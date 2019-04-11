@@ -4,31 +4,8 @@ import random
 import requests
 import json
 import errno
+import fiwarePy.test as test
 
-
-def test_connect(service_name: str, url: str) -> str:
-    """
-    This function tests the a webservice is reachable
-    :param service_name: Name of the webservice
-    :param url: url of the webservice to be tested
-    :return:
-    """
-    try:
-        res = requests.get(url, auth=('user', 'pass'))
-        if res.status_code == 200:
-            print("[INFO] " + service_name + " check success! Service is "
-                                             "up and running!")
-            print("[INFO] Response from service:")
-            print(res.text)
-        else:
-            print("[ERROR] " + service_name + ' check failed! Is the '
-                                              'service up and running? '
-                                              'Please check configuration! '
-                                              'Response: ' + res.status_code)
-    except Exception:
-        print("[ERROR] " + service_name + ' check failed! Is the '
-                                          'service up and running? Please '
-                                          'check configuration!')
 
 
 class Config:
@@ -40,29 +17,25 @@ class Config:
         NOTE: If list of parameters is extended do it here and in
         def update_config()
         """
-        self.orion_host = None
-        self.orion_port = None
-        self.iota_host = None
-        self.iota_port = None
-        self.quantumleap_host = None
-        self.quantumleap_port = None
-        self.config_file = os.getenv("CONFIG_FILE", True)
+        self.file = os.getenv("CONFIG_FILE", True)
         self.path = os.getenv("CONFIG_PATH", 'config.json')
-        if self.config_file:
+        self.data = None
+        if self.file:
             print("[INFO] CONFIG_PATH variable is updated to: " + self.path)
-            config_data = self.read_config_file(self.path)
+            self.data = self.read_config_file(self.path)
         else:
-            config_data = self.read_config_envs()
-        if config_data is not None:
+            self.data = self.read_config_envs()
+        if self.data is not None:
             pass
         #TODO:
         # 0. check if data dict is not None --> use some default values
         # 1. assert data dict
-        self.update_config_param(config_data)
-        try:
-            self.test_config()
-        except Exception:
-            pass
+
+        # self.update_config_param(self.data)
+        #try:
+        self.test_services(self.data)
+        #except Exception:
+         #   pass
 
             # Needs to go to services
             # self.fiware_service = os.getenv("FIWARE_SERVICE", "default")
@@ -114,6 +87,13 @@ class Config:
         :return:
         """
         try:
+            self.data =data
+            print("[INFO]: Configuration parameters updated:")
+            print(json.dumps(data, indent=4))
+        except Exception:
+            print("[ERROR]: Failed to set config parameters!")
+            pass
+        '''try:
             self.orion_host = data['orion']['host']
             self.orion_port = data['orion']['port']
             self.iota_host = data['iota']['host']
@@ -125,7 +105,7 @@ class Config:
         except Exception:
             print("[ERROR]: Failed to set config parameters!")
             pass
-        return True
+        return True'''
 
     # Needs to be moved to IoT-Client part
     def generate_key(self, length: int = 10):
@@ -169,18 +149,23 @@ class Config:
         except Exception:
             print("[ERROR] APIkey check failed. Please check configuration!")
 
-    def test_config(self):
+    def test_services(self, config: dict):
         """This function checks the configuration and tests connections to
         necessary server endpoints"""
-        test_connect('Orion Context Broker', self.orion_host + ':' +
-                     self.orion_port + '/version')
-        test_connect('IoT Agent JSON', self.iota_host + ':' + self.iota_port +
-                     '/iot/about')
-        test_connect('Quantum Leap', self.quantumleap_host + ':' +
-                     self.quantumleap_port + '/v2/version')
+        test.test_config('orion', config)
+        test.test_connection('Orion Context Broker', self.data['orion'][
+            'host'] + ':' + str(self.data['orion']['port']) + '/version')
+        test.test_config('iota', config)
+        test.test_connection('IoT Agent JSON', self.data['iota'][
+            'host'] + ':' + str(self.data['iota']['port']) + '/iot/about')
+        test.test_config('quantum_leap', config)
+        test.test_connection('Quantum Leap', self.data['quantum_leap'][
+            'host'] + ':' + str(self.data['quantum_leap']['port']) + \
+        '/v2/version')
+        print("[INFO]: Configuration seems fine!")
         # self.check_apikey() # needs to be moved to IoTA
         # print("[INFO] Chosen service: " + self.fiware_service)
         # print("[INFO] Chosen service path: " + self.fiware_service_path)
 
 
-__CONFIG = Config()
+CONFIG = Config()

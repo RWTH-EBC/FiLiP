@@ -1,14 +1,27 @@
 import requests
+import fiwarePy.test as test
 import json
 import fiwarePy
-from fiwarePy.config import __CONFIG
+from fiwarePy.config import CONFIG
 import os
 
+
+
 class Iota:
-    def __init__(self, config=CONFIG):
-        self.host = CONFIG.iota_host
-        self.port = CONFIG.iota_host
+    def __init__(self, config = CONFIG)
+        self.name = "IoT Agent" + "JSON"
+        self.host = config.data[self.name]['host']
+        self.port = config.data[self.name]['port']
+        self.test_configuration()
+        #TODO: Figuring our how to register the service and conncet with devices
         self.services = {}
+
+    def test_configuration(self):
+        test.test_config(self.name, CONFIG)
+        test.test_connection(self.name, self.host + ':' + self.port +
+                           '/iot/about')
+
+
 
     def register_configuration(self, service: str,
                            service_path: str,
