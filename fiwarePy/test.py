@@ -1,5 +1,7 @@
 import requests
+import fiwarePy.iota
 import json
+
 
 
 
@@ -76,6 +78,14 @@ def test_config(service_name: str, config: dict):
             else:
                 raise Exception("No valid port configuration for' " +
                                 service_name + "'!")
+        if 'protocol' in config[service_name]:
+            assert isinstance(config[service_name]['protocol'], str),\
+                ("Host configuration for'" + service_name + "' must be string!")
+            # Additional allowed protocols may be added here, e.g. 'IoTA-LWM2M'
+            assert config[service_name]['protocol'] in fiwarePy.iota.supported_iota_protocols, \
+                ("Protocol for '" + service_name + "' not supported! The "
+                "following protocols are supported: " + str(
+                    fiwarePy.iota.supported_iota_protocols))
 
     except Exception as error:
         print("[ERROR]: "+ error.args[0])

@@ -5,7 +5,8 @@
   },
   "iota": {
     "host": "http://134.130.166.185",
-    "port": "4041"
+    "port": "4041",
+    "protocol": "JSON"
   },
   "quantum_leap": {
     "host": "http://134.130.166.185",

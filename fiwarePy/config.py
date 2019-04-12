@@ -74,6 +74,7 @@ class Config:
         data['iota']['host'] = os.getenv("IOTA_JSON_HOST",
                                          "http://localhost")
         data['iota']['port'] = os.getenv("IOTA_PORT", "4041/")
+        data['iota']['port'] = os.getenv("IOTA_PROTOCOL", "IoTA-JSON")
         data['quantumleap']['host'] = os.getenv("QUANTUM_LEAP_HOST",
                                           "http://localhost")
         data['quantumleap']['port'] = os.getenv("IOTA_PORT", "8668/")
@@ -107,48 +108,6 @@ class Config:
             pass
         return True'''
 
-    # Needs to be moved to IoT-Client part
-    def generate_key(self, length: int = 10):
-        """
-        This function generates a random key from lowercase letter and
-        digit characters
-        :ivar length: Number of characters in the key string
-        """
-        return ''.join(random.choice(
-            string.ascii_lowercase + string.digits) for _ in range(
-            length))
-
-    # Needs to be moved to IoT-Client part
-    def check_apikey(self):
-        """
-        This function checks if an apikey is defined in the configfile.
-        Otherwise it will ask the user to generate one and saves it to the
-        configfile in the given sections.
-        """
-
-        try:
-            if self.apikey == "" or self.apikey == self.config['DEFAULT']['apikey']:
-                res = input("No APIkey defined. Do you want to generate one? "
-                            "y/Y ")
-                if res == "y" or res == "Y":
-                    res = input("Please specify number of key (default is "
-                                "10)? ")
-                    if res != 10:
-                        self.apikey = self.generate_key(int(res))
-                    else:
-                        self.apikey = self.generate_key()
-                    self.config[self.section]['apikey'] = str(self.apikey)
-                    with open(self.path, 'w') as configfile:
-                        self.config.write(configfile)
-                    print("Random Key generated: " + self.apikey +
-                          " and saved in configfile!")
-                else:
-                    print("Default Key will be used: " +
-                          self.config['DEFAULT']['APIKEY'])
-            print("[INFO] APIkey check success!")
-        except Exception:
-            print("[ERROR] APIkey check failed. Please check configuration!")
-
     def test_services(self, config: dict):
         """This function checks the configuration and tests connections to
         necessary server endpoints"""
@@ -168,4 +127,4 @@ class Config:
         # print("[INFO] Chosen service path: " + self.fiware_service_path)
 
 
-CONFIG = Config()
+FIWAREPY_CONFIG = Config()

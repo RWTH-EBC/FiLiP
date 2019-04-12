@@ -1,2 +1,2 @@
-from fiwarePy.iota import Iota
-from fiwarePy.config import CONFIG
+import fiwarePy.iota as IoTA
+from fiwarePy.config import FIWAREPY_CONFIG
