@@ -4,7 +4,7 @@ import random
 import requests
 import json
 import errno
-import fiwarePy.test as test
+#import fiwarePy.test as test
 
 
 
@@ -21,7 +21,7 @@ class Config:
         self.path = os.getenv("CONFIG_PATH", 'config.json')
         self.data = None
         if self.file:
-            print("[INFO] CONFIG_PATH variable is updated to: " + self.path)
+#            print("[INFO] CONFIG_PATH variable is updated to: " + self.path)
             self.data = self.read_config_file(self.path)
         else:
             self.data = self.read_config_envs()
@@ -33,7 +33,7 @@ class Config:
 
         # self.update_config_param(self.data)
         #try:
-        self.test_services(self.data)
+#        self.test_services(self.data)
         #except Exception:
          #   pass
 
@@ -127,4 +127,4 @@ class Config:
         # print("[INFO] Chosen service path: " + self.fiware_service_path)
 
 
-FIWAREPY_CONFIG = Config()
+#FIWAREPY_CONFIG = Config()

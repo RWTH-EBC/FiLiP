@@ -1,4 +1,4 @@
-import src.config as config 
+import fiwarePy.config as config 
 
 import requests
 import json 
@@ -11,7 +11,8 @@ HEADER_CONTENT = {'Content-Type': 'application/json'}
 AUTH = ('user', 'pass')
 
 CONFIG = config.Config()
-URL = CONFIG.orion_host + ':' + CONFIG.orion_port + '/v2'
+CONFIG.read_config_file("./config.json")
+URL = CONFIG.data["orion"]["host"] + ':' + CONFIG.data["orion"]["port"] + '/v2'
 
 
 class Attribute:

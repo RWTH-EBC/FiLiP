@@ -1,4 +1,4 @@
-import src.orion as orion
+import fiwarePy.orion as orion
 
 
 def createEntities():
