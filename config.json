@@ -1,0 +1,24 @@
+{
+  "orion": {
+    "host":"http://localhost" ,
+    "port":"1026"
+  },
+  "iota": {
+    "host": "http://134.130.166.185",
+    "port": "4041"
+  },
+  "quantum_leap": {
+    "host": "http://134.130.166.185",
+    "port": "8668"
+  },
+  "cratedb": {
+    "host": "http://134.130.166.185",
+    "port": "4200"
+  },
+  "fiware": {
+    "service": "default",
+    "service_path": "/"
+  }
+}
+
+
