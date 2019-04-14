@@ -2,7 +2,7 @@ import requests
 import filip.test as test
 import json
 import filip
-from filip import FIWAREPY_CONFIG
+from filip import FILIP_CONFIG
 import os
 import string
 import random
