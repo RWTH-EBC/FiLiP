@@ -1,5 +1,5 @@
-import fiwarePy.orion as orion
-import fiwarePy.config as config 
+import filip.orion as orion
+import filip.config as config
 
 
 def createEntities(orion_cb):

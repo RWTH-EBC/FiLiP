@@ -4,7 +4,7 @@ import random
 import requests
 import json
 import errno
-#import fiwarePy.test as test
+#import filip.test as test
 
 
 

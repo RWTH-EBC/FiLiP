@@ -18,8 +18,8 @@ class Device:
     Fiware IoT Agent.
 
     :ivar device_id: Device ID that will be used to identify the device (mandatory).
-    :ivar service: Name of the service the device belongs to (will be used in the fiwarePy-service header).
-    :ivar service_path: Name of the subservice the device belongs to (used in the fiwarePy-servicepath header).
+    :ivar service: Name of the service the device belongs to (will be used in the filip-service header).
+    :ivar service_path: Name of the subservice the device belongs to (used in the filip-servicepath header).
     :ivar entity_name: Name of the entity representing the device in the Context Broker.
     :ivar timezone: Time zone of the sensor if it has any.
     :ivar endpoint: Endpoint where the device is going to receive commands, if any.

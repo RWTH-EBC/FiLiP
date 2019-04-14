@@ -1,8 +1,8 @@
 import os
 import csv
 
-#import fiwarePy.device as dev
-import fiwarePy
+#import filip.device as dev
+import filip
 
 
 

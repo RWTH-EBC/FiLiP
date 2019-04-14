@@ -1,8 +1,8 @@
 import requests
-import fiwarePy.test as test
+import filip.test as test
 import json
-import fiwarePy
-from fiwarePy import FIWAREPY_CONFIG
+import filip
+from filip import FIWAREPY_CONFIG
 import os
 import string
 import random
