@@ -14,7 +14,7 @@ class Attribute:
         self.value = value
         self.type = attr_type
 
-    def getJSON(self):
+    def get_json(self):
         json_dict = {'value': self.value, 'type': '{}'.format(self.type)}
         return json_dict
 
@@ -24,10 +24,10 @@ class Entity:
         self.type = entity_type
         self.attributes = attributes
 
-    def getJSON(self):
+    def get_json(self):
         json_dict = {'id': '{}'.format(self.id), 'type': '{}'.format(self.type)}
         for attr in self.attributes:
-            json_dict[attr.name] = attr.getJSON()
+            json_dict[attr.name] = attr.get_json()
 
         json_res = json.dumps(json_dict)
         print(json.dumps(json_dict))
@@ -65,12 +65,12 @@ class Orion:
     def __init__(self, Config):
         self.url = Config.data["orion"]["host"] + ':' + Config.data["orion"]["port"] + '/v2'
 
-    def postEntity(self, entity):
+    def post_entity(self, entity):
         url = self.url + '/entities'
         head = HEADER_CONTENT
-        post(url, head, AUTH, entity.getJSON())
+        post(url, head, AUTH, entity.get_json())
    
-    def getEntity(self, entity_name, entity_params=None):
+    def get_entity(self, entity_name, entity_params=None):
         url = self.url + '/entities/' + entity_name
         head = HEADER_JSON
 
@@ -79,7 +79,7 @@ class Orion:
         else:
             return get(url, head, AUTH, entity_params)
 
-    def getAllEntities(self, parameter=None, parameter_value=None):
+    def get_all_entities(self, parameter=None, parameter_value=None):
         url = self.url + '/entities'
         head = HEADER_JSON
 
@@ -91,22 +91,22 @@ class Orion:
         else:
             print ("ERROR getting all entities: both function parameters have to be 'not null'")
 
-    def getEntityKeyValues(self, entity_name):
+    def get_entity_keyValues(self, entity_name):
         parameter = {'{}'.format('options'): '{}'.format('keyValues')}
-        return self.getEntity(entity_name, parameter)
+        return self.get_entity(entity_name, parameter)
 
-    def getEntityAttribute_JSON(self, entity_name, attribute_name):
+    def get_entity_attribute_json(self, entity_name, attribute_name):
         url = self.url + '/entities/' + entity_name + '/attrs/' + attribute_name
         head = HEADER_JSON
         return get(url, head, AUTH)
 
-    def getEntityAttributeValue(self, entity_name, attribute_name):
+    def get_entity_attribute_value(self, entity_name, attribute_name):
         url = self.url + '/entities/' + entity_name + '/attrs/' + attribute_name + '/value'
         head = HEADER_PLAIN
         return get(url, head, AUTH)
 
-    def getEntityAttributeList(self, entity_name, attr_name_list):
+    def get_entity_attribute_list(self, entity_name, attr_name_list):
         attributes = ','.join(attr_name_list)
         parameters = {'{}'.format('options'): '{}'.format('values'), '{}'.format('attrs'): attributes}
-        return self.getEntity(entity_name, parameters)
+        return self.get_entity(entity_name, parameters)
 
