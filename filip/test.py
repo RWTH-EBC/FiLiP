@@ -1,12 +1,13 @@
 import requests
-import filip.iota
+import filip.iot
 import json
+import pprint
 
 
 
 
 def test_connection(service_name: str, url: str, auth_method: str =None,
-                    **kwargs) -> str:
+                    **kwargs):
     """
     This function tests the a webservice is reachable
     :param service_name: Name of the webservice
@@ -19,12 +20,12 @@ def test_connection(service_name: str, url: str, auth_method: str =None,
         if auth_method == None:
             res = requests.get(url, auth=('user', 'pass'))
             if res.status_code == 200:
-                print("[INFO] " + service_name + " check success! Service is "
-                                                     "up and running!")
-                print("[INFO] Response from service:")
-                print(res.text)
+                print("[INFO]: " + service_name + " check success! Service is "
+                                                    "up and running!")
+                print("[INFO]: Response from service:")
+                pprint.pprint(res.text)
             else:
-                print("[ERROR] " + service_name + ' check failed! Is the '
+                print("[ERROR]: " + service_name + ' check failed! Is the '
                                                   'service up and running? '
                                                   'Please check configuration! '
                                                   'Response: ' +
@@ -38,7 +39,7 @@ def test_connection(service_name: str, url: str, auth_method: str =None,
                                               'check configuration!')
 
 
-def test_config(service_name: str, config: dict):
+def test_config(service_name: str, config_data: dict):
     """
     Checking configuration for plausibility and correct types
     :param service_name: Name of the client instance for that the
@@ -48,49 +49,52 @@ def test_config(service_name: str, config: dict):
     """
     #TODO: Adding type checking and logical tests
     try:
-        if service_name not in config:
+        if service_name not in config_data:
             raise Exception("Missing configuration for '"+ service_name +
                             "'!")
-        if 'host' not in config[service_name]:
+        if 'host' not in config_data[service_name]:
             raise Exception("Host configuration for'" + service_name + "' is "
                                                                  "missing!")
-        assert isinstance(config[service_name]['host'], str), ("Host "
+        assert isinstance(config_data[service_name]['host'], str), ("Host "
                                                                "configuration "
                                                                "for'" +
                                                                service_name +
                                                                "' must be "
                                                                "string!")
 
-        if 'port' not in config[service_name]:
+        if 'port' not in config_data[service_name]:
             raise Exception("Port configuration for'" + service_name + "' is "
                                                                  "missing!")
-        elif isinstance(config[service_name]['port'], str):
-            port = config[service_name]['port']
+        elif isinstance(config_data[service_name]['port'], str):
+            port = config_data[service_name]['port']
             if port.isdigit() and int(port)<= 65535:
                 pass
             else:
                 raise Exception("No valid Port configuration for '" +
                                 service_name + "'!")
         else:
-            if isinstance(config[service_name]['port'], int) and config[
+            if isinstance(config_data[service_name]['port'], int) and \
+                    config_data[
                 service_name]['port']<= 65535:
                 pass
             else:
                 raise Exception("No valid port configuration for' " +
                                 service_name + "'!")
-        if 'protocol' in config[service_name]:
-            assert isinstance(config[service_name]['protocol'], str),\
+        if 'protocol' in config_data[service_name]:
+            assert isinstance(config_data[service_name]['protocol'], str),\
                 ("Host configuration for'" + service_name + "' must be string!")
             # Additional allowed protocols may be added here, e.g. 'IoTA-LWM2M'
-            assert config[service_name]['protocol'] in filip.iota.supported_iota_protocols, \
+            assert config_data[service_name]['protocol'] in \
+                   filip.iot.PROTOCOLS, \
                 ("Protocol for '" + service_name + "' not supported! The "
                 "following protocols are supported: " + str(
-                    filip.iota.supported_iota_protocols))
+                    filip.iot.PROTOCOLS))
 
     except Exception as error:
         print("[ERROR]: "+ error.args[0])
         print('[ERROR]: Config test failed!')
 
-print()
+    print("[INFO]: Configuration successfully tested!")
+    return True
 
 

@@ -66,7 +66,7 @@ class Orion:
         self.url = Config.data["orion"]["host"] + ':' + Config.data["orion"]["port"] + '/v2'
 
     def postEntity(self, entity):
-        url = self.url + '/entities'
+        url = self.url + 'v2/entities'
         head = HEADER_CONTENT
         post(url, head, AUTH, entity.getJSON())
    

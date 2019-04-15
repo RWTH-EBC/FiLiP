@@ -3,9 +3,15 @@
     "host":"http://localhost" ,
     "port":"1026"
   },
-  "iota": {
+  "iota_json": {
     "host": "http://134.130.166.185",
-    "port": "4041"
+    "port": "4041",
+    "protocol": "IoTA-JSON"
+  },
+    "iota_ul": {
+    "host": "http://134.130.166.185",
+    "port": "4061",
+    "protocol": "IoTA-UL"
   },
   "quantum_leap": {
     "host": "http://134.130.166.185",

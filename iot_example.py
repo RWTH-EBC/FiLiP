@@ -1,15 +1,33 @@
 import os
 import csv
+import iot
 
-#import filip.device as dev
 import filip
-
+import filip.iot as iot
+import filip.orion as orion
 
 
 
 if __name__ == "__main__":
 
     # Read and check configuration
+    CONFIG = filip.Config()
+    #CONFIG.read_config_file("./config.json")
+    ORION_CB = orion.Orion(CONFIG)
+    IOTA_JSON = iot.Agent("iota_json", CONFIG)
+    IOTA_UL = iot.Agent("iota_ul", CONFIG)
+
+    FIWARE_SERVICE = filip.Fiware_service("test_service", "/iot_ul",
+                                          iot_agent="iota_ul", apikey="1234")
+    FIWARE_SERVICE.test_apikey()
+
+    room1_a1 = orion.Attribute('temperature', 11, 'Float')
+    room1_a2 = orion.Attribute('pressure', 111, 'Integer')
+    attributes1 = room1_a1, room1_a2
+    room1 = orion.Entity('Room1', 'Room', attributes1)
+    device = iot.Device('motion001','Room1', "Thing", transport="MQTT",
+                        protocol="PDI-IoTA-UltraLight", timezone="Europe/Berlin")
+
 
     # config = conf.Config(config_path, config_section)
     # CONFIG.read

@@ -4,7 +4,7 @@ import random
 import requests
 import json
 import errno
-#import filip.test as test
+import filip.test as test
 
 
 
@@ -22,9 +22,9 @@ class Config:
         self.data = None
         if self.file:
 #            print("[INFO] CONFIG_PATH variable is updated to: " + self.path)
-            self.data = self.read_config_file(self.path)
+            self.data = self._read_config_file(self.path)
         else:
-            self.data = self.read_config_envs()
+            self.data = self._read_config_envs()
         if self.data is not None:
             pass
         #TODO:
@@ -41,7 +41,7 @@ class Config:
             # self.fiware_service = os.getenv("FIWARE_SERVICE", "default")
             # self.fiware_service_path = os.getenv("FIWARE_SERVICE_PATH",  "/")
 
-    def read_config_file(self, path: str):
+    def _read_config_file(self, path: str):
         """
         Reads configuration file and stores data in entity CONFIG
         :param path: Path to config file
@@ -64,7 +64,7 @@ class Config:
             return False
         return data
 
-    def read_config_envs(self):
+    def _read_config_envs(self):
         """
         :return:
         """
@@ -107,7 +107,7 @@ class Config:
             print("[ERROR]: Failed to set config parameters!")
             pass
         return True'''
-
+#TODO: move to single serrvices
     def test_services(self, config: dict):
         """This function checks the configuration and tests connections to
         necessary server endpoints"""
@@ -127,4 +127,4 @@ class Config:
         # print("[INFO] Chosen service path: " + self.fiware_service_path)
 
 
-#FIWAREPY_CONFIG = Config()
+#FILIP_CONFIG = Config()
