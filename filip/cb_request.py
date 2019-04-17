@@ -21,19 +21,19 @@ def check_response_ok(response, request_type):
         print (str(request_type) + " ok")
         return True
 
-def post(url, head, autho, body):
+def post(url, head, body, autho=None):
     response = requests.post(url, headers=head, auth=autho, data=body)
     check_response_ok(response, "POST")
 
-def put(url, head=None, autho=None, data=None):
+def put(url, head=None, data=None, autho=None):
     response = requests.put(url, headers=head,auth=autho, data=data)
     check_response_ok(response, "PUT")
 
-def get(url, head, autho, parameters=None):
+def get(url, head, parameters=None, autho=None):
     response  = requests.get(url, headers=head, auth=autho, params=parameters)
     if check_response_ok(response, "GET"):
         return response.text
 
-def patch(url, head, autho, body):
+def patch(url, head, body, autho):
     response = requests.patch(url, data=body, headers=head, auth=autho)  # TODO: check if 'data' should be replaced with 'json'
     check_response_ok(response, "PATCH")
