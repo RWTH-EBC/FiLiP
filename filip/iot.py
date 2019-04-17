@@ -1,4 +1,6 @@
 import requests
+from requests import Response
+
 import filip.test as test
 import json
 import string
@@ -88,30 +90,61 @@ class Device:
     def get_commands(self):
         return
 
-class Iot_service:
-    def __init__(self, name: str, path: str, cbroker: str,
+class DeviceGroup:
+    """
+    For every Device Group, the pair (resource, apikey) must be unique
+    (as it is used to identify which group to assign to which device).
+    Those operations of the API targeting specific resources will need
+    the use of the resource and apikey parameters to select the
+    apropriate instance.
+
+    :param name:    Service of the devices of this type
+    :param path:    Subservice of the devices of this type.
+    :param cbHost: Context Broker connection information. This options
+    can be used to override the global ones for specific types of devices.
+    :param kwargs:
+    :ivar entity_type: Name of the type to assign to the group.
+    :ivar trust: Trust token to use for secured access to the Context Broker
+    for this type of devices (optional; only needed for secured scenarios).
+    :ivar lazy: List of lazy attributes of the device.
+    :ivar commands: List of commands of the device
+    :ivar attributes: List of active attributes of the device.
+    :ivar static_attributes: List of static attributes to append to the entity. All the updateContext requests to the CB will have this set of attributes appended.
+    :ivar internal_attributes: Optional section with free format, to allow
+    specific IoT Agents to store information along with the devices in the Device Registry.
+    """
+    def __init__(self, fiware_service: str, fiware_servicepath: str, cb_host:
+    str,
                            **kwargs):
-        self.name = name
-        self.path = path
-        self.cbroker = cbroker
-        self.agent = kwargs.get("iot-agent", "iota-json")
+
+        self.service = fiware_service
+        self.subservice = fiware_servicepath
+        self.resource = kwargs.get("resource", "")
         self.apikey = kwargs.get("apikey", "12345")
         self.entity_type = kwargs.get("entity_type", "Thing")
-        self.resource = kwargs.get("resource","")
+        #self.trust
+        self.cbHost = cb_host
+        #self.lazy
+        #self.commands
+        #self.attributes
+        #self.static_attributes
+        #self.internal_attributes
+
         self.devices = []
+        self.agent = kwargs.get("iot-agent", "iota-json")
 
 
     def get_header(self) -> dict:
         return {
-            "fiware-service": self.name,
-            "fiware-servicepath": self.path
+            "fiware-service": self.service,
+            "fiware-servicepath": self.subservice
         }
 
 
     def get_json(self):
         dict = {}
         dict['apikey']= self.apikey
-        dict['cbroker'] = self.cbroker
+        dict['cbroker'] = self.cbHost
         dict['entity_type']= self.entity_type
         dict['resource'] = self.resource
         return json.dumps(dict, indent=4)
@@ -146,18 +179,12 @@ class Iot_service:
                         self.apikey = self.generate_apikey()
                     #with open(self.path, 'w') as configfile:
                     #    self.config.write(configfile)
-                    print("[INFO]: Random Key generated: '" + self.apikey+ "'")
+                    print("[INFO]: Random Key generated: '" + self.apikey + "'")
                 else:
                     print("[INFO]: Default Key will be used: '1234'!")
             print("[INFO]: API-Key check success! " + self.apikey)
         except Exception:
             print("[ERROR]: API-Key check failed. Please check configuration!")
-
-    def register_device(self, device: Device):
-        return
-
-    def get_device(self, device: Device):
-        return
 
 
 class Agent:
@@ -177,31 +204,34 @@ class Agent:
                                  +":" +config.data[self.name]['port']+
                                  '/iot/about')
 
-    def get_services(self, iot_service):
+    def get_groups(self, device_group):
         url = self.url + '/iot/services'
-        headers = iot_service.get_header()
+        headers = DeviceGroup.get_header(device_group)
         response = requests.request("GET", url, headers=headers)
         print(response.text)
 
-    def delete_service(self, iot_service):
+    def delete_group(self, device_group):
         url = self.url + '/iot/services'
-        headers = iot_service.get_header()
-        querystring ={"resource":iot_service.resource,"apikey": iot_service.apikey}
+        headers = DeviceGroup.get_header(device_group)
+        querystring ={"resource":device_group.resource,"apikey": device_group.apikey}
         response = requests.request("DELETE", url,
                                     headers=headers, params=querystring)
-        print(response.text)
+        if response.status_code==204:
+            print("[INFO]: Device group successfully deleted!")
+        else:
+            print(response.text)
 
-    def post_service(self, iot_service):
+
+    def post_group(self, device_group):
         url = self.url + '/iot/services'
-        head = {**HEADER_CONTENT_JSON, **iot_service.get_header()}
+        head = {**HEADER_CONTENT_JSON, **device_group.get_header()}
         json_dict={}
-        json_dict['services'] = [json.loads(iot_service.get_json())]
+        json_dict['services'] = [json.loads(device_group.get_json())]
         json_dict = json.dumps(json_dict, indent=4)
         print(json_dict)
         response = requests.request("POST", url, data=json_dict, headers=head)
         print(response.text)
         #filip.orion.post(url, head, AUTH, json_dict)
-
 
     def post_device(self, device):
         url = self.url + '/iot/devices'
@@ -217,7 +247,7 @@ class Agent:
 
     def add_service(self, service_name: str, service_path: str,
                            **kwargs):
-        iot_service={'service': service_name,
+        device_group={'service': service_name,
                 'service_path': service_path,
                 'data':{
                     "entity_type": "Thing",

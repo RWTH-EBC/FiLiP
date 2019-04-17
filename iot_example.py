@@ -16,10 +16,10 @@ if __name__ == "__main__":
     IOTA_JSON = iot.Agent("iota_json", CONFIG)
     IOTA_UL = iot.Agent("iota_ul", CONFIG)
 
-    iot_service = filip.iot.Iot_service("test_service", "/iot_ul",
+    device_group = filip.iot.DeviceGroup("test_service", "/iot_ul",
                                           "http://orion:1026",
-                                          iot_agent="iota_ul", apikey="1234")
-    iot_service.test_apikey()
+                                          iot_agent="iota_ul", apikey="12345")
+    device_group.test_apikey()
 
     #attr1 = orion.Attribute('temperature', 11, 'Float')
     #attr2 = orion.Attribute('pressure', 111, 'Integer')
@@ -34,9 +34,9 @@ if __name__ == "__main__":
                            timezone="Europe/Berlin")
     print(device_ul.get_json())
     #print(device_json.get_json())
-    IOTA_JSON.post_service(iot_service)
-    IOTA_JSON.get_services(iot_service)
-    IOTA_JSON.delete_service(iot_service)
+    IOTA_JSON.post_group(device_group)
+    IOTA_JSON.get_groups(device_group)
+    IOTA_JSON.delete_group(device_group)
     IOTA_UL.post_device(device_ul)
     IOTA_JSON.post_device(device_json)
     # config = conf.Config(config_path, config_section)

@@ -1,6 +1,6 @@
 import requests
 import json 
-#import filip.cb_request as cb
+import filip.cb_request as cb
 
 
 HEADER_ACCEPT_JSON = {'Accept': 'application/json'}
@@ -43,10 +43,19 @@ class Orion:
     def __init__(self, Config):
         self.url = Config.data["orion"]["host"] + ':' + Config.data["orion"]["port"] + '/v2'
 
+<<<<<<< HEAD
+
+    def post_entity(self, entity):
+        url = self.url + '/entities'
+        head = HEADER_CONTENT_JSON
+        post(url, head, AUTH, entity.get_json())
+
+=======
     def post_entity(self, entity):
         url = self.url + '/entities'
         head = HEADER_CONTENT_JSON
         cb.post(url, head, AUTH, entity.get_json())
+>>>>>>> 16d72c25fc6592920486098650d434a37e292386
    
     def get_entity(self, entity_name, entity_params=None):
         url = self.url + '/entities/' + entity_name
