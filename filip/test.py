@@ -23,7 +23,7 @@ def test_connection(service_name: str, url: str, auth_method: str =None,
                 print("[INFO]: " + service_name + " check success! Service is "
                                                     "up and running!")
                 print("[INFO]: Response from service:")
-                pprint.pprint(res.text)
+                print(res.text)
             else:
                 print("[ERROR]: " + service_name + ' check failed! Is the '
                                                   'service up and running? '

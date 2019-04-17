@@ -91,17 +91,12 @@ class Orion:
     def __init__(self, Config):
         self.url = Config.data["orion"]["host"] + ':' + Config.data["orion"]["port"] + '/v2'
 
-<<<<<<< HEAD
-    def postEntity(self, entity):
-        url = self.url + 'v2/entities'
-        head = HEADER_CONTENT
-        post(url, head, AUTH, entity.getJSON())
-=======
+
     def post_entity(self, entity):
         url = self.url + '/entities'
         head = HEADER_CONTENT_JSON
         post(url, head, AUTH, entity.get_json())
->>>>>>> remotes/origin/development
+
    
     def get_entity(self, entity_name, entity_params=None):
         url = self.url + '/entities/' + entity_name
