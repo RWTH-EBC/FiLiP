@@ -103,3 +103,15 @@ class Orion:
     def remove_attributes(self, entity_name):
         url = self.url + '/entities/' + entity_name + '/attrs'
         cb.put(url)
+
+    def create_subscription(self, subscription_body):
+        url = self.url + '/subscriptions'
+        head = HEADER_CONTENT_JSON
+
+        headers = cb.post(url, head, subscription_body, None, True)
+
+        location = headers.get('Location')
+        addr_parts = location.split('/')
+        subscription_id = addr_parts.pop()
+        return subscription_id
+

@@ -21,9 +21,11 @@ def check_response_ok(response, request_type):
         print (str(request_type) + " ok")
         return True
 
-def post(url, head, body, autho=None):
+def post(url, head, body, autho=None, return_headers=False):
     response = requests.post(url, headers=head, auth=autho, data=body)
     check_response_ok(response, "POST")
+    if return_headers:
+        return response.headers
 
 def put(url, head=None, data=None, autho=None):
     response = requests.put(url, headers=head,auth=autho, data=data)
