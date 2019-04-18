@@ -282,9 +282,12 @@ class Agent:
     def update_device(self, device, device_group, payload: json):
         url = self.url + '/iot/devices/' + device.device_id
         headers = {**HEADER_CONTENT_JSON, **device_group.get_header()}
-        response = requests.request("GET", url, data=payload,
+        response = requests.request("PUT", url, data=payload,
                                     headers=headers)
-        print(response.text)
+        if response.status_code == 204:
+            print("[INFO]: Device successfully updated!")
+        else:
+            print(response.text)
 
     def add_attribute(self, name, type, value, object_id: str = None,
                       attr_type='active'):

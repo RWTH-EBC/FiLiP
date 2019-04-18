@@ -16,12 +16,12 @@ if __name__ == "__main__":
     ORION_CB = orion.Orion(CONFIG)
     IOTA_JSON = iot.Agent("iota_json", CONFIG)
     IOTA_UL = iot.Agent("iota_ul", CONFIG)
-
-    device_group = filip.iot.DeviceGroup("test_service", "/iot_ul",
+    fiware_service = orion.FiwareService("test_service", "/iot_ul")
+    device_group = filip.iot.DeviceGroup(fiware_service.name,
+                                         fiware_service.path,
                                           "http://orion:1026",
                                           iot_agent="iota_ul", apikey="12345")
     device_group.test_apikey()
-
     #attr1 = orion.Attribute('temperature', 11, 'Float')
     #attr2 = orion.Attribute('pressure', 111, 'Integer')
     #attributes = attr1, attr2
@@ -40,7 +40,7 @@ if __name__ == "__main__":
     IOTA_JSON.get_groups(device_group)
     IOTA_JSON.post_device(device_json, device_group)
     IOTA_JSON.get_device(device_json, device_group)
-    ORION_CB.get_entity('urn:Room:001:sensor01')
+    ORION_CB.get_entity('urn:Room:001:sensor01', fiware_service)
     #iot.Attribute()
     IOTA_JSON.update_device(device_json, device_group, "")
     IOTA_JSON.delete_device(device_json, device_group)
@@ -48,7 +48,7 @@ if __name__ == "__main__":
 
 
     #IOTA_UL.post_device(device_ul)
-    IOTA_JSON.post_device(device_json)
+    #IOTA_JSON.post_device(device_json)
     # config = conf.Config(config_path, config_section)
     # CONFIG.read
     # a = CONFIG.CONFIG_PATH

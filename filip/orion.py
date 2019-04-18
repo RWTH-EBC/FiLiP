@@ -37,33 +37,46 @@ class Entity:
         json_res = json.dumps(json_dict)
         return json_res
 
+
+class FiwareService:
+    def __init__(self, name: str, path: str, **kwargs):
+        self.name = name
+        self.path = path
+
+
+    def get_header(self) -> object:
+        return {
+            "fiware-service": self.name,
+            "fiware-servicepath": self.path
+        }
+
+
 class Orion:
     def __init__(self, Config):
         self.url = Config.data["orion"]["host"] + ':' + Config.data["orion"]["port"] + '/v2'
 
     def post_entity(self, entity):
         url = self.url + '/entities'
-        head = HEADER_CONTENT_JSON
+        headers = {**HEADER_CONTENT_JSON, **FiwareService.get_header()}
         cb.post(url, head, entity.get_json())
    
     def get_entity(self, entity_name, entity_params=None):
         url = self.url + '/entities/' + entity_name
-        head = HEADER_ACCEPT_JSON
-
+        headers = {**HEADER_CONTENT_JSON, **FiwareService.get_header()}
         if entity_params is None:
-            return cb.get(url, head)
+            return cb.get(url, headers)
         else:
-            return cb.get(url, head, entity_params)
+            return cb.get(url, headers, entity_params)
 
     def get_all_entities(self, parameter=None, parameter_value=None):
         url = self.url + '/entities'
-        head = HEADER_ACCEPT_JSON
+        headers = {**HEADER_CONTENT_JSON, **FiwareService.get_header()}
 
         if parameter is None and parameter_value is None:
-            return cb.get(url, head)
+            return cb.get(url, headers)
         elif parameter is not None and parameter_value is not None:
             parameters = {'{}'.format(parameter): '{}'.format(parameter_value)}
-            return cb.get(url, head, parameters)
+            return cb.get(url, headers, parameters)
         else:
             print ("ERROR getting all entities: both function parameters have to be 'not null'")
 
@@ -73,8 +86,8 @@ class Orion:
 
     def get_entity_attribute_json(self, entity_name, attribute_name):
         url = self.url + '/entities/' + entity_name + '/attrs/' + attribute_name
-        head = HEADER_ACCEPT_JSON
-        return cb.get(url, head)
+        headers = {**HEADER_CONTENT_JSON, **FiwareService.get_header()}
+        return cb.get(url, headers)
 
     def get_entity_attribute_value(self, entity_name, attribute_name):
         url = self.url + '/entities/' + entity_name + '/attrs/' + attribute_name + '/value'
@@ -88,9 +101,9 @@ class Orion:
 
     def update_entity(self, entity):
         url = self.url + '/entities/' + entity.name + '/attrs'
-        head = HEADER_CONTENT_JSON
-        json_dict = entity.get_attributes_json_dict()
-        cb.patch(url, head, json.dumps(json_dict))
+        headers = {**HEADER_CONTENT_JSON, **FiwareService.get_header()}
+        payload = entity.get_attributes_json_dict()
+        cb.patch(url, headers, json.dumps(payload))
         # TODO: query entity operation to check that entity was actually updated
         # if ok, should return 204
 
