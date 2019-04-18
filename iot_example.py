@@ -26,7 +26,8 @@ if __name__ == "__main__":
     #attributes = attr1, attr2
     #room_ul = orion.Entity('urn:Room:001', 'Room', attributes)
     #room_json= orion.Entity('urn:Room:002', 'Room', attributes)
-    device_ul = iot.Device('urn:Room:001:sensor01','urn:Room:001', "Thing",
+    device_ul = iot.Device('urn:Room:001:sensor01','urn:Room:001',
+                           "Thing",
                            transport="MQTT", protocol="PDI-IoTA-UltraLight",
                            timezone="Europe/Berlin")
     device_json = iot.Device('urn:Room:001:sensor01','urn:Room:001', "Thing",
