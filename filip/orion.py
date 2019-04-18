@@ -1,6 +1,6 @@
 import requests
 import json 
-#import filip.cb_request as cb
+import filip.cb_request as cb
 
 
 HEADER_ACCEPT_JSON = {'Accept': 'application/json'}
@@ -8,7 +8,6 @@ HEADER_ACCEPT_PLAIN = {'Accept': 'text/plain'}
 HEADER_CONTENT_JSON = {'Content-Type': 'application/json'}
 HEADER_CONTENT_PLAIN = {'Content-Type': 'text/plain'}
 
-AUTH = ('user', 'pass')
 
 class Attribute:
     def __init__(self, name, value, attr_type):
@@ -46,26 +45,26 @@ class Orion:
     def post_entity(self, entity):
         url = self.url + '/entities'
         head = HEADER_CONTENT_JSON
-        cb.post(url, head, AUTH, entity.get_json())
+        cb.post(url, head, entity.get_json())
    
     def get_entity(self, entity_name, entity_params=None):
         url = self.url + '/entities/' + entity_name
         head = HEADER_ACCEPT_JSON
 
         if entity_params is None:
-            return cb.get(url, head, AUTH)
+            return cb.get(url, head)
         else:
-            return cb.get(url, head, AUTH, entity_params)
+            return cb.get(url, head, entity_params)
 
     def get_all_entities(self, parameter=None, parameter_value=None):
         url = self.url + '/entities'
         head = HEADER_ACCEPT_JSON
 
         if parameter is None and parameter_value is None:
-            return cb.get(url, head, AUTH)
+            return cb.get(url, head)
         elif parameter is not None and parameter_value is not None:
             parameters = {'{}'.format(parameter): '{}'.format(parameter_value)}
-            return cb.get(url, head, AUTH, parameters)
+            return cb.get(url, head, parameters)
         else:
             print ("ERROR getting all entities: both function parameters have to be 'not null'")
 
@@ -76,12 +75,12 @@ class Orion:
     def get_entity_attribute_json(self, entity_name, attribute_name):
         url = self.url + '/entities/' + entity_name + '/attrs/' + attribute_name
         head = HEADER_ACCEPT_JSON
-        return cb.get(url, head, AUTH)
+        return cb.get(url, head)
 
     def get_entity_attribute_value(self, entity_name, attribute_name):
         url = self.url + '/entities/' + entity_name + '/attrs/' + attribute_name + '/value'
         head = HEADER_ACCEPT_PLAIN
-        return cb.get(url, head, AUTH)
+        return cb.get(url, head)
 
     def get_entity_attribute_list(self, entity_name, attr_name_list):
         attributes = ','.join(attr_name_list)
@@ -92,15 +91,27 @@ class Orion:
         url = self.url + '/entities/' + entity.name + '/attrs'
         head = HEADER_CONTENT_JSON
         json_dict = entity.get_attributes_json_dict()
-        cb.patch(url, head, AUTH, json.dumps(json_dict))
+        cb.patch(url, head, json.dumps(json_dict))
         # TODO: query entity operation to check that entity was actually updated
         # if ok, should return 204
 
     def update_attribute(self, entity_name, attr_name, attr_value):
         url = self.url + '/entities/' + entity_name + '/attrs/' + attr_name + '/value'
         head = HEADER_CONTENT_PLAIN
-        cb.put(url, head, AUTH, attr_value)
+        cb.put(url, head, attr_value)
 
     def remove_attributes(self, entity_name):
         url = self.url + '/entities/' + entity_name + '/attrs'
         cb.put(url)
+
+    def create_subscription(self, subscription_body):
+        url = self.url + '/subscriptions'
+        head = HEADER_CONTENT_JSON
+
+        headers = cb.post(url, head, subscription_body, None, True)
+
+        location = headers.get('Location')
+        addr_parts = location.split('/')
+        subscription_id = addr_parts.pop()
+        return subscription_id
+

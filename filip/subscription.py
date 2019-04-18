@@ -3,25 +3,55 @@ from enum import Enum
 
 # Subscription according to NGSI v2 specification
 
-AUTH = ('user', 'pass')
-
-
 class Subject_Entity:
-    def __init__(self, _id, _type):
+    def __init__(self, _id, _type=None):
         self.id = _id           # id XOR idPattern; required
         self.type = _type       # type OR typePattern; if omitted -> "any entity type"
     
     def get_json_dict(self):
-        return None
+        json_dict = {"id": "{}".format(self.id)}
+        if self.type is not None:
+            json_dict["type"] = self.type
+        return json_dict
+
+class Subject_Expression:
+    def __init__(self):
+        self.q = None
+        self.mq = None
+        self.georel = None
+        self.geometry = None
+        self.coords = None
+
+    def get_json_dict(self):
+        json_dict = {}
+        if self.q is not None:
+            json_dict["q"] = self.q
+        if self.mq is not None:
+            json_dict["mq"] = self.mq
+        if self.georel is not None:
+            json_dict["georel"] = self.georel
+        if self.geometry is not None:
+            json_dict["geometry"] = self.geometry
+        if self.coords is not None:
+            json_dict["coords"] = self.coords
+        return json_dict
 
 class Subject_Condition:
-    def __init__(self, attributes, expression=None):
+    def __init__(self, attributes=None, expression=None):
         self.attributes = attributes    # list of attribute names; optional
-        self.expression = expression    # TODO: description; optionala
+        self.expression = expression    # TODO: description; optional
 
-   
+    def get_json_dict(self):
+        json_dict = {}
+        if self.attributes is None and self.expression is None:
+            return None
 
-# subscription subject
+        if self.attributes is not None:
+            json_dict["attrs"] = self.attributes
+        if self.expression is not None:
+            json_dict["expression"] = self.expression.get_json_dict()
+        return json_dict
+
 class Subject:
     def __init__(self, entities, condition=None):
         self.entities = entities    # list of Subject_Entity objects, required
@@ -34,14 +64,11 @@ class Subject:
             entity_list.append(entity.get_json_dict())
 
         json_dict["entities"] = entity_list
-        return json_dict
-#        if self.condition is not None:
-#            entity_list = []
-#            for entity in self.entities:
-#                entity_list.append(entity.get_json_dict())
-#
-#            json_dict["condition"] = entity_list
 
+        if self.condition is not None:
+            json_dict["condition"] = self.condition.get_json_dict()
+
+        return json_dict
 
 # attribute_type can be either "attrs" or "exceptAttrs"
 # if left empty, all attributes are included in notifications
@@ -65,19 +92,23 @@ class Notification_Attributes:
     def is_specified(self):
         return self.specified
         
-        
 
 class HTTP_Params:
-    def __init__(self, url, only_url_given=True, headers=None, qs=None, method=None, payload=None):
-        self.url = url              # URL referencing the service to be invoked by a notification
-        self.only_url = only_url_given  # 'http' for True; 'httpCustom' for False
-        self.headers = headers      # key-map of HTTP headers; optional
-        self.qs = qs                # key-map of URL query parameters                
-        self.method = method        # HTTP method to use for notification (default: POST)
-        self.payload = payload      # payload to be used in notifications
+    def __init__(self, url):
+        self.url = url          # URL referencing the service to be invoked by a notification
+        self.headers = None     # key-map (dict) of HTTP headers; optional
+        self.qs = None          # key-map (dict) of URL query parameters                
+        self.method = None      # HTTP method to use for notification (default: POST)
+        self.payload = None     # payload to be used in notifications
 
     def is_custom_http(self):
-        return (not self.only_url)
+        if self.headers is not None \
+        or self.qs is not None \
+        or self.method is not None \
+        or self.payload is not None:
+            return True
+        else:
+            return False
 
     def get_json_dict(self):
         json_dict = {"url": self.url}
@@ -88,16 +119,19 @@ class HTTP_Params:
             json_dict["headers"] = self.headers #TODO: this is wrong, headers is a key-map
         if self.qs is not None:
             json_dict["qs"] = self.qs # TODO (See headers)
-
-        #set_attr = filter(lambda attr: not attr.startswith('__') and not None, dir(obj))
-        #print(set_attr)
+        if self.method is not None:
+            json_dict["method"] = self.method
+        if self.payload is not None:
+            json_dict["payload"] = self.payload
 
         return json_dict
 
 class Notification:
-    def __init__(self, http, attr):
+    def __init__(self, http, attr=None):
         self.http = http    # object of class 'HTTP_Params'
         self.attr = attr    # Notification_Attributes object
+        self.attrsFormat = None     # optional, specifies how entites are represented in notifications
+        self.metadata = None        # list of metadata to be included in notifications
 
     def get_json_dict(self):
         json_dict = {}
@@ -106,7 +140,13 @@ class Notification:
         else:
             json_dict["http"] = self.http.get_json_dict()
 
-        if self.attr.is_specified():
+        if self.attrsFormat is not None:
+            json_dict["attrsFormat"] = self.attrsFormat
+
+        if self.metadata is not None:
+            json_dict["metadata"] = self.metadata
+
+        if self.attr is not None and self.attr.is_specified():
             json_dict.update(self.attr.get_json_dict())
         return json_dict
 
@@ -133,18 +173,7 @@ class Subscription:
         json_dict["subject"] = self.subject.get_json_dict()
 
         return json.dumps(json_dict)
-
-
-        # get all not-null attributes (filter out methods as well)
-        #set_attr = 
-        #filter(lambda attr: not attr.startswith('__') and not None, dir(self));
-        #print(set_attr)
-
-#        for attr in dir(self) if 
-#        json_dict = {'description': '{}'.format(self.description)
-
-
-
+    
 
     def list_registrations(self, host, port, **kwargs):
         url = "http://" + host + ":" + port + "/v2/registrations"
@@ -160,12 +189,3 @@ class Subscription:
             cb.get(url, head, AUTH)
         
 
-
-#ORION
-    def create_subscription(self, subscription):
-        url = self.url + '/subscriptions'
-        head = HEADER_ACCEPT_JSON
-
-        post(url, head, AUTH, subscription_get_json)
-
-        subscription.subscription_id = ...
