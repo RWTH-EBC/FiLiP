@@ -15,6 +15,24 @@ PROTOCOLS = ['IoTA-JSON','IoTA-UL']
 
 AUTH = ('user', 'pass')
 
+class Attribute:
+    def __init__(self, name, value, attr_type):
+        self.name = name
+        self.value = value
+        self.type = attr_type
+
+    def get_json(self):
+        return {'value': self.value, 'type': '{}'.format(self.type)}
+
+class Command:
+    def __init__(self, name, value):
+        self.name = name
+        self.value = value
+        self.type = "command"
+
+    def get_json(self):
+        return {'value': self.value, 'type': '{}'.format(self.type)}
+
 class Device:
     """
     Represents all necessary information for device registration with an Fiware IoT Agent.
@@ -61,7 +79,7 @@ class Device:
         dict['static_attributes'] = self.static_attributes
         return json.dumps(dict, indent=4)
 
-    def add_attribute(self, name, type, object_id: str = None, attr_type='active'):
+    def add_attribute(self, ):
         """
         :param name: The name of the attribute as submitted to the context broker.
         :param type: The type of the attribute as submitted to the context broker.
@@ -221,29 +239,81 @@ class Agent:
         else:
             print(response.text)
 
-
     def post_group(self, device_group):
         url = self.url + '/iot/services'
-        head = {**HEADER_CONTENT_JSON, **device_group.get_header()}
-        json_dict={}
-        json_dict['services'] = [json.loads(device_group.get_json())]
-        json_dict = json.dumps(json_dict, indent=4)
-        print(json_dict)
-        response = requests.request("POST", url, data=json_dict, headers=head)
+        headers = {**HEADER_CONTENT_JSON, **device_group.get_header()}
+        payload={}
+        payload['services'] = [json.loads(device_group.get_json())]
+        payload = json.dumps(payload, indent=4)
+        print(payload)
+        response = requests.request("POST", url, data=payload, headers=headers)
         print(response.text)
         #filip.orion.post(url, head, AUTH, json_dict)
 
-    def post_device(self, device):
+    def post_device(self, device, device_group):
         url = self.url + '/iot/devices'
-        head = HEADER_CONTENT_JSON
-        json_dict={}
-        json_dict['devices'] = [json.loads(device.get_json())]
-        json_dict = json.dumps(json_dict, indent=4)
-        print(json_dict)
-        response = requests.request("POST", url, data=json_dict, headers=head)
+        headers = {**HEADER_CONTENT_JSON, **device_group.get_header()}
+        payload={}
+        payload['devices'] = [json.loads(device.get_json())]
+        payload = json.dumps(payload, indent=4)
+        print(payload)
+        response = requests.request("POST", url, data=payload, headers=headers)
         print(response.text)
-        #filip.orion.post(url, head, AUTH, json_dict)
 
+    def delete_device(self, device, device_group):
+        url = self.url + '/iot/devices/'+ device.device_id
+        headers = {**HEADER_CONTENT_JSON, **device_group.get_header()}
+        payload= ""
+        response = requests.request("DELETE", url, data=payload,
+                                    headers=headers)
+        if response.status_code == 204:
+            print("[INFO]: Device successfully deleted!")
+        else:
+            print(response.text)
+
+    def get_device(self, device, device_group):
+        url = self.url + '/iot/devices/' + device.device_id
+        headers = {**HEADER_CONTENT_JSON, **device_group.get_header()}
+        payload = ""
+        response = requests.request("GET", url, data=payload,
+                                    headers=headers)
+        print(response.text)
+
+    def update_device(self, device, device_group, payload: json):
+        url = self.url + '/iot/devices/' + device.device_id
+        headers = {**HEADER_CONTENT_JSON, **device_group.get_header()}
+        response = requests.request("GET", url, data=payload,
+                                    headers=headers)
+        print(response.text)
+
+    def add_attribute(self, name, type, value, object_id: str = None,
+                      attr_type='active'):
+        """
+        :param name: The name of the attribute as submitted to the context broker.
+        :param type: The type of the attribute as submitted to the context broker.
+        :param object_id: The id of the attribute used from the southbound API.
+        :param attr_type: One of \"active\" (default), \"lazy\" or \"static\"
+        """
+        attr = {
+            "name": name,
+            "type": type,
+            "value": value
+        }
+        if object_id:
+            attr["object_id"] = object_id
+
+        if attr_type == "active":
+            self.attributes.append(attr)
+        elif attr_type == "lazy":
+            self.lazy.append(attr)
+        elif attr_type == "static":
+            self.static_attributes.append(attr)
+        else:
+            print("[WARN] Attribute type unknown: \"{}\"".format(attr_type))
+
+
+
+### END of valid Code################
 
     def add_service(self, service_name: str, service_path: str,
                            **kwargs):

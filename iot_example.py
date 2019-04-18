@@ -7,6 +7,7 @@ import filip.orion as orion
 
 
 
+
 if __name__ == "__main__":
 
     # Read and check configuration
@@ -37,8 +38,16 @@ if __name__ == "__main__":
     #print(device_json.get_json())
     IOTA_JSON.post_group(device_group)
     IOTA_JSON.get_groups(device_group)
+    IOTA_JSON.post_device(device_json, device_group)
+    IOTA_JSON.get_device(device_json, device_group)
+    ORION_CB.get_entity('urn:Room:001:sensor01')
+    #iot.Attribute()
+    IOTA_JSON.update_device(device_json, device_group, "")
+    IOTA_JSON.delete_device(device_json, device_group)
     IOTA_JSON.delete_group(device_group)
-    IOTA_UL.post_device(device_ul)
+
+
+    #IOTA_UL.post_device(device_ul)
     IOTA_JSON.post_device(device_json)
     # config = conf.Config(config_path, config_section)
     # CONFIG.read

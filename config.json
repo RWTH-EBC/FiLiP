@@ -1,6 +1,6 @@
 {
   "orion": {
-    "host":"http://localhost" ,
+    "host":"http://134.130.166.185" ,
     "port":"1026"
   },
   "iota_json": {
