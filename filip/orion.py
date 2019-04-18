@@ -16,8 +16,7 @@ class Attribute:
         self.type = attr_type
 
     def get_json(self):
-        json_dict = {'value': self.value, 'type': '{}'.format(self.type)}
-        return json_dict
+        return {'value': self.value, 'type': '{}'.format(self.type)}
 
 class Entity:
     def __init__(self, entity_id, entity_type, attributes):
@@ -98,7 +97,7 @@ class Orion:
     def update_attribute(self, entity_name, attr_name, attr_value):
         url = self.url + '/entities/' + entity_name + '/attrs/' + attr_name + '/value'
         head = HEADER_CONTENT_PLAIN
-        cb.put(url, head, attr_value)
+        cb.put(url, head, json.dumps(attr_value))
 
     def remove_attributes(self, entity_name):
         url = self.url + '/entities/' + entity_name + '/attrs'
@@ -109,7 +108,8 @@ class Orion:
         head = HEADER_CONTENT_JSON
 
         headers = cb.post(url, head, subscription_body, None, True)
-
+        if headers==None:
+            return
         location = headers.get('Location')
         addr_parts = location.split('/')
         subscription_id = addr_parts.pop()
