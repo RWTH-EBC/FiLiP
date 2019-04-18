@@ -4,7 +4,6 @@ import filip.orion as orion
 import datetime
 import json
 
-
 AUTH = ('user', 'pass')
 
 # create new subscription following the API Walkthrough example:
@@ -27,7 +26,6 @@ def API_Walkthrough_subscription():
     subscription = sub.Subscription(subject, notification, description, expires, throttling)
     return subscription.get_json()
 
-
 def Step_By_Step_reducing_scope_with_expression():
     description = "Notify me of low stock in Store 001"
     subject_entity = sub.Subject_Entity(".*", "InventoryItem")
@@ -42,7 +40,6 @@ def Step_By_Step_reducing_scope_with_expression():
 
     subscription = sub.Subscription(subject, notification, description)
     return subscription.get_json()
-
 
 def http_custom_subscription():
     description = "A subscription to get info about Room3"
@@ -59,10 +56,7 @@ def http_custom_subscription():
     notification = sub.Notification(http_params)
 
     subscription = sub.Subscription(subject, notification, description)
-    print(subscription.get_json())
-
-
-
+    return subscription.get_json()
 
 
 if __name__=="__main__":
@@ -82,6 +76,9 @@ if __name__=="__main__":
     print("subscription id = " + str(sub_id))
 
     print("---------------------")
-#    http_custom_subscription()
-#    print("---------------------")
+    body = http_custom_subscription()
+    print(body)
+    sub_id = ORION_CB.create_subscription(body)
+    print("subscription id = " + str(sub_id))
+    print("---------------------")
 
