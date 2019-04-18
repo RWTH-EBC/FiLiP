@@ -250,7 +250,7 @@ class Agent:
         print(response.text)
         #filip.orion.post(url, head, AUTH, json_dict)
 
-    def post_device(self, device, device_group):
+    def post_device(self, device_group, device):
         url = self.url + '/iot/devices'
         headers = {**HEADER_CONTENT_JSON, **device_group.get_header()}
         payload={}
@@ -260,7 +260,7 @@ class Agent:
         response = requests.request("POST", url, data=payload, headers=headers)
         print(response.text)
 
-    def delete_device(self, device, device_group):
+    def delete_device(self, device_group, device):
         url = self.url + '/iot/devices/'+ device.device_id
         headers = {**HEADER_CONTENT_JSON, **device_group.get_header()}
         payload= ""
@@ -271,7 +271,7 @@ class Agent:
         else:
             print(response.text)
 
-    def get_device(self, device, device_group):
+    def get_device(self, device_group, device):
         url = self.url + '/iot/devices/' + device.device_id
         headers = {**HEADER_CONTENT_JSON, **device_group.get_header()}
         payload = ""
@@ -279,7 +279,7 @@ class Agent:
                                     headers=headers)
         print(response.text)
 
-    def update_device(self, device, device_group, payload: json):
+    def update_device(self, device_group, device, payload: json):
         url = self.url + '/iot/devices/' + device.device_id
         headers = {**HEADER_CONTENT_JSON, **device_group.get_header()}
         response = requests.request("PUT", url, data=payload,

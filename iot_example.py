@@ -17,33 +17,37 @@ if __name__ == "__main__":
     IOTA_JSON = iot.Agent("iota_json", CONFIG)
     IOTA_UL = iot.Agent("iota_ul", CONFIG)
     fiware_service = orion.FiwareService("test_service", "/iot_ul")
+    res=fiware_service.get_header()
     device_group = filip.iot.DeviceGroup(fiware_service.name,
                                          fiware_service.path,
                                           "http://orion:1026",
-                                          iot_agent="iota_ul", apikey="12345")
+                                         iot_agent="iota_ul", \
+                                                       apikey="12345")
     device_group.test_apikey()
     #attr1 = orion.Attribute('temperature', 11, 'Float')
     #attr2 = orion.Attribute('pressure', 111, 'Integer')
     #attributes = attr1, attr2
     #room_ul = orion.Entity('urn:Room:001', 'Room', attributes)
     #room_json= orion.Entity('urn:Room:002', 'Room', attributes)
-    device_ul = iot.Device('urn:Room:001:sensor01','urn:Room:001',
+    device_ul = iot.Device('urn:Room:001:sensor01','Room001',
                            "Thing",
                            transport="MQTT", protocol="PDI-IoTA-UltraLight",
                            timezone="Europe/Berlin")
-    device_json = iot.Device('urn:Room:001:sensor01','urn:Room:001', "Thing",
+    device_json = iot.Device('urn:Room:001:sensor01','Room001', "Thing",
                            transport="MQTT", protocol="IoTA-JSON",
                            timezone="Europe/Berlin")
     print(device_ul.get_json())
     #print(device_json.get_json())
     IOTA_JSON.post_group(device_group)
     IOTA_JSON.get_groups(device_group)
-    IOTA_JSON.post_device(device_json, device_group)
-    IOTA_JSON.get_device(device_json, device_group)
-    ORION_CB.get_entity('urn:Room:001:sensor01', fiware_service)
+    IOTA_JSON.post_device(device_group, device_json)
+    IOTA_JSON.update_device(device_group, device_json, "")
+    IOTA_JSON.get_device(device_group, device_json)
+    ORION_CB.get_all_entities(fiware_service)
+    ORION_CB.get_entity(fiware_service, 'Room001')
     #iot.Attribute()
-    IOTA_JSON.update_device(device_json, device_group, "")
-    IOTA_JSON.delete_device(device_json, device_group)
+
+    IOTA_JSON.delete_device(device_group, device_json)
     IOTA_JSON.delete_group(device_group)
 
 

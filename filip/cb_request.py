@@ -32,7 +32,7 @@ def put(url, head=None, data=None, autho=None):
     check_response_ok(response, "PUT")
 
 def get(url, head, parameters=None, autho=None):
-    response  = requests.get(url, headers=head, auth=autho, params=parameters)
+    response  = requests.get(url, headers=head, params=parameters)
     if check_response_ok(response, "GET"):
         return response.text
 

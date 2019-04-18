@@ -55,22 +55,24 @@ class Orion:
     def __init__(self, Config):
         self.url = Config.data["orion"]["host"] + ':' + Config.data["orion"]["port"] + '/v2'
 
-    def post_entity(self, entity):
+    def post_entity(self, fiware_service, entity):
         url = self.url + '/entities'
-        headers = {**HEADER_CONTENT_JSON, **FiwareService.get_header()}
-        cb.post(url, head, entity.get_json())
+        headers = {**HEADER_CONTENT_JSON, **fiware_service.get_header()}
+        cb.post(url, headers, entity.get_json())
    
-    def get_entity(self, entity_name, entity_params=None):
+    def get_entity(self, fiware_service, entity_name,  entity_params=None):
         url = self.url + '/entities/' + entity_name
-        headers = {**HEADER_CONTENT_JSON, **FiwareService.get_header()}
+        headers = fiware_service.get_header()
+
         if entity_params is None:
             return cb.get(url, headers)
         else:
             return cb.get(url, headers, entity_params)
 
-    def get_all_entities(self, parameter=None, parameter_value=None):
+    def get_all_entities(self, fiware_service, parameter=None,
+                         parameter_value=None):
         url = self.url + '/entities'
-        headers = {**HEADER_CONTENT_JSON, **FiwareService.get_header()}
+        headers = fiware_service.get_header()
 
         if parameter is None and parameter_value is None:
             return cb.get(url, headers)
@@ -84,9 +86,10 @@ class Orion:
         parameter = {'{}'.format('options'): '{}'.format('keyValues')}
         return self.get_entity(entity_name, parameter)
 
-    def get_entity_attribute_json(self, entity_name, attribute_name):
+    def get_entity_attribute_json(self, fiware_service, entity_name,
+                                  attribute_name):
         url = self.url + '/entities/' + entity_name + '/attrs/' + attribute_name
-        headers = {**HEADER_CONTENT_JSON, **FiwareService.get_header()}
+        headers = fiware_service.get_header()
         return cb.get(url, headers)
 
     def get_entity_attribute_value(self, entity_name, attribute_name):
@@ -99,9 +102,9 @@ class Orion:
         parameters = {'{}'.format('options'): '{}'.format('values'), '{}'.format('attrs'): attributes}
         return self.get_entity(entity_name, parameters)
 
-    def update_entity(self, entity):
+    def update_entity(self, fiware_service, entity):
         url = self.url + '/entities/' + entity.name + '/attrs'
-        headers = {**HEADER_CONTENT_JSON, **FiwareService.get_header()}
+        headers = {**HEADER_CONTENT_JSON, **fiware_service.get_header()}
         payload = entity.get_attributes_json_dict()
         cb.patch(url, headers, json.dumps(payload))
         # TODO: query entity operation to check that entity was actually updated
