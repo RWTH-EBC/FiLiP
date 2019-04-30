@@ -11,7 +11,7 @@ import filip.orion as orion
 if __name__ == "__main__":
 
     # Read and check configuration
-    CONFIG = filip.Config()
+    CONFIG = filip.config.Config()
     #CONFIG.read_config_file("./config.json")
     ORION_CB = orion.Orion(CONFIG)
     IOTA_JSON = iot.Agent("iota_json", CONFIG)
@@ -44,8 +44,8 @@ if __name__ == "__main__":
     IOTA_JSON.post_device(device_group, device_json)
     IOTA_JSON.update_device(device_group, device_json, "")
     IOTA_JSON.get_device(device_group, device_json)
-    ORION_CB.get_all_entities(fiware_service)
-    ORION_CB.get_entity(fiware_service, 'urn:Room:001')
+    ORION_CB.get_all_entities()
+    ORION_CB.get_entity('urn:Room:001')
     #iot.Attribute()
 
     IOTA_JSON.delete_device(device_group, device_json)
