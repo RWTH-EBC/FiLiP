@@ -29,13 +29,14 @@ if __name__ == "__main__":
     #attributes = attr1, attr2
     #room_ul = orion.Entity('urn:Room:001', 'Room', attributes)
     #room_json= orion.Entity('urn:Room:002', 'Room', attributes)
-    device_ul = iot.Device('urn:Room:001:sensor01','Room001',
+    device_ul = iot.Device('urn:Room:001:sensor01','urn:Room:001',
                            "Thing",
                            transport="MQTT", protocol="PDI-IoTA-UltraLight",
                            timezone="Europe/Berlin")
-    device_json = iot.Device('urn:Room:001:sensor01','Room001', "Thing",
+    device_json = iot.Device('urn:Room:001:sensor01','urn:Room:001', "Thing",
                            transport="MQTT", protocol="IoTA-JSON",
                            timezone="Europe/Berlin")
+    #attribute = iot.Attribute(name= "test", )
     print(device_ul.get_json())
     #print(device_json.get_json())
     IOTA_JSON.post_group(device_group)
@@ -44,7 +45,7 @@ if __name__ == "__main__":
     IOTA_JSON.update_device(device_group, device_json, "")
     IOTA_JSON.get_device(device_group, device_json)
     ORION_CB.get_all_entities(fiware_service)
-    ORION_CB.get_entity(fiware_service, 'Room001')
+    ORION_CB.get_entity(fiware_service, 'urn:Room:001')
     #iot.Attribute()
 
     IOTA_JSON.delete_device(device_group, device_json)
@@ -70,7 +71,7 @@ if __name__ == "__main__":
     #                          apikey=config.apikey)
 
     # demo using fismep project files, adjust this to your needs!
-
+'''
     devices = []
     with open('example.csv', encoding='UTF-8') as csv_file:
         reader = csv.DictReader(csv_file, delimiter=';')
@@ -85,4 +86,5 @@ if __name__ == "__main__":
             devices.append(device)
 
     print("[INFO] Loaded {} devices".format(len(devices)))
-    dev.provision_devices(devices)
+    #dev.provision_devices(devices)
+    '''

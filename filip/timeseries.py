@@ -6,7 +6,7 @@ class QuantumLeap():
     """
 
     """
-    def subsription(self, entity: orion.Entity, orion.FiwareService):
+    def subscription(self, entity: orion.Entity, orion.FiwareService):
         self.var
 
 

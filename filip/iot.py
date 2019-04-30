@@ -15,23 +15,21 @@ PROTOCOLS = ['IoTA-JSON','IoTA-UL']
 
 AUTH = ('user', 'pass')
 
-class Attribute:
-    def __init__(self, name, value, attr_type):
+class Attribute: # DeviceAttribute
+    def __init__(self, name, attr_type, object_id: str =
+        None):
         self.name = name
-        self.value = value
-        self.type = attr_type
+        #self.value = value
+        #self.value_type = value_type
+        self.attr_type = attr_type
+        self.object_id = object_id
+
+        print("[WARN]: Attribute type unknown: \"{}\"".format(attr['type']))
+
 
     def get_json(self):
         return {'value': self.value, 'type': '{}'.format(self.type)}
 
-class Command:
-    def __init__(self, name, value):
-        self.name = name
-        self.value = value
-        self.type = "command"
-
-    def get_json(self):
-        return {'value': self.value, 'type': '{}'.format(self.type)}
 
 class Device:
     """
@@ -56,7 +54,7 @@ class Device:
         self.service = None
         self.service_path = "/"
         self.timezone = kwargs.get("timezone")
-        self.endpoint = kwargs.get("endpoint")
+        self.endpoint = kwargs.get("endpoint") # necessary for H
         self.protocol = kwargs.get("protocol")
         self.transport = kwargs.get("transport")
         self.attributes = kwargs.get("attributes", [])
@@ -79,7 +77,7 @@ class Device:
         dict['static_attributes'] = self.static_attributes
         return json.dumps(dict, indent=4)
 
-    def add_attribute(self, ):
+    def add_attribute(self, Attribute):
         """
         :param name: The name of the attribute as submitted to the context broker.
         :param type: The type of the attribute as submitted to the context broker.
@@ -87,20 +85,22 @@ class Device:
         :param attr_type: One of \"active\" (default), \"lazy\" or \"static\"
         """
         attr = {
-            "name": name,
-            "type": type
+            "name": Attribute.name,
+            "type": Attribute.value_type
         }
-        if object_id:
-            attr["object_id"] = object_id
+        if Attribute.object_id:
+            attr["object_id"] = Attribute.object_id
 
-        if attr_type == "active":
+        if Attribute.attr_name == "active":
             self.attributes.append(attr)
-        elif attr_type == "lazy":
+        elif Attribute.attr_name == "lazy":
             self.lazy.append(attr)
-        elif attr_type == "static":
+        elif Attribute.attr_name == "static":
+            self.static_attributes.append(attr)
+        elif Attribute.attr_name == "command":
             self.static_attributes.append(attr)
         else:
-            print("[WARN]: Attribute type unknown: \"{}\"".format(attr_type))
+            print("[WARN]: Attribute type unknown: \"{}\"".format(attr['type']))
 
     def add_command(self):
         return
@@ -206,6 +206,8 @@ class DeviceGroup:
 
 
 class Agent:
+# https://iotagent-node-lib.readthedocs.io/en/latest/
+# https://fiware-iotagent-json.readthedocs.io/en/latest/usermanual/index.html
     def __init__(self, agent_name: str, config):
         self.name = agent_name
         self.test_configuration(config)
