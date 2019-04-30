@@ -20,7 +20,7 @@ def create_entities(orion_cb):
     room3_a1 = orion.Attribute('temperature', 33, 'Float')
     room3_a2 = orion.Attribute('pressure', 333, 'Integer')
     attributes3 = room3_a1, room3_a2
-    room3 = orion.Entity('Room3', 'Room', attributes1)
+    room3 = orion.Entity('Room3', 'Room', attributes3)
 
     orion_cb.post_entity(room3)
 
@@ -73,8 +73,7 @@ def query_entity(orion_cb, entity):
 
 
 if __name__=="__main__":
-    CONFIG = config.Config()
-    CONFIG.read_config_file("./config.json")
+    CONFIG = config.Config('config.json')
     ORION_CB = orion.Orion(CONFIG) 
 
     print ("++++ create entities ++++")
