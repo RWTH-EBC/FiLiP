@@ -24,11 +24,7 @@ if __name__ == "__main__":
                                          iot_agent="iota_ul", \
                                                        apikey="12345")
     device_group.test_apikey()
-    #attr1 = orion.Attribute('temperature', 11, 'Float')
-    #attr2 = orion.Attribute('pressure', 111, 'Integer')
-    #attributes = attr1, attr2
-    #room_ul = orion.Entity('urn:Room:001', 'Room', attributes)
-    #room_json= orion.Entity('urn:Room:002', 'Room', attributes)
+
     device_ul = iot.Device('urn:Room:001:sensor01','urn:Room:001',
                            "Thing",
                            transport="MQTT", protocol="PDI-IoTA-UltraLight",
@@ -52,11 +48,22 @@ if __name__ == "__main__":
     IOTA_JSON.delete_group(device_group)
 
 
+    #attr1 = orion.Attribute('temperature', 11, 'Float')
+    #attr2 = orion.Attribute('pressure', 111, 'Integer')
+    #attributes = attr1, attr2
+    #room_ul = orion.Entity('urn:Room:001', 'Room', attributes)
+    #room_json= orion.Entity('urn:Room:002', 'Room', attributes)
+
+
     #IOTA_UL.post_device(device_ul)
     #IOTA_JSON.post_device(device_json)
     # config = conf.Config(config_path, config_section)
     # CONFIG.read
     # a = CONFIG.CONFIG_PATH
+
+
+
+
 
     # CONFIG_PATH = os.getenv("CONFIG_PATH", 'conf.ini')
     # ORION_URL = os.getenv("ORION_URL", "http://localhost:1028/")
