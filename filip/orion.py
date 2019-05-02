@@ -54,7 +54,8 @@ class Orion:
         self.url = Config.data["orion"]["host"] + ':' + Config.data["orion"]["port"] + '/v2'
         self.fiware_service = FiwareService(name=Config.data['fiware']['service'],
                                             path=Config.data['fiware']['service_path'])
-   
+        self.url_v1 = Config.data["orion"]["host"] + ':' + Config.data["orion"]["port"] + '/v1'
+        
     def set_service(self, name: str, path: str):
         """Overwrites the fiware_service and service path of config.json"""
         self.fiware_service.name = name
@@ -135,4 +136,16 @@ class Orion:
         addr_parts = location.split('/')
         subscription_id = addr_parts.pop()
         return subscription_id
-
+    
+    def post_cmd_v1(self, entity_id: str, entity_type: str, cmd_name: str, cmd_value: str):
+        headers = {**HEADER_CONTENT_JSON, **self.fiware_service.get_header()}
+        url = self.url_v1 + '/updateContext'
+        payload = {"updateAction": "UPDATE",
+                   "contextElements": [
+                           {"id": entity_id, "type" : entity_type, "isPattern": "false", 
+                                "attributes": [{"name": cmd_name, 
+                                                "type": "command", "value": cmd_value }]}
+                    
+                        ]
+                    }
+        cb.post(url, headers, json.dumps(payload))                            
