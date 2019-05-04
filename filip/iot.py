@@ -16,8 +16,7 @@ PROTOCOLS = ['IoTA-JSON','IoTA-UL']
 AUTH = ('user', 'pass')
 
 class Attribute: # DeviceAttribute
-    def __init__(self, name, attr_type, object_id: str =
-        None):
+    def __init__(self, name, attr_type, object_id: str=None):
         self.name = name
         #self.value = value
         #self.value_type = value_type
@@ -263,6 +262,7 @@ class Agent:
         print(response.text)
 
     def delete_device(self, device_group, device):
+        # TODO: Check if
         url = self.url + '/iot/devices/'+ device.device_id
         headers = {**HEADER_CONTENT_JSON, **device_group.get_header()}
         payload= ""
@@ -272,6 +272,7 @@ class Agent:
             print("[INFO]: Device successfully deleted!")
         else:
             print(response.text)
+
 
     def get_device(self, device_group, device):
         url = self.url + '/iot/devices/' + device.device_id
