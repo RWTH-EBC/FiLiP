@@ -1,4 +1,3 @@
-import requests
 import json 
 import filip.cb_request as cb
 
@@ -37,12 +36,15 @@ class Entity:
         json_res = json.dumps(json_dict)
         return json_res
 
-
 class FiwareService:
     def __init__(self, name: str, path: str, **kwargs):
         self.name = name
         self.path = path
 
+    def update(self, name: str, path: str):
+        """Overwrites the fiware_service and service path of config.json"""
+        self.name = name
+        self.path = path
 
     def get_header(self) -> object:
         return {
@@ -54,25 +56,32 @@ class FiwareService:
 class Orion:
     def __init__(self, Config):
         self.url = Config.data["orion"]["host"] + ':' + Config.data["orion"]["port"] + '/v2'
+        self.fiware_service = FiwareService(name=Config.data['fiware']['service'],
+                                            path=Config.data['fiware']['service_path'])
+        self.url_v1 = Config.data["orion"]["host"] + ':' + Config.data["orion"]["port"] + '/v1'
+        
+    def set_service(self, fiware_service):
+        """Overwrites the fiware_service and service path of config.json"""
+        self.fiware_service.update(fiware_service.name, fiware_service.path)
 
-    def post_entity(self, fiware_service, entity):
+    def post_entity(self, entity):
         url = self.url + '/entities'
-        headers = {**HEADER_CONTENT_JSON, **fiware_service.get_header()}
+        headers = {**HEADER_CONTENT_JSON, **self.fiware_service.get_header()}
         cb.post(url, headers, entity.get_json())
    
-    def get_entity(self, fiware_service, entity_name,  entity_params=None):
+    def get_entity(self, entity_name,  entity_params=None):
         url = self.url + '/entities/' + entity_name
-        headers = fiware_service.get_header()
+        headers = self.fiware_service.get_header()
 
         if entity_params is None:
             return cb.get(url, headers)
         else:
             return cb.get(url, headers, entity_params)
 
-    def get_all_entities(self, fiware_service, parameter=None,
+    def get_all_entities(self, parameter=None,
                          parameter_value=None):
         url = self.url + '/entities'
-        headers = fiware_service.get_header()
+        headers = self.fiware_service.get_header()
 
         if parameter is None and parameter_value is None:
             return cb.get(url, headers)
@@ -86,25 +95,25 @@ class Orion:
         parameter = {'{}'.format('options'): '{}'.format('keyValues')}
         return self.get_entity(entity_name, parameter)
 
-    def get_entity_attribute_json(self, fiware_service, entity_name,
+    def get_entity_attribute_json(self, entity_name,
                                   attribute_name):
         url = self.url + '/entities/' + entity_name + '/attrs/' + attribute_name
-        headers = fiware_service.get_header()
+        headers = self.fiware_service.get_header()
         return cb.get(url, headers)
 
     def get_entity_attribute_value(self, entity_name, attribute_name):
         url = self.url + '/entities/' + entity_name + '/attrs/' + attribute_name + '/value'
-        head = HEADER_ACCEPT_PLAIN
-        return cb.get(url, head)
+        headers = self.fiware_service.get_header()
+        return cb.get(url, headers)
 
     def get_entity_attribute_list(self, entity_name, attr_name_list):
         attributes = ','.join(attr_name_list)
         parameters = {'{}'.format('options'): '{}'.format('values'), '{}'.format('attrs'): attributes}
         return self.get_entity(entity_name, parameters)
 
-    def update_entity(self, fiware_service, entity):
+    def update_entity(self, entity):
         url = self.url + '/entities/' + entity.name + '/attrs'
-        headers = {**HEADER_CONTENT_JSON, **fiware_service.get_header()}
+        headers = {**HEADER_CONTENT_JSON, **self.fiware_service.get_header()}
         payload = entity.get_attributes_json_dict()
         cb.patch(url, headers, json.dumps(payload))
         # TODO: query entity operation to check that entity was actually updated
@@ -130,4 +139,16 @@ class Orion:
         addr_parts = location.split('/')
         subscription_id = addr_parts.pop()
         return subscription_id
-
+    
+    def post_cmd_v1(self, entity_id: str, entity_type: str, cmd_name: str, cmd_value: str):
+        headers = {**HEADER_CONTENT_JSON, **self.fiware_service.get_header()}
+        url = self.url_v1 + '/updateContext'
+        payload = {"updateAction": "UPDATE",
+                   "contextElements": [
+                           {"id": entity_id, "type" : entity_type, "isPattern": "false", 
+                                "attributes": [{"name": cmd_name, 
+                                                "type": "command", "value": cmd_value }]}
+                    
+                        ]
+                    }
+        cb.post(url, headers, json.dumps(payload))                            

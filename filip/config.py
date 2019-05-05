@@ -9,7 +9,7 @@ import filip.test as test
 
 
 class Config:
-    def __init__(self):
+    def __init__(self, path = 'config.json'):
         """
         Class constructor for config class. At start up it parses either
         system environment variables or external config file in json format.
@@ -18,7 +18,7 @@ class Config:
         def update_config()
         """
         self.file = os.getenv("CONFIG_FILE", True)
-        self.path = os.getenv("CONFIG_PATH", 'config.json')
+        self.path = os.getenv("CONFIG_PATH", path)
         self.data = None
         if self.file:
 #            print("[INFO] CONFIG_PATH variable is updated to: " + self.path)

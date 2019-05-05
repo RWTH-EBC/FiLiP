@@ -11,25 +11,40 @@ import filip.orion as orion
 if __name__ == "__main__":
 
     # Read and check configuration
-    CONFIG = filip.Config()
+    CONFIG = filip.config.Config("config.json")
     #CONFIG.read_config_file("./config.json")
     ORION_CB = orion.Orion(CONFIG)
     IOTA_JSON = iot.Agent("iota_json", CONFIG)
     IOTA_UL = iot.Agent("iota_ul", CONFIG)
     fiware_service = orion.FiwareService("test_service", "/iot_ul")
+    ORION_CB.set_service(fiware_service)
     res=fiware_service.get_header()
-    device_group = filip.iot.DeviceGroup(fiware_service.name,
-                                         fiware_service.path,
-                                          "http://orion:1026",
-                                         iot_agent="iota_ul", \
-                                                       apikey="12345")
+
+    #room1_a1 = orion.Attribute('temperature', 11, 'Float')
+    #room1_a2 = orion.Attribute('pressure', 111, 'Integer')
+    #attributes1 = room1_a1, room1_a2
+    #room1 = orion.Entity('urn:Room:001', 'Room', attributes1)
+    #ORION_CB.post_entity(room1)
+
+
+    device_group = filip.iot.DeviceGroup(fiware_service,
+                                         "http://orion:1026",
+                                         iot_agent="iota_ul", apikey="12345")
     device_group.test_apikey()
 
     device_ul = iot.Device('urn:Room:001:sensor01','urn:Room:001',
                            "Thing",
                            transport="MQTT", protocol="PDI-IoTA-UltraLight",
                            timezone="Europe/Berlin")
-    device_json = iot.Device('urn:Room:001:sensor01','urn:Room:001', "Thing",
+    attr1 = iot.Attribute("temperature", attr_type="active",
+                                value_type="Number", object_id="t")
+    attr2 = iot.Attribute("pressure", attr_type="active",
+                                value_type="Number", object_id="p")
+    device_ul.add_attribute(attr1)
+    device_ul.add_attribute(attr2)
+
+
+    device_json = iot.Device('urn:Room:001:sensor02','urn:Room:001', "Thing",
                            transport="MQTT", protocol="IoTA-JSON",
                            timezone="Europe/Berlin")
     #attribute = iot.Attribute(name= "test", )
@@ -40,12 +55,22 @@ if __name__ == "__main__":
     IOTA_JSON.post_device(device_group, device_json)
     IOTA_JSON.update_device(device_group, device_json, "")
     IOTA_JSON.get_device(device_group, device_json)
-    ORION_CB.get_all_entities(fiware_service)
-    ORION_CB.get_entity(fiware_service, 'urn:Room:001')
+
+    IOTA_UL.post_group(device_group)
+    IOTA_UL.get_groups(device_group)
+    IOTA_UL.post_device(device_group, device_ul)
+    IOTA_UL.update_device(device_group, device_ul, "")
+    IOTA_UL.get_device(device_group, device_ul)
+
+    ORION_CB.get_all_entities()
+    ORION_CB.get_entity('urn:Room:001')
     #iot.Attribute()
 
     IOTA_JSON.delete_device(device_group, device_json)
     IOTA_JSON.delete_group(device_group)
+
+    IOTA_UL.delete_device(device_group, device_ul)
+    IOTA_UL.delete_group(device_group)
 
 
     #attr1 = orion.Attribute('temperature', 11, 'Float')

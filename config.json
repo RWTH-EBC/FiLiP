@@ -1,19 +1,24 @@
 {
   "orion": {
-    "host":"http://134.130.166.185" ,
+    "host":"http://134.130.166.184" ,
     "port":"1026"
   },
-  "iota": {
-    "host": "http://134.130.166.185",
+  "iota_json": {
+    "host": "http://134.130.166.184",
     "port": "4041",
-    "protocol": "JSON"
+    "protocol": "IoTA-JSON"
+  },
+  "iota_ul": {
+    "host": "http://134.130.166.184",
+    "port": "4061",
+    "protocol": "IoTA-UL"
   },
   "quantum_leap": {
-    "host": "http://134.130.166.185",
+    "host": "http://134.130.166.184",
     "port": "8668"
   },
   "cratedb": {
-    "host": "http://134.130.166.185",
+    "host": "http://134.130.166.184",
     "port": "4200"
   },
   "fiware": {

@@ -1,4 +1,3 @@
-from config import Config
-import orion
-import iot
-
+from filip import config, orion, iot
+#import orion
+#import iot

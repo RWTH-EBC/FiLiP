@@ -5,6 +5,7 @@ import filip.test as test
 import json
 import string
 import random
+import orion
 import filip
 
 HEADER_ACCEPT_JSON = {'Accept': 'application/json'}
@@ -16,15 +17,12 @@ PROTOCOLS = ['IoTA-JSON','IoTA-UL']
 AUTH = ('user', 'pass')
 
 class Attribute: # DeviceAttribute
-    def __init__(self, name, attr_type, object_id: str=None):
+    def __init__(self, name: str, attr_type, value_type, object_id: str=None):
         self.name = name
         #self.value = value
-        #self.value_type = value_type
+        self.value_type = value_type
         self.attr_type = attr_type
         self.object_id = object_id
-
-        print("[WARN]: Attribute type unknown: \"{}\"".format(attr['type']))
-
 
     def get_json(self):
         return {'value': self.value, 'type': '{}'.format(self.type)}
@@ -53,7 +51,7 @@ class Device:
         self.service = None
         self.service_path = "/"
         self.timezone = kwargs.get("timezone")
-        self.endpoint = kwargs.get("endpoint") # necessary for H
+        self.endpoint = kwargs.get("endpoint") # necessary for HTTP
         self.protocol = kwargs.get("protocol")
         self.transport = kwargs.get("transport")
         self.attributes = kwargs.get("attributes", [])
@@ -67,7 +65,8 @@ class Device:
         dict['entity_name']= self.entity_name
         dict['entity_type']= self.entity_type
         dict['timezone'] = self.timezone
-        dict['endpoint'] = self.endpoint
+        if self.endpoint:
+            dict['endpoint'] = self.endpoint
         dict['protocol'] = self.protocol
         dict['transport'] = self.transport
         dict['attributes'] = self.attributes
@@ -83,29 +82,28 @@ class Device:
         :param object_id: The id of the attribute used from the southbound API.
         :param attr_type: One of \"active\" (default), \"lazy\" or \"static\"
         """
-        attr = {
-            "name": Attribute.name,
-            "type": Attribute.value_type
-        }
+        attr = {}
         if Attribute.object_id:
             attr["object_id"] = Attribute.object_id
+        attr["name"] = Attribute.name
+        attr["type"] = Attribute.value_type
 
-        if Attribute.attr_name == "active":
+        if Attribute.attr_type == "active":
             self.attributes.append(attr)
-        elif Attribute.attr_name == "lazy":
+        elif Attribute.attr_type == "lazy":
             self.lazy.append(attr)
-        elif Attribute.attr_name == "static":
+        elif Attribute.attr_type == "static":
             self.static_attributes.append(attr)
-        elif Attribute.attr_name == "command":
-            self.static_attributes.append(attr)
+        elif Attribute.attr_type == "command":
+            self.commands.append(attr)
         else:
             print("[WARN]: Attribute type unknown: \"{}\"".format(attr['type']))
 
-    def add_command(self):
-        return
+    #def add_command(self):
+      #  return
 
-    def get_commands(self):
-        return
+    #def get_commands(self):
+       # return
 
 class DeviceGroup:
     """
@@ -130,13 +128,13 @@ class DeviceGroup:
     :ivar internal_attributes: Optional section with free format, to allow
     specific IoT Agents to store information along with the devices in the Device Registry.
     """
-    def __init__(self, fiware_service: str, fiware_servicepath: str, cb_host:
-    str,
+    def __init__(self, fiware_service , cb_host: str,
                            **kwargs):
 
-        self.service = fiware_service
-        self.subservice = fiware_servicepath
-        self.resource = kwargs.get("resource", "")
+        self.service = fiware_service.name
+        self.subservice = fiware_service.path
+        self.resource = kwargs.get("resource", "/iot/d") #for iot-ul 1.7.0
+        # the default must be empty string
         self.apikey = kwargs.get("apikey", "12345")
         self.entity_type = kwargs.get("entity_type", "Thing")
         #self.trust
