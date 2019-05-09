@@ -1,17 +1,17 @@
 import os
 import csv
-import iot
+import filip.iot as iot
 import json
 import filip
 import filip.orion as orion
-
+import filip.config as config
 
 
 
 if __name__ == "__main__":
 
     # Read and check configuration
-    CONFIG = filip.config.Config("config.json")
+    CONFIG = config.Config("config.json")
     #CONFIG.read_config_file("./config.json")
     ORION_CB = orion.Orion(CONFIG)
     IOTA_JSON = iot.Agent("iota_json", CONFIG)

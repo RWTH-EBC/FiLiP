@@ -5,8 +5,7 @@ import filip.test as test
 import json
 import string
 import random
-import orion
-import filip
+import filip.orion as orion
 
 HEADER_ACCEPT_JSON = {'Accept': 'application/json'}
 HEADER_ACCEPT_PLAIN = {'Accept': 'text/plain'}

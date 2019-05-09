@@ -4,8 +4,7 @@ import random
 import requests
 import json
 import errno
-import filip.test as test
-
+import test
 
 
 class Config:
