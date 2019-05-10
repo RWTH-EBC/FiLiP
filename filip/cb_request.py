@@ -39,3 +39,7 @@ def get(url, head, parameters=None, autho=None):
 def patch(url, head, body, autho):
     response = requests.patch(url, data=body, headers=head, auth=autho)  # TODO: check if 'data' should be replaced with 'json'
     check_response_ok(response, "PATCH")
+
+def delete(url, head, autho=None):
+    response = requests.delete(url, headers=head, auth=autho)
+    check_response_ok(response, "DELETE")

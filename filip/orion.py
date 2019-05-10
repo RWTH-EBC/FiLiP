@@ -121,8 +121,8 @@ class Orion:
 
     def update_attribute(self, entity_name, attr_name, attr_value):
         url = self.url + '/entities/' + entity_name + '/attrs/' + attr_name + '/value'
-        head = HEADER_CONTENT_PLAIN
-        cb.put(url, head, json.dumps(attr_value))
+        headers = {**HEADER_CONTENT_PLAIN, **self.fiware_service.get_header()}
+        cb.put(url, headers, json.dumps(attr_value))
 
     def remove_attributes(self, entity_name):
         url = self.url + '/entities/' + entity_name + '/attrs'
@@ -151,4 +151,9 @@ class Orion:
                     
                         ]
                     }
-        cb.post(url, headers, json.dumps(payload))                            
+        cb.post(url, headers, json.dumps(payload))
+
+    def delete(self, entity_id: str, attr: str = None):
+        headers = self.fiware_service.get_header()
+        url = self.url + '/entities/' + entity_id
+        cb.delete(url, headers)

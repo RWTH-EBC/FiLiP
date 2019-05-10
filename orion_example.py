@@ -112,3 +112,7 @@ if __name__=="__main__":
     print ("++++ test querying an attribute that doesn't exist ++++")
     print (ORION_CB.get_entity_attribute_value("Room1", "humidity"))
     print ()
+
+    print ("++++ delete all entities ++++")
+    for entity in entities:
+        ORION_CB.delete(entity.id)
