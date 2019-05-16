@@ -1,12 +1,12 @@
 from filip import orion, config, subscription as sub
 import filip.timeseries as ts
-import time
+import time, datetime
 
 def create_entity(orion_cb):
     attr1 = orion.Attribute('height', 10, 'Integer')
     attr2 = orion.Attribute('leaves', 'green', 'String')
     attr3 = orion.Attribute('age', 7.5, 'Float')
-    oak = orion.Entity('Oak_Nr_43', 'Tree', [attr1, attr2, attr3])
+    oak = orion.Entity('Oak_Nr_44', 'Tree', [attr1, attr2, attr3])
 
     orion_cb.post_entity(oak)
     return oak
@@ -17,7 +17,9 @@ if __name__=="__main__":
 
     oak = create_entity(ORION_CB)
     quantum = ts.QuantumLeap()
-    subscription = quantum.create_subscription_object(oak, "http://localhost:8668/v2/notify")
+    throttling = 5
+    expires = datetime.datetime(2019, 12, 24, 18).isoformat()
+    subscription = quantum.create_subscription_object(oak, "http://localhost:8668/v2/notify", throttling=throttling, expires=expires)
     sub_id = ORION_CB.create_subscription(subscription.get_json())
     print("subscription created, id is: " + str(sub_id))
 
