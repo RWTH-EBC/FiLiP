@@ -19,7 +19,7 @@ if __name__=="__main__":
     quantum = ts.QuantumLeap()
     throttling = 5
     expires = datetime.datetime(2019, 12, 24, 18).isoformat()
-    subscription = quantum.create_subscription_object(oak, "http://localhost:8668/v2/notify", throttling=throttling, expires=expires)
+    subscription = quantum.create_subscription_object(oak, "http://quantumleap:8668/v2/notify", throttling=throttling, expires=expires)
     sub_id = ORION_CB.create_subscription(subscription.get_json())
     print("subscription created, id is: " + str(sub_id))
 

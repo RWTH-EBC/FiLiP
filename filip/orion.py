@@ -130,12 +130,12 @@ class Orion:
 
     def create_subscription(self, subscription_body):
         url = self.url + '/subscriptions'
-        head = HEADER_CONTENT_JSON
+        headers = {**HEADER_CONTENT_JSON, **self.fiware_service.get_header()}
 
-        headers = cb.post(url, head, subscription_body, None, True)
-        if headers==None:
+        ret = cb.post(url, headers, subscription_body, None, True)
+        if ret==None:
             return
-        location = headers.get('Location')
+        location = ret.get('Location')
         addr_parts = location.split('/')
         subscription_id = addr_parts.pop()
         return subscription_id
