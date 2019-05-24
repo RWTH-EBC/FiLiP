@@ -17,20 +17,50 @@ if __name__=="__main__":
 
     oak = create_entity(ORION_CB)
     quantum = ts.QuantumLeap()
+
     throttling = 5
     expires = datetime.datetime(2019, 12, 24, 18).isoformat()
-    subscription = quantum.create_subscription_object(oak, "http://quantumleap:8668/v2/notify", throttling=throttling, expires=expires)
+    subscription = quantum.create_subscription_object(oak, CONFIG, throttling=throttling, expires=expires)
+
+    # add metadata to include the modification time of the attributes
+    # in the notification
+    subscription.notification.metadata = ["dateCreated", "dateModified"]
+
+    # create subscription in Context Broker
     sub_id = ORION_CB.create_subscription(subscription.get_json())
     print("subscription created, id is: " + str(sub_id))
+    print(ORION_CB.get_subscription(sub_id))
 
-    # update entity attributes
-    for i in range(0,3):
+    subscription_list = ORION_CB.get_subscription_list()
+    print(subscription_list)
+
+    print("updating entity attributes..")
+    for i in range(0,10):
         ORION_CB.update_attribute(oak.id, "height", (i*3))
-        time.sleep(1)
+        time.sleep(2)
 
-    ORION_CB.update_attribute(oak.id, "leaves", "brown")
+#    ORION_CB.update_attribute(oak.id, "leaves", "brown")
+
+    # query historical data
+    valuesonly = bool(True)
+
+    print(quantum.get_health())
+    print(quantum.get_version())
+    print(quantum.get_entity_data(oak.id))
+    print(quantum.get_entity_data(oak.id, "height"))
+    print(quantum.get_entity_data(oak.id, "height", valuesonly))
+    print(quantum.get_entity_type_data("Tree", "height"))
+    print(quantum.get_entity_type_data("Tree", "height", valuesonly))
+
+# Return internal server error, but are documented as "To Be Implemented"
+# in QuantumLeap API: https://app.swaggerhub.com/apis/smartsdk/ngsi-tsdb/0.2#/
+#    print(quantum.get_entity_type_data("Tree"))
+#    print(quantum.get_entity_type_data("Tree", valuesonly))
+#    print(quantum.get_attributes("height"))
+#    print(quantum.get_attributes("height", valuesonly))
 
 
+    # delete entity in orion
     timeout = 4
     print("deleting test entity in " + str(timeout) + " seconds")
     for j in range(0, timeout):
@@ -38,4 +68,11 @@ if __name__=="__main__":
         print("...")
 
     ORION_CB.delete(oak.id)
-        
+ 
+    # delete entity in crate DB
+    quantum.delete_entity(oak.id)
+
+    # delete subscription, so that the entity is not posted several times
+    # by multiple subscriptions
+    ORION_CB.delete_subscription(sub_id)
+ 
