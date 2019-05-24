@@ -15,12 +15,15 @@ if __name__=="__main__":
     CONFIG = config.Config()
     ORION_CB = orion.Orion(CONFIG)
 
+#    ORION_CB.fiware_service = None
     oak = create_entity(ORION_CB)
-    quantum = ts.QuantumLeap()
+    quantum = ts.QuantumLeap(CONFIG)
+
+#    quantum.fiware_service = None
 
     throttling = 5
     expires = datetime.datetime(2019, 12, 24, 18).isoformat()
-    subscription = quantum.create_subscription_object(oak, CONFIG, throttling=throttling, expires=expires)
+    subscription = quantum.create_subscription_object(oak, throttling=throttling, expires=expires)
 
     # add metadata to include the modification time of the attributes
     # in the notification
@@ -36,8 +39,12 @@ if __name__=="__main__":
 
     print("updating entity attributes..")
     for i in range(0,10):
+        value = i*3
+        print("value: "+ str(value))
         ORION_CB.update_attribute(oak.id, "height", (i*3))
-        time.sleep(2)
+        print("value in Orion CB")
+        print(ORION_CB.get_entity_attribute_value(oak.id, "height"))
+        time.sleep(1)
 
 #    ORION_CB.update_attribute(oak.id, "leaves", "brown")
 
@@ -52,7 +59,7 @@ if __name__=="__main__":
     print(quantum.get_entity_type_data("Tree", "height"))
     print(quantum.get_entity_type_data("Tree", "height", valuesonly))
 
-# Return internal server error, but are documented as "To Be Implemented"
+# These functions return an internal server error, but are documented as "To Be Implemented"
 # in QuantumLeap API: https://app.swaggerhub.com/apis/smartsdk/ngsi-tsdb/0.2#/
 #    print(quantum.get_entity_type_data("Tree"))
 #    print(quantum.get_entity_type_data("Tree", valuesonly))
@@ -61,7 +68,7 @@ if __name__=="__main__":
 
 
     # delete entity in orion
-    timeout = 4
+    timeout = 30
     print("deleting test entity in " + str(timeout) + " seconds")
     for j in range(0, timeout):
         time.sleep(1)
@@ -75,4 +82,5 @@ if __name__=="__main__":
     # delete subscription, so that the entity is not posted several times
     # by multiple subscriptions
     ORION_CB.delete_subscription(sub_id)
- 
+
+#    ORION_CB.delete_all_subscriptions()
