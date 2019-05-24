@@ -174,18 +174,3 @@ class Subscription:
 
         return json.dumps(json_dict)
     
-
-    def list_registrations(self, host, port, **kwargs):
-        url = "http://" + host + ":" + port + "/v2/registrations"
-        head = HEADER_CONTENT_JSON
-
-        if kwargs is not None:
-            parameters = {}
-            for key, value in kwargs.iteritems():
-                if key in ("limit", "offset", "options"): #TODO: options contains several options
-                    parameters[key] = value
-            cb.get(url, head, AUTH, json.dumps(parameters))
-        else:
-            cb.get(url, head, AUTH)
-        
-
