@@ -1,5 +1,11 @@
 import requests
 
+HEADER_ACCEPT_JSON = {'Accept': 'application/json'}
+HEADER_ACCEPT_PLAIN = {'Accept': 'text/plain'}
+HEADER_CONTENT_JSON = {'Content-Type': 'application/json'}
+HEADER_CONTENT_PLAIN = {'Content-Type': 'text/plain'}
+
+
 
 def pretty_print_request(req):
     print('{}\n{}\n{}\n\nBODY:{}\n{}'.format(
@@ -10,6 +16,7 @@ def pretty_print_request(req):
         '---------------------------'
     ))
 
+# is HTTP response code less than 400
 def check_response_ok(response, request_type):
     if not response.ok:
         msg = str(request_type) + " request returned error status '" + str(response.status_code) + " (" + str(response.reason) + ")'"
@@ -23,6 +30,7 @@ def check_response_ok(response, request_type):
 
 def post(url, head, body, autho=None, return_headers=False):
     response = requests.post(url, headers=head, auth=autho, data=body)
+#    pretty_print_request(response.request)
     check_response_ok(response, "POST")
     if return_headers:
         return response.headers
@@ -42,4 +50,5 @@ def patch(url, head, body, autho):
 
 def delete(url, head, autho=None):
     response = requests.delete(url, headers=head, auth=autho)
+#    pretty_print_request(response.request)
     check_response_ok(response, "DELETE")
