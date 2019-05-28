@@ -8,10 +8,10 @@ class QuantumLeap():
     Initialize with configuration values
     """
     def __init__(self, config: object):
-        self.url_internal = config.data["quantum_leap"]["host_internal"] + ':' \
-                            + config.data["quantum_leap"]["port_internal"] + '/v2'
-        self.url_external = config.data["quantum_leap"]["host_external"] + ':' \
-                            + config.data["quantum_leap"]["port_external"] + '/v2'
+        self.url_internal = config.data["quantum_leap"]["host_internal"] + ':'\
+                           +config.data["quantum_leap"]["port_internal"] + '/v2'
+        self.url_external = config.data["quantum_leap"]["host_external"] + ':'\
+                           +config.data["quantum_leap"]["port_external"] + '/v2'
         
         self.crate_url = config.data["cratedb"]["host"] + ':' \
                             + config.data["cratedb"]["port"]
@@ -19,10 +19,12 @@ class QuantumLeap():
                                             path=config.data['fiware']['service_path'])
 
     """
-    Creates and returns Subscription object so that it can be edited before the subscription
-    is actually created. Takes an entity plus optional parameters as input.
+    Creates and returns Subscription object so that it can be edited before
+    the subscription is actually created.
+    Takes an entity plus optional parameters as input.
     """
-    def create_subscription_object(self, entity: orion.Entity, **kwargs) -> object:
+    def create_subscription_object(self, entity: orion.Entity,
+                                   **kwargs) -> object:
         subject_entity = sub.Subject_Entity(entity.id, entity.type)
         subject = sub.Subject([subject_entity])
         http_params = sub.HTTP_Params(self.url_internal + '/notify')
@@ -30,8 +32,8 @@ class QuantumLeap():
         throttling = kwargs.get("throttling")
         expires = kwargs.get("expires")
         description = kwargs.get("description")
-
-        subscription = sub.Subscription(subject, notification, description, expires, throttling)
+        subscription = sub.Subscription(subject, notification, description,
+                                        expires, throttling)
         return subscription
 
     # combine fiware_service header (if set) and additional headers
@@ -60,35 +62,31 @@ class QuantumLeap():
         url = self.url_external + '/types/' + entity_type
         cb.delete(url, self.get_header(cb.HEADER_CONTENT_PLAIN))
 
-    def get_entity_data(self, entity_id: str, attr_name: str = None, valuesonly: bool = False):
+    def get_entity_data(self, entity_id: str, attr_name: str = None, 
+                        valuesonly: bool = False, **kwargs):
         url = self.url_external + '/entities/' + entity_id
+        params = kwargs.get("params")
+        print(params)
 
         if attr_name != None:
             url += '/attrs/' + attr_name
-
         if valuesonly:
             url += '/value'
+        return cb.get(url, self.get_header(cb.HEADER_CONTENT_PLAIN), params)
 
-        return cb.get(url, self.get_header(cb.HEADER_CONTENT_PLAIN))
-
-    def get_entity_type_data(self, entity_type: str, attr_name: str = None, valuesonly: bool = False):
+    def get_entity_type_data(self, entity_type: str, attr_name: str = None,
+                             valuesonly: bool = False):
         url = self.url_external + '/types/' + entity_type
-
         if attr_name != None:
             url += '/attrs/' + attr_name
-
         if valuesonly:
             url += '/value'
-
         return cb.get(url, self.get_header(cb.HEADER_CONTENT_PLAIN))
 
     def get_attributes(self, attr_name: str = None, valuesonly: bool = False):
         url = self.url_external + '/attrs'
-
         if attr_name != None:
             url += '/' + attr_name
-
         if valuesonly:
             url += '/value'
-
         return cb.get(url, self.get_header(cb.HEADER_CONTENT_PLAIN))

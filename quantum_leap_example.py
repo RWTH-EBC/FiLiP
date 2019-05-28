@@ -23,7 +23,8 @@ if __name__=="__main__":
 
     throttling = 5
     expires = datetime.datetime(2019, 12, 24, 18).isoformat()
-    subscription = quantum.create_subscription_object(oak, throttling=throttling, expires=expires)
+    subscription = quantum.create_subscription_object(oak, throttling=throttling,
+                                                      expires=expires)
 
     # add metadata to include the modification time of the attributes
     # in the notification
@@ -50,25 +51,28 @@ if __name__=="__main__":
 
     # query historical data
     valuesonly = bool(True)
+    params = {"lastN": 10}
 
     print(quantum.get_health())
     print(quantum.get_version())
     print(quantum.get_entity_data(oak.id))
-    print(quantum.get_entity_data(oak.id, "height"))
+    print(quantum.get_entity_data(oak.id, "height", params = params))
     print(quantum.get_entity_data(oak.id, "height", valuesonly))
     print(quantum.get_entity_type_data("Tree", "height"))
     print(quantum.get_entity_type_data("Tree", "height", valuesonly))
 
-# These functions return an internal server error, but are documented as "To Be Implemented"
-# in QuantumLeap API: https://app.swaggerhub.com/apis/smartsdk/ngsi-tsdb/0.2#/
-#    print(quantum.get_entity_type_data("Tree"))
-#    print(quantum.get_entity_type_data("Tree", valuesonly))
-#    print(quantum.get_attributes("height"))
-#    print(quantum.get_attributes("height", valuesonly))
+    """
+    These functions return an internal server error, but are documented as
+    "To Be Implemented" in QuantumLeap API:
+    https://app.swaggerhub.com/apis/smartsdk/ngsi-tsdb/0.2#/
 
-
+        print(quantum.get_entity_type_data("Tree"))
+        print(quantum.get_entity_type_data("Tree", valuesonly))
+        print(quantum.get_attributes("height"))
+        print(quantum.get_attributes("height", valuesonly))
+    """
     # delete entity in orion
-    timeout = 30
+    timeout = 10
     print("deleting test entity in " + str(timeout) + " seconds")
     for j in range(0, timeout):
         time.sleep(1)
