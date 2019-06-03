@@ -21,7 +21,7 @@ if __name__=="__main__":
 
 #    quantum.fiware_service = None
 
-    throttling = 5
+    throttling = 0
     expires = datetime.datetime(2019, 12, 24, 18).isoformat()
     subscription = quantum.create_subscription_object(oak, throttling=throttling,
                                                       expires=expires)
@@ -40,11 +40,7 @@ if __name__=="__main__":
 
     print("updating entity attributes..")
     for i in range(0,10):
-        value = i*3
-        print("value: "+ str(value))
         ORION_CB.update_attribute(oak.id, "height", (i*3))
-        print("value in Orion CB")
-        print(ORION_CB.get_entity_attribute_value(oak.id, "height"))
         time.sleep(1)
 
 #    ORION_CB.update_attribute(oak.id, "leaves", "brown")
@@ -72,7 +68,7 @@ if __name__=="__main__":
         print(quantum.get_attributes("height", valuesonly))
     """
     # delete entity in orion
-    timeout = 10
+    timeout = 3
     print("deleting test entity in " + str(timeout) + " seconds")
     for j in range(0, timeout):
         time.sleep(1)
