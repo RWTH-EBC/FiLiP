@@ -8,10 +8,8 @@ class QuantumLeap():
     Initialize with configuration values
     """
     def __init__(self, config: object):
-        self.url_internal = config.data["quantum_leap"]["host_internal"] + ':'\
-                           +config.data["quantum_leap"]["port_internal"] + '/v2'
-        self.url_external = config.data["quantum_leap"]["host_external"] + ':'\
-                           +config.data["quantum_leap"]["port_external"] + '/v2'
+        self.url = config.data["quantum_leap"]["host"] + ':'\
+                           +config.data["quantum_leap"]["port"] + '/v2'
         
         self.crate_url = config.data["cratedb"]["host"] + ':' \
                             + config.data["cratedb"]["port"]
@@ -23,11 +21,11 @@ class QuantumLeap():
     the subscription is actually created.
     Takes an entity plus optional parameters as input.
     """
-    def create_subscription_object(self, entity: orion.Entity,
+    def create_subscription_object(self, entity: orion.Entity, url: str,
                                    **kwargs) -> object:
         subject_entity = sub.Subject_Entity(entity.id, entity.type)
         subject = sub.Subject([subject_entity])
-        http_params = sub.HTTP_Params(self.url_internal + '/notify')
+        http_params = sub.HTTP_Params(url)
         notification = sub.Notification(http_params)
         throttling = kwargs.get("throttling")
         expires = kwargs.get("expires")
@@ -47,24 +45,24 @@ class QuantumLeap():
             return headers
 
     def get_version(self):
-        url = self.url_external + '/version'
+        url = self.url + '/version'
         return cb.get(url, cb.HEADER_CONTENT_PLAIN)
 
     def get_health(self):
-        url = self.url_external + '/health'
+        url = self.url + '/health'
         return cb.get(url, cb.HEADER_CONTENT_PLAIN)
 
     def delete_entity(self, entity_name: str):
-        url = self.url_external + '/entities/' + entity_name
+        url = self.url + '/entities/' + entity_name
         cb.delete(url, self.get_header(cb.HEADER_CONTENT_PLAIN))
 
     def delete_entities_of_type(self, entity_type):
-        url = self.url_external + '/types/' + entity_type
+        url = self.url + '/types/' + entity_type
         cb.delete(url, self.get_header(cb.HEADER_CONTENT_PLAIN))
 
     def get_entity_data(self, entity_id: str, attr_name: str = None, 
                         valuesonly: bool = False, **kwargs):
-        url = self.url_external + '/entities/' + entity_id
+        url = self.url + '/entities/' + entity_id
         params = kwargs.get("params")
         print(params)
 
@@ -76,7 +74,7 @@ class QuantumLeap():
 
     def get_entity_type_data(self, entity_type: str, attr_name: str = None,
                              valuesonly: bool = False):
-        url = self.url_external + '/types/' + entity_type
+        url = self.url + '/types/' + entity_type
         if attr_name != None:
             url += '/attrs/' + attr_name
         if valuesonly:
@@ -84,7 +82,7 @@ class QuantumLeap():
         return cb.get(url, self.get_header(cb.HEADER_CONTENT_PLAIN))
 
     def get_attributes(self, attr_name: str = None, valuesonly: bool = False):
-        url = self.url_external + '/attrs'
+        url = self.url + '/attrs'
         if attr_name != None:
             url += '/' + attr_name
         if valuesonly:
