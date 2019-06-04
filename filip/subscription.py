@@ -115,10 +115,10 @@ class HTTP_Params:
         :param payload: payload to be used in notifications
         """
         self.url = url
-        self.headers
-        self.qs
-        self.method
-        self.payload
+        self.headers = headers
+        self.qs = qs
+        self.method = method
+        self.payload = payload
 
     def is_custom_http(self):
         if self.headers is not None \
@@ -155,8 +155,8 @@ class Notification:
         """
         self.http = http
         self.attr = attr
-        self.attrsFormat
-        self.metadata
+        self.attrsFormat = attrsFormat
+        self.metadata  = metadata
 
     def get_json_dict(self):
         json_dict = {}

@@ -10,11 +10,10 @@ class QuantumLeap():
     database (CrateDB). Further Information:
     https://smartsdk.github.io/ngsi-timeseries-api/#quantumleap
     """
- def __init__(self, config: object):
-      """Initialize with configuration values"""
-      self.url = config.data["quantum_leap"]["host"] + ':'\
+    def __init__(self, config: object):
+        """Initialize with configuration values"""
+        self.url = config.data["quantum_leap"]["host"] + ':'\
                            +config.data["quantum_leap"]["port"] + '/v2'
-        
         self.crate_url = config.data["cratedb"]["host"] + ':' \
                             + config.data["cratedb"]["port"]
         self.fiware_service = orion.FiwareService(name=config.data['fiware']['service'],

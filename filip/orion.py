@@ -67,7 +67,7 @@ class Orion:
     and subscriptions; retrieving, updating and deleting data. Further documentation:
     https://fiware-orion.readthedocs.io/en/master/
     """
-   def __init__(self, Config):
+    def __init__(self, Config):
         self.url = Config.data["orion"]["host"] + ':' \
                    + Config.data["orion"]["port"] + '/v2'
         self.fiware_service = FiwareService(name=Config.data['fiware']['service'],
