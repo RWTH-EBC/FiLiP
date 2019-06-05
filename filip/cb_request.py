@@ -1,5 +1,9 @@
 import requests
 
+"""
+Helper functions for HTTP requests
+"""
+
 HEADER_ACCEPT_JSON = {'Accept': 'application/json'}
 HEADER_ACCEPT_PLAIN = {'Accept': 'text/plain'}
 HEADER_CONTENT_JSON = {'Content-Type': 'application/json'}
@@ -16,10 +20,11 @@ def pretty_print_request(req):
         '---------------------------'
     ))
 
-# is HTTP response code less than 400
 def check_response_ok(response, request_type):
+    """checks if HTTP response code is less than 400"""
     if not response.ok:
-        msg = str(request_type) + " request returned error status '" + str(response.status_code) + " (" + str(response.reason) + ")'"
+        msg = str(request_type) + " request returned error status '" \
+              + str(response.status_code) + " (" + str(response.reason) + ")'"
         print (msg)
         print ("request content:")
         pretty_print_request(response.request)
@@ -41,11 +46,12 @@ def put(url, head=None, data=None, autho=None):
 
 def get(url, head, parameters=None, autho=None):
     response  = requests.get(url, headers=head,auth=autho, params=parameters)
+#    pretty_print_request(response.request)
     if check_response_ok(response, "GET"):
         return response.text
 
 def patch(url, head, body, autho):
-    response = requests.patch(url, data=body, headers=head, auth=autho)  # TODO: check if 'data' should be replaced with 'json'
+    response = requests.patch(url, data=body, headers=head, auth=autho)
     check_response_ok(response, "PATCH")
 
 def delete(url, head, autho=None):

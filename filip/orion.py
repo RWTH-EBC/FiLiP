@@ -1,9 +1,10 @@
 import json 
 import filip.cb_request as cb
 
-
-
 class Attribute:
+    """
+    Describes the attribute of an entity.
+    """
     def __init__(self, name, value, attr_type):
         self.name = name
         self.value = value
@@ -13,7 +14,15 @@ class Attribute:
         return {'value': self.value, 'type': '{}'.format(self.type)}
 
 class Entity:
-    def __init__(self, entity_id, entity_type, attributes):
+    """
+    Describes an entity which can be saved in the Orion Context Broker.
+    """
+    def __init__(self, entity_id: str, entity_type: str, attributes: list):
+        """
+        :param entity_id: ID of the entity
+        :param entity_type: type of the entity
+        :param attributes: list of Attribute objects
+        """
         self.id = entity_id
         self.type = entity_type
         self.attributes = attributes
@@ -32,7 +41,12 @@ class Entity:
         return json_res
 
 class FiwareService:
-    def __init__(self, name: str, path: str, **kwargs):
+    """
+    Define entity service paths which are supported by the Orion Context Broker
+    to support hierarchical scopes:
+    https://fiware-orion.readthedocs.io/en/master/user/service_path/index.html
+    """
+    def __init__(self, name: str, path: str):
         self.name = name
         self.path = path
 
@@ -47,20 +61,26 @@ class FiwareService:
             "fiware-servicepath": self.path
         }
 
-
 class Orion:
+    """
+    Implementation of Orion Context Broker functionalities, such as creating entities
+    and subscriptions; retrieving, updating and deleting data. Further documentation:
+    https://fiware-orion.readthedocs.io/en/master/
+    """
     def __init__(self, Config):
-        self.url = Config.data["orion"]["host"] + ':' + Config.data["orion"]["port"] + '/v2'
+        self.url = Config.data["orion"]["host"] + ':' \
+                   + Config.data["orion"]["port"] + '/v2'
         self.fiware_service = FiwareService(name=Config.data['fiware']['service'],
-                                            path=Config.data['fiware']['service_path'])
-        self.url_v1 = Config.data["orion"]["host"] + ':' + Config.data["orion"]["port"] + '/v1'
+                                       path=Config.data['fiware']['service_path'])
+        self.url_v1 = Config.data["orion"]["host"] + ':' \
+                      + Config.data["orion"]["port"] + '/v1'
 
     def set_service(self, fiware_service):
         """Overwrites the fiware_service and service path of config.json"""
         self.fiware_service.update(fiware_service.name, fiware_service.path)
  
-    # combine fiware_service header (if set) and additional headers
     def get_header(self, additional_headers: dict = None):
+        """combine fiware_service header (if set) and additional headers"""
         if self.fiware_service == None:
             return additional_headers
         elif additional_headers == None:
@@ -77,7 +97,7 @@ class Orion:
         url = self.url + '/entities/' + entity_name
 
         if entity_params is None:
-            return cb.get(url, headers)
+            return cb.get(url, self.get_header())
         else:
             return cb.get(url, self.get_header(), entity_params)
 
@@ -85,7 +105,7 @@ class Orion:
         url = self.url + '/entities'
 
         if parameter is None and parameter_value is None:
-            return cb.get(url, headers)
+            return cb.get(url, self.get_header())
         elif parameter is not None and parameter_value is not None:
             parameters = {'{}'.format(parameter): '{}'.format(parameter_value)}
             return cb.get(url, self.get_header(), parameters)
