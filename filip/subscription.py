@@ -1,12 +1,14 @@
 import json 
 from enum import Enum
 
-# Subscription according to NGSI v2 specification
-
 class Subject_Entity:
     def __init__(self, _id, _type=None):
-        self.id = _id           # id XOR idPattern; required
-        self.type = _type       # type OR typePattern; if omitted -> "any entity type"
+        """
+        :param id: id XOR idPattern, required
+        :param _type: type OR typePattern; if omitted: any entity type
+        """
+        self.id = _id
+        self.type = _type
     
     def get_json_dict(self):
         json_dict = {"id": "{}".format(self.id)}
@@ -37,15 +39,18 @@ class Subject_Expression:
         return json_dict
 
 class Subject_Condition:
-    def __init__(self, attributes=None, expression=None):
-        self.attributes = attributes    # list of attribute names; optional
-        self.expression = expression    # TODO: description; optional
+    def __init__(self, attributes: list = None, expression:object = None):
+        """
+        :param attributes: list of attribute names, optional
+        :param expression: Subject_Expression object, optional
+        """
+        self.attributes = attributes
+        self.expression = expression
 
     def get_json_dict(self):
         json_dict = {}
         if self.attributes is None and self.expression is None:
             return None
-
         if self.attributes is not None:
             json_dict["attrs"] = self.attributes
         if self.expression is not None:
@@ -53,30 +58,37 @@ class Subject_Condition:
         return json_dict
 
 class Subject:
-    def __init__(self, entities, condition=None):
-        self.entities = entities    # list of Subject_Entity objects, required
-        self.condition = condition  # optional Subject_Condition object; if left empty -> notification will be triggered for any entity attribute change
+    def __init__(self, entities: list, condition: object = None):
+        """
+        :param entities: list of Subject_Entity objects, required
+        :param condition: Subject_Condition object; if left empty,
+        a notification will be triggered for any attribute change
+        """
+        self.entities = entities
+        self.condition = condition
 
     def get_json_dict(self):
         json_dict = {}
         entity_list = []
         for entity in self.entities:
             entity_list.append(entity.get_json_dict())
-
         json_dict["entities"] = entity_list
-
         if self.condition is not None:
             json_dict["condition"] = self.condition.get_json_dict()
-
         return json_dict
 
-# attribute_type can be either "attrs" or "exceptAttrs"
-# if left empty, all attributes are included in notifications
 class Notification_Attributes:
-    def __init__(self, attribute_type=None, _list=None, specified=False):
+    def __init__(self, attribute_type: str = None, _list=None, specified=False):
+        """
+        If the notification attributes are left empty, all attributes will be
+        included in the notifications. Otherwise, only the specified ones will
+        be included.
+        :param attribute_type: either 'attrs' or 'exceptAttrs'
+        :param _list: list of either 'attrs' or 'exceptAttrs' attributes
+        """
         if attribute_type is not None and _list is not None:
-            self.attribute_type = attribute_type    # string value which is either 'attrs' or 'exceptAttrs'
-            self.attr_list = _list      # list of either 'attrs' or 'exceptAttr'
+            self.attribute_type = attribute_type
+            self.attr_list = _list
             self.specified = True
         else: 
             self.specified = False
@@ -84,7 +96,6 @@ class Notification_Attributes:
     def get_json_dict(self):
         if not self.specified:
             return None
-
         json_dict = {}
         json_dict[self.attribute_type] = self.attr_list
         return json_dict
@@ -94,12 +105,20 @@ class Notification_Attributes:
         
 
 class HTTP_Params:
-    def __init__(self, url):
-        self.url = url          # URL referencing the service to be invoked by a notification
-        self.headers = None     # key-map (dict) of HTTP headers; optional
-        self.qs = None          # key-map (dict) of URL query parameters                
-        self.method = None      # HTTP method to use for notification (default: POST)
-        self.payload = None     # payload to be used in notifications
+    def __init__(self, url, headers: dict = None, qs: dict = None,
+                 method: str = None, payload = None):
+        """
+        :param url: URL referencing the service to be invoked by a notification
+        :param headers: key-map (dict) of HTTP headers; optional
+        :param qs: key-map (dict) of URL query parameters
+        :param method: HTTP method to use for notification (default: POST)
+        :param payload: payload to be used in notifications
+        """
+        self.url = url
+        self.headers = headers
+        self.qs = qs
+        self.method = method
+        self.payload = payload
 
     def is_custom_http(self):
         if self.headers is not None \
@@ -114,7 +133,6 @@ class HTTP_Params:
         json_dict = {"url": self.url}
         if not self.is_custom_http():
             return json_dict
-
         if self.headers is not None:
             json_dict["headers"] = self.headers #TODO: this is wrong, headers is a key-map
         if self.qs is not None:
@@ -123,15 +141,22 @@ class HTTP_Params:
             json_dict["method"] = self.method
         if self.payload is not None:
             json_dict["payload"] = self.payload
-
         return json_dict
 
 class Notification:
-    def __init__(self, http, attr=None):
-        self.http = http    # object of class 'HTTP_Params'
-        self.attr = attr    # Notification_Attributes object
-        self.attrsFormat = None     # optional, specifies how entites are represented in notifications
-        self.metadata = None        # list of metadata to be included in notifications
+    def __init__(self, http, attr: object = None, attrsFormat: str = None,
+                                                   metadata: list = None):
+        """
+        :param http: object of class 'HTTP_Params', required
+        :param attr: object of class 'Notification_Attribute', optional
+        :param attrsFormat: specifies entity representation, optional
+        :param metadata: list of metadata to be included in notifications,
+        optional
+        """
+        self.http = http
+        self.attr = attr
+        self.attrsFormat = attrsFormat
+        self.metadata  = metadata
 
     def get_json_dict(self):
         json_dict = {}
@@ -139,26 +164,38 @@ class Notification:
             json_dict["httpCustom"] = self.http.get_json_dict()
         else:
             json_dict["http"] = self.http.get_json_dict()
-
         if self.attrsFormat is not None:
             json_dict["attrsFormat"] = self.attrsFormat
-
         if self.metadata is not None:
             json_dict["metadata"] = self.metadata
-
         if self.attr is not None and self.attr.is_specified():
             json_dict.update(self.attr.get_json_dict())
         return json_dict
 
 
 class Subscription:
-    def __init__(self, subject, notification, description=None, expires=None, throttling=None):
-        self.subject = subject              # Subject of the subscription
-        self.notification = notification    # Notification of the subscription
-        self.description = description      # string, optional
-        self.expires = expires              # date in ISO 8601 format, optional (if omitted -> permanent subscription) 
-        self.throttling = throttling        # min. period (in seconds) between two notifications; optional
-        self.subscription_id = None         # subscription unique identifier, created by Orion Context Broker at creation time
+    """
+    Orion Context Broker Subscription according to NGSI v2 specification.
+    Further information:
+    http://telefonicaid.github.io/fiware-orion/api/v2/stable/
+    """
+    def __init__(self, subject, notification, description=None, expires=None,
+                                                            throttling=None):
+        """
+        :param subject: Subject of the subscription, required
+        :param notification: Notification of the subscription, required
+        :param description: description string, optional
+        :param expires: date in ISO 8601 format, optional
+        :param throttling: min. period (seconds) between two notifications,
+        optional
+        """
+        self.subject = subject
+        self.notification = notification
+        self.description = description
+        self.expires = expires
+        self.throttling = throttling
+        self.subscription_id = None
+        """subscription unique identifier, created by Orion Context Broker at creation time"""
 
     def get_json(self):
         json_dict = {}
@@ -168,9 +205,6 @@ class Subscription:
             json_dict["expires"] = self.expires
         if self.throttling is not None:
             json_dict["throttling"] = self.throttling
-
         json_dict["notification"] = self.notification.get_json_dict()
         json_dict["subject"] = self.subject.get_json_dict()
-
         return json.dumps(json_dict)
-    

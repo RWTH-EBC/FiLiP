@@ -14,10 +14,8 @@
     "protocol": "IoTA-UL"
   },
   "quantum_leap": {
-    "host_external":"http://localhost",
-    "port_external":"8668",
-    "host_internal":"http://quantumleap" ,
-    "port_internal": "8668"
+    "host":"http://localhost",
+    "port":"8668"
   },
   "cratedb": {
     "host":"http://crate" ,
