@@ -5,7 +5,7 @@ import requests
 import json
 import errno
 import test
-
+import pprint
 
 class Config:
     def __init__(self, path = 'config.json'):
@@ -121,9 +121,14 @@ class Config:
             'host'] + ':' + str(self.data['quantum_leap']['port']) + \
         '/v2/version')
         print("[INFO]: Configuration seems fine!")
-        # self.check_apikey() # needs to be moved to IoTA
-        # print("[INFO] Chosen service: " + self.fiware_service)
-        # print("[INFO] Chosen service path: " + self.fiware_service_path)
 
 
-#FILIP_CONFIG = Config()
+
+if __name__=="__main__":
+    CONFIG = Config('D:\Projects\FIWARE\gitlab\FiLiP\config.json')
+    print(CONFIG.data['fiwareService'])
+    print("List of services and paths:")
+    for service in CONFIG.data['fiwareService']:
+        print("{:<30}{:<20}".format('Service: ',service['service']))
+        for path in service['service_path']:
+            print("{:<30}{:<40}".format('',path))
