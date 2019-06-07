@@ -28,7 +28,7 @@ if __name__ == "__main__":
                                          iot_agent="iota_ul", apikey="12345")
     device_group.test_apikey()
 
-    device_ul = iot.Device('urn:Room:001:sensor01','urn:Room:001',
+    device_ul = iot.Device('urn:Room:002:sensor01','urn:Room:002',
                            "Thing",
                            transport="MQTT", protocol="PDI-IoTA-UltraLight",
                            timezone="Europe/Berlin")
@@ -38,10 +38,11 @@ if __name__ == "__main__":
                                 value_type="Number", object_id="p")
     device_ul.add_attribute(attr1)
     device_ul.add_attribute(attr2)
-    device_ul.delete_attribute("pressure", "active")
+
+    #device_ul.delete_attribute("pressure", "active")
 
 
-    device_json = iot.Device('urn:Room:001:sensor02','urn:Room:001', "Thing",
+    device_json = iot.Device('urn:Room:002:sensor02','urn:Room:002', "Thing",
                            transport="MQTT", protocol="IoTA-JSON",
                            timezone="Europe/Berlin")
     
@@ -53,9 +54,6 @@ if __name__ == "__main__":
     IOTA_JSON.get_device(device_group_json, device_json)
 
     IOTA_UL.post_group(device_group)
-    IOTA_UL.get_groups(device_group)
-    device_group.update(entity_type="otherThing",
-                        apikey="updated123456")
     IOTA_UL.update_group(device_group)
     IOTA_UL.get_groups(device_group)
     IOTA_UL.post_device(device_group, device_ul)
@@ -63,7 +61,7 @@ if __name__ == "__main__":
     IOTA_UL.get_device(device_group, device_ul)
 
     ORION_CB.get_all_entities()
-    ORION_CB.get_entity('urn:Room:001')
+    ORION_CB.get_entity('urn:Room:002')
 
     IOTA_JSON.delete_device(device_group_json, device_json)
     IOTA_JSON.delete_group(device_group_json)

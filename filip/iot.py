@@ -18,7 +18,7 @@ AUTH = ('user', 'pass')
 class Attribute: # DeviceAttribute
     def __init__(self, name: str, attr_type, value_type, object_id: str=None):
         self.name = name
-        #self.value = value
+        #self.value = kwargs.get("attr_value", "") NOT Supported by agent-lib
         self.value_type = value_type
         self.attr_type = attr_type
         self.object_id = object_id
@@ -86,6 +86,8 @@ class Device:
             attr["object_id"] = Attribute.object_id
         attr["name"] = Attribute.name
         attr["type"] = Attribute.value_type
+
+        # attr["value"] = Attribute.value NOT Supported by agent-lib
 
         if Attribute.attr_type == "active":
             self.attributes.append(attr)
@@ -227,6 +229,7 @@ class DeviceGroup:
             attr["object_id"] = Attribute.object_id
         attr["name"] = Attribute.name
         attr["type"] = Attribute.value_type
+        #attr["value"] = Attribute.value NOT Supported by agent-lib
 
         if Attribute.attr_type == "active":
             self.__attributes.append(attr)
@@ -295,7 +298,7 @@ class DeviceGroup:
             "fiware-servicepath": self.__subservice
         }
 
-    def get_header_old(self) -> dict:
+    def get_header_last(self) -> dict:
         return {
             "fiware-service": self.__service_last,
             "fiware-servicepath": self.__subservice_last
@@ -410,7 +413,7 @@ class Agent:
 
     def update_group(self, device_group):
         url = self.url + '/iot/services'
-        headers = {**HEADER_CONTENT_JSON, **device_group.get_header_old()}
+        headers = {**HEADER_CONTENT_JSON, **device_group.get_header_last()}
         querystring ={"resource":device_group.get_resource_last(),
                       "apikey":device_group.get_apikey_last()}
         payload= json.loads(device_group.get_json())
