@@ -98,11 +98,39 @@ class Device:
         else:
             print("[WARN]: Attribute type unknown: \"{}\"".format(attr['type']))
 
-    #def add_command(self):
-      #  return
 
-    #def get_commands(self):
-       # return
+    def delete_attribute(self, attr_name, attr_type):
+        '''
+        Removing attribute by name and from the list of attributes in the
+        local device. You need to execute update device in iot agent in
+        order to update the configuration to remote!
+        :param attr_name: Name of the attribute to delete
+        :param attr_type: Type of the attribute to delete
+        :return:
+        '''
+        try:
+            if attr_type == "active":
+                self.attributes = [i for i in self.attributes if not (i[
+                                                        'name']==attr_name)]
+            elif attr_type == "lazy":
+                self.lazy = [i for i in self.lazy if not (i['name'] ==
+                                                                   attr_name)]
+            elif attr_type == "static":
+                self.static_attributes = [i for i in self.static_attributes if
+                                          not (
+                        i['name'] == attr_name)]
+            elif attr_type == "command":
+                self.commands = [i for i in self.commands if not (i['name'] ==
+                                                                   attr_name)]
+            else:
+                print("[WARN]: Attribute type unknown: \"{}\"".format(attr_type))
+            print("[INFO]: Attribute succesfully deleted: \"{}\"".format(
+                attr_name))
+        except:
+            print("[WARN]: Attribute could not be deleted: \"{}\"".format(
+                attr_name))
+
+
 
 class DeviceGroup:
     """
@@ -151,20 +179,20 @@ class DeviceGroup:
 
         #For using the update functionality, the former configuration needs
         # to be stored
-        self.__service_old = fiware_service.name
-        self.__subservice_old = fiware_service.path
-        self.__resource_old = kwargs.get("resource", "/iot/d")
-        self.__apikey_old = kwargs.get("apikey", "12345")
+        self.__service_last = fiware_service.name
+        self.__subservice_last = fiware_service.path
+        self.__resource_last = kwargs.get("resource", "/iot/d")
+        self.__apikey_last = kwargs.get("apikey", "12345")
 
     def update(self,**kwargs):
         #For using the update functionality, the former configuration needs
         # to be stored
         # TODO: NOTE: It is not recommenend to change the combination fiware
         #  service structure and apikey --> Delete old and register a new one
-        self.__service_old = self.__service
-        self.__subservice_old = self.__subservice
-        self.__resource_old = self.__resource
-        self.__apikey_old = self.__apikey
+        self.__service_last = self.__service
+        self.__subservice_last = self.__subservice
+        self.__resource_last = self.__resource
+        self.__apikey_last = self.__apikey
 
         # From here on the variables are updated
         self.__service = kwargs.get("fiware_service", self.__service)
@@ -187,7 +215,67 @@ class DeviceGroup:
         self.__devices = []
         self.__agent = kwargs.get("iot-agent", self.__agent)
 
+    def add_attribute(self, Attribute):
+        """
+        :param name: The name of the attribute as submitted to the context broker.
+        :param type: The type of the attribute as submitted to the context broker.
+        :param object_id: The id of the attribute used from the southbound API.
+        :param attr_type: One of \"active\" (default), \"lazy\" or \"static\"
+        """
+        attr = {}
+        if Attribute.object_id:
+            attr["object_id"] = Attribute.object_id
+        attr["name"] = Attribute.name
+        attr["type"] = Attribute.value_type
 
+        if Attribute.attr_type == "active":
+            self.__attributes.append(attr)
+        elif Attribute.attr_type == "lazy":
+            self.__lazy.append(attr)
+        elif Attribute.attr_type == "static":
+            self.__static_attributes.append(attr)
+        elif Attribute.attr_type == "internal":
+            self.__internal_attributes.append(attr)
+        elif Attribute.attr_type == "command":
+            self.__commands.append(attr)
+        else:
+            print("[WARN]: Attribute type unknown: \"{}\"".format(attr['type']))
+
+    def delete_attribute(self, attr_name, attr_type):
+        '''
+        Removing attribute by name and from the list of attributes in the
+        local device group. You need to execute update device in iot agent in
+        order to update the configuration to remote!
+        :param attr_name: Name of the attribute to delete
+        :param attr_type: Type of the attribute to delte
+        :return:
+        '''
+        try:
+            if attr_type == "active":
+                self.__attributes = [i for i in self.__attributes if not (i[
+                                                        'name']==attr_name)]
+            elif attr_type == "lazy":
+                self.__lazy = [i for i in self.__lazy if not (i['name'] ==
+                                                                   attr_name)]
+            elif attr_type == "static":
+                self.__static_attributes = [i for i in self.__static_attributes
+                                            if not (
+                        i['name'] == attr_name)]
+            elif attr_type == "internal":
+                self.__internal_attributes = [i for i in
+                                              self.__internal_attributes if not
+                    (i['name'] ==  attr_name)]
+            elif attr_type == "command":
+                self.__commands = [i for i in self.__commands if not (i[
+                                                                         'name'] ==
+                                                                   attr_name)]
+            else:
+                print("[WARN]: Attribute type unknown: \"{}\"".format(attr_type))
+            print("[INFO]: Attribute succesfully deleted: \"{}\"".format(
+                attr_name))
+        except:
+            print("[WARN]: Attribute could not be deleted: \"{}\"".format(
+                attr_name))
 
     def get_apikey(self):
         return self.__apikey
@@ -195,11 +283,11 @@ class DeviceGroup:
     def get_resource(self):
         return self.__resource
 
-    def get_apikey_old(self):
-        return self.__apikey_old
+    def get_apikey_last(self):
+        return self.__apikey_last
 
-    def get_resource_old(self):
-        return self.__resource_old
+    def get_resource_last(self):
+        return self.__resource_last
 
     def get_header(self) -> dict:
         return {
@@ -209,8 +297,8 @@ class DeviceGroup:
 
     def get_header_old(self) -> dict:
         return {
-            "fiware-service": self.__service_old,
-            "fiware-servicepath": self.__subservice_old
+            "fiware-service": self.__service_last,
+            "fiware-servicepath": self.__subservice_last
         }
 
     def get_json(self):
@@ -323,8 +411,8 @@ class Agent:
     def update_group(self, device_group):
         url = self.url + '/iot/services'
         headers = {**HEADER_CONTENT_JSON, **device_group.get_header_old()}
-        querystring ={"resource":device_group.get_resource_old(),
-                      "apikey":device_group.get_apikey_old()}
+        querystring ={"resource":device_group.get_resource_last(),
+                      "apikey":device_group.get_apikey_last()}
         payload= json.loads(device_group.get_json())
         payload = json.dumps(payload, indent=4)
         print("[INFO]: Update group with:\n"+payload)

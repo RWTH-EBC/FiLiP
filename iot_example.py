@@ -38,6 +38,7 @@ if __name__ == "__main__":
                                 value_type="Number", object_id="p")
     device_ul.add_attribute(attr1)
     device_ul.add_attribute(attr2)
+    device_ul.delete_attribute("pressure", "active")
 
 
     device_json = iot.Device('urn:Room:001:sensor02','urn:Room:001', "Thing",
