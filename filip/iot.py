@@ -16,15 +16,24 @@ PROTOCOLS = ['IoTA-JSON','IoTA-UL']
 AUTH = ('user', 'pass')
 
 class Attribute: # DeviceAttribute
-    def __init__(self, name: str, attr_type, value_type, object_id: str=None):
+    def __init__(self, name: str, attr_type: str, value_type: str,
+                 object_id: str=None, attr_value: str=None):
         self.name = name
-        #self.value = kwargs.get("attr_value", "") NOT Supported by agent-lib
         self.value_type = value_type
         self.attr_type = attr_type
         self.object_id = object_id
+        self.attr_value = attr_value
+        if attr_value != None and attr_type != "static":
+            print("[WARN]: Setting attribute value only allowed for "
+                      "static attributes! Value will be ignored!")
+            self.attr_value = None
 
     def get_json(self):
-        return {'value': self.value, 'type': '{}'.format(self.type)}
+        if self.attr_value != None:
+            return {'value': self.attr_value, 'type': '{}'.format(
+                self.attr_type)}
+        else:
+            return {'type': '{}'.format(self.attr_type)}
 
 
 class Device:
@@ -84,8 +93,12 @@ class Device:
         attr = {}
         if Attribute.object_id:
             attr["object_id"] = Attribute.object_id
+        if Attribute.attr_value != None and\
+                Attribute.attr_type == "static":
+            attr["value"] = Attribute.attr_value
         attr["name"] = Attribute.name
         attr["type"] = Attribute.value_type
+
 
         # attr["value"] = Attribute.value NOT Supported by agent-lib
 
@@ -98,7 +111,8 @@ class Device:
         elif Attribute.attr_type == "command":
             self.commands.append(attr)
         else:
-            print("[WARN]: Attribute type unknown: \"{}\"".format(attr['type']))
+            print("[WARN]: Attribute type unknown: \"{}\"".format(
+                attr['type']))
 
 
     def delete_attribute(self, attr_name, attr_type):
@@ -227,9 +241,11 @@ class DeviceGroup:
         attr = {}
         if Attribute.object_id:
             attr["object_id"] = Attribute.object_id
+        if Attribute.attr_value != None\
+                and Attribute.attr_type == "static":
+            attr["value"]  = Attribute.attr_value
         attr["name"] = Attribute.name
         attr["type"] = Attribute.value_type
-        #attr["value"] = Attribute.value NOT Supported by agent-lib
 
         if Attribute.attr_type == "active":
             self.__attributes.append(attr)
@@ -242,7 +258,8 @@ class DeviceGroup:
         elif Attribute.attr_type == "command":
             self.__commands.append(attr)
         else:
-            print("[WARN]: Attribute type unknown: \"{}\"".format(attr['type']))
+            print("[WARN]: Attribute type unknown: \"{}\"".format(
+                attr['type']))
 
     def delete_attribute(self, attr_name, attr_type):
         '''
@@ -261,19 +278,21 @@ class DeviceGroup:
                 self.__lazy = [i for i in self.__lazy if not (i['name'] ==
                                                                    attr_name)]
             elif attr_type == "static":
-                self.__static_attributes = [i for i in self.__static_attributes
+                self.__static_attributes = [i for i in
+                                            self.__static_attributes
                                             if not (
-                        i['name'] == attr_name)]
+                            i['name'] == attr_name)]
             elif attr_type == "internal":
                 self.__internal_attributes = [i for i in
-                                              self.__internal_attributes if not
-                    (i['name'] ==  attr_name)]
+                                              self.__internal_attributes
+                                              if not
+                                              (i['name'] ==  attr_name)]
             elif attr_type == "command":
-                self.__commands = [i for i in self.__commands if not (i[
-                                                                         'name'] ==
-                                                                   attr_name)]
+                self.__commands = [i for i in self.__commands if not
+                (i['name'] == attr_name)]
             else:
-                print("[WARN]: Attribute type unknown: \"{}\"".format(attr_type))
+                print("[WARN]: Attribute type unknown: \"{}\"".format(
+                    attr_type))
             print("[INFO]: Attribute succesfully deleted: \"{}\"".format(
                 attr_name))
         except:
@@ -401,12 +420,14 @@ class Agent:
         payload['services'] = [json.loads(device_group.get_json())]
         payload = json.dumps(payload, indent=4)
         print(payload)
-        response = requests.request("POST", url, data=payload, headers=headers)
-        if response.status_code != 200:
+        response = requests.request("POST", url, data=payload,
+                                    headers=headers)
+        if response.status_code != 201:
             print("[WARN] Unable to register default configuration for "
-                  "service \"{}\", path \"{}\": {}".format(
+                  "service \"{}\", path \"{}\": \"{}\" {}".format(
                 device_group.get_header()['fiware-service'],
                 device_group.get_header()['fiware-servicepath'],
+                "Code:" + str(response.status_code),
                 response.text))
             return None
         #filip.orion.post(url, head, AUTH, json_dict)
@@ -434,7 +455,8 @@ class Agent:
         payload['devices'] = [json.loads(device.get_json())]
         payload = json.dumps(payload, indent=4)
         print(payload)
-        response = requests.request("POST", url, data=payload, headers=headers)
+        response = requests.request("POST", url, data=payload,
+                                    headers=headers)
         print(response.text)
 
     def delete_device(self, device_group, device):

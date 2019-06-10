@@ -25,7 +25,8 @@ if __name__ == "__main__":
 
     device_group = filip.iot.DeviceGroup(fiware_service,
                                          "http://orion:1026",
-                                         iot_agent="iota_ul", apikey="12345")
+                                         iot_agent="iota_ul",
+                                         apikey="12345test")
     device_group.test_apikey()
 
     device_ul = iot.Device('urn:Room:002:sensor01','urn:Room:002',
@@ -33,11 +34,16 @@ if __name__ == "__main__":
                            transport="MQTT", protocol="PDI-IoTA-UltraLight",
                            timezone="Europe/Berlin")
     attr1 = iot.Attribute("temperature", attr_type="active",
-                                value_type="Number", object_id="t")
+                          value_type="Number", object_id="t")
     attr2 = iot.Attribute("pressure", attr_type="active",
-                                value_type="Number", object_id="p")
+                          value_type="Number", object_id="p")
+    attr3 = iot.Attribute("nice_name", attr_type="static",
+                          value_type="String", object_id="name",
+                          attr_value="beautiful attribute!")
+    print(attr1.get_json)
     device_ul.add_attribute(attr1)
     device_ul.add_attribute(attr2)
+    device_ul.add_attribute(attr3)
 
     #device_ul.delete_attribute("pressure", "active")
 
