@@ -56,6 +56,9 @@ class FiwareService:
         self.name = name
         self.path = path
 
+    def list(self):
+        print
+
     def get_header(self) -> object:
         return {
             "fiware-service": self.name,
