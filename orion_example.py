@@ -1,6 +1,6 @@
 import filip.orion as orion
 import filip.config as config
-
+import sys
 
 def create_entities(orion_cb):
     room1_a1 = orion.Attribute('temperature', 11, 'Float')
@@ -75,6 +75,7 @@ def query_entity(orion_cb, entity):
 if __name__=="__main__":
     CONFIG = config.Config('config.json')
     ORION_CB = orion.Orion(CONFIG) 
+    ORION_CB.sanity_check()
 
     print ("++++ create entities ++++")
     entities = create_entities(ORION_CB)

@@ -94,40 +94,73 @@ class Orion:
             headers = {**self.fiware_service.get_header(), **additional_headers}
             return headers
 
-    def post_entity(self, entity):
-        url = self.url + '/entities'
-        response = requests.post(url,
-                            headers=self.get_header(requtils.HEADER_CONTENT_JSON),
-                            data=entity.get_json())
+    def sanity_check(self):
+        url = self.url[:-3] + '/version'
+        headers=self.get_header(requtils.HEADER_ACCEPT_JSON)
+        response = requests.get(url, headers=headers)
         ok, retstr = requtils.response_ok(response)
         if (not ok):
             print(retstr)
+            requtils.pretty_print_request(response.request)
+        else:
+            json_obj = json.loads(response.text)
+            version = json_obj["orion"]["version"]
+            print(version)
+
+    def post_entity(self, entity):
+        url = self.url + '/entities'
+        headers=self.get_header(requtils.HEADER_CONTENT_JSON)
+        data=entity.get_json()
+        response = requests.post(url, headers=headers, data=data)
+        ok, retstr = requtils.response_ok(response)
+        if (not ok):
+            print(retstr)
+            requtils.pretty_print_request(response.request)
    
     def get_entity(self, entity_name,  entity_params=None):
         url = self.url + '/entities/' + entity_name
+        headers=self.get_header()
         if entity_params is None:
-            response = requests.get(url, headers=self.get_header())
+            response = requests.get(url, headers=headers)
         else:
-            response = requests.get(url, headers=self.get_header(),
+            response = requests.get(url, headers=headers,
                                     params=entity_params)
         ok, retstr = requtils.response_ok(response)
         if (not ok):
             print(retstr)
+        else:
+            return response.text
 
     def get_all_entities(self, parameter=None, parameter_value=None):
         url = self.url + '/entities'
+        headers=self.get_header()
         if parameter is None and parameter_value is None:
-            response = requests.get(url, headers=self.get_header())
+            response = requests.get(url, headers=headers)
         elif parameter is not None and parameter_value is not None:
             parameters = {'{}'.format(parameter): '{}'.format(parameter_value)}
-            response = requests.get(url, headers=self.get_header(),
-                                    params=parameters)
+            response = requests.get(url, headers=headers, params=parameters)
         else:
             print ("ERROR getting all entities: both function parameters have \
                     to be 'not null'")
         ok, retstr = requtils.response_ok(response)
         if (not ok):
             print(retstr)
+        else:
+            return response.text
+
+    def get_entities_list(self) -> list:
+        url = self.url + '/entities'
+        header = self.get_header(requtils.HEADER_ACCEPT_JSON)
+        response = requests.get(url, headers=header)
+        ok, retstr = requtils.response_ok(response)
+        if (not ok):
+            print(retstr)
+            return None
+        json_object = json.loads(response.text)
+        entities = []
+        for key in json_object:
+            entities.append(key["id"])
+        return entities
 
     def get_entity_keyValues(self, entity_name):
         parameter = {'{}'.format('options'): '{}'.format('keyValues')}
@@ -139,6 +172,8 @@ class Orion:
         ok, retstr = requtils.response_ok(response)
         if (not ok):
             print(retstr)
+        else:
+            return response.text
 
     def get_entity_attribute_value(self, entity_name, attribute_name):
         url = self.url + '/entities/' + entity_name + '/attrs/' \
@@ -147,6 +182,8 @@ class Orion:
         ok, retstr = requtils.response_ok(response)
         if (not ok):
             print(retstr)
+        else:
+            return response.text
 
     def get_entity_attribute_list(self, entity_name, attr_name_list):
         attributes = ','.join(attr_name_list)
@@ -157,10 +194,9 @@ class Orion:
     def update_entity(self, entity):
         url = self.url + '/entities/' + entity.name + '/attrs'
         payload = entity.get_attributes_json_dict()
-        response = requests.patch(
-                             url,
-                             headers=self.get_header(cb.HEADER_CONTENT_JSON),
-                             data=json.dumps(payload))
+        headers=self.get_header(cb.HEADER_CONTENT_JSON)
+        data=json.dumps(payload)
+        response = requests.patch(url, headers=headers, data=data)
         ok, retstr = requtils.response_ok(response)
         if (not ok):
             print(retstr)
@@ -168,10 +204,9 @@ class Orion:
     def update_attribute(self, entity_name, attr_name, attr_value):
         url = self.url + '/entities/' + entity_name + '/attrs/' \
                        + attr_name + '/value'
-        response = requests.put(
-                             url,
-                             headers=self.get_header(cb.HEADER_CONTENT_PLAIN),
-                    data=json.dumps(attr_value))
+        headers=self.get_header(cb.HEADER_CONTENT_PLAIN)
+        data=json.dumps(attr_value)
+        response = requests.put(url, headers=headers, data=data)
         ok, retstr = requtils.response_ok(response)
         if (not ok):
             print(retstr)
@@ -185,10 +220,8 @@ class Orion:
 
     def create_subscription(self, subscription_body):
         url = self.url + '/subscriptions'
-        response = requests.post(
-                              url,
-                              headers=self.get_header(cb.HEADER_CONTENT_JSON),
-                              data=subscription_body)
+        headers=self.get_header(cb.HEADER_CONTENT_JSON)
+        response = requests.post(url, headers=headers, data=subscription_body)
         if response.headers==None:
             return
         ok, retstr = requtils.response_ok(response)
@@ -246,19 +279,22 @@ class Orion:
                              "value": cmd_value
                             }]
                         }]
-                  }
-        response = requests.post(
-                              url,
-                              headers=self.get_header(cb.HEADER_CONTENT_JSON),
-                              data=json.dumps(payload)
-                              )
+                   }
+        headers=self.get_header(cb.HEADER_CONTENT_JSON)
+        data=json.dumps(payload)
+        response = requests.post(url, headers=headers, data=data)
         ok, retstr = requtils.response_ok(response)
         if (not ok):
             print(retstr)
 
     def delete(self, entity_id: str, attr: str = None):
         url = self.url + '/entities/' + entity_id
-        response = requests.delete(url, self.get_header())
+        response = requests.delete(url, headers=self.get_header())
         ok, retstr = requtils.response_ok(response)
         if (not ok):
             print(retstr)
+
+    def delete_all_entities(self):
+        entities = self.get_entities_list()
+        for entity_id in entities:
+            self.delete(entity_id)
