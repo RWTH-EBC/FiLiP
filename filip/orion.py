@@ -194,7 +194,7 @@ class Orion:
     def update_entity(self, entity):
         url = self.url + '/entities/' + entity.name + '/attrs'
         payload = entity.get_attributes_json_dict()
-        headers=self.get_header(cb.HEADER_CONTENT_JSON)
+        headers=self.get_header(requtils.HEADER_CONTENT_JSON)
         data=json.dumps(payload)
         response = requests.patch(url, headers=headers, data=data)
         ok, retstr = requtils.response_ok(response)
@@ -204,7 +204,7 @@ class Orion:
     def update_attribute(self, entity_name, attr_name, attr_value):
         url = self.url + '/entities/' + entity_name + '/attrs/' \
                        + attr_name + '/value'
-        headers=self.get_header(cb.HEADER_CONTENT_PLAIN)
+        headers=self.get_header(requtils.HEADER_CONTENT_PLAIN)
         data=json.dumps(attr_value)
         response = requests.put(url, headers=headers, data=data)
         ok, retstr = requtils.response_ok(response)
@@ -220,7 +220,7 @@ class Orion:
 
     def create_subscription(self, subscription_body):
         url = self.url + '/subscriptions'
-        headers=self.get_header(cb.HEADER_CONTENT_JSON)
+        headers=self.get_header(requtils.HEADER_CONTENT_JSON)
         response = requests.post(url, headers=headers, data=subscription_body)
         if response.headers==None:
             return
@@ -229,7 +229,7 @@ class Orion:
             print(retstr)
             return ""
         else:
-            location = ret.get('Location')
+            location = response.headers.get('Location')
             addr_parts = location.split('/')
             subscription_id = addr_parts.pop()
             return subscription_id
@@ -280,7 +280,7 @@ class Orion:
                             }]
                         }]
                    }
-        headers=self.get_header(cb.HEADER_CONTENT_JSON)
+        headers=self.get_header(requtils.HEADER_CONTENT_JSON)
         data=json.dumps(payload)
         response = requests.post(url, headers=headers, data=data)
         ok, retstr = requtils.response_ok(response)

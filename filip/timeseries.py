@@ -1,7 +1,7 @@
 import filip.subscription as sub
 import filip.orion as orion
-import filip.cb_request as cb
-
+import filip.request_utils as requtils
+import requests
 
 class QuantumLeap():
     """
@@ -51,45 +51,87 @@ class QuantumLeap():
 
     def get_version(self):
         url = self.url + '/version'
-        return cb.get(url, cb.HEADER_CONTENT_PLAIN)
+        headers=requtils.HEADER_CONTENT_PLAIN
+        response = requests.get(url, headers=headers)
+        ok, retstr = requtils.response_ok(response)
+        if (not ok):
+            print(retstr)
+            return ""
+        else:
+            return response.text
 
     def get_health(self):
         url = self.url + '/health'
-        return cb.get(url, cb.HEADER_CONTENT_PLAIN)
+        headers = requtils.HEADER_CONTENT_PLAIN
+        response = requests.get(url, headers=headers)
+        ok, retstr = requtils.response_ok(response)
+        if (not ok):
+            print(retstr)
+            return ""
+        else:
+            return response.text
 
     def delete_entity(self, entity_name: str):
         url = self.url + '/entities/' + entity_name
-        cb.delete(url, self.get_header(cb.HEADER_CONTENT_PLAIN))
+        headers = self.get_header(requtils.HEADER_CONTENT_PLAIN)
+        response = requests.delete(url, headers=headers)
+        ok, retstr = requtils.response_ok(response)
+        if (not ok):
+            print(retstr)
 
     def delete_entities_of_type(self, entity_type):
         url = self.url + '/types/' + entity_type
-        cb.delete(url, self.get_header(cb.HEADER_CONTENT_PLAIN))
+        headers = self.get_header(requtils.HEADER_CONTENT_PLAIN)
+        response = requests.delete(url, headers=headers)
+        ok, retstr = requtils.response_ok(response)
+        if (not ok):
+            print(retstr)
 
     def get_entity_data(self, entity_id: str, attr_name: str = None, 
                         valuesonly: bool = False, **kwargs):
         url = self.url + '/entities/' + entity_id
         params = kwargs.get("params")
-        print(params)
-
+        headers = self.get_header(requtils.HEADER_CONTENT_PLAIN)
         if attr_name != None:
             url += '/attrs/' + attr_name
         if valuesonly:
             url += '/value'
-        return cb.get(url, self.get_header(cb.HEADER_CONTENT_PLAIN), params)
+        response = requests.get(url, headers=headers, params=params)
+        ok, retstr = requtils.response_ok(response)
+        if (not ok):
+            print(retstr)
+            return ""
+        else:
+            return response.text
 
     def get_entity_type_data(self, entity_type: str, attr_name: str = None,
                              valuesonly: bool = False):
         url = self.url + '/types/' + entity_type
+        headers = self.get_header(requtils.HEADER_CONTENT_PLAIN)
         if attr_name != None:
             url += '/attrs/' + attr_name
         if valuesonly:
             url += '/value'
-        return cb.get(url, self.get_header(cb.HEADER_CONTENT_PLAIN))
+        response = requests.get(url, headers=headers)
+        ok, retstr = requtils.response_ok(response)
+        if (not ok):
+            print(retstr)
+            return ""
+        else:
+            return response.text
 
     def get_attributes(self, attr_name: str = None, valuesonly: bool = False):
         url = self.url + '/attrs'
+        headers = self.get_header(requtils.HEADER_CONTENT_PLAIN)
         if attr_name != None:
             url += '/' + attr_name
         if valuesonly:
             url += '/value'
-        return cb.get(url, self.get_header(cb.HEADER_CONTENT_PLAIN))
+        response = requests.get(url, headers=headers, params=params)
+        ok, retstr = requtils.response_ok(response)
+        if (not ok):
+            print(retstr)
+            return ""
+        else:
+            return response.text
+
