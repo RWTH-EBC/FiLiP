@@ -41,7 +41,9 @@ if __name__=="__main__":
 
     print("updating entity attributes..")
     for i in range(0,10):
-        ORION_CB.update_attribute(oak.id, "height", (i*3))
+        value = i*3
+        print("new 'height' value: " + str(value))
+        ORION_CB.update_attribute(oak.id, "height", value)
         time.sleep(1)
 
 #    ORION_CB.update_attribute(oak.id, "leaves", "brown")
