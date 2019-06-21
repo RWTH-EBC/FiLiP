@@ -61,7 +61,7 @@ def http_custom_subscription():
 
 
 if __name__=="__main__":
-    CONFIG = config.Config()
+    CONFIG = config.Config("config - Kopie.json")
     ORION_CB = orion.Orion(CONFIG)
 
     body = API_Walkthrough_subscription()

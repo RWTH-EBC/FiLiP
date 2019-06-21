@@ -23,9 +23,8 @@ if __name__=="__main__":
 
     throttling = 0
     expires = datetime.datetime(2019, 12, 24, 18).isoformat()
-    notify_url = "http://quantumleap:8668/v2/notify"
-    subscription = quantum.create_subscription_object(oak, notify_url,
-                                throttling=throttling, expires=expires)
+    subscription = quantum.create_subscription_object(oak, throttling=throttling,
+                                                      expires=expires)
 
     # add metadata to include the modification time of the attributes
     # in the notification
