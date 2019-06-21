@@ -6,14 +6,10 @@ import json
 import string
 import random
 import filip.orion as orion
+import filip.request_utils as requtils
 
-HEADER_ACCEPT_JSON = {'Accept': 'application/json'}
-HEADER_ACCEPT_PLAIN = {'Accept': 'text/plain'}
-HEADER_CONTENT_JSON = {'Content-Type': 'application/json'}
-HEADER_CONTENT_PLAIN = {'Content-Type': 'text/plain'}
 PROTOCOLS = ['IoTA-JSON','IoTA-UL']
 
-AUTH = ('user', 'pass')
 
 class Attribute: # DeviceAttribute
     def __init__(self, name: str, attr_type: str, value_type: str,
@@ -415,7 +411,7 @@ class Agent:
 
     def post_group(self, device_group):
         url = self.url + '/iot/services'
-        headers = {**HEADER_CONTENT_JSON, **device_group.get_header()}
+        headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header()}
         payload={}
         payload['services'] = [json.loads(device_group.get_json())]
         payload = json.dumps(payload, indent=4)
@@ -434,7 +430,7 @@ class Agent:
 
     def update_group(self, device_group):
         url = self.url + '/iot/services'
-        headers = {**HEADER_CONTENT_JSON, **device_group.get_header_last()}
+        headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header_last()}
         querystring ={"resource":device_group.get_resource_last(),
                       "apikey":device_group.get_apikey_last()}
         payload= json.loads(device_group.get_json())
@@ -453,7 +449,7 @@ class Agent:
 
     def post_device(self, device_group, device):
         url = self.url + '/iot/devices'
-        headers = {**HEADER_CONTENT_JSON, **device_group.get_header()}
+        headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header()}
         payload={}
         payload['devices'] = [json.loads(device.get_json())]
         payload = json.dumps(payload, indent=4)
@@ -469,7 +465,7 @@ class Agent:
     def delete_device(self, device_group, device):
         # TODO: Check if
         url = self.url + '/iot/devices/'+ device.device_id
-        headers = {**HEADER_CONTENT_JSON, **device_group.get_header()}
+        headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header()}
         response = requests.request("DELETE", url, headers=headers)
         if response.status_code == 204:
             print("[INFO]: Device successfully deleted!")
@@ -479,7 +475,7 @@ class Agent:
 
     def get_device(self, device_group, device):
         url = self.url + '/iot/devices/' + device.device_id
-        headers = {**HEADER_CONTENT_JSON, **device_group.get_header()}
+        headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header()}
         payload = ""
         response = requests.request("GET", url, data=payload,
                                     headers=headers)
@@ -487,7 +483,7 @@ class Agent:
 
     def update_device(self, device_group, device, payload: json):
         url = self.url + '/iot/devices/' + device.device_id
-        headers = {**HEADER_CONTENT_JSON, **device_group.get_header()}
+        headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header()}
         response = requests.request("PUT", url, data=payload,
                                     headers=headers)
         if response.status_code not in [201, 200, 204]:
@@ -529,10 +525,6 @@ class Agent:
             print("[WARN] Unable to fetch configuration for service "
                   "\"{}\", path \"{}\": {}"
                   .format(service, service_path, resp.text))
-
-
-
-
 
 
 
