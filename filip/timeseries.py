@@ -28,9 +28,9 @@ class QuantumLeap():
         :param url: URL destination for subscription notifications
         :return: Subscription object, not yet sent to Orion Context Broker
         """
-        id_pattern=kwargs.get("id_pattern",None)
+        id_pattern = kwargs.get("id_pattern")
         if id_pattern is not None:
-            subject_entity = sub.Subject_Entity(entity.id, entity.type, id_pattern)
+            subject_entity = sub.Subject_Entity(id_pattern, None, True)
         else:
             subject_entity = sub.Subject_Entity(entity.id, entity.type)
         subject = sub.Subject([subject_entity])

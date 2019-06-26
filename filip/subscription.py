@@ -2,23 +2,29 @@ import json
 from enum import Enum
 
 class Subject_Entity:
-    def __init__(self, _id, _type=None, _idpattern=None):
+    def __init__(self, _id, _type=None, use_id_pattern=False, use_type_pattern=False):
         """
-        :param id: id XOR idPattern, required
+        :param _id: id XOR idPattern, required
         :param _type: type OR typePattern; if omitted: any entity type
+        :param use_id_pattern: use idPattern instead of id
+        :param use_type_pattern: use typePattern instead of type
         """
         self.id = _id
         self.type = _type
-        self.idpattern = _idpattern
+        self.use_id_pattern = use_id_pattern
+        self.use_type_pattern = use_type_pattern
     
     def get_json_dict(self):
         json_dict = {}
-        if self.idpattern is not None:
-            json_dict["idPattern"] = self.idpattern
+        if self.use_id_pattern:
+            json_dict["idPattern"] = self.id
         else:
             json_dict["id"] = self.id
         if self.type is not None:
-            json_dict["type"] = self.type
+            if self.use_type_pattern:
+                json_dict["typePattern"] = self.type
+            else:
+                json_dict["type"] = self.type
         return json_dict
 
 class Subject_Expression:
