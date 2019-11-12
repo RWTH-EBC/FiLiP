@@ -16,10 +16,10 @@ class Config:
         NOTE: If list of parameters is extended do it here and in
         def update_config()
         """
-        self.file = os.getenv("CONFIG_FILE", True)
+        self.file = os.getenv("CONFIG_FILE", 'True')
         self.path = os.getenv("CONFIG_PATH", path)
         self.data = None
-        if self.file:
+        if eval(self.file):
 #            print("[INFO] CONFIG_PATH variable is updated to: " + self.path)
             self.data = self._read_config_file(self.path)
         else:
@@ -39,6 +39,7 @@ class Config:
             # Needs to go to services
             # self.fiware_service = os.getenv("FIWARE_SERVICE", "default")
             # self.fiware_service_path = os.getenv("FIWARE_SERVICE_PATH",  "/")
+
 
     def _read_config_file(self, path: str):
         """
@@ -63,21 +64,39 @@ class Config:
             return False
         return data
 
+
     def _read_config_envs(self):
         """
         :return:
         """
         data = {}
+        data['orion']={}
         data['orion']['host'] = os.getenv("ORION_HOST", "http://localhost")
         data['orion']['port'] = os.getenv("ORION_PORT", "1026")
-        data['iota']['host'] = os.getenv("IOTA_JSON_HOST",
-                                         "http://localhost")
-        data['iota']['port'] = os.getenv("IOTA_PORT", "4041/")
-        data['iota']['port'] = os.getenv("IOTA_PROTOCOL", "IoTA-JSON")
-        data['quantumleap']['host'] = os.getenv("QUANTUM_LEAP_HOST",
-                                          "http://localhost")
-        data['quantumleap']['port'] = os.getenv("IOTA_PORT", "8668/")
+        
+        data['iota_json']={}
+        data['iota_json']['host'] = os.getenv("IOTA_JSON_HOST", "http://localhost")
+        data['iota_json']['port'] = os.getenv("IOTA_JSON_PORT", "4041")
+        data['iota_json']['protocol'] = os.getenv("IOTA_JSON_PROTOCOL", "IoTA-JSON")
+        
+        data['iota_ul']={}
+        data['iota_ul']['host'] = os.getenv("IOTA_UL_HOST", "http://localhost")
+        data['iota_ul']['port'] = os.getenv("IOTA_UL_PORT", "4041")
+        data['iota_ul']['protocol'] = os.getenv("IOTA_UL_PROTOCOL", "IoTA-UL")
+        
+        data['quantum_leap']={}
+        data['quantum_leap']['host'] = os.getenv("QUANTUM_LEAP_HOST", "http://localhost")
+        data['quantum_leap']['port'] = os.getenv("QUANTUM_LEAP_PORT", "8668")
+        
+        data['cratedb']={}
+        data['cratedb']['host'] = os.getenv("CRATEDB_HOST", "http://localhost")
+        data['cratedb']['port'] = os.getenv("CRATEDB_PORT", "4200")
+        
+        data['fiware']={}
+        data['fiware']['service'] = os.getenv("FIWARE_SERVICE", "service1")
+        data['fiware']['service_path'] = os.getenv("FIWARE_SERVICE_PATH", "/")
         return data
+
 
     def update_config_param(self, data: dict):
         """
@@ -106,6 +125,7 @@ class Config:
             print("[ERROR]: Failed to set config parameters!")
             pass
         return True'''
+        
 #TODO: move to single serrvices
     def test_services(self, config: dict):
         """This function checks the configuration and tests connections to

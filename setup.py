@@ -7,5 +7,5 @@ setup(
     author='RWTH Aachen University',
     author_email='tstorek@eonerc.rwth-aachen.de',
     packages=['filip'],
-    install_requires=['requests']
+    install_requires=['requests', 'fuzzywuzzy', 'fuzzywuzzy[speedup]']
 )
