@@ -418,7 +418,7 @@ class Agent:
         print(payload)
         response = requests.request("POST", url, data=payload,
                                     headers=headers)
-        if response.status_code != 201:
+        if response.status_code not in [201, 200, 204]:
             print("[WARN] Unable to register default configuration for "
                   "service \"{}\", path \"{}\": \"{}\" {}".format(
                 device_group.get_header()['fiware-service'],
@@ -439,9 +439,12 @@ class Agent:
         response = requests.request("PUT", url,
                                     data=payload, headers=headers,
                                     params=querystring)
-        if response.status_code==204:
+        if response.status_code not in [201, 200, 204]:
+            print("[WARN]: Unable to update device group:\n")
+            print(response.text)
+            print("payload")
+        else:
             print("[INFO]: Device group successfully updated!")
-        print(response.text)
         # filip.orion.post(url, head, AUTH, json_dict)
 
     def post_device(self, device_group, device):
@@ -450,10 +453,14 @@ class Agent:
         payload={}
         payload['devices'] = [json.loads(device.get_json())]
         payload = json.dumps(payload, indent=4)
-        print(payload)
         response = requests.request("POST", url, data=payload,
                                     headers=headers)
-        print(response.text)
+        if response.status_code != 201:
+            print("[WARN]: Unable to post device:\n")
+            print(response.text)
+            print("payload")
+        else:
+            print("[INFO]: Device successfully posted!")
 
     def delete_device(self, device_group, device):
         # TODO: Check if
@@ -479,10 +486,12 @@ class Agent:
         headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header()}
         response = requests.request("PUT", url, data=payload,
                                     headers=headers)
-        if response.status_code == 204:
-            print("[INFO]: Device successfully updated!")
-        else:
+        if response.status_code not in [201, 200, 204]:
+            print("[WARN]: Unable to update device:\n")
             print(response.text)
+            print("payload")
+        else:
+            print("[INFO]: Device successfully updated!")
 
 
 ### END of valid Code################

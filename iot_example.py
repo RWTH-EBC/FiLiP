@@ -15,7 +15,7 @@ if __name__ == "__main__":
     ORION_CB = orion.Orion(CONFIG)
     IOTA_JSON = iot.Agent("iota_json", CONFIG)
     IOTA_UL = iot.Agent("iota_ul", CONFIG)
-    fiware_service = orion.FiwareService("test_service", "/iot_ul")
+    fiware_service = orion.FiwareService("test_service2", "/iot_ul")
     ORION_CB.set_service(fiware_service)
     res=fiware_service.get_header()
 
@@ -48,9 +48,10 @@ if __name__ == "__main__":
     #device_ul.delete_attribute("pressure", "active")
 
 
-    device_json = iot.Device('urn:Room:002:sensor02','urn:Room:002', "Thing",
-                           transport="MQTT", protocol="IoTA-JSON",
-                           timezone="Europe/Berlin")
+    device_json = iot.Device('urn:Room:002:sensor02','urn:Room:002',
+                             "Thing", transport="MQTT",
+                             protocol="IoTA-JSON",
+                             timezone="Europe/Berlin")
     
     print(device_ul.get_json())
     IOTA_JSON.post_group(device_group_json)
