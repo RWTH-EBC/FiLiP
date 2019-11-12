@@ -3,16 +3,11 @@
     "host":"http://localhost" ,
     "port":"1026"
   },  
-  "iota_json": {
+  "iota": {
     "host":"http://localhost" ,
     "port": "4041",
-    "protocol": "IoTA-JSON"
-  },  
-  "iota_ul": {
-    "host":"http://localhost" ,
-    "port": "4061",
     "protocol": "IoTA-UL"
-  },  
+  },   
   "quantum_leap": {
     "host":"http://localhost",
     "port":"8668"
