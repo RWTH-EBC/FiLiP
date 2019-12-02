@@ -1,5 +1,28 @@
+bin
+.metadata
 *.pyc
 __pycache__
 /.idea
 *.json
 *.ini
+.project
+.pydevproject
+
+# pip install #
+#####################
+*.egg-info/
+*.egg/
+*.eggs
+dist
+*.pypirc
+build
+
+# PyCharm #
+#####################
+.idea
+.cache
+venv
+
+# Unittest #
+#####################
+.pytest_cache

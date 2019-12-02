@@ -1,8 +1,4 @@
-import os
-import csv
 import filip.iot as iot
-import json
-import filip
 import filip.orion as orion
 import filip.config as config
 
@@ -19,11 +15,11 @@ if __name__ == "__main__":
     ORION_CB.set_service(fiware_service)
     res=fiware_service.get_header()
 
-    device_group_json = filip.iot.DeviceGroup(fiware_service,
+    device_group_json = iot.DeviceGroup(fiware_service,
                                          "http://orion:1026",
                                          iot_agent="iota_ul", apikey="12345")
 
-    device_group = filip.iot.DeviceGroup(fiware_service,
+    device_group = iot.DeviceGroup(fiware_service,
                                          "http://orion:1026",
                                          iot_agent="iota_ul",
                                          apikey="12345test")
@@ -33,17 +29,14 @@ if __name__ == "__main__":
                            "Thing",
                            transport="MQTT", protocol="PDI-IoTA-UltraLight",
                            timezone="Europe/Berlin")
-    attr1 = iot.Attribute("temperature", attr_type="active",
+
+    device_ul.add_attribute("temperature", attr_type="active",
                           value_type="Number", object_id="t")
-    attr2 = iot.Attribute("pressure", attr_type="active",
+    device_ul.add_attribute("pressure", attr_type="active",
                           value_type="Number", object_id="p")
-    attr3 = iot.Attribute("nice_name", attr_type="static",
+    device_ul.add_attribute("nice_name", attr_type="static",
                           value_type="String", object_id="name",
                           attr_value="beautiful attribute!")
-    print(attr1.get_json)
-    device_ul.add_attribute(attr1)
-    device_ul.add_attribute(attr2)
-    device_ul.add_attribute(attr3)
 
     #device_ul.delete_attribute("pressure", "active")
 

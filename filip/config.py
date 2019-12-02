@@ -1,11 +1,7 @@
 import os
-import string
-import random
-import requests
 import json
 import errno
-import test
-import pprint
+
 
 class Config:
     def __init__(self, path = 'config.json'):
@@ -20,9 +16,10 @@ class Config:
         self.path = os.getenv("CONFIG_PATH", path)
         self.data = None
         if eval(self.file):
-#            print("[INFO] CONFIG_PATH variable is updated to: " + self.path)
+            print("[INFO] CONFIG_PATH variable is updated to: " + self.path)
             self.data = self._read_config_file(self.path)
         else:
+            print("[INFO] Configuration loaded from environment variables")
             self.data = self._read_config_envs()
         if self.data is not None:
             pass
@@ -48,6 +45,8 @@ class Config:
         :return: True if operation works
         :return: False if operation fails
         """
+        #TODO: add use of ini: do strings processing split at last dot (if .json or .ini)
+        #TODO: check if all data is defined
         try:
             with open(path, 'r') as filename:
                 print("[INFO] Reading " + path)
@@ -67,34 +66,31 @@ class Config:
 
     def _read_config_envs(self):
         """
-        :return:
+        reads environment variables for host urls and ports of orion, IoTA,
+        quantumleap, crate. Default URL of Orion is "http://localhost", 
+        the default ULR of IoTA, quantumleap and Crate is the URL of Orion.
         """
         data = {}
         data['orion']={}
         data['orion']['host'] = os.getenv("ORION_HOST", "http://localhost")
         data['orion']['port'] = os.getenv("ORION_PORT", "1026")
         
-        data['iota_json']={}
-        data['iota_json']['host'] = os.getenv("IOTA_JSON_HOST", "http://localhost")
-        data['iota_json']['port'] = os.getenv("IOTA_JSON_PORT", "4041")
-        data['iota_json']['protocol'] = os.getenv("IOTA_JSON_PROTOCOL", "IoTA-JSON")
-        
-        data['iota_ul']={}
-        data['iota_ul']['host'] = os.getenv("IOTA_UL_HOST", "http://localhost")
-        data['iota_ul']['port'] = os.getenv("IOTA_UL_PORT", "4041")
-        data['iota_ul']['protocol'] = os.getenv("IOTA_UL_PROTOCOL", "IoTA-UL")
+        data['iota']={}
+        data['iota']['host'] = os.getenv("IOTA_HOST", data['orion']['host'])
+        data['iota']['port'] = os.getenv("IOTA_PORT", "4041")
+        data['iota']['protocol'] = os.getenv("IOTA_PROTOCOL", "IoTA-UL") #or IoTA-JSON
         
         data['quantum_leap']={}
-        data['quantum_leap']['host'] = os.getenv("QUANTUM_LEAP_HOST", "http://localhost")
-        data['quantum_leap']['port'] = os.getenv("QUANTUM_LEAP_PORT", "8668")
+        data['quantum_leap']['host'] = os.getenv("QUANTUMLEAP_HOST", data['orion']['host'])
+        data['quantum_leap']['port'] = os.getenv("QUANTUMLEAP_PORT", "8668")
         
         data['cratedb']={}
-        data['cratedb']['host'] = os.getenv("CRATEDB_HOST", "http://localhost")
+        data['cratedb']['host'] = os.getenv("CRATEDB_HOST", data['orion']['host'])
         data['cratedb']['port'] = os.getenv("CRATEDB_PORT", "4200")
         
         data['fiware']={}
-        data['fiware']['service'] = os.getenv("FIWARE_SERVICE", "service1")
-        data['fiware']['service_path'] = os.getenv("FIWARE_SERVICE_PATH", "/")
+        data['fiware']['service'] = os.getenv("FIWARE_SERVICE", "dummy_service")
+        data['fiware']['service_path'] = os.getenv("FIWARE_SERVICE_PATH", "/dummy_path")
         return data
 
 
@@ -106,7 +102,7 @@ class Config:
         :return:
         """
         try:
-            self.data =data
+            self.data = data
             print("[INFO]: Configuration parameters updated:")
             print(json.dumps(data, indent=4))
         except Exception:
@@ -126,21 +122,21 @@ class Config:
             pass
         return True'''
         
-#TODO: move to single serrvices
-    def test_services(self, config: dict):
-        """This function checks the configuration and tests connections to
-        necessary server endpoints"""
-        test.test_config('orion', config)
-        test.test_connection('Orion Context Broker', self.data['orion'][
-            'host'] + ':' + str(self.data['orion']['port']) + '/version')
-        test.test_config('iota', config)
-        test.test_connection('IoT Agent JSON', self.data['iota'][
-            'host'] + ':' + str(self.data['iota']['port']) + '/iot/about')
-        test.test_config('quantum_leap', config)
-        test.test_connection('Quantum Leap', self.data['quantum_leap'][
-            'host'] + ':' + str(self.data['quantum_leap']['port']) + \
-        '/v2/version')
-        print("[INFO]: Configuration seems fine!")
+#TODO: move to single services
+#    def test_services(self, config: dict):
+#        """This function checks the configuration and tests connections to
+#        necessary server endpoints"""
+#        test.test_config('orion', config)
+#        test.test_connection('Orion Context Broker', self.data['orion'][
+#            'host'] + ':' + str(self.data['orion']['port']) + '/version')
+#        test.test_config('iota', config)
+#        test.test_connection('IoT Agent JSON', self.data['iota'][
+#            'host'] + ':' + str(self.data['iota']['port']) + '/iot/about')
+#        test.test_config('quantum_leap', config)
+#        test.test_connection('Quantum Leap', self.data['quantum_leap'][
+#            'host'] + ':' + str(self.data['quantum_leap']['port']) + \
+#        '/v2/version')
+#        print("[INFO]: Configuration seems fine!")
 
 
 

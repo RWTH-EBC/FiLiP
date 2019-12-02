@@ -79,32 +79,36 @@ class Device:
         dict['static_attributes'] = self.static_attributes
         return json.dumps(dict, indent=4)
 
-    def add_attribute(self, Attribute):
+    def add_attribute(self, attr_name: str, attr_type: str, value_type: str,
+                 object_id: str=None, attr_value: str=None):
         """
         :param name: The name of the attribute as submitted to the context broker.
         :param type: The type of the attribute as submitted to the context broker.
         :param object_id: The id of the attribute used from the southbound API.
         :param attr_type: One of \"active\" (default), \"lazy\" or \"static\"
         """
+        attribute=Attribute(attr_name, attr_type, value_type,
+                 object_id, attr_value)
+        
         attr = {}
-        if Attribute.object_id:
-            attr["object_id"] = Attribute.object_id
-        if Attribute.attr_value != None and\
-                Attribute.attr_type == "static":
-            attr["value"] = Attribute.attr_value
-        attr["name"] = Attribute.name
-        attr["type"] = Attribute.value_type
+        if attribute.object_id:
+            attr["object_id"] = attribute.object_id
+        if attribute.attr_value != None and\
+                attribute.attr_type == "static":
+            attr["value"] = attribute.attr_value
+        attr["name"] = attribute.name
+        attr["type"] = attribute.value_type
 
 
         # attr["value"] = Attribute.value NOT Supported by agent-lib
-
-        if Attribute.attr_type == "active":
+        #TODO: implement as switch
+        if attribute.attr_type == "active":
             self.attributes.append(attr)
-        elif Attribute.attr_type == "lazy":
+        elif attribute.attr_type == "lazy":
             self.lazy.append(attr)
-        elif Attribute.attr_type == "static":
+        elif attribute.attr_type == "static":
             self.static_attributes.append(attr)
-        elif Attribute.attr_type == "command":
+        elif attribute.attr_type == "command":
             self.commands.append(attr)
         else:
             print("[WARN]: Attribute type unknown: \"{}\"".format(
@@ -227,7 +231,7 @@ class DeviceGroup:
         self.__devices = []
         self.__agent = kwargs.get("iot-agent", self.__agent)
 
-    def add_attribute(self, Attribute):
+    def add_default_attribute(self, Attribute):
         """
         :param name: The name of the attribute as submitted to the context broker.
         :param type: The type of the attribute as submitted to the context broker.
@@ -257,7 +261,7 @@ class DeviceGroup:
             print("[WARN]: Attribute type unknown: \"{}\"".format(
                 attr['type']))
 
-    def delete_attribute(self, attr_name, attr_type):
+    def delete_default_attribute(self, attr_name, attr_type):
         '''
         Removing attribute by name and from the list of attributes in the
         local device group. You need to execute update device in iot agent in
@@ -377,17 +381,19 @@ class Agent:
 # https://fiware-iotagent-json.readthedocs.io/en/latest/usermanual/index.html
     def __init__(self, agent_name: str, config):
         self.name = agent_name
-        self.test_configuration(config)
-        self.host = config.data[self.name]['host']
-        self.port = config.data[self.name]['port']
+        self.test_config(config)
+        self.host = config.data['iota']['host']
+        self.port = config.data['iota']['port']
         self.url = self.host + ":" + self.port
-        self.protocol = config.data[self.name]['protocol']
+        self.protocol = config.data['iota']['protocol']
         #TODO: Figuring our how to register the service and conncet with devices
         self.services = []
 
-    def test_configuration(self, config):
-        if test.test_config(self.name, config.data):
-            test.test_connection(self.name , config.data[self.name]['host']
+    def test_config(self, config):
+        test.test_config(self.name, config.data)
+
+    def test_connection(self, config):
+        test.test_connection(self.name , config.data[self.name]['host']
                                  +":" +config.data[self.name]['port']+
                                  '/iot/about')
 
