@@ -4,6 +4,9 @@ import json
 import pprint
 
 
+import logging
+
+log = logging.getLogger('test')
 
 
 def test_connection(service_name: str, url: str, auth_method: str =None,

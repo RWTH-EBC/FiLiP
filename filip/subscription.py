@@ -1,5 +1,9 @@
 import json 
 from enum import Enum
+import logging
+
+log = logging.getLogger('subscription')
+
 
 class Subject_Entity:
     def __init__(self, _id, _type=None):

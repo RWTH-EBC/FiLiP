@@ -6,6 +6,7 @@ import json
 import string
 import random
 import filip.orion as orion
+import logging
 
 HEADER_ACCEPT_JSON = {'Accept': 'application/json'}
 HEADER_ACCEPT_PLAIN = {'Accept': 'text/plain'}
@@ -14,6 +15,9 @@ HEADER_CONTENT_PLAIN = {'Content-Type': 'text/plain'}
 PROTOCOLS = ['IoTA-JSON','IoTA-UL']
 
 AUTH = ('user', 'pass')
+
+log = logging.getLogger('iot')
+
 
 class Attribute: # DeviceAttribute
     def __init__(self, name: str, attr_type, value_type, object_id: str=None):

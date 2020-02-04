@@ -7,8 +7,11 @@ import filip.orion as orion
 import filip.config as config
 
 
-
 if __name__ == "__main__":
+    # setup logging
+    # before the first initalization the log_config.yaml.example file needs to be modified
+
+    config.setup_logging()
 
     # Read and check configuration
     CONFIG = config.Config("config.json")

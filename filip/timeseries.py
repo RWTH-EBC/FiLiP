@@ -2,6 +2,10 @@ import filip.subscription as sub
 import filip.orion as orion
 import filip.cb_request as cb
 
+import logging
+
+log = logging.getLogger('timeseries')
+
 
 class QuantumLeap():
     """

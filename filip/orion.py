@@ -1,5 +1,8 @@
 import json 
 import filip.cb_request as cb
+import logging
+
+log = logging.getLogger('orion')
 
 class Attribute:
     """

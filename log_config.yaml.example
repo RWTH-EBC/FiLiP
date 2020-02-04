@@ -16,7 +16,7 @@ handlers: # defining different handlers, that enable file setting, or level sett
 
   info_file_handler:
     class: logging.handlers.RotatingFileHandler # enables roll over of files, when the current log file exceeds the maxbytes
-    level: INFO
+    level: INFO # which level is the respective level for the file handler, in this case for example only logging messages of the level info are written
     formatter: standard
     filename: info.log # sets the path for the respective log file
     maxBytes: 10485760 # sets the maximum log file size to 10 mb
@@ -43,21 +43,34 @@ handlers: # defining different handlers, that enable file setting, or level sett
 
 loggers: # enables the previously configuration of different loggers, that differ from the root logger
   iot:
-    level: DEBUG
-    handlers: [console]
-    propagate: no
+    level: DEBUG # sets the level for the respective logger
+    handlers: [console, info_file_handler, error_file_handler, debug_file_handler] # sets the handlers
+    propagate: no # set whether logged events are passed to higher loggers
 
   orion:
     level: DEBUG
-    handlers: [error_file_handler]
+    handlers: [console, info_file_handler, error_file_handler, debug_file_handler]
     propagate: no
 
-  filip.orion_example:
+  cb_request:
     level: DEBUG
-    handlers: [console]
+    handlers: [console, info_file_handler, error_file_handler, debug_file_handler]
     propagate: no
+
+  subscription:
+    level: DEBUG
+    handlers: [console, info_file_handler, error_file_handler, debug_file_handler]
+    propagate: no
+
+  timeseries:
+    level: DEBUG
+    handlers: [console, info_file_handler, error_file_handler, debug_file_handler]
+    propagate: no
+
+
+
 
 
 root: # defining a basic root logger, that is the default logger
-  level: DEBUG
-  handlers: [console, info_file_handler, error_file_handler, debug_file_handler]
+  level: DEBUG # set the level for the root logger
+  handlers: [console, info_file_handler, error_file_handler, debug_file_handler] # set handlers for the default logger
