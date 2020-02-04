@@ -8,6 +8,11 @@ import random
 import filip.orion as orion
 import filip.request_utils as requtils
 
+import logging
+
+log = logging.getLogger('iot')
+
+
 PROTOCOLS = ['IoTA-JSON','IoTA-UL']
 
 

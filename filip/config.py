@@ -1,6 +1,28 @@
 import os
 import json
 import errno
+import logging
+import logging.config
+import yaml
+import json
+
+def setup_logging(path_to_config: str ='/Users/Felix/PycharmProjects/Logger/filip/log_config.yaml.example',
+                  default_level=logging.INFO):
+    """
+    Function to setup the logging configuration from a file
+    var: path_to_config: a file configuring the logging setup, either a JSON or a YAML
+    var: default_level: if no valid config file is present, this sets the default logging level
+    """
+    if os.path.exists(path_to_config):
+        file_extension = (path_to_config.split('.')[-1]).lower()
+        with open(path_to_config, 'rt') as f:
+            if file_extension in ['yaml', 'yml']:
+                cfg = yaml.load(f, Loader=yaml.Loader)
+            elif file_extension == 'json':
+                cfg = json.load(f)
+        logging.config.dictConfig(cfg)
+    else:
+        logging.basicConfig(level=default_level)
 
 
 class Config:

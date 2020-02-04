@@ -2,6 +2,11 @@ import json
 import requests
 import filip.request_utils as requtils
 
+import logging
+
+log = logging.getLogger('orion')
+
+
 class Attribute:
     """
     Describes the attribute of an entity.
