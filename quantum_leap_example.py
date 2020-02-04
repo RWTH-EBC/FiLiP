@@ -31,7 +31,8 @@ if __name__=="__main__":
     expires = datetime.datetime(2019, 12, 24, 18).isoformat()
     notify_url = "http://quantumleap:8668/v2/notify"
     subscription = quantum.create_subscription_object(oak, notify_url,
-                                throttling=throttling, expires=expires)
+                                throttling=throttling, expires=expires,
+                                id_pattern="[*44]")
 
     # add metadata to include the modification time of the attributes
     # in the notification
@@ -47,7 +48,9 @@ if __name__=="__main__":
 
     print("updating entity attributes..")
     for i in range(0,10):
-        ORION_CB.update_attribute(oak.id, "height", (i*3))
+        value = i*3
+        print("new 'height' value: " + str(value))
+        ORION_CB.update_attribute(oak.id, "height", value)
         time.sleep(1)
 
 #    ORION_CB.update_attribute(oak.id, "leaves", "brown")

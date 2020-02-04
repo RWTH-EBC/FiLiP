@@ -5,19 +5,36 @@ import logging
 log = logging.getLogger('subscription')
 
 
+"""Implementation of subscriptions according to NGSIv2 specification
+    Further information:
+    http://telefonicaid.github.io/fiware-orion/api/v2/stable/
+    https://fiware-orion.readthedocs.io/en/master/user/ngsiv2_implementation_notes/index.html"""
+
+
 class Subject_Entity:
-    def __init__(self, _id, _type=None):
+    def __init__(self, id_pattern, type_pattern=None, use_id_pattern=False, use_type_pattern=False):
         """
-        :param id: id XOR idPattern, required
-        :param _type: type OR typePattern; if omitted: any entity type
+        :param id_pattern: id XOR idPattern, required
+        :param type_pattern: type XOR typePattern; if omitted: any entity type
+        :param use_id_pattern: use idPattern instead of id
+        :param use_type_pattern: use typePattern instead of type
         """
-        self.id = _id
-        self.type = _type
+        self.id = id_pattern
+        self.type = type_pattern
+        self.use_id_pattern = use_id_pattern
+        self.use_type_pattern = use_type_pattern
     
     def get_json_dict(self):
-        json_dict = {"id": "{}".format(self.id)}
+        json_dict = {}
+        if self.use_id_pattern:
+            json_dict["idPattern"] = self.id
+        else:
+            json_dict["id"] = self.id
         if self.type is not None:
-            json_dict["type"] = self.type
+            if self.use_type_pattern:
+                json_dict["typePattern"] = self.type
+            else:
+                json_dict["type"] = self.type
         return json_dict
 
 class Subject_Expression:
@@ -179,9 +196,7 @@ class Notification:
 
 class Subscription:
     """
-    Orion Context Broker Subscription according to NGSI v2 specification.
-    Further information:
-    http://telefonicaid.github.io/fiware-orion/api/v2/stable/
+    Main class as container class for different subattributes of subscription payload
     """
     def __init__(self, subject, notification, description=None, expires=None,
                                                             throttling=None):
