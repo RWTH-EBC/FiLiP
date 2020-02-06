@@ -3,13 +3,20 @@ import filip.timeseries as ts
 import time, datetime
 
 def create_entity(orion_cb):
-    attr1 = orion.Attribute('height', 10, 'Integer')
-    attr2 = orion.Attribute('leaves', 'green', 'String')
-    attr3 = orion.Attribute('age', 7.5, 'Float')
-    oak = orion.Entity('Oak_Nr_44', 'Tree', [attr1, attr2, attr3])
+    oak = {"id": "Oak_nr_44",
+           "type": "Tree",
+           "height" : {"value" : 11,
+                       "type" : "Integer" },
+           "age" : {"value": 7.5,
+                    "type": "Float"},
+           "leaves" : {"value": "green",
+                       "type": "String"},
 
-    orion_cb.post_entity(oak)
-    return oak
+            }
+    oak_entity = orion.Entity(oak)
+
+    orion_cb.post_json(oak_entity.get_json())
+    return oak_entity
 
 if __name__=="__main__":
     # setup logging
