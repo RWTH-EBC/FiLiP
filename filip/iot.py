@@ -135,6 +135,41 @@ class Device:
             print("[WARN]: Attribute type unknown: \"{}\"".format(attr_type))
 
 
+    def add_attribute_json(self, attribute:dict):
+        """
+        :param attribute: {
+            "name": "Temp_Sensor",
+            "value_type": "Number",
+            "attr_type": "Static",
+            "attr_value": "12"}
+
+
+        :param name: The name of the attribute as submitted to the context broker.
+        :param type: The type of the attribute as submitted to the context broker.
+        :param object_id: The id of the attribute used from the southbound API.
+        :param attr_type: One of \"active\" (default), \"lazy\" or \"static\"
+        """
+
+
+        attr_type = attribute["attr_type"]
+        if "attr_value" in attribute:
+            if attribute["attr_type"] != "static":# & attribute["attr_value"] != None:
+                print('[WARNING] Setting attribute value only allowed for \
+                        static attributes! Value will be ignored!')
+                del attribute["attr_value"]
+
+        attr = {"name": attribute["name"],
+                "type": attribute["value_type"],
+                "object_id": attribute["object_id"]}
+        # attr["value"] = Attribute.value NOT Supported by agent-lib
+        switch_dict = {"active": self.add_active,
+                "lazy": self.add_lazy,
+                "static":  self.add_static,
+                "command": self.add_command
+                }.get(attr_type, "not_ok")(attr)
+        if switch_dict == "not_ok":
+            print("[WARN]: Attribute type unknown: \"{}\"".format(attr_type))
+
 
     def delete_attribute(self, attr_name, attr_type):
         '''

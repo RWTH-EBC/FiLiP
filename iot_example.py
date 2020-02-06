@@ -2,6 +2,10 @@ import filip.iot as iot
 import filip.orion as orion
 import filip.config as config
 
+# ToDo: Rewrite Example, so it matches the orion Example
+# ToDo: Change Data Model
+
+
 
 if __name__ == "__main__":
     # setup logging
@@ -20,12 +24,12 @@ if __name__ == "__main__":
 
     device_group_json = iot.DeviceGroup(fiware_service,
                                          "http://orion:1026",
-                                         iot_agent="iota_ul", apikey="12345")
+                                         iot_agent="iota_json", apikey="12345")
 
     device_group = iot.DeviceGroup(fiware_service,
-                                         "http://orion:1026",
-                                         iot_agent="iota_ul",
-                                         apikey="12345test")
+                                    "http://orion:1026",
+                                    iot_agent="iota_ul",
+                                    apikey="12345test")
     device_group.test_apikey()
 
     device_ul = iot.Device('urn:Room:002:sensor01','urn:Room:002',
@@ -33,13 +37,33 @@ if __name__ == "__main__":
                            transport="MQTT", protocol="PDI-IoTA-UltraLight",
                            timezone="Europe/Berlin")
 
+    '''
+
     device_ul.add_attribute("temperature", attr_type="active",
-                          value_type="Number", object_id="t")
+                            value_type="Number", object_id="t")
+
+    
+    '''
+    temp_attr = {"name": "temperature",
+            "value_type": "Number",
+            "attr_type": "active",
+            "attr_value": "12",
+            "object_id": "t"}
+
+
+
+    device_ul.add_attribute_json(temp_attr)
+
+
+
     device_ul.add_attribute("pressure", attr_type="active",
-                          value_type="Number", object_id="p")
+                            value_type="Number", object_id="p")
+
+
     device_ul.add_attribute("nice_name", attr_type="static",
-                          value_type="String", object_id="name",
-                          attr_value="beautiful attribute!")
+                            value_type="String", object_id="name",
+                            attr_value="beautiful attribute!")
+
 
     #device_ul.delete_attribute("pressure", "active")
 
