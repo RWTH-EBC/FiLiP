@@ -9,6 +9,7 @@ __pycache__
 .project
 .pydevproject
 *.yml
+*.yaml
 
 # pip install #
 #####################
