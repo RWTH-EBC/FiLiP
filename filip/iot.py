@@ -282,6 +282,22 @@ class DeviceGroup:
         self.__devices = []
         self.__agent = kwargs.get("iot-agent", self.__agent)
 
+    def add_lazy(self, attribute):
+        self.__lazy.append(attribute)
+
+    def add_active(self, attribute):
+        self.__attributes.append(attribute)
+
+    def add_static(self, attribute):
+        self.__static_attributes.append(attribute)
+
+    def add_command(self, attribute):
+        self.__commands.append(attribute)
+
+    def add_internal(self, attribute):
+        self.__internal_attributes.append(attribute)
+
+
     def add_default_attribute(self, Attribute):
         """
         :param name: The name of the attribute as submitted to the context broker.
@@ -298,19 +314,18 @@ class DeviceGroup:
         attr["name"] = Attribute.name
         attr["type"] = Attribute.value_type
 
-        if Attribute.attr_type == "active":
-            self.__attributes.append(attr)
-        elif Attribute.attr_type == "lazy":
-            self.__lazy.append(attr)
-        elif Attribute.attr_type == "static":
-            self.__static_attributes.append(attr)
-        elif Attribute.attr_type == "internal":
-            self.__internal_attributes.append(attr)
-        elif Attribute.attr_type == "command":
-            self.__commands.append(attr)
-        else:
-            print("[WARN]: Attribute type unknown: \"{}\"".format(
-                attr['type']))
+        attr_type = Attribute.attr_type
+
+        switch_dict = {"active": self.add_active,
+                        "lazy": self.add_lazy,
+                        "static":  self.add_static,
+                        "command": self.add_command,
+                        "internal": self.add_internal
+                       }.get(attr_type, "not_ok")(attr)
+        if switch_dict == "not_ok":
+            print("[WARN]: Attribute type unknown: \"{}\"".format(attr_type))
+
+
 
     def delete_default_attribute(self, attr_name, attr_type):
         '''
