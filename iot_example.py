@@ -17,7 +17,8 @@ if __name__ == "__main__":
     CONFIG = config.Config("config.json")
     ORION_CB = orion.Orion(CONFIG)
     IOTA_JSON = iot.Agent("iota_json", CONFIG)
-    IOTA_UL = iot.Agent("iota_ul", CONFIG)
+
+    # set the service path
     fiware_service = orion.FiwareService("test_service2", "/iot_ul")
     ORION_CB.set_service(fiware_service)
     res=fiware_service.get_header()

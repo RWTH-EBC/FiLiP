@@ -476,7 +476,6 @@ class Agent:
         payload={}
         payload['services'] = [json.loads(device_group.get_json())]
         payload = json.dumps(payload, indent=4)
-        print(payload)
         response = requests.request("POST", url, data=payload,
                                     headers=headers)
         if response.status_code not in [201, 200, 204]:
