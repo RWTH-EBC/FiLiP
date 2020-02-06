@@ -10,6 +10,7 @@ import filip.request_utils as requtils
 
 PROTOCOLS = ['IoTA-JSON','IoTA-UL']
 
+# ToDo: get rid of Attribute Class
 
 class Attribute: # DeviceAttribute
     def __init__(self, name: str, attr_type: str, value_type: str,
@@ -79,6 +80,20 @@ class Device:
         dict['static_attributes'] = self.static_attributes
         return json.dumps(dict, indent=4)
 
+    def add_lazy(self, attribute):
+        self.lazy.append(attribute)
+
+    def add_active(self, attribute):
+        self.attributes.append(attribute)
+
+    def add_static(self, attribute):
+        self.static_attributes.append(attribute)
+
+    def add_command(self, attribute):
+        self.commands.append(attribute)
+
+
+
     def add_attribute(self, attr_name: str, attr_type: str, value_type: str,
                  object_id: str=None, attr_value: str=None):
         """
@@ -100,19 +115,16 @@ class Device:
         attr["type"] = attribute.value_type
 
 
+
         # attr["value"] = Attribute.value NOT Supported by agent-lib
-        #TODO: implement as switch
-        if attribute.attr_type == "active":
-            self.attributes.append(attr)
-        elif attribute.attr_type == "lazy":
-            self.lazy.append(attr)
-        elif attribute.attr_type == "static":
-            self.static_attributes.append(attr)
-        elif attribute.attr_type == "command":
-            self.commands.append(attr)
-        else:
-            print("[WARN]: Attribute type unknown: \"{}\"".format(
-                attr['type']))
+        switch_dict = {"active": self.add_active,
+                "lazy": self.add_lazy,
+                "static":  self.add_static,
+                "command": self.add_command
+                }.get(attr_type, "not_ok")(attr)
+        if switch_dict == "not_ok":
+            print("[WARN]: Attribute type unknown: \"{}\"".format(attr_type))
+
 
 
     def delete_attribute(self, attr_name, attr_type):
