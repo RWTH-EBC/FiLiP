@@ -385,7 +385,6 @@ class DeviceGroup:
         dict['commands'] = self.__commands
         dict['static_attributes'] = self.__static_attributes
         dict['internal_attributes'] = self.__internal_attributes
-        print(json.dumps(dict, indent=4))
         return json.dumps(dict, indent=4)
 
     def generate_apikey(self, length: int = 10):
@@ -473,7 +472,6 @@ class Agent:
         payload={}
         payload['services'] = [json.loads(device_group.get_json())]
         payload = json.dumps(payload, indent=4)
-        print(payload)
         response = requests.request("POST", url, data=payload,
                                     headers=headers)
         if response.status_code not in [201, 200, 204]:
@@ -512,7 +510,6 @@ class Agent:
         payload={}
         payload['devices'] = [json.loads(device.get_json())]
         payload = json.dumps(payload, indent=4)
-        print(payload, 'this is the payload')
         response = requests.request("POST", url, data=payload,
                                     headers=headers)
         if response.status_code != 201:
