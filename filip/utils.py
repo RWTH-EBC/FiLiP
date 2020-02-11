@@ -81,14 +81,13 @@ def timeseries_to_pandas(ts_dict:dict, to_datetime:bool=False, datetime_format:s
    :param datetime_format: the datetime format which is recived from Quantumleap "%Y-%m-%dT%H:%M:%S.%f"
    :return: a pandas dataframe object, containting one timestamp column and minimum one attribute column
    """
-
-    list_of_dataframes = []
-    column_names = [key for key, value in ts_dict.items()]
-    for attr in column_names:
-        dataframe = pd.DataFrame(ts_dict[attr].items(), columns=["timestamp", attr])
-        list_of_dataframes.append(dataframe)
-    df_all = pd.concat(list_of_dataframes, ignore_index = True)
-    df_all.sort_values(by='timestamp', inplace = True)
-    if to_datetime==True:
-        pd.to_datetime(df_all['timestamp'], format=datetime_format)
-    return df_all
+   list_of_dataframes = []
+   column_names = [key for key, value in ts_dict.items()]
+   for attr in column_names:
+       dataframe = pd.DataFrame(ts_dict[attr].items(), columns=["timestamp", attr])
+       list_of_dataframes.append(dataframe)
+   df_all = pd.concat(list_of_dataframes, ignore_index = True)
+   df_all.sort_values(by='timestamp', inplace = True)
+   if to_datetime==True:
+       pd.to_datetime(df_all['timestamp'], format=datetime_format)
+   return df_all
