@@ -150,15 +150,16 @@ class QuantumLeap():
         """
 
         :param entity_name: Name of the entity where the timeseries data should be retrieved
-        :param attr_name: Name of the attribute where the timeseries data should be retrieved
+        :param attr_name: Name of the attribute where the timeseries data should be retrieved, if none given, all attribute are retrieved
         :param valuesonly: Return has values only
         :param limit: maximum number of values that should be retrieved
         :return: A dictionary, where the key is the time and the value the respective value e.g. '2020-02-11T13:45:23.000': 6
         """
-        url = self.url +"/entities/"+ entity_name + '/attrs'
+        url = self.url +"/entities/"+ entity_name
         headers = self.get_header(requtils.HEADER_CONTENT_PLAIN)
+        res ={}
         if attr_name != None:
-            url += '/' + attr_name
+            url += '/attrs/' + attr_name
         if valuesonly:
             url += '/value'
         url += '?limit=' + limit
@@ -170,7 +171,7 @@ class QuantumLeap():
             return ""
         else:
             response_json = json.loads(response.text)
-            res = dict(zip(response_json["index"], response_json["values"]))
+            res[attr_name] = dict(zip(response_json["index"], response_json["values"]))
             return res
 
 

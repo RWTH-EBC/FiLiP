@@ -1,4 +1,4 @@
-from filip import orion, config, subscription as sub
+from filip import orion, config, subscription as sub, utils 
 import filip.timeseries as ts
 import time, datetime
 
@@ -95,6 +95,8 @@ if __name__=="__main__":
         time.sleep(1)
         print("...")
 
+    dataframe = utils.timeseries_to_pandas(quantum.get_timeseries(oak.id, "height"))
+    print(dataframe)
     ORION_CB.delete(oak.id)
  
     # delete entity in crate DB
@@ -105,4 +107,4 @@ if __name__=="__main__":
     #
     ORION_CB.delete_subscription(sub_id)
 
-    #ORION_CB.delete_all_subscriptions()
+    ORION_CB.delete_all_subscriptions()
