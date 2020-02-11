@@ -42,6 +42,15 @@ if __name__ == "__main__":
 
     device_ul.add_attribute("temperature", attr_type="active",
                             value_type="Number", object_id="t")
+                            
+                            
+    device_ul.add_attribute("pressure", attr_type="active",
+                            value_type="Number", object_id="p")
+
+
+    device_ul.add_attribute("nice_name", attr_type="static",
+                            value_type="String", object_id="name",
+                            attr_value="beautiful attribute!")
 
     
     '''
@@ -55,18 +64,25 @@ if __name__ == "__main__":
 
     device_ul.add_attribute_json(temp_attr)
 
+    press_attr = {"name": "pressure",
+            "value_type": "Number",
+            "attr_type": "active",
+            "object_id": "p"}
+
+    device_ul.add_attribute_json(press_attr)
 
 
-    device_ul.add_attribute("pressure", attr_type="active",
-                            value_type="Number", object_id="p")
+    name_attr =  {"name": "nice_name",
+                   "value_type": "String",
+                   "attr_type": "static",
+                   "attr_value" : "beautiful attribute!",
+                   "object_id": "name"}
+
+    device_ul.add_attribute_json(name_attr)
 
 
-    device_ul.add_attribute("nice_name", attr_type="static",
-                            value_type="String", object_id="name",
-                            attr_value="beautiful attribute!")
 
-
-    #device_ul.delete_attribute("pressure", "active")
+    device_ul.delete_attribute("pressure", "active")
 
 
     device_json = iot.Device('urn:Room:002:sensor02','urn:Room:002',
@@ -96,3 +112,4 @@ if __name__ == "__main__":
 
     IOTA_UL.delete_device(device_group, device_ul)
     IOTA_UL.delete_group(device_group)
+    
