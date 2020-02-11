@@ -3,22 +3,33 @@ import filip.timeseries as ts
 import time, datetime
 
 def create_entity(orion_cb):
+    """
+    Function creates a test entity and registers it with the context broker 
+    :param orion_cb: A Orion Context Broker Instance
+    :return: An NGSI Entity object
+    """
     oak = {"id": "Oak_nr_44",
            "type": "Tree",
-           "height" : {"value" : 11,
-                       "type" : "Integer" },
-           "age" : {"value": 7.5,
-                    "type": "Float"},
-           "leaves" : {"value": "green",
-                       "type": "String"},
-
-            }
+           "height": {"value" : 11,
+                      "type" : "Integer" },
+           "age": {"value": 7.5,
+                   "type": "Float"},
+           "leaves": {"value": "green",
+                      "type": "String"},
+           }
     oak_entity = orion.Entity(oak)
 
     orion_cb.post_json(oak_entity.get_json())
     return oak_entity
 
+#ToDo implement streamlit
+
+def display():
+    pass
+
+
 if __name__=="__main__":
+
     CONFIG = config.Config()
     ORION_CB = orion.Orion(CONFIG)
 
@@ -29,17 +40,17 @@ if __name__=="__main__":
 #    quantum.fiware_service = None
 
     throttling = 0
-    expires = datetime.datetime(2019, 12, 24, 18).isoformat()
+    expires = datetime.datetime(2020, 12, 24, 18).isoformat()
     notify_url = "http://quantumleap:8668/v2/notify"
     subscription = quantum.create_subscription_object(oak, notify_url,
-                                throttling=throttling, expires=expires,
-                                id_pattern="[*44]")
+                                throttling=throttling, expires=expires,)
 
     # add metadata to include the modification time of the attributes
     # in the notification
     subscription.notification.metadata = ["dateCreated", "dateModified"]
 
     # create subscription in Context Broker
+    print(subscription.get_json())
     sub_id = ORION_CB.create_subscription(subscription.get_json())
     print("subscription created, id is: " + str(sub_id))
     print(ORION_CB.get_subscription(sub_id))
@@ -52,9 +63,10 @@ if __name__=="__main__":
         value = i*3
         print("new 'height' value: " + str(value))
         ORION_CB.update_attribute(oak.id, "height", value)
+        print(ORION_CB.get_entity_keyValues('Oak_nr_44'))
         time.sleep(1)
 
-#    ORION_CB.update_attribute(oak.id, "leaves", "brown")
+    ORION_CB.update_attribute(oak.id, "leaves", "brown")
 
     # query historical data
     valuesonly = bool(True)
@@ -64,6 +76,7 @@ if __name__=="__main__":
     print(quantum.get_version())
     print(quantum.get_entity_data(oak.id))
     print(quantum.get_entity_data(oak.id, "height", params = params))
+    print(quantum.get_timeseries(oak.id, "height"), "this is the timeseries")
     print(quantum.get_entity_data(oak.id, "height", valuesonly))
     print(quantum.get_entity_type_data("Tree", "height"))
     print(quantum.get_entity_type_data("Tree", "height", valuesonly))
@@ -92,6 +105,7 @@ if __name__=="__main__":
 
     # delete subscription, so that the entity is not posted several times
     # by multiple subscriptions
+    #
     ORION_CB.delete_subscription(sub_id)
 
-#    ORION_CB.delete_all_subscriptions()
+    #ORION_CB.delete_all_subscriptions()
