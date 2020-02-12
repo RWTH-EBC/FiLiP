@@ -2,4 +2,7 @@ requests
 fuzzywuzzy
 PyYAML
 pandas
+python-Levenshtein
+streamlit
+
 
