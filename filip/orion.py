@@ -107,13 +107,27 @@ class Orion:
             version = json_obj["orion"]["version"]
             print(version)
 
-    def post_entity(self, entity):
+    def post_entity(self, entity:object,  update:bool=True):
+        """
+        Function registers an Object with the Orion Context Broker, if it allready exists it can be automatically updated
+        if the overwrite bool is True
+        First a post request with the entity is tried, if the response code is 422 the entity is
+        uncrossable, as it already exists there are two options, either overwrite it, if the attribute have changed (e.g. at least one new/
+        new values) (update = True) or leave it the way it is (update=False)
+        :param entity: An entity object
+        :param update: If the response.status_code is 422, whether the old entity should be updated or not
+        :return:
+        """
         url = self.url + '/entities'
         headers=self.get_header(requtils.HEADER_CONTENT_JSON)
         data=entity.get_json()
         response = requests.post(url, headers=headers, data=data)
         ok, retstr = requtils.response_ok(response)
         if (not ok):
+            if (response.status_code == 422) & (update == True):
+                    url += "/" + entity.id + "/attrs"
+                    response = requests.post(url, headers=headers, data=data)
+                    ok, retstr = requtils.response_ok(response)
             print(retstr)
             requtils.pretty_print_request(response.request)
    
@@ -288,6 +302,7 @@ class Orion:
             print(retstr)
 
     def delete(self, entity_id: str, attr: str = None):
+
         url = self.url + '/entities/' + entity_id
         response = requests.delete(url, headers=self.get_header())
         ok, retstr = requtils.response_ok(response)
