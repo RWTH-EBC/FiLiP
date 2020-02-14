@@ -453,7 +453,15 @@ class Agent:
             print("[INFO]: Device group successfully updated!")
         # filip.orion.post(url, head, AUTH, json_dict)
 
-    def post_device(self, device_group, device):
+    def post_device(self, device_group:object, device:object, update:bool=True):
+        """
+        Function registers a device with the iot-Agent to the respective device group.
+        If a device allready exists in can be updated with update = True
+        :param device_group: A device group is a necessary for connecting devices, as it provides a authentication key
+        :param device: The device which provides the measurments / accepts the commands
+        :param update: Whether if the device is already existent it should be updated
+        :return:
+        """
         url = self.url + '/iot/devices'
         headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header()}
         payload={}
@@ -461,7 +469,15 @@ class Agent:
         payload = json.dumps(payload, indent=4)
         response = requests.request("POST", url, data=payload,
                                     headers=headers)
-        if response.status_code != 201:
+
+        print(url, payload, headers)
+        if (response.status_code == 409) & (update== True):
+            device_data = {}
+            device_data["attributes"] = json.loads(device.get_json())["attributes"]
+            device_data = json.dumps(device_data, indent=4)
+            self.update_device(device_group, device, device_data)
+
+        elif response.status_code != 201:
             print("[WARN]: Unable to post device:\n")
             print(response.text)
             print("payload")
