@@ -1,6 +1,8 @@
 import json
 import requests
 import filip.request_utils as requtils
+import re
+
 
 class Attribute:
     """
@@ -232,9 +234,11 @@ class Orion:
         if (not ok):
             print(retstr)
 
-    def create_subscription(self, subscription_body):
+    def create_subscription(self, subscription_body, check_duplicate:bool=True):
         url = self.url + '/subscriptions'
         headers=self.get_header(requtils.HEADER_CONTENT_JSON)
+        print(subscription_body, "This is the subscription body")
+        self.check_duplicate_subscription(subscription_body)
         response = requests.post(url, headers=headers, data=subscription_body)
         if response.headers==None:
             return
@@ -274,6 +278,54 @@ class Orion:
         ok, retstr = requtils.response_ok(response)
         if (not ok):
             print(retstr)
+
+    def check_duplicate_subscription(self, subscription_body, limit:int=20):
+        """
+        Function compares the subject of the subscription body, on whether a subscription
+        already exists for a device / entity.
+        :param subscription_body: the body of the new subscripton
+        :param limit: pagination parameter, to set the number of subscriptions bodies the get request should grab
+        :return: exists, boolean -> True, if such a subscription allready exists
+        """
+        exists = False
+        subscription_subject = json.loads(subscription_body)["subject"]
+        url = self.url + '/subscriptions?limit=' + str(limit)
+        # ToDo Figure out how to only get those subscriptions that match a type
+        #  None of the pagination parameters seems to work, however get without paginations is limited to 20 subs
+        response = requests.get(url, headers=self.get_header())
+        response = json.loads(response.text)
+        for existing_subscription in response:
+            # check whether the exact same subscriptions already exists
+            if existing_subscription["subject"] == subscription_subject:
+                exists = True
+                break
+            else:
+                # iterate over all entities included in the subscription object
+                for entity in subscription_subject["entities"]:
+                    type = entity["type"]
+                    # iterate over all entities included in the exisiting subscriptions
+                    for existing_entity in existing_subscription["subject"]["entities"]:
+                        type_existing = existing_entity["type"]
+                        # check whether the type match
+                        if type_existing == type:
+                            # check if on of the subscritptions is a pattern, or if they both refer to the same id
+                            if ("*" in entity["id"]) or ('*' in existing_entity["id"]) or (entity["id"] == existing_entity["id"]):
+                                # last thing to compare is the attributes
+                                # Assumption -> position is the same as the entities list
+                                # i == j
+                                i = subscription_subject["entities"].index(entity)
+                                j = existing_subscription["entities"].index(existing_entity)
+                                if subscription_subject["condition"]["attrs"][i] == existing_subscription["condition"]["attrs"][j]:
+                                    exists = True
+                                else:
+                                    continue
+                            else:
+                                continue
+                        else:
+                            continue
+        return exists
+
+
 
     def delete_all_subscriptions(self):
         subscriptions = self.get_subscription_list()
