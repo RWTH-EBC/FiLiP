@@ -58,6 +58,22 @@ def http_custom_subscription():
     subscription = sub.Subscription(subject, notification, description)
     return subscription.get_json()
 
+def check_duplicate_subscription():
+
+    description = "A second subscription for Room3"
+    subject_entity = sub.Subject_Entity("Room3", "Room")
+    subject_condition = sub.Subject_Condition(["pressure"])
+    subject = sub.Subject([subject_entity], subject_condition)
+
+    http_params = sub.HTTP_Params("http://localhost:1028/accumulate")
+    http_params.headers =  {"Content-Type": "text/plain", "X-Auth-Token": "n5u43SunZCGX0AbnD9e8R537eDslLM"}
+    http_params.method = "PUT"
+    http_params.qs = {"type": "${type}", "id": "${id}"}
+    http_params.payload = "The temperature is ${temperature} degrees"
+    notification = sub.Notification(http_params)
+
+    subscription = sub.Subscription(subject, notification, description)
+    return subscription.get_json()
 
 if __name__=="__main__":
     # setup logging
@@ -72,19 +88,41 @@ if __name__=="__main__":
     body = API_Walkthrough_subscription()
     print("---------------------")
     print(body)
-    sub_id = ORION_CB.create_subscription(body)
-    print("subscription id = " + str(sub_id))
+    sub_id1 = ORION_CB.create_subscription(body)
+    print("subscription id = " + str(sub_id1))
 
     print("---------------------")
     body = Step_By_Step_reducing_scope_with_expression()
     print(body)
-    sub_id = ORION_CB.create_subscription(body)
-    print("subscription id = " + str(sub_id))
+    sub_id2 = ORION_CB.create_subscription(body)
+    print("subscription id = " + str(sub_id2))
 
     print("---------------------")
     body = http_custom_subscription()
     print(body)
-    sub_id = ORION_CB.create_subscription(body)
-    print("subscription id = " + str(sub_id))
+    sub_id3 = ORION_CB.create_subscription(body)
+    print("subscription id = " + str(sub_id3))
     print("---------------------")
 
+
+    # checking for duplicate sbuscription
+    duplicate_body = check_duplicate_subscription()
+    exists = ORION_CB.check_duplicate_subscription(subscription_body=duplicate_body)
+    print("The subscription allready exists:", exists)
+
+
+
+
+    print("deleting subscriptions..")
+    time.sleep(1)
+    sub_id = sub_id1
+    ORION_CB.delete_subscription(sub_id)
+    print("deleted subscription " + sub_id)
+    time.sleep(1)
+    sub_id = sub_id2
+    ORION_CB.delete_subscription(sub_id)
+    print("deleted subscription " + sub_id)
+    time.sleep(1)
+    sub_id = sub_id3
+    #ORION_CB.delete_subscription(sub_id)
+    #print("deleted subscription " + sub_id)
