@@ -94,10 +94,9 @@ def test_config(service_name: str, config_data: dict):
                     filip.iot.PROTOCOLS))
 
     except Exception as error:
-        print("[ERROR]: "+ error.args[0])
-        print('[ERROR]: Config test failed!')
+        log.error(error.args[0], " Config test failed!")
 
-    print("[INFO]: Configuration successfully tested!")
+    log.info("Configuration successfully tested!")
     return True
 
 

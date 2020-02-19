@@ -10,7 +10,7 @@ if __name__ == "__main__":
     config.setup_logging()
 
     # Read and check configuration
-    CONFIG = config.Config("config - Kopie.json")
+    CONFIG = config.Config("config.json")
     ORION_CB = orion.Orion(CONFIG)
     IOTA_JSON = iot.Agent("iota_json", CONFIG)
     IOTA_UL = iot.Agent("iota_ul", CONFIG)

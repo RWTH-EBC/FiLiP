@@ -145,8 +145,7 @@ class Orion:
             parameters = {'{}'.format(parameter): '{}'.format(parameter_value)}
             response = requests.get(url, headers=headers, params=parameters)
         else:
-            print ("ERROR getting all entities: both function parameters have \
-                    to be 'not null'")
+            log.error("ERROR getting all entities: both function parameters have to be 'not null'")
         ok, retstr = requtils.response_ok(response)
         if (not ok):
             print(retstr)
