@@ -4,6 +4,8 @@ bin
 __pycache__
 /.idea
 *.json
+*.yml
+*.yaml
 *.ini
 .project
 .pydevproject
