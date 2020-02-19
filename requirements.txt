@@ -1,4 +1,7 @@
-requests
-fuzzywuzzy
-PyYAML
-
+requests==2.22.0
+fuzzywuzzy==0.17.0
+PyYAML==5.1.2
+pandas==0.25.3
+requests==2.22.0
+streamlit==0.55.0
+fuzzywuzzy==0.18.0
