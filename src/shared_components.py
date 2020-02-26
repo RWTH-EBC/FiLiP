@@ -5,8 +5,9 @@ import importlib
 import logging
 import sys
 from typing import Any, List
-
+import inspect
 import streamlit as st
+import json
 
 logging.basicConfig(format="%(asctime)s - %(message)s", level=logging.INFO)
 
@@ -40,6 +41,19 @@ def write_page(page):  # pylint: disable=redefined-outer-name
     page.write()
 
 
+def display_code(func):
+    """Displays the specificied function
+    Our tutorial is structured into a variety of helper functions. These can be displayed applying the display_code function
+    :param func - A Function where the source code should be displayed
+    """
+    fun_code = inspect.getsource(func)
+    st.code(fun_code)
+
+
+def pretty_print_json(data):
+    json_data = json.loads(data)
+    st.json(json_data)
+
 def video_youtube(src: str, width="100%", height=315):
     """An extension of the video widget
     Arguments:
@@ -56,9 +70,7 @@ def video_youtube(src: str, width="100%", height=315):
     )
 
 
-def multiselect(
-    label: str, options: List[Any], default: List[Any], format_func=str
-) -> List[Any]:
+def multiselect(label: str, options: List[Any], default: List[Any], format_func=str) -> List[Any]:
     """multiselect extension that enables default to be a subset list of the list of objects
      - not a list of strings.
      Assumes that options have unique format_func representations
@@ -104,6 +116,21 @@ def write_svg(svg: str):
     b64 = base64.b64encode(svg.encode("utf-8")).decode("utf-8")
     html = r'<img src="data:image/svg+xml;base64,%s"/>' % b64
     st.write(html, unsafe_allow_html=True)
+
+def multiselect(label, options, default, format_func=str):
+    """multiselect extension that enables default to be a subset list of the list of objects
+     - not a list of strings
+
+     Assumes that options have unique format_func representations
+
+     cf. https://github.com/streamlit/streamlit/issues/352
+     """
+    options_ = {format_func(option): option for option in options}
+    default_ = [format_func(option) for option in default]
+    selections = st.multiselect(
+        label, options=list(options_.keys()), default=default_, format_func=format_func
+    )
+    return [options_[format_func(selection)] for selection in selections]
 
 
 def horizontal_ruler(in_sidebar: bool = False):
