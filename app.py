@@ -11,16 +11,14 @@ https://towardsdatascience.com/streamlit-101-an-in-depth-introduction-fc8aad9492
 
 
 import streamlit as st
-
-
-
-from src import shared_components, context_broker_tutorial, plot_timeseries, home
-
+from src import shared_components, plot_timeseries, home, cb_tutorial, ts_tutorial
+#from filip.src import shared_components, context_broker_tutorial, plot_timeseries, home
 
 PAGES = {
     "Home" : home,
     "Plotting" : plot_timeseries,
-    "Context Broker": context_broker_tutorial
+    "Context Broker Tutorial": cb_tutorial,
+    "Quantum Leap Tutorial": ts_tutorial
 }
 
 
