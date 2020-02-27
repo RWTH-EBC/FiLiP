@@ -1,12 +1,46 @@
-import filip.orion as orion
-import filip.config as config
-import filip.subscription as sub
-import filip.utils as utils
-import filip.timeseries as ts
+from filip import orion
+from filip import config
+from filip import subscription as sub
+from filip import utils
+from filip import timeseries as ts
 
 import time, datetime
 import streamlit as st
-import pandas as pd 
+import pandas as pd
+
+def create_cb(path_to_config:str="config.json"):
+    """
+    Function creates an instance of the context broker
+    :param path_to_config: path to a config, describing the ports
+    :return: Instance of the Config-Broker
+    """
+    # Reading the config
+    CONFIG = config.Config(path_to_config)
+
+    # creating an instance of the ORION context broker
+    ORION_CB = orion.Orion(CONFIG)
+
+
+
+    return ORION_CB
+
+def create_ql(path_to_config:str="config.json"):
+    """
+    Function creates an instance of QunatumLeap
+    :param path_to_config: path to a config, describing the ports
+    :return: Instance of QuantumLeap
+    """
+    # Reading the config
+    CONFIG = config.Config(path_to_config)
+
+
+    # create an instance of Quantumleap
+    QUANTUM = ts.QuantumLeap(CONFIG)
+
+
+
+    return QUANTUM
+
 
 def create_entity(orion_cb):
     """
@@ -52,19 +86,41 @@ def create_subscription(orion_cb:object, quantum:object, entity:object,
     sub_id = orion_cb.create_subscription(subscription.get_json())
     return sub_id
 
-def update_attribute(orion_cb:object, entity:object, attribute_name:str):
-    # ToDO: Add attribute change for string attributes
+def update_attribute(orion_cb:object, entity:object, attribute_name:str, value=None):
+
     """
     :param orion_cb: And instance of the orion context broker 
     :param entity:
     :param attribute_name:
     :return:
     """
-    for i in range(0,10):
-            value = i*3
-            print("new 'height' value: " + str(value))
+    colours = ["yellow", "orange", "red", "purple", "brown"]
+    if attribute_name == "height":
+        for i in range(0,10):
+                value = i*3
+                print("new 'height' value: " + str(value))
+                orion_cb.update_attribute(entity.id, attribute_name, value)
+                time.sleep(1)
+
+    elif attribute_name == "age":
+        for i in range(0,10):
+            value = i
+            print("new 'age' value: " + str(value))
             orion_cb.update_attribute(entity.id, attribute_name, value)
             time.sleep(1)
+
+    elif attribute_name == "leaves":
+        for i in range(len(colours)):
+            value = colours[i]
+            print("New 'colour' value: " + str(value))
+            orion_cb.update_attribute(entity.id, attribute_name, value)
+            time.sleep(1)
+
+    else:
+        orion_cb.update_attribute(entity.id, attribute_name, value)
+
+
+
 
 
 def get_timeseries_data_as_df(quantum:object, entity:object, attribute:str=None):
@@ -111,6 +167,8 @@ def create_example_dataframe():
 
 
     return dataframe
+
+
 
 if __name__=="__main__":
 

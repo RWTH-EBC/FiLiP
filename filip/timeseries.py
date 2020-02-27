@@ -1,7 +1,12 @@
-import filip.subscription as sub
-import filip.orion as orion
-import filip.request_utils as requtils
+
+
+from filip import subscription as sub
+from filip import orion as orion
+from filip import request_utils as requtils
+
+
 import requests
+import json
 
 class QuantumLeap():
     """
@@ -32,7 +37,8 @@ class QuantumLeap():
         if id_pattern is not None:
             subject_entity = sub.Subject_Entity(id_pattern, None, True)
         else:
-            subject_entity = sub.Subject_Entity(entity.id, entity.type)
+            entity_type = json.loads(entity.get_json())["type"]
+            subject_entity = sub.Subject_Entity(entity.id, entity_type)
         subject = sub.Subject([subject_entity])
         http_params = sub.HTTP_Params(url)
         notification = sub.Notification(http_params)
@@ -138,4 +144,43 @@ class QuantumLeap():
             return ""
         else:
             return response.text
+
+
+    def get_timeseries(self, entity_name:str = None, attr_name:str = None, valuesonly:bool=True, limit:str = "10000"):
+        """
+
+        :param entity_name: Name of the entity where the timeseries data should be retrieved
+        :param attr_name: Name of the attribute where the timeseries data should be retrieved, if none given, all attribute are retrieved
+        :param valuesonly: Return has values only
+        :param limit: maximum number of values that should be retrieved
+        :return: A dictionary, where the key is the time and the value the respective value e.g. '2020-02-11T13:45:23.000': 6
+        """
+        url = self.url +"/entities/"+ entity_name
+        headers = self.get_header(requtils.HEADER_CONTENT_PLAIN)
+        res ={}
+        if attr_name != None:
+            url += '/attrs/' + attr_name
+        if valuesonly:
+            url += '/value'
+        url += '?limit=' + limit
+        response = requests.get(url, headers=headers)
+        ok, retstr = requtils.response_ok(response)
+        if (not ok):
+            print(retstr)
+            print(url)
+            return ""
+        else:
+            response_json = json.loads(response.text)
+            if attr_name != None:
+                res[attr_name] = dict(zip(response_json["index"], response_json["values"]))
+            else:
+                for attr in response_json["attributes"]:
+                    attr_name = attr["attrName"]
+                    values = attr["values"]
+                    res[attr_name] = dict(zip(response_json["index"], values))
+            return res
+
+
+
+
 

@@ -1,6 +1,6 @@
-import filip.orion as orion
-import filip.config as config
 import sys
+from filip import config, orion
+
 
 
 def create_entities(orion_cb:object):

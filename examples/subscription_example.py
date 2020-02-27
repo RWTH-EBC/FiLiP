@@ -1,6 +1,5 @@
 import filip.subscription as sub
-import filip.config as config
-import filip.orion as orion
+from filip import config, orion
 import datetime
 import json
 import time

@@ -1,5 +1,7 @@
 from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
+import pandas as pd
+from functools import reduce
 
 def create_type(inputstr: str):
     """ 
@@ -70,3 +72,26 @@ def str2fiware(string:str):
     for char, replacement in chars_to_replace.items():
         string = string.replace(char, replacement).strip()
     return string
+
+def timeseries_to_pandas(ts_dict:dict, to_datetime:bool=False, datetime_format:str = "%Y-%m-%dT%H:%M:%S.%f",):
+    """
+
+    :param ts_dict: ts_dict: a dictionary with the following structure : {attr_name_0 : { timestamp_0 : value_0, timestamp_1: value_1 },
+                                                                attr_name_1 : { timestamp_0 : value_0, timestamp_1: value_1 } }
+    :param to_datetime: Whether the "timestamp" column should be converted to a datetime object
+    :param datetime_format: the datetime format which is recived from Quantumleap "%Y-%m-%dT%H:%M:%S.%f"
+    :return: a pandas dataframe object, containting one timestamp column and minimum one attribute column
+            e.g.  timestamp             age     height leaves
+            0  2020-02-12T11:38:28.000  7.5       0  green
+            1  2020-02-12T11:38:29.000  7.5       3  green
+    """
+    list_of_dataframes = []
+    column_names = [key for key, value in ts_dict.items()]
+    for attr in column_names:
+        dataframe = pd.DataFrame(ts_dict[attr].items(), columns=["timestamp", attr])
+        list_of_dataframes.append(dataframe)
+        print(dataframe)
+    df_all = reduce(lambda x, y: pd.merge(x, y, on='timestamp'), list_of_dataframes)
+    if to_datetime==True:
+         pd.to_datetime(df_all['timestamp'], format=datetime_format)
+    return df_all

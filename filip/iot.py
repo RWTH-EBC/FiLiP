@@ -1,12 +1,13 @@
 import requests
 from requests import Response
 
-import filip.test as test
 import json
 import string
 import random
-import filip.orion as orion
-import filip.request_utils as requtils
+from filip import orion
+from filip import request_utils as requtils
+from filip import test
+
 
 PROTOCOLS = ['IoTA-JSON','IoTA-UL']
 
@@ -124,6 +125,7 @@ class Device:
         :param attr_type: Type of the attribute to delete
         :return:
         '''
+        # TODO: check whether the list comprehensions below can be written in a different way
         try:
             if attr_type == "active":
                 self.attributes = [i for i in self.attributes if not (i[
@@ -415,7 +417,7 @@ class Agent:
         else:
             print(response.text)
 
-    def post_group(self, device_group):
+    def post_group(self, device_group:object, update:bool=True):
         url = self.url + '/iot/services'
         headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header()}
         payload={}
@@ -445,6 +447,7 @@ class Agent:
         response = requests.request("PUT", url,
                                     data=payload, headers=headers,
                                     params=querystring)
+        print(url)
         if response.status_code not in [201, 200, 204]:
             print("[WARN]: Unable to update device group:\n")
             print(response.text)
@@ -453,7 +456,7 @@ class Agent:
             print("[INFO]: Device group successfully updated!")
         # filip.orion.post(url, head, AUTH, json_dict)
 
-    def post_device(self, device_group, device):
+    def post_device(self, device_group:object, device:object, update:bool=True):
         url = self.url + '/iot/devices'
         headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header()}
         payload={}
@@ -461,7 +464,15 @@ class Agent:
         payload = json.dumps(payload, indent=4)
         response = requests.request("POST", url, data=payload,
                                     headers=headers)
-        if response.status_code != 201:
+
+        print(url, payload, headers)
+        if (response.status_code == 409) & (update== True):
+            device_data = {}
+            device_data["attributes"] = json.loads(device.get_json())["attributes"]
+            device_data = json.dumps(device_data, indent=4)
+            self.update_device(device_group, device, device_data)
+
+        elif response.status_code != 201:
             print("[WARN]: Unable to post device:\n")
             print(response.text)
             print("payload")
@@ -492,6 +503,8 @@ class Agent:
         headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header()}
         response = requests.request("PUT", url, data=payload,
                                     headers=headers)
+
+        print(url, payload, headers)
         if response.status_code not in [201, 200, 204]:
             print("[WARN]: Unable to update device:\n")
             print(response.text)
