@@ -51,6 +51,11 @@ def display_code(func):
 
 
 def pretty_print_json(data):
+    """
+    Function pretty prints a JSON-
+    :param data - A string, containting data in the dictionary schema
+    :return a streamlit pretty printed json
+    """
     json_data = json.loads(data)
     st.json(json_data)
 
@@ -142,3 +147,12 @@ def horizontal_ruler(in_sidebar: bool = False):
         return st.sidebar.markdown("---")
 
     return st.markdown("---")
+
+
+def timeseries_to_df():
+    """"
+    Helper Function to turn a timeseries into a dataframe.
+    """
+    # ToDo put from TS-tutorial here
+    pass
+

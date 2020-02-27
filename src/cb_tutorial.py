@@ -36,6 +36,7 @@ def write():
         json_data = json.load(f)
     st.json(json_data)
 
+    # Creating the config
 
     CONFIG = config.Config('config.json')
     ORION_CB = orion.Orion(CONFIG)
@@ -49,7 +50,6 @@ def write():
     if create_code:
         shared_components.display_code(orion_example.create_entities)
 
-    shared_components.display_code(orion_example.create_entities)
     st.write("These are the entities:", [entity.id for entity in entities])
 
     st.subheader("Now we can query the entities.")
