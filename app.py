@@ -9,16 +9,18 @@ The plot can then be seen on port: 8501
 https://towardsdatascience.com/streamlit-101-an-in-depth-introduction-fc8aad9492f2
 """
 
-
+from src import shared_components, plot_timeseries, home, cb_tutorial, ts_tutorial, iot_tutorial, sub_tutorial
 import streamlit as st
-from src import shared_components, plot_timeseries, home, cb_tutorial, ts_tutorial
-#from filip.src import shared_components, context_broker_tutorial, plot_timeseries, home
+
 
 PAGES = {
     "Home" : home,
     "Plotting" : plot_timeseries,
     "Context Broker Tutorial": cb_tutorial,
-    "Quantum Leap Tutorial": ts_tutorial
+    "Quantum Leap Tutorial": ts_tutorial,
+    "Subscription Tutorial": sub_tutorial,
+    "IOT Tutorial": iot_tutorial
+
 }
 
 
