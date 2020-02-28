@@ -8,6 +8,11 @@ import random
 import filip.orion as orion
 import filip.request_utils as requtils
 
+import logging
+
+log = logging.getLogger('iot')
+
+
 PROTOCOLS = ['IoTA-JSON','IoTA-UL']
 
 # ToDo: get rid of Attribute Class
@@ -21,8 +26,8 @@ class Attribute: # DeviceAttribute
         self.object_id = object_id
         self.attr_value = attr_value
         if attr_value != None and attr_type != "static":
-            print("[WARN]: Setting attribute value only allowed for "
-                      "static attributes! Value will be ignored!")
+            log.warning("Setting attribute value only allowed for static attributes! Value will be ignored!")
+
             self.attr_value = None
 
     def get_json(self):
@@ -190,12 +195,11 @@ class Device:
                 self.commands = [i for i in self.commands if not (i['name'] ==
                                                                    attr_name)]
             else:
-                print("[WARN]: Attribute type unknown: \"{}\"".format(attr_type))
-            print("[INFO]: Attribute succesfully deleted: \"{}\"".format(
-                attr_name))
+                log.warning("Attribute type unknown: \"{}\"".format(attr_type))
+
+            log.info("[INFO]: Attribute succesfully deleted: \"{}\"".format(attr_name))
         except:
-            print("[WARN]: Attribute could not be deleted: \"{}\"".format(
-                attr_name))
+            log.warning("Attribute could not be deleted: \"{}\"".format(attr_name))
 
 
 
@@ -357,6 +361,7 @@ class DeviceGroup:
                 self.__commands = [i for i in self.__commands if not
                 (i['name'] == attr_name)]
             else:
+
                 print("[WARN]: Attribute type unknown: \"{}\"".format(
                     attr_type))
             print("[INFO]: Attribute succesfully deleted: \"{}\"".format(
@@ -477,7 +482,7 @@ class Agent:
         response = requests.request("DELETE", url,
                                     headers=headers, params=querystring)
         if response.status_code==204:
-            print("[INFO]: Device group successfully deleted!")
+            log.info("Device group successfully deleted!")
         else:
             print(response.text)
 
@@ -490,8 +495,7 @@ class Agent:
         response = requests.request("POST", url, data=payload,
                                     headers=headers)
         if response.status_code not in [201, 200, 204]:
-            print("[WARN] Unable to register default configuration for "
-                  "service \"{}\", path \"{}\": \"{}\" {}".format(
+            log.warning("Unable to register default configuration for service \"{}\", path \"{}\": \"{}\" {}".format(
                 device_group.get_header()['fiware-service'],
                 device_group.get_header()['fiware-servicepath'],
                 "Code:" + str(response.status_code),
@@ -511,12 +515,11 @@ class Agent:
                                     data=payload, headers=headers,
                                     params=querystring)
         if response.status_code not in [201, 200, 204]:
-            print("[WARN]: Unable to update device group:\n")
-            print(response.text)
-            print(payload)
-            print("payload")
+            log.warning("Unable to update device group:", response.text)
+
         else:
-            print("[INFO]: Device group successfully updated!")
+            log.info("Device group sucessfully updated")
+
         # filip.orion.post(url, head, AUTH, json_dict)
 
     def post_device(self, device_group, device):
@@ -528,11 +531,11 @@ class Agent:
         response = requests.request("POST", url, data=payload,
                                     headers=headers)
         if response.status_code != 201:
-            print("[WARN]: Unable to post device:\n")
-            print(response.text)
-            print("payload")
+            log.warning("Unable to post device: ", response.text)
+
         else:
-            print("[INFO]: Device successfully posted!")
+            log.info("Device successfully posted!")
+
 
     def delete_device(self, device_group, device):
         # TODO: Check if
@@ -540,7 +543,7 @@ class Agent:
         headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header()}
         response = requests.request("DELETE", url, headers=headers)
         if response.status_code == 204:
-            print("[INFO]: Device successfully deleted!")
+            log.info("Device successfully deleted!")
         else:
             print(response.text)
 
@@ -559,11 +562,10 @@ class Agent:
         response = requests.request("PUT", url, data=payload,
                                     headers=headers)
         if response.status_code not in [201, 200, 204]:
-            print("[WARN]: Unable to update device:\n")
-            print(response.text)
-            print("payload")
+            log.warning("Unable to update device: ", response.text)
         else:
-            print("[INFO]: Device successfully updated!")
+            log.info("Device successfully updated!")
+
 
 
 ### END of valid Code################
@@ -594,9 +596,8 @@ class Agent:
         if resp.status_code == 200:
             return resp.json()["services"]
         else:
-            print("[WARN] Unable to fetch configuration for service "
-                  "\"{}\", path \"{}\": {}"
-                  .format(service, service_path, resp.text))
+            log.warning("Unable to fetch configuration for service  \"{}\", path \"{}\": {}".format(service, service_path, resp.text))
+
 
 
 

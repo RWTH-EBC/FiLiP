@@ -2,6 +2,22 @@ import json
 import requests
 import filip.request_utils as requtils
 
+import logging
+
+log = logging.getLogger('orion')
+
+
+class Attribute:
+    """
+    Describes the attribute of an entity.
+    """
+    def __init__(self, name, value, attr_type):
+        self.name = name
+        self.value = value
+        self.type = attr_type
+
+    def get_json(self):
+        return {'value': self.value, 'type': '{}'.format(self.type)}
 
 class Entity:
     def __init__(self, entity_dict: dict):
@@ -168,8 +184,7 @@ class Orion:
             parameters = {'{}'.format(parameter): '{}'.format(parameter_value)}
             response = requests.get(url, headers=headers, params=parameters)
         else:
-            print ("ERROR getting all entities: both function parameters have \
-                    to be 'not null'")
+            log.error("ERROR getting all entities: both function parameters have to be 'not null'")
         ok, retstr = requtils.response_ok(response)
         if (not ok):
             print(retstr)

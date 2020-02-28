@@ -109,12 +109,12 @@ def create_example_dataframe():
     return dataframe
 
 if __name__=="__main__":
-    #print(create_example_dataframe())
+    # setup logging
+    # before the first initalization the log_config.yaml.example file needs to be modified
+
+    config.setup_logging()
 
 
-
-
-    # Reading the config
     CONFIG = config.Config()
 
     # creating an instance of the ORION context broker

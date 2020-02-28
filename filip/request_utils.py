@@ -1,4 +1,5 @@
 import requests
+import logging
 
 """
 Helper functions for HTTP requests
@@ -8,6 +9,8 @@ HEADER_ACCEPT_JSON = {'Accept': 'application/json'}
 HEADER_ACCEPT_PLAIN = {'Accept': 'text/plain'}
 HEADER_CONTENT_JSON = {'Content-Type': 'application/json'}
 HEADER_CONTENT_PLAIN = {'Content-Type': 'text/plain'}
+
+log = logging.getLogger('cb_request')
 
 
 

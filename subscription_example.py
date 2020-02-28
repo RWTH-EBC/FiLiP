@@ -3,7 +3,6 @@ import filip.config as config
 import filip.orion as orion
 import datetime
 import json
-import time
 
 AUTH = ('user', 'pass')
 
@@ -61,38 +60,31 @@ def http_custom_subscription():
 
 
 if __name__=="__main__":
-    CONFIG = config.Config("config.json")
+    # setup logging
+    # before the first initalization the log_config.yaml.example file needs to be modified
+
+    config.setup_logging()
+
+
+    CONFIG = config.Config()
     ORION_CB = orion.Orion(CONFIG)
 
     body = API_Walkthrough_subscription()
     print("---------------------")
     print(body)
-    sub_id1 = ORION_CB.create_subscription(body)
-    print("subscription id = " + str(sub_id1))
+    sub_id = ORION_CB.create_subscription(body)
+    print("subscription id = " + str(sub_id))
 
     print("---------------------")
     body = Step_By_Step_reducing_scope_with_expression()
     print(body)
-    sub_id2 = ORION_CB.create_subscription(body)
-    print("subscription id = " + str(sub_id2))
+    sub_id = ORION_CB.create_subscription(body)
+    print("subscription id = " + str(sub_id))
 
     print("---------------------")
     body = http_custom_subscription()
     print(body)
-    sub_id3 = ORION_CB.create_subscription(body)
-    print("subscription id = " + str(sub_id3))
+    sub_id = ORION_CB.create_subscription(body)
+    print("subscription id = " + str(sub_id))
     print("---------------------")
 
-    print("deleting subscriptions..")
-    time.sleep(1)
-    sub_id = sub_id1
-    ORION_CB.delete_subscription(sub_id)
-    print("deleted subscription " + sub_id)
-    time.sleep(1)
-    sub_id = sub_id2
-    ORION_CB.delete_subscription(sub_id)
-    print("deleted subscription " + sub_id)
-    time.sleep(1)
-    sub_id = sub_id3
-    ORION_CB.delete_subscription(sub_id)
-    print("deleted subscription " + sub_id)

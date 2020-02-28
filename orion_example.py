@@ -104,6 +104,12 @@ def query_entity(orion_cb, entity):
 
 
 if __name__=="__main__":
+    # setup logging
+    # before the first initalization the log_config.yaml.example file needs to be modified
+
+    config.setup_logging()
+
+
     CONFIG = config.Config('config.json')
     ORION_CB = orion.Orion(CONFIG) 
     ORION_CB.sanity_check()

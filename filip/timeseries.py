@@ -4,6 +4,10 @@ import filip.request_utils as requtils
 import requests
 import json
 
+import logging
+
+log = logging.getLogger('timeseries')
+
 class QuantumLeap():
     """
     Implements functions to use the FIWAREs QuantumLeap, which subscribes to an
