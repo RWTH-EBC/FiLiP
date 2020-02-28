@@ -8,6 +8,26 @@ AUTH = ('user', 'pass')
 
 # create new subscription following the API Walkthrough example:
 # https://fiware-orion.readthedocs.io/en/master/user/walkthrough_apiv2/index.html#subscriptions
+
+def create_cb(path_to_config:str="/Users/Felix/restructuring/config.json"):
+    """
+    Function creates an instance of the context broker
+    :param path_to_config: path to a config, describing the ports
+    :return: Instance of the Config-Broker
+    """
+    # Reading the config
+    CONFIG = config.Config(path_to_config)
+
+
+    # creating an instance of the ORION context broker
+    ORION_CB = orion.Orion(CONFIG)
+
+
+
+    return ORION_CB
+
+
+
 def API_Walkthrough_subscription():
     description = "A subscription to get info about Room1"
 
@@ -60,8 +80,10 @@ def http_custom_subscription():
 
 
 if __name__=="__main__":
-    CONFIG = config.Config("config.json")
-    ORION_CB = orion.Orion(CONFIG)
+
+    # creating an instance of the Context Broker
+    ORION_CB = create_cb()
+
 
     body = API_Walkthrough_subscription()
     print("---------------------")
