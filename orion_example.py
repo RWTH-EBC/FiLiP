@@ -2,35 +2,65 @@ import filip.orion as orion
 import filip.config as config
 import sys
 
-def create_entities(orion_cb):
-    room1_a1 = orion.Attribute('temperature', 11, 'Float')
-    room1_a2 = orion.Attribute('pressure', 111, 'Integer')
-    attributes1 = room1_a1, room1_a2
-    room1 = orion.Entity('Room1', 'Room', attributes1)
+def create_entities(orion_cb:object):
+    """
+    Function creates Test Entities for the Context Broker
+    :param orion_cb: Instance of an Orion Context Broker
+    :return: The Entities used for Testing
 
-    orion_cb.post_entity(room1)
+    """
 
-    room2_a1 = orion.Attribute('temperature', 22, 'Float')
-    room2_a2 = orion.Attribute('pressure', 222, 'Integer')
-    attributes2 = room2_a1, room2_a2
-    room2 = orion.Entity('Room2', 'Room', attributes2)
+    room1 = {"id": "Room1",
+             "type": "Room",
+             "temperature" : { "value" : 11,
+                              "type" : "Float" },
+            "pressure" : {"value": 111,
+                        "type": "Integer"}
+            }
 
-    orion_cb.post_entity(room2)
+    room2 = {"id": "Room2",
+             "type": "Room",
+             "temperature" : { "value" : 22,
+                            "type" : "Float" },
+             "pressure" : {"value": 222,
+                          "type": "Integer" }
+            }
 
-    room3_a1 = orion.Attribute('temperature', 33, 'Float')
-    room3_a2 = orion.Attribute('pressure', 333, 'Integer')
-    attributes3 = room3_a1, room3_a2
-    room3 = orion.Entity('Room3', 'Room', attributes3)
+    room3 = {"id": "Room3",
+             "type": "Room",
+             "temperature" : { "value" : 33,
+                            "type" : "Float" },
+            "pressure" : {"value": 333,
+                         "type": "Integer" }
+            }
 
-    orion_cb.post_entity(room3)
+    room1_json = orion.Entity(room1)
 
-    dog_a1 = orion.Attribute('smell', 'bad', 'String')
-    dog_a2 = orion.Attribute('number_of_legs', 4, 'Integer')
-    dog = orion.Entity('Bello', 'Dog', [dog_a1, dog_a2])
+    room2_json = orion.Entity(room2)
 
-    orion_cb.post_entity(dog)
+    room3_json = orion.Entity(room3)
 
-    return room1, room2, room3, dog
+    orion_cb.post_json(room1_json.get_json())
+
+    orion_cb.post_json_key_value(room2_json.get_json())
+
+    orion_cb.post_json_key_value(room3_json.get_json())
+
+    # Test
+    dog =  {"id": "Bello",
+             "type": "Dog",
+             "smell" : { "value" : "bad",
+                        "type" : "String" },
+             "number_of_legs" : {"value": 4,
+                                "type": "Integer" }
+            }
+
+
+    dog_json = orion.Entity(dog)
+
+    orion_cb.post_json_key_value(dog_json.get_json())
+
+    return room1_json, room2_json, room3_json, dog_json
 
 
 def query_entity(orion_cb, entity):
@@ -45,9 +75,10 @@ def query_entity(orion_cb, entity):
     print ()
 
     print ("get attributes of entity '" + name + "':")
-    attr_list = []
-    for attr in entity.attributes:
-        attr_list.append(attr.name)
+    # ToDo check the importance of getting attribute names
+    # Possible implementation through list comprehension
+    # attr_names = [attr_name for attr_name in entity.get_json().keys() if attr_name not in ["id", "type"]]
+    attr_list = entity.get_attributes()
     print (attr_list)
     print (orion_cb.get_entity_attribute_list(name, attr_list))
     print ()
@@ -59,15 +90,15 @@ def query_entity(orion_cb, entity):
     print ()
 
     print ("get entity attributes in JSON format")
-    for attr in entity.attributes:
-        print ("attribute name: " + attr.name)
-        print (orion_cb.get_entity_attribute_json(name, attr.name))
+    for attr in attr_list:
+        print ("attribute name: " + attr)
+        print (orion_cb.get_entity_attribute_json(name, attr))
     print ()
 
     print ("get entity attribute value:")
-    for attr in entity.attributes:
-        print ("entity name: " + name + ", attribute name: " + attr.name)
-        print ("value: " + str(orion_cb.get_entity_attribute_value(name, attr.name)))
+    for attr in attr_list:
+        print ("entity name: " + entity.id + ", attribute name: " + attr)
+        print ("value: " + str(orion_cb.get_entity_attribute_value(name, attr)))
 
     print ("---- ---- ---- ---- ----")
 
@@ -115,5 +146,5 @@ if __name__=="__main__":
     print ()
 
     print ("++++ delete all entities ++++")
-    for entity in entities:
-        ORION_CB.delete(entity.id)
+    #for entity in entities:
+        #ORION_CB.delete(entity.id)

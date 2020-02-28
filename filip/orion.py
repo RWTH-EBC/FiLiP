@@ -2,44 +2,31 @@ import json
 import requests
 import filip.request_utils as requtils
 
-class Attribute:
-    """
-    Describes the attribute of an entity.
-    """
-    def __init__(self, name, value, attr_type):
-        self.name = name
-        self.value = value
-        self.type = attr_type
-
-    def get_json(self):
-        return {'value': self.value, 'type': '{}'.format(self.type)}
 
 class Entity:
-    """
-    Describes an entity which can be saved in the Orion Context Broker.
-    """
-    def __init__(self, entity_id: str, entity_type: str, attributes: list):
+    def __init__(self, entity_dict: dict):
         """
-        :param entity_id: ID of the entity
-        :param entity_type: type of the entity
-        :param attributes: list of Attribute objects
+        :param entity_dict: A dictionarry describing the entity
+        Needed Structure: { "id" : "Sensor002",
+                            "type": "temperature_Sensor",
+                            "Temperature"  : { "value" : 17,
+                                                "type" : "Number" },
+                            "Status" : {"value": "Ok",
+                                        "type": "Text" }
+                            }
         """
-        self.id = entity_id
-        self.type = entity_type
-        self.attributes = attributes
-
-    def get_attributes_json_dict(self):
-        json_dict = {}
-        for attr in self.attributes:
-            json_dict[attr.name] = attr.get_json()
-        return json_dict
+        self.id = entity_dict["id"]
+        self.entity_dict = entity_dict
+        self._PROTECTED = ['id', 'type']
 
     def get_json(self):
-        json_dict = self.get_attributes_json_dict()
-        json_dict['id'] = self.id
-        json_dict['type'] = self.type
-        json_res = json.dumps(json_dict)
+        json_res = json.dumps(self.entity_dict)
         return json_res
+
+    # ToDo Check whether the following function is needed
+    def get_attributes(self):
+        attributes = [key for key in self.entity_dict.keys() if key not in self._PROTECTED]
+        return attributes
 
 class FiwareService:
     """
@@ -116,6 +103,47 @@ class Orion:
         if (not ok):
             print(retstr)
             requtils.pretty_print_request(response.request)
+
+    def post_json(self, json=None, entity=None, params=None):
+        """
+
+        :param json:
+        :param entity:
+        :param params:
+        :return:
+        """
+        headers=self.get_header(requtils.HEADER_CONTENT_JSON)
+        if json is not None:
+            json_data = json
+        elif (json is None) and (entity is not None):
+            json_data = entity.get_json()
+        if params == None:
+            url = self.url + '/entities'
+            response = requests.post(url, headers=headers, data=json_data)
+        else:
+            url = self.url + "/entities" + "?options=" + params
+            response = requests.post(url, headers=headers, data=json_data)
+        ok, retstr = requtils.response_ok(response)
+        if (not ok):
+            print(retstr)
+            requtils.pretty_print_request(response.request)
+            print(url, headers)
+
+    def post_json_key_value(self, json_data=None, params="keyValues"):
+        """
+
+        :param json_data:
+        :param params:
+        :return:
+        """
+        headers=self.get_header(requtils.HEADER_CONTENT_JSON)
+        url = self.url + "/entities" + "?options=" + params
+        response = requests.post(url, headers=headers, data=json_data)
+        ok, retstr = requtils.response_ok(response)
+        if (not ok):
+            print(retstr)
+            requtils.pretty_print_request(response.request)
+            print(url, headers)
    
     def get_entity(self, entity_name,  entity_params=None):
         url = self.url + '/entities/' + entity_name
