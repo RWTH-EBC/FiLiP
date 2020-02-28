@@ -332,16 +332,29 @@ class Orion:
         """
         exists = False
         subscription_subject = json.loads(subscription_body)["subject"]
+        # Exact keys depend on subscription body
+        try:
+            subsription_url = json.loads(subscription_body)["notification"]["httpCustom"]["url"]
+        except KeyError:
+            subsription_url = json.loads(subscription_body)["notification"]["http"]["url"]
         url = self.url + '/subscriptions?limit=' + str(limit)
         # ToDo Figure out how to only get those subscriptions that match a type
         #  None of the pagination parameters seems to work, however get without paginations is limited to 20 subs
         response = requests.get(url, headers=self.get_header())
         response = json.loads(response.text)
+
         for existing_subscription in response:
+
             # check whether the exact same subscriptions already exists
             if existing_subscription["subject"] == subscription_subject:
                 exists = True
                 break
+            try: existing_url = existing_subscription["notification"]["http"]["url"]
+            except KeyError:
+                existing_url = existing_subscription["notification"]["httpCustom"]["url"]
+            # check whether both subscriptions notify to the same path
+            if existing_url != subsription_url:
+                continue
             else:
                 # iterate over all entities included in the subscription object
                 for entity in subscription_subject["entities"]:
@@ -350,7 +363,7 @@ class Orion:
                     for existing_entity in existing_subscription["subject"]["entities"]:
                         type_existing = existing_entity["type"]
                         # check whether the type match
-                        if type_existing == type:
+                        if (type_existing == type) or ('*' in type) or ('*' in type_existing):
                             # check if on of the subscritptions is a pattern, or if they both refer to the same id
                             if ("*" in entity["id"]) or ('*' in existing_entity["id"]) or (entity["id"] == existing_entity["id"]):
                                 # last thing to compare is the attributes
