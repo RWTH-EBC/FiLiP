@@ -453,10 +453,10 @@ class Agent:
     def __init__(self, agent_name: str, config):
         self.name = agent_name
         self.test_config(config)
-        self.host = config.data[agent_name]['host']
-        self.port = config.data[agent_name]['port']
+        self.host = config.data["iota"]['host']
+        self.port = config.data["iota"]['port']
         self.url = self.host + ":" + self.port
-        self.protocol = config.data[agent_name]['protocol']
+        self.protocol = config.data["iota"]['protocol']
         #TODO: Figuring our how to register the service and conncet with devices
         self.services = []
 
@@ -522,7 +522,15 @@ class Agent:
 
         # filip.orion.post(url, head, AUTH, json_dict)
 
-    def post_device(self, device_group, device):
+    def post_device(self, device_group:object, device:object, update:bool=True):
+        """
+        Function registers a device with the iot-Agent to the respective device group.
+        If a device allready exists in can be updated with update = True
+        :param device_group: A device group is a necessary for connecting devices, as it provides a authentication key
+        :param device: The device which provides the measurments / accepts the commands
+        :param update: Whether if the device is already existent it should be updated
+        :return:
+        """
         url = self.url + '/iot/devices'
         headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header()}
         payload={}
@@ -530,11 +538,18 @@ class Agent:
         payload = json.dumps(payload, indent=4)
         response = requests.request("POST", url, data=payload,
                                     headers=headers)
-        if response.status_code != 201:
+
+        if (response.status_code == 409) & (update== True):
+            device_data = {}
+            device_data["attributes"] = json.loads(device.get_json())["attributes"]
+            device_data = json.dumps(device_data, indent=4)
+            self.update_device(device_group, device, device_data)
+
+        elif response.status_code != 201:
             log.warning("Unable to post device: ", response.text)
 
         else:
-            log.info("Device successfully posted!")
+            log.info("Device successfully posted.")
 
 
     def delete_device(self, device_group, device):

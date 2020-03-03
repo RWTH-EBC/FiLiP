@@ -16,16 +16,18 @@ if __name__ == "__main__":
     # Read and check configuration
     CONFIG = config.Config("config.json")
 
+
     # Creating an Instance of the Context Broker
+
     ORION_CB = orion.Orion(CONFIG)
 
 
     # Creating an Instance of the IoT-Agent in the UL-Version
-    IOTA_UL = iot.Agent("iota_ul", CONFIG)
+    IOTA_UL = iot.Agent("iota", CONFIG)
 
 
     # Creating an Instance of the IoT-Agent in the JSON-Version
-    IOTA_JSON = iot.Agent("iota_json", CONFIG)
+    IOTA_JSON = iot.Agent("iota", CONFIG)
 
     # set the service path
     fiware_service = orion.FiwareService("test_service2", "/iot_ul")

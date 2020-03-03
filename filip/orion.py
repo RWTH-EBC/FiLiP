@@ -3,10 +3,10 @@ import requests
 import filip.request_utils as requtils
 import re
 
-
 import logging
 
 log = logging.getLogger('orion')
+
 
 
 class Attribute:
@@ -334,9 +334,9 @@ class Orion:
         subscription_subject = json.loads(subscription_body)["subject"]
         # Exact keys depend on subscription body
         try:
-            subsription_url = json.loads(subscription_body)["notification"]["httpCustom"]["url"]
+            subscription_url = json.loads(subscription_body)["notification"]["httpCustom"]["url"]
         except KeyError:
-            subsription_url = json.loads(subscription_body)["notification"]["http"]["url"]
+            subscription_url = json.loads(subscription_body)["notification"]["http"]["url"]
         url = self.url + '/subscriptions?limit=' + str(limit)
         # ToDo Figure out how to only get those subscriptions that match a type
         #  None of the pagination parameters seems to work, however get without paginations is limited to 20 subs
@@ -353,7 +353,7 @@ class Orion:
             except KeyError:
                 existing_url = existing_subscription["notification"]["httpCustom"]["url"]
             # check whether both subscriptions notify to the same path
-            if existing_url != subsription_url:
+            if existing_url != subscription_url:
                 continue
             else:
                 # iterate over all entities included in the subscription object
