@@ -39,6 +39,27 @@ class Entity:
         json_res = json.dumps(self.entity_dict)
         return json_res
 
+    def add_attribute(self, attr_dict:dict):
+        """
+        Function adds another Attribute to an existing Entity.
+        :param attr_dict: A dictionary describing an Attribute
+                        "Temperature"  : { "value" : 17,
+                                                "type" : "Number" },
+        :return: updated entity dict
+        """
+        for key in attr_dict.keys():
+            self.entity_dict[key] = attr_dict[key]
+
+
+    def delete_attribute(self, attr_name:str):
+        """
+        Function deletes an attribute from an existing Entity
+        :param attr_name: the name of the attribute to delete
+        :return: updated entity_dict
+        """
+        # ToDo Discuss deep or shallow copy
+        del self.entity_dict[attr_name]
+
     # ToDo Check whether the following function is needed
     def get_attributes(self):
         attributes = [key for key in self.entity_dict.keys() if key not in self._PROTECTED]
