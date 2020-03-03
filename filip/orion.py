@@ -62,6 +62,10 @@ class Entity:
 
     # ToDo Check whether the following function is needed
     def get_attributes(self):
+        """
+        Function returns all attributes of an entity
+        :return:
+        """
         attributes = [key for key in self.entity_dict.keys() if key not in self._PROTECTED]
         return attributes
 
@@ -250,6 +254,13 @@ class Orion:
             return response.text
 
     def get_entity_attribute_list(self, entity_name, attr_name_list):
+        """
+        Function returns all types and values for a list of attributes of an entity,
+        given in attr_name_list
+        :param entity_name: Entity_name - Name of the entity to obtain the values from
+        :param attr_name_list: List of attributes - e.g. ["Temperature"]
+        :return: List, containin all attribute dictionaries e.g.: [{"value":33,"type":"Float"}]
+        """
         attributes = ','.join(attr_name_list)
         parameters = {'{}'.format('options'): '{}'.format('values'),
                       '{}'.format('attrs'): attributes}
@@ -274,6 +285,48 @@ class Orion:
         ok, retstr = requtils.response_ok(response)
         if (not ok):
             print(retstr)
+
+    def add_attribute(self, entity:object=None , entity_name:str=None, attribute_dict:dict=None):
+        # POST /v2/entities/{id}/attrs?options=append
+        """
+        This function adds attributes to the Entity in the Context Broker. This can be done in two ways,
+        either by first adding the attribute to the Entity object or by directly sending it from a dict/JSON
+        The Function first compares it with existing attributes, and only adds (so updates) the ones not previoulsy existing
+        :param entity: The updated Entity Instance
+        :param entity_name: The Entity name which should be updated
+        :param attribute_dict: A JSON/Dict containing the attributes
+        :return: -
+        """
+        if isinstance(entity, Entity):
+            attributes = entity.get_attributes()
+            entity_name = Entity.id
+        else:
+            attributes = attribute_dict
+            entity_name = entity_name
+        existing_attributes = self.get_attributes(entity_name)
+        new_attributes = {k: v for (k, v) in attributes.items() if k not in existing_attributes}
+        url = self.url + '/entities/' + entity_name + '/attrs?options=append'
+        headers=self.get_header(requtils.HEADER_CONTENT_JSON)
+        data = json.dumps(new_attributes)
+        response = requests.post(url, data=data, headers=headers)
+        ok, retstr = requtils.response_ok(response)
+        if (not ok):
+            print(retstr)
+
+
+
+
+    def get_attributes(self, entity_name:str):
+        """
+        For a given entity this function returns all attribute names
+        :param entity_name: the name of the entity
+        :return: attributes - list of attributes
+        """
+        entity_json = json.loads(self.get_entity(entity_name))
+        attributes = [k for k in entity_json.keys() if k not in ["id", "type"]]
+        return attributes
+
+
 
     def remove_attributes(self, entity_name):
         url = self.url + '/entities/' + entity_name + '/attrs'
