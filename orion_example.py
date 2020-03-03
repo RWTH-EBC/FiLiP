@@ -137,6 +137,20 @@ if __name__=="__main__":
     print (ORION_CB.get_all_entities("q", "temperature>22"))
     print ()
 
+    # Testing the function to get Attributes and add new ones
+    print(ORION_CB.get_attributes("Room3"))
+
+
+    new_attribute = {"Space" :  {"value": 111,
+                        "type": "Integer"}
+                     }
+
+
+    ORION_CB.add_attribute(entity_name = "Room3", attribute_dict =new_attribute)
+
+    print(ORION_CB.get_attributes("Room3"))
+
+
 
     print ("++++ query entities ++++")
     for entity in entities:
