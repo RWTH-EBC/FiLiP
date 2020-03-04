@@ -338,8 +338,7 @@ class Orion:
         except KeyError:
             subscription_url = json.loads(subscription_body)["notification"]["http"]["url"]
         url = self.url + '/subscriptions?limit=' + str(limit)
-        # ToDo Figure out how to only get those subscriptions that match a type
-        #  None of the pagination parameters seems to work, however get without paginations is limited to 20 subs
+
         response = requests.get(url, headers=self.get_header())
         response = json.loads(response.text)
 
@@ -358,27 +357,49 @@ class Orion:
             else:
                 # iterate over all entities included in the subscription object
                 for entity in subscription_subject["entities"]:
-                    type = entity["type"]
+                    subscription_type = entity["type"]
+                    subscription_id = entity["id"]
                     # iterate over all entities included in the exisiting subscriptions
                     for existing_entity in existing_subscription["subject"]["entities"]:
                         type_existing = existing_entity["type"]
+                        id_existing = existing_entity["id"]
+                        # as the ID field is non optional, it has to match
                         # check whether the type match
-                        if (type_existing == type) or ('*' in type) or ('*' in type_existing):
-                            # check if on of the subscritptions is a pattern, or if they both refer to the same id
-                            if ("*" in entity["id"]) or ('*' in existing_entity["id"]) or (entity["id"] == existing_entity["id"]):
+                        # if the type field is empty, they match all types
+                        if (type_existing == subscription_type) or ('*' in subscription_type) or ('*' in type_existing)\
+                                or (type_existing == "") or (subscription_type == ""):
+                            # check if on of the subscriptions is a pattern, or if they both refer to the same id
+                            if (".*" in subscription_id) or ('.*' in id_existing) or (subscription_id == id_existing):
                                 # last thing to compare is the attributes
                                 # Assumption -> position is the same as the entities list
                                 # i == j
                                 i = subscription_subject["entities"].index(entity)
                                 j = existing_subscription["entities"].index(existing_entity)
-                                if subscription_subject["condition"]["attrs"][i] == existing_subscription["condition"]["attrs"][j]:
-                                    exists = True
-                                else:
-                                    continue
+                                # Attributes have to match, or the have to be an empty array
+                                if subscription_subject["condition"]["attrs"][i] == existing_subscription["condition"]["attrs"][j]\
+                                        or (subscription_subject["condition"]["attrs"][i] == []) or (existing_subscription["condition"]["attrs"][j] == []) :
+                                        exists = True
+
+                            # if they do not match completly or subscribe to all ids they have to match up to a certain position
+
+                            elif ("*" in subscription_id) or ('*' in id_existing):
+                                    regex_existing = id_existing.find('*')
+                                    regex_subscription = subscription_id.find('*')
+                                    # slice the strings to compare
+                                    if (id_existing[:regex_existing] in subscription_id) or \
+                                        (subscription_id[:regex_subscription] in id_existing) or \
+                                        (id_existing[regex_existing:] in subscription_id) or \
+                                        (subscription_id[regex_subscription:] in id_existing):
+                                            exists = True
+
+                                    else:
+                                        continue
                             else:
                                 continue
                         else:
                             continue
+                    else:
+                        continue
         return exists
 
 
