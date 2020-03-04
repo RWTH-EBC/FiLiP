@@ -60,6 +60,10 @@ class Config:
             # self.fiware_service_path = os.getenv("FIWARE_SERVICE_PATH",  "/")
 
     def __repr__(self):
+        """
+        Returns the Representation (= Data) of the object as string
+        :return:
+        """
         return "{}".format(self.data)
 
 
