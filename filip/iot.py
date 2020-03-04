@@ -107,9 +107,7 @@ class Device:
 
 
 
-    # ToDo: Rework the function beneath
-
-
+    # Function beneath is only for backwards compatibility
 
     def add_attribute(self, attr_name: str, attr_type: str, value_type: str,
                  object_id: str=None, attr_value: str=None):
@@ -140,7 +138,7 @@ class Device:
                 "command": self.add_command
                 }.get(attr_type, "not_ok")(attr)
         if switch_dict == "not_ok":
-            print("[WARN]: Attribute type unknown: \"{}\"".format(attr_type))
+            log.warning("Attribute type unknown: {}".format(attr_type))
 
 
     def add_attribute_json(self, attribute:dict):
@@ -162,8 +160,7 @@ class Device:
         attr_type = attribute["attr_type"]
         if "attr_value" in attribute:
             if attribute["attr_type"] != "static":# & attribute["attr_value"] != None:
-                print('[WARNING] Setting attribute value only allowed for \
-                        static attributes! Value will be ignored!')
+                log.warning(" Setting attribute value only allowed for static attributes! Value will be ignored!")
                 del attribute["attr_value"]
 
         attr = {"name": attribute["name"],
@@ -176,7 +173,7 @@ class Device:
                 "command": self.add_command
                 }.get(attr_type, "not_ok")(attr)
         if switch_dict == "not_ok":
-            print("[WARN]: Attribute type unknown: \"{}\"".format(attr_type))
+            log.warning(Attribute type unknown: \"{}\"".format(attr_type))
 
 
     def delete_attribute(self, attr_name, attr_type):
@@ -205,7 +202,7 @@ class Device:
             else:
                 log.warning("Attribute type unknown: \"{}\"".format(attr_type))
 
-            log.info("[INFO]: Attribute succesfully deleted: \"{}\"".format(attr_name))
+            log.info("Attribute succesfully deleted: \"{}\"".format(attr_name))
         except:
             log.warning("Attribute could not be deleted: \"{}\"".format(attr_name))
 
@@ -335,7 +332,7 @@ class DeviceGroup:
                         "internal": self.add_internal
                        }.get(attr_type, "not_ok")(attr)
         if switch_dict == "not_ok":
-            print("[WARN]: Attribute type unknown: \"{}\"".format(attr_type))
+            log.warning("Attribute type unknown: {}".format(attr_type))
 
 
 
@@ -369,14 +366,12 @@ class DeviceGroup:
                 self.__commands = [i for i in self.__commands if not
                 (i['name'] == attr_name)]
             else:
+                log.warning("Attribute type unknown: {}".format(attr_type))
 
-                print("[WARN]: Attribute type unknown: \"{}\"".format(
-                    attr_type))
-            print("[INFO]: Attribute succesfully deleted: \"{}\"".format(
-                attr_name))
+            log.info("Attribute succesfully deleted: {}".format(attr_name))
         except:
-            print("[WARN]: Attribute could not be deleted: \"{}\"".format(
-                attr_name))
+            log.warning("Attribute could not be deleted: {}".format(attr_name))
+
 
     def get_apikey(self):
         return self.__apikey
@@ -426,6 +421,7 @@ class DeviceGroup:
             length))
 
     def test_apikey(self):
+        # TODo Check how to deal with user input
         """
         This function tests if an apikey is defined in the configfile.
         Otherwise it will ask the user to generate one and saves it to the
@@ -445,13 +441,13 @@ class DeviceGroup:
                         self.__apikey = self.generate_apikey()
                     #with open(self.path, 'w') as configfile:
                     #    self.config.write(configfile)
-                    print("[INFO]: Random Key generated: '" + self.__apikey +
-                          "'")
+                    log.info("Random Key generated: {}".format(self.__apikey))
                 else:
-                    print("[INFO]: Default Key will be used: '1234'!")
-            print("[INFO]: API-Key check success! " + self.__apikey)
+                    log.info("Default Key will be used: 1234")
+
+            log.info("API-Key check success! {}".format(self.__apikey))
         except Exception:
-            print("[ERROR]: API-Key check failed. Please check configuration!")
+            log.error(" API-Key check failed. Please check configuration!")
 
 
     def __repr__(self):
@@ -526,7 +522,7 @@ class Agent:
                       "apikey":device_group.get_apikey_last()}
         payload= json.loads(device_group.get_json())
         payload = json.dumps(payload, indent=4)
-        print("[INFO]: Update group with:\n"+payload)
+        log.info("Update group with: {}".format(payload))
         response = requests.request("PUT", url,
                                     data=payload, headers=headers,
                                     params=querystring)
