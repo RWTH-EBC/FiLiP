@@ -59,6 +59,9 @@ class Config:
             # self.fiware_service = os.getenv("FIWARE_SERVICE", "default")
             # self.fiware_service_path = os.getenv("FIWARE_SERVICE_PATH",  "/")
 
+    def __repr__(self):
+        return "{}".format(self.data)
+
 
     def _read_config_file(self, path: str):
         """
@@ -163,7 +166,8 @@ class Config:
 
 
 if __name__=="__main__":
-    CONFIG = Config('D:\Projects\FIWARE\gitlab\FiLiP\config.json')
+    CONFIG = Config('/Users/Felix/PycharmProjects/compare_duplicate/filip/config.json')
+    print(CONFIG)
     print(CONFIG.data['fiwareService'])
     print("List of services and paths:")
     for service in CONFIG.data['fiwareService']:
