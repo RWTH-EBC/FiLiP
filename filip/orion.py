@@ -370,16 +370,16 @@ class Orion:
                                 or (type_existing == "") or (subscription_type == ""):
                             # check if on of the subscriptions is a pattern, or if they both refer to the same id
                             # Get the attrs first, to avoid code duplication
-
+                            # last thing to compare is the attributes
+                            # Assumption -> position is the same as the entities list
+                            # i == j
+                            i = subscription_subject["entities"].index(entity)
+                            j = existing_subscription["subject"]["entities"].index(existing_entity)
+                            subscription_attrs = subscription_subject["condition"]["attrs"][i]
+                            existing_attrs = existing_subscription["subject"]["condition"]["attrs"][j]
 
                             if (".*" in subscription_id) or ('.*' in id_existing) or (subscription_id == id_existing):
-                                # last thing to compare is the attributes
-                                # Assumption -> position is the same as the entities list
-                                # i == j
-                                i = subscription_subject["entities"].index(entity)
-                                j = existing_subscription["subject"]["entities"].index(existing_entity)
-                                subscription_attrs = subscription_subject["condition"]["attrs"][i]
-                                existing_attrs = existing_subscription["subject"]["condition"]["attrs"][j]
+
 
 
                                 # Attributes have to match, or the have to be an empty array

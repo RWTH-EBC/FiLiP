@@ -76,6 +76,50 @@ def check_duplicate_subscription():
     subscription = sub.Subscription(subject, notification, description)
     return subscription.get_json()
 
+
+def check_existing_type_subscription():
+    """
+    Function checks whether a subscription allready exists.
+    :return:
+    """
+    description = "Notify me of low stock in Store 001"
+    subject_entity = sub.Subject_Entity(".*", "")
+    subject_expression = sub.Subject_Expression()
+    subject_expression.q = "shelfCount<10;refStore==urn:ngsi-ld:Store:002"
+    subject_condition = sub.Subject_Condition(["shelfCount"], subject_expression)
+    subject = sub.Subject([subject_entity], subject_condition)
+    expression = sub.Subject_Expression()
+    http_params = sub.HTTP_Params("http://tutorial:3000/subscription/low-stock-store002")
+    notification = sub.Notification(http_params)
+    notification.attrsFormat = "keyValues"
+
+    subscription = sub.Subscription(subject, notification, description)
+    return subscription.get_json()
+
+
+def check_existing_id_pattern_subscription():
+    """
+    Function checks whether a subscription already exists for an id type.
+    :return:
+    """
+    description = "A subscription to get info about Room1"
+
+    subject_entity = sub.Subject_Entity("Roo*", "Room")
+    subject_condition = sub.Subject_Condition(["pressure"])
+    subject = sub.Subject([subject_entity], subject_condition)
+
+    http_params = sub.HTTP_Params("http://localhost:1028/accumulate")
+    notification_attributes = sub.Notification_Attributes("attrs", ["temperature"])
+    notification = sub.Notification(http_params, notification_attributes)
+
+    expires = datetime.datetime(2040, 1, 1, 14).isoformat()
+    print (expires)
+    throttling = 5
+
+    subscription = sub.Subscription(subject, notification, description, expires, throttling)
+    return subscription.get_json()
+
+
 if __name__=="__main__":
     # setup logging
     # before the first initalization the log_config.yaml.example file needs to be modified
@@ -112,7 +156,14 @@ if __name__=="__main__":
     print("The subscription allready exists:", exists)
 
 
+    duplicate_type_body = check_existing_type_subscription()
+    exists_type = ORION_CB.check_duplicate_subscription(subscription_body=duplicate_type_body)
+    print("The subscription allready exists:", exists_type)
 
+
+    id_match_body = check_existing_id_pattern_subscription()
+    exists_id_pattern = ORION_CB.check_duplicate_subscription(id_match_body)
+    print("The subscription allready exists:", exists_id_pattern)
 
     print("deleting subscriptions..")
     time.sleep(1)
