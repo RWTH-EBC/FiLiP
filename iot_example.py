@@ -21,11 +21,13 @@ if __name__ == "__main__":
 
 
     # Creating an Instance of the IoT-Agent in the UL-Version
-    IOTA_UL = iot.Agent("iota_ul", CONFIG)
+    IOTA_UL = iot.Agent("iota", CONFIG)
+
+
 
 
     # Creating an Instance of the IoT-Agent in the JSON-Version
-    IOTA_JSON = iot.Agent("iota_json", CONFIG)
+    IOTA_JSON = iot.Agent("iota", CONFIG)
 
     # set the service path
     fiware_service = orion.FiwareService("test_service2", "/iot_ul")
@@ -40,12 +42,18 @@ if __name__ == "__main__":
                                     "http://orion:1026",
                                     iot_agent="iota_ul",
                                     apikey="12345test")
+
+    print(device_group)
+
+
     device_group.test_apikey()
 
     device_ul = iot.Device('urn:Room:002:sensor01','urn:Room:002',
                            "Thing",
                            transport="MQTT", protocol="PDI-IoTA-UltraLight",
                            timezone="Europe/Berlin")
+
+    print(device_ul)
 
     '''
 

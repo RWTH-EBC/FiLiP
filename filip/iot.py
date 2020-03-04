@@ -15,7 +15,7 @@ log = logging.getLogger('iot')
 
 PROTOCOLS = ['IoTA-JSON','IoTA-UL']
 
-# ToDo: get rid of Attribute Class
+# The Attribute class is only implemented to provide backwards compatibility
 
 class Attribute: # DeviceAttribute
     def __init__(self, name: str, attr_type: str, value_type: str,
@@ -68,6 +68,14 @@ class Device:
         self.lazy = kwargs.get("lazy", [])
         self.commands = kwargs.get("commands", [])
         self.static_attributes = kwargs.get("static_attributes", [])
+
+
+    def __repr__(self):
+        """
+        Function returns a representation of the object (its data) as a string.
+        :return:
+        """
+        return "{}".format(self.get_json())
 
     def get_json(self):
         dict = {}
@@ -444,6 +452,14 @@ class DeviceGroup:
             print("[INFO]: API-Key check success! " + self.__apikey)
         except Exception:
             print("[ERROR]: API-Key check failed. Please check configuration!")
+
+
+    def __repr__(self):
+        """
+        Function returns a representation of the object (its data) as a string.
+        :return:
+        """
+        return "{}".format(self.get_json())
 
 
 
