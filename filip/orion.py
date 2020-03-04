@@ -7,6 +7,7 @@ import logging
 log = logging.getLogger('orion')
 
 
+# Class is only implemented for backward compatibility
 class Attribute:
     """
     Describes the attribute of an entity.
@@ -31,11 +32,24 @@ class Entity:
                                         "type": "Text" }
                             }
         """
+
         self.id = entity_dict["id"]
         self.entity_dict = entity_dict
         self._PROTECTED = ['id', 'type']
 
+    def __repr__(self):
+        """
+        returns the object-representation
+        """
+        attrs = self.get_attributes_key_values()
+        entity_str = '"enity_id": "{}", "type": "{}", "attributes": "{}" '.format(self.id, self.entity_dict["type"], attrs)
+        return entity_str
+
     def get_json(self):
+        """
+        Function returns the Entity to be posted as a JSON
+        :return: the Entity Json
+        """
         json_res = json.dumps(self.entity_dict)
         return json_res
 
@@ -50,7 +64,6 @@ class Entity:
         for key in attr_dict.keys():
             self.entity_dict[key] = attr_dict[key]
 
-
     def delete_attribute(self, attr_name:str):
         """
         Function deletes an attribute from an existing Entity
@@ -60,7 +73,6 @@ class Entity:
         # ToDo Discuss deep or shallow copy
         del self.entity_dict[attr_name]
 
-    # ToDo Check whether the following function is needed
     def get_attributes(self):
         """
         Function returns all attributes of an entity
@@ -68,6 +80,14 @@ class Entity:
         """
         attributes = [key for key in self.entity_dict.keys() if key not in self._PROTECTED]
         return attributes
+
+    def get_attributes_key_values(self):
+        """
+        Function returns all attributes, their types and values of an entity
+        :return:
+        """
+        attributes_values = {key: value for (key,value) in self.entity_dict.items() if key not in self._PROTECTED}
+        return attributes_values
 
 class FiwareService:
     """

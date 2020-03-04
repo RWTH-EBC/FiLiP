@@ -60,6 +60,8 @@ def create_entities(orion_cb:object):
 
     orion_cb.post_json_key_value(dog_json.get_json())
 
+
+
     return room1_json, room2_json, room3_json, dog_json
 
 
@@ -116,6 +118,8 @@ if __name__=="__main__":
 
     print ("++++ create entities ++++")
     entities = create_entities(ORION_CB)
+    for entity in entities:
+        print(entity)
 
     print ("++++ get all entities from Orion Context Broker ++++")
     print (ORION_CB.get_all_entities())
