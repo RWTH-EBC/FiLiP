@@ -369,18 +369,24 @@ class Orion:
                         if (type_existing == subscription_type) or ('*' in subscription_type) or ('*' in type_existing)\
                                 or (type_existing == "") or (subscription_type == ""):
                             # check if on of the subscriptions is a pattern, or if they both refer to the same id
+                            # Get the attrs first, to avoid code duplication
+
+
                             if (".*" in subscription_id) or ('.*' in id_existing) or (subscription_id == id_existing):
                                 # last thing to compare is the attributes
                                 # Assumption -> position is the same as the entities list
                                 # i == j
                                 i = subscription_subject["entities"].index(entity)
-                                j = existing_subscription["entities"].index(existing_entity)
+                                j = existing_subscription["subject"]["entities"].index(existing_entity)
+                                subscription_attrs = subscription_subject["condition"]["attrs"][i]
+                                existing_attrs = existing_subscription["subject"]["condition"]["attrs"][j]
+
+
                                 # Attributes have to match, or the have to be an empty array
-                                if subscription_subject["condition"]["attrs"][i] == existing_subscription["condition"]["attrs"][j]\
-                                        or (subscription_subject["condition"]["attrs"][i] == []) or (existing_subscription["condition"]["attrs"][j] == []) :
+                                if (subscription_attrs == existing_attrs) or (subscription_attrs == []) or (existing_attrs == []):
                                         exists = True
 
-                            # if they do not match completly or subscribe to all ids they have to match up to a certain position
+                            # if they do not match completely or subscribe to all ids they have to match up to a certain position
 
                             elif ("*" in subscription_id) or ('*' in id_existing):
                                     regex_existing = id_existing.find('*')
@@ -390,7 +396,10 @@ class Orion:
                                         (subscription_id[:regex_subscription] in id_existing) or \
                                         (id_existing[regex_existing:] in subscription_id) or \
                                         (subscription_id[regex_subscription:] in id_existing):
-                                            exists = True
+                                            if (subscription_attrs == existing_attrs) or (subscription_attrs == []) or (existing_attrs == []):
+                                                exists = True
+                                            else:
+                                                continue
 
                                     else:
                                         continue
