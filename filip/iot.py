@@ -173,7 +173,7 @@ class Device:
                 "command": self.add_command
                 }.get(attr_type, "not_ok")(attr)
         if switch_dict == "not_ok":
-            log.warning(Attribute type unknown: \"{}\"".format(attr_type))
+            log.warning("Attribute type unknown: {}".format(attr_type))
 
 
     def delete_attribute(self, attr_name, attr_type):
