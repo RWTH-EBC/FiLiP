@@ -171,7 +171,9 @@ class QuantumLeap():
             return ""
         else:
             response_json = json.loads(response.text)
-            res[attr_name] = dict(zip(response_json["index"], response_json["values"]))
+            for attr in response_json["attributes"]:
+                attr_name = attr["attrName"]
+                res[attr_name] = dict(zip(response_json["index"], attr["values"]))
             return res
 
 
