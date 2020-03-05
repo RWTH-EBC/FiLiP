@@ -126,6 +126,8 @@ class Orion:
         response = requests.post(url, headers=headers, data=data)
         ok, retstr = requtils.response_ok(response)
         if (not ok):
+            level, retstr = requtils.logging_switch(response)
+            self.log_switch(level, response)
             print(retstr)
             requtils.pretty_print_request(response.request)
 
@@ -169,7 +171,7 @@ class Orion:
             print(retstr)
             requtils.pretty_print_request(response.request)
             print(url, headers)
-   
+
     def get_entity(self, entity_name,  entity_params=None):
         url = self.url + '/entities/' + entity_name
         headers=self.get_header()
