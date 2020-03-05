@@ -1,12 +1,13 @@
 import requests
 from requests import Response
 
-import filip.test as test
+import test
 import json
 import string
 import random
-import filip.orion as orion
-import filip.request_utils as requtils
+from filip import orion
+from filip import request_utils as requtils
+from filip import test
 
 import logging
 
@@ -462,7 +463,7 @@ class DeviceGroup:
 class Agent:
 # https://iotagent-node-lib.readthedocs.io/en/latest/
 # https://fiware-iotagent-json.readthedocs.io/en/latest/usermanual/index.html
-    def __init__(self, agent_name: str, config):
+    def __init__(self, agent_name: str, config:object):
         self.name = agent_name
         self.test_config(config)
         self.host = config.data[agent_name]['host']
@@ -473,9 +474,10 @@ class Agent:
         self.services = []
 
     def test_config(self, config):
+
         test.test_config(self.name, config.data)
 
-    def test_connection(self, config):
+    def test_connection(self):
         test.test_connection(self.name , config.data[self.name]['host']
                                  +":" +config.data[self.name]['port']+
                                  '/iot/about')
