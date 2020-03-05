@@ -176,8 +176,7 @@ class Orion:
         if (not ok):
             print(retstr)
             requtils.pretty_print_request(response.request)
-            print(url, headers)
-
+   
     def get_entity(self, entity_name,  entity_params=None):
         url = self.url + '/entities/' + entity_name
         headers=self.get_header()
@@ -202,7 +201,7 @@ class Orion:
             parameters = {'{}'.format(parameter): '{}'.format(parameter_value)}
             response = requests.get(url, headers=headers, params=parameters)
         else:
-            logging.error("Getting all entities: both function parameters have to be 'not null'")
+            log.error("Getting all entities: both function parameters have to be 'not null'")
         ok, retstr = requtils.response_ok(response)
         if (not ok):
             level, retstr = requtils.logging_switch(response)

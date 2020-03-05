@@ -327,7 +327,8 @@ class DeviceGroup:
                         "internal": self.add_internal
                        }.get(attr_type, "not_ok")(attr)
         if switch_dict == "not_ok":
-            log.warning("Attribute type unknown: \"{}\"".format(attr['type']))
+            print("[WARN]: Attribute type unknown: \"{}\"".format(attr_type))
+
 
 
     def delete_default_attribute(self, attr_name, attr_type):
@@ -360,6 +361,7 @@ class DeviceGroup:
                 self.__commands = [i for i in self.__commands if not
                 (i['name'] == attr_name)]
             else:
+
                 print("[WARN]: Attribute type unknown: \"{}\"".format(
                     attr_type))
             print("[INFO]: Attribute succesfully deleted: \"{}\"".format(
