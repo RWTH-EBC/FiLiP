@@ -1,6 +1,5 @@
 import requests
 from filip import iot as iot
-from iot import PROTOCOLS
 import json
 import pprint
 import datetime
@@ -92,12 +91,11 @@ def test_config(service_name: str, config_data: dict):
             # Additional allowed protocols may be added here, e.g. 'IoTA-LWM2M'
             assert config_data[service_name]['protocol'] in iot.PROTOCOLS \
                 ("Protocol for '" + service_name + "' not supported! The "
-                "following protocols are supported: " + str(
-                    iot.PROTOCOLS))
+                "following protocols are supported: " + str(iot.PROTOCOLS))
 
 
     except Exception as error:
-        log.error(error.args[0], " Config test failed!")
+        log.error(f" {datetime.datetime.now()} -  Config test failed!")
 
     log.info("Configuration successfully tested!")
     return True

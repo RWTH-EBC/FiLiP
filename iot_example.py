@@ -1,4 +1,5 @@
-from filip import iot, orion, config
+from filip import iot, config, orion
+
 
 # ToDo: Rewrite Example, so it matches the orion Example
 # ToDo: Change Data Model

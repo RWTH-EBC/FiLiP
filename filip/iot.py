@@ -477,7 +477,7 @@ class Agent:
 
         test.test_config(self.name, config.data)
 
-    def test_connection(self):
+    def test_connection(self, config):
         test.test_connection(self.name , config.data[self.name]['host']
                                  +":" +config.data[self.name]['port']+
                                  '/iot/about')
