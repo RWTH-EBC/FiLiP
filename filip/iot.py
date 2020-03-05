@@ -466,11 +466,25 @@ class Agent:
                                  +":" +config.data[self.name]['port']+
                                  '/iot/about')
 
+    def log_switch(self, level, response):
+        """
+        Function returns the required log_level with the repsonse
+        :param level: The logging level that should be returned
+        :param response: The message for the logger
+        :return:
+        """
+        switch_dict={
+                "INFO": logging.info,
+                "ERROR":  logging.error,
+                "WARNING": logging.warning
+                }.get(level, logging.info)(msg=response)
+
     def get_groups(self, device_group):
         url = self.url + '/iot/services'
         headers = DeviceGroup.get_header(device_group)
         response = requests.request("GET", url, headers=headers)
-        print(response.text)
+        level, retstr = requtils.logging_switch(response)
+        self.log_switch(level, retstr)
 
     def delete_group(self, device_group):
         url = self.url + '/iot/services'
@@ -482,7 +496,8 @@ class Agent:
         if response.status_code==204:
             log.info("Device group successfully deleted!")
         else:
-            print(response.text)
+           level, retstr = requtils.logging_switch(response)
+           self.log_switch(level, retstr)
 
     def post_group(self, device_group):
         url = self.url + '/iot/services'

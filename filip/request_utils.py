@@ -1,5 +1,6 @@
 import requests
 import logging
+import json
 
 """
 Helper functions for HTTP requests
@@ -67,6 +68,8 @@ def logging_switch(response):
     status = response.status_code
     ok, retstr = response_ok(response)
     category = str(status)[0]
+    text = json.loads(response.text)
+    keys = [key for key in text.keys()]
     level = {
         "1": "INFO",
         "2": "INFO",
@@ -74,7 +77,8 @@ def logging_switch(response):
         "4": "ERROR",
         "5": "ERROR",
             }.get(category, "INFO")
-    return level, retstr
+    response_text = "The request was: {}, because: {} ".format(text[keys[0]], text[keys[1]])
+    return level, response_text
 
 
 
