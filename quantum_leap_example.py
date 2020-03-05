@@ -260,7 +260,7 @@ if __name__=="__main__":
     print(quantum.get_version())
     print(quantum.get_entity_data(oak.id))
     print(quantum.get_entity_data(oak.id, "height", params = params))
-    print(quantum.get_timeseries(oak.id))
+    print(quantum.get_timeseries(oak.id, valuesonly=False))
     print(quantum.get_entity_data(oak.id, "height", valuesonly))
     print(quantum.get_entity_type_data("Tree", "height"))
     print(quantum.get_entity_type_data("Tree", "height", valuesonly))
