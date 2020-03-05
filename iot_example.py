@@ -15,8 +15,17 @@ if __name__ == "__main__":
 
     # Read and check configuration
     CONFIG = config.Config("config.json")
+
+    # Creating an Instance of the Context Broker
     ORION_CB = orion.Orion(CONFIG)
-    IOTA_JSON = iot.Agent("iota_json", CONFIG)
+
+
+    # Creating an Instance of the IoT-Agent in the UL-Version
+    IOTA_UL = iot.Agent("iota", CONFIG)
+
+
+    # Creating an Instance of the IoT-Agent in the JSON-Version
+    IOTA_JSON = iot.Agent("iota", CONFIG)
 
     # set the service path
     fiware_service = orion.FiwareService("test_service2", "/iot_ul")
@@ -89,7 +98,7 @@ if __name__ == "__main__":
                              "Thing", transport="MQTT",
                              protocol="IoTA-JSON",
                              timezone="Europe/Berlin")
-    
+
     print(device_ul.get_json())
     IOTA_JSON.post_group(device_group_json)
     IOTA_JSON.get_groups(device_group_json)
@@ -107,9 +116,13 @@ if __name__ == "__main__":
     ORION_CB.get_all_entities()
     ORION_CB.get_entity('urn:Room:002')
 
+
+
     IOTA_JSON.delete_device(device_group_json, device_json)
     IOTA_JSON.delete_group(device_group_json)
 
     IOTA_UL.delete_device(device_group, device_ul)
     IOTA_UL.delete_group(device_group)
-    
+
+
+
