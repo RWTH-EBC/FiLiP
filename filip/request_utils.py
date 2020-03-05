@@ -62,6 +62,22 @@ def response_ok(response) -> (bool, str):
     else:
         retstr = "[INFO]: HTTP response: " + response.text
     return ok, retstr
+
+def logging_switch(response):
+    status = response.status_code
+    ok, retstr = response_ok(response)
+    category = str(status)[0]
+    level = {
+        "1": "INFO",
+        "2": "INFO",
+        "3": "WARNING",
+        "4": "ERROR",
+        "5": "ERROR",
+            }.get(category, "INFO")
+    return level, retstr
+
+
+
 """
 def post(url, head, body, autho=None, return_headers=False):
     response = requests.post(url, headers=head, auth=autho, data=body)

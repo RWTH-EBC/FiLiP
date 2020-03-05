@@ -6,7 +6,7 @@ import logging.config
 import yaml
 import json
 
-def setup_logging(path_to_config: str ='/Users/Felix/PycharmProjects/Logger/filip/log_config.yaml.example',
+def setup_logging(path_to_config: str ='/Users/Felix/PycharmProjects/Logger/filip/log_config.yaml',
                   default_level=logging.INFO):
     """
     Function to setup the logging configuration from a file
