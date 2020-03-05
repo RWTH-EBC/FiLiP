@@ -1,6 +1,7 @@
 import requests
 import logging
 import json
+import datetime
 
 """
 Helper functions for HTTP requests
@@ -77,7 +78,8 @@ def logging_switch(response):
         "4": "ERROR",
         "5": "ERROR",
             }.get(category, "INFO")
-    response_text = "The request was: {}, because: {} ".format(text[keys[0]], text[keys[1]])
+    time = datetime.datetime.now()
+    response_text = f" {time} -The request was: {text[keys[0]]}, because: {text[keys[1]]} "
     return level, response_text
 
 
