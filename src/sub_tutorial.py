@@ -61,7 +61,7 @@ def write():
 
 
 
-    st.subheader("Deleting the subscriptions.")
+    st.subheader("Deleting the Devices.")
     st.text("To avoid posting duplicate entries the subscriptions have to be deleted.")
     delete_all = st.checkbox("Delete the subscriptions?", value=False)
     if delete_all:

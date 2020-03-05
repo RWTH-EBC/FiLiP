@@ -56,6 +56,8 @@ def pretty_print_json(data):
     :param data - A string, containting data in the dictionary schema
     :return a streamlit pretty printed json
     """
+    if isinstance(data, dict):
+        data = json.dumps(data)
     json_data = json.loads(data)
     st.json(json_data)
 
@@ -149,7 +151,7 @@ def horizontal_ruler(in_sidebar: bool = False):
     return st.markdown("---")
 
 
-def timeseries_to_df():
+def timeseries_to_df(dataframe):
     """"
     Helper Function to turn a timeseries into a dataframe.
     """

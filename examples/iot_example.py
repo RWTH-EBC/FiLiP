@@ -1,9 +1,38 @@
-import filip.iot as iot
-import filip.orion as orion
-import filip.config as config
+from filip import iot, orion, config
 
-# ToDo: Rewrite Example, so it matches the orion Example
-# ToDo: Change Data Model
+
+def read_config(path_to_config:str="/Users/Felix/restructuring/config.json"):
+    """
+    Function creates an instance of  the CONFIG so it can be passed to different Classes
+    :param path_to_config: path to a config, describing the ports
+    :return: Instance of the config
+    """
+    # Reading the config
+
+    CONFIG = config.Config(path_to_config)
+
+    return CONFIG
+
+
+def create_cb(path_to_config:str="/Users/Felix/restructuring/config.json"):
+    """
+    Function creates an instance of the context broker
+    :param path_to_config: path to a config, describing the ports
+    :return: Instance of the Context Broker
+    """
+    # Reading the config
+    CONFIG = config.Config(path_to_config)
+
+
+    # creating an instance of the ORION context broker
+    ORION_CB = orion.Orion(CONFIG)
+
+
+
+    return ORION_CB
+
+
+
 
 
 def create_device(transport:str = "MQTT",
@@ -99,7 +128,7 @@ if __name__ == "__main__":
     CONFIG = config.Config("config.json")
 
     # Creating an Instance of the Context Broker
-    ORION_CB = orion.Orion(CONFIG)
+    ORION_CB = create_cb()
 
     # check whether the context broker works:
     ORION_CB.sanity_check()
