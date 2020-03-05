@@ -1,6 +1,4 @@
-import filip.iot as iot
-import filip.orion as orion
-import filip.config as config
+from filip import iot, orion, config
 
 # ToDo: Rewrite Example, so it matches the orion Example
 # ToDo: Change Data Model
@@ -28,6 +26,8 @@ if __name__ == "__main__":
 
     # Creating an Instance of the IoT-Agent in the JSON-Version
     IOTA_JSON = iot.Agent("iota", CONFIG)
+
+    IOTA_UL.test_connection(CONFIG)
 
     # set the service path
     fiware_service = orion.FiwareService("test_service2", "/iot_ul")

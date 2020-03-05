@@ -1,6 +1,6 @@
 import json
 import requests
-import filip.request_utils as requtils
+from filip import request_utils as requtils
 
 import logging
 
