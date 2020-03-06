@@ -1,5 +1,4 @@
 import requests
-from filip import iot as iot
 import json
 import pprint
 import datetime
@@ -8,6 +7,7 @@ import datetime
 import logging
 
 log = logging.getLogger('test')
+
 
 
 def test_connection(service_name: str, url: str, auth_method: str =None,
@@ -53,6 +53,9 @@ def test_config(service_name: str, config_data: dict):
     :return:
     """
     #TODO: Adding type checking and logical tests
+    import filip.iot as iot
+    list_protocols = iot.PROTOCOLS.copy()
+    protocols = ', '.join(list_protocols)
     try:
         if service_name not in config_data:
             raise Exception("Missing configuration for '"+ service_name +
@@ -79,25 +82,28 @@ def test_config(service_name: str, config_data: dict):
                                 service_name + "'!")
         else:
             if isinstance(config_data[service_name]['port'], int) and \
-                    config_data[
-                service_name]['port']<= 65535:
+                    config_data[service_name]['port']<= 65535:
                 pass
             else:
                 raise Exception("No valid port configuration for' " +
                                 service_name + "'!")
         if 'protocol' in config_data[service_name]:
+            print("True")
             assert isinstance(config_data[service_name]['protocol'], str),\
                 ("Host configuration for'" + service_name + "' must be string!")
             # Additional allowed protocols may be added here, e.g. 'IoTA-LWM2M'
-            assert config_data[service_name]['protocol'] in iot.PROTOCOLS \
+            assert config_data[service_name]['protocol'] in list_protocols, \
                 ("Protocol for '" + service_name + "' not supported! The "
-                "following protocols are supported: " + str(iot.PROTOCOLS))
+                "following protocols are supported: " + protocols)
+
+
+        log.info("Configuration successfully tested!")
+        return True
 
 
     except Exception as error:
-        log.error(f" {datetime.datetime.now()} -  Config test failed!")
+        log.error(f" {datetime.datetime.now()} -  Config test failed! {error}")
 
-    log.info("Configuration successfully tested!")
-    return True
+
 
 
