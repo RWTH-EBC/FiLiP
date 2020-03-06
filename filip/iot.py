@@ -46,7 +46,9 @@ class Device:
     :ivar service: Name of the service the device belongs to (will be used in the fiware-service header).
     :ivar service_path: Name of the subservice the device belongs to (used in the fiware-servicepath header).
     :ivar entity_name: Name of the entity representing the device in the Context Broker.
-    :ivar timezone: Time zone of the sensor if it has any.
+    :ivar timezone: Time zone of the sensor if it has any. Default ist UTC/Zulu.
+    :ivar timestamp: Optional flag, on whether or not to add the TimeInstant attribute to the device
+    :ivar apikey: Optional Apikey string to use instead of group apikey
     :ivar endpoint: Endpoint where the device is going to receive commands, if any.
     :ivar protocol: Name of the device protocol, for its use with an IoT Manager.
     :ivar transport: Name of the device transport protocol, for the IoT Agents with multiple transport protocols.
@@ -54,6 +56,7 @@ class Device:
     :ivar lazy: List of lazy attributes of the device.
     :ivar commands: List of commands of the device
     :ivar static_attributes: List of static attributes to append to the entity. All the updateContext requests to the CB will have this set of attributes appended.
+    :ivar internal_attributes: List of internal attributes with free format for specific IoT Agent configuration.
         """
     def __init__(self, device_id: str, entity_name: str, entity_type: str, **kwargs):
         self.device_id = device_id
@@ -61,9 +64,9 @@ class Device:
         self.entity_type = entity_type
         self.service = kwargs.get("service", None)
         self.service_path = kwargs.get("service_path", "/")
-        self.timezone = kwargs.get("timezone")
+        self.timezone = kwargs.get("timezone", "UTC/Zulu")
         self.timestamp = kwargs.get("timestamp", False)
-        self.timestamp = kwargs.get("apikey")
+        self.apikey = kwargs.get("apikey")
         self.endpoint = kwargs.get("endpoint") # necessary for HTTP
         self.protocol = kwargs.get("protocol")
         self.transport = kwargs.get("transport")
@@ -232,7 +235,11 @@ class DeviceGroup:
     :param path:    Subservice of the devices of this type.
     :param cbHost: Context Broker connection information. This options
     can be used to override the global ones for specific types of devices.
-    :param kwargs:
+    :ivar resource: string representing the Soutbound resource that will be used to assign a type to a device
+            (e.g. pathname in the soutbound port)
+    :ivar apikey: API key string
+    :ivar timestamp: Optional flag whether to include TimeInstant wihtin each entity created, as well als
+            TimeInstant metadata to each attribute, with the current Timestamp
     :ivar entity_type: Name of the type to assign to the group.
     :ivar trust: Trust token to use for secured access to the Context Broker
     for this type of devices (optional; only needed for secured scenarios).
