@@ -9,6 +9,7 @@ from filip import orion
 from filip import request_utils as requtils
 from filip import test
 
+import datetime
 import logging
 
 log = logging.getLogger('iot')
@@ -183,9 +184,10 @@ class Device:
 
         # attr["value"] = Attribute.value NOT Supported by agent-lib
         switch_dict = {"active": self.add_active,
-                "lazy": self.add_lazy,
-                "static":  self.add_static,
-                "command": self.add_command
+                       "lazy": self.add_lazy,
+                       "static":  self.add_static,
+                       "command": self.add_command,
+                       "internal": self.add_internal
                 }.get(attr_type, "not_ok")(attr)
         if switch_dict == "not_ok":
             log.warning("Attribute type unknown: {}".format(attr_type))
@@ -329,6 +331,11 @@ class DeviceGroup:
     def add_internal(self, attribute):
         self.__internal_attributes.append(attribute)
 
+    def get_resource(self):
+        return self.__resource
+
+    def get_apikey(self):
+        return self.__apikey
 
     def add_default_attribute(self, Attribute):
         """
@@ -522,7 +529,13 @@ class Agent:
         else:
             print(response.text)
 
-    def post_group(self, device_group):
+    def post_group(self, device_group:object, force_update:bool=False):
+        """
+        Function post a device group (service). If force_update = True, the info cannot  unable to register
+        configuration (409 : Duplicate_Group) is ignored and the group is updated.
+        :param device_group: The device group that should be updated. An Instance of the Device_group Class
+        :param force_update: Boolean whether an update should be forced.
+        """
         url = self.url + '/iot/services'
         headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header()}
         payload={}
@@ -530,6 +543,12 @@ class Agent:
         payload = json.dumps(payload, indent=4)
         response = requests.request("POST", url, data=payload,
                                     headers=headers)
+        if (response.status_code == 409) & (force_update == True):
+            resource = device_group.get_resource()
+            api_key = device_group.get_apikey()
+            url = url +  "?resource=" + resource + "&apikey=" + api_key
+            response = requests.request("PUT", url=url, data=payload, headers=headers)
+
         if response.status_code not in [201, 200, 204]:
             log.warning("Unable to register default configuration for service \"{}\", path \"{}\": \"{}\" {}".format(
                 device_group.get_header()['fiware-service'],
@@ -537,7 +556,7 @@ class Agent:
                 "Code:" + str(response.status_code),
                 response.text))
             return None
-        #filip.orion.post(url, head, AUTH, json_dict)
+
 
     def update_group(self, device_group):
         url = self.url + '/iot/services'
@@ -559,6 +578,12 @@ class Agent:
         # filip.orion.post(url, head, AUTH, json_dict)
 
     def post_device(self, device_group, device):
+        """
+
+        :param device_group:
+        :param device:
+        :return:
+        """
         url = self.url + '/iot/devices'
         headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header()}
         payload={}
@@ -566,7 +591,7 @@ class Agent:
         payload = json.dumps(payload, indent=4)
         response = requests.request("POST", url, data=payload,
                                     headers=headers)
-        if response.status_code != 201:
+        if (response.status_code != 201):
             log.warning(f"Unable to post device: {response.text}")
 
         else:
