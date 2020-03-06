@@ -98,6 +98,16 @@ if __name__ == "__main__":
 
     device_ul.add_attribute_json(name_attr)
 
+    # test creating an internal attribute
+
+    internal_attr = {"name": "nice_name_int",
+                   "value_type": "String",
+                   "attr_type": "internal",
+                   "attr_value" : "beautiful attribute!",
+                   "object_id": "name"}
+
+    device_ul.add_attribute_json(internal_attr)
+
 
 
     device_ul.delete_attribute("pressure", "active")
@@ -107,8 +117,9 @@ if __name__ == "__main__":
                              "Thing", transport="MQTT",
                              protocol="IoTA-JSON",
                              timezone="Europe/Berlin")
-    
-    print(device_ul.get_json())
+
+
+
     IOTA_JSON.post_group(device_group_json)
     IOTA_JSON.get_groups(device_group_json)
     IOTA_JSON.post_device(device_group_json, device_json)
@@ -126,11 +137,11 @@ if __name__ == "__main__":
     ORION_CB.get_entity('urn:Room:002')
 
 
+    """
+    IOTA_JSON.delete_device(device_group_json, device_json)
+    IOTA_JSON.delete_group(device_group_json)
 
-    #IOTA_JSON.delete_device(device_group_json, device_json)
-    #IOTA_JSON.delete_group(device_group_json)
-
-    #IOTA_UL.delete_device(device_group, device_ul)
-    #IOTA_UL.delete_group(device_group)
-    
+    IOTA_UL.delete_device(device_group, device_ul)
+    IOTA_UL.delete_group(device_group)
+    """
 

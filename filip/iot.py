@@ -99,6 +99,7 @@ class Device:
         dict['lazy'] = self.lazy
         dict['commands'] = self.commands
         dict['static_attributes'] = self.static_attributes
+        dict['internal_attributes'] = self.internal_attributes
         return json.dumps(dict, indent=4)
 
     def add_lazy(self, attribute):
@@ -348,12 +349,44 @@ class DeviceGroup:
         if Attribute.object_id:
             attr["object_id"] = Attribute.object_id
         if Attribute.attr_value != None\
-                and Attribute.attr_type == "static":
+                and Attribute.attr_type == "static" or Attribute.attr_type == "internal":
             attr["value"]  = Attribute.attr_value
         attr["name"] = Attribute.name
         attr["type"] = Attribute.value_type
 
         attr_type = Attribute.attr_type
+
+        switch_dict = {"active": self.add_active,
+                        "lazy": self.add_lazy,
+                        "static":  self.add_static,
+                        "command": self.add_command,
+                        "internal": self.add_internal
+                       }.get(attr_type, "not_ok")(attr)
+        if switch_dict == "not_ok":
+            log.warning("Attribute type unknown: {}".format(attr_type))
+
+
+    def add_default_attribute_json(self, attribute:dict):
+        """
+        :param name: The name of the attribute as submitted to the context broker.
+        :param type: The type of the attribute as submitted to the context broker.
+        :param object_id: The id of the attribute used from the southbound API.
+        :param attr_type: One of \"active\" (default), \"lazy\" or \"static\"
+        """
+
+        attr_type = attribute["attr_type"]
+        if "attr_value" in attribute:
+            if (attr_type!= "static") or (attr_type != "internal"):# & attribute["attr_value"] != None:
+                log.warning(" Setting attribute value only allowed for static or internal attributes! Value will be ignored!")
+                del attribute["attr_value"]
+
+        attr = {"name": attribute["name"],
+                "type": attribute["value_type"]
+                }
+        # static attribute do not need an object id
+        if attr_type != "static":
+            attr["object_id"] = attribute["object_id"]
+
 
         switch_dict = {"active": self.add_active,
                         "lazy": self.add_lazy,
