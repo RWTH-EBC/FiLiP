@@ -59,9 +59,11 @@ class Device:
         self.device_id = device_id
         self.entity_name = entity_name
         self.entity_type = entity_type
-        self.service = None
-        self.service_path = "/"
+        self.service = kwargs.get("service", None)
+        self.service_path = kwargs.get("service_path", "/")
         self.timezone = kwargs.get("timezone")
+        self.timestamp = kwargs.get("timestamp", False)
+        self.timestamp = kwargs.get("apikey")
         self.endpoint = kwargs.get("endpoint") # necessary for HTTP
         self.protocol = kwargs.get("protocol")
         self.transport = kwargs.get("transport")
@@ -69,6 +71,7 @@ class Device:
         self.lazy = kwargs.get("lazy", [])
         self.commands = kwargs.get("commands", [])
         self.static_attributes = kwargs.get("static_attributes", [])
+        self.internal_attributes = kwargs.get("internal_attributes", [])
 
 
     def __repr__(self):
@@ -106,6 +109,9 @@ class Device:
     def add_command(self, attribute):
         self.commands.append(attribute)
 
+    def add_internal(self, attribute):
+        self.internal_attributes.append(attribute)
+
 
 
     # Function beneath is only for backwards compatibility
@@ -134,9 +140,10 @@ class Device:
 
         # attr["value"] = Attribute.value NOT Supported by agent-lib
         switch_dict = {"active": self.add_active,
-                "lazy": self.add_lazy,
-                "static":  self.add_static,
-                "command": self.add_command
+                       "lazy": self.add_lazy,
+                       "static":  self.add_static,
+                       "command": self.add_command,
+                       "internal": self.add_internal
                 }.get(attr_type, "not_ok")(attr)
         if switch_dict == "not_ok":
             log.warning("Attribute type unknown: {}".format(attr_type))
@@ -241,13 +248,17 @@ class DeviceGroup:
 
         self.__service = fiware_service.name
         self.__subservice = fiware_service.path
+        self.__cbHost = cb_host
+
         self.__resource = kwargs.get("resource", "/iot/d") #for iot-ul 1.7.0
         # the default must be empty string
         self.__apikey = kwargs.get("apikey", "12345")
 
+        self.timestamp = kwargs.get("timestamp", None)
+
+
         self.__entity_type = kwargs.get("entity_type", "Thing")
-        #self.trust
-        self.__cbHost = cb_host
+        self.trust = kwargs.get("trust")
         self.__lazy = kwargs.get("lazy", [])
         self.__commands = kwargs.get("commands", [])
         self.__attributes = kwargs.get("attributes", [])
@@ -549,7 +560,7 @@ class Agent:
         response = requests.request("POST", url, data=payload,
                                     headers=headers)
         if response.status_code != 201:
-            log.warning("Unable to post device: ", response.text)
+            log.warning(f"Unable to post device: {response.text}")
 
         else:
             log.info("Device successfully posted!")
@@ -563,7 +574,10 @@ class Agent:
         if response.status_code == 204:
             log.info("Device successfully deleted!")
         else:
-            print(response.text)
+            log.warning(f"Device could not be deleted: {response.text}")
+
+
+
 
 
     def get_device(self, device_group, device):
