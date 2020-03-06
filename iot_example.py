@@ -21,11 +21,11 @@ if __name__ == "__main__":
 
 
     # Creating an Instance of the IoT-Agent in the UL-Version
-    IOTA_UL = iot.Agent("iota_ul", CONFIG)
+    IOTA_UL = iot.Agent("iota", CONFIG)
 
 
     # Creating an Instance of the IoT-Agent in the JSON-Version
-    IOTA_JSON = iot.Agent("iota_json", CONFIG)
+    IOTA_JSON = iot.Agent("iota", CONFIG)
 
     # set the service path
     fiware_service = orion.FiwareService("test_service2", "/iot_ul")
@@ -68,8 +68,8 @@ if __name__ == "__main__":
             "attr_type": "active",
             "attr_value": "12",
             "object_id": "t"}
-            
-    
+
+
 
     device_ul.add_attribute_json(temp_attr)
 
@@ -98,7 +98,7 @@ if __name__ == "__main__":
                              "Thing", transport="MQTT",
                              protocol="IoTA-JSON",
                              timezone="Europe/Berlin")
-    
+
     print(device_ul.get_json())
     IOTA_JSON.post_group(device_group_json)
     IOTA_JSON.get_groups(device_group_json)
@@ -123,5 +123,6 @@ if __name__ == "__main__":
 
     IOTA_UL.delete_device(device_group, device_ul)
     IOTA_UL.delete_group(device_group)
-    
+
+
 
