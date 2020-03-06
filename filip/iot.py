@@ -165,8 +165,12 @@ class Device:
                 del attribute["attr_value"]
 
         attr = {"name": attribute["name"],
-                "type": attribute["value_type"],
-                "object_id": attribute["object_id"]}
+                "type": attribute["value_type"]
+                }
+        # static attribute do not need an object id
+        if attr_type != "static":
+            attr["object_id"] = attribute["object_id"]
+
         # attr["value"] = Attribute.value NOT Supported by agent-lib
         switch_dict = {"active": self.add_active,
                 "lazy": self.add_lazy,
