@@ -1,15 +1,17 @@
 import requests
 from requests import Response
-
+import datetime
 import test
 import json
 import string
 import random
+
 from filip import orion
+from filip import config
 from filip import request_utils as requtils
 from filip import test
 
-import datetime
+
 import logging
 
 log = logging.getLogger('iot')
@@ -65,7 +67,8 @@ class Device:
         self.entity_type = entity_type
         self.service = kwargs.get("service", None)
         self.service_path = kwargs.get("service_path", "/")
-        self.timezone = kwargs.get("timezone", "UTC/Zulu")
+        self.timezone = config.TIMEZONE
+        #self.timezone = kwargs.get("timezone", "UTC/Zulu")
         self.timestamp = kwargs.get("timestamp", False)
         self.apikey = kwargs.get("apikey")
         self.endpoint = kwargs.get("endpoint") # necessary for HTTP
@@ -93,6 +96,14 @@ class Device:
         dict['timezone'] = self.timezone
         if self.endpoint:
             dict['endpoint'] = self.endpoint
+        if self.apikey:
+            dict['apikey'] = self.apikey
+        if self.timestamp == True:
+            dict['timestamp'] = True
+        if self.service:
+            dict["service"] = self.service
+        if self.service_path:
+            dict['service_path'] = self.service_path
         dict['protocol'] = self.protocol
         dict['transport'] = self.transport
         dict['attributes'] = self.attributes
@@ -100,6 +111,7 @@ class Device:
         dict['commands'] = self.commands
         dict['static_attributes'] = self.static_attributes
         dict['internal_attributes'] = self.internal_attributes
+        dict['timezone'] = self.timezone
         return json.dumps(dict, indent=4)
 
     def add_lazy(self, attribute):
@@ -253,8 +265,8 @@ class DeviceGroup:
     :ivar internal_attributes: Optional section with free format, to allow
     specific IoT Agents to store information along with the devices in the Device Registry.
     """
-    def __init__(self, fiware_service , cb_host: str,
-                           **kwargs):
+    def __init__(self, fiware_service ,
+                 cb_host: str, **kwargs):
 
         self.__service = fiware_service.name
         self.__subservice = fiware_service.path
@@ -265,7 +277,6 @@ class DeviceGroup:
         self.__apikey = kwargs.get("apikey", "12345")
 
         self.timestamp = kwargs.get("timestamp", None)
-
 
         self.__entity_type = kwargs.get("entity_type", "Thing")
         self.trust = kwargs.get("trust")
@@ -471,6 +482,8 @@ class DeviceGroup:
         dict['commands'] = self.__commands
         dict['static_attributes'] = self.__static_attributes
         dict['internal_attributes'] = self.__internal_attributes
+        if self.timestamp:
+            dict['timestamp'] = True
         return json.dumps(dict, indent=4)
 
     def generate_apikey(self, length: int = 10):

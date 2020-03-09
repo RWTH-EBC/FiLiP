@@ -6,6 +6,11 @@ import logging.config
 import yaml
 import json
 
+
+# setup Environmental parameters
+TIMEZONE = os.getenv("TIMEZONE", "UTC/Zulu")
+
+
 def setup_logging(path_to_config: str ='/Users/Felix/PycharmProjects/Logger/filip/log_config.yaml',
                   default_level=logging.INFO):
     """

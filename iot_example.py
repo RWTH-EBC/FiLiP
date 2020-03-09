@@ -37,7 +37,7 @@ if __name__ == "__main__":
 
     device_group_json = iot.DeviceGroup(fiware_service,
                                          "http://orion:1026",
-                                         iot_agent="iota_json", apikey="12345")
+                                         iot_agent="iota_json", apikey="12345", timestamp=True)
 
     device_group = iot.DeviceGroup(fiware_service,
                                     "http://orion:1026",
@@ -116,7 +116,7 @@ if __name__ == "__main__":
     device_json = iot.Device('urn:Room:002:sensor02','urn:Room:002',
                              "Thing", transport="MQTT",
                              protocol="IoTA-JSON",
-                             timezone="Europe/Berlin")
+                             timezone="Europe/Berlin", timestamp=True)
 
 
 
@@ -137,11 +137,10 @@ if __name__ == "__main__":
     ORION_CB.get_entity('urn:Room:002')
 
 
-    """
+
     IOTA_JSON.delete_device(device_group_json, device_json)
     IOTA_JSON.delete_group(device_group_json)
 
     IOTA_UL.delete_device(device_group, device_ul)
     IOTA_UL.delete_group(device_group)
-    """
 
