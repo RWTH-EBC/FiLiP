@@ -172,9 +172,9 @@ class Orion:
             response = requests.post(url, headers=headers, data=json_data)
         ok, retstr = requtils.response_ok(response)
         if (not ok):
-            print(retstr)
-            requtils.pretty_print_request(response.request)
-            print(url, headers)
+            level, retstr = requtils.logging_switch(response)
+            self.log_switch(level, retstr)
+
 
     def post_json_key_value(self, json_data=None, params="keyValues"):
         """
@@ -303,7 +303,6 @@ class Orion:
     def create_subscription(self, subscription_body, check_duplicate:bool=True):
         url = self.url + '/subscriptions'
         headers=self.get_header(requtils.HEADER_CONTENT_JSON)
-        print(subscription_body, "This is the subscription body")
         self.check_duplicate_subscription(subscription_body)
         response = requests.post(url, headers=headers, data=subscription_body)
         if response.headers==None:
@@ -484,7 +483,8 @@ class Orion:
         for sub_id in subscriptions:
             self.delete_subscription(sub_id)
 
-    def post_cmd_v1(self, entity_id: str, entity_type: str, cmd_name: str, cmd_value: str):
+    def post_cmd_v1(self, entity_id: str, entity_type: str,
+                    cmd_name: str, cmd_value: str):
         url = self.url_v1 + '/updateContext'
         payload = {"updateAction": "UPDATE",
                    "contextElements": [
