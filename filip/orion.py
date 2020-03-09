@@ -2,6 +2,7 @@ import json
 import requests
 import filip.request_utils as requtils
 
+import math
 import logging
 
 log = logging.getLogger('orion')
@@ -348,6 +349,39 @@ class Orion:
             level, retstr = requtils.logging_switch(response)
             self.log_switch(level, retstr)
 
+    def get_pagination(self, url:str, headers:dict,
+                       count:float,  limit:int=20):
+        """
+        NGSIv2 implements a pagination mechanism in order to help clients to retrieve large sets of resources.
+        This mechanism works for all listing operations in the API (e.g. GET /v2/entities, GET /v2/subscriptions, POST /v2/op/query, etc.).
+        This function helps getting datasets that are larger than the limit for the different GET operations.
+        :param url: Information about the url, obtained from the orginal function e.g. : http://localhost:1026/v2/subscriptions?limit=20&options=count
+        :param headers: The headers from the original function, e.g: {'fiware-service': 'crio', 'fiware-servicepath': '/measurements'}
+        :param count: Number of total elements, obtained by adding "&options=count" to the url,
+                        included in the response headers
+        :param limit: Limit, obtained from the oringal function, default is 20
+        :return: A list, containing all objects
+        """
+        all_data = []
+        no_intervals = int(math.ceil(count / limit))
+        for i in range(0, no_intervals):
+            offset = str(i * limit)
+            if i == 0:
+                url = url
+            else:
+                url = url + '&offset=' + offset
+            response = requests.get(url, headers=self.get_header())
+            ok, retstr = requtils.response_ok(response)
+            if (not ok):
+                level, retstr = requtils.logging_switch(response)
+                self.log_switch(level, retstr)
+
+            else:
+                for resp_dict in json.loads(response.text):
+                    all_data.append(resp_dict)
+
+        return all_data
+
     def check_duplicate_subscription(self, subscription_body, limit:int=20):
         """
         Function compares the subject of the subscription body, on whether a subscription
@@ -363,11 +397,14 @@ class Orion:
             subscription_url = json.loads(subscription_body)["notification"]["httpCustom"]["url"]
         except KeyError:
             subscription_url = json.loads(subscription_body)["notification"]["http"]["url"]
-        url = self.url + '/subscriptions?limit=' + str(limit)
 
+        # If the number of subscriptions is larger then the limit, paginations methods have to be used
+        url = self.url + '/subscriptions?limit=' + str(limit) + '&options=count'
         response = requests.get(url, headers=self.get_header())
-        response = json.loads(response.text)
-
+        sub_count = float(response.headers["Fiware-Total-Count"])
+        if sub_count >= limit:
+            response = self.get_pagination(url=url, headers=self.get_header(),
+                                           limit=limit, count=sub_count)
         for existing_subscription in response:
 
             # check whether the exact same subscriptions already exists
