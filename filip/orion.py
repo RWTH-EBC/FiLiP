@@ -178,7 +178,6 @@ class Orion:
 
     def post_json_key_value(self, json_data=None, params="keyValues"):
         """
-
         :param json_data:
         :param params:
         :return:
@@ -188,9 +187,9 @@ class Orion:
         response = requests.post(url, headers=headers, data=json_data)
         ok, retstr = requtils.response_ok(response)
         if (not ok):
-            print(retstr)
-            requtils.pretty_print_request(response.request)
-            print(url, headers)
+            level, retstr = requtils.logging_switch(response)
+            self.log_switch(level, retstr)
+
    
     def get_entity(self, entity_name,  entity_params=None):
         url = self.url + '/entities/' + entity_name
@@ -362,6 +361,8 @@ class Orion:
         :return: A list, containing all objects in a dictionary
         """
         all_data = []
+        # due to a math, one of the both numbers has to be a float,
+        # otherwise the value is rounded down not up
         no_intervals = int(math.ceil(count / limit))
         for i in range(0, no_intervals):
             offset = str(i * limit)

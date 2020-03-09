@@ -165,6 +165,7 @@ if __name__=="__main__":
     exists_id_pattern = ORION_CB.check_duplicate_subscription(id_match_body)
     print("The subscription allready exists:", exists_id_pattern)
 
+
     print("deleting subscriptions..")
     time.sleep(1)
     sub_id = sub_id1
@@ -178,3 +179,5 @@ if __name__=="__main__":
     sub_id = sub_id3
     #ORION_CB.delete_subscription(sub_id)
     #print("deleted subscription " + sub_id)
+
+    ORION_CB.delete_all_subscriptions()
