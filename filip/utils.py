@@ -67,7 +67,12 @@ def str2fiware(string:str):
                         "=":"_eq_",
                         ";":" ",
                         "(":"",
-                        ")":""}
+                        ")":"",
+                        "ä": "ae",
+                        "ö": "oe",
+                        "ü": "ue",
+                        "ß": "ss"
+                        }
     for char, replacement in chars_to_replace.items():
         string = string.replace(char, replacement).strip()
     return string
