@@ -360,7 +360,7 @@ class Orion:
         :param count: Number of total elements, obtained by adding "&options=count" to the url,
                         included in the response headers
         :param limit: Limit, obtained from the oringal function, default is 20
-        :return: A list, containing all objects
+        :return: A list, containing all objects in a dictionary
         """
         all_data = []
         no_intervals = int(math.ceil(count / limit))
@@ -401,12 +401,15 @@ class Orion:
         # If the number of subscriptions is larger then the limit, paginations methods have to be used
         url = self.url + '/subscriptions?limit=' + str(limit) + '&options=count'
         response = requests.get(url, headers=self.get_header())
+
         sub_count = float(response.headers["Fiware-Total-Count"])
+        response = json.loads(response.text)
         if sub_count >= limit:
             response = self.get_pagination(url=url, headers=self.get_header(),
                                            limit=limit, count=sub_count)
-        for existing_subscription in response:
 
+
+        for existing_subscription in response:
             # check whether the exact same subscriptions already exists
             if existing_subscription["subject"] == subscription_subject:
                 exists = True
