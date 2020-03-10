@@ -138,7 +138,6 @@ def create_product_entities():
 
 
 
-
 if __name__=="__main__":
 
     # setup logging
@@ -182,9 +181,13 @@ if __name__=="__main__":
         rel.add_ref()
         ORION_CB.post_relationship(json_data=rel.get_json())
 
-    # get infos again
+    # get infos again to see the new refStore attribute
     for shelf in shelf_entities:
         print(ORION_CB.get_entity_attribute_list(entity_name=shelf.id, attr_name_list=shelf.get_attributes()))
+
+    # reading from parent entity to child entity
+    for store in store_entities:
+        print(ORION_CB.get_subjects(object_entity_name=store.id, object_entity_type=store.type))
 
 
 

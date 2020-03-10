@@ -233,6 +233,12 @@ class Orion:
             requtils.pretty_print_request(response.request)
 
     def post_relationship(self, json_data=None):
+        """
+        Function can be used to post a one to many or one to one relationship.
+
+        :param json_data:
+        :return:
+        """
         url = self.url + '/op/update'
         headers = self.get_header(requtils.HEADER_CONTENT_JSON)
         payload = {"actionType": "Append",
@@ -244,6 +250,26 @@ class Orion:
             level, retstr = requtils.logging_switch(response)
             self.log_switch(level, retstr)
 
+    def get_subjects(self, object_entity_name:str, object_entity_type:str, subject_type=None):
+        """
+        Function gets the JSON for child / subject entities for a parent / object entity.
+        :param object_entity_name: The parent / object entity name
+        :param object_entity_type: The type of the parent / object entity
+        :param subject_type: optional parameter, if added only those child / subject entities are returned that match the type
+        :return: JSON containing the child / subject information
+        """
+
+        url = self.url + '/entities/?q=ref' + object_entity_type + '=='  + object_entity_name + '&options=count'
+        if subject_type != None:
+             url = url + '&attrs=type&type'
+        headers = self.get_header()
+        response = requests.get(url=url, headers=headers)
+        ok, retstr = requtils.response_ok(response)
+        if (not ok):
+            level, retstr = requtils.logging_switch(response)
+            self.log_switch(level, retstr)
+        else:
+            return response.text
    
     def get_entity(self, entity_name,  entity_params=None):
         url = self.url + '/entities/' + entity_name
