@@ -32,6 +32,7 @@ class Entity:
                             }
         """
         self.id = entity_dict["id"]
+        self.type = entity_dict["type"]
         self.entity_dict = entity_dict
         self._PROTECTED = ['id', 'type']
 
@@ -39,10 +40,65 @@ class Entity:
         json_res = json.dumps(self.entity_dict)
         return json_res
 
-    # ToDo Check whether the following function is needed
+
+    def add_attribute(self, attr_dict:dict):
+        """
+        Function adds another Attribute to an existing Entity.
+        :param attr_dict: A dictionary describing an Attribute
+                        "Temperature"  : { "value" : 17,
+                                                "type" : "Number" },
+        :return: updated entity dict
+        """
+        for key in attr_dict.keys():
+            self.entity_dict[key] = attr_dict[key]
+
+
     def get_attributes(self):
+        """
+        Function returns list of attribute names.
+        """
         attributes = [key for key in self.entity_dict.keys() if key not in self._PROTECTED]
         return attributes
+
+    def get_attributes_key_values(self):
+        """
+        Function returns all attributes, their types and values of an entity
+        :return:
+        """
+        attributes_values = {key: value for (key,value) in self.entity_dict.items() if key not in self._PROTECTED}
+        return attributes_values
+
+
+
+class Relationship:
+
+    def __init__(self, ref_object:Entity, subject:Entity, predicate:str = None ):
+        self.object = ref_object
+        self.subject = subject
+        self.predicate = predicate
+
+    def add_ref(self):
+        ref_attr = json.loads(self.get_ref())
+        self.subject.add_attribute(ref_attr)
+
+
+    def get_ref(self):
+        ref_type = self.object.type
+        ref_key = "ref" + str(ref_type)
+        ref_dict = {}
+        ref_dict[ref_key] = {"type" : "Relationship",
+                             "value" : self.object.id}
+
+        return json.dumps(ref_dict)
+
+    def get_json(self):
+        temp_dict = {}
+        temp_dict["id"] = self.subject.id
+        temp_dict["type"] = self.subject.type
+        ref_dict = json.loads(self.get_ref())
+        whole_dict = {**temp_dict, **ref_dict}
+        return json.dumps(whole_dict)
+
 
 class FiwareService:
     """
@@ -164,7 +220,6 @@ class Orion:
 
     def post_json_key_value(self, json_data=None, params="keyValues"):
         """
-
         :param json_data:
         :param params:
         :return:
@@ -176,6 +231,19 @@ class Orion:
         if (not ok):
             print(retstr)
             requtils.pretty_print_request(response.request)
+
+    def post_relationship(self, json_data=None):
+        url = self.url + '/op/update'
+        headers = self.get_header(requtils.HEADER_CONTENT_JSON)
+        payload = {"actionType": "Append",
+                   "entities": [json.loads(json_data)]}
+        data = json.dumps(payload)
+        response = requests.post(url=url, data=data, headers=headers)
+        ok, retstr = requtils.response_ok(response)
+        if (not ok):
+            level, retstr = requtils.logging_switch(response)
+            self.log_switch(level, retstr)
+
    
     def get_entity(self, entity_name,  entity_params=None):
         url = self.url + '/entities/' + entity_name
@@ -256,8 +324,8 @@ class Orion:
         return self.get_entity(entity_name, parameters)
 
     def update_entity(self, entity):
-        url = self.url + '/entities/' + entity.name + '/attrs'
-        payload = entity.get_attributes_json_dict()
+        url = self.url + '/entities/' + entity.id + '/attrs'
+        payload = entity.get_attributes_key_values()
         headers=self.get_header(requtils.HEADER_CONTENT_JSON)
         data=json.dumps(payload)
         response = requests.patch(url, headers=headers, data=data)
