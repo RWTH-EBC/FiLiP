@@ -71,18 +71,36 @@ class Entity:
 
 
 class Relationship:
+    """
+    Class implements the concept of FIWARE Entity Relationships.
+
+    """
 
     def __init__(self, ref_object:Entity, subject:Entity, predicate:str = None ):
+        """
+        :param ref_object:  The parent / object of the relationship
+        :param subject: The child / subject of the relationship
+        :param predicate: currently not supported -> describes the relationship between object and subject
+        """
         self.object = ref_object
         self.subject = subject
         self.predicate = predicate
+        self.add_ref()
 
     def add_ref(self):
+        """
+        Function updates the subject Attribute with the relationship attribute
+        :return:
+        """
         ref_attr = json.loads(self.get_ref())
         self.subject.add_attribute(ref_attr)
 
 
     def get_ref(self):
+        """
+        Function creates the NGSI Ref schema in a ref_dict, needed for the subject
+        :return: ref_dict
+        """
         ref_type = self.object.type
         ref_key = "ref" + str(ref_type)
         ref_dict = {}
@@ -92,6 +110,11 @@ class Relationship:
         return json.dumps(ref_dict)
 
     def get_json(self):
+        """
+        Function returns a JSON to describe the Relationship,
+        which then can be pushed to orion
+        :return: whole_dict
+        """
         temp_dict = {}
         temp_dict["id"] = self.subject.id
         temp_dict["type"] = self.subject.type
@@ -235,13 +258,17 @@ class Orion:
     def post_relationship(self, json_data=None):
         """
         Function can be used to post a one to many or one to one relationship.
-
-        :param json_data:
-        :return:
+        :param json_data: Relationship Data obtained from the Relationship class. e.g. :
+                {"id": "urn:ngsi-ld:Shelf:unit001", "type": "Shelf",
+                "refStore": {"type": "Relationship", "value": "urn:ngsi-ld:Store:001"}}
+                Can be a one to one or a one to many relationship
         """
         url = self.url + '/op/update'
         headers = self.get_header(requtils.HEADER_CONTENT_JSON)
-        payload = {"actionType": "Append",
+        # Action type append required,
+        # Will overwrite existing entities if they exist whereas
+        # the entities attribute holds an array of entities we wish to update.
+        payload = {"actionType": "APPEND",
                    "entities": [json.loads(json_data)]}
         data = json.dumps(payload)
         response = requests.post(url=url, data=data, headers=headers)

@@ -180,6 +180,7 @@ if __name__=="__main__":
         rel = orion.Relationship(ref_object=tup[0], subject=tup[1])
         rel.add_ref()
         ORION_CB.post_relationship(json_data=rel.get_json())
+        print(rel.get_json(), "this the json")
 
     # get infos again to see the new refStore attribute
     for shelf in shelf_entities:
