@@ -1,5 +1,5 @@
 from filip import orion, config
-
+import json
 
 def create_store_entities():
 
@@ -180,20 +180,32 @@ if __name__=="__main__":
         rel = orion.Relationship(ref_object=tup[0], subject=tup[1])
         rel.add_ref()
         ORION_CB.post_relationship(json_data=rel.get_json())
-        print(rel.get_json(), "this the json")
 
     # get infos again to see the new refStore attribute
     for shelf in shelf_entities:
+        print(f"These are the attributes of entity {shelf.id}:")
         print(ORION_CB.get_entity_attribute_list(entity_name=shelf.id, attr_name_list=shelf.get_attributes()))
 
     # reading from parent entity to child entity
     for store in store_entities:
-        print(ORION_CB.get_subjects(object_entity_name=store.id, object_entity_type=store.type))
+        children = ORION_CB.get_subjects(object_entity_name=store.id, object_entity_type=store.type)
+        print(f"These are the subjects / children of {store.id} : {children} ")
+        #print(ORION_CB.get_subjects(object_entity_name=store.id, object_entity_type=store.type))
 
 
     # reading from child entity to parent entity
     for shelf in shelf_entities:
-        print(ORION_CB.get_objects(subject_entity_name=shelf.id, subject_entity_type=shelf.type, object_type="Store"))
+        parents = ORION_CB.get_objects(subject_entity_name=shelf.id, subject_entity_type=shelf.type, object_type="Store")
+        print(f"These are the objects / parents of {shelf.id}: {parents} ")
+
+    # get all associated attributes
+    for shelf in shelf_entities:
+        data = ORION_CB.get_associated(name=shelf.id, type=shelf.type)
+        print(json.dumps(data, indent=4))
+
+    for store in store_entities:
+        data = ORION_CB.get_associated(name=store.id, type=store.type)
+        print(json.dumps(data, indent=4))
 
     # After the end of the tutorial delete all entities
     ORION_CB.delete_all_entities()

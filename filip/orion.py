@@ -7,6 +7,8 @@ import logging
 log = logging.getLogger('orion')
 
 
+# ToDo Query params
+
 class Attribute:
     """
     Describes the attribute of an entity.
@@ -298,6 +300,8 @@ class Orion:
         else:
             return response.text
 
+
+        # ToDo test return for multi association
     def get_objects(self, subject_entity_name:str, subject_entity_type:str, object_type=None):
         """
         Function returns a List of all objects associated to a subject. If object type is not None,
@@ -308,7 +312,7 @@ class Orion:
         :return: List containing all associated objects
 
         """
-        url = self.url + '/entities/' + subject_entity_name + '/?type=' + subject_entity_type + '&options=values'
+        url = self.url + '/entities/' + subject_entity_name + '/?type=' + subject_entity_type + '&options=keyValues'
         if object_type != None:
             url = url + '&attrs=ref' + object_type
         headers = self.get_header()
@@ -319,6 +323,48 @@ class Orion:
             self.log_switch(level, retstr)
         else:
             return response.text
+
+    def get_associated(self, name:str, type:str, associated_type=None):
+        """
+        Function returns all associated data for a given entity name and type
+        :param name: name of the entity
+        :param type: type of the entity
+        :param associated_type: if only associated data of one type should be returned, this parameter has to be the type
+        :return: A dictionary, containing the data of the entity, a key "subjects" and "objects" that contain each a list
+                with the reflective data
+        """
+        data_dict = {}
+        associated_objects = self.get_objects(subject_entity_name=name, subject_entity_type=type,
+                                              object_type=associated_type)
+        associated_subjects = self.get_subjects(object_entity_name=name, object_entity_type=type,
+                                                subject_type=associated_type)
+
+        data_dict["subjects"] = json.loads(associated_subjects)
+        object_json = json.loads(associated_objects)
+        data_dict["objects"] = []
+        if isinstance(object_json, list):
+           for associated_object in object_json:
+            entity_name = associated_object["id"]
+            object_data = json.loads(self.get_entity(entity_name=entity_name))
+            data_dict["objects"].append(object_data)
+        else:
+            entity_name = object_json["id"]
+            object_data = json.loads(self.get_entity(entity_name=entity_name))
+            data_dict["objects"].append(object_data)
+
+        entity_dict = json.loads(self.get_entity(entity_name=name))
+
+        whole_dict = {**entity_dict, **data_dict}
+
+        return whole_dict
+
+
+
+
+
+
+
+
    
     def get_entity(self, entity_name,  entity_params=None):
         url = self.url + '/entities/' + entity_name
