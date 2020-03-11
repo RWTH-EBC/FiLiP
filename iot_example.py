@@ -23,12 +23,11 @@ if __name__ == "__main__":
     IOTA_UL = iot.Agent("iota", CONFIG)
 
 
-
-
     # Creating an Instance of the IoT-Agent in the JSON-Version
     IOTA_JSON = iot.Agent("iota", CONFIG)
 
     IOTA_UL.test_connection(CONFIG)
+
 
     # set the service path
     fiware_service = orion.FiwareService("test_service2", "/iot_ul")
@@ -77,8 +76,8 @@ if __name__ == "__main__":
             "attr_type": "active",
             "attr_value": "12",
             "object_id": "t"}
-            
-    
+
+
 
     device_ul.add_attribute_json(temp_attr)
 
@@ -143,4 +142,5 @@ if __name__ == "__main__":
 
     IOTA_UL.delete_device(device_group, device_ul)
     IOTA_UL.delete_group(device_group)
+
 
