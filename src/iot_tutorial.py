@@ -5,6 +5,8 @@ from src import shared_components
 
 def write():
 
+    shared_components.title_EBC()
+
     st.header("This is a tutorial for the IoT Agent")
     st.text("Explanation about IoT-Agent")
 

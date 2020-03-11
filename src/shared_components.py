@@ -100,19 +100,21 @@ def multiselect(label: str, options: List[Any], default: List[Any], format_func=
     return [options_[format_func(selection)] for selection in selections]
 
 
-def title_awesome(body: str):
+# ToDo Write default none selection so if needed user input does not automatically selects something
+
+
+
+def title_EBC():
+
     """Uses st.write to write the title as f'Awesome Streamlit {body}'
     - plus the awesome badge
     - plus a link to the awesome-streamlit GitHub page
     Arguments:
         body {str} -- [description]
     """
-    st.write(
-        f"# Awesome Streamlit {body} "
-        "[![Awesome](https://cdn.rawgit.com/sindresorhus/awesome/"
-        "d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg)]"
-        "(https://github.com/MarcSkovMadsen/awesome-streamlit)"
-    )
+    path_to_logo = "resources/ERC_RWTH_LOGO.png"
+    return st.image(path_to_logo, caption='Welcome to the FIWARE Library for Python.',
+                    use_column_width=False)
 
 
 def write_svg(svg: str):

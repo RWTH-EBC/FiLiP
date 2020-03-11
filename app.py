@@ -25,7 +25,8 @@ PAGES = {
 
 
 def main():
-    """Main function of the App"""
+    """Main function of the App.
+    Is is used to enable the selection of the other pages / functions"""
     st.sidebar.title("Navigation")
     selection = st.sidebar.selectbox(
         'Which tutorial would you like to try?',
@@ -33,9 +34,7 @@ def main():
 
     page = PAGES[selection]
 
-    with st.spinner(f"Loading {selection} ..."):
-        shared_components.write_page(page)
-    st.sidebar.title("INFO  ")
+    st.sidebar.title("INFO")
     st.sidebar.info(
         "[FIWARE](hhttps://www.fiware.org/) is an open source platform for accelerating the development of Smart Solutions. "
         "The FIWARE Library for Python (FiLiP) offers Python APIs to ease the handling of the [FiwareAPI](https://fiware-tutorials.readthedocs.io/en/latest/).")
@@ -46,6 +45,11 @@ def main():
 """
     )
     st.sidebar.image("resources/ERC_RWTH_LOGO.png", use_column_width=True)
+
+    with st.spinner(f"Loading {selection} ..."):
+        shared_components.write_page(page)
+
+
 
 
 if __name__ == "__main__":
