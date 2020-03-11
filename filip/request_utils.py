@@ -12,7 +12,7 @@ HEADER_ACCEPT_PLAIN = {'Accept': 'text/plain'}
 HEADER_CONTENT_JSON = {'Content-Type': 'application/json'}
 HEADER_CONTENT_PLAIN = {'Content-Type': 'text/plain'}
 
-log = logging.getLogger('cb_request')
+log = logging.getLogger(__name__)
 
 
 

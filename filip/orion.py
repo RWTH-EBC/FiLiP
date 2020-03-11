@@ -206,14 +206,22 @@ class Orion:
         else:
             return response.text
 
-    def get_all_entities(self, parameter=None, parameter_value=None):
-        url = self.url + '/entities'
+    def get_all_entities(self, parameter=None, parameter_value=None, limit=100):
+        url = self.url + '/entities?options=count'
         headers=self.get_header()
         if parameter is None and parameter_value is None:
             response = requests.get(url, headers=headers)
+            sub_count = float(response.headers["Fiware-Total-Count"])
+            if sub_count >= limit:
+                response = self.get_pagination(url=url, headers=headers,
+                                           limit=limit, count=sub_count)
         elif parameter is not None and parameter_value is not None:
             parameters = {'{}'.format(parameter): '{}'.format(parameter_value)}
             response = requests.get(url, headers=headers, params=parameters)
+            sub_count = float(response.headers["Fiware-Total-Count"])
+            if sub_count >= limit:
+                response = self.get_pagination(url=url, headers=headers,
+                                               limit=limit, count=sub_count, params=parameters)
         else:
             log.error("Getting all entities: both function parameters have to be 'not null'")
         ok, retstr = requtils.response_ok(response)
@@ -223,10 +231,14 @@ class Orion:
         else:
             return response.text
 
-    def get_entities_list(self) -> list:
-        url = self.url + '/entities'
+    def get_entities_list(self, limit=100) -> list:
+        url = self.url + '/entities?options=count'
         header = self.get_header(requtils.HEADER_ACCEPT_JSON)
         response = requests.get(url, headers=header)
+        sub_count = float(response.headers["Fiware-Total-Count"])
+        if sub_count >= limit:
+            response = self.get_pagination(url=url, headers=header,
+                                           limit=limit, count=sub_count)
         ok, retstr = requtils.response_ok(response)
         if (not ok):
             level, retstr = requtils.logging_switch(response)
@@ -317,9 +329,13 @@ class Orion:
             subscription_id = addr_parts.pop()
             return subscription_id
 
-    def get_subscription_list(self):
-        url = self.url + '/subscriptions'
+    def get_subscription_list(self, limit=100):
+        url = self.url + '/subscriptions?options=count'
         response = requests.get(url, headers=self.get_header())
+        sub_count = float(response.headers["Fiware-Total-Count"])
+        if sub_count >= limit:
+            response = self.get_pagination(url=url, headers=self.get_header(),
+                                           limit=limit, count=sub_count)
         ok, retstr = requtils.response_ok(response)
         if (not ok):
             level, retstr = requtils.logging_switch(response)
@@ -348,7 +364,7 @@ class Orion:
             self.log_switch(level, retstr)
 
     def get_pagination(self, url:str, headers:dict,
-                       count:float,  limit:int=20):
+                       count:float,  limit:int=20, params=None):
         """
         NGSIv2 implements a pagination mechanism in order to help clients to retrieve large sets of resources.
         This mechanism works for all listing operations in the API (e.g. GET /v2/entities, GET /v2/subscriptions, POST /v2/op/query, etc.).
@@ -370,7 +386,10 @@ class Orion:
                 url = url
             else:
                 url = url + '&offset=' + offset
-            response = requests.get(url, headers=self.get_header())
+            if params is (not None):
+                response = requests.get(url=url, headers=headers, params=params)
+            else:
+                response = requests.get(url=url, headers=headers)
             ok, retstr = requtils.response_ok(response)
             if (not ok):
                 level, retstr = requtils.logging_switch(response)
