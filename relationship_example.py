@@ -191,6 +191,9 @@ if __name__=="__main__":
         print(ORION_CB.get_subjects(object_entity_name=store.id, object_entity_type=store.type))
 
 
+    # reading from child entity to parent entity
+    for shelf in shelf_entities:
+        print(ORION_CB.get_objects(subject_entity_name=shelf.id, subject_entity_type=shelf.type, object_type="Store"))
 
     # After the end of the tutorial delete all entities
     ORION_CB.delete_all_entities()

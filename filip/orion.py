@@ -288,7 +288,28 @@ class Orion:
 
         url = self.url + '/entities/?q=ref' + object_entity_type + '=='  + object_entity_name + '&options=count'
         if subject_type != None:
-             url = url + '&attrs=type&type'
+             url = url + '&attrs=type&type=' + subject_type
+        headers = self.get_header()
+        response = requests.get(url=url, headers=headers)
+        ok, retstr = requtils.response_ok(response)
+        if (not ok):
+            level, retstr = requtils.logging_switch(response)
+            self.log_switch(level, retstr)
+        else:
+            return response.text
+
+    def get_objects(self, subject_entity_name:str, subject_entity_type:str, object_type=None):
+        """
+        Function returns a List of all objects associated to a subject. If object type is not None,
+        only those are returned, that match the object type.
+        :param subject_entity_name: The child / subject entity name
+        :param subject_entity_type: The type of the child / subject entity
+        :param object_type:
+        :return: List containing all associated objects
+        """
+        url = self.url + '/entities/' + subject_entity_name + '/?type=' + subject_entity_type + '&options=values'
+        if object_type != None:
+            url = url + '&attrs=ref' + object_type
         headers = self.get_header()
         response = requests.get(url=url, headers=headers)
         ok, retstr = requtils.response_ok(response)
