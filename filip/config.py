@@ -235,62 +235,62 @@ class Log_Config:
         cfg = {}
         cfg["version"] = 1
         cfg["disable_existing_loggers"] = False
-        cfg["formatters"]["standard"]["format"] = os.getenv("STANDARD_FORMAT",  "%(asctime)s - %(levelname)s - %(name)s - %(message)s")
-        cfg["formatters"]["error"]["format"] = os.getenv("STANDARD_FORMAT",
+        cfg["formatters"]["standard"]["format"] = os.getenv("LOG_FORMAT_STANDARD",  "%(asctime)s - %(levelname)s - %(name)s - %(message)s")
+        cfg["formatters"]["error"]["format"] = os.getenv("LOG_FORMAT_ERROR",
                                                          "%(asctime)s - %(levelname)s <PID %(process)d:%(processName)s> %(name)s.%(funcName)s(): %(message)s" )
 
-        cfg["handlers"]["console"]["class"] = os.getenv("CONSOLE_CLASS", "logging.StreamHandler")
-        cfg["handlers"]["console"]["level"] = os.getenv("CONSOLE_LEVEL", "DEBUG")
-        cfg["handlers"]["console"]["formatter"] = os.getenv("CONSOLE_LEVEL", "standard")
-        cfg["handlers"]["console"]["class"] = os.getenv("CONSOLE_STREAM", "ext://sys.stdout")
+        cfg["handlers"]["console"]["class"] = os.getenv("LOG_CLASS_CONSOLE", "logging.StreamHandler")
+        cfg["handlers"]["console"]["level"] = os.getenv("LOG_LEVEL_CONSOLE", "DEBUG")
+        cfg["handlers"]["console"]["formatter"] = os.getenv("LOG_FORMATTER_CONSOLE", "standard")
+        cfg["handlers"]["console"]["class"] = os.getenv("LOG_STREAM_CONSOLE", "ext://sys.stdout")
 
-        cfg["handlers"]["info_file_handler"]["class"] = os.getenv("INFO_CLASS", "logging.handlers.RotatingFileHandler")
-        cfg["handlers"]["info_file_handler"]["level"] = os.getenv("INFO_LEVEL", "INFO")
-        cfg["handlers"]["info_file_handler"]["formatter"] = os.getenv("INFO_FORMATTER", "standard")
-        cfg["handlers"]["info_file_handler"]["filename"] = os.getenv("INFO_FILENAME", "info.log")
-        cfg["handlers"]["info_file_handler"]["maxBytes"] = os.getenv("INFO_MAXBYTES", 10485760)
-        cfg["handlers"]["info_file_handler"]["backupCount"] = os.getenv("INFO_BACKUPCOUNT", 20)
-        cfg["handlers"]["info_file_handler"]["encoding"] = os.getenv("INFO_ENCODING", "utf8")
+        cfg["handlers"]["info_file_handler"]["class"] = os.getenv("LOG_CLASS_INFO", "logging.handlers.RotatingFileHandler")
+        cfg["handlers"]["info_file_handler"]["level"] = os.getenv("LOG_LEVEL_INFO", "INFO")
+        cfg["handlers"]["info_file_handler"]["formatter"] = os.getenv("LOG_FORMATTER_INFO", "standard")
+        cfg["handlers"]["info_file_handler"]["filename"] = os.getenv("LOG_FILENAME_INFO", "info.log")
+        cfg["handlers"]["info_file_handler"]["maxBytes"] = os.getenv("LOG_MAXBYTES_INFO", 10485760)
+        cfg["handlers"]["info_file_handler"]["backupCount"] = os.getenv("LOG_BACKUPCOUNT_INFO", 20)
+        cfg["handlers"]["info_file_handler"]["encoding"] = os.getenv("LOG_ENCODING_INFO", "utf8")
 
-        cfg["handlers"]["error_file_handler"]["class"] = os.getenv("ERROR_CLASS", "logging.handlers.RotatingFileHandler")
-        cfg["handlers"]["error_file_handler"]["level"] = os.getenv("ERROR_LEVEL", "INFO")
-        cfg["handlers"]["error_file_handler"]["formatter"] = os.getenv("ERROR_FORMATTER", "standard")
-        cfg["handlers"]["error_file_handler"]["filename"] = os.getenv("ERROR_FILENAME", "info.log")
-        cfg["handlers"]["error_file_handler"]["maxBytes"] = os.getenv("ERROR_MAXBYTES", 10485760)
-        cfg["handlers"]["error_file_handler"]["backupCount"] = os.getenv("ERROR_BACKUPCOUNT", 20)
-        cfg["handlers"]["error_file_handler"]["encoding"] = os.getenv("ERROR_ENCODING", "utf8")
+        cfg["handlers"]["error_file_handler"]["class"] = os.getenv("LOG_CLASS_ERROR", "logging.handlers.RotatingFileHandler")
+        cfg["handlers"]["error_file_handler"]["level"] = os.getenv("LOG_LEVEL_ERROR", "ERROR")
+        cfg["handlers"]["error_file_handler"]["formatter"] = os.getenv("LOG_FORMATTER_ERROR", "error")
+        cfg["handlers"]["error_file_handler"]["filename"] = os.getenv("LOG_FILENAME_ERROR", "error.log")
+        cfg["handlers"]["error_file_handler"]["maxBytes"] = os.getenv("LOG_MAXBYTES_ERROR", 10485760)
+        cfg["handlers"]["error_file_handler"]["backupCount"] = os.getenv("LOG_BACKUPCOUNT_ERROR", 20)
+        cfg["handlers"]["error_file_handler"]["encoding"] = os.getenv("LOG_ENCODING_ERROR", "utf8")
 
-        cfg["handlers"]["debug_file_handler"]["class"] = os.getenv("DEBUG_CLASS", "logging.handlers.RotatingFileHandler")
-        cfg["handlers"]["debug_file_handler"]["level"] = os.getenv("DEBUG_LEVEL", "INFO")
-        cfg["handlers"]["debug_file_handler"]["formatter"] = os.getenv("DEBUG_FORMATTER", "standard")
-        cfg["handlers"]["debug_file_handler"]["filename"] = os.getenv("DEBUG_FILENAME", "info.log")
-        cfg["handlers"]["debug_file_handler"]["maxBytes"] = os.getenv("DEBUG_MAXBYTES", 10485760)
-        cfg["handlers"]["debug_file_handler"]["backupCount"] = os.getenv("DEBUG_BACKUPCOUNT", 20)
-        cfg["handlers"]["debug_file_handler"]["encoding"] = os.getenv("DEBUG_ENCODING", "utf8")
+        cfg["handlers"]["debug_file_handler"]["class"] = os.getenv("LOG_CLASS_DEBUG", "logging.handlers.RotatingFileHandler")
+        cfg["handlers"]["debug_file_handler"]["level"] = os.getenv("LOG_LEVEL_DEBUG", "DEBUG")
+        cfg["handlers"]["debug_file_handler"]["formatter"] = os.getenv("LOG_FORMATTER_DEBUG", "error")
+        cfg["handlers"]["debug_file_handler"]["filename"] = os.getenv("LOG_FILENAME_DEBUG", "debug.log")
+        cfg["handlers"]["debug_file_handler"]["maxBytes"] = os.getenv("LOG_MAXBYTES_DEBUG", 10485760)
+        cfg["handlers"]["debug_file_handler"]["backupCount"] = os.getenv("LOG_BACKUPCOUNT_DEBUG", 20)
+        cfg["handlers"]["debug_file_handler"]["encoding"] = os.getenv("LOG_ENCODING_DEBUG", "utf8")
 
-        cfg["loggers"]["iot"]["level"] = os.getenv("IOT_LEVEL", "DEBUG")
-        cfg["loggers"]["iot"]["handlers"] = os.getenv("IOT_HANDLERS", ["console", "info_file_handler",
-                                                                       "error_file_handler", "debug_file_handler"])
-        cfg["loggers"]["iot"]["propagate"] = os.getenv("IOT_PROPAGATE", "no")
+        cfg["loggers"]["iot"]["level"] = os.getenv("LOGGER_LEVEL_IOT", "DEBUG")
+        cfg["loggers"]["iot"]["handlers"] = os.getenv("LOGGER_HANDLERS_IOT", ["console", "info_file_handler",
+                                                                              "error_file_handler", "debug_file_handler"])
+        cfg["loggers"]["iot"]["propagate"] = os.getenv("LOGGER_PROPAGATE_IOT", "no")
 
-        cfg["loggers"]["orion"]["level"] = os.getenv("ORION_LEVEL", "DEBUG")
-        cfg["loggers"]["orion"]["handlers"] = os.getenv("ORION_HANDLERS", ["console", "info_file_handler",
-                                                                           "error_file_handler", "debug_file_handler"])
-        cfg["loggers"]["orion"]["propagate"] = os.getenv("ORION_PROPAGATE", "no")
+        cfg["loggers"]["orion"]["level"] = os.getenv("LOGGER_LEVEL_ORION", "DEBUG")
+        cfg["loggers"]["orion"]["handlers"] = os.getenv("LOGGER_HANDLERS_ORION", ["console", "info_file_handler",
+                                                                                  "error_file_handler", "debug_file_handler"])
+        cfg["loggers"]["orion"]["propagate"] = os.getenv("LOGGER_PROPAGATE_ORION", "no")
 
-        cfg["loggers"]["subscription"]["level"] = os.getenv("SUBSCRIPTION_LEVEL", "DEBUG")
-        cfg["loggers"]["subscription"]["handlers"] = os.getenv("SUBSCRIPTION_HANDLERS", ["console", "info_file_handler",
-                                                                                         "error_file_handler", "debug_file_handler"])
-        cfg["loggers"]["subscription"]["propagate"] = os.getenv("SUBSCRIPTION_PROPAGATE", "no")
+        cfg["loggers"]["subscription"]["level"] = os.getenv("LOGGER_LEVEL_SUBSCRIPTION", "DEBUG")
+        cfg["loggers"]["subscription"]["handlers"] = os.getenv("LOGGER_HANDLERS_SUBSCRIPTION", ["console", "info_file_handler",
+                                                                                                "error_file_handler", "debug_file_handler"])
+        cfg["loggers"]["subscription"]["propagate"] = os.getenv("LOGGER_PROPAGATE_SUBSCRIPTION", "no")
 
-        cfg["loggers"]["timeseries"]["level"] = os.getenv("TIMESERIES_LEVEL", "DEBUG")
-        cfg["loggers"]["timeseries"]["handlers"] = os.getenv("TIMESERIES_HANDLERS", ["console", "info_file_handler",
-                                                                                     "error_file_handler", "debug_file_handler"])
-        cfg["loggers"]["timeseries"]["propagate"] = os.getenv("TIMESERIES_PROPAGATE", "no")
+        cfg["loggers"]["timeseries"]["level"] = os.getenv("LOGGER_LEVEL_TIMESERIES", "DEBUG")
+        cfg["loggers"]["timeseries"]["handlers"] = os.getenv("LOGGER_HANDLERS_TIMESERIES", ["console", "info_file_handler",
+                                                                                            "error_file_handler", "debug_file_handler"])
+        cfg["loggers"]["timeseries"]["propagate"] = os.getenv("LOGGER_PROPAGATE_TIMESERIES", "no")
 
 
-        cfg["root"]["level"] = os.getenv("ROOT_LEVEL", "DEBUG")
-        cfg["root"]["handlers"] = os.getenv("ROOT_HANDLERS", ["console", "info_file_handler",
+        cfg["root"]["level"] = os.getenv("LOGGER_LEVEL_ROOT", "DEBUG")
+        cfg["root"]["handlers"] = os.getenv("LOGGER_HANDLERS_ROOT", ["console", "info_file_handler",
                                                               "error_file_handler", "debug_file_handler"])
 
         logging.config.dictConfig(cfg)
