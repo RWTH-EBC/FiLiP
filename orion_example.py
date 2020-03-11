@@ -1,6 +1,7 @@
 import filip.orion as orion
 import filip.config as config
 import sys
+import filip.request_utils as requtils
 
 def create_entities(orion_cb:object):
     """
@@ -169,6 +170,7 @@ if __name__=="__main__":
     print (ORION_CB.get_entity_attribute_value("Room1", "humidity"))
     print ()
 
+
     print ("++++ delete all entities ++++")
-    #for entity in entities:
-        #ORION_CB.delete(entity.id)
+    for entity in entities:
+        ORION_CB.delete(entity.id)

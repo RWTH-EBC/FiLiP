@@ -14,6 +14,25 @@ log = logging.getLogger('cb_request')
 
 
 
+def url_check(url, https=False):
+    """
+    Function checks whether the host has "http" added in case of http as protocol.
+    :param url: the url for the host / port
+    :param https: boolean, whether https or http should be used
+    :return: url - if necessary updated
+    """
+    if https == False:
+        if "http://" not in url:
+            url = "http://" + url
+    if https == True:
+         if "https://" not in url:
+            url = "https://" + url
+    return url
+
+
+
+
+
 def pretty_print_request(req):
     print('{}\n{}\n{}\n\nBODY:{}\n{}'.format(
         '-----------START-----------',
