@@ -9,6 +9,8 @@ __pycache__
 *.ini
 .project
 .pydevproject
+*.pdf
+
 
 # pip install #
 #####################

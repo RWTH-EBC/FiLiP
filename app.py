@@ -45,6 +45,7 @@ def main():
         [E.ON Energy Research Center](https://www.ebc.eonerc.rwth-aachen.de/cms/~dmzz/E-ON-ERC-EBC/)
 """
     )
+    st.sidebar.image("resources/ERC_RWTH_LOGO.png", use_column_width=True)
 
 
 if __name__ == "__main__":
