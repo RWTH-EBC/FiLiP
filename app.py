@@ -37,8 +37,8 @@ def main():
         shared_components.write_page(page)
     st.sidebar.title("INFO  ")
     st.sidebar.info(
-        "Python library for easing the handling of the [FiwareAPI](https://fiware-tutorials.readthedocs.io/en/latest/) from python. "
-        "INFO 2 ")
+        "[FIWARE](hhttps://www.fiware.org/) is an open source platform for accelerating the development of Smart Solutions. "
+        "The FIWARE Library for Python (FiLiP) offers Python APIs to ease the handling of the [FiwareAPI](https://fiware-tutorials.readthedocs.io/en/latest/).")
     st.sidebar.title("About")
     st.sidebar.info(
         """

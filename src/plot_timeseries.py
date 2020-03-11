@@ -23,15 +23,6 @@ def write():
 
     readme_text = st.markdown("Test")
 
-    option = st.sidebar.selectbox(
-        'Which tutorial would you like to try?',
-        ("Introduction", "Understanding the context broker", "test2"))
-
-    'You selected:', option
-
-    if option == "Understanding the context broker":
-        readme_text.empty()
-        st.code(oe.main())
 
 
     @st.cache
