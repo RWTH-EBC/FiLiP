@@ -306,6 +306,7 @@ class Orion:
         :param subject_entity_type: The type of the child / subject entity
         :param object_type:
         :return: List containing all associated objects
+
         """
         url = self.url + '/entities/' + subject_entity_name + '/?type=' + subject_entity_type + '&options=values'
         if object_type != None:
