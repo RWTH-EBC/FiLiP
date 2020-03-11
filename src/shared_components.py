@@ -102,6 +102,9 @@ def multiselect(label: str, options: List[Any], default: List[Any], format_func=
 
 # ToDo Write default none selection so if needed user input does not automatically selects something
 
+def default_selection(options:list):
+    default_option = [""]
+    return default_option.extend(options)
 
 
 def title_EBC():

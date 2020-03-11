@@ -62,6 +62,7 @@ def write():
 
 
     type_list = [entity["type"] for entity in json.loads(entities_json)]
+    type_list = shared_components.default_selection(options=type_list)
     st.write("Get all entities of a type.")
     query_type = st.selectbox("Select a type.", type_list)
     if query_type:
