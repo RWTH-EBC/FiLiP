@@ -1,7 +1,6 @@
 from filip import orion, config
 import json
-import  os
-
+import os
 from pathlib import  Path
 
 def create_store_entities():
@@ -210,6 +209,16 @@ if __name__=="__main__":
     for store in store_entities:
         data = ORION_CB.get_associated(name=store.id, type=store.type)
         print(json.dumps(data, indent=4))
+
+
+    # change some data to check if the updates are done
+    for shelf in shelf_entities:
+        ORION_CB.update_attribute(entity_name=shelf.id, attr_name="maxCapacity", attr_value=220)
+
+    for store in store_entities:
+        data = ORION_CB.get_associated(name=store.id, type=store.type)
+        print(json.dumps(data, indent=4))
+
 
     # After the end of the tutorial delete all entities
     ORION_CB.delete_all_entities()
