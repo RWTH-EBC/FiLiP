@@ -56,7 +56,60 @@ def create_store_entities():
 
     return store_entities
 
-
+def create_product_entities():
+    product_dict =[
+    {
+      "id":"urn:ngsi-ld:Product:001", "type":"Product",
+      "name":{
+        "type":"Text", "value":"Beer"
+      },
+      "size":{
+        "type":"Text", "value": "S"
+      },
+      "price":{
+        "type":"Integer", "value": 99
+      }
+    },
+    {
+      "id":"urn:ngsi-ld:Product:002", "type":"Product",
+      "name":{
+        "type":"Text", "value":"Red Wine"
+      },
+      "size":{
+        "type":"Text", "value": "M"
+      },
+      "price":{
+        "type":"Integer", "value": 1099
+      }
+    },
+    {
+      "id":"urn:ngsi-ld:Product:003", "type":"Product",
+      "name":{
+        "type":"Text", "value":"White Wine"
+      },
+      "size":{
+        "type":"Text", "value": "M"
+      },
+      "price":{
+        "type":"Integer", "value": 1499
+      }
+    },
+    {
+      "id":"urn:ngsi-ld:Product:004", "type":"Product",
+      "name":{
+        "type":"Text", "value":"Vodka"
+      },
+      "size":{
+        "type":"Text", "value": "XL"
+      },
+      "price":{
+        "type":"Integer", "value": 5000
+      }
+    }
+  ]
+    store_entities = []
+    for product_entity in product_dict:
+        store_entities.append()
 
 def create_shelf_entities():
 
@@ -138,6 +191,33 @@ def create_product_entities():
 
 
 
+def create_inventory():
+    inventory_dict = {
+    "id": "urn:ngsi-ld:InventoryItem:001", "type": "InventoryItem",
+    "refStore": {
+        "type": "Relationship",
+        "value": "urn:ngsi-ld:Store:001"
+    },
+    "refShelf": {
+        "type": "Relationship",
+        "value": "urn:ngsi-ld:Shelf:unit001"
+    },
+    "refProduct": {
+        "type": "Relationship",
+        "value": "urn:ngsi-ld:Product:001"
+    },
+    "stockCount":{
+        "type":"Integer", "value": 10000
+    },
+    "shelfCount":{
+        "type":"Integer", "value": 50
+    }}
+
+    inventory = orion.Entity(inventory_dict)
+
+    return inventory
+
+
 
 
 if __name__=="__main__":
@@ -161,10 +241,17 @@ if __name__=="__main__":
     for shelf in shelf_entities:
         ORION_CB.post_json(shelf.get_json())
 
-
     product_entities = create_product_entities()
     for product in product_entities:
         ORION_CB.post_json(product.get_json())
+
+
+    # create a meta entity to link the different entities
+    inventory_entity = create_inventory()
+
+    inventory = ORION_CB.post_json(inventory_entity.get_json())
+
+
 
 
     # get infos for shelves
@@ -204,11 +291,12 @@ if __name__=="__main__":
     # get all associated attributes
     for shelf in shelf_entities:
         data = ORION_CB.get_associated(name=shelf.id, type=shelf.type)
-        print(json.dumps(data, indent=4))
+        #print(json.dumps(data, indent=4))
 
     for store in store_entities:
         data = ORION_CB.get_associated(name=store.id, type=store.type)
-        print(json.dumps(data, indent=4))
+        #print(json.dumps(data, indent=4))
+
 
 
     # change some data to check if the updates are done
@@ -217,7 +305,7 @@ if __name__=="__main__":
 
     for store in store_entities:
         data = ORION_CB.get_associated(name=store.id, type=store.type)
-        print(json.dumps(data, indent=4))
+        #print(json.dumps(data, indent=4))
 
 
     # After the end of the tutorial delete all entities
