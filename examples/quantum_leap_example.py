@@ -6,6 +6,9 @@ import pandas as pd
 import streamlit as st
 import pandas as pd
 
+from pathlib import Path
+import os
+
 def create_entity(orion_cb):
     """
     Function creates a test entity and registers it with the context broker
@@ -201,11 +204,12 @@ if __name__=="__main__":
 
     config.setup_logging()
 
+    path_to_config = os.path.join(str(Path().resolve().parent), "config.json")
 
 
 
     # Reading the config
-    CONFIG = config.Config()
+    CONFIG = config.Config(path_to_config)
 
     # creating an instance of the ORION context broker
     ORION_CB = orion.Orion(CONFIG)

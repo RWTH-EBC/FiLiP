@@ -1,5 +1,8 @@
 from filip import orion, config
 import json
+import  os
+
+from pathlib import  Path
 
 def create_store_entities():
 
@@ -145,8 +148,9 @@ if __name__=="__main__":
 
     config.setup_logging()
 
+    path_to_config = os.path.join(str(Path().resolve().parent), "config.json")
 
-    CONFIG = config.Config('config.json')
+    CONFIG = config.Config(path_to_config)
     ORION_CB = orion.Orion(CONFIG)
     ORION_CB.sanity_check()
 

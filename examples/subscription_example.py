@@ -3,6 +3,8 @@ import filip.config as config
 import filip.orion as orion
 import datetime
 import json
+import  os
+from pathlib import Path
 
 AUTH = ('user', 'pass')
 
@@ -65,8 +67,8 @@ if __name__=="__main__":
 
     config.setup_logging()
 
-
-    CONFIG = config.Config()
+    path_to_config = os.path.join(str(Path().resolve().parent), "config.json")
+    CONFIG = config.Config(path_to_config)
     ORION_CB = orion.Orion(CONFIG)
 
     body = API_Walkthrough_subscription()

@@ -2,6 +2,9 @@ import filip.orion as orion
 import filip.config as config
 import sys
 
+from pathlib import Path
+import os
+
 def create_entities(orion_cb:object):
     """
     Function creates Test Entities for the Context Broker
@@ -109,8 +112,9 @@ if __name__=="__main__":
 
     config.setup_logging()
 
+    path_to_config = os.path.join(str(Path().resolve().parent), "config.json")
 
-    CONFIG = config.Config('config.json')
+    CONFIG = config.Config(path_to_config)
     ORION_CB = orion.Orion(CONFIG) 
     ORION_CB.sanity_check()
 
