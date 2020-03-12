@@ -27,6 +27,8 @@ PAGES = {
 def main():
     """Main function of the App.
     Is is used to enable the selection of the other pages / functions"""
+
+    shared_components.title_EBC()
     st.sidebar.title("Navigation")
     selection = st.sidebar.selectbox(
         'Which tutorial would you like to try?',
