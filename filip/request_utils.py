@@ -1,4 +1,7 @@
 import requests
+import logging
+import json
+import datetime
 
 """
 Helper functions for HTTP requests
@@ -8,6 +11,8 @@ HEADER_ACCEPT_JSON = {'Accept': 'application/json'}
 HEADER_ACCEPT_PLAIN = {'Accept': 'text/plain'}
 HEADER_CONTENT_JSON = {'Content-Type': 'application/json'}
 HEADER_CONTENT_PLAIN = {'Content-Type': 'text/plain'}
+
+log = logging.getLogger('cb_request')
 
 
 
@@ -59,6 +64,26 @@ def response_ok(response) -> (bool, str):
     else:
         retstr = "[INFO]: HTTP response: " + response.text
     return ok, retstr
+
+def logging_switch(response):
+    status = response.status_code
+    ok, retstr = response_ok(response)
+    category = str(status)[0]
+    text = json.loads(response.text)
+    keys = [key for key in text.keys()]
+    level = {
+        "1": "INFO",
+        "2": "INFO",
+        "3": "WARNING",
+        "4": "ERROR",
+        "5": "ERROR",
+            }.get(category, "INFO")
+    time = datetime.datetime.now()
+    response_text = f" {time} -The request was: {text[keys[0]]}, because: {text[keys[1]]} "
+    return level, response_text
+
+
+
 """
 def post(url, head, body, autho=None, return_headers=False):
     response = requests.post(url, headers=head, auth=autho, data=body)

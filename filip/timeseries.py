@@ -7,6 +7,11 @@ from filip import request_utils as requtils
 
 import requests
 import json
+import json
+
+import logging
+
+log = logging.getLogger('timeseries')
 
 class QuantumLeap():
     """

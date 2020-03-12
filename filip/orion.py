@@ -2,7 +2,22 @@ import json
 import requests
 from filip import request_utils as requtils
 
+import logging
 
+log = logging.getLogger('orion')
+
+
+class Attribute:
+    """
+    Describes the attribute of an entity.
+    """
+    def __init__(self, name, value, attr_type):
+        self.name = name
+        self.value = value
+        self.type = attr_type
+
+    def get_json(self):
+        return {'value': self.value, 'type': '{}'.format(self.type)}
 
 class Entity:
     def __init__(self, entity_dict: dict):
@@ -71,7 +86,7 @@ class Orion:
     def set_service(self, fiware_service):
         """Overwrites the fiware_service and service path of config.json"""
         self.fiware_service.update(fiware_service.name, fiware_service.path)
-
+ 
     def get_header(self, additional_headers: dict = None):
         """combine fiware_service header (if set) and additional headers"""
         if self.fiware_service == None:
@@ -82,14 +97,29 @@ class Orion:
             headers = {**self.fiware_service.get_header(), **additional_headers}
             return headers
 
+    def log_switch(self, level, response):
+        """
+        Function returns the required log_level with the repsonse
+        :param level: The logging level that should be returned
+        :param response: The message for the logger
+        :return:
+        """
+        switch_dict={
+                "INFO": logging.info,
+                "ERROR":  logging.error,
+                "WARNING": logging.warning
+                }.get(level, logging.info)(msg=response)
+
+
+
     def sanity_check(self):
         url = self.url[:-3] + '/version'
         headers=self.get_header(requtils.HEADER_ACCEPT_JSON)
         response = requests.get(url, headers=headers)
         ok, retstr = requtils.response_ok(response)
         if (not ok):
-            print(retstr)
-            requtils.pretty_print_request(response.request)
+            level, retstr = requtils.logging_switch(response)
+            self.log_switch(level, retstr)
         else:
             json_obj = json.loads(response.text)
             version = json_obj["orion"]["version"]
@@ -102,6 +132,8 @@ class Orion:
         response = requests.post(url, headers=headers, data=data)
         ok, retstr = requtils.response_ok(response)
         if (not ok):
+            level, retstr = requtils.logging_switch(response)
+            self.log_switch(level, response)
             print(retstr)
             requtils.pretty_print_request(response.request)
 
@@ -144,8 +176,7 @@ class Orion:
         if (not ok):
             print(retstr)
             requtils.pretty_print_request(response.request)
-            print(url, headers)
-
+   
     def get_entity(self, entity_name,  entity_params=None):
         url = self.url + '/entities/' + entity_name
         headers=self.get_header()
@@ -156,7 +187,8 @@ class Orion:
                                     params=entity_params)
         ok, retstr = requtils.response_ok(response)
         if (not ok):
-            print(retstr)
+            level, retstr = requtils.logging_switch(response)
+            self.log_switch(level, retstr)
         else:
             return response.text
 
@@ -169,11 +201,11 @@ class Orion:
             parameters = {'{}'.format(parameter): '{}'.format(parameter_value)}
             response = requests.get(url, headers=headers, params=parameters)
         else:
-            print ("ERROR getting all entities: both function parameters have \
-                    to be 'not null'")
+            log.error("Getting all entities: both function parameters have to be 'not null'")
         ok, retstr = requtils.response_ok(response)
         if (not ok):
-            print(retstr)
+            level, retstr = requtils.logging_switch(response)
+            self.log_switch(level, retstr)
         else:
             return response.text
 
@@ -183,7 +215,8 @@ class Orion:
         response = requests.get(url, headers=header)
         ok, retstr = requtils.response_ok(response)
         if (not ok):
-            print(retstr)
+            level, retstr = requtils.logging_switch(response)
+            self.log_switch(level, retstr)
             return None
         json_object = json.loads(response.text)
         entities = []
@@ -200,7 +233,8 @@ class Orion:
         response = requests.get(url, headers=self.get_header())
         ok, retstr = requtils.response_ok(response)
         if (not ok):
-            print(retstr)
+            level, retstr = requtils.logging_switch(response)
+            self.log_switch(level, retstr)
         else:
             return response.text
 
@@ -210,7 +244,8 @@ class Orion:
         response = requests.get(url, headers=self.get_header())
         ok, retstr = requtils.response_ok(response)
         if (not ok):
-            print(retstr)
+            level, retstr = requtils.logging_switch(response)
+            self.log_switch(level, retstr)
         else:
             return response.text
 
@@ -228,7 +263,8 @@ class Orion:
         response = requests.patch(url, headers=headers, data=data)
         ok, retstr = requtils.response_ok(response)
         if (not ok):
-            print(retstr)
+            level, retstr = requtils.logging_switch(response)
+            self.log_switch(level, retstr)
 
     def update_attribute(self, entity_name, attr_name, attr_value):
         url = self.url + '/entities/' + entity_name + '/attrs/' \
@@ -238,14 +274,16 @@ class Orion:
         response = requests.put(url, headers=headers, data=data)
         ok, retstr = requtils.response_ok(response)
         if (not ok):
-            print(retstr)
+            level, retstr = requtils.logging_switch(response)
+            self.log_switch(level, retstr)
 
     def remove_attributes(self, entity_name):
         url = self.url + '/entities/' + entity_name + '/attrs'
         response = requests.put(url)
         ok, retstr = requtils.response_ok(response)
         if (not ok):
-            print(retstr)
+            level, retstr = requtils.logging_switch(response)
+            self.log_switch(level, response)
 
     def create_subscription(self, subscription_body):
         url = self.url + '/subscriptions'
@@ -255,7 +293,8 @@ class Orion:
             return
         ok, retstr = requtils.response_ok(response)
         if (not ok):
-            print(retstr)
+            level, retstr = requtils.logging_switch(response)
+            self.log_switch(level, retstr)
             return ""
         else:
             location = response.headers.get('Location')
@@ -268,7 +307,8 @@ class Orion:
         response = requests.get(url, headers=self.get_header())
         ok, retstr = requtils.response_ok(response)
         if (not ok):
-            print(retstr)
+            level, retstr = requtils.logging_switch(response)
+            self.log_switch(level, retstr)
             return
         json_object = json.loads(response.text)
         subscriptions = []
@@ -281,14 +321,16 @@ class Orion:
         response = requests.get(url, headers=self.get_header())
         ok, retstr = requtils.response_ok(response)
         if (not ok):
-            print(retstr)
+            level, retstr = requtils.logging_switch(response)
+            self.log_switch(level, retstr)
 
     def delete_subscription(self, subscription_id):
         url = self.url + '/subscriptions/' + subscription_id
         response = requests.delete(url, headers=self.get_header())
         ok, retstr = requtils.response_ok(response)
         if (not ok):
-            print(retstr)
+            level, retstr = requtils.logging_switch(response)
+            self.log_switch(level, retstr)
 
     def delete_all_subscriptions(self):
         subscriptions = self.get_subscription_list()
@@ -314,14 +356,16 @@ class Orion:
         response = requests.post(url, headers=headers, data=data)
         ok, retstr = requtils.response_ok(response)
         if (not ok):
-            print(retstr)
+            level, retstr = requtils.logging_switch(response)
+            self.log_switch(level, retstr)
 
     def delete(self, entity_id: str, attr: str = None):
         url = self.url + '/entities/' + entity_id
         response = requests.delete(url, headers=self.get_header())
         ok, retstr = requtils.response_ok(response)
         if (not ok):
-            print(retstr)
+            level, retstr = requtils.logging_switch(response)
+            self.log_switch(level, retstr)
 
     def delete_all_entities(self):
         entities = self.get_entities_list()

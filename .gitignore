@@ -7,10 +7,9 @@ __pycache__
 *.yml
 *.yaml
 *.ini
+*.log
 .project
 .pydevproject
-*.pdf
-
 
 # pip install #
 #####################

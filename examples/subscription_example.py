@@ -81,8 +81,14 @@ def http_custom_subscription():
 
 if __name__=="__main__":
 
+    # setup logging
+    # before the first initalization the log_config.yaml.example file needs to be modified
+
+    config.setup_logging()
+
     # creating an instance of the Context Broker
     ORION_CB = create_cb()
+
 
 
     body = API_Walkthrough_subscription()

@@ -1,5 +1,9 @@
 import json 
 from enum import Enum
+import logging
+
+log = logging.getLogger('subscription')
+
 
 """Implementation of subscriptions according to NGSIv2 specification
     Further information:

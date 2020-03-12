@@ -1,12 +1,18 @@
 import requests
 from requests import Response
 
+import filip.test as test
 import json
 import string
 import random
 from filip import orion
 from filip import request_utils as requtils
 from filip import test
+
+
+import logging
+
+log = logging.getLogger('iot')
 
 
 PROTOCOLS = ['IoTA-JSON','IoTA-UL']
@@ -21,8 +27,8 @@ class Attribute: # DeviceAttribute
         self.object_id = object_id
         self.attr_value = attr_value
         if attr_value != None and attr_type != "static":
-            print("[WARN]: Setting attribute value only allowed for "
-                      "static attributes! Value will be ignored!")
+            log.warning("Setting attribute value only allowed for static attributes! Value will be ignored!")
+
             self.attr_value = None
 
     def get_json(self):
@@ -80,6 +86,24 @@ class Device:
         dict['static_attributes'] = self.static_attributes
         return json.dumps(dict, indent=4)
 
+    def add_lazy(self, attribute):
+        self.lazy.append(attribute)
+
+    def add_active(self, attribute):
+        self.attributes.append(attribute)
+
+    def add_static(self, attribute):
+        self.static_attributes.append(attribute)
+
+    def add_command(self, attribute):
+        self.commands.append(attribute)
+
+
+
+    # ToDo: Rework the function beneath
+
+
+
     def add_attribute(self, attr_name: str, attr_type: str, value_type: str,
                  object_id: str=None, attr_value: str=None):
         """
@@ -101,31 +125,16 @@ class Device:
         attr["type"] = attribute.value_type
 
 
+
         # attr["value"] = Attribute.value NOT Supported by agent-lib
-        #TODO: implement as switch
-        if attribute.attr_type == "active":
-            self.attributes.append(attr)
-        elif attribute.attr_type == "lazy":
-            self.lazy.append(attr)
-        elif attribute.attr_type == "static":
-            self.static_attributes.append(attr)
-        elif attribute.attr_type == "command":
-            self.commands.append(attr)
-        else:
-            print("[WARN]: Attribute type unknown: \"{}\"".format(
-                attr['type']))
+        switch_dict = {"active": self.add_active,
+                "lazy": self.add_lazy,
+                "static":  self.add_static,
+                "command": self.add_command
+                }.get(attr_type, "not_ok")(attr)
+        if switch_dict == "not_ok":
+            print("[WARN]: Attribute type unknown: \"{}\"".format(attr_type))
 
-    def add_lazy(self, attribute):
-        self.lazy.append(attribute)
-
-    def add_active(self, attribute):
-        self.attributes.append(attribute)
-
-    def add_static(self, attribute):
-        self.static_attributes.append(attribute)
-
-    def add_command(self, attribute):
-        self.commands.append(attribute)
 
     def add_attribute_json(self, attribute:dict):
         """
@@ -163,7 +172,6 @@ class Device:
             print("[WARN]: Attribute type unknown: \"{}\"".format(attr_type))
 
 
-
     def delete_attribute(self, attr_name, attr_type):
         '''
         Removing attribute by name and from the list of attributes in the
@@ -189,12 +197,11 @@ class Device:
                 self.commands = [i for i in self.commands if not (i['name'] ==
                                                                    attr_name)]
             else:
-                print("[WARN]: Attribute type unknown: \"{}\"".format(attr_type))
-            print("[INFO]: Attribute succesfully deleted: \"{}\"".format(
-                attr_name))
+                log.warning("Attribute type unknown: \"{}\"".format(attr_type))
+
+            log.info("[INFO]: Attribute succesfully deleted: \"{}\"".format(attr_name))
         except:
-            print("[WARN]: Attribute could not be deleted: \"{}\"".format(
-                attr_name))
+            log.warning("Attribute could not be deleted: \"{}\"".format(attr_name))
 
 
 
@@ -281,6 +288,22 @@ class DeviceGroup:
         self.__devices = []
         self.__agent = kwargs.get("iot-agent", self.__agent)
 
+    def add_lazy(self, attribute):
+        self.__lazy.append(attribute)
+
+    def add_active(self, attribute):
+        self.__attributes.append(attribute)
+
+    def add_static(self, attribute):
+        self.__static_attributes.append(attribute)
+
+    def add_command(self, attribute):
+        self.__commands.append(attribute)
+
+    def add_internal(self, attribute):
+        self.__internal_attributes.append(attribute)
+
+
     def add_default_attribute(self, Attribute):
         """
         :param name: The name of the attribute as submitted to the context broker.
@@ -297,19 +320,18 @@ class DeviceGroup:
         attr["name"] = Attribute.name
         attr["type"] = Attribute.value_type
 
-        if Attribute.attr_type == "active":
-            self.__attributes.append(attr)
-        elif Attribute.attr_type == "lazy":
-            self.__lazy.append(attr)
-        elif Attribute.attr_type == "static":
-            self.__static_attributes.append(attr)
-        elif Attribute.attr_type == "internal":
-            self.__internal_attributes.append(attr)
-        elif Attribute.attr_type == "command":
-            self.__commands.append(attr)
-        else:
-            print("[WARN]: Attribute type unknown: \"{}\"".format(
-                attr['type']))
+        attr_type = Attribute.attr_type
+
+        switch_dict = {"active": self.add_active,
+                        "lazy": self.add_lazy,
+                        "static":  self.add_static,
+                        "command": self.add_command,
+                        "internal": self.add_internal
+                       }.get(attr_type, "not_ok")(attr)
+        if switch_dict == "not_ok":
+            print("[WARN]: Attribute type unknown: \"{}\"".format(attr_type))
+
+
 
     def delete_default_attribute(self, attr_name, attr_type):
         '''
@@ -341,6 +363,7 @@ class DeviceGroup:
                 self.__commands = [i for i in self.__commands if not
                 (i['name'] == attr_name)]
             else:
+
                 print("[WARN]: Attribute type unknown: \"{}\"".format(
                     attr_type))
             print("[INFO]: Attribute succesfully deleted: \"{}\"".format(
@@ -447,11 +470,25 @@ class Agent:
                                  +":" +config.data[self.name]['port']+
                                  '/iot/about')
 
+    def log_switch(self, level, response):
+        """
+        Function returns the required log_level with the repsonse
+        :param level: The logging level that should be returned
+        :param response: The message for the logger
+        :return:
+        """
+        switch_dict={
+                "INFO": logging.info,
+                "ERROR":  logging.error,
+                "WARNING": logging.warning
+                }.get(level, logging.info)(msg=response)
+
     def get_groups(self, device_group):
         url = self.url + '/iot/services'
         headers = DeviceGroup.get_header(device_group)
         response = requests.request("GET", url, headers=headers)
-        print(response.text)
+        level, retstr = requtils.logging_switch(response)
+        self.log_switch(level, retstr)
 
     def delete_group(self, device_group):
         url = self.url + '/iot/services'
@@ -461,9 +498,10 @@ class Agent:
         response = requests.request("DELETE", url,
                                     headers=headers, params=querystring)
         if response.status_code==204:
-            print("[INFO]: Device group successfully deleted!")
+            log.info("Device group successfully deleted!")
         else:
-            print(response.text)
+           level, retstr = requtils.logging_switch(response)
+           self.log_switch(level, retstr)
 
     def post_group(self, device_group:object, update:bool=True):
         url = self.url + '/iot/services'
@@ -475,8 +513,7 @@ class Agent:
         response = requests.request("POST", url, data=payload,
                                     headers=headers)
         if response.status_code not in [201, 200, 204]:
-            print("[WARN] Unable to register default configuration for "
-                  "service \"{}\", path \"{}\": \"{}\" {}".format(
+            log.warning("Unable to register default configuration for service \"{}\", path \"{}\": \"{}\" {}".format(
                 device_group.get_header()['fiware-service'],
                 device_group.get_header()['fiware-servicepath'],
                 "Code:" + str(response.status_code),
@@ -495,13 +532,12 @@ class Agent:
         response = requests.request("PUT", url,
                                     data=payload, headers=headers,
                                     params=querystring)
-        print(url)
         if response.status_code not in [201, 200, 204]:
-            print("[WARN]: Unable to update device group:\n")
-            print(response.text)
-            print("payload")
+            log.warning("Unable to update device group:", response.text)
+
         else:
-            print("[INFO]: Device group successfully updated!")
+            log.info("Device group sucessfully updated")
+
         # filip.orion.post(url, head, AUTH, json_dict)
 
     def post_device(self, device_group:object, device:object, update:bool=True):
@@ -512,6 +548,9 @@ class Agent:
         payload = json.dumps(payload, indent=4)
         response = requests.request("POST", url, data=payload,
                                     headers=headers)
+        if response.status_code != 201:
+            log.warning("Unable to post device: ", response.text)
+
 
         print(url, payload, headers)
         if (response.status_code == 409) & (update== True):
@@ -525,7 +564,8 @@ class Agent:
             print(response.text)
             print("payload")
         else:
-            print("[INFO]: Device successfully posted!")
+            log.info("Device successfully posted!")
+
 
     def delete_device(self, device_group, device):
         # TODO: Check if
@@ -533,7 +573,7 @@ class Agent:
         headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header()}
         response = requests.request("DELETE", url, headers=headers)
         if response.status_code == 204:
-            print("[INFO]: Device successfully deleted!")
+            log.info("Device successfully deleted!")
         else:
             print(response.text)
 
@@ -551,14 +591,11 @@ class Agent:
         headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header()}
         response = requests.request("PUT", url, data=payload,
                                     headers=headers)
-
-        print(url, payload, headers)
         if response.status_code not in [201, 200, 204]:
-            print("[WARN]: Unable to update device:\n")
-            print(response.text)
-            print("payload")
+            log.warning("Unable to update device: ", response.text)
         else:
-            print("[INFO]: Device successfully updated!")
+            log.info("Device successfully updated!")
+
 
 
 ### END of valid Code################
@@ -589,9 +626,8 @@ class Agent:
         if resp.status_code == 200:
             return resp.json()["services"]
         else:
-            print("[WARN] Unable to fetch configuration for service "
-                  "\"{}\", path \"{}\": {}"
-                  .format(service, service_path, resp.text))
+            log.warning("Unable to fetch configuration for service  \"{}\", path \"{}\": {}".format(service, service_path, resp.text))
+
 
 
 
