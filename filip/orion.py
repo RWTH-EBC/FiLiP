@@ -7,6 +7,8 @@ import logging
 log = logging.getLogger('orion')
 
 
+# ToDo Query params
+
 class Attribute:
     """
     Describes the attribute of an entity.
@@ -32,6 +34,7 @@ class Entity:
                             }
         """
         self.id = entity_dict["id"]
+        self.type = entity_dict["type"]
         self.entity_dict = entity_dict
         self._PROTECTED = ['id', 'type']
 
@@ -39,10 +42,88 @@ class Entity:
         json_res = json.dumps(self.entity_dict)
         return json_res
 
-    # ToDo Check whether the following function is needed
+
+    def add_attribute(self, attr_dict:dict):
+        """
+        Function adds another Attribute to an existing Entity.
+        :param attr_dict: A dictionary describing an Attribute
+                        "Temperature"  : { "value" : 17,
+                                                "type" : "Number" },
+        :return: updated entity dict
+        """
+        for key in attr_dict.keys():
+            self.entity_dict[key] = attr_dict[key]
+
+
     def get_attributes(self):
+        """
+        Function returns list of attribute names.
+        """
         attributes = [key for key in self.entity_dict.keys() if key not in self._PROTECTED]
         return attributes
+
+    def get_attributes_key_values(self):
+        """
+        Function returns all attributes, their types and values of an entity
+        :return:
+        """
+        attributes_values = {key: value for (key,value) in self.entity_dict.items() if key not in self._PROTECTED}
+        return attributes_values
+
+
+
+class Relationship:
+    """
+    Class implements the concept of FIWARE Entity Relationships.
+
+    """
+
+    def __init__(self, ref_object:Entity, subject:Entity, predicate:str = None ):
+        """
+        :param ref_object:  The parent / object of the relationship
+        :param subject: The child / subject of the relationship
+        :param predicate: currently not supported -> describes the relationship between object and subject
+        """
+        self.object = ref_object
+        self.subject = subject
+        self.predicate = predicate
+        self.add_ref()
+
+    def add_ref(self):
+        """
+        Function updates the subject Attribute with the relationship attribute
+        :return:
+        """
+        ref_attr = json.loads(self.get_ref())
+        self.subject.add_attribute(ref_attr)
+
+
+    def get_ref(self):
+        """
+        Function creates the NGSI Ref schema in a ref_dict, needed for the subject
+        :return: ref_dict
+        """
+        ref_type = self.object.type
+        ref_key = "ref" + str(ref_type)
+        ref_dict = {}
+        ref_dict[ref_key] = {"type" : "Relationship",
+                             "value" : self.object.id}
+
+        return json.dumps(ref_dict)
+
+    def get_json(self):
+        """
+        Function returns a JSON to describe the Relationship,
+        which then can be pushed to orion
+        :return: whole_dict
+        """
+        temp_dict = {}
+        temp_dict["id"] = self.subject.id
+        temp_dict["type"] = self.subject.type
+        ref_dict = json.loads(self.get_ref())
+        whole_dict = {**temp_dict, **ref_dict}
+        return json.dumps(whole_dict)
+
 
 class FiwareService:
     """
@@ -164,7 +245,6 @@ class Orion:
 
     def post_json_key_value(self, json_data=None, params="keyValues"):
         """
-
         :param json_data:
         :param params:
         :return:
@@ -176,6 +256,115 @@ class Orion:
         if (not ok):
             print(retstr)
             requtils.pretty_print_request(response.request)
+
+    def post_relationship(self, json_data=None):
+        """
+        Function can be used to post a one to many or one to one relationship.
+        :param json_data: Relationship Data obtained from the Relationship class. e.g. :
+                {"id": "urn:ngsi-ld:Shelf:unit001", "type": "Shelf",
+                "refStore": {"type": "Relationship", "value": "urn:ngsi-ld:Store:001"}}
+                Can be a one to one or a one to many relationship
+        """
+        url = self.url + '/op/update'
+        headers = self.get_header(requtils.HEADER_CONTENT_JSON)
+        # Action type append required,
+        # Will overwrite existing entities if they exist whereas
+        # the entities attribute holds an array of entities we wish to update.
+        payload = {"actionType": "APPEND",
+                   "entities": [json.loads(json_data)]}
+        data = json.dumps(payload)
+        response = requests.post(url=url, data=data, headers=headers)
+        ok, retstr = requtils.response_ok(response)
+        if (not ok):
+            level, retstr = requtils.logging_switch(response)
+            self.log_switch(level, retstr)
+
+    def get_subjects(self, object_entity_name:str, object_entity_type:str, subject_type=None):
+        """
+        Function gets the JSON for child / subject entities for a parent / object entity.
+        :param object_entity_name: The parent / object entity name
+        :param object_entity_type: The type of the parent / object entity
+        :param subject_type: optional parameter, if added only those child / subject entities are returned that match the type
+        :return: JSON containing the child / subject information
+        """
+
+        url = self.url + '/entities/?q=ref' + object_entity_type + '=='  + object_entity_name + '&options=count'
+        if subject_type != None:
+             url = url + '&attrs=type&type=' + subject_type
+        headers = self.get_header()
+        response = requests.get(url=url, headers=headers)
+        ok, retstr = requtils.response_ok(response)
+        if (not ok):
+            level, retstr = requtils.logging_switch(response)
+            self.log_switch(level, retstr)
+        else:
+            return response.text
+
+
+        # ToDo test return for multi association
+    def get_objects(self, subject_entity_name:str, subject_entity_type:str, object_type=None):
+        """
+        Function returns a List of all objects associated to a subject. If object type is not None,
+        only those are returned, that match the object type.
+        :param subject_entity_name: The child / subject entity name
+        :param subject_entity_type: The type of the child / subject entity
+        :param object_type:
+        :return: List containing all associated objects
+
+        """
+        url = self.url + '/entities/' + subject_entity_name + '/?type=' + subject_entity_type + '&options=keyValues'
+        if object_type != None:
+            url = url + '&attrs=ref' + object_type
+        headers = self.get_header()
+        response = requests.get(url=url, headers=headers)
+        ok, retstr = requtils.response_ok(response)
+        if (not ok):
+            level, retstr = requtils.logging_switch(response)
+            self.log_switch(level, retstr)
+        else:
+            return response.text
+
+    def get_associated(self, name:str, type:str, associated_type=None):
+        """
+        Function returns all associated data for a given entity name and type
+        :param name: name of the entity
+        :param type: type of the entity
+        :param associated_type: if only associated data of one type should be returned, this parameter has to be the type
+        :return: A dictionary, containing the data of the entity, a key "subjects" and "objects" that contain each a list
+                with the reflective data
+        """
+        data_dict = {}
+        associated_objects = self.get_objects(subject_entity_name=name, subject_entity_type=type,
+                                              object_type=associated_type)
+        associated_subjects = self.get_subjects(object_entity_name=name, object_entity_type=type,
+                                                subject_type=associated_type)
+
+        data_dict["subjects"] = json.loads(associated_subjects)
+        object_json = json.loads(associated_objects)
+        data_dict["objects"] = []
+        if isinstance(object_json, list):
+           for associated_object in object_json:
+            entity_name = associated_object["id"]
+            object_data = json.loads(self.get_entity(entity_name=entity_name))
+            data_dict["objects"].append(object_data)
+        else:
+            entity_name = object_json["id"]
+            object_data = json.loads(self.get_entity(entity_name=entity_name))
+            data_dict["objects"].append(object_data)
+
+        entity_dict = json.loads(self.get_entity(entity_name=name))
+
+        whole_dict = {**entity_dict, **data_dict}
+
+        return whole_dict
+
+
+
+
+
+
+
+
    
     def get_entity(self, entity_name,  entity_params=None):
         url = self.url + '/entities/' + entity_name
@@ -256,8 +445,8 @@ class Orion:
         return self.get_entity(entity_name, parameters)
 
     def update_entity(self, entity):
-        url = self.url + '/entities/' + entity.name + '/attrs'
-        payload = entity.get_attributes_json_dict()
+        url = self.url + '/entities/' + entity.id + '/attrs'
+        payload = entity.get_attributes_key_values()
         headers=self.get_header(requtils.HEADER_CONTENT_JSON)
         data=json.dumps(payload)
         response = requests.patch(url, headers=headers, data=data)
