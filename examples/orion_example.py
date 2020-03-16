@@ -1,6 +1,9 @@
 import filip.orion as orion
 import filip.config as config
 import sys
+import logging
+
+
 
 from pathlib import Path
 import os

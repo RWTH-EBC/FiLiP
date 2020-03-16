@@ -21,7 +21,9 @@ if __name__ == "__main__":
     # Read and check configuration
     CONFIG = config.Config(path_to_config)
 
+
     # Creating an Instance of the Context Broker
+
     ORION_CB = orion.Orion(CONFIG)
 
 
