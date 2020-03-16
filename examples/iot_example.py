@@ -1,6 +1,9 @@
 from filip import iot, config, orion
 
 
+import os
+from pathlib import Path
+
 # ToDo: Rewrite Example, so it matches the orion Example
 # ToDo: Change Data Model
 
@@ -10,12 +13,16 @@ if __name__ == "__main__":
     # setup logging
     # before the first initalization the log_config.yaml.example file needs to be modified
 
-    config.setup_logging()
 
+
+    path_to_config = os.path.join(str(Path().resolve().parent), "config.json")
+    config.setup_logging()
     # Read and check configuration
-    CONFIG = config.Config("config.json")
+    CONFIG = config.Config(path_to_config)
+
 
     # Creating an Instance of the Context Broker
+
     ORION_CB = orion.Orion(CONFIG)
 
 
