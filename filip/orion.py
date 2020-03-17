@@ -225,7 +225,11 @@ class Orion:
             self.log_switch(level, retstr)
         else:
             json_obj = json.loads(response.text)
-            version = json_obj["orion"]["version"]
+            try: version = json_obj["orion"]["version"]
+            except KeyError:
+                try: version = json_obj["orion"]["orion version"]
+                except KeyError:
+                    version = json_obj["orion"]["orionld version"]
             print(version)
 
     def post_entity(self, entity:object,  update:bool=True):
