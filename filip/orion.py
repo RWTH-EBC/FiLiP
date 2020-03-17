@@ -225,12 +225,15 @@ class Orion:
             self.log_switch(level, retstr)
         else:
             json_obj = json.loads(response.text)
-            try: version = json_obj["orion"]["version"]
-            except KeyError:
-                try: version = json_obj["orion"]["orion version"]
-                except KeyError:
-                    version = json_obj["orion"]["orionld version"]
-            print(version)
+            orion_version = json_obj.get("orion version")
+            orion_ld_version = json_obj.get("orionld version")
+            if (orion_version == None) or (orion_ld_version == None):
+                orion_version = json_obj["orion"]["version"]
+                print(f"This is the Orion version: {orion_version}")
+            else:
+                print(f"This is the Orion version: {orion_version} ")
+                print(f"This is the OrionLD version: {orion_ld_version}")
+
 
     def post_entity(self, entity:object,  update:bool=True):
         """
