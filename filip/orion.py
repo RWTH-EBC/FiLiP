@@ -374,19 +374,20 @@ class Orion:
                                               object_type=associated_type)
         associated_subjects = self.get_subjects(object_entity_name=name, object_entity_type=type,
                                                 subject_type=associated_type)
-
-        data_dict["subjects"] = json.loads(associated_subjects)
-        object_json = json.loads(associated_objects)
-        data_dict["objects"] = []
-        if isinstance(object_json, list):
-           for associated_object in object_json:
-            entity_name = associated_object["id"]
-            object_data = json.loads(self.get_entity(entity_name=entity_name))
-            data_dict["objects"].append(object_data)
-        else:
-            entity_name = object_json["id"]
-            object_data = json.loads(self.get_entity(entity_name=entity_name))
-            data_dict["objects"].append(object_data)
+        if associated_subjects != None:
+            data_dict["subjects"] = json.loads(associated_subjects)
+        if associated_objects != None:
+            object_json = json.loads(associated_objects)
+            data_dict["objects"] = []
+            if isinstance(object_json, list):
+               for associated_object in object_json:
+                entity_name = associated_object["id"]
+                object_data = json.loads(self.get_entity(entity_name=entity_name))
+                data_dict["objects"].append(object_data)
+            else:
+                entity_name = object_json["id"]
+                object_data = json.loads(self.get_entity(entity_name=entity_name))
+                data_dict["objects"].append(object_data)
 
         entity_dict = json.loads(self.get_entity(entity_name=name))
 
