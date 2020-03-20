@@ -427,6 +427,7 @@ class Orion:
             if sub_count >= limit:
                 response = self.get_pagination(url=url, headers=headers,
                                            limit=limit, count=sub_count)
+                return response
         elif parameter is not None and parameter_value is not None:
             parameters = {'{}'.format(parameter): '{}'.format(parameter_value)}
             response = requests.get(url, headers=headers, params=parameters)
@@ -434,6 +435,7 @@ class Orion:
             if sub_count >= limit:
                 response = self.get_pagination(url=url, headers=headers,
                                                limit=limit, count=sub_count, params=parameters)
+                return response
         else:
             log.error("Getting all entities: both function parameters have to be 'not null'")
         ok, retstr = requtils.response_ok(response)
@@ -451,6 +453,7 @@ class Orion:
         if sub_count >= limit:
             response = self.get_pagination(url=url, headers=header,
                                            limit=limit, count=sub_count)
+            return response
         ok, retstr = requtils.response_ok(response)
         if (not ok):
             level, retstr = requtils.logging_switch(response)
@@ -597,6 +600,7 @@ class Orion:
         if sub_count >= limit:
             response = self.get_pagination(url=url, headers=self.get_header(),
                                            limit=limit, count=sub_count)
+            return response
         ok, retstr = requtils.response_ok(response)
         if (not ok):
             level, retstr = requtils.logging_switch(response)
@@ -687,6 +691,11 @@ class Orion:
         if sub_count >= limit:
             response = self.get_pagination(url=url, headers=self.get_header(),
                                            limit=limit, count=sub_count)
+            print(type(response))
+
+            response = json.loads(response)
+
+            print(type(response))
 
 
         for existing_subscription in response:
@@ -721,8 +730,12 @@ class Orion:
                             # i == j
                             i = subscription_subject["entities"].index(entity)
                             j = existing_subscription["subject"]["entities"].index(existing_entity)
-                            subscription_attrs = subscription_subject["condition"]["attrs"][i]
-                            existing_attrs = existing_subscription["subject"]["condition"]["attrs"][j]
+                            try: subscription_attrs = subscription_subject["condition"]["attrs"][i]
+                            except (KeyError, IndexError):
+                                subscription_attrs = []
+                            try: existing_attrs = existing_subscription["subject"]["condition"]["attrs"][j]
+                            except (KeyError, IndexError):
+                                existing_attrs = []
 
                             if (".*" in subscription_id) or ('.*' in id_existing) or (subscription_id == id_existing):
 
