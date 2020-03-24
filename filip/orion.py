@@ -249,8 +249,13 @@ class Orion:
                     url += "/" + entity.id + "/attrs"
                     response = requests.post(url, headers=headers, data=data)
                     ok, retstr = requtils.response_ok(response)
-        level, retstr = requtils.logging_switch(response)
-        self.log_switch(level, response)
+                    if (not ok):
+                        level, retstr = requtils.logging_switch(response)
+                        self.log_switch(level, response)
+
+            else:
+                level, retstr = requtils.logging_switch(response)
+                self.log_switch(level, response)
 
 
     def post_json(self, json=None, entity=None, params=None):
