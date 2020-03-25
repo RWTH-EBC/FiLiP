@@ -36,8 +36,6 @@ class Entity:
                             }
         """
 
-        self.id = entity_dict["id"]
-        self.type = entity_dict["type"]
         self.entity_dict = entity_dict
         self._PROTECTED = ['id', 'type']
 
@@ -92,7 +90,17 @@ class Entity:
         attributes_values = {key: value for (key,value) in self.entity_dict.items() if key not in self._PROTECTED}
         return attributes_values
 
+    def __delattr__(self, attr_name:str):
+        self.delete_attribute(attr_name)
 
+    def __getattr__(self, attr_name:str):
+        return self.entity_dict[attr_name]
+
+    def __setattr__(self, attr_name:str, value):
+        if self.entity_dict and attr_name in self.entity_dict:
+            self.entity_dict[attr_name] = value
+        else:
+            super().__setattr__(attr_name, value)
 
 class Relationship:
     """
