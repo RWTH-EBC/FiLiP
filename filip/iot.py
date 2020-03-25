@@ -1,3 +1,5 @@
+from typing import List, Any, Union, Optional
+
 import requests
 from requests import Response
 import datetime
@@ -50,7 +52,7 @@ class Device:
     :ivar service_path: Name of the subservice the device belongs to (used in the fiware-servicepath header).
     :ivar entity_name: Name of the entity representing the device in the Context Broker.
     :ivar timezone: Time zone of the sensor if it has any. Default ist UTC/Zulu.
-    :ivar timestamp: Optional flag, on whether or not to add the TimeInstant attribute to the device
+    :ivar timestamp: (optional, boolean): This field indicates if an attribute 'TimeInstant' will be added (true) or not (false). If this field is omitted, the global IotAgent configuration timestamp will be used.
     :ivar apikey: Optional Apikey string to use instead of group apikey
     :ivar endpoint: Endpoint where the device is going to receive commands, if any.
     :ivar protocol: Name of the device protocol, for its use with an IoT Manager.
@@ -60,7 +62,11 @@ class Device:
     :ivar commands: List of commands of the device
     :ivar static_attributes: List of static attributes to append to the entity. All the updateContext requests to the CB will have this set of attributes appended.
     :ivar internal_attributes: List of internal attributes with free format for specific IoT Agent configuration.
+    :ivar autoprovision: (optional, boolean): If true, APPEND is used upon
+    measure arrival (thus effectively allowing autoprovisioned devices). If false, UPDATE is used open measure arrival (thus effectively avoiding autoprovisioned devices). This field is optional, so if it omitted then the global IoTAgent appendModel configuration is used.
         """
+
+
     def __init__(self, device_id: str, entity_name: str, entity_type: str, **kwargs):
         self.device_id = device_id
         self.entity_name = entity_name
@@ -69,7 +75,8 @@ class Device:
         self.service_path = kwargs.get("service_path", "/")
         self.timezone = config.TIMEZONE
         #self.timezone = kwargs.get("timezone", "UTC/Zulu")
-        self.timestamp = kwargs.get("timestamp", False)
+        self.timestamp = kwargs.get("timestamp", None)
+        self.autoprovision = kwargs.get("autoprovision", None)
         self.apikey = kwargs.get("apikey")
         self.endpoint = kwargs.get("endpoint") # necessary for HTTP
         self.protocol = kwargs.get("protocol")
@@ -98,8 +105,8 @@ class Device:
             dict['endpoint'] = self.endpoint
         if self.apikey:
             dict['apikey'] = self.apikey
-        if self.timestamp == True:
-            dict['timestamp'] = True
+        if self.timestamp!=None:
+            dict['timestamp'] = self.timestamp
         if self.service:
             dict["service"] = self.service
         if self.service_path:
@@ -111,7 +118,8 @@ class Device:
         dict['commands'] = self.commands
         dict['static_attributes'] = self.static_attributes
         dict['internal_attributes'] = self.internal_attributes
-        dict['timezone'] = self.timezone
+        if self.autoprovision!=None:
+            dict['autoprovision'] = self.autoprovision
         return json.dumps(dict, indent=4)
 
     def add_lazy(self, attribute):
@@ -134,26 +142,29 @@ class Device:
     # Function beneath is only for backwards compatibility
 
     def add_attribute(self, attr_name: str, attr_type: str, value_type: str,
-                 object_id: str=None, attr_value: str=None):
+                      object_id: str=None, attr_value: str=None, metadata:
+            dict=None):
         """
         :param name: The name of the attribute as submitted to the context broker.
         :param type: The type of the attribute as submitted to the context broker.
         :param object_id: The id of the attribute used from the southbound API.
         :param attr_type: One of \"active\" (default), \"lazy\" or \"static\"
+        :param metadata: json/dict of metadata for the attribute, e.g. 
+                    {
+                        "unit": { "type": "Text", "value": "celsius" }
+                    }
         """
-        attribute=Attribute(attr_name, attr_type, value_type,
-                 object_id, attr_value)
-        
+
+
         attr = {}
-        if attribute.object_id:
-            attr["object_id"] = attribute.object_id
-        if attribute.attr_value != None and\
-                attribute.attr_type == "static":
-            attr["value"] = attribute.attr_value
-        attr["name"] = attribute.name
-        attr["type"] = attribute.value_type
-
-
+        if object_id:
+            attr["object_id"] = object_id
+        if attr_value != None and attr_type == "static":
+            attr["value"] = attr_value
+        attr["name"] = attr_name
+        attr["type"] = value_type
+        if metadata and attr_type!="lazy":
+            attr["metadata"]=metadata
 
         # attr["value"] = Attribute.value NOT Supported by agent-lib
         switch_dict = {"active": self.add_active,
@@ -172,20 +183,27 @@ class Device:
             "name": "Temp_Sensor",
             "value_type": "Number",
             "attr_type": "Static",
-            "attr_value": "12"}
-
+            "attr_value": "12",
+            "metadata": {
+                "unit": { "type": "Text", "value": "celsius" }
+                }
+            }
 
         :param name: The name of the attribute as submitted to the context broker.
         :param type: The type of the attribute as submitted to the context broker.
         :param object_id: The id of the attribute used from the southbound API.
         :param attr_type: One of \"active\" (default), \"lazy\" or \"static\"
+        :param metadata: json/dict of metadata for the attribute, e.g.
+                    {
+                        "unit": { "type": "Text", "value": "celsius" }
+                    }
         """
 
 
         attr_type = attribute["attr_type"]
         if "attr_value" in attribute:
             if attribute["attr_type"] != "static":# & attribute["attr_value"] != None:
-                log.warning(" Setting attribute value only allowed for static attributes! Value will be ignored!")
+                log.warning("Setting attribute value only allowed for static attributes! Value will be ignored!")
                 del attribute["attr_value"]
 
         attr = {"name": attribute["name"],
@@ -194,6 +212,9 @@ class Device:
         # static attribute do not need an object id
         if attr_type != "static":
             attr["object_id"] = attribute["object_id"]
+
+        if "metadata" in attribute.keys() and attribute["attr_type"]!="lazy":
+            attr["metadata"] = attribute["metadata"]
 
         # attr["value"] = Attribute.value NOT Supported by agent-lib
         switch_dict = {"active": self.add_active,
@@ -263,8 +284,11 @@ class DeviceGroup:
     :ivar attributes: List of active attributes of the device.
     :ivar static_attributes: List of static attributes to append to the entity. All the updateContext requests to the CB will have this set of attributes appended.
     :ivar internal_attributes: Optional section with free format, to allow
+    :ivar autoprovsion: (optional, boolean): If true, APPEND is used upon measure arrival (thus effectively allowing autoprovisioned devices). If false, UPDATE is used open measure arrival (thus effectively avoiding autoprovisioned devices). This field is optional, so if it omitted then the global IoTAgent appendModel configuration is used.
     specific IoT Agents to store information along with the devices in the Device Registry.
     """
+
+
     def __init__(self, fiware_service ,
                  cb_host: str, **kwargs):
 
@@ -275,9 +299,8 @@ class DeviceGroup:
         self.__resource = kwargs.get("resource", "/iot/d") #for iot-ul 1.7.0
         # the default must be empty string
         self.__apikey = kwargs.get("apikey", "12345")
-
         self.timestamp = kwargs.get("timestamp", None)
-
+        self.autoprovision = kwargs.get("autoprovision", None)
         self.__entity_type = kwargs.get("entity_type", "Thing")
         self.trust = kwargs.get("trust")
         self.__lazy = kwargs.get("lazy", [])
@@ -482,8 +505,10 @@ class DeviceGroup:
         dict['commands'] = self.__commands
         dict['static_attributes'] = self.__static_attributes
         dict['internal_attributes'] = self.__internal_attributes
-        if self.timestamp:
-            dict['timestamp'] = True
+        if self.timestamp!=None:
+            dict['timestamp']=self.timestamp
+        if self.autoprovision!=None:
+            dict['autoprovision']=self.autoprovision
         return json.dumps(dict, indent=4)
 
     def generate_apikey(self, length: int = 10):
