@@ -142,17 +142,12 @@ class Device:
     # Function beneath is only for backwards compatibility
 
     def add_attribute(self, attr_name: str, attr_type: str, value_type: str,
-                      object_id: str=None, attr_value: str=None, metadata:
-            dict=None):
+                      object_id: str=None, attr_value: str=None):
         """
         :param name: The name of the attribute as submitted to the context broker.
         :param type: The type of the attribute as submitted to the context broker.
         :param object_id: The id of the attribute used from the southbound API.
         :param attr_type: One of \"active\" (default), \"lazy\" or \"static\"
-        :param metadata: json/dict of metadata for the attribute, e.g. 
-                    {
-                        "unit": { "type": "Text", "value": "celsius" }
-                    }
         """
 
 
@@ -163,8 +158,7 @@ class Device:
             attr["value"] = attr_value
         attr["name"] = attr_name
         attr["type"] = value_type
-        if metadata and attr_type!="lazy":
-            attr["metadata"]=metadata
+
 
         # attr["value"] = Attribute.value NOT Supported by agent-lib
         switch_dict = {"active": self.add_active,
@@ -184,19 +178,12 @@ class Device:
             "value_type": "Number",
             "attr_type": "Static",
             "attr_value": "12",
-            "metadata": {
-                "unit": { "type": "Text", "value": "celsius" }
-                }
             }
 
         :param name: The name of the attribute as submitted to the context broker.
         :param type: The type of the attribute as submitted to the context broker.
         :param object_id: The id of the attribute used from the southbound API.
         :param attr_type: One of \"active\" (default), \"lazy\" or \"static\"
-        :param metadata: json/dict of metadata for the attribute, e.g.
-                    {
-                        "unit": { "type": "Text", "value": "celsius" }
-                    }
         """
 
 
@@ -213,8 +200,6 @@ class Device:
         if attr_type != "static":
             attr["object_id"] = attribute["object_id"]
 
-        if "metadata" in attribute.keys() and attribute["attr_type"]!="lazy":
-            attr["metadata"] = attribute["metadata"]
 
         # attr["value"] = Attribute.value NOT Supported by agent-lib
         switch_dict = {"active": self.add_active,
@@ -482,6 +467,7 @@ class DeviceGroup:
     def get_resource_last(self):
         return self.__resource_last
 
+
     def get_header(self) -> dict:
         return {
             "fiware-service": self.__service,
@@ -597,14 +583,14 @@ class Agent:
 
     def get_groups(self, device_group):
         url = self.url + '/iot/services'
-        headers = DeviceGroup.get_header(device_group)
+        headers = DeviceGroup.get_header
         response = requests.request("GET", url, headers=headers)
         level, retstr = requtils.logging_switch(response)
         self.log_switch(level, retstr)
 
     def delete_group(self, device_group):
         url = self.url + '/iot/services'
-        headers = DeviceGroup.get_header(device_group)
+        headers = DeviceGroup.get_header
         querystring = {"resource": device_group.get_resource(),
                        "apikey": device_group.get_apikey()}
         response = requests.request("DELETE", url,
@@ -702,7 +688,7 @@ class Agent:
     def delete_device(self, device_group, device):
         # TODO: Check if
         url = self.url + '/iot/devices/'+ device.device_id
-        headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header()}
+        headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header}
         response = requests.request("DELETE", url, headers=headers)
         if response.status_code == 204:
             log.info("Device successfully deleted!")
@@ -715,7 +701,7 @@ class Agent:
 
     def get_device(self, device_group, device):
         url = self.url + '/iot/devices/' + device.device_id
-        headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header()}
+        headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header}
         payload = ""
         response = requests.request("GET", url, data=payload,
                                     headers=headers)
@@ -723,7 +709,7 @@ class Agent:
 
     def update_device(self, device_group, device, payload: json):
         url = self.url + '/iot/devices/' + device.device_id
-        headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header()}
+        headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header}
         response = requests.request("PUT", url, data=payload,
                                     headers=headers)
         if response.status_code not in [201, 200, 204]:
