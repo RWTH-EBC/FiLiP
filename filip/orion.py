@@ -381,19 +381,20 @@ class Orion:
                                               object_type=associated_type)
         associated_subjects = self.get_subjects(object_entity_name=name, object_entity_type=type,
                                                 subject_type=associated_type)
-
-        data_dict["subjects"] = json.loads(associated_subjects)
-        object_json = json.loads(associated_objects)
-        data_dict["objects"] = []
-        if isinstance(object_json, list):
-           for associated_object in object_json:
-            entity_name = associated_object["id"]
-            object_data = json.loads(self.get_entity(entity_name=entity_name))
-            data_dict["objects"].append(object_data)
-        else:
-            entity_name = object_json["id"]
-            object_data = json.loads(self.get_entity(entity_name=entity_name))
-            data_dict["objects"].append(object_data)
+        if associated_subjects != None:
+            data_dict["subjects"] = json.loads(associated_subjects)
+        if associated_objects != None:
+            object_json = json.loads(associated_objects)
+            data_dict["objects"] = []
+            if isinstance(object_json, list):
+               for associated_object in object_json:
+                entity_name = associated_object["id"]
+                object_data = json.loads(self.get_entity(entity_name=entity_name))
+                data_dict["objects"].append(object_data)
+            else:
+                entity_name = object_json["id"]
+                object_data = json.loads(self.get_entity(entity_name=entity_name))
+                data_dict["objects"].append(object_data)
 
         entity_dict = json.loads(self.get_entity(entity_name=name))
 
@@ -433,6 +434,7 @@ class Orion:
             if sub_count >= limit:
                 response = self.get_pagination(url=url, headers=headers,
                                            limit=limit, count=sub_count)
+                return response
         elif parameter is not None and parameter_value is not None:
             parameters = {'{}'.format(parameter): '{}'.format(parameter_value)}
             response = requests.get(url, headers=headers, params=parameters)
@@ -440,6 +442,7 @@ class Orion:
             if sub_count >= limit:
                 response = self.get_pagination(url=url, headers=headers,
                                                limit=limit, count=sub_count, params=parameters)
+                return response
         else:
             log.error("Getting all entities: both function parameters have to be 'not null'")
         ok, retstr = requtils.response_ok(response)
@@ -457,6 +460,7 @@ class Orion:
         if sub_count >= limit:
             response = self.get_pagination(url=url, headers=header,
                                            limit=limit, count=sub_count)
+            return response
         ok, retstr = requtils.response_ok(response)
         if (not ok):
             level, retstr = requtils.logging_switch(response)
@@ -603,6 +607,7 @@ class Orion:
         if sub_count >= limit:
             response = self.get_pagination(url=url, headers=self.get_header(),
                                            limit=limit, count=sub_count)
+            return response
         ok, retstr = requtils.response_ok(response)
         if (not ok):
             level, retstr = requtils.logging_switch(response)
@@ -693,6 +698,11 @@ class Orion:
         if sub_count >= limit:
             response = self.get_pagination(url=url, headers=self.get_header(),
                                            limit=limit, count=sub_count)
+            print(type(response))
+
+            response = json.loads(response)
+
+            print(type(response))
 
 
         for existing_subscription in response:
@@ -727,8 +737,12 @@ class Orion:
                             # i == j
                             i = subscription_subject["entities"].index(entity)
                             j = existing_subscription["subject"]["entities"].index(existing_entity)
-                            subscription_attrs = subscription_subject["condition"]["attrs"][i]
-                            existing_attrs = existing_subscription["subject"]["condition"]["attrs"][j]
+                            try: subscription_attrs = subscription_subject["condition"]["attrs"][i]
+                            except (KeyError, IndexError):
+                                subscription_attrs = []
+                            try: existing_attrs = existing_subscription["subject"]["condition"]["attrs"][j]
+                            except (KeyError, IndexError):
+                                existing_attrs = []
 
                             if (".*" in subscription_id) or ('.*' in id_existing) or (subscription_id == id_existing):
 
