@@ -229,10 +229,11 @@ class Orion:
             orion_ld_version = json_obj.get("orionld version")
             if (orion_version == None) or (orion_ld_version == None):
                 orion_version = json_obj["orion"]["version"]
-                print(f"This is the Orion version: {orion_version}")
+                log.info(f"This is the Orion version: {orion_version}")
             else:
-                print(f"This is the Orion version: {orion_version} ")
-                print(f"This is the OrionLD version: {orion_ld_version}")
+                log.info(f"This is the Orion version: {orion_version} ")
+                log.info(f"This is the OrionLD version: {orion_ld_version}")
+
 
 
     def post_entity(self, entity:object,  update:bool=True):
