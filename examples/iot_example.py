@@ -27,11 +27,11 @@ if __name__ == "__main__":
 
 
     # Creating an Instance of the IoT-Agent in the UL-Version
-    IOTA_UL = iot.Agent("iota_ul", CONFIG)
+    IOTA_UL = iot.Agent("iota", CONFIG)
 
 
     # Creating an Instance of the IoT-Agent in the JSON-Version
-    IOTA_JSON = iot.Agent("iota_json", CONFIG)
+    IOTA_JSON = iot.Agent("iota", CONFIG)
 
     IOTA_UL.test_connection(CONFIG)
 

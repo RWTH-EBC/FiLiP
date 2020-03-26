@@ -121,7 +121,7 @@ if __name__=="__main__":
     path_to_config = os.path.join(str(Path().resolve().parent), "config.json")
 
     CONFIG = config.Config(path_to_config)
-    ORION_CB = orion.Orion(CONFIG)
+    ORION_CB = orion.Orion(CONFIG) 
     ORION_CB.sanity_check()
 
     print ("++++ create entities ++++")
@@ -181,5 +181,3 @@ if __name__=="__main__":
     print ("++++ delete all entities ++++")
     for entity in entities:
         ORION_CB.delete(entity.id)
-
-
