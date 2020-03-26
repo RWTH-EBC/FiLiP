@@ -552,10 +552,10 @@ class Agent:
     def __init__(self, agent_name: str, config:object):
         self.name = agent_name
         self.test_config(config)
-        self.host = config.data["iota"]['host']
-        self.port = config.data["iota"]['port']
+        self.host = config.data[agent_name]['host']
+        self.port = config.data[agent_name]['port']
         self.url = self.host + ":" + self.port
-        self.protocol = config.data["iota"]['protocol']
+        self.protocol = config.data[agent_name]['protocol']
         #TODO: Figuring our how to register the service and conncet with devices
         self.services = []
 
@@ -705,7 +705,8 @@ class Agent:
         payload = ""
         response = requests.request("GET", url, data=payload,
                                     headers=headers)
-        print(response.text)
+
+        return response.text
 
     def update_device(self, device_group, device, payload: json):
         url = self.url + '/iot/devices/' + device.device_id
