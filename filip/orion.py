@@ -2,6 +2,7 @@ import json
 import requests
 from filip import request_utils as requtils
 
+import datetime
 import math
 import logging
 
@@ -171,6 +172,11 @@ class FiwareService:
             "fiware-servicepath": self.path
         }
 
+    def __repr__(self):
+        fiware_service_str = f'"fiware-service": "{self.name}", "fiware-servicepath": "{self.path}"'
+        return fiware_service_str
+
+
 class Orion:
     """
     Implementation of Orion Context Broker functionalities, such as creating
@@ -234,7 +240,24 @@ class Orion:
                 log.info(f"This is the Orion version: {orion_version} ")
                 log.info(f"This is the OrionLD version: {orion_ld_version}")
 
-
+    def test_connection(self, url=None):
+        """
+        Function tests if there is a valid connection for a given URL and returns a suitable Boolean.
+        If no connection can be achieved, the return is false, else true.
+        :param url: The url to which the connection should be tested, if none given self.url will be used.
+        :return: Boolean, True if a connection is possible, False if not.
+        """
+        if url is None:
+            url = self.url
+        try:
+            req = requests.get(url)
+            # HTTP errors are not raised by default, this statement does that
+            req.raise_for_status()
+            log.info(f"Connection to {self.fiware_service} established.")
+            return True
+        except Exception as e:
+            log.error(f"{datetime.datetime.now()} - No Connection to: {self.fiware_service} due to {e.args[0]}")
+            return False
 
     def post_entity(self, entity:object,  update:bool=True):
         """

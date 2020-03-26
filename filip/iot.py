@@ -705,7 +705,8 @@ class Agent:
         payload = ""
         response = requests.request("GET", url, data=payload,
                                     headers=headers)
-        print(response.text)
+
+        return response.text
 
     def update_device(self, device_group, device, payload: json):
         url = self.url + '/iot/devices/' + device.device_id
