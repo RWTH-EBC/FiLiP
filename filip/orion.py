@@ -358,8 +358,6 @@ class Orion:
         else:
             return response.text
 
-
-        # ToDo test return for multi association
     def get_objects(self, subject_entity_name:str, subject_entity_type:str, object_type=None):
         """
         Function returns a List of all objects associated to a subject. If object type is not None,
@@ -417,14 +415,6 @@ class Orion:
 
         return whole_dict
 
-
-
-
-
-
-
-
-   
     def get_entity(self, entity_name,  entity_params=None):
         url = self.url + '/entities/' + entity_name
         headers=self.get_header()
@@ -574,9 +564,6 @@ class Orion:
         if (not ok):
             print(retstr)
 
-
-
-
     def get_attributes(self, entity_name:str):
         """
         For a given entity this function returns all attribute names
@@ -586,8 +573,6 @@ class Orion:
         entity_json = json.loads(self.get_entity(entity_name))
         attributes = [k for k in entity_json.keys() if k not in ["id", "type"]]
         return attributes
-
-
 
     def remove_attributes(self, entity_name):
         url = self.url + '/entities/' + entity_name + '/attrs'
@@ -716,11 +701,7 @@ class Orion:
         if sub_count >= limit:
             response = self.get_pagination(url=url, headers=self.get_header(),
                                            limit=limit, count=sub_count)
-            print(type(response))
-
             response = json.loads(response)
-
-            print(type(response))
 
 
         for existing_subscription in response:
