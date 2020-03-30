@@ -296,6 +296,6 @@ if __name__ == "__main__":
 
     IOTA_UL.delete_device(device_group, device_ul)
     IOTA_UL.delete_group(device_group)
-
+    
 
     '''
