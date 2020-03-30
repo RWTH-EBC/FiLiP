@@ -563,10 +563,13 @@ class Agent:
         test.test_config(self.name, config.data)
 
     def test_connection(self, config):
-        return test.test_connection(self.name , config.data[self.name]['host']
-                                 +":" +config.data[self.name]['port']+
-                                 '/iot/about')
-
+        """
+        Function utilises the test.test_connection() function to check the availability of a given url and service.
+        :return: Boolean, True if the service is reachable, False if not.
+        """
+        boolean = test.test_connection(service_name=self.name, url= config.data[self.name]['host']+":" +
+                                                                     config.data[self.name]['port']+'/iot/about')
+        return boolean
 
     def log_switch(self, level, response):
         """
@@ -705,7 +708,8 @@ class Agent:
         payload = ""
         response = requests.request("GET", url, data=payload,
                                     headers=headers)
-        print(response.text)
+
+        return response.text
 
     def update_device(self, device_group, device, payload: json):
         url = self.url + '/iot/devices/' + device.device_id

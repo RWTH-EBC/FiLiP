@@ -123,6 +123,7 @@ if __name__=="__main__":
     CONFIG = config.Config(path_to_config)
     ORION_CB = orion.Orion(CONFIG) 
     ORION_CB.sanity_check()
+    print(ORION_CB.test_connection())
 
     print ("++++ create entities ++++")
     entities = create_entities(ORION_CB)

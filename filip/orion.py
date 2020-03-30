@@ -1,7 +1,9 @@
 import json
 import requests
 from filip import request_utils as requtils
+from filip import test
 
+import datetime
 import math
 import logging
 
@@ -171,6 +173,11 @@ class FiwareService:
             "fiware-servicepath": self.path
         }
 
+    def __repr__(self):
+        fiware_service_str = f'"fiware-service": "{self.name}", "fiware-servicepath": "{self.path}"'
+        return fiware_service_str
+
+
 class Orion:
     """
     Implementation of Orion Context Broker functionalities, such as creating
@@ -234,6 +241,13 @@ class Orion:
                 log.info(f"This is the Orion version: {orion_version} ")
                 log.info(f"This is the OrionLD version: {orion_ld_version}")
 
+    def test_connection(self):
+        """
+        Function utilises the test.test_connection() function to check the availability of a given url and service.
+        :return: Boolean, True if the service is reachable, False if not.
+        """
+        boolean = test.test_connection(url=self.url, service_name=self.fiware_service)
+        return boolean
 
 
     def post_entity(self, entity:object,  update:bool=True):
