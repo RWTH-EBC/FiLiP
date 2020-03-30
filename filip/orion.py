@@ -600,7 +600,10 @@ class Orion:
     def create_subscription(self, subscription_body, check_duplicate:bool=True):
         url = self.url + '/subscriptions'
         headers=self.get_header(requtils.HEADER_CONTENT_JSON)
-        self.check_duplicate_subscription(subscription_body)
+        if check_duplicate is True:
+            exists = self.check_duplicate_subscription(subscription_body)
+            if exists is True:
+                log.info(f"{datetime.datetime.now()} - A similar subscription already exists.")
         response = requests.post(url, headers=headers, data=subscription_body)
         if response.headers==None:
             return
