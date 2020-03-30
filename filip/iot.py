@@ -560,7 +560,6 @@ class Agent:
         self.services = []
 
     def test_config(self, config):
-
         test.test_config(self.name, config.data)
 
     def test_connection(self, config):
@@ -587,14 +586,14 @@ class Agent:
 
     def get_groups(self, device_group):
         url = self.url + '/iot/services'
-        headers = DeviceGroup.get_header
+        headers = device_group.get_header()
         response = requests.request("GET", url, headers=headers)
         level, retstr = requtils.logging_switch(response)
         self.log_switch(level, retstr)
 
     def delete_group(self, device_group):
         url = self.url + '/iot/services'
-        headers = DeviceGroup.get_header
+        headers = device_group.get_header()
         querystring = {"resource": device_group.get_resource(),
                        "apikey": device_group.get_apikey()}
         response = requests.request("DELETE", url,
@@ -692,7 +691,7 @@ class Agent:
     def delete_device(self, device_group, device):
         # TODO: Check if
         url = self.url + '/iot/devices/'+ device.device_id
-        headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header}
+        headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header()}
         response = requests.request("DELETE", url, headers=headers)
         if response.status_code == 204:
             log.info("Device successfully deleted!")
@@ -705,7 +704,7 @@ class Agent:
 
     def get_device(self, device_group, device):
         url = self.url + '/iot/devices/' + device.device_id
-        headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header}
+        headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header()}
         payload = ""
         response = requests.request("GET", url, data=payload,
                                     headers=headers)
@@ -714,7 +713,7 @@ class Agent:
 
     def update_device(self, device_group, device, payload: json):
         url = self.url + '/iot/devices/' + device.device_id
-        headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header}
+        headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header()}
         response = requests.request("PUT", url, data=payload,
                                     headers=headers)
         if response.status_code not in [201, 200, 204]:
