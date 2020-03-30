@@ -1,6 +1,7 @@
 import filip.subscription as sub
 import filip.orion as orion
 import filip.request_utils as requtils
+from filip import test
 import requests
 import json
 
@@ -22,7 +23,7 @@ class QuantumLeap():
         self.crate_url = config.data["cratedb"]["host"] + ':' \
                             + config.data["cratedb"]["port"]
         self.fiware_service = orion.FiwareService(name=config.data['fiware']['service'],
-                                            path=config.data['fiware']['service_path'])
+                                                  path=config.data['fiware']['service_path'])
 
     def create_subscription_object(self, entity: orion.Entity, url: str,
                                    **kwargs) -> object:
