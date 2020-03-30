@@ -1,6 +1,7 @@
 import json
 import requests
 from filip import request_utils as requtils
+from filip import test
 
 import datetime
 import math
@@ -240,24 +241,14 @@ class Orion:
                 log.info(f"This is the Orion version: {orion_version} ")
                 log.info(f"This is the OrionLD version: {orion_ld_version}")
 
-    def test_connection(self, url=None):
+    def test_connection(self):
         """
-        Function tests if there is a valid connection for a given URL and returns a suitable Boolean.
-        If no connection can be achieved, the return is false, else true.
-        :param url: The url to which the connection should be tested, if none given self.url will be used.
-        :return: Boolean, True if a connection is possible, False if not.
+        Function utilises the test.test_connection() function to check the availability of a given url and service.
+        :return: Boolean, True if the service is reachable, False if not.
         """
-        if url is None:
-            url = self.url
-        try:
-            req = requests.get(url)
-            # HTTP errors are not raised by default, this statement does that
-            req.raise_for_status()
-            log.info(f"Connection to {self.fiware_service} established.")
-            return True
-        except Exception as e:
-            log.error(f"{datetime.datetime.now()} - No Connection to: {self.fiware_service} due to {e.args[0]}")
-            return False
+        boolean = test.test_connection(url=self.url, service_name=self.fiware_service)
+        return boolean
+
 
     def post_entity(self, entity:object,  update:bool=True):
         """
