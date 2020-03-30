@@ -1,6 +1,6 @@
 from filip import iot, config, orion
 
-
+import json
 import os
 from pathlib import Path
 
@@ -10,6 +10,7 @@ from pathlib import Path
 def iota_ul(config:config.Config):
     # Creating an Instance of the Context Broker
 
+    print("uno")
     ORION_CB = orion.Orion(CONFIG)
 
 
@@ -160,9 +161,21 @@ if __name__ == "__main__":
     # Read and check configuration
     CONFIG = config.Config(path_to_config)
 
-    iota_ul(CONFIG)
+    with open(path_to_config) as f:
+        data = json.loads(f.read())
 
-    iota_json(CONFIG)
+
+    if data["iota"]["protocol"] == "IoTA-UL":
+        print("Ultralight Agent")
+        iota_ul(CONFIG)
+
+    elif data["iota"]["protocol"] == "IoTA-JSON":
+        print("JSON Agent")
+        iota_json(CONFIG)
+
+    else:
+        print(f'{data["iota"]["protocol"]} - is not a supported protocol.')
+
 
     '''
     # Creating an Instance of the Context Broker
