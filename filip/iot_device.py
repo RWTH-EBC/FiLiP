@@ -1,6 +1,7 @@
 import json
 import string
 import random
+import datetime
 
 from filip import config
 
@@ -137,7 +138,7 @@ class Device:
                        "internal": self.add_internal
                 }.get(attr_type, "not_ok")(attr)
         if switch_dict == "not_ok":
-            log.warning("Attribute type unknown: {}".format(attr_type))
+            log.warning(f" {datetime.datetime.now()} - Attribute type unknown: {attr_type}")
 
 
     def add_attribute_json(self, attribute:dict):
@@ -159,7 +160,7 @@ class Device:
         attr_type = attribute["attr_type"]
         if "attr_value" in attribute:
             if attribute["attr_type"] != "static":# & attribute["attr_value"] != None:
-                log.warning("Setting attribute value only allowed for static attributes! Value will be ignored!")
+                log.warning(f" {datetime.datetime.now()} - Setting attribute value only allowed for static attributes! Value will be ignored!")
                 del attribute["attr_value"]
 
         attr = {"name": attribute["name"],
@@ -178,7 +179,7 @@ class Device:
                        "internal": self.add_internal
                 }.get(attr_type, "not_ok")(attr)
         if switch_dict == "not_ok":
-            log.warning("Attribute type unknown: {}".format(attr_type))
+            log.warning(f" {datetime.datetime.now()} - Attribute type unknown: {attr_type}")
 
 
     def delete_attribute(self, attr_name, attr_type):
@@ -192,24 +193,23 @@ class Device:
         '''
         try:
             if attr_type == "active":
-                self.attributes = [i for i in self.attributes if not (i[
-                                                        'name']==attr_name)]
+                self.attributes = [i for i in self.attributes if not (i['name']==attr_name)]
             elif attr_type == "lazy":
-                self.lazy = [i for i in self.lazy if not (i['name'] ==
-                                                                   attr_name)]
+                self.lazy = [i for i in self.lazy if not (i['name'] == attr_name)]
             elif attr_type == "static":
                 self.static_attributes = [i for i in self.static_attributes if
-                                          not (
-                        i['name'] == attr_name)]
+                                          not (i['name'] == attr_name)]
             elif attr_type == "command":
                 self.commands = [i for i in self.commands if not (i['name'] ==
                                                                    attr_name)]
+            elif attr_type == "internal":
+                self.internal_attributes = [i for i in self.internal_attributes if not (i['name'] == attr_name)]
             else:
-                log.warning("Attribute type unknown: \"{}\"".format(attr_type))
+                log.warning(f" {datetime.datetime.now()} - Attribute type unknown: {attr_type}")
 
-            log.info("Attribute succesfully deleted: \"{}\"".format(attr_name))
+            log.info(f" {datetime.datetime.now()} -Attribute successfully deleted: {attr_name}")
         except:
-            log.warning("Attribute could not be deleted: \"{}\"".format(attr_name))
+            log.warning(f" {datetime.datetime.now()} -Attribute could not be deleted: {attr_name}")
 
 
 
@@ -357,7 +357,7 @@ class DeviceGroup:
                         "internal": self.add_internal
                        }.get(attr_type, "not_ok")(attr)
         if switch_dict == "not_ok":
-            log.warning("Attribute type unknown: {}".format(attr_type))
+            log.warning(f" {datetime.datetime.now()} - Attribute type unknown: {attr_type}")
 
 
 
@@ -390,12 +390,13 @@ class DeviceGroup:
             elif attr_type == "command":
                 self.__commands = [i for i in self.__commands if not
                 (i['name'] == attr_name)]
-            else:
-                log.warning("Attribute type unknown: {}".format(attr_type))
 
-            log.info("Attribute succesfully deleted: {}".format(attr_name))
+            else:
+                log.warning(f" {datetime.datetime.now()} - Attribute type unknown: {attr_type}")
+
+            log.info(f" {datetime.datetime.now()} - Attribute succesfully deleted: {attr_name}")
         except:
-            log.warning("Attribute could not be deleted: {}".format(attr_name))
+            log.warning(f" {datetime.datetime.now()} - Attribute could not be deleted: {attr_name}")
 
 
     def get_apikey(self):
@@ -471,13 +472,13 @@ class DeviceGroup:
                         self.__apikey = self.generate_apikey()
                     #with open(self.path, 'w') as configfile:
                     #    self.config.write(configfile)
-                    log.info("Random Key generated: {}".format(self.__apikey))
+                    log.info(f" {datetime.datetime.now()} - Random Key generated: {self.__apikey}")
                 else:
-                    log.info("Default Key will be used: 1234")
+                    log.info(f" {datetime.datetime.now()} - Default Key will be used: 1234")
 
-            log.info("API-Key check success! {}".format(self.__apikey))
+            log.info(f" {datetime.datetime.now()} - API-Key check success! {self.__apikey}")
         except Exception:
-            log.error(" API-Key check failed. Please check configuration!")
+            log.error(f" {datetime.datetime.now()} - API-Key check failed. Please check configuration!")
 
 
     def __repr__(self):

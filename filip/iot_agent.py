@@ -1,5 +1,6 @@
 from typing import List, Any, Union, Optional
 
+
 import requests
 from requests import Response
 import datetime
@@ -76,7 +77,7 @@ class Agent:
         response = requests.request("DELETE", url,
                                     headers=headers, params=querystring)
         if response.status_code==204:
-            log.info("Device group successfully deleted!")
+            log.info(f" {datetime.datetime.now()} - Device group successfully deleted!")
         else:
            level, retstr = requtils.logging_switch(response)
            self.log_switch(level, retstr)
@@ -102,11 +103,8 @@ class Agent:
             response = requests.request("PUT", url=url, data=payload, headers=headers)
 
         if response.status_code not in [201, 200, 204]:
-            log.warning("Unable to register default configuration for service \"{}\", path \"{}\": \"{}\" {}".format(
-                device_group.get_header()['fiware-service'],
-                device_group.get_header()['fiware-servicepath'],
-                "Code:" + str(response.status_code),
-                response.text))
+            log.warning(f" {datetime.datetime.now()} - Unable to register default configuration for service {device_group.get_header()['fiware-service']}, path {device_group.get_header()['fiware-servicepath']}"
+                        f" Code: {response.status_code} - Info: {response.text}")
             return None
 
 
@@ -117,15 +115,15 @@ class Agent:
                       "apikey":device_group.get_apikey_last()}
         payload= json.loads(device_group.get_json())
         payload = json.dumps(payload, indent=4)
-        log.info("Update group with: {}".format(payload))
+        log.info(f" {datetime.datetime.now()} - Update group with: {payload}")
         response = requests.request("PUT", url,
                                     data=payload, headers=headers,
                                     params=querystring)
         if response.status_code not in [201, 200, 204]:
-            log.warning("Unable to update device group:", response.text)
+            log.warning(f" {datetime.datetime.now()} -  Unable to update device group:", response.text)
 
         else:
-            log.info("Device group sucessfully updated")
+            log.info(f" {datetime.datetime.now()} - Device group sucessfully updated")
 
         # filip.orion.post(url, head, AUTH, json_dict)
 
@@ -159,10 +157,10 @@ class Agent:
             self.update_device(device_group, device, device_data)
 
         elif response.status_code != 201:
-            log.warning("Unable to post device: ", response.text)
+            log.warning(f" {datetime.datetime.now()} - Unable to post device: ", response.text)
 
         else:
-            log.info("Device successfully posted.")
+            log.info(f" {datetime.datetime.now()} – Device successfully posted.")
 
 
     def delete_device(self, device_group, device):
@@ -171,9 +169,9 @@ class Agent:
         headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header()}
         response = requests.request("DELETE", url, headers=headers)
         if response.status_code == 204:
-            log.info("Device successfully deleted!")
+            log.info(f" {datetime.datetime.now()} – Device successfully deleted!")
         else:
-            log.warning(f"Device could not be deleted: {response.text}")
+            log.warning(f" {datetime.datetime.now()} - Device could not be deleted: {response.text}")
 
     def get_device(self, device_group, device):
         url = self.url + '/iot/devices/' + device.device_id
@@ -190,9 +188,9 @@ class Agent:
         response = requests.request("PUT", url, data=payload,
                                     headers=headers)
         if response.status_code not in [201, 200, 204]:
-            log.warning("Unable to update device: ", response.text)
+            log.warning(f" {datetime.datetime.now()} - Unable to update device: {response.text}")
         else:
-            log.info("Device successfully updated!")
+            log.info(f" {datetime.datetime.now()} - Device successfully updated!")
 
 
 
@@ -224,7 +222,7 @@ class Agent:
         if resp.status_code == 200:
             return resp.json()["services"]
         else:
-            log.warning("Unable to fetch configuration for service  \"{}\", path \"{}\": {}".format(service, service_path, resp.text))
+            log.warning(f" {datetime.datetime.now()} - Unable to fetch configuration for service {service}, path {service_path}: {resp.text}")
 
 
 
