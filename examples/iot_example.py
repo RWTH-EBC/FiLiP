@@ -1,4 +1,4 @@
-from filip import iot, config, orion
+from filip import iot_agent as iota, iot_device, config, orion
 
 import json
 import os
@@ -15,7 +15,7 @@ def iota_ul(config:config.Config):
 
 
     # Creating an Instance of the IoT-Agent in the UL-Version
-    IOTA_UL = iot.Agent("iota", CONFIG)
+    IOTA_UL = iota.Agent("iota", CONFIG)
 
 
 
@@ -38,7 +38,7 @@ def iota_ul(config:config.Config):
     device_group.test_apikey()
 
 
-    device_ul = iot.Device('urn:Room:002:sensor01','urn:Room:002',
+    device_ul = iot_device.Device('urn:Room:002:sensor01','urn:Room:002',
                            "Thing",
                            transport="MQTT", protocol="PDI-IoTA-UltraLight",
                            timezone="Europe/Berlin")
@@ -110,7 +110,7 @@ def iota_json(config:config.Config):
 
 
     # Creating an Instance of the IoT-Agent in the JSON-Version
-    IOTA_JSON = iot.Agent("iota", CONFIG)
+    IOTA_JSON = iota.Agent("iota", CONFIG)
 
 
 
@@ -122,7 +122,7 @@ def iota_json(config:config.Config):
 
 
 
-    device_group_json = iot.DeviceGroup(fiware_service,
+    device_group_json = iot_device.DeviceGroup(fiware_service,
                                          "http://orion:1026",
                                          iot_agent="iota_json", apikey="12345",
                                         timestamp=True, autoprovision=False)
@@ -130,7 +130,7 @@ def iota_json(config:config.Config):
 
 
 
-    device_json = iot.Device('urn:Room:002:sensor02','urn:Room:002',
+    device_json = iot_device.Device('urn:Room:002:sensor02','urn:Room:002',
                              "Thing", transport="MQTT",
                              protocol="IoTA-JSON",
                              timezone="Europe/Berlin",

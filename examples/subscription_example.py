@@ -23,7 +23,6 @@ def API_Walkthrough_subscription():
     notification = sub.Notification(http_params, notification_attributes)
 
     expires = datetime.datetime(2040, 1, 1, 14).isoformat()
-    print (expires)
     throttling = 5
 
     subscription = sub.Subscription(subject, notification, description, expires, throttling)
@@ -48,7 +47,7 @@ def http_custom_subscription():
     description = "A subscription to get info about Room3"
 
     subject_entity = sub.Subject_Entity("Room3", "Room")
-    subject_condition = sub.Subject_Condition(["pressure"])
+    subject_condition = sub.Subject_Condition(["temperature", "pressure"])
     subject = sub.Subject([subject_entity], subject_condition)
 
     http_params = sub.HTTP_Params("http://localhost:1028/accumulate")
@@ -151,22 +150,18 @@ if __name__=="__main__":
     print("subscription id = " + str(sub_id3))
     print("---------------------")
 
-
     # checking for duplicate sbuscription
     duplicate_body = check_duplicate_subscription()
     exists = ORION_CB.check_duplicate_subscription(subscription_body=duplicate_body)
     print("The subscription allready exists:", exists)
 
-
     duplicate_type_body = check_existing_type_subscription()
     exists_type = ORION_CB.check_duplicate_subscription(subscription_body=duplicate_type_body)
     print("The subscription allready exists:", exists_type)
 
-
     id_match_body = check_existing_id_pattern_subscription()
     exists_id_pattern = ORION_CB.check_duplicate_subscription(id_match_body)
     print("The subscription allready exists:", exists_id_pattern)
-
 
     print("deleting subscriptions..")
     time.sleep(1)
@@ -179,7 +174,8 @@ if __name__=="__main__":
     print("deleted subscription " + sub_id)
     time.sleep(1)
     sub_id = sub_id3
-    #ORION_CB.delete_subscription(sub_id)
-    #print("deleted subscription " + sub_id)
+    ORION_CB.delete_subscription(sub_id)
+    print("deleted subscription " + sub_id)
 
     ORION_CB.delete_all_subscriptions()
+
