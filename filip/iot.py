@@ -335,35 +335,9 @@ class DeviceGroup:
     def get_apikey(self):
         return self.__apikey
 
-    def add_default_attribute(self, Attribute):
-        """
-        :param name: The name of the attribute as submitted to the context broker.
-        :param type: The type of the attribute as submitted to the context broker.
-        :param object_id: The id of the attribute used from the southbound API.
-        :param attr_type: One of \"active\" (default), \"lazy\" or \"static\"
-        """
-        attr = {}
-        if Attribute.object_id:
-            attr["object_id"] = Attribute.object_id
-        if Attribute.attr_value != None\
-                and Attribute.attr_type == "static" or Attribute.attr_type == "internal":
-            attr["value"]  = Attribute.attr_value
-        attr["name"] = Attribute.name
-        attr["type"] = Attribute.value_type
-
-        attr_type = Attribute.attr_type
-
-        switch_dict = {"active": self.add_active,
-                        "lazy": self.add_lazy,
-                        "static":  self.add_static,
-                        "command": self.add_command,
-                        "internal": self.add_internal
-                       }.get(attr_type, "not_ok")(attr)
-        if switch_dict == "not_ok":
-            log.warning("Attribute type unknown: {}".format(attr_type))
 
 
-    def add_default_attribute_json(self, attribute:dict):
+    def add_default_attribute(self, attribute:dict):
         """
         :param name: The name of the attribute as submitted to the context broker.
         :param type: The type of the attribute as submitted to the context broker.
@@ -675,10 +649,6 @@ class Agent:
             log.info("Device successfully deleted!")
         else:
             log.warning(f"Device could not be deleted: {response.text}")
-
-
-
-
 
     def get_device(self, device_group, device):
         url = self.url + '/iot/devices/' + device.device_id
