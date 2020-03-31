@@ -603,7 +603,7 @@ class Agent:
            level, retstr = requtils.logging_switch(response)
            self.log_switch(level, retstr)
 
-    def post_group(self, device_group:object, force_update:bool=False):
+    def post_group(self, device_group:object, force_update: bool = False):
         """
         Function post a device group (service). If force_update = True, the info cannot  unable to register
         configuration (409 : Duplicate_Group) is ignored and the group is updated.
@@ -658,12 +658,6 @@ class Agent:
         :param device_group: A device group is a necessary for connecting devices, as it provides a authentication key
         :param device: The device which provides the measurments / accepts the commands
         :param update: Whether if the device is already existent it should be updated
-        :return:
-        """
-        """
-
-        :param device_group:
-        :param device:
         :return:
         """
         url = self.url + '/iot/devices'
