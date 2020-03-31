@@ -21,28 +21,6 @@ log = logging.getLogger('iot')
 
 PROTOCOLS = ['IoTA-JSON','IoTA-UL']
 
-# The Attribute class is only implemented to provide backwards compatibility
-
-class Attribute: # DeviceAttribute
-    def __init__(self, name: str, attr_type: str, value_type: str,
-                 object_id: str=None, attr_value: str=None):
-        self.name = name
-        self.value_type = value_type
-        self.attr_type = attr_type
-        self.object_id = object_id
-        self.attr_value = attr_value
-        if attr_value != None and attr_type != "static":
-            log.warning("Setting attribute value only allowed for static attributes! Value will be ignored!")
-
-            self.attr_value = None
-
-    def get_json(self):
-        if self.attr_value != None:
-            return {'value': self.attr_value, 'type': '{}'.format(
-                self.attr_type)}
-        else:
-            return {'type': '{}'.format(self.attr_type)}
-
 
 class Device:
     """
