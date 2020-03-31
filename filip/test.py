@@ -10,8 +10,8 @@ import logging
 log = logging.getLogger('test')
 
 
-def test_connection(url: str, service_name: str, auth_method: str =None,
-                    **kwargs):
+def test_connection(url: str, service_name: str,
+                    auth_method: str =None, **kwargs):
     """
     This function tests the a webservice is reachable
     :param service_name: Name of the webservice
@@ -26,12 +26,14 @@ def test_connection(url: str, service_name: str, auth_method: str =None,
             res = requests.get(url)
             if res.status_code == 200:
                 log.info(f"{datetime.datetime.now()} - {service_name} : Check Success! Service is up and running!")
+                return True
             else:
                 log.error(f"{datetime.datetime.now()} - {service_name} : Check has Errors! Please check Service response: {res.text}")
+                return False
 
         if auth_method is not None:
             if auth_method is "HTTPBasicAuth":
-                authorization =kwargs.get("auth")
+                authorization = kwargs.get("auth")
                 res = requests.get(url, auth=authorization)
 
             elif auth_method is "HTTPDigestAuth":
@@ -39,16 +41,19 @@ def test_connection(url: str, service_name: str, auth_method: str =None,
                 requests.get(url, auth=HTTPDigestAuth(authorization))
 
             else:
-                log.error(f"{datetime.datetime.now()} - {service_name} : Authentification method: {auth_method} currently not supported")
+                log.error(f"{datetime.datetime.now()} - {service_name} : Authentication method: {auth_method} currently not supported")
                 raise NotImplementedError
 
             if res.status_code == 200:
                 log.info(f"{datetime.datetime.now()} - {service_name} : Check Success! Service is up and running!")
+                return True
             else:
                 log.error(f"{datetime.datetime.now()} - {service_name} :Check has Errors! Please check Service response: {res.text}")
+                return False
 
     except Exception:
         log.error(f"{datetime.datetime.now()} - {service_name} : Check Failed! Is the service up and running? Please check configuration! ")
+        return False
 
 
 
@@ -65,7 +70,7 @@ def test_config(service_name: str, config_data: dict):
     Checking configuration for plausibility and correct types
     :param service_name: Name of the client instance for that the
     configuration should be tested.
-    :param config: Global of dictionary for configuration parameters
+    :param config_data: Global of dictionary for configuration parameters
     :return:
     """
     #TODO: Adding type checking and logical tests
@@ -74,51 +79,42 @@ def test_config(service_name: str, config_data: dict):
     protocols = ', '.join(list_protocols)
     try:
         if service_name not in config_data:
-            raise Exception("Missing configuration for '"+ service_name +
-                            "'!")
+            raise Exception(f" Missing configuration for {service_name}!")
+
         if 'host' not in config_data[service_name]:
-            raise Exception("Host configuration for'" + service_name + "' is "
-                                                                 "missing!")
-        assert isinstance(config_data[service_name]['host'], str), ("Host "
-                                                               "configuration "
-                                                               "for'" +
-                                                               service_name +
-                                                               "' must be "
-                                                               "string!")
+            raise Exception(f" Host configuration for {service_name} is missing!")
+        assert isinstance(config_data[service_name]['host'], str), (f"Host configuration for {service_name} must be string!")
 
         if 'port' not in config_data[service_name]:
-            raise Exception("Port configuration for'" + service_name + "' is "
-                                                                 "missing!")
+            raise Exception(f"Port configuration for {service_name} is missing!")
+
         elif isinstance(config_data[service_name]['port'], str):
             port = config_data[service_name]['port']
-            if port.isdigit() and int(port)<= 65535:
+            if port.isdigit() and int(port) <= 65535:
                 pass
             else:
                 raise Exception("No valid Port configuration for '" +
                                 service_name + "'!")
         else:
             if isinstance(config_data[service_name]['port'], int) and \
-                    config_data[service_name]['port']<= 65535:
+                    config_data[service_name]['port'] <= 65535:
                 pass
             else:
                 raise Exception("No valid port configuration for' " +
                                 service_name + "'!")
         if 'protocol' in config_data[service_name]:
-            print("True")
             assert isinstance(config_data[service_name]['protocol'], str),\
-                ("Host configuration for'" + service_name + "' must be string!")
+                (f"Host configuration for {service_name} must be string!")
             # Additional allowed protocols may be added here, e.g. 'IoTA-LWM2M'
             assert config_data[service_name]['protocol'] in list_protocols, \
-                ("Protocol for '" + service_name + "' not supported! The "
-                "following protocols are supported: " + protocols)
-
+                (f" Protocol for {service_name} not supported! The following protocols are supported: {protocols}")
 
         log.info("Configuration successfully tested!")
         return True
 
-
     except Exception as error:
         log.error(f" {datetime.datetime.now()} -  Config test failed! {error}")
+        return False
 
 
 
