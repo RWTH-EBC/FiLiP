@@ -21,6 +21,9 @@ log = logging.getLogger('iot')
 
 PROTOCOLS = ['IoTA-JSON','IoTA-UL']
 
+
+# ToDo wait for IoT Merge before pep8 conversion
+
 # The Attribute class is only implemented to provide backwards compatibility
 
 class Attribute: # DeviceAttribute
@@ -137,8 +140,6 @@ class Device:
     def add_internal(self, attribute):
         self.internal_attributes.append(attribute)
 
-
-
     # Function beneath is only for backwards compatibility
 
     def add_attribute(self, attr_name: str, attr_type: str, value_type: str,
@@ -169,7 +170,6 @@ class Device:
                 }.get(attr_type, "not_ok")(attr)
         if switch_dict == "not_ok":
             log.warning("Attribute type unknown: {}".format(attr_type))
-
 
     def add_attribute_json(self, attribute:dict):
         """
@@ -210,7 +210,6 @@ class Device:
                 }.get(attr_type, "not_ok")(attr)
         if switch_dict == "not_ok":
             log.warning("Attribute type unknown: {}".format(attr_type))
-
 
     def delete_attribute(self, attr_name, attr_type):
         '''
