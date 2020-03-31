@@ -9,15 +9,10 @@ from pathlib import Path
 def iota_ul(config:config.Config):
     # Creating an Instance of the Context Broker
 
-    print("uno")
     ORION_CB = orion.Orion(CONFIG)
-
 
     # Creating an Instance of the IoT-Agent in the UL-Version
     IOTA_UL = iot.Agent("iota", CONFIG)
-
-
-
 
     # set the service path
     fiware_service = orion.FiwareService("test_service2", "/iot_ul")
