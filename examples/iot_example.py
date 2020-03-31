@@ -1,5 +1,4 @@
 from filip import iot, config, orion
-
 import json
 import os
 from pathlib import Path
