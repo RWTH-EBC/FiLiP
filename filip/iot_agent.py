@@ -125,8 +125,6 @@ class Agent:
         else:
             log.info(f" {datetime.datetime.now()} - Device group sucessfully updated")
 
-        # filip.orion.post(url, head, AUTH, json_dict)
-
     def post_device(self, device_group:object, device:object, update:bool=True):
         """
         Function registers a device with the iot-Agent to the respective device group.
@@ -164,7 +162,6 @@ class Agent:
 
 
     def delete_device(self, device_group, device):
-        # TODO: Check if
         url = self.url + '/iot/devices/'+ device.device_id
         headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header()}
         response = requests.request("DELETE", url, headers=headers)
@@ -212,12 +209,9 @@ class Agent:
                  }
              }
 
-
-
     def fetch_service(self, service: str, service_path: str) -> [dict]:
         resp = requests.get(self.url + "/iot/services",
-                            headers=self._get_header(
-            service, service_path))
+                            headers=self._get_header(service, service_path))
 
         if resp.status_code == 200:
             return resp.json()["services"]

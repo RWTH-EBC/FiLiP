@@ -452,7 +452,6 @@ class DeviceGroup:
             length))
 
     def test_apikey(self):
-        # TODo Check how to deal with user input
         """
         This function tests if an apikey is defined in the configfile.
         Otherwise it will ask the user to generate one and saves it to the
