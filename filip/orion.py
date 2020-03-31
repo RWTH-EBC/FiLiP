@@ -438,6 +438,7 @@ class Orion:
                 return response
         else:
             log.error("Getting all entities: both function parameters have to be 'not null'")
+            return None
         ok, retstr = requtils.response_ok(response)
         if not ok:
             level, retstr = requtils.logging_switch(response)
