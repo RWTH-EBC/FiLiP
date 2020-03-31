@@ -52,13 +52,6 @@ def test_connection(url: str, service_name: str, auth_method: str =None,
 
 
 
-def test_iota_connection():
-    """
-    Function tests that the IoT-Agent connection is working.
-    :return:
-    """
-    pass
-
 
 def test_config(service_name: str, config_data: dict):
     """
