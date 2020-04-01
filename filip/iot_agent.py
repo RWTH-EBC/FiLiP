@@ -66,6 +66,7 @@ class Agent:
         url = self.url + '/iot/services'
         headers = device_group.get_header()
         response = requests.request("GET", url, headers=headers)
+
         level, retstr = requtils.logging_switch(response)
         self.log_switch(level, retstr)
 
@@ -76,13 +77,13 @@ class Agent:
                        "apikey": device_group.get_apikey()}
         response = requests.request("DELETE", url,
                                     headers=headers, params=querystring)
-        if response.status_code==204:
+        if response.status_code is 204:
             log.info(f" {datetime.datetime.now()} - Device group successfully deleted!")
         else:
-           level, retstr = requtils.logging_switch(response)
-           self.log_switch(level, retstr)
+            level, retstr = requtils.logging_switch(response)
+            self.log_switch(level, retstr)
 
-    def post_group(self, device_group:object, force_update:bool=False):
+    def post_group(self, device_group:object, force_update: bool = False):
         """
         Function post a device group (service). If force_update = True, the info cannot  unable to register
         configuration (409 : Duplicate_Group) is ignored and the group is updated.
@@ -91,16 +92,15 @@ class Agent:
         """
         url = self.url + '/iot/services'
         headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header()}
-        payload={}
+        payload= dict()
         payload['services'] = [json.loads(device_group.get_json())]
         payload = json.dumps(payload, indent=4)
         response = requests.request("POST", url, data=payload,
                                     headers=headers)
-        if (response.status_code == 409) & (force_update == True):
-            resource = device_group.get_resource()
-            api_key = device_group.get_apikey()
-            url = url +  "?resource=" + resource + "&apikey=" + api_key
-            response = requests.request("PUT", url=url, data=payload, headers=headers)
+        if (response.status_code == 409) & (force_update is True):
+            querystring ={"resource": device_group.get_resource_last(),
+                          "apikey": device_group.get_apikey_last()}
+            response = requests.request("PUT", url=url, data=payload, headers=headers, params=querystring)
 
         if response.status_code not in [201, 200, 204]:
             log.warning(f" {datetime.datetime.now()} - Unable to register default configuration for service {device_group.get_header()['fiware-service']}, path {device_group.get_header()['fiware-servicepath']}"
@@ -111,8 +111,8 @@ class Agent:
     def update_group(self, device_group):
         url = self.url + '/iot/services'
         headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header_last()}
-        querystring ={"resource":device_group.get_resource_last(),
-                      "apikey":device_group.get_apikey_last()}
+        querystring ={"resource": device_group.get_resource_last(),
+                      "apikey": device_group.get_apikey_last()}
         payload= json.loads(device_group.get_json())
         payload = json.dumps(payload, indent=4)
         log.info(f" {datetime.datetime.now()} - Update group with: {payload}")
@@ -148,8 +148,8 @@ class Agent:
         response = requests.request("POST", url, data=payload,
                                     headers=headers)
 
-        if (response.status_code == 409) & (update== True):
-            device_data = {}
+        if (response.status_code == 409) & (update is True):
+            device_data = dict()
             device_data["attributes"] = json.loads(device.get_json())["attributes"]
             device_data = json.dumps(device_data, indent=4)
             self.update_device(device_group, device, device_data)
@@ -162,7 +162,7 @@ class Agent:
 
 
     def delete_device(self, device_group, device):
-        url = self.url + '/iot/devices/'+ device.device_id
+        url = self.url + '/iot/devices/' + device.device_id
         headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header()}
         response = requests.request("DELETE", url, headers=headers)
         if response.status_code == 204:
