@@ -45,8 +45,8 @@ class Agent:
         Function utilises the test.test_connection() function to check the availability of a given url and service.
         :return: Boolean, True if the service is reachable, False if not.
         """
-        boolean = test.test_connection(service_name=self.name, url= config.data[self.name]['host']+":" +
-                                                                     config.data[self.name]['port']+'/iot/about')
+        boolean = test.test_connection(service_name=self.name, url=config.data[self.name]['host']+":" +
+                                                                   config.data[self.name]['port']+'/iot/about')
         return boolean
 
     def log_switch(self, level, response):
@@ -66,9 +66,12 @@ class Agent:
         url = self.url + '/iot/services'
         headers = device_group.get_header()
         response = requests.request("GET", url, headers=headers)
-
-        level, retstr = requtils.logging_switch(response)
-        self.log_switch(level, retstr)
+        ok, retstr = requtils.response_ok(response)
+        if not ok:
+            level, retstr = requtils.logging_switch(response)
+            self.log_switch(level, retstr)
+        else:
+            return response.text
 
     def delete_group(self, device_group):
         url = self.url + '/iot/services'
@@ -125,7 +128,7 @@ class Agent:
         else:
             log.info(f" {datetime.datetime.now()} - Device group sucessfully updated")
 
-    def post_device(self, device_group:object, device:object, update:bool=True):
+    def post_device(self, device_group: object, device: object, update: bool = True):
         """
         Function registers a device with the iot-Agent to the respective device group.
         If a device allready exists in can be updated with update = True
@@ -134,15 +137,9 @@ class Agent:
         :param update: Whether if the device is already existent it should be updated
         :return:
         """
-        """
-
-        :param device_group:
-        :param device:
-        :return:
-        """
         url = self.url + '/iot/devices'
         headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header()}
-        payload={}
+        payload = dict()
         payload['devices'] = [json.loads(device.get_json())]
         payload = json.dumps(payload, indent=4)
         response = requests.request("POST", url, data=payload,
