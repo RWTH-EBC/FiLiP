@@ -32,6 +32,7 @@ class Device:
     :ivar commands: List of commands of the device
     :ivar static_attributes: List of static attributes to append to the entity. All the updateContext requests to the CB will have this set of attributes appended.
     :ivar internal_attributes: List of internal attributes with free format for specific IoT Agent configuration.
+                                Note: They are only stored in the device registry.
     :ivar autoprovision: (optional, boolean): If true, APPEND is used upon
     measure arrival (thus effectively allowing autoprovisioned devices). If false, UPDATE is used open measure arrival (thus effectively avoiding autoprovisioned devices). This field is optional, so if it omitted then the global IoTAgent appendModel configuration is used.
         """
@@ -63,34 +64,34 @@ class Device:
         Function returns a representation of the object (its data) as a string.
         :return:
         """
-        return "{}".format(self.get_json())
+        return str((vars(self)))
 
     def get_json(self):
-        dict = {}
-        dict['device_id']= self.device_id
-        dict['entity_name']= self.entity_name
-        dict['entity_type']= self.entity_type
-        dict['timezone'] = self.timezone
+        data_dict = dict()
+        data_dict['device_id']= self.device_id
+        data_dict['entity_name']= self.entity_name
+        data_dict['entity_type']= self.entity_type
+        data_dict['timezone'] = self.timezone
         if self.endpoint:
-            dict['endpoint'] = self.endpoint
+            data_dict['endpoint'] = self.endpoint
         if self.apikey:
-            dict['apikey'] = self.apikey
+            data_dict['apikey'] = self.apikey
         if self.timestamp!=None:
-            dict['timestamp'] = self.timestamp
+            data_dict['timestamp'] = self.timestamp
         if self.service:
-            dict["service"] = self.service
+            data_dict["service"] = self.service
         if self.service_path:
-            dict['service_path'] = self.service_path
-        dict['protocol'] = self.protocol
-        dict['transport'] = self.transport
-        dict['attributes'] = self.attributes
-        dict['lazy'] = self.lazy
-        dict['commands'] = self.commands
-        dict['static_attributes'] = self.static_attributes
-        dict['internal_attributes'] = self.internal_attributes
+            data_dict['service_path'] = self.service_path
+        data_dict['protocol'] = self.protocol
+        data_dict['transport'] = self.transport
+        data_dict['attributes'] = self.attributes
+        data_dict['lazy'] = self.lazy
+        data_dict['commands'] = self.commands
+        data_dict['static_attributes'] = self.static_attributes
+        data_dict['internal_attributes'] = self.internal_attributes
         if self.autoprovision!=None:
-            dict['autoprovision'] = self.autoprovision
-        return json.dumps(dict, indent=4)
+            data_dict['autoprovision'] = self.autoprovision
+        return json.dumps(data_dict, indent=4)
 
     def add_lazy(self, attribute):
         self.lazy.append(attribute)
@@ -108,40 +109,10 @@ class Device:
         self.internal_attributes.append(attribute)
 
 
-
     # Function beneath is only for backwards compatibility
 
-    def add_attribute(self, attr_name: str, attr_type: str, value_type: str,
-                      object_id: str=None, attr_value: str=None):
-        """
-        :param name: The name of the attribute as submitted to the context broker.
-        :param type: The type of the attribute as submitted to the context broker.
-        :param object_id: The id of the attribute used from the southbound API.
-        :param attr_type: One of \"active\" (default), \"lazy\" or \"static\"
-        """
 
-
-        attr = {}
-        if object_id:
-            attr["object_id"] = object_id
-        if attr_value != None and attr_type == "static":
-            attr["value"] = attr_value
-        attr["name"] = attr_name
-        attr["type"] = value_type
-
-
-        # attr["value"] = Attribute.value NOT Supported by agent-lib
-        switch_dict = {"active": self.add_active,
-                       "lazy": self.add_lazy,
-                       "static":  self.add_static,
-                       "command": self.add_command,
-                       "internal": self.add_internal
-                }.get(attr_type, "not_ok")(attr)
-        if switch_dict == "not_ok":
-            log.warning(f" {datetime.datetime.now()} - Attribute type unknown: {attr_type}")
-
-
-    def add_attribute_json(self, attribute:dict):
+    def add_attribute(self, attribute:dict):
         """
         :param attribute: {
             "name": "Temp_Sensor",
@@ -152,10 +123,17 @@ class Device:
 
         :param name: The name of the attribute as submitted to the context broker.
         :param type: The type of the attribute as submitted to the context broker.
+
         :param object_id: The id of the attribute used from the southbound API.
         :param attr_type: One of \"active\" (default), \"lazy\" or \"static\"
         """
-
+        """
+        :param attr_name: The name of the attribute as submitted to the context broker.
+        :param attr_type: The type of the attribute as submitted to the context broker.
+        :param value_type: One of \"active\" (default), \"lazy\" or \"static\"
+        :param object_id: The id of the attribute used from the southbound API.
+        :param attr_value: the value of the attribute
+        """
 
         attr_type = attribute["attr_type"]
         if "attr_value" in attribute:
@@ -241,8 +219,6 @@ class DeviceGroup:
     :ivar autoprovsion: (optional, boolean): If true, APPEND is used upon measure arrival (thus effectively allowing autoprovisioned devices). If false, UPDATE is used open measure arrival (thus effectively avoiding autoprovisioned devices). This field is optional, so if it omitted then the global IoTAgent appendModel configuration is used.
     specific IoT Agents to store information along with the devices in the Device Registry.
     """
-
-
     def __init__(self, fiware_service ,
                  cb_host: str, **kwargs):
 

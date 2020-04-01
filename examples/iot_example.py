@@ -41,47 +41,46 @@ def iota_ul(config:config.Config):
     print(device_ul)
 
     temp_attr = {"name": "temperature",
-            "value_type": "Number",
-            "attr_type": "active",
-            "attr_value": "12",
-            "object_id": "t"}
+                 "value_type": "Number",
+                 "attr_type": "active",
+                 "attr_value": "12",
+                 "object_id": "t"}
 
 
-
-    device_ul.add_attribute_json(temp_attr)
+    device_ul.add_attribute(temp_attr)
 
     press_attr = {"name": "pressure",
-            "value_type": "Number",
-            "attr_type": "active",
-            "object_id": "p"}
+                  "value_type": "Number",
+                  "attr_type": "active",
+                  "object_id": "p"}
 
-    device_ul.add_attribute_json(press_attr)
+    device_ul.add_attribute(press_attr)
 
-
-    name_attr =  {"name": "nice_name",
+    name_attr = {"name": "nice_name",
                    "value_type": "String",
                    "attr_type": "static",
                    "attr_value" : "beautiful attribute!",
                    "object_id": "name"}
 
-    device_ul.add_attribute_json(name_attr)
+    device_ul.add_attribute(name_attr)
 
     # test creating an internal attribute
 
     internal_attr = {"name": "nice_name_int",
-                   "value_type": "String",
-                   "attr_type": "internal",
-                   "attr_value" : "beautiful attribute!",
-                   "object_id": "name"}
+                     "value_type": "String",
+                     "attr_type": "internal",
+                     "attr_value" : "beautiful attribute!",
+                     "object_id": "name"}
 
-    device_ul.add_attribute_json(internal_attr)
+    device_ul.add_attribute(internal_attr)
 
+    print(device_ul)
 
 
     device_ul.delete_attribute("pressure", "active")
 
     IOTA_UL.post_group(device_group)
-    IOTA_UL.update_group(device_group)
+    #IOTA_UL.update_group(device_group)
     IOTA_UL.get_groups(device_group)
     IOTA_UL.post_device(device_group, device_ul)
     IOTA_UL.update_device(device_group, device_ul, "")
@@ -129,6 +128,10 @@ def iota_json(config:config.Config):
     IOTA_JSON.post_device(device_group_json, device_json)
     IOTA_JSON.update_device(device_group_json, device_json, "")
     IOTA_JSON.get_device(device_group_json, device_json)
+
+
+    ORION_CB.get_all_entities()
+    ORION_CB.get_entity('urn:Room:002')
 
     IOTA_JSON.delete_device(device_group_json, device_json)
     IOTA_JSON.delete_group(device_group_json)
