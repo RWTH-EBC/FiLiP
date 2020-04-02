@@ -62,7 +62,7 @@ def test_config(service_name: str, config_data: dict):
     :return:
     """
     #TODO: Adding type checking and logical tests
-    import filip.iot_agent as iot
+    from filip.iota import agent as iot
     list_protocols = iot.PROTOCOLS.copy()
     protocols = ', '.join(list_protocols)
     try:

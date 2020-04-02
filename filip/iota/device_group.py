@@ -4,7 +4,7 @@ import random
 import datetime
 
 from filip import config
-
+from iota.device_superclass import Shared
 
 import logging
 
@@ -12,7 +12,7 @@ log = logging.getLogger('iot')
 
 
 
-class DeviceGroup:
+class DeviceGroup(Shared):
     """
     For every Device Group, the pair (resource, apikey) must be unique
     (as it is used to identify which group to assign to which device).
@@ -102,20 +102,6 @@ class DeviceGroup:
         self.__devices = []
         self.__agent = kwargs.get("iot-agent", self.__agent)
 
-    def add_lazy(self, attribute):
-        self.__lazy.append(attribute)
-
-    def add_active(self, attribute):
-        self.__attributes.append(attribute)
-
-    def add_static(self, attribute):
-        self.__static_attributes.append(attribute)
-
-    def add_command(self, attribute):
-        self.__commands.append(attribute)
-
-    def add_internal(self, attribute):
-        self.__internal_attributes.append(attribute)
 
     def get_resource(self):
         return self.__resource
@@ -271,11 +257,3 @@ class DeviceGroup:
             log.info(f" {datetime.datetime.now()} - API-Key check success! {self.__apikey}")
         except Exception:
             log.error(f" {datetime.datetime.now()} - API-Key check failed. Please check configuration!")
-
-
-    def __repr__(self):
-        """
-        Function returns a representation of the object (its data) as a string.
-        :return:
-        """
-        return "{}".format(self.get_json())

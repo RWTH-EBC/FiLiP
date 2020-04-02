@@ -4,7 +4,7 @@ import random
 import datetime
 
 from filip import config
-
+from iota.device_superclass import Shared
 
 import logging
 
@@ -14,7 +14,7 @@ log = logging.getLogger('iot')
 PROTOCOLS = ['IoTA-JSON','IoTA-UL']
 
 
-class Device:
+class Device(Shared):
     """
     Represents all necessary information for device registration with an Fiware IoT Agent.
     :ivar device_id: Device ID that will be used to identify the device (mandatory).
@@ -59,13 +59,6 @@ class Device:
         self.internal_attributes = kwargs.get("internal_attributes", [])
 
 
-    def __repr__(self):
-        """
-        Function returns a representation of the object (its data) as a string.
-        :return:
-        """
-        return str((vars(self)))
-
     def get_json(self):
         data_dict = dict()
         data_dict['device_id']= self.device_id
@@ -92,21 +85,6 @@ class Device:
         if self.autoprovision!=None:
             data_dict['autoprovision'] = self.autoprovision
         return json.dumps(data_dict, indent=4)
-
-    def add_lazy(self, attribute):
-        self.lazy.append(attribute)
-
-    def add_active(self, attribute):
-        self.attributes.append(attribute)
-
-    def add_static(self, attribute):
-        self.static_attributes.append(attribute)
-
-    def add_command(self, attribute):
-        self.commands.append(attribute)
-
-    def add_internal(self, attribute):
-        self.internal_attributes.append(attribute)
 
 
     # Function beneath is only for backwards compatibility

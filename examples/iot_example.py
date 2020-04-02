@@ -1,4 +1,8 @@
-from filip import iot_agent as iota, iot_device, config, orion
+from filip import iota, config, orion
+from iota.agent import Agent
+from iota.device_group import DeviceGroup
+from iota.device import Device
+
 
 import json
 import os
@@ -13,7 +17,7 @@ def iota_ul(config:config.Config):
     ORION_CB = orion.Orion(CONFIG)
 
     # Creating an Instance of the IoT-Agent in the UL-Version
-    IOTA_UL = iota.Agent("iota", CONFIG)
+    IOTA_UL = Agent("iota", CONFIG)
 
     # set the service path
     fiware_service = orion.FiwareService("test_service2", "/iot_ul")
@@ -21,7 +25,7 @@ def iota_ul(config:config.Config):
     res=fiware_service.get_header()
 
 
-    device_group = iot_device.DeviceGroup(fiware_service,
+    device_group = DeviceGroup(fiware_service,
                                     "http://orion:1026",
                                     iot_agent="iota_ul",
                                     apikey="12345test",
@@ -33,7 +37,7 @@ def iota_ul(config:config.Config):
     device_group.test_apikey()
 
 
-    device_ul = iot_device.Device('urn:Room:002:sensor01','urn:Room:002',
+    device_ul = Device('urn:Room:002:sensor01','urn:Room:002',
                            "Thing",
                            transport="MQTT", protocol="PDI-IoTA-UltraLight",
                            timezone="Europe/Berlin")
@@ -103,19 +107,19 @@ def iota_json(config:config.Config):
     ORION_CB = orion.Orion(CONFIG)
 
     # Creating an Instance of the IoT-Agent in the JSON-Version
-    IOTA_JSON = iota.Agent("iota", CONFIG)
+    IOTA_JSON = Agent("iota", CONFIG)
 
     # set the service path
     fiware_service = orion.FiwareService("test_service2", "/iot_ul")
     ORION_CB.set_service(fiware_service)
     res=fiware_service.get_header()
 
-    device_group_json = iot_device.DeviceGroup(fiware_service,
+    device_group_json = DeviceGroup(fiware_service,
                                                "http://orion:1026",
                                                iot_agent="iota_json", apikey="12345",
                                                timestamp=True, autoprovision=False)
 
-    device_json = iot_device.Device('urn:Room:002:sensor02','urn:Room:002',
+    device_json = Device('urn:Room:002:sensor02','urn:Room:002',
                                     "Thing", transport="MQTT",
                                     protocol="IoTA-JSON",
                                     timezone="Europe/Berlin",
