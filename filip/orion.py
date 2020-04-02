@@ -271,8 +271,13 @@ class Orion:
                     url += "/" + entity.id + "/attrs"
                     response = requests.post(url, headers=headers, data=data)
                     ok, retstr = requtils.response_ok(response)
-        level, retstr = requtils.logging_switch(response)
-        self.log_switch(level, response)
+                    if (not ok):
+                        level, retstr = requtils.logging_switch(response)
+                        self.log_switch(level, response)
+
+            else:
+                level, retstr = requtils.logging_switch(response)
+                self.log_switch(level, response)
 
 
     def post_json(self, json=None, entity=None, params=None):
@@ -424,7 +429,7 @@ class Orion:
             response = requests.get(url, headers=headers,
                                     params=entity_params)
         ok, retstr = requtils.response_ok(response)
-        if (not ok):
+        if not ok:
             level, retstr = requtils.logging_switch(response)
             self.log_switch(level, retstr)
         else:
@@ -450,6 +455,7 @@ class Orion:
                 return response
         else:
             log.error("Getting all entities: both function parameters have to be 'not null'")
+            return None
         ok, retstr = requtils.response_ok(response)
         if (not ok):
             level, retstr = requtils.logging_switch(response)
@@ -562,7 +568,8 @@ class Orion:
         response = requests.post(url, data=data, headers=headers)
         ok, retstr = requtils.response_ok(response)
         if (not ok):
-            print(retstr)
+            level, retstr = requtils.logging_switch(response)
+            self.log_switch(level, retstr)
 
     def get_attributes(self, entity_name:str):
         """
@@ -702,7 +709,6 @@ class Orion:
             response = self.get_pagination(url=url, headers=self.get_header(),
                                            limit=limit, count=sub_count)
             response = json.loads(response)
-
 
         for existing_subscription in response:
             # check whether the exact same subscriptions already exists
