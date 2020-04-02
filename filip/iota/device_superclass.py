@@ -7,7 +7,8 @@ import json
 
 class Shared:
     """
-    Class
+    Class is implemented for easier maintenance of the IoT Agent Functions. It implements all shared functions and
+    attributes of the device and device_group class.
     """
     def __init__(self, **kwargs):
         self.service = kwargs.get("service", None)
@@ -28,7 +29,7 @@ class Shared:
         return str((vars(self)))
 
     def add_lazy(self, attribute):
-        self.__lazy_attr.append(attribute)
+        self.lazy_attr.append(attribute)
 
     def add_active(self, attribute):
         self.attributes.append(attribute)

@@ -135,8 +135,8 @@ def iota_json(config:config.Config):
     ORION_CB.get_all_entities()
     ORION_CB.get_entity('urn:Room:002')
 
-    #IOTA_JSON.delete_device(device_group_json, device_json)
-    #IOTA_JSON.delete_group(device_group_json)
+    IOTA_JSON.delete_device(device_group_json, device_json)
+    IOTA_JSON.delete_group(device_group_json)
 
 
 
