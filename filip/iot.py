@@ -138,7 +138,6 @@ class Device:
         self.internal_attributes.append(attribute)
 
 
-
     # Function beneath is only for backwards compatibility
 
     def add_attribute(self, attr_name: str, attr_type: str, value_type: str,
@@ -149,8 +148,6 @@ class Device:
         :param object_id: The id of the attribute used from the southbound API.
         :param attr_type: One of \"active\" (default), \"lazy\" or \"static\"
         """
-
-
         attr = {}
         if object_id:
             attr["object_id"] = object_id
@@ -588,8 +585,13 @@ class Agent:
         url = self.url + '/iot/services'
         headers = device_group.get_header()
         response = requests.request("GET", url, headers=headers)
-        level, retstr = requtils.logging_switch(response)
-        self.log_switch(level, retstr)
+        ok, retstr = requtils.response_ok(response)
+        if not ok:
+            level, retstr = requtils.logging_switch(response)
+            self.log_switch(level, retstr)
+            return None
+        else:
+            return response.text
 
     def delete_group(self, device_group):
         url = self.url + '/iot/services'
@@ -598,11 +600,12 @@ class Agent:
                        "apikey": device_group.get_apikey()}
         response = requests.request("DELETE", url,
                                     headers=headers, params=querystring)
-        if response.status_code==204:
-            log.info("Device group successfully deleted!")
+        ok, retstr = requtils.response_ok(response)
+        if not ok:
+            level, retstr = requtils.logging_switch(response)
+            self.log_switch(level, retstr)
         else:
-           level, retstr = requtils.logging_switch(response)
-           self.log_switch(level, retstr)
+            log.info("Device group successfully deleted!")
 
     def post_group(self, device_group:object, force_update:bool=False):
         """
@@ -708,8 +711,13 @@ class Agent:
         payload = ""
         response = requests.request("GET", url, data=payload,
                                     headers=headers)
-
-        return response.text
+        ok, retstr = requtils.response_ok(response)
+        if not ok:
+            level, retstr = requtils.logging_switch(response)
+            self.log_switch(level, retstr)
+            return None
+        else:
+            return response.text
 
     def update_device(self, device_group, device, payload: json):
         url = self.url + '/iot/devices/' + device.device_id
