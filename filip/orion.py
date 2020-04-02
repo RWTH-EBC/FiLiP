@@ -568,7 +568,8 @@ class Orion:
         response = requests.post(url, data=data, headers=headers)
         ok, retstr = requtils.response_ok(response)
         if (not ok):
-            print(retstr)
+            level, retstr = requtils.logging_switch(response)
+            self.log_switch(level, retstr)
 
     def get_attributes(self, entity_name:str):
         """
@@ -708,7 +709,6 @@ class Orion:
             response = self.get_pagination(url=url, headers=self.get_header(),
                                            limit=limit, count=sub_count)
             response = json.loads(response)
-
 
         for existing_subscription in response:
             # check whether the exact same subscriptions already exists
