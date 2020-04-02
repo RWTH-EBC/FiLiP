@@ -12,6 +12,7 @@ from filip import orion
 from filip import config
 from filip import request_utils as requtils
 from filip import test
+from iota.device_group import DeviceGroup
 
 
 import logging
@@ -85,7 +86,7 @@ class Agent:
             level, retstr = requtils.logging_switch(response)
             self.log_switch(level, retstr)
 
-    def post_group(self, device_group:object, force_update: bool = False):
+    def post_group(self, device_group: DeviceGroup, force_update: bool = False):
         """
         Function post a device group (service). If force_update = True, the info cannot  unable to register
         configuration (409 : Duplicate_Group) is ignored and the group is updated.
@@ -107,6 +108,7 @@ class Agent:
         if response.status_code not in [201, 200, 204]:
             log.warning(f" {datetime.datetime.now()} - Unable to register default configuration for service {device_group.get_header()['fiware-service']}, path {device_group.get_header()['fiware-servicepath']}"
                         f" Code: {response.status_code} - Info: {response.text}")
+            print(payload)
             return None
 
 

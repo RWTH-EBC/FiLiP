@@ -42,27 +42,19 @@ class DeviceGroup(Shared):
     """
     def __init__(self, fiware_service ,
                  cb_host: str, **kwargs):
-
-        self.__service = fiware_service.name
-        self.__subservice = fiware_service.path
+        super(DeviceGroup, self).__init__(service=fiware_service.name,
+                                          service_path=fiware_service.path,
+                                          **kwargs)
         self.__cbHost = cb_host
-
         self.__resource = kwargs.get("resource", "/iot/d") #for iot-ul 1.7.0
         # the default must be empty string
-        self.__apikey = kwargs.get("apikey", "12345")
-        self.timestamp = kwargs.get("timestamp", None)
         self.autoprovision = kwargs.get("autoprovision", None)
         self.__entity_type = kwargs.get("entity_type", "Thing")
         self.trust = kwargs.get("trust")
         self.__lazy = kwargs.get("lazy", [])
-        self.__commands = kwargs.get("commands", [])
-        self.__attributes = kwargs.get("attributes", [])
-        self.__static_attributes = kwargs.get("static_attributes", [])
-        self.__internal_attributes = kwargs.get("internal_attributes", [])
 
         self.devices = []
         self.__agent = kwargs.get("iot-agent", "iota-json")
-
 
         #For using the update functionality, the former configuration needs
         # to be stored
@@ -71,8 +63,18 @@ class DeviceGroup(Shared):
         self.__resource_last = kwargs.get("resource", "/iot/d")
         self.__apikey_last = kwargs.get("apikey", "12345")
 
+    def get_json(self):
+        data_dict = json.loads(super().get_json())
+        data_dict['cbroker'] = self.__cbHost
+        data_dict['entity_type'] = self.__entity_type
+        data_dict['resource'] = self.__resource
+        if self.autoprovision is not None:
+            data_dict['autoprovision'] = self.autoprovision
+        return json.dumps(data_dict, indent=4)
+
+
     def update(self,**kwargs):
-        #For using the update functionality, the former configuration needs
+        # For using the update functionality, the former configuration needs
         # to be stored
         # TODO: NOTE: It is not recommenend to change the combination fiware
         #  service structure and apikey --> Delete old and register a new one
@@ -91,23 +93,9 @@ class DeviceGroup(Shared):
         self.__entity_type = kwargs.get("entity_type", self.__entity_type)
         # self.trust
         self.__cbHost = kwargs.get("cb_host", self.__cbHost)
-        self.__lazy = kwargs.get("lazy", self.__lazy)
-        self.__commands = kwargs.get("commands", self.__commands)
-        self.__attributes = kwargs.get("attributes", self.__attributes)
-        self.__static_attributes = kwargs.get("static_attributes",
-                                              self.__static_attributes)
-        self.__internal_attributes = kwargs.get("internal_attributes",
-                                                self.__internal_attributes)
-
         self.__devices = []
         self.__agent = kwargs.get("iot-agent", self.__agent)
 
-
-    def get_resource(self):
-        return self.__resource
-
-    def get_apikey(self):
-        return self.__apikey
 
     def add_default_attribute(self, attribute:dict):
         """
@@ -129,7 +117,6 @@ class DeviceGroup(Shared):
         # static attribute do not need an object id
         if attr_type != "static":
             attr["object_id"] = attribute["object_id"]
-
 
         switch_dict = {"active": self.add_active,
                         "lazy": self.add_lazy,
@@ -179,7 +166,7 @@ class DeviceGroup(Shared):
 
 
     def get_apikey(self):
-        return self.__apikey
+        return self.apikey
 
     def get_resource(self):
         return self.__resource
@@ -193,8 +180,8 @@ class DeviceGroup(Shared):
 
     def get_header(self) -> dict:
         return {
-            "fiware-service": self.__service,
-            "fiware-servicepath": self.__subservice
+            "fiware-service": self.service,
+            "fiware-servicepath": self.service_path
         }
 
     def get_header_last(self) -> dict:
@@ -203,22 +190,6 @@ class DeviceGroup(Shared):
             "fiware-servicepath": self.__subservice_last
         }
 
-    def get_json(self):
-        dict = {}
-        dict['apikey']= self.__apikey
-        dict['cbroker'] = self.__cbHost
-        dict['entity_type'] = self.__entity_type
-        dict['resource'] = self.__resource
-        dict['lazy'] = self.__lazy
-        dict['attributes'] = self.__attributes
-        dict['commands'] = self.__commands
-        dict['static_attributes'] = self.__static_attributes
-        dict['internal_attributes'] = self.__internal_attributes
-        if self.timestamp!=None:
-            dict['timestamp']=self.timestamp
-        if self.autoprovision!=None:
-            dict['autoprovision']=self.autoprovision
-        return json.dumps(dict, indent=4)
 
     def generate_apikey(self, length: int = 10):
         """

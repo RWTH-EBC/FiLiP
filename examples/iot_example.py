@@ -33,9 +33,7 @@ def iota_ul(config:config.Config):
 
     print(device_group)
 
-
     device_group.test_apikey()
-
 
     device_ul = Device('urn:Room:002:sensor01','urn:Room:002',
                            "Thing",
@@ -84,7 +82,7 @@ def iota_ul(config:config.Config):
     device_ul.delete_attribute("pressure", "active")
 
     IOTA_UL.post_group(device_group)
-    #IOTA_UL.update_group(device_group)
+    IOTA_UL.update_group(device_group)
     IOTA_UL.get_groups(device_group)
     IOTA_UL.post_device(device_group, device_ul)
     IOTA_UL.update_device(device_group, device_ul, "")
@@ -137,8 +135,8 @@ def iota_json(config:config.Config):
     ORION_CB.get_all_entities()
     ORION_CB.get_entity('urn:Room:002')
 
-    IOTA_JSON.delete_device(device_group_json, device_json)
-    IOTA_JSON.delete_group(device_group_json)
+    #IOTA_JSON.delete_device(device_group_json, device_json)
+    #IOTA_JSON.delete_group(device_group_json)
 
 
 

@@ -39,55 +39,33 @@ class Device(Shared):
 
 
     def __init__(self, device_id: str, entity_name: str, entity_type: str, **kwargs):
+        super(Device, self).__init__(**kwargs)
         self.device_id = device_id
         self.entity_name = entity_name
         self.entity_type = entity_type
-        self.service = kwargs.get("service", None)
-        self.service_path = kwargs.get("service_path", "/")
         self.timezone = config.TIMEZONE
         #self.timezone = kwargs.get("timezone", "UTC/Zulu")
         self.timestamp = kwargs.get("timestamp", None)
         self.autoprovision = kwargs.get("autoprovision", None)
-        self.apikey = kwargs.get("apikey")
         self.endpoint = kwargs.get("endpoint") # necessary for HTTP
         self.protocol = kwargs.get("protocol")
         self.transport = kwargs.get("transport")
-        self.attributes = kwargs.get("attributes", [])
-        self.lazy = kwargs.get("lazy", [])
-        self.commands = kwargs.get("commands", [])
-        self.static_attributes = kwargs.get("static_attributes", [])
-        self.internal_attributes = kwargs.get("internal_attributes", [])
 
 
     def get_json(self):
-        data_dict = dict()
+        data_dict = json.loads(super().get_json())
         data_dict['device_id']= self.device_id
         data_dict['entity_name']= self.entity_name
         data_dict['entity_type']= self.entity_type
         data_dict['timezone'] = self.timezone
         if self.endpoint:
             data_dict['endpoint'] = self.endpoint
-        if self.apikey:
-            data_dict['apikey'] = self.apikey
-        if self.timestamp!=None:
-            data_dict['timestamp'] = self.timestamp
-        if self.service:
-            data_dict["service"] = self.service
-        if self.service_path:
-            data_dict['service_path'] = self.service_path
         data_dict['protocol'] = self.protocol
         data_dict['transport'] = self.transport
-        data_dict['attributes'] = self.attributes
-        data_dict['lazy'] = self.lazy
-        data_dict['commands'] = self.commands
-        data_dict['static_attributes'] = self.static_attributes
-        data_dict['internal_attributes'] = self.internal_attributes
         if self.autoprovision!=None:
             data_dict['autoprovision'] = self.autoprovision
         return json.dumps(data_dict, indent=4)
 
-
-    # Function beneath is only for backwards compatibility
 
 
     def add_attribute(self, attribute:dict):
