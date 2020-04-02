@@ -51,8 +51,6 @@ class DeviceGroup(Shared):
         self.autoprovision = kwargs.get("autoprovision", None)
         self.__entity_type = kwargs.get("entity_type", "Thing")
         self.trust = kwargs.get("trust")
-        self.__lazy = kwargs.get("lazy", [])
-
         self.devices = []
         self.__agent = kwargs.get("iot-agent", "iota-json")
 
@@ -84,12 +82,12 @@ class DeviceGroup(Shared):
         self.__apikey_last = self.__apikey
 
         # From here on the variables are updated
-        self.__service = kwargs.get("fiware_service", self.__service)
-        self.__subservice = kwargs.get("fiware_service_path",
+        self.service = kwargs.get("fiware_service", self.__service)
+        self.service_path = kwargs.get("fiware_service_path",
                                        self.__subservice)
         self.__resource = kwargs.get("resource", self.__resource)  # for iot-ul 1.7.0
         # the default must be empty string
-        self.__apikey = kwargs.get("apikey", self.__apikey)
+        self.apikey = kwargs.get("apikey", self.__apikey)
         self.__entity_type = kwargs.get("entity_type", self.__entity_type)
         # self.trust
         self.__cbHost = kwargs.get("cb_host", self.__cbHost)
