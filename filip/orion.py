@@ -1,7 +1,9 @@
 import json
 import requests
 from filip import request_utils as requtils
+from filip import test
 
+import datetime
 import math
 import logging
 
@@ -57,7 +59,7 @@ class Entity:
         json_res = json.dumps(self.entity_dict)
         return json_res
 
-    def add_attribute(self, attr_dict:dict):
+    def add_attribute(self, attr_dict: dict):
         """
         Function adds another Attribute to an existing Entity.
         :param attr_dict: A dictionary describing an Attribute
@@ -68,7 +70,7 @@ class Entity:
         for key in attr_dict.keys():
             self.entity_dict[key] = attr_dict[key]
 
-    def delete_attribute(self, attr_name:str):
+    def delete_attribute(self, attr_name: str):
         """
         Function deletes an attribute from an existing Entity
         :param attr_name: the name of the attribute to delete
@@ -171,6 +173,11 @@ class FiwareService:
             "fiware-servicepath": self.path
         }
 
+    def __repr__(self):
+        fiware_service_str = f'"fiware-service": "{self.name}", "fiware-servicepath": "{self.path}"'
+        return fiware_service_str
+
+
 class Orion:
     """
     Implementation of Orion Context Broker functionalities, such as creating
@@ -234,6 +241,13 @@ class Orion:
                 log.info(f"This is the Orion version: {orion_version} ")
                 log.info(f"This is the OrionLD version: {orion_ld_version}")
 
+    def test_connection(self):
+        """
+        Function utilises the test.test_connection() function to check the availability of a given url and service.
+        :return: Boolean, True if the service is reachable, False if not.
+        """
+        boolean = test.test_connection(url=self.url, service_name=self.fiware_service)
+        return boolean
 
 
     def post_entity(self, entity:object,  update:bool=True):
@@ -349,8 +363,6 @@ class Orion:
         else:
             return response.text
 
-
-        # ToDo test return for multi association
     def get_objects(self, subject_entity_name:str, subject_entity_type:str, object_type=None):
         """
         Function returns a List of all objects associated to a subject. If object type is not None,
@@ -408,14 +420,6 @@ class Orion:
 
         return whole_dict
 
-
-
-
-
-
-
-
-   
     def get_entity(self, entity_name,  entity_params=None):
         url = self.url + '/entities/' + entity_name
         headers=self.get_header()
@@ -565,9 +569,6 @@ class Orion:
         if (not ok):
             print(retstr)
 
-
-
-
     def get_attributes(self, entity_name:str):
         """
         For a given entity this function returns all attribute names
@@ -577,8 +578,6 @@ class Orion:
         entity_json = json.loads(self.get_entity(entity_name))
         attributes = [k for k in entity_json.keys() if k not in ["id", "type"]]
         return attributes
-
-
 
     def remove_attributes(self, entity_name):
         url = self.url + '/entities/' + entity_name + '/attrs'
@@ -591,7 +590,10 @@ class Orion:
     def create_subscription(self, subscription_body, check_duplicate:bool=True):
         url = self.url + '/subscriptions'
         headers=self.get_header(requtils.HEADER_CONTENT_JSON)
-        self.check_duplicate_subscription(subscription_body)
+        if check_duplicate is True:
+            exists = self.check_duplicate_subscription(subscription_body)
+            if exists is True:
+                log.info(f"{datetime.datetime.now()} - A similar subscription already exists.")
         response = requests.post(url, headers=headers, data=subscription_body)
         if response.headers==None:
             return
@@ -704,11 +706,7 @@ class Orion:
         if sub_count >= limit:
             response = self.get_pagination(url=url, headers=self.get_header(),
                                            limit=limit, count=sub_count)
-            print(type(response))
-
             response = json.loads(response)
-
-            print(type(response))
 
 
         for existing_subscription in response:
@@ -725,17 +723,32 @@ class Orion:
             else:
                 # iterate over all entities included in the subscription object
                 for entity in subscription_subject["entities"]:
-                    subscription_type = entity["type"]
-                    subscription_id = entity["id"]
+                    if 'type' in entity.keys():
+                        subscription_type = entity['type']
+                    else:
+                        subscription_type = entity['typePattern']
+                    if 'id' in entity.keys():
+                        subscription_id = entity['id']
+                    else:
+                        subscription_id = entity["idPattern"]
                     # iterate over all entities included in the exisiting subscriptions
                     for existing_entity in existing_subscription["subject"]["entities"]:
-                        type_existing = existing_entity["type"]
-                        id_existing = existing_entity["id"]
+                        if "type" in entity.keys():
+                            type_existing = entity["type"]
+                        else:
+                            type_existing = entity["typePattern"]
+                        if "id" in entity.keys():
+                            id_existing = entity["id"]
+                        else:
+                            id_existing = entity["idPattern"]
                         # as the ID field is non optional, it has to match
                         # check whether the type match
                         # if the type field is empty, they match all types
-                        if (type_existing == subscription_type) or ('*' in subscription_type) or ('*' in type_existing)\
-                                or (type_existing == "") or (subscription_type == ""):
+                        if (type_existing is subscription_type) or\
+                                ('*' in subscription_type) or \
+                                ('*' in type_existing)\
+                                or (type_existing is "") or (
+                                subscription_type is ""):
                             # check if on of the subscriptions is a pattern, or if they both refer to the same id
                             # Get the attrs first, to avoid code duplication
                             # last thing to compare is the attributes
@@ -751,15 +764,10 @@ class Orion:
                                 existing_attrs = []
 
                             if (".*" in subscription_id) or ('.*' in id_existing) or (subscription_id == id_existing):
-
-
-
                                 # Attributes have to match, or the have to be an empty array
                                 if (subscription_attrs == existing_attrs) or (subscription_attrs == []) or (existing_attrs == []):
                                         exists = True
-
                             # if they do not match completely or subscribe to all ids they have to match up to a certain position
-
                             elif ("*" in subscription_id) or ('*' in id_existing):
                                     regex_existing = id_existing.find('*')
                                     regex_subscription = subscription_id.find('*')
@@ -772,7 +780,6 @@ class Orion:
                                                 exists = True
                                             else:
                                                 continue
-
                                     else:
                                         continue
                             else:
@@ -782,7 +789,6 @@ class Orion:
                     else:
                         continue
         return exists
-
 
 
     def delete_all_subscriptions(self):

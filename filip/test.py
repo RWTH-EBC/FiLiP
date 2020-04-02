@@ -1,4 +1,5 @@
 import requests
+from requests.auth import HTTPBasicAuth, HTTPDigestAuth
 import json
 import pprint
 import datetime
@@ -9,28 +10,43 @@ import logging
 log = logging.getLogger('test')
 
 
-
-def test_connection(service_name: str, url: str, auth_method: str =None,
+def test_connection(url: str, service_name: str, auth_method: str =None,
                     **kwargs):
     """
     This function tests the a webservice is reachable
     :param service_name: Name of the webservice
     :param url: url of the webservice to be tested
     :param auth_method: Authorization method for connecting to the service
-    default==None
-    :return:
+    default==None, currently suported options are implemented in the request libray (HTTPBasicAuth and HTTPDigestAuth)
+    :param kwargs: If authmethod is not None, kwargs can be used to pass auth credentials
+    :return: Boolean, whether connnection exists or not
     """
     try:
-        if auth_method == None:
-            res = requests.get(url, auth=('user', 'pass'))
+        if auth_method is None:
+            res = requests.get(url)
             if res.status_code == 200:
-                log.info(f"{datetime.datetime.now()} - {service_name} : Check Success! Service is up and running! - Service response: {res.text}")
+                log.info(f"{datetime.datetime.now()} - {service_name} : Check Success! Service is up and running!")
             else:
-                log.error(f"{datetime.datetime.now()} - {service_name} : Check Success! Service is up and running! - Service response: {res.text}")
+                log.error(f"{datetime.datetime.now()} - {service_name} : Check has Errors! Please check Service response: {res.text}")
 
-        #TODO: Other authorization methods need to be added here! and also
-        # added to the exception handling!
-        #if auth_method ==
+        if auth_method is not None:
+            if auth_method is "HTTPBasicAuth":
+                authorization =kwargs.get("auth")
+                res = requests.get(url, auth=authorization)
+
+            elif auth_method is "HTTPDigestAuth":
+                authorization = kwargs.get("auth")
+                requests.get(url, auth=HTTPDigestAuth(authorization))
+
+            else:
+                log.error(f"{datetime.datetime.now()} - {service_name} : Authentification method: {auth_method} currently not supported")
+                raise NotImplementedError
+
+            if res.status_code == 200:
+                log.info(f"{datetime.datetime.now()} - {service_name} : Check Success! Service is up and running!")
+            else:
+                log.error(f"{datetime.datetime.now()} - {service_name} :Check has Errors! Please check Service response: {res.text}")
+
     except Exception:
         log.error(f"{datetime.datetime.now()} - {service_name} : Check Failed! Is the service up and running? Please check configuration! ")
 
