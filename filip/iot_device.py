@@ -302,8 +302,6 @@ class DeviceGroup:
     def get_apikey(self):
         return self.__apikey
 
-
-
     def add_default_attribute(self, attribute:dict):
         """
         :param name: The name of the attribute as submitted to the context broker.
@@ -334,8 +332,6 @@ class DeviceGroup:
                        }.get(attr_type, "not_ok")(attr)
         if switch_dict == "not_ok":
             log.warning(f" {datetime.datetime.now()} - Attribute type unknown: {attr_type}")
-
-
 
     def delete_default_attribute(self, attr_name, attr_type):
         '''
@@ -462,4 +458,3 @@ class DeviceGroup:
         :return:
         """
         return "{}".format(self.get_json())
-
