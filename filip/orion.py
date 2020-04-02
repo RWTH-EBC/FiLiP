@@ -429,7 +429,7 @@ class Orion:
             response = requests.get(url, headers=headers,
                                     params=entity_params)
         ok, retstr = requtils.response_ok(response)
-        if (not ok):
+        if not ok:
             level, retstr = requtils.logging_switch(response)
             self.log_switch(level, retstr)
         else:
@@ -455,6 +455,7 @@ class Orion:
                 return response
         else:
             log.error("Getting all entities: both function parameters have to be 'not null'")
+            return None
         ok, retstr = requtils.response_ok(response)
         if (not ok):
             level, retstr = requtils.logging_switch(response)
