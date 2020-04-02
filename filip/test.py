@@ -10,7 +10,7 @@ import logging
 log = logging.getLogger('test')
 
 
-def test_connection(url: str, service_name: str, auth_method: str =None,
+def test_connection(url: str, service_name: str, auth_method: str = None,
                     **kwargs):
     """
     This function tests the a webservice is reachable

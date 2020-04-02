@@ -26,10 +26,10 @@ def iota_ul(config:config.Config):
 
 
     device_group = DeviceGroup(fiware_service,
-                                    "http://orion:1026",
-                                    iot_agent="iota_ul",
-                                    apikey="12345test",
-                                   autoprovision=True)
+                               "http://orion:1026",
+                               iot_agent="iota_ul",
+                               apikey="12345test",
+                               autoprovision=True)
 
     print(device_group)
 

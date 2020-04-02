@@ -4,6 +4,10 @@ This class and module is for easier maintenance of the device.py and device_grou
 """
 
 import json
+import logging
+import datetime
+
+log = logging.getLogger()
 
 class Shared:
     """
@@ -59,6 +63,78 @@ class Shared:
         data_dict['static_attributes'] = self.static_attr
         data_dict['internal_attributes'] = self.internal_attr
         return json.dumps(data_dict, indent=4)
+
+    def add_attribute(self, attribute: dict):
+        """
+        :param attribute: {
+            "name": "Temp_Sensor",
+            "value_type": "Number",
+            "attr_type": "Static",
+            "attr_value": "12",
+            }
+
+        :param name: The name of the attribute as submitted to the context broker.
+        :param type: The type of the attribute as submitted to the context broker.
+        :param object_id: The id of the attribute used from the southbound API.
+        :param attr_type: One of \"active\" (default), \"lazy\" or \"static\"
+        :param attr_value: the value of the attribute
+        """
+
+        attr_type = attribute["attr_type"]
+        if "attr_value" in attribute:
+            if attribute["attr_type"] != "static":# & attribute["attr_value"] != None:
+                log.warning(f" {datetime.datetime.now()} - Setting attribute value only allowed for static attributes! Value will be ignored!")
+                del attribute["attr_value"]
+
+        attr = {"name": attribute["name"],
+                "type": attribute["value_type"]
+                }
+        # static attribute do not need an object id
+        if attr_type != "static":
+            attr["object_id"] = attribute["object_id"]
+
+        # attr["value"] = Attribute.value NOT Supported by agent-lib
+        switch_dict = {"active": self.add_active,
+                       "lazy": self.add_lazy,
+                       "static":  self.add_static,
+                       "command": self.add_command,
+                       "internal": self.add_internal
+                       }.get(attr_type, "not_ok")(attr)
+        if switch_dict == "not_ok":
+            log.warning(f" {datetime.datetime.now()} - Attribute type unknown: {attr_type}")
+
+    def delete_attribute(self, attr_name, attr_type):
+        """
+        Removing attribute by name and from the list of attributes in the
+        local device. You need to execute update device in iot agent in
+        order to update the configuration to remote!
+        :param attr_name: Name of the attribute to delete
+        :param attr_type: Type of the attribute to delete
+        :return:
+        """
+        try:
+            if attr_type == "active":
+                self.attributes = [i for i in self.attributes if not (i['name']==attr_name)]
+            elif attr_type == "lazy":
+                self.lazy_attr = [i for i in self.lazy_attr if not (i['name'] == attr_name)]
+            elif attr_type == "static":
+                self.static_attr = [i for i in self.static_attr if
+                                          not (i['name'] == attr_name)]
+            elif attr_type == "command":
+                self.commands = [i for i in self.commands if not (i['name'] ==
+                                                                   attr_name)]
+            elif attr_type == "internal":
+                self.internal_attr = [i for i in self.internal_attr if not (i['name'] == attr_name)]
+            else:
+                log.warning(f" {datetime.datetime.now()} - Attribute type unknown: {attr_type}")
+
+            log.info(f" {datetime.datetime.now()} -Attribute successfully deleted: {attr_name}")
+
+        except:
+            log.warning(f" {datetime.datetime.now()} -Attribute could not be deleted: {attr_name}")
+
+
+
 
 
 

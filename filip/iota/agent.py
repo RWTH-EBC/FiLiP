@@ -1,19 +1,15 @@
-from typing import List, Any, Union, Optional
-
 import requests
-from requests import Response
 import datetime
 import test
 import json
-import string
-import random
 
 from filip import orion
 from filip import config
 from filip import request_utils as requtils
 from filip import test
 from iota.device_group import DeviceGroup
-
+from iota.device import Device
+from filip.config import Config
 
 import logging
 
@@ -23,11 +19,10 @@ log = logging.getLogger('iot')
 PROTOCOLS = ['IoTA-JSON','IoTA-UL']
 
 
-
 class Agent:
-# https://iotagent-node-lib.readthedocs.io/en/latest/
-# https://fiware-iotagent-json.readthedocs.io/en/latest/usermanual/index.html
-    def __init__(self, agent_name: str, config:object):
+    # https://iotagent-node-lib.readthedocs.io/en/latest/
+    # https://fiware-iotagent-json.readthedocs.io/en/latest/usermanual/index.html
+    def __init__(self, agent_name: str, config:Config):
         self.name = agent_name
         self.test_config(config)
         self.host = config.data["iota"]['host']
@@ -37,10 +32,10 @@ class Agent:
         #TODO: Figuring our how to register the service and conncet with devices
         self.services = []
 
-    def test_config(self, config):
+    def test_config(self, config: Config):
         test.test_config(self.name, config.data)
 
-    def test_connection(self, config):
+    def test_connection(self, config: Config):
         """
         Function utilises the test.test_connection() function to check the availability of a given url and service.
         :return: Boolean, True if the service is reachable, False if not.
@@ -56,13 +51,12 @@ class Agent:
         :param response: The message for the logger
         :return:
         """
-        switch_dict={
-                "INFO": logging.info,
-                "ERROR":  logging.error,
-                "WARNING": logging.warning
-                }.get(level, logging.info)(msg=response)
+        switch_dict = {"INFO": logging.info,
+                       "ERROR":  logging.error,
+                       "WARNING": logging.warning
+                       }.get(level, logging.info)(msg=response)
 
-    def get_groups(self, device_group):
+    def get_groups(self, device_group: DeviceGroup):
         url = self.url + '/iot/services'
         headers = device_group.get_header()
         response = requests.request("GET", url, headers=headers)
@@ -73,7 +67,7 @@ class Agent:
         else:
             return response.text
 
-    def delete_group(self, device_group):
+    def delete_group(self, device_group: DeviceGroup):
         url = self.url + '/iot/services'
         headers = device_group.get_header()
         querystring = {"resource": device_group.get_resource(),
@@ -95,29 +89,27 @@ class Agent:
         """
         url = self.url + '/iot/services'
         headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header()}
-        payload= dict()
+        payload = dict()
         payload['services'] = [json.loads(device_group.get_json())]
         payload = json.dumps(payload, indent=4)
         response = requests.request("POST", url, data=payload,
                                     headers=headers)
-        if (response.status_code == 409) & (force_update is True):
-            querystring ={"resource": device_group.get_resource_last(),
-                          "apikey": device_group.get_apikey_last()}
+        if (response.status_code is 409) & (force_update is True):
+            querystring = {"resource": device_group.get_resource_last(),
+                           "apikey": device_group.get_apikey_last()}
             response = requests.request("PUT", url=url, data=payload, headers=headers, params=querystring)
 
         if response.status_code not in [201, 200, 204]:
             log.warning(f" {datetime.datetime.now()} - Unable to register default configuration for service {device_group.get_header()['fiware-service']}, path {device_group.get_header()['fiware-servicepath']}"
                         f" Code: {response.status_code} - Info: {response.text}")
-            print(payload)
             return None
 
-
-    def update_group(self, device_group):
+    def update_group(self, device_group: DeviceGroup):
         url = self.url + '/iot/services'
         headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header_last()}
-        querystring ={"resource": device_group.get_resource_last(),
-                      "apikey": device_group.get_apikey_last()}
-        payload= json.loads(device_group.get_json())
+        querystring = {"resource": device_group.get_resource_last(),
+                       "apikey": device_group.get_apikey_last()}
+        payload = json.loads(device_group.get_json())
         payload = json.dumps(payload, indent=4)
         log.info(f" {datetime.datetime.now()} - Update group with: {payload}")
         response = requests.request("PUT", url,
@@ -129,7 +121,7 @@ class Agent:
         else:
             log.info(f" {datetime.datetime.now()} - Device group sucessfully updated")
 
-    def post_device(self, device_group: object, device: object, update: bool = True):
+    def post_device(self, device_group: DeviceGroup, device: Device, update: bool = True):
         """
         Function registers a device with the iot-Agent to the respective device group.
         If a device allready exists in can be updated with update = True
@@ -158,8 +150,7 @@ class Agent:
         else:
             log.info(f" {datetime.datetime.now()} – Device successfully posted.")
 
-
-    def delete_device(self, device_group, device):
+    def delete_device(self, device_group: DeviceGroup, device: Device):
         url = self.url + '/iot/devices/' + device.device_id
         headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header()}
         response = requests.request("DELETE", url, headers=headers)
@@ -168,7 +159,7 @@ class Agent:
         else:
             log.warning(f" {datetime.datetime.now()} - Device could not be deleted: {response.text}")
 
-    def get_device(self, device_group, device):
+    def get_device(self, device_group: DeviceGroup, device: Device):
         url = self.url + '/iot/devices/' + device.device_id
         headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header()}
         payload = ""
@@ -177,7 +168,7 @@ class Agent:
 
         return response.text
 
-    def update_device(self, device_group, device, payload: json):
+    def update_device(self, device_group: DeviceGroup, device: Device, payload: dict):
         url = self.url + '/iot/devices/' + device.device_id
         headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header()}
         response = requests.request("PUT", url, data=payload,
@@ -187,25 +178,23 @@ class Agent:
         else:
             log.info(f" {datetime.datetime.now()} - Device successfully updated!")
 
-
-
 ### END of valid Code################
 
     def add_service(self, service_name: str, service_path: str,
                            **kwargs):
         device_group={'service': service_name,
-                'service_path': service_path,
-                'data':{
-                    "entity_type": "Thing",
-                    "protocol": kwargs.get("protocol", self.protocol),
-                    "transport": kwargs.get("transport", "MQTT"),
-                    "apikey": kwargs.get("apikey", "1234"),
-                    "attributes": [],
-                    "lazy": [],
-                    "commands": [],
-                    "static_attributes": []
-                 }
-             }
+                      'service_path': service_path,
+                      'data': {
+                          "entity_type": "Thing",
+                          "protocol": kwargs.get("protocol", self.protocol),
+                          "transport": kwargs.get("transport", "MQTT"),
+                          "apikey": kwargs.get("apikey", "1234"),
+                          "attributes": [],
+                          "lazy": [],
+                          "commands": [],
+                          "static_attributes": []
+                      }
+                      }
 
     def fetch_service(self, service: str, service_path: str) -> [dict]:
         resp = requests.get(self.url + "/iot/services",

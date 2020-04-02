@@ -44,105 +44,23 @@ class Device(Shared):
         self.entity_name = entity_name
         self.entity_type = entity_type
         self.timezone = config.TIMEZONE
-        #self.timezone = kwargs.get("timezone", "UTC/Zulu")
+        # self.timezone = kwargs.get("timezone", "UTC/Zulu")
         self.timestamp = kwargs.get("timestamp", None)
         self.autoprovision = kwargs.get("autoprovision", None)
         self.endpoint = kwargs.get("endpoint") # necessary for HTTP
         self.protocol = kwargs.get("protocol")
         self.transport = kwargs.get("transport")
 
-
     def get_json(self):
         data_dict = json.loads(super().get_json())
-        data_dict['device_id']= self.device_id
-        data_dict['entity_name']= self.entity_name
-        data_dict['entity_type']= self.entity_type
+        data_dict['device_id'] = self.device_id
+        data_dict['entity_name'] = self.entity_name
+        data_dict['entity_type'] = self.entity_type
         data_dict['timezone'] = self.timezone
         if self.endpoint:
             data_dict['endpoint'] = self.endpoint
         data_dict['protocol'] = self.protocol
         data_dict['transport'] = self.transport
-        if self.autoprovision!=None:
+        if self.autoprovision is not None:
             data_dict['autoprovision'] = self.autoprovision
         return json.dumps(data_dict, indent=4)
-
-
-
-    def add_attribute(self, attribute:dict):
-        """
-        :param attribute: {
-            "name": "Temp_Sensor",
-            "value_type": "Number",
-            "attr_type": "Static",
-            "attr_value": "12",
-            }
-
-        :param name: The name of the attribute as submitted to the context broker.
-        :param type: The type of the attribute as submitted to the context broker.
-
-        :param object_id: The id of the attribute used from the southbound API.
-        :param attr_type: One of \"active\" (default), \"lazy\" or \"static\"
-        """
-        """
-        :param attr_name: The name of the attribute as submitted to the context broker.
-        :param attr_type: The type of the attribute as submitted to the context broker.
-        :param value_type: One of \"active\" (default), \"lazy\" or \"static\"
-        :param object_id: The id of the attribute used from the southbound API.
-        :param attr_value: the value of the attribute
-        """
-
-        attr_type = attribute["attr_type"]
-        if "attr_value" in attribute:
-            if attribute["attr_type"] != "static":# & attribute["attr_value"] != None:
-                log.warning(f" {datetime.datetime.now()} - Setting attribute value only allowed for static attributes! Value will be ignored!")
-                del attribute["attr_value"]
-
-        attr = {"name": attribute["name"],
-                "type": attribute["value_type"]
-                }
-        # static attribute do not need an object id
-        if attr_type != "static":
-            attr["object_id"] = attribute["object_id"]
-
-
-        # attr["value"] = Attribute.value NOT Supported by agent-lib
-        switch_dict = {"active": self.add_active,
-                       "lazy": self.add_lazy,
-                       "static":  self.add_static,
-                       "command": self.add_command,
-                       "internal": self.add_internal
-                }.get(attr_type, "not_ok")(attr)
-        if switch_dict == "not_ok":
-            log.warning(f" {datetime.datetime.now()} - Attribute type unknown: {attr_type}")
-
-
-    def delete_attribute(self, attr_name, attr_type):
-        '''
-        Removing attribute by name and from the list of attributes in the
-        local device. You need to execute update device in iot agent in
-        order to update the configuration to remote!
-        :param attr_name: Name of the attribute to delete
-        :param attr_type: Type of the attribute to delete
-        :return:
-        '''
-        try:
-            if attr_type == "active":
-                self.attributes = [i for i in self.attributes if not (i['name']==attr_name)]
-            elif attr_type == "lazy":
-                self.lazy = [i for i in self.lazy if not (i['name'] == attr_name)]
-            elif attr_type == "static":
-                self.static_attributes = [i for i in self.static_attributes if
-                                          not (i['name'] == attr_name)]
-            elif attr_type == "command":
-                self.commands = [i for i in self.commands if not (i['name'] ==
-                                                                   attr_name)]
-            elif attr_type == "internal":
-                self.internal_attributes = [i for i in self.internal_attributes if not (i['name'] == attr_name)]
-            else:
-                log.warning(f" {datetime.datetime.now()} - Attribute type unknown: {attr_type}")
-
-            log.info(f" {datetime.datetime.now()} -Attribute successfully deleted: {attr_name}")
-        except:
-            log.warning(f" {datetime.datetime.now()} -Attribute could not be deleted: {attr_name}")
-
-
