@@ -112,13 +112,14 @@ class Agent:
         response = requests.request("PUT", url,
                                     data=payload, headers=headers,
                                     params=querystring)
-        if response.status_code not in [201, 200, 204]:
-            log.warning(f" {datetime.datetime.now()} -  Unable to update device group:", response.text)
-
+        ok, retstr = requtils.response_ok(response)
+        if not ok:
+            level, retstr = requtils.logging_switch(response)
+            self.log_switch(level, retstr)
         else:
             log.info(f" {datetime.datetime.now()} - Device group sucessfully updated")
 
-    def post_device(self, device_group: DeviceGroup, device: Device, update: bool = True):
+    def post_device(self, device_group: DeviceGroup, device: Device, force_update: bool = True):
         """
         Function registers a device with the iot-Agent to the respective device group.
         If a device allready exists in can be updated with update = True
@@ -135,7 +136,7 @@ class Agent:
         response = requests.request("POST", url, data=payload,
                                     headers=headers)
 
-        if (response.status_code == 409) & (update is True):
+        if (response.status_code == 409) & (force_update is True):
             device_data = dict()
             device_data["attributes"] = json.loads(device.get_json())["attributes"]
             device_data = json.dumps(device_data, indent=4)
@@ -148,6 +149,12 @@ class Agent:
             log.info(f" {datetime.datetime.now()} – Device successfully posted.")
 
     def delete_device(self, device_group: DeviceGroup, device: Device):
+        """
+        Function deletes a device.
+        :param device_group: The respective DeviceGroup of the Device
+        :param device: The respective Device.
+        :return:
+        """
         url = self.url + '/iot/devices/' + device.device_id
         headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header()}
         response = requests.request("DELETE", url, headers=headers)
@@ -157,21 +164,40 @@ class Agent:
             log.warning(f" {datetime.datetime.now()} - Device could not be deleted: {response.text}")
 
     def get_device(self, device_group: DeviceGroup, device: Device):
+        """
+        Function gets a device.
+        :param device_group:
+        :param device:
+        :return:
+        """
         url = self.url + '/iot/devices/' + device.device_id
         headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header()}
         payload = ""
         response = requests.request("GET", url, data=payload,
                                     headers=headers)
-
-        return response.text
+        ok, retstr = requtils.response_ok(response)
+        if not ok:
+            level, retstr = requtils.logging_switch(response)
+            self.log_switch(level, retstr)
+        else:
+            return response.text
 
     def update_device(self, device_group: DeviceGroup, device: Device, payload: dict):
+        """
+
+        :param device_group:
+        :param device:
+        :param payload:
+        :return:
+        """
         url = self.url + '/iot/devices/' + device.device_id
         headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header()}
         response = requests.request("PUT", url, data=payload,
                                     headers=headers)
-        if response.status_code not in [201, 200, 204]:
-            log.warning(f" {datetime.datetime.now()} - Unable to update device: {response.text}")
+        ok, retstr = requtils.response_ok(response)
+        if not ok:
+            level, retstr = requtils.logging_switch(response)
+            self.log_switch(level, retstr)
         else:
             log.info(f" {datetime.datetime.now()} - Device successfully updated!")
 

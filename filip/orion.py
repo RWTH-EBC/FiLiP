@@ -238,7 +238,7 @@ class Orion:
         boolean = test.test_connection(url=self.url, service_name=self.fiware_service)
         return boolean
 
-    def post_entity(self, entity: Entity, update: bool = True):
+    def post_entity(self, entity: Entity, force_update: bool = True):
         """
         Function registers an Object with the Orion Context Broker, if it allready exists it can be automatically updated
         if the overwrite bool is True
@@ -255,7 +255,7 @@ class Orion:
         response = requests.post(url, headers=headers, data=data)
         ok, retstr = requtils.response_ok(response)
         if not ok:
-            if (response.status_code == 422) & (update is True):
+            if (response.status_code == 422) & (force_update is True):
                     url += "/" + entity.id + "/attrs"
                     response = requests.post(url, headers=headers, data=data)
                     ok, retstr = requtils.response_ok(response)

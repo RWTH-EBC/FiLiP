@@ -79,6 +79,8 @@ def iota_ul(config:config.Config):
     print(device_ul)
 
 
+
+
     device_ul.delete_attribute("pressure", "active")
 
     IOTA_UL.post_group(device_group)
@@ -86,10 +88,13 @@ def iota_ul(config:config.Config):
     IOTA_UL.get_groups(device_group)
     IOTA_UL.post_device(device_group, device_ul)
     IOTA_UL.update_device(device_group, device_ul, "")
-    IOTA_UL.get_device(device_group, device_ul)
+    print(IOTA_UL.get_device(device_group, device_ul))
+
 
     ORION_CB.get_all_entities()
     ORION_CB.get_entity('urn:Room:002')
+
+
 
 
 

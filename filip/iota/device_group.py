@@ -68,7 +68,6 @@ class DeviceGroup(Shared):
             data_dict['autoprovision'] = self.autoprovision
         return json.dumps(data_dict, indent=4)
 
-
     def update(self,**kwargs):
         # For using the update functionality, the former configuration needs
         # to be stored
