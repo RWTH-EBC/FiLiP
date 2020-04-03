@@ -64,11 +64,14 @@ class Shared:
         data_dict['internal_attributes'] = self.internal_attr
         return json.dumps(data_dict, indent=4)
 
-    def add_attribute(self, attribute: dict):
+    def add_attribute(self, attribute: dict=None, name: str=None,
+                      attr_type: str=None, value_type: str=None,
+                      object_id: str=None, attr_value=None):
         """
         :param attribute: {
             "name": "Temp_Sensor",
             "value_type": "Number",
+            "object_id": "T_sen"
             "attr_type": "Static",
             "attr_value": "12",
             }
@@ -79,11 +82,20 @@ class Shared:
         :param attr_type: One of \"active\" (default), \"lazy\" or \"static\"
         :param attr_value: the value of the attribute
         """
+        if attribute == None or not isinstance(attribute, dict):
+            loc = locals()
+            attribute = dict([(i, loc[i]) for i in ('name',
+                                                    'attr_type',
+                                                    'value_type',
+                                                    'object_id',
+                                                    'attr_value')])
+
 
         attr_type = attribute["attr_type"]
         if "attr_value" in attribute:
             if attribute["attr_type"] != "static":# & attribute["attr_value"] != None:
-                log.warning(f" {datetime.datetime.now()} - Setting attribute value only allowed for static attributes! Value will be ignored!")
+                log.warning(f" {datetime.datetime.now()} - Setting attribute "
+                            f"value only allowed for static attributes! Value will be ignored!")
                 del attribute["attr_value"]
 
         attr = {"name": attribute["name"],
