@@ -42,7 +42,7 @@ def iota_ul(config:config.Config):
 
     print(device_ul)
 
-    temp_attr = {"name": "temperature",
+    temp_attr = {"attr_name": "temperature",
                  "value_type": "Number",
                  "attr_type": "active",
                  "attr_value": "12",
@@ -51,14 +51,14 @@ def iota_ul(config:config.Config):
 
     device_ul.add_attribute(temp_attr)
 
-    press_attr = {"name": "pressure",
+    press_attr = {"attr_name": "pressure",
                   "value_type": "Number",
                   "attr_type": "active",
                   "object_id": "p"}
 
     device_ul.add_attribute(press_attr)
 
-    name_attr = {"name": "nice_name",
+    name_attr = {"attr_name": "nice_name",
                    "value_type": "String",
                    "attr_type": "static",
                    "attr_value" : "beautiful attribute!",
@@ -66,9 +66,20 @@ def iota_ul(config:config.Config):
 
     device_ul.add_attribute(name_attr)
 
+    device_ul.add_attribute(attr_name="Tiger",
+                            attr_type="static",
+                            value_type="Number",
+                            attr_value=12)
+
+    device_ul.add_attribute(attr_name = "OpenCages",
+                            value_type = "String",
+                            attr_type = "command",
+                            attr_value = "Yes",
+                            object_id= "Cage")
+
     # test creating an internal attribute
 
-    internal_attr = {"name": "nice_name_int",
+    internal_attr = {"attr_name": "nice_name_int",
                      "value_type": "String",
                      "attr_type": "internal",
                      "attr_value" : "beautiful attribute!",
