@@ -3,8 +3,7 @@ import string
 import random
 import datetime
 
-from filip import config
-from iota.device_superclass import Shared
+from filip.iota.device_superclass import Shared
 
 import logging
 

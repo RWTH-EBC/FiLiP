@@ -1,7 +1,7 @@
 from filip import iota, config, orion
-from iota.agent import Agent
-from iota.device_group import DeviceGroup
-from iota.device import Device
+from filip.iota.agent import Agent
+from filip.iota.device_group import DeviceGroup
+from filip.iota.device import Device
 
 
 import json

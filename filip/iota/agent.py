@@ -1,14 +1,11 @@
 import requests
 import datetime
-import test
 import json
 
-from filip import orion
-from filip import config
 from filip import request_utils as requtils
 from filip import test
-from iota.device_group import DeviceGroup
-from iota.device import Device
+from filip.iota.device_group import DeviceGroup
+from filip.iota.device import Device
 from filip.config import Config
 
 import logging
