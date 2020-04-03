@@ -471,8 +471,8 @@ class Orion:
         parameter = {'{}'.format('options'): '{}'.format('keyValues')}
         return self.get_entity(entity_name, parameter)
 
-    def get_entity_attribute_json(self, entity_name, attribute_name):
-        url = self.url + '/entities/' + entity_name + '/attrs/' + attribute_name
+    def get_entity_attribute_json(self, entity_name, attr_name):
+        url = self.url + '/entities/' + entity_name + '/attrs/' + attr_name
         response = requests.get(url, headers=self.get_header())
         ok, retstr = requtils.response_ok(response)
         if not ok:
@@ -481,9 +481,9 @@ class Orion:
         else:
             return response.text
 
-    def get_entity_attribute_value(self, entity_name, attribute_name):
+    def get_entity_attribute_value(self, entity_name, attr_name):
         url = self.url + '/entities/' + entity_name + '/attrs/' \
-                       + attribute_name + '/value'
+                       + attr_name + '/value'
         response = requests.get(url, headers=self.get_header())
         ok, retstr = requtils.response_ok(response)
         if not ok:
@@ -527,7 +527,7 @@ class Orion:
             level, retstr = requtils.logging_switch(response)
             self.log_switch(level, retstr)
 
-    def add_attribute(self, entity: Entity = None, entity_name: str = None, attribute_dict: dict = None):
+    def add_attribute(self, entity: Entity = None, entity_name: str = None, attr_dict: dict = None):
         # POST /v2/entities/{id}/attrs?options=append
         """
         This function adds attributes to the Entity in the Context Broker. This can be done in two ways,
@@ -542,7 +542,7 @@ class Orion:
             attributes = entity.get_attributes()
             entity_name = entity.id
         else:
-            attributes = attribute_dict
+            attributes = attr_dict
             entity_name = entity_name
         existing_attributes = self.get_attributes(entity_name)
         new_attributes = {k: v for (k, v) in attributes.items() if k not in existing_attributes}

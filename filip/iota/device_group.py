@@ -89,7 +89,7 @@ class DeviceGroup(Shared):
         self.__entity_type = kwargs.get("entity_type", self.__entity_type)
         # self.trust
         self.__cbHost = kwargs.get("cb_host", self.__cbHost)
-        self.__devices = [] # Attribute is not used?
+        self.__devices = [] # Varaible is not used?
         self.__agent = kwargs.get("iot-agent", self.__agent)
 
     def get_apikey(self):
