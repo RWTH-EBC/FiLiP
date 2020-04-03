@@ -9,6 +9,7 @@ import logging
 
 log = logging.getLogger('timeseries')
 
+
 class QuantumLeap():
     """
     Implements functions to use the FIWAREs QuantumLeap, which subscribes to an
@@ -76,7 +77,7 @@ class QuantumLeap():
         headers = requtils.HEADER_CONTENT_PLAIN
         response = requests.get(url, headers=headers)
         ok, retstr = requtils.response_ok(response)
-        if (not ok):
+        if not ok:
             print(retstr)
             return ""
         else:
@@ -87,7 +88,7 @@ class QuantumLeap():
         headers = self.get_header(requtils.HEADER_CONTENT_PLAIN)
         response = requests.delete(url, headers=headers)
         ok, retstr = requtils.response_ok(response)
-        if (not ok):
+        if not ok:
             print(retstr)
 
     def delete_entities_of_type(self, entity_type):
@@ -95,7 +96,7 @@ class QuantumLeap():
         headers = self.get_header(requtils.HEADER_CONTENT_PLAIN)
         response = requests.delete(url, headers=headers)
         ok, retstr = requtils.response_ok(response)
-        if (not ok):
+        if not ok:
             print(retstr)
 
     def get_entity_data(self, entity_id: str, attr_name: str = None, 
@@ -103,13 +104,13 @@ class QuantumLeap():
         url = self.url + '/entities/' + entity_id
         params = kwargs.get("params")
         headers = self.get_header(requtils.HEADER_CONTENT_PLAIN)
-        if attr_name != None:
+        if attr_name is not None:
             url += '/attrs/' + attr_name
         if valuesonly:
             url += '/value'
         response = requests.get(url, headers=headers, params=params)
         ok, retstr = requtils.response_ok(response)
-        if (not ok):
+        if not ok:
             print(retstr)
             return ""
         else:
@@ -119,13 +120,13 @@ class QuantumLeap():
                              valuesonly: bool = False):
         url = self.url + '/types/' + entity_type
         headers = self.get_header(requtils.HEADER_CONTENT_PLAIN)
-        if attr_name != None:
+        if attr_name is not None:
             url += '/attrs/' + attr_name
         if valuesonly:
             url += '/value'
         response = requests.get(url, headers=headers)
         ok, retstr = requtils.response_ok(response)
-        if (not ok):
+        if not ok:
             print(retstr)
             return ""
         else:
@@ -138,16 +139,16 @@ class QuantumLeap():
             url += '/' + attr_name
         if valuesonly:
             url += '/value'
-        response = requests.get(url, headers=headers, params=params)
+        response = requests.get(url, headers=headers)
         ok, retstr = requtils.response_ok(response)
-        if (not ok):
+        if not ok:
             print(retstr)
             return ""
         else:
             return response.text
 
-
-    def get_timeseries(self, entity_name:str = None, attr_name:str = None, valuesonly:bool=True, limit:str = "10000"):
+    def get_timeseries(self, entity_name: str = None, attr_name: str = None,
+                       valuesonly: bool = True, limit: str = "10000"):
         """
 
         :param entity_name: Name of the entity where the timeseries data should be retrieved
@@ -158,18 +159,17 @@ class QuantumLeap():
         """
         url = self.url +"/entities/"+ entity_name
         headers = self.get_header(requtils.HEADER_CONTENT_PLAIN)
-        res ={}
-        if attr_name != None:
+        res = dict()
+        if attr_name is not None:
             url += '/attrs/' + attr_name
         if valuesonly:
             url += '/value'
         url += '?limit=' + limit
         response = requests.get(url, headers=headers)
         ok, retstr = requtils.response_ok(response)
-        if (not ok):
+        if not ok:
             print(retstr)
-            print(url)
-            return ""
+            return None
         else:
             response_json = json.loads(response.text)
             for attr in response_json["attributes"]:

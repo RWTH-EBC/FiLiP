@@ -1,15 +1,12 @@
 import os
-import json
 import errno
 import logging
 import logging.config
 import yaml
 import json
 
-
 # setup Environmental parameters
 TIMEZONE = os.getenv("TIMEZONE", "UTC/Zulu")
-
 
 def setup_logging(path_to_config: str ='/Users/Felix/PycharmProjects/Logger/filip/log_config.yaml',
                   default_level=logging.INFO):
@@ -28,7 +25,6 @@ def setup_logging(path_to_config: str ='/Users/Felix/PycharmProjects/Logger/fili
         logging.config.dictConfig(cfg)
     else:
         logging.basicConfig(level=default_level)
-
 
 class Config:
     def __init__(self, path = 'config.json'):
@@ -50,7 +46,8 @@ class Config:
             self.data = self._read_config_envs()
         if self.data is not None:
             pass
-        #TODO:
+
+        # TODO:
         # 0. check if data dict is not None --> use some default values
         # 1. assert data dict
 
@@ -70,7 +67,6 @@ class Config:
         :return:
         """
         return "{}".format(self.data)
-
 
     def _read_config_file(self, path: str):
         """
@@ -97,7 +93,6 @@ class Config:
             return False
         return data
 
-
     def _read_config_envs(self):
         """
         reads environment variables for host urls and ports of orion, IoTA,
@@ -105,24 +100,24 @@ class Config:
         the default ULR of IoTA, quantumleap and Crate is the URL of Orion.
         """
         data = {}
-        data['orion']={}
+        data['orion'] = {}
         data['orion']['host'] = os.getenv("ORION_HOST", "http://localhost")
         data['orion']['port'] = os.getenv("ORION_PORT", "1026")
         
-        data['iota']={}
+        data['iota'] = {}
         data['iota']['host'] = os.getenv("IOTA_HOST", data['orion']['host'])
         data['iota']['port'] = os.getenv("IOTA_PORT", "4041")
-        data['iota']['protocol'] = os.getenv("IOTA_PROTOCOL", "IoTA-UL") #or IoTA-JSON
+        data['iota']['protocol'] = os.getenv("IOTA_PROTOCOL", "IoTA-UL")  # or IoTA-JSON
         
-        data['quantum_leap']={}
+        data['quantum_leap'] = {}
         data['quantum_leap']['host'] = os.getenv("QUANTUMLEAP_HOST", data['orion']['host'])
         data['quantum_leap']['port'] = os.getenv("QUANTUMLEAP_PORT", "8668")
         
-        data['cratedb']={}
+        data['cratedb'] = {}
         data['cratedb']['host'] = os.getenv("CRATEDB_HOST", data['orion']['host'])
         data['cratedb']['port'] = os.getenv("CRATEDB_PORT", "4200")
         
-        data['fiware']={}
+        data['fiware'] = {}
         data['fiware']['service'] = os.getenv("FIWARE_SERVICE", "dummy_service")
         data['fiware']['service_path'] = os.getenv("FIWARE_SERVICE_PATH", "/dummy_path")
         return data
@@ -156,7 +151,7 @@ class Config:
             pass
         return True'''
         
-#TODO: move to single services
+# TODO: move to single services
 #    def test_services(self, config: dict):
 #        """This function checks the configuration and tests connections to
 #        necessary server endpoints"""
@@ -171,6 +166,7 @@ class Config:
 #            'host'] + ':' + str(self.data['quantum_leap']['port']) + \
 #        '/v2/version')
 #        print("[INFO]: Configuration seems fine!")
+
 
 class Log_Config:
     def __init__(self, path = None):
@@ -192,20 +188,19 @@ class Log_Config:
             self.data = self._read_config_envs()
         if self.data is not None:
             pass
-        #TODO:
+        # TODO:
         # 0. check if data dict is not None --> use some default values
         # 1. assert data dict
 
         # self.update_config_param(self.data)
-        #try:
-#        self.test_services(self.data)
+        # try:
+        #   self.test_services(self.data)
         #except Exception:
-         #   pass
+        #   pass
 
             # Needs to go to services
             # self.fiware_service = os.getenv("FIWARE_SERVICE", "default")
             # self.fiware_service_path = os.getenv("FIWARE_SERVICE_PATH",  "/")
-
 
     def _read_config_file(self, path: str):
         """
@@ -224,8 +219,6 @@ class Log_Config:
                 elif file_extension == 'json':
                     cfg = json.load(f)
                 logging.config.dictConfig(cfg)
-
-
 
                 print(json.dumps(cfg, indent=4))
 
@@ -326,8 +319,6 @@ class Log_Config:
             pass
 
 
-
-
 if __name__=="__main__":
     CONFIG = Config('/Users/Felix/PycharmProjects/compare_duplicate/filip/config.json')
     #print(CONFIG.data['fiwareService'])
@@ -335,6 +326,6 @@ if __name__=="__main__":
     LOG_CONFIG = Log_Config("/Users/Felix/PycharmProjects/compare_duplicate/filip/log_config.json")
     print("List of services and paths:")
     for service in CONFIG.data['fiwareService']:
-        print("{:<30}{:<20}".format('Service: ',service['service']))
+        print("{:<30}{:<20}".format('Service: ', service['service']))
         for path in service['service_path']:
-            print("{:<30}{:<40}".format('',path))
+            print("{:<30}{:<40}".format('', path))
