@@ -80,9 +80,9 @@ class DeviceGroup(Shared):
         self.__apikey_last = self.__apikey
 
         # From here on the variables are updated
-        self.service = kwargs.get("fiware_service", self.__service)
+        self.service = kwargs.get("fiware_service", self.service)
         self.service_path = kwargs.get("fiware_service_path",
-                                       self.__subservice)
+                                       self.subservice)
         self.__resource = kwargs.get("resource", self.__resource)  # for iot-ul 1.7.0
         # the default must be empty string
         self.apikey = kwargs.get("apikey", self.__apikey)

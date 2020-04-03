@@ -8,7 +8,7 @@ import logging
 log = logging.getLogger('iot')
 
 
-PROTOCOLS = ['IoTA-JSON','IoTA-UL']
+PROTOCOLS = ['IoTA-JSON', 'IoTA-UL']
 
 
 class Device(Shared):

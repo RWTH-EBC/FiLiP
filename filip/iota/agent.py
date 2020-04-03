@@ -13,13 +13,13 @@ import logging
 log = logging.getLogger('iot')
 
 
-PROTOCOLS = ['IoTA-JSON','IoTA-UL']
+PROTOCOLS = ['IoTA-JSON', 'IoTA-UL']
 
 
 class Agent:
     # https://iotagent-node-lib.readthedocs.io/en/latest/
     # https://fiware-iotagent-json.readthedocs.io/en/latest/usermanual/index.html
-    def __init__(self, agent_name: str, config:Config):
+    def __init__(self, agent_name: str, config: Config):
         self.name = agent_name
         self.test_config(config)
         self.host = config.data["iota"]['host']
@@ -175,27 +175,26 @@ class Agent:
         else:
             log.info(f" {datetime.datetime.now()} - Device successfully updated!")
 
-### END of valid Code################
+### END of valid Code ###
 
     def add_service(self, service_name: str, service_path: str,
-                           **kwargs):
-        device_group={'service': service_name,
-                      'service_path': service_path,
-                      'data': {
-                          "entity_type": "Thing",
-                          "protocol": kwargs.get("protocol", self.protocol),
-                          "transport": kwargs.get("transport", "MQTT"),
-                          "apikey": kwargs.get("apikey", "1234"),
-                          "attributes": [],
-                          "lazy": [],
-                          "commands": [],
-                          "static_attributes": []
-                      }
-                      }
+                    **kwargs):
+        device_group = {'service': service_name,
+                        'service_path': service_path,
+                        'data': {
+                            "entity_type": "Thing",
+                            "protocol": kwargs.get("protocol", self.protocol),
+                            "apikey": kwargs.get("apikey", "1234"),
+                            "attributes": [],
+                            "lazy": [],
+                            "commands": [],
+                            "static_attributes": []
+                        }
+                        }
 
     def fetch_service(self, service: str, service_path: str) -> [dict]:
         resp = requests.get(self.url + "/iot/services",
-                            headers=self._get_header(service, service_path))
+                            headers=self.get_header(service, service_path))
 
         if resp.status_code == 200:
             return resp.json()["services"]
