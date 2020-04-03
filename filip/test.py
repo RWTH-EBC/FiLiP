@@ -11,7 +11,7 @@ log = logging.getLogger('test')
 
 
 def test_connection(url: str, service_name: str,
-                    auth_method: str =None, **kwargs):
+                    auth_method: str = None, **kwargs):
     """
     This function tests the a webservice is reachable
     :param service_name: Name of the webservice
@@ -57,13 +57,6 @@ def test_connection(url: str, service_name: str,
 
 
 
-def test_iota_connection():
-    """
-    Function tests that the IoT-Agent connection is working.
-    :return:
-    """
-    pass
-
 
 def test_config(service_name: str, config_data: dict):
     """
@@ -74,7 +67,7 @@ def test_config(service_name: str, config_data: dict):
     :return:
     """
     #TODO: Adding type checking and logical tests
-    import filip.iot as iot
+    from filip.iota import agent as iot
     list_protocols = iot.PROTOCOLS.copy()
     protocols = ', '.join(list_protocols)
     try:
