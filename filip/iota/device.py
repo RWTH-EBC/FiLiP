@@ -8,7 +8,7 @@ import logging
 log = logging.getLogger('iot')
 
 
-PROTOCOLS = ['IoTA-JSON','IoTA-UL']
+PROTOCOLS = ['IoTA-JSON', 'IoTA-UL']
 
 
 class Device(Shared):
@@ -19,7 +19,8 @@ class Device(Shared):
     :ivar service_path: Name of the subservice the device belongs to (used in the fiware-servicepath header).
     :ivar entity_name: Name of the entity representing the device in the Context Broker.
     :ivar timezone: Time zone of the sensor if it has any. Default ist UTC/Zulu.
-    :ivar timestamp: (optional, boolean): This field indicates if an attribute 'TimeInstant' will be added (true) or not (false). If this field is omitted, the global IotAgent configuration timestamp will be used.
+    :ivar timestamp: (optional, boolean): This field indicates if an attribute 'TimeInstant' will be added (true) or not (false).
+                    If this field is omitted, the global IotAgent configuration timestamp will be used.
     :ivar apikey: Optional Apikey string to use instead of group apikey
     :ivar endpoint: Endpoint where the device is going to receive commands, if any.
     :ivar protocol: Name of the device protocol, for its use with an IoT Manager.
@@ -30,8 +31,9 @@ class Device(Shared):
     :ivar static_attributes: List of static attributes to append to the entity. All the updateContext requests to the CB will have this set of attributes appended.
     :ivar internal_attributes: List of internal attributes with free format for specific IoT Agent configuration.
                                 Note: They are only stored in the device registry.
-    :ivar autoprovision: (optional, boolean): If true, APPEND is used upon
-    measure arrival (thus effectively allowing autoprovisioned devices). If false, UPDATE is used open measure arrival (thus effectively avoiding autoprovisioned devices). This field is optional, so if it omitted then the global IoTAgent appendModel configuration is used.
+    :ivar autoprovision: (optional, boolean): If true, APPEND is used upon measure arrival
+        (thus effectively allowing autoprovisioned devices). If false, UPDATE is used open measure arrival (thus effectively avoiding autoprovisioned devices).
+        This field is optional, so if it omitted then the global IoTAgent appendModel configuration is used.
         """
 
 

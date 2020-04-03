@@ -68,7 +68,6 @@ class DeviceGroup(Shared):
             data_dict['autoprovision'] = self.autoprovision
         return json.dumps(data_dict, indent=4)
 
-
     def update(self,**kwargs):
         # For using the update functionality, the former configuration needs
         # to be stored
@@ -80,16 +79,16 @@ class DeviceGroup(Shared):
         self.__apikey_last = self.__apikey
 
         # From here on the variables are updated
-        self.service = kwargs.get("fiware_service", self.__service)
+        self.service = kwargs.get("fiware_service", self.service)
         self.service_path = kwargs.get("fiware_service_path",
-                                       self.__subservice)
+                                       self.subservice)
         self.__resource = kwargs.get("resource", self.__resource)  # for iot-ul 1.7.0
         # the default must be empty string
         self.apikey = kwargs.get("apikey", self.__apikey)
         self.__entity_type = kwargs.get("entity_type", self.__entity_type)
         # self.trust
         self.__cbHost = kwargs.get("cb_host", self.__cbHost)
-        self.__devices = [] # Attribute is not used?
+        self.__devices = [] # Varaible is not used?
         self.__agent = kwargs.get("iot-agent", self.__agent)
 
     def get_apikey(self):

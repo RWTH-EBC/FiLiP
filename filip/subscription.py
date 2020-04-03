@@ -37,6 +37,7 @@ class Subject_Entity:
                 json_dict["type"] = self.type
         return json_dict
 
+
 class Subject_Expression:
     def __init__(self):
         self.q = None
@@ -59,8 +60,9 @@ class Subject_Expression:
             json_dict["coords"] = self.coords
         return json_dict
 
+
 class Subject_Condition:
-    def __init__(self, attributes: list = None, expression:object = None):
+    def __init__(self, attributes: list = None, expression: Subject_Expression = None):
         """
         :param attributes: list of attribute names, optional
         :param expression: Subject_Expression object, optional
@@ -78,8 +80,9 @@ class Subject_Condition:
             json_dict["expression"] = self.expression.get_json_dict()
         return json_dict
 
+
 class Subject:
-    def __init__(self, entities: list, condition: object = None):
+    def __init__(self, entities: list, condition: Subject_Condition = None):
         """
         :param entities: list of Subject_Entity objects, required
         :param condition: Subject_Condition object; if left empty,
@@ -97,6 +100,7 @@ class Subject:
         if self.condition is not None:
             json_dict["condition"] = self.condition.get_json_dict()
         return json_dict
+
 
 class Notification_Attributes:
     def __init__(self, attribute_type: str = None, _list=None, specified=False):
@@ -117,7 +121,7 @@ class Notification_Attributes:
     def get_json_dict(self):
         if not self.specified:
             return None
-        json_dict = {}
+        json_dict = dict()
         json_dict[self.attribute_type] = self.attr_list
         return json_dict
 
@@ -127,7 +131,7 @@ class Notification_Attributes:
 
 class HTTP_Params:
     def __init__(self, url, headers: dict = None, qs: dict = None,
-                 method: str = None, payload = None):
+                 method: str = None, payload=None):
         """
         :param url: URL referencing the service to be invoked by a notification
         :param headers: key-map (dict) of HTTP headers; optional
@@ -143,9 +147,9 @@ class HTTP_Params:
 
     def is_custom_http(self):
         if self.headers is not None \
-        or self.qs is not None \
-        or self.method is not None \
-        or self.payload is not None:
+                or self.qs is not None \
+                or self.method is not None \
+                or self.payload is not None:
             return True
         else:
             return False
@@ -155,18 +159,19 @@ class HTTP_Params:
         if not self.is_custom_http():
             return json_dict
         if self.headers is not None:
-            json_dict["headers"] = self.headers #TODO: this is wrong, headers is a key-map
+            json_dict["headers"] = self.headers  #TODO: this is wrong, headers is a key-map
         if self.qs is not None:
-            json_dict["qs"] = self.qs # TODO (See headers)
+            json_dict["qs"] = self.qs  # TODO (See headers)
         if self.method is not None:
             json_dict["method"] = self.method
         if self.payload is not None:
             json_dict["payload"] = self.payload
         return json_dict
 
+
 class Notification:
-    def __init__(self, http, attr: object = None, attrsFormat: str = None,
-                                                   metadata: list = None):
+    def __init__(self, http, attr: Notification_Attributes = None,
+                 attrsFormat: str = None, metadata: list = None):
         """
         :param http: object of class 'HTTP_Params', required
         :param attr: object of class 'Notification_Attribute', optional
@@ -177,7 +182,7 @@ class Notification:
         self.http = http
         self.attr = attr
         self.attrsFormat = attrsFormat
-        self.metadata  = metadata
+        self.metadata = metadata
 
     def get_json_dict(self):
         json_dict = {}
@@ -198,8 +203,8 @@ class Subscription:
     """
     Main class as container class for different subattributes of subscription payload
     """
-    def __init__(self, subject, notification, description=None, expires=None,
-                                                            throttling=None):
+    def __init__(self, subject, notification, description=None,
+                 expires=None, throttling=None):
         """
         :param subject: Subject of the subscription, required
         :param notification: Notification of the subscription, required
