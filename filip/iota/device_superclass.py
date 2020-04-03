@@ -64,31 +64,47 @@ class Shared:
         data_dict['internal_attributes'] = self.internal_attr
         return json.dumps(data_dict, indent=4)
 
-    def add_attribute(self, attribute: dict):
+    def add_attribute(self, attribute: dict = None, attr_name: str = None,
+                      attr_type: str = None, value_type: str = None,
+                      object_id: str = None, attr_value=None):
         """
         :param attribute: {
             "name": "Temp_Sensor",
             "value_type": "Number",
+            "object_id": "T_sen"
             "attr_type": "Static",
             "attr_value": "12",
             }
 
-        :param name: The name of the attribute as submitted to the context broker.
-        :param type: The type of the attribute as submitted to the context broker.
+        :param attr_name: The name of the attribute as submitted to the context broker.
+        :param attr_type: The type of the attribute as submitted to the context broker.  One of \"active\" (default), \"lazy\" or \"static\"
         :param object_id: The id of the attribute used from the southbound API.
-        :param attr_type: One of \"active\" (default), \"lazy\" or \"static\"
+        :param value_type: The type of the value, e.g. Number, Boolean or String
         :param attr_value: the value of the attribute
         """
+        if isinstance(attribute, dict):
+            if "attr_value" in attribute:
+                if attribute["attr_type"] is not "static":
+                    log.warning(f" {datetime.datetime.now()} - Setting attribute "
+                                f"value only allowed for static attributes! Value will be ignored!")
+
+        if attribute is None or not isinstance(attribute, dict):
+            loc = locals()
+            attribute = dict([(i, loc[i]) for i in ('attr_name',
+                                                    'attr_type',
+                                                    'value_type',
+                                                    'object_id',
+                                                    'attr_value')])
 
         attr_type = attribute["attr_type"]
-        if "attr_value" in attribute:
-            if attribute["attr_type"] != "static":# & attribute["attr_value"] != None:
-                log.warning(f" {datetime.datetime.now()} - Setting attribute value only allowed for static attributes! Value will be ignored!")
+        if "attribute_value" in attribute.keys():
+            if attr_type is not "static":
                 del attribute["attr_value"]
 
-        attr = {"name": attribute["name"],
+        attr = {"name": attribute["attr_name"],
                 "type": attribute["value_type"]
                 }
+
         # static attribute do not need an object id
         if attr_type != "static":
             attr["object_id"] = attribute["object_id"]
