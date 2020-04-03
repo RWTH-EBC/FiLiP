@@ -118,7 +118,8 @@ class Agent:
         else:
             log.info(f" {datetime.datetime.now()} - Device group sucessfully updated")
 
-    def post_device(self, device_group: DeviceGroup, device: Device, update: bool = True):
+    def post_device(self, device_group: DeviceGroup, device: Device,
+                    update: bool = True):
         """
         Function registers a device with the iot-Agent to the respective device group.
         If a device allready exists in can be updated with update = True
@@ -170,8 +171,10 @@ class Agent:
         headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header()}
         response = requests.request("PUT", url, data=payload,
                                     headers=headers)
-        if response.status_code not in [201, 200, 204]:
-            log.warning(f" {datetime.datetime.now()} - Unable to update device: {response.text}")
+        ok, retstr = requtils.response_ok(response)
+        if not ok:
+            level, retstr = requtils.logging_switch(response)
+            self.log_switch(level, retstr)
         else:
             log.info(f" {datetime.datetime.now()} - Device successfully updated!")
 

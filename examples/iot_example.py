@@ -21,9 +21,10 @@ def iota_ul(config:config.Config):
 
     # set the service path
     fiware_service = orion.FiwareService("test_service2", "/iot_ul")
-    ORION_CB.set_service(fiware_service)
-    res=fiware_service.get_header()
 
+    ORION_CB.set_service(fiware_service)
+
+    res = fiware_service.get_header()
 
     device_group = DeviceGroup(fiware_service,
                                "http://orion:1026",
@@ -35,10 +36,10 @@ def iota_ul(config:config.Config):
 
     device_group.test_apikey()
 
-    device_ul = Device('urn:Room:002:sensor01','urn:Room:002',
-                           "Thing",
-                           transport="MQTT", protocol="PDI-IoTA-UltraLight",
-                           timezone="Europe/Berlin")
+    device_ul = Device(device_id='urn:Room:002:sensor01', entity_name='urn:Room:002',
+                       entity_type="Thing",
+                       transport="MQTT", protocol="PDI-IoTA-UltraLight",
+                       timezone="Europe/Berlin")
 
     print(device_ul)
 
@@ -47,7 +48,6 @@ def iota_ul(config:config.Config):
                  "attr_type": "active",
                  "attr_value": "12",
                  "object_id": "t"}
-
 
     device_ul.add_attribute(temp_attr)
 
@@ -66,16 +66,21 @@ def iota_ul(config:config.Config):
 
     device_ul.add_attribute(name_attr)
 
+
     device_ul.add_attribute(attr_name="Tiger",
                             attr_type="static",
                             value_type="Number",
                             attr_value=12)
 
+   
+
     device_ul.add_attribute(attr_name = "OpenCages",
                             value_type = "String",
                             attr_type = "command",
                             attr_value = "Yes",
-                            object_id= "Cage")
+                            object_id= "cage")
+                            
+
 
     # test creating an internal attribute
 
@@ -93,15 +98,15 @@ def iota_ul(config:config.Config):
     device_ul.delete_attribute("pressure", "active")
 
     IOTA_UL.post_group(device_group)
-    IOTA_UL.update_group(device_group)
-    IOTA_UL.get_groups(device_group)
-    IOTA_UL.post_device(device_group, device_ul)
-    IOTA_UL.update_device(device_group, device_ul, "")
+    IOTA_UL.update_group(device_group=device_group)
+    IOTA_UL.get_groups(device_group=device_group)
+
+    IOTA_UL.post_device(device_group=device_group, device=device_ul)
+    IOTA_UL.update_device(device_group=device_group, device=device_ul, payload="")
     IOTA_UL.get_device(device_group, device_ul)
 
-    ORION_CB.get_all_entities()
+    print(ORION_CB.get_all_entities())
     ORION_CB.get_entity('urn:Room:002')
-
 
 
     IOTA_UL.delete_device(device_group, device_ul)
