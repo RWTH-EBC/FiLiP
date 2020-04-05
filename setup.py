@@ -3,9 +3,7 @@ import setuptools
 INSTALL_REQUIRES = ['requests',
                     'fuzzywuzzy',
                     'PyYAML',
-                    'pandas',
-                    'python-Levenshtein',
-                    'streamlit']
+                    'pandas']
 
 SETUP_REQUIRES = INSTALL_REQUIRES.copy()
 
