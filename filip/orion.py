@@ -178,18 +178,25 @@ class Orion:
     Further documentation:
     https://fiware-orion.readthedocs.io/en/master/
     """
-    def __init__(self, config, version_2:bool = True):
+    def __init__(self, config, version_2: bool = True):
         """
         :param config:
-        :param version_2: if param version_2 is True, the 
+        :param version_2: if param version_2 is True, the standard used url is the v2, else v1
         """
         self.fiware_service = FiwareService(name=config.data['fiware']['service'],
                                             path=config.data['fiware']['service_path'])
-        self.url_v1 = config.data["orion"]["host"] + ':' + config.data["orion"]["port"] + '/v1'
-        self.url_v2 = config.data["orion"]["host"] + ':' + config.data["orion"]["port"] + '/v2'
-
+        self.host = config.data.get("orion", {}).get("host")
+        self.port = config.data.get("orion", {}).get("port")
+        if (self.port is None) or (self.port is ""):
+            # if port is None, the full url is given by the  {orion : { host }} key
+            self.url_v1 = self.host + '/v1'
+            self.url_v2 = self.host + '/v2'
+        else:
+            self.url_v1 = self.host + ":" + self.port + "/v1"
+            self.url_v2 = self.host + ':' + self.port + '/v2'
         if version_2 is True:
             self.url = self.url_v2
+            print(self.url)
         else:
             self.url = self.url_v1
 
@@ -224,7 +231,6 @@ class Orion:
         url = self.url[:-3] + '/version'
         headers = self.get_header(requtils.HEADER_ACCEPT_JSON)
         response = requests.get(url, headers=headers)
-        print(response.content)
         ok, retstr = requtils.response_ok(response)
         if not ok:
             level, retstr = requtils.logging_switch(response)
