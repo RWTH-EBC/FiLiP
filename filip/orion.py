@@ -196,7 +196,6 @@ class Orion:
             self.url_v2 = self.host + ':' + self.port + '/v2'
         if version_2 is True:
             self.url = self.url_v2
-            print(self.url)
         else:
             self.url = self.url_v1
 
@@ -204,6 +203,9 @@ class Orion:
     def set_service(self, fiware_service):
         """Overwrites the fiware_service and service path of config.json"""
         self.fiware_service.update(fiware_service.name, fiware_service.path)
+
+    def get_service(self):
+        return self.fiware_service
  
     def get_header(self, additional_headers: dict = None):
         """combine fiware_service header (if set) and additional headers"""
@@ -278,7 +280,6 @@ class Orion:
             if not ok:
                 level, retstr = requtils.logging_switch(response)
                 self.log_switch(level, response)
-
 
     def post_json(self, json=None, entity=None, params=None):
         """

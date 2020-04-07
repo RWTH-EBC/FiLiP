@@ -19,10 +19,23 @@ class QuantumLeap():
     """
     def __init__(self, config: object):
         """Initialize with configuration values"""
-        self.url = config.data["quantum_leap"]["host"] + ':'\
-                           +config.data["quantum_leap"]["port"] + '/v2'
-        self.crate_url = config.data["cratedb"]["host"] + ':' \
-                            + config.data["cratedb"]["port"]
+        self.host = config.data.get("quantum_leap", {}).get("host")
+        self.port = config.data.get("quantum_leap", {}).get("port")
+
+        self.crate_host = config.data.get("cratedb", {}).get("host")
+        self.crate_port = config.data.get("cratedb", {}).get("port")
+
+        if (self.port is None) or (self.port is ""):
+            # if port is None, the full url is given by the  {quantum_leap : { host }} key
+            self.url = self.host
+        else:
+            self.url = self.host + ":" + self.port + '/v2'
+
+        if (self.crate_port is None) or (self.crate_port is ""):
+            self.crate_url = self.crate_host
+        else:
+            self.crate_url = self.crate_host + ":" + self.crate_port
+
         self.fiware_service = orion.FiwareService(name=config.data['fiware']['service'],
                                                   path=config.data['fiware']['service_path'])
 

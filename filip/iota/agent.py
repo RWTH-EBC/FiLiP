@@ -22,9 +22,13 @@ class Agent:
     def __init__(self, agent_name: str, config: Config):
         self.name = agent_name
         self.test_config(config)
-        self.host = config.data["iota"]['host']
-        self.port = config.data["iota"]['port']
-        self.url = self.host + ":" + self.port
+        self.host = config.data.get("iota", {}).get("host")
+        self.port = config.data.get("iota", {}).get("port")
+        if (self.port is None) or (self.port is ""):
+            # if port is None, the full url is given by the  {orion : { host }} key
+            self.url = self.host
+        else:
+            self.url = self.host + ":" + self.port
         self.protocol = config.data["iota"]['protocol']
         #TODO: Figuring our how to register the service and conncet with devices
         self.services = []
