@@ -15,7 +15,6 @@ HEADER_CONTENT_PLAIN = {'Content-Type': 'text/plain'}
 log = logging.getLogger(__name__)
 
 
-
 def url_check(url, https=False):
     """
     Function checks whether the host has "http" added in case of http as protocol.
@@ -32,9 +31,6 @@ def url_check(url, https=False):
     return url
 
 
-
-
-
 def pretty_print_request(req):
     print('{}\n{}\n{}\n\nBODY:{}\n{}'.format(
         '-----------START-----------',
@@ -43,6 +39,7 @@ def pretty_print_request(req):
         req.body,
         '---------------------------'
     ))
+
 
 def check_response_ok(response, request_type):
     """checks if HTTP response code is less than 400"""
@@ -56,6 +53,7 @@ def check_response_ok(response, request_type):
     else:
         print (str(request_type) + " ok")
         return True
+
 
 def response_ok(response) -> (bool, str):
     status = response.status_code

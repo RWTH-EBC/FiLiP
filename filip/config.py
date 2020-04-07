@@ -48,6 +48,7 @@ class Config:
             pass
 
         # TODO:
+        #
         # 0. check if data dict is not None --> use some default values
         # 1. assert data dict
 
@@ -121,7 +122,6 @@ class Config:
         data['fiware']['service'] = os.getenv("FIWARE_SERVICE", "dummy_service")
         data['fiware']['service_path'] = os.getenv("FIWARE_SERVICE_PATH", "/dummy_path")
         return data
-
 
     def update_config_param(self, data: dict):
         """

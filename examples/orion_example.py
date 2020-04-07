@@ -159,7 +159,7 @@ if __name__=="__main__":
                      }
 
 
-    ORION_CB.add_attribute(entity_name = "Room3", attribute_dict =new_attribute)
+    ORION_CB.add_attribute(entity_name = "Room3", attr_dict =new_attribute)
 
     print(ORION_CB.get_attributes("Room3"))
 

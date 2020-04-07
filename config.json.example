@@ -19,6 +19,10 @@
     "host": "http://localhost",
     "port": "4041",
     "protocol": "IoTA-JSON"
-  }
+  },
+    "fiware": {
+    "service": "test_data",
+    "service_path" : "/test"
+    }
 
 }
