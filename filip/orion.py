@@ -178,12 +178,21 @@ class Orion:
     Further documentation:
     https://fiware-orion.readthedocs.io/en/master/
     """
-    def __init__(self, config):
-        self.url = config.data["orion"]["host"] + ':' \
-                   + config.data["orion"]["port"] + '/v2'
+    def __init__(self, config, version_2:bool = True):
+        """
+        :param config:
+        :param version_2: if param version_2 is True, the 
+        """
         self.fiware_service = FiwareService(name=config.data['fiware']['service'],
                                             path=config.data['fiware']['service_path'])
         self.url_v1 = config.data["orion"]["host"] + ':' + config.data["orion"]["port"] + '/v1'
+        self.url_v2 = config.data["orion"]["host"] + ':' + config.data["orion"]["port"] + '/v2'
+
+        if version_2 is True:
+            self.url = self.url_v2
+        else:
+            self.url = self.url_v1
+
 
     def set_service(self, fiware_service):
         """Overwrites the fiware_service and service path of config.json"""
@@ -215,6 +224,7 @@ class Orion:
         url = self.url[:-3] + '/version'
         headers = self.get_header(requtils.HEADER_ACCEPT_JSON)
         response = requests.get(url, headers=headers)
+        print(response.content)
         ok, retstr = requtils.response_ok(response)
         if not ok:
             level, retstr = requtils.logging_switch(response)

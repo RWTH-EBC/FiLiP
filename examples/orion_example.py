@@ -121,7 +121,7 @@ if __name__=="__main__":
     path_to_config = os.path.join(str(Path().resolve().parent), "config.json")
 
     CONFIG = config.Config(path_to_config)
-    ORION_CB = orion.Orion(CONFIG) 
+    ORION_CB = orion.Orion(CONFIG, version_2=True)
     ORION_CB.sanity_check()
     print(ORION_CB.test_connection())
 
@@ -159,7 +159,7 @@ if __name__=="__main__":
                      }
 
 
-    ORION_CB.add_attribute(entity_name = "Room3", attribute_dict =new_attribute)
+    ORION_CB.add_attribute(entity_name = "Room3", attr_dict =new_attribute)
 
     print(ORION_CB.get_attributes("Room3"))
 
