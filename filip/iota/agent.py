@@ -97,7 +97,9 @@ class Agent:
             response = requests.request("PUT", url=url, data=payload, headers=headers, params=querystring)
 
         if response.status_code not in [201, 200, 204]:
-            log.warning(f" {datetime.datetime.now()} - Unable to register default configuration for service {device_group.get_header()['fiware-service']}, path {device_group.get_header()['fiware-servicepath']}"
+            log.warning(f"Unable to register default configuration for service "
+                        f"{device_group.get_header()['fiware-service']}, "
+                        f"path {device_group.get_header()['fiware-servicepath']}"
                         f" Code: {response.status_code} - Info: {response.text}")
             return None
 
@@ -117,7 +119,7 @@ class Agent:
             level, retstr = requtils.logging_switch(response)
             self.log_switch(level, retstr)
         else:
-            log.info(f" {datetime.datetime.now()} - Device group sucessfully updated")
+            log.info(f"Device group sucessfully updated")
 
     def post_device(self, device_group: DeviceGroup, device: Device, force_update: bool = True):
         """
@@ -143,10 +145,10 @@ class Agent:
             self.update_device(device_group, device, device_data)
 
         elif response.status_code != 201:
-            log.warning(f" {datetime.datetime.now()} - Unable to post device: ", response.text)
+            log.warning(f"Unable to post device: ", response.text)
 
         else:
-            log.info(f" {datetime.datetime.now()} – Device successfully posted.")
+            log.info(f"Device successfully posted.")
 
     def delete_device(self, device_group: DeviceGroup, device: Device):
         """
@@ -159,9 +161,9 @@ class Agent:
         headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header()}
         response = requests.request("DELETE", url, headers=headers)
         if response.status_code == 204:
-            log.info(f" {datetime.datetime.now()} – Device successfully deleted!")
+            log.info(f"Device successfully deleted!")
         else:
-            log.warning(f" {datetime.datetime.now()} - Device could not be deleted: {response.text}")
+            log.warning(f"Device could not be deleted: {response.text}")
 
     def get_device(self, device_group: DeviceGroup, device: Device):
         """
@@ -225,7 +227,7 @@ class Agent:
         if resp.status_code == 200:
             return resp.json()["services"]
         else:
-            log.warning(f" {datetime.datetime.now()} - Unable to fetch configuration for service {service}, path {service_path}: {resp.text}")
+            log.warning(f"Unable to fetch configuration for service {service}, path {service_path}: {resp.text}")
 
 
 

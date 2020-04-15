@@ -36,87 +36,79 @@ def iota_ul(config:config.Config):
 
     device_group.test_apikey()
 
-    device_ul = Device(device_id='urn:Room:002:sensor01', entity_name='urn:Room:002',
+    device = Device(device_id='urn:Room:002:sensor01', entity_name='urn:Room:002',
                        entity_type="Thing",
                        transport="MQTT", protocol="PDI-IoTA-UltraLight",
                        timezone="Europe/Berlin")
 
-    print(device_ul)
+    print(device)
 
-    temp_attr = {"attr_name": "temperature",
-                 "value_type": "Number",
+    temp_attr = {"name": "temperature",
+                 "type": "Number",
                  "attr_type": "active",
-                 "attr_value": "12",
+                 "value": "12",
                  "object_id": "t"}
 
-    device_ul.add_attribute(temp_attr)
+    device.add_attribute(temp_attr)
 
-    press_attr = {"attr_name": "pressure",
-                  "value_type": "Number",
+    press_attr = {"name": "pressure",
+                  "type": "Number",
                   "attr_type": "active",
                   "object_id": "p"}
 
-    device_ul.add_attribute(press_attr)
+    device.add_attribute(press_attr)
 
-    name_attr = {"attr_name": "nice_name",
-                   "value_type": "String",
+    name_attr = {"name": "nice_name",
+                   "type": "String",
                    "attr_type": "static",
-                   "attr_value" : "beautiful attribute!",
+                   "value" : "beautiful attribute!",
                    "object_id": "name"}
 
-    device_ul.add_attribute(name_attr)
+    device.add_attribute(name_attr)
 
 
-    device_ul.add_attribute(attr_name="Tiger",
+    device.add_attribute(name="Tiger",
                             attr_type="static",
-                            value_type="Number",
-                            attr_value=12)
+                            type="Number",
+                            value=12)
 
    
 
-    device_ul.add_attribute(attr_name = "OpenCages",
-                            value_type = "String",
+    device.add_attribute(name = "OpenCages",
+                            type = "String",
                             attr_type = "command",
-                            attr_value = "Yes",
+                            value = "Yes",
                             object_id= "cage")
                             
 
 
     # test creating an internal attribute
 
-    internal_attr = {"attr_name": "nice_name_int",
-                     "value_type": "String",
+    internal_attr = {"name": "nice_name_int",
+                     "type": "String",
                      "attr_type": "internal",
-                     "attr_value" : "beautiful attribute!",
+                     "value" : "beautiful attribute!",
                      "object_id": "name"}
 
-    device_ul.add_attribute(internal_attr)
+    device.add_attribute(internal_attr)
 
-    print(device_ul)
+    print(device)
 
-
-
-
-    device_ul.delete_attribute("pressure", "active")
+    device.delete_attribute("pressure", "active")
 
     IOTA_UL.post_group(device_group)
     IOTA_UL.update_group(device_group)
     IOTA_UL.get_groups(device_group)
-    IOTA_UL.post_device(device_group, device_ul)
-    IOTA_UL.update_device(device_group, device_ul, "")
-    print(IOTA_UL.get_device(device_group, device_ul))
+    IOTA_UL.post_device(device_group, device)
+    IOTA_UL.update_device(device_group, device, "")
+    print(IOTA_UL.get_device(device_group, device))
 
 
     print(ORION_CB.get_all_entities())
     ORION_CB.get_entity('urn:Room:002')
 
-
-
-
-
-    IOTA_UL.delete_device(device_group, device_ul)
+    IOTA_UL.delete_device(device_group, device)
     IOTA_UL.delete_group(device_group)
-
 
 
 def iota_json(config:config.Config):
@@ -138,25 +130,75 @@ def iota_json(config:config.Config):
                                                iot_agent="iota_json", apikey="12345",
                                                timestamp=True, autoprovision=False)
 
-    device_json = Device('urn:Room:002:sensor02','urn:Room:002',
+    device = Device('urn:Room:002:sensor02','urn:Room:002',
                                     "Thing", transport="MQTT",
                                     protocol="IoTA-JSON",
                                     timezone="Europe/Berlin",
                                     timestamp=True, autoprovision=False)
 
-    print(device_json)
+    print(device)
 
-    IOTA_JSON.post_group(device_group_json)
-    IOTA_JSON.get_groups(device_group_json)
-    IOTA_JSON.post_device(device_group_json, device_json)
-    IOTA_JSON.update_device(device_group_json, device_json, "")
-    IOTA_JSON.get_device(device_group_json, device_json)
+
+    temp_attr = {"name": "temperature",
+                 "type": "Number",
+                 "attr_type": "active",
+                 "value": "12",
+                 "object_id": "t"}
+
+    device.add_attribute(temp_attr)
+
+    press_attr = {"name": "pressure",
+                  "type": "Number",
+                  "attr_type": "active",
+                  "object_id": "p"}
+
+    device.add_attribute(press_attr)
+
+    attribute = {"name": "nice_name",
+                 "type": "String",
+                 "attr_type": "static",
+                 "value": "beautiful attribute!",
+                 "object_id": "name"}
+
+    device.add_attribute(attribute)
+
+    device.add_attribute(name="Tiger",
+                         attr_type="static",
+                         type="Number",
+                         value=12)
+
+    device.add_attribute(name="OpenCages",
+                         type="String",
+                         attr_type="command",
+                         value="Yes",
+                         object_id="cage")
+
+    # test creating an internal attribute
+
+    internal_attr = {"name": "nice_name_int",
+                     "type": "String",
+                     "attr_type": "internal",
+                     "value": "beautiful attribute!",
+                     "object_id": "name"}
+
+    device.add_attribute(internal_attr)
+
+    print(device)
+
+    device.delete_attribute("pressure", "active")
+
+
+    #IOTA_JSON.post_group(device_group_json)
+    #IOTA_JSON.get_groups(device_group_json)
+    IOTA_JSON.post_device(device_group_json, device)
+    IOTA_JSON.update_device(device_group_json, device, "")
+    IOTA_JSON.get_device(device_group_json, device)
 
 
     ORION_CB.get_all_entities()
     ORION_CB.get_entity('urn:Room:002')
 
-    IOTA_JSON.delete_device(device_group_json, device_json)
+    IOTA_JSON.delete_device(device_group_json, device)
     IOTA_JSON.delete_group(device_group_json)
 
 
@@ -178,6 +220,7 @@ if __name__ == "__main__":
     if data["iota"]["protocol"] == "IoTA-UL":
         print("Ultralight Agent")
         iota_ul(CONFIG)
+
 
     elif data["iota"]["protocol"] == "IoTA-JSON":
         print("JSON Agent")
