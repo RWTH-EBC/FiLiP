@@ -66,7 +66,7 @@ class Shared:
 
     def add_attribute(self, attribute: dict = None, attr_type: str = None,
                       name: str = None, type: str = None,
-                      object_id: str = None, value=None):
+                      object_id: str = None, value = None):
         """
         :param attribute: {
             "name": "Temp_Sensor",
@@ -89,22 +89,26 @@ class Shared:
                                                     'type',
                                                     'object_id',
                                                     'value')])
-        elif attr_type is None and "attr_type" in attribute.keys():
-            attr_type=attribute["attr_type"]
-            del attribute["attr_type"]
-        else:
-            log.warning(f"Missing attribute type!")
+        elif attr_type is None:
+            if "attr_type" in attribute.keys():
+                attr_type = attribute["attr_type"]
+                del attribute["attr_type"]
+            else:
+                log.error(f"Missing attribute type!")
+                return False
 
-        attr_type=attr_type.casefold()
+        attr_type = attr_type.casefold()
         if attr_type != "static":
-            if "value" in attribute:
-                log.warning(f"Setting attribute: Value only allowed for static "
-                            f"attributes! Value will be ignored!")
+            if "value" in attribute.keys():
+                if attribute["value"] != None:
+                    log.warning(f"Setting attribute: Value only allowed for static "
+                                f"attributes! Value will be ignored!")
                 del attribute["value"]
         else:
-            if "object_id" in attribute:
-                log.warning(f"Setting attribute: Static attribute do not need "
-                            f"an object_id! object_id will be ignored!")
+            if "object_id" in attribute.keys():
+                if attribute["object_id"] != None:
+                    log.warning(f"Setting attribute: Static attribute do not need "
+                                f"an object_id! object_id will be ignored!")
                 del attribute["object_id"]
 
         switch_dict = {"active": self.add_active,
@@ -115,6 +119,8 @@ class Shared:
                        }.get(attr_type, "not_ok")(attribute)
         if switch_dict == "not_ok":
             log.warning(f"Attribute type unknown: {attr_type}")
+            return False
+        return True
 
     def delete_attribute(self, name, attr_type):
         """

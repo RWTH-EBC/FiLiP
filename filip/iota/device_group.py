@@ -38,7 +38,7 @@ class DeviceGroup(Shared):
     :ivar autoprovsion: (optional, boolean): If true, APPEND is used upon measure arrival (thus effectively allowing autoprovisioned devices). If false, UPDATE is used open measure arrival (thus effectively avoiding autoprovisioned devices). This field is optional, so if it omitted then the global IoTAgent appendModel configuration is used.
     specific IoT Agents to store information along with the devices in the Device Registry.
     """
-    def __init__(self, fiware_service ,
+    def __init__(self, fiware_service,
                  cb_host: str, **kwargs):
         super(DeviceGroup, self).__init__(service=fiware_service.name,
                                           service_path=fiware_service.path,
