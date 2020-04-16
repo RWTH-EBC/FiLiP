@@ -38,7 +38,7 @@ class DeviceGroup(Shared):
     :ivar autoprovsion: (optional, boolean): If true, APPEND is used upon measure arrival (thus effectively allowing autoprovisioned devices). If false, UPDATE is used open measure arrival (thus effectively avoiding autoprovisioned devices). This field is optional, so if it omitted then the global IoTAgent appendModel configuration is used.
     specific IoT Agents to store information along with the devices in the Device Registry.
     """
-    def __init__(self, fiware_service ,
+    def __init__(self, fiware_service,
                  cb_host: str, **kwargs):
         super(DeviceGroup, self).__init__(service=fiware_service.name,
                                           service_path=fiware_service.path,
@@ -131,7 +131,7 @@ class DeviceGroup(Shared):
         """
         try:
             if self.apikey == "":
-                res = input("[INFO]: No API-Key defined. Do you want to "
+                res = input("No API-Key defined. Do you want to "
                             "generate one? "
                             "y/Y ")
                 if res == "y" or res == "Y":
@@ -143,11 +143,11 @@ class DeviceGroup(Shared):
                         self.apikey = self.generate_apikey()
                     #with open(self.path, 'w') as configfile:
                     #    self.config.write(configfile)
-                    log.info(f" {datetime.datetime.now()} - Random Key generated: {self.apikey}")
+                    log.info(f"Random Key generated: {self.apikey}")
                 else:
-                    log.info(f" {datetime.datetime.now()} - Default Key will be used: 1234")
+                    log.info(f"Default Key will be used: 1234")
 
-            log.info(f" {datetime.datetime.now()} - API-Key check success! {self.apikey}")
+            log.info(f"API-Key check success! {self.apikey}")
 
         except Exception:
-            log.error(f" {datetime.datetime.now()} - API-Key check failed. Please check configuration!")
+            log.error(f"API-Key check failed. Please check configuration!")
