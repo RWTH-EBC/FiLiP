@@ -24,9 +24,11 @@ class Agent:
         self.test_config(config)
         self.host = config.data["iota"]['host']
         self.port = config.data["iota"]['port']
-        self.url = self.host + ":" + self.port
+        if self.port == "":
+            self.url = self.host
+        else:
+            self.url = self.host + ":" + self.port
         self.protocol = config.data["iota"]['protocol']
-        #TODO: Figuring our how to register the service and conncet with devices
         self.services = []
 
     def test_config(self, config: Config):
@@ -37,8 +39,8 @@ class Agent:
         Function utilises the test.test_connection() function to check the availability of a given url and service.
         :return: Boolean, True if the service is reachable, False if not.
         """
-        boolean = test.test_connection(service_name=self.name, url=config.data[self.name]['host']+":" +
-                                                                   config.data[self.name]['port']+'/iot/about')
+        boolean = test.test_connection(service_name=self.name,
+                                       url=f"{self.url}:/iot/about")
         return boolean
 
     def log_switch(self, level, response):
@@ -72,7 +74,7 @@ class Agent:
         response = requests.request("DELETE", url,
                                     headers=headers, params=querystring)
         if response.status_code is 204:
-            log.info(f" {datetime.datetime.now()} - Device group successfully deleted!")
+            log.info(f"Device group successfully deleted!")
         else:
             level, retstr = requtils.logging_switch(response)
             self.log_switch(level, retstr)
@@ -201,7 +203,7 @@ class Agent:
             level, retstr = requtils.logging_switch(response)
             self.log_switch(level, retstr)
         else:
-            log.info(f" {datetime.datetime.now()} - Device successfully updated!")
+            log.info(f"Device successfully updated!")
 
 ### END of valid Code ###
 
