@@ -60,9 +60,6 @@ def test_connection(url: str, service_name: str,
         return False
 
 
-
-
-
 def test_config(service_name: str, config_data: dict):
     """
     Checking configuration for plausibility and correct types
@@ -71,7 +68,7 @@ def test_config(service_name: str, config_data: dict):
     :param config_data: Global of dictionary for configuration parameters
     :return:
     """
-    #TODO: Adding type checking and logical tests
+    # TODO: Adding type checking and logical tests
     from filip.iota import agent as iot
     list_protocols = iot.PROTOCOLS.copy()
     protocols = ', '.join(list_protocols)
@@ -86,7 +83,8 @@ def test_config(service_name: str, config_data: dict):
             (f"Host configuration for {service_name} must be string!")
 
         if 'port' not in config_data[service_name]:
-            raise Exception(f"Port configuration for {service_name} is missing!")
+            raise Exception(f"Port configuration for {service_name} is "
+                            f"missing!")
 
         elif isinstance(config_data[service_name]['port'], str):
             port = config_data[service_name]['port']
@@ -103,12 +101,12 @@ def test_config(service_name: str, config_data: dict):
                 raise Exception("No valid port configuration for' " +
                                 service_name + "'!")
         if 'protocol' in config_data[service_name]:
-            assert isinstance(config_data[service_name]['protocol'], str),\
-                (f"Host configuration for {service_name} must be string!")
+            assert isinstance(config_data[service_name]['protocol'], str), \
+                f"Host configuration for {service_name} must be string!"
             # Additional allowed protocols may be added here, e.g. 'IoTA-LWM2M'
             assert config_data[service_name]['protocol'] in list_protocols, \
-                (f" Protocol for {service_name} not supported! The following "
-                 f"protocols are supported: {protocols}")
+                f" Protocol for {service_name} not supported! The following " \
+                f"protocols are supported: {protocols}"
 
         log.info("Configuration successfully tested!")
         return True
