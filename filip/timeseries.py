@@ -19,10 +19,23 @@ class QuantumLeap():
     """
     def __init__(self, config: object):
         """Initialize with configuration values"""
-        self.url = config.data["quantum_leap"]["host"] + ':'\
-                           +config.data["quantum_leap"]["port"] + '/v2'
-        self.crate_url = config.data["cratedb"]["host"] + ':' \
-                            + config.data["cratedb"]["port"]
+        self.host = config.data.get("quantum_leap", {}).get("host")
+        self.port = config.data.get("quantum_leap", {}).get("port")
+
+        self.crate_host = config.data.get("cratedb", {}).get("host")
+        self.crate_port = config.data.get("cratedb", {}).get("port")
+
+        if (self.port == None) or (self.port == ""):
+            # if port is None, the full url is given by the  {quantum_leap : { host }} key
+            self.url = self.host
+        else:
+            self.url = self.host + ":" + self.port + '/v2'
+
+        if (self.crate_port == None) or (self.crate_port == ""):
+            self.crate_url = self.crate_host
+        else:
+            self.crate_url = self.crate_host + ":" + self.crate_port
+
         self.fiware_service = orion.FiwareService(name=config.data['fiware']['service'],
                                                   path=config.data['fiware']['service_path'])
 
@@ -36,7 +49,7 @@ class QuantumLeap():
         :return: Subscription object, not yet sent to Orion Context Broker
         """
         id_pattern = kwargs.get("id_pattern", None)
-        if id_pattern is not None:
+        if id_pattern != None:
             subject_entity = sub.Subject_Entity(id_pattern, None, True)
         else:
             entity_type = json.loads(entity.get_json())["type"]
@@ -104,7 +117,7 @@ class QuantumLeap():
         url = self.url + '/entities/' + entity_id
         params = kwargs.get("params")
         headers = self.get_header(requtils.HEADER_CONTENT_PLAIN)
-        if attr_name is not None:
+        if attr_name != None:
             url += '/attrs/' + attr_name
         if valuesonly:
             url += '/value'
@@ -120,7 +133,7 @@ class QuantumLeap():
                              valuesonly: bool = False):
         url = self.url + '/types/' + entity_type
         headers = self.get_header(requtils.HEADER_CONTENT_PLAIN)
-        if attr_name is not None:
+        if attr_name != None:
             url += '/attrs/' + attr_name
         if valuesonly:
             url += '/value'
@@ -160,7 +173,7 @@ class QuantumLeap():
         url = self.url +"/entities/"+ entity_name
         headers = self.get_header(requtils.HEADER_CONTENT_PLAIN)
         res = dict()
-        if attr_name is not None:
+        if attr_name != None:
             url += '/attrs/' + attr_name
         if valuesonly:
             url += '/value'

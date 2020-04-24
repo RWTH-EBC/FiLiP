@@ -19,26 +19,29 @@ PROTOCOLS = ['IoTA-JSON', 'IoTA-UL']
 class Agent:
     # https://iotagent-node-lib.readthedocs.io/en/latest/
     # https://fiware-iotagent-json.readthedocs.io/en/latest/usermanual/index.html
-    def __init__(self, agent_name: str, config: Config):
-        self.name = agent_name
+    def __init__(self, config: Config):
         self.test_config(config)
-        self.host = config.data["iota"]['host']
-        self.port = config.data["iota"]['port']
-        self.url = self.host + ":" + self.port
+        self.host = config.data.get("iota", {}).get("host")
+        self.port = config.data.get("iota", {}).get("port")
+        if (self.port == None) or (self.port == ""):
+            # if port is None, the full url is given by the  {orion : { host }} key
+            self.url = self.host
+        else:
+            self.url = self.host + ":" + self.port
         self.protocol = config.data["iota"]['protocol']
         #TODO: Figuring our how to register the service and conncet with devices
         self.services = []
 
     def test_config(self, config: Config):
-        test.test_config(self.name, config.data)
+        test.test_config('iota', config.data)
 
     def test_connection(self, config: Config):
         """
         Function utilises the test.test_connection() function to check the availability of a given url and service.
         :return: Boolean, True if the service is reachable, False if not.
         """
-        boolean = test.test_connection(service_name=self.name, url=config.data[self.name]['host']+":" +
-                                                                   config.data[self.name]['port']+'/iot/about')
+        boolean = test.test_connection(service_name='IoT-Agent', url=self.url
+                                                                   +'/iot/about')
         return boolean
 
     def log_switch(self, level, response):
@@ -71,8 +74,8 @@ class Agent:
                        "apikey": device_group.get_apikey()}
         response = requests.request("DELETE", url,
                                     headers=headers, params=querystring)
-        if response.status_code is 204:
-            log.info(f" {datetime.datetime.now()} - Device group successfully deleted!")
+        if response.status_code == 204:
+            log.info(f"Device group successfully deleted!")
         else:
             level, retstr = requtils.logging_switch(response)
             self.log_switch(level, retstr)
@@ -91,13 +94,15 @@ class Agent:
         payload = json.dumps(payload, indent=4)
         response = requests.request("POST", url, data=payload,
                                     headers=headers)
-        if (response.status_code is 409) & (force_update is True):
+        if (response.status_code == 409) & (force_update is True):
             querystring = {"resource": device_group.get_resource_last(),
                            "apikey": device_group.get_apikey_last()}
             response = requests.request("PUT", url=url, data=payload, headers=headers, params=querystring)
 
         if response.status_code not in [201, 200, 204]:
-            log.warning(f" {datetime.datetime.now()} - Unable to register default configuration for service {device_group.get_header()['fiware-service']}, path {device_group.get_header()['fiware-servicepath']}"
+            log.warning(f"Unable to register default configuration for service "
+                        f"{device_group.get_header()['fiware-service']}, "
+                        f"path {device_group.get_header()['fiware-servicepath']}"
                         f" Code: {response.status_code} - Info: {response.text}")
             return None
 
@@ -117,7 +122,7 @@ class Agent:
             level, retstr = requtils.logging_switch(response)
             self.log_switch(level, retstr)
         else:
-            log.info(f" {datetime.datetime.now()} - Device group sucessfully updated")
+            log.info(f"Device group sucessfully updated")
 
     def post_device(self, device_group: DeviceGroup, device: Device, force_update: bool = True):
         """
@@ -143,10 +148,10 @@ class Agent:
             self.update_device(device_group, device, device_data)
 
         elif response.status_code != 201:
-            log.warning(f" {datetime.datetime.now()} - Unable to post device: ", response.text)
+            log.warning(f"Unable to post device: ", response.text)
 
         else:
-            log.info(f" {datetime.datetime.now()} – Device successfully posted.")
+            log.info(f"Device successfully posted.")
 
     def delete_device(self, device_group: DeviceGroup, device: Device):
         """
@@ -159,9 +164,9 @@ class Agent:
         headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header()}
         response = requests.request("DELETE", url, headers=headers)
         if response.status_code == 204:
-            log.info(f" {datetime.datetime.now()} – Device successfully deleted!")
+            log.info(f"Device successfully deleted!")
         else:
-            log.warning(f" {datetime.datetime.now()} - Device could not be deleted: {response.text}")
+            log.warning(f"Device could not be deleted: {response.text}")
 
     def get_device(self, device_group: DeviceGroup, device: Device):
         """
@@ -199,7 +204,7 @@ class Agent:
             level, retstr = requtils.logging_switch(response)
             self.log_switch(level, retstr)
         else:
-            log.info(f" {datetime.datetime.now()} - Device successfully updated!")
+            log.info(f"Device successfully updated!")
 
 ### END of valid Code ###
 
@@ -225,7 +230,7 @@ class Agent:
         if resp.status_code == 200:
             return resp.json()["services"]
         else:
-            log.warning(f" {datetime.datetime.now()} - Unable to fetch configuration for service {service}, path {service_path}: {resp.text}")
+            log.warning(f"Unable to fetch configuration for service {service}, path {service_path}: {resp.text}")
 
 
 

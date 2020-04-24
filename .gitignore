@@ -29,3 +29,5 @@ venv
 # Unittest #
 #####################
 .pytest_cache
+/filip.egg-info/
+

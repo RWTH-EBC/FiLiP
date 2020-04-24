@@ -25,20 +25,20 @@ def test_connection(url: str, service_name: str,
             if res.status_code == 200:
                 log.info(f"{service_name}: Check Success! Service is up and "
                          f"running!")
+                log.info(res.text)
                 return True
             else:
                 log.error(f"{service_name}: Check has Errors! Please check "
                           f"Service response: {res.text}")
                 return False
-
-        if auth_method is not None:
-            if auth_method is "HTTPBasicAuth":
+        else:
+            if auth_method == "HTTPBasicAuth":
                 authorization = kwargs.get("auth")
                 res = requests.get(url, auth=authorization)
 
-            elif auth_method is "HTTPDigestAuth":
+            elif auth_method == "HTTPDigestAuth":
                 authorization = kwargs.get("auth")
-                res = requests.get(url, auth=HTTPDigestAuth(authorization))
+                requests.get(url, auth=HTTPDigestAuth(authorization))
 
             else:
                 log.error(f"{service_name}: Authentication method:"
@@ -48,6 +48,7 @@ def test_connection(url: str, service_name: str,
             if res.status_code == 200:
                 log.info(f"{service_name}: Check Success! Service is up and "
                          f"running!")
+                log.info(res.text)
                 return True
             else:
                 log.error(f"{service_name}: Check has Errors! Please check "
@@ -80,7 +81,8 @@ def test_config(service_name: str, config_data: dict):
             raise Exception(f" Host configuration for {service_name} is "
                             f"missing!")
         assert isinstance(config_data[service_name]['host'], str),\
-            f"Host configuration for {service_name} must be string!"
+            (f"Host configuration for {service_name} must be string!")
+
         if 'port' not in config_data[service_name]:
             raise Exception(f"Port configuration for {service_name} is "
                             f"missing!")
@@ -113,3 +115,7 @@ def test_config(service_name: str, config_data: dict):
     except Exception as error:
         log.error(f"  Config test failed! {error}")
         return False
+
+
+
+
