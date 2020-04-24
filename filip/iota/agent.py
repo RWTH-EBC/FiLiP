@@ -152,7 +152,7 @@ class Agent:
             log.warning(f"Unable to post device: ", response.text)
 
         else:
-            log.info(f"Device successfully posted.")
+            log.info(f"Device {device.device_id} successfully posted.")
 
     def delete_device(self, device_group: DeviceGroup, device: Device):
         """
