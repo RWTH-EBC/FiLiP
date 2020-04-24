@@ -143,7 +143,8 @@ class Agent:
 
         if (response.status_code == 409) & (force_update is True):
             device_data = dict()
-            device_data["attributes"] = json.loads(device.get_json())["attributes"]
+            device_data["attributes"] = \
+                json.loads(device.get_json())["attributes"]
             device_data = json.dumps(device_data, indent=4)
             self.update_device(device_group, device, device_data)
 
@@ -164,9 +165,9 @@ class Agent:
         headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header()}
         response = requests.request("DELETE", url, headers=headers)
         if response.status_code == 204:
-            log.info(f"Device successfully deleted!")
+            log.info(f"Device {device.device_id} successfully deleted!")
         else:
-            log.warning(f"Device could not be deleted: {response.text}")
+            log.warning(f"Device {device.device_id} could not be deleted: {response.text}")
 
     def get_device(self, device_group: DeviceGroup, device: Device):
         """
@@ -204,34 +205,4 @@ class Agent:
             level, retstr = requtils.logging_switch(response)
             self.log_switch(level, retstr)
         else:
-            log.info(f"Device successfully updated!")
-
-### END of valid Code ###
-
-    def add_service(self, service_name: str, service_path: str,
-                    **kwargs):
-        device_group = {'service': service_name,
-                        'service_path': service_path,
-                        'data': {
-                            "entity_type": "Thing",
-                            "protocol": kwargs.get("protocol", self.protocol),
-                            "apikey": kwargs.get("apikey", "1234"),
-                            "attributes": [],
-                            "lazy": [],
-                            "commands": [],
-                            "static_attributes": []
-                        }
-                        }
-
-    def fetch_service(self, service: str, service_path: str) -> [dict]:
-        resp = requests.get(self.url + "/iot/services",
-                            headers=self.get_header(service, service_path))
-
-        if resp.status_code == 200:
-            return resp.json()["services"]
-        else:
-            log.warning(f"Unable to fetch configuration for service {service}, path {service_path}: {resp.text}")
-
-
-
-
+            log.info(f"Device {device.device_id} successfully updated!")
