@@ -24,15 +24,24 @@ def iota(config:config.Config):
 
     device_group = DeviceGroup(fiware_service,
                                "http://orion:1026",
-                               iot_agent="iota",
                                apikey="12345test",
-                               autoprovision=True)
+                               autoprovision=True,
+                               resource=)
 
     print(device_group)
 
     device_group.test_apikey()
 
     if config.data["iota"]["protocol"] == "IoTA-UL":
+        device_group = DeviceGroup(fiware_service,
+                                   "http://orion:1026",
+                                   apikey="12345test",
+                                   autoprovision=True,
+                                   resource="iot/d")
+        print(device_group)
+
+        device_group.test_apikey()
+
         print("Device initialization for IoTA-UL Agent")
         device = Device(device_id='urn:Room:002:sensor01',
                         entity_name='urn:Room:002',
@@ -45,6 +54,16 @@ def iota(config:config.Config):
                         resource="iot/d"
                         )
     elif config.data["iota"]["protocol"] == "IoTA-JSON":
+        device_group = DeviceGroup(fiware_service,
+                                   "http://orion:1026",
+                                   apikey="12345test",
+                                   autoprovision=True,
+                                   resource="iot/json")
+        print(device_group)
+
+        device_group.test_apikey()
+
+
         print("Device initialization for IoTA-JSON Agent")
         device = Device(device_id='urn:Room:002:sensor02',
                         entity_name='urn:Room:002',

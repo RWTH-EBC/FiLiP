@@ -50,8 +50,6 @@ class DeviceGroup(Shared):
         self.__entity_type = kwargs.get("entity_type", "Thing")
         self.trust = kwargs.get("trust")
         self.devices = []
-        self.__agent = kwargs.get("iot-agent", "iota-json")
-
         # For using the update functionality, the former configuration needs
         # to be stored
         self.__service_last = fiware_service.name
@@ -89,7 +87,7 @@ class DeviceGroup(Shared):
         # self.trust
         self.__cbHost = kwargs.get("cb_host", self.__cbHost)
         self.__devices = [] # Varaible is not used?
-        self.__agent = kwargs.get("iot-agent", self.__agent)
+
 
     def get_apikey(self):
         return self.apikey
