@@ -19,12 +19,11 @@ PROTOCOLS = ['IoTA-JSON', 'IoTA-UL']
 class Agent:
     # https://iotagent-node-lib.readthedocs.io/en/latest/
     # https://fiware-iotagent-json.readthedocs.io/en/latest/usermanual/index.html
-    def __init__(self, agent_name: str, config: Config):
-        self.name = agent_name
+    def __init__(self, config: Config):
         self.test_config(config)
         self.host = config.data.get("iota", {}).get("host")
         self.port = config.data.get("iota", {}).get("port")
-        if (self.port is None) or (self.port is ""):
+        if (self.port == None) or (self.port == ""):
             # if port is None, the full url is given by the  {orion : { host }} key
             self.url = self.host
         else:
@@ -34,7 +33,7 @@ class Agent:
         self.services = []
 
     def test_config(self, config: Config):
-        test.test_config(self.name, config.data)
+        test.test_config('iota', config.data)
 
     def test_connection(self, config: Config):
         """
@@ -75,7 +74,7 @@ class Agent:
                        "apikey": device_group.get_apikey()}
         response = requests.request("DELETE", url,
                                     headers=headers, params=querystring)
-        if response.status_code is 204:
+        if response.status_code == 204:
             log.info(f"Device group successfully deleted!")
         else:
             level, retstr = requtils.logging_switch(response)
@@ -95,7 +94,7 @@ class Agent:
         payload = json.dumps(payload, indent=4)
         response = requests.request("POST", url, data=payload,
                                     headers=headers)
-        if (response.status_code is 409) & (force_update is True):
+        if (response.status_code == 409) & (force_update is True):
             querystring = {"resource": device_group.get_resource_last(),
                            "apikey": device_group.get_apikey_last()}
             response = requests.request("PUT", url=url, data=payload, headers=headers, params=querystring)

@@ -9,7 +9,7 @@ import json
 TIMEZONE = os.getenv("TIMEZONE", "UTC/Zulu")
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
 logging.basicConfig(level=LOG_LEVEL,
-                    format="%(asctime)s-%(levelname)s-filip.%(name)s:%("
+                    format="%(asctime)s-%(levelname)s-filip.%(name)s: %("
                            "message)s")
 log = logging.getLogger('config')
 
@@ -248,7 +248,8 @@ class Log_Config:
         cfg["disable_existing_loggers"] = False
         cfg["formatters"]["standard"]["format"] = os.getenv("LOG_FORMAT_STANDARD",
                                                             "%(asctime)s-%("
-                                                            "levelname)s-filip.%(name)s:%(message)s")
+                                                            "levelname)s-filip.%(name)s: "
+                                                            "%(message)s")
         cfg["formatters"]["error"]["format"] = os.getenv("LOG_FORMAT_ERROR",
                                                          "%(asctime)s-%("
                                                          "levelname)s <PID %("

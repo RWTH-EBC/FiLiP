@@ -2,8 +2,6 @@ import json
 import requests
 from filip import request_utils as requtils
 from filip import test
-
-import datetime
 import math
 import logging
 
@@ -203,9 +201,9 @@ class Orion:
  
     def get_header(self, additional_headers: dict = None):
         """combine fiware_service header (if set) and additional headers"""
-        if self.fiware_service is None:
+        if self.fiware_service == None:
             return additional_headers
-        elif additional_headers is None:
+        elif additional_headers == None:
             return self.fiware_service.get_header()
         else:
             headers = {**self.fiware_service.get_header(), **additional_headers}
@@ -272,7 +270,7 @@ class Orion:
         elif (json is None) and (entity is not None):
             json_data = entity.get_json()
         else:
-            log.error(f"{datetime.datetime.now()} - Please provide a valid data format.")
+            log.error(f"Please provide a valid data format.")
             json_data = ""
         if params is None:
             url = self.url + '/v2/entities'
@@ -573,7 +571,7 @@ class Orion:
         if check_duplicate is True:
             exists = self.check_duplicate_subscription(subscription_body)
             if exists is True:
-                log.info(f"{datetime.datetime.now()} - A similar subscription already exists.")
+                log.info(f"A similar subscription already exists.")
         response = requests.post(url, headers=headers, data=subscription_body)
         if response.headers is None:
             return
@@ -646,7 +644,7 @@ class Orion:
                 url = url
             else:
                 url = url + '&offset=' + offset
-            if params is (not None):
+            if params == (not None):
                 response = requests.get(url=url, headers=headers, params=params)
             else:
                 response = requests.get(url=url, headers=headers)
@@ -723,7 +721,7 @@ class Orion:
                         # as the ID field is non optional, it has to match
                         # check whether the type match
                         # if the type field is empty, they match all types
-                        if (type_existing is subscription_type) or\
+                        if (type_existing == subscription_type) or\
                                 ('*' in subscription_type) or \
                                 ('*' in type_existing)\
                                 or (type_existing == "") or (

@@ -97,8 +97,7 @@ def logging_switch(response):
         "4": "ERROR",
         "5": "ERROR",
             }.get(category, "INFO")
-    time = datetime.datetime.now()
-    response_text = f" {time} -The request was: {text[keys[0]]}, because: {text[keys[1]]} "
+    response_text = f"The request was: {text[keys[0]]}, because: {text[keys[1]]} "
     return level, response_text
 
 

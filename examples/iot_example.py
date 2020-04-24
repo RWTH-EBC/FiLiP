@@ -13,7 +13,7 @@ def iota(config:config.Config):
     ocb = orion.Orion(config)
 
     # Creating an Instance of the IoT-Agent in the UL-Version
-    agent = Agent("iota", config)
+    agent = Agent(config)
 
     # set the service path
     fiware_service = orion.FiwareService("filip",
