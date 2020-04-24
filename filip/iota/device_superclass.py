@@ -7,7 +7,7 @@ import json
 import logging
 import datetime
 
-log = logging.getLogger("filip.iot")
+log = logging.getLogger("iot")
 
 class Shared:
     """

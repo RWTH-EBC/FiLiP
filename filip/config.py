@@ -7,7 +7,11 @@ import json
 
 # setup Environmental parameters
 TIMEZONE = os.getenv("TIMEZONE", "UTC/Zulu")
-log = logging.getLogger('filip.config')
+LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
+logging.basicConfig(level=LOG_LEVEL,
+                    format="%(asctime)s-%(levelname)s-filip.%(name)s:%("
+                           "message)s")
+log = logging.getLogger('config')
 
 
 def setup_logging(path_to_config: str ='/Users/Felix/PycharmProjects/Logger/filip/log_config.yaml',
@@ -19,11 +23,11 @@ def setup_logging(path_to_config: str ='/Users/Felix/PycharmProjects/Logger/fili
     """
     if os.path.exists(path_to_config):
         file_extension = (path_to_config.split('.')[-1]).lower()
-        with open(path_to_config, 'rt') as f:
+        with open(path_to_config, 'rt') as file:
             if file_extension in ['yaml', 'yml']:
-                cfg = yaml.load(f, Loader=yaml.Loader)
+                cfg = yaml.load(file, Loader=yaml.Loader)
             elif file_extension == 'json':
-                cfg = json.load(f)
+                cfg = json.load(file)
         logging.config.dictConfig(cfg)
     else:
         logging.basicConfig(level=default_level)
@@ -224,7 +228,6 @@ class Log_Config:
 
                 print(json.dumps(cfg, indent=4))
 
-
         except IOError as err:
             if err.errno == errno.ENOENT:
                 log.error(f"{path} - does not exist")
@@ -243,9 +246,16 @@ class Log_Config:
         cfg = {}
         cfg["version"] = 1
         cfg["disable_existing_loggers"] = False
-        cfg["formatters"]["standard"]["format"] = os.getenv("LOG_FORMAT_STANDARD",  "%(asctime)s - %(levelname)s - %(name)s - %(message)s")
+        cfg["formatters"]["standard"]["format"] = os.getenv("LOG_FORMAT_STANDARD",
+                                                            "%(asctime)s-%("
+                                                            "levelname)s-filip.%(name)s:%(message)s")
         cfg["formatters"]["error"]["format"] = os.getenv("LOG_FORMAT_ERROR",
-                                                         "%(asctime)s - %(levelname)s <PID %(process)d:%(processName)s> %(name)s.%(funcName)s(): %(message)s" )
+                                                         "%(asctime)s-%("
+                                                         "levelname)s <PID %("
+                                                         "process)d:%("
+                                                         "processName)s> "
+                                                         "filip.%(name)s.%("
+                                                         "funcName)s(): %(message)s" )
 
         cfg["handlers"]["console"]["class"] = os.getenv("LOG_CLASS_CONSOLE", "logging.StreamHandler")
         cfg["handlers"]["console"]["level"] = os.getenv("LOG_LEVEL_CONSOLE", "DEBUG")
@@ -276,21 +286,21 @@ class Log_Config:
         cfg["handlers"]["debug_file_handler"]["backupCount"] = os.getenv("LOG_BACKUPCOUNT_DEBUG", 20)
         cfg["handlers"]["debug_file_handler"]["encoding"] = os.getenv("LOG_ENCODING_DEBUG", "utf8")
 
-        cfg["loggers"]["filip.iot"]["level"] = os.getenv("LOGGER_LEVEL_IOT",
+        cfg["loggers"]["iot"]["level"] = os.getenv("LOGGER_LEVEL_IOT",
                                                      "DEBUG")
-        cfg["loggers"]["filip.iot"]["handlers"] = os.getenv(
+        cfg["loggers"]["iot"]["handlers"] = os.getenv(
             "LOGGER_HANDLERS_IOT", ["console", "info_file_handler",
                                                                               "error_file_handler", "debug_file_handler"])
-        cfg["loggers"]["filip.iot"]["propagate"] = os.getenv(
+        cfg["loggers"]["iot"]["propagate"] = os.getenv(
             "LOGGER_PROPAGATE_IOT", "no")
 
-        cfg["loggers"]["filip.orion"]["level"] = os.getenv(
+        cfg["loggers"]["orion"]["level"] = os.getenv(
             "LOGGER_LEVEL_ORION",
                                                       "DEBUG")
-        cfg["loggers"]["filip.orion"]["handlers"] = os.getenv(
+        cfg["loggers"]["orion"]["handlers"] = os.getenv(
             "LOGGER_HANDLERS_ORION", ["console", "info_file_handler",
                                                                                   "error_file_handler", "debug_file_handler"])
-        cfg["loggers"]["filip.orion"]["propagate"] = os.getenv(
+        cfg["loggers"]["orion"]["propagate"] = os.getenv(
             "LOGGER_PROPAGATE_ORION", "no")
 
         cfg["loggers"]["subscription"]["level"] = os.getenv("LOGGER_LEVEL_SUBSCRIPTION", "DEBUG")

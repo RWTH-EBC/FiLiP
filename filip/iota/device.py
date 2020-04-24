@@ -5,7 +5,7 @@ from filip.iota.device_superclass import Shared
 
 import logging
 
-log = logging.getLogger('filip.iot')
+log = logging.getLogger('iot')
 
 
 PROTOCOLS = ['IoTA-JSON', 'IoTA-UL']

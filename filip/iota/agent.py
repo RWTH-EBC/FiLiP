@@ -10,7 +10,7 @@ from filip.config import Config
 
 import logging
 
-log = logging.getLogger('filip.iot')
+log = logging.getLogger('iot')
 
 
 PROTOCOLS = ['IoTA-JSON', 'IoTA-UL']
