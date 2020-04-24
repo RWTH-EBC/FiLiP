@@ -10,7 +10,7 @@ from filip.config import Config
 
 import logging
 
-log = logging.getLogger('iot')
+log = logging.getLogger('filip.iot')
 
 
 PROTOCOLS = ['IoTA-JSON', 'IoTA-UL']
@@ -41,8 +41,8 @@ class Agent:
         Function utilises the test.test_connection() function to check the availability of a given url and service.
         :return: Boolean, True if the service is reachable, False if not.
         """
-        boolean = test.test_connection(service_name=self.name, url=config.data[self.name]['host']+":" +
-                                                                   config.data[self.name]['port']+'/iot/about')
+        boolean = test.test_connection(service_name='IoT-Agent', url=self.url
+                                                                   +'/iot/about')
         return boolean
 
     def log_switch(self, level, response):

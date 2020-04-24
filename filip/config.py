@@ -7,6 +7,8 @@ import json
 
 # setup Environmental parameters
 TIMEZONE = os.getenv("TIMEZONE", "UTC/Zulu")
+log = logging.getLogger('filip.config')
+
 
 def setup_logging(path_to_config: str ='/Users/Felix/PycharmProjects/Logger/filip/log_config.yaml',
                   default_level=logging.INFO):
@@ -39,10 +41,10 @@ class Config:
         self.path = os.getenv("CONFIG_PATH", path)
         self.data = None
         if eval(self.file):
-            print("[INFO] CONFIG_PATH variable is updated to: " + self.path)
+            log.info(f"CONFIG_PATH variable is updated to: {self.path}")
             self.data = self._read_config_file(self.path)
         else:
-            print("[INFO] Configuration loaded from environment variables")
+            log.info("Configuration loaded from environment variables")
             self.data = self._read_config_envs()
         if self.data is not None:
             pass
@@ -79,17 +81,17 @@ class Config:
         #TODO: check if all data is defined
         try:
             with open(path, 'r') as filename:
-                print("[INFO] Reading " + path)
+                log.info(f"Reading {path}")
                 data = json.load(filename)
-            print(json.dumps(data, indent=4))
+            log.info(json.dumps(data, indent=4))
 
         except IOError as err:
             if err.errno == errno.ENOENT:
-                print('[ERROR]', path, '- does not exist')
+                log.error(f"{path} - does not exist")
             elif err.errno == errno.EACCES:
-                print('[ERROR]', path, '- cannot be read')
+                log.error(f"{path}- cannot be read")
             else:
-                print('[ERROR]', path, '- some other error')
+                log.error(f"{path}- some other error")
             return False
         return data
 
@@ -132,8 +134,8 @@ class Config:
         """
         try:
             self.data = data
-            print("[INFO]: Configuration parameters updated:")
-            print(json.dumps(data, indent=4))
+            log.info("Configuration parameters updated:")
+            log.info(json.dumps(data, indent=4))
         except Exception:
             print("[ERROR]: Failed to set config parameters!")
             pass
@@ -181,10 +183,10 @@ class Log_Config:
         self.path = os.getenv("CONFIG_PATH", path)
         self.data = None
         if eval(self.file):
-            print("[INFO] CONFIG_PATH variable is updated to: " + self.path)
+            log.info(f"CONFIG_PATH variable is updated to: {self.path}")
             self.data = self._read_config_file(self.path)
         else:
-            print("[INFO] Configuration loaded from environment variables")
+            log.info("Configuration loaded from environment variables")
             self.data = self._read_config_envs()
         if self.data is not None:
             pass
@@ -222,13 +224,14 @@ class Log_Config:
 
                 print(json.dumps(cfg, indent=4))
 
+
         except IOError as err:
             if err.errno == errno.ENOENT:
-                print('[ERROR]', path, '- does not exist')
+                log.error(f"{path} - does not exist")
             elif err.errno == errno.EACCES:
-                print('[ERROR]', path, '- cannot be read')
+                log.error(f"{path}- cannot be read")
             else:
-                print('[ERROR]', path, '- some other error')
+                log.error(f"{path}- some other error")
             return False
         return cfg
 
@@ -273,15 +276,22 @@ class Log_Config:
         cfg["handlers"]["debug_file_handler"]["backupCount"] = os.getenv("LOG_BACKUPCOUNT_DEBUG", 20)
         cfg["handlers"]["debug_file_handler"]["encoding"] = os.getenv("LOG_ENCODING_DEBUG", "utf8")
 
-        cfg["loggers"]["iot"]["level"] = os.getenv("LOGGER_LEVEL_IOT", "DEBUG")
-        cfg["loggers"]["iot"]["handlers"] = os.getenv("LOGGER_HANDLERS_IOT", ["console", "info_file_handler",
+        cfg["loggers"]["filip.iot"]["level"] = os.getenv("LOGGER_LEVEL_IOT",
+                                                     "DEBUG")
+        cfg["loggers"]["filip.iot"]["handlers"] = os.getenv(
+            "LOGGER_HANDLERS_IOT", ["console", "info_file_handler",
                                                                               "error_file_handler", "debug_file_handler"])
-        cfg["loggers"]["iot"]["propagate"] = os.getenv("LOGGER_PROPAGATE_IOT", "no")
+        cfg["loggers"]["filip.iot"]["propagate"] = os.getenv(
+            "LOGGER_PROPAGATE_IOT", "no")
 
-        cfg["loggers"]["orion"]["level"] = os.getenv("LOGGER_LEVEL_ORION", "DEBUG")
-        cfg["loggers"]["orion"]["handlers"] = os.getenv("LOGGER_HANDLERS_ORION", ["console", "info_file_handler",
+        cfg["loggers"]["filip.orion"]["level"] = os.getenv(
+            "LOGGER_LEVEL_ORION",
+                                                      "DEBUG")
+        cfg["loggers"]["filip.orion"]["handlers"] = os.getenv(
+            "LOGGER_HANDLERS_ORION", ["console", "info_file_handler",
                                                                                   "error_file_handler", "debug_file_handler"])
-        cfg["loggers"]["orion"]["propagate"] = os.getenv("LOGGER_PROPAGATE_ORION", "no")
+        cfg["loggers"]["filip.orion"]["propagate"] = os.getenv(
+            "LOGGER_PROPAGATE_ORION", "no")
 
         cfg["loggers"]["subscription"]["level"] = os.getenv("LOGGER_LEVEL_SUBSCRIPTION", "DEBUG")
         cfg["loggers"]["subscription"]["handlers"] = os.getenv("LOGGER_HANDLERS_SUBSCRIPTION", ["console", "info_file_handler",
@@ -312,10 +322,10 @@ class Log_Config:
         """
         try:
             self.data = data
-            print("[INFO]: Configuration parameters updated:")
+            log.info("Configuration parameters updated:")
             print(json.dumps(data, indent=4))
         except Exception:
-            print("[ERROR]: Failed to set config parameters!")
+            log.error("Failed to set config parameters!")
             pass
 
 

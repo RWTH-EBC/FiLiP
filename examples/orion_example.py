@@ -1,11 +1,5 @@
 import filip.orion as orion
 import filip.config as config
-import sys
-import logging
-import filip.request_utils as requtils
-
-
-
 from pathlib import Path
 import os
 
@@ -121,8 +115,7 @@ if __name__=="__main__":
     path_to_config = os.path.join(str(Path().resolve().parent), "config.json")
 
     CONFIG = config.Config(path_to_config)
-    ORION_CB = orion.Orion(CONFIG, version_2=True)
-    ORION_CB.sanity_check()
+    ORION_CB = orion.Orion(CONFIG)
     print(ORION_CB.test_connection())
 
     print ("++++ create entities ++++")

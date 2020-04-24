@@ -7,7 +7,7 @@ import datetime
 import math
 import logging
 
-log = logging.getLogger('orion')
+log = logging.getLogger('filip.orion')
 
 
 # ToDo Query params
@@ -178,7 +178,7 @@ class Orion:
     Further documentation:
     https://fiware-orion.readthedocs.io/en/master/
     """
-    def __init__(self, config, version_2: bool = True):
+    def __init__(self, config):
         """
         :param config:
         :param version_2: if param version_2 is True, the standard used url is the v2, else v1
@@ -189,15 +189,9 @@ class Orion:
         self.port = config.data.get("orion", {}).get("port")
         if (self.port is None) or (self.port is ""):
             # if port is None, the full url is given by the  {orion : { host }} key
-            self.url_v1 = self.host + '/v1'
-            self.url_v2 = self.host + '/v2'
+            self.url = self.host
         else:
-            self.url_v1 = self.host + ":" + self.port + "/v1"
-            self.url_v2 = self.host + ':' + self.port + '/v2'
-        if version_2 is True:
-            self.url = self.url_v2
-        else:
-            self.url = self.url_v1
+            self.url = self.host + ":" + self.port
 
 
     def set_service(self, fiware_service):
@@ -229,31 +223,14 @@ class Orion:
                        "WARNING": logging.warning
                        }.get(level, logging.info)(msg=response)
 
-    def sanity_check(self):
-        url = self.url[:-3] + '/version'
-        headers = self.get_header(requtils.HEADER_ACCEPT_JSON)
-        response = requests.get(url, headers=headers)
-        ok, retstr = requtils.response_ok(response)
-        if not ok:
-            level, retstr = requtils.logging_switch(response)
-            self.log_switch(level, retstr)
-        else:
-            json_obj = json.loads(response.text)
-            orion_version = json_obj.get("orion version")
-            orion_ld_version = json_obj.get("orionld version")
-            if (orion_version is None) or (orion_ld_version is None):
-                orion_version = json_obj["orion"]["version"]
-                log.info(f"This is the Orion version: {orion_version}")
-            else:
-                log.info(f"This is the Orion version: {orion_version} ")
-                log.info(f"This is the OrionLD version: {orion_ld_version}")
 
     def test_connection(self):
         """
         Function utilises the test.test_connection() function to check the availability of a given url and service.
         :return: Boolean, True if the service is reachable, False if not.
         """
-        boolean = test.test_connection(url=self.url, service_name=self.fiware_service)
+        boolean = test.test_connection(url=self.url+'/version',
+                                       service_name='orion-context-broker(ocb)')
         return boolean
 
     def post_entity(self, entity: Entity, force_update: bool = True):
@@ -267,14 +244,14 @@ class Orion:
         :param update: If the response.status_code is 422, whether the old entity should be updated or not
         :return:
         """
-        url = self.url + '/entities'
+        url = self.url + '/v2/entities'
         headers = self.get_header(requtils.HEADER_CONTENT_JSON)
         data = entity.get_json()
         response = requests.post(url, headers=headers, data=data)
         ok, retstr = requtils.response_ok(response)
         if not ok:
             if (response.status_code == 422) & (force_update is True):
-                    url += "/" + entity.id + "/attrs"
+                    url += f"{entity.id}/attrs"
                     response = requests.post(url, headers=headers, data=data)
                     ok, retstr = requtils.response_ok(response)
             if not ok:
@@ -298,10 +275,10 @@ class Orion:
             log.error(f"{datetime.datetime.now()} - Please provide a valid data format.")
             json_data = ""
         if params is None:
-            url = self.url + '/entities'
+            url = self.url + '/v2/entities'
             response = requests.post(url, headers=headers, data=json_data)
         else:
-            url = self.url + "/entities" + "?options=" + params
+            url = self.url + "/v2/entities" + "?options=" + params
             response = requests.post(url, headers=headers, data=json_data)
         ok, retstr = requtils.response_ok(response)
         if not ok:
@@ -315,7 +292,7 @@ class Orion:
         :return:
         """
         headers = self.get_header(requtils.HEADER_CONTENT_JSON)
-        url = self.url + "/entities" + "?options=" + params
+        url = self.url + "/v2/entities" + "?options=" + params
         response = requests.post(url, headers=headers, data=json_data)
         ok, retstr = requtils.response_ok(response)
         if not ok:
@@ -330,7 +307,7 @@ class Orion:
                 "refStore": {"type": "Relationship", "value": "urn:ngsi-ld:Store:001"}}
                 Can be a one to one or a one to many relationship
         """
-        url = self.url + '/op/update'
+        url = self.url + '/v2/op/update'
         headers = self.get_header(requtils.HEADER_CONTENT_JSON)
         # Action type append required,
         # Will overwrite existing entities if they exist whereas
@@ -352,11 +329,11 @@ class Orion:
         :param subject_type: optional parameter, if added only those child / subject entities are returned that match the type
         :return: JSON containing the child / subject information
         """
-        url = self.url + '/entities/?q=ref' + object_entity_type + '==' + object_entity_name + '&options=count'
+        url = self.url + '/v2/entities/?q=ref' + object_entity_type + '==' + object_entity_name + '&options=count'
         if subject_type is not None:
             url = url + '&attrs=type&type=' + subject_type
         headers = self.get_header()
-        response = requests.get(url=url, headers=headers)
+        response = requests.get(url=url, headers=headers, )
         ok, retstr = requtils.response_ok(response)
         if not ok:
             level, retstr = requtils.logging_switch(response)
@@ -373,7 +350,7 @@ class Orion:
         :param object_type:
         :return: List containing all associated objects
         """
-        url = self.url + '/entities/' + subject_entity_name + '/?type=' + subject_entity_type + '&options=keyValues'
+        url = self.url + '/v2/entities/' + subject_entity_name + '/?type=' + subject_entity_type + '&options=keyValues'
         if object_type is not None:
             url = url + '&attrs=ref' + object_type
         headers = self.get_header()
@@ -421,7 +398,7 @@ class Orion:
         return whole_dict
 
     def get_entity(self, entity_name,  entity_params=None):
-        url = self.url + '/entities/' + entity_name
+        url = self.url + '/v2/entities/' + entity_name
         headers = self.get_header()
         if entity_params is None:
             response = requests.get(url, headers=headers)
@@ -436,7 +413,7 @@ class Orion:
             return response.text
 
     def get_all_entities(self, parameter=None, parameter_value=None, limit=100):
-        url = self.url + '/entities?options=count'
+        url = self.url + '/v2/entities?options=count'
         headers = self.get_header()
         if parameter is None and parameter_value is None:
             response = requests.get(url, headers=headers)
@@ -464,7 +441,7 @@ class Orion:
             return response.text
 
     def get_entities_list(self, limit=100) -> list:
-        url = self.url + '/entities?options=count'
+        url = self.url + '/v2/entities?options=count'
         header = self.get_header(requtils.HEADER_ACCEPT_JSON)
         response = requests.get(url, headers=header)
         sub_count = float(response.headers["Fiware-Total-Count"])
@@ -489,7 +466,7 @@ class Orion:
         return self.get_entity(entity_name, parameter)
 
     def get_entity_attribute_json(self, entity_name, attr_name):
-        url = self.url + '/entities/' + entity_name + '/attrs/' + attr_name
+        url = self.url + '/v2/entities/' + entity_name + '/attrs/' + attr_name
         response = requests.get(url, headers=self.get_header())
         ok, retstr = requtils.response_ok(response)
         if not ok:
@@ -499,7 +476,7 @@ class Orion:
             return response.text
 
     def get_entity_attribute_value(self, entity_name, attr_name):
-        url = self.url + '/entities/' + entity_name + '/attrs/' \
+        url = self.url + '/v2/entities/' + entity_name + '/attrs/' \
                        + attr_name + '/value'
         response = requests.get(url, headers=self.get_header())
         ok, retstr = requtils.response_ok(response)
@@ -523,7 +500,7 @@ class Orion:
         return self.get_entity(entity_name, parameters)
 
     def update_entity(self, entity):
-        url = self.url + '/entities/' + entity.id + '/attrs'
+        url = self.url + '/v2/entities/' + entity.id + '/attrs'
         payload = entity.get_attributes_key_values()
         headers = self.get_header(requtils.HEADER_CONTENT_JSON)
         data = json.dumps(payload)
@@ -534,7 +511,7 @@ class Orion:
             self.log_switch(level, retstr)
 
     def update_attribute(self, entity_name, attr_name, attr_value):
-        url = self.url + '/entities/' + entity_name + '/attrs/' \
+        url = self.url + '/v2/entities/' + entity_name + '/attrs/' \
                        + attr_name + '/value'
         headers = self.get_header(requtils.HEADER_CONTENT_PLAIN)
         data = json.dumps(attr_value)
@@ -563,7 +540,7 @@ class Orion:
             entity_name = entity_name
         existing_attributes = self.get_attributes(entity_name)
         new_attributes = {k: v for (k, v) in attributes.items() if k not in existing_attributes}
-        url = self.url + '/entities/' + entity_name + '/attrs?options=append'
+        url = self.url + '/v2/entities/' + entity_name + '/attrs?options=append'
         headers = self.get_header(requtils.HEADER_CONTENT_JSON)
         data = json.dumps(new_attributes)
         response = requests.post(url, data=data, headers=headers)
@@ -583,7 +560,7 @@ class Orion:
         return attributes
 
     def remove_attributes(self, entity_name):
-        url = self.url + '/entities/' + entity_name + '/attrs'
+        url = self.url + '/v2/entities/' + entity_name + '/attrs'
         response = requests.put(url)
         ok, retstr = requtils.response_ok(response)
         if not ok:
@@ -591,7 +568,7 @@ class Orion:
             self.log_switch(level, response)
 
     def create_subscription(self, subscription_body, check_duplicate: bool = True):
-        url = self.url + '/subscriptions'
+        url = self.url + '/v2/subscriptions'
         headers = self.get_header(requtils.HEADER_CONTENT_JSON)
         if check_duplicate is True:
             exists = self.check_duplicate_subscription(subscription_body)
@@ -612,7 +589,7 @@ class Orion:
             return subscription_id
 
     def get_subscription_list(self, limit=100):
-        url = self.url + '/subscriptions?options=count'
+        url = self.url + '/v2/subscriptions?options=count'
         response = requests.get(url, headers=self.get_header())
         sub_count = float(response.headers["Fiware-Total-Count"])
         if sub_count >= limit:
@@ -631,7 +608,7 @@ class Orion:
         return subscriptions
 
     def get_subscription(self, subscription_id: str):
-        url = self.url + '/subscriptions/' + subscription_id
+        url = self.url + '/v2/subscriptions/' + subscription_id
         response = requests.get(url, headers=self.get_header())
         ok, retstr = requtils.response_ok(response)
         if not ok:
@@ -639,7 +616,7 @@ class Orion:
             self.log_switch(level, retstr)
 
     def delete_subscription(self, subscription_id: str):
-        url = self.url + '/subscriptions/' + subscription_id
+        url = self.url + '/v2/subscriptions/' + subscription_id
         response = requests.delete(url, headers=self.get_header())
         ok, retstr = requtils.response_ok(response)
         if not ok:
@@ -700,7 +677,7 @@ class Orion:
             subscription_url = json.loads(subscription_body)["notification"]["http"]["url"]
 
         # If the number of subscriptions is larger then the limit, paginations methods have to be used
-        url = self.url + '/subscriptions?limit=' + str(limit) + '&options=count'
+        url = self.url + '/v2/subscriptions?limit=' + str(limit) + '&options=count'
         response = requests.get(url, headers=self.get_header())
 
         sub_count = float(response.headers["Fiware-Total-Count"])
@@ -749,8 +726,8 @@ class Orion:
                         if (type_existing is subscription_type) or\
                                 ('*' in subscription_type) or \
                                 ('*' in type_existing)\
-                                or (type_existing is "") or (
-                                subscription_type is ""):
+                                or (type_existing == "") or (
+                                subscription_type == ""):
                             # check if on of the subscriptions is a pattern, or if they both refer to the same id
                             # Get the attrs first, to avoid code duplication
                             # last thing to compare is the attributes
@@ -799,7 +776,7 @@ class Orion:
 
     def post_cmd_v1(self, entity_id: str, entity_type: str,
                     cmd_name: str, cmd_value: str):
-        url = self.url_v1 + '/updateContext'
+        url = self.url + '/v1/updateContext'
         payload = {"updateAction": "UPDATE",
                    "contextElements": [
                         {"id": entity_id,
@@ -821,7 +798,7 @@ class Orion:
             self.log_switch(level, retstr)
 
     def delete(self, entity_id: str):
-        url = self.url + '/entities/' + entity_id
+        url = self.url + '/v2/entities/' + entity_id
         response = requests.delete(url, headers=self.get_header())
         ok, retstr = requtils.response_ok(response)
         if not ok:
