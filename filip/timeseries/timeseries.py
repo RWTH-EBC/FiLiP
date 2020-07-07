@@ -1,7 +1,7 @@
-import filip.subscription as sub
-import filip.orion as orion
-import filip.request_utils as requtils
-from filip import test
+from cb import Subscription as sub
+from cb import *
+from filip.utils import request_utils as requtils
+from filip.testing import test
 import requests
 import json
 
@@ -17,8 +17,9 @@ class QuantumLeap():
     database (CrateDB). Further Information:
     https://smartsdk.github.io/ngsi-timeseries-api/#quantumleap
     """
-    def __init__(self, config: object):
+    def __init__(self, config: object, session=None):
         """Initialize with configuration values"""
+        self.session = session or requests.Session()
         self.host = config.data.get("quantum_leap", {}).get("host")
         self.port = config.data.get("quantum_leap", {}).get("port")
 
@@ -36,10 +37,19 @@ class QuantumLeap():
         else:
             self.crate_url = self.crate_host + ":" + self.crate_port
 
-        self.fiware_service = orion.FiwareService(name=config.data['fiware']['service'],
+        self.fiware_service = FiwareService(name=config.data['fiware']['service'],
                                                   path=config.data['fiware']['service_path'])
 
-    def create_subscription_object(self, entity: orion.Entity, url: str,
+    def test_connection(self):
+        """
+        Function utilises the test.test_connection() function to check the availability of a given url and service.
+        :return: Boolean, True if the service is reachable, False if not.
+        """
+        boolean = test.test_connection(client=self.session,
+                                       url=self.url + '/v2/version',
+                                       service_name=__name__)
+
+    def create_subscription_object(self, entity: Entity, url: str,
                                    **kwargs) -> object:
         """
         Creates and returns Subscription object so that it can be edited before
@@ -50,7 +60,7 @@ class QuantumLeap():
         """
         id_pattern = kwargs.get("id_pattern", None)
         if id_pattern != None:
-            subject_entity = sub.Subject_Entity(id_pattern, None, True)
+            subject_entity = Subject_Entity(id_pattern, None, True)
         else:
             entity_type = json.loads(entity.get_json())["type"]
             subject_entity = sub.Subject_Entity(entity.id, entity_type)
@@ -75,9 +85,9 @@ class QuantumLeap():
             return headers
 
     def get_version(self):
-        url = self.url + '/version'
+        url = self.url + '/v2/version'
         headers=requtils.HEADER_CONTENT_PLAIN
-        response = requests.get(url, headers=headers)
+        response = self.session.get(url, headers=headers)
         ok, retstr = requtils.response_ok(response)
         if (not ok):
             print(retstr)
@@ -86,9 +96,9 @@ class QuantumLeap():
             return response.text
 
     def get_health(self):
-        url = self.url + '/health'
+        url = self.url + '/v2/health'
         headers = requtils.HEADER_CONTENT_PLAIN
-        response = requests.get(url, headers=headers)
+        response = self.session.get(url, headers=headers)
         ok, retstr = requtils.response_ok(response)
         if not ok:
             print(retstr)
@@ -99,7 +109,7 @@ class QuantumLeap():
     def delete_entity(self, entity_name: str):
         url = self.url + '/entities/' + entity_name
         headers = self.get_header(requtils.HEADER_CONTENT_PLAIN)
-        response = requests.delete(url, headers=headers)
+        response = self.session.delete(url, headers=headers)
         ok, retstr = requtils.response_ok(response)
         if not ok:
             print(retstr)
@@ -107,7 +117,7 @@ class QuantumLeap():
     def delete_entities_of_type(self, entity_type):
         url = self.url + '/types/' + entity_type
         headers = self.get_header(requtils.HEADER_CONTENT_PLAIN)
-        response = requests.delete(url, headers=headers)
+        response = self.session.delete(url, headers=headers)
         ok, retstr = requtils.response_ok(response)
         if not ok:
             print(retstr)
@@ -121,7 +131,7 @@ class QuantumLeap():
             url += '/attrs/' + attr_name
         if valuesonly:
             url += '/value'
-        response = requests.get(url, headers=headers, params=params)
+        response = self.session.get(url, headers=headers, params=params)
         ok, retstr = requtils.response_ok(response)
         if not ok:
             print(retstr)
@@ -137,7 +147,7 @@ class QuantumLeap():
             url += '/attrs/' + attr_name
         if valuesonly:
             url += '/value'
-        response = requests.get(url, headers=headers)
+        response = self.session.get(url, headers=headers)
         ok, retstr = requtils.response_ok(response)
         if not ok:
             print(retstr)
@@ -152,7 +162,7 @@ class QuantumLeap():
             url += '/' + attr_name
         if valuesonly:
             url += '/value'
-        response = requests.get(url, headers=headers)
+        response = self.session.get(url, headers=headers)
         ok, retstr = requtils.response_ok(response)
         if not ok:
             print(retstr)
@@ -178,7 +188,7 @@ class QuantumLeap():
         if valuesonly:
             url += '/value'
         url += '?limit=' + limit
-        response = requests.get(url, headers=headers)
+        response = self.session.get(url, headers=headers)
         ok, retstr = requtils.response_ok(response)
         if not ok:
             print(retstr)

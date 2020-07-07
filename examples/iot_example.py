@@ -1,7 +1,5 @@
 from filip import config, orion
-from filip.iota.agent import Agent
-from filip.iota.device_group import DeviceGroup
-from filip.iota.device import Device
+from filip.iota import Agent, DeviceGroup, Device
 import os
 from pathlib import Path
 

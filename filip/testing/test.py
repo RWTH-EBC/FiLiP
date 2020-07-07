@@ -6,7 +6,7 @@ import logging
 log = logging.getLogger('test')
 
 
-def test_connection(url: str, service_name: str,
+def test_connection(url: str, client: requests.Session, service_name: str,
                     auth_method: str = None, **kwargs):
     """
     This function tests the a webservice is reachable
@@ -20,44 +20,14 @@ def test_connection(url: str, service_name: str,
     :return: Boolean, whether connection exists or not
     """
     try:
-        if auth_method is None:
-            res = requests.get(url)
-            if res.status_code == 200:
-                log.info(f"{service_name}: Check Success! Service is up and "
-                         f"running!")
-                log.info(res.text)
-                return True
-            else:
-                log.error(f"{service_name}: Check has Errors! Please check "
-                          f"Service response: {res.text}")
-                return False
-        else:
-            if auth_method == "HTTPBasicAuth":
-                authorization = kwargs.get("auth")
-                res = requests.get(url, auth=authorization)
-
-            elif auth_method == "HTTPDigestAuth":
-                authorization = kwargs.get("auth")
-                requests.get(url, auth=HTTPDigestAuth(authorization))
-
-            else:
-                log.error(f"{service_name}: Authentication method:"
-                          f" {auth_method} currently not supported")
-                raise NotImplementedError
-
-            if res.status_code == 200:
-                log.info(f"{service_name}: Check Success! Service is up and "
-                         f"running!")
-                log.info(res.text)
-                return True
-            else:
-                log.error(f"{service_name}: Check has Errors! Please check "
-                          f"Service response: {res.text}")
-                return False
-
+        res=client.get(url)
+        if res.status_code == 200:
+            log.info(f"{service_name}: Check Success! Service is up and "
+                     f"running!")
+            log.info(res.text)
     except Exception:
-        log.error(f"{service_name} : Check Failed! Is the service up and "
-                  f"running? Please check configuration! ")
+        log.error(f"{service_name}: Check Failed! Is the service up and "
+                  f"running? Please check configuration!")
         return False
 
 
