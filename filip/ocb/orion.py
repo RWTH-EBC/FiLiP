@@ -5,7 +5,7 @@ from filip.testing import test
 import math
 import logging
 
-log = logging.getLogger('filip.orion')
+logger = logging.getLogger('ocb')
 
 
 # ToDo Query params
@@ -47,7 +47,8 @@ class Entity:
         returns the object-representation
         """
         attrs = self.get_attributes_key_values()
-        entity_str = '"enity_id": "{}", "type": "{}", "attributes": "{}" '.format(self.id, self.entity_dict["type"], attrs)
+        entity_str = '"entity_id": "{}", "type": "{}", "attributes": "{}" ' \
+                     ''.format(self.id, self.entity_dict["type"], attrs)
         return entity_str
 
     def get_json(self):
@@ -272,7 +273,7 @@ class Orion:
         elif (json is None) and (entity is not None):
             json_data = entity.get_json()
         else:
-            log.error(f"Please provide a valid data format.")
+            logger.error(f"Please provide a valid data format.")
             json_data = ""
         if params is None:
             url = self.url + '/v2/entities'
@@ -431,7 +432,7 @@ class Orion:
                                                limit=limit, count=sub_count, params=parameters)
                 return response
         else:
-            log.error("Getting all entities: both function parameters have to be 'not null'")
+            logger.error("Getting all entities: both function parameters have to be 'not null'")
             return None
         ok, retstr = requtils.response_ok(response)
         if not ok:
@@ -573,7 +574,7 @@ class Orion:
         if check_duplicate is True:
             exists = self.check_duplicate_subscription(subscription_body)
             if exists is True:
-                log.info(f"A similar subscription already exists.")
+                logger.info(f"A similar subscription already exists.")
         response = self.session.post(url, headers=headers, data=subscription_body)
         if response.headers is None:
             return

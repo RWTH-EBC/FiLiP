@@ -9,8 +9,9 @@ import json
 TIMEZONE = os.getenv("TIMEZONE", "UTC/Zulu")
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
 logging.basicConfig(level=LOG_LEVEL,
-                    format="%(asctime)s-%(levelname)s-filip.%(name)s: %("
-                           "message)s")
+                    format='%(asctime)s - FiLiP.%(name)s - %(levelname)s: %('
+                              'message)s',
+                    datefmt='%Y-%m-%d %H:%M:%S')
 log = logging.getLogger('config')
 
 
@@ -43,7 +44,7 @@ class Config:
         """
         self.file = os.getenv("CONFIG_FILE", 'True')
         self.path = os.getenv("CONFIG_PATH", path)
-        self.data = None
+        self.data = {}
         if eval(self.file):
             log.info(f"CONFIG_PATH variable is updated to: {self.path}")
             self.data = self._read_config_file(self.path)
@@ -74,6 +75,12 @@ class Config:
         :return:
         """
         return "{}".format(self.data)
+
+    def __getitem__(self, item):
+        return self.data[item]
+
+    def __setitem__(self, key, value):
+        self.data.__setitem__(key, value)
 
     def _read_config_file(self, path: str):
         """
@@ -266,7 +273,7 @@ class Log_Config:
         cfg["handlers"]["info_file_handler"]["class"] = os.getenv("LOG_CLASS_INFO", "logging.handlers.RotatingFileHandler")
         cfg["handlers"]["info_file_handler"]["level"] = os.getenv("LOG_LEVEL_INFO", "INFO")
         cfg["handlers"]["info_file_handler"]["formatter"] = os.getenv("LOG_FORMATTER_INFO", "standard")
-        cfg["handlers"]["info_file_handler"]["filename"] = os.getenv("LOG_FILENAME_INFO", "info.log")
+        cfg["handlers"]["info_file_handler"]["filename"] = os.getenv("LOG_FILENAME_INFO", "info.logger")
         cfg["handlers"]["info_file_handler"]["maxBytes"] = os.getenv("LOG_MAXBYTES_INFO", 10485760)
         cfg["handlers"]["info_file_handler"]["backupCount"] = os.getenv("LOG_BACKUPCOUNT_INFO", 20)
         cfg["handlers"]["info_file_handler"]["encoding"] = os.getenv("LOG_ENCODING_INFO", "utf8")
@@ -274,7 +281,7 @@ class Log_Config:
         cfg["handlers"]["error_file_handler"]["class"] = os.getenv("LOG_CLASS_ERROR", "logging.handlers.RotatingFileHandler")
         cfg["handlers"]["error_file_handler"]["level"] = os.getenv("LOG_LEVEL_ERROR", "ERROR")
         cfg["handlers"]["error_file_handler"]["formatter"] = os.getenv("LOG_FORMATTER_ERROR", "error")
-        cfg["handlers"]["error_file_handler"]["filename"] = os.getenv("LOG_FILENAME_ERROR", "error.log")
+        cfg["handlers"]["error_file_handler"]["filename"] = os.getenv("LOG_FILENAME_ERROR", "error.logger")
         cfg["handlers"]["error_file_handler"]["maxBytes"] = os.getenv("LOG_MAXBYTES_ERROR", 10485760)
         cfg["handlers"]["error_file_handler"]["backupCount"] = os.getenv("LOG_BACKUPCOUNT_ERROR", 20)
         cfg["handlers"]["error_file_handler"]["encoding"] = os.getenv("LOG_ENCODING_ERROR", "utf8")
@@ -282,7 +289,7 @@ class Log_Config:
         cfg["handlers"]["debug_file_handler"]["class"] = os.getenv("LOG_CLASS_DEBUG", "logging.handlers.RotatingFileHandler")
         cfg["handlers"]["debug_file_handler"]["level"] = os.getenv("LOG_LEVEL_DEBUG", "DEBUG")
         cfg["handlers"]["debug_file_handler"]["formatter"] = os.getenv("LOG_FORMATTER_DEBUG", "error")
-        cfg["handlers"]["debug_file_handler"]["filename"] = os.getenv("LOG_FILENAME_DEBUG", "debug.log")
+        cfg["handlers"]["debug_file_handler"]["filename"] = os.getenv("LOG_FILENAME_DEBUG", "debug.logger")
         cfg["handlers"]["debug_file_handler"]["maxBytes"] = os.getenv("LOG_MAXBYTES_DEBUG", 10485760)
         cfg["handlers"]["debug_file_handler"]["backupCount"] = os.getenv("LOG_BACKUPCOUNT_DEBUG", 20)
         cfg["handlers"]["debug_file_handler"]["encoding"] = os.getenv("LOG_ENCODING_DEBUG", "utf8")

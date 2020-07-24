@@ -1,4 +1,4 @@
-import filip.cb as cb
+import filip.ocb as cb
 import filip.config as config
 from pathlib import Path
 import os
@@ -35,11 +35,11 @@ def create_entities(orion_cb:object):
                          "type": "Integer" }
             }
 
-    room1_json = cb.Entity(room1)
+    room1_json = ocb.Entity(room1)
 
-    room2_json = cb.Entity(room2)
+    room2_json = ocb.Entity(room2)
 
-    room3_json = cb.Entity(room3)
+    room3_json = ocb.Entity(room3)
 
     orion_cb.post_json(room1_json.get_json())
 
@@ -57,7 +57,7 @@ def create_entities(orion_cb:object):
             }
 
 
-    dog_json = cb.Entity(dog)
+    dog_json = ocb.Entity(dog)
 
     orion_cb.post_json_key_value(dog_json.get_json())
 
@@ -115,7 +115,7 @@ if __name__=="__main__":
     path_to_config = os.path.join(str(Path().resolve().parent), "config.json")
 
     CONFIG = config.Config(path_to_config)
-    ORION_CB = cb.Orion(CONFIG)
+    ORION_CB = ocb.Orion(CONFIG)
     print(ORION_CB.test_connection())
 
     print ("++++ create entities ++++")

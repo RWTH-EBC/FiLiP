@@ -1,4 +1,5 @@
-from filip import config, orion
+import filip.config as config
+from filip.ocb import Orion, FiwareService
 from filip.iota import Agent, DeviceGroup, Device
 import os
 from pathlib import Path
@@ -6,15 +7,15 @@ from pathlib import Path
 # ToDo: Rewrite Example, so it matches the orion Example
 # ToDo: Change Data Model
 
-def iota(config:config.Config):
+def iota(config: config.Config):
     # Creating an Instance of the Context Broker
-    ocb = orion.Orion(config)
+    ocb = Orion(config)
 
     # Creating an Instance of the IoT-Agent in the UL-Version
     agent = Agent(config)
 
     # set the service path
-    fiware_service = orion.FiwareService("filip",
+    fiware_service = FiwareService("filip",
                                          "/iot_example")
     ocb.set_service(fiware_service)
 

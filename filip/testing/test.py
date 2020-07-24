@@ -3,7 +3,7 @@ from requests.auth import HTTPBasicAuth, HTTPDigestAuth
 
 import logging
 
-log = logging.getLogger('test')
+logger = logging.getLogger('testing')
 
 
 def test_connection(url: str, client: requests.Session, service_name: str,
@@ -20,13 +20,16 @@ def test_connection(url: str, client: requests.Session, service_name: str,
     :return: Boolean, whether connection exists or not
     """
     try:
-        res=client.get(url)
-        if res.status_code == 200:
-            log.info(f"{service_name}: Check Success! Service is up and "
+        res=client.get(url=url)
+        if res.ok:
+            logger.info(f"{service_name}: Check Success! Service is up and "
                      f"running!")
-            log.info(res.text)
+            logger.info(res.text)
+        else:
+            logger.error(f"{service_name}: Check Failed! Please check "
+                      f"configuration! Response code: {res.status_code}")
     except Exception:
-        log.error(f"{service_name}: Check Failed! Is the service up and "
+        logger.error(f"{service_name}: Check Failed! Is the service up and "
                   f"running? Please check configuration!")
         return False
 
@@ -79,11 +82,11 @@ def test_config(service_name: str, config_data: dict):
                 f" Protocol for {service_name} not supported! The following " \
                 f"protocols are supported: {protocols}"
 
-        log.info("Configuration successfully tested!")
+        logger.info("Configuration successfully tested!")
         return True
 
     except Exception as error:
-        log.error(f"  Config test failed! {error}")
+        logger.error(f"  Config test failed! {error}")
         return False
 
 

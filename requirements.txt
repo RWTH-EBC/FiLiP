@@ -1,6 +1,7 @@
 requests
+requests_oauthlib
+oauthlib
 fuzzywuzzy
 PyYAML
 pandas
 python-Levenshtein
-requests_oauthlib

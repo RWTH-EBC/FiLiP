@@ -43,7 +43,7 @@ class Agent:
         """
         boolean = test.test_connection(client=self.session,
                                        service_name=__name__,
-                                       url=self.url+'/iot/about')
+                                       url=self.url+'/version')
         return boolean
 
     def log_switch(self, level, response):
