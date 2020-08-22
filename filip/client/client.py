@@ -16,18 +16,11 @@ import errno
 
 logger = logging.getLogger('client')
 
-auth = {'type': 'oauth2',
-        'flow': 'password_credentials',
-        'secret': r'D:\Projects\N5GEH\n5geh.tools.FiLiP\secrets.json', }
-
 class Client:
-    __credentials = {"username": None,
-                    "password": None,
-                    "client_id": None,
-                    "client_secret": None,
-                    "token_url": None,
-                    "scope": None,
-                    "authorization_endpoint": None}
+    __secrets = {"username": None,
+                 "password": None,
+                 "client_id": None,
+                 "client_secret": None}
 
     def __init__(self):
         auth_types = {'basicauth': self.__http_basic_auth,
