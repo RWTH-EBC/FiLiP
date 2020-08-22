@@ -4,10 +4,12 @@ from ocb import Orion
 from timeseries import QuantumLeap
 from requests.auth import HTTPBasicAuth, HTTPDigestAuth
 from requests import Session
-from requests_oauthlib import OAuth2Session
-from oauthlib.oauth2 import LegacyApplicationClient, \
-    MobileApplicationClient, \
-    BackendApplicationClient
+#from requests_oauthlib import OAuth2Session
+#from oauthlib.oauth2 import LegacyApplicationClient, \
+#    MobileApplicationClient, \
+#    BackendApplicationClient
+from authlib.integrations.requests_client import OAuth2Session
+from authlib.integrations.requests_client import OAuth2Auth
 import logging
 import json
 import errno
@@ -15,10 +17,18 @@ import errno
 logger = logging.getLogger('client')
 
 auth = {'type': 'oauth2',
-        'workflow': 'resource_owner_password_credentials_grant',
+        'flow': 'password_credentials',
         'secret': r'D:\Projects\N5GEH\n5geh.tools.FiLiP\secrets.json', }
 
 class Client:
+    __credentials = {"username": None,
+                    "password": None,
+                    "client_id": None,
+                    "client_secret": None,
+                    "token_url": None,
+                    "scope": None,
+                    "authorization_endpoint": None}
+
     def __init__(self):
         auth_types = {'basicauth': self.__http_basic_auth,
                       'digestauth': self.__http_digest_auth,
@@ -28,7 +38,7 @@ class Client:
             path=r'D:\Projects\N5GEH\n5geh.tools.FiLiP\config.json')
 
         self.config['auth'] = auth
-        self.__credentials = {}
+
         if self.config['auth']:
             assert self.config['auth']['type'].lower() in auth_types.keys()
             self.__get_secrets(path=self.config['auth']['secret'])
@@ -66,10 +76,11 @@ class Client:
         :param path: location of secrets-file
         :return: None
         """
+
         try:
             with open(path, 'r') as filename:
                 logger.info(f"Reading credentials from: {path}")
-                self.__credentials = json.load(filename)
+                self.__credentials.update(json.load(filename))
 
         except IOError as err:
             if err.errno == errno.ENOENT:
@@ -107,47 +118,88 @@ class Client:
         except KeyError:
             pass
 
-    def __oauth2(self):
+#    def __oauth2(self):
+#        """
+#        Initiates a oauthclient according to the workflows defined by OAuth2.0.
+#        We use requests-oauthlib for this implementation. The documentation
+#        of the package is located here:
+#        https://requests-oauthlib.readthedocs.io/en/latest/index.html
+#        The information for workflow selection must be provided via
+#        filip-config. The credentials must be provided via secrets-file.
+#        :return: None
+#        """
+#        oauth2clients = {'authorization_code': None,
+#                         'implicit': MobileApplicationClient,
+#                         'resource_owner_password_credentials':
+#                             LegacyApplicationClient,
+#                         'client_credentials': BackendApplicationClient, }
+#        try:
+#            workflow = self.config['auth']['workflow']
+#        except KeyError:
+#            logger.warning(f"No workflow for OAuth2 defined! Default "
+#                           f"workflow will used: Authorization Code Grant."
+#                           f"Other oauth2-workflows available are: "
+#                           f"{oauth2clients.keys()}")
+#            workflow = 'authorization_code_grant'
+#
+#        oauthclient = oauth2clients[workflow](client_id=self.__credentials[
+#            'client_id'])
+#        self.session = OAuth2Session(client_id=None,
+#                                     client=oauthclient,
+#                                     auto_refresh_url=self.__credentials[
+#                                         'token_url'],
+#                                     auto_refresh_kwargs={
+#                                         self.__credentials['client_id'],
+#                                         self.__credentials['client_secret']})
+#
+#        self.__token = self.session.fetch_token(
+#            token_url=self.__credentials['token_url'],
+#            username=self.__credentials['username'],
+#            password=self.__credentials['password'],
+#            client_id=self.__credentials['client_id'],
+#            client_secret=self.__credentials['client_secret'])
+#
+#    def __token_saver(self, token):
+#        self.__token = token
+
+    def __oauth2(self, **kwargs):
         """
         Initiates a oauthclient according to the workflows defined by OAuth2.0.
-        We use requests-oauthlib for this implementation. The documentation
+        We use authlib for this implementation. The documentation
         of the package is located here:
-        https://requests-oauthlib.readthedocs.io/en/latest/index.html
+        https://docs.authlib.org/en/latest/client/requests.html
         The information for workflow selection must be provided via
         filip-config. The credentials must be provided via secrets-file.
         :return: None
         """
-        oauth2clients = {'authorization_code_grant': None,
-                         'implicit_grant': MobileApplicationClient,
-                         'resource_owner_password_credentials_grant':
-                             LegacyApplicationClient,
-                         'client_credentials_grant': BackendApplicationClient, }
-        try:
-            workflow = self.config['auth']['workflow']
-        except KeyError:
-            logger.warning(f"No workflow for OAuth2 defined! Default "
-                           f"workflow will used: Authorization Code Grant."
-                           f"Other oauth2-workflows available are: "
-                           f"{oauth2clients.keys()}")
-            workflow = 'authorization_code_grant'
+        auth2clients = {'authorization_code': None,
+                         'implicit': None,
+                         'password_credentials': None,
+                         'client_credentials': None }
 
-        oauthclient = oauth2clients[workflow](client_id=self.__credentials[
-            'client_id'])
-        self.session = OAuth2Session(client_id=None,
-                                     client=oauthclient,
-                                     auto_refresh_url=self.__credentials[
-                                         'token_url'],
-                                     auto_refresh_kwargs={
-                                         self.__credentials['client_id'],
-                                         self.__credentials['client_secret']})
 
-        self.__token = self.session.fetch_token(
-            token_url=self.__credentials['token_url'],
-            username=self.__credentials['username'],
-            password=self.__credentials['password'],
-            client_id=self.__credentials['client_id'],
-            client_secret=self.__credentials['client_secret'])
+        self.session = OAuth2Session(client_id=
+                                    self.__credentials['client_id'],
+                                     client_secret=self.__credentials[
+                                         'client_secret'],
+                                     authorization_endpoint=None,
+                                     token_endpoint=None,
+                                     token_endpoint_auth_method=None,
+                                     revocation_endpoint_auth_method=None,
+                                     scope=None,
+                                     redirect_uri=None,
+                                     token=None,
+                                     token_placement='header',
+                                     update_token=None,
+                                     **kwargs)
 
-    def __token_saver(self, token):
-        self.__token = token
-
+        self.__token = self.session.fetch_token(url=
+                                                self.__credentials['token_url'],
+                                                body='',
+                                                method='POST',
+                                                headers=None,
+                                                auth=None,
+                                                grant_type=None,
+                                                **kwargs)
+        print(self.__token)
+        self.session.auth = OAuth2Auth(self.__token)

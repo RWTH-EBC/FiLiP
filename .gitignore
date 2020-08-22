@@ -31,3 +31,7 @@ venv
 .pytest_cache
 /filip.egg-info/
 
+#filip#
+secrets-tst.json
+config-tst.json
+

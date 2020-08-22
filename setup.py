@@ -4,7 +4,8 @@ INSTALL_REQUIRES = ['requests',
                     'fuzzywuzzy',
                     'PyYAML',
                     'pandas',
-                    'requests_oauthlib']
+                    'requests_oauthlib',
+                    'authlib']
 
 SETUP_REQUIRES = INSTALL_REQUIRES.copy()
 

@@ -1,6 +1,7 @@
 requests
 requests_oauthlib
 oauthlib
+authlib
 fuzzywuzzy
 PyYAML
 pandas
