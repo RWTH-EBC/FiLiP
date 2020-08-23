@@ -79,7 +79,7 @@ if __name__ == '__main__':
         resp = client.get(account_url)
 
 
-
+# TODO: https://stackoverflow.com/questions/38380086/sending-list-of-dicts-as-value-of-dict-with-requests-post-going-wrong
 
 
 
