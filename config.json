@@ -1,0 +1,17 @@
+{
+  "orion": {"url": "http://localhost:1026"},
+
+  "Quantumleap": {
+    "Host": "localhost",
+    "port": 8668
+  },
+  "fiware": {
+    "service": "crio",
+    "service_path": "/measurements"
+  },
+  "iota": {
+    "host": "http://localhost",
+    "protocol": "IoTA-JSON"
+  }
+}
+

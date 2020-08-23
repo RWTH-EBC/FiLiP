@@ -1,20 +1,42 @@
 import json 
 from enum import Enum
+import logging
+
+log = logging.getLogger('subscription')
+
+
+"""Implementation of subscriptions according to NGSIv2 specification
+    Further information:
+    http://telefonicaid.github.io/fiware-orion/api/v2/stable/
+    https://fiware-orion.readthedocs.io/en/master/user/ngsiv2_implementation_notes/index.html"""
+
 
 class Subject_Entity:
-    def __init__(self, _id, _type=None):
+    def __init__(self, id_pattern, type_pattern=None, use_id_pattern=False, use_type_pattern=False):
         """
-        :param id: id XOR idPattern, required
-        :param _type: type OR typePattern; if omitted: any entity type
+        :param id_pattern: id XOR idPattern, required
+        :param type_pattern: type XOR typePattern; if omitted: any entity type
+        :param use_id_pattern: use idPattern instead of id
+        :param use_type_pattern: use typePattern instead of type
         """
-        self.id = _id
-        self.type = _type
+        self.id = id_pattern
+        self.type = type_pattern
+        self.use_id_pattern = use_id_pattern
+        self.use_type_pattern = use_type_pattern
     
     def get_json_dict(self):
-        json_dict = {"id": "{}".format(self.id)}
+        json_dict = {}
+        if self.use_id_pattern:
+            json_dict["idPattern"] = self.id
+        else:
+            json_dict["id"] = self.id
         if self.type is not None:
-            json_dict["type"] = self.type
+            if self.use_type_pattern:
+                json_dict["typePattern"] = self.type
+            else:
+                json_dict["type"] = self.type
         return json_dict
+
 
 class Subject_Expression:
     def __init__(self):
@@ -38,8 +60,9 @@ class Subject_Expression:
             json_dict["coords"] = self.coords
         return json_dict
 
+
 class Subject_Condition:
-    def __init__(self, attributes: list = None, expression:object = None):
+    def __init__(self, attributes: list = None, expression: Subject_Expression = None):
         """
         :param attributes: list of attribute names, optional
         :param expression: Subject_Expression object, optional
@@ -57,8 +80,9 @@ class Subject_Condition:
             json_dict["expression"] = self.expression.get_json_dict()
         return json_dict
 
+
 class Subject:
-    def __init__(self, entities: list, condition: object = None):
+    def __init__(self, entities: list, condition: Subject_Condition = None):
         """
         :param entities: list of Subject_Entity objects, required
         :param condition: Subject_Condition object; if left empty,
@@ -76,6 +100,7 @@ class Subject:
         if self.condition is not None:
             json_dict["condition"] = self.condition.get_json_dict()
         return json_dict
+
 
 class Notification_Attributes:
     def __init__(self, attribute_type: str = None, _list=None, specified=False):
@@ -96,7 +121,7 @@ class Notification_Attributes:
     def get_json_dict(self):
         if not self.specified:
             return None
-        json_dict = {}
+        json_dict = dict()
         json_dict[self.attribute_type] = self.attr_list
         return json_dict
 
@@ -106,7 +131,7 @@ class Notification_Attributes:
 
 class HTTP_Params:
     def __init__(self, url, headers: dict = None, qs: dict = None,
-                 method: str = None, payload = None):
+                 method: str = None, payload=None):
         """
         :param url: URL referencing the service to be invoked by a notification
         :param headers: key-map (dict) of HTTP headers; optional
@@ -122,9 +147,9 @@ class HTTP_Params:
 
     def is_custom_http(self):
         if self.headers is not None \
-        or self.qs is not None \
-        or self.method is not None \
-        or self.payload is not None:
+                or self.qs is not None \
+                or self.method is not None \
+                or self.payload is not None:
             return True
         else:
             return False
@@ -134,18 +159,19 @@ class HTTP_Params:
         if not self.is_custom_http():
             return json_dict
         if self.headers is not None:
-            json_dict["headers"] = self.headers #TODO: this is wrong, headers is a key-map
+            json_dict["headers"] = self.headers  #TODO: this is wrong, headers is a key-map
         if self.qs is not None:
-            json_dict["qs"] = self.qs # TODO (See headers)
+            json_dict["qs"] = self.qs  # TODO (See headers)
         if self.method is not None:
             json_dict["method"] = self.method
         if self.payload is not None:
             json_dict["payload"] = self.payload
         return json_dict
 
+
 class Notification:
-    def __init__(self, http, attr: object = None, attrsFormat: str = None,
-                                                   metadata: list = None):
+    def __init__(self, http, attr: Notification_Attributes = None,
+                 attrsFormat: str = None, metadata: list = None):
         """
         :param http: object of class 'HTTP_Params', required
         :param attr: object of class 'Notification_Attribute', optional
@@ -156,7 +182,7 @@ class Notification:
         self.http = http
         self.attr = attr
         self.attrsFormat = attrsFormat
-        self.metadata  = metadata
+        self.metadata = metadata
 
     def get_json_dict(self):
         json_dict = {}
@@ -175,12 +201,10 @@ class Notification:
 
 class Subscription:
     """
-    Orion Context Broker Subscription according to NGSI v2 specification.
-    Further information:
-    http://telefonicaid.github.io/fiware-orion/api/v2/stable/
+    Main class as container class for different subattributes of subscription payload
     """
-    def __init__(self, subject, notification, description=None, expires=None,
-                                                            throttling=None):
+    def __init__(self, subject, notification, description=None,
+                 expires=None, throttling=None):
         """
         :param subject: Subject of the subscription, required
         :param notification: Notification of the subscription, required

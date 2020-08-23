@@ -1,1 +1,7 @@
 requests
+requests_oauthlib
+authlib
+fuzzywuzzy
+PyYAML
+pandas
+python-Levenshtein

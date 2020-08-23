@@ -1,5 +1,37 @@
+bin
+.metadata
 *.pyc
 __pycache__
 /.idea
 *.json
 *.ini
+*.log
+.project
+.pydevproject
+*.yml
+*.yaml
+
+# pip install #
+#####################
+*.egg-info/
+*.egg/
+*.eggs
+dist
+*.pypirc
+build
+
+# PyCharm #
+#####################
+.idea
+.cache
+venv
+
+# Unittest #
+#####################
+.pytest_cache
+/filip.egg-info/
+
+#filip-development
+secrets-tst.json
+config-tst.json
+
