@@ -49,8 +49,8 @@ class Config:
         NOTE: If list of parameters is extended do it here and in
         def update_config()
         """
-        kwargs=self._lower_dict(kwargs)
-        self.__data.update(kwargs)
+        kwargs=self._lower_dict(**kwargs)
+        self.__data.update(**kwargs)
 
 
         self.file = os.getenv("CONFIG_FILE", 'True')
@@ -58,12 +58,10 @@ class Config:
 
         if eval(self.file):
             log.info(f"CONFIG_PATH variable is updated to: {self.path}")
-            self.data = self._read_config_file(self.path)
+            self._read_config_file(self.path)
         else:
             log.info("Configuration loaded from environment variables")
-            self.data = self._read_config_envs()
-        if self.data is not None:
-            pass
+            self._read_config_envs()
 
         # TODO:
         #
@@ -88,10 +86,13 @@ class Config:
         return json.dumps(self.__data, indent=4)
 
     def __getitem__(self, item):
-        return self.__data[item]
+        return self.__data.get(item)
 
     def __setitem__(self, key, value):
         self.__data.__setitem__(key, value)
+
+    def __getattr__(self, item):
+        return self.__data.get(item)
 
     def _lower_dict(self, d):
         lower_dict = {}
@@ -100,6 +101,21 @@ class Config:
                 v = self._lower_dict(v)
             lower_dict[k.lower()] = v
         return lower_dict
+
+    def _create_servive_urls(self, d):
+        for k, v in d.items():
+            if k in ['orion', 'iota', 'quantumleap'] and v.get('url',
+                                                               None) == None:
+                if d[k]['host'].casefold().startswith(('http://',
+                                                       'https://')):
+                    prefix = ""
+                else:
+                    prefix = "https://"
+                if v.get('port', None) == None:
+                    d[k]['url'] = f"{prefix}{d[k]['host']}"
+                else:
+                    d[k]['url'] = f"{prefix}{d[k]['host']}:{d[k]['port']}"
+        return d
 
     def _read_config_file(self, path: str):
         """
@@ -126,10 +142,7 @@ class Config:
             return False
 
         data = self._lower_dict(data)
-
-        for k, v in data.items():
-            if k in ['orion', 'iota', 'quantumleap'] and 'url' not in v.keys():
-                data[k]['url'] = f"https://{data[k]['host']}:{data[k]['port']}"
+        data = self._create_servive_urls(data)
 
         log.info(json.dumps(data, indent=4))
 
@@ -143,32 +156,26 @@ class Config:
         """
         data=self.__data
         data['orion']['host'] = os.getenv("ORION_HOST", "localhost")
-        data['orion']['port'] = os.getenv("ORION_PORT", 1026)
-        data['orion']['url'] = os.getenv("ORION_URL",
-                                         f"https://"
-                                         f"{data['orion']['host']}:"
-                                         f"{data['orion']['port']}")
+        data['orion']['port'] = int(os.getenv("ORION_PORT", 1026))
+        data['orion']['url'] = os.getenv("ORION_URL", None)
 
         data['iota']['host'] = os.getenv("IOTA_HOST", data['orion']['host'])
-        data['iota']['port'] = os.getenv("IOTA_PORT", 4041)
-        data['iota']['url'] = os.getenv("IOTA_URL",
-                                        f"https://"
-                                        f"{data['iota']['host']}:"
-                                        f"{data['iota']['port']}")
+        data['iota']['port'] = int(os.getenv("IOTA_PORT", 4041))
+        data['iota']['url'] = os.getenv("IOTA_URL", None)
         data['iota']['protocol'] = os.getenv("IOTA_PROTOCOL", "IoTA-UL") # or IoTA-JSON
 
         data['quantumleap']['host'] = os.getenv("QUANTUMLEAP_HOST",
                                                 data['orion']['host'])
-        data['quantumleap']['port'] = os.getenv("QUANTUMLEAP_PORT", 8668)
-        data['quantumleap']['url'] = os.getenv("ORION_URL",
-                                               f"https://"
-                                               f"{data['quantumleap']['host']}:"
-                                               f"{data['quantumleap']['port']}")
+        data['quantumleap']['port'] = int(os.getenv("QUANTUMLEAP_PORT", 8668))
+        data['quantumleap']['url'] = os.getenv("QUANTUMLEAP_URL", None)
 
         data['fiware']['service'] = os.getenv("FIWARE_SERVICE",
                                               "dummy_service")
         data['fiware']['service_path'] = os.getenv("FIWARE_SERVICE_PATH",
                                                    "/dummy_path")
+
+        data = self._create_servive_urls(data)
+        log.info(json.dumps(data, indent=4))
 
         self.__data.update(data)
 

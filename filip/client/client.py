@@ -22,19 +22,18 @@ class Client:
                  "client_id": None,
                  "client_secret": None}
 
-    def __init__(self):
+    def __init__(self, config_file=None, **kwargs):
         auth_types = {'basicauth': self.__http_basic_auth,
                       'digestauth': self.__http_digest_auth,
                       'oauth2': self.__oauth2}
 
-        self.config = Config(
-            path=r'D:\Projects\N5GEH\n5geh.tools.FiLiP\config.json')
-
-        self.config['auth'] = auth
-
-        if self.config['auth']:
+        self.config = Config(path=config_file)
+#
+        #self.config['auth'] = auth
+#
+        if self.config.auth:
             assert self.config['auth']['type'].lower() in auth_types.keys()
-            self.__get_secrets(path=self.config['auth']['secret'])
+            self.__get_secrets_file(path=self.config['auth']['secret'])
             auth_types[self.config['auth']['type']]()
         else:
             self.session = Session()
@@ -51,19 +50,18 @@ class Client:
         return self.session.cert
 
     @property
-    def credentials(self):
-        return self.__credentials
+    def secrets(self):
+        return self.__secrets
 
-    @credentials.setter
+    @secrets.setter
     def credentials(self, data: dict):
-        for key in data.keys():
-            self.__credentials[key] = data[key]
+        self.__secrets.update(data)
 
-    @credentials.deleter
+    @secrets.deleter
     def credentials(self):
-        self.__credentials = {}
+        self.__secrets = {}
 
-    def __get_secrets(self, path=None):
+    def __get_secrets_file(self, path=None):
         """
         Reads credentials form secret file the path variable is pointing to.
         :param path: location of secrets-file

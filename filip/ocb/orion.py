@@ -183,15 +183,12 @@ class Orion:
         :param version_2: if param version_2 is True, the standard used url is the v2, else v1
         """
         self.session = session or requests.Session()
-        self.fiware_service = FiwareService(name=config.data['fiware']['service'],
-                                            path=config.data['fiware']['service_path'])
-        self.host = config.data.get("orion", {}).get("host")
-        self.port = config.data.get("orion", {}).get("port")
-        if (self.port == None) or (self.port == ""):
-            # if port is None, the full url is given by the  {orion : { host }} key
-            self.url = self.host
-        else:
-            self.url = self.host + ":" + self.port
+        self.fiware_service = FiwareService(name=config.fiware.get('service'),
+                                            path=config.fiware.get(
+                                                'service_path'))
+        self.host = config.orion.get("host", None)
+        self.port = config.orion.get("port", None)
+        self.url = config.orion.get("url", None)
 
 
     def set_service(self, fiware_service):

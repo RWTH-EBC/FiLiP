@@ -20,16 +20,12 @@ class Agent:
     # https://iotagent-node-lib.readthedocs.io/en/latest/
     # https://fiware-iotagent-json.readthedocs.io/en/latest/usermanual/index.html
     def __init__(self, config: Config, session=None):
-        self.session=session or requests.Session()
+        self.session = session or requests.Session()
         self.test_config(config)
-        self.host = config.data.get("iota", {}).get("host")
-        self.port = config.data.get("iota", {}).get("port")
-        if (self.port == None) or (self.port == ""):
-            # if port is None, the full url is given by the  {orion : { host }} key
-            self.url = self.host
-        else:
-            self.url = self.host + ":" + self.port
-        self.protocol = config.data["iota"]['protocol']
+        self.host = config.iota.get("host")
+        self.port = config.iota.get("port")
+        self.url = config.iota.get("url")
+        self.protocol = config.iota.get("protocol")
         #TODO: Figuring our how to register the service and conncet with devices
         self.services = []
 
