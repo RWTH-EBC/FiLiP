@@ -17,28 +17,16 @@ class QuantumLeap():
     database (CrateDB). Further Information:
     https://smartsdk.github.io/ngsi-timeseries-api/#quantumleap
     """
-    def __init__(self, config: object, session=None):
+    def __init__(self, config, session=None):
         """Initialize with configuration values"""
         self.session = session or requests.Session()
-        self.host = config.data.get("quantum_leap", {}).get("host")
-        self.port = config.data.get("quantum_leap", {}).get("port")
+        self.host = config.quantumleap.get("host", None)
+        self.port = config.quantumleap.get("port", None)
+        self.url = config.quantumleap.get("url", None)
 
-        self.crate_host = config.data.get("cratedb", {}).get("host")
-        self.crate_port = config.data.get("cratedb", {}).get("port")
-
-        if (self.port == None) or (self.port == ""):
-            # if port is None, the full url is given by the  {quantum_leap : { host }} key
-            self.url = self.host
-        else:
-            self.url = self.host + ":" + self.port + '/v2'
-
-        if (self.crate_port == None) or (self.crate_port == ""):
-            self.crate_url = self.crate_host
-        else:
-            self.crate_url = self.crate_host + ":" + self.crate_port
-
-        self.fiware_service = FiwareService(name=config.data['fiware']['service'],
-                                                  path=config.data['fiware']['service_path'])
+        self.fiware_service = FiwareService(name=config.fiware.get('service'),
+                                            path=config.fiware.get(
+                                                'service_path'))
 
     def test_connection(self):
         """
@@ -107,7 +95,7 @@ class QuantumLeap():
             return response.text
 
     def delete_entity(self, entity_name: str):
-        url = self.url + '/entities/' + entity_name
+        url = self.url + '/v2/entities/' + entity_name
         headers = self.get_header(requtils.HEADER_CONTENT_PLAIN)
         response = self.session.delete(url, headers=headers)
         ok, retstr = requtils.response_ok(response)
@@ -115,7 +103,7 @@ class QuantumLeap():
             print(retstr)
 
     def delete_entities_of_type(self, entity_type):
-        url = self.url + '/types/' + entity_type
+        url = self.url + '/v2/types/' + entity_type
         headers = self.get_header(requtils.HEADER_CONTENT_PLAIN)
         response = self.session.delete(url, headers=headers)
         ok, retstr = requtils.response_ok(response)
@@ -124,7 +112,7 @@ class QuantumLeap():
 
     def get_entity_data(self, entity_id: str, attr_name: str = None, 
                         valuesonly: bool = False, **kwargs):
-        url = self.url + '/entities/' + entity_id
+        url = self.url + '/v2/entities/' + entity_id
         params = kwargs.get("params")
         headers = self.get_header(requtils.HEADER_CONTENT_PLAIN)
         if attr_name != None:
@@ -141,7 +129,7 @@ class QuantumLeap():
 
     def get_entity_type_data(self, entity_type: str, attr_name: str = None,
                              valuesonly: bool = False):
-        url = self.url + '/types/' + entity_type
+        url = self.url + '/v2/types/' + entity_type
         headers = self.get_header(requtils.HEADER_CONTENT_PLAIN)
         if attr_name != None:
             url += '/attrs/' + attr_name
@@ -156,7 +144,7 @@ class QuantumLeap():
             return response.text
 
     def get_attributes(self, attr_name: str = None, valuesonly: bool = False):
-        url = self.url + '/attrs'
+        url = self.url + '/v2/attrs'
         headers = self.get_header(requtils.HEADER_CONTENT_PLAIN)
         if attr_name != None:
             url += '/' + attr_name
@@ -180,7 +168,7 @@ class QuantumLeap():
         :param limit: maximum number of values that should be retrieved
         :return: A dictionary, where the key is the time and the value the respective value e.g. '2020-02-11T13:45:23.000': 6
         """
-        url = self.url +"/entities/"+ entity_name
+        url = self.url +"/v2/entities/"+ entity_name
         headers = self.get_header(requtils.HEADER_CONTENT_PLAIN)
         res = dict()
         if attr_name != None:

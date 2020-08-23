@@ -21,7 +21,7 @@ def authworkflow(s, r, data):
     return r
 
 if __name__ == '__main__':
-    #client = Client()
+    client = Client(config_file="../config.json")
     #client.iota.url = 'https://json.iot.n5geh.eonerc.rwth-aachen.de'
     #client.ocb.url = 'https://api.n5geh.eonerc.rwth-aachen.de'
     #client.headers.update({'FiwareService': 'Test'})
@@ -78,8 +78,7 @@ if __name__ == '__main__':
         client.fetch_token(token=token)
         resp = client.get(account_url)
 
-
-
+# TODO: https://stackoverflow.com/questions/38380086/sending-list-of-dicts-as-value-of-dict-with-requests-post-going-wrong
 
 
 
