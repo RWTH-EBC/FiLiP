@@ -14,9 +14,7 @@ pip install git+git://github.com/n5geh/n5geh.tools.filip
 We presented the library in the following publications:
 
 - Baranski, M., Storek, T. P. B., Kümpel, A., Blechmann, S., Streblow, R., 
-Müller, D., - Gross, S., Guarnieri Calo' Carducci, C., Haghgoo, M., Sowa, I., 
-Monti, A., Knorr, M., Wiemann, S., Haupt, L., Seifert, J., Sychev, I., 
-Fitzek, F., Krahmer, S., Gasch, E., . . . Williams, F. 
+Müller, D. et al.,
 (2020). National 5G Energy Hub : Application of the Open-Source Cloud Platform 
 FIWARE for Future Energy Management Systems. 
 https://doi.org/10.18154/RWTH-2020-07876
