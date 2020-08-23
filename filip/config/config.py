@@ -49,8 +49,8 @@ class Config:
         NOTE: If list of parameters is extended do it here and in
         def update_config()
         """
-        kwargs=self._lower_dict(**kwargs)
-        self.__data.update(**kwargs)
+        kwargs=self._lower_dict(kwargs)
+        self.__data.update(kwargs)
 
 
         self.file = os.getenv("CONFIG_FILE", 'True')
@@ -93,6 +93,10 @@ class Config:
 
     def __getattr__(self, item):
         return self.__data.get(item)
+
+    @property
+    def data(self):
+        return self.__data
 
     def _lower_dict(self, d):
         lower_dict = {}

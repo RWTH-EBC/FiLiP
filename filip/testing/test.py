@@ -47,7 +47,7 @@ def test_config(service_name: str, config_data: dict):
     list_protocols = iot.PROTOCOLS.copy()
     protocols = ', '.join(list_protocols)
     try:
-        if service_name not in config_data:
+        if service_name not in config_data.keys():
             raise Exception(f" Missing configuration for {service_name}!")
 
         if 'host' not in config_data[service_name]:

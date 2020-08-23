@@ -30,6 +30,7 @@ class Agent:
         self.services = []
 
     def test_config(self, config: Config):
+        print(config.data)
         test.test_config('iota', config.data)
 
     def test_connection(self):
