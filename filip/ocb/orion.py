@@ -1,11 +1,11 @@
 import json
 import requests
-from filip import request_utils as requtils
-from filip import test
+from filip.utils import request_utils as requtils
+from filip.testing import test
 import math
 import logging
 
-log = logging.getLogger('filip.orion')
+logger = logging.getLogger('ocb')
 
 
 # ToDo Query params
@@ -47,7 +47,8 @@ class Entity:
         returns the object-representation
         """
         attrs = self.get_attributes_key_values()
-        entity_str = '"enity_id": "{}", "type": "{}", "attributes": "{}" '.format(self.id, self.entity_dict["type"], attrs)
+        entity_str = '"entity_id": "{}", "type": "{}", "attributes": "{}" ' \
+                     ''.format(self.id, self.entity_dict["type"], attrs)
         return entity_str
 
     def get_json(self):
@@ -176,20 +177,18 @@ class Orion:
     Further documentation:
     https://fiware-orion.readthedocs.io/en/master/
     """
-    def __init__(self, config):
+    def __init__(self, config, session=None):
         """
         :param config:
         :param version_2: if param version_2 is True, the standard used url is the v2, else v1
         """
-        self.fiware_service = FiwareService(name=config.data['fiware']['service'],
-                                            path=config.data['fiware']['service_path'])
-        self.host = config.data.get("orion", {}).get("host")
-        self.port = config.data.get("orion", {}).get("port")
-        if (self.port == None) or (self.port == ""):
-            # if port is None, the full url is given by the  {orion : { host }} key
-            self.url = self.host
-        else:
-            self.url = self.host + ":" + self.port
+        self.session = session or requests.Session()
+        self.fiware_service = FiwareService(name=config.fiware.get('service'),
+                                            path=config.fiware.get(
+                                                'service_path'))
+        self.host = config.orion.get("host", None)
+        self.port = config.orion.get("port", None)
+        self.url = config.orion.get("url", None)
 
 
     def set_service(self, fiware_service):
@@ -227,8 +226,9 @@ class Orion:
         Function utilises the test.test_connection() function to check the availability of a given url and service.
         :return: Boolean, True if the service is reachable, False if not.
         """
-        boolean = test.test_connection(url=self.url+'/version',
-                                       service_name='orion-context-broker(ocb)')
+        boolean = test.test_connection(client=self.session,
+                                        url=self.url+'/version',
+                                        service_name=__name__)
         return boolean
 
     def post_entity(self, entity: Entity, force_update: bool = True):
@@ -245,12 +245,12 @@ class Orion:
         url = self.url + '/v2/entities'
         headers = self.get_header(requtils.HEADER_CONTENT_JSON)
         data = entity.get_json()
-        response = requests.post(url, headers=headers, data=data)
+        response = self.session.post(url, headers=headers, data=data)
         ok, retstr = requtils.response_ok(response)
         if not ok:
             if (response.status_code == 422) & (force_update is True):
                     url += f"{entity.id}/attrs"
-                    response = requests.post(url, headers=headers, data=data)
+                    response = self.session.post(url, headers=headers, data=data)
                     ok, retstr = requtils.response_ok(response)
             if not ok:
                 level, retstr = requtils.logging_switch(response)
@@ -270,14 +270,14 @@ class Orion:
         elif (json is None) and (entity is not None):
             json_data = entity.get_json()
         else:
-            log.error(f"Please provide a valid data format.")
+            logger.error(f"Please provide a valid data format.")
             json_data = ""
         if params is None:
             url = self.url + '/v2/entities'
-            response = requests.post(url, headers=headers, data=json_data)
+            response = self.session.post(url, headers=headers, data=json_data)
         else:
             url = self.url + "/v2/entities" + "?options=" + params
-            response = requests.post(url, headers=headers, data=json_data)
+            response = self.session.post(url, headers=headers, data=json_data)
         ok, retstr = requtils.response_ok(response)
         if not ok:
             level, retstr = requtils.logging_switch(response)
@@ -291,7 +291,7 @@ class Orion:
         """
         headers = self.get_header(requtils.HEADER_CONTENT_JSON)
         url = self.url + "/v2/entities" + "?options=" + params
-        response = requests.post(url, headers=headers, data=json_data)
+        response = self.session.post(url, headers=headers, data=json_data)
         ok, retstr = requtils.response_ok(response)
         if not ok:
             level, retstr = requtils.logging_switch(response)
@@ -313,7 +313,7 @@ class Orion:
         payload = {"actionType": "APPEND",
                    "entities": [json.loads(json_data)]}
         data = json.dumps(payload)
-        response = requests.post(url=url, data=data, headers=headers)
+        response = self.session.post(url=url, data=data, headers=headers)
         ok, retstr = requtils.response_ok(response)
         if not ok:
             level, retstr = requtils.logging_switch(response)
@@ -331,7 +331,7 @@ class Orion:
         if subject_type is not None:
             url = url + '&attrs=type&type=' + subject_type
         headers = self.get_header()
-        response = requests.get(url=url, headers=headers, )
+        response = self.session.get(url=url, headers=headers, )
         ok, retstr = requtils.response_ok(response)
         if not ok:
             level, retstr = requtils.logging_switch(response)
@@ -352,7 +352,7 @@ class Orion:
         if object_type is not None:
             url = url + '&attrs=ref' + object_type
         headers = self.get_header()
-        response = requests.get(url=url, headers=headers)
+        response = self.session.get(url=url, headers=headers)
         ok, retstr = requtils.response_ok(response)
         if not ok:
             level, retstr = requtils.logging_switch(response)
@@ -399,9 +399,9 @@ class Orion:
         url = self.url + '/v2/entities/' + entity_name
         headers = self.get_header()
         if entity_params is None:
-            response = requests.get(url, headers=headers)
+            response = self.session.get(url, headers=headers)
         else:
-            response = requests.get(url, headers=headers,
+            response = self.session.get(url, headers=headers,
                                     params=entity_params)
         ok, retstr = requtils.response_ok(response)
         if not ok:
@@ -414,7 +414,7 @@ class Orion:
         url = self.url + '/v2/entities?options=count'
         headers = self.get_header()
         if parameter is None and parameter_value is None:
-            response = requests.get(url, headers=headers)
+            response = self.session.get(url, headers=headers)
             sub_count = float(response.headers["Fiware-Total-Count"])
             if sub_count >= limit:
                 response = self.get_pagination(url=url, headers=headers,
@@ -422,14 +422,14 @@ class Orion:
                 return response
         elif parameter is not None and parameter_value is not None:
             parameters = {'{}'.format(parameter): '{}'.format(parameter_value)}
-            response = requests.get(url, headers=headers, params=parameters)
+            response = self.session.get(url, headers=headers, params=parameters)
             sub_count = float(response.headers["Fiware-Total-Count"])
             if sub_count >= limit:
                 response = self.get_pagination(url=url, headers=headers,
                                                limit=limit, count=sub_count, params=parameters)
                 return response
         else:
-            log.error("Getting all entities: both function parameters have to be 'not null'")
+            logger.error("Getting all entities: both function parameters have to be 'not null'")
             return None
         ok, retstr = requtils.response_ok(response)
         if not ok:
@@ -441,7 +441,7 @@ class Orion:
     def get_entities_list(self, limit=100) -> list:
         url = self.url + '/v2/entities?options=count'
         header = self.get_header(requtils.HEADER_ACCEPT_JSON)
-        response = requests.get(url, headers=header)
+        response = self.session.get(url, headers=header)
         sub_count = float(response.headers["Fiware-Total-Count"])
         if sub_count >= limit:
             response = self.get_pagination(url=url, headers=header,
@@ -465,7 +465,7 @@ class Orion:
 
     def get_entity_attribute_json(self, entity_name, attr_name):
         url = self.url + '/v2/entities/' + entity_name + '/attrs/' + attr_name
-        response = requests.get(url, headers=self.get_header())
+        response = self.session.get(url, headers=self.get_header())
         ok, retstr = requtils.response_ok(response)
         if not ok:
             level, retstr = requtils.logging_switch(response)
@@ -476,7 +476,7 @@ class Orion:
     def get_entity_attribute_value(self, entity_name, attr_name):
         url = self.url + '/v2/entities/' + entity_name + '/attrs/' \
                        + attr_name + '/value'
-        response = requests.get(url, headers=self.get_header())
+        response = self.session.get(url, headers=self.get_header())
         ok, retstr = requtils.response_ok(response)
         if not ok:
             level, retstr = requtils.logging_switch(response)
@@ -502,7 +502,7 @@ class Orion:
         payload = entity.get_attributes_key_values()
         headers = self.get_header(requtils.HEADER_CONTENT_JSON)
         data = json.dumps(payload)
-        response = requests.patch(url, headers=headers, data=data)
+        response = self.session.patch(url, headers=headers, data=data)
         ok, retstr = requtils.response_ok(response)
         if not ok:
             level, retstr = requtils.logging_switch(response)
@@ -513,7 +513,7 @@ class Orion:
                        + attr_name + '/value'
         headers = self.get_header(requtils.HEADER_CONTENT_PLAIN)
         data = json.dumps(attr_value)
-        response = requests.put(url, headers=headers, data=data)
+        response = self.session.put(url, headers=headers, data=data)
         ok, retstr = requtils.response_ok(response)
         if not ok:
             level, retstr = requtils.logging_switch(response)
@@ -541,7 +541,7 @@ class Orion:
         url = self.url + '/v2/entities/' + entity_name + '/attrs?options=append'
         headers = self.get_header(requtils.HEADER_CONTENT_JSON)
         data = json.dumps(new_attributes)
-        response = requests.post(url, data=data, headers=headers)
+        response = self.session.post(url, data=data, headers=headers)
         ok, retstr = requtils.response_ok(response)
         if not ok:
             level, retstr = requtils.logging_switch(response)
@@ -559,7 +559,7 @@ class Orion:
 
     def remove_attributes(self, entity_name):
         url = self.url + '/v2/entities/' + entity_name + '/attrs'
-        response = requests.put(url)
+        response = self.session.put(url)
         ok, retstr = requtils.response_ok(response)
         if not ok:
             level, retstr = requtils.logging_switch(response)
@@ -571,8 +571,8 @@ class Orion:
         if check_duplicate is True:
             exists = self.check_duplicate_subscription(subscription_body)
             if exists is True:
-                log.info(f"A similar subscription already exists.")
-        response = requests.post(url, headers=headers, data=subscription_body)
+                logger.info(f"A similar subscription already exists.")
+        response = self.session.post(url, headers=headers, data=subscription_body)
         if response.headers is None:
             return
         ok, retstr = requtils.response_ok(response)
@@ -588,7 +588,7 @@ class Orion:
 
     def get_subscription_list(self, limit=100):
         url = self.url + '/v2/subscriptions?options=count'
-        response = requests.get(url, headers=self.get_header())
+        response = self.session.get(url, headers=self.get_header())
         sub_count = float(response.headers["Fiware-Total-Count"])
         if sub_count >= limit:
             response = self.get_pagination(url=url, headers=self.get_header(),
@@ -607,7 +607,7 @@ class Orion:
 
     def get_subscription(self, subscription_id: str):
         url = self.url + '/v2/subscriptions/' + subscription_id
-        response = requests.get(url, headers=self.get_header())
+        response = self.session.get(url, headers=self.get_header())
         ok, retstr = requtils.response_ok(response)
         if not ok:
             level, retstr = requtils.logging_switch(response)
@@ -615,7 +615,7 @@ class Orion:
 
     def delete_subscription(self, subscription_id: str):
         url = self.url + '/v2/subscriptions/' + subscription_id
-        response = requests.delete(url, headers=self.get_header())
+        response = self.session.delete(url, headers=self.get_header())
         ok, retstr = requtils.response_ok(response)
         if not ok:
             level, retstr = requtils.logging_switch(response)
@@ -645,9 +645,9 @@ class Orion:
             else:
                 url = url + '&offset=' + offset
             if params == (not None):
-                response = requests.get(url=url, headers=headers, params=params)
+                response = self.session.get(url=url, headers=headers, params=params)
             else:
-                response = requests.get(url=url, headers=headers)
+                response = self.session.get(url=url, headers=headers)
             ok, retstr = requtils.response_ok(response)
             if not ok:
                 level, retstr = requtils.logging_switch(response)
@@ -676,7 +676,7 @@ class Orion:
 
         # If the number of subscriptions is larger then the limit, paginations methods have to be used
         url = self.url + '/v2/subscriptions?limit=' + str(limit) + '&options=count'
-        response = requests.get(url, headers=self.get_header())
+        response = self.session.get(url, headers=self.get_header())
 
         sub_count = float(response.headers["Fiware-Total-Count"])
         response = json.loads(response.text)
@@ -789,7 +789,7 @@ class Orion:
                    }
         headers = self.get_header(requtils.HEADER_CONTENT_JSON)
         data = json.dumps(payload)
-        response = requests.post(url, headers=headers, data=data)
+        response = self.session.post(url, headers=headers, data=data)
         ok, retstr = requtils.response_ok(response)
         if not ok:
             level, retstr = requtils.logging_switch(response)
@@ -797,7 +797,7 @@ class Orion:
 
     def delete(self, entity_id: str):
         url = self.url + '/v2/entities/' + entity_id
-        response = requests.delete(url, headers=self.get_header())
+        response = self.session.delete(url, headers=self.get_header())
         ok, retstr = requtils.response_ok(response)
         if not ok:
             level, retstr = requtils.logging_switch(response)

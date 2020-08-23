@@ -2,8 +2,8 @@ import requests
 import datetime
 import json
 
-from filip import request_utils as requtils
-from filip import test
+from filip.utils import request_utils as requtils
+from filip.testing import test
 from filip.iota.device_group import DeviceGroup
 from filip.iota.device import Device
 from filip.config import Config
@@ -19,29 +19,28 @@ PROTOCOLS = ['IoTA-JSON', 'IoTA-UL']
 class Agent:
     # https://iotagent-node-lib.readthedocs.io/en/latest/
     # https://fiware-iotagent-json.readthedocs.io/en/latest/usermanual/index.html
-    def __init__(self, config: Config):
+    def __init__(self, config: Config, session=None):
+        self.session = session or requests.Session()
         self.test_config(config)
-        self.host = config.data.get("iota", {}).get("host")
-        self.port = config.data.get("iota", {}).get("port")
-        if (self.port == None) or (self.port == ""):
-            # if port is None, the full url is given by the  {orion : { host }} key
-            self.url = self.host
-        else:
-            self.url = self.host + ":" + self.port
-        self.protocol = config.data["iota"]['protocol']
+        self.host = config.iota.get("host")
+        self.port = config.iota.get("port")
+        self.url = config.iota.get("url")
+        self.protocol = config.iota.get("protocol")
         #TODO: Figuring our how to register the service and conncet with devices
         self.services = []
 
     def test_config(self, config: Config):
+        print(config.data)
         test.test_config('iota', config.data)
 
-    def test_connection(self, config: Config):
+    def test_connection(self):
         """
         Function utilises the test.test_connection() function to check the availability of a given url and service.
         :return: Boolean, True if the service is reachable, False if not.
         """
-        boolean = test.test_connection(service_name='IoT-Agent', url=self.url
-                                                                   +'/iot/about')
+        boolean = test.test_connection(client=self.session,
+                                       service_name=__name__,
+                                       url=self.url+'/version')
         return boolean
 
     def log_switch(self, level, response):
@@ -59,7 +58,7 @@ class Agent:
     def get_groups(self, device_group: DeviceGroup):
         url = self.url + '/iot/services'
         headers = device_group.get_header()
-        response = requests.request("GET", url, headers=headers)
+        response = self.session.request("GET", url, headers=headers)
         ok, retstr = requtils.response_ok(response)
         if not ok:
             level, retstr = requtils.logging_switch(response)
@@ -72,7 +71,7 @@ class Agent:
         headers = device_group.get_header()
         querystring = {"resource": device_group.get_resource(),
                        "apikey": device_group.get_apikey()}
-        response = requests.request("DELETE", url,
+        response = self.session.request("DELETE", url,
                                     headers=headers, params=querystring)
         if response.status_code == 204:
             log.info(f"Device group successfully deleted!")
@@ -92,7 +91,7 @@ class Agent:
         payload = dict()
         payload['services'] = [json.loads(device_group.get_json())]
         payload = json.dumps(payload, indent=4)
-        response = requests.request("POST", url, data=payload,
+        response = self.session.request("POST", url, data=payload,
                                     headers=headers)
         if (response.status_code == 409) & (force_update is True):
             querystring = {"resource": device_group.get_resource_last(),
@@ -114,7 +113,7 @@ class Agent:
         payload = json.loads(device_group.get_json())
         payload = json.dumps(payload, indent=4)
         log.info(f" {datetime.datetime.now()} - Update group with: {payload}")
-        response = requests.request("PUT", url,
+        response = self.session.request("PUT", url,
                                     data=payload, headers=headers,
                                     params=querystring)
         ok, retstr = requtils.response_ok(response)
@@ -138,7 +137,7 @@ class Agent:
         payload = dict()
         payload['devices'] = [json.loads(device.get_json())]
         payload = json.dumps(payload, indent=4)
-        response = requests.request("POST", url, data=payload,
+        response = self.session.request("POST", url, data=payload,
                                     headers=headers)
 
         if (response.status_code == 409) & (force_update is True):
@@ -163,7 +162,7 @@ class Agent:
         """
         url = self.url + '/iot/devices/' + device.device_id
         headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header()}
-        response = requests.request("DELETE", url, headers=headers)
+        response = self.session.request("DELETE", url, headers=headers)
         if response.status_code == 204:
             log.info(f"Device {device.device_id} successfully deleted!")
         else:
@@ -179,7 +178,7 @@ class Agent:
         url = self.url + '/iot/devices/' + device.device_id
         headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header()}
         payload = ""
-        response = requests.request("GET", url, data=payload,
+        response = self.session.request("GET", url, data=payload,
                                     headers=headers)
         ok, retstr = requtils.response_ok(response)
         if not ok:
@@ -198,8 +197,12 @@ class Agent:
         """
         url = self.url + '/iot/devices/' + device.device_id
         headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header()}
-        response = requests.request("PUT", url, data=payload,
+        response = self.session.request("PUT", url,
+                                    data=payload,
                                     headers=headers)
+
+
+
         ok, retstr = requtils.response_ok(response)
         if not ok:
             level, retstr = requtils.logging_switch(response)

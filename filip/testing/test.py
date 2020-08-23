@@ -3,10 +3,10 @@ from requests.auth import HTTPBasicAuth, HTTPDigestAuth
 
 import logging
 
-log = logging.getLogger('test')
+logger = logging.getLogger('testing')
 
 
-def test_connection(url: str, service_name: str,
+def test_connection(url: str, client: requests.Session, service_name: str,
                     auth_method: str = None, **kwargs):
     """
     This function tests the a webservice is reachable
@@ -20,44 +20,17 @@ def test_connection(url: str, service_name: str,
     :return: Boolean, whether connection exists or not
     """
     try:
-        if auth_method is None:
-            res = requests.get(url)
-            if res.status_code == 200:
-                log.info(f"{service_name}: Check Success! Service is up and "
-                         f"running!")
-                log.info(res.text)
-                return True
-            else:
-                log.error(f"{service_name}: Check has Errors! Please check "
-                          f"Service response: {res.text}")
-                return False
+        res=client.get(url=url)
+        if res.ok:
+            logger.info(f"{service_name}: Check Success! Service is up and "
+                     f"running!")
+            logger.info(res.text)
         else:
-            if auth_method == "HTTPBasicAuth":
-                authorization = kwargs.get("auth")
-                res = requests.get(url, auth=authorization)
-
-            elif auth_method == "HTTPDigestAuth":
-                authorization = kwargs.get("auth")
-                requests.get(url, auth=HTTPDigestAuth(authorization))
-
-            else:
-                log.error(f"{service_name}: Authentication method:"
-                          f" {auth_method} currently not supported")
-                raise NotImplementedError
-
-            if res.status_code == 200:
-                log.info(f"{service_name}: Check Success! Service is up and "
-                         f"running!")
-                log.info(res.text)
-                return True
-            else:
-                log.error(f"{service_name}: Check has Errors! Please check "
-                          f"Service response: {res.text}")
-                return False
-
+            logger.error(f"{service_name}: Check Failed! Please check "
+                      f"configuration! Response code: {res.status_code}")
     except Exception:
-        log.error(f"{service_name} : Check Failed! Is the service up and "
-                  f"running? Please check configuration! ")
+        logger.error(f"{service_name}: Check Failed! Is the service up and "
+                  f"running? Please check configuration!")
         return False
 
 
@@ -74,7 +47,7 @@ def test_config(service_name: str, config_data: dict):
     list_protocols = iot.PROTOCOLS.copy()
     protocols = ', '.join(list_protocols)
     try:
-        if service_name not in config_data:
+        if service_name not in config_data.keys():
             raise Exception(f" Missing configuration for {service_name}!")
 
         if 'host' not in config_data[service_name]:
@@ -109,11 +82,11 @@ def test_config(service_name: str, config_data: dict):
                 f" Protocol for {service_name} not supported! The following " \
                 f"protocols are supported: {protocols}"
 
-        log.info("Configuration successfully tested!")
+        logger.info("Configuration successfully tested!")
         return True
 
     except Exception as error:
-        log.error(f"  Config test failed! {error}")
+        logger.error(f"  Config test failed! {error}")
         return False
 
 

@@ -7,10 +7,11 @@ import json
 
 # setup Environmental parameters
 TIMEZONE = os.getenv("TIMEZONE", "UTC/Zulu")
-LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
-logging.basicConfig(level=LOG_LEVEL,
-                    format="%(asctime)s-%(levelname)s-filip.%(name)s: %("
-                           "message)s")
+LOGLEVEL = os.getenv("LOGLEVEL", "INFO")
+logging.basicConfig(level=LOGLEVEL,
+                    format='%(asctime)s - FiLiP.%(name)s - %(levelname)s: %('
+                              'message)s',
+                    datefmt='%Y-%m-%d %H:%M:%S')
 log = logging.getLogger('config')
 
 
@@ -33,7 +34,14 @@ def setup_logging(path_to_config: str ='/Users/Felix/PycharmProjects/Logger/fili
         logging.basicConfig(level=default_level)
 
 class Config:
-    def __init__(self, path = 'config.json'):
+    __data={'orion': {},
+            'iota': {},
+            'quantumleap': {},
+            'fiware': {},
+            'timezone': os.getenv("TIMEZONE", "UTC/Zulu"),
+            'loglevel': os.getenv("LOGLEVEL", "INFO")}
+
+    def __init__(self, path = None, *args, **kwargs):
         """
         Class constructor for config class. At start up it parses either
         system environment variables or external config file in json format.
@@ -41,17 +49,19 @@ class Config:
         NOTE: If list of parameters is extended do it here and in
         def update_config()
         """
+        kwargs=self._lower_dict(kwargs)
+        self.__data.update(kwargs)
+
+
         self.file = os.getenv("CONFIG_FILE", 'True')
         self.path = os.getenv("CONFIG_PATH", path)
-        self.data = None
+
         if eval(self.file):
             log.info(f"CONFIG_PATH variable is updated to: {self.path}")
-            self.data = self._read_config_file(self.path)
+            self._read_config_file(self.path)
         else:
             log.info("Configuration loaded from environment variables")
-            self.data = self._read_config_envs()
-        if self.data is not None:
-            pass
+            self._read_config_envs()
 
         # TODO:
         #
@@ -73,7 +83,43 @@ class Config:
         Returns the Representation (= Data) of the object as string
         :return:
         """
-        return "{}".format(self.data)
+        return json.dumps(self.__data, indent=4)
+
+    def __getitem__(self, item):
+        return self.__data.get(item)
+
+    def __setitem__(self, key, value):
+        self.__data.__setitem__(key, value)
+
+    def __getattr__(self, item):
+        return self.__data.get(item)
+
+    @property
+    def data(self):
+        return self.__data
+
+    def _lower_dict(self, d):
+        lower_dict = {}
+        for k, v in d.items():
+            if isinstance(v, dict):
+                v = self._lower_dict(v)
+            lower_dict[k.lower()] = v
+        return lower_dict
+
+    def _create_servive_urls(self, d):
+        for k, v in d.items():
+            if k in ['orion', 'iota', 'quantumleap'] and v.get('url',
+                                                               None) == None:
+                if d[k]['host'].casefold().startswith(('http://',
+                                                       'https://')):
+                    prefix = ""
+                else:
+                    prefix = "https://"
+                if v.get('port', None) == None:
+                    d[k]['url'] = f"{prefix}{d[k]['host']}"
+                else:
+                    d[k]['url'] = f"{prefix}{d[k]['host']}:{d[k]['port']}"
+        return d
 
     def _read_config_file(self, path: str):
         """
@@ -85,10 +131,10 @@ class Config:
         #TODO: add use of ini: do strings processing split at last dot (if .json or .ini)
         #TODO: check if all data is defined
         try:
-            with open(path, 'r') as filename:
-                log.info(f"Reading {path}")
-                data = json.load(filename)
-            log.info(json.dumps(data, indent=4))
+            if path.endswith('.json'):
+                with open(path, 'r') as filename:
+                    log.info(f"Reading {path}")
+                    data = json.load(filename)
 
         except IOError as err:
             if err.errno == errno.ENOENT:
@@ -98,7 +144,13 @@ class Config:
             else:
                 log.error(f"{path}- some other error")
             return False
-        return data
+
+        data = self._lower_dict(data)
+        data = self._create_servive_urls(data)
+
+        log.info(json.dumps(data, indent=4))
+
+        self.__data.update(data)
 
     def _read_config_envs(self):
         """
@@ -106,28 +158,30 @@ class Config:
         quantumleap, crate. Default URL of Orion is "http://localhost", 
         the default ULR of IoTA, quantumleap and Crate is the URL of Orion.
         """
-        data = {}
-        data['orion'] = {}
-        data['orion']['host'] = os.getenv("ORION_HOST", "http://localhost")
-        data['orion']['port'] = os.getenv("ORION_PORT", "1026")
-        
-        data['iota'] = {}
+        data=self.__data
+        data['orion']['host'] = os.getenv("ORION_HOST", "localhost")
+        data['orion']['port'] = int(os.getenv("ORION_PORT", 1026))
+        data['orion']['url'] = os.getenv("ORION_URL", None)
+
         data['iota']['host'] = os.getenv("IOTA_HOST", data['orion']['host'])
-        data['iota']['port'] = os.getenv("IOTA_PORT", "4041")
-        data['iota']['protocol'] = os.getenv("IOTA_PROTOCOL", "IoTA-UL")  # or IoTA-JSON
-        
-        data['quantum_leap'] = {}
-        data['quantum_leap']['host'] = os.getenv("QUANTUMLEAP_HOST", data['orion']['host'])
-        data['quantum_leap']['port'] = os.getenv("QUANTUMLEAP_PORT", "8668")
-        
-        data['cratedb'] = {}
-        data['cratedb']['host'] = os.getenv("CRATEDB_HOST", data['orion']['host'])
-        data['cratedb']['port'] = os.getenv("CRATEDB_PORT", "4200")
-        
-        data['fiware'] = {}
-        data['fiware']['service'] = os.getenv("FIWARE_SERVICE", "dummy_service")
-        data['fiware']['service_path'] = os.getenv("FIWARE_SERVICE_PATH", "/dummy_path")
-        return data
+        data['iota']['port'] = int(os.getenv("IOTA_PORT", 4041))
+        data['iota']['url'] = os.getenv("IOTA_URL", None)
+        data['iota']['protocol'] = os.getenv("IOTA_PROTOCOL", "IoTA-UL") # or IoTA-JSON
+
+        data['quantumleap']['host'] = os.getenv("QUANTUMLEAP_HOST",
+                                                data['orion']['host'])
+        data['quantumleap']['port'] = int(os.getenv("QUANTUMLEAP_PORT", 8668))
+        data['quantumleap']['url'] = os.getenv("QUANTUMLEAP_URL", None)
+
+        data['fiware']['service'] = os.getenv("FIWARE_SERVICE",
+                                              "dummy_service")
+        data['fiware']['service_path'] = os.getenv("FIWARE_SERVICE_PATH",
+                                                   "/dummy_path")
+
+        data = self._create_servive_urls(data)
+        log.info(json.dumps(data, indent=4))
+
+        self.__data.update(data)
 
     def update_config_param(self, data: dict):
         """
@@ -266,7 +320,7 @@ class Log_Config:
         cfg["handlers"]["info_file_handler"]["class"] = os.getenv("LOG_CLASS_INFO", "logging.handlers.RotatingFileHandler")
         cfg["handlers"]["info_file_handler"]["level"] = os.getenv("LOG_LEVEL_INFO", "INFO")
         cfg["handlers"]["info_file_handler"]["formatter"] = os.getenv("LOG_FORMATTER_INFO", "standard")
-        cfg["handlers"]["info_file_handler"]["filename"] = os.getenv("LOG_FILENAME_INFO", "info.log")
+        cfg["handlers"]["info_file_handler"]["filename"] = os.getenv("LOG_FILENAME_INFO", "info.logger")
         cfg["handlers"]["info_file_handler"]["maxBytes"] = os.getenv("LOG_MAXBYTES_INFO", 10485760)
         cfg["handlers"]["info_file_handler"]["backupCount"] = os.getenv("LOG_BACKUPCOUNT_INFO", 20)
         cfg["handlers"]["info_file_handler"]["encoding"] = os.getenv("LOG_ENCODING_INFO", "utf8")
@@ -274,7 +328,7 @@ class Log_Config:
         cfg["handlers"]["error_file_handler"]["class"] = os.getenv("LOG_CLASS_ERROR", "logging.handlers.RotatingFileHandler")
         cfg["handlers"]["error_file_handler"]["level"] = os.getenv("LOG_LEVEL_ERROR", "ERROR")
         cfg["handlers"]["error_file_handler"]["formatter"] = os.getenv("LOG_FORMATTER_ERROR", "error")
-        cfg["handlers"]["error_file_handler"]["filename"] = os.getenv("LOG_FILENAME_ERROR", "error.log")
+        cfg["handlers"]["error_file_handler"]["filename"] = os.getenv("LOG_FILENAME_ERROR", "error.logger")
         cfg["handlers"]["error_file_handler"]["maxBytes"] = os.getenv("LOG_MAXBYTES_ERROR", 10485760)
         cfg["handlers"]["error_file_handler"]["backupCount"] = os.getenv("LOG_BACKUPCOUNT_ERROR", 20)
         cfg["handlers"]["error_file_handler"]["encoding"] = os.getenv("LOG_ENCODING_ERROR", "utf8")
@@ -282,7 +336,7 @@ class Log_Config:
         cfg["handlers"]["debug_file_handler"]["class"] = os.getenv("LOG_CLASS_DEBUG", "logging.handlers.RotatingFileHandler")
         cfg["handlers"]["debug_file_handler"]["level"] = os.getenv("LOG_LEVEL_DEBUG", "DEBUG")
         cfg["handlers"]["debug_file_handler"]["formatter"] = os.getenv("LOG_FORMATTER_DEBUG", "error")
-        cfg["handlers"]["debug_file_handler"]["filename"] = os.getenv("LOG_FILENAME_DEBUG", "debug.log")
+        cfg["handlers"]["debug_file_handler"]["filename"] = os.getenv("LOG_FILENAME_DEBUG", "debug.logger")
         cfg["handlers"]["debug_file_handler"]["maxBytes"] = os.getenv("LOG_MAXBYTES_DEBUG", 10485760)
         cfg["handlers"]["debug_file_handler"]["backupCount"] = os.getenv("LOG_BACKUPCOUNT_DEBUG", 20)
         cfg["handlers"]["debug_file_handler"]["encoding"] = os.getenv("LOG_ENCODING_DEBUG", "utf8")
