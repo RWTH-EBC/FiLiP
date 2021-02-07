@@ -19,8 +19,8 @@ import os
 
 if __name__=='__main__':
     # Example using *.json-config-file
-    config = Config(path = '../config.json', loglevel="DEBUG")
-    print(config)
+    #config = Config(path = '../config.json', loglevel="DEBUG")
+    #print(config)
 
     # Example using environment variables
     os.environ["CONFIG_FILE"] = "False"

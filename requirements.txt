@@ -5,3 +5,5 @@ fuzzywuzzy
 PyYAML
 pandas
 python-Levenshtein
+pydantic
+datapackage
