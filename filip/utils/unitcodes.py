@@ -1,4 +1,5 @@
 from pandas_datapackage_reader import read_datapackage
+import pandas as pd
 from pydantic import BaseModel, Field
 from typing import Optional, List, Dict
 from enum import Enum
@@ -22,29 +23,42 @@ class Sector(str, Enum):
 
 
 class Units:
-    levels: List[Level] = None
-    units: Dict[str, Unit] = None
+    levels: pd.DataFrame = None
+    units: pd.DataFrame = None
 
     def __init__(self):
         data = read_datapackage(
             "https://github.com/datasets/unece-units-of-measure")
-        self.levels = [Level(**level) for level in data[
-            'levels'].to_dict(orient="records")]
-        self.units = {unit['Name']: Unit(**unit) for unit in data[
-            'units-of-measure'].to_dict(
-            orient="records")}
+        self.levels = data['levels']
+        self.units = data['units-of-measure']
 
-    def get_unit(self, name: str):
-        return self.units.get(name.casefold(), None)
+        #self.levels = [Level(**level) for level in data[
+        #    'levels'].to_dict(orient="records")]
+        #        self.units = {unit['Name']: Unit(**unit) for unit in data[
+        #    'units-of-measure'].to_dict(
+        #    orient="records")}
 
-    def get_sector(self, sector: Sector):
-        return [unit for unit in self.units.values() if unit.sector.casefold() ==
-                sector.casefold()]
+
+    def __getattr__(self, item):
+        item = item.casefold().replace('_', ' ')
+        return self.__getitem__(item)
+
+    def __getitem__(self, item):
+        row = self.units.loc[self.units.Name == item.casefold()]
+        if len(row) == 0:
+            raise KeyError
+        return Unit(**row.to_dict(orient="records")[0])
+
+
+    @property
+    def sectors(self):
+        return [sector for sector in self.units.Sector.unique()]
 
 units = Units()
 
-print(units.levels)
+if __name__ == '__main__':
+    print(units.levels)
+    print(units.sectors)
+    print(units.newton_second_per_metre.code)
+    print(units['newton second per metre'])
 
-print(units.mechanics)
-print(units.get_unit('Ampere').sector)
-print(units.get_sector(Sector.electricity_and_magnetism))
