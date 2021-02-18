@@ -17,9 +17,9 @@ class Unit(BaseModel):
     description: Optional[str] = Field(alias="Description")
     quantity: str = Field(alias="Quantity")
 
-class Sector(str, Enum):
-    mechanics = 'Mechanics'
-    electricity_and_magnetism = 'Electricity and Magnetism'
+#class Sector(str, Enum):
+#    mechanics = 'Mechanics'
+#    electricity_and_magnetism = 'Electricity and Magnetism'
 
 
 class Units:
@@ -31,34 +31,56 @@ class Units:
             "https://github.com/datasets/unece-units-of-measure")
         self.levels = data['levels']
         self.units = data['units-of-measure']
-
-        #self.levels = [Level(**level) for level in data[
-        #    'levels'].to_dict(orient="records")]
-        #        self.units = {unit['Name']: Unit(**unit) for unit in data[
-        #    'units-of-measure'].to_dict(
-        #    orient="records")}
-
+        self.sectors = Enum('sectors', {str(sector).casefold().replace(' ','_'):
+                                           sector for sector in
+                                    self.units.Sector.unique()},
+                      module=__name__,
+                      type=str)
 
     def __getattr__(self, item):
         item = item.casefold().replace('_', ' ')
         return self.__getitem__(item)
 
     def __getitem__(self, item):
-        row = self.units.loc[self.units.Name == item.casefold()]
+        row = self.units.loc[(self.units.Name.str.casefold() ==
+                              item.casefold())]
+        if len(row) == 0:
+            row = (self.units.loc[(self.units.CommonCode.str.casefold() ==
+                                   item.casefold())])
         if len(row) == 0:
             raise KeyError
         return Unit(**row.to_dict(orient="records")[0])
 
 
-    @property
-    def sectors(self):
-        return [sector for sector in self.units.Sector.unique()]
+    #@property
+    #def sectors(self):
+    #    return [sector for sector in self.units.Sector.unique()]
+
+    def get_unit(self, *, name: str=None, code: str=None):
+
+        if name is not None and code is None:
+            row = self.units.loc[(self.units.Name == name.casefold())]
+        elif name is None and code is not None:
+            row = self.units.loc[(self.units.CommonCode.str.casefold() ==
+                                  code.casefold())]
+        else:
+            raise Exception
+        if len(row) == 0:
+            raise KeyError
+        return Unit(**row.to_dict(orient="records")[0])
+
+    def get_sector(self, sector: str):
+        rows = self.units.loc[(self.units.Name == sector.casefold())]
+        return [Unit(**unit) for unit in rows.to_dict(orient="records")]
+
+
 
 units = Units()
 
 if __name__ == '__main__':
-    print(units.levels)
-    print(units.sectors)
+    #print(units.levels)
+    print(units.sectors.mechanics=='Mechanics')
     print(units.newton_second_per_metre.code)
     print(units['newton second per metre'])
-
+    print(units.get_unit(code='C58'))
+    print(units['C58'])
