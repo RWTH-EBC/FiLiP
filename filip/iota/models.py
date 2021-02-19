@@ -185,12 +185,15 @@ class Device(BaseModel):
     )
     service: Optional[str] = Field(
         description="Name of the service the device belongs to "
-                    "(will be used in the fiware-service header)."
+                    "(will be used in the fiware-service header).",
+        max_length=50
     )
     service_path: Optional[str] = Field(
         default="/",
         description="Name of the subservice the device belongs to "
-                    "(used in the fiware-servicepath header).")
+                    "(used in the fiware-servicepath header).",
+        max_length=51
+    )
     entity_name: str = Field(
         description="Name of the entity representing the device in "
                     "the Context Broker"
@@ -199,6 +202,7 @@ class Device(BaseModel):
         description="Type of the entity in the Context Broker"
     )
     timezone: Optional[str] = Field(
+        default='Europe/London',
         description="Time zone of the sensor if it has any"
     )
     timestamp: Optional[bool] = Field(
@@ -275,4 +279,4 @@ class Device(BaseModel):
 
 if __name__ == '__main__':
     device = Device(device_id="saf", entity_name="saf", entity_type="all")
-    print(device.json(indent=2, skip_defaults=True))
+    print(device.json(indent=2))

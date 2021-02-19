@@ -1,7 +1,7 @@
 import json
 import requests
 from filip.utils import request_utils as requtils
-from filip.testing import test
+from core import test
 import math
 import logging
 
@@ -227,8 +227,8 @@ class Orion:
         :return: Boolean, True if the service is reachable, False if not.
         """
         boolean = test.test_connection(client=self.session,
-                                        url=self.url+'/version',
-                                        service_name=__name__)
+                                       url=self.url+'/version',
+                                       service_name=__name__)
         return boolean
 
     def post_entity(self, entity: Entity, force_update: bool = True):

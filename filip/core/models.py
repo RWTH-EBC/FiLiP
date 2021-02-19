@@ -1,4 +1,5 @@
 from aenum import Enum
+from pydantic import BaseModel, Field, validator
 
 class DataType(str, Enum):
     """
@@ -26,3 +27,22 @@ class DataType(str, Enum):
     Time = "Time", "A point in time recurring on multiple days in the form " \
                    "hh:mm:ss[Z|(+|-)hh:mm] (see XML schema for details)."
 
+class FiwareHeader(BaseModel):
+    service: str = Field(
+        alias="Fiware-Service",
+        default="",
+        max_length=50,
+        description="Fiware service used for multitancy"
+    )
+    path: str = Field(
+        alias="Fiware-ServicePath",
+        default="/",
+        description="Fiware service path",
+        max_length = 51,
+    )
+
+    @validator('path')
+    def validate_service_path(cls, v):
+        assert v.startswith('/'), \
+            "Service path must have a trailing slash ('/')"
+        return v

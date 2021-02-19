@@ -1,18 +1,15 @@
 import requests
 import datetime
 import json
+import logging
 
 from filip.utils import request_utils as requtils
-from filip.testing import test
+from core import test
 from filip.iota.device_group import DeviceGroup
 from filip.iota.device import Device
 from filip.config import Config
 
-import logging
-
 log = logging.getLogger('iot')
-
-
 PROTOCOLS = ['IoTA-JSON', 'IoTA-UL']
 
 
@@ -200,8 +197,6 @@ class Agent:
         response = self.session.request("PUT", url,
                                     data=payload,
                                     headers=headers)
-
-
 
         ok, retstr = requtils.response_ok(response)
         if not ok:
