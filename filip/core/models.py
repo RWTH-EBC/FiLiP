@@ -1,5 +1,5 @@
 from aenum import Enum
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, validator, BaseConfig
 
 class DataType(str, Enum):
     """
@@ -26,20 +26,24 @@ class DataType(str, Enum):
     Text = "Text", "https://schema.org/Text"
     Time = "Time", "A point in time recurring on multiple days in the form " \
                    "hh:mm:ss[Z|(+|-)hh:mm] (see XML schema for details)."
+    Relationship = "Relationship", "Reference to another entity"
 
 class FiwareHeader(BaseModel):
     service: str = Field(
-        alias="Fiware-Service",
+        alias="fiware-service",
         default="",
         max_length=50,
         description="Fiware service used for multitancy"
     )
     path: str = Field(
-        alias="Fiware-ServicePath",
+        alias="fiware-servicepath",
         default="/",
         description="Fiware service path",
         max_length = 51,
     )
+
+    class Config(BaseConfig):
+        pass
 
     @validator('path')
     def validate_service_path(cls, v):

@@ -1,3 +1,6 @@
 [submodule "specifications"]
 	path = specifications
 	url = https://github.com/FIWARE/specifications
+[submodule "external_resources/data-models"]
+	path = external_resources/data-models
+	url = https://github.com/smart-data-models/data-models

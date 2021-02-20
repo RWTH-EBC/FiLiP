@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytz
 from enum import Enum
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, List, Union
 from pydantic import BaseModel, Field, validator, AnyHttpUrl
 from filip.core.models import DataType
 
@@ -83,7 +83,7 @@ class Command(Attribute):
 
 
 class StaticAttribute(BaseAttribute):
-    value: DataType = Field(
+    value: Union[Dict, List, str, float] = Field(
         description="Constant value for this attribute"
     )
 
@@ -96,13 +96,11 @@ class Service(BaseModel):
         description="Subservice of the devices of this type."
     )
     resource: str = Field(
-        default="/",
         description="string representing the Southbound resource that will be "
                     "used to assign a type to a device  (e.g.: pathname in the "
                     "southbound port)."
     )
     apikey: str = Field(
-        default="1234",
         description="API Key string. It is a key used for devices belonging "
                     "to this service. If "", service does not use apikey, but "
                     "it must be specified."
@@ -127,25 +125,25 @@ class Service(BaseModel):
                     "be used to override the global ones for specific types of "
                     "devices."
     )
-    lazy: Optional[Attribute] = Field(
+    lazy: Optional[List[Attribute]] = Field(
         desription="list of common lazy attributes of the device. For each "
                    "attribute, its name and type must be provided."
     )
-    commands: Optional[Command] = Field(
+    commands: Optional[List[Command]] = Field(
         desription="list of common commands attributes of the device. For each "
                    "attribute, its name and type must be provided, additional "
                    "metadata is optional"
     )
-    attributes: Optional[Attribute] = Field(
+    attributes: Optional[List[Attribute]] = Field(
         description="list of common commands attributes of the device. For "
                     "each attribute, its name and type must be provided, "
                     "additional metadata is optional."
     )
-    static_attributes: Optional[StaticAttribute] = Field(
+    static_attributes: Optional[List[StaticAttribute]] = Field(
         description="this attributes will be added to all the entities of this "
                     "group 'as is', additional metadata is optional."
     )
-    internal_attributes: Optional[Dict[str, Any]] = Field(
+    internal_attributes: Optional[List[Dict[str, Any]]] = Field(
         description="optional section with free format, to allow specific "
                     "IoT Agents to store information along with the devices "
                     "in the Device Registry."
@@ -212,11 +210,8 @@ class Device(BaseModel):
                     "timestamp. With NGSI-LD, the Standard observedAt "
                     "property-of-a-property is created instead."
     )
-    apikey: str = Field(
-        default="1234",
-        description="API Key string. It is a key used for devices belonging "
-                    "to this service. If "", service does not use apikey, but "
-                    "it must be specified."
+    apikey: Optional[str] = Field(
+        description="Optional Apikey key string to use instead of group apikey"
     )
     endpoint: Optional[AnyHttpUrl] = Field(
         description="Endpoint where the device is going to receive commands, "
@@ -230,21 +225,21 @@ class Device(BaseModel):
         description="Name of the device transport protocol, for the IoT Agents "
                     "with multiple transport protocols."
     )
-    lazy: Optional[Attribute] = Field(
+    lazy: Optional[List[Attribute]] = Field(
         desription="List of lazy attributes of the device"
     )
-    commands: Optional[Command] = Field(
+    commands: Optional[List[Command]] = Field(
         desription="List of commands of the device"
     )
-    attributes: Optional[Attribute] = Field(
+    attributes: Optional[List[Attribute]] = Field(
         description="List of active attributes of the device"
     )
-    static_attributes: Optional[StaticAttribute] = Field(
+    static_attributes: Optional[List[StaticAttribute]] = Field(
         description="List of static attributes to append to the entity. All the"
                     " updateContext requests to the CB will have this set of "
                     "attributes appended."
     )
-    internal_attributes: Optional[Dict[str, Any]] = Field(
+    internal_attributes: Optional[List[Dict[str, Any]]] = Field(
         description="List of internal attributes with free format for specific "
                     "IoT Agent configuration"
     )

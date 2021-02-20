@@ -4,7 +4,7 @@ import json
 from typing import List, Union
 from urllib.parse import urljoin
 from core import settings, FiwareHeader
-from .models import Device, Protocol
+from .models import Device, Service, Protocol
 
 logger = logging.getLogger(__name__)
 
@@ -18,12 +18,101 @@ class IoTAClient():
 
     def get_version(self):
         url = urljoin(settings.IOTA_URL, 'version')
-        url = 'http://github.com/'
         try:
             res = requests.get(url=url, headers=self.headers)
-            res.raise_for_status()
+            if res.ok:
+                return res
+            else:
+                res.raise_for_status()
         except requests.exceptions.RequestException as e:
             logger.error(e)
+
+    def get_services(self):
+        url = urljoin(settings.IOTA_URL, 'iot/services')
+        headers = self.headers
+        try:
+            res = requests.get(url=url, headers=headers)
+            if res.ok:
+                return [Service(**service) for service in res.json()['services']]
+            else:
+                res.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            logger.error(e)
+
+    def get_service(self, *, resource, apikey):
+        """
+
+        Args:
+            resource:
+            apikey:
+
+        Returns:
+
+        """
+        url = urljoin(settings.IOTA_URL, 'iot/services')
+        headers = self.headers
+        params = {key: value for key, value in locals().items() if value is not
+                  None}
+        res = None
+        try:
+            res = requests.get(url=url, headers=headers, params=params)
+            if res.ok:
+                return Service(**res.json()['services'][0])
+            else:
+                res.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            logger.error(e)
+            if res is not None:
+                logger.error(res.content)
+
+    def post_service(self, service: Service):
+        url = urljoin(settings.IOTA_URL, 'iot/services')
+        headers = self.headers
+        data = {'services': [service.dict(exclude={'service','subservice'},
+                                          exclude_defaults=True)]}
+        res = None
+        try:
+            res = requests.post(url=url, headers=headers, json=data)
+            if res.ok:
+                logger.info("Service successfully posted")
+            else:
+                print(res.text)
+                res.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            logger.error(e)
+            if res is not None:
+                logger.error(res.content)
+
+
+    def delete_service(self, *, resource, apikey):
+        """
+
+        Args:
+            resource:
+            apikey:
+
+        Returns:
+
+        """
+        url = urljoin(settings.IOTA_URL, 'iot/services')
+        headers = self.headers
+        params = {key: value for key, value in locals().items() if value is not
+                  None}
+        res = None
+        try:
+            res = requests.delete(url=url, headers=headers, params=params)
+            if res.ok:
+                logger.info(f"Service with resource: '{resource}' and apikey: "
+                            f"'{apikey}' successfully deleted!")
+            else:
+                res.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            logger.error(e)
+            logger.error(f"Service with resource: '{resource}' and apikey: "
+                            f"'{apikey}' could not deleted!")
+            if res is not None:
+                logger.error(res.content)
+
 
     def get_devices(self, *, limit: int = 20, offset: int = 20,
                     detailed: bool = None, entity: str = None,
@@ -43,7 +132,8 @@ class IoTAClient():
         """
         url = urljoin(settings.IOTA_URL, 'iot/devices')
         headers = self.headers
-        params = {param for param in locals().items() if param is not None}
+        params = {key: value for key, value in locals().items() if value is not
+                  None}
         try:
             res = requests.get(url=url, headers=headers, params=params)
             if res.ok:
@@ -52,6 +142,7 @@ class IoTAClient():
                 res.raise_for_status()
         except requests.exceptions.RequestException as e:
             logger.error(e)
+
 
     def post_devices(self):
         url = urljoin(settings.IOTA_URL, 'version')
@@ -100,4 +191,4 @@ class IoTAClient():
                 res.raise_for_status()
         except requests.exceptions.RequestException as e:
             logger.error(e)
-            logger.error(f"Device {device_id} was not deleted!")
+            logger.error(f"Device {device_id} could not deleted!")
