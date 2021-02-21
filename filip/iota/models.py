@@ -1,11 +1,14 @@
 from __future__ import annotations
-
+import logging
 import pytz
+import itertools
 from enum import Enum
 from typing import Any, Dict, Optional, List, Union
 from pydantic import BaseModel, Field, validator, AnyHttpUrl
 from filip.core.models import DataType
 
+
+logger = logging.getLogger()
 
 class ExpressionLanguage(str, Enum):
     legacy = "legacy"
@@ -71,12 +74,20 @@ class BaseAttribute(BaseModel):
                     "index.html#data-mapping-plugins)"
     )
 
+    def __eq__(self, other):
+        if isinstance(other, BaseAttribute):
+            return self.name == other.name
+        else:
+            return self.dict == other
+
 
 class Attribute(BaseAttribute):
     object_id: Optional[str] = Field(
         description="name of the attribute as coming from the device."
     )
 
+class LazyAttribute(Attribute):
+    pass
 
 class Command(Attribute):
     pass
@@ -125,7 +136,7 @@ class Service(BaseModel):
                     "be used to override the global ones for specific types of "
                     "devices."
     )
-    lazy: Optional[List[Attribute]] = Field(
+    lazy: Optional[List[LazyAttribute]] = Field(
         desription="list of common lazy attributes of the device. For each "
                    "attribute, its name and type must be provided."
     )
@@ -271,7 +282,124 @@ class Device(BaseModel):
         assert v in pytz.all_timezones
         return v
 
+    def get_attribute(self, attribute_name: str) -> Union[Attribute,
+                                                          LazyAttribute,
+                                                          StaticAttribute]:
+        """
 
-if __name__ == '__main__':
-    device = Device(device_id="saf", entity_name="saf", entity_type="all")
-    print(device.json(indent=2))
+        Args:
+            attribute_name:
+
+        Returns:
+
+        """
+        for attribute in itertools.chain(self.attributes,
+                                         self.lazy,
+                                         self.static_attributes,
+                                         self.internal_attributes):
+            if attribute.name == attribute_name:
+                return attribute
+        logger.error(f"Device: {self.device_id}: Could not find "
+                     f"attribute with name {attribute_name}")
+        raise KeyError
+
+
+    def add_attribute(self,
+                      attribute: Union[Attribute,
+                                       LazyAttribute,
+                                       StaticAttribute],
+                      update: bool = False) -> None:
+        """
+
+        Args:
+            attribute:
+            update (bool): If 'True' and attribute does already exists tries
+            to  update the attribute if not
+        Returns:
+            None
+        """
+        try:
+            if isinstance(attribute, Attribute):
+                if attribute in self.attributes:
+                    raise ValueError
+                else:
+                    self.attributes.append(attribute)
+            elif isinstance(attribute, LazyAttribute):
+                if attribute in self.lazy:
+                    raise ValueError
+                else:
+                    self.lazy.append(attribute)
+            elif isinstance(attribute, StaticAttribute):
+                if attribute in self.static_attributes:
+                    raise ValueError
+                else:
+                    self.static_attributes.append(attribute)
+        except ValueError:
+            if update:
+                self.update_attribute(attribute, add=False)
+                logger.warning(f"Device: {self.device_id}: Attribute already "
+                               f"exists. Will update: \n"
+                               f" {attribute.json(indent=2)}")
+            else:
+                logger.error(f"Device: {self.device_id}: Attribute already "
+                             f"exists: \n {attribute.json(indent=2)}")
+                raise ValueError
+
+
+    def update_attribute(self, attribute: Union[Attribute,
+                                                LazyAttribute,
+                                                StaticAttribute],
+                         add: bool = False) -> None:
+        """
+        Updates existing device attribute
+        Args:
+            attribute: Attribute to add to device configuration
+            add (bool): Adds attribute if not exist
+
+        Returns:
+            None
+        """
+        try:
+            if isinstance(attribute, Attribute):
+                idx = self.attributes.index(attribute)
+                self.attributes[idx].dict().update(attribute.dict())
+            elif isinstance(attribute, LazyAttribute):
+                idx = self.lazy.index(attribute)
+                self.lazy[idx].dict().update(attribute.dict())
+            elif isinstance(attribute, StaticAttribute):
+                idx = self.static_attributes.index(attribute)
+                self.static_attributes[idx].dict().update(attribute.dict())
+        except ValueError:
+            if add:
+                logger.warning(f"Device: {self.device_id}: Could not find "
+                               f"attribute: \n {attribute.json(indent=2)}")
+                self.add_attribute(attribute=attribute)
+
+            else:
+                logger.error(f"Device: {self.device_id}: Could not find "
+                             f"attribute: \n {attribute.json(indent=2)}")
+                raise KeyError
+
+    def delete_attribute(self, attribute: Union[Attribute,
+                                                LazyAttribute,
+                                                StaticAttribute]):
+        """
+        Deletes attribute from device
+        Args:
+            attribute: ()
+
+        Returns:
+
+        """
+        try:
+            if isinstance(attribute, Attribute):
+                self.attributes.remove(attribute)
+            elif isinstance(attribute, LazyAttribute):
+                self.lazy.remove(attribute)
+            elif isinstance(attribute, StaticAttribute):
+                self.static_attributes.remove(attribute)
+        except ValueError:
+            logger.warning(f"Device: {self.device_id}: Could not delete "
+                           f"attribute: \n {attribute.json(indent=2)}")
+        logger.info(f"Device: {self.device_id}: Attribute deleted! \n"
+                    f"{attribute.json(indent=2)}")

@@ -43,7 +43,7 @@ class FiwareHeader(BaseModel):
     )
 
     class Config(BaseConfig):
-        pass
+        allow_population_by_field_name = True
 
     @validator('path')
     def validate_service_path(cls, v):

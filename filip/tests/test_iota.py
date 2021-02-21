@@ -28,10 +28,7 @@ class TestClient(unittest.TestCase):
             "explicitAttrs": None,
             "ngsiVersion": None
         }
-        self.fiware_header = FiwareHeader()
-        self.fiware_header.service = 'filip'
-        self.fiware_header.path = '/testing'
-        print(self.fiware_header)
+        self.fiware_header = FiwareHeader(service='filip', path='/testing')
         self.service = models.Service(service='filip',
                                       subservice='/testing',
                                       entity_type='Thing',
