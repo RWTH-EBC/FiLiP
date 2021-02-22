@@ -8,7 +8,7 @@ from .models import Device, ServiceGroup, Protocol
 logger = logging.getLogger(__name__)
 
 
-class IoTAClient():
+class Agent():
     """
     Client for FIWARE IoT-Agents. The implementation follows the API
     specifications from here:

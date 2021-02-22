@@ -6,7 +6,7 @@ from core import FiwareHeader
 
 class TestModels(unittest.TestCase):
     def setUp(self) -> None:
-        self.fiware_header = {'fiware-service': 'filip',
+        self.fiware_header = {'fiware-service_group': 'filip',
                               'fiware-servicepath': '/testing'}
 
     def test_fiware_header(self):

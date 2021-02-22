@@ -1,7 +1,6 @@
-from config import Config
-from iota import Agent
-from ocb import Orion
-from timeseries import QuantumLeap
+import logging
+import json
+import errno
 from requests.auth import HTTPBasicAuth, HTTPDigestAuth
 from requests import Session
 #from requests_oauthlib import OAuth2Session
@@ -10,9 +9,11 @@ from requests import Session
 #    BackendApplicationClient
 from authlib.integrations.requests_client import OAuth2Session
 from authlib.integrations.requests_client import OAuth2Auth
-import logging
-import json
-import errno
+from config import Config
+from iota import Agent
+from ocb import Orion
+from timeseries import QuantumLeap
+from core.models import FiwareHeader
 
 logger = logging.getLogger('client')
 
@@ -37,7 +38,9 @@ class Client:
             auth_types[self.config['auth']['type']]()
         else:
             self.session = Session()
-        self.iota = Agent(config=self.config, session=self.session)
+        # TODO: correctly import Fiware Header
+        FiwareHeader(service='', service_path='/')
+        self.iota = Agent()
         self.ocb = Orion(config=self.config, session=self.session)
         self.timeseries = QuantumLeap(config=self.config, session=self.session)
 
@@ -109,46 +112,46 @@ class Client:
         except KeyError:
             pass
 
-    def __oauth2(self):
-        """
-        Initiates a oauthclient according to the workflows defined by OAuth2.0.
-        We use requests-oauthlib for this implementation. The documentation
-        of the package is located here:
-        https://requests-oauthlib.readthedocs.io/en/latest/index.html
-        The information for workflow selection must be provided via
-        filip-config. The credentials must be provided via secrets-file.
-        :return: None
-        """
-        oauth2clients = {'authorization_code': None,
-                         'implicit': MobileApplicationClient,
-                         'resource_owner_password_credentials':
-                             LegacyApplicationClient,
-                         'client_credentials': BackendApplicationClient, }
-        try:
-            workflow = self.config['auth']['workflow']
-        except KeyError:
-            logger.warning(f"No workflow for OAuth2 defined! Default "
-                           f"workflow will used: Authorization Code Grant."
-                           f"Other oauth2-workflows available are: "
-                           f"{oauth2clients.keys()}")
-            workflow = 'authorization_code_grant'
-
-        oauthclient = oauth2clients[workflow](client_id=self.__secrets[
-            'client_id'])
-        self.session = OAuth2Session(client_id=None,
-                                     client=oauthclient,
-                                     auto_refresh_url=self.__secrets[
-                                         'token_url'],
-                                     auto_refresh_kwargs={
-                                         self.__secrets['client_id'],
-                                         self.__secrets['client_secret']})
-
-        self.__token = self.session.fetch_token(
-            token_url=self.__secrets['token_url'],
-            username=self.__secrets['username'],
-            password=self.__secrets['password'],
-            client_id=self.__secrets['client_id'],
-            client_secret=self.__secrets['client_secret'])
+    #def __oauth2(self):
+    #    """
+    #    Initiates a oauthclient according to the workflows defined by OAuth2.0.
+    #    We use requests-oauthlib for this implementation. The documentation
+    #    of the package is located here:
+    #    https://requests-oauthlib.readthedocs.io/en/latest/index.html
+    #    The information for workflow selection must be provided via
+    #    filip-config. The credentials must be provided via secrets-file.
+    #    :return: None
+    #    """
+    #    oauth2clients = {'authorization_code': None,
+    #                     'implicit': MobileApplicationClient,
+    #                     'resource_owner_password_credentials':
+    #                         LegacyApplicationClient,
+    #                     'client_credentials': BackendApplicationClient, }
+    #    try:
+    #        workflow = self.config['auth']['workflow']
+    #    except KeyError:
+    #        logger.warning(f"No workflow for OAuth2 defined! Default "
+    #                       f"workflow will used: Authorization Code Grant."
+    #                       f"Other oauth2-workflows available are: "
+    #                       f"{oauth2clients.keys()}")
+    #        workflow = 'authorization_code_grant'
+#
+    #    oauthclient = oauth2clients[workflow](client_id=self.__secrets[
+    #        'client_id'])
+    #    self.session = OAuth2Session(client_id=None,
+    #                                 client=oauthclient,
+    #                                 auto_refresh_url=self.__secrets[
+    #                                     'token_url'],
+    #                                 auto_refresh_kwargs={
+    #                                     self.__secrets['client_id'],
+    #                                     self.__secrets['client_secret']})
+#
+    #    self.__token = self.session.fetch_token(
+    #        token_url=self.__secrets['token_url'],
+    #        username=self.__secrets['username'],
+    #        password=self.__secrets['password'],
+    #        client_id=self.__secrets['client_id'],
+    #        client_secret=self.__secrets['client_secret'])
 
     def __token_saver(self, token):
         self.__token = token

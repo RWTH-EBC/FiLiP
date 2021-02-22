@@ -3,13 +3,13 @@ import requests
 from unittest.mock import Mock, patch
 from uuid import uuid4
 from core import FiwareHeader
-from iota import IoTAClient, models
+from iota import Agent, models
 
-class TestClient(unittest.TestCase):
+class TestAgent(unittest.TestCase):
     def setUp(self) -> None:
         self.device = {
             "device_id": "saf",
-            "service": None,
+            "service_group": None,
             "service_path": "/",
             "entity_name": "saf",
             "entity_type": "all",
@@ -28,38 +28,33 @@ class TestClient(unittest.TestCase):
             "explicitAttrs": None,
             "ngsiVersion": None
         }
-        self.fiware_header = FiwareHeader(service='filip', path='/testing')
-        self.service = models.Service(service='filip',
-                                      subservice='/testing',
-                                      entity_type='Thing',
-                                      resource='/iot/json',
-                                      apikey=str(uuid4()))
-        self.client = IoTAClient(fiware_header=self.fiware_header)
+        self.fiware_header = FiwareHeader(service='filip',
+                                          service_path='/testing')
+        self.service_group = models.ServiceGroup(entity_type='Thing',
+                                                 resource='/iot/json',
+                                                 apikey=str(uuid4()))
+        self.service_group = models.ServiceGroup(entity_type='OtherThing',
+                                                 resource='/iot/json',
+                                                 apikey=str(uuid4()))
+        self.client = Agent(fiware_header=self.fiware_header)
 
     def test_device_model(self):
         device = models.Device(**self.device)
         self.assertEqual(device.dict(), self.device)
 
     def test_get_version(self):
-        res = self.client.get_version()
-        if res:
-            print(res)
+        self.assertIsNotNone(self.client.get_version())
 
-    def test_service_endpoints(self):
-        self.client.post_service(service=self.service)
-        services = self.client.get_services()
-        print(services)
-        service = self.client.get_service(resource=self.service.resource,
-                                          apikey=self.service.apikey)
-        print(service.json(indent=2))
-        self.client.delete_service(resource=service.resource,
-                                   apikey=service.apikey)
+    def test_service_group_endpoints(self):
+        self.client.post_group(service_group=self.service_group)
+        groups = self.client.get_groups()
+        group = self.client.get_group(resource=self.service_group.resource,
+                                        apikey=self.service_group.apikey)
+        self.client.delete_group(resource=group.resource,
+                                   apikey=group.apikey)
 
     def test_device_endpoints(self):
         devices = self.client.get_devices()
         for device in devices:
             print(device.json(indent=2, exclude_defaults=True))
 
-    def test_get_device(self):
-        res = requests.get('http://jsonplaceholder.typicode.com/todos')
-        self.assertTrue(res.ok)

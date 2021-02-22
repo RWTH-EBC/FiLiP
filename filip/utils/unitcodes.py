@@ -17,11 +17,6 @@ class Unit(BaseModel):
     description: Optional[str] = Field(alias="Description")
     quantity: str = Field(alias="Quantity")
 
-#class Sector(str, Enum):
-#    mechanics = 'Mechanics'
-#    electricity_and_magnetism = 'Electricity and Magnetism'
-
-
 class Units:
     levels: pd.DataFrame = None
     units: pd.DataFrame = None
@@ -51,13 +46,7 @@ class Units:
             raise KeyError
         return Unit(**row.to_dict(orient="records")[0])
 
-
-    #@property
-    #def sectors(self):
-    #    return [sector for sector in self.units.Sector.unique()]
-
     def get_unit(self, *, name: str=None, code: str=None):
-
         if name is not None and code is None:
             row = self.units.loc[(self.units.Name == name.casefold())]
         elif name is None and code is not None:
@@ -73,12 +62,9 @@ class Units:
         rows = self.units.loc[(self.units.Name == sector.casefold())]
         return [Unit(**unit) for unit in rows.to_dict(orient="records")]
 
-
-
 units = Units()
 
 if __name__ == '__main__':
-    #print(units.levels)
     print(units.sectors.mechanics=='Mechanics')
     print(units.newton_second_per_metre.code)
     print(units['newton second per metre'])
