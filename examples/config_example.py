@@ -13,7 +13,7 @@ import os
  guessed based on the provided information. 
  
  Imported Note:
- Although Urls are also guessed the safest is to set the service url directly
+ Although Urls are also guessed the safest is to set the service_group url directly
  
 '''
 

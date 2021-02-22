@@ -15,7 +15,7 @@ class Shared:
     attributes of the device and device_group class.
     """
     def __init__(self, **kwargs):
-        self.service = kwargs.get("service", None)
+        self.service = kwargs.get("service_group", None)
         self.service_path = kwargs.get("service_path", "/")
         self.apikey = kwargs.get("apikey")
         self.timestamp = kwargs.get("timestamp", None)
@@ -54,7 +54,7 @@ class Shared:
         if self.timestamp is not None:
             data_dict['timestamp'] = self.timestamp
         if self.service:
-            data_dict["service"] = self.service
+            data_dict["service_group"] = self.service
         if self.service_path:
             data_dict['service_path'] = self.service_path
         data_dict['attributes'] = self.attributes

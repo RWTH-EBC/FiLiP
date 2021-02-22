@@ -23,7 +23,7 @@ class Agent:
         self.port = config.iota.get("port")
         self.url = config.iota.get("url")
         self.protocol = config.iota.get("protocol")
-        #TODO: Figuring our how to register the service and conncet with devices
+        #TODO: Figuring our how to register the service_group and conncet with devices
         self.services = []
 
     def test_config(self, config: Config):
@@ -32,8 +32,8 @@ class Agent:
 
     def test_connection(self):
         """
-        Function utilises the test.test_connection() function to check the availability of a given url and service.
-        :return: Boolean, True if the service is reachable, False if not.
+        Function utilises the test.test_connection() function to check the availability of a given url and service_group.
+        :return: Boolean, True if the service_group is reachable, False if not.
         """
         boolean = test.test_connection(client=self.session,
                                        service_name=__name__,
@@ -53,7 +53,7 @@ class Agent:
                        }.get(level, logging.info)(msg=response)
 
     def get_groups(self, device_group: DeviceGroup):
-        url = self.url + '/iot/services'
+        url = self.url + '/iot/service_groups'
         headers = device_group.get_header()
         response = self.session.request("GET", url, headers=headers)
         ok, retstr = requtils.response_ok(response)
@@ -64,7 +64,7 @@ class Agent:
             return response.text
 
     def delete_group(self, device_group: DeviceGroup):
-        url = self.url + '/iot/services'
+        url = self.url + '/iot/service_groups'
         headers = device_group.get_header()
         querystring = {"resource": device_group.get_resource(),
                        "apikey": device_group.get_apikey()}
@@ -78,15 +78,15 @@ class Agent:
 
     def post_group(self, device_group: DeviceGroup, force_update: bool = False):
         """
-        Function post a device group (service). If force_update = True, the info cannot  unable to register
+        Function post a device group (service_group). If force_update = True, the info cannot  unable to register
         configuration (409 : Duplicate_Group) is ignored and the group is updated.
         :param device_group: The device group that should be updated. An Instance of the Device_group Class
         :param force_update: Boolean whether an update should be forced.
         """
-        url = self.url + '/iot/services'
+        url = self.url + '/iot/service_groups'
         headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header()}
         payload = dict()
-        payload['services'] = [json.loads(device_group.get_json())]
+        payload['service_groups'] = [json.loads(device_group.get_json())]
         payload = json.dumps(payload, indent=4)
         response = self.session.request("POST", url, data=payload,
                                     headers=headers)
@@ -96,14 +96,14 @@ class Agent:
             response = requests.request("PUT", url=url, data=payload, headers=headers, params=querystring)
 
         if response.status_code not in [201, 200, 204]:
-            log.warning(f"Unable to register default configuration for service "
-                        f"{device_group.get_header()['fiware-service']}, "
+            log.warning(f"Unable to register default configuration for service_group "
+                        f"{device_group.get_header()['fiware-service_group']}, "
                         f"path {device_group.get_header()['fiware-servicepath']}"
                         f" Code: {response.status_code} - Info: {response.text}")
             return None
 
     def update_group(self, device_group: DeviceGroup):
-        url = self.url + '/iot/services'
+        url = self.url + '/iot/service_groups'
         headers = {**requtils.HEADER_CONTENT_JSON, **device_group.get_header_last()}
         querystring = {"resource": device_group.get_resource_last(),
                        "apikey": device_group.get_apikey_last()}

@@ -15,7 +15,7 @@ class Device(Shared):
     """
     Represents all necessary information for device registration with an Fiware IoT Agent.
     :ivar device_id: Device ID that will be used to identify the device (mandatory).
-    :ivar service: Name of the service the device belongs to (will be used in the fiware-service header).
+    :ivar service_group: Name of the service_group the device belongs to (will be used in the fiware-service_group header).
     :ivar service_path: Name of the subservice the device belongs to (used in the fiware-servicepath header).
     :ivar entity_name: Name of the entity representing the device in the Context Broker.
     :ivar timezone: Time zone of the sensor if it has any. Default ist UTC/Zulu.

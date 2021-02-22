@@ -14,7 +14,7 @@ def iota(config: config.Config):
     # Creating an Instance of the IoT-Agent in the UL-Version
     agent = Agent(config)
 
-    # set the service path
+    # set the service_group path
     fiware_service = FiwareService("filip",
                                          "/iot_example")
     ocb.set_service(fiware_service)

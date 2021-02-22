@@ -18,7 +18,7 @@ class DeviceGroup(Shared):
     the use of the resource and apikey parameters to select the
     apropriate instance.
 
-    :param name:    Service of the devices of this type
+    :param name:    ServiceGroup of the devices of this type
     :param path:    Subservice of the devices of this type.
     :param cbHost: Context Broker connection information. This options
     can be used to override the global ones for specific types of devices.
@@ -70,7 +70,7 @@ class DeviceGroup(Shared):
         # For using the update functionality, the former configuration needs
         # to be stored
         # TODO: NOTE: It is not recommenend to change the combination fiware
-        #  service structure and apikey --> Delete old and register a new one
+        #  service_group structure and apikey --> Delete old and register a new one
         self.__service_last = self.__service
         self.__subservice_last = self.__subservice
         self.__resource_last = self.__resource
@@ -102,12 +102,12 @@ class DeviceGroup(Shared):
         return self.__resource_last
 
     def get_header(self) -> dict:
-        return {"fiware-service": self.service,
+        return {"fiware-service_group": self.service,
                 "fiware-servicepath": self.service_path
                 }
 
     def get_header_last(self) -> dict:
-        return {"fiware-service": self.__service_last,
+        return {"fiware-service_group": self.__service_last,
                 "fiware-servicepath": self.__subservice_last
                 }
 
