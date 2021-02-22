@@ -42,8 +42,8 @@ class TestClient(unittest.TestCase):
 
     def test_get_version(self):
         res = self.client.get_version()
-        if res is not None:
-            print(res.json())
+        if res:
+            print(res)
 
     def test_service_endpoints(self):
         self.client.post_service(service=self.service)

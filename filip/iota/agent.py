@@ -123,9 +123,10 @@ class Agent:
     def post_device(self, device_group: DeviceGroup, device: Device, force_update: bool = True):
         """
         Function registers a device with the iot-Agent to the respective device group.
-        If a device allready exists in can be updated with update = True
+        If a device already exists in can be updated with update = True
         :param device_group: A device group is a necessary for connecting devices, as it provides a authentication key
-        :param device: The device which provides the measurments / accepts the commands
+        :param device: The device which provides the measurements / accepts
+        the commands
         :param update: Whether if the device is already existent it should be updated
         :return:
         """
