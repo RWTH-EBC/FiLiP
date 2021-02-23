@@ -1,5 +1,4 @@
-import filip.ocb as cb
-import filip.config as config
+import core.config as config
 from pathlib import Path
 import os
 
@@ -115,7 +114,7 @@ if __name__=="__main__":
     path_to_config = os.path.join(str(Path().resolve().parent), "config.json")
 
     CONFIG = config.Config(path_to_config)
-    ORION_CB = ocb.Orion(CONFIG)
+    ORION_CB = ocb.ContextBroker(CONFIG)
     print(ORION_CB.test_connection())
 
     print ("++++ create entities ++++")

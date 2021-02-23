@@ -2,10 +2,11 @@ from __future__ import annotations
 import logging
 import pytz
 import itertools
+import json
 from enum import Enum
 from typing import Any, Dict, Optional, List, Union
 from pydantic import BaseModel, Field, validator, AnyHttpUrl
-from filip.core.models import DataType
+from filip.core.models import DataType, UnitCode
 
 
 logger = logging.getLogger()
@@ -85,11 +86,25 @@ class Attribute(BaseAttribute):
     object_id: Optional[str] = Field(
         description="name of the attribute as coming from the device."
     )
+    metadata: Dict[str, Dict] = Field(
+        description="Additional meta information for the attribute, "
+                    "e.g. 'unitcode'"
+    )
+
+    @validator('metadata')
+    def check_metadata(cls, v):
+        assert json.dumps(v), "metadata not serializable"
+        if v.get('unitcode', False):
+            UnitCode(**v['unitcode'])
+
+        return v
+
 
 class LazyAttribute(Attribute):
     pass
 
-class Command(Attribute):
+
+class Command(BaseAttribute):
     pass
 
 
@@ -97,13 +112,20 @@ class StaticAttribute(BaseAttribute):
     value: Union[Dict, List, str, float] = Field(
         description="Constant value for this attribute"
     )
-
-
-class Service(BaseModel):
-    service: str = Field(
-        description="Service of the devices of this type"
+    metadata: Dict[str, Dict] = Field(
+        description="Additional meta information for the attribute, "
+                    "e.g. 'unitcode'"
     )
-    subservice: str = Field(
+
+
+
+
+
+class ServiceGroup(BaseModel):
+    service: Optional[str] = Field(
+        description="ServiceGroup of the devices of this type"
+    )
+    subservice: Optional[str] = Field(
         description="Subservice of the devices of this type."
     )
     resource: str = Field(
@@ -113,7 +135,7 @@ class Service(BaseModel):
     )
     apikey: str = Field(
         description="API Key string. It is a key used for devices belonging "
-                    "to this service. If "", service does not use apikey, but "
+                    "to this service_group. If "", service_group does not use apikey, but "
                     "it must be specified."
     )
     timestamp: Optional[bool] = Field(
@@ -193,8 +215,8 @@ class Device(BaseModel):
         description="Device ID that will be used to identify the device"
     )
     service: Optional[str] = Field(
-        description="Name of the service the device belongs to "
-                    "(will be used in the fiware-service header).",
+        description="Name of the service_group the device belongs to "
+                    "(will be used in the fiware-service_group header).",
         max_length=50
     )
     service_path: Optional[str] = Field(
@@ -274,7 +296,7 @@ class Device(BaseModel):
     @validator('service_path')
     def validate_service_path(cls, v):
         assert v.startswith('/'), \
-            "Service path must have a trailing slash ('/')"
+            "ServiceGroup path must have a trailing slash ('/')"
         return v
 
     @validator('timezone')

@@ -146,7 +146,7 @@ class Relationship:
 
 class FiwareService:
     """
-    Define entity service paths which are supported by the Orion Context Broker
+    Define entity service_group paths which are supported by the Orion Context Broker
     to support hierarchical scopes:
     https://fiware-orion.readthedocs.io/en/master/user/service_path/index.html
     """
@@ -155,22 +155,22 @@ class FiwareService:
         self.path = path
 
     def update(self, name: str, path: str):
-        """Overwrites the fiware_service and service path of config.json"""
+        """Overwrites the fiware_service and service_group path of config.json"""
         self.name = name
         self.path = path
 
     def get_header(self) -> object:
         return {
-            "fiware-service": self.name,
+            "fiware-service_group": self.name,
             "fiware-servicepath": self.path
         }
 
     def __repr__(self):
-        fiware_service_str = f'"fiware-service": "{self.name}", "fiware-servicepath": "{self.path}"'
+        fiware_service_str = f'"fiware-service_group": "{self.name}", "fiware-servicepath": "{self.path}"'
         return fiware_service_str
 
 
-class Orion:
+class ContextBroker:
     """
     Implementation of Orion Context Broker functionalities, such as creating
     entities and subscriptions; retrieving, updating and deleting data.
@@ -183,16 +183,25 @@ class Orion:
         :param version_2: if param version_2 is True, the standard used url is the v2, else v1
         """
         self.session = session or requests.Session()
-        self.fiware_service = FiwareService(name=config.fiware.get('service'),
+        self.fiware_service = FiwareService(name=config.fiware.get('service_group'),
                                             path=config.fiware.get(
                                                 'service_path'))
         self.host = config.orion.get("host", None)
         self.port = config.orion.get("port", None)
         self.url = config.orion.get("url", None)
 
+    # Context Manager Protocol
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
+
+    def close(self):
+        self.session.close()
 
     def set_service(self, fiware_service):
-        """Overwrites the fiware_service and service path of config.json"""
+        """Overwrites the fiware_service and service_group path of config.json"""
         self.fiware_service.update(fiware_service.name, fiware_service.path)
 
     def get_service(self):
@@ -223,8 +232,8 @@ class Orion:
 
     def test_connection(self):
         """
-        Function utilises the test.test_connection() function to check the availability of a given url and service.
-        :return: Boolean, True if the service is reachable, False if not.
+        Function utilises the test.test_connection() function to check the availability of a given url and service_group.
+        :return: Boolean, True if the service_group is reachable, False if not.
         """
         boolean = test.test_connection(client=self.session,
                                        url=self.url+'/version',
@@ -628,7 +637,7 @@ class Orion:
         This mechanism works for all listing operations in the API (e.g. GET /v2/entities, GET /v2/subscriptions, POST /v2/op/query, etc.).
         This function helps getting datasets that are larger than the limit for the different GET operations.
         :param url: Information about the url, obtained from the orginal function e.g. : http://localhost:1026/v2/subscriptions?limit=20&options=count
-        :param headers: The headers from the original function, e.g: {'fiware-service': 'crio', 'fiware-servicepath': '/measurements'}
+        :param headers: The headers from the original function, e.g: {'fiware-service_group': 'crio', 'fiware-servicepath': '/measurements'}
         :param count: Number of total elements, obtained by adding "&options=count" to the url,
                         included in the response headers
         :param limit: Limit, obtained from the oringal function, default is 20

@@ -1,5 +1,7 @@
 from aenum import Enum
+from typing import ClassVar
 from pydantic import BaseModel, Field, validator, BaseConfig
+from utils.unitcodes import units
 
 class DataType(str, Enum):
     """
@@ -33,20 +35,30 @@ class FiwareHeader(BaseModel):
         alias="fiware-service",
         default="",
         max_length=50,
-        description="Fiware service used for multitancy"
+        description="Fiware service_group used for multitancy"
     )
-    path: str = Field(
+    service_path: str = Field(
         alias="fiware-servicepath",
         default="/",
-        description="Fiware service path",
+        description="Fiware service_group path",
         max_length = 51,
     )
 
     class Config(BaseConfig):
         allow_population_by_field_name = True
 
-    @validator('path')
+    @validator('service_path')
     def validate_service_path(cls, v):
         assert v.startswith('/'), \
             "Service path must have a trailing slash ('/')"
+        return v
+
+class UnitCode(BaseModel):
+    type:   ClassVar[str] = "Text"
+    value:  str = Field(
+        description="Code of the measured quantity")
+
+    @validator('value')
+    def validate_code(cls, v):
+        units.get_unit(code=v)
         return v

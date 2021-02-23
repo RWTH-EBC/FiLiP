@@ -1,5 +1,5 @@
-from ocb import Subscription as sub
-from ocb import *
+from cb import Subscription as sub
+from cb.client import FiwareService
 from filip.utils import request_utils as requtils
 from core import test
 import requests
@@ -24,14 +24,26 @@ class QuantumLeap():
         self.port = config.quantumleap.get("port", None)
         self.url = config.quantumleap.get("url", None)
 
-        self.fiware_service = FiwareService(name=config.fiware.get('service'),
+        self.fiware_service = FiwareService(name=config.fiware.get('service_group'),
                                             path=config.fiware.get(
                                                 'service_path'))
 
+    # Context Manager Protocol
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
+
+    def close(self):
+        self.session.close()
+
+
+
     def test_connection(self):
         """
-        Function utilises the test.test_connection() function to check the availability of a given url and service.
-        :return: Boolean, True if the service is reachable, False if not.
+        Function utilises the test.test_connection() function to check the availability of a given url and service_group.
+        :return: Boolean, True if the service_group is reachable, False if not.
         """
         boolean = test.test_connection(client=self.session,
                                        url=self.url + '/v2/version',

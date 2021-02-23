@@ -2,23 +2,24 @@ import logging
 import requests
 from typing import List, Dict, Set, Union
 from urllib.parse import urljoin
-from core import settings, FiwareHeader
-from .models import Device, ServiceGroup, Protocol
+from core import settings
+from core.base_client import _BaseClient
+from core.models import FiwareHeader
+from iota.models import Device, ServiceGroup, Protocol
 
 logger = logging.getLogger(__name__)
 
 
-class Agent():
+class Agent(_BaseClient):
     """
     Client for FIWARE IoT-Agents. The implementation follows the API
     specifications from here:
     https://iotagent-node-lib.readthedocs.io/en/latest/
     """
-    def __init__(self, fiware_header: FiwareHeader = None):
-        self.headers = dict()
-        if not fiware_header:
-            fiware_header = FiwareHeader()
-        self.headers.update(fiware_header.dict(by_alias=True))
+    def __init__(self, session: requests.Session = None,
+                 fiware_header: FiwareHeader = None):
+        super().__init__(session=session,
+                         fiware_header=fiware_header)
 
     # ABOUT API
     def get_version(self) -> Dict:
@@ -29,7 +30,7 @@ class Agent():
         """
         url = urljoin(settings.IOTA_URL, 'iot/about')
         try:
-            res = requests.get(url=url, headers=self.headers)
+            res = self.session.get(url=url, headers=self.headers)
             if res.ok:
                 return res.json()
             else:
@@ -70,7 +71,7 @@ class Agent():
                             group in service_groups]}
         res = None
         try:
-            res = requests.post(url=url, headers=headers, json=data)
+            res = self.session.post(url=url, headers=headers, json=data)
             if res.ok:
                 logger.info("Services successfully posted")
             elif res.status_code == 409:
@@ -87,7 +88,7 @@ class Agent():
                     res.raise_for_status()
             else:
                 res.raise_for_status()
-        except requests.exceptions.RequestException as e:
+        except requests.RequestException as e:
             logger.error(e)
             if res:
                 logger.error(res.content)
@@ -118,7 +119,7 @@ class Agent():
         headers = self.headers
         res = None
         try:
-            res = requests.get(url=url, headers=headers)
+            res = self.session.get(url=url, headers=headers)
             if res.ok:
                 return [ServiceGroup(**group)
                         for group in res.json()['services']]
@@ -144,7 +145,7 @@ class Agent():
         params = {key: value for key, value in locals().items()}
         res = None
         try:
-            res = requests.get(url=url, headers=headers, params=params)
+            res = self.session.get(url=url, headers=headers, params=params)
             if res.ok:
                 return ServiceGroup(**res.json()['services'][0])
             else:
@@ -198,7 +199,7 @@ class Agent():
         params = service_group.dict(include={'resource', 'apikey'})
         res = None
         try:
-            res = requests.put(url=url, headers=headers, params=params,
+            res = self.session.put(url=url, headers=headers, params=params,
                                json=service_group.json(include=fields,
                                                        exclude={'service',
                                                                 'subservice'},
@@ -229,7 +230,7 @@ class Agent():
         params = {key: value for key, value in locals().items()}
         res = None
         try:
-            res = requests.delete(url=url, headers=headers, params=params)
+            res = self.session.delete(url=url, headers=headers, params=params)
             if res.ok:
                 logger.info(f"ServiceGroup with resource: '{resource}' and "
                             f"apikey: '{apikey}' successfully deleted!")
@@ -263,7 +264,7 @@ class Agent():
         data = {"devices": [device.dict() for device in devices]}
         res = None
         try:
-            res = requests.post(url=url, headers=headers, json=data)
+            res = self.session.post(url=url, headers=headers, json=data)
             if res.ok:
                 logger.info(f"Device successfully posted!")
             else:
@@ -301,7 +302,7 @@ class Agent():
         params = {key: value for key, value in locals().items() if value is not
                   None}
         try:
-            res = requests.get(url=url, headers=headers, params=params)
+            res = self.session.get(url=url, headers=headers, params=params)
             if res.ok:
                 return [Device(**device) for device in res.json()['devices']]
             else:
@@ -335,7 +336,7 @@ class Agent():
         headers = self.headers
         res = None
         try:
-            res = requests.get(url=url, headers=headers)
+            res = self.session.get(url=url, headers=headers)
             if res.ok:
                 return Device.parse_raw(res.json())
             else:
@@ -358,7 +359,7 @@ class Agent():
         headers = self.headers
         res = None
         try:
-            res = requests.put(url=url, headers=headers, json=device.dict(
+            res = self.session.put(url=url, headers=headers, json=device.dict(
                 include={'attributes', 'lazy', 'commands',
                          'static_attributes'}))
             if res.ok:
@@ -403,7 +404,7 @@ class Agent():
         url = urljoin(settings.IOTA_URL, f'iot/devices{device_id}', )
         headers = self.headers
         try:
-            res = requests.delete(url=url, headers=headers)
+            res = self.session.delete(url=url, headers=headers)
             if res.ok:
                 logger.info(f"Device {device_id} successfully deleted!")
             else:
@@ -419,7 +420,7 @@ class Agent():
         del headers['fiware-service']
         del headers['fiware-servicepath']
         try:
-            res = requests.get(url=url, headers=headers)
+            res = self.session.get(url=url, headers=headers)
             if res.ok:
                 return res.json()['level']
             else:
@@ -437,7 +438,7 @@ class Agent():
         del headers['fiware-service']
         del headers['fiware-servicepath']
         try:
-            res = requests.put(url=url, headers=headers, params=level)
+            res = self.session.put(url=url, headers=headers, params=level)
             if res.ok:
                 logger.info(f"Loglevel of agent at {settings.IOTA_URL} "
                             f"changed to '{level}'")
@@ -445,3 +446,5 @@ class Agent():
                 res.raise_for_status()
         except requests.exceptions.RequestException as e:
             logger.error(e)
+
+

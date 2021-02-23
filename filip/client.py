@@ -3,17 +3,16 @@ import json
 import errno
 from requests.auth import HTTPBasicAuth, HTTPDigestAuth
 from requests import Session
-#from requests_oauthlib import OAuth2Session
-#from oauthlib.oauth2 import LegacyApplicationClient, \
+# from requests_oauthlib import OAuth2Session
+# from oauthlib.oauth2 import LegacyApplicationClient, \
 #    MobileApplicationClient, \
 #    BackendApplicationClient
-from authlib.integrations.requests_client import OAuth2Session
-from authlib.integrations.requests_client import OAuth2Auth
-from config import Config
-from iota import Agent
-from ocb import Orion
-from timeseries import QuantumLeap
+from core.config import Config
 from core.models import FiwareHeader
+from iota.client import Agent
+from cb import ContextBroker
+from timeseries import QuantumLeap
+
 
 logger = logging.getLogger('client')
 
@@ -25,12 +24,10 @@ class Client:
 
     def __init__(self, config_file=None, **kwargs):
         auth_types = {'basicauth': self.__http_basic_auth,
-                      'digestauth': self.__http_digest_auth,
-                      'oauth2': self.__oauth2}
+                      'digestauth': self.__http_digest_auth,}
+                      # 'oauth2': self.__oauth2}
 
         self.config = Config(path=config_file)
-
-        #self.config['auth'] = auth
 
         if self.config.auth:
             assert self.config['auth']['type'].lower() in auth_types.keys()
@@ -39,10 +36,20 @@ class Client:
         else:
             self.session = Session()
         # TODO: correctly import Fiware Header
-        FiwareHeader(service='', service_path='/')
-        self.iota = Agent()
-        self.ocb = Orion(config=self.config, session=self.session)
+        fiware_header = FiwareHeader(service='', service_path='/')
+        self.iota = Agent(session=self.session, fiware_header=fiware_header)
+        self.ocb = ContextBroker(config=self.config, session=self.session)
         self.timeseries = QuantumLeap(config=self.config, session=self.session)
+
+    # Context Manager Protocol
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
+
+    def close(self):
+        self.session.close()
 
     @property
     def headers(self):
