@@ -1,12 +1,33 @@
-from pydantic import BaseSettings, Field, AnyHttpUrl
+import logging
+from typing import Union
+from pydantic import BaseSettings, Field, AnyHttpUrl, validator
 
 class _Settings(BaseSettings):
-    OCB_URL: AnyHttpUrl = Field(default="http://localhost:1026",
-                                env=['ORION_URL', 'OCB_URL'])
+    CB_URL: AnyHttpUrl = Field(default="http://localhost:1026",
+                                env=['ORION_URL', 'CB_URL', 'CB_HOST',
+                                     'CONTEXTBROKER_URL'])
     IOTA_URL: AnyHttpUrl = Field(default="http://localhost:4041",
                                  env='IOTA_URL')
     QL_URL: AnyHttpUrl = Field(default="http://localhost:8668",
                                env=['QUANTUMLEAP_URL', 'QL_URL'])
+    LOGLEVEL: Union[int, str] = Field(
+        title="LOGLEVEL",
+        default='WARNING',
+        description="Global logging level. Default is warning according "
+                    "python's standard logging module",
+        env=['LOG_LEVEL', 'LOGLEVEL']
+    )
+
+    @validator('LOGLEVEL')
+    def validate_loglevel(cls, v):
+        if isinstance(v, str):
+            v = v.upper()
+            assert v in ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG']
+        elif isinstance(v, int):
+            assert v in range(0, 50, 10)
+        else:
+            raise ValueError
+        return v
 
     class Config:
         env_file = '../../.env'
@@ -15,3 +36,7 @@ class _Settings(BaseSettings):
 
 
 settings = _Settings()
+logging.basicConfig(level=settings.LOGLEVEL,
+                    format='%(asctime)s - FiLiP.%(name)s - %(levelname)s: %('
+                           'message)s',
+                    datefmt='%Y-%m-%d %H:%M:%S')

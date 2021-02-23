@@ -75,7 +75,7 @@ class Agent(_BaseClient):
             if res.ok:
                 logger.info("Services successfully posted")
             elif res.status_code == 409:
-                logger.warning(res.content)
+                logger.warning(res.text)
                 if  len(service_groups) > 1:
                     logger.info("Trying to split bulk operation into single "
                                 "operations")
@@ -91,7 +91,7 @@ class Agent(_BaseClient):
         except requests.RequestException as e:
             logger.error(e)
             if res:
-                logger.error(res.content)
+                logger.error(res.text)
 
     def post_group(self, service_group: ServiceGroup, update: bool = False):
         """
@@ -128,7 +128,7 @@ class Agent(_BaseClient):
         except requests.exceptions.RequestException as e:
             logger.error(e)
             if res:
-                logger.error(res.content)
+                logger.error(res.text)
 
     def get_group(self, *, resource: str, apikey: str) -> ServiceGroup:
         """
@@ -153,7 +153,7 @@ class Agent(_BaseClient):
         except requests.exceptions.RequestException as e:
             logger.error(e)
             if res is not None:
-                logger.error(res.content)
+                logger.error(res.text)
 
     def update_groups(self, *,
                       service_groups: Union[ServiceGroup, List[ServiceGroup]],
@@ -213,7 +213,7 @@ class Agent(_BaseClient):
         except requests.exceptions.RequestException as e:
             logger.error(e)
             if res is not None:
-                logger.error(res.content)
+                logger.error(res.text)
 
     def delete_group(self, *, resource: str, apikey: str):
         """
@@ -241,7 +241,7 @@ class Agent(_BaseClient):
             logger.error(f"ServiceGroup with resource: '{resource}' and "
                          f"apikey: '{apikey}' could not deleted!")
             if res is not None:
-                logger.error(res.content)
+                logger.error(res.text)
 
     # DEVICE API
     def post_devices(self, *, devices: Union[Device, List[Device]],
@@ -344,7 +344,7 @@ class Agent(_BaseClient):
         except requests.exceptions.RequestException as e:
             logger.error(e)
             if res:
-                logger.error(res.content)
+                logger.error(res.text)
 
     def update_device(self, *, device: Device, add: bool = True) -> None:
         """
