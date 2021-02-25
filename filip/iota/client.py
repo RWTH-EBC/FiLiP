@@ -5,7 +5,7 @@ from urllib.parse import urljoin
 from core import settings
 from core.base_client import _BaseClient
 from core.models import FiwareHeader
-from iota.models import Device, ServiceGroup, Protocol
+from iota.models import Device, ServiceGroup, PayloadProtocol
 
 logger = logging.getLogger(__name__)
 
@@ -277,9 +277,22 @@ class Agent(_BaseClient):
                 logger.error(f"Devices could not updated! "
                              f"Reason: {res.text}")
 
+    def post_device(self, *, device: Device, update: bool = False) -> None:
+        """
+
+        Args:
+            device:
+            update:
+
+        Returns:
+
+        """
+        return self.post_devices(devices=[device], update=update)
+
+
     def get_devices(self, *, limit: int = 20, offset: int = None,
                     detailed: bool = None, entity: str = None,
-                    protocol: Protocol = None) -> List[Device]:
+                    protocol: PayloadProtocol = None) -> List[Device]:
         """
         Returns a list of all the devices in the device registry with all
         its data.
@@ -309,18 +322,6 @@ class Agent(_BaseClient):
                 res.raise_for_status()
         except requests.exceptions.RequestException as e:
             logger.error(e)
-
-    def post_device(self, *, device: Device, update: bool = False) -> None:
-        """
-
-        Args:
-            device:
-            update:
-
-        Returns:
-
-        """
-        return self.post_devices(devices=[device], update=update)
 
     def get_device(self, *, device_id: str) -> Device:
         """

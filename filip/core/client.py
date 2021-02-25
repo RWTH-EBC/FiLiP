@@ -41,7 +41,7 @@ class Client:
         self.ocb = ContextBroker(config=self.config, session=self.session)
         self.timeseries = QuantumLeap(config=self.config, session=self.session)
 
-    # Context Manager Protocol
+    # Context Manager PayloadProtocol
     def __enter__(self):
         return self
 

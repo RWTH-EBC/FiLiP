@@ -79,7 +79,7 @@ def test_connection(url: str, client: requests.Session, service_name: str,
 #                f"Host configuration for {service_name} must be string!"
 #            # Additional allowed protocols may be added here, e.g. 'IoTA-LWM2M'
 #            assert config_data[service_name]['protocol'] in list_protocols, \
-#                f" Protocol for {service_name} not supported! The following " \
+#                f" PayloadProtocol for {service_name} not supported! The following " \
 #                f"protocols are supported: {protocols}"
 #
 #        logger.info("Configuration successfully tested!")

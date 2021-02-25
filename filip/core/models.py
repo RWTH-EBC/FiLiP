@@ -3,6 +3,12 @@ from typing import ClassVar
 from pydantic import BaseModel, Field, validator, BaseConfig
 from utils.unitcodes import units
 
+
+class NgsiVersion(str, Enum):
+    v2 = "v2"
+    ld = "ld"
+
+
 class DataType(str, Enum):
     """
     When possible reuse schema.org data types
@@ -35,23 +41,19 @@ class FiwareHeader(BaseModel):
         alias="fiware-service",
         default="",
         max_length=50,
-        description="Fiware service_group used for multitancy"
+        description="Fiware service_group used for multitancy",
+        regex="\w*$"
     )
     service_path: str = Field(
         alias="fiware-servicepath",
         default="/",
         description="Fiware service_group path",
         max_length = 51,
+        regex="^\/+[\w\/]*$"
     )
 
     class Config(BaseConfig):
         allow_population_by_field_name = True
-
-    @validator('service_path')
-    def validate_service_path(cls, v):
-        assert v.startswith('/'), \
-            "Service path must have a trailing slash ('/')"
-        return v
 
 class UnitCode(BaseModel):
     type:   ClassVar[str] = "Text"
@@ -62,3 +64,22 @@ class UnitCode(BaseModel):
     def validate_code(cls, v):
         units.get_unit(code=v)
         return v
+
+class Entity(BaseModel):
+    type: str = Field(
+        description="The NGSI Entity Type."
+    )
+    id: str = Field(
+        description="The NGSI Entity Id."
+    )
+
+    class Config(BaseConfig):
+        extra = 'allow'
+
+class Notification(BaseModel):
+    subscriptionId: str = Field(
+        description="Id of the subscription the notification comes from"
+    )
+    data: Entity = Field(
+        description="Context data entity"
+    )

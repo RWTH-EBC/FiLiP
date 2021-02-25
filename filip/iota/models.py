@@ -6,7 +6,7 @@ import json
 from enum import Enum
 from typing import Any, Dict, Optional, List, Union
 from pydantic import BaseModel, Field, validator, AnyHttpUrl
-from filip.core.models import DataType, UnitCode
+from filip.core.models import NgsiVersion, DataType, UnitCode
 
 
 logger = logging.getLogger()
@@ -16,20 +16,16 @@ class ExpressionLanguage(str, Enum):
     jexl = "jexl"
 
 
-class NgsiVersion(str, Enum):
-    v2 = "v2"
-    ld = "ld"
-
-
-class Protocol(str, Enum):
+class PayloadProtocol(str, Enum):
     IoTA_Json = "IoTA-JSON"
     IoTA_UL = "PDI-IoTA-UltraLight"
     LoRaWAN = "LoRaWAN"
 
 
-class Transport(str, Enum):
+class TransportProtocol(str, Enum):
     MQTT = "MQTT"
     AMQP = "AMQP"
+    HTTP = "HTTP"
 
 
 class BaseAttribute(BaseModel):
@@ -82,7 +78,7 @@ class BaseAttribute(BaseModel):
             return self.dict == other
 
 
-class Attribute(BaseAttribute):
+class DeviceAttribute(BaseAttribute):
     object_id: Optional[str] = Field(
         description="name of the attribute as coming from the device."
     )
@@ -100,15 +96,15 @@ class Attribute(BaseAttribute):
         return v
 
 
-class LazyAttribute(Attribute):
+class LazyDeviceAttribute(DeviceAttribute):
     pass
 
 
-class Command(BaseAttribute):
+class DeviceCommand(BaseAttribute):
     pass
 
 
-class StaticAttribute(BaseAttribute):
+class StaticDeviceAttribute(BaseAttribute):
     value: Union[Dict, List, str, float] = Field(
         description="Constant value for this attribute"
     )
@@ -158,21 +154,21 @@ class ServiceGroup(BaseModel):
                     "be used to override the global ones for specific types of "
                     "devices."
     )
-    lazy: Optional[List[LazyAttribute]] = Field(
+    lazy: Optional[List[LazyDeviceAttribute]] = Field(
         desription="list of common lazy attributes of the device. For each "
                    "attribute, its name and type must be provided."
     )
-    commands: Optional[List[Command]] = Field(
+    commands: Optional[List[DeviceCommand]] = Field(
         desription="list of common commands attributes of the device. For each "
                    "attribute, its name and type must be provided, additional "
                    "metadata is optional"
     )
-    attributes: Optional[List[Attribute]] = Field(
+    attributes: Optional[List[DeviceAttribute]] = Field(
         description="list of common commands attributes of the device. For "
                     "each attribute, its name and type must be provided, "
                     "additional metadata is optional."
     )
-    static_attributes: Optional[List[StaticAttribute]] = Field(
+    static_attributes: Optional[List[StaticDeviceAttribute]] = Field(
         description="this attributes will be added to all the entities of this "
                     "group 'as is', additional metadata is optional."
     )
@@ -254,20 +250,20 @@ class Device(BaseModel):
         description="Name of the device protocol, for its use with an "
                     "IoT Manager."
     )
-    transport: Optional[Transport] = Field(
+    transport: Optional[TransportProtocol] = Field(
         description="Name of the device transport protocol, for the IoT Agents "
                     "with multiple transport protocols."
     )
-    lazy: Optional[List[Attribute]] = Field(
+    lazy: Optional[List[DeviceAttribute]] = Field(
         desription="List of lazy attributes of the device"
     )
-    commands: Optional[List[Command]] = Field(
+    commands: Optional[List[DeviceCommand]] = Field(
         desription="List of commands of the device"
     )
-    attributes: Optional[List[Attribute]] = Field(
+    attributes: Optional[List[DeviceAttribute]] = Field(
         description="List of active attributes of the device"
     )
-    static_attributes: Optional[List[StaticAttribute]] = Field(
+    static_attributes: Optional[List[StaticDeviceAttribute]] = Field(
         description="List of static attributes to append to the entity. All the"
                     " updateContext requests to the CB will have this set of "
                     "attributes appended."
@@ -304,9 +300,8 @@ class Device(BaseModel):
         assert v in pytz.all_timezones
         return v
 
-    def get_attribute(self, attribute_name: str) -> Union[Attribute,
-                                                          LazyAttribute,
-                                                          StaticAttribute]:
+    def get_attribute(self, attribute_name: str) -> Union[DeviceAttribute,
+        LazyDeviceAttribute, StaticDeviceAttribute]:
         """
 
         Args:
@@ -327,9 +322,9 @@ class Device(BaseModel):
 
 
     def add_attribute(self,
-                      attribute: Union[Attribute,
-                                       LazyAttribute,
-                                       StaticAttribute],
+                      attribute: Union[DeviceAttribute,
+                                       LazyDeviceAttribute,
+                                       StaticDeviceAttribute],
                       update: bool = False) -> None:
         """
 
@@ -341,17 +336,17 @@ class Device(BaseModel):
             None
         """
         try:
-            if isinstance(attribute, Attribute):
+            if isinstance(attribute, DeviceAttribute):
                 if attribute in self.attributes:
                     raise ValueError
                 else:
                     self.attributes.append(attribute)
-            elif isinstance(attribute, LazyAttribute):
+            elif isinstance(attribute, LazyDeviceAttribute):
                 if attribute in self.lazy:
                     raise ValueError
                 else:
                     self.lazy.append(attribute)
-            elif isinstance(attribute, StaticAttribute):
+            elif isinstance(attribute, StaticDeviceAttribute):
                 if attribute in self.static_attributes:
                     raise ValueError
                 else:
@@ -368,9 +363,9 @@ class Device(BaseModel):
                 raise ValueError
 
 
-    def update_attribute(self, attribute: Union[Attribute,
-                                                LazyAttribute,
-                                                StaticAttribute],
+    def update_attribute(self, attribute: Union[DeviceAttribute,
+                                                LazyDeviceAttribute,
+                                                StaticDeviceAttribute],
                          add: bool = False) -> None:
         """
         Updates existing device attribute
@@ -382,13 +377,13 @@ class Device(BaseModel):
             None
         """
         try:
-            if isinstance(attribute, Attribute):
+            if isinstance(attribute, DeviceAttribute):
                 idx = self.attributes.index(attribute)
                 self.attributes[idx].dict().update(attribute.dict())
-            elif isinstance(attribute, LazyAttribute):
+            elif isinstance(attribute, LazyDeviceAttribute):
                 idx = self.lazy.index(attribute)
                 self.lazy[idx].dict().update(attribute.dict())
-            elif isinstance(attribute, StaticAttribute):
+            elif isinstance(attribute, StaticDeviceAttribute):
                 idx = self.static_attributes.index(attribute)
                 self.static_attributes[idx].dict().update(attribute.dict())
         except ValueError:
@@ -402,9 +397,9 @@ class Device(BaseModel):
                              f"attribute: \n {attribute.json(indent=2)}")
                 raise KeyError
 
-    def delete_attribute(self, attribute: Union[Attribute,
-                                                LazyAttribute,
-                                                StaticAttribute]):
+    def delete_attribute(self, attribute: Union[DeviceAttribute,
+                                                LazyDeviceAttribute,
+                                                StaticDeviceAttribute]):
         """
         Deletes attribute from device
         Args:
@@ -414,11 +409,11 @@ class Device(BaseModel):
 
         """
         try:
-            if isinstance(attribute, Attribute):
+            if isinstance(attribute, DeviceAttribute):
                 self.attributes.remove(attribute)
-            elif isinstance(attribute, LazyAttribute):
+            elif isinstance(attribute, LazyDeviceAttribute):
                 self.lazy.remove(attribute)
-            elif isinstance(attribute, StaticAttribute):
+            elif isinstance(attribute, StaticDeviceAttribute):
                 self.static_attributes.remove(attribute)
         except ValueError:
             logger.warning(f"Device: {self.device_id}: Could not delete "

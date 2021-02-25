@@ -190,7 +190,7 @@ class ContextBroker:
         self.port = config.orion.get("port", None)
         self.url = config.orion.get("url", None)
 
-    # Context Manager Protocol
+    # Context Manager PayloadProtocol
     def __enter__(self):
         return self
 
