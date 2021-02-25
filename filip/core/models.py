@@ -9,7 +9,7 @@ class NgsiVersion(str, Enum):
     ld = "ld"
 
 
-class DataType(str, Enum):
+class DataTypes(str, Enum):
     """
     When possible reuse schema.org data types
     (Text, Number, DateTime, StructuredValue, etc.).
@@ -20,21 +20,21 @@ class DataType(str, Enum):
     """
     _init_ = 'value __doc__'
 
-    Boolean = "Boolean", "True or False."
-    Date = "Date", "A date value in ISO 8601 date format."
-    DateTime = "DateTime", "A combination of date and time of day in the form " \
+    BOOLEAN = "Boolean", "True or False."
+    DATE = "Date", "A date value in ISO 8601 date format."
+    DATETIME = "DateTime", "A combination of date and time of day in the form " \
                            "[-]CCYY-MM-DDThh:mm:ss[Z|(+|-)hh:mm] " \
                            "(see Chapter 5.4 of ISO 8601)."
-    Number = "Number", "Use values from 0123456789 (Unicode 'DIGIT ZERO' " \
+    NUMBER = "Number", "Use values from 0123456789 (Unicode 'DIGIT ZERO' " \
                        "(U+0030) to 'DIGIT NINE' (U+0039)) rather than " \
                        "superficially similiar Unicode symbols. Use '.' " \
                        "(Unicode 'FULL STOP' (U+002E)) rather than ',' to " \
                        "indicate a decimal point. Avoid using these symbols " \
                        "as a readability separator."
-    Text = "Text", "https://schema.org/Text"
-    Time = "Time", "A point in time recurring on multiple days in the form " \
+    TEXT = "Text", "https://schema.org/Text"
+    TIME = "Time", "A point in time recurring on multiple days in the form " \
                    "hh:mm:ss[Z|(+|-)hh:mm] (see XML schema for details)."
-    Relationship = "Relationship", "Reference to another entity"
+    RELATIONSHIP = "Relationship", "Reference to another context entity"
 
 class FiwareHeader(BaseModel):
     service: str = Field(

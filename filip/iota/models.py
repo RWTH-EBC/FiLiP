@@ -6,20 +6,20 @@ import json
 from enum import Enum
 from typing import Any, Dict, Optional, List, Union
 from pydantic import BaseModel, Field, validator, AnyHttpUrl
-from filip.core.models import NgsiVersion, DataType, UnitCode
+from filip.core.models import NgsiVersion, DataTypes, UnitCode
 
 
 logger = logging.getLogger()
 
 class ExpressionLanguage(str, Enum):
-    legacy = "legacy"
-    jexl = "jexl"
+    LEGACY = "legacy"
+    JEXL = "jexl"
 
 
 class PayloadProtocol(str, Enum):
-    IoTA_Json = "IoTA-JSON"
-    IoTA_UL = "PDI-IoTA-UltraLight"
-    LoRaWAN = "LoRaWAN"
+    IOTA_JSON = "IoTA-JSON"
+    IOTA_UL = "PDI-IoTA-UltraLight"
+    LORAWAN = "LoRaWAN"
 
 
 class TransportProtocol(str, Enum):
@@ -33,7 +33,7 @@ class BaseAttribute(BaseModel):
         description="ID of the attribute in the target entity in the "
                     "Context Broker."
     )
-    type: DataType = Field(
+    type: DataTypes = Field(
         description="name of the type of the attribute in the target entity."
     )
     metadata: Optional[Dict[str, Any]] = Field(
