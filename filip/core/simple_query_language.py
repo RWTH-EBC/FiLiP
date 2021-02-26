@@ -106,6 +106,9 @@ class Operator(str, Enum):
 
 
 class Statement(tuple):
+    """
+    Query statement for simple query language
+    """
     def __new__(self, left_hand_side: str,
                 operator: str,
                 right_hand_side: Union[str, float, int]):
@@ -129,7 +132,17 @@ class Statement(tuple):
 
 
 def create_query(statements: List[
-    Union[Statement, Tuple[str, str, Union[str, float, int]]]]):
+    Union[Statement, Tuple[str, str, Union[str, float, int]]]]) -> str:
+    """
+    Converts are list of statements or 3-Tuples to a query string that can be
+    passed to context requests for filtering.
+    Args:
+        statements (list of Statements or list of 3-tuples): Will be
+        concatenated to a query string
+
+    Returns:
+        query_string(str)
+    """
     if not isinstance(statements, list):
         statements = [statements]
     for idx, statement in enumerate(statements):
