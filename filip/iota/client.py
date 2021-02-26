@@ -10,7 +10,7 @@ from iota.models import Device, ServiceGroup, PayloadProtocol
 logger = logging.getLogger(__name__)
 
 
-class Agent(_BaseClient):
+class IoTAClient(_BaseClient):
     """
     Client for FIWARE IoT-Agents. The implementation follows the API
     specifications from here:

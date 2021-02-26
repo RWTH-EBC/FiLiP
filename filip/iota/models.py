@@ -31,10 +31,15 @@ class TransportProtocol(str, Enum):
 class BaseAttribute(BaseModel):
     name: str = Field(
         description="ID of the attribute in the target entity in the "
-                    "Context Broker."
+                    "Context Broker. Allowed characters "
+                    "are the ones in the plain ASCII set, except the following "
+                    "ones: control characters, whitespace, &, ?, / and #.",
+        max_length = 256,
+        min_length = 1,
+        regex = "(^((?![?&#/])[\x00-\x7F])*$)(?!(id|type|geo:distance|\*))"
     )
     type: DataTypes = Field(
-        description="name of the type of the attribute in the target entity."
+        description="name of the type of the attribute in the target entity. "
     )
     metadata: Optional[Dict[str, Any]] = Field(
         description="additional static metadata for the attribute "
@@ -58,10 +63,21 @@ class BaseAttribute(BaseModel):
                     "Entity names can be defined as expressions, using the "
                     "Expression Language definition. "
                     "(https://iotagent-node-lib.readthedocs.io/en/latest/"
-                    "expressionLanguage/index.html)"
+                    "expressionLanguage/index.html) Allowed characters "
+                    "are the ones in the plain ASCII set, except the following "
+                    "ones: control characters, whitespace, &, ?, / and #.",
+        max_length=256,
+        min_length=1,
+        regex="^((?![?&#/])[\x00-\x7F])*$" # Make it FIWARE-Safe"
     )
     entity_type: Optional[str] = Field(
-        description="configures the type of an alternative entity."
+        description="configures the type of an alternative entity. "
+                    "Allowed characters "
+                    "are the ones in the plain ASCII set, except the following "
+                    "ones: control characters, whitespace, &, ?, / and #.",
+        max_length=256,
+        min_length=1,
+        regex="^((?![?&#/])[\x00-\x7F])*$" # Make it FIWARE-Safe"
     )
     reverse: Optional[str] = Field(
         description="add bidirectionality expressions to the attribute. See "
@@ -142,7 +158,13 @@ class ServiceGroup(BaseModel):
                     "property-of-a-property is created instead."
     )
     entity_type: str = Field(
-        description="name of the Entity type to assign to the group."
+        description="name of the Entity type to assign to the group. "
+                    "Allowed characters "
+                    "are the ones in the plain ASCII set, except the following "
+                    "ones: control characters, whitespace, &, ?, / and #.",
+        max_length=256,
+        min_length=1,
+        regex="^((?![?&#/])[\x00-\x7F])*$" # Make it FIWARE-Safe
     )
     trust: Optional[str] = Field(
         description="trust token to use for secured access to the "
@@ -223,10 +245,21 @@ class Device(BaseModel):
     )
     entity_name: str = Field(
         description="Name of the entity representing the device in "
-                    "the Context Broker"
+                    "the Context Broker Allowed characters "
+                    "are the ones in the plain ASCII set, except the following "
+                    "ones: control characters, whitespace, &, ?, / and #.",
+        max_length=256,
+        min_length=1,
+        regex="^((?![?&#/])[\x00-\x7F])*$" # Make it FIWARE-Safe"
     )
     entity_type: str = Field(
-        description="Type of the entity in the Context Broker"
+        description="Type of the entity in the Context Broker. "
+                    "Allowed characters "
+                    "are the ones in the plain ASCII set, except the following "
+                    "ones: control characters, whitespace, &, ?, / and #.",
+        max_length=256,
+        min_length=1,
+        regex="^((?![?&#/])[\x00-\x7F])*$" # Make it FIWARE-Safe"
     )
     timezone: Optional[str] = Field(
         default='Europe/London',

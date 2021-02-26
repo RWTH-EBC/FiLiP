@@ -1,3 +1,5 @@
+import json
+
 from aenum import Enum
 from typing import Any, List, Dict, Union, Optional
 from pydantic import BaseModel, Field, validator, ValidationError, \
@@ -19,12 +21,22 @@ class ContextMetadata(BaseModel):
         description="a metadata name, describing the role of the metadata in the "
                     "place where it occurs; for example, the metadata name "
                     "accuracy indicates that the metadata value describes how "
-                    "accurate a given attribute value is"
+                    "accurate a given attribute value is. Allowed characters "
+                    "are the ones in the plain ASCII set, except the following "
+                    "ones: control characters, whitespace, &, ?, / and #.",
+        max_length=256,
+        min_length=1,
+        regex="^((?![?&#/*])[\x00-\x7F])*$" # Make it FIWARE-Safe
     )
     type: Optional[DataTypes] = Field(
         title="metadata type",
         description="a metadata type, describing the NGSI value type of the "
-                    "metadata value"
+                    "metadata value Allowed characters "
+                    "are the ones in the plain ASCII set, except the following "
+                    "ones: control characters, whitespace, &, ?, / and #.",
+        max_length=256,
+        min_length=1,
+        regex="^((?![?&#/\*])[\x00-\x7F])*$" # Make it FIWARE-Safe
     )
     value: Optional[DataTypes] = Field(
         title="metadata value",
@@ -45,14 +57,25 @@ class ContextAttribute(BaseModel):
         titel="Attribute name",
         description="The attribute name describes what kind of property the "
                     "attribute value represents of the entity, for example "
-                    "current_speed."
+                    "current_speed. Allowed characters "
+                    "are the ones in the plain ASCII set, except the following "
+                    "ones: control characters, whitespace, &, ?, / and #.",
+        max_length = 256,
+        min_length = 1,
+        regex = "(^((?![?&#/])[\x00-\x7F])*$)(?!(id|type|geo:distance|\*))",
+        # Make it FIWARE-Safe
     )
     type: DataTypes = Field(
         default=DataTypes.TEXT,
         description="The attribute type represents the NGSI value type of the "
                     "attribute value. Note that FIWARE NGSI has its own type "
                     "system for attribute values, so NGSI value types are not "
-                    "the same as JSON types."
+                    "the same as JSON types. Allowed characters "
+                    "are the ones in the plain ASCII set, except the following "
+                    "ones: control characters, whitespace, &, ?, / and #.",
+        max_length = 256,
+        min_length = 1,
+        regex = "^((?![?&#/])[\x00-\x7F])*$", # Make it FIWARE-Safe
     )
     value: Union[float, int, bool, str] = Field(
         title="Attribute value",
@@ -74,8 +97,6 @@ class ContextAttribute(BaseModel):
             return str(v)
 
 
-
-
 class BaseContextEntity(BaseModel):
     """
     Context entities, or simply entities, are the center of gravity in the
@@ -92,15 +113,24 @@ class BaseContextEntity(BaseModel):
     id: str = Field(
         ...,
         title="Entity Id",
-        description='Id of an entity in a NGSI context broker',
+        description='Id of an entity in a NGSI context broker. '
+                    "Allowed characters are the ones in the plain ASCII set, "
+                    "except the following ones: control characters, "
+                    "whitespace, &, ?, / and #.",
         example='Bcn-Welt',
-        regex="^[\w\:\-\_]*$" # Make it FIWARE-Safe
+        max_length=256,
+        min_length=1,
+        regex="^((?![?&#/])[\x00-\x7F])*$", # Make it FIWARE-Safe
     )
     type: str = Field(
         ...,
-        description="",
+        description="Allowed characters are the ones in the plain ASCII set, "
+                    "except the following ones: control characters, "
+                    "whitespace, &, ?, / and #.",
         example="Room",
-        regex="^[\w\:\-\_]*$" # Make it FIWARE-Safe
+        max_length=256,
+        min_length=1,
+        regex="^((?![?&#/])[\x00-\x7F])*$", # Make it FIWARE-Safe
     )
 
     class Config:
@@ -108,15 +138,16 @@ class BaseContextEntity(BaseModel):
         #validate_all = True
         #validate_assignment = True
 
-def create_context_entity_model(name:str, data: Dict):
-    properties = []
+
+def create_context_entity_model(name: str, data: Dict):
+    properties = {}
     for key in data.keys():
         if key not in BaseContextEntity.__fields__.keys():
             pass
     EntityModel = create_model(
-        __model_name='MyModel',
+        __model_name=name,
         __base__=BaseContextEntity,
-        **fields
+        **properties
     )
     return EntityModel
 
@@ -127,19 +158,108 @@ def create_context_entity_model(name:str, data: Dict):
 
 
 
-if __name__ == '__main__':
-    attr = {"type": "Number", "value": 5}
-    attr2 = ContextAttribute(name="myAttr2", type="Number", value=10)
-    entity = BaseContextEntity(id="myRoom",
-                                type='bldg:room',
-                                properties=[attr2],
-                                T1=attr)
-    print(entity.json(indent=2))
-    fields={'foo': (str, ...)}
-
-    entity2 = EntityModel(id="ds", type="sad", foo='test')
-
-    print(entity2.json(indent=2))
 
 
 
+# ToDo Query params
+
+## Class is only implemented for backward compatibility
+#class Attribute:
+#    """
+#    Describes the attribute of an entity.
+#    """
+#    def __init__(self, name, value, attr_type):
+#        self.name = name
+#        self.value = value
+#        self.type = attr_type
+#
+#    def get_json(self):
+#        return {'value': self.value, 'type': '{}'.format(self.type)}
+
+
+
+
+
+#class Relationship:
+#    """
+#    Class implements the concept of FIWARE Entity Relationships.
+#    """
+#    def __init__(self, ref_object: Entity, subject: Entity, predicate: str =
+        #    None):
+#        """
+#        :param ref_object:  The parent / object of the relationship
+#        :param subject: The child / subject of the relationship
+#        :param predicate: currently not supported -> describes the
+        #        relationship between object and subject
+#        """
+#        self.object = ref_object
+#        self.subject = subject
+#        self.predicate = predicate
+#        self.add_ref()
+#
+#    def add_ref(self):
+#        """
+#        Function updates the subject Attribute with the relationship attribute
+#        :return:
+#        """
+#        ref_attr = json.loads(self.get_ref())
+#        self.subject.add_attribute(ref_attr)
+#
+#    def get_ref(self):
+#        """
+#        Function creates the NGSI Ref schema in a ref_dict, needed for the
+        #        subject
+#        :return: ref_dict
+#        """
+#        ref_type = self.object.type
+#        ref_key = "ref" + str(ref_type)
+#        ref_dict = dict()
+#        ref_dict[ref_key] = {"type": "Relationship",
+#                             "value": self.object.id}
+#
+#        return json.dumps(ref_dict)
+#
+#    def get_json(self):
+#        """
+#        Function returns a JSON to describe the Relationship,
+#        which then can be pushed to orion
+#        :return: whole_dict
+#        """
+#        temp_dict = dict()
+#        temp_dict["id"] = self.subject.id
+#        temp_dict["type"] = self.subject.type
+#        ref_dict = json.loads(self.get_ref())
+#        whole_dict = {**temp_dict, **ref_dict}
+#        return json.dumps(whole_dict)
+#
+#
+#class FiwareService:
+#    """
+#    Define entity service_group paths which are supported by the Orion
+    #    Context Broker
+#    to support hierarchical scopes:
+#    https://fiware-orion.readthedocs.io/en/master/user/service_path/index.html
+#    """
+#    def __init__(self, name: str, path: str):
+#        self.name = name
+#        self.path = path
+#
+#    def update(self, name: str, path: str):
+#        """Overwrites the fiware_service and service_group path of
+        #        config.json"""
+#        self.name = name
+#        self.path = path
+#
+#    def get_header(self) -> object:
+#        return {
+#            "fiware-service_group": self.name,
+#            "fiware-servicepath": self.path
+#        }
+#
+#    def __repr__(self):
+#        fiware_service_str = f'"fiware-service_group": "{self.name}",
+        #        "fiware-servicepath": "{self.path}"'
+#        return fiware_service_str
+#
+#
+#

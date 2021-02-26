@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import Mock, patch
 from uuid import uuid4
 from core.models import FiwareHeader
-from iota.client import Agent
+from iota.client import IoTAClient
 from iota.models import ServiceGroup, Device
 
 
@@ -37,10 +37,10 @@ class TestAgent(unittest.TestCase):
         self.service_group2 = ServiceGroup(entity_type='OtherThing',
                                                  resource='/iot/json',
                                                  apikey=str(uuid4()))
-        self.client = Agent(fiware_header=self.fiware_header)
+        self.client = IoTAClient(fiware_header=self.fiware_header)
 
     def test_get_version(self):
-        with Agent(fiware_header=self.fiware_header) as client:
+        with IoTAClient(fiware_header=self.fiware_header) as client:
             self.assertIsNotNone(client.get_version())
 
     def test_service_group_model(self):

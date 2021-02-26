@@ -9,7 +9,7 @@ from requests import Session
 #    BackendApplicationClient
 from core.config import Config
 from core.models import FiwareHeader
-from iota.client import Agent
+from iota.client import IoTAClient
 from cb import ContextBroker
 from timeseries import QuantumLeap
 
@@ -37,7 +37,7 @@ class Client:
             self.session = Session()
         # TODO: correctly import Fiware Header
         fiware_header = FiwareHeader(service='', service_path='/')
-        self.iota = Agent(session=self.session, fiware_header=fiware_header)
+        self.iota = IoTAClient(session=self.session, fiware_header=fiware_header)
         self.ocb = ContextBroker(config=self.config, session=self.session)
         self.timeseries = QuantumLeap(config=self.config, session=self.session)
 
