@@ -1,6 +1,7 @@
 from aenum import Enum
 from typing import Any, List, Dict, Union, Optional
-from pydantic import BaseModel, Field, validator, ValidationError, root_validator
+from pydantic import BaseModel, Field, validator, ValidationError, \
+    root_validator, create_model
 from core.models import DataTypes
 
 
@@ -75,7 +76,7 @@ class ContextAttribute(BaseModel):
 
 
 
-class ContextEntity(BaseModel):
+class BaseContextEntity(BaseModel):
     """
     Context entities, or simply entities, are the center of gravity in the
     FIWARE NGSI information model. An entity represents a thing, i.e., any
@@ -102,32 +103,43 @@ class ContextEntity(BaseModel):
         regex="^[\w\:\-\_]*$" # Make it FIWARE-Safe
     )
 
-    def __init__(self, *,id: str, type: str,
-                 properties: List[ContextAttribute] = None, **kwargs):
-        for key, value in kwargs.items():
-            if not isinstance(value, ContextAttribute):
-                property = ContextAttribute(name=key, **value)
-            else:
-                property = value
-            kwargs[key] = property.dict(exclude={'name'})
-        if properties:
-            for prop in properties:
-                kwargs[prop.name] = prop.dict(exclude={'name'})
-        super().__init__(id=id, type=type, **kwargs)
-
     class Config:
         extra = 'allow'
         #validate_all = True
         #validate_assignment = True
 
+def create_context_entity_model(name:str, data: Dict):
+    properties = []
+    for key in data.keys():
+        if key not in BaseContextEntity.__fields__.keys():
+            pass
+    EntityModel = create_model(
+        __model_name='MyModel',
+        __base__=BaseContextEntity,
+        **fields
+    )
+    return EntityModel
+
+
+
+
+
+
+
+
 if __name__ == '__main__':
     attr = {"type": "Number", "value": 5}
     attr2 = ContextAttribute(name="myAttr2", type="Number", value=10)
-    entity = ContextEntity(id="myRoom",
-                           type='bldg:room',
-                           properties=[attr2],
-                           T1=attr)
+    entity = BaseContextEntity(id="myRoom",
+                                type='bldg:room',
+                                properties=[attr2],
+                                T1=attr)
     print(entity.json(indent=2))
+    fields={'foo': (str, ...)}
+
+    entity2 = EntityModel(id="ds", type="sad", foo='test')
+
+    print(entity2.json(indent=2))
 
 
 

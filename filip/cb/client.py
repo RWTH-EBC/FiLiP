@@ -170,7 +170,7 @@ class FiwareService:
         return fiware_service_str
 
 
-class ContextBroker:
+class ContextBroker():
     """
     Implementation of Orion Context Broker functionalities, such as creating
     entities and subscriptions; retrieving, updating and deleting data.
