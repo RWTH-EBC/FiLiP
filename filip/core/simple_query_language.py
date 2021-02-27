@@ -1,5 +1,8 @@
+import itertools
+import regex as re
 from aenum import Enum
-from typing import Union, List, Tuple
+from typing import Union, List, Tuple, Set
+from pydantic import BaseModel, Field, validator
 
 """
 The Simple Query Language provides a simplified syntax to retrieve entities
@@ -131,22 +134,48 @@ class Statement(tuple):
         return ''.join([str(item) for item in self])
 
 
-def create_query(statements: List[
-    Union[Statement, Tuple[str, str, Union[str, float, int]]]]) -> str:
+class SimpleQuery(BaseModel):
     """
-    Converts are list of statements or 3-Tuples to a query string that can be
-    passed to context requests for filtering.
-    Args:
-        statements (list of Statements or list of 3-tuples): Will be
-        concatenated to a query string
+    Represents a simple query object that can handed to a request for
+    filtering responses.
+    """
+    statements: Set[Statement] = Field(
+        title="Statements",
+        description="List of simple query statement")
 
-    Returns:
-        query_string(str)
-    """
-    if not isinstance(statements, list):
-        statements = [statements]
-    for idx, statement in enumerate(statements):
-        if not isinstance(statement, Statement):
-            statements[idx] = Statement(*statement)
-    statements = set(statements)
-    return ';'.join([str(statement) for statement in statements])
+    def __init__(self, statements:
+    Union[List[Union[Statement, Tuple[str, str, Union[str, float, int]]]],
+          Set[Union[Statement, Tuple[str, str, Union[str, float, int]]]]]):
+        statements = self.validate_statements(statements)
+        super().__init__(statements=statements)
+
+    @validator('statements')
+    def validate_statements(cls, statements):
+        if not isinstance(statements, (list, set)):
+            statements = [statements]
+        for idx, statement in enumerate(statements):
+            if not isinstance(statement, Statement):
+                statements[idx] = Statement(*statement)
+        return set(statements)
+
+    def __str__(self):
+        return self.str()
+
+    def __repr__(self):
+        return f'{super().__repr_name__()}({super().__repr_str__(", ")})'
+
+    def str(self):
+        return ';'.join([str(statement) for statement in self.statements])
+
+    @classmethod
+    def parse_str(cls, query_string: str):
+        query_parts = query_string.split(';')
+        statements = set()
+        for part, op in itertools.product(query_parts, Operator.list()):
+            if re.search(f"^[\w]*{op}+[\w]", part):
+                args =part.split(op)
+                if len(args) == 2:
+                    statements.add(Statement(args[0], op, args[1]))
+                else:
+                    raise ValueError
+        return cls(statements=statements)
