@@ -1,9 +1,6 @@
-import json
-
-from aenum import Enum
 from typing import Any, List, Dict, Union, Optional
 from pydantic import BaseModel, Field, validator, ValidationError, \
-    root_validator, create_model
+    root_validator, create_model, BaseConfig
 from core.models import DataTypes
 
 
@@ -43,28 +40,7 @@ class ContextMetadata(BaseModel):
         description="a metadata value containing the actual metadata"
     )
 
-
-class ContextAttribute(BaseModel):
-    """
-    Context attributes are properties of context entities. For example, the
-    current speed of a car could be modeled as attribute current_speed of entity
-    car-104.
-
-    In the NGSI data model, attributes have an attribute name, an attribute type
-    an attribute value and metadata.
-    """
-    name: str = Field(
-        titel="Attribute name",
-        description="The attribute name describes what kind of property the "
-                    "attribute value represents of the entity, for example "
-                    "current_speed. Allowed characters "
-                    "are the ones in the plain ASCII set, except the following "
-                    "ones: control characters, whitespace, &, ?, / and #.",
-        max_length = 256,
-        min_length = 1,
-        regex = "(^((?![?&#/])[\x00-\x7F])*$)(?!(id|type|geo:distance|\*))",
-        # Make it FIWARE-Safe
-    )
+class BaseContextAttribute(BaseModel):
     type: DataTypes = Field(
         default=DataTypes.TEXT,
         description="The attribute type represents the NGSI value type of the "
@@ -96,8 +72,30 @@ class ContextAttribute(BaseModel):
         else:
             return str(v)
 
+class ContextAttribute(BaseContextAttribute):
+    """
+    Context attributes are properties of context entities. For example, the
+    current speed of a car could be modeled as attribute current_speed of entity
+    car-104.
 
-class BaseContextEntity(BaseModel):
+    In the NGSI data model, attributes have an attribute name, an attribute type
+    an attribute value and metadata.
+    """
+    name: str = Field(
+        titel="Attribute name",
+        description="The attribute name describes what kind of property the "
+                    "attribute value represents of the entity, for example "
+                    "current_speed. Allowed characters "
+                    "are the ones in the plain ASCII set, except the following "
+                    "ones: control characters, whitespace, &, ?, / and #.",
+        max_length = 256,
+        min_length = 1,
+        regex = "(^((?![?&#/])[\x00-\x7F])*$)(?!(id|type|geo:distance|\*))",
+        # Make it FIWARE-Safe
+    )
+
+
+class ContextEntity(BaseModel):
     """
     Context entities, or simply entities, are the center of gravity in the
     FIWARE NGSI information model. An entity represents a thing, i.e., any
@@ -113,7 +111,7 @@ class BaseContextEntity(BaseModel):
     id: str = Field(
         ...,
         title="Entity Id",
-        description='Id of an entity in a NGSI context broker. '
+        description="Id of an entity in an NGSI context broker. "
                     "Allowed characters are the ones in the plain ASCII set, "
                     "except the following ones: control characters, "
                     "whitespace, &, ?, / and #.",
@@ -124,7 +122,9 @@ class BaseContextEntity(BaseModel):
     )
     type: str = Field(
         ...,
-        description="Allowed characters are the ones in the plain ASCII set, "
+        title="Enity Type",
+        description="Id of an entity in an NGSI context broker. "
+                    "Allowed characters are the ones in the plain ASCII set, "
                     "except the following ones: control characters, "
                     "whitespace, &, ?, / and #.",
         example="Room",
@@ -133,25 +133,63 @@ class BaseContextEntity(BaseModel):
         regex="^((?![?&#/])[\x00-\x7F])*$", # Make it FIWARE-Safe
     )
 
-    class Config:
+    def __init__(self,
+                 id: str,
+                 type: str,
+                 **data):
+        data.update(self._validate_properties(data)) # There currently no
+        # validation for extra fields
+        super().__init__(id=id, type=type, **data)
+
+    class Config(BaseConfig):
         extra = 'allow'
-        #validate_all = True
-        #validate_assignment = True
+        validate_all = True
+        validate_assignment = True
+
+    def _validate_properties(cls, data: Dict):
+        attrs = {key: BaseContextAttribute.parse_obj(attr) for key, attr in \
+                data.items() if key not in ContextEntity.__fields__}
+        return attrs
+
+    def get_properties(self) -> List[ContextAttribute]:
+        return [ContextAttribute(name=key, **value) for key, value in
+                self.dict().items() if key not in
+                ContextEntity.__fields__ and
+                value.get('type') is not DataTypes.RELATIONSHIP]
+
+    def get_relationships(self):
+        return [ContextAttribute(name=key, **value) for key, value in
+                self.dict().items() if key not in
+                ContextEntity.__fields__ and
+                value.get('type') == DataTypes.RELATIONSHIP]
 
 
-def create_context_entity_model(name: str, data: Dict):
-    properties = {}
-    for key in data.keys():
-        if key not in BaseContextEntity.__fields__.keys():
-            pass
+def username_alphanumeric(cls, v):
+    #assert v.value.isalnum(), 'must be numeric'
+    return v
+
+
+def create_context_entity_model(name: str = None, data: Dict = None):
+    properties = {key: (BaseContextAttribute, ...) for key in data.keys() if
+                  key not in ContextEntity.__fields__}
+    validators = {f'validate_test': validator('temperature')(
+        username_alphanumeric)}
     EntityModel = create_model(
-        __model_name=name,
-        __base__=BaseContextEntity,
+        __model_name=name or 'GeneratedContextEntity',
+        __base__=ContextEntity,
+        __validators__=validators,
         **properties
     )
     return EntityModel
 
 
+class Notification(BaseModel):
+    subscriptionId: str = Field(
+        description="Id of the subscription the notification comes from"
+    )
+    data: ContextEntity = Field(
+        description="Context data entity"
+    )
 
 
 
@@ -161,20 +199,7 @@ def create_context_entity_model(name: str, data: Dict):
 
 
 
-# ToDo Query params
 
-## Class is only implemented for backward compatibility
-#class Attribute:
-#    """
-#    Describes the attribute of an entity.
-#    """
-#    def __init__(self, name, value, attr_type):
-#        self.name = name
-#        self.value = value
-#        self.type = attr_type
-#
-#    def get_json(self):
-#        return {'value': self.value, 'type': '{}'.format(self.type)}
 
 
 
@@ -231,35 +256,5 @@ def create_context_entity_model(name: str, data: Dict):
 #        ref_dict = json.loads(self.get_ref())
 #        whole_dict = {**temp_dict, **ref_dict}
 #        return json.dumps(whole_dict)
-#
-#
-#class FiwareService:
-#    """
-#    Define entity service_group paths which are supported by the Orion
-    #    Context Broker
-#    to support hierarchical scopes:
-#    https://fiware-orion.readthedocs.io/en/master/user/service_path/index.html
-#    """
-#    def __init__(self, name: str, path: str):
-#        self.name = name
-#        self.path = path
-#
-#    def update(self, name: str, path: str):
-#        """Overwrites the fiware_service and service_group path of
-        #        config.json"""
-#        self.name = name
-#        self.path = path
-#
-#    def get_header(self) -> object:
-#        return {
-#            "fiware-service_group": self.name,
-#            "fiware-servicepath": self.path
-#        }
-#
-#    def __repr__(self):
-#        fiware_service_str = f'"fiware-service_group": "{self.name}",
-        #        "fiware-servicepath": "{self.path}"'
-#        return fiware_service_str
-#
 #
 #

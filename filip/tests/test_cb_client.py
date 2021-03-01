@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import Mock, patch
 from core.models import FiwareHeader
+from cb.models import ContextEntity
 from cb.client import ContextBrokerClient
 
 class TestContextBroker(unittest.TestCase):
@@ -11,8 +12,7 @@ class TestContextBroker(unittest.TestCase):
             "subscriptions_url": "/v2/subscriptions",
             "registrations_url": "/v2/registrations"
         }
-
-
+        self.entity=ContextEntity(id='MyId', type='MyType')
         self.fiware_header = FiwareHeader(service='filip',
                                           service_path='/testing')
 
@@ -27,7 +27,10 @@ class TestContextBroker(unittest.TestCase):
         with ContextBrokerClient(fiware_header=self.fiware_header) as client:
             self.assertIsNotNone(client.get_statistics())
 
-
+    def test_entity_endpoints(self):
+        with ContextBrokerClient(fiware_header=self.fiware_header) as client:
+            self.assertIsNotNone(client.post_entity(entity=self.entity))
+            client.delete_entity(entity_id=self.entity.id)
 
     def tearDown(self) -> None:
         self.client.close()

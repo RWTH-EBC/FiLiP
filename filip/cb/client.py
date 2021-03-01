@@ -1,18 +1,18 @@
 import json
 import requests
-from typing import Dict
+from typing import Dict, Union, List
 from urllib.parse import urljoin
-from core.base_client import _BaseClient
+from core.base_client import BaseClient
 from core.settings import settings
 from core.models import FiwareHeader
-from cb.models import BaseContextEntity
+from cb.models import ContextEntity
 import math
 import logging
 
 logger = logging.getLogger('ocb')
 
 
-class ContextBrokerClient(_BaseClient):
+class ContextBrokerClient(BaseClient):
     """
     Implementation of NGSI Context Broker functionalities, such as creating
     entities and subscriptions; retrieving, updating and deleting data.
@@ -43,6 +43,7 @@ class ContextBrokerClient(_BaseClient):
                 res.raise_for_status()
         except requests.exceptions.RequestException as e:
             logger.error(e)
+            raise
 
     def get_resources(self) -> Dict:
         """
@@ -59,6 +60,7 @@ class ContextBrokerClient(_BaseClient):
                 res.raise_for_status()
         except requests.exceptions.RequestException as e:
             logger.error(e)
+            raise
 
     # STATISTICS API
     def get_statistics(self):
@@ -76,6 +78,7 @@ class ContextBrokerClient(_BaseClient):
                 res.raise_for_status()
         except requests.exceptions.RequestException as e:
             logger.error(e)
+            raise
 
 
 
@@ -84,9 +87,83 @@ class ContextBrokerClient(_BaseClient):
 
 
     # CONTEXT MANAGEMENT API ENDPOINTS
+    def post_entity(self, entity: ContextEntity, update: bool = False):
+        """
+        Function registers an Object with the NGSI Context Broker,
+        if it already exists it can be automatically updated
+        if the overwrite bool is True
+        First a post request with the entity is tried, if the response code
+        is 422 the entity is uncrossable, as it already exists there are two
+        options, either overwrite it, if the attribute have changed
+        (e.g. at least one new/new values) (update = True) or leave
+        it the way it is (update=False)
+        Args:
+            update (bool): If the response.status_code is 422, whether the old
+            entity should be updated or not
+            entity (ContextEntity): Context Entity Object
+        """
+        url = urljoin(settings.CB_URL, f'v2/entities')
+        headers = self.headers
+        res = None
+        try:
+            res = self.session.post(
+                url=url,
+                headers=headers,
+                json=entity.dict(exclude_unset=True))
+            if res.ok:
+                logger.info(f"Entity successfully posted!")
+                return res.headers.get('Location')
+            else:
+                res.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            if update and res.status_code == 422:
+                self.update_entity(entity=entity, add=False)
+            logger.error(e)
+            if res:
+                logger.error(f"Entity could not updated! "
+                             f"Reason: {res.text}")
+            raise
 
+    def update_entity(self, entity: ContextEntity, add=False):
+        """
 
+        Args:
+            entity:
+            add:
 
+        Returns:
+
+        """
+        pass
+
+    def delete_entity(self, entity_id: str, entity_type: str = None):
+
+        """
+        Remove a entity from the context broker. No payload is required
+        or received.
+        Args:
+            entity_id: Id of the entity to be deleted
+            type_id: Entity type, to avoid ambiguity in case there are
+            several entities with the same entity id.
+        Returns:
+            None
+        """
+        url = urljoin(settings.CB_URL, f'v2/entities/{entity_id}')
+        headers = self.headers
+        if type:
+            params = {'type': entity_type}
+        else:
+            params = {}
+        try:
+            res = self.session.delete(url=url, params=params, headers=headers)
+            if res.ok:
+                logger.info(f"Entity {entity_id} successfully deleted!")
+            else:
+                res.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            logger.error(e)
+            logger.error(f"Entity {entity_id} could not deleted!")
+            raise
 
 #    def set_service(self, fiware_service):
 #        """Overwrites the fiware_service and service_group path of
@@ -134,7 +211,7 @@ class ContextBrokerClient(_BaseClient):
 #    def post_entity(self, entity: Entity, force_update: bool = True):
 #        """
 #        Function registers an Object with the Orion Context Broker,
-        #        if it allready exists it can be automatically updated
+        #        if it already exists it can be automatically updated
 #        if the overwrite bool is True
 #        First a post request with the entity is tried, if the response code
         #        is 422 the entity is

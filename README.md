@@ -64,8 +64,6 @@ Efficient Buildings and Indoor Climate
 
 ## Contact
 
-[![EONERC EBC_Logo](https://www.ebc.eonerc.rwth-aachen.de/global/show_picture.asp?id=aaaaaaaaaakevlz)](http://www.ebc.eonerc.rwth-aachen.de)
-
 - [Thomas Storek](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/N5GEH-National-5G-Energy-Hub/~lhda/Thomas-Storek/?allou=1)
 
 

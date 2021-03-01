@@ -1,7 +1,7 @@
 from aenum import Enum
 from typing import ClassVar
 from pydantic import BaseModel, Field, validator, BaseConfig
-from utils.unitcodes import units
+#from utils.unitcodes import units
 
 
 class NgsiVersion(str, Enum):
@@ -36,7 +36,13 @@ class DataTypes(str, Enum):
                    "hh:mm:ss[Z|(+|-)hh:mm] (see XML schema for details)."
     RELATIONSHIP = "Relationship", "Reference to another context entity"
 
+
 class FiwareHeader(BaseModel):
+    """
+    Define entity service paths which are supported by the NGSI
+    Context Brokers to support hierarchical scopes:
+    https://fiware-orion.readthedocs.io/en/master/user/service_path/index.html
+    """
     service: str = Field(
         alias="fiware-service",
         default="",
@@ -55,31 +61,20 @@ class FiwareHeader(BaseModel):
     class Config(BaseConfig):
         allow_population_by_field_name = True
 
-class UnitCode(BaseModel):
-    type:   ClassVar[str] = "Text"
-    value:  str = Field(
-        description="Code of the measured quantity")
 
-    @validator('value')
-    def validate_code(cls, v):
-        units.get_unit(code=v)
-        return v
+#class UnitCode(BaseModel):
+#    """
+#    Fiware recommends unit codes for meta data. This class helps to validate
+#    the codes.
+#    """
+#    type:   ClassVar[str] = "Text"
+#    value:  str = Field(
+#        title="unit code",
+#        description="Code of the measured quantity")
+#
+#    @validator('value')
+#    def validate_code(cls, v):
+#        units.get_unit(code=v)
+#        return v
 
-class Entity(BaseModel):
-    type: str = Field(
-        description="The NGSI Entity Type."
-    )
-    id: str = Field(
-        description="The NGSI Entity Id."
-    )
 
-    class Config(BaseConfig):
-        extra = 'allow'
-
-class Notification(BaseModel):
-    subscriptionId: str = Field(
-        description="Id of the subscription the notification comes from"
-    )
-    data: Entity = Field(
-        description="Context data entity"
-    )

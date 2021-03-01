@@ -3,14 +3,14 @@ import requests
 from typing import List, Dict, Set, Union
 from urllib.parse import urljoin
 from core import settings
-from core.base_client import _BaseClient
+from core.base_client import BaseClient
 from core.models import FiwareHeader
 from iota.models import Device, ServiceGroup, PayloadProtocol
 
 logger = logging.getLogger(__name__)
 
 
-class IoTAClient(_BaseClient):
+class IoTAClient(BaseClient):
     """
     Client for FIWARE IoT-Agents. The implementation follows the API
     specifications from here:
@@ -37,6 +37,7 @@ class IoTAClient(_BaseClient):
                 res.raise_for_status()
         except requests.exceptions.RequestException as e:
             logger.error(e)
+        raise
 
     # SERVICE GROUP API
     def post_groups(self,
@@ -50,7 +51,6 @@ class IoTAClient(_BaseClient):
             service_groups (list of ServiceGroup): Service groups that will be
             posted to the agent's API
             update (bool): If service group already exists try to update its
-            configuration
         Returns:
             None
         """
@@ -67,8 +67,8 @@ class IoTAClient(_BaseClient):
         url = urljoin(settings.IOTA_URL, 'iot/services')
         headers = self.headers
         data = {'services': [group.dict(exclude={'service', 'subservice'},
-                                         exclude_defaults=True) for
-                            group in service_groups]}
+                                        exclude_defaults=True) for
+                             group in service_groups]}
         res = None
         try:
             res = self.session.post(url=url, headers=headers, json=data)
@@ -76,7 +76,7 @@ class IoTAClient(_BaseClient):
                 logger.info("Services successfully posted")
             elif res.status_code == 409:
                 logger.warning(res.text)
-                if  len(service_groups) > 1:
+                if len(service_groups) > 1:
                     logger.info("Trying to split bulk operation into single "
                                 "operations")
                     for group in service_groups:
@@ -92,6 +92,7 @@ class IoTAClient(_BaseClient):
             logger.error(e)
             if res:
                 logger.error(res.text)
+            raise
 
     def post_group(self, service_group: ServiceGroup, update: bool = False):
         """
@@ -129,6 +130,7 @@ class IoTAClient(_BaseClient):
             logger.error(e)
             if res:
                 logger.error(res.text)
+            raise
 
     def get_group(self, *, resource: str, apikey: str) -> ServiceGroup:
         """
@@ -154,14 +156,16 @@ class IoTAClient(_BaseClient):
             logger.error(e)
             if res is not None:
                 logger.error(res.text)
+            raise
 
     def update_groups(self, *,
                       service_groups: Union[ServiceGroup, List[ServiceGroup]],
-                      fields: Union[Set[str], List[str]] = None,
-                      add: False) -> None:
+                      add: False,
+                      fields: Union[Set[str], List[str]] = None) -> None:
         """
         Bulk operation for service group update.
         Args:
+            fields:
             service_groups:
             add:
 
@@ -200,10 +204,10 @@ class IoTAClient(_BaseClient):
         res = None
         try:
             res = self.session.put(url=url, headers=headers, params=params,
-                               json=service_group.json(include=fields,
-                                                       exclude={'service',
-                                                                'subservice'},
-                                                       skip_defaults=True))
+                                   json=service_group.json(
+                                       include=fields,
+                                       exclude={'service', 'subservice'},
+                                       exclude_unset=True))
             if res.ok:
                 logger.info(f"ServiceGroup updated!")
             elif (res.status_code == 404) & (add is True):
@@ -214,6 +218,7 @@ class IoTAClient(_BaseClient):
             logger.error(e)
             if res is not None:
                 logger.error(res.text)
+            raise
 
     def delete_group(self, *, resource: str, apikey: str):
         """
@@ -242,6 +247,7 @@ class IoTAClient(_BaseClient):
                          f"apikey: '{apikey}' could not deleted!")
             if res is not None:
                 logger.error(res.text)
+            raise
 
     # DEVICE API
     def post_devices(self, *, devices: Union[Device, List[Device]],
@@ -276,6 +282,7 @@ class IoTAClient(_BaseClient):
             if res:
                 logger.error(f"Devices could not updated! "
                              f"Reason: {res.text}")
+            raise
 
     def post_device(self, *, device: Device, update: bool = False) -> None:
         """
@@ -288,7 +295,6 @@ class IoTAClient(_BaseClient):
 
         """
         return self.post_devices(devices=[device], update=update)
-
 
     def get_devices(self, *, limit: int = 20, offset: int = None,
                     detailed: bool = None, entity: str = None,
@@ -322,6 +328,7 @@ class IoTAClient(_BaseClient):
                 res.raise_for_status()
         except requests.exceptions.RequestException as e:
             logger.error(e)
+            raise
 
     def get_device(self, *, device_id: str) -> Device:
         """
@@ -346,6 +353,7 @@ class IoTAClient(_BaseClient):
             logger.error(e)
             if res:
                 logger.error(res.text)
+            raise
 
     def update_device(self, *, device: Device, add: bool = True) -> None:
         """
@@ -375,6 +383,7 @@ class IoTAClient(_BaseClient):
             if res:
                 logger.error(f"Device '{device.device_id}' could not updated! "
                              f"Reason: {res.text}")
+            raise
 
     def update_devices(self, *, devices: Union[Device, List[Device]],
                        add: False) -> None:
@@ -402,7 +411,7 @@ class IoTAClient(_BaseClient):
         Returns:
             None
         """
-        url = urljoin(settings.IOTA_URL, f'iot/devices{device_id}', )
+        url = urljoin(settings.IOTA_URL, f'iot/devices/{device_id}', )
         headers = self.headers
         try:
             res = self.session.delete(url=url, headers=headers)
@@ -413,6 +422,7 @@ class IoTAClient(_BaseClient):
         except requests.exceptions.RequestException as e:
             logger.error(e)
             logger.error(f"Device {device_id} could not deleted!")
+            raise
 
     # LOG API
     def get_loglevel_of_agent(self):
@@ -428,6 +438,7 @@ class IoTAClient(_BaseClient):
                 res.raise_for_status()
         except requests.exceptions.RequestException as e:
             logger.error(e)
+            raise
 
     def change_loglevel_of_agent(self, level: str):
         level = level.upper()
@@ -447,5 +458,4 @@ class IoTAClient(_BaseClient):
                 res.raise_for_status()
         except requests.exceptions.RequestException as e:
             logger.error(e)
-
-
+            raise

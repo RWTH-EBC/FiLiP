@@ -7,14 +7,14 @@ from filip.utils import request_utils as requtils
 from core import test
 
 from core import settings
-from core.base_client import _BaseClient
+from core.base_client import BaseClient
 from core.models import FiwareHeader, Notification
 
 
 logger = logging.getLogger(__name__)
 
 
-class QuantumLeap(_BaseClient):
+class QuantumLeap(BaseClient):
     """
     Implements functions to use the FIWAREs QuantumLeap, which subscribes to an
     Orion Context Broker and stores the subscription data in a timeseries

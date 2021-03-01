@@ -62,7 +62,7 @@ class Units:
         rows = self.units.loc[(self.units.Name == sector.casefold())]
         return [Unit(**unit) for unit in rows.to_dict(orient="records")]
 
-units = Units()
+#units = Units()
 
 if __name__ == '__main__':
     print(units.sectors.mechanics=='Mechanics')

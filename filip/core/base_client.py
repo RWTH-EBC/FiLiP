@@ -5,7 +5,7 @@ from core.models import FiwareHeader
 logger = logging.getLogger(__name__)
 
 
-class _BaseClient:
+class BaseClient:
     """
     This class implements an base client for all derived api-clients.
     """
