@@ -1,12 +1,11 @@
-import json
 import requests
-from typing import Dict, Union, List
+import json
+from typing import Dict, Union, List, Any
 from urllib.parse import urljoin
 from core.base_client import BaseClient
 from core.settings import settings
 from core.models import FiwareHeader
-from cb.models import ContextEntity
-import math
+from cb.models import ContextEntity, ContextAttribute, NamedContextAttribute
 import logging
 
 logger = logging.getLogger('ocb')
@@ -87,6 +86,7 @@ class ContextBrokerClient(BaseClient):
 
 
     # CONTEXT MANAGEMENT API ENDPOINTS
+    # Entity Operations
     def post_entity(self, entity: ContextEntity, update: bool = False):
         """
         Function registers an Object with the NGSI Context Broker,
@@ -103,13 +103,15 @@ class ContextBrokerClient(BaseClient):
             entity (ContextEntity): Context Entity Object
         """
         url = urljoin(settings.CB_URL, f'v2/entities')
-        headers = self.headers
+        headers = self.headers.copy()
         res = None
         try:
             res = self.session.post(
                 url=url,
                 headers=headers,
-                json=entity.dict(exclude_unset=True))
+                json=entity.dict(exclude_unset=True,
+                                 exclude_defaults=True,
+                                 exclude_none=True))
             if res.ok:
                 logger.info(f"Entity successfully posted!")
                 return res.headers.get('Location')
@@ -124,23 +126,158 @@ class ContextBrokerClient(BaseClient):
                              f"Reason: {res.text}")
             raise
 
-    def update_entity(self, entity: ContextEntity, add=False):
+    def get_entity(self,
+                   entity_id: str,
+                   entity_type: str = None,
+                   attrs: List[str] = None,
+                   metadata: List[str] = None,
+                   options: str = None) -> ContextEntity:
         """
+        This operation must return one entity element only, but there may be
+        more than one entity with the same ID (e.g. entities with same ID but
+        different types). In such case, an error message is returned, with
+        the HTTP status code set to 409 Conflict.
 
         Args:
-            entity:
-            add:
+            entity_id (String): Id of the entity to be retrieved
+            entity_type (String): Entity type, to avoid ambiguity in case
+            there are several entities with the same entity id.
+            attrs (List of Strings): List of attribute names whose data must be 
+            included in the response. The attributes are retrieved in the order
+            specified by this parameter.
+            See "Filtering out attributes and metadata" section for more
+            detail. If this parameter is not included, the attributes are
+            retrieved in arbitrary order, and all the attributes of the entity
+            are included in the response. Example: temperature,humidity.
+            metadata (List of Strings): A list of metadata names to include in
+            the response. See "Filtering out attributes and metadata" section
+            for more detail. Example: accuracy.
+            options (Dict):
+        Returns:
+            ContextEntity
+        """
+        url = urljoin(settings.CB_URL, f'v2/entities/{entity_id}')
+        headers = self.headers.copy()
+        params = {}
+        if entity_type:
+            params.update({'type': entity_type})
+        if attrs:
+            params.update({'attrs': ','.join(attrs)})
+        if metadata:
+            params.update({'metadata': ','.join(metadata)})
+        if options:
+            params.update({'options': ','.join(options)})
+        try:
+            res = self.session.get(url=url, params=params, headers=headers)
+            if res.ok:
+                logger.debug(f'Received: {res.json()}')
+                return ContextEntity(**res.json())
+            else:
+                res.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            logger.error(e)
+            logger.error(f"Entity {entity_id} could not loaded")
+            raise
 
+    def get_entity_attributes(self,
+                              entity_id: str,
+                              entity_type: str = None,
+                              attrs: List[str] = None,
+                              metadata: List[str] = None,
+                              options: str = None) -> Dict[str, ContextEntity]:
+        """
+        This request is similar to retrieving the whole entity, however this
+        one omits the id and type fields. Just like the general request of
+        getting an entire entity, this operation must return only one entity
+        element. If more than one entity with the same ID is found (e.g.
+        entities with same ID but different type), an error message is
+        returned, with the HTTP status code set to 409 Conflict.
+
+        Args:
+            entity_id (String): Id of the entity to be retrieved
+            entity_type (String): Entity type, to avoid ambiguity in case
+            there are several entities with the same entity id.
+            attrs (List of Strings): List of attribute names whose data must be
+            included in the response. The attributes are retrieved in the order
+            specified by this parameter.
+            See "Filtering out attributes and metadata" section for more
+            detail. If this parameter is not included, the attributes are
+            retrieved in arbitrary order, and all the attributes of the entity
+            are included in the response. Example: temperature,humidity.
+            metadata (List of Strings): A list of metadata names to include in
+            the response. See "Filtering out attributes and metadata" section
+            for more detail. Example: accuracy.
+            options (Dict):
+        Returns:
+            Dict
+        """
+        url = urljoin(settings.CB_URL, f'v2/entities/{entity_id}/attrs')
+        headers = self.headers.copy()
+        params = {}
+        if entity_type:
+            params.update({'type': entity_type})
+        if attrs:
+            params.update({'attrs': ','.join(attrs)})
+        if metadata:
+            params.update({'metadata': ','.join(metadata)})
+        if options:
+            params.update({'options': ','.join(options)})
+        try:
+            res = self.session.get(url=url, params=params, headers=headers)
+            if res.ok:
+                return {key: ContextAttribute(**values)
+                        for key, values in res.json().items()}
+            else:
+                res.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            logger.error(e)
+            logger.error(f"Entity {entity_id} could not deleted!")
+            raise
+
+    def update_entity(self,
+                      entity: ContextEntity,
+                      options: str = None,
+                      add=False):
+        """
+        The request payload is an object representing the attributes to
+        append or update.
+        Args:
+            entity (ContextEntity):
+            add (bool):
+            options:
         Returns:
 
         """
-        pass
+        url = urljoin(settings.CB_URL, f'v2/entities/{entity.id}/attrs')
+        headers = self.headers.copy()
+        res = None
+        params = {}
+        if options:
+            params.update({'options': options})
+        try:
+            res = self.session.post(url=url,
+                                    headers=headers,
+                                    json=entity.dict(exclude={'id', 'type'},
+                                                     exclude_unset=True,
+                                                     exclude_none=True))
+            if res.ok:
+                logger.info(f"Entity '{entity.id}' "
+                            f"successfully updated!")
+            else:
+                res.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            logger.error(e)
+            if res.text:
+                logger.error(f"Entity '{entity.id}' could not updated! "
+                             f"Reason: {res.text}")
+            raise
 
     def delete_entity(self, entity_id: str, entity_type: str = None):
 
         """
         Remove a entity from the context broker. No payload is required
         or received.
+
         Args:
             entity_id: Id of the entity to be deleted
             type_id: Entity type, to avoid ambiguity in case there are
@@ -149,137 +286,346 @@ class ContextBrokerClient(BaseClient):
             None
         """
         url = urljoin(settings.CB_URL, f'v2/entities/{entity_id}')
-        headers = self.headers
-        if type:
+        headers = self.headers.copy()
+        if entity_type:
             params = {'type': entity_type}
         else:
             params = {}
         try:
             res = self.session.delete(url=url, params=params, headers=headers)
             if res.ok:
-                logger.info(f"Entity {entity_id} successfully deleted!")
+                logger.info(f"Entity '{entity_id}' successfully deleted!")
             else:
                 res.raise_for_status()
         except requests.exceptions.RequestException as e:
             logger.error(e)
-            logger.error(f"Entity {entity_id} could not deleted!")
+            logger.error(f"Entity '{entity_id}' could not be deleted!")
             raise
 
-#    def set_service(self, fiware_service):
-#        """Overwrites the fiware_service and service_group path of
-        #        config.json"""
-#        self.fiware_service.update(fiware_service.name, fiware_service.path)
-#
-#    def get_service(self):
-#        return self.fiware_service
-#
-#    def get_header(self, additional_headers: dict = None):
-#        """combine fiware_service header (if set) and additional headers"""
-#        if self.fiware_service == None:
-#            return additional_headers
-#        elif additional_headers == None:
-#            return self.fiware_service.get_header()
-#        else:
-#            headers = {**self.fiware_service.get_header(),
-        #            **additional_headers}
-#            return headers
-#
-#    def log_switch(self, level, response):
-#        """
-#        Function returns the required log_level with the repsonse
-#        :param level: The logging level that should be returned
-#        :param response: The message for the logger
-#        :return:
-#        """
-#        switch_dict = {"INFO": logging.info,
-#                       "ERROR":  logging.error,
-#                       "WARNING": logging.warning
-#                       }.get(level, logging.info)(msg=response)
-#
-#
-#    def test_connection(self):
-#        """
-#        Function utilises the test.test_connection() function to check the
-        #        availability of a given url and service_group.
-#        :return: Boolean, True if the service_group is reachable, False if not.
-#        """
-#        boolean = test.test_connection(client=self.session,
-#                                       url=self.url+'/version',
-#                                       service_name=__name__)
-#        return boolean
-#
-#    def post_entity(self, entity: Entity, force_update: bool = True):
-#        """
-#        Function registers an Object with the Orion Context Broker,
-        #        if it already exists it can be automatically updated
-#        if the overwrite bool is True
-#        First a post request with the entity is tried, if the response code
-        #        is 422 the entity is
-#        uncrossable, as it already exists there are two options, either
-        #        overwrite it, if the attribute have changed (e.g. at least one new/
-#        new values) (update = True) or leave it the way it is (update=False)
-#        :param entity: An entity object
-#        :param update: If the response.status_code is 422, whether the old
-        #        entity should be updated or not
-#        :return:
-#        """
-#        url = self.url + '/v2/entities'
-#        headers = self.get_header(requtils.HEADER_CONTENT_JSON)
-#        data = entity.get_json()
-#        response = self.session.post(url, headers=headers, data=data)
-#        ok, retstr = requtils.response_ok(response)
-#        if not ok:
-#            if (response.status_code == 422) & (force_update is True):
-#                    url += f"{entity.id}/attrs"
-#                    response = self.session.post(url, headers=headers,
-        #                    data=data)
-#                    ok, retstr = requtils.response_ok(response)
-#            if not ok:
-#                level, retstr = requtils.logging_switch(response)
-#                self.log_switch(level, response)
-#
-#    def post_json(self, json=None, entity=None, params=None):
-#        """
-#        Function registers a JSON with the Orion Context Broker.
-#        :param json: A JSON (dictionary)
-#        :param entity: An Orion entity, from which the json_data can be
-        #        obatained.
-#        :param params:
-#        :return:
-#        """
-#        headers = self.get_header(requtils.HEADER_CONTENT_JSON)
-#        if json is not None:
-#            json_data = json
-#        elif (json is None) and (entity is not None):
-#            json_data = entity.get_json()
-#        else:
-#            logger.error(f"Please provide a valid data format.")
-#            json_data = ""
-#        if params is None:
-#            url = self.url + '/v2/entities'
-#            response = self.session.post(url, headers=headers, data=json_data)
-#        else:
-#            url = self.url + "/v2/entities" + "?options=" + params
-#            response = self.session.post(url, headers=headers, data=json_data)
-#        ok, retstr = requtils.response_ok(response)
-#        if not ok:
-#            level, retstr = requtils.logging_switch(response)
-#            self.log_switch(level, retstr)
-#
-#    def post_json_key_value(self, json_data=None, params="keyValues"):
-#        """
-#        :param json_data:
-#        :param params:
-#        :return:
-#        """
-#        headers = self.get_header(requtils.HEADER_CONTENT_JSON)
-#        url = self.url + "/v2/entities" + "?options=" + params
-#        response = self.session.post(url, headers=headers, data=json_data)
-#        ok, retstr = requtils.response_ok(response)
-#        if not ok:
-#            level, retstr = requtils.logging_switch(response)
-#            self.log_switch(level, retstr)
-#
+    def replace_entity_attributes(self,
+                                  entity: ContextEntity,
+                                  options: str = None,
+                                  append: bool = True):
+        """
+        The attributes previously existing in the entity are removed and
+        replaced by the ones in the request.
+
+        Args:
+            entity (ContextEntity):
+            append (bool):
+            options:
+        Returns:
+
+        """
+        url = urljoin(settings.CB_URL, f'v2/entities/{entity.id}/attrs')
+        headers = self.headers.copy()
+        res = None
+        params = {}
+        if options:
+            params.update({'options': options})
+        try:
+            res = self.session.put(url=url,
+                                    headers=headers,
+                                    json=entity.dict(exclude={'id', 'type'},
+                                                     exclude_unset=True,
+                                                     exclude_none=True))
+            if res.ok:
+                logger.info(f"Entity '{entity.id}' "
+                            f"successfully updated!")
+            else:
+                res.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            logger.error(e)
+            if res.text:
+                logger.error(f"Entity '{entity.id}' could not updated! "
+                             f"Reason: {res.text}")
+            raise
+
+    # Attribute operations
+    def get_attribute(self,
+                      entity_id: str,
+                      attr_name: str,
+                      entity_type: str = None,
+                      metadata: str = None) -> ContextAttribute:
+        """
+        Retrieves a specified attribute from an entity.
+        Args:
+            entity_id: Id of the entity. Example: Bcn_Welt
+            attr_name: Name of the attribute to be retrieved.
+                Example: temperature.
+            entity_type:
+            metadata: A list of metadata names to include in the response.
+                See "Filtering out attributes and metadata" section for
+                more detail.
+
+        Returns:
+            The content of the retrieved attribute as ContextAttribute
+        Raises:
+            Error
+
+        """
+        url = urljoin(settings.CB_URL,
+                      f'v2/entities/{entity_id}/attrs/{attr_name}')
+        headers = self.headers.copy()
+        params = {}
+        if entity_type:
+            params.update({'type': entity_type})
+        if metadata:
+            params.update({'metadata': ','.join(metadata)})
+        try:
+            res = self.session.get(url=url, params=params, headers=headers)
+            if res.ok:
+                logger.debug(f'Received: {res.json()}')
+                return ContextAttribute(**res.json())
+            else:
+                res.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            logger.error(e)
+            logger.error(f"Attribute '{attr_name}' from '{entity_id}' "
+                         f"could not be loaded!")
+            raise
+
+    def update_entity_attribute(self,
+                                entity_id: str,
+                                attr: NamedContextAttribute,
+                                entity_type: str = None):
+        """
+        Updates a specified attribute from an entity.
+        Args:
+            attr:
+            entity_id: Id of the entity. Example: Bcn_Welt
+            entity_type: Entity type, to avoid ambiguity in case there are
+                several entities with the same entity id.
+        """
+        url = urljoin(settings.CB_URL,
+                      f'v2/entities/{entity_id}/attrs/{attr.name}')
+        headers = self.headers.copy()
+        res = None
+        params = {}
+        if entity_type:
+            params.update({'type': entity_type})
+        try:
+            res = self.session.put(url=url,
+                                   headers=headers,
+                                   json=attr.dict(exclude={'name'},
+                                                  exclude_unset=True,
+                                                  exclude_none=True))
+            if res.ok:
+                logger.info(f"Attribute '{attr.name}' of '{entity_id}' "
+                            f"successfully updated!")
+            else:
+                res.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            logger.error(e)
+            if res.text:
+                logger.error(f"Attribute '{attr.name}' of '{entity_id} could "
+                             f"not be updated! "
+                             f"Reason: {res.text}")
+            raise
+
+    def delete_entity_attribute(self,
+                                entity_id: str,
+                                attr_name: str,
+                                entity_type: str = None,
+                                metadata: str = None) -> None:
+        """
+        Removes a specified attribute from an entity.
+        Args:
+            entity_id: Id of the entity. Example: Bcn_Welt
+            attr_name: Name of the attribute to be retrieved.
+                Example: temperature.
+            entity_type: Entity type, to avoid ambiguity in case there are
+                several entities with the same entity id.
+        Raises:
+            Error
+
+        """
+        url = urljoin(settings.CB_URL,
+                      f'v2/entities/{entity_id}/attrs/{attr_name}')
+        headers = self.headers.copy()
+        res = None
+        params = {}
+        if entity_type:
+            params.update({'type': entity_type})
+        try:
+            res = self.session.delete(url=url, headers=headers)
+            if res.ok:
+                logger.info(f"Attribute '{attr_name}' of '{entity_id}' "
+                            f"successfully deleted!")
+            else:
+                res.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            logger.error(e)
+            if res.text:
+                logger.error(f"Attribute '{attr_name}' of '{entity_id} could "
+                             f"not be deleted! "
+                             f"Reason: {res.text}")
+            raise
+
+    # Attribute value operations
+    def get_attribute_value(self,
+                            entity_id: str,
+                            attr_name: str,
+                            entity_type: str = None) -> Any:
+        """
+        This operation returns the value property with the value of the
+        attribute.
+
+        Args:
+            entity_id: Id of the entity. Example: Bcn_Welt
+            attr_name: Name of the attribute to be retrieved.
+                Example: temperature.
+            entity_type: Entity type, to avoid ambiguity in case there are
+                several entities with the same entity id.
+
+        Returns:
+
+        """
+        url = urljoin(settings.CB_URL,
+                      f'v2/entities/{entity_id}/attrs/{attr_name}/value')
+        headers = self.headers.copy()
+        params = {}
+        res = None
+        if entity_type:
+            params.update({'type': entity_type})
+        try:
+            res = self.session.get(url=url, params=params, headers=headers)
+            if res.ok:
+                logger.debug(f'Received: {res.json()}')
+                return res.json()
+            else:
+                res.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            logger.error(e)
+            if res.text:
+                logger.error(
+                    f"Value of attribute '{attr_name}' from '{entity_id}' "
+                    f"could not be loaded! "
+                    f"Reason: {res.text}")
+            else:
+                logger.error(
+                    f"Value of attribute '{attr_name}' from '{entity_id}' "
+                    f"could not be loaded!")
+            raise
+
+    def update_attribute_value(self, *,
+                               entity_id: str,
+                               attr_name: str,
+                               value: Any,
+                               entity_type: str = None):
+        """
+        Updates the value of a specified attribute of an entity
+
+        Args:
+            entity_id: Id of the entity. Example: Bcn_Welt
+            attr_name: Name of the attribute to be retrieved.
+                Example: temperature.
+            entity_type: Entity type, to avoid ambiguity in case there are
+                several entities with the same entity id.
+        Returns:
+
+        """
+        url = urljoin(settings.CB_URL,
+                      f'v2/entities/{entity_id}/attrs/{attr_name}/value')
+        headers = self.headers.copy()
+        params = {}
+        res = None
+        if entity_type:
+            params.update({'type': entity_type})
+        try:
+            if not isinstance(value, Dict):
+                headers.update({'Content-Type': 'text/plain'})
+                if isinstance(value, str):
+                    value = f'"{value}"'
+                res = self.session.put(url=url,
+                                       headers=headers,
+                                       data=str(value))
+            else:
+                res = self.session.put(url=url,
+                                       headers=headers,
+                                       json=value)
+            if res.ok:
+                logger.info(f"Attribute '{attr_name}' of '{entity_id}' "
+                            f"successfully updated!")
+            else:
+                res.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            logger.error(e)
+            if res.text:
+                logger.error(f"Attribute '{attr_name}' of '{entity_id} could "
+                             f"not be updated! "
+                             f"Reason: {res.text}")
+            raise
+
+    # Types Operations
+    def get_entity_types(self,
+                         *,
+                         limit: int = None,
+                         offset: int = None,
+                         options: str = None) -> List[Dict[str, Any]]:
+        """
+
+        Args:
+            limit: Limit the number of types to be retrieved.
+            offset: Skip a number of records.
+            options: Options dictionary. Allowed: count, values
+
+        Returns:
+
+        """
+        url = urljoin(settings.CB_URL, f'v2/types')
+        headers = self.headers.copy()
+        params = {}
+        res = None
+        if limit:
+            params.update({'limit': limit})
+        if offset:
+            params.update({'offset': offset})
+        if options:
+            params.update({'options': options})
+        try:
+            res = self.session.get(url=url, params=params, headers=headers)
+            if res.ok:
+                logger.debug(f'Received: {res.json()}')
+                return res.json()
+            else:
+                res.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            logger.error(e)
+            if res.text:
+                logger.error(f"Types could not be loaded! Reason: {res.text}")
+            raise
+
+    def get_entity_type(self, entity_type: str) -> Dict[str, Any]:
+        """
+
+        Args:
+            entity_type: Entity Type. Example: Room
+
+        Returns:
+
+        """
+        url = urljoin(settings.CB_URL, f'v2/types/{entity_type}')
+        headers = self.headers.copy()
+        params = {}
+        res = None
+        try:
+            res = self.session.get(url=url, params=params, headers=headers)
+            if res.ok:
+                logger.debug(f'Received: {res.json()}')
+                return res.json()
+            else:
+                res.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            logger.error(e)
+            if res.text:
+                logger.error(f"Types could not be loaded! Reason: {res.text}")
+            raise
+
+
+
+
+
 #    def post_relationship(self, json_data=None):
 #        """
 #        Function can be used to post a one to many or one to one relationship.

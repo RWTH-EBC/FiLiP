@@ -1,6 +1,7 @@
 from typing import Any, List, Dict, Union, Optional
 from pydantic import BaseModel, Field, validator, ValidationError, \
     root_validator, create_model, BaseConfig
+from pydantic.fields import ModelField
 from core.models import DataTypes
 
 
@@ -13,18 +14,6 @@ class ContextMetadata(BaseModel):
     Note that in NGSI it is not foreseen that metadata may contain nested
     metadata.
     """
-    name: str = Field(
-        titel="metadata name",
-        description="a metadata name, describing the role of the metadata in the "
-                    "place where it occurs; for example, the metadata name "
-                    "accuracy indicates that the metadata value describes how "
-                    "accurate a given attribute value is. Allowed characters "
-                    "are the ones in the plain ASCII set, except the following "
-                    "ones: control characters, whitespace, &, ?, / and #.",
-        max_length=256,
-        min_length=1,
-        regex="^((?![?&#/*])[\x00-\x7F])*$" # Make it FIWARE-Safe
-    )
     type: Optional[DataTypes] = Field(
         title="metadata type",
         description="a metadata type, describing the NGSI value type of the "
@@ -40,7 +29,22 @@ class ContextMetadata(BaseModel):
         description="a metadata value containing the actual metadata"
     )
 
-class BaseContextAttribute(BaseModel):
+class NamedContextMetadata(ContextMetadata):
+    name: str = Field(
+        titel="metadata name",
+        description="a metadata name, describing the role of the metadata in the "
+                    "place where it occurs; for example, the metadata name "
+                    "accuracy indicates that the metadata value describes how "
+                    "accurate a given attribute value is. Allowed characters "
+                    "are the ones in the plain ASCII set, except the following "
+                    "ones: control characters, whitespace, &, ?, / and #.",
+        max_length=256,
+        min_length=1,
+        regex="^((?![?&#/*])[\x00-\x7F])*$" # Make it FIWARE-Safe
+    )
+
+
+class ContextAttribute(BaseModel):
     type: DataTypes = Field(
         default=DataTypes.TEXT,
         description="The attribute type represents the NGSI value type of the "
@@ -57,7 +61,8 @@ class BaseContextAttribute(BaseModel):
         title="Attribute value",
         description="the actual data"
     )
-    metadata: Optional[ContextMetadata] = Field(
+    metadata: Optional[Union[Dict, ContextMetadata]] = Field(
+        default={},
         title="Metadata",
         description="optional metadata describing properties of the attribute "
                     "value like e.g. accuracy, provider, or a timestamp")
@@ -72,7 +77,15 @@ class BaseContextAttribute(BaseModel):
         else:
             return str(v)
 
-class ContextAttribute(BaseContextAttribute):
+    @validator('metadata')
+    def validate_metadata_type(cls, v):
+        if isinstance(v, Dict):
+            if not v:
+                return v
+        else:
+            return ContextMetadata(**v)
+
+class NamedContextAttribute(ContextAttribute):
     """
     Context attributes are properties of context entities. For example, the
     current speed of a car could be modeled as attribute current_speed of entity
@@ -147,22 +160,64 @@ class ContextEntity(BaseModel):
         validate_assignment = True
 
     def _validate_properties(cls, data: Dict):
-        attrs = {key: BaseContextAttribute.parse_obj(attr) for key, attr in \
-                data.items() if key not in ContextEntity.__fields__}
+        attrs = {key: ContextAttribute.parse_obj(attr) for key, attr in \
+                 data.items() if key not in ContextEntity.__fields__}
         return attrs
 
-    def get_properties(self) -> List[ContextAttribute]:
-        return [ContextAttribute(name=key, **value) for key, value in
-                self.dict().items() if key not in
-                ContextEntity.__fields__ and
-                value.get('type') is not DataTypes.RELATIONSHIP]
+    def get_properties(self, format: str = 'list') -> Union[List[
+        NamedContextAttribute], Dict[str, ContextAttribute]]:
+        """
+        Args:
+            format:
 
-    def get_relationships(self):
-        return [ContextAttribute(name=key, **value) for key, value in
-                self.dict().items() if key not in
-                ContextEntity.__fields__ and
-                value.get('type') == DataTypes.RELATIONSHIP]
+        Returns:
 
+        """
+        if format == 'dict':
+            return {key: ContextAttribute(**value) for key, value in
+                    self.dict().items() if key not in ContextEntity.__fields__
+                    and value.get('type') is not DataTypes.RELATIONSHIP}
+        else:
+            return [NamedContextAttribute(name=key, **value) for key, value in
+                    self.dict().items() if key not in
+                    ContextEntity.__fields__ and
+                    value.get('type') is not DataTypes.RELATIONSHIP]
+
+    def add_properties(self, attrs: Union[Dict[str, ContextAttribute],
+                                         List[NamedContextAttribute]]):
+        """
+
+        Args:
+            attrs:
+
+        Returns:
+
+        """
+        if isinstance(attrs, List):
+            attrs = {attr.name: ContextAttribute(**attr) for attr in attrs}
+        for key, attr in attrs.items():
+            self.__setattr__(name=key, value=attr)
+
+    def get_relationships(self, format: str = 'list') -> Union[List[
+                                           NamedContextAttribute], Dict[
+                                           str, ContextAttribute]]:
+        """
+
+        Args:
+            format:
+
+        Returns:
+
+        """
+        if format == 'dict':
+            return {key: ContextAttribute(**value) for key, value in
+                    self.dict().items() if key not in ContextEntity.__fields__
+                    and value.get('type') is DataTypes.RELATIONSHIP}
+        else:
+            return [NamedContextAttribute(name=key, **value) for key, value in
+                    self.dict().items() if key not in
+                    ContextEntity.__fields__ and
+                    value.get('type') is DataTypes.RELATIONSHIP]
 
 def username_alphanumeric(cls, v):
     #assert v.value.isalnum(), 'must be numeric'
@@ -170,7 +225,7 @@ def username_alphanumeric(cls, v):
 
 
 def create_context_entity_model(name: str = None, data: Dict = None):
-    properties = {key: (BaseContextAttribute, ...) for key in data.keys() if
+    properties = {key: (ContextAttribute, ...) for key in data.keys() if
                   key not in ContextEntity.__fields__}
     validators = {f'validate_test': validator('temperature')(
         username_alphanumeric)}
