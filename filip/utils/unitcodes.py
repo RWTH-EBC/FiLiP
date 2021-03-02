@@ -1,9 +1,11 @@
-from pandas_datapackage_reader import read_datapackage
 import pandas as pd
+import filip
+import os
+from pathlib import Path
+from pandas_datapackage_reader import read_datapackage
 from pydantic import BaseModel, Field
 from typing import Optional, List, Dict
 from enum import Enum
-
 
 class Level(BaseModel):
     level: str = Field(alias="LevelAndCategory")
@@ -22,10 +24,24 @@ class Units:
     units: pd.DataFrame = None
 
     def __init__(self):
-        data = read_datapackage(
-            "https://github.com/datasets/unece-units-of-measure")
-        self.levels = data['levels']
-        self.units = data['units-of-measure']
+        filename='unece-units-of-measure.hdf'
+        # create directory for data if not exists
+        dirpath = Path(__file__).parent.parent.absolute().joinpath(
+            'external_resources')
+        dirpath.mkdir(parents=True, exist_ok=True)
+        filepath = dirpath.joinpath(filename)
+        if os.path.isfile(filepath):
+            self.units = pd.read_hdf(filepath, key='units')
+            self.levels = pd.read_hdf(filepath, key='levels')
+        else:
+            # This will cause a warning at first time usage
+            data = read_datapackage(
+                "https://github.com/datasets/unece-units-of-measure")
+            self.levels = data['levels']
+            self.units = data['units-of-measure']
+            self.units.to_hdf(filepath, key='units')
+            self.levels.to_hdf(filepath, key='levels')
+
         self.sectors = Enum('sectors', {str(sector).casefold().replace(' ','_'):
                                            sector for sector in
                                     self.units.Sector.unique()},
@@ -62,11 +78,4 @@ class Units:
         rows = self.units.loc[(self.units.Name == sector.casefold())]
         return [Unit(**unit) for unit in rows.to_dict(orient="records")]
 
-#units = Units()
-
-if __name__ == '__main__':
-    print(units.sectors.mechanics=='Mechanics')
-    print(units.newton_second_per_metre.code)
-    print(units['newton second per metre'])
-    print(units.get_unit(code='C58'))
-    print(units['C58'])
+units = Units()
