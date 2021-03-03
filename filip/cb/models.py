@@ -1,8 +1,18 @@
-from typing import Any, List, Dict, Union, Optional
+from aenum import Enum
+from typing import Any, List, Dict, Union, Optional, Pattern
 from pydantic import BaseModel, Field, validator, ValidationError, \
-    root_validator, create_model, BaseConfig
-from pydantic.fields import ModelField
+    root_validator, create_model, BaseConfig, AnyHttpUrl, Json
+from datetime import datetime
 from core.models import DataTypes
+from core.simple_query_language import SimpleQuery
+
+# Options for queries
+class OptionsGetEntities(str, Enum):
+    _init_ = 'value __doc__'
+
+    KEYVALUES = 'keyValues', ''
+    VALUES = 'values', ''
+    UNIQUE = 'unique', ''
 
 
 class ContextMetadata(BaseModel):
@@ -150,8 +160,8 @@ class ContextEntity(BaseModel):
                  id: str,
                  type: str,
                  **data):
-        data.update(self._validate_properties(data)) # There currently no
-        # validation for extra fields
+        # There is currently no validation for extra fields
+        data.update(self._validate_properties(data))
         super().__init__(id=id, type=type, **data)
 
     class Config(BaseConfig):
@@ -238,12 +248,128 @@ def create_context_entity_model(name: str = None, data: Dict = None):
     return EntityModel
 
 
-class Notification(BaseModel):
+class HttpMethods(str, Enum):
+    _init_ = 'value __doc__'
+
+    POST = "POST", "Post Method"
+    PUT = "PUT", "Put Method"
+    PATCH = "PATCH", "Patch Method"
+
+
+class HttpCustom(BaseModel):
+    url: AnyHttpUrl = Field(
+        description="same as in http above."
+    )
+    headers: Optional[Dict[str, Union[str, Json]]] = Field(
+        description="a key-map of HTTP headers that are included in "
+                    "notification messages."
+    )
+    qs: Optional[Dict[str, Union[str, Json]]] = Field(
+        description="a key-map of URL query parameters that are included in "
+                    "notification messages."
+    )
+    method: str = Field(
+        default=HttpMethods.POST,
+        description="the method to use when sending the notification "
+                    "(default is POST). Only valid HTTP methods are allowed. "
+                    "On specifying an invalid HTTP method, a 400 Bad Request "
+                    "error is returned."
+    )
+    payload: Optional[str] = Field(
+        description='the payload to be used in notifications. If omitted, the '
+                    'default payload (see "Notification Messages" sections) '
+                    'is used.'
+    )
+
+
+class AttrsFormat(str, Enum):
+    _init_ = 'value __doc__'
+
+    NORMALIZED = "normalized", "Normalized message representation"
+    KEYVALUE = "keyValues", "Key value message representation"
+    VALUES = "values", "Key value message representation"
+
+
+class NotificationMessage(BaseModel):
     subscriptionId: str = Field(
         description="Id of the subscription the notification comes from"
     )
     data: ContextEntity = Field(
-        description="Context data entity"
+        description="is an array with the notification data itself which "
+                    "includes the entity and all concerned attributes. Each "
+                    "element in the array corresponds to a different entity. "
+                    "By default, the entities are represented in normalized "
+                    "mode. However, using the attrsFormat modifier, a "
+                    "simplified representation mode can be requested."
+    )
+
+
+class Notification(BaseModel):
+    """
+    If the notification attributes are left empty, all attributes will be
+    included in the notifications. Otherwise, only the specified ones will
+    be included.
+    :param attribute_type: either 'attrs' or 'exceptAttrs'
+    :param _list: list of either 'attrs' or 'exceptAttrs' attributes
+    """
+    attrs: Optional[List[str]] = Field(
+        description='List of attributes to be included in notification '
+                    'messages. It also defines the order in which attributes '
+                    'must appear in notifications when attrsFormat value is '
+                    'used (see "Notification Messages" section). An empty list '
+                    'means that all attributes are to be included in '
+                    'notifications. See "Filtering out attributes and '
+                    'metadata" section for more detail.'
+    )
+    exceptAttrs: Optional[List[str]] = Field(
+        description='List of attributes to be excluded from the notification '
+                    'message, i.e. a notification message includes all entity '
+                    'attributes except the ones listed in this field.'
+    )
+    http: Optional[AnyHttpUrl] = Field(
+        description='It is used to convey parameters for notifications '
+                    'delivered through the HTTP protocol. Cannot be used '
+                    'together with "httpCustom"'
+    )
+    httpCustom: Optional[HttpCustom] = Field(
+        description='It is used to convey parameters for notifications '
+                    'delivered through the HTTP protocol. Cannot be used '
+                    'together with "http"'
+    )
+    attrsFormat: Optional[AttrsFormat] = Field(
+        default= AttrsFormat.NORMALIZED,
+        description='specifies how the entities are represented in '
+                    'notifications. Accepted values are normalized (default), '
+                    'keyValues or values. If attrsFormat takes any value '
+                    'different than those, an error is raised. See detail in '
+                    '"Notification Messages" section.'
+    )
+    metadata: Optional[Any] = Field(
+        description='List of metadata to be included in notification messages. '
+                    'See "Filtering out attributes and metadata" section for '
+                    'more detail.'
+    )
+
+
+class NotificationResponse(Notification):
+    timesSent: int = Field(
+        description='(not editable, only present in GET operations): '
+                    'Number of notifications sent due to this subscription.'
+    )
+    lastNotification: datetime = Field(
+        description='(not editable, only present in GET operations): '
+                    'Last notification timestamp in ISO8601 format.'
+    )
+    lastFailure: Optional[datetime] = Field(
+        description='(not editable, only present in GET operations): '
+                    'Last failure timestamp in ISO8601 format. Not present if '
+                    'subscription has never had a problem with notifications.'
+    )
+    lastSuccess: Optional[datetime] = Field(
+        description='(not editable, only present in GET operations): '
+                    'Timestamp in ISO8601 format for last successful '
+                    'notification. Not present if subscription has never '
+                    'had a successful notification.'
     )
 
 
@@ -252,12 +378,105 @@ class Notification(BaseModel):
 
 
 
+class Status(str, Enum):
+    _init_ = 'value __doc__'
+
+    ACTIVE = "active", "for active subscriptions"
+    INACTIVE = "inactive", "for inactive subscriptions"
+    FAILED = "failed", "for failed subscription"
+    EXPIRED = "expired", "for expired subscription"
 
 
+class Expression(BaseModel):
+    q: Optional[SimpleQuery] = Field(
+        description=''
+    )
+    mq: Optional[SimpleQuery] = Field()
+    # TODO: Adding additional query options
+    # http://telefonicaid.github.io/fiware-orion/api/v2/stable/
 
 
+class Condition(BaseModel):
+    attrs: List[str] = Field(
+        description='array of attribute names'
+    )
+    expression: Optional[Expression] = Field(
+        description='an expression composed of q, mq, georel, geometry and '
+                    'coords (see "List entities" operation above about this '
+                    'field).'
+    )
 
 
+class Subject(BaseModel):
+    entities: Dict[str, str] = Field()
+    condition: Optional[Condition] = Field()
+
+    @validator('entities')
+    def validate_entities(cls, v):
+        for key in v.keys():
+            if not key in ['id', 'idPattern', 'type', 'typePattern']:
+                raise KeyError
+        assert ('id' in v.keys() or 'idPattern' in v.keys())
+        if 'id' in v.keys():
+            assert 'idPattern' not in v.keys()
+        if 'type' in v.keys():
+            assert 'typePattern' not in v.keys()
+        return v
+
+class Subscription(BaseModel):
+    """
+    Subscription payload validations
+    https://fiware-orion.readthedocs.io/en/master/user/ngsiv2_implementation_notes/index.html#subscription-payload-validations
+    """
+    id: str = Field(
+        description="Subscription unique identifier. Automatically created at "
+                    "creation time."
+    )
+    description: Optional[str] = Field(
+        description="A free text used by the client to describe the "
+                    "subscription."
+    )
+    subject: Subject = Field(
+        description="An object that describes the subject of the subscription.",
+        example = {
+            'entities': [{'idPattern': '.*', 'type': 'Room'}],
+            'condition': {
+                'attrs': ['temperature'],
+                'expression': {'q': 'temperature>40'},
+            },
+        },
+    )
+    notification: Notification = Field(
+        description="An object that describes the notification to send when "
+                    "the subscription is triggered.",
+        example={
+            'http': {'url': 'http://localhost:1234'},
+            'attrs': ['temperature', 'humidity'],
+        },
+    )
+    expires: Optional[datetime] = Field(
+        description="Subscription expiration date in ISO8601 format. "
+                    "Permanent subscriptions must omit this field."
+    )
+    status: Status = Field(
+        default=Status.ACTIVE,
+        description="Either active (for active subscriptions) or inactive "
+                    "(for inactive subscriptions). If this field is not "
+                    "provided at subscription creation time, new subscriptions "
+                    "are created with the active status, which can be changed"
+                    " by clients afterwards. For expired subscriptions, this "
+                    "attribute is set to expired (no matter if the client "
+                    "updates it to active/inactive). Also, for subscriptions "
+                    "experiencing problems with notifications, the status is "
+                    "set to failed. As soon as the notifications start working "
+                    "again, the status is changed back to active."
+    )
+    throttling: Optional[int] = Field(
+        default=5,
+        description="throttling: Minimal period of time in seconds which "
+                    "must elapse between two consecutive notifications. "
+                    "It is optional."
+    )
 
 
 #class Relationship:

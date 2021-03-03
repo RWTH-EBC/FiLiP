@@ -51,7 +51,6 @@ class TestContextBroker(unittest.TestCase):
         set_from_statements = set(str(query_from_statements).split(';'))
         set_from_tuples = set(str(query_from_tuples).split(';'))
         set_from_string = set(str(query_from_string).split(';'))
-
         self.assertEqual(set_from_test_string, set_from_statements)
         self.assertEqual(set_from_test_string, set_from_tuples)
         self.assertEqual(set_from_test_string, set_from_string)

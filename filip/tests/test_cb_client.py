@@ -1,8 +1,11 @@
 import unittest
+import re
 from unittest.mock import Mock, patch
 from core.models import FiwareHeader
+from core.simple_query_language import SimpleQuery, Statement
 from cb.models import ContextEntity, ContextAttribute
 from cb.client import ContextBrokerClient
+
 
 class TestContextBroker(unittest.TestCase):
     def setUp(self) -> None:
@@ -28,6 +31,33 @@ class TestContextBroker(unittest.TestCase):
     def test_statistics(self):
         with ContextBrokerClient(fiware_header=self.fiware_header) as client:
             self.assertIsNotNone(client.get_statistics())
+
+    def test_entity_filtering(self):
+        fiware_header = FiwareHeader(service='n5geh',
+                                     service_path='/eonerc_main_building')
+        with ContextBrokerClient(fiware_header=fiware_header) as client:
+            # test patterns
+            with self.assertRaises(re.error):
+                client.get_entities(id_pattern='(&()?')
+            with self.assertRaises(re.error):
+                client.get_entities(type_pattern='(&()?')
+
+            entities = client.get_entities()
+            entities_by_id_pattern = client.get_entities(
+                id_pattern='bacnet501.*')
+            self.assertLess(len(entities_by_id_pattern), len(entities))
+
+            entities_by_type_pattern = client.get_entities(
+                type_pattern='humidity$')
+            self.assertLess(len(entities_by_type_pattern), len(entities))
+
+            query = SimpleQuery(statements=[('presentValue', '>', 0)])
+            entities_by_query = client.get_entities(q=query)
+            self.assertLess(len(entities_by_query), len(entities))
+
+            # test options
+            entities_by_key_values = client.get_entities(options=['keyValues'])
+            self.assertEqual(len(entities_by_key_values), len(entities))
 
     def test_entity_operations(self):
         with ContextBrokerClient(fiware_header=self.fiware_header) as client:

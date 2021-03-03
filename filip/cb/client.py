@@ -1,12 +1,19 @@
+import re
+import logging
 import requests
-import json
-from typing import Dict, Union, List, Any
+from math import inf
+from typing import Dict, List, Any, Union
+from pydantic import parse_obj_as, PositiveInt
 from urllib.parse import urljoin
 from core.base_client import BaseClient
 from core.settings import settings
 from core.models import FiwareHeader
-from cb.models import ContextEntity, ContextAttribute, NamedContextAttribute
-import logging
+from core.simple_query_language import SimpleQuery
+from cb.models import \
+    ContextEntity, \
+    ContextAttribute, \
+    NamedContextAttribute,\
+    OptionsGetEntities
 
 logger = logging.getLogger('ocb')
 
@@ -125,6 +132,176 @@ class ContextBrokerClient(BaseClient):
                 logger.error(f"Entity could not updated! "
                              f"Reason: {res.text}")
             raise
+
+    def get_entities(self,
+                     *,
+                     entity_ids: List[str] = None,
+                     entity_types: List[str] = None,
+                     id_pattern: str = None,
+                     type_pattern: str = None,
+                     q: Union[str, SimpleQuery] = None,
+                     mq: Union[str, SimpleQuery] = None,
+                     georel: str = None,
+                     geometry: str = None,
+                     coords: str = None,
+                     limit: int = inf,
+                     offset: int = None,
+                     attrs: List[str] = None,
+                     metadata: str = None,
+                     order_by: str = None,
+                     options: List[OptionsGetEntities] = None
+                     ) -> Union[List[ContextEntity], List[Dict[str, Any]]]:
+        """
+        Retrieves a list of context entities that match different criteria by
+        id, type, pattern matching (either id or type) and/or those which
+        match a query or geographical query (see Simple Query Language and
+        Geographical Queries). A given entity has to match all the criteria
+        to be retrieved (i.e., the criteria is combined in a logical AND
+        way). Note that pattern matching query parameters are incompatible
+        (i.e. mutually exclusive) with their corresponding exact matching
+        parameters, i.e. idPattern with id and typePattern with type.
+
+        Args:
+            entity_ids: A comma-separated list of elements. Retrieve entities
+                whose ID matches one of the elements in the list.
+                Incompatible with idPattern Example: Boe_Idarium
+            entity_types: comma-separated list of elements. Retrieve entities
+                whose type matches one of the elements in the list.
+                Incompatible with typePattern. Example: Room.
+            id_pattern: A correctly formated regular expression. Retrieve
+                entities whose ID matches the regular expression. Incompatible
+                with id. Example: Bode_.*.
+            type_pattern: A correctly formated regular expression. Retrieve
+                entities whose type matches the regular expression.
+                Incompatible with type. Example: Room_.*.
+            q (SimpleQuery): A query expression, composed of a list of
+                statements separated by ;, i.e.,
+                q=statement1;statement2;statement3. See Simple Query
+                Language specification. Example: temperature>40.
+            mq (SimpleQuery): A  query expression for attribute metadata,
+                composed of a list of statements separated by ;, i.e.,
+                mq=statement1;statement2;statement3. See Simple Query
+                Language specification. Example: temperature.accuracy<0.9.
+            georel: Spatial relationship between matching entities and a
+                reference shape. See Geographical Queries. Example: near.
+            geometry: Geografical area to which the query is restricted.
+                See Geographical Queries. Example: point.
+            coords: List of latitude-longitude pairs of coordinates separated
+                by ';'. See Geographical Queries. Example: 41.390205,
+                2.154007;48.8566,2.3522.
+            limit: Limits the number of entities to be retrieved Example: 20
+            offset: Establishes the offset from where entities are retrieved
+                Example: 20.
+            attrs: Comma-separated list of attribute names whose data are to
+                be included in the response. The attributes are retrieved in
+                the order specified by this parameter. If this parameter is
+                not included, the attributes are retrieved in arbitrary
+                order. See "Filtering out attributes and metadata" section
+                for more detail. Example: seatNumber.
+            metadata: A list of metadata names to include in the response.
+                See "Filtering out attributes and metadata" section for more
+                detail. Example: accuracy.
+            order_by: Criteria for ordering results. See "Ordering Results"
+                section for details. Example: temperature,!speed.
+            options (OptionsGetEntities): Response Format. Note: That if
+                'keyValues' or 'values' are used the response model will
+                change to List[Dict[str, Any]]
+        Returns:
+
+        """
+        url = urljoin(settings.CB_URL, f'v2/entities/')
+        headers = self.headers.copy()
+        params = {}
+
+        if entity_ids and id_pattern:
+            raise ValueError
+        if entity_types and type_pattern:
+            raise ValueError
+        if entity_ids:
+            if not isinstance(entity_ids, list):
+                entity_ids = [entity_ids]
+            params.update({'id': ','.join(entity_ids)})
+        if id_pattern:
+            try:
+                re.compile(id_pattern)
+            except re.error:
+                raise
+            params.update({'idPattern': id_pattern})
+        if entity_types:
+            if not isinstance(entity_types, list):
+                entity_types = [entity_types]
+            params.update({'type': ','.join(entity_types)})
+        if type_pattern:
+            try:
+                re.compile(type_pattern)
+            except re.error:
+                raise
+            params.update({'typePattern': type_pattern})
+        if attrs:
+            params.update({'attrs': ','.join(attrs)})
+        if metadata:
+            params.update({'metadata': ','.join(metadata)})
+        if limit >= 1000:
+            params.update({'limit': 1000})
+        elif limit >=1:
+            params.update({'limit': limit})
+        else:
+            raise ValueError
+        if offset:
+            assert isinstance(offset, int)
+            params.update({'offset': offset})
+        if q:
+            params.update({'q': str(q)})
+        if mq:
+            params.update({'mq': str(mq)})
+        if geometry:
+            params.update({'geometry': geometry})
+        if georel:
+            params.update({'georel': georel})
+        if coords:
+            params.update({'coords': coords})
+        if order_by:
+            params.update({'orderBy': order_by})
+        if options:
+            if not isinstance(options, list):
+                options=[options]
+            options = options + ['count']
+            options = ','.join(options)
+        else:
+            options = 'count'
+        params.update({'options': options})
+
+
+        try:
+            res = self.session.get(url=url, params=params, headers=headers)
+            if res.ok:
+                entities = res.json()
+                # do pagination
+                # https://fiware-orion.readthedocs.io/en/master/user/pagination/index.html
+                count = int(res.headers['Fiware-Total-Count'])
+                if count < limit:
+                    while len(entities) < count:
+                        params['offset'] = len(entities)
+                        params['limit'] = 1000
+                        res = self.session.get(url=url,
+                                               params=params,
+                                               headers=headers)
+                        if res.ok:
+                            entities.extend(res.json())
+                        else:
+                            res.raise_for_status()
+                logger.debug(f'Received: {entities}')
+                if options == 'count':
+                    return parse_obj_as(List[ContextEntity], entities)
+                else:
+                    return entities
+            else:
+                res.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            logger.error(e)
+            logger.error(f"Entities could not loaded")
+            raise
+
 
     def get_entity(self,
                    entity_id: str,

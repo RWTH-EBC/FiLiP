@@ -10,13 +10,15 @@ class BaseClient:
     This class implements an base client for all derived api-clients.
     """
 
-    def __init__(self, session: requests.Session = None,
+    def __init__(self,
+                 session: requests.Session = None,
                  fiware_header: FiwareHeader = None):
         """
 
         Args:
-            session:
-            fiware_header:
+            session: request session object. This is required for reusing
+                the same connection
+            fiware_header: Fiware header object required for multi tenancy
         """
         # TODO: Double Check Header Handling
         self.session = session or requests.Session()

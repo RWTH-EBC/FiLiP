@@ -147,8 +147,8 @@ class ServiceGroup(BaseModel):
     )
     apikey: str = Field(
         description="API Key string. It is a key used for devices belonging "
-                    "to this service_group. If "", service_group does not use apikey, but "
-                    "it must be specified."
+                    "to this service_group. If "", service_group does not use "
+                    "apikey, but it must be specified."
     )
     timestamp: Optional[bool] = Field(
         description="Optional flag about whether or not to add the TimeInstant "
