@@ -8,25 +8,30 @@ from requests import Session
 #    MobileApplicationClient, \
 #    BackendApplicationClient
 from core.config import Config
+from core.base_client import BaseClient
 from core.models import FiwareHeader
 from iota.client import IoTAClient
-from cb import ContextBroker
-from timeseries import QuantumLeap
+from cb.client import ContextBrokerClient
+from timeseries import QuantumLeapClient
 
 
 logger = logging.getLogger('client')
 
-class Client:
+class Client(BaseClient):
     __secrets = {"username": None,
                  "password": None,
                  "client_id": None,
                  "client_secret": None}
 
-    def __init__(self, config_file=None, **kwargs):
+    def __init__(self,
+                 config_file=None,
+                 session: Session = None,
+                 fiware_header: FiwareHeader = None):
         auth_types = {'basicauth': self.__http_basic_auth,
                       'digestauth': self.__http_digest_auth,}
                       # 'oauth2': self.__oauth2}
-
+        super().__init__(session=session,
+                         fiware_header=fiware_header)
         self.config = Config(path=config_file)
 
         if self.config.auth:
@@ -35,11 +40,15 @@ class Client:
             auth_types[self.config['auth']['type']]()
         else:
             self.session = Session()
-        # TODO: correctly import Fiware Header
-        fiware_header = FiwareHeader(service='', service_path='/')
-        self.iota = IoTAClient(session=self.session, fiware_header=fiware_header)
-        self.ocb = ContextBroker(config=self.config, session=self.session)
-        self.timeseries = QuantumLeap(config=self.config, session=self.session)
+
+        if fiware_header is None:
+            fiware_header = FiwareHeader(service='', service_path='/')
+        self.iota = IoTAClient(session=self.session,
+                               fiware_header=fiware_header)
+        self.ocb = ContextBrokerClient(session=self.session,
+                                       fiware_header=fiware_header)
+        self.timeseries = QuantumLeapClient(session=self.session,
+                                            fiware_header=fiware_header)
 
     @property
     def headers(self):

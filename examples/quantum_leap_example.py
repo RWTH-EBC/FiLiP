@@ -89,7 +89,7 @@ def create_example_dataframe():
     CONFIG = config.Config()
     ORION_CB = cb.ContextBroker(CONFIG)
     oak = create_entity(ORION_CB)
-    quantum = ts.QuantumLeap(CONFIG)
+    quantum = ts.QuantumLeapClient(CONFIG)
     """
     Function creates a test entity and registers it with the context broker 
     :param orion_cb: A Orion Context Broker Instance
@@ -172,7 +172,7 @@ def create_example_dataframe():
     CONFIG = config.Config()
     ORION_CB = orion.ContextBroker(CONFIG)
     oak = create_entity(ORION_CB)
-    quantum = ts.QuantumLeap(CONFIG)
+    quantum = ts.QuantumLeapClient(CONFIG)
 
     notify_url =  "http://quantumleap:8668/v2/notify"
 
@@ -217,7 +217,7 @@ if __name__=="__main__":
     oak = create_entity(ORION_CB)
 
     # create an instance of Quantumleap
-    quantum = ts.QuantumLeap(CONFIG)
+    quantum = ts.QuantumLeapClient(CONFIG)
 
 #    quantum.fiware_service = None
     """ 

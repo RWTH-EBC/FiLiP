@@ -2,17 +2,17 @@ import unittest
 from datetime import datetime
 from core.models import FiwareHeader
 from pydantic import BaseModel
-from timeseries.client import QuantumLeap
+from timeseries.client import QuantumLeapClient
 from timeseries.models import IndexedValues
 
 class TestTimeseries(unittest.TestCase):
     def setUp(self) -> None:
         self.fiware_header = FiwareHeader(service='filip',
                                           service_path='/testing')
-        self.client = QuantumLeap(fiware_header=self.fiware_header)
+        self.client = QuantumLeapClient(fiware_header=self.fiware_header)
 
     def test_meta_endpoints(self):
-        with QuantumLeap(fiware_header=self.fiware_header) as client:
+        with QuantumLeapClient(fiware_header=self.fiware_header) as client:
             self.assertIsNotNone(client.get_version())
             self.assertIsNotNone(client.get_health())
 

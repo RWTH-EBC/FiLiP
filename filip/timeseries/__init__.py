@@ -1,1 +1,1 @@
-from .client import QuantumLeap
+from .client import QuantumLeapClient
