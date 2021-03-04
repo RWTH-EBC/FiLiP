@@ -130,6 +130,9 @@ Hence, if you do not yet have a running instance of a FIWARE based platform,
 The most convenient way to set it up, is using docker. 
 Please check [here](https://github.com/N5GEH/n5geh.platform) for a tutorial 
 on this.
+If this is no option for you FIWARE also provides a testing server.
+You can register for a testing account 
+[here](https://www.fiware.org/developers/fiware-lab/).
 
 ### Installation
 
@@ -145,7 +148,9 @@ Once, you have installed the library you can check the [examples](./examples)
 to learn how to use the different components of it. 
 
 Currently, we provide basic examples for the usage of FiLIP for the FIWWARE 
-GEs mentioned above. 
+GEs mentioned above.
+We suggest to start with the config-example in order to understand the 
+configuration of clients (*Note: This may change in future*)
 Furthermore, we provide more advanced examples for the semantic 
 context data modeling within a context broker using 
 [relationships](./examples/relationship_example.py).
