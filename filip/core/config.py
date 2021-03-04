@@ -74,7 +74,7 @@ class Config:
         #except Exception:
          #   pass
 
-            # Needs to go to services
+            # Needs to go to service_groups
             # self.fiware_service = os.getenv("FIWARE_SERVICE", "default")
             # self.fiware_service_path = os.getenv("FIWARE_SERVICE_PATH",  "/")
 
@@ -173,7 +173,7 @@ class Config:
         data['quantumleap']['port'] = int(os.getenv("QUANTUMLEAP_PORT", 8668))
         data['quantumleap']['url'] = os.getenv("QUANTUMLEAP_URL", None)
 
-        data['fiware']['service'] = os.getenv("FIWARE_SERVICE",
+        data['fiware']['service_group'] = os.getenv("FIWARE_SERVICE",
                                               "dummy_service")
         data['fiware']['service_path'] = os.getenv("FIWARE_SERVICE_PATH",
                                                    "/dummy_path")
@@ -211,7 +211,7 @@ class Config:
             pass
         return True'''
         
-# TODO: move to single services
+# TODO: move to single service_groups
 #    def test_services(self, config: dict):
 #        """This function checks the configuration and tests connections to
 #        necessary server endpoints"""
@@ -258,7 +258,7 @@ class Log_Config:
         #except Exception:
         #   pass
 
-            # Needs to go to services
+            # Needs to go to service_groups
             # self.fiware_service = os.getenv("FIWARE_SERVICE", "default")
             # self.fiware_service_path = os.getenv("FIWARE_SERVICE_PATH",  "/")
 
@@ -399,8 +399,8 @@ if __name__=="__main__":
     #print(CONFIG.data['fiwareService'])
 
     LOG_CONFIG = Log_Config("/Users/Felix/PycharmProjects/compare_duplicate/filip/log_config.json")
-    print("List of services and paths:")
+    print("List of service_groups and paths:")
     for service in CONFIG.data['fiwareService']:
-        print("{:<30}{:<20}".format('Service: ', service['service']))
+        print("{:<30}{:<20}".format('ServiceGroup: ', service['service_group']))
         for path in service['service_path']:
             print("{:<30}{:<40}".format('', path))

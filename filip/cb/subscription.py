@@ -133,7 +133,7 @@ class HTTP_Params:
     def __init__(self, url, headers: dict = None, qs: dict = None,
                  method: str = None, payload=None):
         """
-        :param url: URL referencing the service to be invoked by a notification
+        :param url: URL referencing the service_group to be invoked by a notification
         :param headers: key-map (dict) of HTTP headers; optional
         :param qs: key-map (dict) of URL query parameters
         :param method: HTTP method to use for notification (default: POST)

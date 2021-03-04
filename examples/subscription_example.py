@@ -1,8 +1,7 @@
 import filip.subscription as sub
-import filip.config as config
+import core.config as config
 import filip.orion as orion
 import datetime
-import json
 import time
 import  os
 from pathlib import Path
@@ -129,7 +128,7 @@ if __name__=="__main__":
 
     path_to_config = os.path.join(str(Path().resolve().parent), "config.json")
     CONFIG = config.Config(path_to_config)
-    ORION_CB = orion.Orion(CONFIG)
+    ORION_CB = orion.ContextBroker(CONFIG)
 
     body = API_Walkthrough_subscription()
     print("---------------------")
