@@ -799,7 +799,7 @@ class ContextBrokerClient(BaseClient):
                 logger.error(f"Types could not be loaded! Reason: {res.text}")
             raise
 
-
+# TODO: Add Subscitptions and Registrations
 
 
 

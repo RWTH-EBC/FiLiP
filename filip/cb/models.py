@@ -478,7 +478,7 @@ class Subscription(BaseModel):
                     "It is optional."
     )
 
-
+# TODO: Add Registrations and Relationships
 #class Relationship:
 #    """
 #    Class implements the concept of FIWARE Entity Relationships.
