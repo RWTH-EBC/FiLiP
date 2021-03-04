@@ -1,8 +1,7 @@
-# FiLiP 
-
 |<a href="https://www.ebc.eonerc.rwth-aachen.de/"> <img alt="EBC" src="https://www.ebc.eonerc.rwth-aachen.de/global/show_picture.asp?id=aaaaaaaaaakevlz" height="100"> </a>|<a href="https://n5geh.de/"> <img alt="N5GEH" src="https://avatars.githubusercontent.com/u/43948851?s=200&v=4" height="100"> </a>|
 |---|---|
 
+# FiLiP 
 
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
