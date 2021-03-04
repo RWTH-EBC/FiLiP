@@ -1,7 +1,7 @@
-from config import Config
-from iota import Agent
-from ocb import Orion
-from timeseries import QuantumLeap
+from filip.config import Config
+from filip.iota import Agent
+from filip.ocb import Orion
+from filip.timeseries import QuantumLeap
 from requests.auth import HTTPBasicAuth, HTTPDigestAuth
 from requests import Session
 #from requests_oauthlib import OAuth2Session

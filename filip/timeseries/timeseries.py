@@ -1,5 +1,5 @@
-from ocb import Subscription as sub
-from ocb import *
+from filip.ocb import Subscription as sub
+from filip.ocb import *
 from filip.utils import request_utils as requtils
 from filip.testing import test
 import requests

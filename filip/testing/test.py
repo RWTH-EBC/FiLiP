@@ -28,11 +28,12 @@ def test_connection(url: str, client: requests.Session, service_name: str,
         else:
             logger.error(f"{service_name}: Check Failed! Please check "
                       f"configuration! Response code: {res.status_code}")
+
     except Exception:
         logger.error(f"{service_name}: Check Failed! Is the service up and "
                   f"running? Please check configuration!")
         return False
-
+    return True
 
 def test_config(service_name: str, config_data: dict):
     """
