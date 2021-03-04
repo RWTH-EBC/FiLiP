@@ -33,8 +33,8 @@ these documents:
 
 ## FIWARE
 
-The following section introduces FIWARE. If you already familiar with FIWARE 
-you can skip this section.
+The following section introduces FIWARE. If you are already familiar with 
+FIWARE you can skip this section.
 
 ### What is FIWARE?
 
