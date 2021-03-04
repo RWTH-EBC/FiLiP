@@ -3,7 +3,11 @@ import logging
 import requests
 from math import inf
 from typing import Dict, List, Any, Union
-from pydantic import parse_obj_as, PositiveInt
+from pydantic import \
+    parse_obj_as, \
+    PositiveInt, \
+    PositiveFloat, \
+    AnyHttpUrl
 from urllib.parse import urljoin
 from core.base_client import BaseClient
 from core.settings import settings
@@ -12,8 +16,9 @@ from core.simple_query_language import SimpleQuery
 from cb.models import \
     ContextEntity, \
     ContextAttribute, \
-    NamedContextAttribute,\
-    OptionsGetEntities
+    NamedContextAttribute, \
+    OptionsGetEntities, \
+    Subscription
 
 logger = logging.getLogger('ocb')
 
@@ -28,10 +33,68 @@ class ContextBrokerClient(BaseClient):
     Api specifications for v2 are located here:
     http://telefonicaid.github.io/fiware-orion/api/v2/stable/
     """
+
     def __init__(self, session: requests.Session = None,
                  fiware_header: FiwareHeader = None):
         super().__init__(session=session,
                          fiware_header=fiware_header)
+
+    def __pagination__(self,
+                       *,
+                       url: AnyHttpUrl,
+                       headers: Dict,
+                       limit: Union[PositiveInt, PositiveFloat] = None,
+                       params: Dict = None) -> List[Any]:
+        """
+        NGSIv2 implements a pagination mechanism in order to help clients to
+        retrieve large sets of resources. This mechanism works for all listing
+        operations in the API (e.g. GET /v2/entities, GET /v2/subscriptions,
+        POST /v2/op/query, etc.). This function helps getting datasets that are
+        larger than the limit for the different GET operations.
+    
+        https://fiware-orion.readthedocs.io/en/master/user/pagination/index.html
+
+        Args:
+            url: Information about the url, obtained from the original function
+            headers: The headers from the original function
+            params:
+            limit:
+
+        Returns:
+            object:
+
+        """
+        try:
+            if limit is None:
+                limit = inf
+            params['limit'] = 1000  # maximum items per request
+            res = self.session.get(url=url,
+                                   params=params,
+                                   headers=headers)
+            if res.ok:
+                items = res.json()
+                # do pagination
+                count = int(res.headers['Fiware-Total-Count'])
+
+                while len(items) < limit and len(items) < count:
+                    # Establishing the offset from where entities are retrieved
+                    params['offset'] = len(items)
+                    params['limit'] = min(1000, (limit - len(items)))
+                    res = self.session.get(url=url,
+                                           params=params,
+                                           headers=headers)
+                    if res.ok:
+                        items.extend(res.json())
+                    else:
+                        res.raise_for_status()
+                logger.debug(f'Received: {items}')
+                return items
+            else:
+                res.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            logger.error(e)
+            logger.error(f"Entities could not loaded")
+            raise
 
     # MANAGEMENT API
     def get_version(self) -> Dict:
@@ -86,12 +149,6 @@ class ContextBrokerClient(BaseClient):
             logger.error(e)
             raise
 
-
-
-    # MANAGEMENT API
-
-
-
     # CONTEXT MANAGEMENT API ENDPOINTS
     # Entity Operations
     def post_entity(self, entity: ContextEntity, update: bool = False):
@@ -133,24 +190,23 @@ class ContextBrokerClient(BaseClient):
                              f"Reason: {res.text}")
             raise
 
-    def get_entities(self,
-                     *,
-                     entity_ids: List[str] = None,
-                     entity_types: List[str] = None,
-                     id_pattern: str = None,
-                     type_pattern: str = None,
-                     q: Union[str, SimpleQuery] = None,
-                     mq: Union[str, SimpleQuery] = None,
-                     georel: str = None,
-                     geometry: str = None,
-                     coords: str = None,
-                     limit: int = inf,
-                     offset: int = None,
-                     attrs: List[str] = None,
-                     metadata: str = None,
-                     order_by: str = None,
-                     options: List[OptionsGetEntities] = None
-                     ) -> Union[List[ContextEntity], List[Dict[str, Any]]]:
+    def get_entity_list(self,
+                        *,
+                        entity_ids: List[str] = None,
+                        entity_types: List[str] = None,
+                        id_pattern: str = None,
+                        type_pattern: str = None,
+                        q: Union[str, SimpleQuery] = None,
+                        mq: Union[str, SimpleQuery] = None,
+                        georel: str = None,
+                        geometry: str = None,
+                        coords: str = None,
+                        limit: int = inf,
+                        attrs: List[str] = None,
+                        metadata: str = None,
+                        order_by: str = None,
+                        options: List[OptionsGetEntities] = None
+                        ) -> Union[List[ContextEntity], List[Dict[str, Any]]]:
         """
         Retrieves a list of context entities that match different criteria by
         id, type, pattern matching (either id or type) and/or those which
@@ -190,8 +246,6 @@ class ContextBrokerClient(BaseClient):
                 by ';'. See Geographical Queries. Example: 41.390205,
                 2.154007;48.8566,2.3522.
             limit: Limits the number of entities to be retrieved Example: 20
-            offset: Establishes the offset from where entities are retrieved
-                Example: 20.
             attrs: Comma-separated list of attribute names whose data are to
                 be included in the response. The attributes are retrieved in
                 the order specified by this parameter. If this parameter is
@@ -241,15 +295,6 @@ class ContextBrokerClient(BaseClient):
             params.update({'attrs': ','.join(attrs)})
         if metadata:
             params.update({'metadata': ','.join(metadata)})
-        if limit >= 1000:
-            params.update({'limit': 1000})
-        elif limit >=1:
-            params.update({'limit': limit})
-        else:
-            raise ValueError
-        if offset:
-            assert isinstance(offset, int)
-            params.update({'offset': offset})
         if q:
             params.update({'q': str(q)})
         if mq:
@@ -264,44 +309,37 @@ class ContextBrokerClient(BaseClient):
             params.update({'orderBy': order_by})
         if options:
             if not isinstance(options, list):
-                options=[options]
+                options = [options]
             options = options + ['count']
             options = ','.join(options)
         else:
             options = 'count'
         params.update({'options': options})
 
-
         try:
-            res = self.session.get(url=url, params=params, headers=headers)
-            if res.ok:
-                entities = res.json()
-                # do pagination
-                # https://fiware-orion.readthedocs.io/en/master/user/pagination/index.html
-                count = int(res.headers['Fiware-Total-Count'])
-                if count < limit:
-                    while len(entities) < count:
-                        params['offset'] = len(entities)
-                        params['limit'] = 1000
-                        res = self.session.get(url=url,
-                                               params=params,
-                                               headers=headers)
-                        if res.ok:
-                            entities.extend(res.json())
-                        else:
-                            res.raise_for_status()
-                logger.debug(f'Received: {entities}')
-                if options == 'count':
-                    return parse_obj_as(List[ContextEntity], entities)
-                else:
-                    return entities
+            if limit > 1000:
+                items = self.__pagination__(limit=limit,
+                                            url=url,
+                                            params=params,
+                                            headers=headers)
             else:
-                res.raise_for_status()
+                params.update({'limit': limit})
+                res = self.session.get(url=url,
+                                       params=params,
+                                       headers=headers)
+                items = res.json()
+                if not res.ok:
+                    res.raise_for_status()
+            logger.debug(f'Received: {items}')
+            if options == 'count':
+                return parse_obj_as(List[ContextEntity], items)
+            else:
+                return items
+
         except requests.exceptions.RequestException as e:
             logger.error(e)
             logger.error(f"Entities could not loaded")
             raise
-
 
     def get_entity(self,
                    entity_id: str,
@@ -449,7 +487,7 @@ class ContextBrokerClient(BaseClient):
                              f"Reason: {res.text}")
             raise
 
-    def delete_entity(self, entity_id: str, entity_type: str = None):
+    def delete_entity(self, entity_id: str, entity_type: str = None) -> None:
 
         """
         Remove a entity from the context broker. No payload is required
@@ -502,10 +540,10 @@ class ContextBrokerClient(BaseClient):
             params.update({'options': options})
         try:
             res = self.session.put(url=url,
-                                    headers=headers,
-                                    json=entity.dict(exclude={'id', 'type'},
-                                                     exclude_unset=True,
-                                                     exclude_none=True))
+                                   headers=headers,
+                                   json=entity.dict(exclude={'id', 'type'},
+                                                    exclude_unset=True,
+                                                    exclude_none=True))
             if res.ok:
                 logger.info(f"Entity '{entity.id}' "
                             f"successfully updated!")
@@ -799,18 +837,60 @@ class ContextBrokerClient(BaseClient):
                 logger.error(f"Types could not be loaded! Reason: {res.text}")
             raise
 
-# TODO: Add Subscitptions and Registrations
+    # SUBSCRIPTION API ENDPOINTS
+    def get_subscription_list(self,
+                              limit: PositiveInt = inf):
+        """
+        Returns a list of all the subscriptions present in the system.
+        Args:
+            limit: Limit the number of subscriptions to be retrieved
+            offset: Skip a number of subscriptions
 
+        Returns:
+
+        """
+        url = urljoin(settings.CB_URL, f'v2/subscriptions/')
+        headers = self.headers.copy()
+        params = {}
+
+        # We always use the 'count' option to check weather pagination is
+        # required
+        params.update({'options': 'count'})
+        try:
+            if limit > 1000:
+                items = self.__pagination__(limit=limit,
+                                            url=url,
+                                            params=params,
+                                            headers=headers)
+            else:
+                params.update({'limit': limit})
+                res = self.session.get(url=url,
+                                       params=params,
+                                       headers=headers)
+                items = res.json()
+                if not res.ok:
+                    res.raise_for_status()
+
+            logger.debug(f'Received: {items}')
+            return parse_obj_as(List[Subscription], items)
+
+
+        except requests.exceptions.RequestException as e:
+            logger.error(e)
+            logger.error(f"Entities could not loaded")
+            raise
+
+# TODO: Add Subscitptions and Registrations
 
 
 #    def post_relationship(self, json_data=None):
 #        """
 #        Function can be used to post a one to many or one to one relationship.
 #        :param json_data: Relationship Data obtained from the Relationship
-        #        class. e.g. :
+#        class. e.g. :
 #                {"id": "urn:ngsi-ld:Shelf:unit001", "type": "Shelf",
 #                "refStore": {"type": "Relationship", "value":
-        #                "urn:ngsi-ld:Store:001"}}
+#                "urn:ngsi-ld:Store:001"}}
 #                Can be a one to one or a one to many relationship
 #        """
 #        url = self.url + '/v2/op/update'
@@ -830,11 +910,11 @@ class ContextBrokerClient(BaseClient):
 #    def get_subjects(self, object_entity_name: str, object_entity_type: str, subject_type=None):
 #        """
 #        Function gets the JSON for child / subject entities for a parent /
-        #        object entity.
+#        object entity.
 #        :param object_entity_name: The parent / object entity name
 #        :param object_entity_type: The type of the parent / object entity
 #        :param subject_type: optional parameter, if added only those child /
-        #        subject entities are returned that match the type
+#        subject entities are returned that match the type
 #        :return: JSON containing the child / subject information
 #        """
 #        url = self.url + '/v2/entities/?q=ref' + object_entity_type + '==' + object_entity_name + '&options=count'
@@ -850,10 +930,10 @@ class ContextBrokerClient(BaseClient):
 #            return response.text
 #
 #    def get_objects(self, subject_entity_name: str, subject_entity_type:
-        #    str, object_type=None):
+#    str, object_type=None):
 #        """
 #        Function returns a List of all objects associated to a subject. If
-        #        object type is not None,
+#        object type is not None,
 #        only those are returned, that match the object type.
 #        :param subject_entity_name: The child / subject entity name
 #        :param subject_entity_type: The type of the child / subject entity
@@ -873,23 +953,23 @@ class ContextBrokerClient(BaseClient):
 #            return response.text
 #
 #    def get_associated(self, name: str, entity_type: str,
-        #    associated_type=None):
+#    associated_type=None):
 #        """
 #        Function returns all associated data for a given entity name and type
 #        :param name: name of the entity
 #        :param entity_type: type of the entity
 #        :param associated_type: if only associated data of one type should
-        #        be returned, this parameter has to be the type
+#        be returned, this parameter has to be the type
 #        :return: A dictionary, containing the data of the entity,
-        #        a key "subjects" and "objects" that contain each a list
+#        a key "subjects" and "objects" that contain each a list
 #                with the reflective data
 #        """
 #        data_dict = {}
 #        associated_objects = self.get_objects(subject_entity_name=name,
-        #        subject_entity_type=entity_type,
+#        subject_entity_type=entity_type,
 #                                              object_type=associated_type)
 #        associated_subjects = self.get_subjects(object_entity_name=name,
-        #        object_entity_type=entity_type,
+#        object_entity_type=entity_type,
 #                                                subject_type=associated_type)
 #        if associated_subjects is not None:
 #            data_dict["subjects"] = json.loads(associated_subjects)
@@ -900,12 +980,12 @@ class ContextBrokerClient(BaseClient):
 #                for associated_object in object_json:
 #                    entity_name = associated_object["id"]
 #                    object_data = json.loads(self.get_entity(
-        #                    entity_name=entity_name))
+#                    entity_name=entity_name))
 #                    data_dict["objects"].append(object_data)
 #            else:
 #                entity_name = object_json["id"]
 #                object_data = json.loads(self.get_entity(
-        #                entity_name=entity_name))
+#                entity_name=entity_name))
 #                data_dict["objects"].append(object_data)
 #
 #        entity_dict = json.loads(self.get_entity(entity_name=name))
@@ -930,7 +1010,7 @@ class ContextBrokerClient(BaseClient):
 #            return response.text
 #
 #    def get_all_entities(self, parameter=None, parameter_value=None,
-        #    limit=100):
+#    limit=100):
 #        url = self.url + '/v2/entities?options=count'
 #        headers = self.get_header()
 #        if parameter is None and parameter_value is None:
@@ -943,16 +1023,16 @@ class ContextBrokerClient(BaseClient):
 #        elif parameter is not None and parameter_value is not None:
 #            parameters = {'{}'.format(parameter): '{}'.format(parameter_value)}
 #            response = self.session.get(url, headers=headers,
-        #            params=parameters)
+#            params=parameters)
 #            sub_count = float(response.headers["Fiware-Total-Count"])
 #            if sub_count >= limit:
 #                response = self.get_pagination(url=url, headers=headers,
 #                                               limit=limit, count=sub_count,
-        #                                               params=parameters)
+#                                               params=parameters)
 #                return response
 #        else:
 #            logger.error("Getting all entities: both function parameters
-        #            have to be 'not null'")
+#            have to be 'not null'")
 #            return None
 #        ok, retstr = requtils.response_ok(response)
 #        if not ok:
@@ -1012,10 +1092,10 @@ class ContextBrokerClient(BaseClient):
 #        Function returns all types and values for a list of attributes of an entity,
 #        given in attr_name_list
 #        :param entity_name: Entity_name - Name of the entity to obtain the
-        #        values from
+#        values from
 #        :param attr_name_list: List of attributes - e.g. ["Temperature"]
 #        :return: List, containin all attribute dictionaries e.g.: [{
-        #        "value":33,"type":"Float"}]
+#        "value":33,"type":"Float"}]
 #        """
 #        attributes = ','.join(attr_name_list)
 #        parameters = {'{}'.format('options'): '{}'.format('values'),
@@ -1045,15 +1125,15 @@ class ContextBrokerClient(BaseClient):
 #            self.log_switch(level, retstr)
 #
 #    def add_attribute(self, entity: Entity = None, entity_name: str = None,
-        #    attr_dict: dict = None):
+#    attr_dict: dict = None):
 #        # POST /v2/entities/{id}/attrs?options=append
 #        """
 #        This function adds attributes to the Entity in the Context Broker.
-        #        This can be done in two ways,
+#        This can be done in two ways,
 #        either by first adding the attribute to the Entity object or by
-        #        directly sending it from a dict/JSON
+#        directly sending it from a dict/JSON
 #        The Function first compares it with existing attributes, and only
-        #        adds (so updates) the ones not previoulsy existing
+#        adds (so updates) the ones not previoulsy existing
 #        :param entity: The updated Entity Instance
 #        :param entity_name: The Entity name which should be updated
 #        :param attribute_dict: A JSON/Dict containing the attributes
@@ -1067,9 +1147,9 @@ class ContextBrokerClient(BaseClient):
 #            entity_name = entity_name
 #        existing_attributes = self.get_attributes(entity_name)
 #        new_attributes = {k: v for (k, v) in attributes.items() if k not in
-        #        existing_attributes}
+#        existing_attributes}
 #        url = self.url + '/v2/entities/' + entity_name +
-        #        '/attrs?options=append'
+#        '/attrs?options=append'
 #        headers = self.get_header(requtils.HEADER_CONTENT_JSON)
 #        data = json.dumps(new_attributes)
 #        response = self.session.post(url, data=data, headers=headers)
@@ -1104,7 +1184,7 @@ class ContextBrokerClient(BaseClient):
 #            if exists is True:
 #                logger.info(f"A similar subscription already exists.")
 #        response = self.session.post(url, headers=headers,
-        #        data=subscription_body)
+#        data=subscription_body)
 #        if response.headers is None:
 #            return
 #        ok, retstr = requtils.response_ok(response)
@@ -1159,13 +1239,13 @@ class ContextBrokerClient(BaseClient):
 #        NGSIv2 implements a pagination mechanism in order to help clients to retrieve large sets of resources.
 #        This mechanism works for all listing operations in the API (e.g. GET /v2/entities, GET /v2/subscriptions, POST /v2/op/query, etc.).
 #        This function helps getting datasets that are larger than the limit
-        #        for the different GET operations.
+#        for the different GET operations.
 #        :param url: Information about the url, obtained from the orginal
-        #        function e.g. : http://localhost:1026/v2/subscriptions?limit=20&options=count
+#        function e.g. : http://localhost:1026/v2/subscriptions?limit=20&options=count
 #        :param headers: The headers from the original function,
-        #        e.g: {'fiware-service_group': 'crio', 'fiware-servicepath': '/measurements'}
+#        e.g: {'fiware-service_group': 'crio', 'fiware-servicepath': '/measurements'}
 #        :param count: Number of total elements, obtained by adding
-        #        "&options=count" to the url,
+#        "&options=count" to the url,
 #                        included in the response headers
 #        :param limit: Limit, obtained from the oringal function, default is 20
 #        :return: A list, containing all objects in a dictionary
@@ -1182,7 +1262,7 @@ class ContextBrokerClient(BaseClient):
 #                url = url + '&offset=' + offset
 #            if params == (not None):
 #                response = self.session.get(url=url, headers=headers,
-        #                params=params)
+#                params=params)
 #            else:
 #                response = self.session.get(url=url, headers=headers)
 #            ok, retstr = requtils.response_ok(response)
@@ -1201,24 +1281,24 @@ class ContextBrokerClient(BaseClient):
 #        already exists for a device / entity.
 #        :param subscription_body: the body of the new subscripton
 #        :param limit: pagination parameter, to set the number of
-        #        subscriptions bodies the get request should grab
+#        subscriptions bodies the get request should grab
 #        :return: exists, boolean -> True, if such a subscription allready
-        #        exists
+#        exists
 #        """
 #        exists = False
 #        subscription_subject = json.loads(subscription_body)["subject"]
 #        # Exact keys depend on subscription body
 #        try:
 #            subscription_url = json.loads(subscription_body)[
-        #            "notification"]["httpCustom"]["url"]
+#            "notification"]["httpCustom"]["url"]
 #        except KeyError:
 #            subscription_url = json.loads(subscription_body)[
-        #            "notification"]["http"]["url"]
+#            "notification"]["http"]["url"]
 #
 #        # If the number of subscriptions is larger then the limit,
-        #        paginations methods have to be used
+#        paginations methods have to be used
 #        url = self.url + '/v2/subscriptions?limit=' + str(limit) +
-        #        '&options=count'
+#        '&options=count'
 #        response = self.session.get(url, headers=self.get_header())
 #
 #        sub_count = float(response.headers["Fiware-Total-Count"])
@@ -1235,10 +1315,10 @@ class ContextBrokerClient(BaseClient):
 #                break
 #            try:
 #                existing_url = existing_subscription["notification"][
-        #                "http"]["url"]
+#                "http"]["url"]
 #            except KeyError:
 #                existing_url = existing_subscription["notification"][
-        #                "httpCustom"]["url"]
+#                "httpCustom"]["url"]
 #            # check whether both subscriptions notify to the same path
 #            if existing_url != subscription_url:
 #                continue
@@ -1254,9 +1334,9 @@ class ContextBrokerClient(BaseClient):
 #                    else:
 #                        subscription_id = entity["idPattern"]
 #                    # iterate over all entities included in the exisiting
-        #                    subscriptions
+#                    subscriptions
 #                    for existing_entity in existing_subscription["subject"][
-        #                    "entities"]:
+#                    "entities"]:
 #                        if "type" in entity.keys():
 #                            type_existing = entity["type"]
 #                        else:
@@ -1274,47 +1354,47 @@ class ContextBrokerClient(BaseClient):
 #                                or (type_existing == "") or (
 #                                subscription_type == ""):
 #                            # check if on of the subscriptions is a pattern,
-        #                            or if they both refer to the same id
+#                            or if they both refer to the same id
 #                            # Get the attrs first, to avoid code duplication
 #                            # last thing to compare is the attributes
 #                            # Assumption -> position is the same as the
-        #                            entities list
+#                            entities list
 #                            # i == j
 #                            i = subscription_subject["entities"].index(entity)
 #                            j = existing_subscription["subject"][
-        #                            "entities"].index(existing_entity)
+#                            "entities"].index(existing_entity)
 #                            try:
 #                                subscription_attrs = subscription_subject[
-        #                                "condition"]["attrs"][i]
+#                                "condition"]["attrs"][i]
 #                            except (KeyError, IndexError):
 #                                subscription_attrs = []
 #                            try:
 #                                existing_attrs = existing_subscription[
-        #                                "subject"]["condition"]["attrs"][j]
+#                                "subject"]["condition"]["attrs"][j]
 #                            except (KeyError, IndexError):
 #                                existing_attrs = []
 #
 #                            if (".*" in subscription_id) or ('.*' in
-        #                            id_existing) or (subscription_id == id_existing):
+#                            id_existing) or (subscription_id == id_existing):
 #                                # Attributes have to match, or the have to
-        #                                be an empty array
+#                                be an empty array
 #                                if (subscription_attrs == existing_attrs) or
-        #                                (subscription_attrs == []) or (existing_attrs == []):
+#                                (subscription_attrs == []) or (existing_attrs == []):
 #                                        exists = True
 #                            # if they do not match completely or subscribe
-        #                            to all ids they have to match up to a certain position
+#                            to all ids they have to match up to a certain position
 #                            elif ("*" in subscription_id) or ('*' in
-        #                            id_existing):
+#                            id_existing):
 #                                    regex_existing = id_existing.find('*')
 #                                    regex_subscription =
-        #                                    subscription_id.find('*')
+#                                    subscription_id.find('*')
 #                                    # slice the strings to compare
 #                                    if (id_existing[:regex_existing] in
-        #                                    subscription_id) or (subscription_id[:regex_subscription] in id_existing) or \
+#                                    subscription_id) or (subscription_id[:regex_subscription] in id_existing) or \
 #                                            (id_existing[regex_existing:] in
-        #                                            subscription_id) or (subscription_id[regex_subscription:] in id_existing):
+#                                            subscription_id) or (subscription_id[regex_subscription:] in id_existing):
 #                                            if (subscription_attrs ==
-        #                                            existing_attrs) or (subscription_attrs == []) or (existing_attrs == []):
+#                                            existing_attrs) or (subscription_attrs == []) or (existing_attrs == []):
 #                                                exists = True
 #                                            else:
 #                                                continue

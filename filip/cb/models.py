@@ -247,7 +247,6 @@ def create_context_entity_model(name: str = None, data: Dict = None):
     )
     return EntityModel
 
-
 class HttpMethods(str, Enum):
     _init_ = 'value __doc__'
 
@@ -256,10 +255,16 @@ class HttpMethods(str, Enum):
     PATCH = "PATCH", "Patch Method"
 
 
-class HttpCustom(BaseModel):
+class Http(BaseModel):
     url: AnyHttpUrl = Field(
-        description="same as in http above."
+        description="URL referencing the service to be invoked when a "
+                    "notification is generated. An NGSIv2 compliant server "
+                    "must support the http URL schema. Other schemas could "
+                    "also be supported."
     )
+
+
+class HttpCustom(Http):
     headers: Optional[Dict[str, Union[str, Json]]] = Field(
         description="a key-map of HTTP headers that are included in "
                     "notification messages."
@@ -326,7 +331,7 @@ class Notification(BaseModel):
                     'message, i.e. a notification message includes all entity '
                     'attributes except the ones listed in this field.'
     )
-    http: Optional[AnyHttpUrl] = Field(
+    http: Optional[Http] = Field(
         description='It is used to convey parameters for notifications '
                     'delivered through the HTTP protocol. Cannot be used '
                     'together with "httpCustom"'
@@ -350,6 +355,13 @@ class Notification(BaseModel):
                     'more detail.'
     )
 
+    @validator('httpCustom')
+    def validate_http(cls, v, values, field):
+        print(field)
+        if v is not None:
+            assert values['http'] == None
+        return v
+
 
 class NotificationResponse(Notification):
     timesSent: int = Field(
@@ -371,11 +383,6 @@ class NotificationResponse(Notification):
                     'notification. Not present if subscription has never '
                     'had a successful notification.'
     )
-
-
-
-
-
 
 
 class Status(str, Enum):
@@ -408,19 +415,20 @@ class Condition(BaseModel):
 
 
 class Subject(BaseModel):
-    entities: Dict[str, str] = Field()
+    entities: List[Dict[str, str]] = Field()
     condition: Optional[Condition] = Field()
 
     @validator('entities')
     def validate_entities(cls, v):
-        for key in v.keys():
-            if not key in ['id', 'idPattern', 'type', 'typePattern']:
-                raise KeyError
-        assert ('id' in v.keys() or 'idPattern' in v.keys())
-        if 'id' in v.keys():
-            assert 'idPattern' not in v.keys()
-        if 'type' in v.keys():
-            assert 'typePattern' not in v.keys()
+        for item in v:
+            for key in item.keys():
+                if not key in ['id', 'idPattern', 'type', 'typePattern']:
+                    raise KeyError
+            assert ('id' in item.keys() or 'idPattern' in item.keys())
+            if 'id' in item.keys():
+                assert 'idPattern' not in item.keys()
+            if 'type' in item.keys():
+                assert 'typePattern' not in item.keys()
         return v
 
 class Subscription(BaseModel):
@@ -436,9 +444,22 @@ class Subscription(BaseModel):
         description="A free text used by the client to describe the "
                     "subscription."
     )
+    status: Status = Field(
+        default=Status.ACTIVE,
+        description="Either active (for active subscriptions) or inactive "
+                    "(for inactive subscriptions). If this field is not "
+                    "provided at subscription creation time, new subscriptions "
+                    "are created with the active status, which can be changed"
+                    " by clients afterwards. For expired subscriptions, this "
+                    "attribute is set to expired (no matter if the client "
+                    "updates it to active/inactive). Also, for subscriptions "
+                    "experiencing problems with notifications, the status is "
+                    "set to failed. As soon as the notifications start working "
+                    "again, the status is changed back to active."
+    )
     subject: Subject = Field(
         description="An object that describes the subject of the subscription.",
-        example = {
+        example={
             'entities': [{'idPattern': '.*', 'type': 'Room'}],
             'condition': {
                 'attrs': ['temperature'],
@@ -458,22 +479,9 @@ class Subscription(BaseModel):
         description="Subscription expiration date in ISO8601 format. "
                     "Permanent subscriptions must omit this field."
     )
-    status: Status = Field(
-        default=Status.ACTIVE,
-        description="Either active (for active subscriptions) or inactive "
-                    "(for inactive subscriptions). If this field is not "
-                    "provided at subscription creation time, new subscriptions "
-                    "are created with the active status, which can be changed"
-                    " by clients afterwards. For expired subscriptions, this "
-                    "attribute is set to expired (no matter if the client "
-                    "updates it to active/inactive). Also, for subscriptions "
-                    "experiencing problems with notifications, the status is "
-                    "set to failed. As soon as the notifications start working "
-                    "again, the status is changed back to active."
-    )
+
     throttling: Optional[int] = Field(
-        default=5,
-        description="throttling: Minimal period of time in seconds which "
+        description="Minimal period of time in seconds which "
                     "must elapse between two consecutive notifications. "
                     "It is optional."
     )

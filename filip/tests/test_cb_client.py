@@ -32,32 +32,43 @@ class TestContextBroker(unittest.TestCase):
         with ContextBrokerClient(fiware_header=self.fiware_header) as client:
             self.assertIsNotNone(client.get_statistics())
 
+    def test_pagination(self):
+        # test pagination. only works if enough entities are available
+        fiware_header = FiwareHeader(service='n5geh',
+                                     service_path='/eonerc_main_building')
+        with ContextBrokerClient(fiware_header=fiware_header) as client:
+            self.assertLessEqual(len(client.get_entity_list(limit=1)), 1)
+            self.assertLessEqual(len(client.get_entity_list(limit=999)), 999)
+            self.assertLessEqual(len(client.get_entity_list(limit=1001)), 1001)
+            self.assertLessEqual(len(client.get_entity_list(limit=2001)), 2001)
+
     def test_entity_filtering(self):
         fiware_header = FiwareHeader(service='n5geh',
                                      service_path='/eonerc_main_building')
         with ContextBrokerClient(fiware_header=fiware_header) as client:
             # test patterns
             with self.assertRaises(re.error):
-                client.get_entities(id_pattern='(&()?')
+                client.get_entity_list(id_pattern='(&()?')
             with self.assertRaises(re.error):
-                client.get_entities(type_pattern='(&()?')
+                client.get_entity_list(type_pattern='(&()?')
 
-            entities = client.get_entities()
-            entities_by_id_pattern = client.get_entities(
+            entities_all = client.get_entity_list()
+            entities_by_id_pattern = client.get_entity_list(
                 id_pattern='bacnet501.*')
-            self.assertLess(len(entities_by_id_pattern), len(entities))
+            self.assertLess(len(entities_by_id_pattern), len(entities_all))
 
-            entities_by_type_pattern = client.get_entities(
+            entities_by_type_pattern = client.get_entity_list(
                 type_pattern='humidity$')
-            self.assertLess(len(entities_by_type_pattern), len(entities))
+            self.assertLess(len(entities_by_type_pattern), len(entities_all))
 
             query = SimpleQuery(statements=[('presentValue', '>', 0)])
-            entities_by_query = client.get_entities(q=query)
-            self.assertLess(len(entities_by_query), len(entities))
+            entities_by_query = client.get_entity_list(q=query)
+            self.assertLess(len(entities_by_query), len(entities_all))
 
             # test options
-            entities_by_key_values = client.get_entities(options=['keyValues'])
-            self.assertEqual(len(entities_by_key_values), len(entities))
+            entities_by_key_values = client.get_entity_list(
+                options=['keyValues'])
+            self.assertEqual(len(entities_by_key_values), len(entities_all))
 
     def test_entity_operations(self):
         with ContextBrokerClient(fiware_header=self.fiware_header) as client:
@@ -106,10 +117,20 @@ class TestContextBroker(unittest.TestCase):
             print(client.get_entity_type(entity_type='MyType'))
             client.delete_entity(entity_id=self.entity.id)
 
+    def test_subscriptions(self):
+        fiware_header = FiwareHeader(service='n5geh',
+                                     service_path='/eonerc_main_building')
+        with ContextBrokerClient(fiware_header=fiware_header) as client:
+            subs = client.get_subscription_list()
+            for sub in subs:
+                print(sub.json(indent=2))
+
     def tearDown(self) -> None:
         # Cleanup test server
         try:
-            self.client.delete_entity(entity_id=self.entity.id)
+            entities = self.client.get_entity_list()
+            for entity in entities:
+                self.client.delete_entity(entity_id=entity.id)
         except:
             pass
         self.client.close()
