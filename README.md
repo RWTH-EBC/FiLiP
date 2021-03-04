@@ -1,5 +1,13 @@
 # FiLiP 
 
+|<a href="https://www.ebc.eonerc.rwth-aachen.de/"> <img alt="EBC" src="https://www.ebc.eonerc.rwth-aachen.de/global/show_picture.asp?id=aaaaaaaaaakevlz" height="100"> </a>|<a href="https://n5geh.de/"> <img alt="N5GEH" src="https://avatars.githubusercontent.com/u/43948851?s=200&v=4" height="100"> </a>|
+|---|---|
+
+
+[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+
+
+
 FiLiP (Fiware Library for Python) is a python software development kit for 
 accelerate the development of web services that use Fiware's Generic 
 Enablers (GEs) as backend.
@@ -54,7 +62,7 @@ developed open-source and distributed as docker containers on dockerhub.
 
 However, as mentioned, for most use cases only a subset of GEs is required.
 Hence, we wrote a small [tutorial](https://github.com/N5GEH/n5geh.platform) 
-explaing how to setup a platform suited for most use cases within the energy 
+explaining how to setup a platform suited for most use cases within the energy 
 domain. 
 
 ### FIWARE GEs covered by FiLIP
@@ -112,8 +120,10 @@ Therefore, currently covers the APIs of following GEs:
     - [github](https://github.com/FIWARE-GEs/quantum-leap)
     - [swagger](https://app.swaggerhub.com/apis/smartsdk/ngsi-tsdb/0.7) (*not 
       up to date*, newest API version is 8.0)
-      
-## Installation
+
+## Getting started
+
+### Installation
 
 The easiest way to install the library is via pip:
 
@@ -122,9 +132,20 @@ pip install git+git://github.com/n5geh/n5geh.tools.filip
 
 ```
 
-## Getting started
+### Running examples or tests
 
-## Publications
+Explain how to run the automated tests for this system or any beginner-friendly examples of how to use it.
+
+## Documentation
+
+In-depth documentation can be found in the project [wiki].
+
+## Authors
+
+* [Thomas Storek](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/N5GEH-National-5G-Energy-Hub/~lhda/Thomas-Storek/?allou=1) (corresponding)
+* **Felix Rehmann**
+
+## References
 
 We presented the library in the following publications:
 
@@ -142,19 +163,20 @@ Conference Series, 1343, 12063. https://doi.org/10.1088/1742-6596/1343/1/012063
 
 ## License
 
-- [MIT-License](LICENSE)
+This project is licensed under the BSD License - see the [LICENSE](LICENSE) file for details
 
 ## Copyright
 
-2020, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy 
+2021, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy 
 Efficient Buildings and Indoor Climate
-
-## Contact
-
-[![EONERC EBC_Logo](https://www.ebc.eonerc.rwth-aachen.de/global/show_picture.asp?id=aaaaaaaaaakevlz)](http://www.ebc.eonerc.rwth-aachen.de)
-
-- [Thomas Storek](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/N5GEH-National-5G-Energy-Hub/~lhda/Thomas-Storek/?allou=1)
 
 [Institute for Energy Efficient Buildings and Indoor Climate (EBC)](http://www.ebc.eonerc.rwth-aachen.de)  
 [EON Energy Research Center (EONERC)](http://www.eonerc.rwth-aachen.de)  
 [RWTH University Aachen, Germany](http://www.rwth-aachen.de)
+
+## Acknowledgments
+
+We gratefully acknowledge the financial support by Federal Ministry \\ for Economic Affairs and Energy (BMWi), promotional reference XXX.
+
+|<a href="https://www.bmwi.de/Navigation/EN/Home/home.html"> <img alt="BMWE" src="https://www.bmwi.de/SiteGlobals/BMWI/StyleBundles/Bilder/bmwi_logo_en.svgz?__blob=normal&v=10" height="100"> </a>|
+|---|
