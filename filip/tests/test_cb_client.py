@@ -1,9 +1,11 @@
 import unittest
 import re
+import time
 from unittest.mock import Mock, patch
+from datetime import datetime
 from core.models import FiwareHeader
 from core.simple_query_language import SimpleQuery, Statement
-from cb.models import ContextEntity, ContextAttribute
+from cb.models import ContextEntity, ContextAttribute, Subscription
 from cb.client import ContextBrokerClient
 
 
@@ -118,12 +120,49 @@ class TestContextBroker(unittest.TestCase):
             client.delete_entity(entity_id=self.entity.id)
 
     def test_subscriptions(self):
-        fiware_header = FiwareHeader(service='n5geh',
-                                     service_path='/eonerc_main_building')
-        with ContextBrokerClient(fiware_header=fiware_header) as client:
+        with ContextBrokerClient(fiware_header=self.fiware_header) as client:
+            sub_example = {
+                "description": "One subscription to rule them all",
+                "subject": {
+                    "entities": [
+                        {
+                            "idPattern": ".*",
+                            "type": "Room"
+                        }
+                    ],
+                    "condition": {
+                        "attrs": [
+                            "temperature"
+                        ],
+                        "expression": {
+                            "q": "temperature>40"
+                        }
+                    }
+                },
+                "notification": {
+                    "http": {
+                        "url": "http://localhost:1234"
+                    },
+                    "attrs": [
+                        "temperature",
+                        "humidity"
+                    ]
+                },
+                "expires": datetime.now(),
+                "throttling": 0
+            }
+            sub = Subscription(**sub_example)
+            sub_id = client.post_subscription(subscription=sub)
+            sub_res = client.get_subscription(subscription_id=sub_id)
+            time.sleep(1)
+            sub_update = sub_res.copy(update={'expires': datetime.now()})
+            client.update_subscription(subscription=sub_update)
+            sub_res_updated = client.get_subscription(subscription_id=sub_id)
+            self.assertNotEqual(sub_res.expires, sub_res_updated.expires)
             subs = client.get_subscription_list()
+            self.assertIn(sub_res_updated, subs)
             for sub in subs:
-                print(sub.json(indent=2))
+                client.delete_subscription(subscription_id=sub.id)
 
     def tearDown(self) -> None:
         # Cleanup test server

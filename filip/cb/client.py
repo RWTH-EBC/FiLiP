@@ -839,7 +839,7 @@ class ContextBrokerClient(BaseClient):
 
     # SUBSCRIPTION API ENDPOINTS
     def get_subscription_list(self,
-                              limit: PositiveInt = inf):
+                              limit: PositiveInt = inf) -> List[Subscription]:
         """
         Returns a list of all the subscriptions present in the system.
         Args:
@@ -878,6 +878,128 @@ class ContextBrokerClient(BaseClient):
         except requests.exceptions.RequestException as e:
             logger.error(e)
             logger.error(f"Entities could not loaded")
+            raise
+
+    def post_subscription(self, subscription: Subscription) -> str:
+        """
+        Creates a new subscription. The subscription is represented by a
+        Subscription object defined in filip.cb.models.
+
+        Args:
+            subscription:
+
+        Returns:
+
+        """
+        url = urljoin(settings.CB_URL, f'v2/subscriptions')
+        headers = self.headers.copy()
+        headers.update({'Content-Type': 'application/json'})
+        res = None
+        try:
+            res = self.session.post(
+                url=url,
+                headers=headers,
+                data=subscription.json(exclude={'id'},
+                                        exclude_unset=True,
+                                        exclude_defaults=True,
+                                        exclude_none=True))
+            if res.ok:
+                logger.info(f"Subscription successfully created!")
+                return res.headers['Location'].split('/')[-1]
+            else:
+                res.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            logger.error(e)
+            if res.text:
+                logger.error(f"Subscription could not updated! "
+                             f"Reason: {res.text}")
+            raise
+
+    def get_subscription(self, subscription_id: str) -> Subscription:
+        """
+        Retrieves a subscription from
+        Args:
+            subscription_id: id of the subscription
+
+        Returns:
+
+        """
+        url = urljoin(settings.CB_URL, f'v2/subscriptions/{subscription_id}')
+        headers = self.headers.copy()
+        res = None
+        try:
+            res = self.session.get(url=url, headers=headers)
+            if res.ok:
+                logger.debug(f'Received: {res.json()}')
+                return Subscription(**res.json())
+            else:
+                res.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            logger.error(e)
+            if res.text:
+                logger.error(f"Subscription {subscription_id} could not loaded!"
+                             f"Reason: {res.text}")
+            else:
+                logger.error(f"Subscription {subscription_id} could not loaded")
+            raise
+
+    def update_subscription(self, subscription: Subscription):
+        """
+        Only the fields included in the request are updated in the subscription.
+        Args:
+            subscription: Subscription to update
+        Returns:
+
+        """
+        url = urljoin(settings.CB_URL, f'v2/subscriptions/{subscription.id}')
+        headers = self.headers.copy()
+        headers.update({'Content-Type': 'application/json'})
+        res = None
+        try:
+            res = self.session.patch(
+                url=url,
+                headers=headers,
+                data=subscription.json(exclude={'id'},
+                                       exclude_unset=True,
+                                       exclude_defaults=True,
+                                       exclude_none=True))
+            if res.ok:
+                logger.info(f"Subscription successfully updated!")
+            else:
+                res.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            logger.error(e)
+            if res.text:
+                logger.error(f"Subscription could not updated! "
+                             f"Reason: {res.text}")
+            raise
+
+    def delete_subscription(self, subscription_id: str) -> None:
+        """
+        Deletes a subscription from a Context Broker
+        Args:
+            subscription_id: id of the subscription
+        """
+        url = urljoin(settings.CB_URL,
+                      f'v2/subscriptions/{subscription_id}')
+        headers = self.headers.copy()
+        res = None
+        try:
+            res = self.session.delete(url=url, headers=headers)
+            if res.ok:
+                logger.info(f"Subscription '{subscription_id}' "
+                            f"successfully deleted!")
+            else:
+                res.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            logger.error(e)
+            if res.text:
+                logger.error(
+                    f"Subscription {subscription_id} could not deleted!"
+                    f"Reason: {res.text}")
+            else:
+                logger.error(
+                    f"Subscription {subscription_id} could not loaded")
             raise
 
 # TODO: Add Subscitptions and Registrations
@@ -994,98 +1116,12 @@ class ContextBrokerClient(BaseClient):
 #
 #        return whole_dict
 #
-#    def get_entity(self, entity_name,  entity_params=None):
-#        url = self.url + '/v2/entities/' + entity_name
-#        headers = self.get_header()
-#        if entity_params is None:
-#            response = self.session.get(url, headers=headers)
-#        else:
-#            response = self.session.get(url, headers=headers,
-#                                    params=entity_params)
-#        ok, retstr = requtils.response_ok(response)
-#        if not ok:
-#            level, retstr = requtils.logging_switch(response)
-#            self.log_switch(level, retstr)
-#        else:
-#            return response.text
-#
-#    def get_all_entities(self, parameter=None, parameter_value=None,
-#    limit=100):
-#        url = self.url + '/v2/entities?options=count'
-#        headers = self.get_header()
-#        if parameter is None and parameter_value is None:
-#            response = self.session.get(url, headers=headers)
-#            sub_count = float(response.headers["Fiware-Total-Count"])
-#            if sub_count >= limit:
-#                response = self.get_pagination(url=url, headers=headers,
-#                                               limit=limit, count=sub_count)
-#                return response
-#        elif parameter is not None and parameter_value is not None:
-#            parameters = {'{}'.format(parameter): '{}'.format(parameter_value)}
-#            response = self.session.get(url, headers=headers,
-#            params=parameters)
-#            sub_count = float(response.headers["Fiware-Total-Count"])
-#            if sub_count >= limit:
-#                response = self.get_pagination(url=url, headers=headers,
-#                                               limit=limit, count=sub_count,
-#                                               params=parameters)
-#                return response
-#        else:
-#            logger.error("Getting all entities: both function parameters
-#            have to be 'not null'")
-#            return None
-#        ok, retstr = requtils.response_ok(response)
-#        if not ok:
-#            level, retstr = requtils.logging_switch(response)
-#            self.log_switch(level, retstr)
-#        else:
-#            return response.text
-#
-#    def get_entities_list(self, limit=100) -> list:
-#        url = self.url + '/v2/entities?options=count'
-#        header = self.get_header(requtils.HEADER_ACCEPT_JSON)
-#        response = self.session.get(url, headers=header)
-#        sub_count = float(response.headers["Fiware-Total-Count"])
-#        if sub_count >= limit:
-#            response = self.get_pagination(url=url, headers=header,
-#                                           limit=limit, count=sub_count)
-#            return response
-#        ok, retstr = requtils.response_ok(response)
-#        if not ok:
-#            level, retstr = requtils.logging_switch(response)
-#            self.log_switch(level, retstr)
-#            return None
-#        else:
-#            json_object = json.loads(response.text)
-#            entities = []
-#            for key in json_object:
-#                entities.append(key["id"])
-#            return entities
-#
-#    def get_entity_keyValues(self, entity_name):
-#        parameter = {'{}'.format('options'): '{}'.format('keyValues')}
-#        return self.get_entity(entity_name, parameter)
-#
-#    def get_entity_attribute_json(self, entity_name, attr_name):
-#        url = self.url + '/v2/entities/' + entity_name + '/attrs/' + attr_name
-#        response = self.session.get(url, headers=self.get_header())
-#        ok, retstr = requtils.response_ok(response)
-#        if not ok:
-#            level, retstr = requtils.logging_switch(response)
-#            self.log_switch(level, retstr)
-#        else:
-#            return response.text
-#
-#    def get_entity_attribute_value(self, entity_name, attr_name):
-#        url = self.url + '/v2/entities/' + entity_name + '/attrs/' \
-#                       + attr_name + '/value'
-#        response = self.session.get(url, headers=self.get_header())
-#        ok, retstr = requtils.response_ok(response)
-#        if not ok:
-#            level, retstr = requtils.logging_switch(response)
-#            self.log_switch(level, retstr)
-#        else:
-#            return response.text
+
+
+
+
+
+
 #
 #    def get_entity_attribute_list(self, entity_name, attr_name_list):
 #        """

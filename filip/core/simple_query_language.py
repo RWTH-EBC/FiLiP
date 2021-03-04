@@ -1,5 +1,6 @@
 import itertools
 import regex as re
+from json import JSONEncoder
 from aenum import Enum
 from typing import Union, List, Tuple, Set
 from pydantic import BaseModel, Field, validator
@@ -112,6 +113,7 @@ class Statement(tuple):
     """
     Query statement for simple query language
     """
+    # Todo: Make Statements serializable
     def __new__(self, left_hand_side: str,
                 operator: str,
                 right_hand_side: Union[str, float, int]):
@@ -134,6 +136,8 @@ class Statement(tuple):
         return ''.join([str(item) for item in self])
 
 
+
+
 class SimpleQuery(BaseModel):
     """
     Represents a simple query object that can handed to a request for
@@ -144,7 +148,8 @@ class SimpleQuery(BaseModel):
         description="List of simple query statement")
 
     def __init__(self, statements:
-    Union[List[Union[Statement, Tuple[str, str, Union[str, float, int]]]],
+        Union[
+          List[Union[Statement, Tuple[str, str, Union[str, float, int]]]],
           Set[Union[Statement, Tuple[str, str, Union[str, float, int]]]]]):
         statements = self.validate_statements(statements)
         super().__init__(statements=statements)

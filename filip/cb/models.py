@@ -247,6 +247,8 @@ def create_context_entity_model(name: str = None, data: Dict = None):
     )
     return EntityModel
 
+
+# Models for Subscriptions start here
 class HttpMethods(str, Enum):
     _init_ = 'value __doc__'
 
@@ -395,13 +397,18 @@ class Status(str, Enum):
 
 
 class Expression(BaseModel):
-    q: Optional[SimpleQuery] = Field(
+    q: Optional[Union[str, SimpleQuery]] = Field(
         description=''
     )
-    mq: Optional[SimpleQuery] = Field()
+    mq: Optional[Union[str, SimpleQuery]] = Field()
     # TODO: Adding additional query options
     # http://telefonicaid.github.io/fiware-orion/api/v2/stable/
 
+    # TODO: This does not work yet
+    #@validator('q', 'mq')
+    #def validate_expressions(cls, v):
+    #    if isinstance(v, str):
+    #        return SimpleQuery.parse_str(v)
 
 class Condition(BaseModel):
     attrs: List[str] = Field(
@@ -436,7 +443,7 @@ class Subscription(BaseModel):
     Subscription payload validations
     https://fiware-orion.readthedocs.io/en/master/user/ngsiv2_implementation_notes/index.html#subscription-payload-validations
     """
-    id: str = Field(
+    id: Optional[str] = Field(
         description="Subscription unique identifier. Automatically created at "
                     "creation time."
     )
