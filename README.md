@@ -120,22 +120,59 @@ Therefore, currently covers the APIs of following GEs:
 
 ## Getting started
 
+The following section shortly describes use of the libary.
+
+### Prerequisites
+
+As FiLiP is a designed as client Library it requires a server that provides 
+the target Service-APIs.
+Hence, if you do not yet have a running instance of a FIWARE based platform, 
+The most convenient way to set it up, is using docker. 
+Please check [here](https://github.com/N5GEH/n5geh.platform) for a tutorial 
+on this.
+
 ### Installation
 
 The easiest way to install the library is via pip:
 
 ```
 pip install git+git://github.com/n5geh/n5geh.tools.filip
-
 ```
 
 ### Running examples or tests
 
-Explain how to run the automated tests for this system or any beginner-friendly examples of how to use it.
+Once, you have installed the library you can check the [examples](./examples)
+to learn how to use the different components of it. 
+
+Currently, we provide basic examples for the usage of FiLIP for the FIWWARE 
+GEs mentioned above. 
+Furthermore, we provide more advanced examples for the semantic 
+context data modeling within a context broker using 
+[relationships](./examples/relationship_example.py).
+Furthermore, the context broker provides a mechanism for event based 
+http-notification.
+Using this mechanism is shown [here](./examples/subscription_example.py)
+
+**NOTE**: Currently, we are refactoring the library in order to provide 
+better validation mechanism. 
+After this big step we will work on further examples and the integration of 
+further advanced functions supporting the effective context data modelling 
+using validated data model structures. 
+
+## Testing
+
+Currently, we working on a CI workflow for continuous testing of the library
 
 ## Documentation
 
-In-depth documentation can be found in the project [wiki].
+Coming soon...
+
+###  Architectural Concepts
+
+FiLiP is organized as follows:
+  
+  Coming soon after next refactoring...
+
 
 ## Authors
 
