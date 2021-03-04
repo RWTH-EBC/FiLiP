@@ -7,7 +7,6 @@
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
 
-
 FiLiP (Fiware Library for Python) is a python software development kit for 
 accelerate the development of web services that use Fiware's Generic 
 Enablers (GEs) as backend.
