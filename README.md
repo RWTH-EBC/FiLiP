@@ -17,7 +17,7 @@ However, a general prerequisite to do so is that the documentation is of
 good quality in whole depth. 
 FIWARE generally provides 
 [openapi documentation](https://github.com/FIWARE/specifications/tree/master/OpenAPI/ngsiv2)
-But here are some general thoughts on auto generation of client code from 
+Here are some general thoughts on auto generation of client code from 
 these documents:
 
 - Auto generated code tends to become rather bulky and its quality strongly
@@ -33,7 +33,7 @@ these documents:
 ## FIWARE
 
 The following section introduces FIWARE. If you are already familiar with 
-FIWARE you can skip this section.
+FIWARE, you can skip this section.
 
 ### What is FIWARE?
 
@@ -46,7 +46,7 @@ interoperable software modules, so-called Generic Enablers
 (GE) for developing and providing customized IoT platform solutions.
 
 To get familiar with the APIs of the different modules we highly recommend 
-to check the 
+checking the 
 [step-by-step tutorial](https://fiware-tutorials.readthedocs.io/en/latest/). 
 It provides a good overview about FIWARE and its basic usage.
 Whereas the tutorial helps to understand most the general concepts, 
@@ -55,16 +55,16 @@ FIWARE also offers extended lessons through their
 [academy](https://fiware-academy.readthedocs.io/en/latest/index.html/).
 
 However, usually one only requires a small set of components. 
-Hence, we suggest to use the cited pages only on demand.
+Hence, we suggest using the cited pages only on demand.
 
-### How to setup a FIWARE platform?
+### How to set up a FIWARE platform?
 
-The easiest way to setup a FIWARE platform is by using docker as all GEs are 
+The easiest way to set up a FIWARE platform is by using docker as all GEs are 
 developed open-source and distributed as docker containers on dockerhub.
 
 However, as mentioned, for most use cases only a subset of GEs is required.
 Hence, we wrote a small [tutorial](https://github.com/N5GEH/n5geh.platform) 
-explaining how to setup a platform suited for most use cases within the energy 
+explaining how to set up a platform suited for most use cases within the energy 
 domain. 
 
 ### FIWARE GEs covered by FiLIP
@@ -77,7 +77,7 @@ Therefore, FiLiP currently only covers the APIs of following GEs:
 
 - NGSIv2 Context Broker for managing of context data. We use its 
   reference implementation ORION for testing.
-    - [documention](https://fiware-orion.readthedocs.io/en/master/)
+    - [documentation](https://fiware-orion.readthedocs.io/en/master/)
     - [github](https://github.com/telefonicaid/fiware-orion)
     - [swagger](https://swagger.lab.fiware.org/)
     - [NGSI v2 specifications](https://github.com/FIWARE/specifications/tree/master/OpenAPI/ngsiv2)
@@ -85,7 +85,7 @@ Therefore, FiLiP currently only covers the APIs of following GEs:
     
 - IoT-Agents for managing IoT Devices. IoT agents are implemented using 
   the FIWARE IoT Agent Node Lib as a common framework:
-    - [documention](https://iotagent-node-lib.readthedocs.io/en/latest/)
+    - [documentation](https://iotagent-node-lib.readthedocs.io/en/latest/)
     - [github](https://github.com/telefonicaid/iotagent-node-lib)
 
     
@@ -105,7 +105,7 @@ Therefore, FiLiP currently only covers the APIs of following GEs:
             "luminocity": "1570"
         }  
 
-- IoT-Agent-Ultralight for managing devices using a Ultralight 2.0 message 
+- IoT-Agent-Ultralight for managing devices using an Ultralight 2.0 message 
   payload protocol.
   
     - [documentation](https://fiware-iotagent-ul.readthedocs.io/en/latest/)
@@ -126,11 +126,11 @@ Therefore, FiLiP currently only covers the APIs of following GEs:
 
 ## Getting started
 
-The following section shortly describes use of the libary.
+The following section shortly describes use of the library.
 
 ### Prerequisites
 
-As FiLiP is a designed as client Library it requires a server that provides 
+Since FiLiP is a designed as client Library, it requires a server that provides 
 the target Service-APIs.
 Hence, if you do not yet have a running instance of a FIWARE based platform, 
 The most convenient way to set it up, is using docker. 
@@ -150,29 +150,29 @@ pip install git+git://github.com/n5geh/n5geh.tools.filip
 
 ### Running examples or tests
 
-Once, you have installed the library you can check the [examples](./examples)
+Once, you have installed the library you can check the [examples](/examples)
 to learn how to use the different components of it. 
 
-Currently, we provide basic examples for the usage of FiLIP for the FIWWARE 
+Currently, we provide basic examples for the usage of FiLIP for the FIWARE 
 GEs mentioned above.
 We suggest to start with the config-example in order to understand the 
 configuration of clients (*Note: This may change in future*)
 Furthermore, we provide more advanced examples for the semantic 
 context data modeling within a context broker using 
-[relationships](./examples/relationship_example.py).
-Furthermore, the context broker provides a mechanism for event based 
+[relationships](/examples/relationship_example.py).
+Furthermore, the context broker provides a mechanism for an event based 
 http-notification.
-Using this mechanism is shown [here](./examples/subscription_example.py)
+Using this mechanism is shown [here](/examples/subscription_example.py)
 
 **NOTE**: Currently, we are refactoring the library in order to provide 
 better validation mechanism. 
-After this big step we will work on further examples and the integration of 
+After this big step we will work on further examples, and the integration of 
 further advanced functions supporting the effective context data modelling 
 using validated data model structures. 
 
 ## Testing
 
-Currently, we working on a CI workflow for continuous testing of the library
+Currently, we are working on a CI workflow for continuous testing of the library
 
 ## Documentation
 
