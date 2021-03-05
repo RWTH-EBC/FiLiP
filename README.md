@@ -43,19 +43,19 @@ domain.
 At the moment, the FIWARE 
 [catalogue](https://www.fiware.org/developers/catalogue/) contains over 30 
 interoperable software modules, so-called Generic Enablers 
-(GE)for developing and providing customized IoT platform solutions.
+(GE) for developing and providing customized IoT platform solutions.
 
 To get familiar with the APIs of the different modules we highly recommend 
 to check the 
 [step-by-step tutorial](https://fiware-tutorials.readthedocs.io/en/latest/). 
-It provides a good overview about FIWARE and its usage.
+It provides a good overview about FIWARE and its basic usage.
 Whereas the tutorial helps to understand most the general concepts, 
+for a deep dive, where you can learn about the components in more detail, 
 FIWARE also offers extended lessons through their 
-[academy](https://fiware-academy.readthedocs.io/en/latest/index.html/)
-for a deep dive where you can learn about components in more detail. 
+[academy](https://fiware-academy.readthedocs.io/en/latest/index.html/).
 
 However, usually one only requires a small set of components. 
-Hence, we suggest to use the cited pages on demand.
+Hence, we suggest to use the cited pages only on demand.
 
 ### How to setup a FIWARE platform?
 
@@ -69,14 +69,14 @@ domain.
 
 ### FIWARE GEs covered by FiLIP
 
-FiLIP is library developed on the demand.
-Hence, we do not aim to cover the APIs of all GEs included in the 
-[catalogue](https://www.fiware.org/developers/catalogue/), which would mean an 
-unnecessary development overhead. 
-Therefore, currently covers the APIs of following GEs:
+FiLIP is library developed on demand.
+Hence, we do not aim to cover the APIs of all GEs that are included in the 
+[catalogue](https://www.fiware.org/developers/catalogue/). 
+This would mean an unnecessary development overhead. 
+Therefore, FiLiP currently only covers the APIs of following GEs:
 
-- NGSIv2 Context Broker for managing of context data. We use the its 
-  reference implementation ORION.
+- NGSIv2 Context Broker for managing of context data. We use its 
+  reference implementation ORION for testing.
     - [documention](https://fiware-orion.readthedocs.io/en/master/)
     - [github](https://github.com/telefonicaid/fiware-orion)
     - [swagger](https://swagger.lab.fiware.org/)
@@ -87,6 +87,7 @@ Therefore, currently covers the APIs of following GEs:
   the FIWARE IoT Agent Node Lib as a common framework:
     - [documention](https://iotagent-node-lib.readthedocs.io/en/latest/)
     - [github](https://github.com/telefonicaid/iotagent-node-lib)
+
     
 - IoT-Agent-JSON for managing devices using a JSON message payload protocol 
   format.
@@ -220,7 +221,8 @@ Efficient Buildings and Indoor Climate
 
 ## Acknowledgments
 
-We gratefully acknowledge the financial support by Federal Ministry \\ for Economic Affairs and Energy (BMWi), promotional reference XXX.
+We gratefully acknowledge the financial support by Federal Ministry \\ 
+for Economic Affairs and Energy (BMWi), promotional reference 03ET1561B.
 
 |<a href="https://www.bmwi.de/Navigation/EN/Home/home.html"> <img alt="BMWE" src="https://www.bmwi.de/SiteGlobals/BMWI/StyleBundles/Bilder/bmwi_logo_en.svgz?__blob=normal&v=10" height="100"> </a>|
 |---|
