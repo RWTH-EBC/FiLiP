@@ -6,7 +6,7 @@ import json
 from enum import Enum
 from typing import Any, Dict, Optional, List, Union
 from pydantic import BaseModel, Field, validator, AnyHttpUrl
-from filip.core.models import NgsiVersion, DataTypes, UnitCode
+from filip.core.models import NgsiVersion, DataType, UnitCode
 
 
 logger = logging.getLogger()
@@ -38,7 +38,7 @@ class BaseAttribute(BaseModel):
         min_length = 1,
         regex = "(^((?![?&#/])[\x00-\x7F])*$)(?!(id|type|geo:distance|\*))"
     )
-    type: DataTypes = Field(
+    type: DataType = Field(
         description="name of the type of the attribute in the target entity. "
     )
     metadata: Optional[Dict[str, Any]] = Field(
@@ -98,7 +98,7 @@ class DeviceAttribute(BaseAttribute):
     object_id: Optional[str] = Field(
         description="name of the attribute as coming from the device."
     )
-    metadata: Dict[str, Dict] = Field(
+    metadata: Optional[Dict[str, Dict]] = Field(
         description="Additional meta information for the attribute, "
                     "e.g. 'unitcode'"
     )
@@ -124,7 +124,7 @@ class StaticDeviceAttribute(BaseAttribute):
     value: Union[Dict, List, str, float] = Field(
         description="Constant value for this attribute"
     )
-    metadata: Dict[str, Dict] = Field(
+    metadata: Optional[Dict[str, Dict]] = Field(
         description="Additional meta information for the attribute, "
                     "e.g. 'unitcode'"
     )

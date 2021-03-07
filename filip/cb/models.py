@@ -3,11 +3,12 @@ from typing import Any, List, Dict, Union, Optional, Pattern
 from pydantic import BaseModel, Field, validator, ValidationError, \
     root_validator, create_model, BaseConfig, AnyHttpUrl, Json
 from datetime import datetime
-from core.models import DataTypes
+from core.models import DataType
 from core.simple_query_language import SimpleQuery
 
+
 # Options for queries
-class OptionsGetEntities(str, Enum):
+class GetEntitiesOptions(str, Enum):
     _init_ = 'value __doc__'
 
     KEYVALUES = 'keyValues', ''
@@ -24,7 +25,7 @@ class ContextMetadata(BaseModel):
     Note that in NGSI it is not foreseen that metadata may contain nested
     metadata.
     """
-    type: Optional[DataTypes] = Field(
+    type: Optional[DataType] = Field(
         title="metadata type",
         description="a metadata type, describing the NGSI value type of the "
                     "metadata value Allowed characters "
@@ -34,7 +35,7 @@ class ContextMetadata(BaseModel):
         min_length=1,
         regex="^((?![?&#/\*])[\x00-\x7F])*$" # Make it FIWARE-Safe
     )
-    value: Optional[DataTypes] = Field(
+    value: Optional[DataType] = Field(
         title="metadata value",
         description="a metadata value containing the actual metadata"
     )
@@ -55,8 +56,8 @@ class NamedContextMetadata(ContextMetadata):
 
 
 class ContextAttribute(BaseModel):
-    type: DataTypes = Field(
-        default=DataTypes.TEXT,
+    type: DataType = Field(
+        default=DataType.TEXT,
         description="The attribute type represents the NGSI value type of the "
                     "attribute value. Note that FIWARE NGSI has its own type "
                     "system for attribute values, so NGSI value types are not "
@@ -80,9 +81,9 @@ class ContextAttribute(BaseModel):
     @validator('value')
     def validate_value_type(cls, v, values):
         type_ = values['type']
-        if type_ == DataTypes.BOOLEAN:
+        if type_ == DataType.BOOLEAN:
             return bool(v)
-        elif type_ == DataTypes.NUMBER:
+        elif type_ == DataType.NUMBER:
             return float(v)
         else:
             return str(v)
@@ -116,21 +117,7 @@ class NamedContextAttribute(ContextAttribute):
         regex = "(^((?![?&#/])[\x00-\x7F])*$)(?!(id|type|geo:distance|\*))",
         # Make it FIWARE-Safe
     )
-
-
-class ContextEntity(BaseModel):
-    """
-    Context entities, or simply entities, are the center of gravity in the
-    FIWARE NGSI information model. An entity represents a thing, i.e., any
-    physical or logical object (e.g., a sensor, a person, a room, an issue in
-    a ticketing system, etc.). Each entity has an entity id.
-    Furthermore, the type system of FIWARE NGSI enables entities to have an
-    entity type. Entity types are semantic types; they are intended to describe
-    the type of thing represented by the entity. For example, a context
-    entity #with id sensor-365 could have the type temperatureSensor.
-
-    Each entity is uniquely identified by the combination of its id and type.
-    """
+class ContextEntityKeyValues(BaseModel):
     id: str = Field(
         ...,
         title="Entity Id",
@@ -142,6 +129,7 @@ class ContextEntity(BaseModel):
         max_length=256,
         min_length=1,
         regex="^((?![?&#/])[\x00-\x7F])*$", # Make it FIWARE-Safe
+        allow_mutation=False
     )
     type: str = Field(
         ...,
@@ -154,8 +142,28 @@ class ContextEntity(BaseModel):
         max_length=256,
         min_length=1,
         regex="^((?![?&#/])[\x00-\x7F])*$", # Make it FIWARE-Safe
+        allow_mutation=False
     )
 
+    class Config():
+        extra = 'allow'
+        validate_all = True
+        validate_assignment = True
+
+
+class ContextEntity(ContextEntityKeyValues):
+    """
+    Context entities, or simply entities, are the center of gravity in the
+    FIWARE NGSI information model. An entity represents a thing, i.e., any
+    physical or logical object (e.g., a sensor, a person, a room, an issue in
+    a ticketing system, etc.). Each entity has an entity id.
+    Furthermore, the type system of FIWARE NGSI enables entities to have an
+    entity type. Entity types are semantic types; they are intended to describe
+    the type of thing represented by the entity. For example, a context
+    entity #with id sensor-365 could have the type temperatureSensor.
+
+    Each entity is uniquely identified by the combination of its id and type.
+    """
     def __init__(self,
                  id: str,
                  type: str,
@@ -164,7 +172,7 @@ class ContextEntity(BaseModel):
         data.update(self._validate_properties(data))
         super().__init__(id=id, type=type, **data)
 
-    class Config(BaseConfig):
+    class Config():
         extra = 'allow'
         validate_all = True
         validate_assignment = True
@@ -186,12 +194,12 @@ class ContextEntity(BaseModel):
         if format == 'dict':
             return {key: ContextAttribute(**value) for key, value in
                     self.dict().items() if key not in ContextEntity.__fields__
-                    and value.get('type') is not DataTypes.RELATIONSHIP}
+                    and value.get('type') is not DataType.RELATIONSHIP}
         else:
             return [NamedContextAttribute(name=key, **value) for key, value in
                     self.dict().items() if key not in
                     ContextEntity.__fields__ and
-                    value.get('type') is not DataTypes.RELATIONSHIP]
+                    value.get('type') is not DataType.RELATIONSHIP]
 
     def add_properties(self, attrs: Union[Dict[str, ContextAttribute],
                                          List[NamedContextAttribute]]):
@@ -222,12 +230,12 @@ class ContextEntity(BaseModel):
         if format == 'dict':
             return {key: ContextAttribute(**value) for key, value in
                     self.dict().items() if key not in ContextEntity.__fields__
-                    and value.get('type') is DataTypes.RELATIONSHIP}
+                    and value.get('type') is DataType.RELATIONSHIP}
         else:
             return [NamedContextAttribute(name=key, **value) for key, value in
                     self.dict().items() if key not in
                     ContextEntity.__fields__ and
-                    value.get('type') is DataTypes.RELATIONSHIP]
+                    value.get('type') is DataType.RELATIONSHIP]
 
 def username_alphanumeric(cls, v):
     #assert v.value.isalnum(), 'must be numeric'
@@ -239,13 +247,12 @@ def create_context_entity_model(name: str = None, data: Dict = None):
                   key not in ContextEntity.__fields__}
     validators = {f'validate_test': validator('temperature')(
         username_alphanumeric)}
-    EntityModel = create_model(
+    return create_model(
         __model_name=name or 'GeneratedContextEntity',
         __base__=ContextEntity,
         __validators__=validators,
         **properties
     )
-    return EntityModel
 
 
 # Models for Subscriptions start here
@@ -298,8 +305,8 @@ class AttrsFormat(str, Enum):
 
 
 class NotificationMessage(BaseModel):
-    subscriptionId: str = Field(
-        description="Id of the subscription the notification comes from"
+    subscriptionId: Optional[str] = Field(
+        description="Id of the subscription the notification comes from",
     )
     data: ContextEntity = Field(
         description="is an array with the notification data itself which "
@@ -359,11 +366,15 @@ class Notification(BaseModel):
 
     @validator('httpCustom')
     def validate_http(cls, v, values, field):
-        print(field)
         if v is not None:
             assert values['http'] == None
         return v
 
+    @validator('exceptAttrs')
+    def validate_attr(cls, v, values):
+        if v is not None:
+            assert values['attrs'] == None
+        return v
 
 class NotificationResponse(Notification):
     timesSent: int = Field(
@@ -414,29 +425,43 @@ class Condition(BaseModel):
     attrs: List[str] = Field(
         description='array of attribute names'
     )
-    expression: Optional[Expression] = Field(
+    expression: Optional[Union[str, SimpleQuery]] = Field(
         description='an expression composed of q, mq, georel, geometry and '
                     'coords (see "List entities" operation above about this '
                     'field).'
     )
 
 
+class Entity(BaseModel):
+    """
+    Entity pattern
+    """
+    id: Optional[str] = Field(regex='\w')
+    idPattern: Optional[Pattern]
+    type: Optional[str] = Field(regex='\w')
+    typePattern: Optional[Pattern]
+
+    @root_validator()
+    def validate_conditions(cls, values):
+        assert ((values['id'] and not values['idPattern']) or
+                (not values['id'] and values['idPattern'])), \
+            "Both cannot be used at the same time, but one of them " \
+            "must be present."
+        if values['type'] or values.get('typePattern', None):
+            assert ((values['type'] and not values['typePattern']) or
+                    (not values['id'] and values['typePattern'])), \
+                "Type or pattern of the affected entities. " \
+                "Both cannot be used at the same time."
+        return values
+
+
 class Subject(BaseModel):
-    entities: List[Dict[str, str]] = Field()
+    entities: List[Entity] = Field(
+        description="A list of objects, each one composed of by an Entity "
+                    "Object:"
+    )
     condition: Optional[Condition] = Field()
 
-    @validator('entities')
-    def validate_entities(cls, v):
-        for item in v:
-            for key in item.keys():
-                if not key in ['id', 'idPattern', 'type', 'typePattern']:
-                    raise KeyError
-            assert ('id' in item.keys() or 'idPattern' in item.keys())
-            if 'id' in item.keys():
-                assert 'idPattern' not in item.keys()
-            if 'type' in item.keys():
-                assert 'typePattern' not in item.keys()
-        return v
 
 class Subscription(BaseModel):
     """
@@ -451,7 +476,7 @@ class Subscription(BaseModel):
         description="A free text used by the client to describe the "
                     "subscription."
     )
-    status: Status = Field(
+    status: Optional[Status] = Field(
         default=Status.ACTIVE,
         description="Either active (for active subscriptions) or inactive "
                     "(for inactive subscriptions). If this field is not "
@@ -491,6 +516,180 @@ class Subscription(BaseModel):
         description="Minimal period of time in seconds which "
                     "must elapse between two consecutive notifications. "
                     "It is optional."
+    )
+
+# Registration Models
+class ForwardingMode(str, Enum):
+    _init_ = 'value __doc__'
+
+    NONE = "none", "This provider does not support request forwarding."
+    QUERY = "query", "This provider only supports request forwarding to query " \
+                     "data."
+    UPDATE = "update", "This provider only supports request forwarding to " \
+                       "update data."
+    ALL = "all", "This provider supports both query and update forwarding " \
+                 "requests. (Default value)"
+
+
+class Provider(BaseModel):
+    http: AnyHttpUrl = Field(
+        description="It is used to convey parameters for providers that "
+                    "deliver information through the HTTP protocol. (Only "
+                    "protocol supported nowadays). It must contain a subfield "
+                    "named url with the URL that serves as the endpoint that "
+                    "offers the providing interface. The endpoint must not "
+                    "include the protocol specific part (for instance "
+                    "/v2/entities). "
+    )
+    supportedForwardingMode: ForwardingMode = Field(
+        default=ForwardingMode.ALL,
+        description="It is used to convey the forwarding mode supported by "
+                    "this context provider. By default all."
+    )
+
+class ForwardingInformation(BaseModel):
+    timesSent: int = Field(
+        description="(not editable, only present in GET operations): "
+                    "Number of request forwardings sent due to this "
+                    "registration."
+    )
+    lastForwarding: datetime = Field(
+        description="(not editable, only present in GET operations): "
+                    "Last forwarding timestamp in ISO8601 format."
+    )
+    lastFailure: Optional[datetime] = Field(
+        description="(not editable, only present in GET operations): "
+                    "Last failure timestamp in ISO8601 format. Not present "
+                    "if registration has never had a problem with forwarding."
+    )
+    lastSuccess: Optional[datetime] = Field(
+        description="(not editable, only present in GET operations): "
+                    "Timestamp in ISO8601 format for last successful "
+                    "request forwarding. Not present if registration has "
+                    "never had a successful notification."
+    )
+
+    class Config:
+        allow_mutation = False
+
+class DataProvided(BaseModel):
+    entities: List[Entity] = Field(
+        description="A list of objects, each one composed by an entity object"
+    )
+    attrs: Optional[List[str]] = Field(
+        description="List of attributes to be provided "
+                    "(if not specified, all attributes)"
+    )
+    expression: Optional[Union[str, SimpleQuery]] = Field(
+        description="By means of a filtering expression, allows to express "
+                    "what is the scope of the data provided. Currently only "
+                    "geographical scopes are supported "
+    )
+
+
+class Registration(BaseModel):
+    """
+    A Context Registration allows to bind external context information
+    sources so that they can play the role of providers of certain subsets
+    (entities, attributes) of the context information space, including those
+    located at specific geographical areas.
+    """
+
+    id: Optional[str] = Field(
+        description="Unique identifier assigned to the registration. "
+                    "Automatically generated at creation time."
+    )
+    description: Optional[str] = Field(
+        description="A free text used by the client to describe the "
+                    "registration.",
+        example="Relative Humidity Context Source"
+    )
+    provider: Provider = Field(
+        description="Object that describes the context source registered.",
+        example='"http": {"url": "http://localhost:1234"}'
+    )
+    dataProvived: DataProvided = Field(
+        description="Object that describes the data provided by this source",
+        example='{'
+                '   "entities": [{"id": "room2", "type": "Room"}],'
+                '   "attrs": ["relativeHumidity"]'
+                '},'
+    )
+    status: Optional[Status] = Field(
+        default=Status.ACTIVE,
+        description="Either active (for active registration) or inactive "
+                    "(for inactive registration). If this field is not "
+                    "provided at rtegistration creation time, new registration "
+                    "are created with the active status, which can be changed"
+                    " by clients afterwards. For expired registration, this "
+                    "attribute is set to expired (no matter if the client "
+                    "updates it to active/inactive). Also, for subscriptions "
+                    "experiencing problems with notifications, the status is "
+                    "set to failed. As soon as the notifications start working "
+                    "again, the status is changed back to active."
+    )
+    expires: Optional[datetime] = Field(
+        description="Registration expiration date in ISO8601 format. "
+                    "Permanent registrations must omit this field."
+    )
+    forwardingInformation: Optional[ForwardingInformation] = Field(
+        description="Information related to the forwarding operations made "
+                    "against the provider. Automatically provided by the "
+                    "implementation, in the case such implementation supports "
+                    "forwarding capabilities."
+    )
+
+class Query(BaseModel):
+    entities: List[Entity] = Field(
+        description="a list of entities to search for. Each element is "
+                    "represented by a JSON object"
+    )
+    attrs: Optional[List[str]] = Field(
+        description="List of attributes to be provided "
+                    "(if not specified, all attributes)."
+    )
+    expression: Optional[Expression] = Field(
+        description="An expression composed of q, mq, georel, geometry and "
+                    "coords "
+    )
+    metadata: Optional[List[str]] = Field(
+        description='a list of metadata names to include in the response. '
+                    'See "Filtering out attributes and metadata" section for '
+                    'more detail.'
+    )
+
+
+class ActionType(str, Enum):
+    _init_ = 'value __doc__'
+    APPEND = "append", "maps to POST /v2/entities (if the entity does not " \
+                       "already exist) or POST /v2/entities/<id>/attrs (if " \
+                       "the entity already exists). "
+    APPEND_STRICT = "appendStrict", "maps to POST /v2/entities (if the entity " \
+                                    "does not already exist) or POST " \
+                                    "/v2/entities/<id>/attrs?options=append " \
+                                    "(if the entity already exists)."
+    UPDATE = "update", "maps to PATCH /v2/entities/<id>/attrs."
+    DELETE = "delete", "maps to DELETE /v2/entities/<id>/attrs/<attrName> on " \
+                       "every attribute included in the entity or to DELETE " \
+                       "/v2/entities/<id> if no attribute were included in " \
+                       "the entity."
+    REPLACE = "replace", "maps to PUT /v2/entities/<id>/attrs"
+
+
+class Update(BaseModel):
+    actionType: ActionType = Field(
+        description="actionType, to specify the kind of update action to do: "
+                    "either append, appendStrict, update, delete, or replace. "
+    )
+    entities: List[ContextEntity] = Field(
+        description="an array of entities, each entity specified using the "
+                    "JSON entity representation format "
+    )
+
+
+class Notify(BaseModel):
+    subscriptionId: str = Field(
+        description=""
     )
 
 # TODO: Add Registrations and Relationships

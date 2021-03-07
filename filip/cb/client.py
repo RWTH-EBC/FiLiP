@@ -1,5 +1,4 @@
 import re
-import logging
 import requests
 from math import inf
 from typing import Dict, List, Any, Union
@@ -11,16 +10,18 @@ from pydantic import \
 from urllib.parse import urljoin
 from core.base_client import BaseClient
 from core.settings import settings
-from core.models import FiwareHeader
+from core.models import FiwareHeader, PaginationMethod
 from core.simple_query_language import SimpleQuery
 from cb.models import \
     ContextEntity, \
+    ContextEntityKeyValues, \
     ContextAttribute, \
     NamedContextAttribute, \
-    OptionsGetEntities, \
-    Subscription
-
-logger = logging.getLogger('ocb')
+    GetEntitiesOptions, \
+    Subscription,\
+    Registration,\
+    Update, \
+    Query
 
 
 class ContextBrokerClient(BaseClient):
@@ -41,17 +42,20 @@ class ContextBrokerClient(BaseClient):
 
     def __pagination__(self,
                        *,
+                       method: PaginationMethod = PaginationMethod.GET,
                        url: AnyHttpUrl,
                        headers: Dict,
                        limit: Union[PositiveInt, PositiveFloat] = None,
-                       params: Dict = None) -> List[Any]:
+                       params: Dict = None,
+                       data: str = None) -> Union[List[Dict],
+                                                  requests.Response]:
         """
         NGSIv2 implements a pagination mechanism in order to help clients to
         retrieve large sets of resources. This mechanism works for all listing
         operations in the API (e.g. GET /v2/entities, GET /v2/subscriptions,
         POST /v2/op/query, etc.). This function helps getting datasets that are
         larger than the limit for the different GET operations.
-    
+
         https://fiware-orion.readthedocs.io/en/master/user/pagination/index.html
 
         Args:
@@ -64,37 +68,40 @@ class ContextBrokerClient(BaseClient):
             object:
 
         """
-        try:
-            if limit is None:
-                limit = inf
+        if limit is None:
+            limit = inf
+        if limit > 1000:
             params['limit'] = 1000  # maximum items per request
-            res = self.session.get(url=url,
-                                   params=params,
-                                   headers=headers)
-            if res.ok:
-                items = res.json()
-                # do pagination
-                count = int(res.headers['Fiware-Total-Count'])
+        else:
+            params['limit'] = limit
 
-                while len(items) < limit and len(items) < count:
-                    # Establishing the offset from where entities are retrieved
-                    params['offset'] = len(items)
-                    params['limit'] = min(1000, (limit - len(items)))
-                    res = self.session.get(url=url,
+        res = self.session.request(method=method,
+                                   url=url,
+                                   params=params,
+                                   headers=headers,
+                                   data=data)
+        if res.ok:
+            items = res.json()
+            # do pagination
+            count = int(res.headers['Fiware-Total-Count'])
+
+            while len(items) < limit and len(items) < count:
+                # Establishing the offset from where entities are retrieved
+                params['offset'] = len(items)
+                params['limit'] = min(1000, (limit - len(items)))
+                res = self.session.request(method=method,
+                                           url=url,
                                            params=params,
-                                           headers=headers)
-                    if res.ok:
-                        items.extend(res.json())
-                    else:
-                        res.raise_for_status()
-                logger.debug(f'Received: {items}')
-                return items
-            else:
-                res.raise_for_status()
-        except requests.exceptions.RequestException as e:
-            logger.error(e)
-            logger.error(f"Entities could not loaded")
-            raise
+                                           headers=headers,
+                                           data=data)
+                if res.ok:
+                    items.extend(res.json())
+                else:
+                    res.raise_for_status()
+            self.logger.debug(f'Received: {items}')
+            return items
+        else:
+            res.raise_for_status()
 
     # MANAGEMENT API
     def get_version(self) -> Dict:
@@ -111,7 +118,7 @@ class ContextBrokerClient(BaseClient):
             else:
                 res.raise_for_status()
         except requests.exceptions.RequestException as e:
-            logger.error(e)
+            self.logger.error(e)
             raise
 
     def get_resources(self) -> Dict:
@@ -128,7 +135,7 @@ class ContextBrokerClient(BaseClient):
             else:
                 res.raise_for_status()
         except requests.exceptions.RequestException as e:
-            logger.error(e)
+            self.logger.error(e)
             raise
 
     # STATISTICS API
@@ -146,7 +153,7 @@ class ContextBrokerClient(BaseClient):
             else:
                 res.raise_for_status()
         except requests.exceptions.RequestException as e:
-            logger.error(e)
+            self.logger.error(e)
             raise
 
     # CONTEXT MANAGEMENT API ENDPOINTS
@@ -168,7 +175,6 @@ class ContextBrokerClient(BaseClient):
         """
         url = urljoin(settings.CB_URL, f'v2/entities')
         headers = self.headers.copy()
-        res = None
         try:
             res = self.session.post(
                 url=url,
@@ -177,17 +183,15 @@ class ContextBrokerClient(BaseClient):
                                  exclude_defaults=True,
                                  exclude_none=True))
             if res.ok:
-                logger.info(f"Entity successfully posted!")
+                self.logger.info(f"Entity successfully posted!")
                 return res.headers.get('Location')
             else:
                 res.raise_for_status()
         except requests.exceptions.RequestException as e:
-            if update and res.status_code == 422:
-                self.update_entity(entity=entity, add=False)
-            logger.error(e)
-            if res:
-                logger.error(f"Entity could not updated! "
-                             f"Reason: {res.text}")
+            if update and e.response.status_code == 422:
+                return self.update_entity(entity=entity, add=False)
+            msg = "Could not post entity {entity.id}"
+            self.log_error(e=e, msg=msg)
             raise
 
     def get_entity_list(self,
@@ -205,7 +209,7 @@ class ContextBrokerClient(BaseClient):
                         attrs: List[str] = None,
                         metadata: str = None,
                         order_by: str = None,
-                        options: List[OptionsGetEntities] = None
+                        options: List[GetEntitiesOptions] = None
                         ) -> Union[List[ContextEntity], List[Dict[str, Any]]]:
         """
         Retrieves a list of context entities that match different criteria by
@@ -257,7 +261,7 @@ class ContextBrokerClient(BaseClient):
                 detail. Example: accuracy.
             order_by: Criteria for ordering results. See "Ordering Results"
                 section for details. Example: temperature,!speed.
-            options (OptionsGetEntities): Response Format. Note: That if
+            options (GetEntitiesOptions): Response Format. Note: That if
                 'keyValues' or 'values' are used the response model will
                 change to List[Dict[str, Any]]
         Returns:
@@ -317,28 +321,21 @@ class ContextBrokerClient(BaseClient):
         params.update({'options': options})
 
         try:
-            if limit > 1000:
-                items = self.__pagination__(limit=limit,
-                                            url=url,
-                                            params=params,
-                                            headers=headers)
-            else:
-                params.update({'limit': limit})
-                res = self.session.get(url=url,
-                                       params=params,
-                                       headers=headers)
-                items = res.json()
-                if not res.ok:
-                    res.raise_for_status()
-            logger.debug(f'Received: {items}')
+            items = self.__pagination__(method=PaginationMethod.GET,
+                                        limit=limit,
+                                        url=url,
+                                        params=params,
+                                        headers=headers)
             if options == 'count':
                 return parse_obj_as(List[ContextEntity], items)
+            elif 'keyValues' in options:
+                return parse_obj_as(List[ContextEntityKeyValues], items)
             else:
                 return items
 
         except requests.exceptions.RequestException as e:
-            logger.error(e)
-            logger.error(f"Entities could not loaded")
+            msg = "Could not load entities"
+            self.log_error(e=e, msg=msg)
             raise
 
     def get_entity(self,
@@ -385,13 +382,13 @@ class ContextBrokerClient(BaseClient):
         try:
             res = self.session.get(url=url, params=params, headers=headers)
             if res.ok:
-                logger.debug(f'Received: {res.json()}')
+                self.logger.debug(f'Received: {res.json()}')
                 return ContextEntity(**res.json())
             else:
                 res.raise_for_status()
         except requests.exceptions.RequestException as e:
-            logger.error(e)
-            logger.error(f"Entity {entity_id} could not loaded")
+            msg = f"Could not load entity {entity_id}"
+            self.log_error(e=e, msg=msg)
             raise
 
     def get_entity_attributes(self,
@@ -445,8 +442,8 @@ class ContextBrokerClient(BaseClient):
             else:
                 res.raise_for_status()
         except requests.exceptions.RequestException as e:
-            logger.error(e)
-            logger.error(f"Entity {entity_id} could not deleted!")
+            msg = f"Could not load attributes from entity {entity_id}!"
+            self.log_error(e=e, msg=msg)
             raise
 
     def update_entity(self,
@@ -465,7 +462,6 @@ class ContextBrokerClient(BaseClient):
         """
         url = urljoin(settings.CB_URL, f'v2/entities/{entity.id}/attrs')
         headers = self.headers.copy()
-        res = None
         params = {}
         if options:
             params.update({'options': options})
@@ -476,15 +472,12 @@ class ContextBrokerClient(BaseClient):
                                                      exclude_unset=True,
                                                      exclude_none=True))
             if res.ok:
-                logger.info(f"Entity '{entity.id}' "
-                            f"successfully updated!")
+                self.logger.info(f"Entity '{entity.id}' successfully updated!")
             else:
                 res.raise_for_status()
         except requests.exceptions.RequestException as e:
-            logger.error(e)
-            if res.text:
-                logger.error(f"Entity '{entity.id}' could not updated! "
-                             f"Reason: {res.text}")
+            msg = f"Could not update entity {entity.id}!"
+            self.log_error(e=e, msg=msg)
             raise
 
     def delete_entity(self, entity_id: str, entity_type: str = None) -> None:
@@ -495,8 +488,7 @@ class ContextBrokerClient(BaseClient):
 
         Args:
             entity_id: Id of the entity to be deleted
-            type_id: Entity type, to avoid ambiguity in case there are
-            several entities with the same entity id.
+            entity_type: several entities with the same entity id.
         Returns:
             None
         """
@@ -509,12 +501,12 @@ class ContextBrokerClient(BaseClient):
         try:
             res = self.session.delete(url=url, params=params, headers=headers)
             if res.ok:
-                logger.info(f"Entity '{entity_id}' successfully deleted!")
+                self.logger.info(f"Entity '{entity_id}' successfully deleted!")
             else:
                 res.raise_for_status()
         except requests.exceptions.RequestException as e:
-            logger.error(e)
-            logger.error(f"Entity '{entity_id}' could not be deleted!")
+            msg = f"Could not delete entity {entity_id}!"
+            self.log_error(e=e, msg=msg)
             raise
 
     def replace_entity_attributes(self,
@@ -534,7 +526,6 @@ class ContextBrokerClient(BaseClient):
         """
         url = urljoin(settings.CB_URL, f'v2/entities/{entity.id}/attrs')
         headers = self.headers.copy()
-        res = None
         params = {}
         if options:
             params.update({'options': options})
@@ -545,15 +536,12 @@ class ContextBrokerClient(BaseClient):
                                                     exclude_unset=True,
                                                     exclude_none=True))
             if res.ok:
-                logger.info(f"Entity '{entity.id}' "
-                            f"successfully updated!")
+                self.logger.info(f"Entity '{entity.id}' successfully updated!")
             else:
                 res.raise_for_status()
         except requests.exceptions.RequestException as e:
-            logger.error(e)
-            if res.text:
-                logger.error(f"Entity '{entity.id}' could not updated! "
-                             f"Reason: {res.text}")
+            msg = f"Could not replace attribute of entity {entity.id}!"
+            self.log_error(e=e, msg=msg)
             raise
 
     # Attribute operations
@@ -590,14 +578,14 @@ class ContextBrokerClient(BaseClient):
         try:
             res = self.session.get(url=url, params=params, headers=headers)
             if res.ok:
-                logger.debug(f'Received: {res.json()}')
+                self.logger.debug(f'Received: {res.json()}')
                 return ContextAttribute(**res.json())
             else:
                 res.raise_for_status()
         except requests.exceptions.RequestException as e:
-            logger.error(e)
-            logger.error(f"Attribute '{attr_name}' from '{entity_id}' "
-                         f"could not be loaded!")
+            msg = f"Could not load attribute '{attr_name}' from entity" \
+                  f"'{entity_id}' "
+            self.log_error(e=e, msg=msg)
             raise
 
     def update_entity_attribute(self,
@@ -615,7 +603,6 @@ class ContextBrokerClient(BaseClient):
         url = urljoin(settings.CB_URL,
                       f'v2/entities/{entity_id}/attrs/{attr.name}')
         headers = self.headers.copy()
-        res = None
         params = {}
         if entity_type:
             params.update({'type': entity_type})
@@ -626,23 +613,20 @@ class ContextBrokerClient(BaseClient):
                                                   exclude_unset=True,
                                                   exclude_none=True))
             if res.ok:
-                logger.info(f"Attribute '{attr.name}' of '{entity_id}' "
-                            f"successfully updated!")
+                self.logger.info(f"Attribute '{attr.name}' of '{entity_id}' "
+                                 f"successfully updated!")
             else:
                 res.raise_for_status()
         except requests.exceptions.RequestException as e:
-            logger.error(e)
-            if res.text:
-                logger.error(f"Attribute '{attr.name}' of '{entity_id} could "
-                             f"not be updated! "
-                             f"Reason: {res.text}")
+            msg = f"Could not update attribute '{attr.name}' of entity" \
+                  f"'{entity_id}' "
+            self.log_error(e=e, msg=msg)
             raise
 
     def delete_entity_attribute(self,
                                 entity_id: str,
                                 attr_name: str,
-                                entity_type: str = None,
-                                metadata: str = None) -> None:
+                                entity_type: str = None) -> None:
         """
         Removes a specified attribute from an entity.
         Args:
@@ -658,23 +642,20 @@ class ContextBrokerClient(BaseClient):
         url = urljoin(settings.CB_URL,
                       f'v2/entities/{entity_id}/attrs/{attr_name}')
         headers = self.headers.copy()
-        res = None
         params = {}
         if entity_type:
             params.update({'type': entity_type})
         try:
             res = self.session.delete(url=url, headers=headers)
             if res.ok:
-                logger.info(f"Attribute '{attr_name}' of '{entity_id}' "
-                            f"successfully deleted!")
+                self.logger.info(f"Attribute '{attr_name}' of '{entity_id}' "
+                                 f"successfully deleted!")
             else:
                 res.raise_for_status()
         except requests.exceptions.RequestException as e:
-            logger.error(e)
-            if res.text:
-                logger.error(f"Attribute '{attr_name}' of '{entity_id} could "
-                             f"not be deleted! "
-                             f"Reason: {res.text}")
+            msg = f"Could not delete attribute '{attr_name}' of entity" \
+                  f"'{entity_id}' "
+            self.log_error(e=e, msg=msg)
             raise
 
     # Attribute value operations
@@ -700,27 +681,19 @@ class ContextBrokerClient(BaseClient):
                       f'v2/entities/{entity_id}/attrs/{attr_name}/value')
         headers = self.headers.copy()
         params = {}
-        res = None
         if entity_type:
             params.update({'type': entity_type})
         try:
             res = self.session.get(url=url, params=params, headers=headers)
             if res.ok:
-                logger.debug(f'Received: {res.json()}')
+                self.logger.debug(f'Received: {res.json()}')
                 return res.json()
             else:
                 res.raise_for_status()
         except requests.exceptions.RequestException as e:
-            logger.error(e)
-            if res.text:
-                logger.error(
-                    f"Value of attribute '{attr_name}' from '{entity_id}' "
-                    f"could not be loaded! "
-                    f"Reason: {res.text}")
-            else:
-                logger.error(
-                    f"Value of attribute '{attr_name}' from '{entity_id}' "
-                    f"could not be loaded!")
+            msg = f"Could not load value of attribute '{attr_name}' from " \
+                  f"entity'{entity_id}' "
+            self.log_error(e=e, msg=msg)
             raise
 
     def update_attribute_value(self, *,
@@ -732,6 +705,7 @@ class ContextBrokerClient(BaseClient):
         Updates the value of a specified attribute of an entity
 
         Args:
+            value: update value
             entity_id: Id of the entity. Example: Bcn_Welt
             attr_name: Name of the attribute to be retrieved.
                 Example: temperature.
@@ -744,7 +718,6 @@ class ContextBrokerClient(BaseClient):
                       f'v2/entities/{entity_id}/attrs/{attr_name}/value')
         headers = self.headers.copy()
         params = {}
-        res = None
         if entity_type:
             params.update({'type': entity_type})
         try:
@@ -760,16 +733,14 @@ class ContextBrokerClient(BaseClient):
                                        headers=headers,
                                        json=value)
             if res.ok:
-                logger.info(f"Attribute '{attr_name}' of '{entity_id}' "
-                            f"successfully updated!")
+                self.logger.info(f"Attribute '{attr_name}' of '{entity_id}' "
+                                 f"successfully updated!")
             else:
                 res.raise_for_status()
         except requests.exceptions.RequestException as e:
-            logger.error(e)
-            if res.text:
-                logger.error(f"Attribute '{attr_name}' of '{entity_id} could "
-                             f"not be updated! "
-                             f"Reason: {res.text}")
+            msg = f"Could not update value of attribute '{attr_name}' from " \
+                  f"entity '{entity_id}' "
+            self.log_error(e=e, msg=msg)
             raise
 
     # Types Operations
@@ -791,7 +762,6 @@ class ContextBrokerClient(BaseClient):
         url = urljoin(settings.CB_URL, f'v2/types')
         headers = self.headers.copy()
         params = {}
-        res = None
         if limit:
             params.update({'limit': limit})
         if offset:
@@ -801,14 +771,13 @@ class ContextBrokerClient(BaseClient):
         try:
             res = self.session.get(url=url, params=params, headers=headers)
             if res.ok:
-                logger.debug(f'Received: {res.json()}')
+                self.logger.debug(f'Received: {res.json()}')
                 return res.json()
             else:
                 res.raise_for_status()
         except requests.exceptions.RequestException as e:
-            logger.error(e)
-            if res.text:
-                logger.error(f"Types could not be loaded! Reason: {res.text}")
+            msg = f"Could not load entity types!"
+            self.log_error(e=e, msg=msg)
             raise
 
     def get_entity_type(self, entity_type: str) -> Dict[str, Any]:
@@ -823,18 +792,17 @@ class ContextBrokerClient(BaseClient):
         url = urljoin(settings.CB_URL, f'v2/types/{entity_type}')
         headers = self.headers.copy()
         params = {}
-        res = None
         try:
             res = self.session.get(url=url, params=params, headers=headers)
             if res.ok:
-                logger.debug(f'Received: {res.json()}')
+                self.logger.debug(f'Received: {res.json()}')
                 return res.json()
             else:
                 res.raise_for_status()
         except requests.exceptions.RequestException as e:
-            logger.error(e)
-            if res.text:
-                logger.error(f"Types could not be loaded! Reason: {res.text}")
+            msg = f"Could not load entities of type" \
+                  f"'{entity_type}' "
+            self.log_error(e=e, msg=msg)
             raise
 
     # SUBSCRIPTION API ENDPOINTS
@@ -844,10 +812,8 @@ class ContextBrokerClient(BaseClient):
         Returns a list of all the subscriptions present in the system.
         Args:
             limit: Limit the number of subscriptions to be retrieved
-            offset: Skip a number of subscriptions
-
         Returns:
-
+            list of subscriptions
         """
         url = urljoin(settings.CB_URL, f'v2/subscriptions/')
         headers = self.headers.copy()
@@ -857,27 +823,14 @@ class ContextBrokerClient(BaseClient):
         # required
         params.update({'options': 'count'})
         try:
-            if limit > 1000:
-                items = self.__pagination__(limit=limit,
-                                            url=url,
-                                            params=params,
-                                            headers=headers)
-            else:
-                params.update({'limit': limit})
-                res = self.session.get(url=url,
-                                       params=params,
-                                       headers=headers)
-                items = res.json()
-                if not res.ok:
-                    res.raise_for_status()
-
-            logger.debug(f'Received: {items}')
+            items = self.__pagination__(limit=limit,
+                                        url=url,
+                                        params=params,
+                                        headers=headers)
             return parse_obj_as(List[Subscription], items)
-
-
         except requests.exceptions.RequestException as e:
-            logger.error(e)
-            logger.error(f"Entities could not loaded")
+            msg = f"Could not load subscriptions!"
+            self.log_error(e=e, msg=msg)
             raise
 
     def post_subscription(self, subscription: Subscription) -> str:
@@ -894,25 +847,22 @@ class ContextBrokerClient(BaseClient):
         url = urljoin(settings.CB_URL, f'v2/subscriptions')
         headers = self.headers.copy()
         headers.update({'Content-Type': 'application/json'})
-        res = None
         try:
             res = self.session.post(
                 url=url,
                 headers=headers,
                 data=subscription.json(exclude={'id'},
-                                        exclude_unset=True,
-                                        exclude_defaults=True,
-                                        exclude_none=True))
+                                       exclude_unset=True,
+                                       exclude_defaults=True,
+                                       exclude_none=True))
             if res.ok:
-                logger.info(f"Subscription successfully created!")
+                self.logger.info(f"Subscription successfully created!")
                 return res.headers['Location'].split('/')[-1]
             else:
                 res.raise_for_status()
         except requests.exceptions.RequestException as e:
-            logger.error(e)
-            if res.text:
-                logger.error(f"Subscription could not updated! "
-                             f"Reason: {res.text}")
+            msg = f"Could not send subscription!"
+            self.log_error(e=e, msg=msg)
             raise
 
     def get_subscription(self, subscription_id: str) -> Subscription:
@@ -926,21 +876,16 @@ class ContextBrokerClient(BaseClient):
         """
         url = urljoin(settings.CB_URL, f'v2/subscriptions/{subscription_id}')
         headers = self.headers.copy()
-        res = None
         try:
             res = self.session.get(url=url, headers=headers)
             if res.ok:
-                logger.debug(f'Received: {res.json()}')
+                self.logger.debug(f'Received: {res.json()}')
                 return Subscription(**res.json())
             else:
                 res.raise_for_status()
         except requests.exceptions.RequestException as e:
-            logger.error(e)
-            if res.text:
-                logger.error(f"Subscription {subscription_id} could not loaded!"
-                             f"Reason: {res.text}")
-            else:
-                logger.error(f"Subscription {subscription_id} could not loaded")
+            msg = f"Could not load subscription {subscription_id}!"
+            self.log_error(e=e, msg=msg)
             raise
 
     def update_subscription(self, subscription: Subscription):
@@ -954,7 +899,6 @@ class ContextBrokerClient(BaseClient):
         url = urljoin(settings.CB_URL, f'v2/subscriptions/{subscription.id}')
         headers = self.headers.copy()
         headers.update({'Content-Type': 'application/json'})
-        res = None
         try:
             res = self.session.patch(
                 url=url,
@@ -964,14 +908,12 @@ class ContextBrokerClient(BaseClient):
                                        exclude_defaults=True,
                                        exclude_none=True))
             if res.ok:
-                logger.info(f"Subscription successfully updated!")
+                self.logger.info(f"Subscription successfully updated!")
             else:
                 res.raise_for_status()
         except requests.exceptions.RequestException as e:
-            logger.error(e)
-            if res.text:
-                logger.error(f"Subscription could not updated! "
-                             f"Reason: {res.text}")
+            msg = f"Could not update subscription {subscription.id}!"
+            self.log_error(e=e, msg=msg)
             raise
 
     def delete_subscription(self, subscription_id: str) -> None:
@@ -983,27 +925,230 @@ class ContextBrokerClient(BaseClient):
         url = urljoin(settings.CB_URL,
                       f'v2/subscriptions/{subscription_id}')
         headers = self.headers.copy()
-        res = None
         try:
             res = self.session.delete(url=url, headers=headers)
             if res.ok:
-                logger.info(f"Subscription '{subscription_id}' "
-                            f"successfully deleted!")
+                self.logger.info(f"Subscription '{subscription_id}' "
+                                 f"successfully deleted!")
             else:
                 res.raise_for_status()
         except requests.exceptions.RequestException as e:
-            logger.error(e)
-            if res.text:
-                logger.error(
-                    f"Subscription {subscription_id} could not deleted!"
-                    f"Reason: {res.text}")
-            else:
-                logger.error(
-                    f"Subscription {subscription_id} could not loaded")
+            msg = f"Could not delete subscription {subscription_id}!"
+            self.log_error(e=e, msg=msg)
             raise
 
-# TODO: Add Subscitptions and Registrations
+    # Registration API
+    def get_registration_list(self,
+                              *,
+                              limit: PositiveInt = None) -> List[Registration]:
+        """
+        Lists all the context provider registrations present in the system.
 
+        Args:
+            limit: Limit the number of registrations to be retrieved
+        Returns:
+
+        """
+        url = urljoin(settings.CB_URL, f'v2/registration/')
+        headers = self.headers.copy()
+        params = {}
+
+        # We always use the 'count' option to check weather pagination is
+        # required
+        params.update({'options': 'count'})
+        try:
+            items = self.__pagination__(limit=limit,
+                                        url=url,
+                                        params=params,
+                                        headers=headers)
+
+            return parse_obj_as(List[Registration], items)
+        except requests.exceptions.RequestException as e:
+            msg = f"Could not load registrations!"
+            self.log_error(e=e, msg=msg)
+            raise
+
+    def post_registration(self, registration: Registration):
+        """
+        Creates a new context provider registration. This is typically used
+        for binding context sources as providers of certain data. The
+        registration is represented by cb.models.Registration
+
+        Args:
+            registration (Registration):
+
+        Returns:
+
+        """
+        url = urljoin(settings.CB_URL, f'v2/registrations')
+        headers = self.headers.copy()
+        headers.update({'Content-Type': 'application/json'})
+        try:
+            res = self.session.post(
+                url=url,
+                headers=headers,
+                data=registration.json(exclude={'id'},
+                                       exclude_unset=True,
+                                       exclude_defaults=True,
+                                       exclude_none=True))
+            if res.ok:
+                self.logger.info(f"Registration successfully created!")
+                return res.headers['Location'].split('/')[-1]
+            else:
+                res.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            msg = f"Could not send registration {registration.id}!"
+            self.log_error(e=e, msg=msg)
+            raise
+
+    def get_registration(self, registration_id: str) -> Registration:
+        """
+        Retrieves a registration from context broker by id
+        Args:
+            registration_id: id of the registration
+        Returns:
+            Registration
+        """
+        url = urljoin(settings.CB_URL, f'v2/registrations/{registration_id}')
+        headers = self.headers.copy()
+        try:
+            res = self.session.get(url=url, headers=headers)
+            if res.ok:
+                self.logger.debug(f'Received: {res.json()}')
+                return Registration(**res.json())
+            else:
+                res.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            msg = f"Could not load registration {registration_id}!"
+            self.log_error(e=e, msg=msg)
+            raise
+
+    def update_registration(self, registration: Registration):
+        """
+        Only the fields included in the request are updated in the registration.
+        Args:
+            registration: Registration to update
+        Returns:
+
+        """
+        url = urljoin(settings.CB_URL, f'v2/registrations/{registration.id}')
+        headers = self.headers.copy()
+        headers.update({'Content-Type': 'application/json'})
+        try:
+            res = self.session.patch(
+                url=url,
+                headers=headers,
+                data=registration.json(exclude={'id'},
+                                       exclude_unset=True,
+                                       exclude_defaults=True,
+                                       exclude_none=True))
+            if res.ok:
+                self.logger.info(f"Registration successfully updated!")
+            else:
+                res.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            msg = f"Could not update registration {registration.id}!"
+            self.log_error(e=e, msg=msg)
+            raise
+
+    def delete_registration(self, registration_id: str) -> None:
+        """
+        Deletes a subscription from a Context Broker
+        Args:
+            registration_id: id of the subscription
+        """
+        url = urljoin(settings.CB_URL,
+                      f'v2/registrations/{registration_id}')
+        headers = self.headers.copy()
+        try:
+            res = self.session.delete(url=url, headers=headers)
+            if res.ok:
+                self.logger.info(f"Registration '{registration_id}' "
+                                 f"successfully deleted!")
+            else:
+                res.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            msg = f"Could not delete registration {registration_id}!"
+            self.log_error(e=e, msg=msg)
+            raise
+
+    # Batch operation API
+    def update(self,
+               *,
+               update: Update,
+               options: str = None) -> None:
+        """
+        This operation allows to create, update and/or delete several entities
+        in a single batch operation.
+        Args:
+            update (Update): Payload to update
+            options (str): Optional 'keyValues'
+
+        Returns:
+
+        """
+
+        url = urljoin(settings.CB_URL, 'v2/op/update')
+        headers = self.headers.copy()
+        params = {}
+        if options:
+            assert options == 'keyValues', \
+                "Only 'keyValues' is allowed as option"
+            params.update({'options': 'keyValues'})
+        try:
+            res = self.session.post(
+                url=url,
+                headers=headers,
+                params=params,
+                json=update.dict())
+            if res.ok:
+                self.logger.info(f"Update operation '"
+                                 f"{update.actionType.value}' succeeded!")
+            else:
+                res.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            msg = f"Update operation '{update.actionType.value}' failed!"
+            self.log_error(e=e, msg=msg)
+            raise
+
+    def query(self,
+              *,
+              query: Query,
+              limit: PositiveInt = None,
+              order_by: str = None,
+              options: GetEntitiesOptions = None):
+        """
+
+        Args:
+            query (Query):
+            limit (PositiveInt):
+            order_by (str):
+            options ():
+        Returns:
+
+        """
+        url = urljoin(settings.CB_URL, 'v2/op/query')
+        headers = self.headers.copy()
+        headers.update({'Content-Type': 'application/json'})
+        params = {'options': 'count'}
+        if options:
+            params['options'] = ','.join([options, 'count'])
+        try:
+            items = self.__pagination__(method=PaginationMethod.POST,
+                                        url=url,
+                                        headers=headers,
+                                        params=params,
+                                        data=query.json(exclude_unset=True,
+                                                        exclude_none=True),
+                                        limit=limit)
+            if params['options'] == 'count':
+                return parse_obj_as(List[ContextEntity], items)
+            else:
+                return parse_obj_as(List[ContextEntityKeyValues], items)
+        except requests.exceptions.RequestException as e:
+            msg = f"Query operation failed!"
+            self.log_error(e=e, msg=msg)
+            raise
 
 #    def post_relationship(self, json_data=None):
 #        """
@@ -1117,199 +1262,7 @@ class ContextBrokerClient(BaseClient):
 #        return whole_dict
 #
 
-
-
-
-
-
 #
-#    def get_entity_attribute_list(self, entity_name, attr_name_list):
-#        """
-#        Function returns all types and values for a list of attributes of an entity,
-#        given in attr_name_list
-#        :param entity_name: Entity_name - Name of the entity to obtain the
-#        values from
-#        :param attr_name_list: List of attributes - e.g. ["Temperature"]
-#        :return: List, containin all attribute dictionaries e.g.: [{
-#        "value":33,"type":"Float"}]
-#        """
-#        attributes = ','.join(attr_name_list)
-#        parameters = {'{}'.format('options'): '{}'.format('values'),
-#                      '{}'.format('attrs'): attributes}
-#        return self.get_entity(entity_name, parameters)
-#
-#    def update_entity(self, entity):
-#        url = self.url + '/v2/entities/' + entity.id + '/attrs'
-#        payload = entity.get_attributes_key_values()
-#        headers = self.get_header(requtils.HEADER_CONTENT_JSON)
-#        data = json.dumps(payload)
-#        response = self.session.patch(url, headers=headers, data=data)
-#        ok, retstr = requtils.response_ok(response)
-#        if not ok:
-#            level, retstr = requtils.logging_switch(response)
-#            self.log_switch(level, retstr)
-#
-#    def update_attribute(self, entity_name, attr_name, attr_value):
-#        url = self.url + '/v2/entities/' + entity_name + '/attrs/' \
-#                       + attr_name + '/value'
-#        headers = self.get_header(requtils.HEADER_CONTENT_PLAIN)
-#        data = json.dumps(attr_value)
-#        response = self.session.put(url, headers=headers, data=data)
-#        ok, retstr = requtils.response_ok(response)
-#        if not ok:
-#            level, retstr = requtils.logging_switch(response)
-#            self.log_switch(level, retstr)
-#
-#    def add_attribute(self, entity: Entity = None, entity_name: str = None,
-#    attr_dict: dict = None):
-#        # POST /v2/entities/{id}/attrs?options=append
-#        """
-#        This function adds attributes to the Entity in the Context Broker.
-#        This can be done in two ways,
-#        either by first adding the attribute to the Entity object or by
-#        directly sending it from a dict/JSON
-#        The Function first compares it with existing attributes, and only
-#        adds (so updates) the ones not previoulsy existing
-#        :param entity: The updated Entity Instance
-#        :param entity_name: The Entity name which should be updated
-#        :param attribute_dict: A JSON/Dict containing the attributes
-#        :return: -
-#        """
-#        if isinstance(entity, Entity):
-#            attributes = entity.get_attributes()
-#            entity_name = entity.id
-#        else:
-#            attributes = attr_dict
-#            entity_name = entity_name
-#        existing_attributes = self.get_attributes(entity_name)
-#        new_attributes = {k: v for (k, v) in attributes.items() if k not in
-#        existing_attributes}
-#        url = self.url + '/v2/entities/' + entity_name +
-#        '/attrs?options=append'
-#        headers = self.get_header(requtils.HEADER_CONTENT_JSON)
-#        data = json.dumps(new_attributes)
-#        response = self.session.post(url, data=data, headers=headers)
-#        ok, retstr = requtils.response_ok(response)
-#        if not ok:
-#            level, retstr = requtils.logging_switch(response)
-#            self.log_switch(level, retstr)
-#
-#    def get_attributes(self, entity_name: str):
-#        """
-#        For a given entity this function returns all attribute names
-#        :param entity_name: the name of the entity
-#        :return: attributes - list of attributes
-#        """
-#        entity_json = json.loads(self.get_entity(entity_name))
-#        attributes = [k for k in entity_json.keys() if k not in ["id", "type"]]
-#        return attributes
-#
-#    def remove_attributes(self, entity_name):
-#        url = self.url + '/v2/entities/' + entity_name + '/attrs'
-#        response = self.session.put(url)
-#        ok, retstr = requtils.response_ok(response)
-#        if not ok:
-#            level, retstr = requtils.logging_switch(response)
-#            self.log_switch(level, response)
-#
-#    def create_subscription(self, subscription_body, check_duplicate: bool = True):
-#        url = self.url + '/v2/subscriptions'
-#        headers = self.get_header(requtils.HEADER_CONTENT_JSON)
-#        if check_duplicate is True:
-#            exists = self.check_duplicate_subscription(subscription_body)
-#            if exists is True:
-#                logger.info(f"A similar subscription already exists.")
-#        response = self.session.post(url, headers=headers,
-#        data=subscription_body)
-#        if response.headers is None:
-#            return
-#        ok, retstr = requtils.response_ok(response)
-#        if not ok:
-#            level, retstr = requtils.logging_switch(response)
-#            self.log_switch(level, retstr)
-#            return None
-#        else:
-#            location = response.headers.get('Location')
-#            addr_parts = location.split('/')
-#            subscription_id = addr_parts.pop()
-#            return subscription_id
-#
-#    def get_subscription_list(self, limit=100):
-#        url = self.url + '/v2/subscriptions?options=count'
-#        response = self.session.get(url, headers=self.get_header())
-#        sub_count = float(response.headers["Fiware-Total-Count"])
-#        if sub_count >= limit:
-#            response = self.get_pagination(url=url, headers=self.get_header(),
-#                                           limit=limit, count=sub_count)
-#            return response
-#        ok, retstr = requtils.response_ok(response)
-#        if not ok:
-#            level, retstr = requtils.logging_switch(response)
-#            self.log_switch(level, retstr)
-#            return None
-#        json_object = json.loads(response.text)
-#        subscriptions = []
-#        for key in json_object:
-#            subscriptions.append(key["id"])
-#        return subscriptions
-#
-#    def get_subscription(self, subscription_id: str):
-#        url = self.url + '/v2/subscriptions/' + subscription_id
-#        response = self.session.get(url, headers=self.get_header())
-#        ok, retstr = requtils.response_ok(response)
-#        if not ok:
-#            level, retstr = requtils.logging_switch(response)
-#            self.log_switch(level, retstr)
-#
-#    def delete_subscription(self, subscription_id: str):
-#        url = self.url + '/v2/subscriptions/' + subscription_id
-#        response = self.session.delete(url, headers=self.get_header())
-#        ok, retstr = requtils.response_ok(response)
-#        if not ok:
-#            level, retstr = requtils.logging_switch(response)
-#            self.log_switch(level, retstr)
-#
-#    def get_pagination(self, url: str, headers: dict,
-#                       count: float,  limit: int = 20, params=None):
-#        """
-#        NGSIv2 implements a pagination mechanism in order to help clients to retrieve large sets of resources.
-#        This mechanism works for all listing operations in the API (e.g. GET /v2/entities, GET /v2/subscriptions, POST /v2/op/query, etc.).
-#        This function helps getting datasets that are larger than the limit
-#        for the different GET operations.
-#        :param url: Information about the url, obtained from the orginal
-#        function e.g. : http://localhost:1026/v2/subscriptions?limit=20&options=count
-#        :param headers: The headers from the original function,
-#        e.g: {'fiware-service_group': 'crio', 'fiware-servicepath': '/measurements'}
-#        :param count: Number of total elements, obtained by adding
-#        "&options=count" to the url,
-#                        included in the response headers
-#        :param limit: Limit, obtained from the oringal function, default is 20
-#        :return: A list, containing all objects in a dictionary
-#        """
-#        all_data = []
-#        # due to a math, one of the both numbers has to be a float,
-#        # otherwise the value is rounded down not up
-#        no_intervals = int(math.ceil(count / limit))
-#        for i in range(0, no_intervals):
-#            offset = str(i * limit)
-#            if i == 0:
-#                url = url
-#            else:
-#                url = url + '&offset=' + offset
-#            if params == (not None):
-#                response = self.session.get(url=url, headers=headers,
-#                params=params)
-#            else:
-#                response = self.session.get(url=url, headers=headers)
-#            ok, retstr = requtils.response_ok(response)
-#            if not ok:
-#                level, retstr = requtils.logging_switch(response)
-#                self.log_switch(level, retstr)
-#            else:
-#                for resp_dict in json.loads(response.text):
-#                    all_data.append(resp_dict)
-#
-#        return all_data
 #
 #    def check_duplicate_subscription(self, subscription_body, limit: int = 20):
 #        """
@@ -1444,44 +1397,13 @@ class ContextBrokerClient(BaseClient):
 #                        continue
 #        return exists
 #
-#    def delete_all_subscriptions(self):
-#        subscriptions = self.get_subscription_list()
-#        for sub_id in subscriptions:
-#            self.delete_subscription(sub_id)
-#
-#    def post_cmd_v1(self, entity_id: str, entity_type: str,
-#                    cmd_name: str, cmd_value: str):
-#        url = self.url + '/v1/updateContext'
-#        payload = {"updateAction": "UPDATE",
-#                   "contextElements": [
-#                        {"id": entity_id,
-#                         "type": entity_type,
-#                         "isPattern": "false",
-#                         "attributes": [
-#                            {"name": cmd_name,
-#                             "type": "command",
-#                             "value": cmd_value
-#                             }]
-#                         }]
-#                   }
-#        headers = self.get_header(requtils.HEADER_CONTENT_JSON)
-#        data = json.dumps(payload)
-#        response = self.session.post(url, headers=headers, data=data)
-#        ok, retstr = requtils.response_ok(response)
-#        if not ok:
-#            level, retstr = requtils.logging_switch(response)
-#            self.log_switch(level, retstr)
-#
-#    def delete(self, entity_id: str):
-#        url = self.url + '/v2/entities/' + entity_id
-#        response = self.session.delete(url, headers=self.get_header())
-#        ok, retstr = requtils.response_ok(response)
-#        if not ok:
-#            level, retstr = requtils.logging_switch(response)
-#            self.log_switch(level, retstr)
-#
-#    def delete_all_entities(self):
-#        entities = self.get_entities_list()
-#        for entity_id in entities:
-#            self.delete(entity_id)
-#
+
+# def post_cmd_v1(self, entity_id: str, entity_type: str, cmd_name: str,
+# cmd_value: str): url = self.url + '/v1/updateContext' payload = {
+# "updateAction": "UPDATE", "contextElements": [ {"id": entity_id, "type":
+# entity_type, "isPattern": "false", "attributes": [ {"name": cmd_name,
+# "type": "command", "value": cmd_value }] }] } headers = self.get_header(
+# requtils.HEADER_CONTENT_JSON) data = json.dumps(payload) response =
+# self.session.post(url, headers=headers, data=data) ok, retstr =
+# requtils.response_ok(response) if not ok: level, retstr =
+# requtils.logging_switch(response) self.log_switch(level, retstr)

@@ -129,7 +129,7 @@ def iota(config: config.Config):
 
     agent.post_group(device_group)
     agent.update_group(device_group)
-    agent.get_groups(device_group)
+    agent.get_group_list(device_group)
     agent.post_device(device_group, device)
     agent.update_device(device_group, device, {})
 

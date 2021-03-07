@@ -36,6 +36,8 @@ class TestContextBroker(unittest.TestCase):
         test_query_string = test_query_string.strip(';')
 
         query_from_statements = SimpleQuery(statements=test_statements)
+        print(query_from_statements.json(indent=2))
+
         query_from_tuples = SimpleQuery(statements=test_tuples)
         query_from_string = SimpleQuery.parse_str(test_query_string)
 
