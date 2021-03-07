@@ -3,13 +3,9 @@ from typing import Any, List, Dict, Union, Optional, Pattern
 from pydantic import BaseModel, Field, validator, ValidationError, \
     root_validator, create_model, BaseConfig, AnyHttpUrl, Json
 from datetime import datetime
-from core.models import DataTypes
+from core.models import DataType
 from core.simple_query_language import SimpleQuery
 
-
-class PaginationMethod(str, Enum):
-    GET = "GET"
-    POST = "POST"
 
 # Options for queries
 class GetEntitiesOptions(str, Enum):
@@ -29,7 +25,7 @@ class ContextMetadata(BaseModel):
     Note that in NGSI it is not foreseen that metadata may contain nested
     metadata.
     """
-    type: Optional[DataTypes] = Field(
+    type: Optional[DataType] = Field(
         title="metadata type",
         description="a metadata type, describing the NGSI value type of the "
                     "metadata value Allowed characters "
@@ -39,7 +35,7 @@ class ContextMetadata(BaseModel):
         min_length=1,
         regex="^((?![?&#/\*])[\x00-\x7F])*$" # Make it FIWARE-Safe
     )
-    value: Optional[DataTypes] = Field(
+    value: Optional[DataType] = Field(
         title="metadata value",
         description="a metadata value containing the actual metadata"
     )
@@ -60,8 +56,8 @@ class NamedContextMetadata(ContextMetadata):
 
 
 class ContextAttribute(BaseModel):
-    type: DataTypes = Field(
-        default=DataTypes.TEXT,
+    type: DataType = Field(
+        default=DataType.TEXT,
         description="The attribute type represents the NGSI value type of the "
                     "attribute value. Note that FIWARE NGSI has its own type "
                     "system for attribute values, so NGSI value types are not "
@@ -85,9 +81,9 @@ class ContextAttribute(BaseModel):
     @validator('value')
     def validate_value_type(cls, v, values):
         type_ = values['type']
-        if type_ == DataTypes.BOOLEAN:
+        if type_ == DataType.BOOLEAN:
             return bool(v)
-        elif type_ == DataTypes.NUMBER:
+        elif type_ == DataType.NUMBER:
             return float(v)
         else:
             return str(v)
@@ -198,12 +194,12 @@ class ContextEntity(ContextEntityKeyValues):
         if format == 'dict':
             return {key: ContextAttribute(**value) for key, value in
                     self.dict().items() if key not in ContextEntity.__fields__
-                    and value.get('type') is not DataTypes.RELATIONSHIP}
+                    and value.get('type') is not DataType.RELATIONSHIP}
         else:
             return [NamedContextAttribute(name=key, **value) for key, value in
                     self.dict().items() if key not in
                     ContextEntity.__fields__ and
-                    value.get('type') is not DataTypes.RELATIONSHIP]
+                    value.get('type') is not DataType.RELATIONSHIP]
 
     def add_properties(self, attrs: Union[Dict[str, ContextAttribute],
                                          List[NamedContextAttribute]]):
@@ -234,12 +230,12 @@ class ContextEntity(ContextEntityKeyValues):
         if format == 'dict':
             return {key: ContextAttribute(**value) for key, value in
                     self.dict().items() if key not in ContextEntity.__fields__
-                    and value.get('type') is DataTypes.RELATIONSHIP}
+                    and value.get('type') is DataType.RELATIONSHIP}
         else:
             return [NamedContextAttribute(name=key, **value) for key, value in
                     self.dict().items() if key not in
                     ContextEntity.__fields__ and
-                    value.get('type') is DataTypes.RELATIONSHIP]
+                    value.get('type') is DataType.RELATIONSHIP]
 
 def username_alphanumeric(cls, v):
     #assert v.value.isalnum(), 'must be numeric'

@@ -1,4 +1,5 @@
 import unittest
+import requests
 from unittest.mock import Mock, patch
 from uuid import uuid4
 from core.models import FiwareHeader
@@ -50,11 +51,12 @@ class TestAgent(unittest.TestCase):
     def test_service_group_endpoints(self):
         self.client.post_groups(service_groups=[self.service_group1,
                                                 self.service_group2])
-        groups = self.client.get_groups()
-        self.assertEqual(self.client.post_groups(groups, update=False), None)
+        groups = self.client.get_group_list()
+        with self.assertRaises(requests.RequestException):
+            self.client.post_groups(groups, update=False)
 
-        group = self.client.get_group(resource=self.service_group1.resource,
-                                        apikey=self.service_group1.apikey)
+        self.client.get_group(resource=self.service_group1.resource,
+                              apikey=self.service_group1.apikey)
         for gr in groups:
             self.client.delete_group(resource=gr.resource,
                                      apikey=gr.apikey)
@@ -64,9 +66,11 @@ class TestAgent(unittest.TestCase):
         self.assertEqual(device.dict(), self.device)
 
     def test_device_endpoints(self):
-        devices = self.client.get_devices()
-        for device in devices:
-            print(device.json(indent=2, exclude_defaults=True))
+        fiware_header = FiwareHeader(service='filip',
+                                     service_path='/testing')
+        with IoTAClient(fiware_header=fiware_header) as client:
+            # Todo: Add device creation in scope
+            client.get_device_list()
 
     def tearDown(self) -> None:
         self.client.close()

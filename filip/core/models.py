@@ -9,7 +9,7 @@ class NgsiVersion(str, Enum):
     ld = "ld"
 
 
-class DataTypes(str, Enum):
+class DataType(str, Enum):
     """
     When possible reuse schema.org data types
     (Text, Number, DateTime, StructuredValue, etc.).
@@ -31,6 +31,8 @@ class DataTypes(str, Enum):
                        "(Unicode 'FULL STOP' (U+002E)) rather than ',' to " \
                        "indicate a decimal point. Avoid using these symbols " \
                        "as a readability separator."
+    INTEGER = "Integer", "Integer number"
+    FLOAT = "Float", "Floating number. Please check 'DataType.Number'"
     TEXT = "Text", "https://schema.org/Text"
     TIME = "Time", "A point in time recurring on multiple days in the form " \
                    "hh:mm:ss[Z|(+|-)hh:mm] (see XML schema for details)."
@@ -60,6 +62,11 @@ class FiwareHeader(BaseModel):
 
     class Config(BaseConfig):
         allow_population_by_field_name = True
+
+
+class PaginationMethod(str, Enum):
+    GET = "GET"
+    POST = "POST"
 
 
 class UnitCode(BaseModel):

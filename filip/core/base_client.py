@@ -1,8 +1,7 @@
 import logging
 import requests
-from core.models import FiwareHeader
-
-
+from core.models import \
+    FiwareHeader
 
 
 class BaseClient:

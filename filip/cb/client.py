@@ -10,7 +10,7 @@ from pydantic import \
 from urllib.parse import urljoin
 from core.base_client import BaseClient
 from core.settings import settings
-from core.models import FiwareHeader
+from core.models import FiwareHeader, PaginationMethod
 from core.simple_query_language import SimpleQuery
 from cb.models import \
     ContextEntity, \
@@ -21,8 +21,7 @@ from cb.models import \
     Subscription,\
     Registration,\
     Update, \
-    Query, \
-    PaginationMethod
+    Query
 
 
 class ContextBrokerClient(BaseClient):
@@ -56,7 +55,7 @@ class ContextBrokerClient(BaseClient):
         operations in the API (e.g. GET /v2/entities, GET /v2/subscriptions,
         POST /v2/op/query, etc.). This function helps getting datasets that are
         larger than the limit for the different GET operations.
-    
+
         https://fiware-orion.readthedocs.io/en/master/user/pagination/index.html
 
         Args:
