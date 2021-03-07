@@ -2,7 +2,7 @@ import logging
 import requests
 from core.models import FiwareHeader
 
-logger = logging.getLogger(__name__)
+
 
 
 class BaseClient:
@@ -20,6 +20,7 @@ class BaseClient:
                 the same connection
             fiware_header: Fiware header object required for multi tenancy
         """
+        self.logger = logging.getLogger(self.__class__.__name__)
         # TODO: Double Check Header Handling
         self.session = session or requests.Session()
         self.headers = dict()
@@ -33,6 +34,28 @@ class BaseClient:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()
+
+    def log_error(self,
+                  e: requests.RequestException,
+                  msg: str = None) -> None:
+        """
+
+        Args:
+            e: Request Error
+            msg:
+
+        Returns:
+
+        """
+        if e.response and msg:
+            self.logger.error(f"{msg} \n Reason: {e.response.text}")
+        elif e.response and not msg:
+            self.logger.error({e.response.text})
+        elif not e.response and msg:
+            self.logger.error(f"{msg} \n Reason: {e}")
+        else:
+            self.logger.error({e})
+
 
     def close(self):
         self.session.close()

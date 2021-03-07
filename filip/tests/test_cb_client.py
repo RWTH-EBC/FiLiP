@@ -12,7 +12,8 @@ from cb.models import \
     Subscription, \
     Update, \
     Query, \
-    Entity
+    Entity, \
+    ActionType
 
 
 class TestContextBroker(unittest.TestCase):
@@ -42,31 +43,59 @@ class TestContextBroker(unittest.TestCase):
 
     def test_pagination(self):
         # test pagination. only works if enough entities are available
-        fiware_header = FiwareHeader(service='n5geh',
-                                     service_path='/eonerc_main_building')
+        fiware_header = FiwareHeader(service='filip',
+                                     service_path='/testing')
         with ContextBrokerClient(fiware_header=fiware_header) as client:
+            entitiesA = [ContextEntity(id=str(i),
+                                      type=f'filip:object:TypeA') for i in
+                        range(0, 1000)]
+            update = Update(actionType=ActionType.APPEND, entities=entitiesA)
+            client.update(update=update)
+            entitiesB = [ContextEntity(id=str(i),
+                                       type=f'filip:object:TypeB') for i in
+                        range(1000, 2001)]
+            update = Update(actionType=ActionType.APPEND, entities=entitiesB)
+            client.update(update=update)
             self.assertLessEqual(len(client.get_entity_list(limit=1)), 1)
             self.assertLessEqual(len(client.get_entity_list(limit=999)), 999)
             self.assertLessEqual(len(client.get_entity_list(limit=1001)), 1001)
             self.assertLessEqual(len(client.get_entity_list(limit=2001)), 2001)
 
+            update = Update(actionType=ActionType.DELETE,
+                            entities=entitiesA)
+            client.update(update=update)
+            update = Update(actionType=ActionType.DELETE,
+                            entities=entitiesB)
+            client.update(update=update)
+
+
     def test_entity_filtering(self):
-        fiware_header = FiwareHeader(service='n5geh',
-                                     service_path='/eonerc_main_building')
+        fiware_header = FiwareHeader(service='filip',
+                                     service_path='/testing')
         with ContextBrokerClient(fiware_header=fiware_header) as client:
             # test patterns
             with self.assertRaises(re.error):
                 client.get_entity_list(id_pattern='(&()?')
             with self.assertRaises(re.error):
                 client.get_entity_list(type_pattern='(&()?')
+            entitiesA = [ContextEntity(id=str(i),
+                                      type=f'filip:object:TypeA') for i in
+                        range(0, 5)]
+            update = Update(actionType=ActionType.APPEND, entities=entitiesA)
+            client.update(update=update)
+            entitiesB = [ContextEntity(id=str(i),
+                                       type=f'filip:object:TypeB') for i in
+                        range(6, 10)]
+            update = Update(actionType=ActionType.APPEND, entities=entitiesB)
+            client.update(update=update)
 
             entities_all = client.get_entity_list()
             entities_by_id_pattern = client.get_entity_list(
-                id_pattern='bacnet501.*')
+                id_pattern='.*[1-5]')
             self.assertLess(len(entities_by_id_pattern), len(entities_all))
 
             entities_by_type_pattern = client.get_entity_list(
-                type_pattern='humidity$')
+                type_pattern=".*TypeA$")
             self.assertLess(len(entities_by_type_pattern), len(entities_all))
 
             query = SimpleQuery(statements=[('presentValue', '>', 0)])
@@ -77,6 +106,13 @@ class TestContextBroker(unittest.TestCase):
             entities_by_key_values = client.get_entity_list(
                 options=['keyValues'])
             self.assertEqual(len(entities_by_key_values), len(entities_all))
+
+            update = Update(actionType=ActionType.DELETE,
+                            entities=entitiesA)
+            client.update(update=update)
+            update = Update(actionType=ActionType.DELETE,
+                            entities=entitiesB)
+            client.update(update=update)
 
     def test_entity_operations(self):
         with ContextBrokerClient(fiware_header=self.fiware_header) as client:
@@ -119,10 +155,10 @@ class TestContextBroker(unittest.TestCase):
         with ContextBrokerClient(fiware_header=self.fiware_header) as client:
             self.assertIsNotNone(client.post_entity(entity=self.entity,
                                                     update=True))
-            print(client.get_entity_types())
-            print(client.get_entity_types(options='count'))
-            print(client.get_entity_types(options='values'))
-            print(client.get_entity_type(entity_type='MyType'))
+            client.get_entity_types()
+            client.get_entity_types(options='count')
+            client.get_entity_types(options='values')
+            client.get_entity_type(entity_type='MyType')
             client.delete_entity(entity_id=self.entity.id)
 
     def test_subscriptions(self):
@@ -171,23 +207,31 @@ class TestContextBroker(unittest.TestCase):
                 client.delete_subscription(subscription_id=sub.id)
 
     def test_batch_operations(self):
-        fiware_header = FiwareHeader(service='n5geh',
-                                     service_path='/eonerc_main_building')
+        fiware_header = FiwareHeader(service='filip',
+                                     service_path='/testing')
         with ContextBrokerClient(fiware_header=fiware_header) as client:
-            e = Entity(idPattern="bacnet501.*")
-
-            q = Query.parse_obj({"entities":[{"idPattern": "bacnet501.*"}]})
-            print(q.json(indent=2, exclude_unset=True))
-            items = client.query(query=q, options='keyValues')
-            for item in items:
-                print(item.json(indent=2))
+            entities = [ContextEntity(id=str(i),
+                                      type=f'filip:object:TypeA') for i in
+                        range(0, 1000)]
+            update = Update(actionType=ActionType.APPEND, entities=entities)
+            client.update(update=update)
+            entities = [ContextEntity(id=str(i),
+                                      type=f'filip:object:TypeB') for i in
+                        range(0, 1000)]
+            update = Update(actionType=ActionType.APPEND, entities=entities)
+            client.update(update=update)
+            e = Entity(idPattern=".*", typePattern=".*TypeA$")
+            q = Query.parse_obj({"entities":[e.dict(exclude_unset=True)]})
+            self.assertEqual(1000,
+                             len(client.query(query=q, options='keyValues')))
 
     def tearDown(self) -> None:
         # Cleanup test server
         try:
             entities = self.client.get_entity_list()
-            for entity in entities:
-                self.client.delete_entity(entity_id=entity.id)
+            update = Update(actionType=ActionType.DELETE,
+                            entities=entities)
+            self.client.update(update=update)
         except:
             pass
         self.client.close()

@@ -451,7 +451,7 @@ class Entity(BaseModel):
                 (not values['id'] and values['idPattern'])), \
             "Both cannot be used at the same time, but one of them " \
             "must be present."
-        if values['type'] or values['typePattern']:
+        if values['type'] or values.get('typePattern', None):
             assert ((values['type'] and not values['typePattern']) or
                     (not values['id'] and values['typePattern'])), \
                 "Type or pattern of the affected entities. " \
