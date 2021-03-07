@@ -5,6 +5,7 @@ from aenum import Enum
 from typing import Union, List, Tuple, Set
 from pydantic import BaseModel, Field, validator
 
+
 """
 The Simple Query Language provides a simplified syntax to retrieve entities
 which match a set of conditions. A query is composed by a list of
@@ -153,6 +154,11 @@ class SimpleQuery(BaseModel):
           Set[Union[Statement, Tuple[str, str, Union[str, float, int]]]]]):
         statements = self.validate_statements(statements)
         super().__init__(statements=statements)
+
+    class Config():
+        json_encoders = {
+            Statement: lambda v: str(v)
+        }
 
     @validator('statements')
     def validate_statements(cls, statements):

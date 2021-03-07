@@ -5,8 +5,14 @@ from unittest.mock import Mock, patch
 from datetime import datetime
 from core.models import FiwareHeader
 from core.simple_query_language import SimpleQuery, Statement
-from cb.models import ContextEntity, ContextAttribute, Subscription
 from cb.client import ContextBrokerClient
+from cb.models import \
+    ContextEntity, \
+    ContextAttribute, \
+    Subscription, \
+    Update, \
+    Query, \
+    Entity
 
 
 class TestContextBroker(unittest.TestCase):
@@ -163,6 +169,18 @@ class TestContextBroker(unittest.TestCase):
             self.assertIn(sub_res_updated, subs)
             for sub in subs:
                 client.delete_subscription(subscription_id=sub.id)
+
+    def test_batch_operations(self):
+        fiware_header = FiwareHeader(service='n5geh',
+                                     service_path='/eonerc_main_building')
+        with ContextBrokerClient(fiware_header=fiware_header) as client:
+            e = Entity(idPattern="bacnet501.*")
+
+            q = Query.parse_obj({"entities":[{"idPattern": "bacnet501.*"}]})
+            print(q.json(indent=2, exclude_unset=True))
+            items = client.query(query=q, options='keyValues')
+            for item in items:
+                print(item.json(indent=2))
 
     def tearDown(self) -> None:
         # Cleanup test server
