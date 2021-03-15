@@ -79,7 +79,23 @@ class QuantumLeapClient(BaseClient):
         Returns:
 
         """
-        pass
+        url = urljoin(settings.QL_URL, '/v2/notify')
+        headers = self.headers.copy()
+        res = None
+        try:
+            res = self.session.post(
+                url=url,
+                headers=headers,
+                json=notification.json)
+            if res.ok:
+                logger.info(f"Notification successfully posted!")
+            else:
+                res.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            logger.error(e)
+            if res:
+                logger.error(res.text)
+            raise
 
     def post_subscription(self):
         pass
