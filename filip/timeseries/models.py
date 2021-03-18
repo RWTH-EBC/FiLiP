@@ -3,6 +3,7 @@ import logging
 from typing import Any, Dict, Optional, List, Union
 from pydantic import BaseModel, Field, validator, AnyHttpUrl
 from datetime import datetime
+from cb.models import ContextEntity
 
 logger = logging.getLogger()
 
@@ -109,6 +110,18 @@ class EntityIndexedValues(BaseValues):
         description=""
     )
 
+class NotificationMessage(BaseModel):
+    subscriptionId: Optional[str] = Field(
+        description="Id of the subscription the notification comes from",
+    )
+    data: List[ContextEntity] = Field(
+        description="is an array with the notification data itself which "
+                    "includes the entity and all concerned attributes. Each "
+                    "element in the array corresponds to a different entity. "
+                    "By default, the entities are represented in normalized "
+                    "mode. However, using the attrsFormat modifier, a "
+                    "simplified representation mode can be requested."
+    )
 
 
 

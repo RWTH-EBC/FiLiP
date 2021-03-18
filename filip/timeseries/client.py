@@ -1,5 +1,6 @@
 import logging
 import requests
+import json
 from typing import List, Dict, Set, Union
 from urllib.parse import urljoin
 from cb import Subscription as sub
@@ -8,7 +9,9 @@ from core import test
 
 from core import settings
 from core.base_client import BaseClient
-from core.models import FiwareHeader, Notification
+from core.models import FiwareHeader
+from timeseries.models import NotificationMessage
+
 
 
 logger = logging.getLogger(__name__)
@@ -34,15 +37,16 @@ class QuantumLeapClient(BaseClient):
         Returns:
             Dictionary with response
         """
-        url = urljoin(settings.QL_URL, '/version')
+        url = urljoin(settings.QL_URL, '/v2/version')
         try:
-            res = self.session.get(url=url, headers=self.headers)
+            res = self.session.get(url=url)
             if res.ok:
                 return res.json()
             else:
                 res.raise_for_status()
         except requests.exceptions.RequestException as e:
             logger.error(e)
+            raise
 
     def get_health(self):
         """
@@ -56,15 +60,16 @@ class QuantumLeapClient(BaseClient):
         Returns:
             Dictionary with response
         """
-        url = urljoin(settings.QL_URL, '/health')
+        url = urljoin(settings.QL_URL, '/v2/health')
         try:
-            res = self.session.get(url=url, headers=self.headers)
+            res = self.session.get(url=url)
             if res.ok:
                 return res.json()
             else:
                 res.raise_for_status()
         except requests.exceptions.RequestException as e:
             logger.error(e)
+            raise
 
     def post_config(self):
         """
@@ -73,7 +78,7 @@ class QuantumLeapClient(BaseClient):
         raise NotImplementedError
 
     # INPUT API ENDPOINTS
-    def post_notification(self, notification: Notification):
+    def post_notification(self, notification: NotificationMessage):
         """
         Notify QuantumLeap the arrival of a new NGSI notification.
         Returns:
@@ -81,24 +86,42 @@ class QuantumLeapClient(BaseClient):
         """
         url = urljoin(settings.QL_URL, '/v2/notify')
         headers = self.headers.copy()
+        headers.update({'Content-Type': 'application/json'})
         res = None
+        data = []
+        for entity in notification.data:
+            data.append(entity.dict(exclude_unset=True,
+                                 exclude_defaults=True,
+                                 exclude_none=True))
+        data_set = {
+            "data": data,
+            "subscriptionId": notification.subscriptionId
+        }
+
         try:
             res = self.session.post(
                 url=url,
                 headers=headers,
-                json=notification.json)
+                json=data_set)
             if res.ok:
-                logger.info(f"Notification successfully posted!")
+                msg = "Notification successfully posted!"
+                logger.info(msg)
+                return msg
             else:
                 res.raise_for_status()
         except requests.exceptions.RequestException as e:
             logger.error(e)
-            if res:
-                logger.error(res.text)
             raise
 
     def post_subscription(self):
-        pass
+        """
+        This endpoint simplifies the creation of the subscription in orion that will generate the notifications to be
+        consumed by QuantumLeap in order to save historical records. If you want an advanced specification of the
+        notifications, you can always create the subscription in orion at your will. This endpoint just aims to
+        simplify the common use case.
+        Returns:
+        """
+
 
 
     def test_connection(self):
