@@ -74,7 +74,6 @@ class QuantumLeapClient(BaseClient):
         raise NotImplementedError("Endpoint to be implemented..")
 
     # INPUT API ENDPOINTS
-    # TODO:put notificationmessage on core
     def post_notification(self, notification: NotificationMessage):
         """
         Notify QuantumLeap the arrival of a new NGSI notification.
@@ -130,12 +129,12 @@ class QuantumLeapClient(BaseClient):
 
         headers = self.headers.copy()
         params = {}
-        orion_url = urljoin(settings.CB_URL, '/v2')
+        #orion_url = urljoin(settings.CB_URL, '/v2')
+        orion_url = 'http://orion:1026/v2'
         ql_url = urljoin(settings.QL_URL, '/v2')
-        params.update({'orionUrl': orion_url})
-        params.update({'quantumLeapUrl': ql_url})
 
-        url = urljoin(settings.QL_URL, '/v2/subscribe')
+        url = urljoin(settings.QL_URL, '/v2/subscribe?orionUrl=' + orion_url +
+                      '&quantumleapUrl=' + ql_url)
         if entity_type:
             params.update({'entityType': entity_type})
         if entity_id:
@@ -271,7 +270,6 @@ class QuantumLeapClient(BaseClient):
             res = self.session.get(url=url, params=params)
             if res.ok:
                 self.logger.info(f'Received: {res.json()}')
-                # TODO:response model
                 return ResponseModel(**res.json())
             else:
                 res.raise_for_status()
