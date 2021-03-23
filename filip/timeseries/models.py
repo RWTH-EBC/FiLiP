@@ -1,9 +1,10 @@
 from __future__ import annotations
 import logging
-from typing import Any, Dict, Optional, List, Union
-from pydantic import BaseModel, Field, validator, AnyHttpUrl
+from typing import Any, Optional, List, Union
+from pydantic import BaseModel, Field, validator
 from datetime import datetime
 from cb.models import ContextEntity
+import pandas as pd
 
 logger = logging.getLogger()
 
@@ -46,7 +47,7 @@ class IndexArray(str):
         return f'IndexArray({super().__repr__()})'
 
 
-class ValuesArray():
+class ValuesArray(str):
     """
     Array of values of the selected attribute, in the same corresponding order
     of the 'index' array. When using aggregation options, the format of this
@@ -54,6 +55,19 @@ class ValuesArray():
     is day, each value of course may not correspond to original measurements
     but rather the aggregate of measurements in each day.
     """
+    @classmethod
+    def __get_validators__(cls):
+        yield cls.validate
+
+    @classmethod
+    def validate(cls, v):
+        if not isinstance(v, list):
+            raise TypeError('list required')
+        return v
+
+    def __repr__(self):
+        return f'ValueArray({super().__repr__()})'
+
 
 class BaseValues(BaseModel):
     values: List[Any] = Field(
@@ -67,7 +81,8 @@ class BaseValues(BaseModel):
     )
 
     def to_pandas(self):
-        return 0
+        return pd.DataFrame(self)
+
 
 class IndexedValues(BaseValues):
     index: List[Union[float, str, datetime]] = Field(
@@ -110,6 +125,8 @@ class EntityIndexedValues(BaseValues):
         description=""
     )
 
+
+# TODO move to core
 class NotificationMessage(BaseModel):
     subscriptionId: Optional[str] = Field(
         description="Id of the subscription the notification comes from",
@@ -124,3 +141,14 @@ class NotificationMessage(BaseModel):
     )
 
 
+class ResponseModel(BaseModel):
+    entityId: str = None
+    index: List[str] = None
+    attributes: List[AttributeValues] = None
+    values: ValuesArray = None
+    entityType: str = None
+    attrName: str = None
+    entities: List[EntityIndexedValues] = None
+
+    def to_pandas(self):
+        return pd.DataFrame(self).dropna()
