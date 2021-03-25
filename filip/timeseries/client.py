@@ -1,5 +1,4 @@
 import logging
-
 import requests
 from typing import Dict
 from urllib.parse import urljoin
@@ -69,7 +68,7 @@ class QuantumLeapClient(BaseClient):
 
     def post_config(self):
         """
-        (To Be Implemented) Customize your persistance configuration to
+        (To Be Implemented) Customize your persistence configuration to
         better suit your needs."""
         raise NotImplementedError("Endpoint to be implemented..")
 
@@ -129,12 +128,11 @@ class QuantumLeapClient(BaseClient):
 
         headers = self.headers.copy()
         params = {}
-        #orion_url = urljoin(settings.CB_URL, '/v2')
-        orion_url = 'http://orion:1026/v2'
+        url = urljoin(settings.QL_URL, '/v2/subscribe')
+        orion_url = urljoin(settings.CB_URL, '/v2')
         ql_url = urljoin(settings.QL_URL, '/v2')
-
-        url = urljoin(settings.QL_URL, '/v2/subscribe?orionUrl=' + orion_url +
-                      '&quantumleapUrl=' + ql_url)
+        params.update({'orionUrl': orion_url.encode('utf-8')})
+        params.update({'quantumleapUrl': ql_url.encode('utf-8')})
         if entity_type:
             params.update({'entityType': entity_type})
         if entity_id:
@@ -148,6 +146,8 @@ class QuantumLeapClient(BaseClient):
         if notified_attributes:
             params.update({'notifiedAttributes': notified_attributes})
         if throttling:
+            if throttling < 1:
+                raise TypeError("Throttling must be a positive integer")
             params.update({'throttling': throttling})
         if time_index_attribute:
             params.update({'timeIndexAttribute': time_index_attribute})
@@ -212,8 +212,8 @@ class QuantumLeapClient(BaseClient):
             raise
 
     # QUERY API ENDPOINTS
-    def __get_entity_data(self, entity_id: str, attr_name: str = None,
-                          valuesonly: bool = False, options: str = None,
+    def __get_entity_data(self, *, entity_id: str, attr_name: str = None,
+                          values_only: bool = False, options: str = None,
                           entity_type: str = None, aggr_method: str = None,
                           aggr_period: str = None, from_date: str = None,
                           to_date: str = None, last_n: int = None,
@@ -233,7 +233,7 @@ class QuantumLeapClient(BaseClient):
 
         if attr_name:
             url += f'/attrs/{attr_name}'
-        if valuesonly:
+        if values_only:
             url += '/value'
         params = {}
         if options:
@@ -297,7 +297,7 @@ class QuantumLeapClient(BaseClient):
         """
 
         response = self.__get_entity_data(entity_id=entity_id, attrs=attrs,
-                                          valuesonly=False,
+                                          values_only=False,
                                           options=options,
                                           entity_type=entity_type,
                                           aggr_method=aggr_method,
@@ -329,7 +329,7 @@ class QuantumLeapClient(BaseClient):
         """
 
         response = self.__get_entity_data(entity_id=entity_id, attrs=attrs,
-                                          valuesonly=True,
+                                          values_only=True,
                                           options=options,
                                           entity_type=entity_type,
                                           aggr_method=aggr_method,
@@ -359,7 +359,7 @@ class QuantumLeapClient(BaseClient):
         """
 
         response = self.__get_entity_data(entity_id=entity_id,
-                                          attr_name=attr_name, valuesonly=False,
+                                          attr_name=attr_name, values_only=False,
                                           options=options,
                                           entity_type=entity_type,
                                           aggr_method=aggr_method,
@@ -390,7 +390,7 @@ class QuantumLeapClient(BaseClient):
         """
 
         response = self.__get_entity_data(entity_id=entity_id,
-                                          attr_name=attr_name, valuesonly=True,
+                                          attr_name=attr_name, values_only=True,
                                           options=options,
                                           entity_type=entity_type,
                                           aggr_method=aggr_method,
@@ -421,7 +421,7 @@ class QuantumLeapClient(BaseClient):
         raise NotImplementedError("Endpoint to be implemented..")
 
     # /types/{entityType}/value
-    def get_entity_attrs_values_by_type(self, entity_type: str, attrs: str =None,
+    def get_entity_attrs_values_by_type(self, entity_type: str, attrs: str = None,
                                         entity_id: str = None,
                                         aggr_method: str = None,
                                         aggr_period: str = None,
@@ -464,7 +464,7 @@ class QuantumLeapClient(BaseClient):
         #TODO:define args
         """
         response = self.__get_entity_data(entity_id=entity_id,
-                                          attr_name=attr_name, valuesonly=False,
+                                          attr_name=attr_name, values_only=False,
                                           options=options,
                                           entity_type=entity_type,
                                           aggr_method=aggr_method,
@@ -496,7 +496,7 @@ class QuantumLeapClient(BaseClient):
         #TODO:define args
         """
         response = self.__get_entity_data(entity_id=entity_id,
-                                          attr_name=attr_name, valuesonly=True,
+                                          attr_name=attr_name, values_only=True,
                                           options=options,
                                           entity_type=entity_type,
                                           aggr_method=aggr_method,
