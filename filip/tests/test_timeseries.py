@@ -13,7 +13,7 @@ class TestTimeSeries(unittest.TestCase):
         self.attr = {'temperature': {'value': 20,
                                      'type': 'Number'}}
         self.entity_1 = ContextEntity(id='Kitchen', type='Room', **self.attr)
-        self.entity_2 = ContextEntity(id='Living', type='Flat', **self.attr)
+        self.entity_2 = ContextEntity(id='Living', type='Room', **self.attr)
 
     def test_meta_endpoints(self):
         with QuantumLeapClient(fiware_header=self.fiware_header) as client:
@@ -27,11 +27,6 @@ class TestTimeSeries(unittest.TestCase):
                                                        subscriptionId="test")
             self.assertIsNotNone(client.post_notification(notification_message))
             self.assertIsNotNone(client.post_subscription())
-
-            # self.assertEqual(client.delete_entity(self.entity_1.id,
-            # self.entity_1.type), self.entity_1.id)
-            # self.assertEqual(client.delete_entity_type(self.entity_2.type),
-            # self.entity_2.type)
 
     def test_queries_endpoint(self):
         with QuantumLeapClient(fiware_header=self.fiware_header) as client:
@@ -54,7 +49,7 @@ class TestTimeSeries(unittest.TestCase):
 
             # TODO:Test for each parameter
 
-            print(attrs_id.to_pandas())
+            print(attr_id.to_pandas())
 
     def tearDown(self) -> None:
         try:
