@@ -53,8 +53,8 @@ class TestTimeSeries(unittest.TestCase):
 
     def tearDown(self) -> None:
         try:
-            self.client.delete_entity(self.entity_1.id)
-            self.client.delete_entity(self.entity_2.id)
+            self.client.delete_entity(self.entity_1.id, self.entity_1.type)
+            self.client.delete_entity(self.entity_2.id, self.entity_2.type)
         except:
             pass
         self.client.close()
