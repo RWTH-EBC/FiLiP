@@ -6,8 +6,8 @@
 
 # FiLiP 
 
-FiLiP (Fiware Library for Python) is a python software development kit for 
-accelerate the development of web services that use Fiware's Generic 
+FiLiP (Fiware Library for Python) is a python software development kit (SDK) for 
+accelerating the development of web services that use Fiware's Generic 
 Enablers (GEs) as backend.
 
 ## General Motivation
@@ -225,5 +225,5 @@ Efficient Buildings and Indoor Climate
 We gratefully acknowledge the financial support by Federal Ministry \\ 
 for Economic Affairs and Energy (BMWi), promotional reference 03ET1561B.
 
-|<a href="https://www.bmwi.de/Navigation/EN/Home/home.html"> <img alt="BMWE" src="https://www.bmwi.de/SiteGlobals/BMWI/StyleBundles/Bilder/bmwi_logo_en.svgz?__blob=normal&v=10" height="100"> </a>|
-|---|
+<a href="https://www.bmwi.de/Navigation/EN/Home/home.html"> <img alt="BMWE" src="https://www.bmwi.de/SiteGlobals/BMWI/StyleBundles/Bilder/bmwi_logo_en.svgz?__blob=normal&v=10" height="100"> </a>
+
