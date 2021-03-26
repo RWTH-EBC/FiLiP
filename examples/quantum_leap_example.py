@@ -1,11 +1,7 @@
-from filip import ocb, config, utils
-from filip.ocb import subscription as sub
+from filip import cb, utils
+from core import config
 import filip.timeseries as ts
 import time, datetime
-import streamlit as st
-import pandas as pd
-import streamlit as st
-import pandas as pd
 
 from pathlib import Path
 import os
@@ -25,7 +21,7 @@ def create_entity(orion_cb):
            "leaves": {"value": "green",
                       "type": "String"},
            }
-    oak_entity = ocb.Entity(oak)
+    oak_entity = cb.Entity(oak)
 
     orion_cb.post_json(oak_entity.get_json())
     return oak_entity
@@ -91,9 +87,9 @@ def create_example_dataframe():
     :return: a dataframe
     """
     CONFIG = config.Config()
-    ORION_CB = ocb.Orion(CONFIG)
+    ORION_CB = cb.ContextBroker(CONFIG)
     oak = create_entity(ORION_CB)
-    quantum = ts.QuantumLeap(CONFIG)
+    quantum = ts.QuantumLeapClient(CONFIG)
     """
     Function creates a test entity and registers it with the context broker 
     :param orion_cb: A Orion Context Broker Instance
@@ -108,7 +104,7 @@ def create_example_dataframe():
            "leaves": {"value": "green",
                       "type": "String"},
            }
-    oak_entity = ocb.Entity(oak)
+    oak_entity = cb.Entity(oak)
 
     ORION_CB.post_json(oak_entity.get_json())
     return oak_entity
@@ -174,9 +170,9 @@ def create_example_dataframe():
     :return: a dataframe
     """
     CONFIG = config.Config()
-    ORION_CB = orion.Orion(CONFIG)
+    ORION_CB = orion.ContextBroker(CONFIG)
     oak = create_entity(ORION_CB)
-    quantum = ts.QuantumLeap(CONFIG)
+    quantum = ts.QuantumLeapClient(CONFIG)
 
     notify_url =  "http://quantumleap:8668/v2/notify"
 
@@ -213,7 +209,7 @@ if __name__=="__main__":
     CONFIG = config.Config(path_to_config)
 
     # creating an instance of the ORION context broker
-    ORION_CB = ocb.Orion(CONFIG)
+    ORION_CB = cb.ContextBroker(CONFIG)
 
 #    ORION_CB.fiware_service = None
 
@@ -221,7 +217,7 @@ if __name__=="__main__":
     oak = create_entity(ORION_CB)
 
     # create an instance of Quantumleap
-    quantum = ts.QuantumLeap(CONFIG)
+    quantum = ts.QuantumLeapClient(CONFIG)
 
 #    quantum.fiware_service = None
     """ 

@@ -1,4 +1,4 @@
-from filip.client import Client
+from filip import Client
 
 if __name__ == '__main__':
     client = Client(config_file="../config.json")

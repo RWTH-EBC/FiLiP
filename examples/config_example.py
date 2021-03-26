@@ -1,4 +1,4 @@
-from filip.config import Config
+from core.config import Config
 import os
 
 '''
@@ -13,14 +13,14 @@ import os
  guessed based on the provided information. 
  
  Imported Note:
- Although Urls are also guessed the safest is to set the service url directly
+ Although Urls are also guessed the safest is to set the service_group url directly
  
 '''
 
 if __name__=='__main__':
     # Example using *.json-config-file
-    config = Config(path = '../config.json', loglevel="DEBUG")
-    print(config)
+    #config = Config(path = '../config.json', loglevel="DEBUG")
+    #print(config)
 
     # Example using environment variables
     os.environ["CONFIG_FILE"] = "False"

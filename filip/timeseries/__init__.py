@@ -1,1 +1,1 @@
-from .timeseries import QuantumLeap
+from .client import QuantumLeapClient

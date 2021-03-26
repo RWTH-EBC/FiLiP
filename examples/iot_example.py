@@ -1,5 +1,5 @@
-import filip.config as config
-from filip.ocb import Orion, FiwareService
+import core.config as config
+from filip.cb import ContextBroker, FiwareService
 from filip.iota import Agent, DeviceGroup, Device
 import os
 from pathlib import Path
@@ -9,12 +9,12 @@ from pathlib import Path
 
 def iota(config: config.Config):
     # Creating an Instance of the Context Broker
-    ocb = Orion(config)
+    ocb = ContextBroker(config)
 
     # Creating an Instance of the IoT-Agent in the UL-Version
     agent = Agent(config)
 
-    # set the service path
+    # set the service_group path
     fiware_service = FiwareService("filip",
                                          "/iot_example")
     ocb.set_service(fiware_service)
@@ -129,7 +129,7 @@ def iota(config: config.Config):
 
     agent.post_group(device_group)
     agent.update_group(device_group)
-    agent.get_groups(device_group)
+    agent.get_group_list(device_group)
     agent.post_device(device_group, device)
     agent.update_device(device_group, device, {})
 
