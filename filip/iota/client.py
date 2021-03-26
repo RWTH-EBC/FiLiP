@@ -33,7 +33,7 @@ class IoTAClient(BaseClient):
                 return res.json()
             else:
                 res.raise_for_status()
-        except requests.exceptions.RequestException as e:
+        except requests.RequestException as e:
             self.logger.error(e)
         raise
 
@@ -202,7 +202,7 @@ class IoTAClient(BaseClient):
                 self.post_group(service_group=service_group)
             else:
                 res.raise_for_status()
-        except requests.exceptions.RequestException as e:
+        except requests.RequestException as e:
             self.log_error(e=e, msg=None)
             raise
 
@@ -228,7 +228,7 @@ class IoTAClient(BaseClient):
                                  f"apikey: '{apikey}' successfully deleted!")
             else:
                 res.raise_for_status()
-        except requests.exceptions.RequestException as e:
+        except requests.RequestException as e:
             msg = f"Could not delete ServiceGroup with resource " \
                   f"'{resource}' and apikey '{apikey}'!"
             self.log_error(e=e, msg=msg)
@@ -259,7 +259,7 @@ class IoTAClient(BaseClient):
                 self.logger.info(f"Device successfully posted!")
             else:
                 res.raise_for_status()
-        except requests.exceptions.RequestException as e:
+        except requests.RequestException as e:
             if update:
                 return self.update_devices(devices=devices, add=False)
             msg = "Could not update devices"
@@ -309,7 +309,7 @@ class IoTAClient(BaseClient):
                 return parse_obj_as(List[Device], res.json()['devices'])
             else:
                 res.raise_for_status()
-        except requests.exceptions.RequestException as e:
+        except requests.RequestException as e:
             self.log_error(e=e, msg=None)
             raise
 
@@ -331,7 +331,7 @@ class IoTAClient(BaseClient):
                 return Device.parse_raw(res.json())
             else:
                 res.raise_for_status()
-        except requests.exceptions.RequestException as e:
+        except requests.RequestException as e:
             self.log_error(e=e, msg=None)
             raise
 
@@ -357,7 +357,7 @@ class IoTAClient(BaseClient):
                 self.post_device(device=device, update=False)
             else:
                 res.raise_for_status()
-        except requests.exceptions.RequestException as e:
+        except requests.RequestException as e:
             msg = f"Could not update device '{device.device_id}'"
             self.log_error(e=e, msg=msg)
             raise
@@ -396,7 +396,7 @@ class IoTAClient(BaseClient):
                 self.logger.info(f"Device {device_id} successfully deleted!")
             else:
                 res.raise_for_status()
-        except requests.exceptions.RequestException as e:
+        except requests.RequestException as e:
             msg = f"Could not delete device {device_id}!"
             self.log_error(e=e, msg=msg)
             raise
@@ -413,7 +413,7 @@ class IoTAClient(BaseClient):
                 return res.json()['level']
             else:
                 res.raise_for_status()
-        except requests.exceptions.RequestException as e:
+        except requests.RequestException as e:
             self.log_error(e=e)
             raise
 
@@ -433,6 +433,6 @@ class IoTAClient(BaseClient):
                                  f"changed to '{level}'")
             else:
                 res.raise_for_status()
-        except requests.exceptions.RequestException as e:
+        except requests.RequestException as e:
             self.log_error(e=e)
             raise

@@ -117,7 +117,7 @@ class ContextBrokerClient(BaseClient):
                 return res.json()
             else:
                 res.raise_for_status()
-        except requests.exceptions.RequestException as e:
+        except requests.RequestException as e:
             self.logger.error(e)
             raise
 
@@ -134,7 +134,7 @@ class ContextBrokerClient(BaseClient):
                 return res.json()
             else:
                 res.raise_for_status()
-        except requests.exceptions.RequestException as e:
+        except requests.RequestException as e:
             self.logger.error(e)
             raise
 
@@ -152,7 +152,7 @@ class ContextBrokerClient(BaseClient):
                 return res.json()
             else:
                 res.raise_for_status()
-        except requests.exceptions.RequestException as e:
+        except requests.RequestException as e:
             self.logger.error(e)
             raise
 
@@ -187,7 +187,7 @@ class ContextBrokerClient(BaseClient):
                 return res.headers.get('Location')
             else:
                 res.raise_for_status()
-        except requests.exceptions.RequestException as e:
+        except requests.RequestException as e:
             if update and e.response.status_code == 422:
                 return self.update_entity(entity=entity, add=False)
             msg = "Could not post entity {entity.id}"
@@ -333,7 +333,7 @@ class ContextBrokerClient(BaseClient):
             else:
                 return items
 
-        except requests.exceptions.RequestException as e:
+        except requests.RequestException as e:
             msg = "Could not load entities"
             self.log_error(e=e, msg=msg)
             raise
@@ -386,7 +386,7 @@ class ContextBrokerClient(BaseClient):
                 return ContextEntity(**res.json())
             else:
                 res.raise_for_status()
-        except requests.exceptions.RequestException as e:
+        except requests.RequestException as e:
             msg = f"Could not load entity {entity_id}"
             self.log_error(e=e, msg=msg)
             raise
@@ -441,7 +441,7 @@ class ContextBrokerClient(BaseClient):
                         for key, values in res.json().items()}
             else:
                 res.raise_for_status()
-        except requests.exceptions.RequestException as e:
+        except requests.RequestException as e:
             msg = f"Could not load attributes from entity {entity_id}!"
             self.log_error(e=e, msg=msg)
             raise
@@ -475,7 +475,7 @@ class ContextBrokerClient(BaseClient):
                 self.logger.info(f"Entity '{entity.id}' successfully updated!")
             else:
                 res.raise_for_status()
-        except requests.exceptions.RequestException as e:
+        except requests.RequestException as e:
             msg = f"Could not update entity {entity.id}!"
             self.log_error(e=e, msg=msg)
             raise
@@ -504,7 +504,7 @@ class ContextBrokerClient(BaseClient):
                 self.logger.info(f"Entity '{entity_id}' successfully deleted!")
             else:
                 res.raise_for_status()
-        except requests.exceptions.RequestException as e:
+        except requests.RequestException as e:
             msg = f"Could not delete entity {entity_id}!"
             self.log_error(e=e, msg=msg)
             raise
@@ -539,7 +539,7 @@ class ContextBrokerClient(BaseClient):
                 self.logger.info(f"Entity '{entity.id}' successfully updated!")
             else:
                 res.raise_for_status()
-        except requests.exceptions.RequestException as e:
+        except requests.RequestException as e:
             msg = f"Could not replace attribute of entity {entity.id}!"
             self.log_error(e=e, msg=msg)
             raise
@@ -582,7 +582,7 @@ class ContextBrokerClient(BaseClient):
                 return ContextAttribute(**res.json())
             else:
                 res.raise_for_status()
-        except requests.exceptions.RequestException as e:
+        except requests.RequestException as e:
             msg = f"Could not load attribute '{attr_name}' from entity" \
                   f"'{entity_id}' "
             self.log_error(e=e, msg=msg)
@@ -617,7 +617,7 @@ class ContextBrokerClient(BaseClient):
                                  f"successfully updated!")
             else:
                 res.raise_for_status()
-        except requests.exceptions.RequestException as e:
+        except requests.RequestException as e:
             msg = f"Could not update attribute '{attr.name}' of entity" \
                   f"'{entity_id}' "
             self.log_error(e=e, msg=msg)
@@ -652,7 +652,7 @@ class ContextBrokerClient(BaseClient):
                                  f"successfully deleted!")
             else:
                 res.raise_for_status()
-        except requests.exceptions.RequestException as e:
+        except requests.RequestException as e:
             msg = f"Could not delete attribute '{attr_name}' of entity" \
                   f"'{entity_id}' "
             self.log_error(e=e, msg=msg)
@@ -690,7 +690,7 @@ class ContextBrokerClient(BaseClient):
                 return res.json()
             else:
                 res.raise_for_status()
-        except requests.exceptions.RequestException as e:
+        except requests.RequestException as e:
             msg = f"Could not load value of attribute '{attr_name}' from " \
                   f"entity'{entity_id}' "
             self.log_error(e=e, msg=msg)
@@ -737,7 +737,7 @@ class ContextBrokerClient(BaseClient):
                                  f"successfully updated!")
             else:
                 res.raise_for_status()
-        except requests.exceptions.RequestException as e:
+        except requests.RequestException as e:
             msg = f"Could not update value of attribute '{attr_name}' from " \
                   f"entity '{entity_id}' "
             self.log_error(e=e, msg=msg)
@@ -775,7 +775,7 @@ class ContextBrokerClient(BaseClient):
                 return res.json()
             else:
                 res.raise_for_status()
-        except requests.exceptions.RequestException as e:
+        except requests.RequestException as e:
             msg = f"Could not load entity types!"
             self.log_error(e=e, msg=msg)
             raise
@@ -799,7 +799,7 @@ class ContextBrokerClient(BaseClient):
                 return res.json()
             else:
                 res.raise_for_status()
-        except requests.exceptions.RequestException as e:
+        except requests.RequestException as e:
             msg = f"Could not load entities of type" \
                   f"'{entity_type}' "
             self.log_error(e=e, msg=msg)
@@ -828,7 +828,7 @@ class ContextBrokerClient(BaseClient):
                                         params=params,
                                         headers=headers)
             return parse_obj_as(List[Subscription], items)
-        except requests.exceptions.RequestException as e:
+        except requests.RequestException as e:
             msg = f"Could not load subscriptions!"
             self.log_error(e=e, msg=msg)
             raise
@@ -860,7 +860,7 @@ class ContextBrokerClient(BaseClient):
                 return res.headers['Location'].split('/')[-1]
             else:
                 res.raise_for_status()
-        except requests.exceptions.RequestException as e:
+        except requests.RequestException as e:
             msg = f"Could not send subscription!"
             self.log_error(e=e, msg=msg)
             raise
@@ -883,7 +883,7 @@ class ContextBrokerClient(BaseClient):
                 return Subscription(**res.json())
             else:
                 res.raise_for_status()
-        except requests.exceptions.RequestException as e:
+        except requests.RequestException as e:
             msg = f"Could not load subscription {subscription_id}!"
             self.log_error(e=e, msg=msg)
             raise
@@ -911,7 +911,7 @@ class ContextBrokerClient(BaseClient):
                 self.logger.info(f"Subscription successfully updated!")
             else:
                 res.raise_for_status()
-        except requests.exceptions.RequestException as e:
+        except requests.RequestException as e:
             msg = f"Could not update subscription {subscription.id}!"
             self.log_error(e=e, msg=msg)
             raise
@@ -932,7 +932,7 @@ class ContextBrokerClient(BaseClient):
                                  f"successfully deleted!")
             else:
                 res.raise_for_status()
-        except requests.exceptions.RequestException as e:
+        except requests.RequestException as e:
             msg = f"Could not delete subscription {subscription_id}!"
             self.log_error(e=e, msg=msg)
             raise
@@ -963,7 +963,7 @@ class ContextBrokerClient(BaseClient):
                                         headers=headers)
 
             return parse_obj_as(List[Registration], items)
-        except requests.exceptions.RequestException as e:
+        except requests.RequestException as e:
             msg = f"Could not load registrations!"
             self.log_error(e=e, msg=msg)
             raise
@@ -996,7 +996,7 @@ class ContextBrokerClient(BaseClient):
                 return res.headers['Location'].split('/')[-1]
             else:
                 res.raise_for_status()
-        except requests.exceptions.RequestException as e:
+        except requests.RequestException as e:
             msg = f"Could not send registration {registration.id}!"
             self.log_error(e=e, msg=msg)
             raise
@@ -1018,7 +1018,7 @@ class ContextBrokerClient(BaseClient):
                 return Registration(**res.json())
             else:
                 res.raise_for_status()
-        except requests.exceptions.RequestException as e:
+        except requests.RequestException as e:
             msg = f"Could not load registration {registration_id}!"
             self.log_error(e=e, msg=msg)
             raise
@@ -1046,7 +1046,7 @@ class ContextBrokerClient(BaseClient):
                 self.logger.info(f"Registration successfully updated!")
             else:
                 res.raise_for_status()
-        except requests.exceptions.RequestException as e:
+        except requests.RequestException as e:
             msg = f"Could not update registration {registration.id}!"
             self.log_error(e=e, msg=msg)
             raise
@@ -1067,7 +1067,7 @@ class ContextBrokerClient(BaseClient):
                                  f"successfully deleted!")
             else:
                 res.raise_for_status()
-        except requests.exceptions.RequestException as e:
+        except requests.RequestException as e:
             msg = f"Could not delete registration {registration_id}!"
             self.log_error(e=e, msg=msg)
             raise
@@ -1106,7 +1106,7 @@ class ContextBrokerClient(BaseClient):
                                  f"{update.actionType.value}' succeeded!")
             else:
                 res.raise_for_status()
-        except requests.exceptions.RequestException as e:
+        except requests.RequestException as e:
             msg = f"Update operation '{update.actionType.value}' failed!"
             self.log_error(e=e, msg=msg)
             raise
@@ -1145,7 +1145,7 @@ class ContextBrokerClient(BaseClient):
                 return parse_obj_as(List[ContextEntity], items)
             else:
                 return parse_obj_as(List[ContextEntityKeyValues], items)
-        except requests.exceptions.RequestException as e:
+        except requests.RequestException as e:
             msg = f"Query operation failed!"
             self.log_error(e=e, msg=msg)
             raise
