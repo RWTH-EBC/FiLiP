@@ -21,10 +21,6 @@ If environment variables are not set properly, try more explicit command in Wind
 Be aware of forward slashes (for python) and backslashes (for Windows). You might need to encompass paths in inverted commas (") in order to handle spaces.
 
 
-
-.. toctree::
-   :maxdepth: 3
-
 Indices and tables
 ==================
 
