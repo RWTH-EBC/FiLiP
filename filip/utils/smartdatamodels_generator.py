@@ -21,20 +21,24 @@ if __name__ == '__main__':
     path.mkdir(parents=True, exist_ok=True)
     with TemporaryDirectory() as temp:
         temp = Path(temp)
-        url = 'https://json.schemastore.org/grafana-dashboard-5.x'
+        #url = 'https://smart-data-models.github.io/dataModel.Building/Building/schema.json'
+        url = 'https://smart-data-models.github.io/data-models/common-schema.json#/definitions/GSMA-Commons'
         r = requests.get(url)
         with open(temp.joinpath('schema.json'), 'wb') as f:
             f.write(r.content)
         output = Path(temp).joinpath('model.py')
-        #input = Path(os.getcwd())
         input = temp.joinpath('schema.json')
         generate(
             input_=input,
             input_file_type=InputFileType.JsonSchema,
-            #input_filename="schema-example.json",
             output=output,
-            class_name='Grafana_Dashboard_5x'
+            #class_name='SmartDataModels_Building'
+            class_name='SmartDataModels_GSMA'
+
         )
-        filename = path.joinpath('grafana_dashboard.py')
+        #filename = path.joinpath('smart_data_models_building.py')
+        filename = path.joinpath('smart_data_models_gsma.py')
         shutil.move(str(output), str(filename))
+
+
 
