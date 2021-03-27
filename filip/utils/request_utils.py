@@ -1,4 +1,3 @@
-import requests
 import logging
 import json
 from pydantic import BaseModel, AnyHttpUrl
