@@ -28,7 +28,6 @@ class BaseClient:
                                  f"{self.__class__.__name__}")
         self.base_url = url
         self.session = session or requests.Session()
-        self.headers = dict()
         if not fiware_header:
             fiware_header = FiwareHeader()
         self.headers.update(fiware_header.dict(by_alias=True))
@@ -39,6 +38,10 @@ class BaseClient:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()
+
+    @property
+    def headers(self):
+        return self.session.headers
 
     def log_error(self,
                   err: requests.RequestException,

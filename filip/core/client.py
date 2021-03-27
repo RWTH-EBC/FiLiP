@@ -6,7 +6,6 @@ from requests import Session
 from typing import Optional, Union, Dict
 from pathlib import Path
 from pydantic import BaseModel, AnyHttpUrl
-from filip.core.config import Config
 from filip.core.base_client import BaseClient
 from filip.core.models import FiwareHeader
 from filip.iota.client import IoTAClient
@@ -76,10 +75,6 @@ class Client(BaseClient):
             self._config = self.Settings.parse_file(config)
         else:
             self._config = self.Settings.parse_obj(config)
-
-    @property
-    def headers(self):
-        return self.session.headers
 
     @property
     def cert(self):
