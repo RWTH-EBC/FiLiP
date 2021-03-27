@@ -22,9 +22,10 @@ class BaseClient:
         """
         self.logger = logging.getLogger(self.__class__.__name__)
         # TODO: Double Check Header Handling
-        if not validators.url(url):
-            raise ValueError(f"Found invalid url scheme for "
-                             f"{self.__class__.__name__}")
+        if url:
+            if not validators.url(url):
+                raise ValueError(f"Found invalid url scheme for "
+                                 f"{self.__class__.__name__}")
         self.base_url = url
         self.session = session or requests.Session()
         self.headers = dict()
