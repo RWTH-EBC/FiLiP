@@ -1,6 +1,6 @@
 import requests
 from typing import List, Dict, Set, Union
-from pydantic import parse_obj_as
+from pydantic import parse_obj_as, AnyHttpUrl
 from urllib.parse import urljoin
 from filip.core import settings
 from filip.core.base_client import BaseClient
@@ -14,9 +14,14 @@ class IoTAClient(BaseClient):
     specifications from here:
     https://iotagent-node-lib.readthedocs.io/en/latest/
     """
-    def __init__(self, session: requests.Session = None,
+    def __init__(self,
+                 *,
+                 url: str = None,
+                 session: requests.Session = None,
                  fiware_header: FiwareHeader = None):
-        super().__init__(session=session,
+        url = url or settings.IOTA_URL
+        super().__init__(url=url,
+                         session=session,
                          fiware_header=fiware_header)
 
     # ABOUT API
@@ -26,15 +31,15 @@ class IoTAClient(BaseClient):
         Returns:
             Dictionary with response
         """
-        url = urljoin(settings.IOTA_URL, 'iot/about')
+        url = urljoin(self.base_url, 'iot/about')
         try:
             res = self.session.get(url=url, headers=self.headers)
             if res.ok:
                 return res.json()
             else:
                 res.raise_for_status()
-        except requests.RequestException as e:
-            self.logger.error(e)
+        except requests.RequestException as err:
+            self.logger.error(err)
         raise
 
     # SERVICE GROUP API
@@ -62,7 +67,7 @@ class IoTAClient(BaseClient):
                 assert group.subservice == self.headers['fiware-servicepath'], \
                     "Service group subservice does not math fiware service path"
 
-        url = urljoin(settings.IOTA_URL, 'iot/services')
+        url = urljoin(self.base_url, 'iot/services')
         headers = self.headers
         data = {'services': [group.dict(exclude={'service', 'subservice'},
                                         exclude_defaults=True) for
@@ -85,8 +90,8 @@ class IoTAClient(BaseClient):
                     res.raise_for_status()
             else:
                 res.raise_for_status()
-        except requests.RequestException as e:
-            self.log_error(e=e, msg=None)
+        except requests.RequestException as err:
+            self.log_error(err=err, msg=None)
             raise
 
     def post_group(self, service_group: ServiceGroup, update: bool = False):
@@ -111,7 +116,7 @@ class IoTAClient(BaseClient):
         Returns:
 
         """
-        url = urljoin(settings.IOTA_URL, 'iot/services')
+        url = urljoin(self.base_url, 'iot/services')
         headers = self.headers
         try:
             res = self.session.get(url=url, headers=headers)
@@ -119,8 +124,8 @@ class IoTAClient(BaseClient):
                 return parse_obj_as(List[ServiceGroup], res.json()['services'])
             else:
                 res.raise_for_status()
-        except requests.RequestException as e:
-            self.log_error(e=e, msg=None)
+        except requests.RequestException as err:
+            self.log_error(err=err, msg=None)
             raise
 
     def get_group(self, *, resource: str, apikey: str) -> ServiceGroup:
@@ -133,7 +138,7 @@ class IoTAClient(BaseClient):
         Returns:
 
         """
-        url = urljoin(settings.IOTA_URL, 'iot/services')
+        url = urljoin(self.base_url, 'iot/services')
         headers = self.headers
         params = {key: value for key, value in locals().items()}
         res = None
@@ -143,8 +148,8 @@ class IoTAClient(BaseClient):
                 return ServiceGroup(**res.json()['services'][0])
             else:
                 res.raise_for_status()
-        except requests.RequestException as e:
-            self.log_error(e=e, msg=None)
+        except requests.RequestException as err:
+            self.log_error(err=err, msg=None)
             raise
 
     def update_groups(self, *,
@@ -187,7 +192,7 @@ class IoTAClient(BaseClient):
                 fields = set(fields)
         else:
             fields = None
-        url = urljoin(settings.IOTA_URL, 'iot/services')
+        url = urljoin(self.base_url, 'iot/services')
         headers = self.headers.update()
         params = service_group.dict(include={'resource', 'apikey'})
         try:
@@ -202,8 +207,8 @@ class IoTAClient(BaseClient):
                 self.post_group(service_group=service_group)
             else:
                 res.raise_for_status()
-        except requests.RequestException as e:
-            self.log_error(e=e, msg=None)
+        except requests.RequestException as err:
+            self.log_error(err=err, msg=None)
             raise
 
     def delete_group(self, *, resource: str, apikey: str):
@@ -216,7 +221,7 @@ class IoTAClient(BaseClient):
         Returns:
 
         """
-        url = urljoin(settings.IOTA_URL, 'iot/services')
+        url = urljoin(self.base_url, 'iot/services')
         headers = self.headers
         params = {key: value for key, value in locals().items()}
         res = None
@@ -228,10 +233,10 @@ class IoTAClient(BaseClient):
                                  f"apikey: '{apikey}' successfully deleted!")
             else:
                 res.raise_for_status()
-        except requests.RequestException as e:
+        except requests.RequestException as err:
             msg = f"Could not delete ServiceGroup with resource " \
                   f"'{resource}' and apikey '{apikey}'!"
-            self.log_error(e=e, msg=msg)
+            self.log_error(err=err, msg=msg)
             raise
 
     # DEVICE API
@@ -250,7 +255,7 @@ class IoTAClient(BaseClient):
         """
         if not isinstance(devices, list):
             devices = [devices]
-        url = urljoin(settings.IOTA_URL, f'iot/devices')
+        url = urljoin(self.base_url, f'iot/devices')
         headers = self.headers
         data = {"devices": [device.dict() for device in devices]}
         try:
@@ -259,11 +264,11 @@ class IoTAClient(BaseClient):
                 self.logger.info(f"Device successfully posted!")
             else:
                 res.raise_for_status()
-        except requests.RequestException as e:
+        except requests.RequestException as err:
             if update:
                 return self.update_devices(devices=devices, add=False)
             msg = "Could not update devices"
-            self.log_error(e=e, msg=msg)
+            self.log_error(err=err, msg=msg)
             raise
 
     def post_device(self, *, device: Device, update: bool = False) -> None:
@@ -299,7 +304,7 @@ class IoTAClient(BaseClient):
             if not 1 < limit < 1000:
                 self.logger.error("'limit' must be an integer between 1 and 1000!")
                 raise ValueError
-        url = urljoin(settings.IOTA_URL, 'iot/devices')
+        url = urljoin(self.base_url, 'iot/devices')
         headers = self.headers
         params = {key: value for key, value in locals().items() if value is not
                   None}
@@ -309,8 +314,8 @@ class IoTAClient(BaseClient):
                 return parse_obj_as(List[Device], res.json()['devices'])
             else:
                 res.raise_for_status()
-        except requests.RequestException as e:
-            self.log_error(e=e, msg=None)
+        except requests.RequestException as err:
+            self.log_error(err=err, msg=None)
             raise
 
     def get_device(self, *, device_id: str) -> Device:
@@ -323,7 +328,7 @@ class IoTAClient(BaseClient):
             Device
 
         """
-        url = urljoin(settings.IOTA_URL, f'iot/devices/{device_id}')
+        url = urljoin(self.base_url, f'iot/devices/{device_id}')
         headers = self.headers
         try:
             res = self.session.get(url=url, headers=headers)
@@ -331,8 +336,8 @@ class IoTAClient(BaseClient):
                 return Device.parse_raw(res.json())
             else:
                 res.raise_for_status()
-        except requests.RequestException as e:
-            self.log_error(e=e, msg=None)
+        except requests.RequestException as err:
+            self.log_error(err=err, msg=None)
             raise
 
     def update_device(self, *, device: Device, add: bool = True) -> None:
@@ -344,7 +349,7 @@ class IoTAClient(BaseClient):
         Returns:
             None
         """
-        url = urljoin(settings.IOTA_URL, f'iot/devices/{device.device_id}')
+        url = urljoin(self.base_url, f'iot/devices/{device.device_id}')
         headers = self.headers
         try:
             res = self.session.put(url=url, headers=headers, json=device.dict(
@@ -357,9 +362,9 @@ class IoTAClient(BaseClient):
                 self.post_device(device=device, update=False)
             else:
                 res.raise_for_status()
-        except requests.RequestException as e:
+        except requests.RequestException as err:
             msg = f"Could not update device '{device.device_id}'"
-            self.log_error(e=e, msg=msg)
+            self.log_error(err=err, msg=msg)
             raise
 
     def update_devices(self, *, devices: Union[Device, List[Device]],
@@ -388,7 +393,7 @@ class IoTAClient(BaseClient):
         Returns:
             None
         """
-        url = urljoin(settings.IOTA_URL, f'iot/devices/{device_id}', )
+        url = urljoin(self.base_url, f'iot/devices/{device_id}', )
         headers = self.headers
         try:
             res = self.session.delete(url=url, headers=headers)
@@ -396,14 +401,14 @@ class IoTAClient(BaseClient):
                 self.logger.info(f"Device {device_id} successfully deleted!")
             else:
                 res.raise_for_status()
-        except requests.RequestException as e:
+        except requests.RequestException as err:
             msg = f"Could not delete device {device_id}!"
-            self.log_error(e=e, msg=msg)
+            self.log_error(err=err, msg=msg)
             raise
 
     # LOG API
     def get_loglevel_of_agent(self):
-        url = urljoin(settings.IOTA_URL, 'admin/log')
+        url = urljoin(self.base_url, 'admin/log')
         headers = self.headers.copy()
         del headers['fiware-service']
         del headers['fiware-servicepath']
@@ -413,8 +418,8 @@ class IoTAClient(BaseClient):
                 return res.json()['level']
             else:
                 res.raise_for_status()
-        except requests.RequestException as e:
-            self.log_error(e=e)
+        except requests.RequestException as err:
+            self.log_error(err=err)
             raise
 
     def change_loglevel_of_agent(self, level: str):
@@ -422,17 +427,17 @@ class IoTAClient(BaseClient):
         if level not in ['INFO', 'ERROR', 'FATAL', 'DEBUG', 'WARNING']:
             raise KeyError
 
-        url = urljoin(settings.IOTA_URL, 'admin/log')
+        url = urljoin(self.base_url, 'admin/log')
         headers = self.headers.copy()
         del headers['fiware-service']
         del headers['fiware-servicepath']
         try:
             res = self.session.put(url=url, headers=headers, params=level)
             if res.ok:
-                self.logger.info(f"Loglevel of agent at {settings.IOTA_URL} "
+                self.logger.info(f"Loglevel of agent at {self.base_url} "
                                  f"changed to '{level}'")
             else:
                 res.raise_for_status()
-        except requests.RequestException as e:
-            self.log_error(e=e)
+        except requests.RequestException as err:
+            self.log_error(err=err)
             raise

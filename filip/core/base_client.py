@@ -1,3 +1,4 @@
+import validators
 import logging
 import requests
 from filip.core.models import FiwareHeader
@@ -8,7 +9,8 @@ class BaseClient:
     This class implements an base client for all derived api-clients.
     """
 
-    def __init__(self,
+    def __init__(self, *,
+                 url: str = None,
                  session: requests.Session = None,
                  fiware_header: FiwareHeader = None):
         """
@@ -20,8 +22,12 @@ class BaseClient:
         """
         self.logger = logging.getLogger(self.__class__.__name__)
         # TODO: Double Check Header Handling
+        if url:
+            if not validators.url(url):
+                raise ValueError(f"Found invalid url scheme for "
+                                 f"{self.__class__.__name__}")
+        self.base_url = url
         self.session = session or requests.Session()
-        self.headers = dict()
         if not fiware_header:
             fiware_header = FiwareHeader()
         self.headers.update(fiware_header.dict(by_alias=True))
@@ -33,26 +39,30 @@ class BaseClient:
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()
 
+    @property
+    def headers(self):
+        return self.session.headers
+
     def log_error(self,
-                  e: requests.RequestException,
+                  err: requests.RequestException,
                   msg: str = None) -> None:
         """
 
         Args:
-            e: Request Error
-            msg:
+            err: Request Error
+            msg: error message from calling function
 
         Returns:
 
         """
-        if e.response and msg:
-            self.logger.error(f"{msg} \n Reason: {e.response.text}")
-        elif e.response and not msg:
-            self.logger.error({e.response.text})
-        elif not e.response and msg:
-            self.logger.error(f"{msg} \n Reason: {e}")
+        if err.response and msg:
+            self.logger.error("%s \n Reason: %s", msg, err.response.text)
+        elif err.response and not msg:
+            self.logger.error("%s", err.response.text)
+        elif not err.response and msg:
+            self.logger.error("%s \n Reason: %s", msg, err)
         else:
-            self.logger.error({e})
+            self.logger.error(err)
 
 
     def close(self):
