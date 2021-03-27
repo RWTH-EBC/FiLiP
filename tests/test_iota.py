@@ -1,6 +1,5 @@
 import unittest
 import requests
-from unittest.mock import Mock, patch
 from uuid import uuid4
 from filip.core.models import FiwareHeader
 from filip.iota.client import IoTAClient
@@ -11,7 +10,7 @@ class TestAgent(unittest.TestCase):
     def setUp(self) -> None:
         self.device = {
             "device_id": "saf",
-            "service_group": None,
+            "service": None,
             "service_path": "/",
             "entity_name": "saf",
             "entity_type": "all",

@@ -1,5 +1,4 @@
 import logging
-import os
 from typing import Union
 from pydantic import BaseSettings, Field, AnyHttpUrl, validator
 
@@ -38,7 +37,6 @@ class _Settings(BaseSettings):
         case_sensitive = False
 
 settings = _Settings()
-print(settings)
 logging.basicConfig(level=settings.LOGLEVEL,
                     format='%(asctime)s - FiLiP.%(name)s - %(levelname)s: %('
                            'message)s',

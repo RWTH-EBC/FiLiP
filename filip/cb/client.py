@@ -35,15 +35,20 @@ class ContextBrokerClient(BaseClient):
     http://telefonicaid.github.io/fiware-orion/api/v2/stable/
     """
 
-    def __init__(self, session: requests.Session = None,
+    def __init__(self,
+                 *,
+                 url: str = None,
+                 session: requests.Session = None,
                  fiware_header: FiwareHeader = None):
-        super().__init__(session=session,
+        url = url or settings.CB_URL
+        super().__init__(url=url,
+                         session=session,
                          fiware_header=fiware_header)
 
     def __pagination__(self,
                        *,
                        method: PaginationMethod = PaginationMethod.GET,
-                       url: AnyHttpUrl,
+                       url: str,
                        headers: Dict,
                        limit: Union[PositiveInt, PositiveFloat] = None,
                        params: Dict = None,
@@ -110,15 +115,15 @@ class ContextBrokerClient(BaseClient):
         Returns:
             Dictionary with response
         """
-        url = urljoin(settings.CB_URL, '/version')
+        url = urljoin(self.base_url, '/version')
         try:
             res = self.session.get(url=url, headers=self.headers)
             if res.ok:
                 return res.json()
             else:
                 res.raise_for_status()
-        except requests.RequestException as e:
-            self.logger.error(e)
+        except requests.RequestException as err:
+            self.logger.error(err)
             raise
 
     def get_resources(self) -> Dict:
@@ -127,15 +132,15 @@ class ContextBrokerClient(BaseClient):
         Returns:
 
         """
-        url = urljoin(settings.CB_URL, '/v2')
+        url = urljoin(self.base_url, '/v2')
         try:
             res = self.session.get(url=url, headers=self.headers)
             if res.ok:
                 return res.json()
             else:
                 res.raise_for_status()
-        except requests.RequestException as e:
-            self.logger.error(e)
+        except requests.RequestException as err:
+            self.logger.error(err)
             raise
 
     # STATISTICS API
@@ -145,15 +150,15 @@ class ContextBrokerClient(BaseClient):
         Returns:
             Dictionary with response
         """
-        url = urljoin(settings.CB_URL, 'statistics')
+        url = urljoin(self.base_url, 'statistics')
         try:
             res = self.session.get(url=url, headers=self.headers)
             if res.ok:
                 return res.json()
             else:
                 res.raise_for_status()
-        except requests.RequestException as e:
-            self.logger.error(e)
+        except requests.RequestException as err:
+            self.logger.error(err)
             raise
 
     # CONTEXT MANAGEMENT API ENDPOINTS
@@ -173,7 +178,7 @@ class ContextBrokerClient(BaseClient):
             entity should be updated or not
             entity (ContextEntity): Context Entity Object
         """
-        url = urljoin(settings.CB_URL, f'v2/entities')
+        url = urljoin(self.base_url, 'v2/entities')
         headers = self.headers.copy()
         try:
             res = self.session.post(
@@ -187,11 +192,11 @@ class ContextBrokerClient(BaseClient):
                 return res.headers.get('Location')
             else:
                 res.raise_for_status()
-        except requests.RequestException as e:
-            if update and e.response.status_code == 422:
+        except requests.RequestException as err:
+            if update and err.response.status_code == 422:
                 return self.update_entity(entity=entity, add=False)
             msg = "Could not post entity {entity.id}"
-            self.log_error(e=e, msg=msg)
+            self.log_error(err=err, msg=msg)
             raise
 
     def get_entity_list(self,
@@ -267,7 +272,7 @@ class ContextBrokerClient(BaseClient):
         Returns:
 
         """
-        url = urljoin(settings.CB_URL, f'v2/entities/')
+        url = urljoin(self.base_url, 'v2/entities/')
         headers = self.headers.copy()
         params = {}
 
@@ -333,9 +338,9 @@ class ContextBrokerClient(BaseClient):
             else:
                 return items
 
-        except requests.RequestException as e:
+        except requests.RequestException as err:
             msg = "Could not load entities"
-            self.log_error(e=e, msg=msg)
+            self.log_error(err=err, msg=msg)
             raise
 
     def get_entity(self,
@@ -368,7 +373,7 @@ class ContextBrokerClient(BaseClient):
         Returns:
             ContextEntity
         """
-        url = urljoin(settings.CB_URL, f'v2/entities/{entity_id}')
+        url = urljoin(self.base_url, f'v2/entities/{entity_id}')
         headers = self.headers.copy()
         params = {}
         if entity_type:
@@ -386,9 +391,9 @@ class ContextBrokerClient(BaseClient):
                 return ContextEntity(**res.json())
             else:
                 res.raise_for_status()
-        except requests.RequestException as e:
+        except requests.RequestException as err:
             msg = f"Could not load entity {entity_id}"
-            self.log_error(e=e, msg=msg)
+            self.log_error(err=err, msg=msg)
             raise
 
     def get_entity_attributes(self,
@@ -423,7 +428,7 @@ class ContextBrokerClient(BaseClient):
         Returns:
             Dict
         """
-        url = urljoin(settings.CB_URL, f'v2/entities/{entity_id}/attrs')
+        url = urljoin(self.base_url, f'v2/entities/{entity_id}/attrs')
         headers = self.headers.copy()
         params = {}
         if entity_type:
@@ -441,9 +446,9 @@ class ContextBrokerClient(BaseClient):
                         for key, values in res.json().items()}
             else:
                 res.raise_for_status()
-        except requests.RequestException as e:
+        except requests.RequestException as err:
             msg = f"Could not load attributes from entity {entity_id}!"
-            self.log_error(e=e, msg=msg)
+            self.log_error(err=err, msg=msg)
             raise
 
     def update_entity(self,
@@ -460,7 +465,7 @@ class ContextBrokerClient(BaseClient):
         Returns:
 
         """
-        url = urljoin(settings.CB_URL, f'v2/entities/{entity.id}/attrs')
+        url = urljoin(self.base_url, f'v2/entities/{entity.id}/attrs')
         headers = self.headers.copy()
         params = {}
         if options:
@@ -475,9 +480,9 @@ class ContextBrokerClient(BaseClient):
                 self.logger.info(f"Entity '{entity.id}' successfully updated!")
             else:
                 res.raise_for_status()
-        except requests.RequestException as e:
+        except requests.RequestException as err:
             msg = f"Could not update entity {entity.id}!"
-            self.log_error(e=e, msg=msg)
+            self.log_error(err=err, msg=msg)
             raise
 
     def delete_entity(self, entity_id: str, entity_type: str = None) -> None:
@@ -492,7 +497,7 @@ class ContextBrokerClient(BaseClient):
         Returns:
             None
         """
-        url = urljoin(settings.CB_URL, f'v2/entities/{entity_id}')
+        url = urljoin(self.base_url, f'v2/entities/{entity_id}')
         headers = self.headers.copy()
         if entity_type:
             params = {'type': entity_type}
@@ -504,9 +509,9 @@ class ContextBrokerClient(BaseClient):
                 self.logger.info(f"Entity '{entity_id}' successfully deleted!")
             else:
                 res.raise_for_status()
-        except requests.RequestException as e:
+        except requests.RequestException as err:
             msg = f"Could not delete entity {entity_id}!"
-            self.log_error(e=e, msg=msg)
+            self.log_error(err=err, msg=msg)
             raise
 
     def replace_entity_attributes(self,
@@ -524,7 +529,7 @@ class ContextBrokerClient(BaseClient):
         Returns:
 
         """
-        url = urljoin(settings.CB_URL, f'v2/entities/{entity.id}/attrs')
+        url = urljoin(self.base_url, f'v2/entities/{entity.id}/attrs')
         headers = self.headers.copy()
         params = {}
         if options:
@@ -539,9 +544,9 @@ class ContextBrokerClient(BaseClient):
                 self.logger.info(f"Entity '{entity.id}' successfully updated!")
             else:
                 res.raise_for_status()
-        except requests.RequestException as e:
+        except requests.RequestException as err:
             msg = f"Could not replace attribute of entity {entity.id}!"
-            self.log_error(e=e, msg=msg)
+            self.log_error(err=err, msg=msg)
             raise
 
     # Attribute operations
@@ -567,7 +572,7 @@ class ContextBrokerClient(BaseClient):
             Error
 
         """
-        url = urljoin(settings.CB_URL,
+        url = urljoin(self.base_url,
                       f'v2/entities/{entity_id}/attrs/{attr_name}')
         headers = self.headers.copy()
         params = {}
@@ -582,10 +587,10 @@ class ContextBrokerClient(BaseClient):
                 return ContextAttribute(**res.json())
             else:
                 res.raise_for_status()
-        except requests.RequestException as e:
+        except requests.RequestException as err:
             msg = f"Could not load attribute '{attr_name}' from entity" \
                   f"'{entity_id}' "
-            self.log_error(e=e, msg=msg)
+            self.log_error(err=err, msg=msg)
             raise
 
     def update_entity_attribute(self,
@@ -600,7 +605,7 @@ class ContextBrokerClient(BaseClient):
             entity_type: Entity type, to avoid ambiguity in case there are
                 several entities with the same entity id.
         """
-        url = urljoin(settings.CB_URL,
+        url = urljoin(self.base_url,
                       f'v2/entities/{entity_id}/attrs/{attr.name}')
         headers = self.headers.copy()
         params = {}
@@ -617,10 +622,10 @@ class ContextBrokerClient(BaseClient):
                                  f"successfully updated!")
             else:
                 res.raise_for_status()
-        except requests.RequestException as e:
+        except requests.RequestException as err:
             msg = f"Could not update attribute '{attr.name}' of entity" \
                   f"'{entity_id}' "
-            self.log_error(e=e, msg=msg)
+            self.log_error(err=err, msg=msg)
             raise
 
     def delete_entity_attribute(self,
@@ -639,7 +644,7 @@ class ContextBrokerClient(BaseClient):
             Error
 
         """
-        url = urljoin(settings.CB_URL,
+        url = urljoin(self.base_url,
                       f'v2/entities/{entity_id}/attrs/{attr_name}')
         headers = self.headers.copy()
         params = {}
@@ -652,10 +657,10 @@ class ContextBrokerClient(BaseClient):
                                  f"successfully deleted!")
             else:
                 res.raise_for_status()
-        except requests.RequestException as e:
+        except requests.RequestException as err:
             msg = f"Could not delete attribute '{attr_name}' of entity" \
                   f"'{entity_id}' "
-            self.log_error(e=e, msg=msg)
+            self.log_error(err=err, msg=msg)
             raise
 
     # Attribute value operations
@@ -677,7 +682,7 @@ class ContextBrokerClient(BaseClient):
         Returns:
 
         """
-        url = urljoin(settings.CB_URL,
+        url = urljoin(self.base_url,
                       f'v2/entities/{entity_id}/attrs/{attr_name}/value')
         headers = self.headers.copy()
         params = {}
@@ -690,10 +695,10 @@ class ContextBrokerClient(BaseClient):
                 return res.json()
             else:
                 res.raise_for_status()
-        except requests.RequestException as e:
+        except requests.RequestException as err:
             msg = f"Could not load value of attribute '{attr_name}' from " \
                   f"entity'{entity_id}' "
-            self.log_error(e=e, msg=msg)
+            self.log_error(err=err, msg=msg)
             raise
 
     def update_attribute_value(self, *,
@@ -714,7 +719,7 @@ class ContextBrokerClient(BaseClient):
         Returns:
 
         """
-        url = urljoin(settings.CB_URL,
+        url = urljoin(self.base_url,
                       f'v2/entities/{entity_id}/attrs/{attr_name}/value')
         headers = self.headers.copy()
         params = {}
@@ -737,10 +742,10 @@ class ContextBrokerClient(BaseClient):
                                  f"successfully updated!")
             else:
                 res.raise_for_status()
-        except requests.RequestException as e:
+        except requests.RequestException as err:
             msg = f"Could not update value of attribute '{attr_name}' from " \
                   f"entity '{entity_id}' "
-            self.log_error(e=e, msg=msg)
+            self.log_error(err=err, msg=msg)
             raise
 
     # Types Operations
@@ -759,7 +764,7 @@ class ContextBrokerClient(BaseClient):
         Returns:
 
         """
-        url = urljoin(settings.CB_URL, f'v2/types')
+        url = urljoin(self.base_url, 'v2/types')
         headers = self.headers.copy()
         params = {}
         if limit:
@@ -775,9 +780,9 @@ class ContextBrokerClient(BaseClient):
                 return res.json()
             else:
                 res.raise_for_status()
-        except requests.RequestException as e:
+        except requests.RequestException as err:
             msg = f"Could not load entity types!"
-            self.log_error(e=e, msg=msg)
+            self.log_error(err=err, msg=msg)
             raise
 
     def get_entity_type(self, entity_type: str) -> Dict[str, Any]:
@@ -789,7 +794,7 @@ class ContextBrokerClient(BaseClient):
         Returns:
 
         """
-        url = urljoin(settings.CB_URL, f'v2/types/{entity_type}')
+        url = urljoin(self.base_url, f'v2/types/{entity_type}')
         headers = self.headers.copy()
         params = {}
         try:
@@ -799,10 +804,10 @@ class ContextBrokerClient(BaseClient):
                 return res.json()
             else:
                 res.raise_for_status()
-        except requests.RequestException as e:
+        except requests.RequestException as err:
             msg = f"Could not load entities of type" \
                   f"'{entity_type}' "
-            self.log_error(e=e, msg=msg)
+            self.log_error(err=err, msg=msg)
             raise
 
     # SUBSCRIPTION API ENDPOINTS
@@ -815,7 +820,7 @@ class ContextBrokerClient(BaseClient):
         Returns:
             list of subscriptions
         """
-        url = urljoin(settings.CB_URL, f'v2/subscriptions/')
+        url = urljoin(self.base_url, 'v2/subscriptions/')
         headers = self.headers.copy()
         params = {}
 
@@ -828,9 +833,9 @@ class ContextBrokerClient(BaseClient):
                                         params=params,
                                         headers=headers)
             return parse_obj_as(List[Subscription], items)
-        except requests.RequestException as e:
+        except requests.RequestException as err:
             msg = f"Could not load subscriptions!"
-            self.log_error(e=e, msg=msg)
+            self.log_error(err=err, msg=msg)
             raise
 
     def post_subscription(self, subscription: Subscription) -> str:
@@ -844,7 +849,7 @@ class ContextBrokerClient(BaseClient):
         Returns:
 
         """
-        url = urljoin(settings.CB_URL, f'v2/subscriptions')
+        url = urljoin(self.base_url, 'v2/subscriptions')
         headers = self.headers.copy()
         headers.update({'Content-Type': 'application/json'})
         try:
@@ -860,9 +865,9 @@ class ContextBrokerClient(BaseClient):
                 return res.headers['Location'].split('/')[-1]
             else:
                 res.raise_for_status()
-        except requests.RequestException as e:
+        except requests.RequestException as err:
             msg = f"Could not send subscription!"
-            self.log_error(e=e, msg=msg)
+            self.log_error(err=err, msg=msg)
             raise
 
     def get_subscription(self, subscription_id: str) -> Subscription:
@@ -874,7 +879,7 @@ class ContextBrokerClient(BaseClient):
         Returns:
 
         """
-        url = urljoin(settings.CB_URL, f'v2/subscriptions/{subscription_id}')
+        url = urljoin(self.base_url, f'v2/subscriptions/{subscription_id}')
         headers = self.headers.copy()
         try:
             res = self.session.get(url=url, headers=headers)
@@ -883,9 +888,9 @@ class ContextBrokerClient(BaseClient):
                 return Subscription(**res.json())
             else:
                 res.raise_for_status()
-        except requests.RequestException as e:
+        except requests.RequestException as err:
             msg = f"Could not load subscription {subscription_id}!"
-            self.log_error(e=e, msg=msg)
+            self.log_error(err=err, msg=msg)
             raise
 
     def update_subscription(self, subscription: Subscription):
@@ -896,7 +901,7 @@ class ContextBrokerClient(BaseClient):
         Returns:
 
         """
-        url = urljoin(settings.CB_URL, f'v2/subscriptions/{subscription.id}')
+        url = urljoin(self.base_url, f'v2/subscriptions/{subscription.id}')
         headers = self.headers.copy()
         headers.update({'Content-Type': 'application/json'})
         try:
@@ -911,9 +916,9 @@ class ContextBrokerClient(BaseClient):
                 self.logger.info(f"Subscription successfully updated!")
             else:
                 res.raise_for_status()
-        except requests.RequestException as e:
+        except requests.RequestException as err:
             msg = f"Could not update subscription {subscription.id}!"
-            self.log_error(e=e, msg=msg)
+            self.log_error(err=err, msg=msg)
             raise
 
     def delete_subscription(self, subscription_id: str) -> None:
@@ -922,7 +927,7 @@ class ContextBrokerClient(BaseClient):
         Args:
             subscription_id: id of the subscription
         """
-        url = urljoin(settings.CB_URL,
+        url = urljoin(self.base_url,
                       f'v2/subscriptions/{subscription_id}')
         headers = self.headers.copy()
         try:
@@ -932,9 +937,9 @@ class ContextBrokerClient(BaseClient):
                                  f"successfully deleted!")
             else:
                 res.raise_for_status()
-        except requests.RequestException as e:
+        except requests.RequestException as err:
             msg = f"Could not delete subscription {subscription_id}!"
-            self.log_error(e=e, msg=msg)
+            self.log_error(err=err, msg=msg)
             raise
 
     # Registration API
@@ -949,7 +954,7 @@ class ContextBrokerClient(BaseClient):
         Returns:
 
         """
-        url = urljoin(settings.CB_URL, f'v2/registration/')
+        url = urljoin(self.base_url, 'v2/registrations/')
         headers = self.headers.copy()
         params = {}
 
@@ -963,9 +968,9 @@ class ContextBrokerClient(BaseClient):
                                         headers=headers)
 
             return parse_obj_as(List[Registration], items)
-        except requests.RequestException as e:
+        except requests.RequestException as err:
             msg = f"Could not load registrations!"
-            self.log_error(e=e, msg=msg)
+            self.log_error(err=err, msg=msg)
             raise
 
     def post_registration(self, registration: Registration):
@@ -980,7 +985,7 @@ class ContextBrokerClient(BaseClient):
         Returns:
 
         """
-        url = urljoin(settings.CB_URL, f'v2/registrations')
+        url = urljoin(self.base_url, 'v2/registrations')
         headers = self.headers.copy()
         headers.update({'Content-Type': 'application/json'})
         try:
@@ -996,9 +1001,9 @@ class ContextBrokerClient(BaseClient):
                 return res.headers['Location'].split('/')[-1]
             else:
                 res.raise_for_status()
-        except requests.RequestException as e:
+        except requests.RequestException as err:
             msg = f"Could not send registration {registration.id}!"
-            self.log_error(e=e, msg=msg)
+            self.log_error(err=err, msg=msg)
             raise
 
     def get_registration(self, registration_id: str) -> Registration:
@@ -1009,7 +1014,7 @@ class ContextBrokerClient(BaseClient):
         Returns:
             Registration
         """
-        url = urljoin(settings.CB_URL, f'v2/registrations/{registration_id}')
+        url = urljoin(self.base_url, f'v2/registrations/{registration_id}')
         headers = self.headers.copy()
         try:
             res = self.session.get(url=url, headers=headers)
@@ -1018,9 +1023,9 @@ class ContextBrokerClient(BaseClient):
                 return Registration(**res.json())
             else:
                 res.raise_for_status()
-        except requests.RequestException as e:
+        except requests.RequestException as err:
             msg = f"Could not load registration {registration_id}!"
-            self.log_error(e=e, msg=msg)
+            self.log_error(err=err, msg=msg)
             raise
 
     def update_registration(self, registration: Registration):
@@ -1031,7 +1036,7 @@ class ContextBrokerClient(BaseClient):
         Returns:
 
         """
-        url = urljoin(settings.CB_URL, f'v2/registrations/{registration.id}')
+        url = urljoin(self.base_url, f'v2/registrations/{registration.id}')
         headers = self.headers.copy()
         headers.update({'Content-Type': 'application/json'})
         try:
@@ -1046,9 +1051,9 @@ class ContextBrokerClient(BaseClient):
                 self.logger.info(f"Registration successfully updated!")
             else:
                 res.raise_for_status()
-        except requests.RequestException as e:
+        except requests.RequestException as err:
             msg = f"Could not update registration {registration.id}!"
-            self.log_error(e=e, msg=msg)
+            self.log_error(err=err, msg=msg)
             raise
 
     def delete_registration(self, registration_id: str) -> None:
@@ -1057,7 +1062,7 @@ class ContextBrokerClient(BaseClient):
         Args:
             registration_id: id of the subscription
         """
-        url = urljoin(settings.CB_URL,
+        url = urljoin(self.base_url,
                       f'v2/registrations/{registration_id}')
         headers = self.headers.copy()
         try:
@@ -1067,9 +1072,9 @@ class ContextBrokerClient(BaseClient):
                                  f"successfully deleted!")
             else:
                 res.raise_for_status()
-        except requests.RequestException as e:
+        except requests.RequestException as err:
             msg = f"Could not delete registration {registration_id}!"
-            self.log_error(e=e, msg=msg)
+            self.log_error(err=err, msg=msg)
             raise
 
     # Batch operation API
@@ -1088,7 +1093,7 @@ class ContextBrokerClient(BaseClient):
 
         """
 
-        url = urljoin(settings.CB_URL, 'v2/op/update')
+        url = urljoin(self.base_url, 'v2/op/update')
         headers = self.headers.copy()
         params = {}
         if options:
@@ -1106,9 +1111,9 @@ class ContextBrokerClient(BaseClient):
                                  f"{update.actionType.value}' succeeded!")
             else:
                 res.raise_for_status()
-        except requests.RequestException as e:
+        except requests.RequestException as err:
             msg = f"Update operation '{update.actionType.value}' failed!"
-            self.log_error(e=e, msg=msg)
+            self.log_error(err=err, msg=msg)
             raise
 
     def query(self,
@@ -1127,7 +1132,7 @@ class ContextBrokerClient(BaseClient):
         Returns:
 
         """
-        url = urljoin(settings.CB_URL, 'v2/op/query')
+        url = urljoin(self.base_url, 'v2/op/query')
         headers = self.headers.copy()
         headers.update({'Content-Type': 'application/json'})
         params = {'options': 'count'}
@@ -1145,9 +1150,9 @@ class ContextBrokerClient(BaseClient):
                 return parse_obj_as(List[ContextEntity], items)
             else:
                 return parse_obj_as(List[ContextEntityKeyValues], items)
-        except requests.RequestException as e:
+        except requests.RequestException as err:
             msg = f"Query operation failed!"
-            self.log_error(e=e, msg=msg)
+            self.log_error(err=err, msg=msg)
             raise
 
 #    def post_relationship(self, json_data=None):
