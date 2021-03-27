@@ -1,10 +1,10 @@
-import validators
 import logging
 import requests
 from filip.core.models import FiwareHeader
-
+from filip.utils import validate_url
 
 class BaseClient:
+
     """
     This class implements an base client for all derived api-clients.
     """
@@ -22,10 +22,7 @@ class BaseClient:
         """
         self.logger = logging.getLogger(self.__class__.__name__)
         # TODO: Double Check Header Handling
-        if url:
-            if not validators.url(url):
-                raise ValueError(f"Found invalid url scheme for "
-                                 f"{self.__class__.__name__}")
+        validate_url(url)
         self.base_url = url
         self.session = session or requests.Session()
         if not fiware_header:

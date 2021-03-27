@@ -76,4 +76,3 @@ aenum>=3.0.0
 fuzzywuzzy>=0.17.0
 xlrd>=2.0.1
 regex>=2021.3.17
-validator>=0.7.0
