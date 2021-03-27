@@ -146,7 +146,13 @@ You can register for a testing account
 The easiest way to install the library is via pip:
 
 ```
-pip install git+git://github.com/n5geh/n5geh.tools.filip
+pip install git+git://github.com/RWTH-EBC/filip
+```
+
+If you want to benefit of the latest changes you the development.
+
+```
+pip install git+git://github.com/RWTH-EBC/filip@development
 ```
 
 ### Running examples or tests
@@ -189,7 +195,7 @@ FiLiP is organized as follows:
 ## Authors
 
 * [Thomas Storek](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/N5GEH-National-5G-Energy-Hub/~lhda/Thomas-Storek/?allou=1) (corresponding)
-* **Felix Rehmann**
+* Felix Rehmann
 
 ## References
 
