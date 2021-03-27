@@ -1,7 +1,7 @@
 import unittest
 import json
 from pydantic import ValidationError
-from core.models import FiwareHeader
+from filip.core.models import FiwareHeader
 
 
 class TestModels(unittest.TestCase):

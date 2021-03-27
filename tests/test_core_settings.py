@@ -1,5 +1,5 @@
 import unittest
-from core.settings import _Settings
+from filip.core.settings import _Settings
 
 
 class TestSettings(unittest.TestCase):

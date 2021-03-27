@@ -1,5 +1,5 @@
 from unittest import TestCase
-from utils.unitcodes import units
+from filip.utils.unitcodes import units
 
 class TestUnitCodes(TestCase):
     def test_units(self):

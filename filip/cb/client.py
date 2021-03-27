@@ -8,11 +8,11 @@ from pydantic import \
     PositiveFloat, \
     AnyHttpUrl
 from urllib.parse import urljoin
-from core.base_client import BaseClient
-from core.settings import settings
-from core.models import FiwareHeader, PaginationMethod
-from core.simple_query_language import SimpleQuery
-from cb.models import \
+from filip.core.base_client import BaseClient
+from filip.core.settings import settings
+from filip.core.models import FiwareHeader, PaginationMethod
+from filip.core.simple_query_language import SimpleQuery
+from filip.cb.models import \
     ContextEntity, \
     ContextEntityKeyValues, \
     ContextAttribute, \

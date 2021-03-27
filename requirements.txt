@@ -83,3 +83,5 @@ aenum>=3.0.0
 fuzzywuzzy>=0.17.0
 authlib>=0.14.3
 xlrd>=2.0.1
+pandas_datapackage_reader>=0.18.0
+regex>=2021.3.17

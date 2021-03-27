@@ -1,10 +1,15 @@
 from aenum import Enum
 from typing import Any, List, Dict, Union, Optional, Pattern
-from pydantic import BaseModel, Field, validator, ValidationError, \
-    root_validator, create_model, BaseConfig, AnyHttpUrl, Json
+from pydantic import BaseModel, \
+    Field, \
+    validator,  \
+    root_validator, \
+    create_model, \
+    AnyHttpUrl, \
+    Json
 from datetime import datetime
-from core.models import DataType
-from core.simple_query_language import SimpleQuery
+from filip.core.models import DataType
+from filip.core.simple_query_language import SimpleQuery
 
 
 # Options for queries
@@ -425,7 +430,7 @@ class Condition(BaseModel):
     attrs: List[str] = Field(
         description='array of attribute names'
     )
-    expression: Optional[Union[str, SimpleQuery]] = Field(
+    expression: Optional[Union[str, Expression]] = Field(
         description='an expression composed of q, mq, georel, geometry and '
                     'coords (see "List entities" operation above about this '
                     'field).'
@@ -580,7 +585,7 @@ class DataProvided(BaseModel):
         description="List of attributes to be provided "
                     "(if not specified, all attributes)"
     )
-    expression: Optional[Union[str, SimpleQuery]] = Field(
+    expression: Optional[Union[str, Expression]] = Field(
         description="By means of a filtering expression, allows to express "
                     "what is the scope of the data provided. Currently only "
                     "geographical scopes are supported "

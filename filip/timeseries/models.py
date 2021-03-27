@@ -1,11 +1,12 @@
 from __future__ import annotations
 import logging
 import numbers
+import pandas as pd
 from typing import Any, Optional, List, Union
 from pydantic import BaseModel, Field, validator
 from datetime import datetime
-from cb.models import ContextEntity
-import pandas as pd
+from filip.cb.models import ContextEntity
+
 
 logger = logging.getLogger()
 

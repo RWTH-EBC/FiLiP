@@ -1,6 +1,5 @@
 import itertools
 import regex as re
-from json import JSONEncoder
 from aenum import Enum
 from typing import Union, List, Tuple, Set
 from pydantic import BaseModel, Field, validator
