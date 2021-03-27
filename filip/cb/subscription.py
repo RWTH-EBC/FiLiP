@@ -1,5 +1,4 @@
 import json 
-from enum import Enum
 import logging
 
 log = logging.getLogger('subscription')

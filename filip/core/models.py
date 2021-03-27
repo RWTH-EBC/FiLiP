@@ -1,7 +1,7 @@
 from aenum import Enum
 from typing import ClassVar
 from pydantic import BaseModel, Field, validator, BaseConfig
-from utils.unitcodes import units
+from filip.utils.unitcodes import units
 
 
 class NgsiVersion(str, Enum):

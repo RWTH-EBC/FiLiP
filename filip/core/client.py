@@ -3,16 +3,18 @@ import json
 import errno
 from requests.auth import HTTPBasicAuth, HTTPDigestAuth
 from requests import Session
+from filip.core.config import Config
+from filip.core.base_client import BaseClient
+from filip.core.models import FiwareHeader
+from filip.iota.client import IoTAClient
+from filip.cb.client import ContextBrokerClient
+from filip.timeseries import QuantumLeapClient
+
 # from requests_oauthlib import OAuth2Session
 # from oauthlib.oauth2 import LegacyApplicationClient, \
 #    MobileApplicationClient, \
 #    BackendApplicationClient
-from core.config import Config
-from core.base_client import BaseClient
-from core.models import FiwareHeader
-from iota.client import IoTAClient
-from cb.client import ContextBrokerClient
-from timeseries import QuantumLeapClient
+
 
 
 logger = logging.getLogger('client')

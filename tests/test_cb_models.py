@@ -1,7 +1,7 @@
 import unittest
 import json
 from pydantic import ValidationError
-from cb.models import \
+from filip.cb.models import \
     ContextAttribute,\
     ContextEntity, \
     create_context_entity_model

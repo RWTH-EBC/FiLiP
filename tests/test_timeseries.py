@@ -1,8 +1,8 @@
 import unittest
-from core.models import FiwareHeader
-from timeseries.client import QuantumLeapClient
-from cb.models import ContextEntity
-from timeseries.models import NotificationMessage
+from filip.core.models import FiwareHeader
+from filip.cb.models import ContextEntity
+from filip.timeseries.client import QuantumLeapClient
+from filip.timeseries.models import NotificationMessage
 
 
 class TestTimeSeries(unittest.TestCase):

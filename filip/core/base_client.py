@@ -1,7 +1,6 @@
 import logging
 import requests
-from core.models import \
-    FiwareHeader
+from filip.core.models import FiwareHeader
 
 
 class BaseClient:
