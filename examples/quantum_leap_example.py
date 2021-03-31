@@ -14,9 +14,8 @@ def setup():
     with QuantumLeapClient(fiware_header=FiwareHeader(service='filip',
                                                       service_path='/testing')) as \
             ql_client:
-        for key, value in ql_client.get_version().items():
-            print("Quantum Leap version" + value["version"] + "at url " +
-                  ql_client.base_url)
+        print("Quantum Leap " + ql_client.get_version().__str__() + " at url " +
+              ql_client.base_url)
     with ContextBrokerClient(fiware_header=FiwareHeader(service='filip',
                                                         service_path='/testing')) as \
             cb_client:
@@ -286,6 +285,8 @@ def cleanup_cb(entity_id, subscription_id):
 
 if __name__ == "__main__":
     print("------EXAMPLE QUANTUM LEAP------")
+
+    setup()
 
     created_entity = create_entity()
 
