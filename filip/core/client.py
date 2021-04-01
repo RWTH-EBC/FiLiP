@@ -3,16 +3,20 @@ import json
 import errno
 from requests.auth import HTTPBasicAuth, HTTPDigestAuth
 from requests import Session
+from typing import Optional, Union, Dict
+from pathlib import Path
+from pydantic import BaseModel, AnyHttpUrl
+from filip.core.base_client import BaseClient
+from filip.core.models import FiwareHeader
+from filip.iota.client import IoTAClient
+from filip.cb.client import ContextBrokerClient
+from filip.timeseries import QuantumLeapClient
+
 # from requests_oauthlib import OAuth2Session
 # from oauthlib.oauth2 import LegacyApplicationClient, \
 #    MobileApplicationClient, \
 #    BackendApplicationClient
-from core.config import Config
-from core.base_client import BaseClient
-from core.models import FiwareHeader
-from iota.client import IoTAClient
-from cb.client import ContextBrokerClient
-from timeseries import QuantumLeapClient
+
 
 
 logger = logging.getLogger('client')
@@ -22,18 +26,23 @@ class Client(BaseClient):
                  "password": None,
                  "client_id": None,
                  "client_secret": None}
+    class Settings(BaseModel):
+        cb_url: Optional[AnyHttpUrl] = None
+        iota_url: Optional[AnyHttpUrl] = None
+        ql_url: Optional[AnyHttpUrl] = None
+        auth: Optional[Dict] = None
 
     def __init__(self,
-                 config_file=None,
+                 config: Union[str, Path, Dict]= None,
                  session: Session = None,
                  fiware_header: FiwareHeader = None):
         auth_types = {'basicauth': self.__http_basic_auth,
                       'digestauth': self.__http_digest_auth,}
                       # 'oauth2': self.__oauth2}
+
         super().__init__(session=session,
                          fiware_header=fiware_header)
-        self.config = Config(path=config_file)
-
+        self.config = config
         if self.config.auth:
             assert self.config['auth']['type'].lower() in auth_types.keys()
             self.__get_secrets_file(path=self.config['auth']['secret'])
@@ -41,18 +50,31 @@ class Client(BaseClient):
         else:
             self.session = Session()
 
-        if fiware_header is None:
+        if not fiware_header:
             fiware_header = FiwareHeader(service='', service_path='/')
-        self.iota = IoTAClient(session=self.session,
+        self.iota = IoTAClient(url=self.config.iota_url,
+                               session=self.session,
                                fiware_header=fiware_header)
-        self.ocb = ContextBrokerClient(session=self.session,
-                                       fiware_header=fiware_header)
-        self.timeseries = QuantumLeapClient(session=self.session,
+        self.cb = ContextBrokerClient(url=self.config.cb_url,
+                                      session=self.session,
+                                      fiware_header=fiware_header)
+        self.timeseries = QuantumLeapClient(url=self.config.ql_url,
+                                            session=self.session,
                                             fiware_header=fiware_header)
 
     @property
-    def headers(self):
-        return self.session.headers
+    def config(self):
+        return self._config
+
+    @config.setter
+    def config(self, config: Settings):
+        """Set a new config"""
+        if isinstance(config, self.Settings):
+            self._config = config
+        elif isinstance(config, (str, Path)):
+            self._config = self.Settings.parse_file(config)
+        else:
+            self._config = self.Settings.parse_obj(config)
 
     @property
     def cert(self):

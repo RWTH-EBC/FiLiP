@@ -1,5 +1,8 @@
-from fuzzywuzzy import fuzz
 import pandas as pd
+from fuzzywuzzy import fuzz
+
+
+
 
 
 def create_type(inputstr: str):

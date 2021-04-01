@@ -1,7 +1,6 @@
-import requests
 import logging
 import json
-import datetime
+from pydantic import BaseModel, AnyHttpUrl
 
 """
 Helper functions for HTTP requests
@@ -14,21 +13,18 @@ HEADER_CONTENT_PLAIN = {'Content-Type': 'text/plain'}
 
 log = logging.getLogger(__name__)
 
+class UrlValidator(BaseModel):
+    url: AnyHttpUrl
 
-def url_check(url, https=False):
+
+def validate_url(url):
     """
     Function checks whether the host has "http" added in case of http as protocol.
     :param url: the url for the host / port
-    :param https: boolean, whether https or http should be used
     :return: url - if necessary updated
     """
-    if https == False:
-        if "http://" not in url:
-            url = "http://" + url
-    if https == True:
-         if "https://" not in url:
-            url = "https://" + url
-    return url
+    UrlValidator(url=url)
+
 
 
 def pretty_print_request(req):

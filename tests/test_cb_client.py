@@ -1,12 +1,11 @@
 import unittest
 import re
 import time
-from unittest.mock import Mock, patch
 from datetime import datetime
-from core.models import FiwareHeader
-from core.simple_query_language import SimpleQuery, Statement
-from cb.client import ContextBrokerClient
-from cb.models import \
+from filip.core.models import FiwareHeader
+from filip.core.simple_query_language import SimpleQuery
+from filip.cb.client import ContextBrokerClient
+from filip.cb.models import \
     ContextEntity, \
     ContextAttribute, \
     Subscription, \

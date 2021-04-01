@@ -1,1 +1,15 @@
+stages:
+    - doc
+    - code_quality
+    - deploy
 
+variables:
+    EXCLUDE_PYTHON: 36
+
+include:
+    - project: 'EBC/EBC_all/gitlab_ci/templates'
+      file: 'python/code-quality/pylint.gitlab-ci.yml'
+    - project: 'EBC/EBC_all/gitlab_ci/templates'
+      file: 'python/doc/sphinxdoc.gitlab-ci.yml'
+    - project: 'EBC/EBC_all/gitlab_ci/templates'
+      file: 'pages/pages.gitlab-ci.yml'

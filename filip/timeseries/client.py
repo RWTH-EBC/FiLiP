@@ -1,13 +1,12 @@
 import logging
-
 import requests
 from typing import Dict
 from urllib.parse import urljoin
 
-from core import settings
-from core.base_client import BaseClient
-from core.models import FiwareHeader
-from timeseries.models import ResponseModel, NotificationMessage
+from filip.core import settings
+from filip.core.base_client import BaseClient
+from filip.core.models import FiwareHeader
+from filip.timeseries.models import ResponseModel, NotificationMessage
 
 logger = logging.getLogger(__name__)
 
@@ -21,9 +20,14 @@ class QuantumLeapClient(BaseClient):
     https://app.swaggerhub.com/apis/heikkilv/quantumleap-api/
     """
 
-    def __init__(self, session: requests.Session = None,
+    def __init__(self,
+                 *,
+                 url: str = None,
+                 session: requests.Session = None,
                  fiware_header: FiwareHeader = None):
-        super().__init__(session=session,
+        url = url or settings.QL_URL
+        super().__init__(url=url,
+                         session=session,
                          fiware_header=fiware_header)
 
     # META API ENDPOINTS
@@ -33,15 +37,15 @@ class QuantumLeapClient(BaseClient):
         Returns:
             Dictionary with response
         """
-        url = urljoin(settings.QL_URL, '/v2/version')
+        url = urljoin(self.base_url, '/v2/version')
         try:
             res = self.session.get(url=url)
             if res.ok:
                 return res.json()
             else:
                 res.raise_for_status()
-        except requests.exceptions.RequestException as e:
-            self.logger.error(e)
+        except requests.exceptions.RequestException as err:
+            self.logger.error(err)
             raise
 
     def get_health(self):
@@ -56,20 +60,20 @@ class QuantumLeapClient(BaseClient):
         Returns:
             Dictionary with response
         """
-        url = urljoin(settings.QL_URL, '/v2/health')
+        url = urljoin(self.base_url, '/v2/health')
         try:
             res = self.session.get(url=url)
             if res.ok:
                 return res.json()
             else:
                 res.raise_for_status()
-        except requests.exceptions.RequestException as e:
+        except requests.exceptions.RequestException as err:
             self.logger.error(e)
             raise
 
     def post_config(self):
         """
-        (To Be Implemented) Customize your persistance configuration to
+        (To Be Implemented) Customize your persistence configuration to
         better suit your needs."""
         raise NotImplementedError("Endpoint to be implemented..")
 
@@ -80,7 +84,7 @@ class QuantumLeapClient(BaseClient):
         Returns:
 
         """
-        url = urljoin(settings.QL_URL, '/v2/notify')
+        url = urljoin(self.base_url, '/v2/notify')
         headers = self.headers.copy()
         data = []
         for entity in notification.data:
@@ -103,10 +107,10 @@ class QuantumLeapClient(BaseClient):
                 return msg
             else:
                 res.raise_for_status()
-        except requests.exceptions.RequestException as e:
+        except requests.exceptions.RequestException as err:
             msg = f"Could not post notification for subscription id " \
                   f"{notification.subscriptionId}"
-            self.log_error(e=e, msg=msg)
+            self.log_error(err=err, msg=msg)
             raise
 
     def post_subscription(self, entity_type: str = None, entity_id: str = None,
@@ -129,12 +133,11 @@ class QuantumLeapClient(BaseClient):
 
         headers = self.headers.copy()
         params = {}
-        #orion_url = urljoin(settings.CB_URL, '/v2')
-        orion_url = 'http://orion:1026/v2'
-        ql_url = urljoin(settings.QL_URL, '/v2')
-
-        url = urljoin(settings.QL_URL, '/v2/subscribe?orionUrl=' + orion_url +
-                      '&quantumleapUrl=' + ql_url)
+        url = urljoin(self.base_url, '/v2/subscribe')
+        orion_url = urljoin(settings.CB_URL, '/v2')
+        ql_url = urljoin(self.base_url, '/v2')
+        params.update({'orionUrl': orion_url.encode('utf-8')})
+        params.update({'quantumleapUrl': ql_url.encode('utf-8')})
         if entity_type:
             params.update({'entityType': entity_type})
         if entity_id:
@@ -148,6 +151,8 @@ class QuantumLeapClient(BaseClient):
         if notified_attributes:
             params.update({'notifiedAttributes': notified_attributes})
         if throttling:
+            if throttling < 1:
+                raise TypeError("Throttling must be a positive integer")
             params.update({'throttling': throttling})
         if time_index_attribute:
             params.update({'timeIndexAttribute': time_index_attribute})
@@ -163,16 +168,16 @@ class QuantumLeapClient(BaseClient):
                 return msg
             else:
                 res.raise_for_status()
-        except requests.exceptions.RequestException as e:
+        except requests.exceptions.RequestException as err:
             msg = f"Could not create subscription."
-            self.log_error(e=e, msg=msg)
+            self.log_error(err=err, msg=msg)
             raise
 
     def delete_entity(self, entity_id: str, entity_type: str) -> str:
         """
         Given an entity (with type and id), delete all its historical records.
         """
-        url = urljoin(settings.QL_URL, f'/v2/entities/{entity_id}')
+        url = urljoin(self.base_url, f'/v2/entities/{entity_id}')
         headers = self.headers.copy()
         if entity_type:
             params = {'type': entity_type}
@@ -186,9 +191,9 @@ class QuantumLeapClient(BaseClient):
                 return entity_id
             else:
                 res.raise_for_status()
-        except requests.exceptions.RequestException as e:
+        except requests.exceptions.RequestException as err:
             msg = f"Could not delete entity of id {entity_id}"
-            self.log_error(e=e, msg=msg)
+            self.log_error(err=err, msg=msg)
             raise
 
     def delete_entity_type(self, entity_type: str) -> str:
@@ -196,7 +201,7 @@ class QuantumLeapClient(BaseClient):
         Given an entity type, delete all the historical records of all
         entities of such type.
         """
-        url = urljoin(settings.QL_URL, f'/v2/types/{entity_type}')
+        url = urljoin(self.base_url, f'/v2/types/{entity_type}')
         headers = self.headers.copy()
         try:
             res = self.session.delete(url=url, headers=headers)
@@ -206,14 +211,14 @@ class QuantumLeapClient(BaseClient):
                 return entity_type
             else:
                 res.raise_for_status()
-        except requests.exceptions.RequestException as e:
+        except requests.exceptions.RequestException as err:
             msg = f"Could not delete entities of type {entity_type}"
-            self.log_error(e=e, msg=msg)
+            self.log_error(err=err, msg=msg)
             raise
 
     # QUERY API ENDPOINTS
-    def __get_entity_data(self, entity_id: str, attr_name: str = None,
-                          valuesonly: bool = False, options: str = None,
+    def __get_entity_data(self, *, entity_id: str, attr_name: str = None,
+                          values_only: bool = False, options: str = None,
                           entity_type: str = None, aggr_method: str = None,
                           aggr_period: str = None, from_date: str = None,
                           to_date: str = None, last_n: int = None,
@@ -227,13 +232,13 @@ class QuantumLeapClient(BaseClient):
         Private Function to call respective API endpoints
         """
         if by_type:
-            url = urljoin(settings.QL_URL, f'/v2/types/{entity_type}')
+            url = urljoin(self.base_url, f'/v2/types/{entity_type}')
         else:
-            url = urljoin(settings.QL_URL, f'/v2/entities/{entity_id}')
+            url = urljoin(self.base_url, f'/v2/entities/{entity_id}')
 
         if attr_name:
             url += f'/attrs/{attr_name}'
-        if valuesonly:
+        if values_only:
             url += '/value'
         params = {}
         if options:
@@ -273,9 +278,9 @@ class QuantumLeapClient(BaseClient):
                 return ResponseModel(**res.json())
             else:
                 res.raise_for_status()
-        except requests.exceptions.RequestException as e:
+        except requests.exceptions.RequestException as err:
             msg = "Could not load entity data"
-            self.log_error(e=e, msg=msg)
+            self.log_error(err=err, msg=msg)
             raise
 
     # /entities/{entityId}
@@ -297,7 +302,7 @@ class QuantumLeapClient(BaseClient):
         """
 
         response = self.__get_entity_data(entity_id=entity_id, attrs=attrs,
-                                          valuesonly=False,
+                                          values_only=False,
                                           options=options,
                                           entity_type=entity_type,
                                           aggr_method=aggr_method,
@@ -329,7 +334,7 @@ class QuantumLeapClient(BaseClient):
         """
 
         response = self.__get_entity_data(entity_id=entity_id, attrs=attrs,
-                                          valuesonly=True,
+                                          values_only=True,
                                           options=options,
                                           entity_type=entity_type,
                                           aggr_method=aggr_method,
@@ -359,7 +364,7 @@ class QuantumLeapClient(BaseClient):
         """
 
         response = self.__get_entity_data(entity_id=entity_id,
-                                          attr_name=attr_name, valuesonly=False,
+                                          attr_name=attr_name, values_only=False,
                                           options=options,
                                           entity_type=entity_type,
                                           aggr_method=aggr_method,
@@ -390,7 +395,7 @@ class QuantumLeapClient(BaseClient):
         """
 
         response = self.__get_entity_data(entity_id=entity_id,
-                                          attr_name=attr_name, valuesonly=True,
+                                          attr_name=attr_name, values_only=True,
                                           options=options,
                                           entity_type=entity_type,
                                           aggr_method=aggr_method,
@@ -421,7 +426,7 @@ class QuantumLeapClient(BaseClient):
         raise NotImplementedError("Endpoint to be implemented..")
 
     # /types/{entityType}/value
-    def get_entity_attrs_values_by_type(self, entity_type: str, attrs: str =None,
+    def get_entity_attrs_values_by_type(self, entity_type: str, attrs: str = None,
                                         entity_id: str = None,
                                         aggr_method: str = None,
                                         aggr_period: str = None,
@@ -464,7 +469,7 @@ class QuantumLeapClient(BaseClient):
         #TODO:define args
         """
         response = self.__get_entity_data(entity_id=entity_id,
-                                          attr_name=attr_name, valuesonly=False,
+                                          attr_name=attr_name, values_only=False,
                                           options=options,
                                           entity_type=entity_type,
                                           aggr_method=aggr_method,
@@ -496,7 +501,7 @@ class QuantumLeapClient(BaseClient):
         #TODO:define args
         """
         response = self.__get_entity_data(entity_id=entity_id,
-                                          attr_name=attr_name, valuesonly=True,
+                                          attr_name=attr_name, values_only=True,
                                           options=options,
                                           entity_type=entity_type,
                                           aggr_method=aggr_method,

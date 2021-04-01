@@ -1,12 +1,13 @@
-|<a href="https://www.ebc.eonerc.rwth-aachen.de/"> <img alt="EBC" src="https://www.ebc.eonerc.rwth-aachen.de/global/show_picture.asp?id=aaaaaaaaaakevlz" height="100"> </a>|<a href="https://n5geh.de/"> <img alt="N5GEH" src="https://avatars.githubusercontent.com/u/43948851?s=200&v=4" height="100"> </a>|
-|---|---|
+<a href="https://www.ebc.eonerc.rwth-aachen.de/"> <img alt="EBC" src="https://www.ebc.eonerc.rwth-aachen.de/global/show_picture.asp?id=aaaaaaaaaakevlz" height="100"> </a>
+<a href="https://n5geh.de/"> <img alt="N5GEH" src="https://avatars.githubusercontent.com/u/43948851?s=200&v=4" height="100"> </a>
+
 
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
 # FiLiP 
 
-FiLiP (Fiware Library for Python) is a python software development kit for 
-accelerate the development of web services that use Fiware's Generic 
+FiLiP (Fiware Library for Python) is a python software development kit (SDK) for 
+accelerating the development of web services that use Fiware's Generic 
 Enablers (GEs) as backend.
 
 ## General Motivation
@@ -17,7 +18,7 @@ However, a general prerequisite to do so is that the documentation is of
 good quality in whole depth. 
 FIWARE generally provides 
 [openapi documentation](https://github.com/FIWARE/specifications/tree/master/OpenAPI/ngsiv2)
-But here are some general thoughts on auto generation of client code from 
+Here are some general thoughts on auto generation of client code from 
 these documents:
 
 - Auto generated code tends to become rather bulky and its quality strongly
@@ -33,7 +34,7 @@ these documents:
 ## FIWARE
 
 The following section introduces FIWARE. If you are already familiar with 
-FIWARE you can skip this section.
+FIWARE, you can skip this section.
 
 ### What is FIWARE?
 
@@ -43,41 +44,41 @@ domain.
 At the moment, the FIWARE 
 [catalogue](https://www.fiware.org/developers/catalogue/) contains over 30 
 interoperable software modules, so-called Generic Enablers 
-(GE)for developing and providing customized IoT platform solutions.
+(GE) for developing and providing customized IoT platform solutions.
 
 To get familiar with the APIs of the different modules we highly recommend 
-to check the 
+checking the 
 [step-by-step tutorial](https://fiware-tutorials.readthedocs.io/en/latest/). 
-It provides a good overview about FIWARE and its usage.
+It provides a good overview about FIWARE and its basic usage.
 Whereas the tutorial helps to understand most the general concepts, 
+for a deep dive, where you can learn about the components in more detail, 
 FIWARE also offers extended lessons through their 
-[academy](https://fiware-academy.readthedocs.io/en/latest/index.html/)
-for a deep dive where you can learn about components in more detail. 
+[academy](https://fiware-academy.readthedocs.io/en/latest/index.html/).
 
 However, usually one only requires a small set of components. 
-Hence, we suggest to use the cited pages on demand.
+Hence, we suggest using the cited pages only on demand.
 
-### How to setup a FIWARE platform?
+### How to set up a FIWARE platform?
 
-The easiest way to setup a FIWARE platform is by using docker as all GEs are 
+The easiest way to set up a FIWARE platform is by using docker as all GEs are 
 developed open-source and distributed as docker containers on dockerhub.
 
 However, as mentioned, for most use cases only a subset of GEs is required.
 Hence, we wrote a small [tutorial](https://github.com/N5GEH/n5geh.platform) 
-explaining how to setup a platform suited for most use cases within the energy 
+explaining how to set up a platform suited for most use cases within the energy 
 domain. 
 
 ### FIWARE GEs covered by FiLIP
 
-FiLIP is library developed on the demand.
-Hence, we do not aim to cover the APIs of all GEs included in the 
-[catalogue](https://www.fiware.org/developers/catalogue/), which would mean an 
-unnecessary development overhead. 
-Therefore, currently covers the APIs of following GEs:
+FiLIP is library developed on demand.
+Hence, we do not aim to cover the APIs of all GEs that are included in the 
+[catalogue](https://www.fiware.org/developers/catalogue/). 
+This would mean an unnecessary development overhead. 
+Therefore, FiLiP currently only covers the APIs of following GEs:
 
-- NGSIv2 Context Broker for managing of context data. We use the its 
-  reference implementation ORION.
-    - [documention](https://fiware-orion.readthedocs.io/en/master/)
+- NGSIv2 Context Broker for managing of context data. We use its 
+  reference implementation ORION for testing.
+    - [documentation](https://fiware-orion.readthedocs.io/en/master/)
     - [github](https://github.com/telefonicaid/fiware-orion)
     - [swagger](https://swagger.lab.fiware.org/)
     - [NGSI v2 specifications](https://github.com/FIWARE/specifications/tree/master/OpenAPI/ngsiv2)
@@ -85,8 +86,9 @@ Therefore, currently covers the APIs of following GEs:
     
 - IoT-Agents for managing IoT Devices. IoT agents are implemented using 
   the FIWARE IoT Agent Node Lib as a common framework:
-    - [documention](https://iotagent-node-lib.readthedocs.io/en/latest/)
+    - [documentation](https://iotagent-node-lib.readthedocs.io/en/latest/)
     - [github](https://github.com/telefonicaid/iotagent-node-lib)
+
     
 - IoT-Agent-JSON for managing devices using a JSON message payload protocol 
   format.
@@ -104,7 +106,7 @@ Therefore, currently covers the APIs of following GEs:
             "luminocity": "1570"
         }  
 
-- IoT-Agent-Ultralight for managing devices using a Ultralight 2.0 message 
+- IoT-Agent-Ultralight for managing devices using an Ultralight 2.0 message 
   payload protocol.
   
     - [documentation](https://fiware-iotagent-ul.readthedocs.io/en/latest/)
@@ -125,11 +127,11 @@ Therefore, currently covers the APIs of following GEs:
 
 ## Getting started
 
-The following section shortly describes use of the libary.
+The following section shortly describes use of the library.
 
 ### Prerequisites
 
-As FiLiP is a designed as client Library it requires a server that provides 
+Since FiLiP is a designed as client Library, it requires a server that provides 
 the target Service-APIs.
 Hence, if you do not yet have a running instance of a FIWARE based platform, 
 The most convenient way to set it up, is using docker. 
@@ -144,34 +146,40 @@ You can register for a testing account
 The easiest way to install the library is via pip:
 
 ```
-pip install git+git://github.com/n5geh/n5geh.tools.filip
+pip install git+git://github.com/RWTH-EBC/filip
+```
+
+If you want to benefit of the latest changes you the development.
+
+```
+pip install git+git://github.com/RWTH-EBC/filip@development
 ```
 
 ### Running examples or tests
 
-Once, you have installed the library you can check the [examples](./examples)
+Once, you have installed the library you can check the [examples](/examples)
 to learn how to use the different components of it. 
 
-Currently, we provide basic examples for the usage of FiLIP for the FIWWARE 
+Currently, we provide basic examples for the usage of FiLIP for the FIWARE 
 GEs mentioned above.
 We suggest to start with the config-example in order to understand the 
 configuration of clients (*Note: This may change in future*)
 Furthermore, we provide more advanced examples for the semantic 
 context data modeling within a context broker using 
-[relationships](./examples/relationship_example.py).
-Furthermore, the context broker provides a mechanism for event based 
+[relationships](/examples/relationship_example.py).
+Furthermore, the context broker provides a mechanism for an event based 
 http-notification.
-Using this mechanism is shown [here](./examples/subscription_example.py)
+Using this mechanism is shown [here](/examples/subscription_example.py)
 
 **NOTE**: Currently, we are refactoring the library in order to provide 
 better validation mechanism. 
-After this big step we will work on further examples and the integration of 
+After this big step we will work on further examples, and the integration of 
 further advanced functions supporting the effective context data modelling 
 using validated data model structures. 
 
 ## Testing
 
-Currently, we working on a CI workflow for continuous testing of the library
+Currently, we are working on a CI workflow for continuous testing of the library
 
 ## Documentation
 
@@ -187,7 +195,7 @@ FiLiP is organized as follows:
 ## Authors
 
 * [Thomas Storek](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/N5GEH-National-5G-Energy-Hub/~lhda/Thomas-Storek/?allou=1) (corresponding)
-* **Felix Rehmann**
+* Felix Rehmann
 
 ## References
 
@@ -220,7 +228,8 @@ Efficient Buildings and Indoor Climate
 
 ## Acknowledgments
 
-We gratefully acknowledge the financial support by Federal Ministry \\ for Economic Affairs and Energy (BMWi), promotional reference XXX.
+We gratefully acknowledge the financial support by Federal Ministry \\ 
+for Economic Affairs and Energy (BMWi), promotional reference 03ET1561B.
 
-|<a href="https://www.bmwi.de/Navigation/EN/Home/home.html"> <img alt="BMWE" src="https://www.bmwi.de/SiteGlobals/BMWI/StyleBundles/Bilder/bmwi_logo_en.svgz?__blob=normal&v=10" height="100"> </a>|
-|---|
+<a href="https://www.bmwi.de/Navigation/EN/Home/home.html"> <img alt="BMWE" src="https://www.bmwi.de/SiteGlobals/BMWI/StyleBundles/Bilder/bmwi_logo_en.svgz?__blob=normal&v=10" height="100"> </a>
+

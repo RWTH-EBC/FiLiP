@@ -35,3 +35,4 @@ venv
 secrets-tst.json
 config-tst.json
 
+/filip/external_resources/unece-units-of-measure.hdf

@@ -4,7 +4,7 @@ INSTALL_REQUIRES = ['requests',
                     'fuzzywuzzy',
                     'PyYAML',
                     'pandas',
-                    'pydantic'
+                    'pydantic',
                     'requests_oauthlib',
                     'authlib']
 

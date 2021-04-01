@@ -1,14 +1,17 @@
 from __future__ import annotations
 import logging
+import numbers
+import pandas as pd
 from typing import Any, Optional, List, Union
 from pydantic import BaseModel, Field, validator
 from datetime import datetime
-from cb.models import ContextEntity
-import pandas as pd
+from filip.cb.models import ContextEntity
+
 
 logger = logging.getLogger()
 
-class IndexArray(str):
+
+class IndexArray(list):
     """
     Array of the timestamps which are indexes of the response for the
     requested data. It's a parallel array to 'values'. The timestamp will be
@@ -47,7 +50,7 @@ class IndexArray(str):
         return f'IndexArray({super().__repr__()})'
 
 
-class ValuesArray(str):
+class ValuesArray(list):
     """
     Array of values of the selected attribute, in the same corresponding order
     of the 'index' array. When using aggregation options, the format of this
@@ -63,10 +66,12 @@ class ValuesArray(str):
     def validate(cls, v):
         if not isinstance(v, list):
             raise TypeError('list required')
+        if not isinstance(all(v), (str, numbers.Number)):
+            raise TypeError('Alphanumeric values required!')
         return v
 
     def __repr__(self):
-        return f'ValueArray({super().__repr__()})'
+        return f'ValuesArray({super().__repr__()})'
 
 
 class BaseValues(BaseModel):
@@ -97,6 +102,7 @@ class IndexedValues(BaseValues):
                     "each index will be a valid timestamp of a moment in the "
                     "corresponding day."
     )
+
     @validator('index')
     def validate_index(cls, v):
         for idx, timestamp in enumerate(v):
@@ -111,7 +117,6 @@ class IndexedValues(BaseValues):
         return v
 
 
-
 class AttributeValues(BaseValues):
     attrName: str = Field(
         title="Attribute name",
@@ -119,14 +124,13 @@ class AttributeValues(BaseValues):
     )
 
 
-class EntityIndexedValues(BaseValues):
+class EntityIndexedValues(IndexedValues):
     entityId: str = Field(
         title="Entity Id",
         description=""
     )
 
 
-# TODO move to core
 class NotificationMessage(BaseModel):
     subscriptionId: Optional[str] = Field(
         description="Id of the subscription the notification comes from",
@@ -150,5 +154,10 @@ class ResponseModel(BaseModel):
     attrName: str = None
     entities: List[EntityIndexedValues] = None
 
+    # TODO:make it more general
     def to_pandas(self):
-        return pd.DataFrame(self).dropna()
+        print(self.dict())
+        index = pd.MultiIndex.from_product([[self.entityId], self.index],
+                                           names=['entity_id', 'index'])
+        columns = pd.MultiIndex.from_product([[self.attrName]])
+        return pd.DataFrame(self.values, index=index, columns=columns)

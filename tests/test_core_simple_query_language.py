@@ -1,5 +1,8 @@
 import unittest
-from core.simple_query_language import Statement, Operator, SimpleQuery
+from filip.core.simple_query_language import \
+    Statement, \
+    Operator, \
+    SimpleQuery
 
 
 class TestContextBroker(unittest.TestCase):

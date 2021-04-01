@@ -1,17 +1,16 @@
 import unittest
 import requests
-from unittest.mock import Mock, patch
 from uuid import uuid4
-from core.models import FiwareHeader
-from iota.client import IoTAClient
-from iota.models import ServiceGroup, Device
+from filip.core.models import FiwareHeader
+from filip.iota.client import IoTAClient
+from filip.iota.models import ServiceGroup, Device
 
 
 class TestAgent(unittest.TestCase):
     def setUp(self) -> None:
         self.device = {
             "device_id": "saf",
-            "service_group": None,
+            "service": None,
             "service_path": "/",
             "entity_name": "saf",
             "entity_type": "all",
