@@ -18,11 +18,6 @@ def setup():
 
 
 def create_entities():
-    """
-    Function creates Test Entities for the Context Broker
-    :return: The Entities used for Testing
-
-    """
     with ContextBrokerClient(fiware_header=FiwareHeader(service='filip',
                                                         service_path='/testing')) as \
             cb_client:
@@ -102,9 +97,6 @@ def update_entity(entity):
                                                      value=12))
 
         logger.info("------Adding a new attribute to an entity------")
-        # print(cb_client.update_entity_attribute(entity_id="Room1",
-        #                                         attr=NamedContextAttribute(
-        #                                         **new_attribute)))
         logger.info(cb_client.update_entity(entity=entity))
 
         logger.info("------Checking if new attribute is added------")
