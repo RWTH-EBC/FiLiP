@@ -3,7 +3,7 @@ import re
 import time
 from datetime import datetime
 from filip.core.models import FiwareHeader
-from filip.core.simple_query_language import SimpleQuery
+from filip.core.simple_query_language import QueryString
 from filip.cb.client import ContextBrokerClient
 from filip.cb.models import \
     ContextEntity, \
@@ -97,8 +97,8 @@ class TestContextBroker(unittest.TestCase):
                 type_pattern=".*TypeA$")
             self.assertLess(len(entities_by_type_pattern), len(entities_all))
 
-            query = SimpleQuery(statements=[('presentValue', '>', 0)])
-            entities_by_query = client.get_entity_list(q=query)
+            qs = QueryString(qs=[('presentValue', '>', 0)])
+            entities_by_query = client.get_entity_list(q=qs)
             self.assertLess(len(entities_by_query), len(entities_all))
 
             # test options

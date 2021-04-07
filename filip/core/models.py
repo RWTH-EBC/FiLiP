@@ -54,10 +54,10 @@ class FiwareHeader(BaseModel):
     )
     service_path: str = Field(
         alias="fiware-servicepath",
-        default="/",
+        default="",
         description="Fiware service_group path",
         max_length = 51,
-        regex="^\/+[\w\/]*$"
+        regex="^(\/[\w\/]*[\w\#])(,(\/[\w\/]*[\w\#]))*$"
     )
 
     class Config(BaseConfig):

@@ -1,10 +1,3 @@
-import itertools
-import regex as re
-from aenum import Enum
-from typing import Union, List, Tuple, Set, Any
-from pydantic import BaseModel, Field, validator
-
-
 """
 The Simple Query Language provides a simplified syntax to retrieve entities
 which match a set of conditions. A query is composed by a list of
@@ -16,6 +9,9 @@ For further details of the language please refer to:
 
 http://telefonicaid.github.io/fiware-orion/api/v2/stable/
 """
+import regex as re
+from aenum import Enum
+from typing import Union, List, Tuple, Any
 
 
 class Operator(str, Enum):
@@ -44,13 +40,13 @@ class Operator(str, Enum):
                   "elements target properties that represent dates (in " \
                   "ISO8601 format), numbers or strings. "
     UNEQUAL = '!=', "Single element, e.g. temperature!=41. For an entity to " \
-                    "match, it must contain the target property (temperature) " \
+                    "match, it must contain the target property (temperature) "\
                     "and the target property value must not be the query " \
                     "value (41). A list of comma-separated values, " \
                     "e.g. color!=black,red. For an entity to match, it must " \
                     "contain the target property and the target property " \
                     "value must not be any of the values in the list (AND " \
-                    "clause) (or not include any of the values in the list in " \
+                    "clause) (or not include any of the values in the list in "\
                     "case the target property value is an array). Eg. " \
                     "entities whose attribute color is set to black will not " \
                     "match, while entities whose attribute color is set to " \
@@ -108,9 +104,10 @@ class Operator(str, Enum):
     def list(cls):
         return list(map(lambda c: c.value, cls))
 
-class Query(Tuple):
+
+class QueryStatement(Tuple):
     def __new__(self, left: str, op: Union[str, Operator], right: Any):
-        q = tuple.__new__(Query, (left, op, right))
+        q = tuple.__new__(QueryStatement, (left, op, right))
         q = self.validate(q)
         return q
 
@@ -120,7 +117,7 @@ class Query(Tuple):
 
     @classmethod
     def validate(cls, v):
-        if isinstance(v, (tuple, Query)):
+        if isinstance(v, (tuple, QueryStatement)):
             if len(v) != 3:
                 raise TypeError('3-tuple required')
             if not isinstance(v[0], str):
@@ -138,21 +135,23 @@ class Query(Tuple):
                     raise
             return v
         elif isinstance(v, str):
-            return cls.parse_string(v)
+            return cls.parse_str(v)
         else:
             raise TypeError
 
-    def to_string(self):
+    def to_str(self):
         if not isinstance(self[2], str):
             right = str(self[2])
-        else:
+        elif self[2].isnumeric():
             right = f"'{self[2]}'"
+        else:
+            right = self[2]
         return ''.join([self[0], self[1], right])
 
     @classmethod
-    def parse_string(cls, string: str):
+    def parse_str(cls, string: str):
         for op in Operator.list():
-            if re.search(f"^[\w]*{op}+[\w]", string):
+            if re.fullmatch(f"^\w(\w*|\.(?=\w))*{op}\w*", string):
                 args = string.split(op)
                 if len(args) == 2:
                     if args[1].isnumeric():
@@ -160,19 +159,23 @@ class Query(Tuple):
                             right = int(args[1])
                         except ValueError:
                             right = float(args[1])
-                        return Query(args[0], op, right)
+                        return QueryStatement(args[0], op, right)
                     else:
-                        return Query(args[0], op, args[1])
+                        return QueryStatement(args[0], op, args[1])
                 else:
                     raise ValueError
 
+    def __str__(self):
+        return self.to_str()
+
     def __repr__(self):
-        return self.to_string().__repr__()
+        return self.to_str().__repr__()
+
 
 class QueryString():
     def __init__(self, qs: Union[Tuple,
-                                Query,
-                                List[Union[Query, Tuple]]]):
+                                 QueryStatement,
+                                 List[Union[QueryStatement, Tuple]]]):
         qs = self.__check_arguments(qs=qs)
         self._qs = qs
 
@@ -180,24 +183,24 @@ class QueryString():
     def __check_arguments(cls, qs):
         if isinstance(qs, List):
             for idx, item in enumerate(qs):
-                if not isinstance(item, Query):
-                    qs[idx] = Query(*item)
+                if not isinstance(item, QueryStatement):
+                    qs[idx] = QueryStatement(*item)
             # Remove duplicates
             qs = list(dict.fromkeys(qs))
-        elif isinstance(qs, Query):
+        elif isinstance(qs, QueryStatement):
             qs = [qs]
         elif isinstance(qs, tuple):
-            qs = [Query(*qs)]
+            qs = [QueryStatement(*qs)]
         else:
             raise ValueError('Invalid argument!')
         return qs
 
-    def update(self, qs: Union[Tuple, Query, List[Query]]):
+    def update(self, qs: Union[Tuple, QueryStatement, List[QueryStatement]]):
         qs = self.__check_arguments(qs=qs)
         self._qs.extend(qs)
         self._qs = list(dict.fromkeys(qs))
 
-    def remove(self, qs: Union[Tuple, Query, List[Query]]):
+    def remove(self, qs: Union[Tuple, QueryStatement, List[QueryStatement]]):
         qs = self.__check_arguments(qs=qs)
         for q in qs:
             self._qs.remove(q)
@@ -211,74 +214,24 @@ class QueryString():
         if isinstance(v, QueryString):
             return v
         if isinstance(v, str):
-            return cls.parse_string(v)
+            return cls.parse_str(v)
         else:
             raise ValueError('Invalid argument!')
 
-    def to_string(self):
-        return ';'.join([q.to_string() for q in self._qs])
+    def to_str(self):
+        return ';'.join([q.to_str() for q in self._qs])
 
     @classmethod
-    def parse_string(cls, string: str):
+    def parse_str(cls, string: str):
         q_parts = string.split(';')
         qs = []
         for part in q_parts:
-            q = Query.parse_string(part)
+            q = QueryStatement.parse_str(part)
             qs.append(q)
         return QueryString(qs=qs)
 
+    def __str__(self):
+        return self.to_str()
+
     def __repr__(self):
-        return self.to_string().__repr__()
-
-
-class Expression(BaseModel):
-    qs: QueryString
-
-    class Config():
-        json_encoders = {QueryString: lambda v: v.to_string(),
-                        Query: lambda v: v.to_string()}
-
-q1 = Query('t', '==', 50)
-q2 = Query('temp', '>', '60')
-q3 = Query('temp', '<=', '60')
-
-print(q1.to_string())
-
-q4 = Query.parse_string(q1.to_string())
-print(str(q1)==str(q4))
-
-q5 = Query.parse_string(q2.to_string())
-
-print(q2.to_string())
-
-
-
-print(q4)
-print(q5)
-
-
-
-qs=QueryString(('t', '<=', '50'))
-print(type(qs._qs))
-print(qs.to_string())
-print(qs)
-
-
-model = Expression(qs=qs)
-
-print(model.json())
-
-model2 = Expression.parse_obj({"qs": "temp<=60;t<=50"})
-
-qs2= QueryString.parse_string("temp<=60;t<=50")
-qs2.update(('t', '<=', '50'))
-
-print(qs2)
-
-print(model2.dict())
-
-test = model2.dict().copy()
-
-print(type(test['qs']))
-print({'qs': "temp<=60;t<=50"})
-
+        return self.to_str().__repr__()
