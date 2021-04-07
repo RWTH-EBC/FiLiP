@@ -1,10 +1,3 @@
-import itertools
-import regex as re
-from aenum import Enum
-from typing import Union, List, Tuple, Set
-from pydantic import BaseModel, Field, validator
-
-
 """
 The Simple Query Language provides a simplified syntax to retrieve entities
 which match a set of conditions. A query is composed by a list of
@@ -16,6 +9,9 @@ For further details of the language please refer to:
 
 http://telefonicaid.github.io/fiware-orion/api/v2/stable/
 """
+import regex as re
+from aenum import Enum
+from typing import Union, List, Tuple, Any
 
 
 class Operator(str, Enum):
@@ -44,13 +40,13 @@ class Operator(str, Enum):
                   "elements target properties that represent dates (in " \
                   "ISO8601 format), numbers or strings. "
     UNEQUAL = '!=', "Single element, e.g. temperature!=41. For an entity to " \
-                    "match, it must contain the target property (temperature) " \
+                    "match, it must contain the target property (temperature) "\
                     "and the target property value must not be the query " \
                     "value (41). A list of comma-separated values, " \
                     "e.g. color!=black,red. For an entity to match, it must " \
                     "contain the target property and the target property " \
                     "value must not be any of the values in the list (AND " \
-                    "clause) (or not include any of the values in the list in " \
+                    "clause) (or not include any of the values in the list in "\
                     "case the target property value is an array). Eg. " \
                     "entities whose attribute color is set to black will not " \
                     "match, while entities whose attribute color is set to " \
@@ -109,83 +105,133 @@ class Operator(str, Enum):
         return list(map(lambda c: c.value, cls))
 
 
-class Statement(tuple):
-    """
-    Query statement for simple query language
-    """
-    # Todo: Make Statements serializable
-    def __new__(self, left_hand_side: str,
-                operator: str,
-                right_hand_side: Union[str, float, int]):
-        assert operator in list(Operator), f"No valid operator string. String " \
-                                           f"must be one of the following: " \
-                                           f"{Operator.list()}"
-        if operator not in [Operator.EQUAL,
-                            Operator.UNEQUAL,
-                            Operator.MATCH_PATTERN]:
-            try:
-                float(right_hand_side)
-            except ValueError as e:
-                e.args += ("Combination of operator and right hand side "
-                           "is not allowed", )
-                raise
-        return tuple.__new__(Statement,
-                             (left_hand_side, operator, right_hand_side))
-
-    def __str__(self):
-        return ''.join([str(item) for item in self])
-
-
-
-
-class SimpleQuery(BaseModel):
-    """
-    Represents a simple query object that can handed to a request for
-    filtering responses.
-    """
-    statements: Set[Statement] = Field(
-        title="Statements",
-        description="List of simple query statement")
-
-    def __init__(self, statements:
-        Union[
-          List[Union[Statement, Tuple[str, str, Union[str, float, int]]]],
-          Set[Union[Statement, Tuple[str, str, Union[str, float, int]]]]]):
-        statements = self.validate_statements(statements)
-        super().__init__(statements=statements)
-
-    class Config():
-        json_encoders = {
-            Statement: lambda v: str(v)
-        }
-
-    @validator('statements')
-    def validate_statements(cls, statements):
-        if not isinstance(statements, (list, set)):
-            statements = [statements]
-        for idx, statement in enumerate(statements):
-            if not isinstance(statement, Statement):
-                statements[idx] = Statement(*statement)
-        return set(statements)
-
-    def __str__(self):
-        return self.str()
-
-    def __repr__(self):
-        return f'{super().__repr_name__()}({super().__repr_str__(", ")})'
-
-    def str(self):
-        return ';'.join([str(statement) for statement in self.statements])
+class QueryStatement(Tuple):
+    def __new__(self, left: str, op: Union[str, Operator], right: Any):
+        q = tuple.__new__(QueryStatement, (left, op, right))
+        q = self.validate(q)
+        return q
 
     @classmethod
-    def parse_str(cls, query_string: str):
-        query_parts = query_string.split(';')
-        statements = set()
-        for part, op in itertools.product(query_parts, Operator.list()):
-            if re.search(f"^[\w]*{op}+[\w]", part):
-                args =part.split(op)
+    def __get_validators__(cls):
+        yield cls.validate
+
+    @classmethod
+    def validate(cls, v):
+        if isinstance(v, (tuple, QueryStatement)):
+            if len(v) != 3:
+                raise TypeError('3-tuple required')
+            if not isinstance(v[0], str):
+                raise TypeError('First argument must be a string!')
+            if v[1] not in Operator.list():
+                raise TypeError('Invalid comparison operator!')
+            if v[1] not in [Operator.EQUAL,
+                            Operator.UNEQUAL,
+                            Operator.MATCH_PATTERN]:
+                try:
+                    float(v[2])
+                except ValueError as err:
+                    err.args += ("Invalid combination of operator and right "
+                                 "hand side!",)
+                    raise
+            return v
+        elif isinstance(v, str):
+            return cls.parse_str(v)
+        else:
+            raise TypeError
+
+    def to_str(self):
+        if not isinstance(self[2], str):
+            right = str(self[2])
+        elif self[2].isnumeric():
+            right = f"'{self[2]}'"
+        else:
+            right = self[2]
+        return ''.join([self[0], self[1], right])
+
+    @classmethod
+    def parse_str(cls, string: str):
+        for op in Operator.list():
+            if re.fullmatch(f"^\w(\w*|\.(?=\w))*{op}\w*", string):
+                args = string.split(op)
                 if len(args) == 2:
-                    statements.add(Statement(args[0], op, args[1]))
+                    if args[1].isnumeric():
+                        try:
+                            right = int(args[1])
+                        except ValueError:
+                            right = float(args[1])
+                        return QueryStatement(args[0], op, right)
+                    else:
+                        return QueryStatement(args[0], op, args[1])
                 else:
                     raise ValueError
-        return cls(statements=statements)
+
+    def __str__(self):
+        return self.to_str()
+
+    def __repr__(self):
+        return self.to_str().__repr__()
+
+
+class QueryString():
+    def __init__(self, qs: Union[Tuple,
+                                 QueryStatement,
+                                 List[Union[QueryStatement, Tuple]]]):
+        qs = self.__check_arguments(qs=qs)
+        self._qs = qs
+
+    @classmethod
+    def __check_arguments(cls, qs):
+        if isinstance(qs, List):
+            for idx, item in enumerate(qs):
+                if not isinstance(item, QueryStatement):
+                    qs[idx] = QueryStatement(*item)
+            # Remove duplicates
+            qs = list(dict.fromkeys(qs))
+        elif isinstance(qs, QueryStatement):
+            qs = [qs]
+        elif isinstance(qs, tuple):
+            qs = [QueryStatement(*qs)]
+        else:
+            raise ValueError('Invalid argument!')
+        return qs
+
+    def update(self, qs: Union[Tuple, QueryStatement, List[QueryStatement]]):
+        qs = self.__check_arguments(qs=qs)
+        self._qs.extend(qs)
+        self._qs = list(dict.fromkeys(qs))
+
+    def remove(self, qs: Union[Tuple, QueryStatement, List[QueryStatement]]):
+        qs = self.__check_arguments(qs=qs)
+        for q in qs:
+            self._qs.remove(q)
+
+    @classmethod
+    def __get_validators__(cls):
+        yield cls.validate
+
+    @classmethod
+    def validate(cls, v):
+        if isinstance(v, QueryString):
+            return v
+        if isinstance(v, str):
+            return cls.parse_str(v)
+        else:
+            raise ValueError('Invalid argument!')
+
+    def to_str(self):
+        return ';'.join([q.to_str() for q in self._qs])
+
+    @classmethod
+    def parse_str(cls, string: str):
+        q_parts = string.split(';')
+        qs = []
+        for part in q_parts:
+            q = QueryStatement.parse_str(part)
+            qs.append(q)
+        return QueryString(qs=qs)
+
+    def __str__(self):
+        return self.to_str()
+
+    def __repr__(self):
+        return self.to_str().__repr__()

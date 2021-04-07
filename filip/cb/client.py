@@ -11,7 +11,7 @@ from urllib.parse import urljoin
 from filip.core.base_client import BaseClient
 from filip.core.settings import settings
 from filip.core.models import FiwareHeader, PaginationMethod
-from filip.core.simple_query_language import SimpleQuery
+from filip.core.simple_query_language import QueryString
 from filip.cb.models import \
     ContextEntity, \
     ContextEntityKeyValues, \
@@ -205,8 +205,8 @@ class ContextBrokerClient(BaseClient):
                         entity_types: List[str] = None,
                         id_pattern: str = None,
                         type_pattern: str = None,
-                        q: Union[str, SimpleQuery] = None,
-                        mq: Union[str, SimpleQuery] = None,
+                        q: Union[str, QueryString] = None,
+                        mq: Union[str, QueryString] = None,
                         georel: str = None,
                         geometry: str = None,
                         coords: str = None,
@@ -214,7 +214,10 @@ class ContextBrokerClient(BaseClient):
                         attrs: List[str] = None,
                         metadata: str = None,
                         order_by: str = None,
-                        options: List[GetEntitiesOptions] = None
+                        options: Union[str,
+                                       GetEntitiesOptions,
+                                       List[Union[str, GetEntitiesOptions]]] =
+                        None
                         ) -> Union[List[ContextEntity], List[Dict[str, Any]]]:
         """
         Retrieves a list of context entities that match different criteria by
@@ -324,7 +327,6 @@ class ContextBrokerClient(BaseClient):
         else:
             options = 'count'
         params.update({'options': options})
-
         try:
             items = self.__pagination__(method=PaginationMethod.GET,
                                         limit=limit,
@@ -369,7 +371,7 @@ class ContextBrokerClient(BaseClient):
             metadata (List of Strings): A list of metadata names to include in
             the response. See "Filtering out attributes and metadata" section
             for more detail. Example: accuracy.
-            options (Dict):
+            options (List):
         Returns:
             ContextEntity
         """
@@ -847,6 +849,7 @@ class ContextBrokerClient(BaseClient):
             subscription:
 
         Returns:
+            object: 
 
         """
         url = urljoin(self.base_url, 'v2/subscriptions')

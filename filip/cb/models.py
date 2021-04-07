@@ -1,15 +1,18 @@
 from aenum import Enum
-from typing import Any, List, Dict, Union, Optional, Pattern
-from pydantic import BaseModel, \
+from datetime import datetime
+from pydantic import \
+    BaseModel, \
     Field, \
     validator,  \
     root_validator, \
     create_model, \
     AnyHttpUrl, \
     Json
-from datetime import datetime
+from typing import Any, Type, List, Dict, Union, Optional, Pattern
 from filip.core.models import DataType
-from filip.core.simple_query_language import SimpleQuery
+from filip.core.simple_query_language import \
+    QueryString, \
+    QueryStatement
 
 
 # Options for queries
@@ -44,6 +47,7 @@ class ContextMetadata(BaseModel):
         title="metadata value",
         description="a metadata value containing the actual metadata"
     )
+
 
 class NamedContextMetadata(ContextMetadata):
     name: str = Field(
@@ -101,6 +105,7 @@ class ContextAttribute(BaseModel):
         else:
             return ContextMetadata(**v)
 
+
 class NamedContextAttribute(ContextAttribute):
     """
     Context attributes are properties of context entities. For example, the
@@ -122,6 +127,8 @@ class NamedContextAttribute(ContextAttribute):
         regex = "(^((?![?&#/])[\x00-\x7F])*$)(?!(id|type|geo:distance|\*))",
         # Make it FIWARE-Safe
     )
+
+
 class ContextEntityKeyValues(BaseModel):
     id: str = Field(
         ...,
@@ -247,17 +254,19 @@ def username_alphanumeric(cls, v):
     return v
 
 
-def create_context_entity_model(name: str = None, data: Dict = None):
+def create_context_entity_model(name: str = None, data: Dict = None) -> \
+        Type['ContextEntity']:
     properties = {key: (ContextAttribute, ...) for key in data.keys() if
                   key not in ContextEntity.__fields__}
     validators = {f'validate_test': validator('temperature')(
         username_alphanumeric)}
-    return create_model(
+    model = create_model(
         __model_name=name or 'GeneratedContextEntity',
         __base__=ContextEntity,
         __validators__=validators,
         **properties
     )
+    return model
 
 
 # Models for Subscriptions start here
@@ -331,6 +340,16 @@ class Notification(BaseModel):
     :param attribute_type: either 'attrs' or 'exceptAttrs'
     :param _list: list of either 'attrs' or 'exceptAttrs' attributes
     """
+    http: Optional[Http] = Field(
+        description='It is used to convey parameters for notifications '
+                    'delivered through the HTTP protocol. Cannot be used '
+                    'together with "httpCustom"'
+    )
+    httpCustom: Optional[HttpCustom] = Field(
+        description='It is used to convey parameters for notifications '
+                    'delivered through the HTTP protocol. Cannot be used '
+                    'together with "http"'
+    )
     attrs: Optional[List[str]] = Field(
         description='List of attributes to be included in notification '
                     'messages. It also defines the order in which attributes '
@@ -344,16 +363,6 @@ class Notification(BaseModel):
         description='List of attributes to be excluded from the notification '
                     'message, i.e. a notification message includes all entity '
                     'attributes except the ones listed in this field.'
-    )
-    http: Optional[Http] = Field(
-        description='It is used to convey parameters for notifications '
-                    'delivered through the HTTP protocol. Cannot be used '
-                    'together with "httpCustom"'
-    )
-    httpCustom: Optional[HttpCustom] = Field(
-        description='It is used to convey parameters for notifications '
-                    'delivered through the HTTP protocol. Cannot be used '
-                    'together with "http"'
     )
     attrsFormat: Optional[AttrsFormat] = Field(
         default= AttrsFormat.NORMALIZED,
@@ -380,6 +389,7 @@ class Notification(BaseModel):
         if v is not None:
             assert values['attrs'] == None
         return v
+
 
 class NotificationResponse(Notification):
     timesSent: int = Field(
@@ -413,28 +423,98 @@ class Status(str, Enum):
 
 
 class Expression(BaseModel):
-    q: Optional[Union[str, SimpleQuery]] = Field(
-        description=''
+    """
+    By means of a filtering expression, allows to express what is the scope
+    of the data provided.
+    http://telefonicaid.github.io/fiware-orion/api/v2/stable
+    """
+    q: Optional[Union[str, QueryString]] = Field(
+        default=None,
+        title='Simple Query Language: filter',
+        description='If filtering by attribute value (i.e. the expression is '
+                    'used in a q query), the rest of tokens (if present) '
+                    'represent the path to a sub-property of the target NGSI '
+                    'attribute value (which should be a JSON object). Such '
+                    'sub-property is defined as the target property.'
     )
-    mq: Optional[Union[str, SimpleQuery]] = Field()
-    # TODO: Adding additional query options
-    # http://telefonicaid.github.io/fiware-orion/api/v2/stable/
+    mq: Optional[Union[str, QueryString]] = Field(
+        default=None,
+        title='Simple Query Language: metadata filters',
+        description='If filtering by metadata (i.e. the expression is used in '
+                    'a mq query), the second token represents a metadata name '
+                    'associated to the target NGSI attribute, target '
+                    'metadata, and the rest of tokens (if present) represent '
+                    'the path to a sub-property of the target metadata value '
+                    '(which should be a JSON object). Such sub-property is '
+                    'defined as the target property. '
+    )
+    georel: Optional[Union[str, QueryString]] = Field(
+        default=None,
+        title='Metadata filters',
+        description='Any of the geographical relationships as specified by '
+                    'the Geoqueries section of this specification.'
+    )
+    geometry: Optional[Union[str, QueryString]] = Field(
+        default=None,
+        title='Metadata filters',
+        description='Any of the supported geometries as specified by the '
+                    'Geoqueries section of this specification.'
+    )
+    coords: Optional[Union[str, QueryString]] = Field(
+        default=None,
+        title='Metadata filters',
+        description='String representation of coordinates as specified by the '
+                    'Geoqueries section of the specification.'
+    )
 
-    # TODO: This does not work yet
-    #@validator('q', 'mq')
-    #def validate_expressions(cls, v):
-    #    if isinstance(v, str):
-    #        return SimpleQuery.parse_str(v)
+    @validator('q', 'mq')
+    def validate_expressions(cls, v):
+        if isinstance(v, str):
+            return QueryString.parse_str(v)
+
+    class Config():
+        json_encoders = {QueryString: lambda v: v.to_str(),
+                         QueryStatement: lambda v: v.to_str()}
+
 
 class Condition(BaseModel):
-    attrs: List[str] = Field(
+    """
+    Notification rules are as follow:
+    If attrs and expression are used, a notification is sent whenever one of
+    the attributes in the attrs list changes and at the same time expression
+    matches.
+    If attrs is used and expression is not used, a notification is sent
+    whenever any of the attributes in the attrs list changes.
+    If attrs is not used and expression is used, a notification is sent
+    whenever any of the attributes of the entity changes and at the same time
+    expression matches.
+    If neither attrs nor expression are used, a notification is sent whenever
+    any of the attributes of the entity changes.
+
+    """
+    attrs: Optional[Union[str, List[str]]] = Field(
+        default=None,
         description='array of attribute names'
     )
     expression: Optional[Union[str, Expression]] = Field(
+        default=None,
         description='an expression composed of q, mq, georel, geometry and '
                     'coords (see "List entities" operation above about this '
                     'field).'
     )
+
+    @validator('attrs')
+    def check_attrs(cls, v):
+        if isinstance(v, list):
+            return v
+        elif isinstance(v, str):
+            return [v]
+        else:
+            raise TypeError()
+
+    class Config():
+        json_encoders = {QueryString: lambda v: v.to_str(),
+                         QueryStatement: lambda v: v.to_str()}
 
 
 class Entity(BaseModel):
@@ -466,6 +546,10 @@ class Subject(BaseModel):
                     "Object:"
     )
     condition: Optional[Condition] = Field()
+
+    class Config():
+        json_encoders = {QueryString: lambda v: v.to_str(),
+                         QueryStatement: lambda v: v.to_str()}
 
 
 class Subscription(BaseModel):
@@ -523,6 +607,11 @@ class Subscription(BaseModel):
                     "It is optional."
     )
 
+    class Config():
+        json_encoders = {QueryString: lambda v: v.to_str(),
+                         QueryStatement: lambda v: v.to_str()}
+
+
 # Registration Models
 class ForwardingMode(str, Enum):
     _init_ = 'value __doc__'
@@ -552,6 +641,7 @@ class Provider(BaseModel):
                     "this context provider. By default all."
     )
 
+
 class ForwardingInformation(BaseModel):
     timesSent: int = Field(
         description="(not editable, only present in GET operations): "
@@ -576,6 +666,7 @@ class ForwardingInformation(BaseModel):
 
     class Config:
         allow_mutation = False
+
 
 class DataProvided(BaseModel):
     entities: List[Entity] = Field(
@@ -644,6 +735,7 @@ class Registration(BaseModel):
                     "forwarding capabilities."
     )
 
+
 class Query(BaseModel):
     entities: List[Entity] = Field(
         description="a list of entities to search for. Each element is "
@@ -697,7 +789,7 @@ class Notify(BaseModel):
         description=""
     )
 
-# TODO: Add Registrations and Relationships
+# TODO: Add Relationships
 #class Relationship:
 #    """
 #    Class implements the concept of FIWARE Entity Relationships.
@@ -749,5 +841,3 @@ class Notify(BaseModel):
 #        ref_dict = json.loads(self.get_ref())
 #        whole_dict = {**temp_dict, **ref_dict}
 #        return json.dumps(whole_dict)
-#
-#

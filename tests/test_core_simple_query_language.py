@@ -1,8 +1,8 @@
 import unittest
 from filip.core.simple_query_language import \
-    Statement, \
+    QueryStatement, \
     Operator, \
-    SimpleQuery
+    QueryString
 
 
 class TestContextBroker(unittest.TestCase):
@@ -13,11 +13,13 @@ class TestContextBroker(unittest.TestCase):
 
     def test_statements(self):
         for op in list(Operator):
-            Statement(self.left_hand_side, op, self.numeric_right_hand_side)
+            QueryStatement(self.left_hand_side, op,
+                           self.numeric_right_hand_side)
             if op not in [Operator.EQUAL,
                           Operator.UNEQUAL,
                           Operator.MATCH_PATTERN]:
-                self.assertRaises(ValueError, Statement, self.left_hand_side,
+                self.assertRaises(ValueError, QueryStatement,
+                                  self.left_hand_side,
                                   op, self.string_right_hand_side)
 
     def test_simple_query(self):
@@ -31,24 +33,23 @@ class TestContextBroker(unittest.TestCase):
             test_query_string = ';'.join([test_query_string, statement_string])
 
             test_statements.append(
-                Statement(self.left_hand_side, op, self.numeric_right_hand_side)
+                QueryStatement(self.left_hand_side, op,
+                               self.numeric_right_hand_side)
             )
             test_tuples.append(
                 (self.left_hand_side, op, self.numeric_right_hand_side)
             )
         test_query_string = test_query_string.strip(';')
 
-        query_from_statements = SimpleQuery(statements=test_statements)
-        print(query_from_statements.json(indent=2))
-
-        query_from_tuples = SimpleQuery(statements=test_tuples)
-        query_from_string = SimpleQuery.parse_str(test_query_string)
+        query_from_statements = QueryString(qs=test_statements)
+        query_from_tuples = QueryString(qs=test_tuples)
+        query_from_string = QueryString.parse_str(test_query_string)
 
         # Test string conversion
         self.assertEqual(str(query_from_statements),
-                         query_from_statements.str())
-        self.assertEqual(str(query_from_tuples), query_from_tuples.str())
-        self.assertEqual(str(query_from_string), query_from_string.str())
+                         query_from_statements.to_str())
+        self.assertEqual(str(query_from_tuples), query_from_tuples.to_str())
+        self.assertEqual(str(query_from_string), query_from_string.to_str())
 
         # The implementation does not maintain order of statements.
         # Hence we compare sets of the different Methods.
