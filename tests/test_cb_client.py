@@ -1,7 +1,11 @@
+"""
+Tests for filip.cb.client
+"""
 import unittest
 import re
 import time
 from datetime import datetime
+from requests import RequestException
 from filip.core.models import FiwareHeader
 from filip.core.simple_query_language import QueryString
 from filip.cb.client import ContextBrokerClient
@@ -16,6 +20,9 @@ from filip.cb.models import \
 
 
 class TestContextBroker(unittest.TestCase):
+    """
+    Test class for ContextBrokerClient
+    """
     def setUp(self) -> None:
         self.resources = {
             "entities_url": "/v2/entities",
@@ -25,35 +32,44 @@ class TestContextBroker(unittest.TestCase):
         }
         self.attr = {'temperature': {'value': 20,
                                      'type': 'Number'}}
-        self.entity=ContextEntity(id='MyId', type='MyType', **self.attr)
+        self.entity = ContextEntity(id='MyId', type='MyType', **self.attr)
         self.fiware_header = FiwareHeader(service='filip',
                                           service_path='/testing')
 
         self.client = ContextBrokerClient(fiware_header=self.fiware_header)
 
     def test_management_endpoints(self):
+        """
+        Test management functions of context broker client
+        """
         with ContextBrokerClient(fiware_header=self.fiware_header) as client:
             self.assertIsNotNone(client.get_version())
             self.assertEqual(client.get_resources(), self.resources)
 
     def test_statistics(self):
+        """
+        Test statistics of context broker client
+        """
         with ContextBrokerClient(fiware_header=self.fiware_header) as client:
             self.assertIsNotNone(client.get_statistics())
 
     def test_pagination(self):
-        # test pagination. only works if enough entities are available
+        """
+        Test pagination of context broker client
+        Test pagination. only works if enough entities are available
+        """
         fiware_header = FiwareHeader(service='filip',
                                      service_path='/testing')
         with ContextBrokerClient(fiware_header=fiware_header) as client:
-            entitiesA = [ContextEntity(id=str(i),
-                                      type=f'filip:object:TypeA') for i in
-                        range(0, 1000)]
-            update = Update(actionType=ActionType.APPEND, entities=entitiesA)
+            entities_a = [ContextEntity(id=str(i),
+                                        type=f'filip:object:TypeA') for i in
+                          range(0, 1000)]
+            update = Update(actionType=ActionType.APPEND, entities=entities_a)
             client.update(update=update)
-            entitiesB = [ContextEntity(id=str(i),
-                                       type=f'filip:object:TypeB') for i in
-                        range(1000, 2001)]
-            update = Update(actionType=ActionType.APPEND, entities=entitiesB)
+            entities_b = [ContextEntity(id=str(i),
+                                        type=f'filip:object:TypeB') for i in
+                          range(1000, 2001)]
+            update = Update(actionType=ActionType.APPEND, entities=entities_b)
             client.update(update=update)
             self.assertLessEqual(len(client.get_entity_list(limit=1)), 1)
             self.assertLessEqual(len(client.get_entity_list(limit=999)), 999)
@@ -61,14 +77,16 @@ class TestContextBroker(unittest.TestCase):
             self.assertLessEqual(len(client.get_entity_list(limit=2001)), 2001)
 
             update = Update(actionType=ActionType.DELETE,
-                            entities=entitiesA)
+                            entities=entities_a)
             client.update(update=update)
             update = Update(actionType=ActionType.DELETE,
-                            entities=entitiesB)
+                            entities=entities_b)
             client.update(update=update)
 
-
     def test_entity_filtering(self):
+        """
+        Test filter operations of context broker client
+        """
         fiware_header = FiwareHeader(service='filip',
                                      service_path='/testing')
         with ContextBrokerClient(fiware_header=fiware_header) as client:
@@ -77,15 +95,15 @@ class TestContextBroker(unittest.TestCase):
                 client.get_entity_list(id_pattern='(&()?')
             with self.assertRaises(re.error):
                 client.get_entity_list(type_pattern='(&()?')
-            entitiesA = [ContextEntity(id=str(i),
-                                      type=f'filip:object:TypeA') for i in
-                        range(0, 5)]
-            update = Update(actionType=ActionType.APPEND, entities=entitiesA)
+            entities_a = [ContextEntity(id=str(i),
+                                        type=f'filip:object:TypeA') for i in
+                          range(0, 5)]
+            update = Update(actionType=ActionType.APPEND, entities=entities_a)
             client.update(update=update)
-            entitiesB = [ContextEntity(id=str(i),
-                                       type=f'filip:object:TypeB') for i in
-                        range(6, 10)]
-            update = Update(actionType=ActionType.APPEND, entities=entitiesB)
+            entities_b = [ContextEntity(id=str(i),
+                                        type=f'filip:object:TypeB') for i in
+                          range(6, 10)]
+            update = Update(actionType=ActionType.APPEND, entities=entities_b)
             client.update(update=update)
 
             entities_all = client.get_entity_list()
@@ -107,13 +125,16 @@ class TestContextBroker(unittest.TestCase):
             self.assertEqual(len(entities_by_key_values), len(entities_all))
 
             update = Update(actionType=ActionType.DELETE,
-                            entities=entitiesA)
+                            entities=entities_a)
             client.update(update=update)
             update = Update(actionType=ActionType.DELETE,
-                            entities=entitiesB)
+                            entities=entities_b)
             client.update(update=update)
 
     def test_entity_operations(self):
+        """
+        Test entity operations of context broker client
+        """
         with ContextBrokerClient(fiware_header=self.fiware_header) as client:
             self.assertIsNotNone(client.post_entity(entity=self.entity,
                                                     update=True))
@@ -133,6 +154,9 @@ class TestContextBroker(unittest.TestCase):
                              res_entity)
 
     def test_attribute_operations(self):
+        """
+        Test attribute operations of context broker client
+        """
         with ContextBrokerClient(fiware_header=self.fiware_header) as client:
             self.assertIsNotNone(client.post_entity(entity=self.entity,
                                                     update=True))
@@ -151,6 +175,9 @@ class TestContextBroker(unittest.TestCase):
             client.delete_entity(entity_id=self.entity.id)
 
     def test_type_operations(self):
+        """
+        Test type operations of context broker client
+        """
         with ContextBrokerClient(fiware_header=self.fiware_header) as client:
             self.assertIsNotNone(client.post_entity(entity=self.entity,
                                                     update=True))
@@ -161,6 +188,9 @@ class TestContextBroker(unittest.TestCase):
             client.delete_entity(entity_id=self.entity.id)
 
     def test_subscriptions(self):
+        """
+        Test subscription operations of context broker client
+        """
         with ContextBrokerClient(fiware_header=self.fiware_header) as client:
             sub_example = {
                 "description": "One subscription to rule them all",
@@ -206,6 +236,9 @@ class TestContextBroker(unittest.TestCase):
                 client.delete_subscription(subscription_id=sub.id)
 
     def test_batch_operations(self):
+        """
+        Test batch operations of context broker client
+        """
         fiware_header = FiwareHeader(service='filip',
                                      service_path='/testing')
         with ContextBrokerClient(fiware_header=fiware_header) as client:
@@ -220,7 +253,7 @@ class TestContextBroker(unittest.TestCase):
             update = Update(actionType=ActionType.APPEND, entities=entities)
             client.update(update=update)
             e = Entity(idPattern=".*", typePattern=".*TypeA$")
-            q = Query.parse_obj({"entities":[e.dict(exclude_unset=True)]})
+            q = Query.parse_obj({"entities": [e.dict(exclude_unset=True)]})
             self.assertEqual(1000,
                              len(client.query(query=q, options='keyValues')))
 
@@ -231,6 +264,6 @@ class TestContextBroker(unittest.TestCase):
             update = Update(actionType=ActionType.DELETE,
                             entities=entities)
             self.client.update(update=update)
-        except:
+        except RequestException:
             pass
         self.client.close()

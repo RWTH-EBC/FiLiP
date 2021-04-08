@@ -1,16 +1,29 @@
+"""
+Tests for filip.core.models
+"""
 import unittest
 import json
 from pydantic import ValidationError
+from requests import RequestException
 from filip.core.models import FiwareHeader
+from filip.cb.client import ContextBrokerClient
+from filip.cb.models import ContextEntity, Update
 
 
 class TestModels(unittest.TestCase):
+    """
+    Test class for core.models
+    """
     def setUp(self) -> None:
+        self.service_paths = ['/testing', '/testing2' ]
         self.fiware_header = {'fiware-service': 'filip',
-                              'fiware-servicepath': '/testing'}
+                              'fiware-servicepath': self.service_paths[0]}
 
     def test_fiware_header(self):
-        header = FiwareHeader(service='filip', service_path='/testing')
+        """
+        Test for fiware header
+        """
+        header = FiwareHeader.parse_obj(self.fiware_header)
         self.assertEqual(header.dict(by_alias=True),
                          self.fiware_header)
         self.assertEqual(header.json(by_alias=True),
@@ -25,32 +38,37 @@ class TestModels(unittest.TestCase):
                           service='filip', service_path='/$testing')
         self.assertRaises(ValidationError, FiwareHeader,
                           service='filip', service_path='/testing ')
+        self.assertRaises(ValidationError, FiwareHeader,
+                          service='filip', service_path='#')
+        headers = FiwareHeader.parse_obj(self.fiware_header)
+        with ContextBrokerClient(fiware_header=headers) as client:
+            entity = ContextEntity(id='myId', type='MyType')
+            for path in self.service_paths:
+                client.fiware_service_path = path
+                client.post_entity(entity=entity)
+                client.get_entity(entity_id=entity.id)
+            client.fiware_service_path = '/#'
+            self.assertEqual(len(client.get_entity_list()),
+                             len(self.service_paths))
+            for path in self.service_paths:
+                client.fiware_service_path = path
+                client.delete_entity(entity_id=entity.id)
+
+    def tearDown(self) -> None:
+        # Cleanup test server
+        with ContextBrokerClient() as client:
+            client.fiware_service = 'filip'
+
+            for path in self.service_paths:
+                try:
+                    client.fiware_service_path = path
+                    entities = client.get_entity_list()
+                    update = Update(actionType='delete',
+                                    entities=entities)
+                    client.update(update=update)
+                except RequestException:
+                    pass
+            client.close()
 
 
 
-if __name__ == '__main__':
-    data = {'id': 'str',
-            'type': 'myType',
-            'temperature': {'value': '20', 'type': 'Number'},
-            'relation': {'value': 'OtherEntity', 'type': 'Relationship'}}
-    base_model = ContextEntity(**data)
-    print(base_model.json(indent=2))
-
-    model = ContextEntity(**data)
-    model2 = ContextEntity.parse_obj(data)
-    print(model == model2)
-    print(model.json(indent=2))
-    print(model.get_properties())
-    print(model.get_relationships())
-    GeneratedModel = create_context_entity_model(data=data)
-
-    data = {'id': 'str',
-            'type': 'myType',
-            'temperature': {'value': 20, 'type': 'Number'},
-            'relation': {'value': 'OtherEntity', 'type': 'Relationship'}}
-
-    model3 = GeneratedModel(**data)
-    model4 = GeneratedModel.parse_obj(data)
-    print(model.get_properties())
-    print(model3.json(indent=2))
-    print(model3.__fields__)

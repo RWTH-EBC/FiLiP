@@ -1,7 +1,12 @@
+"""
+Base client module
+"""
 import logging
 import requests
+from typing import Dict, Union
 from filip.core.models import FiwareHeader
 from filip.utils import validate_url
+
 
 class BaseClient:
 
@@ -12,7 +17,7 @@ class BaseClient:
     def __init__(self, *,
                  url: str = None,
                  session: requests.Session = None,
-                 fiware_header: FiwareHeader = None):
+                 fiware_header: Union[Dict, FiwareHeader] = None):
         """
 
         Args:
@@ -26,8 +31,9 @@ class BaseClient:
         self.base_url = url
         self.session = session or requests.Session()
         if not fiware_header:
-            fiware_header = FiwareHeader()
-        self.headers.update(fiware_header.dict(by_alias=True))
+            self.fiware_headers = FiwareHeader()
+        else:
+            self.fiware_headers = fiware_header
 
     # Context Manager Protocol
     def __enter__(self):
@@ -35,6 +41,40 @@ class BaseClient:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()
+
+    @property
+    def fiware_headers(self):
+        return self._fiware_headers.copy()
+
+    @fiware_headers.setter
+    def fiware_headers(self, headers: Union[Dict, FiwareHeader]):
+        if isinstance(headers, FiwareHeader):
+            self._fiware_headers = headers
+        elif isinstance(headers, dict):
+            self._fiware_headers = FiwareHeader.parse_obj(headers)
+        elif isinstance(headers, str):
+            self._fiware_headers = FiwareHeader.parse_raw(headers)
+        else:
+            raise TypeError(f'Invalid headers! {type(headers)}')
+        self.headers.update(self.fiware_headers.dict(by_alias=True))
+
+    @property
+    def fiware_service(self):
+        return self.fiware_headers.service_path
+
+    @fiware_service.setter
+    def fiware_service(self, service: str):
+        self._fiware_headers.service = service
+        self.headers.update(self.fiware_headers.dict(by_alias=True))
+
+    @property
+    def fiware_service_path(self):
+        return self.fiware_headers.service_path
+
+    @fiware_service_path.setter
+    def fiware_service_path(self, service_path: str):
+        self._fiware_headers.service_path = service_path
+        self.headers.update(self.fiware_headers.dict(by_alias=True))
 
     @property
     def headers(self):
@@ -60,7 +100,6 @@ class BaseClient:
             self.logger.error("%s \n Reason: %s", msg, err)
         else:
             self.logger.error(err)
-
 
     def close(self):
         self.session.close()

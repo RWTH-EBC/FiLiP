@@ -389,7 +389,8 @@ class ContextBrokerClient(BaseClient):
         try:
             res = self.session.get(url=url, params=params, headers=headers)
             if res.ok:
-                self.logger.debug(f'Received: {res.json()}')
+                self.logger.info("Entity successfully retrieved!")
+                self.logger.debug("Received: %s", res.json())
                 return ContextEntity(**res.json())
             else:
                 res.raise_for_status()
@@ -1124,7 +1125,7 @@ class ContextBrokerClient(BaseClient):
               query: Query,
               limit: PositiveInt = None,
               order_by: str = None,
-              options: GetEntitiesOptions = None):
+              options: Union[str, GetEntitiesOptions] = None):
         """
 
         Args:
