@@ -49,9 +49,12 @@ class TestTimeSeries(unittest.TestCase):
                 attr_values_type = client.get_entity_attr_values_by_type(
                     entity_type=self.entity_1.type, attr_name="temperature")
 
-                # TODO:Test for each parameter
-
+                print(attrs_id.to_pandas())
+                print(attrs_values_id.to_pandas())
                 print(attr_id.to_pandas())
+                print(attr_values_id.to_pandas())
+                print(attr_type.to_pandas())
+                print(attr_values_type.to_pandas())
             except:
                 print("There is no historical data yet.")
 

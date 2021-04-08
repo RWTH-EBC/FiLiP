@@ -154,10 +154,41 @@ class ResponseModel(BaseModel):
     attrName: str = None
     entities: List[EntityIndexedValues] = None
 
-    # TODO:make it more general
     def to_pandas(self):
         print(self.dict())
-        index = pd.MultiIndex.from_product([[self.entityId], self.index],
-                                           names=['entity_id', 'index'])
-        columns = pd.MultiIndex.from_product([[self.attrName]])
-        return pd.DataFrame(self.values, index=index, columns=columns)
+        list_of_dataframes = []
+        #if attr_id, attr_values_id
+        if self.index is not None and self.attributes is None:
+            index = pd.MultiIndex.from_product([[self.entityId], self.index],
+                                               names=['entity_id', 'index'])
+            columns = pd.MultiIndex.from_product([[self.attrName]])
+            df_all = pd.DataFrame(self.values, index=index, columns=columns)
+        elif self.entities is not None:
+            #if attr_type
+            for entity in self.entities:
+                index = pd.MultiIndex.from_product([[entity.entityId], entity.index],
+                                                   names=['entity_id', 'index'])
+                columns = pd.MultiIndex.from_product([[self.attrName]])
+                dataframe = pd.DataFrame(entity.values, index=index, columns=columns)
+                list_of_dataframes.append(dataframe)
+            df_all = pd.concat(list_of_dataframes, ignore_index=False)
+        elif self.attributes is not None:
+            # if attrs_values_id, attrs_id
+            for entity in self.attributes:
+                index = pd.MultiIndex.from_product([[self.entityId], self.index],
+                                                   names=['entity_id', 'index'])
+                columns = pd.MultiIndex.from_product([[entity.attrName]])
+                dataframe = pd.DataFrame(entity.values, index=index, columns=columns)
+                list_of_dataframes.append(dataframe)
+            df_all = pd.concat(list_of_dataframes, ignore_index=False)
+        elif self.values is not None:
+            # if attr_values_type
+            for entity in self.values:
+                index = pd.MultiIndex.from_product([[entity["entityId"]], entity["index"]],
+                                                   names=['entity_id', 'index'])
+                columns = pd.MultiIndex.from_product([["attribute"]])
+                dataframe = pd.DataFrame(entity["values"], index=index, columns=columns)
+                list_of_dataframes.append(dataframe)
+            df_all = pd.concat(list_of_dataframes, ignore_index=False)
+
+        return df_all
