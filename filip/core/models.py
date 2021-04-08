@@ -37,6 +37,8 @@ class DataType(str, Enum):
     TIME = "Time", "A point in time recurring on multiple days in the form " \
                    "hh:mm:ss[Z|(+|-)hh:mm] (see XML schema for details)."
     RELATIONSHIP = "Relationship", "Reference to another context entity"
+    COMPLEX = "Complex", "Complex datatype must be serializable"
+    ARRAY = "Array", "Array of the types above"
 
 
 class FiwareHeader(BaseModel):
@@ -57,12 +59,12 @@ class FiwareHeader(BaseModel):
         default="",
         description="Fiware service_group path",
         max_length = 51,
-        regex="^(\/[\w\/]*[\w\#])(,(\/[\w\/]*[\w\#]))*$"
+        regex=r"^((\/\w*)|(\/\#))*(\,((\/\w*)|(\/\#)))*$"
     )
 
     class Config(BaseConfig):
         allow_population_by_field_name = True
-
+        validate_assignment = True
 
 class PaginationMethod(str, Enum):
     GET = "GET"

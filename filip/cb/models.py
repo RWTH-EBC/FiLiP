@@ -1,3 +1,4 @@
+import json
 from aenum import Enum
 from datetime import datetime
 from pydantic import \
@@ -65,7 +66,7 @@ class NamedContextMetadata(ContextMetadata):
 
 
 class ContextAttribute(BaseModel):
-    type: DataType = Field(
+    type: Union[DataType, str] = Field(
         default=DataType.TEXT,
         description="The attribute type represents the NGSI value type of the "
                     "attribute value. Note that FIWARE NGSI has its own type "
@@ -77,7 +78,8 @@ class ContextAttribute(BaseModel):
         min_length = 1,
         regex = "^((?![?&#/])[\x00-\x7F])*$", # Make it FIWARE-Safe
     )
-    value: Union[float, int, bool, str] = Field(
+    value: Union[List[Union[float, int, bool, str]],
+                      Union[float, int, bool, str]] = Field(
         title="Attribute value",
         description="the actual data"
     )
@@ -91,11 +93,35 @@ class ContextAttribute(BaseModel):
     def validate_value_type(cls, v, values):
         type_ = values['type']
         if type_ == DataType.BOOLEAN:
-            return bool(v)
-        elif type_ == DataType.NUMBER:
-            return float(v)
+            if isinstance(v, list):
+                return [bool(item) for item in v]
+            else:
+                return bool(v)
+        elif type_ == DataType.NUMBER or type_ == DataType.FLOAT:
+            if isinstance(v, list):
+                return [float(item) for item in v]
+            else:
+                return float(v)
+        elif type_ == DataType.INTEGER:
+            if isinstance(v, list):
+                return [int(item) for item in v]
+            else:
+                return int(v)
+        elif type_ == DataType.ARRAY:
+            if isinstance(v, list):
+                return v
+            else:
+                raise TypeError(f"{type(v)} does not match {DataType.ARRAY}")
+        elif type_ == DataType.COMPLEX:
+            v = json.dumps(v)
+            return json.loads(v)
+        elif type_ == DataType.DATETIME:
+            return v
         else:
-            return str(v)
+            if isinstance(v, list):
+                return [str(item) for item in v]
+            else:
+                return str(v)
 
     @validator('metadata')
     def validate_metadata_type(cls, v):
@@ -206,12 +232,12 @@ class ContextEntity(ContextEntityKeyValues):
         if format == 'dict':
             return {key: ContextAttribute(**value) for key, value in
                     self.dict().items() if key not in ContextEntity.__fields__
-                    and value.get('type') is not DataType.RELATIONSHIP}
+                    and value.get('type') != DataType.RELATIONSHIP}
         else:
             return [NamedContextAttribute(name=key, **value) for key, value in
                     self.dict().items() if key not in
                     ContextEntity.__fields__ and
-                    value.get('type') is not DataType.RELATIONSHIP]
+                    value.get('type') != DataType.RELATIONSHIP]
 
     def add_properties(self, attrs: Union[Dict[str, ContextAttribute],
                                          List[NamedContextAttribute]]):
@@ -242,12 +268,12 @@ class ContextEntity(ContextEntityKeyValues):
         if format == 'dict':
             return {key: ContextAttribute(**value) for key, value in
                     self.dict().items() if key not in ContextEntity.__fields__
-                    and value.get('type') is DataType.RELATIONSHIP}
+                    and value.get('type') == DataType.RELATIONSHIP}
         else:
             return [NamedContextAttribute(name=key, **value) for key, value in
                     self.dict().items() if key not in
                     ContextEntity.__fields__ and
-                    value.get('type') is DataType.RELATIONSHIP]
+                    value.get('type') == DataType.RELATIONSHIP]
 
 def username_alphanumeric(cls, v):
     #assert v.value.isalnum(), 'must be numeric'
@@ -774,7 +800,7 @@ class ActionType(str, Enum):
 
 
 class Update(BaseModel):
-    actionType: ActionType = Field(
+    actionType: Union[ActionType, str] = Field(
         description="actionType, to specify the kind of update action to do: "
                     "either append, appendStrict, update, delete, or replace. "
     )
