@@ -242,12 +242,12 @@ class ContextEntity(ContextEntityKeyValues):
         if format == 'dict':
             return {key: ContextAttribute(**value) for key, value in
                     self.dict().items() if key not in ContextEntity.__fields__
-                    and value.get('type') is DataType.RELATIONSHIP}
+                    and value.get('type') == DataType.RELATIONSHIP}
         else:
             return [NamedContextAttribute(name=key, **value) for key, value in
                     self.dict().items() if key not in
                     ContextEntity.__fields__ and
-                    value.get('type') is DataType.RELATIONSHIP]
+                    value.get('type') == DataType.RELATIONSHIP]
 
 def username_alphanumeric(cls, v):
     #assert v.value.isalnum(), 'must be numeric'
