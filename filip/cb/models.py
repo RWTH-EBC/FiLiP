@@ -1,13 +1,16 @@
+"""
+NGSIv2 models for context broker interaction
+"""
 import json
 from aenum import Enum
 from datetime import datetime
 from pydantic import \
+    AnyHttpUrl, \
     BaseModel, \
+    create_model, \
     Field, \
     validator,  \
     root_validator, \
-    create_model, \
-    AnyHttpUrl, \
     Json
 from typing import Any, Type, List, Dict, Union, Optional, Pattern
 from filip.core.models import DataType
@@ -34,7 +37,7 @@ class ContextMetadata(BaseModel):
     Note that in NGSI it is not foreseen that metadata may contain nested
     metadata.
     """
-    type: Optional[DataType] = Field(
+    type: Optional[Union[DataType, str]] = Field(
         title="metadata type",
         description="a metadata type, describing the NGSI value type of the "
                     "metadata value Allowed characters "
@@ -44,13 +47,16 @@ class ContextMetadata(BaseModel):
         min_length=1,
         regex="^((?![?&#/\*])[\x00-\x7F])*$" # Make it FIWARE-Safe
     )
-    value: Optional[DataType] = Field(
+    value: Optional[Any] = Field(
         title="metadata value",
         description="a metadata value containing the actual metadata"
     )
 
 
 class NamedContextMetadata(ContextMetadata):
+    """
+    Model for metadata including a name
+    """
     name: str = Field(
         titel="metadata name",
         description="a metadata name, describing the role of the metadata in the "
@@ -66,6 +72,10 @@ class NamedContextMetadata(ContextMetadata):
 
 
 class ContextAttribute(BaseModel):
+    """
+    Values of entity attributes. For adding it you need to nest it into a
+    dict in order to give it a name.
+    """
     type: Union[DataType, str] = Field(
         default=DataType.TEXT,
         description="The attribute type represents the NGSI value type of the "
@@ -83,7 +93,9 @@ class ContextAttribute(BaseModel):
         title="Attribute value",
         description="the actual data"
     )
-    metadata: Optional[Union[Dict, ContextMetadata]] = Field(
+    metadata: Optional[Union[Dict[str, ContextMetadata],
+                             NamedContextMetadata,
+                             List[NamedContextMetadata]]] = Field(
         default={},
         title="Metadata",
         description="optional metadata describing properties of the attribute "
@@ -112,7 +124,7 @@ class ContextAttribute(BaseModel):
                 return v
             else:
                 raise TypeError(f"{type(v)} does not match {DataType.ARRAY}")
-        elif type_ == DataType.COMPLEX:
+        elif type_ == DataType.STRUCTUREDVALUE:
             v = json.dumps(v)
             return json.loads(v)
         elif type_ == DataType.DATETIME:
@@ -125,11 +137,22 @@ class ContextAttribute(BaseModel):
 
     @validator('metadata')
     def validate_metadata_type(cls, v):
-        if isinstance(v, Dict):
-            if not v:
+        if isinstance(v, NamedContextMetadata):
+            v = [v]
+        elif isinstance(v, Dict):
+            if all([isinstance(item, ContextMetadata) for item in v.values()]):
                 return v
+            else:
+                json.dumps(v)
+                return {key: ContextMetadata(**item) for key, item in v.items()}
+        if isinstance(v, list):
+            if all([isinstance(item, NamedContextMetadata) for item in v]):
+                return {item.name: ContextMetadata(**item.dict(exclude={
+                    'name'})) for item in v}
+            elif all([isinstance(item, Dict) for item in v]):
+                return {key: ContextMetadata(**item) for key, item in v}
         else:
-            return ContextMetadata(**v)
+            raise TypeError(f"Invalid type {type(v)}")
 
 
 class NamedContextAttribute(ContextAttribute):
@@ -250,7 +273,8 @@ class ContextEntity(ContextEntityKeyValues):
 
         """
         if isinstance(attrs, List):
-            attrs = {attr.name: ContextAttribute(**attr) for attr in attrs}
+            attrs = {attr.name: ContextAttribute(**attr.dict(exclude={'name'}))
+                     for attr in attrs}
         for key, attr in attrs.items():
             self.__setattr__(name=key, value=attr)
 

@@ -37,7 +37,8 @@ class DataType(str, Enum):
     TIME = "Time", "A point in time recurring on multiple days in the form " \
                    "hh:mm:ss[Z|(+|-)hh:mm] (see XML schema for details)."
     RELATIONSHIP = "Relationship", "Reference to another context entity"
-    COMPLEX = "Complex", "Complex datatype must be serializable"
+    STRUCTUREDVALUE = "StructuredValue", "Structered datatype must be " \
+                                         "serializable"
     ARRAY = "Array", "Array of the types above"
 
 
