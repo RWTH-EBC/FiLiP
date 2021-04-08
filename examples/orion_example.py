@@ -1,176 +1,151 @@
-import core.config as config
-from pathlib import Path
-import os
+import logging
+from cb import ContextBrokerClient
+from core.models import FiwareHeader
+from models import ContextEntity, ContextAttribute
+from simple_query_language import SimpleQuery
 
-def create_entities(orion_cb:object):
-    """
-    Function creates Test Entities for the Context Broker
-    :param orion_cb: Instance of an Orion Context Broker
-    :return: The Entities used for Testing
-
-    """
-
-    room1 = {"id": "Room1",
-             "type": "Room",
-             "temperature" : { "value" : 11,
-                              "type" : "Float" },
-            "pressure" : {"value": 111,
-                        "type": "Integer"}
-            }
-
-    room2 = {"id": "Room2",
-             "type": "Room",
-             "temperature" : { "value" : 22,
-                            "type" : "Float" },
-             "pressure" : {"value": 222,
-                          "type": "Integer" }
-            }
-
-    room3 = {"id": "Room3",
-             "type": "Room",
-             "temperature" : { "value" : 33,
-                            "type" : "Float" },
-            "pressure" : {"value": 333,
-                         "type": "Integer" }
-            }
-
-    room1_json = ocb.Entity(room1)
-
-    room2_json = ocb.Entity(room2)
-
-    room3_json = ocb.Entity(room3)
-
-    orion_cb.post_json(room1_json.get_json())
-
-    orion_cb.post_json_key_value(room2_json.get_json())
-
-    orion_cb.post_json_key_value(room3_json.get_json())
-
-    # Test
-    dog =  {"id": "Bello",
-             "type": "Dog",
-             "smell" : { "value" : "bad",
-                        "type" : "String" },
-             "number_of_legs" : {"value": 4,
-                                "type": "Integer" }
-            }
+logger = logging.getLogger(__name__)
 
 
-    dog_json = ocb.Entity(dog)
-
-    orion_cb.post_json_key_value(dog_json.get_json())
-
-
-
-    return room1_json, room2_json, room3_json, dog_json
-
-
-def query_entity(orion_cb, entity):
-    print ("---- ---- ---- ---- ----")
-    name = entity.id
-    print ("query entity '" + name + "':")
-    print (orion_cb.get_entity(name))
-    print ()
-
-    print ("get key values of entity '" + name + "':")
-    print (orion_cb.get_entity_keyValues(name))
-    print ()
-
-    print ("get attributes of entity '" + name + "':")
-    # ToDo check the importance of getting attribute names
-    # Possible implementation through list comprehension
-    # attr_names = [attr_name for attr_name in entity.get_json().keys() if attr_name not in ["id", "type"]]
-    attr_list = entity.get_attributes()
-    print (attr_list)
-    print (orion_cb.get_entity_attribute_list(name, attr_list))
-    print ()
-
-    print ("check: get attributes in reverse:")
-    reversed_list = list(reversed(attr_list))
-    print (reversed_list)
-    print (orion_cb.get_entity_attribute_list(name, reversed_list))
-    print ()
-
-    print ("get entity attributes in JSON format")
-    for attr in attr_list:
-        print ("attribute name: " + attr)
-        print (orion_cb.get_entity_attribute_json(name, attr))
-    print ()
-
-    print ("get entity attribute value:")
-    for attr in attr_list:
-        print ("entity name: " + entity.id + ", attribute name: " + attr)
-        print ("value: " + str(orion_cb.get_entity_attribute_value(name, attr)))
-
-    print ("---- ---- ---- ---- ----")
+def setup():
+    logger.info("------Setting up clients------")
+    with ContextBrokerClient(fiware_header=FiwareHeader(service='filip',
+                                                        service_path='/testing')) as \
+            cb_client:
+        for key, value in cb_client.get_version().items():
+            print("Context broker version" + value["version"] + "at url " +
+                  cb_client.base_url)
 
 
-if __name__=="__main__":
-    # setup logging
-    # before the first initalization the log_config.yaml.example file needs to be modified
+def create_entities():
+    with ContextBrokerClient(fiware_header=FiwareHeader(service='filip',
+                                                        service_path='/testing')) as \
+            cb_client:
+        room1 = {"id": "Room1",
+                 "type": "Room",
+                 "temperature": {"value": 11,
+                                 "type": "Float"},
+                 "pressure": {"value": 111,
+                              "type": "Integer"}
+                 }
 
-    config.setup_logging()
+        room2 = {"id": "Room2",
+                 "type": "Room",
+                 "temperature": {"value": 22,
+                                 "type": "Float"},
+                 "pressure": {"value": 222,
+                              "type": "Integer"}
+                 }
 
-    path_to_config = os.path.join(str(Path().resolve().parent), "config.json")
+        room3 = {"id": "Room3",
+                 "type": "Room",
+                 "temperature": {"value": 33,
+                                 "type": "Float"},
+                 "pressure": {"value": 333,
+                              "type": "Integer"}
+                 }
+        logger.info("------Creating example entities------")
 
-    CONFIG = config.Config(path_to_config)
-    ORION_CB = ocb.ContextBroker(CONFIG)
-    print(ORION_CB.test_connection())
+        room1_entity = ContextEntity(**room1)
+        room2_entity = ContextEntity(**room2)
+        room3_entity = ContextEntity(**room3)
 
-    print ("++++ create entities ++++")
-    entities = create_entities(ORION_CB)
-    for entity in entities:
-        print(entity)
+        logger.info("------Posting example entities------")
 
-    print ("++++ get all entities from Orion Context Broker ++++")
-    print (ORION_CB.get_all_entities())
-    print ()
+        cb_client.post_entity(entity=room1_entity)
+        cb_client.post_entity(entity=room2_entity)
+        cb_client.post_entity(entity=room3_entity)
 
-    print ("++++ get all entities of type 'Room' ++++")
-    print (ORION_CB.get_all_entities("type", "Room"))
-    print ()
-
-    print ("++++ get all entities of type 'Dog' ++++")
-    print (ORION_CB.get_all_entities("type", "Dog"))
-    print ()
-
-    print ("++++ get all entities with idPattern '^Room[2-5]' (regular expression to filter out 'Room2 to Room5') ++++")
-    print (ORION_CB.get_all_entities("idPattern", "^Room[2-5]"))
-    print ()
-
-    print ("++++ query all entities with temperature > 22 ++++")
-    print (ORION_CB.get_all_entities("q", "temperature>22"))
-    print ()
-
-    # Testing the function to get Attributes and add new ones
-    print(ORION_CB.get_attributes("Room3"))
-
-
-    new_attribute = {"Space" :  {"value": 111,
-                        "type": "Integer"}
-                     }
+        return room1_entity, room2_entity, room3_entity
 
 
-    ORION_CB.add_attribute(entity_name = "Room3", attr_dict =new_attribute)
+def filter_entities():
+    with ContextBrokerClient(fiware_header=FiwareHeader(service='filip',
+                                                        service_path='/testing')) as \
+            cb_client:
+        logger.info("------Get all entities from context broker------")
+        logger.info(cb_client.get_entity_list())
 
-    print(ORION_CB.get_attributes("Room3"))
+        logger.info("------Get entities by id------")
+        logger.info(cb_client.get_entity_list(entity_ids=["Room1"]))
+
+        logger.info("------Get entities by type------")
+        logger.info(cb_client.get_entity_list(entity_types=["Room"]))
+
+        logger.info("------Get entities by id pattern------")
+        logger.info(cb_client.get_entity_list(id_pattern="^Room[2-5]"))
+
+        logger.info("------Get entities by query expression------")
+        query = SimpleQuery(statements=[('temperature', '>', 22)])
+        logger.info(cb_client.get_entity_list(q=query))
+
+        logger.info("------Get attributes of entities------")
+        logger.info(cb_client.get_entity_attributes(entity_id="Room1"))
 
 
+def update_entity(entity):
+    with ContextBrokerClient(fiware_header=FiwareHeader(service='filip',
+                                                        service_path='/testing')) as \
+            cb_client:
+        entity.add_properties({'Space': ContextAttribute(
+            type='Number', value=111)})
 
-    print ("++++ query entities ++++")
-    for entity in entities:
-        query_entity(ORION_CB, entity)
-    print ()
+        logger.info("------Updating value of an attribute of an entity------")
 
-    print ("++++ test querying an entity that was not created ++++")
-    print (ORION_CB.get_entity("Room5"))
-    print ()
+        logger.info(cb_client.update_attribute_value(entity_id=entity.id,
+                                                     attr_name="temperature",
+                                                     value=12))
 
-    print ("++++ test querying an attribute that doesn't exist ++++")
-    print (ORION_CB.get_entity_attribute_value("Room1", "humidity"))
-    print ()
+        logger.info("------Adding a new attribute to an entity------")
+        logger.info(cb_client.update_entity(entity=entity))
+
+        logger.info("------Checking if new attribute is added------")
+        logger.info(cb_client.get_entity_attributes(entity_id=entity.id))
 
 
-    print ("++++ delete all entities ++++")
-    for entity in entities:
-        ORION_CB.delete(entity.id)
+def error_check(entity):
+    with ContextBrokerClient(fiware_header=FiwareHeader(service='filip',
+                                                        service_path='/testing')) as \
+            cb_client:
+        try:
+            logger.info("------Should return an error for non existing id------")
+            logger.info(cb_client.get_entity(entity_id="Room5"))
+        except:
+            try:
+                logger.info("------Should return an error for non existing type------")
+                logger.info(cb_client.get_entity(entity_id=entity.id,
+                                                 entity_type="Surface"))
+            except:
+                try:
+                    logger.info("------Should return an error for non existing attribute "
+                                "name------")
+                    logger.info(cb_client.get_attribute_value(entity_id=entity.id,
+                                                              attr_name="area"))
+                except:
+                    pass
+
+
+def delete_entities(entities_to_delete):
+    with ContextBrokerClient(fiware_header=FiwareHeader(service='filip',
+                                                        service_path='/testing')) as \
+            cb_client:
+        logger.info("Deleting all test entities")
+        for entity in entities_to_delete:
+            cb_client.delete_entity(entity_id=entity.id)
+        return
+
+
+if __name__ == "__main__":
+    logger.info("------EXAMPLE ORION------")
+
+    setup()
+
+    entities = create_entities()
+
+    filter_entities()
+
+    update_entity(entities[0])
+
+    error_check(entities[0])
+
+    delete_entities(entities)
