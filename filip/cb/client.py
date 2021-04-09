@@ -288,8 +288,8 @@ class ContextBrokerClient(BaseClient):
         if id_pattern:
             try:
                 re.compile(id_pattern)
-            except re.error:
-                raise
+            except re.error as err:
+                raise ValueError(f'Invalid Pattern: {err}')
             params.update({'idPattern': id_pattern})
         if entity_types:
             if not isinstance(entity_types, list):
@@ -298,8 +298,8 @@ class ContextBrokerClient(BaseClient):
         if type_pattern:
             try:
                 re.compile(type_pattern)
-            except re.error:
-                raise
+            except re.error as err:
+                raise ValueError(f'Invalid Pattern: {err}')
             params.update({'typePattern': type_pattern})
         if attrs:
             params.update({'attrs': ','.join(attrs)})
@@ -333,7 +333,7 @@ class ContextBrokerClient(BaseClient):
                                         headers=headers)
             if options == 'count':
                 return parse_obj_as(List[ContextEntity], items)
-            elif 'keyValues' in options:
+            if 'keyValues' in options:
                 return parse_obj_as(List[ContextEntityKeyValues], items)
             return items
 
@@ -475,7 +475,7 @@ class ContextBrokerClient(BaseClient):
                                                      exclude_unset=True,
                                                      exclude_none=True))
             if res.ok:
-                self.logger.info(f"Entity '{entity.id}' successfully updated!")
+                self.logger.info("Entity '%s' successfully updated!", entity.id)
             else:
                 res.raise_for_status()
         except requests.RequestException as err:
@@ -504,7 +504,7 @@ class ContextBrokerClient(BaseClient):
         try:
             res = self.session.delete(url=url, params=params, headers=headers)
             if res.ok:
-                self.logger.info(f"Entity '{entity_id}' successfully deleted!")
+                self.logger.info("Entity '%s' successfully deleted!", entity_id)
             else:
                 res.raise_for_status()
         except requests.RequestException as err:
@@ -539,7 +539,8 @@ class ContextBrokerClient(BaseClient):
                                                     exclude_unset=True,
                                                     exclude_none=True))
             if res.ok:
-                self.logger.info(f"Entity '{entity.id}' successfully updated!")
+                self.logger.info("Entity '%s' successfully "
+                                 "updated!", entity.id)
             else:
                 res.raise_for_status()
         except requests.RequestException as err:
@@ -615,8 +616,8 @@ class ContextBrokerClient(BaseClient):
                                                   exclude_unset=True,
                                                   exclude_none=True))
             if res.ok:
-                self.logger.info(f"Attribute '{attr.name}' of '{entity_id}' "
-                                 f"successfully updated!")
+                self.logger.info("Attribute '%s' of '%s' "
+                                 "successfully updated!", attr.name, entity_id)
             else:
                 res.raise_for_status()
         except requests.RequestException as err:
@@ -734,8 +735,8 @@ class ContextBrokerClient(BaseClient):
                                        headers=headers,
                                        json=value)
             if res.ok:
-                self.logger.info(f"Attribute '{attr_name}' of '{entity_id}' "
-                                 f"successfully updated!")
+                self.logger.info("Attribute '%s' of '%s' "
+                                 f"successfully updated!", attr_name, entity_id)
             else:
                 res.raise_for_status()
         except requests.RequestException as err:
@@ -776,7 +777,7 @@ class ContextBrokerClient(BaseClient):
                 return res.json()
             res.raise_for_status()
         except requests.RequestException as err:
-            msg = f"Could not load entity types!"
+            msg = "Could not load entity types!"
             self.log_error(err=err, msg=msg)
             raise
 
@@ -856,7 +857,7 @@ class ContextBrokerClient(BaseClient):
                                        exclude_defaults=True,
                                        exclude_none=True))
             if res.ok:
-                self.logger.info(f"Subscription successfully created!")
+                self.logger.info("Subscription successfully created!")
                 return res.headers['Location'].split('/')[-1]
             res.raise_for_status()
         except requests.RequestException as err:
@@ -962,7 +963,7 @@ class ContextBrokerClient(BaseClient):
 
             return parse_obj_as(List[Registration], items)
         except requests.RequestException as err:
-            msg = f"Could not load registrations!"
+            msg = "Could not load registrations!"
             self.log_error(err=err, msg=msg)
             raise
 
@@ -990,7 +991,7 @@ class ContextBrokerClient(BaseClient):
                                        exclude_defaults=True,
                                        exclude_none=True))
             if res.ok:
-                self.logger.info(f"Registration successfully created!")
+                self.logger.info("Registration successfully created!")
                 return res.headers['Location'].split('/')[-1]
             res.raise_for_status()
         except requests.RequestException as err:
@@ -1039,7 +1040,7 @@ class ContextBrokerClient(BaseClient):
                                        exclude_defaults=True,
                                        exclude_none=True))
             if res.ok:
-                self.logger.info(f"Registration successfully updated!")
+                self.logger.info("Registration successfully updated!")
             else:
                 res.raise_for_status()
         except requests.RequestException as err:
