@@ -2,25 +2,25 @@
 NGSIv2 models for context broker interaction
 """
 import json
-from aenum import Enum
+from typing import Any, Type, List, Dict, Union, Optional, Pattern
 from datetime import datetime
+from aenum import Enum
 from pydantic import \
     AnyHttpUrl, \
     BaseModel, \
     create_model, \
     Field, \
-    validator,  \
+    Json, \
     root_validator, \
-    Json
-from typing import Any, Type, List, Dict, Union, Optional, Pattern
+    validator
 from filip.core.models import DataType
 from filip.core.simple_query_language import \
     QueryString, \
     QueryStatement
 
 
-# Options for queries
 class GetEntitiesOptions(str, Enum):
+    """ Options for queries"""
     _init_ = 'value __doc__'
 
     KEYVALUES = 'keyValues', ''
@@ -59,8 +59,8 @@ class NamedContextMetadata(ContextMetadata):
     """
     name: str = Field(
         titel="metadata name",
-        description="a metadata name, describing the role of the metadata in the "
-                    "place where it occurs; for example, the metadata name "
+        description="a metadata name, describing the role of the metadata in "
+                    "the place where it occurs; for example, the metadata name "
                     "accuracy indicates that the metadata value describes how "
                     "accurate a given attribute value is. Allowed characters "
                     "are the ones in the plain ASCII set, except the following "
@@ -104,34 +104,30 @@ class ContextAttribute(BaseModel):
 
     @validator('value')
     def validate_value_type(cls, v, values):
+        """validator for field 'value'"""
         type_ = values['type']
         if type_ == DataType.TEXT:
             if isinstance(v, list):
                 return [str(item) for item in v]
-            else:
-                return str(v)
+            return str(v)
         elif type_ == DataType.BOOLEAN:
             if isinstance(v, list):
                 return [bool(item) for item in v]
-            else:
-                return bool(v)
+            return bool(v)
         elif type_ == DataType.NUMBER or type_ == DataType.FLOAT:
             if isinstance(v, list):
                 return [float(item) for item in v]
-            else:
-                return float(v)
+            return float(v)
         elif type_ == DataType.INTEGER:
             if isinstance(v, list):
                 return [int(item) for item in v]
-            else:
-                return int(v)
+            return int(v)
         elif type_ == DataType.DATETIME:
             return v
         elif type_ == DataType.ARRAY:
             if isinstance(v, list):
                 return v
-            else:
-                raise TypeError(f"{type(v)} does not match {DataType.ARRAY}")
+            raise TypeError(f"{type(v)} does not match {DataType.ARRAY}")
         elif type_ == DataType.STRUCTUREDVALUE:
             v = json.dumps(v)
             return json.loads(v)
@@ -141,14 +137,14 @@ class ContextAttribute(BaseModel):
 
     @validator('metadata')
     def validate_metadata_type(cls, v):
+        """validator for field 'metadata'"""
         if isinstance(v, NamedContextMetadata):
             v = [v]
         elif isinstance(v, Dict):
             if all([isinstance(item, ContextMetadata) for item in v.values()]):
                 return v
-            else:
-                json.dumps(v)
-                return {key: ContextMetadata(**item) for key, item in v.items()}
+            json.dumps(v)
+            return {key: ContextMetadata(**item) for key, item in v.items()}
         if isinstance(v, list):
             if all([isinstance(item, NamedContextMetadata) for item in v]):
                 return {item.name: ContextMetadata(**item.dict(exclude={
@@ -297,11 +293,10 @@ class ContextEntity(ContextEntityKeyValues):
             return {key: ContextAttribute(**value) for key, value in
                     self.dict().items() if key not in ContextEntity.__fields__
                     and value.get('type') == DataType.RELATIONSHIP}
-        else:
-            return [NamedContextAttribute(name=key, **value) for key, value in
-                    self.dict().items() if key not in
-                    ContextEntity.__fields__ and
-                    value.get('type') == DataType.RELATIONSHIP]
+        return [NamedContextAttribute(name=key, **value) for key, value in
+                self.dict().items() if key not in
+                ContextEntity.__fields__ and
+                value.get('type') == DataType.RELATIONSHIP]
 
 def username_alphanumeric(cls, v):
     #assert v.value.isalnum(), 'must be numeric'
