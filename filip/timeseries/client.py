@@ -1,8 +1,10 @@
+"""
+TimeSeries Module for QuantumLeap API Client
+"""
 import logging
-import requests
 from typing import Dict
 from urllib.parse import urljoin
-
+import requests
 from filip.core import settings
 from filip.core.base_client import BaseClient
 from filip.core.models import FiwareHeader
@@ -42,8 +44,7 @@ class QuantumLeapClient(BaseClient):
             res = self.session.get(url=url)
             if res.ok:
                 return res.json()
-            else:
-                res.raise_for_status()
+            res.raise_for_status()
         except requests.exceptions.RequestException as err:
             self.logger.error(err)
             raise
@@ -65,8 +66,7 @@ class QuantumLeapClient(BaseClient):
             res = self.session.get(url=url)
             if res.ok:
                 return res.json()
-            else:
-                res.raise_for_status()
+            res.raise_for_status()
         except requests.exceptions.RequestException as err:
             self.logger.error(e)
             raise
@@ -105,8 +105,7 @@ class QuantumLeapClient(BaseClient):
                 msg = "Notification successfully posted!"
                 self.logger.info(msg)
                 return msg
-            else:
-                res.raise_for_status()
+            res.raise_for_status()
         except requests.exceptions.RequestException as err:
             msg = f"Could not post notification for subscription id " \
                   f"{notification.subscriptionId}"
@@ -166,8 +165,7 @@ class QuantumLeapClient(BaseClient):
                 msg = "Subscription created successfully!"
                 self.logger.info(msg)
                 return msg
-            else:
-                res.raise_for_status()
+            res.raise_for_status()
         except requests.exceptions.RequestException as err:
             msg = f"Could not create subscription."
             self.log_error(err=err, msg=msg)
@@ -189,8 +187,7 @@ class QuantumLeapClient(BaseClient):
                 self.logger.info(
                     f"Entity id '{entity_id}' successfully deleted!")
                 return entity_id
-            else:
-                res.raise_for_status()
+            res.raise_for_status()
         except requests.exceptions.RequestException as err:
             msg = f"Could not delete entity of id {entity_id}"
             self.log_error(err=err, msg=msg)
@@ -209,8 +206,7 @@ class QuantumLeapClient(BaseClient):
                 self.logger.info(
                     f"Entities of type '{entity_type}' successfully deleted!")
                 return entity_type
-            else:
-                res.raise_for_status()
+            res.raise_for_status()
         except requests.exceptions.RequestException as err:
             msg = f"Could not delete entities of type {entity_type}"
             self.log_error(err=err, msg=msg)
@@ -276,8 +272,7 @@ class QuantumLeapClient(BaseClient):
             if res.ok:
                 self.logger.info(f'Received: {res.json()}')
                 return ResponseModel(**res.json())
-            else:
-                res.raise_for_status()
+            res.raise_for_status()
         except requests.exceptions.RequestException as err:
             msg = "Could not load entity data"
             self.log_error(err=err, msg=msg)

@@ -1,7 +1,10 @@
-import requests
+"""
+IoT-Agent Module for API Client
+"""
 from typing import List, Dict, Set, Union
-from pydantic import parse_obj_as, AnyHttpUrl
 from urllib.parse import urljoin
+import requests
+from pydantic import parse_obj_as
 from filip.core import settings
 from filip.core.base_client import BaseClient
 from filip.core.models import FiwareHeader
@@ -36,8 +39,7 @@ class IoTAClient(BaseClient):
             res = self.session.get(url=url, headers=self.headers)
             if res.ok:
                 return res.json()
-            else:
-                res.raise_for_status()
+            res.raise_for_status()
         except requests.RequestException as err:
             self.logger.error(err)
         raise
@@ -122,8 +124,7 @@ class IoTAClient(BaseClient):
             res = self.session.get(url=url, headers=headers)
             if res.ok:
                 return parse_obj_as(List[ServiceGroup], res.json()['services'])
-            else:
-                res.raise_for_status()
+            res.raise_for_status()
         except requests.RequestException as err:
             self.log_error(err=err, msg=None)
             raise
@@ -146,8 +147,7 @@ class IoTAClient(BaseClient):
             res = self.session.get(url=url, headers=headers, params=params)
             if res.ok:
                 return ServiceGroup(**res.json()['services'][0])
-            else:
-                res.raise_for_status()
+            res.raise_for_status()
         except requests.RequestException as err:
             self.log_error(err=err, msg=None)
             raise
@@ -202,7 +202,7 @@ class IoTAClient(BaseClient):
                                        exclude={'service', 'subservice'},
                                        exclude_unset=True))
             if res.ok:
-                self.logger.info(f"ServiceGroup updated!")
+                self.logger.info("ServiceGroup updated!")
             elif (res.status_code == 404) & (add is True):
                 self.post_group(service_group=service_group)
             else:
@@ -228,9 +228,9 @@ class IoTAClient(BaseClient):
         try:
             res = self.session.delete(url=url, headers=headers, params=params)
             if res.ok:
-                self.logger.info(f"ServiceGroup with resource: '{resource}' "
-                                 f"and "
-                                 f"apikey: '{apikey}' successfully deleted!")
+                self.logger.info("ServiceGroup with resource: '%s' and "
+                                 "apikey: '%s' successfully deleted!",
+                                 resource, apikey)
             else:
                 res.raise_for_status()
         except requests.RequestException as err:
@@ -255,13 +255,13 @@ class IoTAClient(BaseClient):
         """
         if not isinstance(devices, list):
             devices = [devices]
-        url = urljoin(self.base_url, f'iot/devices')
+        url = urljoin(self.base_url, 'iot/devices')
         headers = self.headers
         data = {"devices": [device.dict() for device in devices]}
         try:
             res = self.session.post(url=url, headers=headers, json=data)
             if res.ok:
-                self.logger.info(f"Device successfully posted!")
+                self.logger.info("Device successfully posted!")
             else:
                 res.raise_for_status()
         except requests.RequestException as err:
@@ -302,7 +302,8 @@ class IoTAClient(BaseClient):
         """
         if limit:
             if not 1 < limit < 1000:
-                self.logger.error("'limit' must be an integer between 1 and 1000!")
+                self.logger.error("'limit' must be an integer between 1 and "
+                                  "1000!")
                 raise ValueError
         url = urljoin(self.base_url, 'iot/devices')
         headers = self.headers
@@ -312,8 +313,7 @@ class IoTAClient(BaseClient):
             res = self.session.get(url=url, headers=headers, params=params)
             if res.ok:
                 return parse_obj_as(List[Device], res.json()['devices'])
-            else:
-                res.raise_for_status()
+            res.raise_for_status()
         except requests.RequestException as err:
             self.log_error(err=err, msg=None)
             raise
@@ -334,8 +334,7 @@ class IoTAClient(BaseClient):
             res = self.session.get(url=url, headers=headers)
             if res.ok:
                 return Device.parse_raw(res.json())
-            else:
-                res.raise_for_status()
+            res.raise_for_status()
         except requests.RequestException as err:
             self.log_error(err=err, msg=None)
             raise
@@ -356,8 +355,8 @@ class IoTAClient(BaseClient):
                 include={'attributes', 'lazy', 'commands',
                          'static_attributes'}))
             if res.ok:
-                self.logger.info(f"Device '{device.device_id}' "
-                                 f"successfully updated!")
+                self.logger.info("Device '%s' successfully updated!",
+                                 device.device_id)
             elif (res.status_code == 409) & (add is True):
                 self.post_device(device=device, update=False)
             else:
@@ -398,7 +397,7 @@ class IoTAClient(BaseClient):
         try:
             res = self.session.delete(url=url, headers=headers)
             if res.ok:
-                self.logger.info(f"Device {device_id} successfully deleted!")
+                self.logger.info("Device '%s' successfully deleted!", device_id)
             else:
                 res.raise_for_status()
         except requests.RequestException as err:
@@ -416,8 +415,7 @@ class IoTAClient(BaseClient):
             res = self.session.get(url=url, headers=headers)
             if res.ok:
                 return res.json()['level']
-            else:
-                res.raise_for_status()
+            res.raise_for_status()
         except requests.RequestException as err:
             self.log_error(err=err)
             raise
@@ -434,8 +432,8 @@ class IoTAClient(BaseClient):
         try:
             res = self.session.put(url=url, headers=headers, params=level)
             if res.ok:
-                self.logger.info(f"Loglevel of agent at {self.base_url} "
-                                 f"changed to '{level}'")
+                self.logger.info("Loglevel of agent at %s "
+                                 "changed to '%s'", self.base_url, level)
             else:
                 res.raise_for_status()
         except requests.RequestException as err:

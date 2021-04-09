@@ -1097,8 +1097,8 @@ class ContextBrokerClient(BaseClient):
                 params=params,
                 json=json.loads(update.json()))
             if res.ok:
-                self.logger.info(f"Update operation '"
-                                 f"{update.actionType.value}' succeeded!")
+                self.logger.info("Update operation '%s' succeeded!",
+                                 update.actionType.value)
             else:
                 res.raise_for_status()
         except requests.RequestException as err:
@@ -1138,10 +1138,9 @@ class ContextBrokerClient(BaseClient):
                                         limit=limit)
             if params['options'] == 'count':
                 return parse_obj_as(List[ContextEntity], items)
-            else:
-                return parse_obj_as(List[ContextEntityKeyValues], items)
+            return parse_obj_as(List[ContextEntityKeyValues], items)
         except requests.RequestException as err:
-            msg = f"Query operation failed!"
+            msg = "Query operation failed!"
             self.log_error(err=err, msg=msg)
             raise
 
