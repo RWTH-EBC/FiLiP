@@ -581,7 +581,7 @@ class ContextBrokerClient(BaseClient):
         try:
             res = self.session.get(url=url, params=params, headers=headers)
             if res.ok:
-                self.logger.debug(f'Received: {res.json()}')
+                self.logger.debug('Received: %s', res.json())
                 return ContextAttribute(**res.json())
             res.raise_for_status()
         except requests.RequestException as err:
@@ -650,8 +650,8 @@ class ContextBrokerClient(BaseClient):
         try:
             res = self.session.delete(url=url, headers=headers)
             if res.ok:
-                self.logger.info(f"Attribute '{attr_name}' of '{entity_id}' "
-                                 f"successfully deleted!")
+                self.logger.info("Attribute '%s' of '%s' "
+                                 "successfully deleted!", attr_name, entity_id)
             else:
                 res.raise_for_status()
         except requests.RequestException as err:
@@ -688,7 +688,7 @@ class ContextBrokerClient(BaseClient):
         try:
             res = self.session.get(url=url, params=params, headers=headers)
             if res.ok:
-                self.logger.debug(f'Received: {res.json()}')
+                self.logger.debug('Received: %s', res.json())
                 return res.json()
             res.raise_for_status()
         except requests.RequestException as err:
@@ -772,7 +772,7 @@ class ContextBrokerClient(BaseClient):
         try:
             res = self.session.get(url=url, params=params, headers=headers)
             if res.ok:
-                self.logger.debug(f'Received: {res.json()}')
+                self.logger.debug('Received: %s', res.json())
                 return res.json()
             res.raise_for_status()
         except requests.RequestException as err:
@@ -795,7 +795,7 @@ class ContextBrokerClient(BaseClient):
         try:
             res = self.session.get(url=url, params=params, headers=headers)
             if res.ok:
-                self.logger.debug(f'Received: {res.json()}')
+                self.logger.debug('Received: %s', res.json())
                 return res.json()
             res.raise_for_status()
         except requests.RequestException as err:
@@ -878,7 +878,7 @@ class ContextBrokerClient(BaseClient):
         try:
             res = self.session.get(url=url, headers=headers)
             if res.ok:
-                self.logger.debug(f'Received: {res.json()}')
+                self.logger.debug('Received: %s', res.json())
                 return Subscription(**res.json())
             res.raise_for_status()
         except requests.RequestException as err:
@@ -906,7 +906,7 @@ class ContextBrokerClient(BaseClient):
                                        exclude_defaults=True,
                                        exclude_none=True))
             if res.ok:
-                self.logger.info(f"Subscription successfully updated!")
+                self.logger.info("Subscription successfully updated!")
             else:
                 res.raise_for_status()
         except requests.RequestException as err:
@@ -1011,7 +1011,7 @@ class ContextBrokerClient(BaseClient):
         try:
             res = self.session.get(url=url, headers=headers)
             if res.ok:
-                self.logger.debug(f'Received: {res.json()}')
+                self.logger.debug('Received: %s', res.json())
                 return Registration(**res.json())
             res.raise_for_status()
         except requests.RequestException as err:
@@ -1059,8 +1059,8 @@ class ContextBrokerClient(BaseClient):
         try:
             res = self.session.delete(url=url, headers=headers)
             if res.ok:
-                self.logger.info(f"Registration '{registration_id}' "
-                                 f"successfully deleted!")
+                self.logger.info("Registration '%s' "
+                                 "successfully deleted!", registration_id)
             res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Could not delete registration {registration_id}!"
