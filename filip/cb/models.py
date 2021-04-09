@@ -88,8 +88,9 @@ class ContextAttribute(BaseModel):
         min_length = 1,
         regex = "^((?![?&#/])[\x00-\x7F])*$", # Make it FIWARE-Safe
     )
-    value: Union[List[Union[float, int, bool, str]],
-                      Union[float, int, bool, str]] = Field(
+    value: Union[List[Union[float, int, bool, str, List, Dict[str, Any]]],
+                      Union[float, int, bool, str, List, Dict[str, Any]]] = \
+        Field(
         title="Attribute value",
         description="the actual data"
     )
@@ -104,7 +105,12 @@ class ContextAttribute(BaseModel):
     @validator('value')
     def validate_value_type(cls, v, values):
         type_ = values['type']
-        if type_ == DataType.BOOLEAN:
+        if type_ == DataType.TEXT:
+            if isinstance(v, list):
+                return [str(item) for item in v]
+            else:
+                return str(v)
+        elif type_ == DataType.BOOLEAN:
             if isinstance(v, list):
                 return [bool(item) for item in v]
             else:
@@ -119,6 +125,8 @@ class ContextAttribute(BaseModel):
                 return [int(item) for item in v]
             else:
                 return int(v)
+        elif type_ == DataType.DATETIME:
+            return v
         elif type_ == DataType.ARRAY:
             if isinstance(v, list):
                 return v
@@ -127,13 +135,9 @@ class ContextAttribute(BaseModel):
         elif type_ == DataType.STRUCTUREDVALUE:
             v = json.dumps(v)
             return json.loads(v)
-        elif type_ == DataType.DATETIME:
-            return v
         else:
-            if isinstance(v, list):
-                return [str(item) for item in v]
-            else:
-                return str(v)
+            v = json.dumps({v})
+            return json.loads(v)
 
     @validator('metadata')
     def validate_metadata_type(cls, v):
