@@ -108,7 +108,7 @@ class IndexedValues(BaseValues):
         for idx, timestamp in enumerate(v):
             if isinstance(timestamp, datetime):
                 return v
-            elif isinstance(timestamp, float):
+            if isinstance(timestamp, float):
                 v[idx] = datetime.fromtimestamp(timestamp / 1000.0)
             elif isinstance(timestamp, str):
                 v[idx] = datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%S.%f')

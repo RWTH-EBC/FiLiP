@@ -1,22 +1,19 @@
+"""
+Module for FIWARE api client
+"""
 import logging
 import json
 import errno
-from requests.auth import HTTPBasicAuth, HTTPDigestAuth
-from requests import Session
 from typing import Optional, Union, Dict
 from pathlib import Path
 from pydantic import BaseModel, AnyHttpUrl
+from requests.auth import HTTPBasicAuth, HTTPDigestAuth
+from requests import Session
 from filip.core.base_client import BaseClient
 from filip.core.models import FiwareHeader
 from filip.iota.client import IoTAClient
 from filip.cb.client import ContextBrokerClient
 from filip.timeseries import QuantumLeapClient
-
-# from requests_oauthlib import OAuth2Session
-# from oauthlib.oauth2 import LegacyApplicationClient, \
-#    MobileApplicationClient, \
-#    BackendApplicationClient
-
 
 
 logger = logging.getLogger('client')
@@ -101,16 +98,16 @@ class Client(BaseClient):
 
         try:
             with open(path, 'r') as filename:
-                logger.info(f"Reading credentials from: {path}")
+                logger.info("Reading credentials from: %s",path)
                 self.__secrets.update(json.load(filename))
 
         except IOError as err:
             if err.errno == errno.ENOENT:
-                logger.error(f"{path} - does not exist")
+                logger.error("%s - does not exist", path)
             elif err.errno == errno.EACCES:
-                logger.error(f"{path} - cannot be read")
+                logger.error("%s - cannot be read", path)
             else:
-                logger.error(f"{path} - some other error")
+                logger.error("%s - some other error", path)
 
     def __http_basic_auth(self):
         """
@@ -183,6 +180,3 @@ class Client(BaseClient):
 
     def __token_saver(self, token):
         self.__token = token
-
-
-

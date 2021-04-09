@@ -1,15 +1,18 @@
-import pandas as pd
-import filip
 import os
+from enum import Enum
 from pathlib import Path
+from typing import Optional
+import pandas as pd
 from pandas_datapackage_reader import read_datapackage
 from pydantic import BaseModel, Field
-from typing import Optional, List, Dict
-from enum import Enum
+
+
+
 
 class Level(BaseModel):
     level: str = Field(alias="LevelAndCategory")
     description: str = Field(alias="Description")
+
 
 class Unit(BaseModel):
     level: str = Field(alias="LevelAndCategory")
@@ -18,6 +21,7 @@ class Unit(BaseModel):
     code: str = Field(alias="CommonCode")
     description: Optional[str] = Field(alias="Description")
     quantity: str = Field(alias="Quantity")
+
 
 class Units:
     levels: pd.DataFrame = None

@@ -102,10 +102,9 @@ class QuantumLeapClient(BaseClient):
                 headers=headers,
                 json=data_set)
             if res.ok:
-                msg = "Notification successfully posted!"
-                self.logger.info(msg)
-                return msg
-            res.raise_for_status()
+                self.logger.info("Notification successfully posted!")
+            else:
+                res.raise_for_status()
         except requests.exceptions.RequestException as err:
             msg = f"Could not post notification for subscription id " \
                   f"{notification.subscriptionId}"
@@ -167,7 +166,7 @@ class QuantumLeapClient(BaseClient):
                 return msg
             res.raise_for_status()
         except requests.exceptions.RequestException as err:
-            msg = f"Could not create subscription."
+            msg = "Could not create subscription."
             self.log_error(err=err, msg=msg)
             raise
 
@@ -184,8 +183,8 @@ class QuantumLeapClient(BaseClient):
         try:
             res = self.session.delete(url=url, headers=headers, params=params)
             if res.ok:
-                self.logger.info(
-                    f"Entity id '{entity_id}' successfully deleted!")
+                self.logger.info("Entity id '%s' successfully deleted!",
+                                 entity_id)
                 return entity_id
             res.raise_for_status()
         except requests.exceptions.RequestException as err:
@@ -203,8 +202,8 @@ class QuantumLeapClient(BaseClient):
         try:
             res = self.session.delete(url=url, headers=headers)
             if res.ok:
-                self.logger.info(
-                    f"Entities of type '{entity_type}' successfully deleted!")
+                self.logger.info("Entities of type '%s' successfully deleted!",
+                                 entity_type)
                 return entity_type
             res.raise_for_status()
         except requests.exceptions.RequestException as err:
@@ -270,7 +269,7 @@ class QuantumLeapClient(BaseClient):
         try:
             res = self.session.get(url=url, params=params)
             if res.ok:
-                self.logger.info(f'Received: {res.json()}')
+                self.logger.info('Received: %s', res.json())
                 return ResponseModel(**res.json())
             res.raise_for_status()
         except requests.exceptions.RequestException as err:

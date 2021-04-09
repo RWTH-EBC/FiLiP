@@ -106,9 +106,9 @@ class Operator(str, Enum):
 
 
 class QueryStatement(Tuple):
-    def __new__(self, left: str, op: Union[str, Operator], right: Any):
+    def __new__(cls, left: str, op: Union[str, Operator], right: Any):
         q = tuple.__new__(QueryStatement, (left, op, right))
-        q = self.validate(q)
+        q = cls.validate(q)
         return q
 
     @classmethod
@@ -117,6 +117,12 @@ class QueryStatement(Tuple):
 
     @classmethod
     def validate(cls, v):
+        """
+        Validates statements
+        Args:
+            v:
+        Returns:
+        """
         if isinstance(v, (tuple, QueryStatement)):
             if len(v) != 3:
                 raise TypeError('3-tuple required')
@@ -140,6 +146,11 @@ class QueryStatement(Tuple):
             raise TypeError
 
     def to_str(self):
+        """
+        Parses QueryStatement to String
+        Returns:
+            String
+        """
         if not isinstance(self[2], str):
             right = str(self[2])
         elif self[2].isnumeric():
@@ -150,6 +161,14 @@ class QueryStatement(Tuple):
 
     @classmethod
     def parse_str(cls, string: str):
+        """
+        Generates QueryStatement form string
+        Args:
+            string:
+
+        Returns:
+            QueryStatement
+        """
         for op in Operator.list():
             if re.fullmatch(f"^\w(\w*|\.(?=\w))*{op}\w*", string):
                 args = string.split(op)
@@ -160,8 +179,7 @@ class QueryStatement(Tuple):
                         except ValueError:
                             right = float(args[1])
                         return QueryStatement(args[0], op, right)
-                    else:
-                        return QueryStatement(args[0], op, args[1])
+                    return QueryStatement(args[0], op, args[1])
                 else:
                     raise ValueError
 
@@ -173,6 +191,9 @@ class QueryStatement(Tuple):
 
 
 class QueryString():
+    """
+    Class for validated QueryStrings that can be used in api clients
+    """
     def __init__(self, qs: Union[Tuple,
                                  QueryStatement,
                                  List[Union[QueryStatement, Tuple]]]):
@@ -196,11 +217,27 @@ class QueryString():
         return qs
 
     def update(self, qs: Union[Tuple, QueryStatement, List[QueryStatement]]):
+        """
+        Adds or updates QueryStatement within QueryString. First to arguments
+        must match an existing argument for update. This redundant rules
+        Args:
+            qs:
+        Returns:
+            None
+        """
         qs = self.__check_arguments(qs=qs)
         self._qs.extend(qs)
         self._qs = list(dict.fromkeys(qs))
 
     def remove(self, qs: Union[Tuple, QueryStatement, List[QueryStatement]]):
+        """
+        Remove Statement from QueryString
+        Args:
+            qs:
+
+        Returns:
+
+        """
         qs = self.__check_arguments(qs=qs)
         for q in qs:
             self._qs.remove(q)
@@ -215,14 +252,21 @@ class QueryString():
             return v
         if isinstance(v, str):
             return cls.parse_str(v)
-        else:
-            raise ValueError('Invalid argument!')
+        raise ValueError('Invalid argument!')
 
     def to_str(self):
         return ';'.join([q.to_str() for q in self._qs])
 
     @classmethod
     def parse_str(cls, string: str):
+        """
+        Creates QueryString from string
+        Args:
+            string:
+
+        Returns:
+            QueryString
+        """
         q_parts = string.split(';')
         qs = []
         for part in q_parts:

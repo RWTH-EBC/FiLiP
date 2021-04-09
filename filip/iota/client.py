@@ -141,8 +141,9 @@ class IoTAClient(BaseClient):
         """
         url = urljoin(self.base_url, 'iot/services')
         headers = self.headers
-        params = {key: value for key, value in locals().items()}
-        res = None
+        params = {'resource': resource,
+                  'apikey': apikey}
+
         try:
             res = self.session.get(url=url, headers=headers, params=params)
             if res.ok:
@@ -223,8 +224,8 @@ class IoTAClient(BaseClient):
         """
         url = urljoin(self.base_url, 'iot/services')
         headers = self.headers
-        params = {key: value for key, value in locals().items()}
-        res = None
+        params = {'resource': resource,
+                  'apikey': apikey}
         try:
             res = self.session.delete(url=url, headers=headers, params=params)
             if res.ok:
@@ -407,6 +408,11 @@ class IoTAClient(BaseClient):
 
     # LOG API
     def get_loglevel_of_agent(self):
+        """
+        Get current loglevel of agent
+        Returns:
+
+        """
         url = urljoin(self.base_url, 'admin/log')
         headers = self.headers.copy()
         del headers['fiware-service']
@@ -421,6 +427,14 @@ class IoTAClient(BaseClient):
             raise
 
     def change_loglevel_of_agent(self, level: str):
+        """
+        Change current loglevel of agent
+        Args:
+            level:
+
+        Returns:
+
+        """
         level = level.upper()
         if level not in ['INFO', 'ERROR', 'FATAL', 'DEBUG', 'WARNING']:
             raise KeyError

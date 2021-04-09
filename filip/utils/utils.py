@@ -2,9 +2,6 @@ import pandas as pd
 from fuzzywuzzy import fuzz
 
 
-
-
-
 def create_type(inputstr: str):
     """ 
     Creating entity type of measurement based on datamodel and substring
@@ -46,9 +43,8 @@ def create_type(inputstr: str):
     if number_of_max > 1:
         print("max ratio = " + str(max_ratio))
         return max_ratio_entitytype
-    else:
-        print("max partial ratio = " + str(max_partial))
-        return max_partial_entitytype
+    print("max partial ratio = " + str(max_partial))
+    return max_partial_entitytype
 
 
 def str2fiware(string: str):
@@ -81,18 +77,25 @@ def str2fiware(string: str):
     return string
 
 
-def timeseries_to_pandas(ts_dict: dict, to_datetime: bool = False, datetime_format: str = "%Y-%m-%dT%H:%M:%S.%f"):
+def timeseries_to_pandas(ts_dict: dict,
+                         to_datetime: bool = False,
+                         datetime_format: str = "%Y-%m-%dT%H:%M:%S.%f"):
     """
-    :param ts_dict: ts_dict: a dictionary with the following structure : {attr_name_0 : { timestamp_0 : value_0, timestamp_1: value_1 },
-                                                                    attr_name_1 : { timestamp_0 : value_0, timestamp_1: value_1 } }
-    :param to_datetime: Whether the "timestamp" column should be converted to a datetime object
-    :param datetime_format: the datetime format which is recived from Quantumleap "%Y-%m-%dT%H:%M:%S.%f"
-    :return: a pandas dataframe object, containting one timestamp column and minimum one attribute column
+    :param ts_dict: ts_dict: a dictionary with the following structure:
+        {attr_name_0 : { timestamp_0 : value_0, timestamp_1: value_1 },
+        sattr_name_1 : { timestamp_0 : value_0, timestamp_1: value_1 } }
+    :param to_datetime: Whether the "timestamp" column should be converted to
+        a datetime object
+    :param datetime_format: the datetime format which is recived from
+        Quantumleap "%Y-%m-%dT%H:%M:%S.%f"
+    :return: a pandas dataframe object, containting one timestamp column
+        and minimum one attribute column
     """
     list_of_dataframes = []
     column_names = [key for key, value in ts_dict.items()]
     for attr in column_names:
-        dataframe = pd.DataFrame(ts_dict[attr].items(), columns=["timestamp", attr])
+        dataframe = pd.DataFrame(ts_dict[attr].items(),
+                                 columns=["timestamp", attr])
         list_of_dataframes.append(dataframe)
     df_all = pd.concat(list_of_dataframes, ignore_index=True)
     df_all.sort_values(by='timestamp', inplace=True)
