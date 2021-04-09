@@ -11,11 +11,11 @@ Welcome to FiLiP's documentation!
 .. toctree::
    :maxdepth: 4
 
-   core
-   cb
-   iota
-   timeseries
-   utils
+   filip.core
+   filip.cb
+   filip.iota
+   filip.timeseries
+   filip.utils
 
 
 Version History
