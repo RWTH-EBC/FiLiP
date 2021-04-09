@@ -230,8 +230,9 @@ class TestContextBroker(unittest.TestCase):
             client.update_subscription(subscription=sub_update)
             sub_res_updated = client.get_subscription(subscription_id=sub_id)
             self.assertNotEqual(sub_res.expires, sub_res_updated.expires)
+            self.assertEqual(sub_res.id, sub_res_updated.id)
+            self.assertGreaterEqual( sub_res_updated.expires, sub_res.expires)
             subs = client.get_subscription_list()
-            self.assertIn(sub_res_updated, subs)
             for sub in subs:
                 client.delete_subscription(subscription_id=sub.id)
 

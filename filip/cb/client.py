@@ -1,13 +1,16 @@
+"""
+Context Broker Module for API Client
+"""
 import re
-import requests
+import json
 from math import inf
-from typing import Dict, List, Any, Union
+from typing import Any, Dict, List, Union
+from urllib.parse import urljoin
+import requests
 from pydantic import \
     parse_obj_as, \
     PositiveInt, \
-    PositiveFloat, \
-    AnyHttpUrl
-from urllib.parse import urljoin
+    PositiveFloat
 from filip.core.base_client import BaseClient
 from filip.core.settings import settings
 from filip.core.models import FiwareHeader, PaginationMethod
@@ -103,10 +106,9 @@ class ContextBrokerClient(BaseClient):
                     items.extend(res.json())
                 else:
                     res.raise_for_status()
-            self.logger.debug(f'Received: {items}')
+            self.logger.debug('Received: %s', items)
             return items
-        else:
-            res.raise_for_status()
+        res.raise_for_status()
 
     # MANAGEMENT API
     def get_version(self) -> Dict:
@@ -120,8 +122,7 @@ class ContextBrokerClient(BaseClient):
             res = self.session.get(url=url, headers=self.headers)
             if res.ok:
                 return res.json()
-            else:
-                res.raise_for_status()
+            res.raise_for_status()
         except requests.RequestException as err:
             self.logger.error(err)
             raise
@@ -137,8 +138,7 @@ class ContextBrokerClient(BaseClient):
             res = self.session.get(url=url, headers=self.headers)
             if res.ok:
                 return res.json()
-            else:
-                res.raise_for_status()
+            res.raise_for_status()
         except requests.RequestException as err:
             self.logger.error(err)
             raise
@@ -155,8 +155,7 @@ class ContextBrokerClient(BaseClient):
             res = self.session.get(url=url, headers=self.headers)
             if res.ok:
                 return res.json()
-            else:
-                res.raise_for_status()
+            res.raise_for_status()
         except requests.RequestException as err:
             self.logger.error(err)
             raise
@@ -190,8 +189,7 @@ class ContextBrokerClient(BaseClient):
             if res.ok:
                 self.logger.info(f"Entity successfully posted!")
                 return res.headers.get('Location')
-            else:
-                res.raise_for_status()
+            res.raise_for_status()
         except requests.RequestException as err:
             if update and err.response.status_code == 422:
                 return self.update_entity(entity=entity, add=False)
@@ -337,8 +335,7 @@ class ContextBrokerClient(BaseClient):
                 return parse_obj_as(List[ContextEntity], items)
             elif 'keyValues' in options:
                 return parse_obj_as(List[ContextEntityKeyValues], items)
-            else:
-                return items
+            return items
 
         except requests.RequestException as err:
             msg = "Could not load entities"
@@ -392,8 +389,7 @@ class ContextBrokerClient(BaseClient):
                 self.logger.info("Entity successfully retrieved!")
                 self.logger.debug("Received: %s", res.json())
                 return ContextEntity(**res.json())
-            else:
-                res.raise_for_status()
+            res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Could not load entity {entity_id}"
             self.log_error(err=err, msg=msg)
@@ -447,8 +443,7 @@ class ContextBrokerClient(BaseClient):
             if res.ok:
                 return {key: ContextAttribute(**values)
                         for key, values in res.json().items()}
-            else:
-                res.raise_for_status()
+            res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Could not load attributes from entity {entity_id}!"
             self.log_error(err=err, msg=msg)
@@ -588,8 +583,7 @@ class ContextBrokerClient(BaseClient):
             if res.ok:
                 self.logger.debug(f'Received: {res.json()}')
                 return ContextAttribute(**res.json())
-            else:
-                res.raise_for_status()
+            res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Could not load attribute '{attr_name}' from entity" \
                   f"'{entity_id}' "
@@ -696,8 +690,7 @@ class ContextBrokerClient(BaseClient):
             if res.ok:
                 self.logger.debug(f'Received: {res.json()}')
                 return res.json()
-            else:
-                res.raise_for_status()
+            res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Could not load value of attribute '{attr_name}' from " \
                   f"entity'{entity_id}' "
@@ -781,8 +774,7 @@ class ContextBrokerClient(BaseClient):
             if res.ok:
                 self.logger.debug(f'Received: {res.json()}')
                 return res.json()
-            else:
-                res.raise_for_status()
+            res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Could not load entity types!"
             self.log_error(err=err, msg=msg)
@@ -805,8 +797,7 @@ class ContextBrokerClient(BaseClient):
             if res.ok:
                 self.logger.debug(f'Received: {res.json()}')
                 return res.json()
-            else:
-                res.raise_for_status()
+            res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Could not load entities of type" \
                   f"'{entity_type}' "
@@ -867,8 +858,7 @@ class ContextBrokerClient(BaseClient):
             if res.ok:
                 self.logger.info(f"Subscription successfully created!")
                 return res.headers['Location'].split('/')[-1]
-            else:
-                res.raise_for_status()
+            res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Could not send subscription!"
             self.log_error(err=err, msg=msg)
@@ -890,8 +880,7 @@ class ContextBrokerClient(BaseClient):
             if res.ok:
                 self.logger.debug(f'Received: {res.json()}')
                 return Subscription(**res.json())
-            else:
-                res.raise_for_status()
+            res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Could not load subscription {subscription_id}!"
             self.log_error(err=err, msg=msg)
@@ -1003,8 +992,7 @@ class ContextBrokerClient(BaseClient):
             if res.ok:
                 self.logger.info(f"Registration successfully created!")
                 return res.headers['Location'].split('/')[-1]
-            else:
-                res.raise_for_status()
+            res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Could not send registration {registration.id}!"
             self.log_error(err=err, msg=msg)
@@ -1025,8 +1013,7 @@ class ContextBrokerClient(BaseClient):
             if res.ok:
                 self.logger.debug(f'Received: {res.json()}')
                 return Registration(**res.json())
-            else:
-                res.raise_for_status()
+            res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Could not load registration {registration_id}!"
             self.log_error(err=err, msg=msg)
@@ -1074,8 +1061,7 @@ class ContextBrokerClient(BaseClient):
             if res.ok:
                 self.logger.info(f"Registration '{registration_id}' "
                                  f"successfully deleted!")
-            else:
-                res.raise_for_status()
+            res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Could not delete registration {registration_id}!"
             self.log_error(err=err, msg=msg)
@@ -1109,7 +1095,7 @@ class ContextBrokerClient(BaseClient):
                 url=url,
                 headers=headers,
                 params=params,
-                json=update.dict())
+                json=json.loads(update.json()))
             if res.ok:
                 self.logger.info(f"Update operation '"
                                  f"{update.actionType.value}' succeeded!")
