@@ -6,19 +6,22 @@
 Welcome to FiLiP's documentation!
 =======================================
 
-**FiLiP** stands for: **FI**\WARE **Li**\brary for **P**\ython
+.. mdinclude::  ../../README.md
+
+.. toctree::
+   :maxdepth: 4
+
+   core
+   cb
+   iota
+   timeseries
+   utils
 
 
-Installation
+Version History
 -------------------
 
-For installation use pip. Run ``pip install -e "Path/to/this/repository"``
-
-If environment variables are not set properly, try more explicit command in Windows shell:
-
-``C:\Path\to\pythonDirectory\python.exe -c "import pip" & C:\Path\to\pythonDirectory\python.exe -m pip install -e C:\Path\to\this\repository``
-
-Be aware of forward slashes (for python) and backslashes (for Windows). You might need to encompass paths in inverted commas (") in order to handle spaces.
+.. mdinclude::  ../../CHANGELOG.md
 
 
 Indices and tables
