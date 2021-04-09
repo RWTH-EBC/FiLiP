@@ -141,15 +141,15 @@ class ContextAttribute(BaseModel):
         if isinstance(v, NamedContextMetadata):
             v = [v]
         elif isinstance(v, Dict):
-            if all([isinstance(item, ContextMetadata) for item in v.values()]):
+            if all(isinstance(item, ContextMetadata) for item in v.values()):
                 return v
             json.dumps(v)
             return {key: ContextMetadata(**item) for key, item in v.items()}
         if isinstance(v, list):
-            if all([isinstance(item, NamedContextMetadata) for item in v]):
+            if all(isinstance(item, NamedContextMetadata) for item in v):
                 return {item.name: ContextMetadata(**item.dict(exclude={
                     'name'})) for item in v}
-            elif all([isinstance(item, Dict) for item in v]):
+            elif all(isinstance(item, Dict) for item in v):
                 return {key: ContextMetadata(**item) for key, item in v}
         else:
             raise TypeError(f"Invalid type {type(v)}")
