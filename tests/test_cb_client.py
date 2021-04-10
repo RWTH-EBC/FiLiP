@@ -2,7 +2,6 @@
 Tests for filip.cb.client
 """
 import unittest
-import re
 import time
 from datetime import datetime
 from requests import RequestException
@@ -10,10 +9,11 @@ from filip.core.models import FiwareHeader
 from filip.core.simple_query_language import QueryString
 from filip.cb.client import ContextBrokerClient
 from filip.cb.models import \
+    AttrsFormat,\
     ContextEntity, \
     ContextAttribute, \
+    NamedContextAttribute, \
     Subscription, \
-    Update, \
     Query, \
     Entity, \
     ActionType
@@ -30,7 +30,7 @@ class TestContextBroker(unittest.TestCase):
             "subscriptions_url": "/v2/subscriptions",
             "registrations_url": "/v2/registrations"
         }
-        self.attr = {'temperature': {'value': 20,
+        self.attr = {'temperature': {'value': 20.1,
                                      'type': 'Number'}}
         self.entity = ContextEntity(id='MyId', type='MyType', **self.attr)
         self.fiware_header = FiwareHeader(service='filip',
@@ -64,24 +64,18 @@ class TestContextBroker(unittest.TestCase):
             entities_a = [ContextEntity(id=str(i),
                                         type=f'filip:object:TypeA') for i in
                           range(0, 1000)]
-            update = Update(actionType=ActionType.APPEND, entities=entities_a)
-            client.update(update=update)
+            client.update(action_type=ActionType.APPEND, entities=entities_a)
             entities_b = [ContextEntity(id=str(i),
                                         type=f'filip:object:TypeB') for i in
                           range(1000, 2001)]
-            update = Update(actionType=ActionType.APPEND, entities=entities_b)
-            client.update(update=update)
+            client.update(action_type=ActionType.APPEND, entities=entities_b)
             self.assertLessEqual(len(client.get_entity_list(limit=1)), 1)
             self.assertLessEqual(len(client.get_entity_list(limit=999)), 999)
             self.assertLessEqual(len(client.get_entity_list(limit=1001)), 1001)
             self.assertLessEqual(len(client.get_entity_list(limit=2001)), 2001)
 
-            update = Update(actionType=ActionType.DELETE,
-                            entities=entities_a)
-            client.update(update=update)
-            update = Update(actionType=ActionType.DELETE,
-                            entities=entities_b)
-            client.update(update=update)
+            client.update(action_type=ActionType.DELETE, entities=entities_a)
+            client.update(action_type=ActionType.DELETE, entities=entities_b)
 
     def test_entity_filtering(self):
         """
@@ -91,20 +85,20 @@ class TestContextBroker(unittest.TestCase):
                                      service_path='/testing')
         with ContextBrokerClient(fiware_header=fiware_header) as client:
             # test patterns
-            with self.assertRaises(re.error):
+            with self.assertRaises(ValueError):
                 client.get_entity_list(id_pattern='(&()?')
-            with self.assertRaises(re.error):
+            with self.assertRaises(ValueError):
                 client.get_entity_list(type_pattern='(&()?')
             entities_a = [ContextEntity(id=str(i),
                                         type=f'filip:object:TypeA') for i in
                           range(0, 5)]
-            update = Update(actionType=ActionType.APPEND, entities=entities_a)
-            client.update(update=update)
+
+            client.update(action_type=ActionType.APPEND, entities=entities_a)
             entities_b = [ContextEntity(id=str(i),
                                         type=f'filip:object:TypeB') for i in
                           range(6, 10)]
-            update = Update(actionType=ActionType.APPEND, entities=entities_b)
-            client.update(update=update)
+
+            client.update(action_type=ActionType.APPEND, entities=entities_b)
 
             entities_all = client.get_entity_list()
             entities_by_id_pattern = client.get_entity_list(
@@ -120,24 +114,26 @@ class TestContextBroker(unittest.TestCase):
             self.assertLess(len(entities_by_query), len(entities_all))
 
             # test options
-            entities_by_key_values = client.get_entity_list(
-                options=['keyValues'])
-            self.assertEqual(len(entities_by_key_values), len(entities_all))
+            for opt in list(AttrsFormat):
+                entities_by_option = client.get_entity_list(response_format=opt)
+                self.assertEqual(len(entities_by_option), len(entities_all))
+                self.assertEqual(client.get_entity(
+                    entity_id='0',
+                    response_format=opt),
+                    entities_by_option[0])
+            with self.assertRaises(ValueError):
+                client.get_entity_list(response_format='not in AttrFormat')
 
-            update = Update(actionType=ActionType.DELETE,
-                            entities=entities_a)
-            client.update(update=update)
-            update = Update(actionType=ActionType.DELETE,
-                            entities=entities_b)
-            client.update(update=update)
+            client.update(action_type=ActionType.DELETE, entities=entities_a)
+
+            client.update(action_type=ActionType.DELETE, entities=entities_b)
 
     def test_entity_operations(self):
         """
         Test entity operations of context broker client
         """
         with ContextBrokerClient(fiware_header=self.fiware_header) as client:
-            self.assertIsNotNone(client.post_entity(entity=self.entity,
-                                                    update=True))
+            client.post_entity(entity=self.entity, update=True)
             res_entity = client.get_entity(entity_id=self.entity.id)
             client.get_entity(entity_id=self.entity.id, attrs=['temperature'])
             self.assertEqual(client.get_entity_attributes(
@@ -158,21 +154,43 @@ class TestContextBroker(unittest.TestCase):
         Test attribute operations of context broker client
         """
         with ContextBrokerClient(fiware_header=self.fiware_header) as client:
-            self.assertIsNotNone(client.post_entity(entity=self.entity,
+            entity = self.entity
+            attr_txt = NamedContextAttribute(name='attr_txt',
+                                             type='Text',
+                                             value="Test")
+            attr_list = NamedContextAttribute(name='attr_list',
+                                              type='StructuredValue',
+                                              value=[1, 2, 3])
+            attr_dict = NamedContextAttribute(name='attr_dict',
+                                              type='StructuredValue',
+                                              value={'key': 'value'})
+            entity.add_properties([attr_txt, attr_list, attr_dict])
+
+            self.assertIsNotNone(client.post_entity(entity=entity,
                                                     update=True))
-            attr = client.get_attribute(entity_id=self.entity.id,
-                                        attr_name='temperature')
-            attr_value = client.get_attribute_value(entity_id=self.entity.id,
-                                                    attr_name='temperature')
-            self.assertEqual(attr_value, attr.value)
-            new_value = 1337
-            client.update_attribute_value(entity_id=self.entity.id,
+            res_entity = client.get_entity(entity_id=entity.id)
+            print(res_entity.json(indent=2))
+            for attr in entity.get_properties():
+                self.assertIn(attr, res_entity.get_properties())
+                res_attr = client.get_attribute(entity_id=entity.id,
+                                                attr_name=attr.name)
+
+                self.assertEqual(type(res_attr.value), type(attr.value))
+                self.assertEqual(res_attr.value, attr.value)
+                value = client.get_attribute_value(entity_id=entity.id,
+                                                   attr_name=attr.name)
+                self.assertEqual(type(value), type(attr.value))
+                self.assertEqual(value, attr.value)
+
+            new_value = 1337.0
+            client.update_attribute_value(entity_id=entity.id,
                                           attr_name='temperature',
                                           value=new_value)
-            attr_value = client.get_attribute_value(entity_id=self.entity.id,
+            attr_value = client.get_attribute_value(entity_id=entity.id,
                                                     attr_name='temperature')
             self.assertEqual(attr_value, new_value)
-            client.delete_entity(entity_id=self.entity.id)
+
+            client.delete_entity(entity_id=entity.id)
 
     def test_type_operations(self):
         """
@@ -246,25 +264,22 @@ class TestContextBroker(unittest.TestCase):
             entities = [ContextEntity(id=str(i),
                                       type=f'filip:object:TypeA') for i in
                         range(0, 1000)]
-            update = Update(actionType=ActionType.APPEND, entities=entities)
-            client.update(update=update)
+            client.update(entities=entities, action_type=ActionType.APPEND)
             entities = [ContextEntity(id=str(i),
                                       type=f'filip:object:TypeB') for i in
                         range(0, 1000)]
-            update = Update(actionType=ActionType.APPEND, entities=entities)
-            client.update(update=update)
+            client.update(entities=entities, action_type=ActionType.APPEND)
             e = Entity(idPattern=".*", typePattern=".*TypeA$")
             q = Query.parse_obj({"entities": [e.dict(exclude_unset=True)]})
             self.assertEqual(1000,
-                             len(client.query(query=q, options='keyValues')))
+                             len(client.query(query=q, format='keyValues')))
 
     def tearDown(self) -> None:
         # Cleanup test server
         try:
-            entities = self.client.get_entity_list()
-            update = Update(actionType=ActionType.DELETE,
-                            entities=entities)
-            self.client.update(update=update)
+            entities = [ContextEntity(id=entity.id, type=entity.type) for
+                        entity in self.client.get_entity_list()]
+            self.client.update(entities=entities, action_type='delete')
         except RequestException:
             pass
         self.client.close()

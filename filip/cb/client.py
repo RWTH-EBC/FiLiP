@@ -16,14 +16,14 @@ from filip.core.settings import settings
 from filip.core.models import FiwareHeader, PaginationMethod
 from filip.core.simple_query_language import QueryString
 from filip.cb.models import \
+    ActionType, \
+    AttrsFormat, \
     ContextEntity, \
     ContextEntityKeyValues, \
     ContextAttribute, \
     NamedContextAttribute, \
-    GetEntitiesOptions, \
     Subscription,\
     Registration,\
-    Update, \
     Query
 
 
@@ -37,7 +37,6 @@ class ContextBrokerClient(BaseClient):
     Api specifications for v2 are located here:
     http://telefonicaid.github.io/fiware-orion/api/v2/stable/
     """
-
     def __init__(self,
                  *,
                  url: str = None,
@@ -48,15 +47,14 @@ class ContextBrokerClient(BaseClient):
                          session=session,
                          fiware_header=fiware_header)
 
-    def __pagination__(self,
-                       *,
-                       method: PaginationMethod = PaginationMethod.GET,
-                       url: str,
-                       headers: Dict,
-                       limit: Union[PositiveInt, PositiveFloat] = None,
-                       params: Dict = None,
-                       data: str = None) -> Union[List[Dict],
-                                                  requests.Response]:
+    def __pagination(self,
+                     *,
+                     method: PaginationMethod = PaginationMethod.GET,
+                     url: str,
+                     headers: Dict,
+                     limit: Union[PositiveInt, PositiveFloat] = None,
+                     params: Dict = None,
+                     data: str = None) -> List[Dict]:
         """
         NGSIv2 implements a pagination mechanism in order to help clients to
         retrieve large sets of resources. This mechanism works for all listing
@@ -162,7 +160,9 @@ class ContextBrokerClient(BaseClient):
 
     # CONTEXT MANAGEMENT API ENDPOINTS
     # Entity Operations
-    def post_entity(self, entity: ContextEntity, update: bool = False):
+    def post_entity(self,
+                    entity: ContextEntity,
+                    update: bool = False):
         """
         Function registers an Object with the NGSI Context Broker,
         if it already exists it can be automatically updated
@@ -212,11 +212,11 @@ class ContextBrokerClient(BaseClient):
                         attrs: List[str] = None,
                         metadata: str = None,
                         order_by: str = None,
-                        options: Union[str,
-                                       GetEntitiesOptions,
-                                       List[Union[str, GetEntitiesOptions]]] =
-                        None
-                        ) -> Union[List[ContextEntity], List[Dict[str, Any]]]:
+                        response_format: Union[AttrsFormat, str] = \
+                        AttrsFormat.NORMALIZED
+                        ) -> List[Union[ContextEntity,
+                                        ContextEntityKeyValues,
+                                        Dict[str, Any]]]:
         """
         Retrieves a list of context entities that match different criteria by
         id, type, pattern matching (either id or type) and/or those which
@@ -267,9 +267,10 @@ class ContextBrokerClient(BaseClient):
                 detail. Example: accuracy.
             order_by: Criteria for ordering results. See "Ordering Results"
                 section for details. Example: temperature,!speed.
-            options (GetEntitiesOptions): Response Format. Note: That if
+            response_format (AttrsFormat, str): Response Format. Note: That if
                 'keyValues' or 'values' are used the response model will
-                change to List[Dict[str, Any]]
+                change to List[ContextEntityKeyValues] and to List[Dict[str,
+                Any]], respectively.
         Returns:
 
         """
@@ -299,7 +300,7 @@ class ContextBrokerClient(BaseClient):
             try:
                 re.compile(type_pattern)
             except re.error as err:
-                raise ValueError(f'Invalid Pattern: {err}')
+                raise ValueError(f'Invalid Pattern: {err.msg}')
             params.update({'typePattern': type_pattern})
         if attrs:
             params.update({'attrs': ','.join(attrs)})
@@ -317,23 +318,19 @@ class ContextBrokerClient(BaseClient):
             params.update({'coords': coords})
         if order_by:
             params.update({'orderBy': order_by})
-        if options:
-            if not isinstance(options, list):
-                options = [options]
-            options = options + ['count']
-            options = ','.join(options)
-        else:
-            options = 'count'
-        params.update({'options': options})
+        if response_format not in list(AttrsFormat):
+            raise ValueError(f'Value must be in {list(AttrsFormat)}')
+        response_format = ','.join(['count', response_format])
+        params.update({'options': response_format})
         try:
-            items = self.__pagination__(method=PaginationMethod.GET,
-                                        limit=limit,
-                                        url=url,
-                                        params=params,
-                                        headers=headers)
-            if options == 'count':
+            items = self.__pagination(method=PaginationMethod.GET,
+                                      limit=limit,
+                                      url=url,
+                                      params=params,
+                                      headers=headers)
+            if AttrsFormat.NORMALIZED in response_format:
                 return parse_obj_as(List[ContextEntity], items)
-            if 'keyValues' in options:
+            if AttrsFormat.KEYVALUE in response_format:
                 return parse_obj_as(List[ContextEntityKeyValues], items)
             return items
 
@@ -347,7 +344,8 @@ class ContextBrokerClient(BaseClient):
                    entity_type: str = None,
                    attrs: List[str] = None,
                    metadata: List[str] = None,
-                   options: str = None) -> ContextEntity:
+                   response_format: Union[AttrsFormat, str] = AttrsFormat.NORMALIZED) \
+            -> Union[ContextEntity, ContextEntityKeyValues, Dict[str, Any]]:
         """
         This operation must return one entity element only, but there may be
         more than one entity with the same ID (e.g. entities with same ID but
@@ -368,7 +366,7 @@ class ContextBrokerClient(BaseClient):
             metadata (List of Strings): A list of metadata names to include in
             the response. See "Filtering out attributes and metadata" section
             for more detail. Example: accuracy.
-            options (List):
+            response_format (AttrsFormat, str): Representation format of response
         Returns:
             ContextEntity
         """
@@ -381,14 +379,19 @@ class ContextBrokerClient(BaseClient):
             params.update({'attrs': ','.join(attrs)})
         if metadata:
             params.update({'metadata': ','.join(metadata)})
-        if options:
-            params.update({'options': ','.join(options)})
+        if response_format not in list(AttrsFormat):
+            raise ValueError(f'Value must be in {list(AttrsFormat)}')
+        params.update({'options': response_format})
         try:
             res = self.session.get(url=url, params=params, headers=headers)
             if res.ok:
                 self.logger.info("Entity successfully retrieved!")
                 self.logger.debug("Received: %s", res.json())
-                return ContextEntity(**res.json())
+                if response_format == AttrsFormat.NORMALIZED:
+                    return ContextEntity(**res.json())
+                if response_format == AttrsFormat.KEYVALUE:
+                    return ContextEntityKeyValues(**res.json())
+                return res.json()
             res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Could not load entity {entity_id}"
@@ -400,7 +403,9 @@ class ContextBrokerClient(BaseClient):
                               entity_type: str = None,
                               attrs: List[str] = None,
                               metadata: List[str] = None,
-                              options: str = None) -> Dict[str, ContextEntity]:
+                              response_format: Union[AttrsFormat, str] =
+                              AttrsFormat.NORMALIZED) -> \
+            Dict[str, ContextAttribute]:
         """
         This request is similar to retrieving the whole entity, however this
         one omits the id and type fields. Just like the general request of
@@ -423,7 +428,7 @@ class ContextBrokerClient(BaseClient):
             metadata (List of Strings): A list of metadata names to include in
             the response. See "Filtering out attributes and metadata" section
             for more detail. Example: accuracy.
-            options (Dict):
+            response_format (AttrsFormat, str): Representation format of response
         Returns:
             Dict
         """
@@ -436,13 +441,17 @@ class ContextBrokerClient(BaseClient):
             params.update({'attrs': ','.join(attrs)})
         if metadata:
             params.update({'metadata': ','.join(metadata)})
-        if options:
-            params.update({'options': ','.join(options)})
+        if response_format not in list(AttrsFormat):
+            raise ValueError(f'Value must be in {list(AttrsFormat)}')
+        params.update({'options': response_format})
         try:
             res = self.session.get(url=url, params=params, headers=headers)
             if res.ok:
-                return {key: ContextAttribute(**values)
-                        for key, values in res.json().items()}
+                if response_format == AttrsFormat.NORMALIZED:
+                    return {key: ContextAttribute(**values)
+                            for key, values in res.json().items()}
+                else:
+                    return res.json()
             res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Could not load attributes from entity {entity_id}!"
@@ -723,7 +732,7 @@ class ContextBrokerClient(BaseClient):
         if entity_type:
             params.update({'type': entity_type})
         try:
-            if not isinstance(value, Dict):
+            if not isinstance(value, (Dict, List)):
                 headers.update({'Content-Type': 'text/plain'})
                 if isinstance(value, str):
                     value = f'"{value}"'
@@ -823,10 +832,10 @@ class ContextBrokerClient(BaseClient):
         # required
         params.update({'options': 'count'})
         try:
-            items = self.__pagination__(limit=limit,
-                                        url=url,
-                                        params=params,
-                                        headers=headers)
+            items = self.__pagination(limit=limit,
+                                      url=url,
+                                      params=params,
+                                      headers=headers)
             return parse_obj_as(List[Subscription], items)
         except requests.RequestException as err:
             msg = f"Could not load subscriptions!"
@@ -956,10 +965,10 @@ class ContextBrokerClient(BaseClient):
         # required
         params.update({'options': 'count'})
         try:
-            items = self.__pagination__(limit=limit,
-                                        url=url,
-                                        params=params,
-                                        headers=headers)
+            items = self.__pagination(limit=limit,
+                                      url=url,
+                                      params=params,
+                                      headers=headers)
 
             return parse_obj_as(List[Registration], items)
         except requests.RequestException as err:
@@ -1071,13 +1080,39 @@ class ContextBrokerClient(BaseClient):
     # Batch operation API
     def update(self,
                *,
-               update: Update,
-               options: str = None) -> None:
+               entities: List[ContextEntity],
+               action_type: Union[ActionType, str],
+               update_format: str = None) -> None:
         """
         This operation allows to create, update and/or delete several entities
         in a single batch operation.
+
+        This operation is split in as many individual operations as entities
+        in the entities vector, so the actionType is executed for each one of
+        them. Depending on the actionType, a mapping with regular non-batch
+        operations can be done:
+
+        append: maps to POST /v2/entities (if the entity does not already exist)
+        or POST /v2/entities/<id>/attrs (if the entity already exists).
+
+        appendStrict: maps to POST /v2/entities (if the entity does not
+        already exist) or POST /v2/entities/<id>/attrs?options=append (if the
+        entity already exists).
+
+        update: maps to PATCH /v2/entities/<id>/attrs.
+
+        delete: maps to DELETE /v2/entities/<id>/attrs/<attrName> on every
+        attribute included in the entity or to DELETE /v2/entities/<id> if no
+        attribute were included in the entity.
+
+        replace: maps to PUT /v2/entities/<id>/attrs.
+
         Args:
-            update (Update): Payload to update
+            entities: "an array of entities, each entity specified using the "
+                      "JSON entity representation format "
+            action_type (Update): "actionType, to specify the kind of update
+                    action to do: either append, appendStrict, update, delete,
+                    or replace. "
             options (str): Optional 'keyValues'
 
         Returns:
@@ -1087,23 +1122,27 @@ class ContextBrokerClient(BaseClient):
         url = urljoin(self.base_url, 'v2/op/update')
         headers = self.headers.copy()
         params = {}
-        if options:
-            assert options == 'keyValues', \
+        if action_type not in list(ActionType):
+            raise ValueError(f'action_type must be in {list(ActionType)}')
+        if update_format:
+            assert update_format == 'keyValues', \
                 "Only 'keyValues' is allowed as option"
             params.update({'options': 'keyValues'})
+        data = {'actionType': action_type,
+                'entities': [json.loads(entity.json()) for entity in entities]}
         try:
             res = self.session.post(
                 url=url,
                 headers=headers,
                 params=params,
-                json=json.loads(update.json()))
+                json=data)
             if res.ok:
                 self.logger.info("Update operation '%s' succeeded!",
-                                 update.actionType.value)
+                                 action_type)
             else:
                 res.raise_for_status()
         except requests.RequestException as err:
-            msg = f"Update operation '{update.actionType.value}' failed!"
+            msg = f"Update operation '{action_type}' failed!"
             self.log_error(err=err, msg=msg)
             raise
 
@@ -1112,63 +1151,48 @@ class ContextBrokerClient(BaseClient):
               query: Query,
               limit: PositiveInt = None,
               order_by: str = None,
-              options: Union[str, GetEntitiesOptions] = None):
+              format: Union[AttrsFormat, str] = AttrsFormat.NORMALIZED ) -> \
+            List[Any]:
         """
 
         Args:
             query (Query):
             limit (PositiveInt):
             order_by (str):
-            options ():
+            format (AttrsFormat, str):
         Returns:
-
+            The response payload is an Array containing one object per matching
+            entity, or an empty array [] if no entities are found. The entities
+            follow the JSON entity representation format (described in the
+            section "JSON Entity Representation").
         """
         url = urljoin(self.base_url, 'v2/op/query')
         headers = self.headers.copy()
         headers.update({'Content-Type': 'application/json'})
         params = {'options': 'count'}
-        if options:
-            params['options'] = ','.join([options, 'count'])
+        if format:
+            if format not in list(AttrsFormat):
+                raise ValueError(f'Value must be in {list(AttrsFormat)}')
+            params['options'] = ','.join([format, 'count'])
         try:
-            items = self.__pagination__(method=PaginationMethod.POST,
-                                        url=url,
-                                        headers=headers,
-                                        params=params,
-                                        data=query.json(exclude_unset=True,
+            items = self.__pagination(method=PaginationMethod.POST,
+                                      url=url,
+                                      headers=headers,
+                                      params=params,
+                                      data=query.json(exclude_unset=True,
                                                         exclude_none=True),
-                                        limit=limit)
-            if params['options'] == 'count':
+                                      limit=limit)
+            if format == AttrsFormat.NORMALIZED:
                 return parse_obj_as(List[ContextEntity], items)
-            return parse_obj_as(List[ContextEntityKeyValues], items)
+            if format == AttrsFormat.KEYVALUE:
+                return parse_obj_as(List[ContextEntityKeyValues], items)
+            return items
         except requests.RequestException as err:
             msg = "Query operation failed!"
             self.log_error(err=err, msg=msg)
             raise
 
-#    def post_relationship(self, json_data=None):
-#        """
-#        Function can be used to post a one to many or one to one relationship.
-#        :param json_data: Relationship Data obtained from the Relationship
-#        class. e.g. :
-#                {"id": "urn:ngsi-ld:Shelf:unit001", "type": "Shelf",
-#                "refStore": {"type": "Relationship", "value":
-#                "urn:ngsi-ld:Store:001"}}
-#                Can be a one to one or a one to many relationship
-#        """
-#        url = self.url + '/v2/op/update'
-#        headers = self.get_header(requtils.HEADER_CONTENT_JSON)
-#        # Action type append required,
-#        # Will overwrite existing entities if they exist whereas
-#        # the entities attribute holds an array of entities we wish to update.
-#        payload = {"actionType": "APPEND",
-#                   "entities": [json.loads(json_data)]}
-#        data = json.dumps(payload)
-#        response = self.session.post(url=url, data=data, headers=headers)
-#        ok, retstr = requtils.response_ok(response)
-#        if not ok:
-#            level, retstr = requtils.logging_switch(response)
-#            self.log_switch(level, retstr)
-#
+
 #    def get_subjects(self, object_entity_name: str, object_entity_type: str, subject_type=None):
 #        """
 #        Function gets the JSON for child / subject entities for a parent /

@@ -23,9 +23,29 @@ class GetEntitiesOptions(str, Enum):
     """ Options for queries"""
     _init_ = 'value __doc__'
 
-    KEYVALUES = 'keyValues', ''
-    VALUES = 'values', ''
-    UNIQUE = 'unique', ''
+    NORMALIZED = "normalized", "Normalized message representation"
+    KEYVALUES = "keyValues", "Key value message representation." \
+                            "This mode represents the entity " \
+                            "attributes by their values only, leaving out the " \
+                            "information about type and metadata. See example " \
+                            "below." \
+                            "Example: " \
+                            "{" \
+                            "  'id': 'R12345'," \
+                            "  'type': 'Room'," \
+                            "  'temperature': 22" \
+                            "}"
+    VALUES = "values", "Key value message representation. " \
+                       "This mode represents the entity as an array of " \
+                       "attribute values. Information about id and type is " \
+                       "left out. See example below. The order of the " \
+                       "attributes in the array is specified by the attrs URI " \
+                       "param (e.g. attrs=branch,colour,engine). If attrs is " \
+                       "not used, the order is arbitrary. " \
+                       "Example:" \
+                       "[ 'Ford', 'black', 78.3 ]"
+    UNIQUE = 'unique', "unique mode. This mode is just like values mode, " \
+                       "except that values are not repeated"
 
 
 class ContextMetadata(BaseModel):
@@ -73,8 +93,34 @@ class NamedContextMetadata(ContextMetadata):
 
 class ContextAttribute(BaseModel):
     """
+    Model for an attribute is represented by a JSON object with the following
+    syntax:
+
+    The attribute value is specified by the value property, whose value may
+    be any JSON datatype.
+
+    The attribute NGSI type is specified by the type property, whose value
+    is a string containing the NGSI type.
+
+    The attribute metadata is specified by the metadata property. Its value
+    is another JSON object which contains a property per metadata element
+    defined (the name of the property is the name of the metadata element).
+    Each metadata element, in turn, is represented by a JSON object
+    containing the following properties:
+
     Values of entity attributes. For adding it you need to nest it into a
     dict in order to give it a name.
+    Args:
+        value: Its value contains the metadata value, which may correspond to
+            any JSON datatype.
+        type: Its value contains a string representation of the metadata
+            NGSI type.
+    Examples:
+        {
+          "value": <...>,
+          "type": <...>,
+          "metadata": <...>
+        }
     """
     type: Union[DataType, str] = Field(
         default=DataType.TEXT,
@@ -179,6 +225,16 @@ class NamedContextAttribute(ContextAttribute):
 
 
 class ContextEntityKeyValues(BaseModel):
+    """
+    Base Model for an entity is represented by a JSON object with the following
+    syntax:
+
+    The entity id is specified by the object's id property, whose value
+    is a string containing the entity id.
+
+    The entity type is specified by the object's type property, whose value
+    is a string containing the entity's type name.
+    """
     id: str = Field(
         ...,
         title="Entity Id",
@@ -224,11 +280,38 @@ class ContextEntity(ContextEntityKeyValues):
     entity #with id sensor-365 could have the type temperatureSensor.
 
     Each entity is uniquely identified by the combination of its id and type.
+
+    The entity id is specified by the object's id property, whose value
+    is a string containing the entity id.
+
+    The entity type is specified by the object's type property, whose value
+    is a string containing the entity's type name.
+
+    Entity attributes are specified by additional properties, whose names are
+    the name of the attribute and whose representation is described in the
+    "ContextAttribute"-model. Obviously, id and type are
+    not allowed to be used as attribute names.
+
+    Args:
+        id (str): entity id
+        type (str): entity type
+        **data:
+
+    Examples:
+        {
+          "id": "entityID",
+          "type": "entityType",
+          "attr_1": <val_1>,
+          "attr_2": <val_2>,
+          ...
+          "attr_N": <val_N>
+        }
     """
     def __init__(self,
                  id: str,
                  type: str,
                  **data):
+
         # There is currently no validation for extra fields
         data.update(self._validate_properties(data))
         super().__init__(id=id, type=type, **data)
@@ -363,8 +446,26 @@ class AttrsFormat(str, Enum):
     _init_ = 'value __doc__'
 
     NORMALIZED = "normalized", "Normalized message representation"
-    KEYVALUE = "keyValues", "Key value message representation"
-    VALUES = "values", "Key value message representation"
+    KEYVALUE = "keyValues", "Key value message representation." \
+                            "This mode represents the entity " \
+                            "attributes by their values only, leaving out the " \
+                            "information about type and metadata. See example " \
+                            "below." \
+                            "Example: " \
+                            "{" \
+                            "  'id': 'R12345'," \
+                            "  'type': 'Room'," \
+                            "  'temperature': 22" \
+                            "}"
+    VALUES = "values", "Key value message representation. " \
+                       "This mode represents the entity as an array of " \
+                       "attribute values. Information about id and type is " \
+                       "left out. See example below. The order of the " \
+                       "attributes in the array is specified by the attrs URI " \
+                       "param (e.g. attrs=branch,colour,engine). If attrs is " \
+                       "not used, the order is arbitrary. " \
+                       "Example:" \
+                       "[ 'Ford', 'black', 78.3 ]"
 
 
 class NotificationMessage(BaseModel):
@@ -820,17 +921,6 @@ class ActionType(str, Enum):
                        "/v2/entities/<id> if no attribute were included in " \
                        "the entity."
     REPLACE = "replace", "maps to PUT /v2/entities/<id>/attrs"
-
-
-class Update(BaseModel):
-    actionType: Union[ActionType, str] = Field(
-        description="actionType, to specify the kind of update action to do: "
-                    "either append, appendStrict, update, delete, or replace. "
-    )
-    entities: List[ContextEntity] = Field(
-        description="an array of entities, each entity specified using the "
-                    "JSON entity representation format "
-    )
 
 
 class Notify(BaseModel):
