@@ -121,14 +121,14 @@ class TestContextBroker(unittest.TestCase):
 
             # test options
             for opt in list(AttrsFormat):
-                entities_by_option = client.get_entity_list(options=opt)
+                entities_by_option = client.get_entity_list(format=opt)
                 self.assertEqual(len(entities_by_option), len(entities_all))
                 self.assertEqual(client.get_entity(
                     entity_id='0',
-                    options=opt),
+                    format=opt),
                     entities_by_option[0])
             with self.assertRaises(ValueError):
-                client.get_entity_list(options='not in AttrFormat')
+                client.get_entity_list(format='not in AttrFormat')
 
             update = Update(actionType=ActionType.DELETE,
                             entities=entities_a)
@@ -261,7 +261,7 @@ class TestContextBroker(unittest.TestCase):
             e = Entity(idPattern=".*", typePattern=".*TypeA$")
             q = Query.parse_obj({"entities": [e.dict(exclude_unset=True)]})
             self.assertEqual(1000,
-                             len(client.query(query=q, options='keyValues')))
+                             len(client.query(query=q, format='keyValues')))
 
     def tearDown(self) -> None:
         # Cleanup test server
