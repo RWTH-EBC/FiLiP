@@ -923,17 +923,6 @@ class ActionType(str, Enum):
     REPLACE = "replace", "maps to PUT /v2/entities/<id>/attrs"
 
 
-class Update(BaseModel):
-    actionType: Union[ActionType, str] = Field(
-        description="actionType, to specify the kind of update action to do: "
-                    "either append, appendStrict, update, delete, or replace. "
-    )
-    entities: List[ContextEntity] = Field(
-        description="an array of entities, each entity specified using the "
-                    "JSON entity representation format "
-    )
-
-
 class Notify(BaseModel):
     subscriptionId: str = Field(
         description=""

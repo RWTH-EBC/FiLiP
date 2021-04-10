@@ -65,24 +65,18 @@ class TestContextBroker(unittest.TestCase):
             entities_a = [ContextEntity(id=str(i),
                                         type=f'filip:object:TypeA') for i in
                           range(0, 1000)]
-            update = Update(actionType=ActionType.APPEND, entities=entities_a)
-            client.update(update=update)
+            client.update(action_type=ActionType.APPEND, entities=entities_a)
             entities_b = [ContextEntity(id=str(i),
                                         type=f'filip:object:TypeB') for i in
                           range(1000, 2001)]
-            update = Update(actionType=ActionType.APPEND, entities=entities_b)
-            client.update(update=update)
+            client.update(action_type=ActionType.APPEND, entities=entities_b)
             self.assertLessEqual(len(client.get_entity_list(limit=1)), 1)
             self.assertLessEqual(len(client.get_entity_list(limit=999)), 999)
             self.assertLessEqual(len(client.get_entity_list(limit=1001)), 1001)
             self.assertLessEqual(len(client.get_entity_list(limit=2001)), 2001)
 
-            update = Update(actionType=ActionType.DELETE,
-                            entities=entities_a)
-            client.update(update=update)
-            update = Update(actionType=ActionType.DELETE,
-                            entities=entities_b)
-            client.update(update=update)
+            client.update(action_type=ActionType.DELETE, entities=entities_a)
+            client.update(action_type=ActionType.DELETE, entities=entities_b)
 
     def test_entity_filtering(self):
         """
