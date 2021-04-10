@@ -37,7 +37,6 @@ class ContextBrokerClient(BaseClient):
     Api specifications for v2 are located here:
     http://telefonicaid.github.io/fiware-orion/api/v2/stable/
     """
-
     def __init__(self,
                  *,
                  url: str = None,
@@ -48,14 +47,14 @@ class ContextBrokerClient(BaseClient):
                          session=session,
                          fiware_header=fiware_header)
 
-    def __pagination__(self,
-                       *,
-                       method: PaginationMethod = PaginationMethod.GET,
-                       url: str,
-                       headers: Dict,
-                       limit: Union[PositiveInt, PositiveFloat] = None,
-                       params: Dict = None,
-                       data: str = None) -> Union[List[Dict],
+    def __pagination(self,
+                     *,
+                     method: PaginationMethod = PaginationMethod.GET,
+                     url: str,
+                     headers: Dict,
+                     limit: Union[PositiveInt, PositiveFloat] = None,
+                     params: Dict = None,
+                     data: str = None) -> Union[List[Dict],
                                                   requests.Response]:
         """
         NGSIv2 implements a pagination mechanism in order to help clients to
@@ -320,17 +319,21 @@ class ContextBrokerClient(BaseClient):
         if options:
             if not isinstance(options, list):
                 options = [options]
+            for option in options:
+                if option not in list(GetEntitiesOptions):
+                    raise KeyError(f'Value must be in '
+                                   f'{list(GetEntitiesOptions)}')
             options = options + ['count']
             options = ','.join(options)
         else:
             options = 'count'
         params.update({'options': options})
         try:
-            items = self.__pagination__(method=PaginationMethod.GET,
-                                        limit=limit,
-                                        url=url,
-                                        params=params,
-                                        headers=headers)
+            items = self.__pagination(method=PaginationMethod.GET,
+                                      limit=limit,
+                                      url=url,
+                                      params=params,
+                                      headers=headers)
             if options == 'count':
                 return parse_obj_as(List[ContextEntity], items)
             if 'keyValues' in options:
@@ -823,10 +826,10 @@ class ContextBrokerClient(BaseClient):
         # required
         params.update({'options': 'count'})
         try:
-            items = self.__pagination__(limit=limit,
-                                        url=url,
-                                        params=params,
-                                        headers=headers)
+            items = self.__pagination(limit=limit,
+                                      url=url,
+                                      params=params,
+                                      headers=headers)
             return parse_obj_as(List[Subscription], items)
         except requests.RequestException as err:
             msg = f"Could not load subscriptions!"
@@ -956,10 +959,10 @@ class ContextBrokerClient(BaseClient):
         # required
         params.update({'options': 'count'})
         try:
-            items = self.__pagination__(limit=limit,
-                                        url=url,
-                                        params=params,
-                                        headers=headers)
+            items = self.__pagination(limit=limit,
+                                      url=url,
+                                      params=params,
+                                      headers=headers)
 
             return parse_obj_as(List[Registration], items)
         except requests.RequestException as err:
@@ -1130,13 +1133,13 @@ class ContextBrokerClient(BaseClient):
         if options:
             params['options'] = ','.join([options, 'count'])
         try:
-            items = self.__pagination__(method=PaginationMethod.POST,
-                                        url=url,
-                                        headers=headers,
-                                        params=params,
-                                        data=query.json(exclude_unset=True,
+            items = self.__pagination(method=PaginationMethod.POST,
+                                      url=url,
+                                      headers=headers,
+                                      params=params,
+                                      data=query.json(exclude_unset=True,
                                                         exclude_none=True),
-                                        limit=limit)
+                                      limit=limit)
             if params['options'] == 'count':
                 return parse_obj_as(List[ContextEntity], items)
             return parse_obj_as(List[ContextEntityKeyValues], items)
