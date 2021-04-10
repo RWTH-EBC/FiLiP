@@ -299,7 +299,7 @@ class ContextBrokerClient(BaseClient):
             try:
                 re.compile(type_pattern)
             except re.error as err:
-                raise ValueError(f'Invalid Pattern: {err}')
+                raise ValueError(f'Invalid Pattern: {err.msg}')
             params.update({'typePattern': type_pattern})
         if attrs:
             params.update({'attrs': ','.join(attrs)})
@@ -318,7 +318,7 @@ class ContextBrokerClient(BaseClient):
         if order_by:
             params.update({'orderBy': order_by})
         if options not in list(AttrsFormat):
-            raise KeyError(f'Value must be in {list(AttrsFormat)}')
+            raise ValueError(f'Value must be in {list(AttrsFormat)}')
         options = ','.join(['count',options])
         params.update({'options': options})
         try:
@@ -343,7 +343,8 @@ class ContextBrokerClient(BaseClient):
                    entity_type: str = None,
                    attrs: List[str] = None,
                    metadata: List[str] = None,
-                   options: str = None) -> ContextEntity:
+                   options: Union[AttrsFormat, str] = AttrsFormat.NORMALIZED) \
+            -> Union[ContextEntity, ContextEntityKeyValues, Dict[str, Any]]:
         """
         This operation must return one entity element only, but there may be
         more than one entity with the same ID (e.g. entities with same ID but
@@ -377,14 +378,19 @@ class ContextBrokerClient(BaseClient):
             params.update({'attrs': ','.join(attrs)})
         if metadata:
             params.update({'metadata': ','.join(metadata)})
-        if options:
-            params.update({'options': ','.join(options)})
+        if options not in list(AttrsFormat):
+            raise ValueError(f'Value must be in {list(AttrsFormat)}')
+        params.update({'options': options})
         try:
             res = self.session.get(url=url, params=params, headers=headers)
             if res.ok:
                 self.logger.info("Entity successfully retrieved!")
                 self.logger.debug("Received: %s", res.json())
-                return ContextEntity(**res.json())
+                if options == AttrsFormat.NORMALIZED:
+                    return ContextEntity(**res.json())
+                if options == AttrsFormat.KEYVALUE:
+                    return ContextEntityKeyValues(**res.json())
+                return res.json()
             res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Could not load entity {entity_id}"
@@ -396,7 +402,9 @@ class ContextBrokerClient(BaseClient):
                               entity_type: str = None,
                               attrs: List[str] = None,
                               metadata: List[str] = None,
-                              options: str = None) -> Dict[str, ContextEntity]:
+                              options: Union[AttrsFormat, str] =
+                              AttrsFormat.NORMALIZED) -> \
+            Dict[str, ContextAttribute]:
         """
         This request is similar to retrieving the whole entity, however this
         one omits the id and type fields. Just like the general request of
@@ -419,7 +427,7 @@ class ContextBrokerClient(BaseClient):
             metadata (List of Strings): A list of metadata names to include in
             the response. See "Filtering out attributes and metadata" section
             for more detail. Example: accuracy.
-            options (Dict):
+            options (AttrsFormat, str): Representation format of response
         Returns:
             Dict
         """
@@ -432,13 +440,17 @@ class ContextBrokerClient(BaseClient):
             params.update({'attrs': ','.join(attrs)})
         if metadata:
             params.update({'metadata': ','.join(metadata)})
-        if options:
-            params.update({'options': ','.join(options)})
+        if options not in list(AttrsFormat):
+            raise ValueError(f'Value must be in {list(AttrsFormat)}')
+        params.update({'options': options})
         try:
             res = self.session.get(url=url, params=params, headers=headers)
             if res.ok:
-                return {key: ContextAttribute(**values)
-                        for key, values in res.json().items()}
+                if options == AttrsFormat.NORMALIZED:
+                    return {key: ContextAttribute(**values)
+                            for key, values in res.json().items()}
+                else:
+                    return res.json()
             res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Could not load attributes from entity {entity_id}!"

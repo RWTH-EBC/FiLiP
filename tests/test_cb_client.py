@@ -2,7 +2,6 @@
 Tests for filip.cb.client
 """
 import unittest
-import re
 import time
 from datetime import datetime
 from requests import RequestException
@@ -10,6 +9,7 @@ from filip.core.models import FiwareHeader
 from filip.core.simple_query_language import QueryString
 from filip.cb.client import ContextBrokerClient
 from filip.cb.models import \
+    AttrsFormat,\
     ContextEntity, \
     ContextAttribute, \
     Subscription, \
@@ -91,9 +91,9 @@ class TestContextBroker(unittest.TestCase):
                                      service_path='/testing')
         with ContextBrokerClient(fiware_header=fiware_header) as client:
             # test patterns
-            with self.assertRaises(re.error):
+            with self.assertRaises(ValueError):
                 client.get_entity_list(id_pattern='(&()?')
-            with self.assertRaises(re.error):
+            with self.assertRaises(ValueError):
                 client.get_entity_list(type_pattern='(&()?')
             entities_a = [ContextEntity(id=str(i),
                                         type=f'filip:object:TypeA') for i in
@@ -120,9 +120,15 @@ class TestContextBroker(unittest.TestCase):
             self.assertLess(len(entities_by_query), len(entities_all))
 
             # test options
-            entities_by_key_values = client.get_entity_list(
-                options=['keyValues'])
-            self.assertEqual(len(entities_by_key_values), len(entities_all))
+            for opt in list(AttrsFormat):
+                entities_by_option = client.get_entity_list(options=opt)
+                self.assertEqual(len(entities_by_option), len(entities_all))
+                self.assertEqual(client.get_entity(
+                    entity_id='0',
+                    options=opt),
+                    entities_by_option[0])
+            with self.assertRaises(ValueError):
+                client.get_entity_list(options='not in AttrFormat')
 
             update = Update(actionType=ActionType.DELETE,
                             entities=entities_a)
@@ -151,20 +157,6 @@ class TestContextBroker(unittest.TestCase):
             client.update_entity(entity=res_entity)
             self.assertEqual(client.get_entity(entity_id=self.entity.id),
                              res_entity)
-            entities = client.get_entity_list(options='normalized')
-            for entity in entities:
-                print(entity.json(indent=2))
-
-    def test_attribute_representation(self) -> None:
-        """
-        Test attribute representation options
-        Returns:
-            None
-        """
-        with ContextBrokerClient(fiware_header=self.fiware_header) as client:
-            self.assertIsNotNone(client.post_entity(entity=self.entity,
-                                                    update=True))
-            client.get_entity(entity_id=self.entity.id, attrs=['temperature'])
 
     def test_attribute_operations(self):
         """
