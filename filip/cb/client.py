@@ -213,7 +213,7 @@ class ContextBrokerClient(BaseClient):
                         attrs: List[str] = None,
                         metadata: str = None,
                         order_by: str = None,
-                        format: Union[AttrsFormat, str] = \
+                        response_format: Union[AttrsFormat, str] = \
                         AttrsFormat.NORMALIZED
                         ) -> List[Union[ContextEntity,
                                         ContextEntityKeyValues,
@@ -268,7 +268,7 @@ class ContextBrokerClient(BaseClient):
                 detail. Example: accuracy.
             order_by: Criteria for ordering results. See "Ordering Results"
                 section for details. Example: temperature,!speed.
-            format (AttrsFormat, str): Response Format. Note: That if
+            response_format (AttrsFormat, str): Response Format. Note: That if
                 'keyValues' or 'values' are used the response model will
                 change to List[ContextEntityKeyValues] and to List[Dict[str,
                 Any]], respectively.
@@ -319,19 +319,19 @@ class ContextBrokerClient(BaseClient):
             params.update({'coords': coords})
         if order_by:
             params.update({'orderBy': order_by})
-        if format not in list(AttrsFormat):
+        if response_format not in list(AttrsFormat):
             raise ValueError(f'Value must be in {list(AttrsFormat)}')
-        format = ','.join(['count', format])
-        params.update({'options': format})
+        response_format = ','.join(['count', response_format])
+        params.update({'options': response_format})
         try:
             items = self.__pagination(method=PaginationMethod.GET,
                                       limit=limit,
                                       url=url,
                                       params=params,
                                       headers=headers)
-            if AttrsFormat.NORMALIZED in format:
+            if AttrsFormat.NORMALIZED in response_format:
                 return parse_obj_as(List[ContextEntity], items)
-            if AttrsFormat.KEYVALUE in format:
+            if AttrsFormat.KEYVALUE in response_format:
                 return parse_obj_as(List[ContextEntityKeyValues], items)
             return items
 
@@ -345,7 +345,7 @@ class ContextBrokerClient(BaseClient):
                    entity_type: str = None,
                    attrs: List[str] = None,
                    metadata: List[str] = None,
-                   format: Union[AttrsFormat, str] = AttrsFormat.NORMALIZED) \
+                   response_format: Union[AttrsFormat, str] = AttrsFormat.NORMALIZED) \
             -> Union[ContextEntity, ContextEntityKeyValues, Dict[str, Any]]:
         """
         This operation must return one entity element only, but there may be
@@ -367,7 +367,7 @@ class ContextBrokerClient(BaseClient):
             metadata (List of Strings): A list of metadata names to include in
             the response. See "Filtering out attributes and metadata" section
             for more detail. Example: accuracy.
-            format (AttrsFormat, str): Representation format of response
+            response_format (AttrsFormat, str): Representation format of response
         Returns:
             ContextEntity
         """
@@ -380,17 +380,17 @@ class ContextBrokerClient(BaseClient):
             params.update({'attrs': ','.join(attrs)})
         if metadata:
             params.update({'metadata': ','.join(metadata)})
-        if format not in list(AttrsFormat):
+        if response_format not in list(AttrsFormat):
             raise ValueError(f'Value must be in {list(AttrsFormat)}')
-        params.update({'options': format})
+        params.update({'options': response_format})
         try:
             res = self.session.get(url=url, params=params, headers=headers)
             if res.ok:
                 self.logger.info("Entity successfully retrieved!")
                 self.logger.debug("Received: %s", res.json())
-                if format == AttrsFormat.NORMALIZED:
+                if response_format == AttrsFormat.NORMALIZED:
                     return ContextEntity(**res.json())
-                if format == AttrsFormat.KEYVALUE:
+                if response_format == AttrsFormat.KEYVALUE:
                     return ContextEntityKeyValues(**res.json())
                 return res.json()
             res.raise_for_status()
@@ -404,7 +404,7 @@ class ContextBrokerClient(BaseClient):
                               entity_type: str = None,
                               attrs: List[str] = None,
                               metadata: List[str] = None,
-                              format: Union[AttrsFormat, str] =
+                              response_format: Union[AttrsFormat, str] =
                               AttrsFormat.NORMALIZED) -> \
             Dict[str, ContextAttribute]:
         """
@@ -429,7 +429,7 @@ class ContextBrokerClient(BaseClient):
             metadata (List of Strings): A list of metadata names to include in
             the response. See "Filtering out attributes and metadata" section
             for more detail. Example: accuracy.
-            format (AttrsFormat, str): Representation format of response
+            response_format (AttrsFormat, str): Representation format of response
         Returns:
             Dict
         """
@@ -442,13 +442,13 @@ class ContextBrokerClient(BaseClient):
             params.update({'attrs': ','.join(attrs)})
         if metadata:
             params.update({'metadata': ','.join(metadata)})
-        if format not in list(AttrsFormat):
+        if response_format not in list(AttrsFormat):
             raise ValueError(f'Value must be in {list(AttrsFormat)}')
-        params.update({'options': format})
+        params.update({'options': response_format})
         try:
             res = self.session.get(url=url, params=params, headers=headers)
             if res.ok:
-                if format == AttrsFormat.NORMALIZED:
+                if response_format == AttrsFormat.NORMALIZED:
                     return {key: ContextAttribute(**values)
                             for key, values in res.json().items()}
                 else:
@@ -1082,7 +1082,7 @@ class ContextBrokerClient(BaseClient):
     def update(self,
                *,
                update: Update,
-               format: str = None) -> None:
+               update_format: str = None) -> None:
         """
         This operation allows to create, update and/or delete several entities
         in a single batch operation.
@@ -1097,8 +1097,8 @@ class ContextBrokerClient(BaseClient):
         url = urljoin(self.base_url, 'v2/op/update')
         headers = self.headers.copy()
         params = {}
-        if format:
-            assert format == 'keyValues', \
+        if update_format:
+            assert update_format == 'keyValues', \
                 "Only 'keyValues' is allowed as option"
             params.update({'options': 'keyValues'})
         try:

@@ -121,14 +121,14 @@ class TestContextBroker(unittest.TestCase):
 
             # test options
             for opt in list(AttrsFormat):
-                entities_by_option = client.get_entity_list(format=opt)
+                entities_by_option = client.get_entity_list(response_format=opt)
                 self.assertEqual(len(entities_by_option), len(entities_all))
                 self.assertEqual(client.get_entity(
                     entity_id='0',
-                    format=opt),
+                    response_format=opt),
                     entities_by_option[0])
             with self.assertRaises(ValueError):
-                client.get_entity_list(format='not in AttrFormat')
+                client.get_entity_list(response_format='not in AttrFormat')
 
             update = Update(actionType=ActionType.DELETE,
                             entities=entities_a)
