@@ -24,7 +24,6 @@ from filip.cb.models import \
     NamedContextAttribute, \
     Subscription,\
     Registration,\
-    Update, \
     Query
 
 

@@ -14,7 +14,6 @@ from filip.cb.models import \
     ContextAttribute, \
     NamedContextAttribute, \
     Subscription, \
-    Update, \
     Query, \
     Entity, \
     ActionType
@@ -93,13 +92,13 @@ class TestContextBroker(unittest.TestCase):
             entities_a = [ContextEntity(id=str(i),
                                         type=f'filip:object:TypeA') for i in
                           range(0, 5)]
-            update = Update(actionType=ActionType.APPEND, entities=entities_a)
-            client.update(update=update)
+
+            client.update(action_type=ActionType.APPEND, entities=entities_a)
             entities_b = [ContextEntity(id=str(i),
                                         type=f'filip:object:TypeB') for i in
                           range(6, 10)]
-            update = Update(actionType=ActionType.APPEND, entities=entities_b)
-            client.update(update=update)
+
+            client.update(action_type=ActionType.APPEND, entities=entities_b)
 
             entities_all = client.get_entity_list()
             entities_by_id_pattern = client.get_entity_list(
@@ -125,12 +124,9 @@ class TestContextBroker(unittest.TestCase):
             with self.assertRaises(ValueError):
                 client.get_entity_list(response_format='not in AttrFormat')
 
-            update = Update(actionType=ActionType.DELETE,
-                            entities=entities_a)
-            client.update(update=update)
-            update = Update(actionType=ActionType.DELETE,
-                            entities=entities_b)
-            client.update(update=update)
+            client.update(action_type=ActionType.DELETE, entities=entities_a)
+
+            client.update(action_type=ActionType.DELETE, entities=entities_b)
 
     def test_entity_operations(self):
         """
@@ -178,7 +174,7 @@ class TestContextBroker(unittest.TestCase):
                 self.assertIn(attr, res_entity.get_properties())
                 res_attr = client.get_attribute(entity_id=entity.id,
                                                 attr_name=attr.name)
-                print(res_attr.json(indent=2))
+
                 self.assertEqual(type(res_attr.value), type(attr.value))
                 self.assertEqual(res_attr.value, attr.value)
                 value = client.get_attribute_value(entity_id=entity.id,
