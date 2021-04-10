@@ -136,8 +136,7 @@ class TestContextBroker(unittest.TestCase):
         Test entity operations of context broker client
         """
         with ContextBrokerClient(fiware_header=self.fiware_header) as client:
-            self.assertIsNotNone(client.post_entity(entity=self.entity,
-                                                    update=True))
+            client.post_entity(entity=self.entity, update=True)
             res_entity = client.get_entity(entity_id=self.entity.id)
             client.get_entity(entity_id=self.entity.id, attrs=['temperature'])
             self.assertEqual(client.get_entity_attributes(
@@ -152,6 +151,20 @@ class TestContextBroker(unittest.TestCase):
             client.update_entity(entity=res_entity)
             self.assertEqual(client.get_entity(entity_id=self.entity.id),
                              res_entity)
+            entities = client.get_entity_list(options='normalized')
+            for entity in entities:
+                print(entity.json(indent=2))
+
+    def test_attribute_representation(self) -> None:
+        """
+        Test attribute representation options
+        Returns:
+            None
+        """
+        with ContextBrokerClient(fiware_header=self.fiware_header) as client:
+            self.assertIsNotNone(client.post_entity(entity=self.entity,
+                                                    update=True))
+            client.get_entity(entity_id=self.entity.id, attrs=['temperature'])
 
     def test_attribute_operations(self):
         """

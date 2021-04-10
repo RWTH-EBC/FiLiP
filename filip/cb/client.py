@@ -16,6 +16,7 @@ from filip.core.settings import settings
 from filip.core.models import FiwareHeader, PaginationMethod
 from filip.core.simple_query_language import QueryString
 from filip.cb.models import \
+    AttrsFormat, \
     ContextEntity, \
     ContextEntityKeyValues, \
     ContextAttribute, \
@@ -211,11 +212,10 @@ class ContextBrokerClient(BaseClient):
                         attrs: List[str] = None,
                         metadata: str = None,
                         order_by: str = None,
-                        options: Union[str,
-                                       GetEntitiesOptions,
-                                       List[Union[str, GetEntitiesOptions]]] =
-                        None
-                        ) -> Union[List[ContextEntity], List[Dict[str, Any]]]:
+                        options: Union[AttrsFormat, str] = AttrsFormat.NORMALIZED
+                        ) -> List[Union[ContextEntity,
+                                        ContextEntityKeyValues,
+                                        Dict[str, Any]]]:
         """
         Retrieves a list of context entities that match different criteria by
         id, type, pattern matching (either id or type) and/or those which
@@ -268,7 +268,8 @@ class ContextBrokerClient(BaseClient):
                 section for details. Example: temperature,!speed.
             options (GetEntitiesOptions): Response Format. Note: That if
                 'keyValues' or 'values' are used the response model will
-                change to List[Dict[str, Any]]
+                change to List[ContextEntityKeyValues] and to List[Dict[str,
+                Any]], respectively.
         Returns:
 
         """
@@ -316,17 +317,9 @@ class ContextBrokerClient(BaseClient):
             params.update({'coords': coords})
         if order_by:
             params.update({'orderBy': order_by})
-        if options:
-            if not isinstance(options, list):
-                options = [options]
-            for option in options:
-                if option not in list(GetEntitiesOptions):
-                    raise KeyError(f'Value must be in '
-                                   f'{list(GetEntitiesOptions)}')
-            options = options + ['count']
-            options = ','.join(options)
-        else:
-            options = 'count'
+        if options not in list(AttrsFormat):
+            raise KeyError(f'Value must be in {list(AttrsFormat)}')
+        options = ','.join(['count',options])
         params.update({'options': options})
         try:
             items = self.__pagination(method=PaginationMethod.GET,
@@ -334,9 +327,9 @@ class ContextBrokerClient(BaseClient):
                                       url=url,
                                       params=params,
                                       headers=headers)
-            if options == 'count':
+            if AttrsFormat.NORMALIZED in options:
                 return parse_obj_as(List[ContextEntity], items)
-            if 'keyValues' in options:
+            if AttrsFormat.KEYVALUE in options:
                 return parse_obj_as(List[ContextEntityKeyValues], items)
             return items
 

@@ -24,7 +24,7 @@ class GetEntitiesOptions(str, Enum):
     _init_ = 'value __doc__'
 
     NORMALIZED = "normalized", "Normalized message representation"
-    KEYVALUE = "keyValues", "Key value message representation." \
+    KEYVALUES = "keyValues", "Key value message representation." \
                             "This mode represents the entity " \
                             "attributes by their values only, leaving out the " \
                             "information about type and metadata. See example " \
