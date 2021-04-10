@@ -733,7 +733,7 @@ class ContextBrokerClient(BaseClient):
         if entity_type:
             params.update({'type': entity_type})
         try:
-            if not isinstance(value, Dict):
+            if not isinstance(value, (Dict, List)):
                 headers.update({'Content-Type': 'text/plain'})
                 if isinstance(value, str):
                     value = f'"{value}"'
@@ -1163,30 +1163,7 @@ class ContextBrokerClient(BaseClient):
             self.log_error(err=err, msg=msg)
             raise
 
-#    def post_relationship(self, json_data=None):
-#        """
-#        Function can be used to post a one to many or one to one relationship.
-#        :param json_data: Relationship Data obtained from the Relationship
-#        class. e.g. :
-#                {"id": "urn:ngsi-ld:Shelf:unit001", "type": "Shelf",
-#                "refStore": {"type": "Relationship", "value":
-#                "urn:ngsi-ld:Store:001"}}
-#                Can be a one to one or a one to many relationship
-#        """
-#        url = self.url + '/v2/op/update'
-#        headers = self.get_header(requtils.HEADER_CONTENT_JSON)
-#        # Action type append required,
-#        # Will overwrite existing entities if they exist whereas
-#        # the entities attribute holds an array of entities we wish to update.
-#        payload = {"actionType": "APPEND",
-#                   "entities": [json.loads(json_data)]}
-#        data = json.dumps(payload)
-#        response = self.session.post(url=url, data=data, headers=headers)
-#        ok, retstr = requtils.response_ok(response)
-#        if not ok:
-#            level, retstr = requtils.logging_switch(response)
-#            self.log_switch(level, retstr)
-#
+
 #    def get_subjects(self, object_entity_name: str, object_entity_type: str, subject_type=None):
 #        """
 #        Function gets the JSON for child / subject entities for a parent /

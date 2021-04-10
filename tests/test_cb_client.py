@@ -12,6 +12,7 @@ from filip.cb.models import \
     AttrsFormat,\
     ContextEntity, \
     ContextAttribute, \
+    NamedContextAttribute, \
     Subscription, \
     Update, \
     Query, \
@@ -30,7 +31,7 @@ class TestContextBroker(unittest.TestCase):
             "subscriptions_url": "/v2/subscriptions",
             "registrations_url": "/v2/registrations"
         }
-        self.attr = {'temperature': {'value': 20,
+        self.attr = {'temperature': {'value': 20.1,
                                      'type': 'Number'}}
         self.entity = ContextEntity(id='MyId', type='MyType', **self.attr)
         self.fiware_header = FiwareHeader(service='filip',
@@ -163,21 +164,43 @@ class TestContextBroker(unittest.TestCase):
         Test attribute operations of context broker client
         """
         with ContextBrokerClient(fiware_header=self.fiware_header) as client:
-            self.assertIsNotNone(client.post_entity(entity=self.entity,
+            entity = self.entity
+            attr_txt = NamedContextAttribute(name='attr_txt',
+                                             type='Text',
+                                             value="Test")
+            attr_list = NamedContextAttribute(name='attr_list',
+                                              type='StructuredValue',
+                                              value=[1, 2, 3])
+            attr_dict = NamedContextAttribute(name='attr_dict',
+                                              type='StructuredValue',
+                                              value={'key': 'value'})
+            entity.add_properties([attr_txt, attr_list, attr_dict])
+
+            self.assertIsNotNone(client.post_entity(entity=entity,
                                                     update=True))
-            attr = client.get_attribute(entity_id=self.entity.id,
-                                        attr_name='temperature')
-            attr_value = client.get_attribute_value(entity_id=self.entity.id,
-                                                    attr_name='temperature')
-            self.assertEqual(attr_value, attr.value)
-            new_value = 1337
-            client.update_attribute_value(entity_id=self.entity.id,
+            res_entity = client.get_entity(entity_id=entity.id)
+            print(res_entity.json(indent=2))
+            for attr in entity.get_properties():
+                self.assertIn(attr, res_entity.get_properties())
+                res_attr = client.get_attribute(entity_id=entity.id,
+                                                attr_name=attr.name)
+                print(res_attr.json(indent=2))
+                self.assertEqual(type(res_attr.value), type(attr.value))
+                self.assertEqual(res_attr.value, attr.value)
+                value = client.get_attribute_value(entity_id=entity.id,
+                                                   attr_name=attr.name)
+                self.assertEqual(type(value), type(attr.value))
+                self.assertEqual(value, attr.value)
+
+            new_value = 1337.0
+            client.update_attribute_value(entity_id=entity.id,
                                           attr_name='temperature',
                                           value=new_value)
-            attr_value = client.get_attribute_value(entity_id=self.entity.id,
+            attr_value = client.get_attribute_value(entity_id=entity.id,
                                                     attr_name='temperature')
             self.assertEqual(attr_value, new_value)
-            client.delete_entity(entity_id=self.entity.id)
+
+            client.delete_entity(entity_id=entity.id)
 
     def test_type_operations(self):
         """
@@ -266,10 +289,8 @@ class TestContextBroker(unittest.TestCase):
     def tearDown(self) -> None:
         # Cleanup test server
         try:
-            entities = self.client.get_entity_list()
-            update = Update(actionType=ActionType.DELETE,
-                            entities=entities)
-            self.client.update(update=update)
+            for entity in self.client.get_entity_list():
+                self.client.delete_entity(entity_id=entity.id)
         except RequestException:
             pass
         self.client.close()
