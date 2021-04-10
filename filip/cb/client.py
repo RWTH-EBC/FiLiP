@@ -1088,6 +1088,26 @@ class ContextBrokerClient(BaseClient):
         This operation allows to create, update and/or delete several entities
         in a single batch operation.
 
+        This operation is split in as many individual operations as entities
+        in the entities vector, so the actionType is executed for each one of
+        them. Depending on the actionType, a mapping with regular non-batch
+        operations can be done:
+
+        append: maps to POST /v2/entities (if the entity does not already exist)
+        or POST /v2/entities/<id>/attrs (if the entity already exists).
+
+        appendStrict: maps to POST /v2/entities (if the entity does not
+        already exist) or POST /v2/entities/<id>/attrs?options=append (if the
+        entity already exists).
+
+        update: maps to PATCH /v2/entities/<id>/attrs.
+
+        delete: maps to DELETE /v2/entities/<id>/attrs/<attrName> on every
+        attribute included in the entity or to DELETE /v2/entities/<id> if no
+        attribute were included in the entity.
+
+        replace: maps to PUT /v2/entities/<id>/attrs.
+
         Args:
             entities: "an array of entities, each entity specified using the "
                       "JSON entity representation format "
