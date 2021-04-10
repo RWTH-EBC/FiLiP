@@ -274,13 +274,11 @@ class TestContextBroker(unittest.TestCase):
             entities = [ContextEntity(id=str(i),
                                       type=f'filip:object:TypeA') for i in
                         range(0, 1000)]
-            update = Update(actionType=ActionType.APPEND, entities=entities)
-            client.update(update=update)
+            client.update(entities=entities, action_type=ActionType.APPEND)
             entities = [ContextEntity(id=str(i),
                                       type=f'filip:object:TypeB') for i in
                         range(0, 1000)]
-            update = Update(actionType=ActionType.APPEND, entities=entities)
-            client.update(update=update)
+            client.update(entities=entities, action_type=ActionType.APPEND)
             e = Entity(idPattern=".*", typePattern=".*TypeA$")
             q = Query.parse_obj({"entities": [e.dict(exclude_unset=True)]})
             self.assertEqual(1000,
@@ -289,8 +287,9 @@ class TestContextBroker(unittest.TestCase):
     def tearDown(self) -> None:
         # Cleanup test server
         try:
-            for entity in self.client.get_entity_list():
-                self.client.delete_entity(entity_id=entity.id)
+            entities = [ContextEntity(id=entity.id, type=entity.type) for
+                        entity in self.client.get_entity_list()]
+            self.client.update(entities=entities, action_type='delete')
         except RequestException:
             pass
         self.client.close()

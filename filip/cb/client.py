@@ -16,12 +16,12 @@ from filip.core.settings import settings
 from filip.core.models import FiwareHeader, PaginationMethod
 from filip.core.simple_query_language import QueryString
 from filip.cb.models import \
+    ActionType, \
     AttrsFormat, \
     ContextEntity, \
     ContextEntityKeyValues, \
     ContextAttribute, \
     NamedContextAttribute, \
-    GetEntitiesOptions, \
     Subscription,\
     Registration,\
     Update, \
@@ -1081,13 +1081,19 @@ class ContextBrokerClient(BaseClient):
     # Batch operation API
     def update(self,
                *,
-               update: Update,
+               entities: List[ContextEntity],
+               action_type: Union[ActionType, str],
                update_format: str = None) -> None:
         """
         This operation allows to create, update and/or delete several entities
         in a single batch operation.
+
         Args:
-            update (Update): Payload to update
+            entities: "an array of entities, each entity specified using the "
+                      "JSON entity representation format "
+            action_type (Update): "actionType, to specify the kind of update
+                    action to do: either append, appendStrict, update, delete,
+                    or replace. "
             options (str): Optional 'keyValues'
 
         Returns:
@@ -1097,23 +1103,27 @@ class ContextBrokerClient(BaseClient):
         url = urljoin(self.base_url, 'v2/op/update')
         headers = self.headers.copy()
         params = {}
+        if action_type not in list(ActionType):
+            raise ValueError(f'action_type must be in {list(ActionType)}')
         if update_format:
             assert update_format == 'keyValues', \
                 "Only 'keyValues' is allowed as option"
             params.update({'options': 'keyValues'})
+        data = {'actionType': action_type,
+                'entities': [json.loads(entity.json()) for entity in entities]}
         try:
             res = self.session.post(
                 url=url,
                 headers=headers,
                 params=params,
-                json=json.loads(update.json()))
+                json=data)
             if res.ok:
                 self.logger.info("Update operation '%s' succeeded!",
-                                 update.actionType.value)
+                                 action_type)
             else:
                 res.raise_for_status()
         except requests.RequestException as err:
-            msg = f"Update operation '{update.actionType.value}' failed!"
+            msg = f"Update operation '{action_type}' failed!"
             self.log_error(err=err, msg=msg)
             raise
 
