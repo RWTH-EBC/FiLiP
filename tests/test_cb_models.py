@@ -2,14 +2,14 @@ import unittest
 
 from filip.cb.client import ContextBrokerClient
 from filip.cb.models import \
-    Condition, \
+    ActionType,\
     ContextMetadata, \
     ContextAttribute, \
     ContextEntity, \
     create_context_entity_model, \
-    Expression, \
     NamedContextMetadata, \
-    Subscription
+    Subscription, \
+    Update
 from filip.core.models import FiwareHeader
 
 
@@ -114,3 +114,10 @@ class TestModels(unittest.TestCase):
             sub_ids = [sub.id for sub in client.get_subscription_list()]
             for sub_id in sub_ids:
                 client.delete_subscription(subscription_id=sub_id)
+
+    def test_update_model(self):
+        entities = [ContextEntity(id='1', type='myType')]
+        action_type = ActionType.APPEND
+        Update(actionType=action_type, entities=entities)
+        with self.assertRaises(ValueError):
+            Update(actionType='test', entities=entities)

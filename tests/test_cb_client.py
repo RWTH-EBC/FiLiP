@@ -30,7 +30,7 @@ class TestContextBroker(unittest.TestCase):
             "subscriptions_url": "/v2/subscriptions",
             "registrations_url": "/v2/registrations"
         }
-        self.attr = {'temperature': {'value': 20.1,
+        self.attr = {'temperature': {'value': 20.0,
                                      'type': 'Number'}}
         self.entity = ContextEntity(id='MyId', type='MyType', **self.attr)
         self.fiware_header = FiwareHeader(service='filip',
@@ -169,7 +169,7 @@ class TestContextBroker(unittest.TestCase):
             self.assertIsNotNone(client.post_entity(entity=entity,
                                                     update=True))
             res_entity = client.get_entity(entity_id=entity.id)
-            print(res_entity.json(indent=2))
+
             for attr in entity.get_properties():
                 self.assertIn(attr, res_entity.get_properties())
                 res_attr = client.get_attribute(entity_id=entity.id,
@@ -179,6 +179,10 @@ class TestContextBroker(unittest.TestCase):
                 self.assertEqual(res_attr.value, attr.value)
                 value = client.get_attribute_value(entity_id=entity.id,
                                                    attr_name=attr.name)
+                # unfortunately FIWARE returns an int for 20.0 although float
+                # is expected
+                if isinstance(value, int):
+                    value=float(value)
                 self.assertEqual(type(value), type(attr.value))
                 self.assertEqual(value, attr.value)
 

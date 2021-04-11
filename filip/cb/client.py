@@ -24,7 +24,8 @@ from filip.cb.models import \
     NamedContextAttribute, \
     Subscription,\
     Registration,\
-    Query
+    Query, \
+    Update
 
 
 class ContextBrokerClient(BaseClient):
@@ -1121,21 +1122,19 @@ class ContextBrokerClient(BaseClient):
 
         url = urljoin(self.base_url, 'v2/op/update')
         headers = self.headers.copy()
+        headers.update({'Content-Type': 'application/json'})
         params = {}
-        if action_type not in list(ActionType):
-            raise ValueError(f'action_type must be in {list(ActionType)}')
         if update_format:
             assert update_format == 'keyValues', \
                 "Only 'keyValues' is allowed as option"
             params.update({'options': 'keyValues'})
-        data = {'actionType': action_type,
-                'entities': [json.loads(entity.json()) for entity in entities]}
+        update = Update(actionType=action_type, entities=entities)
         try:
             res = self.session.post(
                 url=url,
                 headers=headers,
                 params=params,
-                json=data)
+                data=update.json(by_alias=True))
             if res.ok:
                 self.logger.info("Update operation '%s' succeeded!",
                                  action_type)
@@ -1170,6 +1169,7 @@ class ContextBrokerClient(BaseClient):
         headers = self.headers.copy()
         headers.update({'Content-Type': 'application/json'})
         params = {'options': 'count'}
+
         if format:
             if format not in list(AttrsFormat):
                 raise ValueError(f'Value must be in {list(AttrsFormat)}')
