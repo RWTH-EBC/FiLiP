@@ -1,9 +1,13 @@
+"""
+utility functions
+"""
+
 import pandas as pd
 from fuzzywuzzy import fuzz
 
 
 def create_type(inputstr: str):
-    """ 
+    """
     Creating entity type of measurement based on datamodel and substring
     search in given string.
     :param inputstr: input string for processing
@@ -29,8 +33,8 @@ def create_type(inputstr: str):
     max_partial_entitytype = ""
     number_of_max = 0
     inputstr = inputstr.lower()
-    for key in datamodel.keys():
-        for elem in datamodel[key]:
+    for key, value in datamodel.items():
+        for elem in value:
             ratio = fuzz.ratio(inputstr, elem)
             partial_ratio = fuzz.partial_ratio(inputstr, elem)
             if ratio > max_ratio:
@@ -53,7 +57,7 @@ def str2fiware(string: str):
     Converting provided string according to Fiware specifications. The mapping
     for character replacement can be provided as dict. If no mapping is
     provided the default library mapping will be used. For list of forbidden
-    characters see 
+    characters see
     https://fiware-orion.readthedocs.io/en/master/user/forbidden_characters/index.html
     :param string: str string for conversion according to Fiware specifications
     :param: dict mapping for character replacement
