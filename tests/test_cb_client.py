@@ -158,6 +158,9 @@ class TestContextBroker(unittest.TestCase):
             attr_txt = NamedContextAttribute(name='attr_txt',
                                              type='Text',
                                              value="Test")
+            attr_txt = NamedContextAttribute(name='attr_txt',
+                                             type='Boolean',
+                                             value=True)
             attr_list = NamedContextAttribute(name='attr_list',
                                               type='StructuredValue',
                                               value=[1, 2, 3])
@@ -181,7 +184,7 @@ class TestContextBroker(unittest.TestCase):
                                                    attr_name=attr.name)
                 # unfortunately FIWARE returns an int for 20.0 although float
                 # is expected
-                if isinstance(value, int):
+                if isinstance(value, int) and not isinstance(value, bool):
                     value=float(value)
                 self.assertEqual(type(value), type(attr.value))
                 self.assertEqual(value, attr.value)

@@ -92,9 +92,9 @@ class BaseClient:
         Returns:
 
         """
-        if err.response and msg:
+        if err.response.text and msg:
             self.logger.error("%s \n Reason: %s", msg, err.response.text)
-        elif err.response and not msg:
+        elif err.response.text and not msg:
             self.logger.error("%s", err.response.text)
         elif not err.response and msg:
             self.logger.error("%s \n Reason: %s", msg, err)

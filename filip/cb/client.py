@@ -2,7 +2,6 @@
 Context Broker Module for API Client
 """
 import re
-import json
 from math import inf
 from typing import Any, Dict, List, Union
 from urllib.parse import urljoin
@@ -291,7 +290,7 @@ class ContextBrokerClient(BaseClient):
             try:
                 re.compile(id_pattern)
             except re.error as err:
-                raise ValueError(f'Invalid Pattern: {err}')
+                raise ValueError(f'Invalid Pattern: {err}') from err
             params.update({'idPattern': id_pattern})
         if entity_types:
             if not isinstance(entity_types, list):
@@ -301,7 +300,7 @@ class ContextBrokerClient(BaseClient):
             try:
                 re.compile(type_pattern)
             except re.error as err:
-                raise ValueError(f'Invalid Pattern: {err.msg}')
+                raise ValueError(f'Invalid Pattern: {err.msg}') from err
             params.update({'typePattern': type_pattern})
         if attrs:
             params.update({'attrs': ','.join(attrs)})
@@ -733,13 +732,13 @@ class ContextBrokerClient(BaseClient):
         if entity_type:
             params.update({'type': entity_type})
         try:
-            if not isinstance(value, (Dict, List)):
+            if not isinstance(value, (dict, list)):
                 headers.update({'Content-Type': 'text/plain'})
                 if isinstance(value, str):
                     value = f'"{value}"'
                 res = self.session.put(url=url,
                                        headers=headers,
-                                       data=str(value))
+                                       json=value)
             else:
                 res = self.session.put(url=url,
                                        headers=headers,
