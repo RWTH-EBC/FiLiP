@@ -3,8 +3,10 @@ import setuptools
 INSTALL_REQUIRES = ['requests',
                     'fuzzywuzzy',
                     'PyYAML',
-                    'pandas',
-                    'pydantic',
+                    'pandas>=1.2',
+                    'datamodel-code-generator>=0.10.1',
+                    'pandas-datapackage-reader>=0.18.0',
+                    'pydantic>=1.7.2',
                     'requests_oauthlib',
                     'authlib']
 
@@ -19,9 +21,7 @@ setuptools.setup(
                      of Energy Efficient Buildings and Indoor Climate',
     # Specify the Python versions you support here. In particular, ensure
     # that you indicate whether you support Python 2, Python 3 or both.
-    classifiers=['Programming Language :: Python :: 3.5',
-                 'Programming Language :: Python :: 3.6',
-                 'Programming Language :: Python :: 3.7',
+    classifiers=['Programming Language :: Python :: 3.7',
                  'Programming Language :: Python :: 3.8',
                  'Programming Language :: Python :: 3.9'],
     author_email='tstorek@eonerc.rwth-aachen.de',

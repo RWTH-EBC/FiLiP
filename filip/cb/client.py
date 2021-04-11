@@ -188,7 +188,7 @@ class ContextBrokerClient(BaseClient):
                                  exclude_defaults=True,
                                  exclude_none=True))
             if res.ok:
-                self.logger.info(f"Entity successfully posted!")
+                self.logger.info("Entity successfully posted!")
                 return res.headers.get('Location')
             res.raise_for_status()
         except requests.RequestException as err:
@@ -746,7 +746,7 @@ class ContextBrokerClient(BaseClient):
                                        json=value)
             if res.ok:
                 self.logger.info("Attribute '%s' of '%s' "
-                                 f"successfully updated!", attr_name, entity_id)
+                                 "successfully updated!", attr_name, entity_id)
             else:
                 res.raise_for_status()
         except requests.RequestException as err:
@@ -839,7 +839,7 @@ class ContextBrokerClient(BaseClient):
                                       headers=headers)
             return parse_obj_as(List[Subscription], items)
         except requests.RequestException as err:
-            msg = f"Could not load subscriptions!"
+            msg = "Could not load subscriptions!"
             self.log_error(err=err, msg=msg)
             raise
 
@@ -871,7 +871,7 @@ class ContextBrokerClient(BaseClient):
                 return res.headers['Location'].split('/')[-1]
             res.raise_for_status()
         except requests.RequestException as err:
-            msg = f"Could not send subscription!"
+            msg = "Could not send subscription!"
             self.log_error(err=err, msg=msg)
             raise
 

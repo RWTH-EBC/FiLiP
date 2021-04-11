@@ -339,11 +339,11 @@ class ContextEntity(ContextEntityKeyValues):
             return {key: ContextAttribute(**value) for key, value in
                     self.dict().items() if key not in ContextEntity.__fields__
                     and value.get('type') != DataType.RELATIONSHIP}
-        else:
-            return [NamedContextAttribute(name=key, **value) for key, value in
-                    self.dict().items() if key not in
-                    ContextEntity.__fields__ and
-                    value.get('type') != DataType.RELATIONSHIP]
+
+        return [NamedContextAttribute(name=key, **value) for key, value in
+                self.dict().items() if key not in
+                ContextEntity.__fields__ and
+                value.get('type') != DataType.RELATIONSHIP]
 
     def add_properties(self, attrs: Union[Dict[str, ContextAttribute],
                                          List[NamedContextAttribute]]):
@@ -390,7 +390,7 @@ def create_context_entity_model(name: str = None, data: Dict = None) -> \
         Type['ContextEntity']:
     properties = {key: (ContextAttribute, ...) for key in data.keys() if
                   key not in ContextEntity.__fields__}
-    validators = {f'validate_test': validator('temperature')(
+    validators = {'validate_test': validator('temperature')(
         username_alphanumeric)}
     model = create_model(
         __model_name=name or 'GeneratedContextEntity',
@@ -529,19 +529,22 @@ class Notification(BaseModel):
     )
 
     @validator('httpCustom')
-    def validate_http(cls, v, values, field):
-        if v is not None:
+    def validate_http(cls, http_custom, values):
+        if http_custom is not None:
             assert values['http'] == None
-        return v
+        return http_custom
 
     @validator('exceptAttrs')
-    def validate_attr(cls, v, values):
-        if v is not None:
+    def validate_attr(cls, except_attrs, values):
+        if except_attrs is not None:
             assert values['attrs'] == None
-        return v
+        return except_attrs
 
 
 class NotificationResponse(Notification):
+    """
+    Server response model for notifications
+    """
     timesSent: int = Field(
         description='(not editable, only present in GET operations): '
                     'Number of notifications sent due to this subscription.'

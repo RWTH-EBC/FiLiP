@@ -79,3 +79,4 @@ fuzzywuzzy>=0.17.0
 xlrd>=2.0.1
 regex>=2021.3.17
 datamodel-code-generator>=0.10.1
+pandas-datapackage-reader>=0.18.0

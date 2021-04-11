@@ -1,6 +1,5 @@
 import os
 import shutil
-import requests
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from datamodel_code_generator import InputFileType, generate
