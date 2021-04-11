@@ -20,14 +20,6 @@ filip.cb.models module
    :undoc-members:
    :show-inheritance:
 
-filip.cb.subscription module
-----------------------------
-
-.. automodule:: filip.cb.subscription
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Module contents
 ---------------
 
