@@ -282,7 +282,9 @@ class TestContextBroker(unittest.TestCase):
                              len(client.query(query=q, format='keyValues')))
 
     def tearDown(self) -> None:
-        # Cleanup test server
+        """
+        Cleanup test server
+        """
         try:
             entities = [ContextEntity(id=entity.id, type=entity.type) for
                         entity in self.client.get_entity_list()]

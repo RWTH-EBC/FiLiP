@@ -134,9 +134,10 @@ class ContextAttribute(BaseModel):
         min_length = 1,
         regex = "^((?![?&#/])[\x00-\x7F])*$", # Make it FIWARE-Safe
     )
-    value: Union[List[Union[float, int, bool, str, List, Dict[str, Any]]],
-                      Union[float, int, bool, str, List, Dict[str, Any]]] = \
-        Field(
+    value: Optional[Union[Union[float, int, bool, str, List, Dict[str, Any]],
+                          List[Union[float, int, bool, str, List,
+                                     Dict[str, Any]]]]] = Field(
+        default=None,
         title="Attribute value",
         description="the actual data"
     )
@@ -152,34 +153,36 @@ class ContextAttribute(BaseModel):
     def validate_value_type(cls, v, values):
         """validator for field 'value'"""
         type_ = values['type']
-        if type_ == DataType.TEXT:
-            if isinstance(v, list):
-                return [str(item) for item in v]
-            return str(v)
-        elif type_ == DataType.BOOLEAN:
-            if isinstance(v, list):
-                return [bool(item) for item in v]
-            return bool(v)
-        elif type_ == DataType.NUMBER or type_ == DataType.FLOAT:
-            if isinstance(v, list):
-                return [float(item) for item in v]
-            return float(v)
-        elif type_ == DataType.INTEGER:
-            if isinstance(v, list):
-                return [int(item) for item in v]
-            return int(v)
-        elif type_ == DataType.DATETIME:
-            return v
-        elif type_ == DataType.ARRAY:
-            if isinstance(v, list):
+        if v:
+            if type_ == DataType.TEXT:
+                if isinstance(v, list):
+                    return [str(item) for item in v]
+                return str(v)
+            elif type_ == DataType.BOOLEAN:
+                if isinstance(v, list):
+                    return [bool(item) for item in v]
+                return bool(v)
+            elif type_ == DataType.NUMBER or type_ == DataType.FLOAT:
+                if isinstance(v, list):
+                    return [float(item) for item in v]
+                return float(v)
+            elif type_ == DataType.INTEGER:
+                if isinstance(v, list):
+                    return [int(item) for item in v]
+                return int(v)
+            elif type_ == DataType.DATETIME:
                 return v
-            raise TypeError(f"{type(v)} does not match {DataType.ARRAY}")
-        elif type_ == DataType.STRUCTUREDVALUE:
-            v = json.dumps(v)
-            return json.loads(v)
-        else:
-            v = json.dumps({v})
-            return json.loads(v)
+            elif type_ == DataType.ARRAY:
+                if isinstance(v, list):
+                    return v
+                raise TypeError(f"{type(v)} does not match {DataType.ARRAY}")
+            elif type_ == DataType.STRUCTUREDVALUE:
+                v = json.dumps(v)
+                return json.loads(v)
+            else:
+                v = json.dumps({v})
+                return json.loads(v)
+        return v
 
     @validator('metadata')
     def validate_metadata_type(cls, v):
