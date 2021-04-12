@@ -405,7 +405,7 @@ class Device(BaseModel):
                     raise ValueError
                 else:
                     self.commands.append(attribute)
-                    self.__setattr__(name='commmands',
+                    self.__setattr__(name='commands',
                                      value=self.commands)
             else:
                 raise ValueError
