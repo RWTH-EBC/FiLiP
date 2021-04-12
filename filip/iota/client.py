@@ -258,11 +258,12 @@ class IoTAClient(BaseClient):
             devices = [devices]
         url = urljoin(self.base_url, 'iot/devices')
         headers = self.headers
-        data = {"devices": [device.dict() for device in devices]}
+        data = {"devices": [device.dict(exclude_none=True) for device in
+                            devices]}
         try:
             res = self.session.post(url=url, headers=headers, json=data)
             if res.ok:
-                self.logger.info("Device successfully posted!")
+                self.logger.info("Devices successfully posted!")
             else:
                 res.raise_for_status()
         except requests.RequestException as err:
@@ -334,7 +335,7 @@ class IoTAClient(BaseClient):
         try:
             res = self.session.get(url=url, headers=headers)
             if res.ok:
-                return Device.parse_raw(res.json())
+                return Device.parse_obj(res.json())
             res.raise_for_status()
         except requests.RequestException as err:
             self.log_error(err=err, msg=None)

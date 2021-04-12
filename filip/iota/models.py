@@ -130,9 +130,6 @@ class StaticDeviceAttribute(BaseAttribute):
     )
 
 
-
-
-
 class ServiceGroup(BaseModel):
     service: Optional[str] = Field(
         description="ServiceGroup of the devices of this type"
@@ -283,25 +280,30 @@ class Device(BaseModel):
         description="Name of the device protocol, for its use with an "
                     "IoT Manager."
     )
-    transport: Optional[TransportProtocol] = Field(
+    transport: TransportProtocol = Field(
         description="Name of the device transport protocol, for the IoT Agents "
                     "with multiple transport protocols."
     )
-    lazy: Optional[List[DeviceAttribute]] = Field(
-        desription="List of lazy attributes of the device"
+    lazy: List[DeviceAttribute] = Field(
+        default=[],
+        description="List of lazy attributes of the device"
     )
-    commands: Optional[List[DeviceCommand]] = Field(
+    commands: List[DeviceCommand] = Field(
+        default=[],
         desription="List of commands of the device"
     )
-    attributes: Optional[List[DeviceAttribute]] = Field(
+    attributes: List[DeviceAttribute] = Field(
+        default=[],
         description="List of active attributes of the device"
     )
     static_attributes: Optional[List[StaticDeviceAttribute]] = Field(
+        default=[],
         description="List of static attributes to append to the entity. All the"
                     " updateContext requests to the CB will have this set of "
                     "attributes appended."
     )
     internal_attributes: Optional[List[Dict[str, Any]]] = Field(
+        default=None,
         description="List of internal attributes with free format for specific "
                     "IoT Agent configuration"
     )
@@ -312,15 +314,21 @@ class Device(BaseModel):
                     "is used as default value."
     )
     explicitAttrs: Optional[bool] = Field(
+        default=False,
         description="optional boolean value, to support selective ignore "
                     "of measures so that IOTA doesn’t progress. If not "
                     "specified default is false."
     )
-    ngsiVersion: Optional[NgsiVersion] = Field(
+    ngsiVersion: NgsiVersion = Field(
+        default=NgsiVersion.v2,
         description="optional string value used in mixed mode to switch between"
                     " NGSI-v2 and NGSI-LD payloads. Possible values are: "
                     "v2 or ld. The default is v2. When not running in "
                     "mixed mode, this field is ignored.")
+
+    class Config():
+        validate_all = True
+        validate_assignment = True
 
     @validator('service_path')
     def validate_service_path(cls, v):
@@ -334,7 +342,7 @@ class Device(BaseModel):
         return v
 
     def get_attribute(self, attribute_name: str) -> Union[DeviceAttribute,
-        LazyDeviceAttribute, StaticDeviceAttribute]:
+        LazyDeviceAttribute, StaticDeviceAttribute, DeviceCommand]:
         """
 
         Args:
@@ -346,7 +354,8 @@ class Device(BaseModel):
         for attribute in itertools.chain(self.attributes,
                                          self.lazy,
                                          self.static_attributes,
-                                         self.internal_attributes):
+                                         self.internal_attributes,
+                                         self.commands):
             if attribute.name == attribute_name:
                 return attribute
         logger.error(f"Device: {self.device_id}: Could not find "
@@ -357,7 +366,8 @@ class Device(BaseModel):
     def add_attribute(self,
                       attribute: Union[DeviceAttribute,
                                        LazyDeviceAttribute,
-                                       StaticDeviceAttribute],
+                                       StaticDeviceAttribute,
+                                       DeviceCommand],
                       update: bool = False) -> None:
         """
 
@@ -374,16 +384,31 @@ class Device(BaseModel):
                     raise ValueError
                 else:
                     self.attributes.append(attribute)
+                    self.__setattr__(name='attributes',
+                                     value=self.attributes)
             elif isinstance(attribute, LazyDeviceAttribute):
                 if attribute in self.lazy:
                     raise ValueError
                 else:
                     self.lazy.append(attribute)
+                    self.__setattr__(name='lazy',
+                                     value=self.lazy)
             elif isinstance(attribute, StaticDeviceAttribute):
                 if attribute in self.static_attributes:
                     raise ValueError
                 else:
                     self.static_attributes.append(attribute)
+                    self.__setattr__(name='static_attributes',
+                                     value=self.static_attributes)
+            elif isinstance(attribute, DeviceCommand):
+                if attribute in self.commands:
+                    raise ValueError
+                else:
+                    self.commands.append(attribute)
+                    self.__setattr__(name='commmands',
+                                     value=self.commands)
+            else:
+                raise ValueError
         except ValueError:
             if update:
                 self.update_attribute(attribute, add=False)
@@ -393,13 +418,15 @@ class Device(BaseModel):
             else:
                 logger.error(f"Device: {self.device_id}: Attribute already "
                              f"exists: \n {attribute.json(indent=2)}")
-                raise ValueError
+                raise
 
 
-    def update_attribute(self, attribute: Union[DeviceAttribute,
-                                                LazyDeviceAttribute,
-                                                StaticDeviceAttribute],
-                         add: bool = False) -> None:
+    def update_attribute(self,
+                         attribute: Union[DeviceAttribute,
+                                          LazyDeviceAttribute,
+                                          StaticDeviceAttribute,
+                                          DeviceCommand],
+                         append: bool = False) -> None:
         """
         Updates existing device attribute
         Args:
@@ -419,8 +446,11 @@ class Device(BaseModel):
             elif isinstance(attribute, StaticDeviceAttribute):
                 idx = self.static_attributes.index(attribute)
                 self.static_attributes[idx].dict().update(attribute.dict())
+            elif isinstance(attribute, DeviceCommand):
+                idx = self.commands.index(attribute)
+                self.commands[idx].dict().update(attribute.dict())
         except ValueError:
-            if add:
+            if append:
                 logger.warning(f"Device: {self.device_id}: Could not find "
                                f"attribute: \n {attribute.json(indent=2)}")
                 self.add_attribute(attribute=attribute)
@@ -432,7 +462,8 @@ class Device(BaseModel):
 
     def delete_attribute(self, attribute: Union[DeviceAttribute,
                                                 LazyDeviceAttribute,
-                                                StaticDeviceAttribute]):
+                                                StaticDeviceAttribute,
+                                                DeviceCommand]):
         """
         Deletes attribute from device
         Args:
@@ -448,8 +479,54 @@ class Device(BaseModel):
                 self.lazy.remove(attribute)
             elif isinstance(attribute, StaticDeviceAttribute):
                 self.static_attributes.remove(attribute)
+            elif isinstance(attribute, DeviceCommand):
+                self.commands.remove(attribute)
+            else:
+                raise ValueError
         except ValueError:
             logger.warning(f"Device: {self.device_id}: Could not delete "
                            f"attribute: \n {attribute.json(indent=2)}")
+            raise
+
         logger.info(f"Device: {self.device_id}: Attribute deleted! \n"
                     f"{attribute.json(indent=2)}")
+
+    def get_command(self, command_name: str):
+        """
+        Short for self.get_attributes
+        Args:
+            command_name (str):
+        Returns:
+
+        """
+        return self.get_attribute(attribute_name=command_name)
+
+    def add_command(self, command: DeviceCommand, update: bool = False):
+        """
+        Short for self.add_attribute
+        Args:
+            command (DeviceCommand):
+        Returns:
+        """
+        self.add_attribute(attribute=command, update=update)
+
+    def update_command(self, command: DeviceCommand, append: bool = False):
+        """
+        Short for self.update_attribute
+        Args:
+            command:
+            append:
+        Returns:
+        """
+        self.update_attribute(attribute=command, append=append)
+
+    def delete_command(self, command: DeviceCommand):
+        """
+        Short for self.delete_attribute
+        Args:
+            command:
+
+        Returns:
+
+        """
+        self.delete_attribute(attribute=command)

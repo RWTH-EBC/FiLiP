@@ -3,13 +3,14 @@ import requests
 from uuid import uuid4
 from filip.core.models import FiwareHeader
 from filip.iota.client import IoTAClient
-from filip.iota.models import ServiceGroup, Device
-
+from filip.iota.models import ServiceGroup, Device, DeviceAttribute
+from filip.cb.client import ContextBrokerClient
+from filip.cb.models import ContextEntity
 
 class TestAgent(unittest.TestCase):
     def setUp(self) -> None:
         self.device = {
-            "device_id": "saf",
+            "device_id": "test_device",
             "service": None,
             "service_path": "/",
             "entity_name": "saf",
@@ -18,16 +19,9 @@ class TestAgent(unittest.TestCase):
             "timestamp": None,
             "apikey": "1234",
             "endpoint": None,
-            "protocol": None,
-            "transport": None,
-            "lazy": None,
-            "commands": None,
-            "attributes": None,
-            "static_attributes": None,
+            "transport": 'HTTP',
             "internal_attributes": None,
-            "expressionLanguage": None,
-            "explicitAttrs": None,
-            "ngsiVersion": None
+            "expressionLanguage": None
         }
         self.fiware_header = FiwareHeader(service='filip',
                                           service_path='/testing')
@@ -44,8 +38,7 @@ class TestAgent(unittest.TestCase):
             self.assertIsNotNone(client.get_version())
 
     def test_service_group_model(self):
-        device = Device(**self.device)
-        self.assertEqual(device.dict(), self.device)
+        pass
 
     def test_service_group_endpoints(self):
         self.client.post_groups(service_groups=[self.service_group1,
@@ -62,15 +55,50 @@ class TestAgent(unittest.TestCase):
 
     def test_device_model(self):
         device = Device(**self.device)
-        self.assertEqual(device.dict(), self.device)
+        self.assertEqual(self.device,
+                         device.dict(exclude_unset=True))
 
     def test_device_endpoints(self):
+        """
+        Test device creation
+        """
         fiware_header = FiwareHeader(service='filip',
                                      service_path='/testing')
         with IoTAClient(fiware_header=fiware_header) as client:
-            # Todo: Add device creation in scope
             client.get_device_list()
+            device = Device(**self.device)
+            attr = DeviceAttribute(name='temperature',
+                                   object_id='t',
+                                   type='Number',
+                                   entity_name='test')
+            device.add_attribute(attr)
+            client.post_device(device=device)
+            device_res = client.get_device(device_id=device.device_id)
+            self.assertEqual(device.dict(exclude={'service',
+                                                  'service_path',
+                                                  'timezone'}),
+                             device_res.dict(exclude={'service',
+                                                      'service_path',
+                                                      'timezone'}))
+            self.assertEqual(self.fiware_header.service, device_res.service)
+            self.assertEqual(self.fiware_header.service_path,
+                             device_res.service_path)
 
     def tearDown(self) -> None:
+        """
+        Cleanup test server
+        """
+        try:
+            devices = self.client.get_device_list()
+            for device in devices:
+                self.client.delete_device(device_id=device.device_id)
+            with ContextBrokerClient(fiware_header=self.fiware_header) as \
+                    client:
+                entities = [ContextEntity(id=entity.id, type=entity.type) for
+                            entity in client.get_entity_list()]
+                client.update(entities=entities, action_type='delete')
+
+        except requests.RequestException:
+            pass
         self.client.close()
 
