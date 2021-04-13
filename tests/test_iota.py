@@ -1,11 +1,15 @@
 import unittest
+
 import requests
 from uuid import uuid4
+
 from filip.core.models import FiwareHeader
 from filip.iota.client import IoTAClient
-from filip.iota.models import ServiceGroup, Device, DeviceAttribute
+from filip.iota.models import ServiceGroup, Device, DeviceAttribute, DeviceCommand, LazyDeviceAttribute, \
+    StaticDeviceAttribute
 from filip.cb.client import ContextBrokerClient
 from filip.cb.models import ContextEntity
+
 
 class TestAgent(unittest.TestCase):
     def setUp(self) -> None:
@@ -67,11 +71,24 @@ class TestAgent(unittest.TestCase):
         with IoTAClient(fiware_header=fiware_header) as client:
             client.get_device_list()
             device = Device(**self.device)
+
             attr = DeviceAttribute(name='temperature',
                                    object_id='t',
                                    type='Number',
                                    entity_name='test')
+            attr_command = DeviceCommand(name='open')
+            attr_lazy = LazyDeviceAttribute(name='pressure',
+                                           object_id='p',
+                                           type='Text',
+                                           entity_name='pressure')
+            attr_static = StaticDeviceAttribute(name='hasRoom',
+                                                type='Relationship',
+                                                value='my_partner_id')
             device.add_attribute(attr)
+            device.add_attribute(attr_command)
+            device.add_attribute(attr_lazy)
+            device.add_attribute(attr_static)
+
             client.post_device(device=device)
             device_res = client.get_device(device_id=device.device_id)
             self.assertEqual(device.dict(exclude={'service',
@@ -94,9 +111,11 @@ class TestAgent(unittest.TestCase):
                 self.client.delete_device(device_id=device.device_id)
             with ContextBrokerClient(fiware_header=self.fiware_header) as \
                     client:
+
                 entities = [ContextEntity(id=entity.id, type=entity.type) for
                             entity in client.get_entity_list()]
                 client.update(entities=entities, action_type='delete')
+                pass
 
         except requests.RequestException:
             pass

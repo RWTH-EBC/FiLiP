@@ -38,7 +38,7 @@ class BaseAttribute(BaseModel):
         min_length = 1,
         regex = "(^((?![?&#/])[\x00-\x7F])*$)(?!(id|type|geo:distance|\*))"
     )
-    type: DataType = Field(
+    type: Union[DataType, str] = Field(
         description="name of the type of the attribute in the target entity. "
     )
     metadata: Optional[Dict[str, Any]] = Field(
@@ -116,12 +116,24 @@ class LazyDeviceAttribute(DeviceAttribute):
     pass
 
 
-class DeviceCommand(BaseAttribute):
-    pass
+class DeviceCommand(BaseModel):
+    name: str = Field(
+        description="ID of the attribute in the target entity in the "
+                    "Context Broker. Allowed characters "
+                    "are the ones in the plain ASCII set, except the following "
+                    "ones: control characters, whitespace, &, ?, / and #.",
+        max_length=256,
+        min_length=1,
+        regex="(^((?![?&#/])[\x00-\x7F])*$)(?!(id|type|geo:distance|\*))"
+    )
+    type: Union[DataType, str] = Field(
+        description="name of the type of the attribute in the target entity. ",
+        default=DataType.COMMAND
+    )
 
 
 class StaticDeviceAttribute(BaseAttribute):
-    value: Union[Dict, List, str, float] = Field(
+    value: Optional[Union[Dict, List, str, float]] = Field(
         description="Constant value for this attribute"
     )
     metadata: Optional[Dict[str, Dict]] = Field(
