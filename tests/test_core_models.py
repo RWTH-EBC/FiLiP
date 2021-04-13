@@ -63,9 +63,7 @@ class TestModels(unittest.TestCase):
                 try:
                     client.fiware_service_path = path
                     entities = client.get_entity_list()
-                    update = Update(actionType='delete',
-                                    entities=entities)
-                    client.update(update=update)
+                    client.update(entities=entities, action_type='delete')
                 except RequestException:
                     pass
             client.close()
