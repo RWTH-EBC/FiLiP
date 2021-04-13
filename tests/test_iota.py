@@ -115,7 +115,6 @@ class TestAgent(unittest.TestCase):
                 entities = [ContextEntity(id=entity.id, type=entity.type) for
                             entity in client.get_entity_list()]
                 client.update(entities=entities, action_type='delete')
-                pass
 
         except requests.RequestException:
             pass
