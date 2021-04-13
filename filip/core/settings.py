@@ -18,7 +18,7 @@ class _Settings(BaseSettings):
         env=['LOG_LEVEL', 'LOGLEVEL']
     )
 
-    @validator('LOGLEVEL')
+    @validator('LOGLEVEL', allow_reuse=True)
     def validate_loglevel(cls, v):
         if isinstance(v, str):
             v = v.upper()

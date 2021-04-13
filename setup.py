@@ -6,7 +6,7 @@ INSTALL_REQUIRES = ['requests',
                     'pandas>=1.2',
                     'datamodel-code-generator>=0.10.2',
                     'pandas-datapackage-reader>=0.18.0',
-                    'pydantic>=1.7.2',
+                    'pydantic[dotenv]>=1.7.2',
                     'requests_oauthlib',
                     'authlib']
 

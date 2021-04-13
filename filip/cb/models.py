@@ -180,7 +180,7 @@ class ContextAttribute(BaseModel):
                 v = json.dumps(v)
                 return json.loads(v)
             else:
-                v = json.dumps({v})
+                v = json.dumps(v)
                 return json.loads(v)
         return v
 
