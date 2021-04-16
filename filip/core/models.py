@@ -57,13 +57,13 @@ class FiwareHeader(BaseModel):
         alias="fiware-service",
         default="",
         max_length=50,
-        description="Fiware service_group used for multitancy",
+        description="Fiware service used for multitancy",
         regex="\w*$"
     )
     service_path: str = Field(
         alias="fiware-servicepath",
         default="",
-        description="Fiware service_group path",
+        description="Fiware service path",
         max_length = 51,
         regex=r"^((\/\w*)|(\/\#))*(\,((\/\w*)|(\/\#)))*$"
     )
