@@ -269,7 +269,8 @@ class QuantumLeapClient(BaseClient):
         try:
             res = self.session.get(url=url, params=params)
             if res.ok:
-                self.logger.info('Received: %s', res.json())
+                self.logger.info("Successfully received entity data")
+                self.logger.debug('Received: %s', res.json())
                 return ResponseModel(**res.json())
             res.raise_for_status()
         except requests.exceptions.RequestException as err:
