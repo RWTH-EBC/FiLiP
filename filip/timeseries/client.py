@@ -238,7 +238,7 @@ class QuantumLeapClient(BaseClient):
         params = {}
         if options:
             params.update({'options': options})
-        if entity_type:
+        if entity_type and not by_type:
             params.update({'entity_type': entity_type})
         if aggr_method:
             params.update({'aggrMethod': aggr_method})
@@ -264,7 +264,7 @@ class QuantumLeapClient(BaseClient):
             params.update({'attrs': attrs})
         if aggr_scope:
             params.update({'aggr_scope': aggr_scope})
-        if entity_id:
+        if entity_id and by_type:
             params.update({'id': entity_id})
         try:
             res = self.session.get(url=url, params=params)
