@@ -39,7 +39,7 @@ class QuantumLeapClient(BaseClient):
         Returns:
             Dictionary with response
         """
-        url = urljoin(self.base_url, '/v2/version')
+        url = urljoin(self.base_url, '/version')
         try:
             res = self.session.get(url=url)
             if res.ok:
@@ -61,14 +61,14 @@ class QuantumLeapClient(BaseClient):
         Returns:
             Dictionary with response
         """
-        url = urljoin(self.base_url, '/v2/health')
+        url = urljoin(self.base_url, '/health')
         try:
             res = self.session.get(url=url)
             if res.ok:
                 return res.json()
             res.raise_for_status()
         except requests.exceptions.RequestException as err:
-            self.logger.error(e)
+            self.logger.error(err)
             raise
 
     def post_config(self):
