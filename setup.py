@@ -1,6 +1,7 @@
 import setuptools
 
-INSTALL_REQUIRES = ['requests',
+INSTALL_REQUIRES = ['aenum',
+                    'requests',
                     'fuzzywuzzy',
                     'PyYAML',
                     'pandas>=1.2',
