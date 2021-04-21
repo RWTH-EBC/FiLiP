@@ -1,5 +1,5 @@
 import unittest
-from cb import ContextBrokerClient
+from filip.cb import ContextBrokerClient
 from filip.core.models import FiwareHeader
 from filip.cb.models import ContextEntity
 from filip.timeseries.client import QuantumLeapClient
@@ -13,7 +13,7 @@ class TestTimeSeries(unittest.TestCase):
         self.client = QuantumLeapClient(fiware_header=self.fiware_header)
         self.attr = {'temperature': {'value': 20,
                                      'type': 'Number'}}
-        self.entity_1 = ContextEntity(id='Kitchen_Test', type='Room', **self.attr)
+        self.entity_1 = ContextEntity(id='Kitchen', type='Room', **self.attr)
         self.cb_client = ContextBrokerClient(fiware_header=self.fiware_header)
 
     def test_meta_endpoints(self):
@@ -29,31 +29,39 @@ class TestTimeSeries(unittest.TestCase):
             self.assertIsNotNone(client.post_subscription(entity_id=self.entity_1.id))
             self.assertIsNotNone(client.post_notification(notification_message))
 
+    def test_entity_context(self):
+        with QuantumLeapClient(fiware_header=self.fiware_header) as client:
+            entities = client.get_entities()
+            for entity in entities:
+                print(entity.json(indent=2))
+
     def test_queries_endpoint(self):
         with QuantumLeapClient(fiware_header=self.fiware_header) as client:
-            try:
-                attrs_id = client.get_entity_attrs_by_id(entity_id=self.entity_1.id)
-                attrs_values_id = client.get_entity_attrs_values_by_id(
-                    entity_id=self.entity_1.id)
-                attr_id = client.get_entity_attr_by_id(
-                    entity_id=self.entity_1.id, attr_name="temperature")
-                attr_values_id = client.get_entity_attr_values_by_id(
-                    entity_id=self.entity_1.id, attr_name="temperature")
+            attrs_id = client.get_entity_attrs_by_id(entity_id=self.entity_1.id)
+            print(attrs_id.json(indent=2))
+            attrs_values_id = client.get_entity_attrs_values_by_id(
+                entity_id=self.entity_1.id)
+            print(attrs_values_id.json(indent=2))
+            attr_id = client.get_entity_attr_by_id(
+                entity_id=self.entity_1.id, attr_name="temperature")
+            print(attr_id.json(indent=2))
+            attr_values_id = client.get_entity_attr_values_by_id(
+                entity_id=self.entity_1.id, attr_name="temperature")
+            print(attr_values_id.json(indent=2))
+            # attrs_type = client.get_entity_attrs_by_type(
+            #     entity_type=self.entity_2.type)
+            # attrs_values_type = client.get_entity_attrs_values_by_type(
+            #     entity_type=self.entity_2.type)
+            attr_type = client.get_entity_attr_by_type(
+                entity_type=self.entity_1.type, attr_name="temperature")
+            print(attr_type.json(indent=2))
+            attr_values_type = client.get_entity_attr_values_by_type(
+                entity_type=self.entity_1.type, attr_name="temperature")
+            print(attr_values_type.json(indent=2))
+            # TODO:Test for each parameter
 
-                # attrs_type = client.get_entity_attrs_by_type(
-                #     entity_type=self.entity_2.type)
-                # attrs_values_type = client.get_entity_attrs_values_by_type(
-                #     entity_type=self.entity_2.type)
-                attr_type = client.get_entity_attr_by_type(
-                    entity_type=self.entity_1.type, attr_name="temperature")
-                attr_values_type = client.get_entity_attr_values_by_type(
-                    entity_type=self.entity_1.type, attr_name="temperature")
+            print(attr_id.to_pandas())
 
-                # TODO:Test for each parameter
-
-                print(attr_id.to_pandas())
-            except:
-                print("There is no historical data yet.")
 
     def tearDown(self) -> None:
         try:
@@ -66,16 +74,3 @@ class TestTimeSeries(unittest.TestCase):
             pass
         self.client.close()
         self.cb_client.close()
-
-# class TestModels(unittest.TestCase):
-#     def setUp(self) -> None:
-#         pass
-#
-#     def test_indexed_values(self):
-#         timestamp_str = '2010-10-10T07:09:00.792'
-#         timestamp_epoch = datetime.strptime(timestamp_str,
-#                                            '%Y-%m-%dT%H:%M:%S.%f')
-#         values = IndexedValues(index=[1, 1000], values=['1', '2'])
-#         print(values)
-#         values = IndexedValues(index=['2010-10-10T07:09:00.792'], values=['1'])
-#         print(values)

@@ -2,13 +2,17 @@
 TimeSeries Module for QuantumLeap API Client
 """
 import logging
-from typing import Dict
+from typing import Dict, List
 from urllib.parse import urljoin
 import requests
+from pydantic import parse_obj_as
 from filip.core import settings
 from filip.core.base_client import BaseClient
 from filip.core.models import FiwareHeader
-from filip.timeseries.models import ResponseModel, NotificationMessage
+from filip.timeseries.models import \
+    TimeSeries, \
+    TimeSeriesEntity, \
+    NotificationMessage
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +25,6 @@ class QuantumLeapClient(BaseClient):
     https://smartsdk.github.io/ngsi-timeseries-api/#quantumleap
     https://app.swaggerhub.com/apis/heikkilv/quantumleap-api/
     """
-
     def __init__(self,
                  *,
                  url: str = None,
@@ -120,26 +123,31 @@ class QuantumLeapClient(BaseClient):
         """
         Subscribe QL to process Orion notifications of certain type.
         This endpoint simplifies the creation of the subscription in orion
-        that will generate the notifications to be consumed by QuantumLeap in order to
-        save historical records. If you want an advanced specification of the
-        notifications, you can always create the subscription in orion at your will.
+        that will generate the notifications to be consumed by QuantumLeap in
+        order to save historical records. If you want an advanced specification
+        of the notifications, you can always create the subscription in orion
+        at your will.
         This endpoint just aims to simplify the common use case.
         Args:
             entity_type (String): The type of entities for which to create a
-            subscription, so as to persist historical data of entities of this type.
-            entity_id (String): Id of the entity to track. If specified, it takes
-            precedence over the idPattern parameter.
-            id_pattern (String): The pattern covering the entity ids for which to
-            subscribe. If not specified, QL will track all entities of the specified
-            type.
-            attributes (String): Comma-separated list of attribute names to track.
-            observed_attributes (String): Comma-separated list of attribute names to
-            track.
-            notified_attributes (String): Comma-separated list of attribute names to be
-            used to restrict the data of which QL will keep a history.
-            throttling (int): Minimal period of time in seconds which must elapse
-            between two consecutive notifications.
-            time_index_attribute (String): The name of a custom attribute to be used as a
+                subscription, so as to persist historical data of entities of
+                this type.
+            entity_id (String): Id of the entity to track. If specified, it
+                takes precedence over the idPattern parameter.
+            id_pattern (String): The pattern covering the entity ids for which
+                to subscribe. If not specified, QL will track all entities of
+                the specified type.
+            attributes (String): Comma-separated list of attribute names to
+                track.
+            observed_attributes (String): Comma-separated list of attribute
+                names to track.
+            notified_attributes (String): Comma-separated list of attribute
+                names to be used to restrict the data of which QL will keep a
+                history.
+            throttling (int): Minimal period of time in seconds which must
+                elapse between two consecutive notifications.
+            time_index_attribute (String): The name of a custom attribute to be
+                used as a
             time index.
         """
         headers = self.headers.copy()
@@ -188,7 +196,8 @@ class QuantumLeapClient(BaseClient):
         Given an entity (with type and id), delete all its historical records.
         Args:
             entity_id (String): Entity id is required.
-            entity_type (String): Entity type if entity_id alone can not uniquely
+            entity_type (String): Entity type if entity_id alone can not
+                uniquely
             define the entity.
         Returns:
             The entity_id of entity that is deleted.
@@ -235,17 +244,25 @@ class QuantumLeapClient(BaseClient):
             raise
 
     # QUERY API ENDPOINTS
-    def __get_entity_data(self, *, entity_id: str, attr_name: str = None,
-                          values_only: bool = False, options: str = None,
-                          entity_type: str = None, aggr_method: str = None,
-                          aggr_period: str = None, from_date: str = None,
-                          to_date: str = None, last_n: int = None,
-                          limit: int = None, offset: int = None,
-                          georel: str = None, geometry: str = None,
-                          coords: str = None, by_type: bool = False,
+    def __get_entity_data(self, *, entity_id: str,
+                          attr_name: str = None,
+                          values_only: bool = False,
+                          options: str = None,
+                          entity_type: str = None,
+                          aggr_method: str = None,
+                          aggr_period: str = None,
+                          from_date: str = None,
+                          to_date: str = None,
+                          last_n: int = None,
+                          limit: int = None,
+                          offset: int = None,
+                          georel: str = None,
+                          geometry: str = None,
+                          coords: str = None,
+                          by_type: bool = False,
                           attrs: str = None,
                           aggr_scope: str = None
-                          ) -> ResponseModel:
+                          ) -> TimeSeries:
         """
         Private Function to call respective API endpoints
         """
@@ -294,7 +311,60 @@ class QuantumLeapClient(BaseClient):
             if res.ok:
                 self.logger.info("Successfully received entity data")
                 self.logger.debug('Received: %s', res.json())
-                return ResponseModel(**res.json())
+                return res.json()
+            res.raise_for_status()
+        except requests.exceptions.RequestException as err:
+            msg = "Could not load entity data"
+            self.log_error(err=err, msg=msg)
+            raise
+
+    # v2/entities
+    def get_entities(self, *,
+                     entity_type: str = None,
+                     from_date: str = None,
+                     to_date: str = None,
+                     limit: int = None,
+                     offset: int = None
+                     ) -> List[TimeSeriesEntity]:
+        """
+        Get list of all available entities and their context information
+        about EntityType and last update date.
+        Args:
+            entity_type (str): Comma-separated list of entity types whose data
+                are to be included in the response. Use only one (no comma)
+                when required. If used to resolve ambiguity for the given
+                entityId, make sure the given entityId exists for this
+                entityType.
+            from_date (str): The starting date and time (inclusive) from which
+                the context information is queried. Must be in ISO8601 format
+                (e.g., 2018-01-05T15:44:34)
+            to_date (str): The final date and time (inclusive) from which the
+                context information is queried. Must be in ISO8601 format
+                (e.g., 2018-01-05T15:44:34).
+            limit (int): Maximum number of results to be retrieved.
+                Default value : 10000
+            offset (int): Offset for the results.
+        Returns:
+            List of TimeSeriesEntity
+        """
+        url = urljoin(self.base_url, 'v2/entities')
+        params = {}
+        if entity_type:
+            params.update({'type': from_date})
+        if from_date:
+            params.update({'fromDate': from_date})
+        if to_date:
+            params.update({'toDate': to_date})
+        if limit:
+            params.update({'limit': limit})
+        if offset:
+            params.update({'offset': offset})
+        try:
+            res = self.session.get(url=url, params=params)
+            if res.ok:
+                self.logger.info("Successfully received entity data")
+                self.logger.debug('Received: %s', res.json())
+                return parse_obj_as(List[TimeSeriesEntity], res.json())
             res.raise_for_status()
         except requests.exceptions.RequestException as err:
             msg = "Could not load entity data"
@@ -309,7 +379,7 @@ class QuantumLeapClient(BaseClient):
                                limit: int = None, offset: int = None,
                                georel: str = None, geometry: str = None,
                                coords: str = None, options: str = None
-                               ) -> ResponseModel:
+                               ) -> TimeSeries:
 
         """
         History of N attributes of a given entity instance
@@ -319,47 +389,61 @@ class QuantumLeapClient(BaseClient):
         Args:
             entity_id (String): Entity id is required.
             attrs (String): Comma-separated list of attribute names
-            entity_type (String): Comma-separated list of entity types whose data are to be
-            included in the response.
-            aggr_method (String): The function to apply to the raw data filtered.
-            count, sum, avg, min, max
+            entity_type (String): Comma-separated list of entity types whose
+                data are to be included in the response.
+            aggr_method (String): The function to apply to the raw data
+                filtered. count, sum, avg, min, max
             aggr_period (String): year, month, day, hour, minute, second
             from_date (String): Starting date and time inclusive.
             to_date (String): Final date and time inclusive.
             last_n (int): Request only the last N values.
-            limit (int): Maximum number of results to be retrieved. Default value : 10000
+            limit (int): Maximum number of results to be retrieved.
+                Default value : 10000
             offset (int): Offset for the results.
             georel (String): Geographical pattern
-            geometry (String): Required if georel is specified.  point, line, polygon, box
-            coords (String): Required if georel is specified. e.g. 40.714,-74.006
+            geometry (String): Required if georel is specified.  point, line,
+                polygon, box
+            coords (String): Required if georel is specified.
+                e.g. 40.714,-74.006
             options (String): Key value pair options.
         Returns:
-            Response Model
+            TimeSeries
         """
-        response = self.__get_entity_data(entity_id=entity_id, attrs=attrs,
+        response = self.__get_entity_data(entity_id=entity_id,
+                                          attrs=attrs,
                                           values_only=False,
                                           options=options,
                                           entity_type=entity_type,
                                           aggr_method=aggr_method,
                                           aggr_period=aggr_period,
-                                          from_date=from_date, to_date=to_date,
+                                          from_date=from_date,
+                                          to_date=to_date,
                                           last_n=last_n,
-                                          limit=limit, offset=offset,
-                                          georel=georel, geometry=geometry,
-                                          coords=coords, by_type=False)
-        return response
+                                          limit=limit,
+                                          offset=offset,
+                                          georel=georel,
+                                          geometry=geometry,
+                                          coords=coords,
+                                          by_type=False)
+        return TimeSeries.parse_obj(response)
 
     # /entities/{entityId}/value
-    def get_entity_attrs_values_by_id(self, entity_id: str, attrs: str = None,
+    def get_entity_attrs_values_by_id(self, *,
+                                      entity_id: str,
+                                      attrs: str = None,
                                       entity_type: str = None,
                                       aggr_method: str = None,
                                       aggr_period: str = None,
                                       from_date: str = None,
-                                      to_date: str = None, last_n: int = None,
-                                      limit: int = None, offset: int = None,
-                                      georel: str = None, geometry: str = None,
-                                      coords: str = None, options: str = None
-                                      ) -> ResponseModel:
+                                      to_date: str = None,
+                                      last_n: int = None,
+                                      limit: int = None,
+                                      offset: int = None,
+                                      georel: str = None,
+                                      geometry: str = None,
+                                      coords: str = None,
+                                      options: str = None
+                                      ) -> TimeSeries:
         """
         History of N attributes (values only) of a given entity instance
         For example, query the average pressure, temperature and humidity (
@@ -368,36 +452,44 @@ class QuantumLeapClient(BaseClient):
         Args:
             entity_id (String): Entity id is required.
             attrs (String): Comma-separated list of attribute names
-            entity_type (String): Comma-separated list of entity types whose data are to be
-            included in the response.
-            aggr_method (String): The function to apply to the raw data filtered.
-            count, sum, avg, min, max
+            entity_type (String): Comma-separated list of entity types whose
+                data are to be included in the response.
+            aggr_method (String): The function to apply to the raw data
+                filtered. count, sum, avg, min, max
             aggr_period (String): year, month, day, hour, minute, second
             from_date (String): Starting date and time inclusive.
             to_date (String): Final date and time inclusive.
             last_n (int): Request only the last N values.
-            limit (int): Maximum number of results to be retrieved. Default value : 10000
+            limit (int): Maximum number of results to be retrieved.
+                Default value : 10000
             offset (int): Offset for the results.
             georel (String): Geographical pattern
-            geometry (String): Required if georel is specified.  point, line, polygon, box
-            coords (String): Required if georel is specified. e.g. 40.714,-74.006
+            geometry (String): Required if georel is specified.  point, line,
+                polygon, box
+            coords (String): Required if georel is specified.
+                e.g. 40.714,-74.006
             options (String): Key value pair options.
         Returns:
             Response Model
         """
 
-        response = self.__get_entity_data(entity_id=entity_id, attrs=attrs,
+        response = self.__get_entity_data(entity_id=entity_id,
+                                          attrs=attrs,
                                           values_only=True,
                                           options=options,
                                           entity_type=entity_type,
                                           aggr_method=aggr_method,
                                           aggr_period=aggr_period,
-                                          from_date=from_date, to_date=to_date,
-                                          last_n=last_n, limit=limit,
-                                          offset=offset, georel=georel,
-                                          geometry=geometry, coords=coords,
+                                          from_date=from_date,
+                                          to_date=to_date,
+                                          last_n=last_n,
+                                          limit=limit,
+                                          offset=offset,
+                                          georel=georel,
+                                          geometry=geometry,
+                                          coords=coords,
                                           by_type=False)
-        return response
+        return TimeSeries.parse_obj(response)
 
     # /entities/{entityId}/attrs/{attrName}
     def get_entity_attr_by_id(self, entity_id: str, attr_name: str,
@@ -407,7 +499,7 @@ class QuantumLeapClient(BaseClient):
                               limit: int = None, offset: int = None,
                               georel: str = None, geometry: str = None,
                               coords: str = None, options: str = None
-                              ) -> ResponseModel:
+                              ) -> TimeSeries:
         """
         History of an attribute of a given entity instance
         For example, query max water level of the central tank throughout the
@@ -416,26 +508,30 @@ class QuantumLeapClient(BaseClient):
         Args:
             entity_id (String): Entity id is required.
             attr_name (String): The attribute name is required.
-            entity_type (String): Comma-separated list of entity types whose data are to be
-            included in the response.
-            aggr_method (String): The function to apply to the raw data filtered.
-            count, sum, avg, min, max
+            entity_type (String): Comma-separated list of entity types whose
+                data are to be included in the response.
+            aggr_method (String): The function to apply to the raw data
+                filtered. count, sum, avg, min, max
             aggr_period (String): year, month, day, hour, minute, second
             from_date (String): Starting date and time inclusive.
             to_date (String): Final date and time inclusive.
             last_n (int): Request only the last N values.
-            limit (int): Maximum number of results to be retrieved. Default value : 10000
+            limit (int): Maximum number of results to be retrieved.
+                Default value : 10000
             offset (int): Offset for the results.
             georel (String): Geographical pattern
-            geometry (String): Required if georel is specified.  point, line, polygon, box
-            coords (String): Required if georel is specified. e.g. 40.714,-74.006
+            geometry (String): Required if georel is specified.  point, line,
+                polygon, box
+            coords (String): Required if georel is specified.
+                e.g. 40.714,-74.006
             options (String): Key value pair options.
         Returns:
             Response Model
         """
 
         response = self.__get_entity_data(entity_id=entity_id,
-                                          attr_name=attr_name, values_only=False,
+                                          attr_name=attr_name,
+                                          values_only=False,
                                           options=options,
                                           entity_type=entity_type,
                                           aggr_method=aggr_method,
@@ -445,19 +541,24 @@ class QuantumLeapClient(BaseClient):
                                           offset=offset, georel=georel,
                                           geometry=geometry, coords=coords,
                                           by_type=False)
-        return response
+        return TimeSeries.parse_obj(response)
 
     # /entities/{entityId}/attrs/{attrName}/value
-    def get_entity_attr_values_by_id(self, entity_id: str, attr_name: str,
+    def get_entity_attr_values_by_id(self, entity_id: str,
+                                     attr_name: str,
                                      entity_type: str = None,
                                      aggr_method: str = None,
                                      aggr_period: str = None,
                                      from_date: str = None,
-                                     to_date: str = None, last_n: int = None,
-                                     limit: int = None, offset: int = None,
-                                     georel: str = None, geometry: str = None,
-                                     coords: str = None, options: str = None
-                                     ) -> ResponseModel:
+                                     to_date: str = None,
+                                     last_n: int = None,
+                                     limit: int = None,
+                                     offset: int = None,
+                                     georel: str = None,
+                                     geometry: str = None,
+                                     coords: str = None,
+                                     options: str = None
+                                     ) -> TimeSeries:
         """
         History of an attribute (values only) of a given entity instance
         Similar to the previous, but focusing on the values regardless of the
@@ -465,36 +566,44 @@ class QuantumLeapClient(BaseClient):
         Args:
             entity_id (String): Entity id is required.
             attr_name (String): The attribute name is required.
-            entity_type (String): Comma-separated list of entity types whose data are to be
-            included in the response.
-            aggr_method (String): The function to apply to the raw data filtered.
-            count, sum, avg, min, max
+            entity_type (String): Comma-separated list of entity types whose
+                data are to be included in the response.
+            aggr_method (String): The function to apply to the raw data
+                filtered. count, sum, avg, min, max
             aggr_period (String): year, month, day, hour, minute, second
             from_date (String): Starting date and time inclusive.
             to_date (String): Final date and time inclusive.
             last_n (int): Request only the last N values.
-            limit (int): Maximum number of results to be retrieved. Default value : 10000
+            limit (int): Maximum number of results to be retrieved.
+                Default value : 10000
             offset (int): Offset for the results.
             georel (String): Geographical pattern
-            geometry (String): Required if georel is specified.  point, line, polygon, box
-            coords (String): Required if georel is specified. e.g. 40.714,-74.006
+            geometry (String): Required if georel is specified.  point, line,
+                polygon, box
+            coords (String): Required if georel is specified.
+                e.g. 40.714,-74.006
             options (String): Key value pair options.
         Returns:
             Response Model
         """
 
         response = self.__get_entity_data(entity_id=entity_id,
-                                          attr_name=attr_name, values_only=True,
+                                          attr_name=attr_name,
+                                          values_only=True,
                                           options=options,
                                           entity_type=entity_type,
                                           aggr_method=aggr_method,
                                           aggr_period=aggr_period,
-                                          from_date=from_date, to_date=to_date,
-                                          last_n=last_n, limit=limit,
-                                          offset=offset, georel=georel,
-                                          geometry=geometry, coords=coords,
+                                          from_date=from_date,
+                                          to_date=to_date,
+                                          last_n=last_n,
+                                          limit=limit,
+                                          offset=offset,
+                                          georel=georel,
+                                          geometry=geometry,
+                                          coords=coords,
                                           by_type=False)
-        return response
+        return TimeSeries.parse_obj(response)
 
     # /types/{entityType}
     def get_entity_attrs_by_type(self, entity_type: str, attrs: str = None,
@@ -505,7 +614,7 @@ class QuantumLeapClient(BaseClient):
                                  georel: str = None, geometry: str = None,
                                  coords: str = None, options: str = None,
                                  aggr_scope=None
-                                 ) -> ResponseModel:
+                                 ) -> TimeSeries:
         """
         History of N attributes of N entities of the same type.
         For example, query the average pressure, temperature and humidity of
@@ -514,18 +623,22 @@ class QuantumLeapClient(BaseClient):
         raise NotImplementedError("Endpoint to be implemented..")
 
     # /types/{entityType}/value
-    def get_entity_attrs_values_by_type(self, entity_type: str, attrs: str = None,
+    def get_entity_attrs_values_by_type(self, entity_type: str,
+                                        attrs: str = None,
                                         entity_id: str = None,
                                         aggr_method: str = None,
                                         aggr_period: str = None,
                                         from_date: str = None,
-                                        to_date: str = None, last_n: int = None,
-                                        limit: int = None, offset: int = None,
+                                        to_date: str = None,
+                                        last_n: int = None,
+                                        limit: int = None,
+                                        offset: int = None,
                                         georel: str = None,
                                         geometry: str = None,
-                                        coords: str = None, options: str = None,
+                                        coords: str = None,
+                                        options: str = None,
                                         aggr_scope=None
-                                        ) -> ResponseModel:
+                                        ) -> TimeSeries:
         """
         History of N attributes (values only) of N entities of the same type.
         For example, query the average pressure, temperature and humidity (
@@ -543,7 +656,7 @@ class QuantumLeapClient(BaseClient):
                                 georel: str = None, geometry: str = None,
                                 coords: str = None, options: str = None,
                                 aggr_scope=None
-                                ) -> ResponseModel:
+                                ) -> TimeSeries:
         """
         History of an attribute of N entities of the same type.
         For example, query the pressure measurements of this month in all the
@@ -556,49 +669,67 @@ class QuantumLeapClient(BaseClient):
         Args:
             entity_type (String): Entity type is required.
             attr_name (String): The attribute name is required.
-            entity_id (String): Comma-separated list of entity ids whose data are to be
-            included in the response.
-            aggr_method (String): The function to apply to the raw data filtered.
-            count, sum, avg, min, max
+            entity_id (String): Comma-separated list of entity ids whose data
+                are to be included in the response.
+            aggr_method (String): The function to apply to the raw data
+                filtered. count, sum, avg, min, max
             aggr_period (String): year, month, day, hour, minute, second
+            aggr_scope (str): Optional. (This parameter is not yet supported).
+                When the query results cover historical data for multiple
+                entities instances, you can define the aggregation method to be
+                applied for each entity instance [entity] or across
+                them [global]
             from_date (String): Starting date and time inclusive.
             to_date (String): Final date and time inclusive.
             last_n (int): Request only the last N values.
-            limit (int): Maximum number of results to be retrieved. Default value : 10000
+            limit (int): Maximum number of results to be retrieved.
+                Default value : 10000
             offset (int): Offset for the results.
             georel (String): Geographical pattern
-            geometry (String): Required if georel is specified.  point, line, polygon, box
-            coords (String): Required if georel is specified. e.g. 40.714,-74.006
+            geometry (String): Required if georel is specified.  point, line,
+                polygon, box
+            coords (String): Required if georel is specified.
+                e.g. 40.714,-74.006
             options (String): Key value pair options.
         Returns:
             Response Model
         """
         response = self.__get_entity_data(entity_id=entity_id,
-                                          attr_name=attr_name, values_only=False,
+                                          attr_name=attr_name,
+                                          values_only=False,
                                           options=options,
                                           entity_type=entity_type,
                                           aggr_method=aggr_method,
                                           aggr_period=aggr_period,
-                                          from_date=from_date, to_date=to_date,
-                                          last_n=last_n, limit=limit,
-                                          offset=offset, georel=georel,
-                                          geometry=geometry, coords=coords,
-                                          by_type=True, aggr_scope=aggr_scope)
-        return response
+                                          from_date=from_date,
+                                          to_date=to_date,
+                                          last_n=last_n,
+                                          limit=limit,
+                                          offset=offset,
+                                          georel=georel,
+                                          geometry=geometry,
+                                          coords=coords,
+                                          by_type=True,
+                                          aggr_scope=aggr_scope)
+        return TimeSeries.parse_obj(response)
 
     # /types/{entityType}/attrs/{attrName}/value
-    def get_entity_attr_values_by_type(self, entity_type: str, attr_name: str,
+    def get_entity_attr_values_by_type(self, entity_type: str,
+                                       attr_name: str,
                                        entity_id: str = None,
                                        aggr_method: str = None,
                                        aggr_period: str = None,
                                        from_date: str = None,
-                                       to_date: str = None, last_n: int = None,
-                                       limit: int = None, offset: int = None,
+                                       to_date: str = None,
+                                       last_n: int = None,
+                                       limit: int = None,
+                                       offset: int = None,
                                        georel: str = None,
                                        geometry: str = None,
-                                       coords: str = None, options: str = None,
+                                       coords: str = None,
+                                       options: str = None,
                                        aggr_scope=None
-                                       ) -> ResponseModel:
+                                       ) -> TimeSeries:
         """
         History of an attribute (values only) of N entities of the same type.
         For example, query the average pressure (values only, no metadata) of
@@ -606,32 +737,41 @@ class QuantumLeapClient(BaseClient):
         Args:
             entity_type (String): Entity type is required.
             attr_name (String): The attribute name is required.
-            entity_id (String): Comma-separated list of entity ids whose data are to be
-            included in the response.
-            aggr_method (String): The function to apply to the raw data filtered.
-            count, sum, avg, min, max
+            entity_id (String): Comma-separated list of entity ids whose data
+                are to be included in the response.
+            aggr_method (String): The function to apply to the raw data
+                filtered. count, sum, avg, min, max
             aggr_period (String): year, month, day, hour, minute, second
             from_date (String): Starting date and time inclusive.
             to_date (String): Final date and time inclusive.
             last_n (int): Request only the last N values.
-            limit (int): Maximum number of results to be retrieved. Default value : 10000
+            limit (int): Maximum number of results to be retrieved.
+                Default value : 10000
             offset (int): Offset for the results.
             georel (String): Geographical pattern
-            geometry (String): Required if georel is specified.  point, line, polygon, box
-            coords (String): Required if georel is specified. e.g. 40.714,-74.006
+            geometry (String): Required if georel is specified.  point, line,
+                polygon, box
+            coords (String): Required if georel is specified.
+                e.g. 40.714,-74.006
             options (String): Key value pair options.
         Returns:
             Response Model
         """
         response = self.__get_entity_data(entity_id=entity_id,
-                                          attr_name=attr_name, values_only=True,
+                                          attr_name=attr_name,
+                                          values_only=True,
                                           options=options,
                                           entity_type=entity_type,
                                           aggr_method=aggr_method,
                                           aggr_period=aggr_period,
-                                          from_date=from_date, to_date=to_date,
-                                          last_n=last_n, limit=limit,
-                                          offset=offset, georel=georel,
-                                          geometry=geometry, coords=coords,
-                                          by_type=True, aggr_scope=aggr_scope)
-        return response
+                                          from_date=from_date,
+                                          to_date=to_date,
+                                          last_n=last_n,
+                                          limit=limit,
+                                          offset=offset,
+                                          georel=georel,
+                                          geometry=geometry,
+                                          coords=coords,
+                                          by_type=True,
+                                          aggr_scope=aggr_scope)
+        return TimeSeries.parse_obj(response)
