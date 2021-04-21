@@ -39,7 +39,7 @@ class QuantumLeapClient(BaseClient):
         Returns:
             Dictionary with response
         """
-        url = urljoin(self.base_url, '/v2/version')
+        url = urljoin(self.base_url, '/version')
         try:
             res = self.session.get(url=url)
             if res.ok:
@@ -61,14 +61,14 @@ class QuantumLeapClient(BaseClient):
         Returns:
             Dictionary with response
         """
-        url = urljoin(self.base_url, '/v2/health')
+        url = urljoin(self.base_url, '/health')
         try:
             res = self.session.get(url=url)
             if res.ok:
                 return res.json()
             res.raise_for_status()
         except requests.exceptions.RequestException as err:
-            self.logger.error(e)
+            self.logger.error(err)
             raise
 
     def post_config(self):
@@ -81,8 +81,8 @@ class QuantumLeapClient(BaseClient):
     def post_notification(self, notification: NotificationMessage):
         """
         Notify QuantumLeap the arrival of a new NGSI notification.
-        Returns:
-
+        Args:
+            notification (NotificationMessage): Notification Message Object
         """
         url = urljoin(self.base_url, '/v2/notify')
         headers = self.headers.copy()
@@ -120,15 +120,28 @@ class QuantumLeapClient(BaseClient):
         """
         Subscribe QL to process Orion notifications of certain type.
         This endpoint simplifies the creation of the subscription in orion
-        that will generate the notifications to be
-        consumed by QuantumLeap in order to save historical records. If you
-        want an advanced specification of the
-        notifications, you can always create the subscription in orion at
-        your will. This endpoint just aims to
-        simplify the common use case.
-        Returns:
+        that will generate the notifications to be consumed by QuantumLeap in order to
+        save historical records. If you want an advanced specification of the
+        notifications, you can always create the subscription in orion at your will.
+        This endpoint just aims to simplify the common use case.
+        Args:
+            entity_type (String): The type of entities for which to create a
+            subscription, so as to persist historical data of entities of this type.
+            entity_id (String): Id of the entity to track. If specified, it takes
+            precedence over the idPattern parameter.
+            id_pattern (String): The pattern covering the entity ids for which to
+            subscribe. If not specified, QL will track all entities of the specified
+            type.
+            attributes (String): Comma-separated list of attribute names to track.
+            observed_attributes (String): Comma-separated list of attribute names to
+            track.
+            notified_attributes (String): Comma-separated list of attribute names to be
+            used to restrict the data of which QL will keep a history.
+            throttling (int): Minimal period of time in seconds which must elapse
+            between two consecutive notifications.
+            time_index_attribute (String): The name of a custom attribute to be used as a
+            time index.
         """
-
         headers = self.headers.copy()
         params = {}
         url = urljoin(self.base_url, '/v2/subscribe')
@@ -173,6 +186,12 @@ class QuantumLeapClient(BaseClient):
     def delete_entity(self, entity_id: str, entity_type: str) -> str:
         """
         Given an entity (with type and id), delete all its historical records.
+        Args:
+            entity_id (String): Entity id is required.
+            entity_type (String): Entity type if entity_id alone can not uniquely
+            define the entity.
+        Returns:
+            The entity_id of entity that is deleted.
         """
         url = urljoin(self.base_url, f'/v2/entities/{entity_id}')
         headers = self.headers.copy()
@@ -196,6 +215,10 @@ class QuantumLeapClient(BaseClient):
         """
         Given an entity type, delete all the historical records of all
         entities of such type.
+        Args:
+            entity_type (String): Type of entities data to be deleted.
+        Returns:
+            Entity type of the entities deleted.
         """
         url = urljoin(self.base_url, f'/v2/types/{entity_type}')
         headers = self.headers.copy()
@@ -238,7 +261,7 @@ class QuantumLeapClient(BaseClient):
         params = {}
         if options:
             params.update({'options': options})
-        if entity_type:
+        if entity_type and not by_type:
             params.update({'entity_type': entity_type})
         if aggr_method:
             params.update({'aggrMethod': aggr_method})
@@ -264,12 +287,13 @@ class QuantumLeapClient(BaseClient):
             params.update({'attrs': attrs})
         if aggr_scope:
             params.update({'aggr_scope': aggr_scope})
-        if entity_id:
+        if entity_id and by_type:
             params.update({'id': entity_id})
         try:
             res = self.session.get(url=url, params=params)
             if res.ok:
-                self.logger.info('Received: %s', res.json())
+                self.logger.info("Successfully received entity data")
+                self.logger.debug('Received: %s', res.json())
                 return ResponseModel(**res.json())
             res.raise_for_status()
         except requests.exceptions.RequestException as err:
@@ -292,9 +316,26 @@ class QuantumLeapClient(BaseClient):
         For example, query max water level of the central tank throughout the
         last year. Queries can get more
         sophisticated with the use of filters and query attributes.
-        #TODO:define args
+        Args:
+            entity_id (String): Entity id is required.
+            attrs (String): Comma-separated list of attribute names
+            entity_type (String): Comma-separated list of entity types whose data are to be
+            included in the response.
+            aggr_method (String): The function to apply to the raw data filtered.
+            count, sum, avg, min, max
+            aggr_period (String): year, month, day, hour, minute, second
+            from_date (String): Starting date and time inclusive.
+            to_date (String): Final date and time inclusive.
+            last_n (int): Request only the last N values.
+            limit (int): Maximum number of results to be retrieved. Default value : 10000
+            offset (int): Offset for the results.
+            georel (String): Geographical pattern
+            geometry (String): Required if georel is specified.  point, line, polygon, box
+            coords (String): Required if georel is specified. e.g. 40.714,-74.006
+            options (String): Key value pair options.
+        Returns:
+            Response Model
         """
-
         response = self.__get_entity_data(entity_id=entity_id, attrs=attrs,
                                           values_only=False,
                                           options=options,
@@ -324,7 +365,25 @@ class QuantumLeapClient(BaseClient):
         For example, query the average pressure, temperature and humidity (
         values only, no metadata) of this
         month in the weather station WS1.
-        #TODO:define args
+        Args:
+            entity_id (String): Entity id is required.
+            attrs (String): Comma-separated list of attribute names
+            entity_type (String): Comma-separated list of entity types whose data are to be
+            included in the response.
+            aggr_method (String): The function to apply to the raw data filtered.
+            count, sum, avg, min, max
+            aggr_period (String): year, month, day, hour, minute, second
+            from_date (String): Starting date and time inclusive.
+            to_date (String): Final date and time inclusive.
+            last_n (int): Request only the last N values.
+            limit (int): Maximum number of results to be retrieved. Default value : 10000
+            offset (int): Offset for the results.
+            georel (String): Geographical pattern
+            geometry (String): Required if georel is specified.  point, line, polygon, box
+            coords (String): Required if georel is specified. e.g. 40.714,-74.006
+            options (String): Key value pair options.
+        Returns:
+            Response Model
         """
 
         response = self.__get_entity_data(entity_id=entity_id, attrs=attrs,
@@ -354,7 +413,25 @@ class QuantumLeapClient(BaseClient):
         For example, query max water level of the central tank throughout the
         last year. Queries can get more
         sophisticated with the use of filters and query attributes.
-        #TODO:define args
+        Args:
+            entity_id (String): Entity id is required.
+            attr_name (String): The attribute name is required.
+            entity_type (String): Comma-separated list of entity types whose data are to be
+            included in the response.
+            aggr_method (String): The function to apply to the raw data filtered.
+            count, sum, avg, min, max
+            aggr_period (String): year, month, day, hour, minute, second
+            from_date (String): Starting date and time inclusive.
+            to_date (String): Final date and time inclusive.
+            last_n (int): Request only the last N values.
+            limit (int): Maximum number of results to be retrieved. Default value : 10000
+            offset (int): Offset for the results.
+            georel (String): Geographical pattern
+            geometry (String): Required if georel is specified.  point, line, polygon, box
+            coords (String): Required if georel is specified. e.g. 40.714,-74.006
+            options (String): Key value pair options.
+        Returns:
+            Response Model
         """
 
         response = self.__get_entity_data(entity_id=entity_id,
@@ -385,7 +462,25 @@ class QuantumLeapClient(BaseClient):
         History of an attribute (values only) of a given entity instance
         Similar to the previous, but focusing on the values regardless of the
         metadata.
-        #TODO:define args
+        Args:
+            entity_id (String): Entity id is required.
+            attr_name (String): The attribute name is required.
+            entity_type (String): Comma-separated list of entity types whose data are to be
+            included in the response.
+            aggr_method (String): The function to apply to the raw data filtered.
+            count, sum, avg, min, max
+            aggr_period (String): year, month, day, hour, minute, second
+            from_date (String): Starting date and time inclusive.
+            to_date (String): Final date and time inclusive.
+            last_n (int): Request only the last N values.
+            limit (int): Maximum number of results to be retrieved. Default value : 10000
+            offset (int): Offset for the results.
+            georel (String): Geographical pattern
+            geometry (String): Required if georel is specified.  point, line, polygon, box
+            coords (String): Required if georel is specified. e.g. 40.714,-74.006
+            options (String): Key value pair options.
+        Returns:
+            Response Model
         """
 
         response = self.__get_entity_data(entity_id=entity_id,
@@ -415,7 +510,6 @@ class QuantumLeapClient(BaseClient):
         History of N attributes of N entities of the same type.
         For example, query the average pressure, temperature and humidity of
         this month in all the weather stations.
-        #TODO:define args
         """
         raise NotImplementedError("Endpoint to be implemented..")
 
@@ -437,7 +531,6 @@ class QuantumLeapClient(BaseClient):
         For example, query the average pressure, temperature and humidity (
         values only, no metadata) of this month in
         all the weather stations.
-        #TODO:define args
         """
         raise NotImplementedError("Endpoint to be implemented..")
 
@@ -460,7 +553,25 @@ class QuantumLeapClient(BaseClient):
         instance. In this case, the index array is just the fromDate and
         toDate values user specified in the request
         (if any).
-        #TODO:define args
+        Args:
+            entity_type (String): Entity type is required.
+            attr_name (String): The attribute name is required.
+            entity_id (String): Comma-separated list of entity ids whose data are to be
+            included in the response.
+            aggr_method (String): The function to apply to the raw data filtered.
+            count, sum, avg, min, max
+            aggr_period (String): year, month, day, hour, minute, second
+            from_date (String): Starting date and time inclusive.
+            to_date (String): Final date and time inclusive.
+            last_n (int): Request only the last N values.
+            limit (int): Maximum number of results to be retrieved. Default value : 10000
+            offset (int): Offset for the results.
+            georel (String): Geographical pattern
+            geometry (String): Required if georel is specified.  point, line, polygon, box
+            coords (String): Required if georel is specified. e.g. 40.714,-74.006
+            options (String): Key value pair options.
+        Returns:
+            Response Model
         """
         response = self.__get_entity_data(entity_id=entity_id,
                                           attr_name=attr_name, values_only=False,
@@ -492,7 +603,25 @@ class QuantumLeapClient(BaseClient):
         History of an attribute (values only) of N entities of the same type.
         For example, query the average pressure (values only, no metadata) of
         this month in all the weather stations.
-        #TODO:define args
+        Args:
+            entity_type (String): Entity type is required.
+            attr_name (String): The attribute name is required.
+            entity_id (String): Comma-separated list of entity ids whose data are to be
+            included in the response.
+            aggr_method (String): The function to apply to the raw data filtered.
+            count, sum, avg, min, max
+            aggr_period (String): year, month, day, hour, minute, second
+            from_date (String): Starting date and time inclusive.
+            to_date (String): Final date and time inclusive.
+            last_n (int): Request only the last N values.
+            limit (int): Maximum number of results to be retrieved. Default value : 10000
+            offset (int): Offset for the results.
+            georel (String): Geographical pattern
+            geometry (String): Required if georel is specified.  point, line, polygon, box
+            coords (String): Required if georel is specified. e.g. 40.714,-74.006
+            options (String): Key value pair options.
+        Returns:
+            Response Model
         """
         response = self.__get_entity_data(entity_id=entity_id,
                                           attr_name=attr_name, values_only=True,
