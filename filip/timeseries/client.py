@@ -6,7 +6,7 @@ from urllib.parse import urljoin
 from filip.core import settings
 from filip.core.base_client import BaseClient
 from filip.core.models import FiwareHeader
-from filip.timeseries.models import ResponseModel, NotificationMessage
+from filip.timeseries.models import TimeSeries, NotificationMessage
 
 logger = logging.getLogger(__name__)
 
@@ -173,7 +173,7 @@ class QuantumLeapClient(BaseClient):
             self.log_error(err=err, msg=msg)
             raise
 
-    def delete_entity(self, entity_id: str, entity_type: str) -> str:
+    def delete_entity(self, entity_id: str, entity_type: str = None) -> str:
         """
         Given an entity (with type and id), delete all its historical records.
         """
@@ -227,7 +227,7 @@ class QuantumLeapClient(BaseClient):
                           coords: str = None, by_type: bool = False,
                           attrs: str = None,
                           aggr_scope: str = None
-                          ) -> ResponseModel:
+                          ) -> TimeSeries:
         """
         Private Function to call respective API endpoints
         """
@@ -275,7 +275,7 @@ class QuantumLeapClient(BaseClient):
             res = self.session.get(url=url, params=params)
             if res.ok:
                 self.logger.info(f'Received: {res.json()}')
-                return ResponseModel(**res.json())
+                return TimeSeries(**res.json())
             else:
                 res.raise_for_status()
         except requests.exceptions.RequestException as err:
@@ -291,7 +291,7 @@ class QuantumLeapClient(BaseClient):
                                limit: int = None, offset: int = None,
                                georel: str = None, geometry: str = None,
                                coords: str = None, options: str = None
-                               ) -> ResponseModel:
+                               ) -> TimeSeries:
 
         """
         History of N attributes of a given entity instance
@@ -324,7 +324,7 @@ class QuantumLeapClient(BaseClient):
                                       limit: int = None, offset: int = None,
                                       georel: str = None, geometry: str = None,
                                       coords: str = None, options: str = None
-                                      ) -> ResponseModel:
+                                      ) -> TimeSeries:
         """
         History of N attributes (values only) of a given entity instance
         For example, query the average pressure, temperature and humidity (
@@ -344,6 +344,7 @@ class QuantumLeapClient(BaseClient):
                                           offset=offset, georel=georel,
                                           geometry=geometry, coords=coords,
                                           by_type=False)
+        response.entityId = entity_id
         return response
 
     # /entities/{entityId}/attrs/{attrName}
@@ -354,7 +355,7 @@ class QuantumLeapClient(BaseClient):
                               limit: int = None, offset: int = None,
                               georel: str = None, geometry: str = None,
                               coords: str = None, options: str = None
-                              ) -> ResponseModel:
+                              ) -> TimeSeries:
         """
         History of an attribute of a given entity instance
         For example, query max water level of the central tank throughout the
@@ -386,7 +387,7 @@ class QuantumLeapClient(BaseClient):
                                      limit: int = None, offset: int = None,
                                      georel: str = None, geometry: str = None,
                                      coords: str = None, options: str = None
-                                     ) -> ResponseModel:
+                                     ) -> TimeSeries:
         """
         History of an attribute (values only) of a given entity instance
         Similar to the previous, but focusing on the values regardless of the
@@ -405,6 +406,8 @@ class QuantumLeapClient(BaseClient):
                                           offset=offset, georel=georel,
                                           geometry=geometry, coords=coords,
                                           by_type=False)
+        response.entityId = entity_id
+        response.attrName=attr_name
         return response
 
     # /types/{entityType}
@@ -416,7 +419,7 @@ class QuantumLeapClient(BaseClient):
                                  georel: str = None, geometry: str = None,
                                  coords: str = None, options: str = None,
                                  aggr_scope=None
-                                 ) -> ResponseModel:
+                                 ) -> TimeSeries:
         """
         History of N attributes of N entities of the same type.
         For example, query the average pressure, temperature and humidity of
@@ -437,7 +440,7 @@ class QuantumLeapClient(BaseClient):
                                         geometry: str = None,
                                         coords: str = None, options: str = None,
                                         aggr_scope=None
-                                        ) -> ResponseModel:
+                                        ) -> TimeSeries:
         """
         History of N attributes (values only) of N entities of the same type.
         For example, query the average pressure, temperature and humidity (
@@ -456,7 +459,7 @@ class QuantumLeapClient(BaseClient):
                                 georel: str = None, geometry: str = None,
                                 coords: str = None, options: str = None,
                                 aggr_scope=None
-                                ) -> ResponseModel:
+                                ) -> TimeSeries:
         """
         History of an attribute of N entities of the same type.
         For example, query the pressure measurements of this month in all the
@@ -493,7 +496,7 @@ class QuantumLeapClient(BaseClient):
                                        geometry: str = None,
                                        coords: str = None, options: str = None,
                                        aggr_scope=None
-                                       ) -> ResponseModel:
+                                       ) -> TimeSeries:
         """
         History of an attribute (values only) of N entities of the same type.
         For example, query the average pressure (values only, no metadata) of
@@ -511,4 +514,5 @@ class QuantumLeapClient(BaseClient):
                                           offset=offset, georel=georel,
                                           geometry=geometry, coords=coords,
                                           by_type=True, aggr_scope=aggr_scope)
+        response.attrName=attr_name
         return response

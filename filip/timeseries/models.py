@@ -111,7 +111,7 @@ class IndexedValues(BaseValues):
             elif isinstance(timestamp, float):
                 v[idx] = datetime.fromtimestamp(timestamp / 1000.0)
             elif isinstance(timestamp, str):
-                v[idx] = datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%S.%f')
+                v[idx] = datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%S.%f%z')
             else:
                 raise TypeError
         return v
@@ -145,7 +145,7 @@ class NotificationMessage(BaseModel):
     )
 
 
-class ResponseModel(BaseModel):
+class TimeSeries(BaseModel):
     entityId: str = None
     index: List[str] = None
     attributes: List[AttributeValues] = None
@@ -155,7 +155,6 @@ class ResponseModel(BaseModel):
     entities: List[EntityIndexedValues] = None
 
     def to_pandas(self):
-        print(self.dict())
         list_of_dataframes = []
         #if attr_id, attr_values_id
         if self.index is not None and self.attributes is None:
@@ -186,7 +185,7 @@ class ResponseModel(BaseModel):
             for entity in self.values:
                 index = pd.MultiIndex.from_product([[entity["entityId"]], entity["index"]],
                                                    names=['entity_id', 'index'])
-                columns = pd.MultiIndex.from_product([["attribute"]])
+                columns = pd.MultiIndex.from_product([[self.attrName]])
                 dataframe = pd.DataFrame(entity["values"], index=index, columns=columns)
                 list_of_dataframes.append(dataframe)
             df_all = pd.concat(list_of_dataframes, ignore_index=False)
