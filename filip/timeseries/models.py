@@ -145,9 +145,17 @@ class NotificationMessage(BaseModel):
     )
 
 
-class ResponseModel(BaseModel):
+class TimeSeriesBase(BaseModel):
+    index: List[datetime] = None
+
+
+class TimeSeriesEntity(TimeSeriesBase):
+    id: str = None
+    type: str
+
+
+class TimeSeries(TimeSeriesBase):
     entityId: str = None
-    index: List[str] = None
     attributes: List[AttributeValues] = None
     values: ValuesArray = None
     entityType: str = None
