@@ -56,7 +56,7 @@ class TimeSeriesEntity(TimeSeriesBase):
     Model to describe an available entity in the time series api
     """
     # aliases are required due to inconsistencies in the api-specs
-    entityId: str = Field(...,
+    entityId: str = Field(default=None,
                           alias="id",
                           description="The entity id the time series api."
                                       "If the id is unique among all entity "
@@ -67,6 +67,9 @@ class TimeSeriesEntity(TimeSeriesBase):
     entityType: str = Field(default=None,
                             alias="type",
                             description="The type of an entity")
+
+    class Config:
+        allow_population_by_field_name = False
 
 
 class IndexedValues(TimeSeriesBase):
@@ -82,43 +85,28 @@ class IndexedValues(TimeSeriesBase):
     )
 
 
-class AttributeValues(BaseModel):
+class AttributeValues(IndexedValues):
     attrName: str = Field(
         title="Attribute name",
         description=""
     )
-    values: List[Any] = Field(
-        default=None,
-        description="Array of values of the selected attribute, in the same "
-                    "corresponding order of the 'index' array. When using "
-                    "aggregation options, the format of this remains the same, "
-                    "only the semantics will change. For example, if "
-                    "aggrPeriod is day, each value of course may not "
-                    "correspond to original measurements but rather the "
-                    "aggregate of measurements in each day."
-    )
 
 
-class EntityIndexedValues(IndexedValues):
-    entityId: str = Field(
-        title="Entity Id",
-        description="The type of an entity"
-    )
-
-
-class TimeSeries(EntityIndexedValues):
-    entityType: str = None
+class TimeSeries(TimeSeriesEntity):
     attributes: List[AttributeValues] = None
 
     def to_pandas(self):
-        names = [attr.attrName for attr in self.attributes]
-        values = np.array([attr.values for attr in self.attributes]).transpose()
         index = pd.Index(data=self.index, name='datetime')
+        attr_names = [attr.attrName for attr in self.attributes]
+        values = np.array([attr.values for attr in self.attributes]).transpose()
         columns = pd.MultiIndex.from_product(
-            [[self.entityId], [self.entityType], names],
+            [[self.entityId], [self.entityType], attr_names],
             names=['entityId', 'entityType', 'attribute'])
+
         return pd.DataFrame(data=values, index=index, columns=columns)
 
+    class Config:
+        allow_population_by_field_name = True
 
 class AggrMethod(str, Enum):
     """

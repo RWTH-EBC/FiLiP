@@ -252,45 +252,34 @@ class QuantumLeapClient(BaseClient):
             raise
 
     # QUERY API ENDPOINTS
-    def __get_entity_data(self,
-                          url,
-                          *,
-                          entity_id: str = None,
-                          attr_name: str = None,
-                          values_only: bool = False,
-                          options: str = None,
-                          entity_type: str = None,
-                          aggr_method: Union[str, AggrMethod] = None,
-                          aggr_period: Union[str, AggrPeriod] = None,
-                          from_date: str = None,
-                          to_date: str = None,
-                          last_n: int = None,
-                          limit: int = None,
-                          offset: int = None,
-                          georel: str = None,
-                          geometry: str = None,
-                          coords: str = None,
-                          by_type: bool = False,
-                          attrs: str = None,
-                          aggr_scope: Union[str, AggrScope] = None
-                          ) -> Dict:
+    def __query_builder(self,
+                        url,
+                        *,
+                        entity_id: str = None,
+                        options: str = None,
+                        entity_type: str = None,
+                        aggr_method: Union[str, AggrMethod] = None,
+                        aggr_period: Union[str, AggrPeriod] = None,
+                        from_date: str = None,
+                        to_date: str = None,
+                        last_n: int = None,
+                        limit: int = None,
+                        offset: int = None,
+                        georel: str = None,
+                        geometry: str = None,
+                        coords: str = None,
+                        attrs: str = None,
+                        aggr_scope: Union[str, AggrScope] = None
+                        ) -> Dict:
         """
         Private Function to call respective API endpoints
         """
-        #if by_type:
-        #    url = urljoin(self.base_url, f'/v2/types/{entity_type}')
-        #else:
-        #    url = urljoin(self.base_url, f'/v2/entities/{entity_id}')
-#
-        #if attr_name:
-        #    url = urljoin(url, f'/attrs/{attr_name}')
-        #if values_only:
-        #    url = urljoin(url, '/value')
         params = {}
+        headers = self.headers.copy()
         if options:
             params.update({'options': options})
-        if entity_type and not by_type:
-            params.update({'entity_type': entity_type})
+        if entity_type:
+            params.update({'type': entity_type})
         if aggr_method:
             aggr_method = AggrMethod(aggr_method)
             params.update({'aggrMethod': aggr_method.value})
@@ -318,10 +307,10 @@ class QuantumLeapClient(BaseClient):
         if aggr_scope:
             aggr_scope = AggrScope(aggr_scope)
             params.update({'aggr_scope': aggr_scope.value})
-        if entity_id and by_type:
+        if entity_id:
             params.update({'id': entity_id})
         try:
-            res = self.session.get(url=url, params=params)
+            res = self.session.get(url=url, params=params, headers=headers)
             if res.ok:
                 self.logger.info("Successfully received entity data")
                 self.logger.debug('Received: %s', res.json())
@@ -362,33 +351,33 @@ class QuantumLeapClient(BaseClient):
             List of TimeSeriesEntity
         """
         url = urljoin(self.base_url, 'v2/entities')
-        res = self.__get_entity_data(url=url,
-                                     entity_type=entity_type,
-                                     from_date=from_date,
-                                     to_date=to_date,
-                                     limit=limit,
-                                     offset=offset)
+        res = self.__query_builder(url=url,
+                                   entity_type=entity_type,
+                                   from_date=from_date,
+                                   to_date=to_date,
+                                   limit=limit,
+                                   offset=offset)
         return parse_obj_as(List[TimeSeriesEntity], res)
 
 
     # /entities/{entityId}
-    def get_entity_attrs_by_id(self,
-                               entity_id: str,
-                               *,
-                               attrs: str = None,
-                               entity_type: str = None,
-                               aggr_method: Union[str, AggrMethod] = None,
-                               aggr_period: Union[str, AggrPeriod] = None,
-                               from_date: str = None,
-                               to_date: str = None,
-                               last_n: int = None,
-                               limit: int = None,
-                               offset: int = None,
-                               georel: str = None,
-                               geometry: str = None,
-                               coords: str = None,
-                               options: str = None
-                               ) -> TimeSeries:
+    def get_entity_by_id(self,
+                         entity_id: str,
+                         *,
+                         attrs: str = None,
+                         entity_type: str = None,
+                         aggr_method: Union[str, AggrMethod] = None,
+                         aggr_period: Union[str, AggrPeriod] = None,
+                         from_date: str = None,
+                         to_date: str = None,
+                         last_n: int = None,
+                         limit: int = None,
+                         offset: int = None,
+                         georel: str = None,
+                         geometry: str = None,
+                         coords: str = None,
+                         options: str = None
+                         ) -> TimeSeries:
 
         """
         History of N attributes of a given entity instance
@@ -418,43 +407,41 @@ class QuantumLeapClient(BaseClient):
         Returns:
             TimeSeries
         """
-        res = self.__get_entity_data(entity_id=entity_id,
-                                     attrs=attrs,
-                                     values_only=False,
-                                     options=options,
-                                     entity_type=entity_type,
-                                     aggr_method=aggr_method,
-                                     aggr_period=aggr_period,
-                                     from_date=from_date,
-                                     to_date=to_date,
-                                     last_n=last_n,
-                                     limit=limit,
-                                     offset=offset,
-                                     georel=georel,
-                                     geometry=geometry,
-                                     coords=coords,
-                                     by_type=False)
+        url = urljoin(self.base_url, f'/v2/entities/{entity_id}')
+        res = self.__query_builder(url=url,
+                                   attrs=attrs,
+                                   options=options,
+                                   entity_type=entity_type,
+                                   aggr_method=aggr_method,
+                                   aggr_period=aggr_period,
+                                   from_date=from_date,
+                                   to_date=to_date,
+                                   last_n=last_n,
+                                   limit=limit,
+                                   offset=offset,
+                                   georel=georel,
+                                   geometry=geometry,
+                                   coords=coords)
         return TimeSeries.parse_obj(res)
 
     # /entities/{entityId}/value
-    def get_entity_attrs_values_by_id(self, *,
-                                      entity_id: str,
-                                      attrs: str = None,
-                                      entity_type: str = None,
-                                      aggr_method: Union[
-                                          str, AggrMethod] = None,
-                                      aggr_period: Union[
-                                          str, AggrPeriod] = None,
-                                      from_date: str = None,
-                                      to_date: str = None,
-                                      last_n: int = None,
-                                      limit: int = None,
-                                      offset: int = None,
-                                      georel: str = None,
-                                      geometry: str = None,
-                                      coords: str = None,
-                                      options: str = None
-                                      ) -> TimeSeries:
+    def get_entity_values_by_id(self,
+                                entity_id: str,
+                                *,
+                                attrs: str = None,
+                                entity_type: str = None,
+                                aggr_method: Union[str, AggrMethod] = None,
+                                aggr_period: Union[str, AggrPeriod] = None,
+                                from_date: str = None,
+                                to_date: str = None,
+                                last_n: int = None,
+                                limit: int = None,
+                                offset: int = None,
+                                georel: str = None,
+                                geometry: str = None,
+                                coords: str = None,
+                                options: str = None
+                                ) -> TimeSeries:
         """
         History of N attributes (values only) of a given entity instance
         For example, query the average pressure, temperature and humidity (
@@ -483,24 +470,22 @@ class QuantumLeapClient(BaseClient):
         Returns:
             Response Model
         """
-        res = self.__get_entity_data(entity_id=entity_id,
-                                     attrs=attrs,
-                                     values_only=True,
-                                     options=options,
-                                     entity_type=entity_type,
-                                     aggr_method=aggr_method,
-                                     aggr_period=aggr_period,
-                                     from_date=from_date,
-                                     to_date=to_date,
-                                     last_n=last_n,
-                                     limit=limit,
-                                     offset=offset,
-                                     georel=georel,
-                                     geometry=geometry,
-                                     coords=coords,
-                                     by_type=False)
-        return TimeSeries(entityId=entity_id,
-                          **res)
+        url = urljoin(self.base_url, f'/v2/entities/{entity_id}/value')
+        res = self.__query_builder(url=url,
+                                   attrs=attrs,
+                                   options=options,
+                                   entity_type=entity_type,
+                                   aggr_method=aggr_method,
+                                   aggr_period=aggr_period,
+                                   from_date=from_date,
+                                   to_date=to_date,
+                                   last_n=last_n,
+                                   limit=limit,
+                                   offset=offset,
+                                   georel=georel,
+                                   geometry=geometry,
+                                   coords=coords)
+        return TimeSeries(entityId=entity_id, **res)
 
     # /entities/{entityId}/attrs/{attrName}
     def get_entity_attr_by_id(self,
@@ -548,23 +533,22 @@ class QuantumLeapClient(BaseClient):
         Returns:
             Response Model
         """
-
-        res = self.__get_entity_data(entity_id=entity_id,
-                                     attr_name=attr_name,
-                                     values_only=False,
-                                     options=options,
-                                     entity_type=entity_type,
-                                     aggr_method=aggr_method,
-                                     aggr_period=aggr_period,
-                                     from_date=from_date,
-                                     to_date=to_date,
-                                     last_n=last_n,
-                                     limit=limit,
-                                     offset=offset,
-                                     georel=georel,
-                                     geometry=geometry,
-                                     coords=coords,
-                                     by_type=False)
+        url = urljoin(self.base_url, f'/v2/entities/{entity_id}/attrs'
+                                     f'/{attr_name}')
+        res = self.__query_builder(url=url,
+                                   entity_id=entity_id,
+                                   options=options,
+                                   entity_type=entity_type,
+                                   aggr_method=aggr_method,
+                                   aggr_period=aggr_period,
+                                   from_date=from_date,
+                                   to_date=to_date,
+                                   last_n=last_n,
+                                   limit=limit,
+                                   offset=offset,
+                                   georel=georel,
+                                   geometry=geometry,
+                                   coords=coords)
         return TimeSeries(entityId=entity_id,
                           index=res.get('index'),
                           attributes=[AttributeValues(**res)])
@@ -614,23 +598,21 @@ class QuantumLeapClient(BaseClient):
         Returns:
             Response Model
         """
-
-        res = self.__get_entity_data(entity_id=entity_id,
-                                     attr_name=attr_name,
-                                     values_only=True,
-                                     options=options,
-                                     entity_type=entity_type,
-                                     aggr_method=aggr_method,
-                                     aggr_period=aggr_period,
-                                     from_date=from_date,
-                                     to_date=to_date,
-                                     last_n=last_n,
-                                     limit=limit,
-                                     offset=offset,
-                                     georel=georel,
-                                     geometry=geometry,
-                                     coords=coords,
-                                     by_type=False)
+        url = urljoin(self.base_url, f'v2/entities/{entity_id}/attrs'
+                                     f'/{attr_name}/value')
+        res = self.__query_builder(url=url,
+                                   options=options,
+                                   entity_type=entity_type,
+                                   aggr_method=aggr_method,
+                                   aggr_period=aggr_period,
+                                   from_date=from_date,
+                                   to_date=to_date,
+                                   last_n=last_n,
+                                   limit=limit,
+                                   offset=offset,
+                                   georel=georel,
+                                   geometry=geometry,
+                                   coords=coords)
         return TimeSeries(entityId=entity_id,
                           index=res.get('index'),
                           attributes=[AttributeValues(attrName=attr_name,
@@ -661,24 +643,23 @@ class QuantumLeapClient(BaseClient):
         For example, query the average pressure, temperature and humidity of
         this month in all the weather stations.
         """
-        res = self.__get_entity_data(entity_id=entity_id,
-                                     attrs=attrs,
-                                     values_only=False,
-                                     options=options,
-                                     entity_type=entity_type,
-                                     aggr_method=aggr_method,
-                                     aggr_period=aggr_period,
-                                     from_date=from_date,
-                                     to_date=to_date,
-                                     last_n=last_n,
-                                     limit=limit,
-                                     offset=offset,
-                                     georel=georel,
-                                     geometry=geometry,
-                                     coords=coords,
-                                     by_type=True,
-                                     aggr_scope=aggr_scope)
-        return [TimeSeries(entityType=entity_type, **item)
+        url = urljoin(self.base_url, f'/v2/types/{entity_type}')
+        res = self.__query_builder(url=url,
+                                   entity_id=entity_id,
+                                   attrs=attrs,
+                                   options=options,
+                                   aggr_method=aggr_method,
+                                   aggr_period=aggr_period,
+                                   from_date=from_date,
+                                   to_date=to_date,
+                                   last_n=last_n,
+                                   limit=limit,
+                                   offset=offset,
+                                   georel=georel,
+                                   geometry=geometry,
+                                   coords=coords,
+                                   aggr_scope=aggr_scope)
+        return [TimeSeries(type=entity_type, **item)
                 for item in res.get('entities')]
 
     # /types/{entityType}/value
@@ -706,24 +687,24 @@ class QuantumLeapClient(BaseClient):
         values only, no metadata) of this month in
         all the weather stations.
         """
-        res = self.__get_entity_data(entity_id=entity_id,
-                                     attrs=attrs,
-                                     values_only=False,
-                                     options=options,
-                                     entity_type=entity_type,
-                                     aggr_method=aggr_method,
-                                     aggr_period=aggr_period,
-                                     from_date=from_date,
-                                     to_date=to_date,
-                                     last_n=last_n,
-                                     limit=limit,
-                                     offset=offset,
-                                     georel=georel,
-                                     geometry=geometry,
-                                     coords=coords,
-                                     by_type=True,
-                                     aggr_scope=aggr_scope)
-        return [TimeSeries(entityType=entity_type, **item)
+        url = urljoin(self.base_url, f'/v2/types/{entity_type}/value')
+        res = self.__query_builder(url=url,
+                                   entity_id=entity_id,
+                                   attrs=attrs,
+                                   options=options,
+                                   entity_type=entity_type,
+                                   aggr_method=aggr_method,
+                                   aggr_period=aggr_period,
+                                   from_date=from_date,
+                                   to_date=to_date,
+                                   last_n=last_n,
+                                   limit=limit,
+                                   offset=offset,
+                                   georel=georel,
+                                   geometry=geometry,
+                                   coords=coords,
+                                   aggr_scope=aggr_scope)
+        return [TimeSeries(type=entity_type, **item)
                 for item in res.get('values')]
 
     # /types/{entityType}/attrs/{attrName}
@@ -782,24 +763,25 @@ class QuantumLeapClient(BaseClient):
         Returns:
             Response Model
         """
-        res = self.__get_entity_data(entity_id=entity_id,
-                                     attr_name=attr_name,
-                                     values_only=False,
-                                     options=options,
-                                     entity_type=entity_type,
-                                     aggr_method=aggr_method,
-                                     aggr_period=aggr_period,
-                                     from_date=from_date,
-                                     to_date=to_date,
-                                     last_n=last_n,
-                                     limit=limit,
-                                     offset=offset,
-                                     georel=georel,
-                                     geometry=geometry,
-                                     coords=coords,
-                                     by_type=True,
-                                     aggr_scope=aggr_scope)
-        return [TimeSeries(entityType=entity_type,
+        url = urljoin(self.base_url, f'/v2/types/{entity_type}/attrs'
+                                     f'/{attr_name}')
+        res = self.__query_builder(url=url,
+                                   entity_id=entity_id,
+                                   options=options,
+                                   entity_type=entity_type,
+                                   aggr_method=aggr_method,
+                                   aggr_period=aggr_period,
+                                   from_date=from_date,
+                                   to_date=to_date,
+                                   last_n=last_n,
+                                   limit=limit,
+                                   offset=offset,
+                                   georel=georel,
+                                   geometry=geometry,
+                                   coords=coords,
+                                   aggr_scope=aggr_scope)
+        return [TimeSeries(index=item.get('index'),
+                           entityType=entity_type,
                            entityId=item.get('entityId'),
                            attributes=[
                                AttributeValues(attrName=res.get('attrName'),
@@ -856,26 +838,27 @@ class QuantumLeapClient(BaseClient):
         Returns:
             Response Model
         """
-        res = self.__get_entity_data(entity_id=entity_id,
-                                     attr_name=attr_name,
-                                     values_only=True,
-                                     options=options,
-                                     entity_type=entity_type,
-                                     aggr_method=aggr_method,
-                                     aggr_period=aggr_period,
-                                     from_date=from_date,
-                                     to_date=to_date,
-                                     last_n=last_n,
-                                     limit=limit,
-                                     offset=offset,
-                                     georel=georel,
-                                     geometry=geometry,
-                                     coords=coords,
-                                     by_type=True,
-                                     aggr_scope=aggr_scope)
-        return [TimeSeries(entityType=entity_type,
+        url = urljoin(self.base_url, f'/v2/types/{entity_type}/attrs/'
+                                     f'{attr_name}/value')
+        res = self.__query_builder(url=url,
+                                   entity_id=entity_id,
+                                   options=options,
+                                   entity_type=entity_type,
+                                   aggr_method=aggr_method,
+                                   aggr_period=aggr_period,
+                                   from_date=from_date,
+                                   to_date=to_date,
+                                   last_n=last_n,
+                                   limit=limit,
+                                   offset=offset,
+                                   georel=georel,
+                                   geometry=geometry,
+                                   coords=coords,
+                                   aggr_scope=aggr_scope)
+        return [TimeSeries(index=item.get('index'),
+                           entityType=entity_type,
                            entityId=item.get('entityId'),
                            attributes=[
                                AttributeValues(attrName=attr_name,
                                                values=item.get('values'))])
-                for item in res.get('entities')]
+                for item in res.get('values')]

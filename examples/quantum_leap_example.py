@@ -82,8 +82,8 @@ def get_historical_data(entity_in_cb):
             ql_client:
         logger.info("------Historical data from QL------")
         try:
-            print(ql_client.get_entity_attrs_by_id(entity_in_cb.id))
-            print(ql_client.get_entity_attrs_values_by_id(entity_in_cb.id))
+            print(ql_client.get_entity_by_id(entity_in_cb.id))
+            print(ql_client.get_entity_values_by_id(entity_in_cb.id))
             print(ql_client.get_entity_attr_by_id(entity_in_cb.id, "temperature"))
             print(ql_client.get_entity_attr_values_by_id(entity_in_cb.id,
                                                          attr_name="temperature"))

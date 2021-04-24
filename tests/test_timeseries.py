@@ -3,6 +3,7 @@ Tests for time series api client aka QuantumLeap
 """
 import unittest
 from random import random
+import requests
 from filip.cb import ContextBrokerClient
 from filip.core.models import FiwareHeader
 from filip.cb.models import ContextEntity
@@ -37,47 +38,42 @@ class TestTimeSeries(unittest.TestCase):
 
     def test_entity_context(self):
         with QuantumLeapClient(fiware_header=self.fiware_header) as client:
-            entities = client.get_entities()
+            entities = client.get_entities(entity_type='MyType')
             for entity in entities:
                 print(entity.json(indent=2))
 
 
     def test_queries_endpoint(self):
         with QuantumLeapClient(fiware_header=self.fiware_header) as client:
-            attrs_id = client.get_entity_attrs_by_id(entity_id=self.entity_1.id)
-            print(attrs_id.json(indent=2))
+            with self.assertRaises(requests.RequestException):
+                client.get_entity_by_id(entity_id=self.entity_1.id,
+                                        entity_type='MyType')
+            attrs_id = client.get_entity_by_id(entity_id=self.entity_1.id)
             print(attrs_id.to_pandas())
-            attrs_values_id = client.get_entity_attrs_values_by_id(
+            attrs_values_id = client.get_entity_values_by_id(
                 entity_id=self.entity_1.id)
-            print(attrs_values_id.json(indent=2))
             print(attrs_id.to_pandas())
             attr_id = client.get_entity_attr_by_id(
                 entity_id=self.entity_1.id, attr_name="temperature")
-            print(attr_id.json(indent=2))
             print(attrs_id.to_pandas())
             attr_values_id = client.get_entity_attr_values_by_id(
                 entity_id=self.entity_1.id, attr_name="temperature")
-            print(attr_values_id.json(indent=2))
             print(attrs_id.to_pandas())
             attrs_type = client.get_entity_by_type(
                 entity_type=self.entity_1.type)
             for entity in attrs_type:
-                print(entity.json(indent=2))
                 print(entity.to_pandas())
             attrs_values_type = client.get_entity_values_by_type(
                  entity_type=self.entity_1.type)
             for entity in attrs_values_type:
-                print(entity.json(indent=2))
                 print(entity.to_pandas())
             attr_type = client.get_entity_attr_by_type(
                 entity_type=self.entity_1.type, attr_name="temperature")
             for entity in attr_type:
-                print(entity.json(indent=2))
                 print(entity.to_pandas())
             attr_values_type = client.get_entity_attr_values_by_type(
                 entity_type=self.entity_1.type, attr_name="temperature")
             for entity in attr_values_type:
-                print(entity.json(indent=2))
                 print(entity.to_pandas())
 
     def tearDown(self) -> None:
