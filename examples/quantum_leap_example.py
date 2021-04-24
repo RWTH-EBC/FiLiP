@@ -1,10 +1,10 @@
 import logging
 
-from models import ContextEntity
-from core.models import FiwareHeader
-from timeseries import QuantumLeapClient
-from cb import ContextBrokerClient
-from timeseries.models import NotificationMessage
+from filip.cb.models import ContextEntity
+from filip.core.models import FiwareHeader
+from filip.timeseries import QuantumLeapClient
+from filip.cb import ContextBrokerClient
+from filip.timeseries.models import NotificationMessage
 
 logger = logging.getLogger(__name__)
 

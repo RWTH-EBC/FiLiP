@@ -2,9 +2,9 @@ import logging
 from datetime import datetime
 import time
 
-from cb.models import Subscription
-from cb import ContextBrokerClient
-from core.models import FiwareHeader
+from filip.cb.models import Subscription
+from filip.cb import ContextBrokerClient
+from filip.core.models import FiwareHeader
 
 AUTH = ('user', 'pass')
 

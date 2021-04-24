@@ -1,13 +1,13 @@
 import logging
-from cb import ContextBrokerClient
-from core.models import FiwareHeader
-from settings import _Settings
-from timeseries import QuantumLeapClient
+from filip.cb import ContextBrokerClient
+from filip.core.models import FiwareHeader
+from filip.core.settings import _Settings
+from filip.timeseries import QuantumLeapClient
 
 logger = logging.getLogger(__name__)
 
 if __name__ == '__main__':
-    settings_dotenv = _Settings(_env_file='.env.filip')
+
     logger.info("------Setting up clients------")
     with QuantumLeapClient(fiware_header=FiwareHeader(service='filip',
                                                       service_path='/testing')) as \

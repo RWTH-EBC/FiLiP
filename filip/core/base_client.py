@@ -14,8 +14,9 @@ class BaseClient:
     This class implements an base client for all derived api-clients.
     """
 
-    def __init__(self, *,
+    def __init__(self,
                  url: str = None,
+                 *,
                  session: requests.Session = None,
                  fiware_header: Union[Dict, FiwareHeader] = None):
         """

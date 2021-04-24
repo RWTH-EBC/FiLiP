@@ -1,8 +1,8 @@
 import logging
-from cb import ContextBrokerClient
-from core.models import FiwareHeader
-from models import ContextEntity, ContextAttribute
-from simple_query_language import SimpleQuery
+from filip.cb import ContextBrokerClient
+from filip.core.models import FiwareHeader
+from filip.cb.models import ContextEntity, ContextAttribute
+from filip.core.simple_query_language import SimpleQuery
 
 logger = logging.getLogger(__name__)
 

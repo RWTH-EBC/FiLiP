@@ -4,8 +4,8 @@ from pydantic import BaseSettings, Field, AnyHttpUrl, validator
 
 class _Settings(BaseSettings):
     CB_URL: AnyHttpUrl = Field(default="http://localhost:1026",
-                                env=['ORION_URL', 'CB_URL', 'CB_HOST',
-                                     'CONTEXTBROKER_URL', 'OCB_URL'])
+                               env=['ORION_URL', 'CB_URL', 'CB_HOST',
+                                    'CONTEXTBROKER_URL', 'OCB_URL'])
     IOTA_URL: AnyHttpUrl = Field(default="http://localhost:4041",
                                  env='IOTA_URL')
     QL_URL: AnyHttpUrl = Field(default="http://localhost:8668",
@@ -19,15 +19,15 @@ class _Settings(BaseSettings):
     )
 
     @validator('LOGLEVEL', allow_reuse=True)
-    def validate_loglevel(cls, v):
-        if isinstance(v, str):
-            v = v.upper()
-            assert v in ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG']
-        elif isinstance(v, int):
-            assert v in range(0, 50, 10)
+    def validate_loglevel(cls, value):
+        if isinstance(value, str):
+            value = value.upper()
+            assert value in ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG']
+        elif isinstance(value, int):
+            assert value in range(0, 50, 10)
         else:
             raise ValueError
-        return v
+        return value
 
     #TIMEZONE:
 
