@@ -33,7 +33,8 @@ class TestTimeSeries(unittest.TestCase):
             data = [self.entity_1]
             notification_message = NotificationMessage(data=data,
                                                        subscriptionId="test")
-            self.assertIsNotNone(client.post_subscription(entity_id=self.entity_1.id))
+            self.assertIsNotNone(
+                client.post_subscription(entity_id=self.entity_1.id))
             client.post_notification(notification_message)
 
     def test_entity_context(self):
@@ -41,7 +42,6 @@ class TestTimeSeries(unittest.TestCase):
             entities = client.get_entities(entity_type='MyType')
             for entity in entities:
                 print(entity.json(indent=2))
-
 
     def test_queries_endpoint(self):
         with QuantumLeapClient(fiware_header=self.fiware_header) as client:
@@ -52,13 +52,13 @@ class TestTimeSeries(unittest.TestCase):
             print(attrs_id.to_pandas())
             attrs_values_id = client.get_entity_values_by_id(
                 entity_id=self.entity_1.id)
-            print(attrs_id.to_pandas())
+            print(attrs_values_id.to_pandas())
             attr_id = client.get_entity_attr_by_id(
                 entity_id=self.entity_1.id, attr_name="temperature")
-            print(attrs_id.to_pandas())
+            print(attr_id.to_pandas())
             attr_values_id = client.get_entity_attr_values_by_id(
                 entity_id=self.entity_1.id, attr_name="temperature")
-            print(attrs_id.to_pandas())
+            print(attr_values_id.to_pandas())
             attrs_type = client.get_entity_by_type(
                 entity_type=self.entity_1.type)
             for entity in attrs_type:
