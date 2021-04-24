@@ -359,7 +359,6 @@ class QuantumLeapClient(BaseClient):
                                    offset=offset)
         return parse_obj_as(List[TimeSeriesEntity], res)
 
-
     # /entities/{entityId}
     def get_entity_by_id(self,
                          entity_id: str,
@@ -659,7 +658,7 @@ class QuantumLeapClient(BaseClient):
                                    geometry=geometry,
                                    coords=coords,
                                    aggr_scope=aggr_scope)
-        return [TimeSeries(type=entity_type, **item)
+        return [TimeSeries(entityType=entity_type, **item)
                 for item in res.get('entities')]
 
     # /types/{entityType}/value
@@ -704,7 +703,7 @@ class QuantumLeapClient(BaseClient):
                                    geometry=geometry,
                                    coords=coords,
                                    aggr_scope=aggr_scope)
-        return [TimeSeries(type=entity_type, **item)
+        return [TimeSeries(entityType=entity_type, **item)
                 for item in res.get('values')]
 
     # /types/{entityType}/attrs/{attrName}

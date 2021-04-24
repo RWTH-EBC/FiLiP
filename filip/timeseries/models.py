@@ -3,11 +3,11 @@ Data models for interacting with FIWARE's time series-api (aka QuantumLeap)
 """
 from __future__ import annotations
 import logging
-from typing import Any, Optional, List, Union
+from typing import Any, Optional, List
 import numpy as np
 import pandas as pd
 from aenum import Enum
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field
 from datetime import datetime
 from filip.cb.models import ContextEntity
 
