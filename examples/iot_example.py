@@ -1,7 +1,7 @@
 import logging
-from iota.client import IoTAClient
-from core.models import FiwareHeader
-from iota.models import Device, ServiceGroup
+from filip.iota.client import IoTAClient
+from filip.core.models import FiwareHeader
+from filip.iota.models import Device, ServiceGroup
 from uuid import uuid4
 
 logger = logging.getLogger(__name__)

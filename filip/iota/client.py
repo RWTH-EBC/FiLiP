@@ -18,8 +18,8 @@ class IoTAClient(BaseClient):
     https://iotagent-node-lib.readthedocs.io/en/latest/
     """
     def __init__(self,
-                 *,
                  url: str = None,
+                 *,
                  session: requests.Session = None,
                  fiware_header: FiwareHeader = None):
         url = url or settings.IOTA_URL

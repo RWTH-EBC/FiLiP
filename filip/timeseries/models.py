@@ -1,137 +1,24 @@
+"""
+Data models for interacting with FIWARE's time series-api (aka QuantumLeap)
+"""
 from __future__ import annotations
 import logging
-import numbers
+from typing import Any, Optional, List
+import numpy as np
 import pandas as pd
-from typing import Any, Optional, List, Union
-from pydantic import BaseModel, Field, validator
+from aenum import Enum
+from pydantic import BaseModel, Field
 from datetime import datetime
 from filip.cb.models import ContextEntity
 
 
-logger = logging.getLogger()
-
-
-class IndexArray(list):
-    """
-    Array of the timestamps which are indexes of the response for the
-    requested data. It's a parallel array to 'values'. The timestamp will be
-    in the ISO8601 format (e.g. 2010-10-10T07:09:00.792) or in milliseconds
-    since epoch whichever format was used in the input (notification), but
-    ALWAYS in UTC. When using aggregation options, the format of this remains
-    the same, only the semantics will change. For example, if aggrPeriod is day,
-     each index will be a valid timestamp of a moment in the corresponding day.
-    """
-    @classmethod
-    def __get_validators__(cls):
-        yield cls.validate
-
-    @classmethod
-    def __modify_schema__(cls, field_schema):
-        field_schema.update()
-
-    @classmethod
-    def validate(cls, v):
-        if not isinstance(v, list):
-            raise TypeError('list required')
-
-        for idx, timestamp in enumerate(v):
-            try:
-                float(timestamp)
-                v[idx] = datetime.strptime(timestamp, '%d.%m.%Y %H:%M:%S.%f')
-            except Exception:
-                pass
-            try:
-                v[idx] = datetime.fromtimestamp(timestamp/1000.0)
-            except Exception:
-                raise TypeError
-        return v
-
-    def __repr__(self):
-        return f'IndexArray({super().__repr__()})'
-
-
-class ValuesArray(list):
-    """
-    Array of values of the selected attribute, in the same corresponding order
-    of the 'index' array. When using aggregation options, the format of this
-    remains the same, only the semantics will change. For example, if aggrPeriod
-    is day, each value of course may not correspond to original measurements
-    but rather the aggregate of measurements in each day.
-    """
-    @classmethod
-    def __get_validators__(cls):
-        yield cls.validate
-
-    @classmethod
-    def validate(cls, v):
-        if not isinstance(v, list):
-            raise TypeError('list required')
-        if not isinstance(all(v), (str, numbers.Number)):
-            raise TypeError('Alphanumeric values required!')
-        return v
-
-    def __repr__(self):
-        return f'ValuesArray({super().__repr__()})'
-
-
-class BaseValues(BaseModel):
-    values: List[Any] = Field(
-        description="Array of values of the selected attribute, in the same "
-                    "corresponding order of the 'index' array. When using "
-                    "aggregation options, the format of this remains the same, "
-                    "only the semantics will change. For example, if "
-                    "aggrPeriod is day, each value of course may not "
-                    "correspond to original measurements but rather the "
-                    "aggregate of measurements in each day."
-    )
-
-    def to_pandas(self):
-        return pd.DataFrame(self)
-
-
-class IndexedValues(BaseValues):
-    index: List[Union[float, str, datetime]] = Field(
-        description="Array of the timestamps which are indexes of the response "
-                    "for the requested data. It's a parallel array to 'values'. "
-                    "The timestamp will be in the ISO8601 format "
-                    "(e.g. 2010-10-10T07:09:00.792) or in milliseconds since "
-                    "epoch whichever format was used in the input "
-                    "(notification), but ALWAYS in UTC. When using aggregation "
-                    "options, the format of this remains the same, only the "
-                    "semantics will change. For example, if aggrPeriod is day, "
-                    "each index will be a valid timestamp of a moment in the "
-                    "corresponding day."
-    )
-
-    @validator('index')
-    def validate_index(cls, v):
-        for idx, timestamp in enumerate(v):
-            if isinstance(timestamp, datetime):
-                return v
-            if isinstance(timestamp, float):
-                v[idx] = datetime.fromtimestamp(timestamp / 1000.0)
-            elif isinstance(timestamp, str):
-                v[idx] = datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%S.%f')
-            else:
-                raise TypeError
-        return v
-
-
-class AttributeValues(BaseValues):
-    attrName: str = Field(
-        title="Attribute name",
-        description=""
-    )
-
-
-class EntityIndexedValues(IndexedValues):
-    entityId: str = Field(
-        title="Entity Id",
-        description=""
-    )
+logger = logging.getLogger(__name__)
 
 
 class NotificationMessage(BaseModel):
+    """
+    Model to create new entry in QuantumLeap
+    """
     subscriptionId: Optional[str] = Field(
         description="Id of the subscription the notification comes from",
     )
@@ -146,26 +33,114 @@ class NotificationMessage(BaseModel):
 
 
 class TimeSeriesBase(BaseModel):
-    index: List[datetime] = None
+    """
+    Base model for other time series api models
+    """
+    index: List[datetime] = Field(
+        default=None,
+        description="Array of the timestamps which are indexes of the response "
+                    "for the requested data. It's a parallel array to 'values'. "
+                    "The timestamp will be in the ISO8601 format "
+                    "(e.g. 2010-10-10T07:09:00.792) or in milliseconds since "
+                    "epoch whichever format was used in the input "
+                    "(notification), but ALWAYS in UTC. When using aggregation "
+                    "options, the format of this remains the same, only the "
+                    "semantics will change. For example, if aggrPeriod is day, "
+                    "each index will be a valid timestamp of a moment in the "
+                    "corresponding day."
+    )
 
 
-class TimeSeriesEntity(TimeSeriesBase):
-    id: str = None
-    type: str
+class TimeSeriesHeader(TimeSeriesBase):
+    """
+    Model to describe an available entity in the time series api
+    """
+    # aliases are required due to inconsistencies in the api-specs
+    entityId: str = Field(default=None,
+                          alias="id",
+                          description="The entity id the time series api."
+                                      "If the id is unique among all entity "
+                                      "types, this could be used to uniquely "
+                                      "identify the entity instance. Otherwise, "
+                                      "you will have to use the entityType "
+                                      "attribute to resolve ambiguity.")
+    entityType: str = Field(default=None,
+                            alias="type",
+                            description="The type of an entity")
+
+    class Config:
+        allow_population_by_field_name = False
 
 
-class TimeSeries(TimeSeriesBase):
-    entityId: str = None
+class IndexedValues(BaseModel):
+    values: List[Any] = Field(
+        default=None,
+        description="Array of values of the selected attribute, in the same "
+                    "corresponding order of the 'index' array. When using "
+                    "aggregation options, the format of this remains the same, "
+                    "only the semantics will change. For example, if "
+                    "aggrPeriod is day, each value of course may not "
+                    "correspond to original measurements but rather the "
+                    "aggregate of measurements in each day."
+    )
+
+
+class AttributeValues(IndexedValues):
+    attrName: str = Field(
+        title="Attribute name",
+        description=""
+    )
+
+
+class TimeSeries(TimeSeriesHeader):
     attributes: List[AttributeValues] = None
-    values: ValuesArray = None
-    entityType: str = None
-    attrName: str = None
-    entities: List[EntityIndexedValues] = None
 
-    # TODO:make it more general
     def to_pandas(self):
-        print(self.dict())
-        index = pd.MultiIndex.from_product([[self.entityId], self.index],
-                                           names=['entity_id', 'index'])
-        columns = pd.MultiIndex.from_product([[self.attrName]])
-        return pd.DataFrame(self.values, index=index, columns=columns)
+        index = pd.Index(data=self.index, name='datetime')
+        attr_names = [attr.attrName for attr in self.attributes]
+        values = np.array([attr.values for attr in self.attributes]).transpose()
+        columns = pd.MultiIndex.from_product(
+            [[self.entityId], [self.entityType], attr_names],
+            names=['entityId', 'entityType', 'attribute'])
+
+        return pd.DataFrame(data=values, index=index, columns=columns)
+
+    class Config:
+        allow_population_by_field_name = True
+
+
+class AggrMethod(str, Enum):
+    """
+    Aggregation Methods
+    """
+    _init_ = 'value __doc__'
+    COUNT = "count", "Number of Entries"
+    SUM = "sum", "Sum"
+    AVG = "avg", "Average"
+    MIN = "min", "Minimum"
+    MAX = "max", "Maximum"
+
+
+class AggrPeriod(str, Enum):
+    """
+    Aggregation Periods
+    """
+    _init_ = 'value __doc__'
+    YEAR = "year", "year"
+    MONTH = "month", "month"
+    DAY = "day", "day"
+    HOUR = "hour", "hour"
+    MINUTE = "minute", "minute"
+    SECOND = "second", "second"
+
+
+class AggrScope(str, Enum):
+    """
+    Aggregation Periods
+    When the query results cover historical data for
+    multiple entities instances, you can define the aggregation method to be
+    applied for each entity instance [entity] or across them [global].
+    """
+    _init_ = 'value __doc__'
+    ENTITY = "entity", "Entity (default)"
+    GLOBAL = "global", "Global"

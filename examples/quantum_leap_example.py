@@ -1,10 +1,10 @@
 import logging
 
-from models import ContextEntity
-from core.models import FiwareHeader
-from timeseries import QuantumLeapClient
-from cb import ContextBrokerClient
-from timeseries.models import NotificationMessage
+from filip.cb.models import ContextEntity
+from filip.core.models import FiwareHeader
+from filip.timeseries import QuantumLeapClient
+from filip.cb import ContextBrokerClient
+from filip.timeseries.models import NotificationMessage
 
 logger = logging.getLogger(__name__)
 
@@ -82,8 +82,8 @@ def get_historical_data(entity_in_cb):
             ql_client:
         logger.info("------Historical data from QL------")
         try:
-            print(ql_client.get_entity_attrs_by_id(entity_in_cb.id))
-            print(ql_client.get_entity_attrs_values_by_id(entity_in_cb.id))
+            print(ql_client.get_entity_by_id(entity_in_cb.id))
+            print(ql_client.get_entity_values_by_id(entity_in_cb.id))
             print(ql_client.get_entity_attr_by_id(entity_in_cb.id, "temperature"))
             print(ql_client.get_entity_attr_values_by_id(entity_in_cb.id,
                                                          attr_name="temperature"))
