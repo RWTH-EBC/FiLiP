@@ -19,8 +19,11 @@ class TestTimeSeries(unittest.TestCase):
         self.attr = {'temperature': {'value': random(),
                                      'type': 'Number'},
                      'humidity': {'value': random(),
-                                  'type': 'Number'}}
+                                  'type': 'Number'},
+                     'co2': {'value': random(),
+                             'type': 'Number'}}
         self.entity_1 = ContextEntity(id='Kitchen', type='Room', **self.attr)
+        self.entity_2 = ContextEntity(id='LivingRoom', type='Room', **self.attr)
         self.cb_client = ContextBrokerClient(fiware_header=self.fiware_header)
 
     def test_meta_endpoints(self):
@@ -30,7 +33,7 @@ class TestTimeSeries(unittest.TestCase):
 
     def test_input_endpoints(self):
         with QuantumLeapClient(fiware_header=self.fiware_header) as client:
-            data = [self.entity_1]
+            data = [self.entity_1, self.entity_2]
             notification_message = NotificationMessage(data=data,
                                                        subscriptionId="test")
             self.assertIsNotNone(
@@ -39,7 +42,7 @@ class TestTimeSeries(unittest.TestCase):
 
     def test_entity_context(self):
         with QuantumLeapClient(fiware_header=self.fiware_header) as client:
-            entities = client.get_entities(entity_type='MyType')
+            entities = client.get_entities(entity_type='Room')
             for entity in entities:
                 print(entity.json(indent=2))
 
@@ -48,7 +51,11 @@ class TestTimeSeries(unittest.TestCase):
             with self.assertRaises(requests.RequestException):
                 client.get_entity_by_id(entity_id=self.entity_1.id,
                                         entity_type='MyType')
-            attrs_id = client.get_entity_by_id(entity_id=self.entity_1.id)
+            attrs_id = client.get_entity_by_id(entity_id=self.entity_1.id,
+                                               aggr_period='minute',
+                                               aggr_method='avg',
+                                               attrs='temperature,co2')
+            print(attrs_id.json(indent=2))
             print(attrs_id.to_pandas())
             attrs_values_id = client.get_entity_values_by_id(
                 entity_id=self.entity_1.id)

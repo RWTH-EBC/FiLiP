@@ -51,7 +51,7 @@ class TimeSeriesBase(BaseModel):
     )
 
 
-class TimeSeriesEntity(TimeSeriesBase):
+class TimeSeriesHeader(TimeSeriesBase):
     """
     Model to describe an available entity in the time series api
     """
@@ -72,7 +72,7 @@ class TimeSeriesEntity(TimeSeriesBase):
         allow_population_by_field_name = False
 
 
-class IndexedValues(TimeSeriesBase):
+class IndexedValues(BaseModel):
     values: List[Any] = Field(
         default=None,
         description="Array of values of the selected attribute, in the same "
@@ -92,7 +92,7 @@ class AttributeValues(IndexedValues):
     )
 
 
-class TimeSeries(TimeSeriesEntity):
+class TimeSeries(TimeSeriesHeader):
     attributes: List[AttributeValues] = None
 
     def to_pandas(self):
@@ -107,6 +107,7 @@ class TimeSeries(TimeSeriesEntity):
 
     class Config:
         allow_population_by_field_name = True
+
 
 class AggrMethod(str, Enum):
     """

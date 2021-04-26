@@ -16,7 +16,7 @@ from filip.timeseries.models import \
     AttributeValues, \
     NotificationMessage, \
     TimeSeries, \
-    TimeSeriesEntity
+    TimeSeriesHeader
 
 
 logger = logging.getLogger(__name__)
@@ -328,7 +328,7 @@ class QuantumLeapClient(BaseClient):
                      to_date: str = None,
                      limit: int = None,
                      offset: int = None
-                     ) -> List[TimeSeriesEntity]:
+                     ) -> List[TimeSeriesHeader]:
         """
         Get list of all available entities and their context information
         about EntityType and last update date.
@@ -348,7 +348,7 @@ class QuantumLeapClient(BaseClient):
                 Default value : 10000
             offset (int): Offset for the results.
         Returns:
-            List of TimeSeriesEntity
+            List of TimeSeriesHeader
         """
         url = urljoin(self.base_url, 'v2/entities')
         res = self.__query_builder(url=url,
@@ -357,7 +357,7 @@ class QuantumLeapClient(BaseClient):
                                    to_date=to_date,
                                    limit=limit,
                                    offset=offset)
-        return parse_obj_as(List[TimeSeriesEntity], res)
+        return parse_obj_as(List[TimeSeriesHeader], res)
 
     # /entities/{entityId}
     def get_entity_by_id(self,
