@@ -22,6 +22,8 @@ class TestTimeSeries(unittest.TestCase):
                                   'type': 'Number'}}
         self.entity_1 = ContextEntity(id='Kitchen', type='Room', **self.attr)
         self.cb_client = ContextBrokerClient(fiware_header=self.fiware_header)
+        self.client.post_notification(NotificationMessage(data=[
+            self.entity_1], subscriptionId="test"))
 
     def test_meta_endpoints(self):
         with QuantumLeapClient(fiware_header=self.fiware_header) as client:
@@ -30,12 +32,17 @@ class TestTimeSeries(unittest.TestCase):
 
     def test_input_endpoints(self):
         with QuantumLeapClient(fiware_header=self.fiware_header) as client:
-            data = [self.entity_1]
-            notification_message = NotificationMessage(data=data,
-                                                       subscriptionId="test")
             self.assertIsNotNone(
-                client.post_subscription(entity_id=self.entity_1.id))
-            client.post_notification(notification_message)
+                client.post_subscription(entity_id=self.entity_1.id,
+                                         entity_type=self.entity_1.type))
+            try:
+                for sub in self.cb_client.get_subscription_list():
+                    for entity in sub.subject.entities:
+                        if (entity.id, entity.type) == (self.entity_1.id,
+                                                        self.entity_1.type):
+                            self.cb_client.delete_subscription(sub.id)
+            except:
+                pass
 
     def test_entity_context(self):
         with QuantumLeapClient(fiware_header=self.fiware_header) as client:
@@ -78,11 +85,8 @@ class TestTimeSeries(unittest.TestCase):
 
     def tearDown(self) -> None:
         try:
-            for sub in self.cb_client.get_subscription_list():
-                for entity in sub.subject.entities:
-                    if (entity.id, entity.type) == (self.entity_1.id,
-                                                    self.entity_1.type):
-                        self.cb_client.delete_subscription(sub.id)
+            self.client.delete_entity(entity_id=self.entity_1.id,
+                                      entity_type=self.entity_1.type)
         except:
             pass
         self.client.close()
