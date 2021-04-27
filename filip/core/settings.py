@@ -3,12 +3,12 @@ from typing import Union
 from pydantic import BaseSettings, Field, AnyHttpUrl, validator
 
 class _Settings(BaseSettings):
-    CB_URL: AnyHttpUrl = Field(default="http://localhost:1026",
+    CB_URL: AnyHttpUrl = Field(default="http://137.226.248.127:1026",
                                env=['ORION_URL', 'CB_URL', 'CB_HOST',
                                     'CONTEXTBROKER_URL', 'OCB_URL'])
-    IOTA_URL: AnyHttpUrl = Field(default="http://localhost:4041",
+    IOTA_URL: AnyHttpUrl = Field(default="http://137.226.248.127:4041",
                                  env='IOTA_URL')
-    QL_URL: AnyHttpUrl = Field(default="http://localhost:8668",
+    QL_URL: AnyHttpUrl = Field(default="http://137.226.248.127:8668",
                                env=['QUANTUMLEAP_URL', 'QL_URL'])
     LOGLEVEL: Union[int, str] = Field(
         title="LOGLEVEL",
