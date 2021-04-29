@@ -2,7 +2,8 @@ import logging
 from typing import List
 from requests import RequestException
 from filip.cb import ContextBrokerClient
-from filip.core.models import FiwareHeader, ContextEntity, ContextAttribute
+from filip.core.models import FiwareHeader
+from filip.cb.models import ContextEntity, ContextAttribute
 from filip.core.simple_query_language import QueryString
 
 logger = logging.getLogger(__name__)

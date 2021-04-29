@@ -5,7 +5,7 @@ import unittest
 from random import random
 import requests
 from filip.core.models import FiwareHeader
-from filip.core.models import ContextEntity, NotificationMessage
+from filip.cb.models import ContextEntity, NotificationMessage
 from filip.cb import ContextBrokerClient
 from filip.timeseries.client import QuantumLeapClient
 
