@@ -1,42 +1,55 @@
 from __future__ import annotations
 import logging
-import pytz
 import itertools
-import json
 from enum import Enum
 from typing import Any, Dict, Optional, List, Union
+import json
+import pytz
 from pydantic import BaseModel, Field, validator, AnyHttpUrl
 from filip.core.models import NgsiVersion, DataType, UnitCode
 
 
 logger = logging.getLogger()
 
+
 class ExpressionLanguage(str, Enum):
+    """
+    Options for expression language
+    """
     LEGACY = "legacy"
     JEXL = "jexl"
 
 
 class PayloadProtocol(str, Enum):
+    """
+    Options for payload protocols
+    """
     IOTA_JSON = "IoTA-JSON"
     IOTA_UL = "PDI-IoTA-UltraLight"
     LORAWAN = "LoRaWAN"
 
 
 class TransportProtocol(str, Enum):
+    """
+    Options for transport protocols
+    """
     MQTT = "MQTT"
     AMQP = "AMQP"
     HTTP = "HTTP"
 
 
 class BaseAttribute(BaseModel):
+    """
+    Base model for device attributes
+    """
     name: str = Field(
         description="ID of the attribute in the target entity in the "
                     "Context Broker. Allowed characters "
                     "are the ones in the plain ASCII set, except the following "
                     "ones: control characters, whitespace, &, ?, / and #.",
-        max_length = 256,
-        min_length = 1,
-        regex = "(^((?![?&#/])[\x00-\x7F])*$)(?!(id|type|geo:distance|\*))"
+        max_length=256,
+        min_length=1,
+        regex="(^((?![?&#/])[\x00-\x7F])*$)(?!(id|type|geo:distance|\*))"
     )
     type: Union[DataType, str] = Field(
         description="name of the type of the attribute in the target entity. "
@@ -68,7 +81,7 @@ class BaseAttribute(BaseModel):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex="^((?![?&#/])[\x00-\x7F])*$" # Make it FIWARE-Safe"
+        regex="^((?![?&#/])[\x00-\x7F])*$"  # Make it FIWARE-Safe"
     )
     entity_type: Optional[str] = Field(
         description="configures the type of an alternative entity. "
@@ -77,7 +90,7 @@ class BaseAttribute(BaseModel):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex="^((?![?&#/])[\x00-\x7F])*$" # Make it FIWARE-Safe"
+        regex="^((?![?&#/])[\x00-\x7F])*$"  # Make it FIWARE-Safe"
     )
     reverse: Optional[str] = Field(
         description="add bidirectionality expressions to the attribute. See "
@@ -95,6 +108,9 @@ class BaseAttribute(BaseModel):
 
 
 class DeviceAttribute(BaseAttribute):
+    """
+    Model for active device attributes
+    """
     object_id: Optional[str] = Field(
         description="name of the attribute as coming from the device."
     )
@@ -113,10 +129,16 @@ class DeviceAttribute(BaseAttribute):
 
 
 class LazyDeviceAttribute(DeviceAttribute):
+    """
+    Model for lazy device attributes
+    """
     pass
 
 
 class DeviceCommand(BaseModel):
+    """
+    Model for commands
+    """
     name: str = Field(
         description="ID of the attribute in the target entity in the "
                     "Context Broker. Allowed characters "
@@ -133,6 +155,9 @@ class DeviceCommand(BaseModel):
 
 
 class StaticDeviceAttribute(BaseAttribute):
+    """
+    Model for static device attributes
+    """
     value: Optional[Union[Dict, List, str, float]] = Field(
         description="Constant value for this attribute"
     )
@@ -143,11 +168,15 @@ class StaticDeviceAttribute(BaseAttribute):
 
 
 class ServiceGroup(BaseModel):
+    """
+    Model for device service group
+    """
     service: Optional[str] = Field(
         description="ServiceGroup of the devices of this type"
     )
     subservice: Optional[str] = Field(
-        description="Subservice of the devices of this type."
+        description="Subservice of the devices of this type.",
+        regex="^/"
     )
     resource: str = Field(
         description="string representing the Southbound resource that will be "
@@ -173,7 +202,7 @@ class ServiceGroup(BaseModel):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex="^((?![?&#/])[\x00-\x7F])*$" # Make it FIWARE-Safe
+        regex="^((?![?&#/])[\x00-\x7F])*$"  # Make it FIWARE-Safe
     )
     trust: Optional[str] = Field(
         description="trust token to use for secured access to the "
@@ -216,7 +245,7 @@ class ServiceGroup(BaseModel):
     )
     explicitAttrs: Optional[bool] = Field(
         description="optional boolean value, to support selective ignore "
-                    "of measures so that IOTA doesn’t progress. If not "
+                    "of measures so that IOTA does not progress. If not "
                     "specified default is false."
     )
     ngsiVersion: Optional[NgsiVersion] = Field(
@@ -230,14 +259,11 @@ class ServiceGroup(BaseModel):
                     "provided at device provisioning time."
     )
 
-    @validator('subservice')
-    def validate_service_path(cls, v):
-        assert v.startswith('/'), \
-            "Subservice must have a trailing slash ('/')"
-        return v
-
 
 class Device(BaseModel):
+    """
+    Model for device
+    """
     device_id: str = Field(
         description="Device ID that will be used to identify the device"
     )
@@ -250,7 +276,8 @@ class Device(BaseModel):
         default="/",
         description="Name of the subservice the device belongs to "
                     "(used in the fiware-servicepath header).",
-        max_length=51
+        max_length=51,
+        regex="^/"
     )
     entity_name: str = Field(
         description="Name of the entity representing the device in "
@@ -259,7 +286,7 @@ class Device(BaseModel):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex="^((?![?&#/])[\x00-\x7F])*$" # Make it FIWARE-Safe"
+        regex="^((?![?&#/])[\x00-\x7F])*$"  # Make it FIWARE-Safe"
     )
     entity_type: str = Field(
         description="Type of the entity in the Context Broker. "
@@ -268,7 +295,7 @@ class Device(BaseModel):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex="^((?![?&#/])[\x00-\x7F])*$" # Make it FIWARE-Safe"
+        regex="^((?![?&#/])[\x00-\x7F])*$"  # Make it FIWARE-Safe"
     )
     timezone: Optional[str] = Field(
         default='Europe/London',
@@ -328,7 +355,7 @@ class Device(BaseModel):
     explicitAttrs: Optional[bool] = Field(
         default=False,
         description="optional boolean value, to support selective ignore "
-                    "of measures so that IOTA doesn’t progress. If not "
+                    "of measures so that IOTA does not progress. If not "
                     "specified default is false."
     )
     ngsiVersion: NgsiVersion = Field(
@@ -338,23 +365,24 @@ class Device(BaseModel):
                     "v2 or ld. The default is v2. When not running in "
                     "mixed mode, this field is ignored.")
 
-    class Config():
+    class Config:
         validate_all = True
         validate_assignment = True
 
-    @validator('service_path')
-    def validate_service_path(cls, v):
-        assert v.startswith('/'), \
-            "ServiceGroup path must have a trailing slash ('/')"
-        return v
-
     @validator('timezone')
-    def validate_timezone(cls, v):
-        assert v in pytz.all_timezones
-        return v
+    def validate_timezone(cls, value):
+        """
+        validate timezone
+        Returns:
+            timezone
+        """
+        assert value in pytz.all_timezones
+        return value
 
     def get_attribute(self, attribute_name: str) -> Union[DeviceAttribute,
-        LazyDeviceAttribute, StaticDeviceAttribute, DeviceCommand]:
+                                                          LazyDeviceAttribute,
+                                                          StaticDeviceAttribute,
+                                                          DeviceCommand]:
         """
 
         Args:
@@ -370,10 +398,9 @@ class Device(BaseModel):
                                          self.commands):
             if attribute.name == attribute_name:
                 return attribute
-        logger.error(f"Device: {self.device_id}: Could not find "
-                     f"attribute with name {attribute_name}")
+        logger.error("Device: %s: Could not find "
+                     "attribute with name %s", self.device_id, attribute_name)
         raise KeyError
-
 
     def add_attribute(self,
                       attribute: Union[DeviceAttribute,
@@ -386,7 +413,7 @@ class Device(BaseModel):
         Args:
             attribute:
             update (bool): If 'True' and attribute does already exists tries
-            to  update the attribute if not
+                to  update the attribute if not
         Returns:
             None
         """
@@ -394,44 +421,44 @@ class Device(BaseModel):
             if isinstance(attribute, DeviceAttribute):
                 if attribute in self.attributes:
                     raise ValueError
-                else:
-                    self.attributes.append(attribute)
-                    self.__setattr__(name='attributes',
-                                     value=self.attributes)
+
+                self.attributes.append(attribute)
+                self.__setattr__(name='attributes',
+                                 value=self.attributes)
             elif isinstance(attribute, LazyDeviceAttribute):
                 if attribute in self.lazy:
                     raise ValueError
-                else:
-                    self.lazy.append(attribute)
-                    self.__setattr__(name='lazy',
-                                     value=self.lazy)
+
+                self.lazy.append(attribute)
+                self.__setattr__(name='lazy',
+                                 value=self.lazy)
             elif isinstance(attribute, StaticDeviceAttribute):
                 if attribute in self.static_attributes:
                     raise ValueError
-                else:
-                    self.static_attributes.append(attribute)
-                    self.__setattr__(name='static_attributes',
-                                     value=self.static_attributes)
+
+                self.static_attributes.append(attribute)
+                self.__setattr__(name='static_attributes',
+                                 value=self.static_attributes)
             elif isinstance(attribute, DeviceCommand):
                 if attribute in self.commands:
                     raise ValueError
-                else:
-                    self.commands.append(attribute)
-                    self.__setattr__(name='commands',
-                                     value=self.commands)
+
+                self.commands.append(attribute)
+                self.__setattr__(name='commands',
+                                 value=self.commands)
             else:
                 raise ValueError
         except ValueError:
             if update:
-                self.update_attribute(attribute, add=False)
-                logger.warning(f"Device: {self.device_id}: Attribute already "
-                               f"exists. Will update: \n"
-                               f" {attribute.json(indent=2)}")
+                self.update_attribute(attribute, append=False)
+                logger.warning("Device: %s: Attribute already "
+                               "exists. Will update: \n %s",
+                               self.device_id, attribute.json(indent=2))
             else:
-                logger.error(f"Device: {self.device_id}: Attribute already "
-                             f"exists: \n {attribute.json(indent=2)}")
+                logger.error("Device: %s: Attribute already "
+                             "exists: \n %s", self.device_id,
+                             attribute.json(indent=2))
                 raise
-
 
     def update_attribute(self,
                          attribute: Union[DeviceAttribute,
@@ -443,7 +470,7 @@ class Device(BaseModel):
         Updates existing device attribute
         Args:
             attribute: Attribute to add to device configuration
-            add (bool): Adds attribute if not exist
+            append (bool): Adds attribute if not exist
 
         Returns:
             None
@@ -463,13 +490,15 @@ class Device(BaseModel):
                 self.commands[idx].dict().update(attribute.dict())
         except ValueError:
             if append:
-                logger.warning(f"Device: {self.device_id}: Could not find "
-                               f"attribute: \n {attribute.json(indent=2)}")
+                logger.warning("Device: %s: Could not find "
+                               "attribute: \n %s",
+                               self.device_id, attribute.json(indent=2))
                 self.add_attribute(attribute=attribute)
 
             else:
-                logger.error(f"Device: {self.device_id}: Could not find "
-                             f"attribute: \n {attribute.json(indent=2)}")
+                logger.error("Device: %s: Could not find "
+                             "attribute: \n %s", self.device_id,
+                             attribute.json(indent=2))
                 raise KeyError
 
     def delete_attribute(self, attribute: Union[DeviceAttribute,
@@ -496,12 +525,13 @@ class Device(BaseModel):
             else:
                 raise ValueError
         except ValueError:
-            logger.warning(f"Device: {self.device_id}: Could not delete "
-                           f"attribute: \n {attribute.json(indent=2)}")
+            logger.warning(f"Device: %s: Could not delete "
+                           f"attribute: \n %s",
+                           self.device_id, attribute.json(indent=2))
             raise
 
-        logger.info(f"Device: {self.device_id}: Attribute deleted! \n"
-                    f"{attribute.json(indent=2)}")
+        logger.info("Device: %s: Attribute deleted! \n %s",
+                    self.device_id, attribute.json(indent=2))
 
     def get_command(self, command_name: str):
         """
@@ -518,6 +548,7 @@ class Device(BaseModel):
         Short for self.add_attribute
         Args:
             command (DeviceCommand):
+            update (bool): Update command if it already exists
         Returns:
         """
         self.add_attribute(attribute=command, update=update)
@@ -539,6 +570,6 @@ class Device(BaseModel):
             command:
 
         Returns:
-
+            None
         """
         self.delete_attribute(attribute=command)
