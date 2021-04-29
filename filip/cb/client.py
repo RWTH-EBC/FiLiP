@@ -384,6 +384,7 @@ class ContextBrokerClient(BaseClient):
         if response_format not in list(AttrsFormat):
             raise ValueError(f'Value must be in {list(AttrsFormat)}')
         params.update({'options': response_format})
+
         try:
             res = self.session.get(url=url, params=params, headers=headers)
             if res.ok:
@@ -1153,7 +1154,7 @@ class ContextBrokerClient(BaseClient):
               query: Query,
               limit: PositiveInt = None,
               order_by: str = None,
-              format: Union[AttrsFormat, str] = AttrsFormat.NORMALIZED ) -> \
+              format: Union[AttrsFormat, str] = AttrsFormat.NORMALIZED) -> \
             List[Any]:
         """
 
