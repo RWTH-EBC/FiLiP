@@ -1,6 +1,7 @@
 """
 NGSIv2 models for context broker interaction
 """
+import json
 from typing import Any, Type, List, Dict, Union, Optional, Pattern
 from datetime import datetime
 from aenum import Enum
@@ -13,15 +14,7 @@ from pydantic import \
     root_validator, \
     validator
 from filip.core.simple_query_language import QueryString, QueryStatement
-# These import are used for backward compatibility
-from filip.core.models import \
-    DataType, \
-    ContextMetadata, \
-    NamedContextMetadata, \
-    ContextAttribute, \
-    NamedContextAttribute, \
-    ContextEntityKeyValues, \
-    ContextEntity
+from filip.core.models import DataType
 
 
 class GetEntitiesOptions(str, Enum):
@@ -54,9 +47,341 @@ class GetEntitiesOptions(str, Enum):
                        "except that values are not repeated"
 
 
+# NGSIv2 entity models
+class ContextMetadata(BaseModel):
+    """
+    Context metadata is used in FIWARE NGSI in several places, one of them being
+    an optional part of the attribute value as described above. Similar to
+    attributes, each piece of metadata has:
+
+    Note that in NGSI it is not foreseen that metadata may contain nested
+    metadata.
+    """
+    type: Optional[Union[DataType, str]] = Field(
+        title="metadata type",
+        description="a metadata type, describing the NGSI value type of the "
+                    "metadata value Allowed characters "
+                    "are the ones in the plain ASCII set, except the following "
+                    "ones: control characters, whitespace, &, ?, / and #.",
+        max_length=256,
+        min_length=1,
+        regex="^((?![?&#/\*])[\x00-\x7F])*$" # Make it FIWARE-Safe
+    )
+    value: Optional[Any] = Field(
+        title="metadata value",
+        description="a metadata value containing the actual metadata"
+    )
 
 
+class NamedContextMetadata(ContextMetadata):
+    """
+    Model for metadata including a name
+    """
+    name: str = Field(
+        titel="metadata name",
+        description="a metadata name, describing the role of the metadata in "
+                    "the place where it occurs; for example, the metadata name "
+                    "accuracy indicates that the metadata value describes how "
+                    "accurate a given attribute value is. Allowed characters "
+                    "are the ones in the plain ASCII set, except the following "
+                    "ones: control characters, whitespace, &, ?, / and #.",
+        max_length=256,
+        min_length=1,
+        regex="^((?![?&#/*])[\x00-\x7F])*$" # Make it FIWARE-Safe
+    )
 
+class ContextAttribute(BaseModel):
+    """
+    Model for an attribute is represented by a JSON object with the following
+    syntax:
+
+    The attribute value is specified by the value property, whose value may
+    be any JSON datatype.
+
+    The attribute NGSI type is specified by the type property, whose value
+    is a string containing the NGSI type.
+
+    The attribute metadata is specified by the metadata property. Its value
+    is another JSON object which contains a property per metadata element
+    defined (the name of the property is the name of the metadata element).
+    Each metadata element, in turn, is represented by a JSON object
+    containing the following properties:
+
+    Values of entity attributes. For adding it you need to nest it into a
+    dict in order to give it a name.
+    Args:
+        value: Its value contains the metadata value, which may correspond to
+            any JSON datatype.
+        type: Its value contains a string representation of the metadata
+            NGSI type.
+    Examples:
+        {
+          "value": <...>,
+          "type": <...>,
+          "metadata": <...>
+        }
+    """
+    type: Union[DataType, str] = Field(
+        default=DataType.TEXT,
+        description="The attribute type represents the NGSI value type of the "
+                    "attribute value. Note that FIWARE NGSI has its own type "
+                    "system for attribute values, so NGSI value types are not "
+                    "the same as JSON types. Allowed characters "
+                    "are the ones in the plain ASCII set, except the following "
+                    "ones: control characters, whitespace, &, ?, / and #.",
+        max_length = 256,
+        min_length = 1,
+        regex = "^((?![?&#/])[\x00-\x7F])*$", # Make it FIWARE-Safe
+    )
+    value: Optional[Union[Union[float, int, bool, str, List, Dict[str, Any]],
+                          List[Union[float, int, bool, str, List,
+                                     Dict[str, Any]]]]] = Field(
+        default=None,
+        title="Attribute value",
+        description="the actual data"
+    )
+    metadata: Optional[Union[Dict[str, ContextMetadata],
+                             NamedContextMetadata,
+                             List[NamedContextMetadata]]] = Field(
+        default={},
+        title="Metadata",
+        description="optional metadata describing properties of the attribute "
+                    "value like e.g. accuracy, provider, or a timestamp")
+
+    @validator('value')
+    def validate_value_type(cls, v, values):
+        """validator for field 'value'"""
+        type_ = values['type']
+        if v:
+            if type_ == DataType.TEXT:
+                if isinstance(v, list):
+                    return [str(item) for item in v]
+                return str(v)
+            elif type_ == DataType.BOOLEAN:
+                if isinstance(v, list):
+                    return [bool(item) for item in v]
+                return bool(v)
+            elif type_ == DataType.NUMBER or type_ == DataType.FLOAT:
+                if isinstance(v, list):
+                    return [float(item) for item in v]
+                return float(v)
+            elif type_ == DataType.INTEGER:
+                if isinstance(v, list):
+                    return [int(item) for item in v]
+                return int(v)
+            elif type_ == DataType.DATETIME:
+                return v
+            elif type_ == DataType.ARRAY:
+                if isinstance(v, list):
+                    return v
+                raise TypeError(f"{type(v)} does not match {DataType.ARRAY}")
+            elif type_ == DataType.STRUCTUREDVALUE:
+                v = json.dumps(v)
+                return json.loads(v)
+            else:
+                v = json.dumps(v)
+                return json.loads(v)
+        return v
+
+    @validator('metadata')
+    def validate_metadata_type(cls, v):
+        """validator for field 'metadata'"""
+        if isinstance(v, NamedContextMetadata):
+            v = [v]
+        elif isinstance(v, Dict):
+            if all(isinstance(item, ContextMetadata) for item in v.values()):
+                return v
+            json.dumps(v)
+            return {key: ContextMetadata(**item) for key, item in v.items()}
+        if isinstance(v, list):
+            if all(isinstance(item, NamedContextMetadata) for item in v):
+                return {item.name: ContextMetadata(**item.dict(exclude={
+                    'name'})) for item in v}
+            elif all(isinstance(item, Dict) for item in v):
+                return {key: ContextMetadata(**item) for key, item in v}
+        else:
+            raise TypeError(f"Invalid type {type(v)}")
+
+
+class NamedContextAttribute(ContextAttribute):
+    """
+    Context attributes are properties of context entities. For example, the
+    current speed of a car could be modeled as attribute current_speed of entity
+    car-104.
+
+    In the NGSI data model, attributes have an attribute name, an attribute type
+    an attribute value and metadata.
+    """
+    name: str = Field(
+        titel="Attribute name",
+        description="The attribute name describes what kind of property the "
+                    "attribute value represents of the entity, for example "
+                    "current_speed. Allowed characters "
+                    "are the ones in the plain ASCII set, except the following "
+                    "ones: control characters, whitespace, &, ?, / and #.",
+        max_length = 256,
+        min_length = 1,
+        regex = "(^((?![?&#/])[\x00-\x7F])*$)(?!(id|type|geo:distance|\*))",
+        # Make it FIWARE-Safe
+    )
+
+
+class ContextEntityKeyValues(BaseModel):
+    """
+    Base Model for an entity is represented by a JSON object with the following
+    syntax:
+
+    The entity id is specified by the object's id property, whose value
+    is a string containing the entity id.
+
+    The entity type is specified by the object's type property, whose value
+    is a string containing the entity's type name.
+    """
+    id: str = Field(
+        ...,
+        title="Entity Id",
+        description="Id of an entity in an NGSI context broker. "
+                    "Allowed characters are the ones in the plain ASCII set, "
+                    "except the following ones: control characters, "
+                    "whitespace, &, ?, / and #.",
+        example='Bcn-Welt',
+        max_length=256,
+        min_length=1,
+        regex="^((?![?&#/])[\x00-\x7F])*$", # Make it FIWARE-Safe
+        allow_mutation=False
+    )
+    type: str = Field(
+        ...,
+        title="Enity Type",
+        description="Id of an entity in an NGSI context broker. "
+                    "Allowed characters are the ones in the plain ASCII set, "
+                    "except the following ones: control characters, "
+                    "whitespace, &, ?, / and #.",
+        example="Room",
+        max_length=256,
+        min_length=1,
+        regex="^((?![?&#/])[\x00-\x7F])*$", # Make it FIWARE-Safe
+        allow_mutation=False
+    )
+
+    class Config():
+        extra = 'allow'
+        validate_all = True
+        validate_assignment = True
+
+
+class ContextEntity(ContextEntityKeyValues):
+    """
+    Context entities, or simply entities, are the center of gravity in the
+    FIWARE NGSI information model. An entity represents a thing, i.e., any
+    physical or logical object (e.g., a sensor, a person, a room, an issue in
+    a ticketing system, etc.). Each entity has an entity id.
+    Furthermore, the type system of FIWARE NGSI enables entities to have an
+    entity type. Entity types are semantic types; they are intended to describe
+    the type of thing represented by the entity. For example, a context
+    entity #with id sensor-365 could have the type temperatureSensor.
+
+    Each entity is uniquely identified by the combination of its id and type.
+
+    The entity id is specified by the object's id property, whose value
+    is a string containing the entity id.
+
+    The entity type is specified by the object's type property, whose value
+    is a string containing the entity's type name.
+
+    Entity attributes are specified by additional properties, whose names are
+    the name of the attribute and whose representation is described in the
+    "ContextAttribute"-model. Obviously, id and type are
+    not allowed to be used as attribute names.
+
+    Args:
+        id (str): entity id
+        type (str): entity type
+        **data:
+
+    Examples:
+        {
+          "id": "entityID",
+          "type": "entityType",
+          "attr_1": <val_1>,
+          "attr_2": <val_2>,
+          ...
+          "attr_N": <val_N>
+        }
+    """
+    def __init__(self,
+                 id: str,
+                 type: str,
+                 **data):
+
+        # There is currently no validation for extra fields
+        data.update(self._validate_properties(data))
+        super().__init__(id=id, type=type, **data)
+
+    class Config():
+        extra = 'allow'
+        validate_all = True
+        validate_assignment = True
+
+    def _validate_properties(cls, data: Dict):
+        attrs = {key: ContextAttribute.parse_obj(attr) for key, attr in \
+                 data.items() if key not in ContextEntity.__fields__}
+        return attrs
+
+    def get_properties(self, format: str = 'list') -> Union[List[
+        NamedContextAttribute], Dict[str, ContextAttribute]]:
+        """
+        Args:
+            format:
+
+        Returns:
+
+        """
+        if format == 'dict':
+            return {key: ContextAttribute(**value) for key, value in
+                    self.dict().items() if key not in ContextEntity.__fields__
+                    and value.get('type') != DataType.RELATIONSHIP}
+
+        return [NamedContextAttribute(name=key, **value) for key, value in
+                self.dict().items() if key not in
+                ContextEntity.__fields__ and
+                value.get('type') != DataType.RELATIONSHIP]
+
+    def add_properties(self, attrs: Union[Dict[str, ContextAttribute],
+                                         List[NamedContextAttribute]]):
+        """
+
+        Args:
+            attrs:
+
+        Returns:
+
+        """
+        if isinstance(attrs, List):
+            attrs = {attr.name: ContextAttribute(**attr.dict(exclude={'name'}))
+                     for attr in attrs}
+        for key, attr in attrs.items():
+            self.__setattr__(name=key, value=attr)
+
+    def get_relationships(self, format: str = 'list') -> Union[List[
+                                           NamedContextAttribute], Dict[
+                                           str, ContextAttribute]]:
+        """
+
+        Args:
+            format:
+
+        Returns:
+
+        """
+        if format == 'dict':
+            return {key: ContextAttribute(**value) for key, value in
+                    self.dict().items() if key not in ContextEntity.__fields__
+                    and value.get('type') == DataType.RELATIONSHIP}
+        return [NamedContextAttribute(name=key, **value) for key, value in
+                self.dict().items() if key not in
+                ContextEntity.__fields__ and
+                value.get('type') == DataType.RELATIONSHIP]
 
 
 def username_alphanumeric(cls, v):
@@ -77,6 +402,24 @@ def create_context_entity_model(name: str = None, data: Dict = None) -> \
         **properties
     )
     return model
+
+
+class NotificationMessage(BaseModel):
+    """
+    Model for a notification message, when send to other NGSIv2-APIs
+    """
+    subscriptionId: Optional[str] = Field(
+        description="Id of the subscription the notification comes from",
+    )
+    data: List[ContextEntity] = Field(
+        description="is an array with the notification data itself which "
+                    "includes the entity and all concerned attributes. Each "
+                    "element in the array corresponds to a different entity. "
+                    "By default, the entities are represented in normalized "
+                    "mode. However, using the attrsFormat modifier, a "
+                    "simplified representation mode can be requested."
+    )
+
 
 
 # Models for Subscriptions start here
