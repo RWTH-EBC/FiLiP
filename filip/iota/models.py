@@ -49,7 +49,7 @@ class BaseAttribute(BaseModel):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex="(^((?![?&#/])[\x00-\x7F])*$)(?!(id|type|geo:distance|\*))"
+        regex=r"(^((?![?&#/])[\x00-\x7F])*$)(?!(id|type|geo:distance|\*))"
     )
     type: Union[DataType, str] = Field(
         description="name of the type of the attribute in the target entity. "
@@ -81,7 +81,7 @@ class BaseAttribute(BaseModel):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex="^((?![?&#/])[\x00-\x7F])*$"  # Make it FIWARE-Safe"
+        regex=r"^((?![?&#/])[\x00-\x7F])*$"  # Make it FIWARE-Safe"
     )
     entity_type: Optional[str] = Field(
         description="configures the type of an alternative entity. "
@@ -90,7 +90,7 @@ class BaseAttribute(BaseModel):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex="^((?![?&#/])[\x00-\x7F])*$"  # Make it FIWARE-Safe"
+        regex=r"^((?![?&#/])[\x00-\x7F])*$"  # Make it FIWARE-Safe"
     )
     reverse: Optional[str] = Field(
         description="add bidirectionality expressions to the attribute. See "
@@ -146,7 +146,7 @@ class DeviceCommand(BaseModel):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex="(^((?![?&#/])[\x00-\x7F])*$)(?!(id|type|geo:distance|\*))"
+        regex=r"(^((?![?&#/])[\x00-\x7F])*$)(?!(id|type|geo:distance|\*))"
     )
     type: Union[DataType, str] = Field(
         description="name of the type of the attribute in the target entity. ",
@@ -525,8 +525,8 @@ class Device(BaseModel):
             else:
                 raise ValueError
         except ValueError:
-            logger.warning(f"Device: %s: Could not delete "
-                           f"attribute: \n %s",
+            logger.warning("Device: %s: Could not delete "
+                           "attribute: \n %s",
                            self.device_id, attribute.json(indent=2))
             raise
 

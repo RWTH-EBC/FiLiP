@@ -13,7 +13,6 @@ class BaseClient:
     """
     This class implements an base client for all derived api-clients.
     """
-
     def __init__(self,
                  url: str = None,
                  *,
@@ -79,6 +78,11 @@ class BaseClient:
 
     @property
     def headers(self):
+        """
+        Return current session headers
+        Returns:
+            dict with headers
+        """
         return self.session.headers
 
     def log_error(self,
@@ -102,5 +106,10 @@ class BaseClient:
         else:
             self.logger.error(err)
 
-    def close(self):
+    def close(self) -> None:
+        """
+        Close http session
+        Returns:
+            None
+        """
         self.session.close()

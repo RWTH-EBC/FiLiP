@@ -23,17 +23,17 @@ class GetEntitiesOptions(str, Enum):
 
     NORMALIZED = "normalized", "Normalized message representation"
     KEY_VALUES = "keyValues", "Key value message representation." \
-                             "This mode represents the entity " \
-                             "attributes by their values only, leaving out " \
-                             "the information about type and metadata. " \
-                             "See example " \
-                             "below." \
-                             "Example: " \
-                             "{" \
-                             "  'id': 'R12345'," \
-                             "  'type': 'Room'," \
-                             "  'temperature': 22" \
-                             "}"
+                              "This mode represents the entity " \
+                              "attributes by their values only, leaving out " \
+                              "the information about type and metadata. " \
+                              "See example " \
+                              "below." \
+                              "Example: " \
+                              "{" \
+                              "  'id': 'R12345'," \
+                              "  'type': 'Room'," \
+                              "  'temperature': 22" \
+                              "}"
     VALUES = "values", "Key value message representation. " \
                        "This mode represents the entity as an array of " \
                        "attribute values. Information about id and type is " \
@@ -148,58 +148,58 @@ class ContextAttribute(BaseModel):
                     "value like e.g. accuracy, provider, or a timestamp")
 
     @validator('value')
-    def validate_value_type(cls, v, values):
+    def validate_value_type(cls, value, values):
         """validator for field 'value'"""
         type_ = values['type']
-        if v:
+        if value:
             if type_ == DataType.TEXT:
-                if isinstance(v, list):
-                    return [str(item) for item in v]
-                return str(v)
-            elif type_ == DataType.BOOLEAN:
-                if isinstance(v, list):
-                    return [bool(item) for item in v]
-                return bool(v)
-            elif type_ == DataType.NUMBER or type_ == DataType.FLOAT:
-                if isinstance(v, list):
-                    return [float(item) for item in v]
-                return float(v)
-            elif type_ == DataType.INTEGER:
-                if isinstance(v, list):
-                    return [int(item) for item in v]
-                return int(v)
-            elif type_ == DataType.DATETIME:
-                return v
-            elif type_ == DataType.ARRAY:
-                if isinstance(v, list):
-                    return v
-                raise TypeError(f"{type(v)} does not match {DataType.ARRAY}")
-            elif type_ == DataType.STRUCTUREDVALUE:
-                v = json.dumps(v)
-                return json.loads(v)
+                if isinstance(value, list):
+                    return [str(item) for item in value]
+                return str(value)
+            if type_ == DataType.BOOLEAN:
+                if isinstance(value, list):
+                    return [bool(item) for item in value]
+                return bool(value)
+            if type_ in (DataType.NUMBER, DataType.FLOAT):
+                if isinstance(value, list):
+                    return [float(item) for item in value]
+                return float(value)
+            if type_ == DataType.INTEGER:
+                if isinstance(value, list):
+                    return [int(item) for item in value]
+                return int(value)
+            if type_ == DataType.DATETIME:
+                return value
+            if type_ == DataType.ARRAY:
+                if isinstance(value, list):
+                    return value
+                raise TypeError(f"{type(value)} does not match "
+                                f"{DataType.ARRAY}")
+            if type_ == DataType.STRUCTUREDVALUE:
+                value = json.dumps(value)
+                return json.loads(value)
             else:
-                v = json.dumps(v)
-                return json.loads(v)
-        return v
+                value = json.dumps(value)
+                return json.loads(value)
+        return value
 
     @validator('metadata')
-    def validate_metadata_type(cls, v):
+    def validate_metadata_type(cls, value):
         """validator for field 'metadata'"""
-        if isinstance(v, NamedContextMetadata):
-            v = [v]
-        elif isinstance(v, Dict):
-            if all(isinstance(item, ContextMetadata) for item in v.values()):
-                return v
-            json.dumps(v)
-            return {key: ContextMetadata(**item) for key, item in v.items()}
-        if isinstance(v, list):
-            if all(isinstance(item, NamedContextMetadata) for item in v):
+        if isinstance(value, NamedContextMetadata):
+            value = [value]
+        elif isinstance(value, dict):
+            if all(isinstance(item, ContextMetadata) for item in value.values()):
+                return value
+            json.dumps(value)
+            return {key: ContextMetadata(**item) for key, item in value.items()}
+        if isinstance(value, list):
+            if all(isinstance(item, NamedContextMetadata) for item in value):
                 return {item.name: ContextMetadata(**item.dict(exclude={
-                    'name'})) for item in v}
-            elif all(isinstance(item, Dict) for item in v):
-                return {key: ContextMetadata(**item) for key, item in v}
-        else:
-            raise TypeError(f"Invalid type {type(v)}")
+                    'name'})) for item in value}
+            if all(isinstance(item, Dict) for item in value):
+                return {key: ContextMetadata(**item) for key, item in value}
+        raise TypeError(f"Invalid type {type(value)}")
 
 
 class NamedContextAttribute(ContextAttribute):
@@ -220,7 +220,7 @@ class NamedContextAttribute(ContextAttribute):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex="(^((?![?&#/])[\x00-\x7F])*$)(?!(id|type|geo:distance|\*))",
+        regex=r"(^((?![?&#/])[\x00-\x7F])*$)(?!(id|type|geo:distance|\*))",
         # Make it FIWARE-Safe
     )
 
@@ -264,6 +264,9 @@ class ContextEntityKeyValues(BaseModel):
     )
 
     class Config:
+        """
+        Pydantic config
+        """
         extra = 'allow'
         validate_all = True
         validate_assignment = True
@@ -328,6 +331,9 @@ class ContextEntity(ContextEntityKeyValues):
         super().__init__(id=id, type=type, **data)
 
     class Config:
+        """
+        Pydantic config
+        """
         extra = 'allow'
         validate_all = True
         validate_assignment = True
@@ -668,6 +674,9 @@ class Expression(BaseModel):
             return QueryString.parse_str(v)
 
     class Config:
+        """
+        Pydantic config
+        """
         json_encoders = {QueryString: lambda v: v.to_str(),
                          QueryStatement: lambda v: v.to_str()}
 
@@ -708,6 +717,9 @@ class Condition(BaseModel):
             raise TypeError()
 
     class Config:
+        """
+        Pydantic config
+        """
         json_encoders = {QueryString: lambda v: v.to_str(),
                          QueryStatement: lambda v: v.to_str()}
 
@@ -716,9 +728,9 @@ class Entity(BaseModel):
     """
     Entity pattern
     """
-    id: Optional[str] = Field(regex="\w")
+    id: Optional[str] = Field(regex=r"\w")
     idPattern: Optional[Pattern]
-    type: Optional[str] = Field(regex='\w')
+    type: Optional[str] = Field(regex=r'\w')
     typePattern: Optional[Pattern]
 
     @root_validator()
@@ -736,6 +748,9 @@ class Entity(BaseModel):
 
 
 class Subject(BaseModel):
+    """
+    Model for subscription subject
+    """
     entities: List[Entity] = Field(
         description="A list of objects, each one composed of by an Entity "
                     "Object:"
@@ -743,6 +758,9 @@ class Subject(BaseModel):
     condition: Optional[Condition] = Field()
 
     class Config:
+        """
+        Pydantic config
+        """
         json_encoders = {QueryString: lambda v: v.to_str(),
                          QueryStatement: lambda v: v.to_str()}
 
@@ -803,6 +821,9 @@ class Subscription(BaseModel):
     )
 
     class Config:
+        """
+        Pydantic config
+        """
         json_encoders = {QueryString: lambda v: v.to_str(),
                          QueryStatement: lambda v: v.to_str()}
 
@@ -860,10 +881,16 @@ class ForwardingInformation(BaseModel):
     )
 
     class Config:
+        """
+        Pydantic config
+        """
         allow_mutation = False
 
 
 class DataProvided(BaseModel):
+    """
+    Model for provided data
+    """
     entities: List[Entity] = Field(
         description="A list of objects, each one composed by an entity object"
     )
@@ -932,6 +959,9 @@ class Registration(BaseModel):
 
 
 class Query(BaseModel):
+    """
+    Model for queries
+    """
     entities: List[Entity] = Field(
         description="a list of entities to search for. Each element is "
                     "represented by a JSON object"
@@ -952,6 +982,9 @@ class Query(BaseModel):
 
 
 class ActionType(str, Enum):
+    """
+    Options for queries
+    """
     _init_ = 'value __doc__'
     APPEND = "append", "maps to POST /v2/entities (if the entity does not " \
                        "already exist) or POST /v2/entities/<id>/attrs (if " \
@@ -969,6 +1002,9 @@ class ActionType(str, Enum):
 
 
 class Update(BaseModel):
+    """
+    Model for update action
+    """
     action_type: Union[ActionType, str] = Field(
         alias='actionType',
         description="actionType, to specify the kind of update action to do: "
@@ -989,12 +1025,6 @@ class Update(BaseModel):
             action_type
         """
         return ActionType(action)
-
-
-class Notify(BaseModel):
-    subscriptionId: str = Field(
-        description=""
-    )
 
 # TODO: Add Relationships
 # class Relationship:
