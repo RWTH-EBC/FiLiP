@@ -8,13 +8,12 @@ import requests
 from pydantic import parse_obj_as
 from filip.core import settings
 from filip.core.base_client import BaseClient
-from filip.core.models import FiwareHeader
+from filip.core.models import FiwareHeader, NotificationMessage
 from filip.timeseries.models import \
     AggrPeriod, \
     AggrMethod, \
     AggrScope, \
     AttributeValues, \
-    NotificationMessage, \
     TimeSeries, \
     TimeSeriesHeader
 

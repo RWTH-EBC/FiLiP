@@ -158,7 +158,7 @@ class TestContextBroker(unittest.TestCase):
             attr_txt = NamedContextAttribute(name='attr_txt',
                                              type='Text',
                                              value="Test")
-            attr_txt = NamedContextAttribute(name='attr_txt',
+            attr_bool = NamedContextAttribute(name='attr_txt',
                                              type='Boolean',
                                              value=True)
             attr_list = NamedContextAttribute(name='attr_list',
@@ -167,7 +167,7 @@ class TestContextBroker(unittest.TestCase):
             attr_dict = NamedContextAttribute(name='attr_dict',
                                               type='StructuredValue',
                                               value={'key': 'value'})
-            entity.add_properties([attr_txt, attr_list, attr_dict])
+            entity.add_properties([attr_txt, attr_bool, attr_list, attr_dict])
 
             self.assertIsNotNone(client.post_entity(entity=entity,
                                                     update=True))

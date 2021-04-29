@@ -4,11 +4,10 @@ Tests for time series api client aka QuantumLeap
 import unittest
 from random import random
 import requests
-from filip.cb import ContextBrokerClient
 from filip.core.models import FiwareHeader
-from filip.cb.models import ContextEntity
+from filip.core.models import ContextEntity, NotificationMessage
+from filip.cb import ContextBrokerClient
 from filip.timeseries.client import QuantumLeapClient
-from filip.timeseries.models import NotificationMessage
 
 
 class TestTimeSeries(unittest.TestCase):

@@ -12,15 +12,17 @@ from pydantic import \
     PositiveFloat
 from filip.core.base_client import BaseClient
 from filip.core.settings import settings
-from filip.core.models import FiwareHeader, PaginationMethod
+from filip.core.models import \
+    FiwareHeader, \
+    PaginationMethod, \
+    ContextEntity, \
+    ContextEntityKeyValues, \
+    ContextAttribute, \
+    NamedContextAttribute
 from filip.core.simple_query_language import QueryString
 from filip.cb.models import \
     ActionType, \
     AttrsFormat, \
-    ContextEntity, \
-    ContextEntityKeyValues, \
-    ContextAttribute, \
-    NamedContextAttribute, \
     Subscription,\
     Registration,\
     Query, \

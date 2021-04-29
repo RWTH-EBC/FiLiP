@@ -3,33 +3,15 @@ Data models for interacting with FIWARE's time series-api (aka QuantumLeap)
 """
 from __future__ import annotations
 import logging
-from typing import Any, Optional, List
+from typing import Any, List
 import numpy as np
 import pandas as pd
 from aenum import Enum
 from pydantic import BaseModel, Field
 from datetime import datetime
-from filip.cb.models import ContextEntity
 
 
 logger = logging.getLogger(__name__)
-
-
-class NotificationMessage(BaseModel):
-    """
-    Model to create new entry in QuantumLeap
-    """
-    subscriptionId: Optional[str] = Field(
-        description="Id of the subscription the notification comes from",
-    )
-    data: List[ContextEntity] = Field(
-        description="is an array with the notification data itself which "
-                    "includes the entity and all concerned attributes. Each "
-                    "element in the array corresponds to a different entity. "
-                    "By default, the entities are represented in normalized "
-                    "mode. However, using the attrsFormat modifier, a "
-                    "simplified representation mode can be requested."
-    )
 
 
 class TimeSeriesBase(BaseModel):
@@ -39,8 +21,8 @@ class TimeSeriesBase(BaseModel):
     index: List[datetime] = Field(
         default=None,
         description="Array of the timestamps which are indexes of the response "
-                    "for the requested data. It's a parallel array to 'values'. "
-                    "The timestamp will be in the ISO8601 format "
+                    "for the requested data. It's a parallel array to 'values'."
+                    " The timestamp will be in the ISO8601 format "
                     "(e.g. 2010-10-10T07:09:00.792) or in milliseconds since "
                     "epoch whichever format was used in the input "
                     "(notification), but ALWAYS in UTC. When using aggregation "
@@ -61,8 +43,8 @@ class TimeSeriesHeader(TimeSeriesBase):
                           description="The entity id the time series api."
                                       "If the id is unique among all entity "
                                       "types, this could be used to uniquely "
-                                      "identify the entity instance. Otherwise, "
-                                      "you will have to use the entityType "
+                                      "identify the entity instance. Otherwise,"
+                                      " you will have to use the entityType "
                                       "attribute to resolve ambiguity.")
     entityType: str = Field(default=None,
                             alias="type",
