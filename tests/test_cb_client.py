@@ -24,6 +24,11 @@ class TestContextBroker(unittest.TestCase):
     Test class for ContextBrokerClient
     """
     def setUp(self) -> None:
+        """
+        Setup test data
+        Returns:
+            None
+        """
         self.resources = {
             "entities_url": "/v2/entities",
             "types_url": "/v2/types",
@@ -138,7 +143,7 @@ class TestContextBroker(unittest.TestCase):
             client.get_entity(entity_id=self.entity.id, attrs=['temperature'])
             self.assertEqual(client.get_entity_attributes(
                 entity_id=self.entity.id), res_entity.get_properties(
-                format='dict'))
+                response_format='dict'))
             res_entity.temperature.value = 25
             client.update_entity(entity=res_entity)
             self.assertEqual(client.get_entity(entity_id=self.entity.id),

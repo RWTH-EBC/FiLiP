@@ -22,7 +22,7 @@ class GetEntitiesOptions(str, Enum):
     _init_ = 'value __doc__'
 
     NORMALIZED = "normalized", "Normalized message representation"
-    KEYVALUES = "keyValues", "Key value message representation." \
+    KEY_VALUES = "keyValues", "Key value message representation." \
                              "This mode represents the entity " \
                              "attributes by their values only, leaving out " \
                              "the information about type and metadata. " \
@@ -251,7 +251,7 @@ class ContextEntityKeyValues(BaseModel):
     )
     type: str = Field(
         ...,
-        title="Enity Type",
+        title="Entity Type",
         description="Id of an entity in an NGSI context broker. "
                     "Allowed characters are the ones in the plain ASCII set, "
                     "except the following ones: control characters, "
@@ -339,19 +339,18 @@ class ContextEntity(ContextEntityKeyValues):
         return attrs
 
     def get_properties(self,
-                       format: Union[str, PropertyFormat] =
+                       response_format: Union[str, PropertyFormat] =
                        PropertyFormat.LIST) -> \
         Union[List[NamedContextAttribute],
               Dict[str, ContextAttribute]]:
         """
         Args:
-            format:
-
+            response_format:
         Returns:
 
         """
-        format = PropertyFormat(format)
-        if format == PropertyFormat.DICT:
+        response_format = PropertyFormat(response_format)
+        if response_format == PropertyFormat.DICT:
             return {key: ContextAttribute(**value) for key, value in
                     self.dict().items() if key not in ContextEntity.__fields__
                     and value.get('type') != DataType.RELATIONSHIP}
@@ -362,14 +361,13 @@ class ContextEntity(ContextEntityKeyValues):
                 value.get('type') != DataType.RELATIONSHIP]
 
     def add_properties(self, attrs: Union[Dict[str, ContextAttribute],
-                                          List[NamedContextAttribute]]):
+                                          List[NamedContextAttribute]]) -> None:
         """
-
+        Add property to entity
         Args:
             attrs:
-
         Returns:
-
+            None
         """
         if isinstance(attrs, List):
             attrs = {attr.name: ContextAttribute(**attr.dict(exclude={'name'}))
@@ -377,19 +375,21 @@ class ContextEntity(ContextEntityKeyValues):
         for key, attr in attrs.items():
             self.__setattr__(name=key, value=attr)
 
-    def get_relationships(self, format: Union[str, PropertyFormat] = 'list') \
+    def get_relationships(self,
+                          response_format: Union[str, PropertyFormat] =
+                          PropertyFormat.LIST) \
             -> Union[List[NamedContextAttribute],
                      Dict[str, ContextAttribute]]:
         """
-
+        Get all relationships of the context entity
         Args:
-            format:
+            response_format:
 
         Returns:
 
         """
-        format = PropertyFormat(format)
-        if format == PropertyFormat.DICT:
+        response_format = PropertyFormat(response_format)
+        if response_format == PropertyFormat.DICT:
             return {key: ContextAttribute(**value) for key, value in
                     self.dict().items() if key not in ContextEntity.__fields__
                     and value.get('type') == DataType.RELATIONSHIP}
@@ -456,6 +456,9 @@ class HttpMethods(str, Enum):
 
 
 class Http(BaseModel):
+    """
+    Model for notification address
+    """
     url: AnyHttpUrl = Field(
         description="URL referencing the service to be invoked when a "
                     "notification is generated. An NGSIv2 compliant server "
@@ -465,6 +468,9 @@ class Http(BaseModel):
 
 
 class HttpCustom(Http):
+    """
+    Model for custom notification address
+    """
     headers: Optional[Dict[str, Union[str, Json]]] = Field(
         description="a key-map of HTTP headers that are included in "
                     "notification messages."
@@ -488,20 +494,23 @@ class HttpCustom(Http):
 
 
 class AttrsFormat(str, Enum):
+    """
+    Allowed options for attribute formats
+    """
     _init_ = 'value __doc__'
 
     NORMALIZED = "normalized", "Normalized message representation"
-    KEYVALUE = "keyValues", "Key value message representation." \
-                            "This mode represents the entity " \
-                            "attributes by their values only, leaving out " \
-                            "the information about type and metadata. " \
-                            "See example below." \
-                            "Example: " \
-                            "{" \
-                            "  'id': 'R12345'," \
-                            "  'type': 'Room'," \
-                            "  'temperature': 22" \
-                            "}"
+    KEY_VALUES = "keyValues", "Key value message representation." \
+                              "This mode represents the entity " \
+                              "attributes by their values only, leaving out " \
+                              "the information about type and metadata. " \
+                              "See example below." \
+                              "Example: " \
+                              "{" \
+                              "  'id': 'R12345'," \
+                              "  'type': 'Room'," \
+                              "  'temperature': 22" \
+                              "}"
     VALUES = "values", "Key value message representation. " \
                        "This mode represents the entity as an array of " \
                        "attribute values. Information about id and type is " \
@@ -595,10 +604,10 @@ class NotificationResponse(Notification):
     )
 
 
-# Models for subsriptions
+# Models for subscriptions
 class Status(str, Enum):
     """
-    Curent status of a subscription
+    Current status of a subscription
     """
     _init_ = 'value __doc__'
 
@@ -831,7 +840,7 @@ class Provider(BaseModel):
 class ForwardingInformation(BaseModel):
     timesSent: int = Field(
         description="(not editable, only present in GET operations): "
-                    "Number of request forwardings sent due to this "
+                    "Number of forwarding requests sent due to this "
                     "registration."
     )
     lastForwarding: datetime = Field(
@@ -890,7 +899,7 @@ class Registration(BaseModel):
         description="Object that describes the context source registered.",
         example='"http": {"url": "http://localhost:1234"}'
     )
-    dataProvived: DataProvided = Field(
+    dataProvided: DataProvided = Field(
         description="Object that describes the data provided by this source",
         example='{'
                 '   "entities": [{"id": "room2", "type": "Room"}],'
@@ -901,7 +910,7 @@ class Registration(BaseModel):
         default=Status.ACTIVE,
         description="Either active (for active registration) or inactive "
                     "(for inactive registration). If this field is not "
-                    "provided at rtegistration creation time, new registration "
+                    "provided at registration creation time, new registration "
                     "are created with the active status, which can be changed"
                     " by clients afterwards. For expired registration, this "
                     "attribute is set to expired (no matter if the client "
