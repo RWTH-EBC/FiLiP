@@ -5,7 +5,11 @@ from uuid import uuid4
 
 from filip.core.models import FiwareHeader
 from filip.iota.client import IoTAClient
-from filip.iota.models import ServiceGroup, Device, DeviceAttribute, DeviceCommand, LazyDeviceAttribute, \
+from filip.iota.models import ServiceGroup, \
+    Device, \
+    DeviceAttribute, \
+    DeviceCommand, \
+    LazyDeviceAttribute, \
     StaticDeviceAttribute
 from filip.cb.client import ContextBrokerClient
 from filip.cb.models import ContextEntity
@@ -30,11 +34,11 @@ class TestAgent(unittest.TestCase):
         self.fiware_header = FiwareHeader(service='filip',
                                           service_path='/testing')
         self.service_group1 = ServiceGroup(entity_type='Thing',
-                                                 resource='/iot/json',
-                                                 apikey=str(uuid4()))
+                                           resource='/iot/json',
+                                           apikey=str(uuid4()))
         self.service_group2 = ServiceGroup(entity_type='OtherThing',
-                                                 resource='/iot/json',
-                                                 apikey=str(uuid4()))
+                                           resource='/iot/json',
+                                           apikey=str(uuid4()))
         self.client = IoTAClient(fiware_header=self.fiware_header)
 
     def test_get_version(self):
@@ -78,9 +82,9 @@ class TestAgent(unittest.TestCase):
                                    entity_name='test')
             attr_command = DeviceCommand(name='open')
             attr_lazy = LazyDeviceAttribute(name='pressure',
-                                           object_id='p',
-                                           type='Text',
-                                           entity_name='pressure')
+                                            object_id='p',
+                                            type='Text',
+                                            entity_name='pressure')
             attr_static = StaticDeviceAttribute(name='hasRoom',
                                                 type='Relationship',
                                                 value='my_partner_id')
@@ -119,4 +123,3 @@ class TestAgent(unittest.TestCase):
         except requests.RequestException:
             pass
         self.client.close()
-

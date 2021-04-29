@@ -356,17 +356,18 @@ class ContextBrokerClient(BaseClient):
         Args:
             entity_id (String): Id of the entity to be retrieved
             entity_type (String): Entity type, to avoid ambiguity in case
-            there are several entities with the same entity id.
-            attrs (List of Strings): List of attribute names whose data must be 
-            included in the response. The attributes are retrieved in the order
-            specified by this parameter.
-            See "Filtering out attributes and metadata" section for more
-            detail. If this parameter is not included, the attributes are
-            retrieved in arbitrary order, and all the attributes of the entity
-            are included in the response. Example: temperature,humidity.
+                there are several entities with the same entity id.
+            attrs (List of Strings): List of attribute names whose data must be
+                included in the response. The attributes are retrieved in the
+                order specified by this parameter.
+                See "Filtering out attributes and metadata" section for more
+                detail. If this parameter is not included, the attributes are
+                retrieved in arbitrary order, and all the attributes of the
+                entity are included in the response.
+                Example: temperature, humidity.
             metadata (List of Strings): A list of metadata names to include in
-            the response. See "Filtering out attributes and metadata" section
-            for more detail. Example: accuracy.
+                the response. See "Filtering out attributes and metadata"
+                section for more detail. Example: accuracy.
             response_format (AttrsFormat, str): Representation format of
                 response
         Returns:
@@ -384,6 +385,7 @@ class ContextBrokerClient(BaseClient):
         if response_format not in list(AttrsFormat):
             raise ValueError(f'Value must be in {list(AttrsFormat)}')
         params.update({'options': response_format})
+
         try:
             res = self.session.get(url=url, params=params, headers=headers)
             if res.ok:
@@ -454,8 +456,7 @@ class ContextBrokerClient(BaseClient):
                 if response_format == AttrsFormat.NORMALIZED:
                     return {key: ContextAttribute(**values)
                             for key, values in res.json().items()}
-                else:
-                    return res.json()
+                return res.json()
             res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Could not load attributes from entity {entity_id}!"
@@ -465,13 +466,13 @@ class ContextBrokerClient(BaseClient):
     def update_entity(self,
                       entity: ContextEntity,
                       options: str = None,
-                      add=False):
+                      append=False):
         """
         The request payload is an object representing the attributes to
         append or update.
         Args:
             entity (ContextEntity):
-            add (bool):
+            append (bool):
             options:
         Returns:
 
@@ -1153,15 +1154,15 @@ class ContextBrokerClient(BaseClient):
               query: Query,
               limit: PositiveInt = None,
               order_by: str = None,
-              format: Union[AttrsFormat, str] = AttrsFormat.NORMALIZED ) -> \
-            List[Any]:
+              response_format: Union[AttrsFormat, str] =
+              AttrsFormat.NORMALIZED) -> List[Any]:
         """
-
+        Generate api query
         Args:
             query (Query):
             limit (PositiveInt):
             order_by (str):
-            format (AttrsFormat, str):
+            response_format (AttrsFormat, str):
         Returns:
             The response payload is an Array containing one object per matching
             entity, or an empty array [] if no entities are found. The entities
@@ -1173,10 +1174,10 @@ class ContextBrokerClient(BaseClient):
         headers.update({'Content-Type': 'application/json'})
         params = {'options': 'count'}
 
-        if format:
-            if format not in list(AttrsFormat):
+        if response_format:
+            if response_format not in list(AttrsFormat):
                 raise ValueError(f'Value must be in {list(AttrsFormat)}')
-            params['options'] = ','.join([format, 'count'])
+            params['options'] = ','.join([response_format, 'count'])
         try:
             items = self.__pagination(method=PaginationMethod.POST,
                                       url=url,
@@ -1185,9 +1186,9 @@ class ContextBrokerClient(BaseClient):
                                       data=query.json(exclude_unset=True,
                                                         exclude_none=True),
                                       limit=limit)
-            if format == AttrsFormat.NORMALIZED:
+            if response_format == AttrsFormat.NORMALIZED:
                 return parse_obj_as(List[ContextEntity], items)
-            if format == AttrsFormat.KEY_VALUES:
+            if response_format == AttrsFormat.KEY_VALUES:
                 return parse_obj_as(List[ContextEntityKeyValues], items)
             return items
         except requests.RequestException as err:

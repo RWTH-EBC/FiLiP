@@ -284,7 +284,7 @@ class TestContextBroker(unittest.TestCase):
             e = Entity(idPattern=".*", typePattern=".*TypeA$")
             q = Query.parse_obj({"entities": [e.dict(exclude_unset=True)]})
             self.assertEqual(1000,
-                             len(client.query(query=q, format='keyValues')))
+                             len(client.query(query=q, response_format='keyValues')))
 
     def tearDown(self) -> None:
         """
