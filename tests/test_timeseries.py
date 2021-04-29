@@ -4,15 +4,22 @@ Tests for time series api client aka QuantumLeap
 import unittest
 from random import random
 import requests
-from filip.cb import ContextBrokerClient
 from filip.core.models import FiwareHeader
-from filip.cb.models import ContextEntity
+from filip.cb.models import ContextEntity, NotificationMessage
+from filip.cb import ContextBrokerClient
 from filip.timeseries.client import QuantumLeapClient
-from filip.timeseries.models import NotificationMessage
 
 
 class TestTimeSeries(unittest.TestCase):
+    """
+    Test class for time series api client
+    """
     def setUp(self) -> None:
+        """
+        Setup test data
+        Returns:
+            None
+        """
         self.fiware_header = FiwareHeader(service='filip',
                                           service_path='/testing')
         self.client = QuantumLeapClient(fiware_header=self.fiware_header)
@@ -26,12 +33,22 @@ class TestTimeSeries(unittest.TestCase):
         self.entity_2 = ContextEntity(id='LivingRoom', type='Room', **self.attr)
         self.cb_client = ContextBrokerClient(fiware_header=self.fiware_header)
 
-    def test_meta_endpoints(self):
+    def test_meta_endpoints(self) -> None:
+        """
+        Test meta data endpoints
+        Returns:
+            None
+        """
         with QuantumLeapClient(fiware_header=self.fiware_header) as client:
             self.assertIsNotNone(client.get_version())
             self.assertIsNotNone(client.get_health())
 
-    def test_input_endpoints(self):
+    def test_input_endpoints(self) -> None:
+        """
+        Test input endpoint
+        Returns:
+            None
+        """
         with QuantumLeapClient(fiware_header=self.fiware_header) as client:
             data = [self.entity_1, self.entity_2]
             notification_message = NotificationMessage(data=data,
@@ -40,13 +57,23 @@ class TestTimeSeries(unittest.TestCase):
                 client.post_subscription(entity_id=self.entity_1.id))
             client.post_notification(notification_message)
 
-    def test_entity_context(self):
+    def test_entity_context(self) -> None:
+        """
+        Test entities endpoint
+        Returns:
+            None
+        """
         with QuantumLeapClient(fiware_header=self.fiware_header) as client:
             entities = client.get_entities(entity_type='Room')
             for entity in entities:
                 print(entity.json(indent=2))
 
-    def test_queries_endpoint(self):
+    def test_query_endpoints(self) -> None:
+        """
+        Test queries
+        Returns:
+            None
+        """
         with QuantumLeapClient(fiware_header=self.fiware_header) as client:
             with self.assertRaises(requests.RequestException):
                 client.get_entity_by_id(entity_id=self.entity_1.id,
@@ -84,6 +111,11 @@ class TestTimeSeries(unittest.TestCase):
                 print(entity.to_pandas())
 
     def tearDown(self) -> None:
+        """
+        Clean up server
+        Returns:
+            None
+        """
         try:
             for sub in self.cb_client.get_subscription_list():
                 for entity in sub.subject.entities:

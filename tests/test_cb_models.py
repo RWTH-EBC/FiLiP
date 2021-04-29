@@ -1,3 +1,6 @@
+"""
+Test module for context broker models
+"""
 import unittest
 
 from filip.cb.client import ContextBrokerClient
@@ -14,7 +17,15 @@ from filip.core.models import FiwareHeader
 
 
 class TestModels(unittest.TestCase):
+    """
+    Test class for context broker models
+    """
     def setUp(self) -> None:
+        """
+        Setup test data
+        Returns:
+            None
+        """
         self.attr = {'temperature': {'value': 20,
                                      'type': 'Number'}}
         self.relation = {'relation': {'value': 'OtherEntity',
@@ -24,7 +35,12 @@ class TestModels(unittest.TestCase):
         self.entity_data.update(self.attr)
         self.entity_data.update(self.relation)
 
-    def test_cb_attribute(self):
+    def test_cb_attribute(self) -> None:
+        """
+        Test context attribute models
+        Returns:
+            None
+        """
         attr = ContextAttribute(**{'value': 20, 'type': 'Text'})
         self.assertIsInstance(attr.value, str)
         attr = ContextAttribute(**{'value': 20, 'type': 'Number'})
@@ -36,7 +52,12 @@ class TestModels(unittest.TestCase):
         attr = ContextAttribute(**{'value': [20, 20], 'type': 'Array'})
         self.assertIsInstance(attr.value, list)
 
-    def test_cb_metadata(self):
+    def test_cb_metadata(self) -> None:
+        """
+        Test context metadata model
+        Returns:
+            None
+        """
         md1 = ContextMetadata(type='Text', value='test')
         md2 = NamedContextMetadata(name='info', type='Text', value='test')
         md3 = [NamedContextMetadata(name='info', type='Text', value='test')]
@@ -50,26 +71,44 @@ class TestModels(unittest.TestCase):
         self.assertEqual(attr1, attr2)
         self.assertEqual(attr1, attr3)
 
-    def test_cb_entity(self):
+    def test_cb_entity(self) -> None:
+        """
+        Test context entity models
+        Returns:
+            None
+        """
         entity = ContextEntity(**self.entity_data)
         self.assertEqual(self.entity_data, entity.dict(exclude_unset=True))
         entity = ContextEntity.parse_obj(self.entity_data)
         self.assertEqual(self.entity_data, entity.dict(exclude_unset=True))
-        properties = entity.get_properties()
+
+        properties = entity.get_properties(response_format='list')
         self.assertEqual(self.attr, {properties[0].name: properties[0].dict(
             exclude={'name', 'metadata'}, exclude_unset=True)})
+        properties = entity.get_properties(response_format='dict')
+        self.assertEqual(self.attr['temperature'],
+                         properties['temperature'].dict(exclude={'metadata'},
+                                                        exclude_unset=True))
+
         relations = entity.get_relationships()
         self.assertEqual(self.relation, {relations[0].name: relations[0].dict(
             exclude={'name', 'metadata'}, exclude_unset=True)})
+
         new_attr = {'new_attr': ContextAttribute(type='Number', value=25)}
         entity.add_properties(new_attr)
+
         generated_model = create_context_entity_model(data=self.entity_data)
         entity = generated_model(**self.entity_data)
         self.assertEqual(self.entity_data, entity.dict(exclude_unset=True))
         entity = generated_model.parse_obj(self.entity_data)
         self.assertEqual(self.entity_data, entity.dict(exclude_unset=True))
 
-    def test_cb_subscriptions(self):
+    def test_cb_subscriptions(self) -> None:
+        """
+        Test subscription models
+        Returns:
+            None
+        """
         sub_dict = {
             "description": "One subscription to rule them all",
             "subject": {
@@ -116,6 +155,11 @@ class TestModels(unittest.TestCase):
                 client.delete_subscription(subscription_id=sub_id)
 
     def test_update_model(self):
+        """
+        Test model for bulk updates
+        Returns:
+            None
+        """
         entities = [ContextEntity(id='1', type='myType')]
         action_type = ActionType.APPEND
         Update(actionType=action_type, entities=entities)

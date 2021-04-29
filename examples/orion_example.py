@@ -1,26 +1,35 @@
 import logging
+from typing import List
+from requests import RequestException
 from filip.cb import ContextBrokerClient
 from filip.core.models import FiwareHeader
 from filip.cb.models import ContextEntity, ContextAttribute
-from filip.core.simple_query_language import SimpleQuery
+from filip.core.simple_query_language import QueryString
 
 logger = logging.getLogger(__name__)
 
 
 def setup():
+    """
+    Get version of context broker
+    """
     logger.info("------Setting up clients------")
-    with ContextBrokerClient(fiware_header=FiwareHeader(service='filip',
-                                                        service_path='/testing')) as \
-            cb_client:
+    with ContextBrokerClient(
+            fiware_header=FiwareHeader(service='filip',
+                                       service_path='/testing')) as cb_client:
         for key, value in cb_client.get_version().items():
             print("Context broker version" + value["version"] + "at url " +
                   cb_client.base_url)
 
 
 def create_entities():
-    with ContextBrokerClient(fiware_header=FiwareHeader(service='filip',
-                                                        service_path='/testing')) as \
-            cb_client:
+    """
+    Create entities
+    """
+
+    with ContextBrokerClient(
+            fiware_header=FiwareHeader(service='filip',
+                                       service_path='/testing')) as cb_client:
         room1 = {"id": "Room1",
                  "type": "Room",
                  "temperature": {"value": 11,
@@ -56,13 +65,18 @@ def create_entities():
         cb_client.post_entity(entity=room2_entity)
         cb_client.post_entity(entity=room3_entity)
 
-        return room1_entity, room2_entity, room3_entity
+        return [room1_entity, room2_entity, room3_entity]
 
 
 def filter_entities():
-    with ContextBrokerClient(fiware_header=FiwareHeader(service='filip',
-                                                        service_path='/testing')) as \
-            cb_client:
+    """
+    Retrieve and filter entities
+    Returns:
+
+    """
+    with ContextBrokerClient(
+            fiware_header=FiwareHeader(service='filip',
+                                       service_path='/testing')) as cb_client:
         logger.info("------Get all entities from context broker------")
         logger.info(cb_client.get_entity_list())
 
@@ -76,17 +90,24 @@ def filter_entities():
         logger.info(cb_client.get_entity_list(id_pattern="^Room[2-5]"))
 
         logger.info("------Get entities by query expression------")
-        query = SimpleQuery(statements=[('temperature', '>', 22)])
+        query = QueryString(qs=[('temperature', '>', 22)])
         logger.info(cb_client.get_entity_list(q=query))
 
         logger.info("------Get attributes of entities------")
         logger.info(cb_client.get_entity_attributes(entity_id="Room1"))
 
 
-def update_entity(entity):
-    with ContextBrokerClient(fiware_header=FiwareHeader(service='filip',
-                                                        service_path='/testing')) as \
-            cb_client:
+def update_entity(entity: ContextEntity):
+    """
+    Update entitites
+    Args:
+        entity:
+    Returns:
+
+    """
+    with ContextBrokerClient(
+            fiware_header=FiwareHeader(service='filip',
+                                       service_path='/testing')) as cb_client:
         entity.add_properties({'Space': ContextAttribute(
             type='Number', value=111)})
 
@@ -103,32 +124,51 @@ def update_entity(entity):
         logger.info(cb_client.get_entity_attributes(entity_id=entity.id))
 
 
-def error_check(entity):
-    with ContextBrokerClient(fiware_header=FiwareHeader(service='filip',
-                                                        service_path='/testing')) as \
-            cb_client:
+def error_check(entity: ContextEntity):
+    """
+    Check error messages
+    Args:
+        entity:
+    Returns:
+
+    """
+
+    with ContextBrokerClient(
+            fiware_header=FiwareHeader(service='filip',
+                                       service_path='/testing')) as cb_client:
         try:
-            logger.info("------Should return an error for non existing id------")
+            logger.info("-----Should return an error "
+                        "for non existing id------")
             logger.info(cb_client.get_entity(entity_id="Room5"))
-        except:
+        except RequestException:
             try:
-                logger.info("------Should return an error for non existing type------")
+                logger.info("-----Should return an error "
+                            "for non existing type-----")
                 logger.info(cb_client.get_entity(entity_id=entity.id,
                                                  entity_type="Surface"))
-            except:
+            except RequestException:
                 try:
-                    logger.info("------Should return an error for non existing attribute "
-                                "name------")
-                    logger.info(cb_client.get_attribute_value(entity_id=entity.id,
-                                                              attr_name="area"))
-                except:
+                    logger.info("------Should return an error for non "
+                                "existing attribute name------")
+                    logger.info(
+                        cb_client.get_attribute_value(entity_id=entity.id,
+                                                      attr_name="area"))
+                except RequestException:
                     pass
 
 
-def delete_entities(entities_to_delete):
-    with ContextBrokerClient(fiware_header=FiwareHeader(service='filip',
-                                                        service_path='/testing')) as \
-            cb_client:
+def delete_entities(entities_to_delete: List[ContextEntity]):
+    """
+    Clean up
+    Args:
+        entities_to_delete:
+
+    Returns:
+
+    """
+    with ContextBrokerClient(
+            fiware_header=FiwareHeader(service='filip',
+                                       service_path='/testing')) as cb_client:
         logger.info("Deleting all test entities")
         for entity in entities_to_delete:
             cb_client.delete_entity(entity_id=entity.id)

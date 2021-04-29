@@ -212,7 +212,7 @@ class ContextBrokerClient(BaseClient):
                         attrs: List[str] = None,
                         metadata: str = None,
                         order_by: str = None,
-                        response_format: Union[AttrsFormat, str] = \
+                        response_format: Union[AttrsFormat, str] =
                         AttrsFormat.NORMALIZED
                         ) -> List[Union[ContextEntity,
                                         ContextEntityKeyValues,
@@ -330,7 +330,7 @@ class ContextBrokerClient(BaseClient):
                                       headers=headers)
             if AttrsFormat.NORMALIZED in response_format:
                 return parse_obj_as(List[ContextEntity], items)
-            if AttrsFormat.KEYVALUE in response_format:
+            if AttrsFormat.KEY_VALUES in response_format:
                 return parse_obj_as(List[ContextEntityKeyValues], items)
             return items
 
@@ -344,7 +344,8 @@ class ContextBrokerClient(BaseClient):
                    entity_type: str = None,
                    attrs: List[str] = None,
                    metadata: List[str] = None,
-                   response_format: Union[AttrsFormat, str] = AttrsFormat.NORMALIZED) \
+                   response_format: Union[AttrsFormat, str] =
+                   AttrsFormat.NORMALIZED) \
             -> Union[ContextEntity, ContextEntityKeyValues, Dict[str, Any]]:
         """
         This operation must return one entity element only, but there may be
@@ -366,7 +367,8 @@ class ContextBrokerClient(BaseClient):
             metadata (List of Strings): A list of metadata names to include in
             the response. See "Filtering out attributes and metadata" section
             for more detail. Example: accuracy.
-            response_format (AttrsFormat, str): Representation format of response
+            response_format (AttrsFormat, str): Representation format of
+                response
         Returns:
             ContextEntity
         """
@@ -389,7 +391,7 @@ class ContextBrokerClient(BaseClient):
                 self.logger.debug("Received: %s", res.json())
                 if response_format == AttrsFormat.NORMALIZED:
                     return ContextEntity(**res.json())
-                if response_format == AttrsFormat.KEYVALUE:
+                if response_format == AttrsFormat.KEY_VALUES:
                     return ContextEntityKeyValues(**res.json())
                 return res.json()
             res.raise_for_status()
@@ -417,18 +419,20 @@ class ContextBrokerClient(BaseClient):
         Args:
             entity_id (String): Id of the entity to be retrieved
             entity_type (String): Entity type, to avoid ambiguity in case
-            there are several entities with the same entity id.
+                there are several entities with the same entity id.
             attrs (List of Strings): List of attribute names whose data must be
-            included in the response. The attributes are retrieved in the order
-            specified by this parameter.
-            See "Filtering out attributes and metadata" section for more
-            detail. If this parameter is not included, the attributes are
-            retrieved in arbitrary order, and all the attributes of the entity
-            are included in the response. Example: temperature,humidity.
+                included in the response. The attributes are retrieved in the
+                order specified by this parameter.
+                See "Filtering out attributes and metadata" section for more
+                detail. If this parameter is not included, the attributes are
+                retrieved in arbitrary order, and all the attributes of the
+                entity are included in the response. Example: temperature,
+                humidity.
             metadata (List of Strings): A list of metadata names to include in
-            the response. See "Filtering out attributes and metadata" section
-            for more detail. Example: accuracy.
-            response_format (AttrsFormat, str): Representation format of response
+                the response. See "Filtering out attributes and metadata"
+                section for more detail. Example: accuracy.
+            response_format (AttrsFormat, str): Representation format of
+                response
         Returns:
             Dict
         """
@@ -1102,8 +1106,8 @@ class ContextBrokerClient(BaseClient):
         update: maps to PATCH /v2/entities/<id>/attrs.
 
         delete: maps to DELETE /v2/entities/<id>/attrs/<attrName> on every
-        attribute included in the entity or to DELETE /v2/entities/<id> if no
-        attribute were included in the entity.
+            attribute included in the entity or to DELETE /v2/entities/<id> if
+            no attribute were included in the entity.
 
         replace: maps to PUT /v2/entities/<id>/attrs.
 
@@ -1113,7 +1117,7 @@ class ContextBrokerClient(BaseClient):
             action_type (Update): "actionType, to specify the kind of update
                     action to do: either append, appendStrict, update, delete,
                     or replace. "
-            options (str): Optional 'keyValues'
+            update_format (str): Optional 'keyValues'
 
         Returns:
 
@@ -1125,7 +1129,7 @@ class ContextBrokerClient(BaseClient):
         params = {}
         if update_format:
             assert update_format == 'keyValues', \
-                "Only 'keyValues' is allowed as option"
+                "Only 'keyValues' is allowed as update format"
             params.update({'options': 'keyValues'})
         update = Update(actionType=action_type, entities=entities)
         try:
@@ -1183,7 +1187,7 @@ class ContextBrokerClient(BaseClient):
                                       limit=limit)
             if format == AttrsFormat.NORMALIZED:
                 return parse_obj_as(List[ContextEntity], items)
-            if format == AttrsFormat.KEYVALUE:
+            if format == AttrsFormat.KEY_VALUES:
                 return parse_obj_as(List[ContextEntityKeyValues], items)
             return items
         except requests.RequestException as err:
