@@ -55,14 +55,22 @@ class TestModels(unittest.TestCase):
         self.assertEqual(self.entity_data, entity.dict(exclude_unset=True))
         entity = ContextEntity.parse_obj(self.entity_data)
         self.assertEqual(self.entity_data, entity.dict(exclude_unset=True))
-        properties = entity.get_properties()
+
+        properties = entity.get_properties(format='list')
         self.assertEqual(self.attr, {properties[0].name: properties[0].dict(
             exclude={'name', 'metadata'}, exclude_unset=True)})
+        properties = entity.get_properties(format='dict')
+        self.assertEqual(self.attr['temperature'],
+                         properties['temperature'].dict(exclude={'metadata'},
+                                     exclude_unset=True))
+
         relations = entity.get_relationships()
         self.assertEqual(self.relation, {relations[0].name: relations[0].dict(
             exclude={'name', 'metadata'}, exclude_unset=True)})
+
         new_attr = {'new_attr': ContextAttribute(type='Number', value=25)}
         entity.add_properties(new_attr)
+
         generated_model = create_context_entity_model(data=self.entity_data)
         entity = generated_model(**self.entity_data)
         self.assertEqual(self.entity_data, entity.dict(exclude_unset=True))

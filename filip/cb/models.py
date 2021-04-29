@@ -38,9 +38,9 @@ class GetEntitiesOptions(str, Enum):
                        "This mode represents the entity as an array of " \
                        "attribute values. Information about id and type is " \
                        "left out. See example below. The order of the " \
-                       "attributes in the array is specified by the attrs URI " \
-                       "param (e.g. attrs=branch,colour,engine). If attrs is " \
-                       "not used, the order is arbitrary. " \
+                       "attributes in the array is specified by the attrs " \
+                       "URI param (e.g. attrs=branch,colour,engine). " \
+                       "If attrs is not used, the order is arbitrary. " \
                        "Example:" \
                        "[ 'Ford', 'black', 78.3 ]"
     UNIQUE = 'unique', "unique mode. This mode is just like values mode, " \
@@ -65,7 +65,7 @@ class ContextMetadata(BaseModel):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex="^((?![?&#/\*])[\x00-\x7F])*$" # Make it FIWARE-Safe
+        regex="^((?![?&#\/*])[\x00-\x7F])*$"  # Make it FIWARE-Safe
     )
     value: Optional[Any] = Field(
         title="metadata value",
@@ -87,8 +87,9 @@ class NamedContextMetadata(ContextMetadata):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex="^((?![?&#/*])[\x00-\x7F])*$" # Make it FIWARE-Safe
+        regex="^((?![?&#/*])[\x00-\x7F])*$"  # Make it FIWARE-Safe
     )
+
 
 class ContextAttribute(BaseModel):
     """
@@ -109,11 +110,9 @@ class ContextAttribute(BaseModel):
 
     Values of entity attributes. For adding it you need to nest it into a
     dict in order to give it a name.
-    Args:
-        value: Its value contains the metadata value, which may correspond to
-            any JSON datatype.
-        type: Its value contains a string representation of the metadata
-            NGSI type.
+    value: Its value contains the metadata value, which may correspond to
+        any JSON datatype.
+    type: Its value contains a string representation of the metadata NGSI type.
     Examples:
         {
           "value": <...>,
@@ -129,9 +128,9 @@ class ContextAttribute(BaseModel):
                     "the same as JSON types. Allowed characters "
                     "are the ones in the plain ASCII set, except the following "
                     "ones: control characters, whitespace, &, ?, / and #.",
-        max_length = 256,
-        min_length = 1,
-        regex = "^((?![?&#/])[\x00-\x7F])*$", # Make it FIWARE-Safe
+        max_length=256,
+        min_length=1,
+        regex="^((?![?&#/])[\x00-\x7F])*$",  # Make it FIWARE-Safe
     )
     value: Optional[Union[Union[float, int, bool, str, List, Dict[str, Any]],
                           List[Union[float, int, bool, str, List,
@@ -219,9 +218,9 @@ class NamedContextAttribute(ContextAttribute):
                     "current_speed. Allowed characters "
                     "are the ones in the plain ASCII set, except the following "
                     "ones: control characters, whitespace, &, ?, / and #.",
-        max_length = 256,
-        min_length = 1,
-        regex = "(^((?![?&#/])[\x00-\x7F])*$)(?!(id|type|geo:distance|\*))",
+        max_length=256,
+        min_length=1,
+        regex="(^((?![?&#/])[\x00-\x7F])*$)(?!(id|type|geo:distance|\*))",
         # Make it FIWARE-Safe
     )
 
@@ -247,7 +246,7 @@ class ContextEntityKeyValues(BaseModel):
         example='Bcn-Welt',
         max_length=256,
         min_length=1,
-        regex="^((?![?&#/])[\x00-\x7F])*$", # Make it FIWARE-Safe
+        regex="^((?![?&#/])[\x00-\x7F])*$",  # Make it FIWARE-Safe
         allow_mutation=False
     )
     type: str = Field(
@@ -260,14 +259,23 @@ class ContextEntityKeyValues(BaseModel):
         example="Room",
         max_length=256,
         min_length=1,
-        regex="^((?![?&#/])[\x00-\x7F])*$", # Make it FIWARE-Safe
+        regex="^((?![?&#/])[\x00-\x7F])*$",  # Make it FIWARE-Safe
         allow_mutation=False
     )
 
-    class Config():
+    class Config:
         extra = 'allow'
         validate_all = True
         validate_assignment = True
+
+
+class PropertyFormat(str, Enum):
+    """
+    Format to decide if properties of ContextEntity class are returned as
+    List of NamedContextAttributes or as Dict of ContextAttributes.
+    """
+    LIST = 'list'
+    DICT = 'dict'
 
 
 class ContextEntity(ContextEntityKeyValues):
@@ -309,6 +317,7 @@ class ContextEntity(ContextEntityKeyValues):
           "attr_N": <val_N>
         }
     """
+
     def __init__(self,
                  id: str,
                  type: str,
@@ -318,18 +327,22 @@ class ContextEntity(ContextEntityKeyValues):
         data.update(self._validate_properties(data))
         super().__init__(id=id, type=type, **data)
 
-    class Config():
+    class Config:
         extra = 'allow'
         validate_all = True
         validate_assignment = True
 
+    @classmethod
     def _validate_properties(cls, data: Dict):
-        attrs = {key: ContextAttribute.parse_obj(attr) for key, attr in \
+        attrs = {key: ContextAttribute.parse_obj(attr) for key, attr in
                  data.items() if key not in ContextEntity.__fields__}
         return attrs
 
-    def get_properties(self, format: str = 'list') -> Union[List[
-        NamedContextAttribute], Dict[str, ContextAttribute]]:
+    def get_properties(self,
+                       format: Union[str, PropertyFormat] =
+                       PropertyFormat.LIST) -> \
+        Union[List[NamedContextAttribute],
+              Dict[str, ContextAttribute]]:
         """
         Args:
             format:
@@ -337,7 +350,8 @@ class ContextEntity(ContextEntityKeyValues):
         Returns:
 
         """
-        if format == 'dict':
+        format = PropertyFormat(format)
+        if format == PropertyFormat.DICT:
             return {key: ContextAttribute(**value) for key, value in
                     self.dict().items() if key not in ContextEntity.__fields__
                     and value.get('type') != DataType.RELATIONSHIP}
@@ -348,7 +362,7 @@ class ContextEntity(ContextEntityKeyValues):
                 value.get('type') != DataType.RELATIONSHIP]
 
     def add_properties(self, attrs: Union[Dict[str, ContextAttribute],
-                                         List[NamedContextAttribute]]):
+                                          List[NamedContextAttribute]]):
         """
 
         Args:
@@ -363,9 +377,9 @@ class ContextEntity(ContextEntityKeyValues):
         for key, attr in attrs.items():
             self.__setattr__(name=key, value=attr)
 
-    def get_relationships(self, format: str = 'list') -> Union[List[
-                                           NamedContextAttribute], Dict[
-                                           str, ContextAttribute]]:
+    def get_relationships(self, format: Union[str, PropertyFormat] = 'list') \
+            -> Union[List[NamedContextAttribute],
+                     Dict[str, ContextAttribute]]:
         """
 
         Args:
@@ -374,7 +388,8 @@ class ContextEntity(ContextEntityKeyValues):
         Returns:
 
         """
-        if format == 'dict':
+        format = PropertyFormat(format)
+        if format == PropertyFormat.DICT:
             return {key: ContextAttribute(**value) for key, value in
                     self.dict().items() if key not in ContextEntity.__fields__
                     and value.get('type') == DataType.RELATIONSHIP}
@@ -384,21 +399,31 @@ class ContextEntity(ContextEntityKeyValues):
                 value.get('type') == DataType.RELATIONSHIP]
 
 
-def username_alphanumeric(cls, v):
-    #assert v.value.isalnum(), 'must be numeric'
-    return v
-
-
-def create_context_entity_model(name: str = None, data: Dict = None) -> \
+def create_context_entity_model(name: str = None,
+                                data: Dict = None,
+                                validators: Dict[str, Any] = None) -> \
         Type['ContextEntity']:
+    """
+    Creates a ContextEntity-Model from a dict:
+    Args:
+        name:
+        data:
+        validators:
+            Example:
+            {'validate_test': validator('temperature')(username_alphanumeric)}
+            with:
+            def username_alphanumeric(cls, value):
+                 assert v.value.isalnum(), 'must be numeric'
+                return value
+    Returns:
+        ContextEntity
+    """
     properties = {key: (ContextAttribute, ...) for key in data.keys() if
                   key not in ContextEntity.__fields__}
-    validators = {'validate_test': validator('temperature')(
-        username_alphanumeric)}
     model = create_model(
         __model_name=name or 'GeneratedContextEntity',
         __base__=ContextEntity,
-        __validators__=validators,
+        __validators__=validators or {},
         **properties
     )
     return model
@@ -419,7 +444,6 @@ class NotificationMessage(BaseModel):
                     "mode. However, using the attrsFormat modifier, a "
                     "simplified representation mode can be requested."
     )
-
 
 
 # Models for Subscriptions start here
@@ -469,9 +493,9 @@ class AttrsFormat(str, Enum):
     NORMALIZED = "normalized", "Normalized message representation"
     KEYVALUE = "keyValues", "Key value message representation." \
                             "This mode represents the entity " \
-                            "attributes by their values only, leaving out the " \
-                            "information about type and metadata. See example " \
-                            "below." \
+                            "attributes by their values only, leaving out " \
+                            "the information about type and metadata. " \
+                            "See example below." \
                             "Example: " \
                             "{" \
                             "  'id': 'R12345'," \
@@ -482,9 +506,9 @@ class AttrsFormat(str, Enum):
                        "This mode represents the entity as an array of " \
                        "attribute values. Information about id and type is " \
                        "left out. See example below. The order of the " \
-                       "attributes in the array is specified by the attrs URI " \
-                       "param (e.g. attrs=branch,colour,engine). If attrs is " \
-                       "not used, the order is arbitrary. " \
+                       "attributes in the array is specified by the attrs " \
+                       "URI param (e.g. attrs=branch,colour,engine). " \
+                       "If attrs is not used, the order is arbitrary. " \
                        "Example:" \
                        "[ 'Ford', 'black', 78.3 ]"
 
@@ -494,8 +518,6 @@ class Notification(BaseModel):
     If the notification attributes are left empty, all attributes will be
     included in the notifications. Otherwise, only the specified ones will
     be included.
-    :param attribute_type: either 'attrs' or 'exceptAttrs'
-    :param _list: list of either 'attrs' or 'exceptAttrs' attributes
     """
     http: Optional[Http] = Field(
         description='It is used to convey parameters for notifications '
@@ -522,7 +544,7 @@ class Notification(BaseModel):
                     'attributes except the ones listed in this field.'
     )
     attrsFormat: Optional[AttrsFormat] = Field(
-        default= AttrsFormat.NORMALIZED,
+        default=AttrsFormat.NORMALIZED,
         description='specifies how the entities are represented in '
                     'notifications. Accepted values are normalized (default), '
                     'keyValues or values. If attrsFormat takes any value '
@@ -538,13 +560,13 @@ class Notification(BaseModel):
     @validator('httpCustom')
     def validate_http(cls, http_custom, values):
         if http_custom is not None:
-            assert values['http'] == None
+            assert values['http'] is None
         return http_custom
 
     @validator('exceptAttrs')
     def validate_attr(cls, except_attrs, values):
         if except_attrs is not None:
-            assert values['attrs'] == None
+            assert values['attrs'] is None
         return except_attrs
 
 
@@ -636,7 +658,7 @@ class Expression(BaseModel):
         if isinstance(v, str):
             return QueryString.parse_str(v)
 
-    class Config():
+    class Config:
         json_encoders = {QueryString: lambda v: v.to_str(),
                          QueryStatement: lambda v: v.to_str()}
 
@@ -676,7 +698,7 @@ class Condition(BaseModel):
         else:
             raise TypeError()
 
-    class Config():
+    class Config:
         json_encoders = {QueryString: lambda v: v.to_str(),
                          QueryStatement: lambda v: v.to_str()}
 
@@ -685,7 +707,7 @@ class Entity(BaseModel):
     """
     Entity pattern
     """
-    id: Optional[str] = Field(regex='\w')
+    id: Optional[str] = Field(regex="\w")
     idPattern: Optional[Pattern]
     type: Optional[str] = Field(regex='\w')
     typePattern: Optional[Pattern]
@@ -711,7 +733,7 @@ class Subject(BaseModel):
     )
     condition: Optional[Condition] = Field()
 
-    class Config():
+    class Config:
         json_encoders = {QueryString: lambda v: v.to_str(),
                          QueryStatement: lambda v: v.to_str()}
 
@@ -771,7 +793,7 @@ class Subscription(BaseModel):
                     "It is optional."
     )
 
-    class Config():
+    class Config:
         json_encoders = {QueryString: lambda v: v.to_str(),
                          QueryStatement: lambda v: v.to_str()}
 
@@ -781,8 +803,8 @@ class ForwardingMode(str, Enum):
     _init_ = 'value __doc__'
 
     NONE = "none", "This provider does not support request forwarding."
-    QUERY = "query", "This provider only supports request forwarding to query " \
-                     "data."
+    QUERY = "query", "This provider only supports request forwarding to " \
+                     "query data."
     UPDATE = "update", "This provider only supports request forwarding to " \
                        "update data."
     ALL = "all", "This provider supports both query and update forwarding " \
@@ -925,8 +947,8 @@ class ActionType(str, Enum):
     APPEND = "append", "maps to POST /v2/entities (if the entity does not " \
                        "already exist) or POST /v2/entities/<id>/attrs (if " \
                        "the entity already exists). "
-    APPEND_STRICT = "appendStrict", "maps to POST /v2/entities (if the entity " \
-                                    "does not already exist) or POST " \
+    APPEND_STRICT = "appendStrict", "maps to POST /v2/entities (if the " \
+                                    "entity does not already exist) or POST " \
                                     "/v2/entities/<id>/attrs?options=append " \
                                     "(if the entity already exists)."
     UPDATE = "update", "maps to PATCH /v2/entities/<id>/attrs."
@@ -959,23 +981,24 @@ class Update(BaseModel):
         """
         return ActionType(action)
 
+
 class Notify(BaseModel):
     subscriptionId: str = Field(
         description=""
     )
 
 # TODO: Add Relationships
-#class Relationship:
+# class Relationship:
 #    """
 #    Class implements the concept of FIWARE Entity Relationships.
 #    """
-#    def __init__(self, ref_object: Entity, subject: Entity, predicate: str =
-        #    None):
+#    def __init__(self, ref_object: Entity, subject: Entity,
+#    predicate: str = None):
 #        """
 #        :param ref_object:  The parent / object of the relationship
 #        :param subject: The child / subject of the relationship
 #        :param predicate: currently not supported -> describes the
-        #        relationship between object and subject
+#        relationship between object and subject
 #        """
 #        self.object = ref_object
 #        self.subject = subject
@@ -993,7 +1016,7 @@ class Notify(BaseModel):
 #    def get_ref(self):
 #        """
 #        Function creates the NGSI Ref schema in a ref_dict, needed for the
-        #        subject
+#        subject
 #        :return: ref_dict
 #        """
 #        ref_type = self.object.type
