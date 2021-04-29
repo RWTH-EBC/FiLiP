@@ -192,7 +192,7 @@ class ContextBrokerClient(BaseClient):
             res.raise_for_status()
         except requests.RequestException as err:
             if update and err.response.status_code == 422:
-                return self.update_entity(entity=entity, add=False)
+                return self.update_entity(entity=entity)
             msg = "Could not post entity {entity.id}"
             self.log_error(err=err, msg=msg)
             raise
