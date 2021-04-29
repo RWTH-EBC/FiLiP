@@ -375,7 +375,7 @@ class ContextEntity(ContextEntityKeyValues):
         Returns:
             None
         """
-        if isinstance(attrs, List):
+        if isinstance(attrs, list):
             attrs = {attr.name: ContextAttribute(**attr.dict(exclude={'name'}))
                      for attr in attrs}
         for key, attr in attrs.items():
