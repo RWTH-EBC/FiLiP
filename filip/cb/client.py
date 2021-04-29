@@ -1154,15 +1154,15 @@ class ContextBrokerClient(BaseClient):
               query: Query,
               limit: PositiveInt = None,
               order_by: str = None,
-              format: Union[AttrsFormat, str] = AttrsFormat.NORMALIZED) -> \
-            List[Any]:
+              response_format: Union[AttrsFormat, str] =
+              AttrsFormat.NORMALIZED) -> List[Any]:
         """
-
+        Generate api query
         Args:
             query (Query):
             limit (PositiveInt):
             order_by (str):
-            format (AttrsFormat, str):
+            response_format (AttrsFormat, str):
         Returns:
             The response payload is an Array containing one object per matching
             entity, or an empty array [] if no entities are found. The entities
@@ -1174,10 +1174,10 @@ class ContextBrokerClient(BaseClient):
         headers.update({'Content-Type': 'application/json'})
         params = {'options': 'count'}
 
-        if format:
-            if format not in list(AttrsFormat):
+        if response_format:
+            if response_format not in list(AttrsFormat):
                 raise ValueError(f'Value must be in {list(AttrsFormat)}')
-            params['options'] = ','.join([format, 'count'])
+            params['options'] = ','.join([response_format, 'count'])
         try:
             items = self.__pagination(method=PaginationMethod.POST,
                                       url=url,
@@ -1186,9 +1186,9 @@ class ContextBrokerClient(BaseClient):
                                       data=query.json(exclude_unset=True,
                                                         exclude_none=True),
                                       limit=limit)
-            if format == AttrsFormat.NORMALIZED:
+            if response_format == AttrsFormat.NORMALIZED:
                 return parse_obj_as(List[ContextEntity], items)
-            if format == AttrsFormat.KEY_VALUES:
+            if response_format == AttrsFormat.KEY_VALUES:
                 return parse_obj_as(List[ContextEntityKeyValues], items)
             return items
         except requests.RequestException as err:
