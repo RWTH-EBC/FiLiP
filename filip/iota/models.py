@@ -342,7 +342,7 @@ class Device(BaseModel):
                     "attributes appended."
     )
     internal_attributes: Optional[List[Dict[str, Any]]] = Field(
-        default=None,
+        default=[],
         description="List of internal attributes with free format for specific "
                     "IoT Agent configuration"
     )
