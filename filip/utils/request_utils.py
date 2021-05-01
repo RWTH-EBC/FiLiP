@@ -1,10 +1,10 @@
-import logging
-import json
-from pydantic import BaseModel, AnyHttpUrl
-
 """
 Helper functions for HTTP requests
 """
+import logging
+from pydantic import BaseModel, AnyHttpUrl
+
+
 
 HEADER_ACCEPT_JSON = {'Accept': 'application/json'}
 HEADER_ACCEPT_PLAIN = {'Accept': 'text/plain'}
@@ -14,6 +14,9 @@ HEADER_CONTENT_PLAIN = {'Content-Type': 'text/plain'}
 log = logging.getLogger(__name__)
 
 class UrlValidator(BaseModel):
+    """
+    Validator model for URLs
+    """
     url: AnyHttpUrl
 
 
@@ -27,72 +30,73 @@ def validate_url(url):
 
 
 
-def pretty_print_request(req):
-    print('{}\n{}\n{}\n\nBODY:{}\n{}'.format(
-        '-----------START-----------',
-        req.method + ' ' + req.url,
-        '\n'.join('{}: {}'.format(k, v) for k, v in req.headers.items()),
-        req.body,
-        '---------------------------'
-    ))
+#def pretty_print_request(req):
+#    print('{}\n{}\n{}\n\nBODY:{}\n{}'.format(
+#        '-----------START-----------',
+#        req.method + ' ' + req.url,
+#        '\n'.join('{}: {}'.format(k, v) for k, v in req.headers.items()),
+#        req.body,
+#        '---------------------------'
+#    ))
+#
+#
+#def check_response_ok(response, request_type):
+#    """checks if HTTP response code is less than 400"""
+#    if not response.ok:
+#        msg = str(request_type) + " request returned error status '" \
+#              + str(response.status_code) + " (" + str(response.reason) + ")'"
+#        print (msg)
+#        print ("request content:")
+#        pretty_print_request(response.request)
+#        return False
+#    else:
+#        print (str(request_type) + " ok")
+#        return True
 
 
-def check_response_ok(response, request_type):
-    """checks if HTTP response code is less than 400"""
-    if not response.ok:
-        msg = str(request_type) + " request returned error status '" \
-              + str(response.status_code) + " (" + str(response.reason) + ")'"
-        print (msg)
-        print ("request content:")
-        pretty_print_request(response.request)
-        return False
-    else:
-        print (str(request_type) + " ok")
-        return True
+# def response_ok(response) -> (bool, str):
+#    status = response.status_code
+#    ok = False
+#    retstr = ""
+#    if status == 200:
+#        ok = True
+#        retstr = "[INFO]: HTTP request OK"
+#    elif status == 201:
+#        ok = True
+#        retstr = "[INFO]: Created"
+#    elif status == 204:
+#        ok = True
+#        retstr = "[INFO]: HTTP request successfully processed"
+#    elif status == 405:
+#        retstr = "[INFO]: HTTP error - method not allowed"
+#    elif status == 411:
+#        retstr = "[INFO]: HTTP error - content length required"
+#    elif status == 413:
+#        retstr = "[INFO]: HTTP error - request entity too large"
+#    elif status == 415:
+#        retstr = "[INFO]: HTTP error - unsupported media type"
+#    elif status == 422:
+#        retstr = "[INFO]: HTTP error - unprocessable entity"
+#    else:
+#        retstr = "[INFO]: HTTP response: " + response.text
+#    return ok, retstr
 
-
-def response_ok(response) -> (bool, str):
-    status = response.status_code
-    ok = False
-    retstr = ""
-    if status == 200:
-        ok = True
-        retstr = "[INFO]: HTTP request OK"
-    elif status == 201:
-        ok = True
-        retstr = "[INFO]: Created"
-    elif status == 204:
-        ok = True
-        retstr = "[INFO]: HTTP request successfully processed"
-    elif status == 405:
-        retstr = "[INFO]: HTTP error - method not allowed"
-    elif status == 411:
-        retstr = "[INFO]: HTTP error - content length required"
-    elif status == 413:
-        retstr = "[INFO]: HTTP error - request entity too large"
-    elif status == 415:
-        retstr = "[INFO]: HTTP error - unsupported media type"
-    elif status == 422:
-        retstr = "[INFO]: HTTP error - unprocessable entity"
-    else:
-        retstr = "[INFO]: HTTP response: " + response.text
-    return ok, retstr
-
-def logging_switch(response):
-    status = response.status_code
-    ok, retstr = response_ok(response)
-    category = str(status)[0]
-    text = json.loads(response.text)
-    keys = [key for key in text.keys()]
-    level = {
-        "1": "INFO",
-        "2": "INFO",
-        "3": "WARNING",
-        "4": "ERROR",
-        "5": "ERROR",
-            }.get(category, "INFO")
-    response_text = f"The request was: {text[keys[0]]}, because: {text[keys[1]]} "
-    return level, response_text
+#def logging_switch(response):
+#    status = response.status_code
+#    ok, retstr = response_ok(response)
+#    category = str(status)[0]
+#    text = json.loads(response.text)
+#    keys = [key for key in text.keys()]
+#    level = {
+#        "1": "INFO",
+#        "2": "INFO",
+#        "3": "WARNING",
+#        "4": "ERROR",
+#        "5": "ERROR",
+#            }.get(category, "INFO")
+#    response_text = f"The request was: {text[keys[0]]}, because: {text[keys[
+    #    1]]} "
+#    return level, response_text
 
 
 
