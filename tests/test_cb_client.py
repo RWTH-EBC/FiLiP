@@ -3,6 +3,7 @@ Tests for filip.cb.client
 """
 import unittest
 import time
+import random
 from datetime import datetime
 from requests import RequestException
 from filip.core.models import FiwareHeader
@@ -163,16 +164,23 @@ class TestContextBroker(unittest.TestCase):
             attr_txt = NamedContextAttribute(name='attr_txt',
                                              type='Text',
                                              value="Test")
-            attr_bool = NamedContextAttribute(name='attr_txt',
-                                             type='Boolean',
-                                             value=True)
+            attr_bool = NamedContextAttribute(name='attr_bool',
+                                              type='Boolean',
+                                              value=True)
+            attr_float = NamedContextAttribute(name='attr_float',
+                                               type='Number',
+                                               value=round(random.random(), 5))
             attr_list = NamedContextAttribute(name='attr_list',
                                               type='StructuredValue',
                                               value=[1, 2, 3])
             attr_dict = NamedContextAttribute(name='attr_dict',
                                               type='StructuredValue',
                                               value={'key': 'value'})
-            entity.add_properties([attr_txt, attr_bool, attr_list, attr_dict])
+            entity.add_properties([attr_txt,
+                                   attr_bool,
+                                   attr_float,
+                                   attr_list,
+                                   attr_dict])
 
             self.assertIsNotNone(client.post_entity(entity=entity,
                                                     update=True))
@@ -187,6 +195,21 @@ class TestContextBroker(unittest.TestCase):
                 self.assertEqual(res_attr.value, attr.value)
                 value = client.get_attribute_value(entity_id=entity.id,
                                                    attr_name=attr.name)
+                # unfortunately FIWARE returns an int for 20.0 although float
+                # is expected
+                if isinstance(value, int) and not isinstance(value, bool):
+                    value=float(value)
+                self.assertEqual(type(value), type(attr.value))
+                self.assertEqual(value, attr.value)
+
+            for attr_name, attr in entity.get_properties(
+                    response_format='dict').items():
+
+                client.update_entity_attribute(entity_id=entity.id,
+                                               attr_name=attr_name,
+                                               attr=attr)
+                value = client.get_attribute_value(entity_id=entity.id,
+                                                   attr_name=attr_name)
                 # unfortunately FIWARE returns an int for 20.0 although float
                 # is expected
                 if isinstance(value, int) and not isinstance(value, bool):

@@ -1,20 +1,19 @@
+"""
+Implementation of Unit Codes
+"""
 import os
 from enum import Enum
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional
 import pandas as pd
 from pandas_datapackage_reader import read_datapackage
 from pydantic import BaseModel, Field
 
 
-
-
-class Level(BaseModel):
-    level: str = Field(alias="LevelAndCategory")
-    description: str = Field(alias="Description")
-
-
 class Unit(BaseModel):
+    """
+    Model for a unit definiton
+    """
     level: str = Field(alias="LevelAndCategory")
     name: str = Field(alias="Name")
     sector: str = Field(alias="Sector")
@@ -24,11 +23,16 @@ class Unit(BaseModel):
 
 
 class Units:
+    """
+    Class for creating the data set of unece units
+    It downloads the data and stores it in external resources if not
+    already present.
+    """
     levels: pd.DataFrame = None
     units: pd.DataFrame = None
 
     def __init__(self):
-        filename='unece-units-of-measure.hdf'
+        filename = 'unece-units-of-measure.hdf'
         # create directory for data if not exists
         dirpath = Path(__file__).parent.parent.absolute().joinpath(
             'external_resources')
@@ -46,11 +50,12 @@ class Units:
             self.units.to_hdf(filepath, key='units')
             self.levels.to_hdf(filepath, key='levels')
 
-        self.sectors = Enum('sectors', {str(sector).casefold().replace(' ','_'):
-                                           sector for sector in
-                                    self.units.Sector.unique()},
-                      module=__name__,
-                      type=str)
+        self.sectors = Enum('sectors',
+                            {str(sector).casefold().replace(' ','_'):
+                                 sector for sector in
+                             self.units.Sector.unique()},
+                            module=__name__,
+                            type=str)
 
     def __getattr__(self, item):
         item = item.casefold().replace('_', ' ')
@@ -66,7 +71,15 @@ class Units:
             raise KeyError
         return Unit(**row.to_dict(orient="records")[0])
 
-    def get_unit(self, *, name: str=None, code: str=None):
+    def get_unit(self, *, name: str=None, code: str=None) -> Unit:
+        """
+        Get unit by name or code
+        Args:
+            name:
+            code:
+
+        Returns:
+        """
         if name is not None and code is None:
             row = self.units.loc[(self.units.Name == name.casefold())]
         elif name is None and code is not None:
@@ -78,8 +91,17 @@ class Units:
             raise KeyError
         return Unit(**row.to_dict(orient="records")[0])
 
-    def get_sector(self, sector: str):
+    def get_sector(self, sector: str) -> List[Unit]:
+        """
+        Filter units by sector
+        Args:
+            sector:
+
+        Returns:
+            List of units
+        """
         rows = self.units.loc[(self.units.Name == sector.casefold())]
         return [Unit(**unit) for unit in rows.to_dict(orient="records")]
+
 
 units = Units()
