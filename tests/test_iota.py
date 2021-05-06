@@ -21,8 +21,8 @@ class TestAgent(unittest.TestCase):
             "device_id": "test_device",
             "service": None,
             "service_path": "/",
-            "entity_name": "saf",
-            "entity_type": "all",
+            "entity_name": "test_entity",
+            "entity_type": "test_entity_type",
             "timezone": 'Europe/Berlin',
             "timestamp": None,
             "apikey": "1234",
@@ -104,6 +104,36 @@ class TestAgent(unittest.TestCase):
             self.assertEqual(self.fiware_header.service, device_res.service)
             self.assertEqual(self.fiware_header.service_path,
                              device_res.service_path)
+
+    def test_metadata(self):
+        """
+        Test for metadata works but the api of iot agent-json seems not
+        working correctly
+        Returns:
+            None
+        """
+        metadata = {"accuracy": {"type": "Text",
+                                 "value": "+-5%"}}
+        attr = DeviceAttribute(name="temperature",
+                               object_id="temperature",
+                               type="Number",
+                               metadata=metadata)
+        device = Device(**self.device)
+        device.device_id = "device_with_meta"
+        device.add_attribute(attribute=attr)
+        print(device.json(indent=2))
+        fiware_header = FiwareHeader(service='filip',
+                                     service_path='/testing')
+
+        with IoTAClient(fiware_header=fiware_header) as client:
+            client.post_device(device=device)
+            print(client.get_device(device_id=device.device_id).json(
+                indent=2, exclude_unset=True))
+
+        with ContextBrokerClient(fiware_header=fiware_header) as client:
+            print(client.get_entity(entity_id=device.entity_name).json(
+                indent=2))
+
 
     def tearDown(self) -> None:
         """
