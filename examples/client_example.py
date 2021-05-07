@@ -1,7 +1,6 @@
 import logging
 from filip.cb import ContextBrokerClient
 from filip.core.models import FiwareHeader
-from filip.core.settings import _Settings
 from filip.timeseries import QuantumLeapClient
 
 logger = logging.getLogger(__name__)

@@ -11,7 +11,7 @@ from pydantic import \
     PositiveInt, \
     PositiveFloat
 from filip.core.base_client import BaseClient
-from filip.core.settings import settings
+from filip.core.config import settings
 from filip.core.models import FiwareHeader, PaginationMethod
 from filip.core.simple_query_language import QueryString
 from filip.cb.models import \
