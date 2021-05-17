@@ -121,7 +121,7 @@ html_theme_options = {
     # If True, show hidden TOC entries
     'globaltoc_includehidden': False,
     # Little logo on top left
-    'logo_icon': 'f100',
+    'logo_icon': '&#xf1b7',
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
