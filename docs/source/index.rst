@@ -11,6 +11,7 @@ Welcome to FiLiP's documentation!
 .. toctree::
    :maxdepth: 4
 
+   filip
    filip.core
    filip.cb
    filip.iota
