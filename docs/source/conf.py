@@ -100,11 +100,11 @@ html_theme_options = {
     'nav_title': 'FiliP',
 
     # Set you GA account ID to enable tracking
-    #'google_analytics_account': 'UA-XXXXX',
+    # 'google_analytics_account': 'UA-XXXXX',
 
     # Specify a base_url used to generate sitemap.xml. If not
     # specified, then no sitemap will be built.
-    #'base_url': 'https://project.github.io/project',
+    # 'base_url': 'https://project.github.io/project',
 
     # Set the color and the accent color
     'color_primary': 'red',
@@ -140,14 +140,12 @@ html_sidebars = {
 
 # This is required for the alabaster theme
 # refs: http://alabaster.readthedocs.io/en/latest/installation.html#sidebars
-#html_sidebars = {
+# html_sidebars = {
 #    '**': [
 #        'relations.html',  # needs 'show_related': True theme option to display
 #        'searchbox.html',
 #    ]
-#}
-
-
+# }
 
 
 # -- Options for HTMLHelp output ------------------------------------------
@@ -206,8 +204,6 @@ texinfo_documents = [
      'Miscellaneous'),
 ]
 
-
-
 # -- Options for Epub output ----------------------------------------------
 
 # Bibliographic Dublin Core info.
@@ -227,7 +223,6 @@ epub_copyright = copyright
 
 # A list of files that should not be packed into the epub file.
 epub_exclude_files = ['search.html']
-
 
 
 # Example configuration for intersphinx: refer to the Python standard library.
