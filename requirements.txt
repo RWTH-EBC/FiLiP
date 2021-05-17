@@ -80,4 +80,3 @@ xlrd>=2.0.1
 regex>=2021.3.17
 datamodel-code-generator>=0.10.2
 pandas-datapackage-reader>=0.18.0
-sphinx-material>=0.0.32

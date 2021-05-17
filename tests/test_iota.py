@@ -114,13 +114,6 @@ class TestAgent(unittest.TestCase):
         """
         metadata = {"accuracy": {"type": "Text",
                                  "value": "+-5%"}}
-        metadata = {"unit": {"type": "StructuredValue",
-                             "value": {"name": {"type": "Text",
-                                                "value": "degree Celsius"},
-                                       "symbol": {"type": "Text",
-                                                  "value": "°C"}}
-                             }
-                    }
         attr = DeviceAttribute(name="temperature",
                                object_id="temperature",
                                type="Number",
@@ -138,9 +131,8 @@ class TestAgent(unittest.TestCase):
                 indent=2, exclude_unset=True))
 
         with ContextBrokerClient(fiware_header=fiware_header) as client:
-            entity = client.get_entity(entity_id=device.entity_name)
-            print(entity.dict())
-            print(entity.json(indent=2).decode())
+            print(client.get_entity(entity_id=device.entity_name).json(
+                indent=2))
 
 
     def tearDown(self) -> None:
