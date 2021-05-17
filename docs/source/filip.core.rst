@@ -28,18 +28,18 @@ filip.core.config module
    :undoc-members:
    :show-inheritance:
 
-filip.core.models module
-------------------------
+filip.core.config\_deprecated module
+------------------------------------
 
-.. automodule:: filip.core.models
+.. automodule:: filip.core.config_deprecated
    :members:
    :undoc-members:
    :show-inheritance:
 
-filip.core.settings module
---------------------------
+filip.core.models module
+------------------------
 
-.. automodule:: filip.core.settings
+.. automodule:: filip.core.models
    :members:
    :undoc-members:
    :show-inheritance:
