@@ -135,7 +135,7 @@ html_static_path = ['_static']
 # This is required for the material theme
 # Refs: https://bashtage.github.io/sphinx-material/index.html
 html_sidebars = {
-    "**": ["logo-text.html", "globaltoc.html", "localtoc.html", "searchbox.html"]
+    "**": ["logo-text.html", "globaltoc.html", "localtoc.html"]
 }
 
 # This is required for the alabaster theme
