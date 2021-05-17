@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to documentation FiLiP!
+Welcome to the documentation of FiLiP!
 =======================================
 
 .. mdinclude::  ../../README.md

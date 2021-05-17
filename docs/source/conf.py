@@ -97,7 +97,7 @@ html_theme = 'sphinx_material'
 html_theme_options = {
 
     # Set the name of the project to appear in the navigation.
-    'nav_title': 'FiliP',
+    'nav_title': project,
 
     # Set you GA account ID to enable tracking
     # 'google_analytics_account': 'UA-XXXXX',
@@ -108,7 +108,7 @@ html_theme_options = {
 
     # Set the color and the accent color
     'color_primary': 'red',
-    'color_accent': 'light-red',
+    'color_accent': 'red',
 
     # Set the repo location to get a badge with stats
     'repo_url': 'https://github.com/rwth-ebc/filip',
@@ -121,7 +121,7 @@ html_theme_options = {
     # If True, show hidden TOC entries
     'globaltoc_includehidden': False,
     # Little logo on top left
-    'logo_icon': '&#xe869',
+    'logo_icon': '&#xf100',
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
@@ -135,7 +135,7 @@ html_static_path = ['_static']
 # This is required for the material theme
 # Refs: https://bashtage.github.io/sphinx-material/index.html
 html_sidebars = {
-    "**": ["logo-text.html", "globaltoc.html", "localtoc.html"]
+    "**": ["logo-text.html", "globaltoc.html", "localtoc.html", "searchbox.html"]
 }
 
 # This is required for the alabaster theme
