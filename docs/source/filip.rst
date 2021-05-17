@@ -5,7 +5,7 @@ Subpackages
 -----------
 
 .. toctree::
-   :maxdepth: 10
+   :maxdepth: 4
 
    filip.cb
    filip.core
