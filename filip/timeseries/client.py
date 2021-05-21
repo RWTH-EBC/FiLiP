@@ -31,13 +31,16 @@ class QuantumLeapClient(BaseClient):
     https://app.swaggerhub.com/apis/heikkilv/quantumleap-api/
     """
     def __init__(self,
-                 *,
                  url: str = None,
+                 *,
                  session: requests.Session = None,
+                 reuse_session: bool = False,
                  fiware_header: FiwareHeader = None):
+        # set service url
         url = url or settings.QL_URL
         super().__init__(url=url,
                          session=session,
+                         reuse_session=reuse_session,
                          fiware_header=fiware_header)
 
     # META API ENDPOINTS
@@ -49,7 +52,10 @@ class QuantumLeapClient(BaseClient):
         """
         url = urljoin(self.base_url, '/version')
         try:
-            res = self.session.get(url=url)
+            if self.session:
+                res = self.session.get(url=url)
+            else:
+                res = requests.get(url=url)
             if res.ok:
                 return res.json()
             res.raise_for_status()
@@ -71,7 +77,10 @@ class QuantumLeapClient(BaseClient):
         """
         url = urljoin(self.base_url, '/health')
         try:
-            res = self.session.get(url=url)
+            if self.session:
+                res = self.session.get(url=url)
+            else:
+                res = requests.get(url=url)
             if res.ok:
                 return res.json()
             res.raise_for_status()

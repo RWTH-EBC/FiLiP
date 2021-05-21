@@ -6,6 +6,8 @@ import json
 import errno
 from typing import Optional, Union, Dict
 from pathlib import Path
+
+import requests
 from pydantic import BaseModel, AnyHttpUrl
 from requests.auth import HTTPBasicAuth, HTTPDigestAuth
 from requests import Session
@@ -19,10 +21,11 @@ from filip.timeseries import QuantumLeapClient
 logger = logging.getLogger('client')
 
 class Client(BaseClient):
-    __secrets = {"username": None,
-                 "password": None,
-                 "client_id": None,
-                 "client_secret": None}
+    """
+    Master client. This client contains all implemented sub clients based on
+    the principal of composition. Hence, each sub client is accessible from
+    this client, but they share a general config and if provided a session.
+    """
     class Settings(BaseModel):
         cb_url: Optional[AnyHttpUrl] = None
         iota_url: Optional[AnyHttpUrl] = None
@@ -32,32 +35,43 @@ class Client(BaseClient):
     def __init__(self,
                  config: Union[str, Path, Dict]= None,
                  session: Session = None,
+                 reuse_session: bool = False,
                  fiware_header: FiwareHeader = None):
+
+        self.config = config
+        super().__init__(session=session,
+                         reuse_session=reuse_session,
+                         fiware_header=fiware_header)
+
+        # initialize sub clients
+        self.cb = ContextBrokerClient(url=self.config.cb_url,
+                                      session=self.session,
+                                      fiware_header=fiware_header)
+
+        self.iota = IoTAClient(url=self.config.iota_url,
+                               session=self.session,
+                               fiware_header=fiware_header)
+
+        self.timeseries = QuantumLeapClient(url=self.config.ql_url,
+                                            session=self.session,
+                                            fiware_header=fiware_header)
+
+        # from here on deprecated?
         auth_types = {'basicauth': self.__http_basic_auth,
                       'digestauth': self.__http_digest_auth,}
                       # 'oauth2': self.__oauth2}
 
-        super().__init__(session=session,
-                         fiware_header=fiware_header)
-        self.config = config
         if self.config.auth:
             assert self.config['auth']['type'].lower() in auth_types.keys()
             self.__get_secrets_file(path=self.config['auth']['secret'])
             auth_types[self.config['auth']['type']]()
-        else:
-            self.session = Session()
 
-        if not fiware_header:
-            fiware_header = FiwareHeader(service='', service_path='/')
-        self.iota = IoTAClient(url=self.config.iota_url,
-                               session=self.session,
-                               fiware_header=fiware_header)
-        self.cb = ContextBrokerClient(url=self.config.cb_url,
-                                      session=self.session,
-                                      fiware_header=fiware_header)
-        self.timeseries = QuantumLeapClient(url=self.config.ql_url,
-                                            session=self.session,
-                                            fiware_header=fiware_header)
+
+
+        self.__secrets = {"username": None,
+                          "password": None,
+                          "client_id": None,
+                          "client_secret": None}
 
     @property
     def config(self):

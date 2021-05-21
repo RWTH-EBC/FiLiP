@@ -9,17 +9,16 @@ from filip.utils import validate_url
 
 
 class BaseClient:
-
     """
-    This class implements an base client for all derived api-clients.
+    Base client for all derived api-clients.
     """
     def __init__(self,
                  url: str = None,
                  *,
                  session: requests.Session = None,
-                 fiware_header: Union[Dict, FiwareHeader] = None):
+                 reuse_session: bool = False,
+                 fiware_header: Union[Dict, FiwareHeader] = None,):
         """
-
         Args:
             session: request session object. This is required for reusing
                 the same connection
@@ -27,9 +26,16 @@ class BaseClient:
         """
         self.logger = logging.getLogger(self.__class__.__name__)
         # TODO: Double Check Header Handling
-        validate_url(url)
-        self.base_url = url
-        self.session = session or requests.Session()
+        if url:
+            validate_url(url)
+            self.base_url = url
+
+        if session or reuse_session:
+            self.session = session or requests.Session()
+        else:
+            self.session = None
+            self._headers = {}
+
         if not fiware_header:
             self.fiware_headers = FiwareHeader()
         else:
@@ -83,7 +89,10 @@ class BaseClient:
         Returns:
             dict with headers
         """
-        return self.session.headers
+        if self.session:
+            return self.session.headers
+        else:
+            return self._headers
 
     def log_error(self,
                   err: requests.RequestException,
@@ -112,4 +121,5 @@ class BaseClient:
         Returns:
             None
         """
-        self.session.close()
+        if self.session:
+            self.session.close()

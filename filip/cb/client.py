@@ -38,13 +38,16 @@ class ContextBrokerClient(BaseClient):
     http://telefonicaid.github.io/fiware-orion/api/v2/stable/
     """
     def __init__(self,
-                 *,
                  url: str = None,
+                 *,
                  session: requests.Session = None,
+                 reuse_session: bool = False,
                  fiware_header: FiwareHeader = None):
+        # set service url
         url = url or settings.CB_URL
         super().__init__(url=url,
                          session=session,
+                         reuse_session=reuse_session,
                          fiware_header=fiware_header)
 
     def __pagination(self,
