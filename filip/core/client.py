@@ -6,12 +6,11 @@ import json
 import errno
 from typing import Optional, Union, Dict
 from pathlib import Path
-
-import requests
 from pydantic import BaseModel, AnyHttpUrl
 from requests.auth import HTTPBasicAuth, HTTPDigestAuth
 from requests import Session
 from filip.core.base_client import BaseClient
+from filip.core.config import settings
 from filip.core.models import FiwareHeader
 from filip.iota.client import IoTAClient
 from filip.cb.client import ContextBrokerClient
@@ -27,18 +26,21 @@ class Client(BaseClient):
     this client, but they share a general config and if provided a session.
     """
     class Settings(BaseModel):
-        cb_url: Optional[AnyHttpUrl] = None
-        iota_url: Optional[AnyHttpUrl] = None
-        ql_url: Optional[AnyHttpUrl] = None
+        cb_url: Optional[AnyHttpUrl] = settings.CB_URL
+        iota_url: Optional[AnyHttpUrl] = settings.IOTA_URL
+        ql_url: Optional[AnyHttpUrl] = settings.QL_URL
         auth: Optional[Dict] = None
 
     def __init__(self,
-                 config: Union[str, Path, Dict]= None,
+                 config: Union[str, Path, Dict] = None,
                  session: Session = None,
                  reuse_session: bool = False,
                  fiware_header: FiwareHeader = None):
+        if config:
+            self.config = config
+        else:
+            self.config = self.Settings()
 
-        self.config = config
         super().__init__(session=session,
                          reuse_session=reuse_session,
                          fiware_header=fiware_header)

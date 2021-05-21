@@ -35,11 +35,15 @@ class TestClient(unittest.TestCase):
     def test_config_json(self):
         config_path = Path("./test_core_client.json")
         client = Client(config=config_path, fiware_header=self.fh)
+        print(client.cb.get_version())
         print(client.cb.get_resources())
         print(client.cb.get_entity_list())
 
-    def test_env(self):
-        pass
+    def test_config_env(self):
+        client = Client(fiware_header=self.fh)
+        print(client.cb.get_version())
+        print(client.iota.get_version())
+        print(client.timeseries.get_version())
 
     def tearDown(self) -> None:
         """
