@@ -122,7 +122,7 @@ class BaseClient:
             requests.Response
         """
 
-        kwargs.update({k: v for k,v in self.kwargs.items()
+        kwargs.update({k: v for k, v in self.kwargs.items()
                        if k not in kwargs.keys()})
 
         if self.session:
@@ -143,6 +143,7 @@ class BaseClient:
         """
         kwargs.update({k: v for k, v in self.kwargs.items()
                        if k not in kwargs.keys()})
+
         if self.session:
             return self.session.options(url=url, **kwargs)
         return requests.options(url=url, **kwargs)
@@ -165,6 +166,7 @@ class BaseClient:
         """
         kwargs.update({k: v for k, v in self.kwargs.items()
                        if k not in kwargs.keys()})
+
         if self.session:
             return self.session.head(url=url, params=params, **kwargs)
         return requests.head(url=url, params=params, **kwargs)
@@ -191,6 +193,7 @@ class BaseClient:
         """
         kwargs.update({k: v for k, v in self.kwargs.items()
                        if k not in kwargs.keys()})
+
         if self.session:
             return self.session.post(url=url, data=data, json=json, **kwargs)
         return requests.post(url=url, data=data, json=json, **kwargs)
@@ -218,6 +221,7 @@ class BaseClient:
         """
         kwargs.update({k: v for k, v in self.kwargs.items()
                        if k not in kwargs.keys()})
+
         if self.session:
             return self.session.put(url=url, data=data, json=json, **kwargs)
         return requests.put(url=url, data=data, json=json, **kwargs)
@@ -245,6 +249,7 @@ class BaseClient:
         """
         kwargs.update({k: v for k, v in self.kwargs.items()
                        if k not in kwargs.keys()})
+
         if self.session:
             return self.session.patch(url=url, data=data, json=json,
                                       **kwargs, **kwargs)
@@ -262,6 +267,9 @@ class BaseClient:
         Returns:
             request.Response
         """
+        kwargs.update({k: v for k, v in self.kwargs.items()
+                       if k not in kwargs.keys()})
+
         if self.session:
             return self.session.delete(url=url, **kwargs)
         return requests.delete(url=url, **kwargs)
