@@ -17,15 +17,22 @@ class BaseClient:
                  *,
                  session: requests.Session = None,
                  reuse_session: bool = False,
-                 fiware_header: Union[Dict, FiwareHeader] = None,):
+                 fiware_header: Union[Dict, FiwareHeader] = None,
+                 **kwargs):
         """
         Args:
             session: request session object. This is required for reusing
                 the same connection
+            reuse_session (bool):
             fiware_header: Fiware header object required for multi tenancy
+            **kwargs: Optional arguments that ``request`` takes.
+
+        Returns:
+            filip.core.BaseClient
         """
+
         self.logger = logging.getLogger(self.__class__.__name__)
-        # TODO: Double Check Header Handling
+
         if url:
             validate_url(url)
             self.base_url = url
@@ -40,6 +47,9 @@ class BaseClient:
             self.fiware_headers = FiwareHeader()
         else:
             self.fiware_headers = fiware_header
+
+        self.headers.update(kwargs.pop('headers', {}))
+        self.kwargs: Dict = kwargs
 
     # Context Manager Protocol
     def __enter__(self):
@@ -94,7 +104,10 @@ class BaseClient:
         return self._headers
 
     # modification to requests api
-    def get(self, url: str, params: Dict = None, **kwargs) -> requests.Response:
+    def get(self,
+            url: str,
+            params: Union[Dict, List[Tuple], ByteString] = None,
+            **kwargs) -> requests.Response:
         """
         Sends a GET request either using the provided session or the single
         session.
@@ -108,6 +121,10 @@ class BaseClient:
         Returns:
             requests.Response
         """
+
+        kwargs.update({k: v for k,v in self.kwargs.items()
+                       if k not in kwargs.keys()})
+
         if self.session:
             return self.session.get(url=url, params=params, **kwargs)
         return requests.get(url=url, params=params, **kwargs)
@@ -124,27 +141,33 @@ class BaseClient:
         Returns:
             requests.Response
         """
+        kwargs.update({k: v for k, v in self.kwargs.items()
+                       if k not in kwargs.keys()})
         if self.session:
             return self.session.options(url=url, **kwargs)
         return requests.options(url=url, **kwargs)
 
-    def head(self, url: str, **kwargs) -> requests.Response:
+    def head(self, url: str,
+             params: Union[Dict, List[Tuple], ByteString] = None,
+             **kwargs) -> requests.Response:
         """
         Sends a HEAD request either using the provided session or the
         single session.
 
         Args:
             url (str): URL for the new :class:`Request` object.
-            params (optional): (optional) Dictionary, list of tuples or bytes
+            params (optional): Dictionary, list of tuples or bytes
                 to send in the query string for the :class:`Request`.
             **kwargs: Optional arguments that ``request`` takes.
 
         Returns:
             requests.Response
         """
+        kwargs.update({k: v for k, v in self.kwargs.items()
+                       if k not in kwargs.keys()})
         if self.session:
-            return self.session.head(url=url, **kwargs)
-        return requests.head(url=url, **kwargs)
+            return self.session.head(url=url, params=params, **kwargs)
+        return requests.head(url=url, params=params, **kwargs)
 
     def post(self,
              url: str,
@@ -156,15 +179,18 @@ class BaseClient:
         single session.
         Args:
             url: URL for the new :class:`Request` object.
-            data (Union[Dict, ByteString, List[Tuple], IO]):
+            data (Dict, ByteString, List[Tuple], IO):
                 Dictionary, list of tuples, bytes, or file-like
                 object to send in the body of the :class:`Request`.
-            json (Dict): json data to send in the body of the :class:`Request`.
+            json (Dict): A JSON serializable Python object to send in the
+                body of the :class:`Request`..
             **kwargs: Optional arguments that ``request`` takes.
 
         Returns:
 
         """
+        kwargs.update({k: v for k, v in self.kwargs.items()
+                       if k not in kwargs.keys()})
         if self.session:
             return self.session.post(url=url, data=data, json=json, **kwargs)
         return requests.post(url=url, data=data, json=json, **kwargs)
@@ -183,12 +209,15 @@ class BaseClient:
             data (Union[Dict, ByteString, List[Tuple], IO]):
                 Dictionary, list of tuples, bytes, or file-like
                 object to send in the body of the :class:`Request`.
-            json (Dict): json data to send in the body of the :class:`Request`.
+            json (Dict): A JSON serializable Python object to send in the
+                body of the :class:`Request`..
             **kwargs: Optional arguments that ``request`` takes.
 
         Returns:
             request.Response
         """
+        kwargs.update({k: v for k, v in self.kwargs.items()
+                       if k not in kwargs.keys()})
         if self.session:
             return self.session.put(url=url, data=data, json=json, **kwargs)
         return requests.put(url=url, data=data, json=json, **kwargs)
@@ -207,14 +236,18 @@ class BaseClient:
             data (Union[Dict, ByteString, List[Tuple], IO]):
                 Dictionary, list of tuples, bytes, or file-like
                 object to send in the body of the :class:`Request`.
-            json (Dict): json data to send in the body of the :class:`Request`.
+            json (Dict): A JSON serializable Python object to send in the
+                body of the :class:`Request`..
             **kwargs: Optional arguments that ``request`` takes.
 
         Returns:
             request.Response
         """
+        kwargs.update({k: v for k, v in self.kwargs.items()
+                       if k not in kwargs.keys()})
         if self.session:
-            return self.session.patch(url=url, data=data, json=json, **kwargs)
+            return self.session.patch(url=url, data=data, json=json,
+                                      **kwargs, **kwargs)
         return requests.patch(url=url, data=data, json=json, **kwargs)
 
     def delete(self, url: str, **kwargs) -> requests.Response:

@@ -35,13 +35,24 @@ class QuantumLeapClient(BaseClient):
                  *,
                  session: requests.Session = None,
                  reuse_session: bool = False,
-                 fiware_header: FiwareHeader = None):
+                 fiware_header: FiwareHeader = None,
+                 **kwargs):
+        """
+
+        Args:
+            url:
+            session:
+            reuse_session:
+            fiware_header:
+            **kwargs:
+        """
         # set service url
         url = url or settings.QL_URL
         super().__init__(url=url,
                          session=session,
                          reuse_session=reuse_session,
-                         fiware_header=fiware_header)
+                         fiware_header=fiware_header,
+                         **kwargs)
 
     # META API ENDPOINTS
     def get_version(self) -> Dict:

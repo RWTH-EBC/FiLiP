@@ -35,7 +35,19 @@ class Client(BaseClient):
                  config: Union[str, Path, Dict] = None,
                  session: Session = None,
                  reuse_session: bool = False,
-                 fiware_header: FiwareHeader = None):
+                 fiware_header: FiwareHeader = None,
+                 **kwargs):
+        """
+        Constructor for master client
+        Args:
+            config (Union[str, Path, Dict]): Confiiguration object
+            session (request.Session): Session object
+            reuse_session (bool): Default False.
+                If 'True' client uses session objects for requests,
+                'True' if external session object is provided.
+            fiware_header (FiwareHeader): Fiware header
+            **kwargs: Optional arguments that ``request`` takes.
+        """
         if config:
             self.config = config
         else:
@@ -43,20 +55,24 @@ class Client(BaseClient):
 
         super().__init__(session=session,
                          reuse_session=reuse_session,
-                         fiware_header=fiware_header)
+                         fiware_header=fiware_header,
+                         **kwargs)
 
         # initialize sub clients
         self.cb = ContextBrokerClient(url=self.config.cb_url,
                                       session=self.session,
-                                      fiware_header=fiware_header)
+                                      fiware_header=fiware_header,
+                                      **self.kwargs)
 
         self.iota = IoTAClient(url=self.config.iota_url,
                                session=self.session,
-                               fiware_header=fiware_header)
+                               fiware_header=fiware_header,
+                               **self.kwargs)
 
         self.timeseries = QuantumLeapClient(url=self.config.ql_url,
                                             session=self.session,
-                                            fiware_header=fiware_header)
+                                            fiware_header=fiware_header,
+                                            **self.kwargs)
 
         # from here on deprecated?
         auth_types = {'basicauth': self.__http_basic_auth,
