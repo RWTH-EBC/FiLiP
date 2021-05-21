@@ -149,7 +149,7 @@ class BaseClient:
     def post(self,
              url: str,
              data: Union[Dict, ByteString, List[Tuple], IO] = None,
-             json: str = None,
+             json: Dict = None,
              **kwargs) -> requests.Response:
         """
         Sends a POST request either using the provided session or the
@@ -159,7 +159,7 @@ class BaseClient:
             data (Union[Dict, ByteString, List[Tuple], IO]):
                 Dictionary, list of tuples, bytes, or file-like
                 object to send in the body of the :class:`Request`.
-            json (JSON): json data to send in the body of the :class:`Request`.
+            json (Dict): json data to send in the body of the :class:`Request`.
             **kwargs: Optional arguments that ``request`` takes.
 
         Returns:
@@ -172,7 +172,7 @@ class BaseClient:
     def put(self,
             url: str,
             data: Union[Dict, ByteString, List[Tuple], IO] = None,
-            json: str = None,
+            json: Dict = None,
             **kwargs) -> requests.Response:
         """
         Sends a PUT request either using the provided session or the
@@ -183,7 +183,7 @@ class BaseClient:
             data (Union[Dict, ByteString, List[Tuple], IO]):
                 Dictionary, list of tuples, bytes, or file-like
                 object to send in the body of the :class:`Request`.
-            json (JSON): json data to send in the body of the :class:`Request`.
+            json (Dict): json data to send in the body of the :class:`Request`.
             **kwargs: Optional arguments that ``request`` takes.
 
         Returns:
@@ -196,7 +196,7 @@ class BaseClient:
     def patch(self,
               url: str,
               data: Union[Dict, ByteString, List[Tuple], IO] = None,
-              json: str = None,
+              json: Dict = None,
               **kwargs) -> requests.Response:
         """
         Sends a PATCH request either using the provided session or the
@@ -207,7 +207,7 @@ class BaseClient:
             data (Union[Dict, ByteString, List[Tuple], IO]):
                 Dictionary, list of tuples, bytes, or file-like
                 object to send in the body of the :class:`Request`.
-            json (JSON): json data to send in the body of the :class:`Request`.
+            json (Dict): json data to send in the body of the :class:`Request`.
             **kwargs: Optional arguments that ``request`` takes.
 
         Returns:

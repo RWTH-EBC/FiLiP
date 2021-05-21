@@ -39,7 +39,7 @@ class IoTAClient(BaseClient):
         """
         url = urljoin(self.base_url, 'iot/about')
         try:
-            res = self.session.get(url=url, headers=self.headers)
+            res = self.get(url=url, headers=self.headers)
             if res.ok:
                 return res.json()
             res.raise_for_status()
@@ -78,7 +78,7 @@ class IoTAClient(BaseClient):
                                         exclude_defaults=True) for
                              group in service_groups]}
         try:
-            res = self.session.post(url=url, headers=headers, json=data)
+            res = self.post(url=url, headers=headers, json=data)
             if res.ok:
                 self.logger.info("Services successfully posted")
             elif res.status_code == 409:
@@ -124,7 +124,7 @@ class IoTAClient(BaseClient):
         url = urljoin(self.base_url, 'iot/services')
         headers = self.headers
         try:
-            res = self.session.get(url=url, headers=headers)
+            res = self.get(url=url, headers=headers)
             if res.ok:
                 return parse_obj_as(List[ServiceGroup], res.json()['services'])
             res.raise_for_status()
@@ -148,7 +148,7 @@ class IoTAClient(BaseClient):
                   'apikey': apikey}
 
         try:
-            res = self.session.get(url=url, headers=headers, params=params)
+            res = self.get(url=url, headers=headers, params=params)
             if res.ok:
                 return ServiceGroup(**res.json()['services'][0])
             res.raise_for_status()
@@ -200,7 +200,7 @@ class IoTAClient(BaseClient):
         headers = self.headers.update()
         params = service_group.dict(include={'resource', 'apikey'})
         try:
-            res = self.session.put(url=url, headers=headers, params=params,
+            res = self.put(url=url, headers=headers, params=params,
                                    json=service_group.json(
                                        include=fields,
                                        exclude={'service', 'subservice'},
@@ -230,7 +230,7 @@ class IoTAClient(BaseClient):
         params = {'resource': resource,
                   'apikey': apikey}
         try:
-            res = self.session.delete(url=url, headers=headers, params=params)
+            res = self.delete(url=url, headers=headers, params=params)
             if res.ok:
                 self.logger.info("ServiceGroup with resource: '%s' and "
                                  "apikey: '%s' successfully deleted!",
@@ -264,7 +264,7 @@ class IoTAClient(BaseClient):
         data = {"devices": [device.dict(exclude_none=True) for device in
                             devices]}
         try:
-            res = self.session.post(url=url, headers=headers, json=data)
+            res = self.post(url=url, headers=headers, json=data)
             if res.ok:
                 self.logger.info("Devices successfully posted!")
             else:
@@ -315,7 +315,7 @@ class IoTAClient(BaseClient):
         params = {key: value for key, value in locals().items() if value is not
                   None}
         try:
-            res = self.session.get(url=url, headers=headers, params=params)
+            res = self.get(url=url, headers=headers, params=params)
             if res.ok:
                 return parse_obj_as(List[Device], res.json()['devices'])
             res.raise_for_status()
@@ -336,7 +336,7 @@ class IoTAClient(BaseClient):
         url = urljoin(self.base_url, f'iot/devices/{device_id}')
         headers = self.headers
         try:
-            res = self.session.get(url=url, headers=headers)
+            res = self.get(url=url, headers=headers)
             if res.ok:
                 return Device.parse_obj(res.json())
             res.raise_for_status()
@@ -356,7 +356,7 @@ class IoTAClient(BaseClient):
         url = urljoin(self.base_url, f'iot/devices/{device.device_id}')
         headers = self.headers
         try:
-            res = self.session.put(url=url, headers=headers, json=device.dict(
+            res = self.put(url=url, headers=headers, json=device.dict(
                 include={'attributes', 'lazy', 'commands',
                          'static_attributes'}))
             if res.ok:
@@ -400,7 +400,7 @@ class IoTAClient(BaseClient):
         url = urljoin(self.base_url, f'iot/devices/{device_id}', )
         headers = self.headers
         try:
-            res = self.session.delete(url=url, headers=headers)
+            res = self.delete(url=url, headers=headers)
             if res.ok:
                 self.logger.info("Device '%s' successfully deleted!", device_id)
             else:
@@ -422,7 +422,7 @@ class IoTAClient(BaseClient):
         del headers['fiware-service']
         del headers['fiware-servicepath']
         try:
-            res = self.session.get(url=url, headers=headers)
+            res = self.get(url=url, headers=headers)
             if res.ok:
                 return res.json()['level']
             res.raise_for_status()
@@ -448,7 +448,7 @@ class IoTAClient(BaseClient):
         del headers['fiware-service']
         del headers['fiware-servicepath']
         try:
-            res = self.session.put(url=url, headers=headers, params=level)
+            res = self.put(url=url, headers=headers, params=level)
             if res.ok:
                 self.logger.info("Loglevel of agent at %s "
                                  "changed to '%s'", self.base_url, level)

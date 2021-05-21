@@ -215,24 +215,29 @@ class ServiceGroup(BaseModel):
                     "devices."
     )
     lazy: Optional[List[LazyDeviceAttribute]] = Field(
+        default=[],
         desription="list of common lazy attributes of the device. For each "
                    "attribute, its name and type must be provided."
     )
     commands: Optional[List[DeviceCommand]] = Field(
+        default=[],
         desription="list of common commands attributes of the device. For each "
                    "attribute, its name and type must be provided, additional "
                    "metadata is optional"
     )
     attributes: Optional[List[DeviceAttribute]] = Field(
+        default=[],
         description="list of common commands attributes of the device. For "
                     "each attribute, its name and type must be provided, "
                     "additional metadata is optional."
     )
     static_attributes: Optional[List[StaticDeviceAttribute]] = Field(
+        default=[],
         description="this attributes will be added to all the entities of this "
                     "group 'as is', additional metadata is optional."
     )
     internal_attributes: Optional[List[Dict[str, Any]]] = Field(
+        default=[],
         description="optional section with free format, to allow specific "
                     "IoT Agents to store information along with the devices "
                     "in the Device Registry."

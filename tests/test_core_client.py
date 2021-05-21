@@ -27,6 +27,7 @@ class TestClient(unittest.TestCase):
     def test_config_dict(self):
         with requests.Session() as s:
             client=Client(config=self.config, session=s, fiware_header=self.fh)
+            client.fiware_service_path = '/someOther'
             print(client.cb.get_version())
             print(client.cb.get_entity_list())
             print(client.cb.session)

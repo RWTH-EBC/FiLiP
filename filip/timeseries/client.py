@@ -108,7 +108,7 @@ class QuantumLeapClient(BaseClient):
         }
 
         try:
-            res = self.session.post(
+            res = self.post(
                 url=url,
                 headers=headers,
                 json=data_set)
@@ -188,10 +188,7 @@ class QuantumLeapClient(BaseClient):
             params.update({'timeIndexAttribute': time_index_attribute})
 
         try:
-            res = self.session.post(
-                url=url,
-                headers=headers,
-                params=params)
+            res = self.post(url=url, headers=headers, params=params)
             if res.ok:
                 msg = "Subscription created successfully!"
                 self.logger.info(msg)
@@ -220,7 +217,7 @@ class QuantumLeapClient(BaseClient):
         else:
             params = {}
         try:
-            res = self.session.delete(url=url, headers=headers, params=params)
+            res = self.delete(url=url, headers=headers, params=params)
             if res.ok:
                 self.logger.info("Entity id '%s' successfully deleted!",
                                  entity_id)
@@ -243,7 +240,7 @@ class QuantumLeapClient(BaseClient):
         url = urljoin(self.base_url, f'/v2/types/{entity_type}')
         headers = self.headers.copy()
         try:
-            res = self.session.delete(url=url, headers=headers)
+            res = self.delete(url=url, headers=headers)
             if res.ok:
                 self.logger.info("Entities of type '%s' successfully deleted!",
                                  entity_type)
@@ -276,6 +273,27 @@ class QuantumLeapClient(BaseClient):
                         ) -> Dict:
         """
         Private Function to call respective API endpoints
+
+        Args:
+            url:
+            entity_id:
+            options:
+            entity_type:
+            aggr_method:
+            aggr_period:
+            from_date:
+            to_date:
+            last_n:
+            limit:
+            offset:
+            georel:
+            geometry:
+            coords:
+            attrs:
+            aggr_scope:
+
+        Returns:
+            requests.Response
         """
         params = {}
         headers = self.headers.copy()
@@ -313,7 +331,7 @@ class QuantumLeapClient(BaseClient):
         if entity_id:
             params.update({'id': entity_id})
         try:
-            res = self.session.get(url=url, params=params, headers=headers)
+            res = self.get(url=url, params=params, headers=headers)
             if res.ok:
                 self.logger.info("Successfully received entity data")
                 self.logger.debug('Received: %s', res.json())
