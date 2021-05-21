@@ -84,32 +84,37 @@ class ContextBrokerClient(BaseClient):
         else:
             params['limit'] = limit
 
-        res = self.session.request(method=method,
-                                   url=url,
-                                   params=params,
-                                   headers=headers,
-                                   data=data)
-        if res.ok:
-            items = res.json()
-            # do pagination
-            count = int(res.headers['Fiware-Total-Count'])
+        if self.session:
+            session = self.session
+        else:
+            session = requests.Session()
+        with session:
+            res = session.request(method=method,
+                                  url=url,
+                                  params=params,
+                                  headers=headers,
+                                  data=data)
+            if res.ok:
+                items = res.json()
+                # do pagination
+                count = int(res.headers['Fiware-Total-Count'])
 
-            while len(items) < limit and len(items) < count:
-                # Establishing the offset from where entities are retrieved
-                params['offset'] = len(items)
-                params['limit'] = min(1000, (limit - len(items)))
-                res = self.session.request(method=method,
-                                           url=url,
-                                           params=params,
-                                           headers=headers,
-                                           data=data)
-                if res.ok:
-                    items.extend(res.json())
-                else:
-                    res.raise_for_status()
-            self.logger.debug('Received: %s', items)
-            return items
-        res.raise_for_status()
+                while len(items) < limit and len(items) < count:
+                    # Establishing the offset from where entities are retrieved
+                    params['offset'] = len(items)
+                    params['limit'] = min(1000, (limit - len(items)))
+                    res = session.request(method=method,
+                                          url=url,
+                                          params=params,
+                                          headers=headers,
+                                          data=data)
+                    if res.ok:
+                        items.extend(res.json())
+                    else:
+                        res.raise_for_status()
+                self.logger.debug('Received: %s', items)
+                return items
+            res.raise_for_status()
 
     # MANAGEMENT API
     def get_version(self) -> Dict:
@@ -391,7 +396,7 @@ class ContextBrokerClient(BaseClient):
         params.update({'options': response_format})
 
         try:
-            res = self.session.get(url=url, params=params, headers=headers)
+            res = self.get(url=url, params=params, headers=headers)
             if res.ok:
                 self.logger.info("Entity successfully retrieved!")
                 self.logger.debug("Received: %s", res.json())
