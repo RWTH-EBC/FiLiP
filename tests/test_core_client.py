@@ -31,9 +31,8 @@ class TestClient(unittest.TestCase):
 
     def test_config_json(self):
         config_path = Path("./test_core_client.json")
-        with requests.Session() as s:
-            client=Client(config=config_path, session=s)
-            print(client.cb.get_version())
+        client = Client(config=config_path)
+        print(client.cb.get_version())
 
     def test_env(self):
         pass

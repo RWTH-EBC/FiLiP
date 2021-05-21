@@ -3,7 +3,7 @@ Base client module
 """
 import logging
 import requests
-from typing import Dict, Union
+from typing import Dict, ByteString, List, IO, Tuple, Union
 from filip.core.models import FiwareHeader
 from filip.utils import validate_url
 
@@ -91,8 +91,147 @@ class BaseClient:
         """
         if self.session:
             return self.session.headers
-        else:
-            return self._headers
+        return self._headers
+
+    # modification to requests api
+    def get(self, url: str, params: Dict = None, **kwargs) -> requests.Response:
+        """
+        Sends a GET request either using the provided session or the single
+        session.
+
+        Args:
+            url (str): URL for the new :class:`Request` object.
+            params (optional): (optional) Dictionary, list of tuples or bytes
+                to send in the query string for the :class:`Request`.
+            **kwargs: Optional arguments that ``request`` takes.
+
+        Returns:
+            requests.Response
+        """
+        if self.session:
+            return self.session.get(url=url, params=params, **kwargs)
+        return requests.get(url=url, params=params, **kwargs)
+
+    def options(self, url: str, **kwargs) -> requests.Response:
+        """
+        Sends an OPTIONS request either using the provided session or the
+        single session.
+
+        Args:
+            url (str):
+            **kwargs: Optional arguments that ``request`` takes.
+
+        Returns:
+            requests.Response
+        """
+        if self.session:
+            return self.session.options(url=url, **kwargs)
+        return requests.options(url=url, **kwargs)
+
+    def head(self, url: str, **kwargs) -> requests.Response:
+        """
+        Sends a HEAD request either using the provided session or the
+        single session.
+
+        Args:
+            url (str): URL for the new :class:`Request` object.
+            params (optional): (optional) Dictionary, list of tuples or bytes
+                to send in the query string for the :class:`Request`.
+            **kwargs: Optional arguments that ``request`` takes.
+
+        Returns:
+            requests.Response
+        """
+        if self.session:
+            return self.session.head(url=url, **kwargs)
+        return requests.head(url=url, **kwargs)
+
+    def post(self,
+             url: str,
+             data: Union[Dict, ByteString, List[Tuple], IO] = None,
+             json: str = None,
+             **kwargs) -> requests.Response:
+        """
+        Sends a POST request either using the provided session or the
+        single session.
+        Args:
+            url: URL for the new :class:`Request` object.
+            data (Union[Dict, ByteString, List[Tuple], IO]):
+                Dictionary, list of tuples, bytes, or file-like
+                object to send in the body of the :class:`Request`.
+            json (JSON): json data to send in the body of the :class:`Request`.
+            **kwargs: Optional arguments that ``request`` takes.
+
+        Returns:
+
+        """
+        if self.session:
+            return self.session.post(url=url, data=data, json=json, **kwargs)
+        return requests.post(url=url, data=data, json=json, **kwargs)
+
+    def put(self,
+            url: str,
+            data: Union[Dict, ByteString, List[Tuple], IO] = None,
+            json: str = None,
+            **kwargs) -> requests.Response:
+        """
+        Sends a PUT request either using the provided session or the
+        single session.
+
+        Args:
+            url: URL for the new :class:`Request` object.
+            data (Union[Dict, ByteString, List[Tuple], IO]):
+                Dictionary, list of tuples, bytes, or file-like
+                object to send in the body of the :class:`Request`.
+            json (JSON): json data to send in the body of the :class:`Request`.
+            **kwargs: Optional arguments that ``request`` takes.
+
+        Returns:
+            request.Response
+        """
+        if self.session:
+            return self.session.put(url=url, data=data, json=json, **kwargs)
+        return requests.put(url=url, data=data, json=json, **kwargs)
+
+    def patch(self,
+              url: str,
+              data: Union[Dict, ByteString, List[Tuple], IO] = None,
+              json: str = None,
+              **kwargs) -> requests.Response:
+        """
+        Sends a PATCH request either using the provided session or the
+        single session.
+
+        Args:
+            url: URL for the new :class:`Request` object.
+            data (Union[Dict, ByteString, List[Tuple], IO]):
+                Dictionary, list of tuples, bytes, or file-like
+                object to send in the body of the :class:`Request`.
+            json (JSON): json data to send in the body of the :class:`Request`.
+            **kwargs: Optional arguments that ``request`` takes.
+
+        Returns:
+            request.Response
+        """
+        if self.session:
+            return self.session.patch(url=url, data=data, json=json, **kwargs)
+        return requests.patch(url=url, data=data, json=json, **kwargs)
+
+    def delete(self, url: str, **kwargs) -> requests.Response:
+        """
+        Sends a DELETE request either using the provided session or the
+        single session.
+
+        Args:
+            url (str): URL for the new :class:`Request` object.
+            **kwargs: Optional arguments that ``request`` takes.
+
+        Returns:
+            request.Response
+        """
+        if self.session:
+            return self.session.delete(url=url, **kwargs)
+        return requests.delete(url=url, **kwargs)
 
     def log_error(self,
                   err: requests.RequestException,

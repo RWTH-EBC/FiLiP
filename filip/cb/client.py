@@ -120,7 +120,7 @@ class ContextBrokerClient(BaseClient):
         """
         url = urljoin(self.base_url, '/version')
         try:
-            res = self.session.get(url=url, headers=self.headers)
+            res = self.get(url=url, headers=self.headers)
             if res.ok:
                 return res.json()
             res.raise_for_status()
@@ -130,13 +130,14 @@ class ContextBrokerClient(BaseClient):
 
     def get_resources(self) -> Dict:
         """
-        Re
-        Returns:
+        Gets reo
 
+        Returns:
+            Dict
         """
         url = urljoin(self.base_url, '/v2')
         try:
-            res = self.session.get(url=url, headers=self.headers)
+            res = self.get(url=url, headers=self.headers)
             if res.ok:
                 return res.json()
             res.raise_for_status()
@@ -145,7 +146,7 @@ class ContextBrokerClient(BaseClient):
             raise
 
     # STATISTICS API
-    def get_statistics(self):
+    def get_statistics(self) -> Dict:
         """
         Gets statistics of context broker
         Returns:
@@ -153,7 +154,7 @@ class ContextBrokerClient(BaseClient):
         """
         url = urljoin(self.base_url, 'statistics')
         try:
-            res = self.session.get(url=url, headers=self.headers)
+            res = self.get(url=url, headers=self.headers)
             if res.ok:
                 return res.json()
             res.raise_for_status()
@@ -196,7 +197,7 @@ class ContextBrokerClient(BaseClient):
         except requests.RequestException as err:
             if update and err.response.status_code == 422:
                 return self.update_entity(entity=entity)
-            msg = "Could not post entity {entity.id}"
+            msg = f"Could not post entity {entity.id}"
             self.log_error(err=err, msg=msg)
             raise
 
