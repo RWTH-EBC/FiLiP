@@ -22,7 +22,8 @@ class TestClient(unittest.TestCase):
         """
         self.fh = FiwareHeader(service='filip',
                                service_path='/testing')
-        self.config = json.loads("test_core_client.json")
+        with open("test_core_client.json") as f:
+            self.config = json.load(f)
 
     def _test_change_of_headers(self, client: Client):
         """
