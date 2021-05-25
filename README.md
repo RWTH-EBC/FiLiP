@@ -124,6 +124,10 @@ Therefore, FiLiP currently only covers the APIs of the following GEs:
     - [swagger](https://app.swaggerhub.com/apis/smartsdk/ngsi-tsdb/0.7) (*not 
       up to date*, newest API version is 8.0)
 
+## Structure of FiLiP
+
+![Library Structure](/docs/diagrams/out/architecture.png)
+
 ## Getting started
 
 The following section shortly describes use of the library.

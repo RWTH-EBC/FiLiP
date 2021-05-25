@@ -1,0 +1,22 @@
+@startwbs
+
+* FiLiP
+** core
+*** BaseClient
+*** Client
+*** Config
+*** Models
+*** Simple Query Language
+** cb
+*** ContextBrokerClient
+*** Models
+** iota
+*** IoTACLient
+*** Models
+** timeseries
+*** QuantumLeapClient
+*** Models
+** utils
+
+
+@endwbs
