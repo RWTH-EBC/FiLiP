@@ -28,7 +28,6 @@ class TestAgent(unittest.TestCase):
             "apikey": "1234",
             "endpoint": None,
             "transport": 'HTTP',
-            "internal_attributes": None,
             "expressionLanguage": None
         }
         self.fiware_header = FiwareHeader(service='filip',

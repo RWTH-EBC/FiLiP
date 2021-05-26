@@ -38,14 +38,25 @@ class ContextBrokerClient(BaseClient):
     http://telefonicaid.github.io/fiware-orion/api/v2/stable/
     """
     def __init__(self,
-                 *,
                  url: str = None,
+                 *,
                  session: requests.Session = None,
-                 fiware_header: FiwareHeader = None):
+                 fiware_header: FiwareHeader = None,
+                 **kwargs):
+        """
+
+        Args:
+            url: Url of context broker server
+            session (requests.Session):
+            fiware_header (FiwareHeader): fiware service and fiware service path
+            **kwargs (Optional): Optional arguments that ``request`` takes.
+        """
+        # set service url
         url = url or settings.CB_URL
         super().__init__(url=url,
                          session=session,
-                         fiware_header=fiware_header)
+                         fiware_header=fiware_header,
+                         **kwargs)
 
     def __pagination(self,
                      *,
@@ -81,32 +92,37 @@ class ContextBrokerClient(BaseClient):
         else:
             params['limit'] = limit
 
-        res = self.session.request(method=method,
-                                   url=url,
-                                   params=params,
-                                   headers=headers,
-                                   data=data)
-        if res.ok:
-            items = res.json()
-            # do pagination
-            count = int(res.headers['Fiware-Total-Count'])
+        if self.session:
+            session = self.session
+        else:
+            session = requests.Session()
+        with session:
+            res = session.request(method=method,
+                                  url=url,
+                                  params=params,
+                                  headers=headers,
+                                  data=data)
+            if res.ok:
+                items = res.json()
+                # do pagination
+                count = int(res.headers['Fiware-Total-Count'])
 
-            while len(items) < limit and len(items) < count:
-                # Establishing the offset from where entities are retrieved
-                params['offset'] = len(items)
-                params['limit'] = min(1000, (limit - len(items)))
-                res = self.session.request(method=method,
-                                           url=url,
-                                           params=params,
-                                           headers=headers,
-                                           data=data)
-                if res.ok:
-                    items.extend(res.json())
-                else:
-                    res.raise_for_status()
-            self.logger.debug('Received: %s', items)
-            return items
-        res.raise_for_status()
+                while len(items) < limit and len(items) < count:
+                    # Establishing the offset from where entities are retrieved
+                    params['offset'] = len(items)
+                    params['limit'] = min(1000, (limit - len(items)))
+                    res = session.request(method=method,
+                                          url=url,
+                                          params=params,
+                                          headers=headers,
+                                          data=data)
+                    if res.ok:
+                        items.extend(res.json())
+                    else:
+                        res.raise_for_status()
+                self.logger.debug('Received: %s', items)
+                return items
+            res.raise_for_status()
 
     # MANAGEMENT API
     def get_version(self) -> Dict:
@@ -117,7 +133,7 @@ class ContextBrokerClient(BaseClient):
         """
         url = urljoin(self.base_url, '/version')
         try:
-            res = self.session.get(url=url, headers=self.headers)
+            res = self.get(url=url, headers=self.headers)
             if res.ok:
                 return res.json()
             res.raise_for_status()
@@ -127,13 +143,14 @@ class ContextBrokerClient(BaseClient):
 
     def get_resources(self) -> Dict:
         """
-        Re
-        Returns:
+        Gets reo
 
+        Returns:
+            Dict
         """
         url = urljoin(self.base_url, '/v2')
         try:
-            res = self.session.get(url=url, headers=self.headers)
+            res = self.get(url=url, headers=self.headers)
             if res.ok:
                 return res.json()
             res.raise_for_status()
@@ -142,7 +159,7 @@ class ContextBrokerClient(BaseClient):
             raise
 
     # STATISTICS API
-    def get_statistics(self):
+    def get_statistics(self) -> Dict:
         """
         Gets statistics of context broker
         Returns:
@@ -150,7 +167,7 @@ class ContextBrokerClient(BaseClient):
         """
         url = urljoin(self.base_url, 'statistics')
         try:
-            res = self.session.get(url=url, headers=self.headers)
+            res = self.get(url=url, headers=self.headers)
             if res.ok:
                 return res.json()
             res.raise_for_status()
@@ -180,7 +197,7 @@ class ContextBrokerClient(BaseClient):
         url = urljoin(self.base_url, 'v2/entities')
         headers = self.headers.copy()
         try:
-            res = self.session.post(
+            res = self.post(
                 url=url,
                 headers=headers,
                 json=entity.dict(exclude_unset=True,
@@ -193,7 +210,7 @@ class ContextBrokerClient(BaseClient):
         except requests.RequestException as err:
             if update and err.response.status_code == 422:
                 return self.update_entity(entity=entity)
-            msg = "Could not post entity {entity.id}"
+            msg = f"Could not post entity {entity.id}"
             self.log_error(err=err, msg=msg)
             raise
 
@@ -387,7 +404,7 @@ class ContextBrokerClient(BaseClient):
         params.update({'options': response_format})
 
         try:
-            res = self.session.get(url=url, params=params, headers=headers)
+            res = self.get(url=url, params=params, headers=headers)
             if res.ok:
                 self.logger.info("Entity successfully retrieved!")
                 self.logger.debug("Received: %s", res.json())
@@ -451,7 +468,7 @@ class ContextBrokerClient(BaseClient):
             raise ValueError(f'Value must be in {list(AttrsFormat)}')
         params.update({'options': response_format})
         try:
-            res = self.session.get(url=url, params=params, headers=headers)
+            res = self.get(url=url, params=params, headers=headers)
             if res.ok:
                 if response_format == AttrsFormat.NORMALIZED:
                     return {key: ContextAttribute(**values)
@@ -483,7 +500,7 @@ class ContextBrokerClient(BaseClient):
         if options:
             params.update({'options': options})
         try:
-            res = self.session.post(url=url,
+            res = self.post(url=url,
                                     headers=headers,
                                     json=entity.dict(exclude={'id', 'type'},
                                                      exclude_unset=True,
@@ -516,7 +533,7 @@ class ContextBrokerClient(BaseClient):
         else:
             params = {}
         try:
-            res = self.session.delete(url=url, params=params, headers=headers)
+            res = self.delete(url=url, params=params, headers=headers)
             if res.ok:
                 self.logger.info("Entity '%s' successfully deleted!", entity_id)
             else:
@@ -547,7 +564,7 @@ class ContextBrokerClient(BaseClient):
         if options:
             params.update({'options': options})
         try:
-            res = self.session.put(url=url,
+            res = self.put(url=url,
                                    headers=headers,
                                    json=entity.dict(exclude={'id', 'type'},
                                                     exclude_unset=True,
@@ -595,7 +612,7 @@ class ContextBrokerClient(BaseClient):
         if metadata:
             params.update({'metadata': ','.join(metadata)})
         try:
-            res = self.session.get(url=url, params=params, headers=headers)
+            res = self.get(url=url, params=params, headers=headers)
             if res.ok:
                 self.logger.debug('Received: %s', res.json())
                 return ContextAttribute(**res.json())
@@ -638,7 +655,7 @@ class ContextBrokerClient(BaseClient):
         if entity_type:
             params.update({'type': entity_type})
         try:
-            res = self.session.put(url=url,
+            res = self.put(url=url,
                                    headers=headers,
                                    json=attr.dict(exclude={'name'},
                                                   exclude_unset=True,
@@ -677,7 +694,7 @@ class ContextBrokerClient(BaseClient):
         if entity_type:
             params.update({'type': entity_type})
         try:
-            res = self.session.delete(url=url, headers=headers)
+            res = self.delete(url=url, headers=headers)
             if res.ok:
                 self.logger.info("Attribute '%s' of '%s' "
                                  "successfully deleted!", attr_name, entity_id)
@@ -715,7 +732,7 @@ class ContextBrokerClient(BaseClient):
         if entity_type:
             params.update({'type': entity_type})
         try:
-            res = self.session.get(url=url, params=params, headers=headers)
+            res = self.get(url=url, params=params, headers=headers)
             if res.ok:
                 self.logger.debug('Received: %s', res.json())
                 return res.json()
@@ -755,11 +772,11 @@ class ContextBrokerClient(BaseClient):
                 headers.update({'Content-Type': 'text/plain'})
                 if isinstance(value, str):
                     value = f'"{value}"'
-                res = self.session.put(url=url,
+                res = self.put(url=url,
                                        headers=headers,
                                        json=value)
             else:
-                res = self.session.put(url=url,
+                res = self.put(url=url,
                                        headers=headers,
                                        json=value)
             if res.ok:
@@ -799,7 +816,7 @@ class ContextBrokerClient(BaseClient):
         if options:
             params.update({'options': options})
         try:
-            res = self.session.get(url=url, params=params, headers=headers)
+            res = self.get(url=url, params=params, headers=headers)
             if res.ok:
                 self.logger.debug('Received: %s', res.json())
                 return res.json()
@@ -822,7 +839,7 @@ class ContextBrokerClient(BaseClient):
         headers = self.headers.copy()
         params = {}
         try:
-            res = self.session.get(url=url, params=params, headers=headers)
+            res = self.get(url=url, params=params, headers=headers)
             if res.ok:
                 self.logger.debug('Received: %s', res.json())
                 return res.json()
@@ -877,7 +894,7 @@ class ContextBrokerClient(BaseClient):
         headers = self.headers.copy()
         headers.update({'Content-Type': 'application/json'})
         try:
-            res = self.session.post(
+            res = self.post(
                 url=url,
                 headers=headers,
                 data=subscription.json(exclude={'id'},
@@ -905,7 +922,7 @@ class ContextBrokerClient(BaseClient):
         url = urljoin(self.base_url, f'v2/subscriptions/{subscription_id}')
         headers = self.headers.copy()
         try:
-            res = self.session.get(url=url, headers=headers)
+            res = self.get(url=url, headers=headers)
             if res.ok:
                 self.logger.debug('Received: %s', res.json())
                 return Subscription(**res.json())
@@ -927,7 +944,7 @@ class ContextBrokerClient(BaseClient):
         headers = self.headers.copy()
         headers.update({'Content-Type': 'application/json'})
         try:
-            res = self.session.patch(
+            res = self.patch(
                 url=url,
                 headers=headers,
                 data=subscription.json(exclude={'id'},
@@ -953,7 +970,7 @@ class ContextBrokerClient(BaseClient):
                       f'v2/subscriptions/{subscription_id}')
         headers = self.headers.copy()
         try:
-            res = self.session.delete(url=url, headers=headers)
+            res = self.delete(url=url, headers=headers)
             if res.ok:
                 self.logger.info(f"Subscription '{subscription_id}' "
                                  f"successfully deleted!")
@@ -1011,7 +1028,7 @@ class ContextBrokerClient(BaseClient):
         headers = self.headers.copy()
         headers.update({'Content-Type': 'application/json'})
         try:
-            res = self.session.post(
+            res = self.post(
                 url=url,
                 headers=headers,
                 data=registration.json(exclude={'id'},
@@ -1038,7 +1055,7 @@ class ContextBrokerClient(BaseClient):
         url = urljoin(self.base_url, f'v2/registrations/{registration_id}')
         headers = self.headers.copy()
         try:
-            res = self.session.get(url=url, headers=headers)
+            res = self.get(url=url, headers=headers)
             if res.ok:
                 self.logger.debug('Received: %s', res.json())
                 return Registration(**res.json())
@@ -1060,7 +1077,7 @@ class ContextBrokerClient(BaseClient):
         headers = self.headers.copy()
         headers.update({'Content-Type': 'application/json'})
         try:
-            res = self.session.patch(
+            res = self.patch(
                 url=url,
                 headers=headers,
                 data=registration.json(exclude={'id'},
@@ -1086,7 +1103,7 @@ class ContextBrokerClient(BaseClient):
                       f'v2/registrations/{registration_id}')
         headers = self.headers.copy()
         try:
-            res = self.session.delete(url=url, headers=headers)
+            res = self.delete(url=url, headers=headers)
             if res.ok:
                 self.logger.info("Registration '%s' "
                                  "successfully deleted!", registration_id)
@@ -1148,7 +1165,7 @@ class ContextBrokerClient(BaseClient):
             params.update({'options': 'keyValues'})
         update = Update(actionType=action_type, entities=entities)
         try:
-            res = self.session.post(
+            res = self.post(
                 url=url,
                 headers=headers,
                 params=params,

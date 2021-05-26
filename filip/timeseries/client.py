@@ -31,25 +31,36 @@ class QuantumLeapClient(BaseClient):
     https://app.swaggerhub.com/apis/heikkilv/quantumleap-api/
     """
     def __init__(self,
-                 *,
                  url: str = None,
+                 *,
                  session: requests.Session = None,
-                 fiware_header: FiwareHeader = None):
+                 fiware_header: FiwareHeader = None,
+                 **kwargs):
+        """
+
+        Args:
+            url:
+            session:
+            fiware_header:
+            **kwargs:
+        """
+        # set service url
         url = url or settings.QL_URL
         super().__init__(url=url,
                          session=session,
-                         fiware_header=fiware_header)
+                         fiware_header=fiware_header,
+                         **kwargs)
 
     # META API ENDPOINTS
     def get_version(self) -> Dict:
         """
-        Returns the version of QuantumLeap.
+        Gets version of QuantumLeap-Service.
         Returns:
             Dictionary with response
         """
         url = urljoin(self.base_url, '/version')
         try:
-            res = self.session.get(url=url)
+            res = self.get(url=url)
             if res.ok:
                 return res.json()
             res.raise_for_status()
@@ -57,7 +68,7 @@ class QuantumLeapClient(BaseClient):
             self.logger.error(err)
             raise
 
-    def get_health(self):
+    def get_health(self) -> Dict:
         """
         This endpoint is intended for administrators of QuantumLeap. Using the
         information returned by this endpoint they can diagnose problems in the
@@ -71,7 +82,7 @@ class QuantumLeapClient(BaseClient):
         """
         url = urljoin(self.base_url, '/health')
         try:
-            res = self.session.get(url=url)
+            res = self.get(url=url)
             if res.ok:
                 return res.json()
             res.raise_for_status()
@@ -105,7 +116,7 @@ class QuantumLeapClient(BaseClient):
         }
 
         try:
-            res = self.session.post(
+            res = self.post(
                 url=url,
                 headers=headers,
                 json=data_set)
@@ -185,14 +196,11 @@ class QuantumLeapClient(BaseClient):
             params.update({'timeIndexAttribute': time_index_attribute})
 
         try:
-            res = self.session.post(
-                url=url,
-                headers=headers,
-                params=params)
+            res = self.post(url=url, headers=headers, params=params)
             if res.ok:
                 msg = "Subscription created successfully!"
                 self.logger.info(msg)
-                return msg
+
             res.raise_for_status()
         except requests.exceptions.RequestException as err:
             msg = "Could not create subscription."
@@ -217,7 +225,7 @@ class QuantumLeapClient(BaseClient):
         else:
             params = {}
         try:
-            res = self.session.delete(url=url, headers=headers, params=params)
+            res = self.delete(url=url, headers=headers, params=params)
             if res.ok:
                 self.logger.info("Entity id '%s' successfully deleted!",
                                  entity_id)
@@ -240,7 +248,7 @@ class QuantumLeapClient(BaseClient):
         url = urljoin(self.base_url, f'/v2/types/{entity_type}')
         headers = self.headers.copy()
         try:
-            res = self.session.delete(url=url, headers=headers)
+            res = self.delete(url=url, headers=headers)
             if res.ok:
                 self.logger.info("Entities of type '%s' successfully deleted!",
                                  entity_type)
@@ -273,6 +281,27 @@ class QuantumLeapClient(BaseClient):
                         ) -> Dict:
         """
         Private Function to call respective API endpoints
+
+        Args:
+            url:
+            entity_id:
+            options:
+            entity_type:
+            aggr_method:
+            aggr_period:
+            from_date:
+            to_date:
+            last_n:
+            limit:
+            offset:
+            georel:
+            geometry:
+            coords:
+            attrs:
+            aggr_scope:
+
+        Returns:
+            Dict
         """
         params = {}
         headers = self.headers.copy()
@@ -310,7 +339,7 @@ class QuantumLeapClient(BaseClient):
         if entity_id:
             params.update({'id': entity_id})
         try:
-            res = self.session.get(url=url, params=params, headers=headers)
+            res = self.get(url=url, params=params, headers=headers)
             if res.ok:
                 self.logger.info("Successfully received entity data")
                 self.logger.debug('Received: %s', res.json())
