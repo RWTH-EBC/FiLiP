@@ -2,8 +2,8 @@
 Base client module
 """
 import logging
-import requests
 from typing import Dict, ByteString, List, IO, Tuple, Union
+import requests
 from filip.core.models import FiwareHeader
 from filip.utils import validate_url
 
