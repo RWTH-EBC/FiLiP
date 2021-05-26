@@ -55,6 +55,9 @@ class TimeSeriesHeader(TimeSeriesBase):
 
 
 class IndexedValues(BaseModel):
+    """
+    Model for time indexed values
+    """
     values: List[Any] = Field(
         default=None,
         description="Array of values of the selected attribute, in the same "
@@ -68,6 +71,9 @@ class IndexedValues(BaseModel):
 
 
 class AttributeValues(IndexedValues):
+    """
+    Model for indexed values that contain attribute name
+    """
     attrName: str = Field(
         title="Attribute name",
         description=""
@@ -75,9 +81,17 @@ class AttributeValues(IndexedValues):
 
 
 class TimeSeries(TimeSeriesHeader):
+    """
+    Model for time series data
+    """
     attributes: List[AttributeValues] = None
 
-    def to_pandas(self):
+    def to_pandas(self) -> pd.DataFrame:
+        """
+        Converts time series data to pandas dataframe
+        Returns:
+            pandas.DataFrame
+        """
         index = pd.Index(data=self.index, name='datetime')
         attr_names = [attr.attrName for attr in self.attributes]
         values = np.array([attr.values for attr in self.attributes]).transpose()
@@ -88,6 +102,9 @@ class TimeSeries(TimeSeriesHeader):
         return pd.DataFrame(data=values, index=index, columns=columns)
 
     class Config:
+        """
+        Pydantic configuration
+        """
         allow_population_by_field_name = True
 
 

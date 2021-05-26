@@ -53,8 +53,7 @@ class TestTimeSeries(unittest.TestCase):
             data = [self.entity_1, self.entity_2]
             notification_message = NotificationMessage(data=data,
                                                        subscriptionId="test")
-            self.assertIsNotNone(
-                client.post_subscription(entity_id=self.entity_1.id))
+            client.post_subscription(entity_id=self.entity_1.id)
             client.post_notification(notification_message)
 
     def test_entity_context(self) -> None:
@@ -84,27 +83,34 @@ class TestTimeSeries(unittest.TestCase):
                                                attrs='temperature,co2')
             print(attrs_id.json(indent=2))
             print(attrs_id.to_pandas())
+
             attrs_values_id = client.get_entity_values_by_id(
                 entity_id=self.entity_1.id)
             print(attrs_values_id.to_pandas())
+
             attr_id = client.get_entity_attr_by_id(
                 entity_id=self.entity_1.id, attr_name="temperature")
             print(attr_id.to_pandas())
+
             attr_values_id = client.get_entity_attr_values_by_id(
                 entity_id=self.entity_1.id, attr_name="temperature")
             print(attr_values_id.to_pandas())
+
             attrs_type = client.get_entity_by_type(
                 entity_type=self.entity_1.type)
             for entity in attrs_type:
                 print(entity.to_pandas())
+
             attrs_values_type = client.get_entity_values_by_type(
                  entity_type=self.entity_1.type)
             for entity in attrs_values_type:
                 print(entity.to_pandas())
+
             attr_type = client.get_entity_attr_by_type(
                 entity_type=self.entity_1.type, attr_name="temperature")
             for entity in attr_type:
                 print(entity.to_pandas())
+
             attr_values_type = client.get_entity_attr_values_by_type(
                 entity_type=self.entity_1.type, attr_name="temperature")
             for entity in attr_values_type:

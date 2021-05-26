@@ -54,7 +54,7 @@ class QuantumLeapClient(BaseClient):
     # META API ENDPOINTS
     def get_version(self) -> Dict:
         """
-        Returns the version of QuantumLeap.
+        Gets version of QuantumLeap-Service.
         Returns:
             Dictionary with response
         """
@@ -68,7 +68,7 @@ class QuantumLeapClient(BaseClient):
             self.logger.error(err)
             raise
 
-    def get_health(self):
+    def get_health(self) -> Dict:
         """
         This endpoint is intended for administrators of QuantumLeap. Using the
         information returned by this endpoint they can diagnose problems in the
@@ -200,7 +200,7 @@ class QuantumLeapClient(BaseClient):
             if res.ok:
                 msg = "Subscription created successfully!"
                 self.logger.info(msg)
-                return msg
+
             res.raise_for_status()
         except requests.exceptions.RequestException as err:
             msg = "Could not create subscription."
@@ -301,7 +301,7 @@ class QuantumLeapClient(BaseClient):
             aggr_scope:
 
         Returns:
-            requests.Response
+            Dict
         """
         params = {}
         headers = self.headers.copy()

@@ -62,11 +62,27 @@ class BaseClient:
         self.close()
 
     @property
-    def fiware_headers(self):
+    def fiware_headers(self) -> FiwareHeader:
+        """
+        Get fiware header
+        Returns:
+            FiwareHeader
+        """
         return self._fiware_headers.copy()
 
     @fiware_headers.setter
-    def fiware_headers(self, headers: Union[Dict, FiwareHeader]):
+    def fiware_headers(self, headers: Union[Dict, FiwareHeader]) -> None:
+        """
+        Sets new fiware header
+        Args:
+            headers (Dict, FiwareHeader): New headers either as FiwareHeader
+                object or as dict.
+                Example:
+                    {fiware-service: "MyService",
+                    fiware-servicepath: "/MyServicePath"}
+        Returns:
+            None
+        """
         if isinstance(headers, FiwareHeader):
             self._fiware_headers = headers
         elif isinstance(headers, dict):
@@ -78,20 +94,46 @@ class BaseClient:
         self.headers.update(self.fiware_headers.dict(by_alias=True))
 
     @property
-    def fiware_service(self):
+    def fiware_service(self) -> str:
+        """
+        Get current fiware service
+        Returns:
+            str
+        """
         return self.fiware_headers.service_path
 
     @fiware_service.setter
-    def fiware_service(self, service: str):
+    def fiware_service(self, service: str) -> None:
+        """
+        Set new fiware service
+        Args:
+            service:
+
+        Returns:
+            None
+        """
         self._fiware_headers.service = service
         self.headers.update(self.fiware_headers.dict(by_alias=True))
 
     @property
-    def fiware_service_path(self):
+    def fiware_service_path(self) -> str:
+        """
+        Get current fiware service path
+        Returns:
+            str
+        """
         return self.fiware_headers.service_path
 
     @fiware_service_path.setter
-    def fiware_service_path(self, service_path: str):
+    def fiware_service_path(self, service_path: str) -> None:
+        """
+        Set new fiware service path
+        Args:
+            service_path (str): New fiware service path. Must start with '/'
+
+        Returns:
+            None
+        """
         self._fiware_headers.service_path = service_path
         self.headers.update(self.fiware_headers.dict(by_alias=True))
 
