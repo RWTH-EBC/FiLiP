@@ -34,7 +34,6 @@ class Client(BaseClient):
     def __init__(self,
                  config: Union[str, Path, Dict] = None,
                  session: Session = None,
-                 reuse_session: bool = False,
                  fiware_header: FiwareHeader = None,
                  **kwargs):
         """
@@ -42,9 +41,6 @@ class Client(BaseClient):
         Args:
             config (Union[str, Path, Dict]): Confiiguration object
             session (request.Session): Session object
-            reuse_session (bool): Default False.
-                If 'True' client uses session objects for requests,
-                'True' if external session object is provided.
             fiware_header (FiwareHeader): Fiware header
             **kwargs: Optional arguments that ``request`` takes.
         """
@@ -54,7 +50,6 @@ class Client(BaseClient):
             self.config = self.Settings()
 
         super().__init__(session=session,
-                         reuse_session=reuse_session,
                          fiware_header=fiware_header,
                          **kwargs)
 

@@ -34,7 +34,6 @@ class QuantumLeapClient(BaseClient):
                  url: str = None,
                  *,
                  session: requests.Session = None,
-                 reuse_session: bool = False,
                  fiware_header: FiwareHeader = None,
                  **kwargs):
         """
@@ -42,7 +41,6 @@ class QuantumLeapClient(BaseClient):
         Args:
             url:
             session:
-            reuse_session:
             fiware_header:
             **kwargs:
         """
@@ -50,7 +48,6 @@ class QuantumLeapClient(BaseClient):
         url = url or settings.QL_URL
         super().__init__(url=url,
                          session=session,
-                         reuse_session=reuse_session,
                          fiware_header=fiware_header,
                          **kwargs)
 

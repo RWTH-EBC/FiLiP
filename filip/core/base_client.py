@@ -16,7 +16,6 @@ class BaseClient:
                  url: str = None,
                  *,
                  session: requests.Session = None,
-                 reuse_session: bool = False,
                  fiware_header: Union[Dict, FiwareHeader] = None,
                  **kwargs):
         """
@@ -37,8 +36,9 @@ class BaseClient:
             validate_url(url)
             self.base_url = url
 
-        if session or reuse_session:
-            self.session = session or requests.Session()
+        if session:
+            self.session = session
+            self._external_session = True
         else:
             self.session = None
             self._headers = {}
@@ -53,6 +53,9 @@ class BaseClient:
 
     # Context Manager Protocol
     def __enter__(self):
+        if not self.session:
+            self.session = requests.Session()
+            self._external_session = False
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
@@ -301,5 +304,5 @@ class BaseClient:
         Returns:
             None
         """
-        if self.session:
+        if self.session and not self._external_session:
             self.session.close()

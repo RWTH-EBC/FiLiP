@@ -102,18 +102,29 @@ class TestClient(unittest.TestCase):
         """
         # with new session object
         with Client(config=self.config,
-                    fiware_header=self.fh,
-                    reuse_session=True) as client:
+                    fiware_header=self.fh) as client:
+            self.assertIsNotNone(client.session)
             self._test_connections(client=client)
             self._test_change_of_headers(client=client)
 
-        # with outer session
+        # with external session
         with requests.Session() as s:
             client = Client(config=self.config,
                             session=s,
                             fiware_header=self.fh)
+            self.assertEqual(client.session, s)
             self._test_connections(client=client)
             self._test_change_of_headers(client=client)
+
+        # with external session but unnecessary 'with'-statement
+        with requests.Session() as s:
+            with Client(config=self.config,
+                        session=s,
+                        fiware_header=self.fh) as client:
+                self.assertEqual(client.session, s)
+                self._test_connections(client=client)
+                self._test_change_of_headers(client=client)
+
 
     def tearDown(self) -> None:
         """

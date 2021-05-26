@@ -41,23 +41,20 @@ class ContextBrokerClient(BaseClient):
                  url: str = None,
                  *,
                  session: requests.Session = None,
-                 reuse_session: bool = False,
                  fiware_header: FiwareHeader = None,
                  **kwargs):
         """
 
         Args:
-            url:
-            session:
-            reuse_session:
-            fiware_header:
-            **kwargs:
+            url: Url of context broker server
+            session (requests.Session):
+            fiware_header (FiwareHeader): fiware service and fiware service path
+            **kwargs (Optional): Optional arguments that ``request`` takes.
         """
         # set service url
         url = url or settings.CB_URL
         super().__init__(url=url,
                          session=session,
-                         reuse_session=reuse_session,
                          fiware_header=fiware_header,
                          **kwargs)
 
