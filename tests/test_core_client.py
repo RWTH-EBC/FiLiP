@@ -125,7 +125,6 @@ class TestClient(unittest.TestCase):
                 self._test_connections(client=client)
                 self._test_change_of_headers(client=client)
 
-
     def tearDown(self) -> None:
         """
         Clean up artifacts
