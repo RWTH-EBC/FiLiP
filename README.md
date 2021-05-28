@@ -124,7 +124,7 @@ Therefore, FiLiP currently only covers the APIs of the following GEs:
 
 ## Structure of FiLiP
 
-![Library Structure](https://github.com/N5GEH/n5geh.tools.FiLiP/blob/development/docs/logos/EBC_Logo.png)
+![Library Structure](https://github.com/N5GEH/n5geh.tools.FiLiP/blob/development/docs/diagrams/out/architecture.png)
 
 ## Getting started
 
