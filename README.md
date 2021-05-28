@@ -1,4 +1,4 @@
-![E.ON EBC RWTH Aachen University](https://github.com/N5GEH/n5geh.tools.FiLiP/blob/development/docs/logos/EBC_Logo.png)
+![E.ON EBC RWTH Aachen University](https://raw.githubusercontent.com/N5GEH/n5geh.tools.FiLiP/development/docs/logos/EBC_Logo.png)
 
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
@@ -124,7 +124,7 @@ Therefore, FiLiP currently only covers the APIs of the following GEs:
 
 ## Structure of FiLiP
 
-![Library Structure](https://github.com/N5GEH/n5geh.tools.FiLiP/blob/development/docs/diagrams/out/architecture.png)
+![Library Structure](https://raw.githubusercontent.com/N5GEH/n5geh.tools.FiLiP/development/docs/diagrams/out/architecture.png)
 
 ## Getting started
 
