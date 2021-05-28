@@ -1,10 +1,8 @@
-<a href="https://www.ebc.eonerc.rwth-aachen.de/"> <img alt="EBC" src="https://www.ebc.eonerc.rwth-aachen.de/global/show_picture.asp?id=aaaaaaaaaakevlz" height="100"> </a>
-<a href="https://n5geh.de/"> <img alt="N5GEH" src="https://avatars.githubusercontent.com/u/43948851?s=200&v=4" height="100"> </a>
-
+![E.ON EBC RWTH Aachen University](./docs/logos/EBC_Logo.png)
 
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
-# FiLiP 
+# FiLiP - Fiware Library for Python
 
 FiLiP (Fiware Library for Python) is a python software development kit (SDK) for 
 accelerating the development of web services that use Fiware's Generic 
@@ -186,18 +184,17 @@ Currently, we are working on a CI workflow for continuous testing of the library
 
 ## Documentation
 
-Coming soon...
-
-###  Architectural Concepts
-
-FiLiP is organized as follows:
-  
-  Coming soon after the next refactoring...
-
+You can find our documentation 
+[here](https://ebc.pages.rwth-aachen.de/EBC_all/fiware/filip).
 
 ## Authors
 
 * [Thomas Storek](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Team2/~lhda/Thomas-Storek/?lidx=1) (corresponding)
+* [Stephan Göbel](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Team3/~ccdhp/Goebel-Stephan/)
+* [Saira Bano](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Systemadministration/~ohhca/Bano-Saira/)
+
+## Alumni
+
 * Felix Rehmann
 
 ## References
@@ -222,12 +219,20 @@ This project is licensed under the BSD License - see the [LICENSE](LICENSE) file
 
 ## Copyright
 
+<a href="https://www.ebc.eonerc.rwth-aachen.de/"> <img alt="EBC" src="https://www.ebc.eonerc.rwth-aachen.de/global/show_picture.asp?id=aaaaaaaaaakevlz" height="100"> </a>
+
 2021, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy 
 Efficient Buildings and Indoor Climate
 
 [Institute for Energy Efficient Buildings and Indoor Climate (EBC)](http://www.ebc.eonerc.rwth-aachen.de)  
 [E.ON Energy Research Center (E.ON ERC)](http://www.eonerc.rwth-aachen.de)  
 [RWTH University Aachen, Germany](http://www.rwth-aachen.de)
+
+## Related projects
+
+
+<a href="https://n5geh.de/"> <img alt="National 5G Energy Hub" 
+src="https://avatars.githubusercontent.com/u/43948851?s=200&v=4" height="100"></a>
 
 ## Acknowledgments
 
