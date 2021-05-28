@@ -184,8 +184,9 @@ Currently, we are working on a CI workflow for continuous testing of the library
 
 ## Documentation
 
-You can find our documentation 
-[here](https://ebc.pages.rwth-aachen.de/EBC_all/fiware/filip).
+We are still working on the documentation.
+You can find our current documentation 
+[here](https://ebc.pages.rwth-aachen.de/EBC_all/fiware/filip/development/docs/index.html).
 
 ## Authors
 
