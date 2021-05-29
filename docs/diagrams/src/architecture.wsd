@@ -1,10 +1,10 @@
 @startwbs
 !theme materia
-skinparam BackgroundColor white
+skinparam BackgroundColor transparent
 <style>
 node {
     Padding 2
-    Margin 3
+    Margin 5
     HorizontalAlignment center
     LineColor #9B231E
     LineThickness 2.0
