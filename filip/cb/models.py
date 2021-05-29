@@ -1026,6 +1026,42 @@ class Update(BaseModel):
         """
         return ActionType(action)
 
+class Command(BaseModel):
+    """
+    Class for sending commands to IoT Devices.
+    Note that the command must be registered via an IoT-Agent. Internally
+    FIWARE uses its registration mechanism in order to connect the command
+    with an IoT-Device
+    """
+    type: DataType = Field(default=DataType.COMMAND,
+                           description="Command must have the type command",
+                           const=True)
+    value: Any = Field(description="Any json serializable command that will "
+                                   "be forwarded to the connected IoT device")
+
+    @validator("value")
+    def check_value(cls, value):
+        """
+        Check if value is json serializable
+        Args:
+            value: value field
+        Returns:
+            value
+        """
+        json.dumps(value)
+        return value
+
+class NamedCommand(Command):
+    """
+    Class for sending command to IoT-Device.
+    Extend :class: Command with command Name
+    """
+    name: str = Field(
+        description="Name of the command",
+        max_length=256,
+        min_length=1,
+        regex=r"(^((?![?&#/])[\x00-\x7F])*$)(?!(id|type|geo:distance|\*))")
+
 # TODO: Add Relationships
 # class Relationship:
 #    """

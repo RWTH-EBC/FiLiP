@@ -11,9 +11,11 @@ from filip.core.simple_query_language import QueryString
 from filip.cb.client import ContextBrokerClient
 from filip.cb.models import \
     AttrsFormat,\
+    Command, \
     ContextEntity, \
     ContextAttribute, \
     NamedContextAttribute, \
+    NamedCommand, \
     Subscription, \
     Query, \
     Entity, \
@@ -308,6 +310,30 @@ class TestContextBroker(unittest.TestCase):
             q = Query.parse_obj({"entities": [e.dict(exclude_unset=True)]})
             self.assertEqual(1000,
                              len(client.query(query=q, response_format='keyValues')))
+
+    def test_command(self) -> None:
+        """
+        test sending commands
+        Returns:
+            None
+        """
+        # Todo: Implement more robust test for commands
+        fh = FiwareHeader(service="opcua_car",
+                          service_path="/demo")
+        cmd = NamedCommand(name="Accelerate", value=[3])
+        client = ContextBrokerClient(url="http://134.130.166.184:1026",
+                                     fiware_header=fh)
+        entity_id = "age01_Car"
+        entity_type = "Device"
+        entity_before = client.get_entity(entity_id=entity_id,
+                                          entity_type=entity_type)
+        client.post_command(entity_id=entity_id,
+                            entity_type=entity_type,
+                            command=cmd)
+        time.sleep(5)
+        entity_after = client.get_entity(entity_id=entity_id,
+                                        entity_type=entity_type)
+        self.assertNotEqual(entity_before, entity_after)
 
     def tearDown(self) -> None:
         """
