@@ -7,5 +7,4 @@ regex>=2021.3.17
 pytz>=2019.1
 fuzzywuzzy>=0.17.0
 pandas>=1.2.0
-numpy>=1.18.2
 setuptools>=40.6.0

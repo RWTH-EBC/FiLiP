@@ -2,10 +2,11 @@
 Test module for context broker models
 """
 import unittest
-
+from pydantic import ValidationError
 from filip.cb.client import ContextBrokerClient
 from filip.cb.models import \
     ActionType,\
+    Command, \
     ContextMetadata, \
     ContextAttribute, \
     ContextEntity, \
@@ -153,6 +154,23 @@ class TestModels(unittest.TestCase):
             sub_ids = [sub.id for sub in client.get_subscription_list()]
             for sub_id in sub_ids:
                 client.delete_subscription(subscription_id=sub_id)
+
+    def test_command(self):
+        """
+        Test command model
+        Returns:
+
+        """
+        cmd_data = {"type": "command",
+                    "value": [5]}
+        Command(**cmd_data)
+        Command(value=[0])
+        with self.assertRaises(ValidationError):
+            class NotSerializableObject:
+                test: "test"
+            Command(value=NotSerializableObject())
+            Command(type="cmd", value=5)
+
 
     def test_update_model(self):
         """

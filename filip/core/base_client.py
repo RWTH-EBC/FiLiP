@@ -218,7 +218,7 @@ class BaseClient:
 
     def post(self,
              url: str,
-             data: Union[Dict, ByteString, List[Tuple], IO] = None,
+             data: Union[Dict, ByteString, List[Tuple], IO, str] = None,
              json: Dict = None,
              **kwargs) -> requests.Response:
         """
@@ -245,7 +245,7 @@ class BaseClient:
 
     def put(self,
             url: str,
-            data: Union[Dict, ByteString, List[Tuple], IO] = None,
+            data: Union[Dict, ByteString, List[Tuple], IO, str] = None,
             json: Dict = None,
             **kwargs) -> requests.Response:
         """
@@ -273,7 +273,7 @@ class BaseClient:
 
     def patch(self,
               url: str,
-              data: Union[Dict, ByteString, List[Tuple], IO] = None,
+              data: Union[Dict, ByteString, List[Tuple], IO, str] = None,
               json: Dict = None,
               **kwargs) -> requests.Response:
         """
@@ -296,8 +296,7 @@ class BaseClient:
                        if k not in kwargs.keys()})
 
         if self.session:
-            return self.session.patch(url=url, data=data, json=json,
-                                      **kwargs, **kwargs)
+            return self.session.patch(url=url, data=data, json=json, **kwargs)
         return requests.patch(url=url, data=data, json=json, **kwargs)
 
     def delete(self, url: str, **kwargs) -> requests.Response:
