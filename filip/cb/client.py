@@ -1233,8 +1233,8 @@ class ContextBrokerClient(BaseClient):
     def post_command(self,
                      *,
                      entity_id: str,
+                     entity_type: str,
                      command: Union[Command, NamedCommand, Dict],
-                     entity_type: str = None,
                      command_name: str = None) -> None:
         """
         Post a command to a context entity
@@ -1248,9 +1248,7 @@ class ContextBrokerClient(BaseClient):
         """
         url = urljoin(self.base_url, f'v2/entities/{entity_id}/attrs')
         headers = self.headers.copy()
-        params = {}
-        if entity_type:
-            params = {"type": entity_type}
+        params = {"type": entity_type}
         if command_name:
             assert isinstance(command, (Command, dict))
             if isinstance(command, dict):

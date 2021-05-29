@@ -320,7 +320,7 @@ class TestContextBroker(unittest.TestCase):
         # Todo: Implement more robust test for commands
         fh = FiwareHeader(service="opcua_car",
                           service_path="/demo")
-        cmd = NamedCommand(name="Accelerate", value=[2])
+        cmd = NamedCommand(name="Accelerate", value=[3])
         client = ContextBrokerClient(url="http://134.130.166.184:1026",
                                      fiware_header=fh)
         entity_id = "age01_Car"
