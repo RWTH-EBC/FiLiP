@@ -7,12 +7,12 @@ node {
     Margin 3
     HorizontalAlignment center
     LineColor #9B231E
-    LineThickness 1.0
+    LineThickness 2.0
     BackgroundColor #E53027
     FontColor white
     FontName Roboto
     FontStyle bold
-    RoundCorner 2
+    RoundCorner 3
     MaximumWidth 100
 }
 </style>
