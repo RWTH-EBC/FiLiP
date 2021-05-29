@@ -1,4 +1,21 @@
 @startwbs
+!theme materia
+skinparam BackgroundColor white
+<style>
+node {
+    Padding 2
+    Margin 3
+    HorizontalAlignment center
+    LineColor #9B231E
+    LineThickness 1.0
+    BackgroundColor #E53027
+    FontColor white
+    FontName Roboto
+    FontStyle bold
+    RoundCorner 2
+    MaximumWidth 100
+}
+</style>
 
 * FiLiP
 ** core
