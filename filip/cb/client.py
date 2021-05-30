@@ -1,6 +1,7 @@
 """
 Context Broker Module for API Client
 """
+import json
 import re
 from math import inf
 from typing import Any, Dict, List, Union
@@ -17,9 +18,11 @@ from filip.core.simple_query_language import QueryString
 from filip.cb.models import \
     ActionType, \
     AttrsFormat, \
+    Command, \
     ContextEntity, \
     ContextEntityKeyValues, \
     ContextAttribute, \
+    NamedCommand, \
     NamedContextAttribute, \
     Subscription,\
     Registration,\
@@ -1227,6 +1230,47 @@ class ContextBrokerClient(BaseClient):
             self.log_error(err=err, msg=msg)
             raise
 
+    def post_command(self,
+                     *,
+                     entity_id: str,
+                     entity_type: str,
+                     command: Union[Command, NamedCommand, Dict],
+                     command_name: str = None) -> None:
+        """
+        Post a command to a context entity
+        Args:
+            entity_id: Entity identifier
+            command: Command
+            entity_type: Entity type
+            command_name: Name of the command in the entity
+        Returns:
+            None
+        """
+        url = urljoin(self.base_url, f'v2/entities/{entity_id}/attrs')
+        headers = self.headers.copy()
+        params = {"type": entity_type}
+        if command_name:
+            assert isinstance(command, (Command, dict))
+            if isinstance(command, dict):
+                command = Command(**command)
+            command = {command_name: command.dict()}
+        else:
+            assert isinstance(command, (NamedCommand, dict))
+            if isinstance(command, dict):
+                command = NamedCommand(**command)
+            command = {command.name: command.dict(exclude={'name'})}
+        try:
+            res = self.patch(url=url,
+                             headers=headers,
+                             params=params,
+                             json=command)
+            if res.ok:
+                return
+            res.raise_for_status()
+        except requests.RequestException as err:
+                msg = "Query operation failed!"
+                self.log_error(err=err, msg=msg)
+                raise
 
 #    def get_subjects(self, object_entity_name: str, object_entity_type: str, subject_type=None):
 #        """
