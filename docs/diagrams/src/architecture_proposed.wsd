@@ -1,0 +1,43 @@
+@startwbs
+!theme materia
+skinparam BackgroundColor white
+<style>
+node {
+    Padding 2
+    Margin 3
+    HorizontalAlignment center
+    LineColor #9B231E
+    LineThickness 2.0
+    BackgroundColor #E53027
+    FontColor white
+    FontName Roboto
+    FontStyle bold
+    RoundCorner 3
+    MaximumWidth 150
+}
+</style>
+
+* FiLiP
+** core
+*** base_client.py \n class BaseClient
+*** config.py \n class Settings
+*** simple_query_language.py \n class SimpleQuery (maybe utils?)
+** clients
+*** client \n class Client
+*** cb \n class ContextBrokerClient
+*** timeseries \n class QuantumLeapClient
+*** iota \n class IoTACLient
+*** mqtt \n class MQTTClient
+** models
+*** general/base/core.py \n class FiwareHeader
+*** iot.py \n class Device \n class DeviceGroup
+*** context.py \n class ContextEntity \n class ContextAttribute etc.
+*** subscriptions.py \n class Subscription
+*** notifications.py \n class Notification and subsclasses
+*** units.py \n class Unit
+** utils
+*** validators.py
+*** datamodel_generator.py
+*** token_manager.py
+
+@endwbs
