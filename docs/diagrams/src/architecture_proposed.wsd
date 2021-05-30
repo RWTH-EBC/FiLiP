@@ -19,16 +19,19 @@ node {
 
 * FiLiP
 ** core
+*** __init__.py
 *** base_client.py \n class BaseClient
 *** config.py \n class Settings
 *** simple_query_language.py \n class SimpleQuery (maybe utils?)
 ** clients
-*** client \n class Client
-*** cb \n class ContextBrokerClient
-*** timeseries \n class QuantumLeapClient
-*** iota \n class IoTACLient
-*** mqtt \n class MQTTClient
+*** __init__.py
+*** client.py \n class Client
+*** cb.py \n class ContextBrokerClient
+*** timeseries.py \n class QuantumLeapClient
+*** iota.py \n class IoTACLient
+*** mqtt.py \n class MQTTClient
 ** models
+*** __init__.py
 *** general/base/core.py \n class FiwareHeader
 *** iot.py \n class Device \n class DeviceGroup
 *** context.py \n class ContextEntity \n class ContextAttribute etc.
@@ -36,8 +39,11 @@ node {
 *** notifications.py \n class Notification and subsclasses
 *** units.py \n class Unit
 ** utils
+*** __init__.py
 *** validators.py
 *** datamodel_generator.py
 *** token_manager.py
+** external (no package)
+*** units.hdf
 
 @endwbs
