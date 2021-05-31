@@ -55,6 +55,7 @@ class BaseClient:
     def __enter__(self):
         if not self.session:
             self.session = requests.Session()
+            self.headers.update(self.fiware_headers.dict(by_alias=True))
             self._external_session = False
         return self
 
