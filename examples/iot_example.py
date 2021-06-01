@@ -17,7 +17,7 @@ def setup():
 
 
 def create_device():
-    example_device = {"device_id": "sensor004",
+    example_device = {"device_id": "sensor008",
                       "service": "",
                       "service_path": "/",
                       "entity_name": "sensor1",
@@ -88,7 +88,7 @@ def filter_device():
             iota_client:
         retrieved_devices = iota_client.get_device_list()
         logger.info("------Getting all example devices------")
-        logger.info(devices)
+        logger.info(retrieved_devices)
         # for device in retrieved_devices:
         # logger.info("------Getting devices by id------")
         # iota_client.get_device(device_id=device.device_id)
