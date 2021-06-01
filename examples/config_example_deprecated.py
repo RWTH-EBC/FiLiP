@@ -1,4 +1,4 @@
-from filip.core.config import Config
+from filip.config import Config
 import os
 
 '''
