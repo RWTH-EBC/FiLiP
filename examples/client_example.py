@@ -8,7 +8,6 @@ import logging
 import requests
 
 from filip.clients.ngsi_v2 import \
-    Client, \
     ContextBrokerClient, \
     IoTAClient, \
     QuantumLeapClient
@@ -79,9 +78,7 @@ if __name__ == '__main__':
                 "iota_url": "http://<yourHost>:4041",
                 "ql_url": "http://<yourHost>:8668"
             }
+    from filip.clients.ngsi_v2 import Client
     client = Client(config=config)
     
     """
-
-
-
