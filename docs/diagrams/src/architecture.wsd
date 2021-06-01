@@ -21,13 +21,14 @@ node {
 ** config.py \n class Settings
 ** clients
 *** BaseClient
+*** mqtt
+**** MQTTClient
+**** encoders
 *** ngsi_v2
 **** Client
 **** ContextBrokerClient
 **** QuantumLeapClient
 **** IoTACLient
-*** mqtt
-**** MQTTClient
 *** ngsi_ld
 **** ...
 
