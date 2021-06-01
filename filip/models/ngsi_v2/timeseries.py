@@ -4,11 +4,12 @@ Data models for interacting with FIWARE's time series-api (aka QuantumLeap)
 from __future__ import annotations
 import logging
 from typing import Any, List
+from datetime import datetime
 import numpy as np
 import pandas as pd
 from aenum import Enum
 from pydantic import BaseModel, Field
-from datetime import datetime
+
 
 
 logger = logging.getLogger(__name__)

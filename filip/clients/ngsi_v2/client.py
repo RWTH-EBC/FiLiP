@@ -27,6 +27,9 @@ class Client(BaseClient):
     this client, but they share a general config and if provided a session.
     """
     class Settings(BaseModel):
+        """
+        Settings class for client
+        """
         cb_url: Optional[AnyHttpUrl] = settings.CB_URL
         iota_url: Optional[AnyHttpUrl] = settings.IOTA_URL
         ql_url: Optional[AnyHttpUrl] = settings.QL_URL
@@ -89,6 +92,7 @@ class Client(BaseClient):
 
     @property
     def config(self):
+        """Return current config"""
         return self._config
 
     @config.setter
@@ -103,27 +107,33 @@ class Client(BaseClient):
 
     @property
     def cert(self):
+        """Return session certificate"""
         return self.session.cert
 
     @property
     def secrets(self):
+        """Returns secrets"""
         return self.__secrets
 
     @secrets.setter
     def secrets(self, data: dict):
+        """Set new secrets"""
         self.__secrets.update(data)
 
     @secrets.deleter
     def secrets(self):
+        """Delete secrets"""
         self.__secrets = {}
 
     def __get_secrets_file(self, path=None):
         """
         Reads credentials form secret file the path variable is pointing to.
-        :param path: location of secrets-file
-        :return: None
-        """
 
+        Args:
+            path: location of secrets-file
+        Returns:
+             None
+        """
         try:
             with open(path, 'r') as filename:
                 logger.info("Reading credentials from: %s",path)

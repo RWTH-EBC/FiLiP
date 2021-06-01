@@ -151,8 +151,7 @@ class QueryStatement(Tuple):
             return value
         elif isinstance(value, str):
             return cls.parse_str(value)
-        else:
-            raise TypeError
+        raise TypeError
 
     def to_str(self):
         """
@@ -189,8 +188,7 @@ class QueryStatement(Tuple):
                             right = float(args[1])
                         return QueryStatement(args[0], op, right)
                     return QueryStatement(args[0], op, args[1])
-                else:
-                    raise ValueError
+                raise ValueError
 
     def __str__(self):
         """ Return str(self). """
