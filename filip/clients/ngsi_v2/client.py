@@ -20,6 +20,7 @@ from filip.clients.ngsi_v2 import \
 
 logger = logging.getLogger('client')
 
+
 class Client(BaseClient):
     """
     Master client. This client contains all implemented sub clients based on
@@ -75,15 +76,13 @@ class Client(BaseClient):
 
         # from here on deprecated?
         auth_types = {'basicauth': self.__http_basic_auth,
-                      'digestauth': self.__http_digest_auth,}
-                      # 'oauth2': self.__oauth2}
+                      'digestauth': self.__http_digest_auth}
+        # 'oauth2': self.__oauth2}
 
         if self.config.auth:
-            assert self.config['auth']['type'].lower() in auth_types.keys()
-            self.__get_secrets_file(path=self.config['auth']['secret'])
-            auth_types[self.config['auth']['type']]()
-
-
+            assert self.config.auth['type'].lower() in auth_types.keys()
+            self.__get_secrets_file(path=self.config.auth['secret'])
+            auth_types[self.config.auth['type']]()
 
         self.__secrets = {"username": None,
                           "password": None,
@@ -136,7 +135,7 @@ class Client(BaseClient):
         """
         try:
             with open(path, 'r') as filename:
-                logger.info("Reading credentials from: %s",path)
+                logger.info("Reading credentials from: %s", path)
                 self.__secrets.update(json.load(filename))
 
         except IOError as err:
@@ -175,7 +174,7 @@ class Client(BaseClient):
         except KeyError:
             pass
 
-    #def __oauth2(self):
+    # def __oauth2(self):
     #    """
     #    Initiates a oauthclient according to the workflows defined by OAuth2.0.
     #    We use requests-oauthlib for this implementation. The documentation
