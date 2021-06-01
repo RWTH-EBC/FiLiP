@@ -7,7 +7,7 @@ the matching conditions (AND logical operator).
 
 For further details of the language please refer to:
 
-http://telefonicaid.github.io/fiware-orion/api/v2/stable/
+https://telefonicaid.github.io/fiware-orion/api/v2/stable/
 """
 import regex as re
 from aenum import Enum
@@ -26,28 +26,28 @@ class Operator(str, Enum):
                   "(41). " \
                   "A list of comma-separated values, e.g. color!=black," \
                   "red. For an entity to match, it must contain the target " \
-                  "property and the target property value must not be any of " \
-                  "the values in the list (AND clause) (or not include any of " \
-                  "the values in the list in case the target property value " \
-                  "is an array). Eg. entities whose attribute color is set to " \
-                  "black will not match, while entities whose attribute color " \
-                  "is set to white will match." \
+                  "property and the target property value must not be any " \
+                  "of the values in the list (AND clause) (or not include any "\
+                  "of the values in the list in case the target property " \
+                  "value is an array). Eg. entities whose attribute color is " \
+                  "set to black will not match, while entities whose " \
+                  "attribute color is set to white will match." \
                   "A range, specified as a minimum and maximum separated by " \
                   ".., e.g. temperature!=10..20. For an entity to match, " \
                   "it must contain the target property (temperature) and the " \
                   "target property value must not be between the upper and " \
-                  "lower limits (both included). Ranges can only be used with " \
-                  "elements target properties that represent dates (in " \
+                  "lower limits (both included). Ranges can only be used " \
+                  "with elements target properties that represent dates (in " \
                   "ISO8601 format), numbers or strings. "
     UNEQUAL = '!=', "Single element, e.g. temperature!=41. For an entity to " \
-                    "match, it must contain the target property (temperature) "\
-                    "and the target property value must not be the query " \
-                    "value (41). A list of comma-separated values, " \
+                    "match, it must contain the target property " \
+                    "(temperature) and the target property value must not be " \
+                    "the query value (41). A list of comma-separated values, " \
                     "e.g. color!=black,red. For an entity to match, it must " \
                     "contain the target property and the target property " \
                     "value must not be any of the values in the list (AND " \
-                    "clause) (or not include any of the values in the list in "\
-                    "case the target property value is an array). Eg. " \
+                    "clause) (or not include any of the values in the list " \
+                    "in case the target property value is an array). Eg. " \
                     "entities whose attribute color is set to black will not " \
                     "match, while entities whose attribute color is set to " \
                     "white will match. A range, specified as a minimum and " \
@@ -63,49 +63,58 @@ class Operator(str, Enum):
                         "contain the target property (temperature) and the " \
                         "target property value must be strictly greater than " \
                         "the query value (42). This operation is only valid " \
-                        "for target properties of type date, number or string " \
-                        "(used with target properties of other types may lead " \
-                        "to unpredictable results). "
+                        "for target properties of type date, number or " \
+                        "string (used with target properties of other types " \
+                        "may lead to unpredictable results). "
     LESS_THAN = '<', "The right-hand side must be a single element, e.g. " \
-                     "temperature<43. For an entity to match, it must contain " \
-                     "the target property (temperature) and the target " \
-                     "property value must be strictly less than the value (" \
-                     "43). This operation is only valid for target properties " \
-                     "of type date, number or string (used with target " \
-                     "properties of other types may lead to unpredictable " \
-                     "results). "
+                     "temperature<43. For an entity to match, it must " \
+                     "contain the target property (temperature) and the " \
+                     "target property value must be strictly less than the " \
+                     "value (43). This operation is only valid for target " \
+                     "properties of type date, number or string (used with " \
+                     "target properties of other types may lead to " \
+                     "unpredictable results). "
     GREATER_OR_EQUAL = '>=', "The right-hand side must be a single element, " \
                              "e.g. temperature>=44. For an entity to match, " \
                              "it must contain the target property (" \
-                             "temperature) and the target property value must " \
-                             "be greater than or equal to that value (44). " \
-                             "This operation is only valid for target " \
-                             "properties of type date, number or string (used " \
-                             "with target properties of other types may lead " \
-                             "to unpredictable results). "
+                             "temperature) and the target property value " \
+                             "must be greater than or equal to that value " \
+                             "(44). This operation is only valid for target " \
+                             "properties of type date, number or string " \
+                             "(used with target properties of other types " \
+                             "may lead to unpredictable results). "
     LESS_OR_EQUAL = '<=', "The right-hand side must be a single element, " \
                           "e.g. temperature<=45. For an entity to match, " \
                           "it must contain the target property (temperature) " \
-                          "and the target property value must be less than or " \
-                          "equal to that value (45). This operation is only " \
-                          "valid for target properties of type date, number " \
-                          "or string (used with target properties of other " \
-                          "types may lead to unpredictable results). "
+                          "and the target property value must be less than " \
+                          "or equal to that value (45). This operation is " \
+                          "only valid for target properties of type date, " \
+                          "number or string (used with target properties of " \
+                          "other types may lead to unpredictable results). "
     MATCH_PATTERN = '~=', "The value matches a given pattern, expressed as a " \
                           "regular expression, e.g. color~=ow. For an entity " \
                           "to match, it must contain the target property (" \
-                          "color) and the target property value must match the " \
-                          "string in the right-hand side, 'ow' in this example " \
-                          "(brown and yellow would match, black and white " \
-                          "would not). This operation is only valid for target " \
-                          "properties of type string. "
+                          "color) and the target property value must match " \
+                          "the string in the right-hand side, 'ow' in this " \
+                          "example (brown and yellow would match, black and " \
+                          "white would not). This operation is only valid " \
+                          "for target properties of type string. "
 
     @classmethod
     def list(cls):
+        """
+
+        Returns:
+            list of all valid values
+        """
         return list(map(lambda c: c.value, cls))
 
 
 class QueryStatement(Tuple):
+    """
+    Simple query stetement
+    """
+
     def __new__(cls, left: str, op: Union[str, Operator], right: Any):
         q = tuple.__new__(QueryStatement, (left, op, right))
         q = cls.validate(q)
@@ -116,32 +125,32 @@ class QueryStatement(Tuple):
         yield cls.validate
 
     @classmethod
-    def validate(cls, v):
+    def validate(cls, value):
         """
         Validates statements
         Args:
-            v:
+            value:
         Returns:
         """
-        if isinstance(v, (tuple, QueryStatement)):
-            if len(v) != 3:
+        if isinstance(value, (tuple, QueryStatement)):
+            if len(value) != 3:
                 raise TypeError('3-tuple required')
-            if not isinstance(v[0], str):
+            if not isinstance(value[0], str):
                 raise TypeError('First argument must be a string!')
-            if v[1] not in Operator.list():
+            if value[1] not in Operator.list():
                 raise TypeError('Invalid comparison operator!')
-            if v[1] not in [Operator.EQUAL,
-                            Operator.UNEQUAL,
-                            Operator.MATCH_PATTERN]:
+            if value[1] not in [Operator.EQUAL,
+                                Operator.UNEQUAL,
+                                Operator.MATCH_PATTERN]:
                 try:
-                    float(v[2])
+                    float(value[2])
                 except ValueError as err:
                     err.args += ("Invalid combination of operator and right "
                                  "hand side!",)
                     raise
-            return v
-        elif isinstance(v, str):
-            return cls.parse_str(v)
+            return value
+        elif isinstance(value, str):
+            return cls.parse_str(value)
         else:
             raise TypeError
 
@@ -170,7 +179,7 @@ class QueryStatement(Tuple):
             QueryStatement
         """
         for op in Operator.list():
-            if re.fullmatch(f"^\w(\w*|\.(?=\w))*{op}\w*", string):
+            if re.fullmatch(rf"^\w(\w*|\.(?=\w))*{op}\w*", string):
                 args = string.split(op)
                 if len(args) == 2:
                     if args[1].isnumeric():
@@ -184,16 +193,19 @@ class QueryStatement(Tuple):
                     raise ValueError
 
     def __str__(self):
+        """ Return str(self). """
         return self.to_str()
 
     def __repr__(self):
+        """ Return repr(self). """
         return self.to_str().__repr__()
 
 
-class QueryString():
+class QueryString:
     """
     Class for validated QueryStrings that can be used in api clients
     """
+
     def __init__(self, qs: Union[Tuple,
                                  QueryStatement,
                                  List[Union[QueryStatement, Tuple]]]):
@@ -202,6 +214,13 @@ class QueryString():
 
     @classmethod
     def __check_arguments(cls, qs):
+        """
+        Check arguments on consistency
+        Args:
+            qs: queny statement object
+        returns:
+            List of QueryStatements
+        """
         if isinstance(qs, List):
             for idx, item in enumerate(qs):
                 if not isinstance(item, QueryStatement):
@@ -221,7 +240,7 @@ class QueryString():
         Adds or updates QueryStatement within QueryString. First to arguments
         must match an existing argument for update. This redundant rules
         Args:
-            qs:
+            qs: Query statement to add to the string object
         Returns:
             None
         """
@@ -248,6 +267,7 @@ class QueryString():
 
     @classmethod
     def validate(cls, v):
+        """validate QueryString"""
         if isinstance(v, QueryString):
             return v
         if isinstance(v, str):
@@ -255,6 +275,11 @@ class QueryString():
         raise ValueError('Invalid argument!')
 
     def to_str(self):
+        """
+        Parsing self.qs to string object
+        Returns:
+            String: query string that can be added to requests as parameter
+        """
         return ';'.join([q.to_str() for q in self._qs])
 
     @classmethod
@@ -275,7 +300,9 @@ class QueryString():
         return QueryString(qs=qs)
 
     def __str__(self):
+        """ Return str(self). """
         return self.to_str()
 
     def __repr__(self):
+        """ Return repr(self). """
         return self.to_str().__repr__()
