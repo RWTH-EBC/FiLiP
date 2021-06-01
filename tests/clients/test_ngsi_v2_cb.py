@@ -200,7 +200,7 @@ class TestContextBroker(unittest.TestCase):
                 # unfortunately FIWARE returns an int for 20.0 although float
                 # is expected
                 if isinstance(value, int) and not isinstance(value, bool):
-                    value=float(value)
+                    value = float(value)
                 self.assertEqual(type(value), type(attr.value))
                 self.assertEqual(value, attr.value)
 
@@ -215,7 +215,7 @@ class TestContextBroker(unittest.TestCase):
                 # unfortunately FIWARE returns an int for 20.0 although float
                 # is expected
                 if isinstance(value, int) and not isinstance(value, bool):
-                    value=float(value)
+                    value = float(value)
                 self.assertEqual(type(value), type(attr.value))
                 self.assertEqual(value, attr.value)
 
@@ -286,7 +286,7 @@ class TestContextBroker(unittest.TestCase):
             sub_res_updated = client.get_subscription(subscription_id=sub_id)
             self.assertNotEqual(sub_res.expires, sub_res_updated.expires)
             self.assertEqual(sub_res.id, sub_res_updated.id)
-            self.assertGreaterEqual( sub_res_updated.expires, sub_res.expires)
+            self.assertGreaterEqual(sub_res_updated.expires, sub_res.expires)
             subs = client.get_subscription_list()
             for sub in subs:
                 client.delete_subscription(subscription_id=sub.id)
@@ -309,7 +309,8 @@ class TestContextBroker(unittest.TestCase):
             e = Entity(idPattern=".*", typePattern=".*TypeA$")
             q = Query.parse_obj({"entities": [e.dict(exclude_unset=True)]})
             self.assertEqual(1000,
-                             len(client.query(query=q, response_format='keyValues')))
+                             len(client.query(query=q,
+                                              response_format='keyValues')))
 
     def test_command(self) -> None:
         """
@@ -332,7 +333,7 @@ class TestContextBroker(unittest.TestCase):
                             command=cmd)
         time.sleep(5)
         entity_after = client.get_entity(entity_id=entity_id,
-                                        entity_type=entity_type)
+                                         entity_type=entity_type)
         self.assertNotEqual(entity_before, entity_after)
 
     def tearDown(self) -> None:

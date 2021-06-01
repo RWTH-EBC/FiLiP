@@ -1,5 +1,5 @@
-class MQTTConfig():
-    pass
+
 
 class MQTTClient():
-    pass
+    class Settings():
+        pass
