@@ -1,7 +1,8 @@
 import logging
-from filip.iota.client import IoTAClient
-from filip.core.models import FiwareHeader
-from filip.iota.models import Device, ServiceGroup
+import json
+from filip.clients.ngsi_v2 import IoTAClient
+from filip.models.base import FiwareHeader
+from filip.models.ngsi_v2.iot import Device, ServiceGroup
 from uuid import uuid4
 
 logger = logging.getLogger(__name__)
@@ -12,8 +13,8 @@ def setup():
     with IoTAClient(fiware_header=FiwareHeader(service='filip',
                                                service_path='/testing')) as \
             iota_client:
-        logger.info("IoTA " + iota_client.get_version().__str__() + " at url " +
-                    iota_client.base_url)
+        logger.info("IoTA " + json.dumps(iota_client.get_version(), indent=2)
+                    + " at url " + iota_client.base_url)
 
 
 def create_device():
@@ -66,9 +67,11 @@ def filter_service_group():
         logger.info("------Get all service groups------")
         logger.info(retrieved_groups)
         for group in retrieved_groups:
-            logger.info("------Getting service groups by resource and API key------")
+            logger.info("------Getting service groups "
+                        "by resource and API key------")
             logger.info(
-                iota_client.get_group(resource=group.resource, apikey=group.apikey))
+                iota_client.get_group(resource=group.resource,
+                                      apikey=group.apikey).json(indent=2))
         return retrieved_groups
 
 

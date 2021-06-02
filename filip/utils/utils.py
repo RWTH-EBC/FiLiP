@@ -48,7 +48,7 @@ def create_type(inputstr: str):
     print("max partial ratio = " + str(max_partial))
     return max_partial_entitytype
 
-# Todo this hosuld be converted to a regular expresion string
+# Todo this should be converted to a regular expresion string
 def str2fiware(string: str):
     """
     Fiware does not support all characters.
@@ -77,30 +77,3 @@ def str2fiware(string: str):
     for char, replacement in chars_to_replace.items():
         string = string.replace(char, replacement).strip()
     return string
-
-#deprecated
-#def timeseries_to_pandas(ts_dict: dict,
-#                         to_datetime: bool = False,
-#                         datetime_format: str = "%Y-%m-%dT%H:%M:%S.%f"):
-#    """
-#    :param ts_dict: ts_dict: a dictionary with the following structure:
-#        {attr_name_0 : { timestamp_0 : value_0, timestamp_1: value_1 },
-#        sattr_name_1 : { timestamp_0 : value_0, timestamp_1: value_1 } }
-#    :param to_datetime: Whether the "timestamp" column should be converted to
-#        a datetime object
-#    :param datetime_format: the datetime format which is recived from
-#        Quantumleap "%Y-%m-%dT%H:%M:%S.%f"
-#    :return: a pandas dataframe object, containting one timestamp column
-#        and minimum one attribute column
-#    """
-#    list_of_dataframes = []
-#    column_names = [key for key, value in ts_dict.items()]
-#    for attr in column_names:
-#        dataframe = pd.DataFrame(ts_dict[attr].items(),
-#                                 columns=["timestamp", attr])
-#        list_of_dataframes.append(dataframe)
-#    df_all = pd.concat(list_of_dataframes, ignore_index=True)
-#    df_all.sort_values(by='timestamp', inplace=True)
-#    if to_datetime is True:
-#        pd.to_datetime(df_all['timestamp'], format=datetime_format)
-#    return df_all
