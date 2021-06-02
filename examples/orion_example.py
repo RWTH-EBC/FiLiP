@@ -1,10 +1,10 @@
 import logging
 from typing import List
 from requests import RequestException
-from filip.cb import ContextBrokerClient
-from filip.core.models import FiwareHeader
-from filip.cb.models import ContextEntity, ContextAttribute
-from filip.core.simple_query_language import QueryString
+from filip.clients.ngsi_v2 import ContextBrokerClient
+from filip.models.base import FiwareHeader
+from filip.models.ngsi_v2.context import ContextEntity, ContextAttribute
+from filip.utils.simple_ql import QueryString
 
 logger = logging.getLogger(__name__)
 

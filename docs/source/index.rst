@@ -11,10 +11,8 @@ Welcome to the documentation of FiLiP!
 .. toctree::
    :maxdepth: 4
 
-   filip.core
-   filip.cb
-   filip.iota
-   filip.timeseries
+   filip.clients
+   filip.models
    filip.utils
 
 

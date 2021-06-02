@@ -7,11 +7,20 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   filip.cb
-   filip.core
-   filip.iota
-   filip.timeseries
+   filip.clients
+   filip.models
    filip.utils
+
+Submodules
+----------
+
+filip.config module
+-------------------
+
+.. automodule:: filip.config
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 Module contents
 ---------------
