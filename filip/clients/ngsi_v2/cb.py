@@ -641,7 +641,7 @@ class ContextBrokerClient(BaseClient):
                 several entities with the same entity id.
         """
         headers = self.headers.copy()
-        if isinstance(attr, ContextAttribute):
+        if not isinstance(attr, NamedContextAttribute):
             assert attr_name is not None, "Missing name for attribute. " \
                                           "attr_name must be present if" \
                                           "attr is of type ContextAttribute"
