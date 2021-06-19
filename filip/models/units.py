@@ -47,12 +47,12 @@ class Units:
             self.units.to_hdf(str(filepath), key='units')
             self.levels.to_hdf(str(filepath), key='levels')
 
-        self.sectors = Enum('sectors',
-                            {str(sector).casefold().replace(' ', '_'):
-                                sector for sector in
-                                self.units.Sector.unique()},
-                            module=__name__,
-                            type=str)
+        # self.sectors = Enum('sectors',
+        #                     {str(sector).casefold().replace(' ', '_'):
+        #                         sector for sector in
+        #                         self.units.Sector.unique()},
+        #                     module=__name__,
+        #                     type=str)
 
     def __getattr__(self, item):
         item = item.casefold().replace('_', ' ')
