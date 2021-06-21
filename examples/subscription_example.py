@@ -3,7 +3,7 @@ from datetime import datetime
 import time
 
 from filip.models.ngsi_v2.context import Subscription
-from filip.cb import ContextBrokerClient
+from filip.clients.ngsi_v2.cb import ContextBrokerClient
 from filip.models.base import FiwareHeader
 
 AUTH = ('user', 'pass')
