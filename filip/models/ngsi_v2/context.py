@@ -130,7 +130,7 @@ class ContextAttribute(BaseModel):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex="^((?![?&#/])[\x00-\x7F])*$",  # Make it FIWARE-Safe
+        regex=r"^((?![?&#/])[\x00-\x7F])*$",  # Make it FIWARE-Safe
     )
     value: Optional[Union[Union[float, int, bool, str, List, Dict[str, Any]],
                           List[Union[float, int, bool, str, List,

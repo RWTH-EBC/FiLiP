@@ -1,11 +1,9 @@
 """
-Helper functions for HTTP requests
+Helper functions to prohibit boiler plate code
 """
-import logging
+from typing import Dict, Union
 from pydantic import BaseModel, AnyHttpUrl
 
-
-log = logging.getLogger(__name__)
 
 class UrlValidator(BaseModel):
     """
@@ -14,10 +12,14 @@ class UrlValidator(BaseModel):
     url: AnyHttpUrl
 
 
-def validate_url(url):
+def validate_url(url: Union[AnyHttpUrl, str]) -> None:
     """
-    Function checks whether the host has "http" added in case of http as protocol.
-    :param url: the url for the host / port
-    :return: url - if necessary updated
+    Function checks whether the host has "http" added in case of http as
+    protocol.
+    Args:
+        url (Union[AnyHttpUrl, str]): the url for the host / port
+
+    Returns:
+        None
     """
     UrlValidator(url=url)

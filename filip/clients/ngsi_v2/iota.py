@@ -207,11 +207,13 @@ class IoTAClient(BaseClient):
         headers = self.headers.update()
         params = service_group.dict(include={'resource', 'apikey'})
         try:
-            res = self.put(url=url, headers=headers, params=params,
-                                   json=service_group.json(
-                                       include=fields,
-                                       exclude={'service', 'subservice'},
-                                       exclude_unset=True))
+            res = self.put(url=url,
+                           headers=headers,
+                           params=params,
+                           json=service_group.json(
+                               include=fields,
+                               exclude={'service', 'subservice'},
+                               exclude_unset=True))
             if res.ok:
                 self.logger.info("ServiceGroup updated!")
             elif (res.status_code == 404) & (add is True):

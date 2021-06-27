@@ -4,7 +4,6 @@ Shared data models
 from typing import ClassVar
 from aenum import Enum
 from pydantic import BaseModel, Field, validator, BaseConfig
-from filip.models.units import units
 
 
 class NgsiVersion(str, Enum):
@@ -91,17 +90,17 @@ class FiwareHeader(BaseModel):
         validate_assignment = True
 
 
-class UnitCode(BaseModel):
-    """
-    Fiware recommends unit codes for meta data. This class helps to validate
-    the codes.
-    """
-    type: ClassVar[str] = "Text"
-    value: str = Field(
-        title="unit code",
-        description="Code of the measured quantity")
-
-    @validator('value')
-    def validate_code(cls, v):
-        units.get_unit(code=v)
-        return v
+#class UnitCode(BaseModel):
+#    """
+#    Fiware recommends unit codes for meta data. This class helps to validate
+#    the codes.
+#    """
+#    type: ClassVar[str] = "Text"
+#    value: str = Field(
+#        title="unit code",
+#        description="Code of the measured quantity")
+#
+#    @validator('value')
+#    def validate_code(cls, v):
+#        units.get_unit(code=v)
+#        return v
