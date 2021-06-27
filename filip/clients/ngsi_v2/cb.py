@@ -23,8 +23,8 @@ from filip.models.ngsi_v2.context import \
     ContextAttribute, \
     NamedCommand, \
     NamedContextAttribute, \
-    Subscription,\
-    Registration,\
+    Subscription, \
+    Registration, \
     Query, \
     Update
 
@@ -37,7 +37,7 @@ class ContextBrokerClient(BaseClient):
     https://fiware-orion.readthedocs.io/en/master/
 
     Api specifications for v2 are located here:
-    http://telefonicaid.github.io/fiware-orion/api/v2/stable/
+    https://telefonicaid.github.io/fiware-orion/api/v2/stable/
     """
     def __init__(self,
                  url: str = None,
@@ -503,10 +503,10 @@ class ContextBrokerClient(BaseClient):
             params.update({'options': options})
         try:
             res = self.post(url=url,
-                                    headers=headers,
-                                    json=entity.dict(exclude={'id', 'type'},
-                                                     exclude_unset=True,
-                                                     exclude_none=True))
+                            headers=headers,
+                            json=entity.dict(exclude={'id', 'type'},
+                                             exclude_unset=True,
+                                             exclude_none=True))
             if res.ok:
                 self.logger.info("Entity '%s' successfully updated!", entity.id)
             else:
@@ -567,10 +567,10 @@ class ContextBrokerClient(BaseClient):
             params.update({'options': options})
         try:
             res = self.put(url=url,
-                                   headers=headers,
-                                   json=entity.dict(exclude={'id', 'type'},
-                                                    exclude_unset=True,
-                                                    exclude_none=True))
+                           headers=headers,
+                           json=entity.dict(exclude={'id', 'type'},
+                                            exclude_unset=True,
+                                            exclude_none=True))
             if res.ok:
                 self.logger.info("Entity '%s' successfully "
                                  "updated!", entity.id)
@@ -658,10 +658,10 @@ class ContextBrokerClient(BaseClient):
             params.update({'type': entity_type})
         try:
             res = self.put(url=url,
-                                   headers=headers,
-                                   json=attr.dict(exclude={'name'},
-                                                  exclude_unset=True,
-                                                  exclude_none=True))
+                           headers=headers,
+                           json=attr.dict(exclude={'name'},
+                                          exclude_unset=True,
+                                          exclude_none=True))
             if res.ok:
                 self.logger.info("Attribute '%s' of '%s' "
                                  "successfully updated!", attr_name, entity_id)
@@ -775,12 +775,12 @@ class ContextBrokerClient(BaseClient):
                 if isinstance(value, str):
                     value = f'"{value}"'
                 res = self.put(url=url,
-                                       headers=headers,
-                                       json=value)
+                               headers=headers,
+                               json=value)
             else:
                 res = self.put(url=url,
-                                       headers=headers,
-                                       json=value)
+                               headers=headers,
+                               json=value)
             if res.ok:
                 self.logger.info("Attribute '%s' of '%s' "
                                  "successfully updated!", attr_name, entity_id)
@@ -1217,7 +1217,7 @@ class ContextBrokerClient(BaseClient):
                                       headers=headers,
                                       params=params,
                                       data=query.json(exclude_unset=True,
-                                                        exclude_none=True),
+                                                      exclude_none=True),
                                       limit=limit)
             if response_format == AttrsFormat.NORMALIZED:
                 return parse_obj_as(List[ContextEntity], items)
@@ -1267,9 +1267,9 @@ class ContextBrokerClient(BaseClient):
                 return
             res.raise_for_status()
         except requests.RequestException as err:
-                msg = "Query operation failed!"
-                self.log_error(err=err, msg=msg)
-                raise
+            msg = "Query operation failed!"
+            self.log_error(err=err, msg=msg)
+            raise
 
 #    def get_subjects(self, object_entity_name: str, object_entity_type: str, subject_type=None):
 #        """
