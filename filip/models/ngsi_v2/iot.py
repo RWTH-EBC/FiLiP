@@ -6,8 +6,8 @@ from typing import Any, Dict, Optional, List, Union
 import json
 import pytz
 from pydantic import BaseModel, Field, validator, AnyHttpUrl
-from filip.models.base import NgsiVersion, DataType, UnitCode
-
+from filip.models.base import NgsiVersion, DataType
+from filip.models.units import validate_units_in_metadata
 
 logger = logging.getLogger()
 
@@ -116,16 +116,21 @@ class DeviceAttribute(BaseAttribute):
     )
     metadata: Optional[Dict[str, Dict]] = Field(
         description="Additional meta information for the attribute, "
-                    "e.g. 'unitcode'"
+                    "e.g. 'unitCode'"
     )
 
     @validator('metadata')
-    def check_metadata(cls, v):
-        assert json.dumps(v), "metadata not serializable"
-        if v.get('unitcode', False):
-            UnitCode(**v['unitcode'])
+    def validate_metadata(cls, value):
+        """
+        Check metadata object for serialization and units if present.
+        Args:
+            value: value of metadata field
+        Returns:
 
-        return v
+        """
+        assert json.dumps(value), "metadata not serializable"
+        value = validate_units_in_metadata(data=value)
+        return value
 
 
 class LazyDeviceAttribute(DeviceAttribute):
@@ -163,7 +168,7 @@ class StaticDeviceAttribute(BaseAttribute):
     )
     metadata: Optional[Dict[str, Dict]] = Field(
         description="Additional meta information for the attribute, "
-                    "e.g. 'unitcode'"
+                    "e.g. 'unitCode'"
     )
 
 

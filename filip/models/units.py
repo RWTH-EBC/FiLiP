@@ -1,104 +1,300 @@
 """
-Implementation of Unit Codes
+Implementation of UN/CEFACT units
+
+We creating the data set of UNECE units from here.
+"https://github.com/datasets/unece-units-of-measure"
+It downloads the data and stores it in external resources if not
+already present. For additional information on UNECE an the current state of
+tables visit this website:
+https://unece.org/trade/cefact/UNLOCODE-Download
+https://unece.org/trade/uncefact/cl-recommendations
 """
-import os
-from enum import Enum
-from pathlib import Path
-from typing import List, Optional
-import pandas as pd
-from pandas_datapackage_reader import read_datapackage
-from pydantic import BaseModel, Field
+
+from typing import Any, Dict, List, Optional, Union
+from pydantic import BaseModel, Field, root_validator, validator
+from filip.models.base import NgsiVersion, DataType
+from filip.utils.data import load_datapackage
+
+
+UNITS = load_datapackage(
+    url="https://github.com/datasets/unece-units-of-measure",
+    filename="unece-units.hdf")["units_of_measure"]
+# remove deprecated entries
+UNITS = UNITS.loc[
+    ((UNITS.Status.str.casefold() != 'x') &
+     (UNITS.Status.str.casefold() != 'd'))]
+
+
+class UnitCode(BaseModel):
+    """
+    The unit of measurement given using the UN/CEFACT Common Code (3 characters)
+    or a URL. Other codes than the UN/CEFACT Common Code may be used with a
+    prefix followed by a colon.
+    https://schema.org/unitCode
+
+    Note:
+        Currently we only support the UN/CEFACT Common Codes
+    """
+    type: DataType = Field(default=DataType.TEXT,
+                           const=True,
+                           description="Data type")
+    value: str = Field(...,
+                       title="Code of unit ",
+                       description="UN/CEFACT Common Code (3 characters)",
+                       min_length=2,
+                       max_length=3)
+
+    @validator('value')
+    def validate_code(cls, value):
+        if len(UNITS.loc[UNITS.CommonCode == value.upper()]) == 1:
+            return value
+        raise KeyError("Code does not exist or is deprecated! %s", value)
+
+
+class UnitText(BaseModel):
+    """
+    A string or text indicating the unit of measurement. Useful if you cannot
+    provide a standard unit code for unitCode.
+    https://schema.org/unitText
+
+    Note:
+        We use the names of units of measurements from UN/CEFACT for validation
+    """
+    type: DataType = Field(default=DataType.TEXT,
+                           const=True,
+                           description="Data type")
+    value: str = Field(...,
+                       title="Name of unit of measurement",
+                       description="Verbose name of a unit using British "
+                                   "spelling in singular form, "
+                                   "e.g. 'newton second per metre'")
+
+    @validator('value')
+    def validate_text(cls, value):
+        if len(UNITS.loc[(UNITS.Name.str.casefold() == value.casefold())]) >= 1:
+            return value
+        raise ValueError("Invalid 'name' for unit! ", value)
 
 
 class Unit(BaseModel):
     """
     Model for a unit definition
     """
-    level: str = Field(alias="LevelAndCategory")
-    name: str = Field(alias="Name")
-    sector: str = Field(alias="Sector")
-    code: str = Field(alias="CommonCode")
-    description: Optional[str] = Field(alias="Description")
-    quantity: str = Field(alias="Quantity")
+    _ngsi_version: NgsiVersion = Field(default=NgsiVersion.v2, const=True)
+    name: Optional[Union[str, UnitText]] = Field(
+        alias="unitText",
+        default=None,
+        description="A string or text indicating the unit of measurement")
+    code: Optional[Union[str, UnitCode]] = Field(
+        alias="unitCode",
+        default=None,
+        description="The unit of measurement given using the UN/CEFACT "
+                    "Common Code (3 characters)")
+    description: Dict[str, str] = Field(
+        default=None,
+        alias="unitDescription",
+        description="Verbose description of unit",
+        max_length=350)
+    symbol: Dict[str, str] = Field(
+        default=None,
+        alias="unitSymbol",
+        description="The symbol used to represent the unit of measure as "
+                    "in ISO 31 / 80000.")
+    conversion_factor: Dict[str, str] = Field(
+        default=None,
+        alias="unitConversionFactor",
+        description="The value used to convert units to the equivalent SI "
+                    "unit when applicable.")
+
+    class Config:
+        extra = 'ignore'
+        allow_population_by_field_name = True
+
+    @root_validator(pre=False)
+    def check_consistency(cls, values):
+        """
+        Validate and auto complete unit data based on the UN/CEFACT data
+        Args:
+            values (dict): Values of a all data fields
+
+        Returns:
+            values (dict): Validated data
+        """
+        name = values.get("name")
+        code = values.get("code")
+
+        if isinstance(code, UnitCode):
+            code = code.value
+        if isinstance(name, UnitText):
+            name = name.value
+
+        if code and name:
+            idx = UNITS.index[((UNITS.CommonCode == code) &
+                               (UNITS.Name == name))]
+            if idx.empty:
+                raise ValueError("Invalid combination of 'code' and 'name': ",
+                                 code, name)
+        elif code:
+            idx = UNITS.index[(UNITS.CommonCode == code)]
+            if idx.empty:
+                raise ValueError("Invalid 'code': ", code)
+        elif name:
+            idx = UNITS.index[(UNITS.CommonCode == name)]
+            if idx.empty:
+                raise ValueError("Invalid 'name': ", name)
+        else:
+            raise AssertionError("'name' or 'code' must be  provided!")
+
+        values["code"] = UnitCode(value=UNITS.CommonCode[idx[0]])
+        values["name"] = UnitText(value=UNITS.Name[idx[0]])
+        values["symbol"] = {"type":     DataType.TEXT,
+                            "value":    UNITS.Symbol[idx[0]]}
+        values["conversion_factor"] = \
+            {"type":    DataType.TEXT,
+             "value":   UNITS.ConversionFactor[idx[0]]}
+        if not values.get("description"):
+            values["description"] = \
+                {"type":    DataType.TEXT,
+                 "value":   UNITS.Description[idx[0]]}
+        return values
 
 
 class Units:
     """
-    Class for creating the data set of unece units
-    It downloads the data and stores it in external resources if not
-    already present.
+    Class for easy accessing the data set of UNECE units from here.
+    "https://github.com/datasets/unece-units-of-measure"
     """
-    def __init__(self):
-        filename = 'unece-units.hdf'
+    def __getattr__(cls, item):
+        """
+        Return unit as attribute by name or code.
+        Notes:
+            Underscores will be substituted with whitespaces
+        Args:
+            item: if len(row) == 0:
 
-        # create directory for data if not exists
-        path = Path(__file__).parent.parent.absolute().joinpath('data')
-        path.mkdir(parents=True, exist_ok=True)
-        filepath = path.joinpath(filename)
-        if os.path.isfile(filepath):
-            self.units = pd.read_hdf(filepath, key='units')
-            self.levels = pd.read_hdf(filepath, key='levels')
-        else:
-            # download external data and store data
-            data = read_datapackage(
-                "https://github.com/datasets/unece-units-of-measure")
-            self.levels = data['levels']
-            self.units = data['units-of-measure']
-            self.units.to_hdf(str(filepath), key='units')
-            self.levels.to_hdf(str(filepath), key='levels')
-
-        self.sectors = Enum('sectors',
-                            {str(sector).casefold().replace(' ', '_'):
-                                sector for sector in
-                                self.units.Sector.unique()},
-                            module=__name__,
-                            type=str)
-
-    def __getattr__(self, item):
+        Returns:
+            Unit
+        """
         item = item.casefold().replace('_', ' ')
-        return self.__getitem__(item)
+        return cls.__getitem__(item)
 
-    def __getitem__(self, item):
-        row = self.units.loc[(self.units.Name.str.casefold() ==
-                              item.casefold())]
-        if len(row) == 0:
-            row = (self.units.loc[(self.units.CommonCode.str.casefold() ==
-                                   item.casefold())])
-        if len(row) == 0:
-            raise KeyError
-        return Unit(**row.to_dict(orient="records")[0])
+    @property
+    def quantities(self):
+        """
+        Get list of units ordered by measured quantities
+        Returns:
+            list of units ordered by measured quantities
+        """
+        raise NotImplementedError("The used dataset does currently not "
+                                  "contain the information about quantity")
 
-    def get_unit(self, *, name: str = None, code: str = None) -> Unit:
+    def __getitem__(self, item: str) -> Unit:
         """
         Get unit by name or code
         Args:
-            name:
-            code:
+            item (str): name or code
 
         Returns:
+            Unit
         """
-        if name is not None and code is None:
-            row = self.units.loc[(self.units.Name == name.casefold())]
-        elif name is None and code is not None:
-            row = self.units.loc[(self.units.CommonCode.str.casefold() ==
-                                  code.casefold())]
-        else:
-            raise Exception
-        if len(row) == 0:
-            raise KeyError
-        return Unit(**row.to_dict(orient="records")[0])
+        idx = UNITS.index[((UNITS.CommonCode == item.upper()) |
+                           (UNITS.Name == item.casefold()))]
+        if idx.empty:
+            raise ValueError("Invalid 'code' or 'name': ", item)
 
-    def get_sector(self, sector: str) -> List[Unit]:
+        return Unit(code=UNITS.CommonCode[idx[0]])
+
+    def keys(self, by_code: bool = False) -> List[str]:
         """
-        Filter units by sector
+        Returns list of all unit names or codes
         Args:
-            sector:
-
+            by_code (bool): if 'True' the keys will contain the unit codes
+                instead of their names.
         Returns:
-            List of units
+            List[str] containing the names or list
         """
-        rows = self.units.loc[(self.units.Name == sector.casefold())]
-        return [Unit(**unit) for unit in rows.to_dict(orient="records")]
+        if by_code:
+            return UNITS.CommonCode.to_list()
+        return UNITS.Name.to_list()
+
+    @property
+    def names(self) -> List[str]:
+        """
+        Returns list of all unit names
+        Returns:
+            List[str] containing the names or list
+        """
+        return self.keys()
+
+    @property
+    def codes(self):
+        """
+        Returns list of all unit codes
+        Returns:
+            List[str] containing the codes
+        """
+        return self.keys(by_code=True)
+
+    def values(self) -> List[Unit]:
+        """
+        Get list of all units
+        Returns:
+            List[Unit] containing all units
+        """
+        return [Unit(code=code) for code in UNITS.CommonCode]
+
+    def get(self, item: str, default: Any = None):
+        """
+        Get unit by name or by code
+        Args:
+            item (str): name or code of unit
+            default (Any): Default value to return if unit does not exist.
+        Returns:
+            Unit
+        """
+        try:
+            return self.__getitem__(item)
+        except KeyError:
+            return default
 
 
-units = Units()
+def validate_units_in_metadata(data: Dict) -> Dict:
+    """
+    Search for unit related data fields in metadata
+    Args:
+        data (Dict): Dictionary containing the metadata of an object
+
+    Returns:
+        Validated dictionary of metadata
+    """
+    if data.get('unit', False):
+        unit = data.get('unit')
+        if isinstance(unit, Unit):
+            pass
+        elif isinstance(unit, dict):
+            data['unit'] = Unit.parse_obj(unit)
+        elif isinstance(unit, str):
+            data['unit'] = Unit.parse_raw(unit)
+        else:
+            raise ValueError('Invalid unit data!')
+    elif data.get('unitCode', False):
+        code = data.get('unitCode')
+        if isinstance(code, UnitCode):
+            pass
+        elif isinstance(code, dict):
+            data['unitCode'] = Unit.parse_obj(code)
+        elif isinstance(code, str):
+            data['unitCode'] = Unit.parse_raw(code)
+        else:
+            raise ValueError('Invalid unit code!')
+    elif data.get('unitText', False):
+        name = data.get('unitText')
+        if isinstance(name, UnitText):
+            pass
+        elif isinstance(name, dict):
+            data['unitText'] = Unit.parse_obj(name)
+        elif isinstance(name, str):
+            data['unitText'] = Unit.parse_raw(name)
+        else:
+            raise ValueError('Invalid unit code!')
+    return data
