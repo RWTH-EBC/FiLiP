@@ -29,17 +29,15 @@ setuptools.setup(
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
     url="https://github.com/RWTH-EBC/filip",
-    project_urls =
-        {"Documentation":"https://ebc.pages.rwth-aachen.de/EBC_all/fiware"
-                         "/filip/development/docs/index.html"},
+    project_urls={"Documentation": "https://ebc.pages.rwth-aachen.de/EBC_all/"
+                                   "fiware/filip/development/docs/index.html"},
     # Specify the Python versions you support here. In particular, ensure
     # that you indicate whether you support Python 2, Python 3 or both.
     classifiers=['Programming Language :: Python :: 3.7',
                  'Programming Language :: Python :: 3.8',
                  'Programming Language :: Python :: 3.9',
                  "License :: OSI Approve :: BSD 3-Clause License"],
-    package_dir={"": ""},
-    packages=setuptools.find_packages(where="filip", exclude=['img']),
+    packages=setuptools.find_packages(exclude=['img']),
     setup_requires=SETUP_REQUIRES,
     install_requires=INSTALL_REQUIRES,
     python_requires=">=3.7",
