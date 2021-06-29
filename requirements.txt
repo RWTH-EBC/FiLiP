@@ -1,6 +1,5 @@
 requests>=2.23.0
 pydantic>=1.8.1
-filip>=0.1
 aenum>=3.0.0
 pathlib>=1.0.1
 regex>=2021.3.17
