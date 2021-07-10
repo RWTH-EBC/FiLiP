@@ -364,8 +364,8 @@ class IoTAClient(BaseClient):
         headers = self.headers
         try:
             res = self.put(url=url, headers=headers, json=device.dict(
-                include={'attributes', 'lazy', 'commands',
-                         'static_attributes'}))
+                include={'attributes', 'lazy', 'commands', 'static_attributes'},
+                exclude_none=True))
             if res.ok:
                 self.logger.info("Device '%s' successfully updated!",
                                  device.device_id)
