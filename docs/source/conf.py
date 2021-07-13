@@ -46,6 +46,7 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.coverage',
               'm2r2',  # Enable .md files
               'sphinx.ext.napoleon',  # Enable google docstrings
+              'sphinxcontrib.autodoc_pydantic' # add support for pydantic
               ]
 
 # Add any paths that contain templates here, relative to this directory.
