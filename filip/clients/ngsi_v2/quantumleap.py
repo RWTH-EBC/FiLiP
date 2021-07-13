@@ -7,7 +7,7 @@ from urllib.parse import urljoin
 import requests
 from pydantic import parse_obj_as
 from filip import settings
-from filip.clients.base_client import BaseClient
+from filip.clients.base_http_client import BaseHttpClient
 from filip.models.base import FiwareHeader
 from filip.models.ngsi_v2.context import NotificationMessage
 from filip.models.ngsi_v2.timeseries import \
@@ -22,7 +22,7 @@ from filip.models.ngsi_v2.timeseries import \
 logger = logging.getLogger(__name__)
 
 
-class QuantumLeapClient(BaseClient):
+class QuantumLeapClient(BaseHttpClient):
     """
     Implements functions to use the FIWAREs QuantumLeap, which subscribes to an
     Orion Context Broker and stores the subscription data in a timeseries

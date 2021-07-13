@@ -6,7 +6,7 @@ import requests
 import json
 from pathlib import Path
 from filip.models.base import FiwareHeader
-from filip.clients.ngsi_v2.client import Client
+from filip.clients.ngsi_v2.client import HttpClient
 
 
 class TestClient(unittest.TestCase):
@@ -25,15 +25,26 @@ class TestClient(unittest.TestCase):
         with open("test_ngsi_v2_client.json") as f:
             self.config = json.load(f)
 
-    def _test_change_of_headers(self, client: Client):
+    def _test_change_of_headers(self, client: HttpClient):
         """
         Test changes in fiware headers
         Args:
-            client (Client): Client under test
+            client (HttpClient): Client under test
         Returns:
             None
         """
+        self.assertEqual(id(client.fiware_service_path),
+                         id(client.cb.fiware_service_path),
+                         'FIWARE Service path out of sync')
+        self.assertEqual(id(client.fiware_service_path),
+                         id(client.iota.fiware_service_path),
+                         'FIWARE Service path out of sync')
+        self.assertEqual(id(client.fiware_service_path),
+                         id(client.timeseries.fiware_service_path),
+                         'FIWARE Service path out of sync')
+
         client.fiware_service = 'filip_other'
+
         self.assertEqual(client.fiware_service_path,
                          client.cb.fiware_service_path,
                          'FIWARE service out of sync')
@@ -43,9 +54,9 @@ class TestClient(unittest.TestCase):
         self.assertEqual(client.fiware_service_path,
                          client.timeseries.fiware_service_path,
                          'FIWARE service out of sync')
-        print(client.headers)
 
         client.fiware_service_path = '/someOther'
+
         self.assertEqual(client.fiware_service_path,
                          client.cb.fiware_service_path,
                          'FIWARE Service path out of sync')
@@ -55,13 +66,12 @@ class TestClient(unittest.TestCase):
         self.assertEqual(client.fiware_service_path,
                          client.timeseries.fiware_service_path,
                          'FIWARE Service path out of sync')
-        print(client.headers)
 
-    def _test_connections(self, client: Client):
+    def _test_connections(self, client: HttpClient):
         """
         Test connections of sub clients
         Args:
-            client (Client): Client under test
+            client (HttpClient): Client under test
         Returns:
             None
         """
@@ -70,7 +80,7 @@ class TestClient(unittest.TestCase):
         client.timeseries.get_version()
 
     def test_config_dict(self):
-        client = Client(config=self.config, fiware_header=self.fh)
+        client = HttpClient(config=self.config, fiware_header=self.fh)
         self._test_connections(client=client)
         self._test_change_of_headers(client=client)
 
@@ -81,7 +91,7 @@ class TestClient(unittest.TestCase):
 
         """
         config_path = Path("test_ngsi_v2_client.json")
-        client = Client(config=config_path, fiware_header=self.fh)
+        client = HttpClient(config=config_path, fiware_header=self.fh)
         self._test_connections(client=client)
         self._test_change_of_headers(client=client)
 
@@ -92,7 +102,7 @@ class TestClient(unittest.TestCase):
         Returns:
             None
         """
-        client = Client(fiware_header=self.fh)
+        client = HttpClient(fiware_header=self.fh)
         self._test_connections(client=client)
         self._test_change_of_headers(client=client)
 
@@ -103,26 +113,26 @@ class TestClient(unittest.TestCase):
             None
         """
         # with new session object
-        with Client(config=self.config,
-                    fiware_header=self.fh) as client:
+        with HttpClient(config=self.config,
+                        fiware_header=self.fh) as client:
             self.assertIsNotNone(client.session)
             self._test_connections(client=client)
             self._test_change_of_headers(client=client)
 
         # with external session
         with requests.Session() as s:
-            client = Client(config=self.config,
-                            session=s,
-                            fiware_header=self.fh)
+            client = HttpClient(config=self.config,
+                                session=s,
+                                fiware_header=self.fh)
             self.assertEqual(client.session, s)
             self._test_connections(client=client)
             self._test_change_of_headers(client=client)
 
         # with external session but unnecessary 'with'-statement
         with requests.Session() as s:
-            with Client(config=self.config,
-                        session=s,
-                        fiware_header=self.fh) as client:
+            with HttpClient(config=self.config,
+                            session=s,
+                            fiware_header=self.fh) as client:
                 self.assertEqual(client.session, s)
                 self._test_connections(client=client)
                 self._test_change_of_headers(client=client)

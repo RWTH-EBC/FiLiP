@@ -10,7 +10,7 @@ from pydantic import \
     parse_obj_as, \
     PositiveInt, \
     PositiveFloat
-from filip.clients.base_client import BaseClient
+from filip.clients.base_http_client import BaseHttpClient
 from filip.config import settings
 from filip.models.base import FiwareHeader, PaginationMethod
 from filip.utils.simple_ql import QueryString
@@ -29,7 +29,7 @@ from filip.models.ngsi_v2.context import \
     Update
 
 
-class ContextBrokerClient(BaseClient):
+class ContextBrokerClient(BaseHttpClient):
     """
     Implementation of NGSI Context Broker functionalities, such as creating
     entities and subscriptions; retrieving, updating and deleting data.

@@ -6,12 +6,12 @@ from urllib.parse import urljoin
 import requests
 from pydantic import parse_obj_as
 from filip.config import settings
-from filip.clients.base_client import BaseClient
+from filip.clients.base_http_client import BaseHttpClient
 from filip.models.base import FiwareHeader
 from filip.models.ngsi_v2.iot import Device, ServiceGroup, PayloadProtocol
 
 
-class IoTAClient(BaseClient):
+class IoTAClient(BaseHttpClient):
     """
     Client for FIWARE IoT-Agents. The implementation follows the API
     specifications from here:

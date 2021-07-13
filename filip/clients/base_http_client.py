@@ -2,18 +2,19 @@
 Base client module
 """
 import logging
+from pydantic import AnyHttpUrl
 from typing import Dict, ByteString, List, IO, Tuple, Union
 import requests
 from filip.models.base import FiwareHeader
 from filip.utils import validate_url
 
 
-class BaseClient:
+class BaseHttpClient:
     """
     Base client for all derived api-clients.
     """
     def __init__(self,
-                 url: str = None,
+                 url: Union[AnyHttpUrl, str] = None,
                  *,
                  session: requests.Session = None,
                  fiware_header: Union[Dict, FiwareHeader] = None,
@@ -33,8 +34,7 @@ class BaseClient:
         self.logger = logging.getLogger(self.__class__.__name__)
 
         if url:
-            validate_url(url)
-            self.base_url = url
+            self.base_url = validate_url(url)
 
         if session:
             self.session = session
@@ -69,7 +69,7 @@ class BaseClient:
         Returns:
             FiwareHeader
         """
-        return self._fiware_headers.copy()
+        return self._fiware_headers
 
     @fiware_headers.setter
     def fiware_headers(self, headers: Union[Dict, FiwareHeader]) -> None:
