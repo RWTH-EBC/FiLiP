@@ -236,7 +236,7 @@ class ContextBrokerClient(BaseHttpClient):
                         ) -> List[Union[ContextEntity,
                                         ContextEntityKeyValues,
                                         Dict[str, Any]]]:
-        """
+        r"""
         Retrieves a list of context entities that match different criteria by
         id, type, pattern matching (either id or type) and/or those which
         match a query or geographical query (see Simple Query Language and
@@ -249,16 +249,16 @@ class ContextBrokerClient(BaseHttpClient):
         Args:
             entity_ids: A comma-separated list of elements. Retrieve entities
                 whose ID matches one of the elements in the list.
-                Incompatible with idPattern Example: Boe_Idarium
+                Incompatible with idPattern,e.g. Boe_Idarium
             entity_types: comma-separated list of elements. Retrieve entities
                 whose type matches one of the elements in the list.
                 Incompatible with typePattern. Example: Room.
-            id_pattern: A correctly formated regular expression. Retrieve
+            id_pattern: A correctly formatted regular expression. Retrieve
                 entities whose ID matches the regular expression. Incompatible
-                with id. Example: Bode_.*.
-            type_pattern: A correctly formated regular expression. Retrieve
+                with id, e.g. ngsi-ld.* or sensor.*
+            type_pattern: A correctly formatted regular expression. Retrieve
                 entities whose type matches the regular expression.
-                Incompatible with type. Example: Room_.*.
+                Incompatible with type, e.g. room.*
             q (SimpleQuery): A query expression, composed of a list of
                 statements separated by ;, i.e.,
                 q=statement1;statement2;statement3. See Simple Query
@@ -268,8 +268,8 @@ class ContextBrokerClient(BaseHttpClient):
                 mq=statement1;statement2;statement3. See Simple Query
                 Language specification. Example: temperature.accuracy<0.9.
             georel: Spatial relationship between matching entities and a
-                reference shape. See Geographical Queries. Example: near.
-            geometry: Geografical area to which the query is restricted.
+                reference shape. See Geographical Queries. Example: 'near'.
+            geometry: Geographical area to which the query is restricted.
                 See Geographical Queries. Example: point.
             coords: List of latitude-longitude pairs of coordinates separated
                 by ';'. See Geographical Queries. Example: 41.390205,
@@ -590,17 +590,18 @@ class ContextBrokerClient(BaseHttpClient):
                       response_format = '') -> ContextAttribute:
         """
         Retrieves a specified attribute from an entity.
+
         Args:
             entity_id: Id of the entity. Example: Bcn_Welt
             attr_name: Name of the attribute to be retrieved.
-                Example: temperature.
-            entity_type:
-            metadata: A list of metadata names to include in the response.
-                See "Filtering out attributes and metadata" section for
-                more detail.
+            entity_type (Optional): Type of the entity to retrieve
+            metadata (Optional): A list of metadata names to include in the
+                response. See "Filtering out attributes and metadata" section
+                for more detail.
 
         Returns:
             The content of the retrieved attribute as ContextAttribute
+
         Raises:
             Error
 
@@ -635,10 +636,10 @@ class ContextBrokerClient(BaseHttpClient):
         """
         Updates a specified attribute from an entity.
         Args:
-            attr:
+            attr: context attribute to update
             entity_id: Id of the entity. Example: Bcn_Welt
             entity_type: Entity type, to avoid ambiguity in case there are
-                several entities with the same entity id.
+            several entities with the same entity id.
         """
         headers = self.headers.copy()
         if not isinstance(attr, NamedContextAttribute):
@@ -680,11 +681,10 @@ class ContextBrokerClient(BaseHttpClient):
         """
         Removes a specified attribute from an entity.
         Args:
-            entity_id: Id of the entity. Example: Bcn_Welt
+            entity_id: Id of the entity.
             attr_name: Name of the attribute to be retrieved.
-                Example: temperature.
             entity_type: Entity type, to avoid ambiguity in case there are
-                several entities with the same entity id.
+            several entities with the same entity id.
         Raises:
             Error
 

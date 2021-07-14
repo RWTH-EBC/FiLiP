@@ -12,6 +12,14 @@ from filip.utils import validate_url
 class BaseHttpClient:
     """
     Base client for all derived api-clients.
+
+    Args:
+        session: request session object. This is required for reusing
+            the same connection
+        reuse_session (bool):
+        fiware_header: Fiware header object required for multi tenancy
+        **kwargs: Optional arguments that ``request`` takes.
+
     """
     def __init__(self,
                  url: Union[AnyHttpUrl, str] = None,
@@ -19,17 +27,6 @@ class BaseHttpClient:
                  session: requests.Session = None,
                  fiware_header: Union[Dict, FiwareHeader] = None,
                  **kwargs):
-        """
-        Args:
-            session: request session object. This is required for reusing
-                the same connection
-            reuse_session (bool):
-            fiware_header: Fiware header object required for multi tenancy
-            **kwargs: Optional arguments that ``request`` takes.
-
-        Returns:
-            filip.core.BaseClient
-        """
 
         self.logger = logging.getLogger(self.__class__.__name__)
 
@@ -66,6 +63,7 @@ class BaseHttpClient:
     def fiware_headers(self) -> FiwareHeader:
         """
         Get fiware header
+
         Returns:
             FiwareHeader
         """
@@ -75,12 +73,15 @@ class BaseHttpClient:
     def fiware_headers(self, headers: Union[Dict, FiwareHeader]) -> None:
         """
         Sets new fiware header
+
         Args:
             headers (Dict, FiwareHeader): New headers either as FiwareHeader
                 object or as dict.
-                Example:
-                    {fiware-service: "MyService",
-                    fiware-servicepath: "/MyServicePath"}
+
+        Example:
+            {fiware-service: "MyService",
+             fiware-servicepath: "/MyServicePath"}
+
         Returns:
             None
         """
@@ -225,13 +226,13 @@ class BaseHttpClient:
         """
         Sends a POST request either using the provided session or the
         single session.
+
         Args:
             url: URL for the new :class:`Request` object.
-            data (Dict, ByteString, List[Tuple], IO):
-                Dictionary, list of tuples, bytes, or file-like
-                object to send in the body of the :class:`Request`.
-            json (Dict): A JSON serializable Python object to send in the
-                body of the :class:`Request`..
+            data: Dictionary, list of tuples, bytes, or file-like object to
+                send in the body of the :class:`Request`.
+            json: A JSON serializable Python object to send in the
+                body of the :class:`Request`.
             **kwargs: Optional arguments that ``request`` takes.
 
         Returns:

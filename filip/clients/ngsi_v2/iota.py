@@ -16,6 +16,12 @@ class IoTAClient(BaseHttpClient):
     Client for FIWARE IoT-Agents. The implementation follows the API
     specifications from here:
     https://iotagent-node-lib.readthedocs.io/en/latest/
+
+    Args:
+        url: Url of IoT-Agent
+        session (requests.Session):
+        fiware_header (FiwareHeader): fiware service and fiware service path
+        **kwargs (Optional): Optional arguments that ``request`` takes.
     """
     def __init__(self,
                  url: str = None,
@@ -23,13 +29,6 @@ class IoTAClient(BaseHttpClient):
                  session: requests.Session = None,
                  fiware_header: FiwareHeader = None,
                  **kwargs):
-        """
-        Args:
-            url: Url of context broker server
-            session (requests.Session):
-            fiware_header (FiwareHeader): fiware service and fiware service path
-            **kwargs (Optional): Optional arguments that ``request`` takes.
-        """
         # set service url
         url = url or settings.IOTA_URL
         super().__init__(url=url,
@@ -41,6 +40,7 @@ class IoTAClient(BaseHttpClient):
     def get_version(self) -> Dict:
         """
         Gets version of IoT Agent
+
         Returns:
             Dictionary with response
         """
@@ -62,10 +62,12 @@ class IoTAClient(BaseHttpClient):
         Creates a set of service groups for the given service and service_path.
         The service_group and subservice information will taken from the
         headers, overwriting any preexisting values.
+
         Args:
             service_groups (list of ServiceGroup): Service groups that will be
             posted to the agent's API
             update (bool): If service group already exists try to update its
+
         Returns:
             None
         """
@@ -109,10 +111,12 @@ class IoTAClient(BaseHttpClient):
     def post_group(self, service_group: ServiceGroup, update: bool = False):
         """
         Single service registration but using the bulk operation in background
+
         Args:
             service_group (ServiceGroup): Service that will be posted to the
             agent's API
             update (bool):
+
         Returns:
             None
         """
@@ -120,11 +124,12 @@ class IoTAClient(BaseHttpClient):
                                 update=update)
 
     def get_group_list(self) -> List[ServiceGroup]:
-        """
+        r"""
         Retrieves service_group groups from the database. If the servicepath
-        header has the wildcard expression, /*, all the subservices for the
+        header has the wildcard expression, /\*, all the subservices for the
         service_group are returned. The specific subservice parameters are
         returned in any other case.
+
         Returns:
 
         """

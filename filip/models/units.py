@@ -191,6 +191,7 @@ class Units:
     def __getitem__(self, item: str) -> Unit:
         """
         Get unit by name or code
+
         Args:
             item (str): name or code
 
@@ -207,9 +208,11 @@ class Units:
     def keys(self, by_code: bool = False) -> List[str]:
         """
         Returns list of all unit names or codes
+
         Args:
             by_code (bool): if 'True' the keys will contain the unit codes
                 instead of their names.
+
         Returns:
             List[str] containing the names or list
         """
@@ -221,6 +224,7 @@ class Units:
     def names(self) -> List[str]:
         """
         Returns list of all unit names
+
         Returns:
             List[str] containing the names or list
         """
@@ -230,6 +234,7 @@ class Units:
     def codes(self):
         """
         Returns list of all unit codes
+
         Returns:
             List[str] containing the codes
         """
@@ -238,6 +243,7 @@ class Units:
     def values(self) -> List[Unit]:
         """
         Get list of all units
+
         Returns:
             List[Unit] containing all units
         """
@@ -246,6 +252,7 @@ class Units:
     def get(self, item: str, default: Any = None):
         """
         Get unit by name or by code
+
         Args:
             item (str): name or code of unit
             default (Any): Default value to return if unit does not exist.

@@ -17,7 +17,7 @@ Submodules
 filip.clients.base\_client module
 ---------------------------------
 
-.. automodule:: filip.clients.base_client
+.. automodule:: filip.clients.base_http_client
    :members:
    :undoc-members:
    :show-inheritance:

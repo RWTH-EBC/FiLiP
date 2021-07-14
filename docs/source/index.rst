@@ -9,7 +9,7 @@ Welcome to the documentation of FiLiP!
 .. mdinclude::  ../../README.md
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 5
 
    filip.clients
    filip.models
