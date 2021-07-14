@@ -112,7 +112,7 @@ class Operator(str, Enum):
 
 class QueryStatement(Tuple):
     """
-    Simple query stetement
+    Simple query statement
     """
 
     def __new__(cls, left: str, op: Union[str, Operator], right: Any):
@@ -203,7 +203,6 @@ class QueryString:
     """
     Class for validated QueryStrings that can be used in api clients
     """
-
     def __init__(self, qs: Union[Tuple,
                                  QueryStatement,
                                  List[Union[QueryStatement, Tuple]]]):

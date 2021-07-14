@@ -7,7 +7,7 @@ from urllib.parse import urljoin
 import requests
 from pydantic import parse_obj_as
 from filip import settings
-from filip.clients.base_client import BaseClient
+from filip.clients.base_http_client import BaseHttpClient
 from filip.models.base import FiwareHeader
 from filip.models.ngsi_v2.context import NotificationMessage
 from filip.models.ngsi_v2.timeseries import \
@@ -22,13 +22,19 @@ from filip.models.ngsi_v2.timeseries import \
 logger = logging.getLogger(__name__)
 
 
-class QuantumLeapClient(BaseClient):
+class QuantumLeapClient(BaseHttpClient):
     """
     Implements functions to use the FIWAREs QuantumLeap, which subscribes to an
     Orion Context Broker and stores the subscription data in a timeseries
     database (CrateDB). Further Information:
     https://smartsdk.github.io/ngsi-timeseries-api/#quantumleap
     https://app.swaggerhub.com/apis/heikkilv/quantumleap-api/
+
+    Args:
+        url: url of the quantumleap service
+        session (Optional):
+        fiware_header:
+        **kwargs:
     """
     def __init__(self,
                  url: str = None,
@@ -36,14 +42,6 @@ class QuantumLeapClient(BaseClient):
                  session: requests.Session = None,
                  fiware_header: FiwareHeader = None,
                  **kwargs):
-        """
-
-        Args:
-            url:
-            session:
-            fiware_header:
-            **kwargs:
-        """
         # set service url
         url = url or settings.QL_URL
         super().__init__(url=url,
@@ -55,6 +53,7 @@ class QuantumLeapClient(BaseClient):
     def get_version(self) -> Dict:
         """
         Gets version of QuantumLeap-Service.
+
         Returns:
             Dictionary with response
         """
@@ -77,6 +76,7 @@ class QuantumLeapClient(BaseClient):
         health-checks. Due to the lack of a standardized response format, we
         base the implementation on the draft of
         https://inadarei.github.io/rfc-healthcheck/
+
         Returns:
             Dictionary with response
         """
@@ -93,15 +93,17 @@ class QuantumLeapClient(BaseClient):
     def post_config(self):
         """
         (To Be Implemented) Customize your persistence configuration to
-        better suit your needs."""
+        better suit your needs.
+        """
         raise NotImplementedError("Endpoint to be implemented..")
 
     # INPUT API ENDPOINTS
     def post_notification(self, notification: NotificationMessage):
         """
         Notify QuantumLeap the arrival of a new NGSI notification.
+
         Args:
-            notification (NotificationMessage): Notification Message Object
+            notification: Notification Message Object
         """
         url = urljoin(self.base_url, '/v2/notify')
         headers = self.headers.copy()
@@ -145,8 +147,8 @@ class QuantumLeapClient(BaseClient):
         that will generate the notifications to be consumed by QuantumLeap in
         order to save historical records. If you want an advanced specification
         of the notifications, you can always create the subscription in orion
-        at your will.
-        This endpoint just aims to simplify the common use case.
+        at your will. This endpoint just aims to simplify the common use case.
+
         Args:
             entity_type (String): The type of entities for which to create a
                 subscription, so as to persist historical data of entities of
@@ -210,11 +212,12 @@ class QuantumLeapClient(BaseClient):
     def delete_entity(self, entity_id: str, entity_type: str) -> str:
         """
         Given an entity (with type and id), delete all its historical records.
+
         Args:
             entity_id (String): Entity id is required.
             entity_type (String): Entity type if entity_id alone can not
-                uniquely
-            define the entity.
+                uniquely define the entity.
+
         Returns:
             The entity_id of entity that is deleted.
         """
@@ -361,6 +364,7 @@ class QuantumLeapClient(BaseClient):
         """
         Get list of all available entities and their context information
         about EntityType and last update date.
+
         Args:
             entity_type (str): Comma-separated list of entity types whose data
                 are to be included in the response. Use only one (no comma)
@@ -376,6 +380,7 @@ class QuantumLeapClient(BaseClient):
             limit (int): Maximum number of results to be retrieved.
                 Default value : 10000
             offset (int): Offset for the results.
+
         Returns:
             List of TimeSeriesHeader
         """
@@ -412,6 +417,7 @@ class QuantumLeapClient(BaseClient):
         For example, query max water level of the central tank throughout the
         last year. Queries can get more
         sophisticated with the use of filters and query attributes.
+
         Args:
             entity_id (String): Entity id is required.
             attrs (String): Comma-separated list of attribute names
@@ -432,6 +438,7 @@ class QuantumLeapClient(BaseClient):
             coords (String): Required if georel is specified.
                 e.g. 40.714,-74.006
             options (String): Key value pair options.
+
         Returns:
             TimeSeries
         """
@@ -475,6 +482,7 @@ class QuantumLeapClient(BaseClient):
         For example, query the average pressure, temperature and humidity (
         values only, no metadata) of this
         month in the weather station WS1.
+
         Args:
             entity_id (String): Entity id is required.
             attrs (String): Comma-separated list of attribute names
@@ -495,6 +503,7 @@ class QuantumLeapClient(BaseClient):
             coords (String): Required if georel is specified.
                 e.g. 40.714,-74.006
             options (String): Key value pair options.
+
         Returns:
             Response Model
         """
@@ -538,6 +547,7 @@ class QuantumLeapClient(BaseClient):
         For example, query max water level of the central tank throughout the
         last year. Queries can get more
         sophisticated with the use of filters and query attributes.
+
         Args:
             entity_id (String): Entity id is required.
             attr_name (String): The attribute name is required.
@@ -558,6 +568,7 @@ class QuantumLeapClient(BaseClient):
             coords (String): Required if georel is specified.
                 e.g. 40.714,-74.006
             options (String): Key value pair options.
+
         Returns:
             Response Model
         """
@@ -603,6 +614,7 @@ class QuantumLeapClient(BaseClient):
         History of an attribute (values only) of a given entity instance
         Similar to the previous, but focusing on the values regardless of the
         metadata.
+
         Args:
             entity_id (String): Entity id is required.
             attr_name (String): The attribute name is required.
@@ -623,6 +635,7 @@ class QuantumLeapClient(BaseClient):
             coords (String): Required if georel is specified.
                 e.g. 40.714,-74.006
             options (String): Key value pair options.
+
         Returns:
             Response Model
         """
@@ -763,6 +776,7 @@ class QuantumLeapClient(BaseClient):
         instance. In this case, the index array is just the fromDate and
         toDate values user specified in the request
         (if any).
+
         Args:
             entity_type (String): Entity type is required.
             attr_name (String): The attribute name is required.
@@ -788,6 +802,7 @@ class QuantumLeapClient(BaseClient):
             coords (String): Required if georel is specified.
                 e.g. 40.714,-74.006
             options (String): Key value pair options.
+
         Returns:
             Response Model
         """
@@ -841,6 +856,7 @@ class QuantumLeapClient(BaseClient):
         History of an attribute (values only) of N entities of the same type.
         For example, query the average pressure (values only, no metadata) of
         this month in all the weather stations.
+
         Args:
             aggr_scope:
             entity_type (String): Entity type is required.
@@ -863,6 +879,7 @@ class QuantumLeapClient(BaseClient):
             coords (String): Required if georel is specified.
                 e.g. 40.714,-74.006
             options (String): Key value pair options.
+
         Returns:
             Response Model
         """

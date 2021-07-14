@@ -53,4 +53,4 @@ class TestUnitCodes(TestCase):
         self.assertEqual(UNITS.CommonCode.to_list(), units.codes)
 
         for unit in units.values():
-            unit.json(indent=2)
+            print(unit.json(indent=2))

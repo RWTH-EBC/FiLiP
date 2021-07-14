@@ -78,7 +78,7 @@ if __name__ == '__main__':
                 "iota_url": "http://<yourHost>:4041",
                 "ql_url": "http://<yourHost>:8668"
             }
-    from filip.clients.ngsi_v2 import Client
-    client = Client(config=config)
+    from filip.clients.ngsi_v2 import HttpClient
+    client = HttpClient(config=config)
     
     """

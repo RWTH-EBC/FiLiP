@@ -46,6 +46,7 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.coverage',
               'm2r2',  # Enable .md files
               'sphinx.ext.napoleon',  # Enable google docstrings
+              'sphinxcontrib.autodoc_pydantic' # add support for pydantic
               ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -81,6 +82,11 @@ todo_include_todos = False
 # Napoleon settings
 napoleon_google_docstring = True
 
+# autodoc_pydantic settings
+autodoc_pydantic_model_show_json = False
+autodoc_pydantic_settings_show_json = True
+autodoc_pydantic_model_show_config_summary = True
+autodoc_pydantic_model_show_validator_summary = True
 
 # -- Options for HTML output ----------------------------------------------
 
@@ -115,7 +121,7 @@ html_theme_options = {
     'repo_name': 'Fiware Library for Python',
 
     # Visible levels of the global TOC; -1 means unlimited
-    'globaltoc_depth': 3,
+    'globaltoc_depth': 4,
     # If False, expand all TOC entries
     'globaltoc_collapse': True,
     # If True, show hidden TOC entries

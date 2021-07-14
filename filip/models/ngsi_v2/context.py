@@ -52,10 +52,10 @@ class ContextMetadata(BaseModel):
     """
     Context metadata is used in FIWARE NGSI in several places, one of them being
     an optional part of the attribute value as described above. Similar to
-    attributes, each piece of metadata has:
+    attributes, each piece of metadata has.
 
-    Note that in NGSI it is not foreseen that metadata may contain nested
-    metadata.
+    Note:
+         In NGSI it is not foreseen that metadata may contain nested metadata.
     """
     type: Optional[Union[DataType, str]] = Field(
         title="metadata type",
@@ -110,15 +110,14 @@ class ContextAttribute(BaseModel):
 
     Values of entity attributes. For adding it you need to nest it into a
     dict in order to give it a name.
-    value: Its value contains the metadata value, which may correspond to
-        any JSON datatype.
-    type: Its value contains a string representation of the metadata NGSI type.
-    Examples:
-        {
-          "value": <...>,
-          "type": <...>,
-          "metadata": <...>
-        }
+
+    Example:
+
+        >>> data = {"value": <...>,
+                    "type": <...>,
+                    "metadata": <...>}
+        >>> attr = ContextAttribute(**data)
+
     """
     type: Union[DataType, str] = Field(
         default=DataType.TEXT,
@@ -229,20 +228,21 @@ class NamedContextAttribute(ContextAttribute):
 class ContextEntityKeyValues(BaseModel):
     """
     Base Model for an entity is represented by a JSON object with the following
-    syntax:
+    syntax.
 
     The entity id is specified by the object's id property, whose value
     is a string containing the entity id.
 
     The entity type is specified by the object's type property, whose value
     is a string containing the entity's type name.
+
     """
     id: str = Field(
         ...,
         title="Entity Id",
-        description="Id of an entity in an NGSI context broker. "
-                    "Allowed characters are the ones in the plain ASCII set, "
-                    "except the following ones: control characters, "
+        description="Id of an entity in an NGSI context broker. Allowed "
+                    "characters are the ones in the plain ASCII set, except "
+                    "the following ones: control characters, "
                     "whitespace, &, ?, / and #.",
         example='Bcn-Welt',
         max_length=256,
@@ -306,22 +306,15 @@ class ContextEntity(ContextEntityKeyValues):
     "ContextAttribute"-model. Obviously, id and type are
     not allowed to be used as attribute names.
 
-    Args:
-        id (str): entity id
-        type (str): entity type
-        **data:
+    Example:
 
-    Examples:
-        {
-          "id": "entityID",
-          "type": "entityType",
-          "attr_1": <val_1>,
-          "attr_2": <val_2>,
-          ...
-          "attr_N": <val_N>
-        }
+        >>> data = {'id': 'MyId',
+                    'type': 'MyType',
+                    'my_attr': {'value': 20, 'type': 'Number'}}
+
+        >>> entity = ContextEntity(**data)
+
     """
-
     def __init__(self,
                  id: str,
                  type: str,
@@ -353,6 +346,7 @@ class ContextEntity(ContextEntityKeyValues):
         """
         Args:
             response_format:
+
         Returns:
 
         """
@@ -389,6 +383,7 @@ class ContextEntity(ContextEntityKeyValues):
                      Dict[str, ContextAttribute]]:
         """
         Get all relationships of the context entity
+
         Args:
             response_format:
 
@@ -410,20 +405,32 @@ def create_context_entity_model(name: str = None,
                                 data: Dict = None,
                                 validators: Dict[str, Any] = None) -> \
         Type['ContextEntity']:
-    """
+    r"""
     Creates a ContextEntity-Model from a dict:
+
     Args:
-        name:
-        data:
-        validators:
-            Example:
-            {'validate_test': validator('temperature')(username_alphanumeric)}
-            with:
-            def username_alphanumeric(cls, value):
-                 assert v.value.isalnum(), 'must be numeric'
+        name: name of the model
+        data: dictionary containing the data structure
+        validators (optional): validators for the new model
+
+    Example:
+
+        >>> def username_alphanumeric(cls, value):
+                assert v.value.isalnum(), 'must be numeric'
                 return value
+
+        >>> model = create_context_entity_model(
+                        name='MyModel',
+                        data={
+                            'id': 'MyId',
+                            'type':'MyType',
+                            'temp': 'MyProperty'}
+                        {'validate_test': validator('temperature')(
+                            username_alphanumeric)})
+
     Returns:
         ContextEntity
+
     """
     properties = {key: (ContextAttribute, ...) for key in data.keys() if
                   key not in ContextEntity.__fields__}

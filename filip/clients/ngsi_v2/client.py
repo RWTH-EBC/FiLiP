@@ -9,7 +9,7 @@ from pathlib import Path
 from pydantic import BaseModel, AnyHttpUrl
 from requests.auth import HTTPBasicAuth, HTTPDigestAuth
 from requests import Session
-from filip.clients.base_client import BaseClient
+from filip.clients.base_http_client import BaseHttpClient
 from filip.config import settings
 from filip.models.base import FiwareHeader
 from filip.clients.ngsi_v2 import \
@@ -21,30 +21,31 @@ from filip.clients.ngsi_v2 import \
 logger = logging.getLogger('client')
 
 
-class Client(BaseClient):
+class HttpClientConfig(BaseModel):
+    """
+    Config class for client
+    """
+    cb_url: Optional[AnyHttpUrl] = settings.CB_URL
+    iota_url: Optional[AnyHttpUrl] = settings.IOTA_URL
+    ql_url: Optional[AnyHttpUrl] = settings.QL_URL
+    auth: Optional[Dict] = None
+
+
+class HttpClient(BaseHttpClient):
     """
     Master client. This client contains all implemented sub clients based on
     the principal of composition. Hence, each sub client is accessible from
     this client, but they share a general config and if provided a session.
     """
-    class Settings(BaseModel):
-        """
-        Settings class for client
-        """
-        cb_url: Optional[AnyHttpUrl] = settings.CB_URL
-        iota_url: Optional[AnyHttpUrl] = settings.IOTA_URL
-        ql_url: Optional[AnyHttpUrl] = settings.QL_URL
-        auth: Optional[Dict] = None
-
     def __init__(self,
-                 config: Union[str, Path, Dict] = None,
+                 config: Union[str, Path, HttpClientConfig, Dict] = None,
                  session: Session = None,
                  fiware_header: FiwareHeader = None,
                  **kwargs):
         """
         Constructor for master client
         Args:
-            config (Union[str, Path, Dict]): Confiiguration object
+            config (Union[str, Path, Dict]): Configuration object
             session (request.Session): Session object
             fiware_header (FiwareHeader): Fiware header
             **kwargs: Optional arguments that ``request`` takes.
@@ -52,7 +53,7 @@ class Client(BaseClient):
         if config:
             self.config = config
         else:
-            self.config = self.Settings()
+            self.config = HttpClientConfig()
 
         super().__init__(session=session,
                          fiware_header=fiware_header,
@@ -61,17 +62,17 @@ class Client(BaseClient):
         # initialize sub clients
         self.cb = ContextBrokerClient(url=self.config.cb_url,
                                       session=self.session,
-                                      fiware_header=fiware_header,
+                                      fiware_header=self.fiware_headers,
                                       **self.kwargs)
 
         self.iota = IoTAClient(url=self.config.iota_url,
                                session=self.session,
-                               fiware_header=fiware_header,
+                               fiware_header=self.fiware_headers,
                                **self.kwargs)
 
         self.timeseries = QuantumLeapClient(url=self.config.ql_url,
                                             session=self.session,
-                                            fiware_header=fiware_header,
+                                            fiware_header=self.fiware_headers,
                                             **self.kwargs)
 
         # from here on deprecated?
@@ -95,14 +96,14 @@ class Client(BaseClient):
         return self._config
 
     @config.setter
-    def config(self, config: Settings):
+    def config(self, config: HttpClientConfig):
         """Set a new config"""
-        if isinstance(config, self.Settings):
+        if isinstance(config, HttpClientConfig):
             self._config = config
         elif isinstance(config, (str, Path)):
-            self._config = self.Settings.parse_file(config)
+            self._config = HttpClientConfig.parse_file(config)
         else:
-            self._config = self.Settings.parse_obj(config)
+            self._config = HttpClientConfig.parse_obj(config)
 
     @property
     def cert(self):
