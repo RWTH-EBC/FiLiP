@@ -148,13 +148,13 @@ You can register for a testing account
 The easiest way to install the library is via pip:
 
 ```
-pip install git+git://github.com/RWTH-EBC/filip
+pip install -U git+git://github.com/RWTH-EBC/filip
 ```
 
 If you want to benefit from the latest changes, use the development branch:
 
 ```
-pip install git+git://github.com/RWTH-EBC/filip@development
+pip install -U git+git://github.com/RWTH-EBC/filip@development
 ```
 
 ### Running examples or tests
