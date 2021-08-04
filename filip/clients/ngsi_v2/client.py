@@ -23,7 +23,7 @@ logger = logging.getLogger('client')
 
 class HttpClientConfig(BaseModel):
     """
-    Config class for client
+    Config class for http client
     """
     cb_url: Optional[AnyHttpUrl] = settings.CB_URL
     iota_url: Optional[AnyHttpUrl] = settings.IOTA_URL

@@ -2,6 +2,7 @@
 Tests for time series api client aka QuantumLeap
 """
 import unittest
+import logging
 from random import random
 import requests
 from filip.models.base import FiwareHeader
@@ -9,6 +10,12 @@ from filip.models.ngsi_v2.context import ContextEntity, NotificationMessage
 from filip.clients.ngsi_v2 import \
     ContextBrokerClient, \
     QuantumLeapClient
+
+
+# Setting up logging
+logging.basicConfig(
+    level='DEBUG',
+    format='%(asctime)s %(name)s %(levelname)s: %(message)s')
 
 
 class TestTimeSeries(unittest.TestCase):

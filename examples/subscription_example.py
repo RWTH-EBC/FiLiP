@@ -12,6 +12,10 @@ AUTH = ('user', 'pass')
 # https://fiware-orion.readthedocs.io/en/master/user/walkthrough_apiv2/index.html
 # #subscriptions
 
+# Setting up logging
+logging.basicConfig(
+    level='INFO',
+    format='%(asctime)s %(name)s %(levelname)s: %(message)s')
 logger = logging.getLogger(__name__)
 
 

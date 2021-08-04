@@ -28,9 +28,14 @@ class BaseHttpClient:
                  fiware_header: Union[Dict, FiwareHeader] = None,
                  **kwargs):
 
-        self.logger = logging.getLogger(self.__class__.__name__)
+        self.logger = logging.getLogger(
+            name=f"{self.__class__.__module__}."
+                 f"{self.__class__.__name__}")
+        self.logger.addHandler(logging.NullHandler())
+        self.logger.debug("Creating %s", self.__class__.__name__)
 
         if url:
+            self.logger.debug("Checking url style...")
             self.base_url = validate_url(url)
 
         if session:
@@ -332,12 +337,13 @@ class BaseHttpClient:
         Returns:
 
         """
-        if err.response.text and msg:
-            self.logger.error("%s \n Reason: %s", msg, err.response.text)
-        elif err.response.text and not msg:
-            self.logger.error("%s", err.response.text)
+        if err.response:
+            if err.response.text and msg:
+                self.logger.error("%s \n Reason: %s", msg, err.response.text)
+            elif err.response.text and not msg:
+                self.logger.error("%s", err.response.text)
         elif not err.response and msg:
-            self.logger.error("%s \n Reason: %s", msg, err)
+                self.logger.error("%s \n Reason: %s", msg, err)
         else:
             self.logger.error(err)
 

@@ -4,17 +4,17 @@ For each client we will retrieve the active service version.
 Please, make sure to adjust the either the 'filip.env' for your server.
 """
 import logging
-
 import requests
-
 from filip.clients.ngsi_v2 import \
     ContextBrokerClient, \
     IoTAClient, \
     QuantumLeapClient
 from filip.models.base import FiwareHeader
 
-
-logger = logging.getLogger(__name__)
+# Setting up logging
+logging.basicConfig(
+    level='INFO',
+    format='%(asctime)s %(name)s %(levelname)s: %(message)s')
 
 if __name__ == '__main__':
     # First a create a fiware header that you want to work with
@@ -31,9 +31,10 @@ if __name__ == '__main__':
 
     # 2. Run the client via the python's context protocol. THis will
     # initialize requests.session that the client will reuse for each function.
-    # This will usually lead to an performance boost because the connection
-    # can be reused. The client and its connection will be closed after the end
-    # of the with-statement
+    # Formally, this usually lead to an performance boost because the
+    # connection was reused reused. The client and its connection will be
+    # closed after the end of the with-statement. However, thanks to urllib3
+    # the keep-alive and session reuse is handled totally automatically.
     with ContextBrokerClient(fiware_header=fiware_header) as cb_client:
         print(f"OCB Version: {cb_client.get_version()}")
 
