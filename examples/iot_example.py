@@ -5,6 +5,11 @@ from filip.models.base import FiwareHeader
 from filip.models.ngsi_v2.iot import Device, ServiceGroup
 from uuid import uuid4
 
+
+# Setting up logging
+logging.basicConfig(
+    level='INFO',
+    format='%(asctime)s %(name)s %(levelname)s: %(message)s')
 logger = logging.getLogger(__name__)
 
 
