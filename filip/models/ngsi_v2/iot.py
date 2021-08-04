@@ -114,7 +114,7 @@ class DeviceAttribute(BaseAttribute):
     object_id: Optional[str] = Field(
         description="name of the attribute as coming from the device."
     )
-    metadata: Optional[Dict[str, Dict]] = Field(
+    metadata: Optional[Union[Dict[str, Dict], str]] = Field(
         description="Additional meta information for the attribute, "
                     "e.g. 'unitCode'"
     )
