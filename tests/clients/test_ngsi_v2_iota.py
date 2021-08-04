@@ -1,5 +1,4 @@
 import unittest
-
 import requests
 from uuid import uuid4
 
@@ -15,6 +14,11 @@ from filip.models.ngsi_v2.iot import \
     LazyDeviceAttribute, \
     StaticDeviceAttribute
 from filip.models.ngsi_v2.context import ContextEntity
+
+
+import logging
+from filip.config import settings
+logging.basicConfig(level='CRITICAL', format=settings.LOG_FORMAT)
 
 
 class TestAgent(unittest.TestCase):

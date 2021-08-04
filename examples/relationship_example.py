@@ -4,6 +4,11 @@ from filip.clients.ngsi_v2 import ContextBrokerClient
 from filip.models.ngsi_v2.context import ContextEntity
 from filip.models.base import FiwareHeader
 
+
+# Setting up logging
+logging.basicConfig(
+    level='INFO',
+    format='%(asctime)s %(name)s %(levelname)s: %(message)s')
 logger = logging.getLogger(__name__)
 
 
