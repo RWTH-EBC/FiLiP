@@ -2,6 +2,7 @@
 Tests for filip.cb.client
 """
 import unittest
+import logging
 import time
 import random
 from datetime import datetime
@@ -19,6 +20,12 @@ from filip.models.ngsi_v2.context import \
     Query, \
     Entity, \
     ActionType
+
+
+# Setting up logging
+logging.basicConfig(
+    level='DEBUG',
+    format='%(asctime)s %(name)s %(levelname)s: %(message)s')
 
 
 class TestContextBroker(unittest.TestCase):

@@ -2,11 +2,19 @@
 Test for filip.core.client
 """
 import unittest
-import requests
 import json
+import logging
+import requests
+
 from pathlib import Path
 from filip.models.base import FiwareHeader
 from filip.clients.ngsi_v2.client import HttpClient
+
+
+# Setting up logging
+logging.basicConfig(
+    level='DEBUG',
+    format='%(asctime)s %(name)s %(levelname)s: %(message)s')
 
 
 class TestClient(unittest.TestCase):

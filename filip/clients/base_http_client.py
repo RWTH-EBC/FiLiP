@@ -29,7 +29,9 @@ class BaseHttpClient:
                  **kwargs):
 
         self.logger = logging.getLogger(
-            name=f"{self.__class__.__module__}.{self.__class__.__name__}")
+            name=f"{self.__class__.__module__}."
+                 f"{self.__class__.__name__}")
+        self.logger.addHandler(logging.NullHandler())
         self.logger.debug("Creating %s", self.__class__.__name__)
 
         if url:
