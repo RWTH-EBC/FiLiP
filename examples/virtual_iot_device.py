@@ -9,6 +9,7 @@ from filip.models.ngsi_v2.iot import \
     DeviceCommand, \
     DeviceAttribute, \
     StaticDeviceAttribute
+from filip.models.ngsi_v2.
 from filip.clients.ngsi_v2 import HttpClient
 
 
@@ -25,7 +26,8 @@ logging.basicConfig(
 attr = DeviceAttribute(name='temperature',
                        object_id='t',
                        type="Number",
-                       metadata={"unit": {"unitCode": "CEL"}})
+                       metadata={"unitCode": {"value": "CEL",
+                                              "type": "Text"}})
 
 # creating a static attribute that holds additional information
 static_attr = StaticDeviceAttribute(name='info',
@@ -33,16 +35,19 @@ static_attr = StaticDeviceAttribute(name='info',
                                     value="Filip example for virtual IoT "
                                           "device")
 # creating a command that the IoT device will liston to
-command = DeviceCommand(name='valve_opening')
+command = DeviceCommand(name='heater', type="Boolean")
 
 device = Device(device_id='MyDevice',
                 entity_name='MyDevice',
                 entity_type='Thing',
+                protocol='IoTA-JSON',
                 transport='MQTT',
                 apikey='filip_example',
                 attributes=[attr],
                 static_attributes=[static_attr],
                 commands=[command])
+
+# You can also add additional
 
 # This will print our configuration
 print("This is our device configuration: \n" + device.json(indent=2))
@@ -60,13 +65,17 @@ fiware_header = FiwareHeader(service='filip', service_path='/iot_examples')
 # create the Http client node that once sent the device cannot be posted again
 # and you need to use the update command
 client = HttpClient(fiware_header=fiware_header)
-#client.iota.post_device(device=device)
+client.iota.post_device(device=device)
 
 # check if the data entity is created in the context broker
 entity = client.cb.get_entity(entity_id=device.device_id,
                               entity_type=device.entity_type)
 print("This is our data entity belonging to our device: \n" +
       entity.json(indent=2))
+
+# create and send a command via the context broker
+
+client.cb.post_command()
 
 # cleanup the server and delete everything
 client.iota.delete_device(device_id=device.device_id)

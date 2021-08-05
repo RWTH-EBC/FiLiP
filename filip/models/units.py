@@ -289,9 +289,9 @@ def validate_units_in_metadata(data: Dict) -> Dict:
         if isinstance(code, UnitCode):
             pass
         elif isinstance(code, dict):
-            data['unitCode'] = Unit.parse_obj(code)
+            data['unitCode'] = UnitCode.parse_obj(code)
         elif isinstance(code, str):
-            data['unitCode'] = Unit.parse_raw(code)
+            data['unitCode'] = UnitCode.parse_raw(code)
         else:
             raise ValueError('Invalid unit code!')
     elif data.get('unitText', False):
@@ -299,9 +299,9 @@ def validate_units_in_metadata(data: Dict) -> Dict:
         if isinstance(name, UnitText):
             pass
         elif isinstance(name, dict):
-            data['unitText'] = Unit.parse_obj(name)
+            data['unitText'] = UnitText.parse_obj(name)
         elif isinstance(name, str):
-            data['unitText'] = Unit.parse_raw(name)
+            data['unitText'] = UnitText.parse_raw(name)
         else:
             raise ValueError('Invalid unit code!')
     return data
