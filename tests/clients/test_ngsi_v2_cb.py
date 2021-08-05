@@ -24,7 +24,7 @@ from filip.models.ngsi_v2.context import \
 
 # Setting up logging
 logging.basicConfig(
-    level='DEBUG',
+    level='ERROR',
     format='%(asctime)s %(name)s %(levelname)s: %(message)s')
 
 

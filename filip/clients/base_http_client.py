@@ -329,15 +329,21 @@ class BaseHttpClient:
                   err: requests.RequestException,
                   msg: str = None) -> None:
         """
+        Outputs the error messages from the client request function. If
+        additional information is available in the server response this will
+        be forwarded to the logging output.
+
+        Note:
+            The user is responsible to setup the logging system
 
         Args:
             err: Request Error
             msg: error message from calling function
 
         Returns:
-
+            None
         """
-        if err.response:
+        if err.response is not None:
             if err.response.text and msg:
                 self.logger.error("%s \n Reason: %s", msg, err.response.text)
             elif err.response.text and not msg:
