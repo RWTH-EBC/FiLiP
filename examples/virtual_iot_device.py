@@ -2,14 +2,20 @@
 This example shows how to provision a virtual iot device in a FIWARE-based
 IoT Platform using FiLiP and PahoMQTT
 """
+import json
 import logging
+import random
+
+import paho.mqtt.client as mqtt
+import time
 from filip.models import FiwareHeader
 from filip.models.ngsi_v2.iot import \
     Device, \
     DeviceCommand, \
     DeviceAttribute, \
+    ServiceGroup, \
     StaticDeviceAttribute
-from filip.models.ngsi_v2.
+from filip.models.ngsi_v2.context import NamedCommand
 from filip.clients.ngsi_v2 import HttpClient
 
 
@@ -17,67 +23,193 @@ from filip.clients.ngsi_v2 import HttpClient
 logging.basicConfig(
     level='INFO',
     format='%(asctime)s %(name)s %(levelname)s: %(message)s')
+logger = logging.getLogger(__name__)
 
-# First we create our device configuration using the models provided for
-# filip.models.ngsi_v2.iot
+if __name__ == '__main__':
+    # First we create our device configuration using the models provided for
+    # filip.models.ngsi_v2.iot
 
-# creating an attribute for incoming measurements from e.g. a sensor we do
-# add the metadata for units here using the unit models
-attr = DeviceAttribute(name='temperature',
-                       object_id='t',
-                       type="Number",
-                       metadata={"unitCode": {"value": "CEL",
-                                              "type": "Text"}})
+    # creating an attribute for incoming measurements from e.g. a sensor we do
+    # add the metadata for units here using the unit models
+    device_attr1 = DeviceAttribute(name='temperature',
+                                   object_id='t',
+                                   type="Number",
+                                   metadata={"unitCode": {"value": "CEL",
+                                                          "type": "Text"}})
 
-# creating a static attribute that holds additional information
-static_attr = StaticDeviceAttribute(name='info',
-                                    type="Text",
-                                    value="Filip example for virtual IoT "
-                                          "device")
-# creating a command that the IoT device will liston to
-command = DeviceCommand(name='heater', type="Boolean")
+    # creating a static attribute that holds additional information
+    static_device_attr = StaticDeviceAttribute(name='info',
+                                               type="Text",
+                                               value="Filip example for virtual "
+                                                     "IoT device")
+    # creating a command that the IoT device will liston to
+    device_command = DeviceCommand(name='heater', type="Boolean")
 
-device = Device(device_id='MyDevice',
-                entity_name='MyDevice',
-                entity_type='Thing',
-                protocol='IoTA-JSON',
-                transport='MQTT',
-                apikey='filip_example',
-                attributes=[attr],
-                static_attributes=[static_attr],
-                commands=[command])
+    # NOTE: You need to know that if you define an apikey for a single device it
+    # will be only used for outgoing traffic. This is does not become very clear
+    # in the official documentation.
+    # https://fiware-iotagent-json.readthedocs.io/en/latest/usermanual/index.html
+    device = Device(device_id='MyDevice',
+                    entity_name='MyDevice',
+                    entity_type='Thing2',
+                    protocol='IoTA-JSON',
+                    transport='MQTT',
+                    apikey='filip_device',
+                    attributes=[device_attr1],
+                    static_attributes=[static_device_attr],
+                    commands=[device_command])
 
-# You can also add additional
+    # You can also add additional attributes via the Device API
+    device_attr2=device_attr1 = DeviceAttribute(name='humidity',
+                                                object_id='h',
+                                                type="Number")
 
-# This will print our configuration
-print("This is our device configuration: \n" + device.json(indent=2))
+    device.add_attribute(attribute=device_attr2)
 
-# Send device configuration to FIWARE via the IoT-Agent. We use the general
-# ngsiv2 httpClient for this.
-# This will automatically create an data entity in the context broker and
-# make the device with it. The name of the entity will be our device_id in
-# this case for more complex configuration you need to set the entity_name
-# and entity_type in the previous Device-Model
+    # This will print our configuration that we will send
+    logger.info("This is our device configuration: \n" + device.json(indent=2))
 
-# create a fiware header
-fiware_header = FiwareHeader(service='filip', service_path='/iot_examples')
+    # Send device configuration to FIWARE via the IoT-Agent. We use the general
+    # ngsiv2 httpClient for this.
+    # This will automatically create an data entity in the context broker and
+    # make the device with it. The name of the entity will be our device_id in
+    # this case for more complex configuration you need to set the entity_name
+    # and entity_type in the previous Device-Model
 
-# create the Http client node that once sent the device cannot be posted again
-# and you need to use the update command
-client = HttpClient(fiware_header=fiware_header)
-client.iota.post_device(device=device)
+    # create a fiware header
+    fiware_header = FiwareHeader(service='filip', service_path='/iot_examples')
 
-# check if the data entity is created in the context broker
-entity = client.cb.get_entity(entity_id=device.device_id,
-                              entity_type=device.entity_type)
-print("This is our data entity belonging to our device: \n" +
-      entity.json(indent=2))
+    # in order to change the apikey of out devices for incoming data we need to
+    # create a service group that our device weill be we attached to
+    # NOTE: This is important in order to adjust the apikey for incoming traffic.
+    service_group = ServiceGroup(service=fiware_header.service,
+                                 subservice=fiware_header.service_path,
+                                 apikey='filip',
+                                 resource='/iot/json')
 
-# create and send a command via the context broker
+    # create the Http client node that once sent the device cannot be posted again
+    # and you need to use the update command
+    client = HttpClient(fiware_header=fiware_header)
+    client.iota.post_group(service_group=service_group, update=True)
+    client.iota.post_device(device=device)
 
-client.cb.post_command()
+    # check if the device is correctly configured
+    device = client.iota.get_device(device_id=device.device_id)
+    logger.info(f"{device.json(indent=2)}")
 
-# cleanup the server and delete everything
-client.iota.delete_device(device_id=device.device_id)
-client.cb.delete_entity(entity_id=device.device_id,
-                        entity_type=device.entity_type)
+    # check if the data entity is created in the context broker
+    entity = client.cb.get_entity(entity_id=device.device_id,
+                                  entity_type=device.entity_type)
+    logger.info("This is our data entity belonging to our device: \n" +
+                entity.json(indent=2))
+
+    # create a mqtt client that we use as representation of an IoT device
+    # following the official documentation of Paho-MQTT.
+    # https://www.eclipse.org/paho/index.php?page=clients/python/docs/index.php
+
+    # NOTE: Since Paho-MQTT is no requirement to the library at current stage you
+    # probably need need to install it first.
+    #
+    #   pip install paho-qtt
+    #
+
+    # WE USE THE IMPLEMENTATION OF MQTTv5 which slightly different from former
+    # versions. Especially, the arguments of the well-known function have changed
+    # a little. It's now more verbose than it used to be. Furthermore, you have
+    # to handle the properties argument.
+
+    # The callback for when the mqtt client receives a CONNACK response from the
+    # server. All callbacks need to have this specific arguments, Otherwise the
+    # client will not be able to execute them.
+    def on_connect(client, userdata, flags, reasonCode, properties=None):
+        if reasonCode != 0:
+            logger.error(f"Connection failed with error code: '{reasonCode}'")
+        else:
+            logger.info("Successfully, connected with result code "+str(
+                reasonCode))
+        # Subscribing in on_connect() means that if we lose the connection and
+        # reconnect then subscriptions will be renewed.
+        # We do subscribe to the topic that the platfrom will publish our
+        # commands on
+        client.subscribe(f"/{device.apikey}/{device.device_id}/cmd")
+
+    # Callback when the command topic is succesfully subscribed
+    def on_subscribe(client, userdata, mid, granted_qos, properties=None):
+        logger.info("Successfully subscribed to with QoS: %s", granted_qos)
+
+    # The callback for when the device receives a PUBLISH  message like a command
+    # from the server. Here, the received command will be printed and an
+    # command-acknowledge will be sent to the platform.
+
+    # NOTE: We need to use the apikey of the service-group to send the message to
+    # the platform
+    def on_message(client, userdata, msg):
+        logger.info(msg.topic+" "+str(msg.payload))
+        data = json.loads(msg.payload)
+        res = {k: v for k, v in data.items()}
+        client.publish(topic=f"/json/{service_group.apikey}"
+                             f"/{device.device_id}/cmdexe",
+                       payload=json.dumps(res))
+
+    def on_disconnect(client, userdata, reasonCode):
+        logger.info("MQTT client disconnected" + str(reasonCode))
+
+    mqtt_client = mqtt.Client(client_id="filip-examples",
+                              userdata=None,
+                              protocol=mqtt.MQTTv5,
+                              transport="tcp")
+    # add our callbacks to the client
+    mqtt_client.on_connect = on_connect
+    mqtt_client.on_subscribe = on_subscribe
+    mqtt_client.on_message = on_message
+    mqtt_client.on_disconnect = on_disconnect
+    # connect to the server
+    mqtt_client.connect(host="134.130.166.184",
+                        port=1883,
+                        keepalive=60,
+                        bind_address="",
+                        bind_port=0,
+                        clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
+                        properties=None)
+    # create a non-blocking thread for mqtt communication
+    mqtt_client.loop_start()
+
+    for attr in device.attributes:
+        payload = json.dumps({attr.object_id: random.randint(0,9)})
+        logger.info("Send data to platform:" + payload)
+        mqtt_client.publish(
+            topic=f"/json/{service_group.apikey}/{device.device_id}/attrs",
+            payload=json.dumps({attr.object_id: random.randint(0,9)}))
+
+    time.sleep(1)
+    entity = client.cb.get_entity(entity_id=device.device_id,
+                                  entity_type=device.entity_type)
+    logger.info("This is updated entity status after measurements are "
+                "received: \n" + entity.json(indent=2))
+
+    # create and send a command via the context broker
+    context_command = NamedCommand(name=device_command.name,
+                                   value=False)
+    client.cb.post_command(entity_id=entity.id,
+                           entity_type=entity.type,
+                           command=context_command)
+
+    time.sleep(1)
+    # check the entity the command attribute should now show the PENDING
+    entity = client.cb.get_entity(entity_id=device.device_id,
+                                  entity_type=device.entity_type)
+    logger.info("This is updated entity status after the command was sent "
+                "and the acknowledge message was received: "
+                "\n" + entity.json(indent=2))
+
+    # close the mqtt listening thread
+    mqtt_client.loop_stop()
+    # disconnect the mqtt device
+    mqtt_client.disconnect()
+
+    # cleanup the server and delete everything
+    client.iota.delete_device(device_id=device.device_id)
+    client.iota.delete_group(resource=service_group.resource,
+                             apikey=service_group.apikey)
+    client.cb.delete_entity(entity_id=entity.id,
+                            entity_type=entity.type)

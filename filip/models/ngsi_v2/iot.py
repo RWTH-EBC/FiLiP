@@ -200,7 +200,7 @@ class ServiceGroup(BaseModel):
                     "timestamp. With NGSI-LD, the Standard observedAt "
                     "property-of-a-property is created instead."
     )
-    entity_type: str = Field(
+    entity_type: Optional[str] = Field(
         description="name of the Entity type to assign to the group. "
                     "Allowed characters "
                     "are the ones in the plain ASCII set, except the following "
@@ -279,7 +279,7 @@ class Device(BaseModel):
     )
     service: Optional[str] = Field(
         description="Name of the service_group the device belongs to "
-                    "(will be used in the fiware-service_group header).",
+                    "(will be used in the fiware-service header).",
         max_length=50
     )
     service_path: Optional[str] = Field(
