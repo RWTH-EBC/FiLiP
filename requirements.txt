@@ -7,3 +7,4 @@ pytz>=2019.1
 fuzzywuzzy>=0.17.0
 pandas>=1.2.0
 setuptools>=40.6.0
+paho-mqtt>=1.5.1
