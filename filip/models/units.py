@@ -139,7 +139,7 @@ class Unit(BaseModel):
             if idx.empty:
                 raise ValueError("Invalid 'code': ", code)
         elif name:
-            idx = UNITS.index[(UNITS.CommonCode == name)]
+            idx = UNITS.index[(UNITS.Name == name)]
             if idx.empty:
                 raise ValueError("Invalid 'name': ", name)
         else:
