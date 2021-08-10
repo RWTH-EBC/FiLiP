@@ -5,9 +5,11 @@ IoT Platform using FiLiP and PahoMQTT
 import json
 import logging
 import random
-
-import paho.mqtt.client as mqtt
 import time
+import paho.mqtt.client as mqtt
+
+from urllib.parse import urlparse
+
 from filip.models import FiwareHeader
 from filip.models.ngsi_v2.iot import \
     Device, \
@@ -16,26 +18,49 @@ from filip.models.ngsi_v2.iot import \
     ServiceGroup, \
     StaticDeviceAttribute
 from filip.models.ngsi_v2.context import NamedCommand
-from filip.clients.ngsi_v2 import HttpClient
+from filip.clients.ngsi_v2 import HttpClient, HttpClientConfig
 
 
 # Setting up logging
 logging.basicConfig(
     level='INFO',
     format='%(asctime)s %(name)s %(levelname)s: %(message)s')
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('filip-iot-example')
+
+# Before running the example you should set some global variables
+CB_URL = "http://yourHost:yourPort"
+IOTA_URL = "http://yourHost:yourPort"
+MQTT_BROKER_URL = "http://yourHost:yourPort"
+DEVICE_APIKEY = 'filip-iot-example-device'
+SERVICE_GROUP_APIKEY= 'filip-iot-example-service-group'
+FIWARE_SERVICE = 'filip'
+FIWARE_SERVICE_PATH = '/iot_examples'
 
 if __name__ == '__main__':
+    # Since we want to use the multi-tenancy concept of fiware we always start
+    # with create a fiware header
+    fiware_header = FiwareHeader(service=FIWARE_SERVICE,
+                                 service_path=FIWARE_SERVICE_PATH)
+
     # First we create our device configuration using the models provided for
     # filip.models.ngsi_v2.iot
 
     # creating an attribute for incoming measurements from e.g. a sensor we do
-    # add the metadata for units here using the unit models
+    # add the metadata for units here using the unit models. You will later
+    # notice that the library automatically will augment the provided
+    # information about units.
     device_attr1 = DeviceAttribute(name='temperature',
                                    object_id='t',
                                    type="Number",
-                                   metadata={"unitCode": {"value": "CEL",
-                                                          "type": "Text"}})
+                                   metadata={"unit":
+                                                 {"type": "Unit",
+                                                  "value": {
+                                                      "name": {
+                                                          "type": "Text",
+                                                          "value": "degree "
+                                                                   "Celsius"}
+                                                  }}
+                                             })
 
     # creating a static attribute that holds additional information
     static_device_attr = StaticDeviceAttribute(name='info',
@@ -54,15 +79,18 @@ if __name__ == '__main__':
                     entity_type='Thing2',
                     protocol='IoTA-JSON',
                     transport='MQTT',
-                    apikey='filip_device',
+                    apikey=DEVICE_APIKEY,
                     attributes=[device_attr1],
                     static_attributes=[static_device_attr],
                     commands=[device_command])
 
     # You can also add additional attributes via the Device API
-    device_attr2=device_attr1 = DeviceAttribute(name='humidity',
-                                                object_id='h',
-                                                type="Number")
+    device_attr2 = DeviceAttribute(name='humidity',
+                                   object_id='h',
+                                   type="Number",
+                                   metadata={"unitText":
+                                                 {"value": "percent",
+                                                  "type": "Text"}})
 
     device.add_attribute(attribute=device_attr2)
 
@@ -76,24 +104,26 @@ if __name__ == '__main__':
     # this case for more complex configuration you need to set the entity_name
     # and entity_type in the previous Device-Model
 
-    # create a fiware header
-    fiware_header = FiwareHeader(service='filip', service_path='/iot_examples')
-
     # in order to change the apikey of out devices for incoming data we need to
     # create a service group that our device weill be we attached to
     # NOTE: This is important in order to adjust the apikey for incoming traffic.
     service_group = ServiceGroup(service=fiware_header.service,
                                  subservice=fiware_header.service_path,
-                                 apikey='filip',
+                                 apikey=SERVICE_GROUP_APIKEY,
                                  resource='/iot/json')
 
     # create the Http client node that once sent the device cannot be posted again
     # and you need to use the update command
-    client = HttpClient(fiware_header=fiware_header)
+    config=HttpClientConfig(cb_url=CB_URL, iota_url=IOTA_URL)
+    client = HttpClient(fiware_header=fiware_header, config=config)
     client.iota.post_group(service_group=service_group, update=True)
-    client.iota.post_device(device=device)
+    client.iota.post_device(device=device, update=True)
 
-    # check if the device is correctly configured
+    time.sleep(0.5)
+
+    # check if the device is correctly configured. You will notice that
+    # unfortunately the iot API does not return all the metadata. However,
+    # it will still appear in the context-entity
     device = client.iota.get_device(device_id=device.device_id)
     logger.info(f"{device.json(indent=2)}")
 
@@ -107,16 +137,16 @@ if __name__ == '__main__':
     # following the official documentation of Paho-MQTT.
     # https://www.eclipse.org/paho/index.php?page=clients/python/docs/index.php
 
-    # NOTE: Since Paho-MQTT is no requirement to the library at current stage you
-    # probably need need to install it first.
+    # NOTE: Since Paho-MQTT is no requirement to the library at current stage
+    # you probably need need to install it first.
     #
-    #   pip install paho-qtt
+    #   pip install paho-mqtt
     #
 
     # WE USE THE IMPLEMENTATION OF MQTTv5 which slightly different from former
-    # versions. Especially, the arguments of the well-known function have changed
-    # a little. It's now more verbose than it used to be. Furthermore, you have
-    # to handle the properties argument.
+    # versions. Especially, the arguments of the well-known function have
+    # change a little. It's now more verbose than it used to be. Furthermore,
+    # you have to handle the properties argument.
 
     # The callback for when the mqtt client receives a CONNACK response from the
     # server. All callbacks need to have this specific arguments, Otherwise the
@@ -154,7 +184,7 @@ if __name__ == '__main__':
     def on_disconnect(client, userdata, reasonCode):
         logger.info("MQTT client disconnected" + str(reasonCode))
 
-    mqtt_client = mqtt.Client(client_id="filip-examples",
+    mqtt_client = mqtt.Client(client_id="filip-iot-example",
                               userdata=None,
                               protocol=mqtt.MQTTv5,
                               transport="tcp")
@@ -164,8 +194,9 @@ if __name__ == '__main__':
     mqtt_client.on_message = on_message
     mqtt_client.on_disconnect = on_disconnect
     # connect to the server
-    mqtt_client.connect(host="134.130.166.184",
-                        port=1883,
+    mqtt_url = urlparse(MQTT_BROKER_URL)
+    mqtt_client.connect(host=mqtt_url.hostname,
+                        port=mqtt_url.port,
                         keepalive=60,
                         bind_address="",
                         bind_port=0,

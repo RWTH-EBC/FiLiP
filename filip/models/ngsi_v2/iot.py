@@ -7,7 +7,7 @@ import json
 import pytz
 from pydantic import BaseModel, Field, validator, AnyHttpUrl
 from filip.models.base import NgsiVersion, DataType
-from filip.models.units import validate_units_in_metadata
+from filip.models.ngsi_v2.context import NamedContextMetadata
 
 logger = logging.getLogger()
 
@@ -120,7 +120,7 @@ class DeviceAttribute(BaseAttribute):
     )
 
     @validator('metadata')
-    def validate_metadata(cls, value):
+    def validate_metadata(cls, data):
         """
         Check metadata object for serialization and units if present.
         Args:
@@ -128,10 +128,10 @@ class DeviceAttribute(BaseAttribute):
         Returns:
 
         """
-        assert json.dumps(value), "metadata not serializable"
-        value = validate_units_in_metadata(data=value)
-        return value
-
+        assert json.dumps(data), "metadata not serializable"
+        for k, v in data.items():
+            data.update(NamedContextMetadata(name=k, **v).to_context_metadata())
+        return data
 
 class LazyDeviceAttribute(DeviceAttribute):
     """
@@ -504,7 +504,6 @@ class Device(BaseModel):
                                "attribute: \n %s",
                                self.device_id, attribute.json(indent=2))
                 self.add_attribute(attribute=attribute)
-
             else:
                 logger.error("Device: %s: Could not find "
                              "attribute: \n %s", self.device_id,

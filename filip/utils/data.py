@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Dict
 import pandas as pd
 from pandas_datapackage_reader import read_datapackage
-from .validators import validate_url
+from filip.utils.validators import validate_url
 
 logger = logging.getLogger(__name__)
 
