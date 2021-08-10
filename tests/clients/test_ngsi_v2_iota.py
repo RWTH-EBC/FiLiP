@@ -22,7 +22,7 @@ from filip.models.ngsi_v2.context import ContextEntity
 
 # Setting up logging
 logging.basicConfig(
-    level='DEBUG',
+    level='ERROR',
     format='%(asctime)s %(name)s %(levelname)s: %(message)s')
 
 
