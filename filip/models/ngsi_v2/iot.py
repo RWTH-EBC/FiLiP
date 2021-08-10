@@ -7,7 +7,7 @@ import json
 import pytz
 from pydantic import BaseModel, Field, validator, AnyHttpUrl
 from filip.models.base import NgsiVersion, DataType
-from filip.models.units import validate_units_in_metadata
+from filip.models.ngsi_v2.context import NamedContextMetadata
 
 logger = logging.getLogger()
 
@@ -114,13 +114,13 @@ class DeviceAttribute(BaseAttribute):
     object_id: Optional[str] = Field(
         description="name of the attribute as coming from the device."
     )
-    metadata: Optional[Dict[str, Dict]] = Field(
+    metadata: Optional[Dict[str, Union[Dict, str]]] = Field(
         description="Additional meta information for the attribute, "
                     "e.g. 'unitCode'"
     )
 
     @validator('metadata')
-    def validate_metadata(cls, value):
+    def validate_metadata(cls, data):
         """
         Check metadata object for serialization and units if present.
         Args:
@@ -128,10 +128,10 @@ class DeviceAttribute(BaseAttribute):
         Returns:
 
         """
-        assert json.dumps(value), "metadata not serializable"
-        value = validate_units_in_metadata(data=value)
-        return value
-
+        assert json.dumps(data), "metadata not serializable"
+        for k, v in data.items():
+            data.update(NamedContextMetadata(name=k, **v).to_context_metadata())
+        return data
 
 class LazyDeviceAttribute(DeviceAttribute):
     """
@@ -200,7 +200,7 @@ class ServiceGroup(BaseModel):
                     "timestamp. With NGSI-LD, the Standard observedAt "
                     "property-of-a-property is created instead."
     )
-    entity_type: str = Field(
+    entity_type: Optional[str] = Field(
         description="name of the Entity type to assign to the group. "
                     "Allowed characters "
                     "are the ones in the plain ASCII set, except the following "
@@ -279,7 +279,7 @@ class Device(BaseModel):
     )
     service: Optional[str] = Field(
         description="Name of the service_group the device belongs to "
-                    "(will be used in the fiware-service_group header).",
+                    "(will be used in the fiware-service header).",
         max_length=50
     )
     service_path: Optional[str] = Field(
@@ -504,7 +504,6 @@ class Device(BaseModel):
                                "attribute: \n %s",
                                self.device_id, attribute.json(indent=2))
                 self.add_attribute(attribute=attribute)
-
             else:
                 logger.error("Device: %s: Could not find "
                              "attribute: \n %s", self.device_id,

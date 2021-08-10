@@ -9,11 +9,15 @@ tables visit this website:
 https://unece.org/trade/cefact/UNLOCODE-Download
 https://unece.org/trade/uncefact/cl-recommendations
 """
-
+import json
+import logging
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field, root_validator, validator
 from filip.models.base import NgsiVersion, DataType
 from filip.utils.data import load_datapackage
+
+
+logger = logging.getLogger(name=__name__)
 
 
 UNITS = load_datapackage(
@@ -139,7 +143,7 @@ class Unit(BaseModel):
             if idx.empty:
                 raise ValueError("Invalid 'code': ", code)
         elif name:
-            idx = UNITS.index[(UNITS.CommonCode == name)]
+            idx = UNITS.index[(UNITS.Name == name)]
             if idx.empty:
                 raise ValueError("Invalid 'name': ", name)
         else:
@@ -205,7 +209,8 @@ class Units:
 
         return Unit(code=UNITS.CommonCode[idx[0]])
 
-    def keys(self, by_code: bool = False) -> List[str]:
+    @staticmethod
+    def keys(by_code: bool = False) -> List[str]:
         """
         Returns list of all unit names or codes
 
@@ -264,44 +269,37 @@ class Units:
         except KeyError:
             return default
 
-
-def validate_units_in_metadata(data: Dict) -> Dict:
+def validate_unit_type(unit_type: str) -> str:
     """
-    Search for unit related data fields in metadata
+    Validation if unit types
+    Args:
+        unit_type: String that should be validate in order to check if it is
+            a valid unit type
+
+    Returns:
+        String that matches a valid unit type
+    """
+
+def validate_unit_data(data: Dict) -> Dict:
+    """
+    Validator for unit objects
     Args:
         data (Dict): Dictionary containing the metadata of an object
 
     Returns:
         Validated dictionary of metadata
     """
-    if data.get('unit', False):
-        unit = data.get('unit')
-        if isinstance(unit, Unit):
-            pass
-        elif isinstance(unit, dict):
-            data['unit'] = Unit.parse_obj(unit)
-        elif isinstance(unit, str):
-            data['unit'] = Unit.parse_raw(unit)
-        else:
-            raise ValueError('Invalid unit data!')
-    elif data.get('unitCode', False):
-        code = data.get('unitCode')
-        if isinstance(code, UnitCode):
-            pass
-        elif isinstance(code, dict):
-            data['unitCode'] = Unit.parse_obj(code)
-        elif isinstance(code, str):
-            data['unitCode'] = Unit.parse_raw(code)
-        else:
-            raise ValueError('Invalid unit code!')
-    elif data.get('unitText', False):
-        name = data.get('unitText')
-        if isinstance(name, UnitText):
-            pass
-        elif isinstance(name, dict):
-            data['unitText'] = Unit.parse_obj(name)
-        elif isinstance(name, str):
-            data['unitText'] = Unit.parse_raw(name)
-        else:
-            raise ValueError('Invalid unit code!')
-    return data
+    _unit_models = {'unit': Unit,
+                    "unitText": UnitText,
+                    "unitCode": UnitCode}
+    for modelname, model in _unit_models.items():
+        if data.get("name", "").casefold() == modelname.casefold():
+            if data.get("name", "").casefold() == 'unit':
+                data["type"] = 'Unit'
+                data["value"] = model.parse_obj(data["value"]).dict()
+                return data
+            else:
+                data.update(model.parse_obj(data).dict())
+                return data
+    raise ValueError(f"Invalid unit data found: \n "
+                     f"{json.dumps(data, indent=2)}")

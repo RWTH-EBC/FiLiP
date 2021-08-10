@@ -15,7 +15,7 @@ from pydantic import \
     validator
 from filip.utils.simple_ql import QueryString, QueryStatement
 from filip.models.base import DataType
-
+from filip.models.units import validate_unit_data, validate_unit_type
 
 class GetEntitiesOptions(str, Enum):
     """ Options for queries"""
@@ -72,6 +72,11 @@ class ContextMetadata(BaseModel):
         description="a metadata value containing the actual metadata"
     )
 
+    @validator('value', allow_reuse=True)
+    def validate_value(cls, value):
+        assert json.dumps(value), "metadata not serializable"
+        return value
+
 
 class NamedContextMetadata(ContextMetadata):
     """
@@ -89,6 +94,17 @@ class NamedContextMetadata(ContextMetadata):
         min_length=1,
         regex=r"^((?![?&#/*])[\x00-\x7F])*$"  # Make it FIWARE-Safe
     )
+
+    @root_validator
+    def validate_data(cls, values):
+        if values.get("name", "").casefold() in ["unit",
+                                                 "unittext",
+                                                 "unitcode"]:
+             values.update(validate_unit_data(values))
+        return values
+
+    def to_context_metadata(self):
+        return {self.name: ContextMetadata(**self.dict())}
 
 
 class ContextAttribute(BaseModel):

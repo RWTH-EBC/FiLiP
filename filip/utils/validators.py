@@ -1,8 +1,12 @@
 """
 Helper functions to prohibit boiler plate code
 """
-from typing import Union
+import logging
+from typing import Dict, Union
 from pydantic import AnyHttpUrl, validate_arguments
+
+
+logger = logging.getLogger(name=__name__)
 
 
 @validate_arguments

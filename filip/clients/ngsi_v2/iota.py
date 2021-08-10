@@ -209,13 +209,13 @@ class IoTAClient(BaseHttpClient):
         else:
             fields = None
         url = urljoin(self.base_url, 'iot/services')
-        headers = self.headers.update()
+        headers = self.headers
         params = service_group.dict(include={'resource', 'apikey'})
         try:
             res = self.put(url=url,
                            headers=headers,
                            params=params,
-                           json=service_group.json(
+                           data=service_group.json(
                                include=fields,
                                exclude={'service', 'subservice'},
                                exclude_unset=True))

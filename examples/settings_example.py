@@ -1,10 +1,8 @@
 """
  This an example for demonstrating the effect of different
  configuration settings. Using *.json config-files or environment
- variables. 
- Note: 
- .env-files will probably be added later.
- 
+ variables. You can also use the .env.filip file to provide the variables
+
  Feel free to play around with the settings and the check how 
  the urls and header parameter will be checked and/or automatically 
  guessed based on the provided information. 
