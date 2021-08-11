@@ -1,9 +1,9 @@
 """
 Shared data models
 """
-from typing import ClassVar
+
 from aenum import Enum
-from pydantic import BaseModel, Field, validator, BaseConfig
+from pydantic import BaseModel, Field, BaseConfig
 
 
 class NgsiVersion(str, Enum):
@@ -29,7 +29,7 @@ class DataType(str, Enum):
 
     BOOLEAN = "Boolean", "True or False."
     DATE = "Date", "A date value in ISO 8601 date format."
-    DATETIME = "DateTime", "A combination of date and time of day in the form " \
+    DATETIME = "DateTime", "A combination of date and time of day in the form "\
                            "[-]CCYY-MM-DDThh:mm:ss[Z|(+|-)hh:mm] " \
                            "(see Chapter 5.4 of ISO 8601)."
     NUMBER = "Number", "Use values from 0123456789 (Unicode 'DIGIT ZERO' " \
@@ -75,7 +75,7 @@ class FiwareHeader(BaseModel):
         default="",
         max_length=50,
         description="Fiware service used for multitancy",
-        regex="\w*$"
+        regex=r"\w*$"
     )
     service_path: str = Field(
         alias="fiware-servicepath",
@@ -88,19 +88,3 @@ class FiwareHeader(BaseModel):
     class Config(BaseConfig):
         allow_population_by_field_name = True
         validate_assignment = True
-
-
-#class UnitCode(BaseModel):
-#    """
-#    Fiware recommends unit codes for meta data. This class helps to validate
-#    the codes.
-#    """
-#    type: ClassVar[str] = "Text"
-#    value: str = Field(
-#        title="unit code",
-#        description="Code of the measured quantity")
-#
-#    @validator('value')
-#    def validate_code(cls, v):
-#        units.get_unit(code=v)
-#        return v

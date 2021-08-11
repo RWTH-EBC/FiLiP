@@ -15,7 +15,7 @@ from pydantic import \
     validator
 from filip.utils.simple_ql import QueryString, QueryStatement
 from filip.models.base import DataType
-from filip.models.units import validate_unit_data, validate_unit_type
+from filip.models.ngsi_v2.units import validate_unit_data
 
 class GetEntitiesOptions(str, Enum):
     """ Options for queries"""
