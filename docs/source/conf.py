@@ -23,7 +23,7 @@ copyright = '2021, RWTH Aachen University, ' \
 author = 'EON EBC'
 
 # The full version, including alpha/beta/rc tags
-release = '0.1.3'
+release = '0.1.4'
 
 # The short X.Y version.
 version = '0.1'

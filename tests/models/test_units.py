@@ -2,10 +2,16 @@
 Test for filip.models.units
 """
 from unittest import TestCase
-from filip.models.units import Unit, Units, UnitCode, UnitText, UNITS
+from filip.models.ngsi_v2.units import \
+    Unit, \
+    Units, \
+    UnitCode, \
+    UnitText, \
+    load_units
 
 class TestUnitCodes(TestCase):
     def setUp(self):
+        self.units_data = load_units()
         self.units = Units()
         self.unit = {"code": {"type": "Text",
                               "value": "C58"},
@@ -18,7 +24,7 @@ class TestUnitCodes(TestCase):
         Returns:
             None
         """
-        for index, row in UNITS.iterrows():
+        for index, row in self.units_data.iterrows():
             UnitCode(value=row.CommonCode)
 
     def test_unit_text(self):
@@ -27,7 +33,7 @@ class TestUnitCodes(TestCase):
         Returns:
             None
         """
-        for index, row in UNITS.iterrows():
+        for index, row in self.units_data.iterrows():
             UnitText(value=row.Name)
 
     def test_unit_model(self):
@@ -47,10 +53,12 @@ class TestUnitCodes(TestCase):
             None
         """
         units = Units()
-        self.assertEqual(UNITS.Name.to_list(), units.keys())
-        self.assertEqual(UNITS.Name.to_list(), units.names)
-        self.assertEqual(UNITS.CommonCode.to_list(), units.keys(by_code=True))
-        self.assertEqual(UNITS.CommonCode.to_list(), units.codes)
+        self.assertEqual(self.units_data.Name.to_list(), units.keys())
+        self.assertEqual(self.units_data.Name.to_list(), units.names)
+        self.assertEqual(self.units_data.CommonCode.to_list(),
+                         units.keys(by_code=True))
+        self.assertEqual(self.units_data.CommonCode.to_list(), units.codes)
 
         for unit in units.values():
-            print(unit.json(indent=2))
+            cmdout = unit.json(indent=2)
+            #print(cmdout)
