@@ -35,7 +35,6 @@ setuptools.setup(
     # that you indicate whether you support Python 2, Python 3 or both.
     classifiers=['Programming Language :: Python :: 3.7',
                  'Programming Language :: Python :: 3.8',
-                 'Programming Language :: Python :: 3.9',
                  "License :: OSI Approve :: BSD 3-Clause License"],
     packages=setuptools.find_packages(exclude=['img']),
     setup_requires=SETUP_REQUIRES,
