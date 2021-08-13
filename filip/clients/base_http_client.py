@@ -107,7 +107,7 @@ class BaseHttpClient:
         Returns:
             str
         """
-        return self.fiware_headers.service_path
+        return self.fiware_headers.service
 
     @fiware_service.setter
     def fiware_service(self, service: str) -> None:
