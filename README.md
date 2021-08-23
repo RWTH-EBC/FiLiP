@@ -29,6 +29,72 @@ these documents:
   and dicts in Python. So there is no real benefit.
   Furthermore, there is no chance for reasonable validation and error handling.
 
+## Structure of FiLiP
+
+![Library Structure](https://raw.githubusercontent.com/N5GEH/n5geh.tools.FiLiP/development/docs/diagrams/out/architecture.png)
+
+## Getting started
+
+The following section shortly describes use of the library.
+
+### Prerequisites
+
+Since FiLiP is designed as a client library, it requires a server that provides 
+the target Service-APIs.
+Hence, if you do not yet have a running instance of a FIWARE based platform, 
+using docker is the most convenient way to set it up. 
+Please check [here](https://github.com/N5GEH/n5geh.platform) for a tutorial 
+on this.
+If this is not an option for you, FIWARE also provides a testing server.
+You can register for a testing account 
+[here](https://www.fiware.org/developers/fiware-lab/).
+
+### Installation
+
+The easiest way to install the library is via pip:
+
+```
+pip install -U git+git://github.com/RWTH-EBC/filip
+```
+
+If you want to benefit from the latest changes, use the development branch:
+
+```
+pip install -U git+git://github.com/RWTH-EBC/filip@development
+```
+
+## Documentation
+
+We are still working on the documentation.
+You can find our current documentation 
+[here](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/development/docs/index.html).
+
+### Running examples or tests
+
+Once you have installed the library, you can check the [examples](/examples)
+to learn how to use the different components. 
+
+Currently, we provide basic examples for the usage of FiLiP for the FIWARE 
+GEs mentioned above.
+We suggest to start with the config-example in order to understand the 
+configuration of clients (*Note: This may change in the future*).
+Also, we provide more advanced examples for the semantic 
+context data modeling within a context broker using 
+[relationships](/examples/relationship_example.py).
+Furthermore, the context broker provides a mechanism for an event-based 
+http-notification.
+Using this mechanism is shown [here](/examples/subscription_example.py).
+
+**NOTE**: Currently, we are refactoring the library in order to provide a 
+better validation mechanism. 
+After this big step we will work on further examples, and on the integration of 
+further advanced functions supporting effective context data modeling 
+using validated data model structures. 
+
+## Testing
+
+Currently, we are working on a CI workflow for continuous testing of the library.
+
 ## FIWARE
 
 The following section introduces FIWARE. If you are already familiar with 
@@ -121,72 +187,6 @@ Therefore, FiLiP currently only covers the APIs of the following GEs:
     - [github](https://github.com/FIWARE-GEs/quantum-leap)
     - [swagger](https://app.swaggerhub.com/apis/smartsdk/ngsi-tsdb/0.7) (*not 
       up to date*, newest API version is 8.0)
-
-## Structure of FiLiP
-
-![Library Structure](https://raw.githubusercontent.com/N5GEH/n5geh.tools.FiLiP/development/docs/diagrams/out/architecture.png)
-
-## Getting started
-
-The following section shortly describes use of the library.
-
-### Prerequisites
-
-Since FiLiP is designed as a client library, it requires a server that provides 
-the target Service-APIs.
-Hence, if you do not yet have a running instance of a FIWARE based platform, 
-using docker is the most convenient way to set it up. 
-Please check [here](https://github.com/N5GEH/n5geh.platform) for a tutorial 
-on this.
-If this is not an option for you, FIWARE also provides a testing server.
-You can register for a testing account 
-[here](https://www.fiware.org/developers/fiware-lab/).
-
-### Installation
-
-The easiest way to install the library is via pip:
-
-```
-pip install -U git+git://github.com/RWTH-EBC/filip
-```
-
-If you want to benefit from the latest changes, use the development branch:
-
-```
-pip install -U git+git://github.com/RWTH-EBC/filip@development
-```
-
-### Running examples or tests
-
-Once you have installed the library, you can check the [examples](/examples)
-to learn how to use the different components. 
-
-Currently, we provide basic examples for the usage of FiLiP for the FIWARE 
-GEs mentioned above.
-We suggest to start with the config-example in order to understand the 
-configuration of clients (*Note: This may change in the future*).
-Also, we provide more advanced examples for the semantic 
-context data modeling within a context broker using 
-[relationships](/examples/relationship_example.py).
-Furthermore, the context broker provides a mechanism for an event-based 
-http-notification.
-Using this mechanism is shown [here](/examples/subscription_example.py).
-
-**NOTE**: Currently, we are refactoring the library in order to provide a 
-better validation mechanism. 
-After this big step we will work on further examples, and on the integration of 
-further advanced functions supporting effective context data modeling 
-using validated data model structures. 
-
-## Testing
-
-Currently, we are working on a CI workflow for continuous testing of the library.
-
-## Documentation
-
-We are still working on the documentation.
-You can find our current documentation 
-[here](https://ebc.pages.rwth-aachen.de/EBC_all/fiware/filip/development/docs/index.html).
 
 ## Authors
 
