@@ -5,7 +5,14 @@ from filip.config import Settings
 
 class TestSettings(unittest.TestCase):
     def setUp(self) -> None:
-        self.settings_parsing = Settings(_env_file='test_config.env')
+
+        # Test if the testcase was run directly or over in a global test-run.
+        # Match the needed path to the config file in both cases
+        if os.getcwd().split("\\")[-1] == "tests":
+            self.settings_parsing = Settings(_env_file='test_config.env')
+        else:
+            self.settings_parsing = Settings(_env_file='./tests/test_config.env')
+
         for k, v in self.settings_parsing.dict().items():
             os.environ[k] = v
         self.settings_dotenv = Settings()
