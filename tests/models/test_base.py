@@ -15,7 +15,7 @@ class TestModels(unittest.TestCase):
     Test class for core.models
     """
     def setUp(self) -> None:
-        self.service_paths = ['/testing', '/testing2' ]
+        self.service_paths = ['/testing', '/testing2']
         self.fiware_header = {'fiware-service': 'filip',
                               'fiware-servicepath': self.service_paths[0]}
 

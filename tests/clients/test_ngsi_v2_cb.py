@@ -7,9 +7,9 @@ import time
 import random
 from datetime import datetime
 from requests import RequestException
-from filip.models.base import FiwareHeader
+from filip.models.base import FiwareHeader, DataType
 from filip.utils.simple_ql import QueryString
-from filip.clients.ngsi_v2 import ContextBrokerClient
+from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient
 from filip.models.ngsi_v2.context import \
     AttrsFormat, \
     ContextEntity, \
@@ -51,6 +51,7 @@ class TestContextBroker(unittest.TestCase):
                                           service_path='/testing')
 
         self.client = ContextBrokerClient(fiware_header=self.fiware_header)
+
 
     def test_management_endpoints(self):
         """
@@ -95,9 +96,8 @@ class TestContextBroker(unittest.TestCase):
         """
         Test filter operations of context broker client
         """
-        fiware_header = FiwareHeader(service='filip',
-                                     service_path='/testing')
-        with ContextBrokerClient(fiware_header=fiware_header) as client:
+
+        with ContextBrokerClient(fiware_header=self.fiware_header) as client:
             print(client.session.headers)
             # test patterns
             with self.assertRaises(ValueError):
@@ -325,23 +325,75 @@ class TestContextBroker(unittest.TestCase):
         Returns:
             None
         """
-        # Todo: Implement more robust test for commands
-        fh = FiwareHeader(service="opcua_car",
-                          service_path="/demo")
-        cmd = NamedCommand(name="Accelerate", value=[3])
-        client = ContextBrokerClient(url="http://134.130.166.184:1026",
-                                     fiware_header=fh)
-        entity_id = "age01_Car"
-        entity_type = "Device"
-        entity_before = client.get_entity(entity_id=entity_id,
-                                          entity_type=entity_type)
-        client.post_command(entity_id=entity_id,
-                            entity_type=entity_type,
-                            command=cmd)
-        time.sleep(5)
-        entity_after = client.get_entity(entity_id=entity_id,
-                                         entity_type=entity_type)
+
+        iota_client = IoTAClient(fiware_header=self.fiware_header)
+        test_device_id = 'test_device'
+        entity_id = 'test_entity_id'
+        entity_type = 'Tester'
+        command_name = 'com'
+
+        # make sure device does not exist
+        try:
+            iota_client.delete_device(device_id=test_device_id)
+        except RequestException:
+            pass
+
+        # Create a device entry
+        iota_client = IoTAClient(fiware_header=self.fiware_header)
+        from filip.models.ngsi_v2.iot import Device, DeviceCommand
+
+        # use a public accessible endpoint; it only needs to return HTTP-CODE-200
+        device = Device(device_id=test_device_id,
+                        service=self.fiware_header.service,
+                        service_path=self.fiware_header.service_path,
+                        entity_name=entity_id,
+                        entity_type=entity_type,
+                        transport='HTTP',
+                        endpoint="https://httpbin.org/",
+                        )
+
+        device.add_attribute(
+            DeviceCommand(
+                name=command_name,
+                type=DataType.STRUCTUREDVALUE,
+
+            )
+        )
+
+        iota_client.post_device(device=device, update=False)
+
+        time.sleep(2)
+        entity_before = self.client.get_entity(entity_id=entity_id)
+        cmd = NamedCommand(name=command_name, value='3')
+        self.client.post_command(entity_id=entity_id, entity_type=entity_type, command=cmd)
+        time.sleep(2)
+        entity_after = self.client.get_entity(entity_id=entity_id)
         self.assertNotEqual(entity_before, entity_after)
+
+        #clean up device
+        iota_client.delete_device(device_id=test_device_id)
+        iota_client.close()
+
+
+        # Todo: Implement more robust test for commands
+        # fh = FiwareHeader(service="opcua_car",
+        #                   service_path="/demo")
+        # cmd = NamedCommand(name="Accelerate", value=[3])
+        # client = ContextBrokerClient(url="http://134.130.166.184:1026",
+        #                              fiware_header=fh)
+        # entity_id = "age01_Car"
+        # entity_type = "Device"
+        # entity_before = client.get_entity(entity_id=entity_id,
+        #                                   entity_type=entity_type)
+        # client.post_command(entity_id=entity_id,
+        #                     entity_type=entity_type,
+        #                     command=cmd)
+        # time.sleep(5)
+        # entity_after = client.get_entity(entity_id=entity_id,
+        #                                  entity_type=entity_type)
+        # self.assertNotEqual(entity_before, entity_after)
+
+
 
     def tearDown(self) -> None:
         """
@@ -353,4 +405,5 @@ class TestContextBroker(unittest.TestCase):
             self.client.update(entities=entities, action_type='delete')
         except RequestException:
             pass
+
         self.client.close()
