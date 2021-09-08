@@ -363,37 +363,16 @@ class TestContextBroker(unittest.TestCase):
         iota_client.post_device(device=device, update=False)
 
         time.sleep(2)
-        entity_before = self.client.get_entity(entity_id=entity_id)
         cmd = NamedCommand(name=command_name, value='3')
         self.client.post_command(entity_id=entity_id, entity_type=entity_type, command=cmd)
         time.sleep(2)
         entity_after = self.client.get_entity(entity_id=entity_id)
-        self.assertNotEqual(entity_before, entity_after)
 
-        #clean up device
+        self.assertEqual(entity_after.com_status.value, "PENDING")
+
+        # clean up device
         iota_client.delete_device(device_id=test_device_id)
         iota_client.close()
-
-
-        # Todo: Implement more robust test for commands
-        # fh = FiwareHeader(service="opcua_car",
-        #                   service_path="/demo")
-        # cmd = NamedCommand(name="Accelerate", value=[3])
-        # client = ContextBrokerClient(url="http://134.130.166.184:1026",
-        #                              fiware_header=fh)
-        # entity_id = "age01_Car"
-        # entity_type = "Device"
-        # entity_before = client.get_entity(entity_id=entity_id,
-        #                                   entity_type=entity_type)
-        # client.post_command(entity_id=entity_id,
-        #                     entity_type=entity_type,
-        #                     command=cmd)
-        # time.sleep(5)
-        # entity_after = client.get_entity(entity_id=entity_id,
-        #                                  entity_type=entity_type)
-        # self.assertNotEqual(entity_before, entity_after)
-
-
 
     def tearDown(self) -> None:
         """
