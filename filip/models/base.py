@@ -88,3 +88,13 @@ class FiwareHeader(BaseModel):
     class Config(BaseConfig):
         allow_population_by_field_name = True
         validate_assignment = True
+
+
+class FiwareRegex(str, Enum):
+    """
+    Collection of Regex expression used to check if the value of a Pydantic
+    field, can be used in the related Fiware field.
+    """
+    standard = r"(^((?![?&#/ ])[\x00-\x7F])*$)"
+    string_protect = r"(?!^id$)(?!^type$)(?!^geo:location$)" \
+                     r"(^((?![?&#/ ])[\x00-\x7F])*$)"
