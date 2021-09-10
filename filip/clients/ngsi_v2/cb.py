@@ -3,7 +3,7 @@ Context Broker Module for API Client
 """
 import re
 from math import inf
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Union, Optional
 from urllib.parse import urljoin
 import requests
 from pydantic import \
@@ -1270,6 +1270,121 @@ class ContextBrokerClient(BaseHttpClient):
             msg = "Query operation failed!"
             self.log_error(err=err, msg=msg)
             raise
+
+    def does_entity_exists(self,
+                           entity_id: str,
+                           entity_type: str) -> bool:
+        """
+        Test if an entity with given id and type is present in the CB
+        Args:
+            entity_id: Entity id
+            entity_type: Entity type
+        Returns:
+            bool; True if entity exists
+        """
+        try:
+            self.get_entity(entity_id=entity_id, entity_type=entity_type)
+        except requests.RequestException:
+            return False
+        return True
+
+    def patch_entity(self,
+                     entity: ContextEntity,
+                     old_entity: Optional[ContextEntity] = None) -> None:
+        """
+           Takes a given entity and updates the state in the CB to match it.
+           Args:
+               entity: Entity to update
+               old_entity: OPTIONAL, if given only the differences between the
+                           old_entity and entity are updated in the CB.
+                           Other changes made to the entity in CB, can be kept.
+           Returns:
+               None
+        """
+
+        new_entity = entity
+
+        if old_entity is None:
+            # If no old entity_was provided we use the current state to compare
+            # the entity to
+            if self.does_entity_exists(entity_id=new_entity.id,
+                                       entity_type=new_entity.type):
+                old_entity = self.get_entity(entity_id=new_entity.id,
+                                             entity_type=new_entity.type)
+            else:
+                # the entity is new, post and finish
+                self.post_entity(new_entity, update=False)
+                return
+
+        else:
+            # An old_entity was provided
+            # check if the old_entity (still) exists else recall methode
+            # and discard old_entity
+            if not self.does_entity_exists(entity_id=old_entity.id,
+                                           entity_type=old_entity.type):
+                self.patch_entity(new_entity)
+                return
+
+            # if type or id was changed, the old_entity needs to be deleted
+            # and the new_entity created
+            # In this case we will loose the current state of the entity
+            if old_entity.id != new_entity.id or \
+                    old_entity.type != new_entity.type:
+                self.delete_entity(entity_id=old_entity.id,
+                                   entity_type=old_entity.type)
+
+                if not self.does_entity_exists(entity_id=new_entity.id,
+                                               entity_type=new_entity.type):
+                    self.post_entity(entity=new_entity, update=False)
+                    return
+
+        # At this point we know that we need to patch only the attributes of
+        # the entity
+        # Check the differences between the attributes of old and new entity
+        # Delete the removed attributes, create the news,
+        # and update the existing if necessary
+        old_attributes = old_entity.get_properties()
+        old_attributes.extend(old_entity.get_relationships())
+
+        new_attributes = new_entity.get_properties()
+        new_attributes.extend(new_entity.get_relationships())
+
+        # Manage attributes that existed before
+        for old_attr in old_attributes:
+
+            corresponding_new_attr = None
+            for new_attr in new_attributes:
+                if new_attr.name == old_attr.name:
+                    corresponding_new_attr = new_attr
+
+            if corresponding_new_attr is None:
+                # Attribute no longer exists, delete it
+                self.delete_entity_attribute(entity_id=new_entity.id,
+                                             entity_type=new_entity.type,
+                                             attr_name=old_attr.name)
+            else:
+                # Check if attributed changed in any way, if yes update
+                # else do nothing and keep current state
+                if not old_attr.__eq__(corresponding_new_attr):
+                    self.update_entity_attribute(entity_id=new_entity.id,
+                                                 entity_type=new_entity.type,
+                                                 attr=corresponding_new_attr)
+
+        # Create new attributes
+        update_entity = ContextEntity(id=entity.id, type=entity.type)
+        update_needed = False
+        for new_attr in new_attributes:
+            attr_existed = False
+            for old_attr in old_attributes:
+                if new_attr.name == old_attr.name:
+                    attr_existed = True
+
+            if not attr_existed:
+                update_needed = True
+                update_entity.add_properties([new_attr])
+
+        if update_needed:
+            self.update_entity(update_entity, append=True)
 
 #    def get_subjects(self, object_entity_name: str, object_entity_type: str, subject_type=None):
 #        """
