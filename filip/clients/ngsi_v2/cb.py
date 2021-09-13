@@ -2,8 +2,9 @@
 Context Broker Module for API Client
 """
 import re
+import warnings
 from math import inf
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Union, Optional
 from urllib.parse import urljoin
 import requests
 from pydantic import \
@@ -880,7 +881,8 @@ class ContextBrokerClient(BaseHttpClient):
             self.log_error(err=err, msg=msg)
             raise
 
-    def post_subscription(self, subscription: Subscription) -> str:
+    def post_subscription(self, subscription: Subscription,
+                          update: Optional[bool] = False) -> str:
         """
         Creates a new subscription. The subscription is represented by a
         Subscription object defined in filip.cb.models.
@@ -890,9 +892,10 @@ class ContextBrokerClient(BaseHttpClient):
 
         Args:
             subscription: Subscription
-
+            update: True - If the subscription already exists, update it
+                    False- If the subscription already exists, throw warning
         Returns:
-            str: Id of the created subscription
+            str: Id of the (created) subscription
 
         """
         existing_subscriptions = self.get_subscription_list()
@@ -901,9 +904,14 @@ class ContextBrokerClient(BaseHttpClient):
         for ex_sub in existing_subscriptions:
             if sub_hash ==\
                     str(ex_sub.dict(include={'subject', 'notification'})):
-                self.logger.info("Subscription already exists, updated instead")
-                subscription.id = ex_sub.id
-                self.update_subscription(subscription)
+                self.logger.info("Subscription already exists")
+                if update:
+                    self.logger.info("Updated subscription")
+                    subscription.id = ex_sub.id
+                    self.update_subscription(subscription)
+                else:
+                    warnings.warn(f"Subscription existed already with the id"
+                                  f" {ex_sub.id}")
                 return ex_sub.id
 
         url = urljoin(self.base_url, 'v2/subscriptions')

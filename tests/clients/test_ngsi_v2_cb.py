@@ -295,12 +295,19 @@ class TestContextBroker(unittest.TestCase):
             self.assertEqual(sub_res.id, sub_res_updated.id)
             self.assertGreaterEqual(sub_res_updated.expires, sub_res.expires)
 
-            # test duplicate prevention an update
+            # test duplicate prevention and update
             sub = Subscription(**sub_example)
             id1 = client.post_subscription(sub)
             sub_first_version = client.get_subscription(id1)
             sub.description = "This subscription shall not pass"
-            id2 = client.post_subscription(sub)
+
+            id2 = client.post_subscription(sub, update=False)
+            self.assertEqual(id1, id2)
+            sub_second_version = client.get_subscription(id2)
+            self.assertEqual(sub_first_version.description,
+                             sub_second_version.description)
+
+            id2 = client.post_subscription(sub, update=True)
             self.assertEqual(id1, id2)
             sub_second_version = client.get_subscription(id2)
             self.assertNotEqual(sub_first_version.description,
