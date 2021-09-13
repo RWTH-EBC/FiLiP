@@ -5,6 +5,7 @@ stages:
 
 variables:
     EXCLUDE_PYTHON: 36
+    PAGES_BRANCH: master
 
 include:
     - project: 'EBC/EBC_all/gitlab_ci/templates'
