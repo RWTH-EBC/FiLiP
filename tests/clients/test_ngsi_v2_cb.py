@@ -342,7 +342,8 @@ class TestContextBroker(unittest.TestCase):
         iota_client = IoTAClient(fiware_header=self.fiware_header)
         from filip.models.ngsi_v2.iot import Device, DeviceCommand
 
-        # use a public accessible endpoint; it only needs to return HTTP-CODE-200
+        # use a public accessible endpoint; it only needs to return
+        # HTTP-CODE-200
         device = Device(device_id=test_device_id,
                         service=self.fiware_header.service,
                         service_path=self.fiware_header.service_path,
@@ -364,7 +365,8 @@ class TestContextBroker(unittest.TestCase):
 
         time.sleep(2)
         cmd = NamedCommand(name=command_name, value='3')
-        self.client.post_command(entity_id=entity_id, entity_type=entity_type, command=cmd)
+        self.client.post_command(entity_id=entity_id, entity_type=entity_type,
+                                 command=cmd)
         time.sleep(2)
         entity_after = self.client.get_entity(entity_id=entity_id)
 
