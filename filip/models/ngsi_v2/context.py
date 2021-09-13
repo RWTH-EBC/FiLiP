@@ -14,7 +14,7 @@ from pydantic import \
     root_validator, \
     validator
 from filip.utils.simple_ql import QueryString, QueryStatement
-from filip.models.base import DataType
+from filip.models.base import DataType, FiwareRegex
 from filip.models.ngsi_v2.units import validate_unit_data
 
 class GetEntitiesOptions(str, Enum):
@@ -65,7 +65,7 @@ class ContextMetadata(BaseModel):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex="^((?![?&#\/*])[\x00-\x7F])*$"  # Make it FIWARE-Safe
+        regex=FiwareRegex.standard.value  # Make it FIWARE-Safe
     )
     value: Optional[Any] = Field(
         title="metadata value",
@@ -92,7 +92,7 @@ class NamedContextMetadata(ContextMetadata):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex=r"^((?![?&#/*])[\x00-\x7F])*$"  # Make it FIWARE-Safe
+        regex=FiwareRegex.standard.value  # Make it FIWARE-Safe
     )
 
     @root_validator
@@ -145,7 +145,7 @@ class ContextAttribute(BaseModel):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex=r"^((?![?&#/])[\x00-\x7F])*$",  # Make it FIWARE-Safe
+        regex=FiwareRegex.standard.value,  # Make it FIWARE-Safe
     )
     value: Optional[Union[Union[float, int, bool, str, List, Dict[str, Any]],
                           List[Union[float, int, bool, str, List,
@@ -236,7 +236,7 @@ class NamedContextAttribute(ContextAttribute):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex=r"(^((?![?&#/])[\x00-\x7F])*$)(?!(id|type|geo:distance|\*))",
+        regex=FiwareRegex.string_protect.value,
         # Make it FIWARE-Safe
     )
 
@@ -263,7 +263,7 @@ class ContextEntityKeyValues(BaseModel):
         example='Bcn-Welt',
         max_length=256,
         min_length=1,
-        regex="^((?![?&#/])[\x00-\x7F])*$",  # Make it FIWARE-Safe
+        regex=FiwareRegex.standard.value,  # Make it FIWARE-Safe
         allow_mutation=False
     )
     type: str = Field(
@@ -276,7 +276,7 @@ class ContextEntityKeyValues(BaseModel):
         example="Room",
         max_length=256,
         min_length=1,
-        regex="^((?![?&#/])[\x00-\x7F])*$",  # Make it FIWARE-Safe
+        regex=FiwareRegex.standard.value,  # Make it FIWARE-Safe
         allow_mutation=False
     )
 
@@ -1086,7 +1086,8 @@ class NamedCommand(Command):
         description="Name of the command",
         max_length=256,
         min_length=1,
-        regex=r"(^((?![?&#/])[\x00-\x7F])*$)(?!(id|type|geo:distance|\*))")
+        regex=FiwareRegex.string_protect.value
+    )
 
 # TODO: Add Relationships
 # class Relationship:
