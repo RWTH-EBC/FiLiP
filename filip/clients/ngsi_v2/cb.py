@@ -885,13 +885,27 @@ class ContextBrokerClient(BaseHttpClient):
         Creates a new subscription. The subscription is represented by a
         Subscription object defined in filip.cb.models.
 
+        If the subscription already exists, the adding is prevented and the id
+        of the existing subscription is returned.
+
         Args:
-            subscription:
+            subscription: Subscription
 
         Returns:
-            object: 
+            str: Id of the created subscription
 
         """
+        existing_subscriptions = self.get_subscription_list()
+
+        sub_hash = str(subscription.dict(include={'subject', 'notification'}))
+        for ex_sub in existing_subscriptions:
+            if sub_hash ==\
+                    str(ex_sub.dict(include={'subject', 'notification'})):
+                self.logger.info("Subscription already exists, updated instead")
+                subscription.id = ex_sub.id
+                self.update_subscription(subscription)
+                return ex_sub.id
+
         url = urljoin(self.base_url, 'v2/subscriptions')
         headers = self.headers.copy()
         headers.update({'Content-Type': 'application/json'})
