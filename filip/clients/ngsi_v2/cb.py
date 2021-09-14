@@ -1,16 +1,17 @@
 """
 Context Broker Module for API Client
 """
-import re
-import warnings
 from math import inf
-from typing import Any, Dict, List, Union, Optional
-from urllib.parse import urljoin
-import requests
+from pkg_resources import parse_version
 from pydantic import \
     parse_obj_as, \
     PositiveInt, \
     PositiveFloat
+from typing import Any, Dict, List, Union, Optional
+import re
+import requests
+from urllib.parse import urljoin
+import warnings
 from filip.clients.base_http_client import BaseHttpClient
 from filip.config import settings
 from filip.models.base import FiwareHeader, PaginationMethod
@@ -881,8 +882,10 @@ class ContextBrokerClient(BaseHttpClient):
             self.log_error(err=err, msg=msg)
             raise
 
-    def post_subscription(self, subscription: Subscription,
-                          update: bool = False) -> str:
+    def post_subscription(self,
+                          subscription: Subscription,
+                          update: bool = False,
+                          skip_initial_notification: bool = False) -> str:
         """
         Creates a new subscription. The subscription is represented by a
         Subscription object defined in filip.cb.models.
@@ -898,6 +901,10 @@ class ContextBrokerClient(BaseHttpClient):
             subscription: Subscription
             update: True - If the subscription already exists, update it
                     False- If the subscription already exists, throw warning
+            skip_initial_notification: True - Initial Notifications will be
+                send to recipient containing the whole data. This is
+                deprecated and removed from version 3.0 of the context broker.
+                False - skip the initial notification
         Returns:
             str: Id of the (created) subscription
 
@@ -917,6 +924,21 @@ class ContextBrokerClient(BaseHttpClient):
                                   f" {ex_sub.id}")
                 return ex_sub.id
 
+        params = {}
+        if skip_initial_notification:
+            version = self.get_version()['orion']['version']
+            if parse_version(version) < parse_version('3.0'):
+                params.update({'q': "skipInitialNotification"})
+            else:
+                pass
+            warnings.warn(f"Skip initial notifications is a deprecated "
+                          "feature of older versions <3.0 of the context "
+                          "broker. The Context Broker that you requesting has "
+                          "version: version. For newer versions we "
+                          "automatically skip this option. Consider "
+                          "refactoring and updating your services",
+                          DeprecationWarning)
+
         url = urljoin(self.base_url, 'v2/subscriptions')
         headers = self.headers.copy()
         headers.update({'Content-Type': 'application/json'})
@@ -927,7 +949,8 @@ class ContextBrokerClient(BaseHttpClient):
                 data=subscription.json(exclude={'id'},
                                        exclude_unset=True,
                                        exclude_defaults=True,
-                                       exclude_none=True))
+                                       exclude_none=True),
+                params=params)
             if res.ok:
                 self.logger.info("Subscription successfully created!")
                 return res.headers['Location'].split('/')[-1]
@@ -959,14 +982,35 @@ class ContextBrokerClient(BaseHttpClient):
             self.log_error(err=err, msg=msg)
             raise
 
-    def update_subscription(self, subscription: Subscription):
+    def update_subscription(self,
+                            subscription: Subscription,
+                            skip_initial_notification: bool = False):
         """
         Only the fields included in the request are updated in the subscription.
         Args:
             subscription: Subscription to update
+            skip_initial_notification: True - Initial Notifications will be
+                send to recipient containing the whole data. This is
+                deprecated and removed from version 3.0 of the context broker.
+                False - skip the initial notification
         Returns:
 
         """
+        params = {}
+        if skip_initial_notification:
+            version = self.get_version()['orion']['version']
+            if parse_version(version) < parse_version('3.0'):
+                params.update({'q': "skipInitialNotification"})
+            else:
+                pass
+            warnings.warn(f"Skip initial notifications is a deprecated "
+                          f"feature of older versions <3.0 of the context "
+                          f"broker. The Context Broker that you requesting has "
+                          f"version: {version}. For newer versions we "
+                          f"automatically skip this option. Consider "
+                          f"refactoring and updating your services",
+                          DeprecationWarning)
+
         url = urljoin(self.base_url, f'v2/subscriptions/{subscription.id}')
         headers = self.headers.copy()
         headers.update({'Content-Type': 'application/json'})
