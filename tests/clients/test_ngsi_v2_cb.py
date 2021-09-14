@@ -612,9 +612,9 @@ class TestContextBroker(unittest.TestCase):
         # check the entity the command attribute should now show the PENDING
         entity = client.cb.get_entity(entity_id=device.device_id,
                                       entity_type=device.entity_type)
-        logger.info("This is updated entity status after the command was sent "
-                    "and the acknowledge message was received: "
-                    "\n" + entity.json(indent=2))
+
+        self.assertEqual(entity.heater_status.value, "PENDING")
+
 
         # close the mqtt listening thread
         mqtt_client.loop_stop()
