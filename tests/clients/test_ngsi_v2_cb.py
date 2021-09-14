@@ -574,7 +574,10 @@ class TestContextBroker(unittest.TestCase):
         mqtt_client.on_message = on_message
         mqtt_client.on_disconnect = on_disconnect
         # connect to the server
+        print("------------------------------------------")
+        print(MQTT_BROKER_URL)
         mqtt_url = urlparse(MQTT_BROKER_URL)
+        print(mqtt_url)
         mqtt_client.connect(host=mqtt_url.hostname,
                             port=mqtt_url.port,
                             keepalive=60,
