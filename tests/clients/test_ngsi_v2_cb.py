@@ -319,6 +319,8 @@ class TestContextBroker(unittest.TestCase):
                              len(client.query(query=q,
                                               response_format='keyValues')))
 
+    @unittest.skip("Test does currently not work in the CI. Valid reachable "
+                   "endpoint needed")
     def test_command(self) -> None:
         """
         test sending commands
