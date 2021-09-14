@@ -21,10 +21,10 @@ def start_test_run(self):
         fiware_header = FiwareHeader(service='filip', service_path='/testing')
 
         with IoTAClient(fiware_header=fiware_header) as client:
-            devices = self.client.get_device_list()
+            devices = client.get_device_list()
             for device in devices:
                 client.delete_device(device_id=device.device_id)
-                
+
         with ContextBrokerClient(fiware_header=fiware_header) as client:
             entities = [ContextEntity(id=entity.id, type=entity.type) for
                         entity in client.get_entity_list()]
