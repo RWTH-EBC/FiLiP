@@ -144,7 +144,6 @@ class TestAgent(unittest.TestCase):
             print(client.get_entity(entity_id=device.entity_name).json(
                 indent=2))
 
-
     def tearDown(self) -> None:
         """
         Cleanup test server
