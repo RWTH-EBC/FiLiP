@@ -882,13 +882,17 @@ class ContextBrokerClient(BaseHttpClient):
             raise
 
     def post_subscription(self, subscription: Subscription,
-                          update: Optional[bool] = False) -> str:
+                          update: bool = False) -> str:
         """
         Creates a new subscription. The subscription is represented by a
         Subscription object defined in filip.cb.models.
 
         If the subscription already exists, the adding is prevented and the id
         of the existing subscription is returned.
+
+        A subscription is deemed as already existing if there exists a
+        subscription with the exact same subject and notification fields. All
+        optional fields are not considered.
 
         Args:
             subscription: Subscription
