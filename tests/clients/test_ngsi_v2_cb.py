@@ -32,12 +32,6 @@ from filip.models.ngsi_v2.iot import \
     ServiceGroup, \
     StaticDeviceAttribute
 
-
-# Setting up logging
-logging.basicConfig(
-    level='ERROR',
-    format='%(asctime)s %(name)s %(levelname)s: %(message)s')
-
 # Setting up logging
 logging.basicConfig(
     level='ERROR',
