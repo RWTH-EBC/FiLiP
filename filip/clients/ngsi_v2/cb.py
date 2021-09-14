@@ -2,8 +2,9 @@
 Context Broker Module for API Client
 """
 import re
+import warnings
 from math import inf
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Union, Optional
 from urllib.parse import urljoin
 import requests
 from pydantic import \
@@ -880,18 +881,42 @@ class ContextBrokerClient(BaseHttpClient):
             self.log_error(err=err, msg=msg)
             raise
 
-    def post_subscription(self, subscription: Subscription) -> str:
+    def post_subscription(self, subscription: Subscription,
+                          update: bool = False) -> str:
         """
         Creates a new subscription. The subscription is represented by a
         Subscription object defined in filip.cb.models.
 
-        Args:
-            subscription:
+        If the subscription already exists, the adding is prevented and the id
+        of the existing subscription is returned.
 
+        A subscription is deemed as already existing if there exists a
+        subscription with the exact same subject and notification fields. All
+        optional fields are not considered.
+
+        Args:
+            subscription: Subscription
+            update: True - If the subscription already exists, update it
+                    False- If the subscription already exists, throw warning
         Returns:
-            object: 
+            str: Id of the (created) subscription
 
         """
+        existing_subscriptions = self.get_subscription_list()
+
+        sub_hash = subscription.json(include={'subject', 'notification'})
+        for ex_sub in existing_subscriptions:
+            if sub_hash == ex_sub.json(include={'subject', 'notification'}):
+                self.logger.info("Subscription already exists")
+                if update:
+                    self.logger.info("Updated subscription")
+                    subscription.id = ex_sub.id
+                    self.update_subscription(subscription)
+                else:
+                    warnings.warn(f"Subscription existed already with the id"
+                                  f" {ex_sub.id}")
+                return ex_sub.id
+
         url = urljoin(self.base_url, 'v2/subscriptions')
         headers = self.headers.copy()
         headers.update({'Content-Type': 'application/json'})
