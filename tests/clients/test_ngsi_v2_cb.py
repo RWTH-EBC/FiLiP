@@ -285,7 +285,8 @@ class TestContextBroker(unittest.TestCase):
                 "throttling": 0
             }
             sub = Subscription(**sub_example)
-            sub_id = client.post_subscription(subscription=sub)
+            sub_id = client.post_subscription(subscription=sub,
+                                              skip_initial_notification=True)
             sub_res = client.get_subscription(subscription_id=sub_id)
             time.sleep(1)
             sub_update = sub_res.copy(update={'expires': datetime.now()})

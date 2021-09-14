@@ -999,12 +999,12 @@ class ContextBrokerClient(BaseHttpClient):
         params = {}
         if skip_initial_notification:
             version = self.get_version()['orion']['version']
-            if parse_version(version) < parse_version('3.0'):
+            if parse_version(version) <= parse_version('3.1'):
                 params.update({'q': "skipInitialNotification"})
             else:
                 pass
             warnings.warn(f"Skip initial notifications is a deprecated "
-                          f"feature of older versions <3.0 of the context "
+                          f"feature of older versions <3.1 of the context "
                           f"broker. The Context Broker that you requesting has "
                           f"version: {version}. For newer versions we "
                           f"automatically skip this option. Consider "
