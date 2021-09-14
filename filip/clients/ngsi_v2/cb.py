@@ -904,10 +904,9 @@ class ContextBrokerClient(BaseHttpClient):
         """
         existing_subscriptions = self.get_subscription_list()
 
-        sub_hash = str(subscription.dict(include={'subject', 'notification'}))
+        sub_hash = subscription.json(include={'subject', 'notification'})
         for ex_sub in existing_subscriptions:
-            if sub_hash ==\
-                    str(ex_sub.dict(include={'subject', 'notification'})):
+            if sub_hash == ex_sub.json(include={'subject', 'notification'}):
                 self.logger.info("Subscription already exists")
                 if update:
                     self.logger.info("Updated subscription")
