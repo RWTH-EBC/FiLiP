@@ -17,7 +17,7 @@ from requests import RequestException
 from urllib.parse import urlparse
 from filip.models.base import FiwareHeader
 from filip.utils.simple_ql import QueryString
-from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient
+from filip.clients.ngsi_v2 import ContextBrokerClient
 from filip.clients.ngsi_v2 import HttpClient, HttpClientConfig
 from filip.config import settings
 from filip.models.ngsi_v2.context import \
@@ -29,7 +29,7 @@ from filip.models.ngsi_v2.context import \
     Query, \
     EntityPattern, \
     ActionType
-from filip.models.ngsi_v2.subscriptions import Subscription, Mqtt
+from filip.models.ngsi_v2.subscriptions import Mqtt, Message, Subscription
 from filip.models.ngsi_v2.iot import \
     Device, \
     DeviceCommand, \
@@ -354,17 +354,17 @@ class TestContextBroker(unittest.TestCase):
             update={'notification': notification,
                     'description': 'MQTT test subscription',
                     'expires': None})
-        print(subscription.json(indent=2))
         entity = ContextEntity(id='myID', type='Room', **self.attr)
-        with ContextBrokerClient(fiware_header=self.fiware_header) as client:
-            client.post_entity(entity=entity)
-            sub_id = client.post_subscription(subscription)
 
-        expected_message = 'test'
+        self.client.post_entity(entity=entity)
+        sub_id = self.client.post_subscription(subscription)
+
+        sub_message = None
+
         def on_connect(client, userdata, flags, reasonCode, properties=None):
             if reasonCode != 0:
                 logger.error(f"Connection failed with error code: "
-                              f"'{reasonCode}'")
+                             f"'{reasonCode}'")
                 raise ConnectionError
             else:
                 logger.info("Successfully, connected with result code " + str(
@@ -376,7 +376,8 @@ class TestContextBroker(unittest.TestCase):
 
         def on_message(client, userdata, msg):
             logger.info(msg.topic + " " + str(msg.payload))
-            print(expected_message)
+            nonlocal sub_message
+            sub_message = Message.parse_raw(msg.payload)
 
         def on_disconnect(client, userdata, reasonCode):
             logger.info("MQTT client disconnected" + str(reasonCode))
@@ -404,20 +405,26 @@ class TestContextBroker(unittest.TestCase):
 
         # create a non-blocking thread for mqtt communication
         mqtt_client.loop_start()
-        with ContextBrokerClient(fiware_header=self.fiware_header) as client:
-            client.update_attribute_value(entity_id=entity.id,
-                                          attr_name='temperature',
-                                          value=50,
-                                          entity_type=entity.type)
+        new_value = 50
+
+        self.client.update_attribute_value(entity_id=entity.id,
+                                           attr_name='temperature',
+                                           value=new_value,
+                                           entity_type=entity.type)
         time.sleep(5)
+
+        # test if the subscriptions arrives and the content aligns with updates
+        self.assertIsNotNone(sub_message)
+        self.assertEqual(sub_id, sub_message.subscriptionId)
+        self.assertEqual(new_value, sub_message.data[0].temperature.value)
         mqtt_client.loop_stop()
         mqtt_client.disconnect()
         time.sleep(1)
 
-        # Clean up
-        subs = client.get_subscription_list()
+        # Clean up subscriptions
+        subs = self.client.get_subscription_list()
         for sub in subs:
-            client.delete_subscription(subscription_id=sub.id)
+            self.client.delete_subscription(subscription_id=sub.id)
 
     def test_batch_operations(self):
         """
@@ -455,21 +462,22 @@ class TestContextBroker(unittest.TestCase):
         there for a complete documentation
         """
         import os
-        mqtt_broker_url = os.environ.get('MQTT_BROKER_URL')
+        mqtt_url = os.environ.get('MQTT_BROKER_URL')
 
         device_attr1 = DeviceAttribute(name='temperature',
                                        object_id='t',
                                        type="Number",
-                                       metadata={"unit":
-                                                     {"type": "Unit",
-                                                      "value": {
-                                                          "name": {
-                                                              "type": "Text",
-                                                              "value": "degree "
-                                                                       "Celsius"
-                                                          }
-                                                      }}
-                                                 })
+                                       metadata={
+                                           "unit":
+                                               {"type": "Unit",
+                                                "value": {
+                                                    "name": {
+                                                        "type": "Text",
+                                                        "value": "degree "
+                                                                 "Celsius"
+                                                    }
+                                                }}
+                                       })
 
         # creating a static attribute that holds additional information
         static_device_attr = StaticDeviceAttribute(name='info',
@@ -492,9 +500,10 @@ class TestContextBroker(unittest.TestCase):
         device_attr2 = DeviceAttribute(name='humidity',
                                        object_id='h',
                                        type="Number",
-                                       metadata={"unitText":
-                                                     {"value": "percent",
-                                                      "type": "Text"}})
+                                       metadata={
+                                           "unitText":
+                                               {"value": "percent",
+                                                "type": "Text"}})
 
         device.add_attribute(attribute=device_attr2)
 
@@ -524,7 +533,6 @@ class TestContextBroker(unittest.TestCase):
         entity = client.cb.get_entity(entity_id=device.device_id,
                                       entity_type=device.entity_type)
 
-
         # create a mqtt client that we use as representation of an IoT device
         # following the official documentation of Paho-MQTT.
         # https://www.eclipse.org/paho/index.php?page=clients/python/
@@ -552,7 +560,7 @@ class TestContextBroker(unittest.TestCase):
         def on_disconnect(client, userdata, reasonCode):
             pass
 
-        mqtt_client = mqtt.Client(client_id="filip-iot-example",
+        mqtt_client = mqtt.Client(client_id="filip-test",
                                   userdata=None,
                                   protocol=mqtt.MQTTv5,
                                   transport="tcp")
@@ -564,7 +572,7 @@ class TestContextBroker(unittest.TestCase):
         mqtt_client.on_disconnect = on_disconnect
 
         # extract the MQTT_BROKER_URL form the environment
-        mqtt_url = urlparse(mqtt_broker_url)
+        mqtt_url = urlparse(mqtt_url)
 
         mqtt_client.connect(host=mqtt_url.hostname,
                             port=mqtt_url.port,
@@ -611,7 +619,6 @@ class TestContextBroker(unittest.TestCase):
                                  apikey=service_group.apikey)
         client.cb.delete_entity(entity_id=entity.id, entity_type=entity.type)
 
-
     def tearDown(self) -> None:
         """
         Cleanup test server
@@ -620,6 +627,14 @@ class TestContextBroker(unittest.TestCase):
             entities = [ContextEntity(id=entity.id, type=entity.type) for
                         entity in self.client.get_entity_list()]
             self.client.update(entities=entities, action_type='delete')
+        except RequestException:
+            pass
+
+        # Clean up subscriptions
+        try:
+            subs = self.client.get_subscription_list()
+            for sub in subs:
+                self.client.delete_subscription(subscription_id=sub.id)
         except RequestException:
             pass
 
