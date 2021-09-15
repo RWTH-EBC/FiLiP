@@ -1,12 +1,10 @@
 """
 Test module for context broker models
 """
-import time
 import unittest
 from typing import List
 
 from pydantic import ValidationError
-from filip.clients.ngsi_v2 import ContextBrokerClient
 from filip.models.ngsi_v2.context import \
     ActionType, \
     Command, \
@@ -15,9 +13,10 @@ from filip.models.ngsi_v2.context import \
     ContextEntity, \
     create_context_entity_model, \
     NamedContextMetadata, \
-    Subscription, \
-    Update, NamedContextAttribute, ContextEntityKeyValues, NamedCommand
-from filip.models.base import FiwareHeader
+    Update, \
+    NamedContextAttribute, \
+    ContextEntityKeyValues, \
+    NamedCommand
 
 
 class TestContextModels(unittest.TestCase):
