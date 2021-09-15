@@ -25,10 +25,10 @@ from filip.models.ngsi_v2.context import \
     ContextAttribute, \
     NamedCommand, \
     NamedContextAttribute, \
-    Subscription, \
-    Registration, \
     Query, \
     Update
+from filip.models.ngsi_v2.subscriptions import Subscription
+from filip.models.ngsi_v2.registrations import Registration
 
 
 class ContextBrokerClient(BaseHttpClient):
@@ -927,16 +927,16 @@ class ContextBrokerClient(BaseHttpClient):
         params = {}
         if skip_initial_notification:
             version = self.get_version()['orion']['version']
-            if parse_version(version) < parse_version('3.0'):
-                params.update({'q': "skipInitialNotification"})
+            if parse_version(version) <= parse_version('3.1'):
+                params.update({'options': "skipInitialNotification"})
             else:
                 pass
             warnings.warn(f"Skip initial notifications is a deprecated "
-                          "feature of older versions <3.0 of the context "
-                          "broker. The Context Broker that you requesting has "
-                          "version: version. For newer versions we "
-                          "automatically skip this option. Consider "
-                          "refactoring and updating your services",
+                          f"feature of older versions <=3.1 of the context "
+                          f"broker. The Context Broker that you requesting has "
+                          f"version: {version}. For newer versions we "
+                          f"automatically skip this option. Consider "
+                          f"refactoring and updating your services",
                           DeprecationWarning)
 
         url = urljoin(self.base_url, 'v2/subscriptions')
@@ -1000,7 +1000,7 @@ class ContextBrokerClient(BaseHttpClient):
         if skip_initial_notification:
             version = self.get_version()['orion']['version']
             if parse_version(version) <= parse_version('3.1'):
-                params.update({'q': "skipInitialNotification"})
+                params.update({'options': "skipInitialNotification"})
             else:
                 pass
             warnings.warn(f"Skip initial notifications is a deprecated "
