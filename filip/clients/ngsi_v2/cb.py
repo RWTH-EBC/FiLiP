@@ -1039,7 +1039,7 @@ class ContextBrokerClient(BaseHttpClient):
             self.log_error(err=err, msg=msg)
             raise
 
-    def post_registration(self, registration: Registration):
+    def post_registration(self, registration: Registration) -> str:
         """
         Creates a new context provider registration. This is typically used
         for binding context sources as providers of certain data. The
@@ -1049,7 +1049,7 @@ class ContextBrokerClient(BaseHttpClient):
             registration (Registration):
 
         Returns:
-
+            ID of posted registration
         """
         url = urljoin(self.base_url, 'v2/registrations')
         headers = self.headers.copy()

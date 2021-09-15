@@ -6,10 +6,12 @@ import logging
 import time
 import random
 from datetime import datetime
+
+from filip.models.ngsi_v2.iot import DeviceCommand, Device
 from requests import RequestException
 from filip.models.base import FiwareHeader
 from filip.utils.simple_ql import QueryString
-from filip.clients.ngsi_v2 import ContextBrokerClient
+from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient
 from filip.models.ngsi_v2.context import \
     AttrsFormat, \
     ContextEntity, \
@@ -19,8 +21,7 @@ from filip.models.ngsi_v2.context import \
     Subscription, \
     Query, \
     Entity, \
-    ActionType
-
+    ActionType, Registration, Provider, URL, DataProvided
 
 # Setting up logging
 logging.basicConfig(
@@ -373,6 +374,47 @@ class TestContextBroker(unittest.TestCase):
                                          entity_type=entity_type)
         self.assertNotEqual(entity_before, entity_after)
 
+    def test_registrations(self):
+        # setup
+        entity_id = "id1"
+        entity_type = "type1"
+        entity = ContextEntity(entity_id,entity_type)
+        attr1 = NamedContextAttribute(name="attr1")
+        entity.add_properties([attr1])
+        self.client.post_entity(entity)
+
+        reg1 = Registration(
+            provider=Provider(http=URL(url="http://localhost:1234")),
+            dataProvided=DataProvided(entities=[entity], attrs=[attr1.name])
+        )
+        reg_id = self.client.post_registration(reg1)
+
+        # Registration was successful ?
+        self.client.get_registration(reg_id)
+
+        # Registration removed if entity no longer present?
+        self.client.delete_entity(entity_id=entity_id)
+        self.client.get_registration(reg_id)
+
+        device = Device(
+            device_id="test_device2",
+            entity_name=entity_id,
+            entity_type=entity_type,
+            apikey="1234",
+            endpoint='http://localhost:2222',
+            transport='HTTP'
+        )
+
+        attr_command = DeviceCommand(name='open')
+        device.add_attribute(attr_command)
+
+        iota_client = IoTAClient(fiware_header=self.fiware_header)
+        iota_client.post_device(device=device)
+        print(self.client.get_registration_list())
+        iota_client.delete_device(device_id=device.device_id)
+        print()
+        print(self.client.get_registration_list())
+
 
     def tearDown(self) -> None:
         """
@@ -384,4 +426,16 @@ class TestContextBroker(unittest.TestCase):
             self.client.update(entities=entities, action_type='delete')
         except RequestException:
             pass
+
+        for req in self.client.get_registration_list():
+            self.client.delete_registration(req.id)
+
+        iota_client = IoTAClient(fiware_header=self.fiware_header)
+        for device in iota_client.get_device_list():
+            try:
+                iota_client.delete_device(device_id=device.device_id)
+            except:
+                pass
+
+        iota_client.close()
         self.client.close()

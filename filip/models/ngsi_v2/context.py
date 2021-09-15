@@ -865,8 +865,12 @@ class ForwardingMode(str, Enum):
                  "requests. (Default value)"
 
 
+class URL(BaseModel):
+    url: AnyHttpUrl = Field()
+
+
 class Provider(BaseModel):
-    http: AnyHttpUrl = Field(
+    http: URL = Field(
         description="It is used to convey parameters for providers that "
                     "deliver information through the HTTP protocol. (Only "
                     "protocol supported nowadays). It must contain a subfield "
