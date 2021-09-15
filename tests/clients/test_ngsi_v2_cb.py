@@ -304,6 +304,36 @@ class TestContextBroker(unittest.TestCase):
             self.assertNotEqual(sub_res.expires, sub_res_updated.expires)
             self.assertEqual(sub_res.id, sub_res_updated.id)
             self.assertGreaterEqual(sub_res_updated.expires, sub_res.expires)
+
+            # test duplicate prevention and update
+            sub = Subscription(**sub_example)
+            id1 = client.post_subscription(sub)
+            sub_first_version = client.get_subscription(id1)
+            sub.description = "This subscription shall not pass"
+
+            id2 = client.post_subscription(sub, update=False)
+            self.assertEqual(id1, id2)
+            sub_second_version = client.get_subscription(id2)
+            self.assertEqual(sub_first_version.description,
+                             sub_second_version.description)
+
+            id2 = client.post_subscription(sub, update=True)
+            self.assertEqual(id1, id2)
+            sub_second_version = client.get_subscription(id2)
+            self.assertNotEqual(sub_first_version.description,
+                                sub_second_version.description)
+
+            # test that duplicate prevention does not prevent to much
+            sub2 = Subscription(**sub_example)
+            sub2.description = "Take this subscription to Fiware"
+            sub2.subject.entities[0] = {
+                            "idPattern": ".*",
+                            "type": "Building"
+                        }
+            id3 = client.post_subscription(sub2)
+            self.assertNotEqual(id1, id3)
+
+            # Clean up
             subs = client.get_subscription_list()
             for sub in subs:
                 client.delete_subscription(subscription_id=sub.id)
@@ -499,6 +529,7 @@ class TestContextBroker(unittest.TestCase):
         client.iota.delete_group(resource=service_group.resource,
                                  apikey=service_group.apikey)
         client.cb.delete_entity(entity_id=entity.id, entity_type=entity.type)
+
 
     def tearDown(self) -> None:
         """
