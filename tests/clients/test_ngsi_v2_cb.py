@@ -1,7 +1,7 @@
 """
 Tests for filip.cb.client
 
-edited 15th Sep 2021
+edited Sep 15, 2021
 
 @author Jeff Reding
 
@@ -344,7 +344,8 @@ class TestContextBroker(unittest.TestCase):
                 client.delete_subscription(subscription_id=sub.id)
 
     def test_mqtt_subscriptions(self):
-        mqtt_url = 'mqtt://134.130.166.184:1883'
+        import os
+        mqtt_url = os.environ.get('MQTT_BROKER_URL')
         mqtt_topic = 'filip/testing'
         notification = self.subscription.notification.copy(
             update={'http': None, 'mqtt': Mqtt(url=mqtt_url,
@@ -359,6 +360,7 @@ class TestContextBroker(unittest.TestCase):
             client.post_entity(entity=entity)
             sub_id = client.post_subscription(subscription)
 
+        expected_message = 'test'
         def on_connect(client, userdata, flags, reasonCode, properties=None):
             if reasonCode != 0:
                 logger.error(f"Connection failed with error code: "
@@ -374,6 +376,7 @@ class TestContextBroker(unittest.TestCase):
 
         def on_message(client, userdata, msg):
             logger.info(msg.topic + " " + str(msg.payload))
+            print(expected_message)
 
         def on_disconnect(client, userdata, reasonCode):
             logger.info("MQTT client disconnected" + str(reasonCode))
@@ -388,6 +391,7 @@ class TestContextBroker(unittest.TestCase):
         mqtt_client.on_subscribe = on_subscribe
         mqtt_client.on_message = on_message
         mqtt_client.on_disconnect = on_disconnect
+
         # connect to the server
         mqtt_url = urlparse(mqtt_url)
         mqtt_client.connect(host=mqtt_url.hostname,
@@ -405,11 +409,11 @@ class TestContextBroker(unittest.TestCase):
                                           attr_name='temperature',
                                           value=50,
                                           entity_type=entity.type)
-            print(client.get_entity(entity_id=entity.id,
-                                    entity_type=entity.type))
-        time.sleep(10)
+        time.sleep(5)
         mqtt_client.loop_stop()
         mqtt_client.disconnect()
+        time.sleep(1)
+
         # Clean up
         subs = client.get_subscription_list()
         for sub in subs:
