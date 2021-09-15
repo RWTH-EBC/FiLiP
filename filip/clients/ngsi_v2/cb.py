@@ -7,6 +7,7 @@ from math import inf
 from typing import Any, Dict, List, Union, Optional
 from urllib.parse import urljoin
 import requests
+from filip.models.ngsi_v2.iot import Device
 from pydantic import \
     parse_obj_as, \
     PositiveInt, \
@@ -517,7 +518,8 @@ class ContextBrokerClient(BaseHttpClient):
             self.log_error(err=err, msg=msg)
             raise
 
-    def delete_entity(self, entity_id: str, entity_type: str = None) -> None:
+    def delete_entity(self, entity_id: str, entity_type: str = None,
+                      delete_devices: bool = False) -> None:
 
         """
         Remove a entity from the context broker. No payload is required
@@ -526,6 +528,8 @@ class ContextBrokerClient(BaseHttpClient):
         Args:
             entity_id: Id of the entity to be deleted
             entity_type: several entities with the same entity id.
+            delete_devices: If True, also delete all devices that reference this
+                            entity (entity_id as entity_name)
         Returns:
             None
         """
@@ -545,6 +549,13 @@ class ContextBrokerClient(BaseHttpClient):
             msg = f"Could not delete entity {entity_id} !"
             self.log_error(err=err, msg=msg)
             raise
+
+        if delete_devices:
+            from filip.clients.ngsi_v2 import IoTAClient
+            iota_client = IoTAClient(fiware_header=self.fiware_headers)
+
+            for device in iota_client.get_device_list(entity=entity_id):
+                iota_client.delete_device(device_id=device.device_id)
 
     def replace_entity_attributes(self,
                                   entity: ContextEntity,
@@ -1295,6 +1306,7 @@ class ContextBrokerClient(BaseHttpClient):
             msg = "Query operation failed!"
             self.log_error(err=err, msg=msg)
             raise
+
 
 #    def get_subjects(self, object_entity_name: str, object_entity_type: str, subject_type=None):
 #        """

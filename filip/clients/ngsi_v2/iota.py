@@ -355,7 +355,8 @@ class IoTAClient(BaseHttpClient):
                 return Device.parse_obj(res.json())
             res.raise_for_status()
         except requests.RequestException as err:
-            self.log_error(err=err, msg=None)
+            msg = f"Device {device_id} was not found"
+            self.log_error(err=err, msg=msg)
             raise
 
     def update_device(self, *, device: Device, add: bool = True) -> None:
@@ -401,18 +402,30 @@ class IoTAClient(BaseHttpClient):
         for device in devices:
             self.update_device(device=device, add=add)
 
-    def delete_device(self, *, device_id) -> None:
+    def delete_device(self, *, device_id: str,
+                      delete_entity: bool = False) -> None:
         """
         Remove a device from the device registry. No payload is required
         or received.
         Args:
-            device_id:
-
+            device_id: str, ID of Device
+            delete_entity:  False -> Only delete the device entry,
+                                     the automatically created and linked
+                                     context-entity will continue to
+                                     exist in Fiware
+                            True -> Also delete the automatically
+                                    created and linked context-entity
+                                    If multiple devices are linked to this
+                                    entity, this operation is not executed and
+                                    an exception is raised
         Returns:
             None
         """
         url = urljoin(self.base_url, f'iot/devices/{device_id}', )
         headers = self.headers
+
+        device = self.get_device(device_id=device_id)
+
         try:
             res = self.delete(url=url, headers=headers)
             if res.ok:
@@ -423,6 +436,28 @@ class IoTAClient(BaseHttpClient):
             msg = f"Could not delete device {device_id}!"
             self.log_error(err=err, msg=msg)
             raise
+
+        if delete_entity:
+            # An entity can technically belong to multiple devices
+            # Only delete the entity if
+            devices = self.get_device_list(entity=device.entity_name)
+            if len(devices) > 0:
+                raise Exception(f"The Corresponding Entity to the device "
+                                "{device_id} is linked to multiple devices, "
+                                "it was not deleted")
+            else:
+                try:
+                    from filip.clients.ngsi_v2 import ContextBrokerClient
+                    client = ContextBrokerClient(
+                        fiware_header=self.fiware_headers)
+
+                    client.delete_entity(entity_id=device.entity_name)
+
+                except requests.RequestException as err:
+                    # Do not throw an error
+                    # It is only important that the entity does not exists after
+                    # this methode, not if this methode actively deleted it
+                    pass
 
     # LOG API
     def get_loglevel_of_agent(self):

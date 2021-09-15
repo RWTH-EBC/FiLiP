@@ -1,6 +1,7 @@
 """
 Test for iota http client
 """
+import copy
 import unittest
 import logging
 import requests
@@ -144,6 +145,71 @@ class TestAgent(unittest.TestCase):
             print(client.get_entity(entity_id=device.entity_name).json(
                 indent=2))
 
+    def test_deletions(self):
+        """
+        Test the deletion of a context entity/device if the state is always
+        correctly cleared
+        """
+        self.tearDown()
+
+        device_id = 'device_id'
+        entity_id = 'entity_id'
+
+        device = Device(device_id=device_id,
+                        entity_name=entity_id,
+                        entity_type='Thing2',
+                        protocol='IoTA-JSON',
+                        transport='MQTT',
+                        apikey='filip-iot-test-device')
+
+        cb_client = ContextBrokerClient(fiware_header=self.fiware_header)
+
+        # Test 1: Only delete device
+        # delete without optional parameter -> entity needs to continue existing
+        self.client.post_device(device=device)
+        self.client.delete_device(device_id=device_id)
+        self.assertTrue(
+            len(cb_client.get_entity_list(entity_ids=[entity_id])) == 1)
+        cb_client.delete_entity(entity_id=entity_id)
+
+        # Test 2:Delete device and corresponding entity
+        # delete with optional parameter -> entity needs to be deleted
+        self.client.post_device(device=device)
+        self.client.delete_device(device_id=device_id,
+                                  delete_entity=True)
+        self.assertTrue(
+            len(cb_client.get_entity_list(entity_ids=[entity_id])) == 0)
+
+        # Test 3:Delete device and corresponding entity,
+        #        that is linked to multiple devices
+        # delete with optional parameter -> entity needs to be deleted
+        self.client.post_device(device=device)
+        device2 = copy.deepcopy(device)
+        device2.device_id = "device_id2"
+        self.client.post_device(device=device2)
+        self.assertRaises(Exception, self.client.delete_device,
+                          device_id=device_id, delete_entity=True)
+        self.assertTrue(
+            len(cb_client.get_entity_list(entity_ids=[entity_id])) == 1)
+        self.client.delete_device(device_id=device2.device_id)
+
+        # Test 4: Only delete entity
+        # delete without optional parameter -> device needs to continue existing
+        self.client.post_device(device=device)
+        cb_client.delete_entity(entity_id=entity_id)
+        self.client.get_device(device_id=device_id)
+        self.client.delete_device(device_id=device_id)
+
+        # Test 5: Delete entity, and all devices
+        # # delete with optional parameter -> all devices need to be deleted
+        self.client.post_device(device=device)
+        device2 = copy.deepcopy(device)
+        device2.device_id = "device_id2"
+        self.client.post_device(device=device2)
+        cb_client.delete_entity(entity_id=entity_id, delete_devices=True)
+        self.assertEqual(len(self.client.get_device_list()), 0)
+
+        cb_client.close()
 
     def tearDown(self) -> None:
         """
