@@ -1,6 +1,7 @@
 """
 Test for filip.core.client
 """
+import os
 import unittest
 import json
 import logging
@@ -30,8 +31,21 @@ class TestClient(unittest.TestCase):
         """
         self.fh = FiwareHeader(service='filip',
                                service_path='/testing')
-        with open("test_ngsi_v2_client.json") as f:
+        with open(self.get_json_path()) as f:
             self.config = json.load(f)
+
+    @staticmethod
+    def get_json_path() -> str:
+        """
+        Get the correct path to the json file needed for this test
+        """
+
+        # Test if the testcase was run directly or over in a global test-run.
+        # Match the needed path to the config file in both cases
+        if os.getcwd().split("\\")[-1] == "clients":
+            return 'test_ngsi_v2_client.json'
+        else:
+            return './tests/clients/test_ngsi_v2_client.json'
 
     def _test_change_of_headers(self, client: HttpClient):
         """
@@ -98,7 +112,7 @@ class TestClient(unittest.TestCase):
         Returns:
 
         """
-        config_path = Path("test_ngsi_v2_client.json")
+        config_path = Path(self.get_json_path())
         client = HttpClient(config=config_path, fiware_header=self.fh)
         self._test_connections(client=client)
         self._test_change_of_headers(client=client)
