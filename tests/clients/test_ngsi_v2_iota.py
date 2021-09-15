@@ -80,6 +80,13 @@ class TestAgent(unittest.TestCase):
         """
         Test device creation
         """
+        # Clean up Fiware test state, this test can fail if the device was not
+        # correctly removed before
+        try:
+            self.client.delete_device(device_id=Device(**self.device).device_id)
+        except requests.RequestException:
+            pass
+
         fiware_header = FiwareHeader(service='filip',
                                      service_path='/testing')
         with IoTAClient(fiware_header=fiware_header) as client:
@@ -143,7 +150,6 @@ class TestAgent(unittest.TestCase):
         with ContextBrokerClient(fiware_header=fiware_header) as client:
             print(client.get_entity(entity_id=device.entity_name).json(
                 indent=2))
-
 
     def tearDown(self) -> None:
         """

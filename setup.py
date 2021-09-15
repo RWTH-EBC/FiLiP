@@ -21,7 +21,7 @@ SETUP_REQUIRES = INSTALL_REQUIRES.copy()
 
 setuptools.setup(
     name='filip',
-    version='0.1.6',
+    version='0.1.7',
     author='RWTH Aachen University, E.ON Energy Research Center, Institute\
         of Energy Efficient Buildings and Indoor Climate',
     author_email='tstorek@eonerc.rwth-aachen.de',
