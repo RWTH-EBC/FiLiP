@@ -12,3 +12,6 @@ pandas_datapackage_reader>=0.18.0
 tables>=3.6.1
 python-Levenshtein>=0.12.2
 paho-mqtt
+filip~=0.1.5
+numpy~=1.19.5
+rdflib~=6.0.0

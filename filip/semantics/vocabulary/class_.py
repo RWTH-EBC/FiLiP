@@ -119,7 +119,7 @@ class Class(Entity):
         result.extend(self.get_combined_data_relations(vocabulary))
         return result
 
-    def class_is_child_of_all(self, target_list: List[str]) -> bool:
+    def is_child_of_all_classes(self, target_list: List[str]) -> bool:
         """Tests if this class is a child class for each of the given classes
 
         Args:

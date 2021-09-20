@@ -5,9 +5,6 @@ from typing import TYPE_CHECKING, Dict, List, Union
 import requests
 from pydantic import BaseModel
 
-from config import settings
-from utils.auth import token_manager
-
 if TYPE_CHECKING:
     from . import Vocabulary,IdType
 
@@ -26,29 +23,29 @@ class Source(BaseModel):
     vocabulary
     """
 
-    id:str = ""
+    id: str = ""
     """unique ID of the source; for internal use"""
-    was_link: bool = False
-    """Stats if the source was given via a link or a file"""
     source_name: str = ""
     """Name of the source """
+    content: str = ""
+    """File content of the provided ontology file"""
+
     parsing_log: List[Dict[str, Union[LoggingLevel, 'IdType', str]]] = []
     """Log containg all issues that were discovered while parsing"""
-    source_path: str = "DEPRECATED"  # if file -> file path, else -> link
-    """Deprecated"""
-    source_server_id: str = "TEMP VALUE"
-    """unique ID of the source, used to have an unique id when communicating with backend"""
     dependency_statements: List[Dict[str, str]] = []
-    """ List[Dict[str, str]]: List of purged statements dicts with keys: Parent Class, class, dependency, fulfilled"""
+    """ List[Dict[str, str]]: List of purged statements dicts with keys: 
+    Parent Class, class, dependency, fulfilled"""
     timestamp: str
     """timestamp when the source was added to the project"""
     ontology_iri: str = None
     """Iri of the ontology of the source"""
     predefined: bool = False
-    """Stating if the source is a predefined source; a predefined source is added to each project containing owl:Thing
+    """Stating if the source is a predefined source; a predefined source is 
+    added to each project containing owl:Thing
     and predefined Datatypes"""
 
-    def get_number_of_id_type(self, vocabulary: 'Vocabulary', id_type: 'IdType') -> int:
+    def get_number_of_id_type(self, vocabulary: 'Vocabulary',
+                              id_type: 'IdType') -> int:
         """Ge the number how many entities of a given type are from this source
 
         Args:
@@ -98,7 +95,8 @@ class Source(BaseModel):
         return self.source_name
 
     def treat_dependency_statements(self, vocabulary: 'Vocabulary'):
-        """ Log and purge all pointers/iris in entities that are not contained in the vocabulary
+        """ Log and purge all pointers/iris in entities that are not contained
+         in the vocabulary
 
         Args:
             vocabulary (Vocabulary): Vocabulary of this project
@@ -110,17 +108,21 @@ class Source(BaseModel):
 
         for class_ in vocabulary.get_classes():
             if class_.get_source_id() == self.id:
-                dependency_statements.extend(class_.treat_dependency_statements(vocabulary))
+                dependency_statements.extend(
+                    class_.treat_dependency_statements(vocabulary))
 
         for individual_iri in vocabulary.individuals:
             individual = vocabulary.get_individual(individual_iri)
             if individual.get_source_id() == self.id:
-                dependency_statements.extend(individual.treat_dependency_statements(vocabulary))
+                dependency_statements.extend(
+                    individual.treat_dependency_statements(vocabulary))
 
         self.dependency_statements = dependency_statements
 
-    def add_parsing_log_entry(self, level: LoggingLevel, entity_type: 'IdType', entity_iri: str,  msg: str):
-        """Add a parsing log entry for an entity, if an issue in parsing was discovered
+    def add_parsing_log_entry(self, level: LoggingLevel, entity_type: 'IdType',
+                              entity_iri: str,  msg: str):
+        """Add a parsing log entry for an entity, if an issue in parsing
+        was discovered
 
         Args:
             level (LoggingLevel): Logging level of the entry
@@ -131,10 +133,12 @@ class Source(BaseModel):
         Returns:
             None
         """
-        entry = {"level": level, "entity_type": entity_type, "entity_iri": entity_iri, "message": msg}
+        entry = {"level": level, "entity_type": entity_type,
+                 "entity_iri": entity_iri, "message": msg}
         self.parsing_log.append(entry)
 
-    def get_parsing_log(self, vocabulary: 'Vocabulary') -> List[Dict[str, Union[LoggingLevel, 'IdType', str]]]:
+    def get_parsing_log(self, vocabulary: 'Vocabulary') -> \
+            List[Dict[str, Union[LoggingLevel, 'IdType', str]]]:
         """get the Parsinglog, where the labels of the entities are filled in
 
         Args:
@@ -163,18 +167,3 @@ class Source(BaseModel):
         self.parsing_log = []
         self.dependency_statements = []
 
-    def load_source_from_server(self):
-        """Load the source file from where it is stored in the server
-
-        Returns:
-            None
-        """
-
-        headers = token_manager.headers
-        params = {'vocabulary_source_id': self.source_server_id}
-
-        res = requests.get(url=f"{settings.BACKEND_URL}/api/v1/vocabulary/source-file/", params=params,
-                           headers=headers)
-        content = res.text
-
-        return io.StringIO(content)

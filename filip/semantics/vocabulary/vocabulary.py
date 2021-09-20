@@ -1,3 +1,5 @@
+import copy
+import datetime
 import operator
 import uuid
 from enum import Enum
@@ -5,6 +7,8 @@ from enum import Enum
 from pydantic import BaseModel
 from . import *
 from typing import List, Dict, Union, Set
+
+from ..ontology_parser.rdfparser import RdfParser
 
 
 class IdType(str, Enum):
@@ -27,6 +31,10 @@ class Vocabulary(BaseModel):
 
     The vocabulary consists out of multiple sources, that each contribute
     objects
+
+    From the vocabulary nothing should be added or deleted manually. The sources
+    are added and removed through the respective methods. Everything else should
+    be used as READ-ONLY
     """
 
     classes: Dict[str, Class] = {}
@@ -56,9 +64,6 @@ class Vocabulary(BaseModel):
     """Maps all entity iris and (combined)relations to their Entity/Object 
         type, to speed up lookups"""
 
-    current_source: Source = None
-    """Current source to which entities are added, needed while parsing"""
-
     conflicting_label_entities: Dict[str, List[Entity]] = {}
     """ used to store these results from postprocessing until the vocabulary is 
     committed matches label to list of entities who currently have that label"""
@@ -67,25 +72,8 @@ class Vocabulary(BaseModel):
     """used to store results from postprocessing
     contains all original labels that were found more than once """
 
-    def clear(self):
-        """Clear all objects form the vocabulary
 
-        Returns:
-            None
-        """
-        self.classes.clear()
-        self.object_properties.clear()
-        self.data_properties.clear()
-        self.datatypes.clear()
-        self.relations.clear()
-        self.combined_object_relations.clear()
-        self.combined_data_relations.clear()
-        self.individuals.clear()
-        self.id_types.clear()
-        for source in self.sources.values():
-            source.clear()
-
-    def get_type_of_id(self, id:str) -> Union[IdType,None]:
+    def get_type_of_id(self, id: str) -> Union[IdType,None]:
         """Get the type (class, relation,...) of an iri/id
 
         Args:
@@ -99,23 +87,6 @@ class Vocabulary(BaseModel):
         except KeyError:
             return None
 
-    def add_class(self, class_: Class):
-        """Add a class to the vocabulary
-
-        Args:
-            class_ (Class): class to be added
-
-        Returns:
-            None
-        """
-
-        self.add_log_entry_for_overwriting_entity(class_, self.classes,
-                                                  IdType.class_)
-
-        self.classes[class_.iri] = class_
-        self.id_types[class_.iri] = IdType.class_
-        class_.source_id = self.current_source.id
-
     def get_class_by_iri(self, class_iri: str) -> Union[Class, None]:
         """Get the class belonging to the class_iri
 
@@ -126,23 +97,6 @@ class Vocabulary(BaseModel):
             Class or None if iri not a registered class
         """
         return self.classes.get(class_iri)
-
-    def add_object_property(self, obj_prop: ObjectProperty):
-        """Add an ObjectProperty to the vocabulary
-
-        Args:
-            obj_prop (ObjectProperty): ObjectProperty to be added
-
-        Returns:
-            None
-        """
-
-        self.add_log_entry_for_overwriting_entity(
-            obj_prop, self.object_properties, IdType.object_property)
-
-        self.object_properties[obj_prop.iri] = obj_prop
-        self.id_types[obj_prop.iri] = IdType.object_property
-        obj_prop.source_id = self.current_source.id
 
     def get_object_property(self, obj_prop_iri: str) -> ObjectProperty:
         """Get the object property beloning to the iri
@@ -159,23 +113,6 @@ class Vocabulary(BaseModel):
         """
         return self.object_properties[obj_prop_iri]
 
-    def add_data_property(self, data_prop: DataProperty):
-        """Add an DataProperty to the vocabulary
-
-        Args:
-            data_prop (DataProperty): DataProperty to be added
-
-        Returns:
-            None
-        """
-
-        self.add_log_entry_for_overwriting_entity(
-            data_prop, self.data_properties, IdType.data_property)
-
-        self.data_properties[data_prop.iri] = data_prop
-        self.id_types[data_prop.iri] = IdType.data_property
-        data_prop.source_id = self.current_source.id
-
     def get_data_property(self, data_prop_iri: str) -> DataProperty:
         """Get the data property belonging to the iri
 
@@ -190,38 +127,6 @@ class Vocabulary(BaseModel):
 
         """
         return self.data_properties[data_prop_iri]
-
-    def add_datatype(self, datatype: Datatype):
-        """Add a DataType to the vocabulary
-
-        Args:
-            datatype (Datatype): Datatype to be added
-
-        Returns:
-            None
-        """
-
-        self.add_log_entry_for_overwriting_entity(
-            datatype, self.datatypes, IdType.datatype)
-
-        self.id_types[datatype.iri] = IdType.datatype
-        self.datatypes[datatype.iri] = datatype
-        datatype.source_id = self.current_source.id
-
-    def add_predefined_datatype(self, datatype: Datatype):
-        """Add a DataType to the vocabulary, that belongs to the source:
-            Predefined
-
-        Args:
-            datatype (Datatype): Datatype to be added
-
-        Returns:
-            None
-        """
-        self.id_types[datatype.iri] = IdType.datatype
-        self.datatypes[datatype.iri] = datatype
-        datatype.predefined = True
-        datatype.source_id = "PREDEFINED"
 
     def iri_is_predefined_datatype(self, iri: str) -> bool:
         """Test if an iri belongs to a predefined datatype
@@ -250,23 +155,6 @@ class Vocabulary(BaseModel):
             KeyError: if not a registered datatype
         """
         return self.datatypes[datatype_iri]
-
-    def add_individual(self, individual: Individual):
-        """Add an Individual to the vocabulary
-
-        Args:
-            individual (Individual): Individual to be added
-
-        Returns:
-            None
-        """
-
-        self.add_log_entry_for_overwriting_entity(individual, self.individuals,
-                                                  IdType.individual)
-
-        self.individuals[individual.iri] = individual
-        self.id_types[individual.iri] = IdType.individual
-        individual.source_id = self.current_source.id
 
     def get_individual(self, individual_iri: str) -> Individual:
         """Get the individual belonging to the iri
@@ -325,7 +213,8 @@ class Vocabulary(BaseModel):
                       key=operator.methodcaller("get_label"),
                       reverse=False)
 
-    def sort_entity_list_by_label(self, list: List[Entity]) -> List[Entity]:
+    def get_entity_list_sorted_by_label(self, list: List[Entity]) \
+            -> List[Entity]:
         """Sort a given entity list by their labels
 
         Args:
@@ -413,34 +302,6 @@ class Vocabulary(BaseModel):
         """
         return self.combined_object_relations[id]
 
-    def add_relation_for_class(self, class_iri: str, rel: Relation):
-        self.relations[rel.id] = rel
-        self.get_class_by_iri(class_iri).relation_ids.append(rel.id)
-        self.id_types[rel.id] = IdType.relation
-
-    def add_combined_object_relation_for_class(self, class_iri: str,
-                                               crel: CombinedObjectRelation):
-        self.combined_object_relations[crel.id] = crel
-        self.get_class_by_iri(class_iri).\
-            combined_object_relation_ids.append(crel.id)
-        self.id_types[crel.id] = IdType.combined_relation
-
-    def add_combined_data_relation_for_class(self, class_iri: str,
-                                             cdata: CombinedDataRelation):
-        self.combined_data_relations[cdata.id] = cdata
-        self.get_class_by_iri(class_iri).\
-            combined_data_relation_ids.append(cdata.id)
-        self.id_types[cdata.id] = IdType.combined_relation
-
-    def add_source(self, source: Source, id: str = None):
-        if id is None:
-            source.id = uuid.uuid4().hex
-        else:
-            source.id = id
-        self.id_types[source.id] = IdType.source
-        self.sources[source.id] = source
-        self.current_source = source
-
     def get_source(self, source_id: str) -> Source:
         """Get the source with the given id
 
@@ -455,8 +316,8 @@ class Vocabulary(BaseModel):
         """
         return self.sources[source_id]
 
-    def get_sources(self) -> List[Source]:
-        """Get all source objects of the vocabulary
+    def get_source_list(self) -> List[Source]:
+        """Get all source objects of the vocabulary as list
 
         Returns:
             List[Source]
@@ -492,18 +353,6 @@ class Vocabulary(BaseModel):
         """
         return self.id_types[id] == type
 
-    def entity_is_known(self, iri: str) -> bool:
-        """Test if the given iri is in vocabulary, if not it belongs to a
-        dependency which is not yet loaded
-
-        Args:
-            iri (str)
-
-        Returns:
-            bool
-        """
-        return iri in self.id_types
-
     def get_label_for_entity_iri(self, iri: str) -> str:
         """Get the label of the entity with the given iri
         Fast efficient methode
@@ -536,16 +385,6 @@ class Vocabulary(BaseModel):
         assert source_id in self.sources
         self.current_source = self.sources[source_id]
 
-    def add_log_entry_for_overwriting_entity(self, entity: Entity,
-                                             entity_dict: Dict[str, Entity],
-                                             id_type: IdType):
-        if entity.iri in entity_dict:
-            old_entity = entity_dict[entity.iri]
-            self.current_source.add_parsing_log_entry(
-                LoggingLevel.warning, id_type, entity.iri,
-                "{} {} from source {} was overwritten"
-                .format(id_type, old_entity.get_label(),
-                        old_entity.get_source_name(self)))
 
     def get_entity_by_iri(self, iri: str) -> Union[None, Entity]:
         """Get the entity with the given iri
@@ -685,50 +524,3 @@ class Vocabulary(BaseModel):
 
         return res
 
-    def transfer_settings(self, new_vocabulary: 'Vocabulary'):
-        """Transfer all the user made settings (labels, key_colums, ia_agent,..)
-        to a new vocabulary
-
-        Args:
-            new_vocabulary (Vocabulary): Vocabulary to which the settings of
-            this vocabulary should be transferred
-
-        Returns:
-            None
-        """
-
-        # agent&device settings
-        for class_ in self.get_classes():
-            if class_.iri in new_vocabulary.classes:
-                new_vocabulary.get_class_by_iri(class_.iri).is_agent_class = \
-                    class_.is_agent_class
-                new_vocabulary.get_class_by_iri(class_.iri).is_iot_class = \
-                    class_.is_iot_class
-
-        # label settings
-        for entity in self.get_all_entities():
-            new_entity = new_vocabulary.get_entity_by_iri(entity.iri)
-            if new_entity is not None:
-                new_entity.user_set_label = entity.user_set_label
-
-        # combined relation settings
-        combined_relation_pairs = [(self.combined_object_relations,
-                                    new_vocabulary.combined_object_relations),
-                                   (self.combined_data_relations,
-                                    new_vocabulary.combined_data_relations)]
-        for (old_list, new_list) in combined_relation_pairs:
-            for cr_id in old_list:
-                if cr_id in new_list:
-
-                    old_cr = self.get_combined_relation_by_id(cr_id)
-                    new_cr = new_vocabulary.get_combined_relation_by_id(cr_id)
-                    new_cr.is_key_information = old_cr.is_key_information
-                    new_cr.inspect = old_cr.inspect
-
-        # CombinedDataRelation additional Settings
-        for cdr_id in self.combined_data_relations:
-            if cdr_id in new_vocabulary.combined_data_relations:
-                old_cdr = self.get_combined_data_relation_by_id(cdr_id)
-                new_cdr = new_vocabulary.\
-                    get_combined_data_relation_by_id(cdr_id)
-                new_cdr.type = old_cdr.type

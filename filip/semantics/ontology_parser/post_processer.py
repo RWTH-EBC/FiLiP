@@ -13,7 +13,7 @@ information as: duplicate labels or sort relations
 """
 
 
-def post_process_vocabulary(vocabulary: Vocabulary, project_id:str):
+def post_process_vocabulary(vocabulary: Vocabulary, project_id: str):
     """Main methode to be called for post processing
 
     Args:
