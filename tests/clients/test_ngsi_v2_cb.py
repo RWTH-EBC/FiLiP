@@ -21,14 +21,14 @@ from filip.clients.ngsi_v2 import ContextBrokerClient
 from filip.clients.ngsi_v2 import HttpClient, HttpClientConfig
 from filip.config import settings
 from filip.models.ngsi_v2.context import \
-    AttrsFormat, \
     ContextEntity, \
     ContextAttribute, \
     NamedContextAttribute, \
     NamedCommand, \
     Query, \
-    EntityPattern, \
     ActionType
+from filip.models.ngsi_v2.base import AttrsFormat
+from filip.models.ngsi_v2._base import EntityPattern
 from filip.models.ngsi_v2.subscriptions import Mqtt, Message, Subscription
 from filip.models.ngsi_v2.iot import \
     Device, \

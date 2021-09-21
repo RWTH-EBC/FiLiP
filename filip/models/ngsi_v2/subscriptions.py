@@ -12,19 +12,15 @@ from typing import Any, List, Dict, Union, Optional
 from datetime import datetime
 from aenum import Enum
 from pydantic import \
-    AnyHttpUrl, \
     BaseModel, \
     Field, \
     Json, \
     root_validator, \
     validator
+from .base import AttrsFormat, EntityPattern, Http, Status, Expression
 from filip.utils.simple_ql import QueryString, QueryStatement
-from filip.utils.validators import validate_http_url, validate_mqtt_url
-from filip.models.ngsi_v2.context import \
-    AttrsFormat, \
-    ContextEntity, \
-    EntityPattern, \
-    Expression
+from filip.utils.validators import validate_mqtt_url
+from filip.models.ngsi_v2.context import ContextEntity
 from filip.types import AnyMqttUrl
 
 
@@ -51,22 +47,6 @@ class HttpMethods(str, Enum):
     POST = "POST", "Post Method"
     PUT = "PUT", "Put Method"
     PATCH = "PATCH", "Patch Method"
-
-
-class Http(BaseModel):
-    """
-    Model for notification sent via HTTP
-    """
-    url: Union[AnyHttpUrl, str] = Field(
-        description="URL referencing the service to be invoked when a "
-                    "notification is generated. An NGSIv2 compliant server "
-                    "must support the http URL schema. Other schemas could "
-                    "also be supported."
-    )
-
-    @validator('url', allow_reuse=True)
-    def check_url(cls, value):
-        return validate_http_url(url=value)
 
 
 class HttpCustom(Http):
@@ -251,18 +231,6 @@ class Response(Notification):
                     'notification. Not present if subscription has never '
                     'had a successful notification.'
     )
-
-
-class Status(str, Enum):
-    """
-    Current status of a subscription
-    """
-    _init_ = 'value __doc__'
-
-    ACTIVE = "active", "for active subscriptions"
-    INACTIVE = "inactive", "for inactive subscriptions"
-    FAILED = "failed", "for failed subscription"
-    EXPIRED = "expired", "for expired subscription"
 
 
 class Condition(BaseModel):

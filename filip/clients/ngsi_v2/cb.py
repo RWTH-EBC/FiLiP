@@ -18,7 +18,6 @@ from filip.models.base import FiwareHeader, PaginationMethod
 from filip.utils.simple_ql import QueryString
 from filip.models.ngsi_v2.context import \
     ActionType, \
-    AttrsFormat, \
     Command, \
     ContextEntity, \
     ContextEntityKeyValues, \
@@ -27,6 +26,7 @@ from filip.models.ngsi_v2.context import \
     NamedContextAttribute, \
     Query, \
     Update
+from filip.models.ngsi_v2.base import AttrsFormat
 from filip.models.ngsi_v2.subscriptions import Subscription
 from filip.models.ngsi_v2.registrations import Registration
 

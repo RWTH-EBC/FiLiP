@@ -11,12 +11,8 @@ broker.
 from typing import List, Union, Optional
 from datetime import datetime
 from aenum import Enum
-from pydantic import \
-    AnyHttpUrl, \
-    BaseModel, \
-    Field
-from filip.models.ngsi_v2.context import EntityPattern, Expression
-from filip.models.ngsi_v2.subscriptions import Status
+from pydantic import BaseModel, Field
+from filip.models.ngsi_v2.base import EntityPattern, Expression, Http, Status
 
 
 class ForwardingMode(str, Enum):
@@ -32,7 +28,7 @@ class ForwardingMode(str, Enum):
 
 
 class Provider(BaseModel):
-    http: AnyHttpUrl = Field(
+    http: Http = Field(
         description="It is used to convey parameters for providers that "
                     "deliver information through the HTTP protocol. (Only "
                     "protocol supported nowadays). It must contain a subfield "
