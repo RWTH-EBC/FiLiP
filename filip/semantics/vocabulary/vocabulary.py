@@ -8,9 +8,6 @@ from pydantic import BaseModel
 from . import *
 from typing import List, Dict, Union, Set
 
-from ..ontology_parser.rdfparser import RdfParser
-
-
 class IdType(str, Enum):
     class_ = 'Class'
     object_property = 'Object Property'

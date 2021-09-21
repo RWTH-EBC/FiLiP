@@ -1,3 +1,4 @@
+import datetime
 import io
 from enum import Enum
 from typing import TYPE_CHECKING, Dict, List, Union
@@ -35,7 +36,7 @@ class Source(BaseModel):
     dependency_statements: List[Dict[str, str]] = []
     """ List[Dict[str, str]]: List of purged statements dicts with keys: 
     Parent Class, class, dependency, fulfilled"""
-    timestamp: str
+    timestamp: datetime.datetime
     """timestamp when the source was added to the project"""
     ontology_iri: str = None
     """Iri of the ontology of the source"""

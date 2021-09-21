@@ -6,8 +6,6 @@ from pydantic import BaseModel
 from filip.semantics.vocabulary import *
 from typing import List, Dict, Union, Set
 
-from ..ontology_parser.rdfparser import RdfParser
-
 
 class IdType(str, Enum):
     class_ = 'Class'
@@ -205,54 +203,6 @@ class VocabularyBuilder(BaseModel):
         """
         return iri in self.vocabulary.id_types
 
-
-    def transfer_settings(self, new_vocabulary: 'Vocabulary'):
-        """Transfer all the user made settings (labels, key_colums, ia_agent,..)
-        to a new vocabulary
-
-        Args:
-            new_vocabulary (Vocabulary): Vocabulary to which the settings of
-            this vocabulary should be transferred
-
-        Returns:
-            None
-        """
-
-        # agent&device settings
-        for class_ in self.vocabulary.get_classes():
-            if class_.iri in new_vocabulary.classes:
-                new_vocabulary.get_class_by_iri(class_.iri).is_agent_class = \
-                    class_.is_agent_class
-                new_vocabulary.get_class_by_iri(class_.iri).is_iot_class = \
-                    class_.is_iot_class
-
-        # label settings
-        for entity in self.vocabulary.get_all_entities():
-            new_entity = new_vocabulary.get_entity_by_iri(entity.iri)
-            if new_entity is not None:
-                new_entity.user_set_label = entity.user_set_label
-
-        # combined relation settings
-        combined_relation_pairs = [(self.vocabulary.combined_object_relations,
-                                    new_vocabulary.combined_object_relations),
-                                   (self.vocabulary.combined_data_relations,
-                                    new_vocabulary.combined_data_relations)]
-        for (old_list, new_list) in combined_relation_pairs:
-            for cr_id in old_list:
-                if cr_id in new_list:
-
-                    old_cr = self.vocabulary.get_combined_relation_by_id(cr_id)
-                    new_cr = new_vocabulary.get_combined_relation_by_id(cr_id)
-                    new_cr.is_key_information = old_cr.is_key_information
-                    new_cr.inspect = old_cr.inspect
-
-        # CombinedDataRelation additional Settings
-        for cdr_id in self.vocabulary.combined_data_relations:
-            if cdr_id in new_vocabulary.combined_data_relations:
-                old_cdr = self.vocabulary.get_combined_data_relation_by_id(cdr_id)
-                new_cdr = new_vocabulary.\
-                    get_combined_data_relation_by_id(cdr_id)
-                new_cdr.type = old_cdr.type
 
 
 

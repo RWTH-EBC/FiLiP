@@ -201,7 +201,7 @@ class Relation(BaseModel):
         targets = self.get_targets()
         for target_list in targets:
             for class_ in vocabulary.get_classes():
-                if class_.class_is_child_of_all(target_list):
+                if class_.is_child_of_all_classes(target_list):
                     possible_class_iris.add(class_.iri)
                     children = vocabulary.get_class_by_iri(class_.iri).\
                         child_class_iris

@@ -1,4 +1,5 @@
 import uuid
+import io
 from enum import Enum
 from typing import List, Tuple, Dict
 
@@ -77,41 +78,6 @@ class RdfParser:
             self.current_source.add_parsing_log_entry(level, entity_type,
                                                       entity_iri, msg)
 
-    def parse_source_into_vocabulary_old(self, source: Source,
-                                     vocabulary: Vocabulary) -> bool:
-        """ Parse a Source into the given vocabulary
-        Args:
-            source (Source)
-            vocabulary (Vocabulary)
-
-        Returns:
-            bool, True if success, False if Error occurred, as an invalid File
-        """
-
-        # if this is the predefined source don't parse it, just pretend it
-        # was successful
-        if source.predefined:
-            return True
-
-        g = rdflib.Graph()
-        # format = rdflib.util.guess_format(source.source_path)
-        vocabulary.set_current_source(source.id)
-        g.parse(source.content, format="turtle")
-
-        ontology_nodes = list(g.subjects(
-            object=rdflib.term.URIRef("http://www.w3.org/2002/07/owl#Ontology"),
-            predicate=rdflib.term.URIRef(Tags.rdf_type)))
-
-        # a source may have no ontology iri defined
-        # if wanted on this place more info about the ontology can be extracted
-        if len(ontology_nodes) > 0:
-            source.ontology_iri = get_iri_from_uriref(ontology_nodes[0])
-
-        self.current_source = source
-
-        self._parse_to_vocabulary(g, vocabulary)
-        return True
-
     def parse_source_into_vocabulary(self, source: Source,
                                      vocabulary: Vocabulary) -> bool:
         """ Parse a Source into the given vocabulary
@@ -123,8 +89,6 @@ class RdfParser:
             bool, True if success, False if Error occurred, as an invalid File
         """
 
-
-
         # if this is the predefined source don't parse it, just pretend it
         # was successful
         if source.predefined:
@@ -134,12 +98,15 @@ class RdfParser:
         g = rdflib.Graph()
 
         # format = rdflib.util.guess_format(source.source_path)
+        voc_builder.add_source(source)
         voc_builder.set_current_source(source.id)
-        g.parse(source.content, format="turtle")
+
+        g.parse(data=source.content, format="turtle")
 
         ontology_nodes = list(g.subjects(
             object=rdflib.term.URIRef("http://www.w3.org/2002/07/owl#Ontology"),
-            predicate=rdflib.term.URIRef(Tags.rdf_type)))
+            predicate=rdflib.term.URIRef(Tags.rdf_type.value)))
+
 
         # a source may have no ontology iri defined
         # if wanted on this place more info about the ontology can be extracted
@@ -149,6 +116,7 @@ class RdfParser:
         self.current_source = source
 
         self._parse_to_vocabulary(g, voc_builder)
+
         return True
 
     def _is_object_defined_by_other_source(self, a: rdflib.term,
@@ -182,13 +150,11 @@ class RdfParser:
         Returns:
             None
         """
-
         # OWLClasses
         for a in graph.subjects(
-                object=rdflib.term.URIRef
-                    ("http://www.w3.org/2002/07/owl#Class"),
-                predicate=rdflib.term.URIRef(Tags.rdf_type)):
-
+                object=rdflib.term.URIRef(
+                    "http://www.w3.org/2002/07/owl#Class"),
+                predicate=rdflib.term.URIRef(Tags.rdf_type.value)):
             if isinstance(a, rdflib.term.BNode):
                 pass
                 # owl:Class can also occure in complex target statements of
@@ -202,6 +168,7 @@ class RdfParser:
                 iri, label, comment = self._extract_annotations(graph, a)
                 c = Class(iri=iri, label=label, comment=comment)
                 voc_builder.add_class(class_=c)
+
 
                 # parentclass / relation parsing
                 for sub in graph.objects(
@@ -219,7 +186,7 @@ class RdfParser:
         for a in graph.subjects(
                 object=rdflib.term.URIRef(
                     "http://www.w3.org/2002/07/owl#ObjectProperty"),
-                predicate=rdflib.term.URIRef(Tags.rdf_type)):
+                predicate=rdflib.term.URIRef(Tags.rdf_type.value)):
 
             if isinstance(a, rdflib.term.BNode):
                 self._add_logging_information(LoggingLevel.warning,
@@ -253,7 +220,7 @@ class RdfParser:
         for a in graph.subjects(
                 object=rdflib.term.URIRef(
                     "http://www.w3.org/2002/07/owl#DatatypeProperty"),
-                predicate=rdflib.term.URIRef(Tags.rdf_type)):
+                predicate=rdflib.term.URIRef(Tags.rdf_type.value)):
 
             if isinstance(a, rdflib.term.BNode):
                 self._add_logging_information(LoggingLevel.warning,
@@ -277,7 +244,7 @@ class RdfParser:
         for a in graph.subjects(
                 object=rdflib.term.URIRef(
                     "http://www.w3.org/2000/01/rdf-schema#Datatype"),
-                predicate=rdflib.term.URIRef(Tags.rdf_type)):
+                predicate=rdflib.term.URIRef(Tags.rdf_type.value)):
 
             if isinstance(a, rdflib.term.BNode):
                 # self._add_logging_information(LoggingLevel.warning,
@@ -335,8 +302,9 @@ class RdfParser:
 
         # OWLIndividuals
 
-        for a in graph.subjects(object=rdflib.term.URIRef(Tags.owl_individual),
-                                predicate=rdflib.term.URIRef(Tags.rdf_type)):
+        for a in graph.subjects(
+                object=rdflib.term.URIRef(Tags.owl_individual.value),
+                predicate=rdflib.term.URIRef(Tags.rdf_type.value)):
 
             if isinstance(a, rdflib.term.BNode):
                 self._add_logging_information(LoggingLevel.warning,
@@ -351,11 +319,12 @@ class RdfParser:
                 iri, label, comment = self._extract_annotations(graph, a)
                 objects = graph.objects(subject=a,
                                         predicate=
-                                        rdflib.term.URIRef(Tags.rdf_type))
+                                        rdflib.term.URIRef(Tags.rdf_type.value))
                 # superclasses = types
                 types = []
                 for object in objects:
-                    if not object == rdflib.term.URIRef(Tags.owl_individual):
+                    if not object == \
+                           rdflib.term.URIRef(Tags.owl_individual.value):
                         types.extend(self.
                             _extract_objects_out_of_layered_combination(
                                         graph, object, True, False))
@@ -373,10 +342,11 @@ class RdfParser:
         # as we may not have loaded all dependencies we can not simply look it
         # up in vocabulary
         # -> getbase uri of statement and filter all known specifier uris
-        for sub in graph.subjects(predicate=rdflib.term.URIRef(Tags.rdf_type)):
+        for sub in graph.subjects(
+                predicate=rdflib.term.URIRef(Tags.rdf_type.value)):
             for obj in graph.objects(subject=sub,
                                      predicate=
-                                     rdflib.term.URIRef(Tags.rdf_type)):
+                                     rdflib.term.URIRef(Tags.rdf_type.value)):
 
                 if isinstance(obj, rdflib.term.BNode):
                     continue
@@ -455,7 +425,7 @@ class RdfParser:
                 objects.append(o)
 
             # Combination of statements
-            if rdflib.term.URIRef(Tags.owl_intersection) in predicates:
+            if rdflib.term.URIRef(Tags.owl_intersection.value) in predicates:
                 objects = self._extract_objects_out_of_single_combination(
                     graph, node, True, False)
                 for object in objects:
@@ -463,12 +433,12 @@ class RdfParser:
                                               voc_builder=voc_builder,
                                               node=object, class_iri=class_iri)
 
-            elif rdflib.term.URIRef(Tags.owl_union) in predicates:
+            elif rdflib.term.URIRef(Tags.owl_union.value) in predicates:
                 self._add_logging_information(
                     LoggingLevel.severe, IdType.class_, class_iri,
                     "Relation statements combined with or")
 
-            elif rdflib.term.URIRef(Tags.owl_one_of) in predicates:
+            elif rdflib.term.URIRef(Tags.owl_one_of.value) in predicates:
                 self._add_logging_information(
                     LoggingLevel.severe, IdType.class_, class_iri,
                     "Relation statements combined with oneOf")
@@ -481,7 +451,7 @@ class RdfParser:
                 owl_on_property = ""
 
                 for i in range(len(predicates)):
-                    if predicates[i] == rdflib.term.URIRef(Tags.rdf_type):
+                    if predicates[i] == rdflib.term.URIRef(Tags.rdf_type.value):
                         rdf_type = get_iri_from_uriref(objects[i])
                     elif predicates[i] == rdflib.term.URIRef(
                             "http://www.w3.org/2002/07/owl#onProperty"):
@@ -591,16 +561,16 @@ class RdfParser:
     def _parse_cardinality(self, graph: rdflib.Graph,
                            relation: Relation, statement, statements,
                            treated_statements):
-        if Tags.owl_on_class in statements:
+        if Tags.owl_on_class.value in statements:
             relation.restriction_cardinality = str(statements[statement])
-            target = statements[Tags.owl_on_class]
+            target = statements[Tags.owl_on_class.value]
             self._parse_relation_values(graph, relation, target)
-            treated_statements.append(Tags.owl_on_class)
-        elif Tags.owl_on_data_range in statements:
+            treated_statements.append(Tags.owl_on_class.value)
+        elif Tags.owl_on_data_range.value in statements:
             relation.restriction_cardinality = str(statements[statement])
-            target = statements[Tags.owl_on_data_range]
+            target = statements[Tags.owl_on_data_range.value]
             self._parse_relation_values(graph, relation, target)
-            treated_statements.append(Tags.owl_on_data_range)
+            treated_statements.append(Tags.owl_on_data_range.value)
         else:
             # has From:
             # in File: owl:maxCardinality "1"^^xsd:nonNegativeInteger
@@ -618,8 +588,8 @@ class RdfParser:
                                                target_iri=datatype)
             relation.target_statement = target_statement
 
-    def _parse_has_value(self, graph: rdflib.Graph, vocabulary: Vocabulary,
-                         relation: Relation, node: rdflib.term):
+    def _parse_has_value(self, graph: rdflib.Graph, relation: Relation,
+                         node: rdflib.term):
         self._parse_relation_values(graph, relation, node)
         # for hasValue only a targetstatement that is a leaf is allowed
         if not relation.target_statement.type == StatementType.LEAF:
@@ -642,11 +612,11 @@ class RdfParser:
 
                 current_statement.set_target(target_iri=target_iri)
             else:
-                if rdflib.term.URIRef(Tags.owl_intersection) in \
+                if rdflib.term.URIRef(Tags.owl_intersection.value) in \
                         graph.predicates(subject=current_term):
 
                     current_statement.type = StatementType.AND
-                elif rdflib.term.URIRef(Tags.owl_union) in \
+                elif rdflib.term.URIRef(Tags.owl_union.value) in \
                         graph.predicates(subject=current_term):
 
                     current_statement.type = StatementType.OR
@@ -683,24 +653,24 @@ class RdfParser:
         # the passed startnode needs to contain an intersection or a union
         # both at the same time should not be possible
         start_node = None
-        if rdflib.term.URIRef(Tags.owl_intersection) \
+        if rdflib.term.URIRef(Tags.owl_intersection.value) \
                 in predicates:
             if accept_and:
                 start_node = next(graph.objects(
                     subject=node,
-                    predicate=rdflib.term.URIRef(Tags.owl_intersection)))
-        elif rdflib.term.URIRef(Tags.owl_union) \
+                    predicate=rdflib.term.URIRef(Tags.owl_intersection.value)))
+        elif rdflib.term.URIRef(Tags.owl_union.value) \
                 in predicates:
             if accept_or:
                 start_node = next(graph.objects(
                     subject=node,
-                    predicate=rdflib.term.URIRef(Tags.owl_union)))
-        elif rdflib.term.URIRef(Tags.owl_one_of) \
+                    predicate=rdflib.term.URIRef(Tags.owl_union.value)))
+        elif rdflib.term.URIRef(Tags.owl_one_of.value) \
                 in predicates:
             if accept_one_of:
                 start_node = next(graph.objects(
                     subject=node,
-                    predicate=rdflib.term.URIRef(Tags.owl_one_of)))
+                    predicate=rdflib.term.URIRef(Tags.owl_one_of.value)))
         else:
             self._add_logging_information(
                 LoggingLevel.severe, IdType.class_, self.current_class_iri,
@@ -739,5 +709,3 @@ class RdfParser:
                              (graph, node, accept_and, accept_or))
         return result
 
-    # dic = parseFile("")
-    # print(len(dic.data_properties))
