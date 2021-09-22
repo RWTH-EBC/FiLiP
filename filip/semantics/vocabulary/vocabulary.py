@@ -378,11 +378,6 @@ class Vocabulary(BaseModel):
             index = iri.rfind("/")
             return iri[:index]
 
-    def set_current_source(self, source_id: str):
-        assert source_id in self.sources
-        self.current_source = self.sources[source_id]
-
-
     def get_entity_by_iri(self, iri: str) -> Union[None, Entity]:
         """Get the entity with the given iri
         Fast efficient methode

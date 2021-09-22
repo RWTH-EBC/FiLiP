@@ -1,7 +1,7 @@
 import copy
 import os
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 
 from filip.semantics.ontology_parser.post_processer import \
     post_process_vocabulary
@@ -11,18 +11,35 @@ from filip.semantics.vocabulary import Vocabulary, Source
 
 class VocabularyConfigurator:
 
-    def create_vocabulary(self) -> Vocabulary:
+    @staticmethod
+    def create_vocabulary() -> Vocabulary:
         return Vocabulary()
 
     @staticmethod
-    def add_ontology_to_vocabulary_as_file(vocabulary: Vocabulary,
-                                           path_to_file: str) -> Vocabulary:
+    def delete_source_from_vocabulary(vocabulary: Vocabulary,
+                                      source_id: str) -> Vocabulary:
+        new_vocabulary = Vocabulary()
+        parser = RdfParser()
+        for source in vocabulary.sources.values():
+            if not source_id == source.id:
+                parser.parse_source_into_vocabulary(
+                    source=copy.deepcopy(source),vocabulary=new_vocabulary)
+
+        return new_vocabulary
+
+    @staticmethod
+    def add_ontology_to_vocabulary_as_file(
+            vocabulary: Vocabulary,
+            path_to_file: str,
+            source_name: Optional[str] = None) -> Vocabulary:
+
         with open(path_to_file, 'r') as file:
             data = file.read().replace('\n', '')
 
-        filename = os.path.basename(path_to_file).split(".")[0]
+        if source_name is None:
+            source_name = os.path.basename(path_to_file).split(".")[0]
 
-        source = Source(source_name=filename,
+        source = Source(source_name=source_name,
                         content=data,
                         timestamp=datetime.now())
 
@@ -48,7 +65,7 @@ class VocabularyConfigurator:
         new_vocabulary = Vocabulary()
         parser = RdfParser()
         for source in vocabulary.sources.values():
-            parser.parse_source_into_vocabulary(source=source,
+            parser.parse_source_into_vocabulary(source=copy.deepcopy(source),
                                                 vocabulary=new_vocabulary)
 
         # try to parse in the new sources and post_process
