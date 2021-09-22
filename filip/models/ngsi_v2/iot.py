@@ -259,6 +259,9 @@ class ServiceGroup(BaseModel):
                     "of measures so that IOTA does not progress. If not "
                     "specified default is false."
     )
+    autoprovision: Optional[bool] = Field(
+        description="optional boolean value"
+    )
     ngsiVersion: Optional[NgsiVersion] = Field(
         description="optional string value used in mixed mode to switch between"
                     " NGSI-v2 and NGSI-LD payloads. Possible values are: "
