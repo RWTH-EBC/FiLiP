@@ -1,12 +1,12 @@
 import copy
 import os
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 from filip.semantics.ontology_parser.post_processer import \
     post_process_vocabulary
 from filip.semantics.ontology_parser.rdfparser import RdfParser
-from filip.semantics.vocabulary import Vocabulary, Source
+from filip.semantics.vocabulary import Vocabulary, Source, Entity
 
 
 class VocabularyConfigurator:
@@ -34,7 +34,7 @@ class VocabularyConfigurator:
             source_name: Optional[str] = None) -> Vocabulary:
 
         with open(path_to_file, 'r') as file:
-            data = file.read().replace('\n', '')
+            data = file.read()
 
         if source_name is None:
             source_name = os.path.basename(path_to_file).split(".")[0]
@@ -49,7 +49,7 @@ class VocabularyConfigurator:
     @staticmethod
     def add_ontology_to_vocabulary_as_string(vocabulary: Vocabulary,
                                              source_name: str,
-                                             source_content: str):
+                                             source_content: str) -> Vocabulary:
         source = Source(source_name=source_name,
                         content=source_content,
                         timestamp=datetime.now())
@@ -73,12 +73,55 @@ class VocabularyConfigurator:
             for source in sources:
                 parser.parse_source_into_vocabulary(source=source,
                                                     vocabulary=new_vocabulary)
-            post_process_vocabulary(vocabulary=new_vocabulary,
-                                    old_vocabulary=vocabulary)
+            post_process_vocabulary(vocabulary=new_vocabulary)
         except Exception:
             raise ParsingException
 
         return new_vocabulary
+
+    @staticmethod
+    def get_label_conflicts_in_vocabulary(vocabulary: Vocabulary):
+
+        # maps label to list of entities with that label
+        used_labels: Dict[str, List[Entity]] = {}
+        duplicate_labels = set()
+
+        # process entities to find conflicts, ignore individuals and datatypes
+        # as they are never used as Keys in FIWARE
+        # Multiple individuals/datatypes can have the same label,
+        # this is no issue for the system
+        # it may disturb the user, but it is his own choice
+        entities_to_check = [vocabulary.classes,
+                             vocabulary.object_properties,
+                             vocabulary.data_properties,
+                             # vocabulary.datatypes,
+                             # vocabulary.individuals
+                             ]
+
+        for entity_list in entities_to_check:
+            for entity in entity_list.values():
+                label = entity.get_label()
+                if label in used_labels:
+                    duplicate_labels.add(label)
+                    used_labels[label].append(entity)
+                else:
+                    used_labels[label] = [entity]
+
+        # sort duplicate_labels to have alphabetical order in list
+        dup_list = list(duplicate_labels)
+        dup_list = sorted(dup_list, key=str.casefold)
+
+        result: Dict[str, List[Entity]] = {}
+        # store and log findings
+        for label in dup_list:
+            result[label] = used_labels[label]
+
+        return result
+
+    @staticmethod
+    def is_vocabulary_valid(vocabulary: Vocabulary):
+        return len(VocabularyConfigurator.
+                   get_label_conflicts_in_vocabulary(vocabulary).keys()) == 0
 
 
 class ParsingException(Exception):

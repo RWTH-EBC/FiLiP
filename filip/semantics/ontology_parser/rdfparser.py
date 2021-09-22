@@ -155,6 +155,7 @@ class RdfParser:
                 object=rdflib.term.URIRef(
                     "http://www.w3.org/2002/07/owl#Class"),
                 predicate=rdflib.term.URIRef(Tags.rdf_type.value)):
+
             if isinstance(a, rdflib.term.BNode):
                 pass
                 # owl:Class can also occure in complex target statements of

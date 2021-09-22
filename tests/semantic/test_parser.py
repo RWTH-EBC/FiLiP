@@ -11,6 +11,7 @@ from filip.semantics.ontology_parser.post_processer import \
     post_process_vocabulary
 from filip.semantics.ontology_parser.rdfparser import RdfParser
 from filip.semantics.vocabulary import Vocabulary, Source, DatatypeType
+from filip.semantics.vocabulary_configurator import VocabularyConfigurator
 
 
 class TestModels(unittest.TestCase):
@@ -30,14 +31,18 @@ class TestModels(unittest.TestCase):
         with open('./ontology_files/ParsingTesterOntology.ttl', 'rb') as file:
             data = file.read()
 
-        source = Source(id="my_unique_id", source_name="TestSource",
-                        content=data, timestamp=datetime.datetime.now())
+        # source = Source(id="my_unique_id", source_name="TestSource",
+        #                 content=data, timestamp=datetime.datetime.now())
+        #
+        # parser = RdfParser()
+        # parser.parse_source_into_vocabulary(source=source,
+        #                                     vocabulary=vocabulary)
+        #
+        # post_process_vocabulary(vocabulary=vocabulary)
 
-        parser = RdfParser()
-        parser.parse_source_into_vocabulary(source=source,
-                                            vocabulary=vocabulary)
+        vocabulary = VocabularyConfigurator.add_ontology_to_vocabulary_as_string(vocabulary, "test",data)
 
-        post_process_vocabulary(vocabulary=vocabulary)
+
         # class annotations
         self.assertEqual(vocabulary.get_class_by_iri(iri("Class1")).label,
                          "Class1")

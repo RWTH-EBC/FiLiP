@@ -61,15 +61,6 @@ class Vocabulary(BaseModel):
     """Maps all entity iris and (combined)relations to their Entity/Object 
         type, to speed up lookups"""
 
-    conflicting_label_entities: Dict[str, List[Entity]] = {}
-    """ used to store these results from postprocessing until the vocabulary is 
-    committed matches label to list of entities who currently have that label"""
-
-    conflicting_original_labels: Set[str] = set()
-    """used to store results from postprocessing
-    contains all original labels that were found more than once """
-
-
     def get_type_of_id(self, id: str) -> Union[IdType,None]:
         """Get the type (class, relation,...) of an iri/id
 

@@ -32,7 +32,7 @@ class Source(BaseModel):
     """File content of the provided ontology file"""
 
     parsing_log: List[Dict[str, Union[LoggingLevel, 'IdType', str]]] = []
-    """Log containg all issues that were discovered while parsing"""
+    """Log containing all issues that were discovered while parsing"""
     dependency_statements: List[Dict[str, str]] = []
     """ List[Dict[str, str]]: List of purged statements dicts with keys: 
     Parent Class, class, dependency, fulfilled"""

@@ -46,7 +46,6 @@ def post_process_vocabulary(vocabulary: Vocabulary,
         transfer_settings(new_vocabulary=vocabulary,
                           old_vocabulary=old_vocabulary)
     make_labels_fiware_safe(voc_builder)
-    check_for_duplicate_labels(voc_builder)
 
     sort_relations(voc_builder)
     mirror_object_property_inverses(voc_builder)
@@ -336,63 +335,6 @@ def make_labels_fiware_safe(voc_builder: VocabularyBuilder):
 
         if entity.is_label_protected(entity.label):
             entity.label = "Unallowed_Label"
-
-
-def check_for_duplicate_labels(voc_builder: VocabularyBuilder):
-    """Check and log all entity labels that are not unique
-
-    Args:
-        voc_builder: Builder object for Vocabulary
-    Returns:
-        None
-    """
-    vocabulary = voc_builder.vocabulary
-
-    vocabulary.conflicting_label_entities = {}
-    vocabulary.conflicting_original_labels.clear()
-
-    # original label counter
-    original_labels_first_encounter: Set[str] = set()
-
-    # maps label to list of entities with that label
-    used_labels: Dict[str, List[Entity]] = {}
-    duplicate_labels = set()
-
-    # process entities to find conflicts, ignore individuals and datatypes as
-    # they are never used as Keys in FIWARE
-    # Multiple individuals/datatypes can have the same label,
-    # this is no issue for the system
-    # it may disturb the user, but it is his own choice
-    entities_to_check = [vocabulary.classes,
-                         vocabulary.object_properties,
-                         vocabulary.data_properties,
-                         # vocabulary.datatypes,
-                         # vocabulary.individuals
-                         ]
-
-    for entity_list in entities_to_check:
-        for entity in entity_list.values():
-            label = entity.get_label()
-            if label in used_labels:
-                duplicate_labels.add(label)
-                used_labels[label].append(entity)
-            else:
-                used_labels[label] = [entity]
-
-            if entity.get_original_label() in original_labels_first_encounter:
-                vocabulary.conflicting_original_labels.add(
-                    entity.get_original_label())
-            else:
-                original_labels_first_encounter.add(entity.get_original_label())
-
-    # sort duplicate_labels to have alpahbatical order in list
-    dup_list = list(duplicate_labels)
-    dup_list = sorted(dup_list, key=str.casefold)
-
-    # store and log findings
-    for label in dup_list:
-        vocabulary.conflicting_label_entities[label] = used_labels[label]
-
 
 def compute_ancestor_classes(voc_builder: VocabularyBuilder):
     """Compute all ancestor classes of classes
