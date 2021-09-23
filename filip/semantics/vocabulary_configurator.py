@@ -123,6 +123,16 @@ class VocabularyConfigurator:
         return len(VocabularyConfigurator.
                    get_label_conflicts_in_vocabulary(vocabulary).keys()) == 0
 
+    @staticmethod
+    def build_class_models(vocabulary: Vocabulary):
+
+        if not VocabularyConfigurator.is_vocabulary_valid(vocabulary):
+            raise Exception
+
+        for class_ in vocabulary.classes.values():
+            print()
+            print(class_.dict())
+
 
 class ParsingException(Exception):
 

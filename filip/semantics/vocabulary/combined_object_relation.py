@@ -21,7 +21,7 @@ class CombinedObjectRelation(CombinedRelation):
         result_set = set()
         for relation in relations:
             result_set.update(relation.
-                              get_all_possible_target_classes(vocabulary))
+                              get_all_possible_target_class_iris(vocabulary))
 
         return list(result_set)
 

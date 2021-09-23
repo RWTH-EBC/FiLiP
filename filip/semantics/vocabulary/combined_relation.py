@@ -1,6 +1,6 @@
 
 from pydantic import BaseModel
-from typing import List, TYPE_CHECKING
+from typing import List, TYPE_CHECKING, Set
 import uuid
 from . import Relation
 
@@ -68,3 +68,16 @@ class CombinedRelation(BaseModel):
             res = res + relation.to_string(vocabulary) + ", "
 
         return res[:-2]
+
+    def get_all_target_iris(self, vocabulary: 'Vocabulary') -> Set[str]:
+        iris = set()
+
+        for relation_id in self.relation_ids:
+            relation = vocabulary.get_relation_by_id(relation_id)
+            iris.update(relation.get_all_target_iris())
+        return iris
+
+    def get_all_target_labels(self, vocabulary: 'Vocabulary') -> Set[str]:
+        return {vocabulary.get_label_for_entity_iri(iri)
+                for iri in self.get_all_target_iris(vocabulary)}
+

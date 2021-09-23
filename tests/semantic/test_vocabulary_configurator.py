@@ -121,6 +121,9 @@ class TestModels(unittest.TestCase):
             True
         )
 
+    def test_build_models(self):
+        VocabularyConfigurator.build_class_models(vocabulary=self.vocabulary_1)
+
 
     def tearDown(self) -> None:
         pass

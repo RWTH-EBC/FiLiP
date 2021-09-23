@@ -4,10 +4,10 @@ from pydantic import BaseModel
 from enum import Enum
 
 
-from . import TargetStatement
+from . import TargetStatement, StatementType
 
 if TYPE_CHECKING:
-    from . import Vocabulary
+    from . import Vocabulary, Class
 
 
 class RestrictionType(str, Enum):
@@ -180,9 +180,10 @@ class Relation(BaseModel):
         return self.is_restriction_fulfilled(number_of_fulfilling_values,
                                              len(values))
 
-    def get_all_possible_target_classes(self, vocabulary: 'Vocabulary') \
+    def get_all_possible_target_class_iris(self, vocabulary: 'Vocabulary') \
             -> Set[str]:
-        """Get a set of classes that are possible values for an objectRelation
+        """Get a set of class iris that are possible values for an
+        objectRelation
 
         Args:
             vocabulary (Vocabulary): Vocabulary of this project
@@ -238,3 +239,22 @@ class Relation(BaseModel):
                     res.extend(datatype.enum_values)
 
         return res
+
+    def get_all_target_iris(self):
+        iris = set()
+
+        statements = [self.target_statement]
+
+        while len(statements) > 0:
+            statement = statements.pop()
+            if statement.type == StatementType.LEAF:
+                if not statement.target_iri == "":
+                    iris.add(statement.target_iri)
+            else:
+                statements.extend(statement.target_statements)
+
+        return iris
+
+
+
+

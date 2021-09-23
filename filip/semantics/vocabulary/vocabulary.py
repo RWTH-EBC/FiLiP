@@ -194,7 +194,7 @@ class Vocabulary(BaseModel):
         Returns:
             List[Class]
         """
-        return self.classes.values()
+        return list(self.classes.values())
 
     def get_classes_sorted_by_label(self) -> List[Class]:
         return sorted(self.classes.values(),
