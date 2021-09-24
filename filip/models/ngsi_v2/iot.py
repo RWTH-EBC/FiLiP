@@ -275,7 +275,7 @@ class ServiceGroup(BaseModel):
         description="optional boolean: If false, autoprovisioned devices "
                     "(i.e. devices that are not created with an explicit "
                     "provision operation but when the first measure arrives) "
-                    "are not allowed in this group. 
+                    "are not allowed in this group. "
                     "Default (in the case of omitting the field) is true."
     )
     ngsiVersion: Optional[NgsiVersion] = Field(
