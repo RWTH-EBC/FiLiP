@@ -1,5 +1,3 @@
-from __future__ import annotations
-import logging
 """
 created April 1st, 2021
 
@@ -7,7 +5,8 @@ created April 1st, 2021
 
 Module contains models for accessing and interaction with FIWARE's IoT-Agents.
 """
-
+from __future__ import annotations
+import logging
 import itertools
 from enum import Enum
 from typing import Any, Dict, Optional, List, Union
@@ -16,6 +15,7 @@ import pytz
 from pydantic import BaseModel, Field, validator, AnyHttpUrl
 from filip.models.base import NgsiVersion, DataType, FiwareRegex
 from filip.models.ngsi_v2.context import NamedContextMetadata
+
 
 logger = logging.getLogger()
 
