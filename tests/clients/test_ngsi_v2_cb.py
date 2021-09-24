@@ -333,10 +333,7 @@ class TestContextBroker(unittest.TestCase):
             id3 = client.post_subscription(sub2)
             self.assertNotEqual(id1, id3)
 
-            # Clean up
-            subs = client.get_subscription_list()
-            for sub in subs:
-                client.delete_subscription(subscription_id=sub.id)
+
 
     def test_batch_operations(self):
         """
@@ -539,6 +536,10 @@ class TestContextBroker(unittest.TestCase):
             entities = [ContextEntity(id=entity.id, type=entity.type) for
                         entity in self.client.get_entity_list()]
             self.client.update(entities=entities, action_type='delete')
+
+            subs = self.client.get_subscription_list()
+            for sub in subs:
+                self.client.delete_subscription(subscription_id=sub.id)
         except RequestException:
             pass
 

@@ -239,3 +239,14 @@ class TestContextModels(unittest.TestCase):
             NamedContextMetadata(name=string)
             ContextAttribute(type=string)
             ContextEntityKeyValues(id=string, type=string)
+
+    def tearDown(self) -> None:
+        """
+        Cleanup test server
+        """
+        fiware_header = FiwareHeader(service='filip',
+                                     service_path='/testing')
+        with ContextBrokerClient(fiware_header=fiware_header) as client:
+            sub_ids = [sub.id for sub in client.get_subscription_list()]
+            for sub_id in sub_ids:
+                client.delete_subscription(subscription_id=sub_id)
