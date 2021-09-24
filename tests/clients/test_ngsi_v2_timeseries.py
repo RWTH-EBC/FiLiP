@@ -41,6 +41,9 @@ class TestTimeSeries(unittest.TestCase):
         self.entity_2 = ContextEntity(id='LivingRoom', type='Room', **self.attr)
         self.cb_client = ContextBrokerClient(fiware_header=self.fiware_header)
 
+        self.cb_client.post_entity(entity=self.entity_1)
+        self.cb_client.post_entity(entity=self.entity_2)
+
     def test_meta_endpoints(self) -> None:
         """
         Test meta data endpoints
@@ -132,11 +135,14 @@ class TestTimeSeries(unittest.TestCase):
         """
         try:
             for sub in self.cb_client.get_subscription_list():
-                for entity in sub.subject.entities:
-                    if (entity.id, entity.type) == (self.entity_1.id,
-                                                    self.entity_1.type):
-                        self.cb_client.delete_subscription(sub.id)
+                self.cb_client.delete_subscription(sub.id)
         except:
             pass
+        try:
+            self.cb_client.delete_entity(entity_id=self.entity_1.id)
+            self.cb_client.delete_entity(entity_id=self.entity_2.id)
+        except:
+            pass
+
         self.client.close()
         self.cb_client.close()
