@@ -98,7 +98,6 @@ class Registration(BaseModel):
     (entities, attributes) of the context information space, including those
     located at specific geographical areas.
     """
-
     id: Optional[str] = Field(
         description="Unique identifier assigned to the registration. "
                     "Automatically generated at creation time."
