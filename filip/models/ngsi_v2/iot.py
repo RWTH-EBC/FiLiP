@@ -258,7 +258,7 @@ class ServiceGroup(BaseModel):
                     "in the Device Registry."
     )
     expressionLanguage: Optional[ExpressionLanguage] = Field(
-        default="legacy"
+        default="legacy",
         description="optional boolean value, to set expression language used "
                     "to compute expressions, possible values are: "
                     "legacy or jexl. When not set or wrongly set, legacy "
