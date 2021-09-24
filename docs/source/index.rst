@@ -11,15 +11,10 @@ Welcome to the documentation of FiLiP!
 .. toctree::
    :maxdepth: 5
 
-   filip.clients
-   filip.models
-   filip.utils
-
-
-Version History
--------------------
-
-.. mdinclude::  ../../CHANGELOG.md
+   examples
+   filip
+   contribution
+   version_his
 
 
 Indices and tables
