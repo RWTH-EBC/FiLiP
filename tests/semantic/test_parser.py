@@ -40,7 +40,8 @@ class TestModels(unittest.TestCase):
         #
         # post_process_vocabulary(vocabulary=vocabulary)
 
-        vocabulary = VocabularyConfigurator.add_ontology_to_vocabulary_as_string(vocabulary, "test",data)
+        vocabulary = VocabularyConfigurator.\
+            add_ontology_to_vocabulary_as_string(vocabulary, "test", data)
 
 
         # class annotations
@@ -190,7 +191,7 @@ def get_targets_for_combine_object_relation(vocabulary: Vocabulary,
 
     for rel_id in com_obj_rel.relation_ids:
         relation = vocabulary.get_relation_by_id(rel_id)
-        target_iris = relation.get_all_possible_target_classes(vocabulary)
+        target_iris = relation.get_all_possible_target_class_iris(vocabulary)
         for target_iri in target_iris:
             possible_class_iris.add(target_iri)
 

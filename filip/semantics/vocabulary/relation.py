@@ -255,6 +255,18 @@ class Relation(BaseModel):
 
         return iris
 
+    def export_rule(self, vocabulary: 'Vocabulary') -> (str, str):
+        # replace the iris in the target string with class labels
+        targets = []
+        for inner_list in self.get_targets():
+            new_list = []
+            targets.append(new_list)
+            for iri in inner_list:
+                new_list.append(vocabulary.get_label_for_entity_iri(iri))
 
-
+        if (int)(self.restriction_cardinality) > 0:
+            return f'"{self.restriction_type.value}|' \
+                   f'{self.restriction_cardinality}"', targets
+        else:
+            return f'"{self.restriction_type.value}"', targets
 

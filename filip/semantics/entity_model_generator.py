@@ -1,104 +1,51 @@
 import json
+from typing import List
 
 from filip.semantics.vocabulary import Vocabulary, Class
 from filip.semantics.vocabulary.target_statment import StatementType
-from filip.utils.datamodel_generator import  create_datamodel
-
-# https://pydantic-docs.helpmanual.io/datamodel_code_generator/
-# https://koxudaxi.github.io/datamodel-code-generator/
-
-def generate_model_for_class(vocabulary: Vocabulary, class_: Class):
-
-    # Build dictionary
-    json_dic = {}
-
-    json_dic['title'] = class_.get_label()
-    json_dic['type'] = "object"
-
-    properties_dic = {}
-    json_dic['properties'] = properties_dic
-    for cor in class_.get_combined_object_relations(vocabulary=vocabulary):
-        cor_dict = {}
-
-        # set the description equal to the target information string
-        # ex: some Light, min 1 LED
-        relations = cor.get_relations(vocabulary=vocabulary)
-        cor_dict['description'] = \
-            cor.get_all_targetstatements_as_string(vocabulary=vocabulary)
-
-        # Fill in  allowed classes for field
-        if len(relations) == 1:
-            cor_dict['type'] ='string'
-                # relations[0].get_all_possible_target_class_labels(vocabulary)[0]
-        else:
-            types = [r.get_all_possible_target_class_labels(vocabulary)
-                     for r in relations]
-            cor_dict['type'] = f"Union{types}"
-
-        cor_dict['default'] = 'def'
-
-        properties_dic[cor.get_property_label(vocabulary)] = cor_dict
-
-    print(json.dumps(obj=json_dic, indent=2))
-    create_datamodel(output_path="D:/",
-                     filename=f"{class_.get_label()}.py",
-                     schema=json.dumps(obj=json_dic, indent=2))
-
-def generate_model(vocabulary: Vocabulary):
-
-    # Build dictionary
-    vocabulary_list = []
-
-    for class_ in vocabulary.get_classes():
-        class_dic = {}
-        class_dic['title'] = class_.get_label()
-        class_dic['type'] = "object"
-
-        properties_dic = {}
-        class_dic['properties'] = properties_dic
-        for cor in class_.get_combined_object_relations(vocabulary=vocabulary):
-            cor_dict = {}
-
-            # set the description equal to the target information string
-            # ex: some Light, min 1 LED
-            relations = cor.get_relations(vocabulary=vocabulary)
-            cor_dict['description'] = \
-                cor.get_all_targetstatements_as_string(vocabulary=vocabulary)
-
-            # Fill in  allowed classes for field
-            if len(relations) == 1:
-                cor_dict['type'] = \
-                    relations[0].get_all_possible_target_class_labels(vocabulary)[0]
-            else:
-                types = [r.get_all_possible_target_class_labels(vocabulary)
-                         for r in relations]
-                cor_dict['type'] = f"Union{types}"
-
-            properties_dic[cor.get_property_label(vocabulary)] = cor_dict
+from filip.utils.datamodel_generator import create_datamodel
 
 
-        vocabulary_list.append(class_dic)
-
-    dic_obj = {}
-    print(json.dumps(obj=vocabulary_list, indent=2))
-
-    create_datamodel(output_path="D:/",
-                     filename=f"test.py",
-                     schema=json.dumps(obj=vocabulary_list, indent=2))
-
-
-def generate_vocabulary_models(vocabulary: Vocabulary):
+def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
+                               filename: str):
 
     content: str = ""
 
     # imports
-    content += "from pydantic import BaseModel, Field"
+    content += "from pydantic import BaseModel, Field\n"
+    content += "from typing import List, Union\n"
+    content += "from filip.semantics.semantic_models import SemanticClass, " \
+               "SemanticIndividual, Relationship\n"
 
-    #classes
-    for class_ in vocabulary.get_classes_sorted_by_label():
+    content += "\n"
+    content += "##CLASSES##"
+
+    classes: List[Class] = vocabulary.get_classes_sorted_by_label()
+    class_order:  List[Class] = []
+    index: int = 0
+    while len(classes) > 0:
+        print([c.get_label() for c in class_order])
+        print(index)
+        print([c.get_label() for c in classes])
+        for c in classes:
+            for p in c.get_parent_classes(vocabulary):
+                print(p.get_label())
+        class_ = classes[index]
+        parents = class_.get_parent_classes(vocabulary)
+        if len([p for p in parents if p in class_order]) == len(parents):
+            class_order.append(class_)
+            del classes[index]
+            index = 0
+
+        else:
+            index += 1
+
+    for class_ in class_order:
+        relationship_validators_content = ""
+
         content += "\n\n"
         # Parent Classes
-        parent_classes = "BaseModel"
+        parent_classes = "SemanticClass"
         for parent in class_.get_parent_classes(vocabulary):
             parent_classes += f", {parent.get_label()}"
 
@@ -108,7 +55,7 @@ def generate_vocabulary_models(vocabulary: Vocabulary):
         # Relation fields
         content += "#Relation fields"
         for cor in class_.get_combined_object_relations(vocabulary):
-            content += "\n\t"
+            content += "\n\n\t"
 
             # target_names = cor.get_all_target_labels(vocabulary)
             # if len(target_names)>1:
@@ -116,20 +63,62 @@ def generate_vocabulary_models(vocabulary: Vocabulary):
             # else:
             #     types = target_names.pop()
 
-
-
-
-            content += f"{cor.get_property_label(vocabulary)}: List[{types}] = Field("
+            label = cor.get_property_label(vocabulary)
+            # field
+            content += f"{label}: Relationship = Relationship("
             content += "\n\t\t"
-            content += f"description = '{cor.get_all_targetstatements_as_string(vocabulary)}',"
+            content += f"rule='{cor.get_all_targetstatements_as_string(vocabulary)}',"
             content += "\n\t\t"
-            content += f"default = []"
-            content += "\n\t"
-            content += ")"
+            content += f"_rules={cor.export_rule(vocabulary)},"
+            content += "\n\t)"
+
+        if len(class_.get_combined_object_relations(vocabulary)) == 0:
+            content += "\n\t pass"
+
+    content += "\n\n\n"
+    content += "##Individuals##"
+
+    for individual in vocabulary.individuals.values():
+        content += "\n\n"
+        parent_classes = "SemanticIndividual"
+
+        for parent in individual.get_parent_classes(vocabulary):
+            parent_classes += f", {parent.get_label()}"
+
+        content += f"class {individual.get_label()}({parent_classes}):"
+
+        # setter prevention
+        treated_properties = set()
+        for class_ in individual.get_parent_classes(vocabulary):
+            for cor in class_.get_combined_object_relations(vocabulary):
+                if cor.get_property_label(vocabulary) in treated_properties:
+                    continue
+                else:
+                    treated_properties.add(cor.get_property_label(vocabulary))
+
+                content += "\n\t"
+                content += f"@{cor.get_property_label(vocabulary)}.setter"
+                content += "\n\t"
+                content += f"def {cor.get_property_label(vocabulary)}(self, " \
+                           f"value):"
+                content += "\n\t\t"
+                content += "assert False, 'Individuals have no values'"
+
+        if len(treated_properties) == 0:
+            content += "\n\t pass"
+
+    content += "\n\n\n"
+    # update forware references
+    # for class_ in vocabulary.get_classes_sorted_by_label():
+    #     content += "\n"
+    #     content += f"{class_.get_label()}.update_forward_refs()"
+    #
+    # for individual in vocabulary.individuals.values():
+    #     content += "\n"
+    #     content += f"{individual.get_label()}.update_forward_refs()"
 
 
-
-        with open("D:/Output.py", "w") as text_file:
-            text_file.write(content)
-
-
+    if not path[:-1] == "/":
+        path += "/"
+    with open(f"{path}{filename}.py", "w") as text_file:
+        text_file.write(content)

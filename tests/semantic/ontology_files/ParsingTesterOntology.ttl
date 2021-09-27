@@ -261,8 +261,8 @@
                         ] .
 
 
-###  http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25#Class12*
-<http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25#Class12*> rdf:type owl:Class ;
+###  http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25#Class12
+<http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25#Class12> rdf:type owl:Class ;
                                                                                     rdfs:subClassOf [ owl:intersectionOf ( :Class1
                                                                                                                            :Class2
                                                                                                                          ) ;
@@ -270,8 +270,10 @@
                                                                                                     ] .
 
 
-###  http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25#Class3a*
-<http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25#Class3a*> rdf:type owl:Class ;
+###  http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25
+#Class3aa
+<http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25
+#Class3aa> rdf:type owl:Class ;
                                                                                     rdfs:subClassOf :Class3a .
 
 
