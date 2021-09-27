@@ -24,12 +24,6 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
     class_order:  List[Class] = []
     index: int = 0
     while len(classes) > 0:
-        print([c.get_label() for c in class_order])
-        print(index)
-        print([c.get_label() for c in classes])
-        for c in classes:
-            for p in c.get_parent_classes(vocabulary):
-                print(p.get_label())
         class_ = classes[index]
         parents = class_.get_parent_classes(vocabulary)
         if len([p for p in parents if p in class_order]) == len(parents):
@@ -45,9 +39,13 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
 
         content += "\n\n"
         # Parent Classes
-        parent_classes = "SemanticClass"
+        parent_classes = ""
         for parent in class_.get_parent_classes(vocabulary):
             parent_classes += f", {parent.get_label()}"
+
+        parent_classes = parent_classes[2:]  # remove first comma and space
+        if parent_classes == "":
+            parent_classes = "SemanticClass"
 
         content += f"class {class_.get_label()}({parent_classes}):"
 
@@ -88,24 +86,35 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
         content += f"class {individual.get_label()}({parent_classes}):"
 
         # setter prevention
-        treated_properties = set()
+        properties = []
         for class_ in individual.get_parent_classes(vocabulary):
             for cor in class_.get_combined_object_relations(vocabulary):
-                if cor.get_property_label(vocabulary) in treated_properties:
+                if cor.get_property_label(vocabulary) in properties:
                     continue
                 else:
-                    treated_properties.add(cor.get_property_label(vocabulary))
+                    properties.append(cor.get_property_label(vocabulary))
 
-                content += "\n\t"
-                content += f"@{cor.get_property_label(vocabulary)}.setter"
-                content += "\n\t"
-                content += f"def {cor.get_property_label(vocabulary)}(self, " \
-                           f"value):"
-                content += "\n\t\t"
-                content += "assert False, 'Individuals have no values'"
-
-        if len(treated_properties) == 0:
+        if len(properties) == 0:
             content += "\n\t pass"
+        else:
+            content += "\n\t"
+            content += "def __init__(self):"
+            content += "\n\t\t"
+            content += "super().__init__()"
+            for label in properties:
+                content += "\n\t\t"
+                content += f"self.{label} = None"
+
+            # content += "\n"
+            # for label in properties:
+            #     content += "\n\t"
+            #     content += f"@{label}.setter"
+            #     content += "\n\t"
+            #     content += f"def {label}(self, " \
+            #                f"value):"
+            #     content += "\n\t\t"
+            #     content += "assert False, 'Individuals have no values'"
+
 
     content += "\n\n\n"
     # update forware references

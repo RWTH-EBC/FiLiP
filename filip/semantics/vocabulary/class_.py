@@ -216,12 +216,13 @@ class Class(Entity):
             List[Class]
         """
         parents = []
+
         for parent_iri in self.parent_class_iris:
             parents.append(vocabulary.get_class_by_iri(parent_iri))
 
             if vocabulary.get_class_by_iri(parent_iri) is None:
                 print("Parent in class {} with iri {} was none".format(
-                    self.iri,parent_iri))
+                    self.iri, parent_iri))
 
         return parents
 

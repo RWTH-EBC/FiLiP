@@ -36,6 +36,7 @@ def post_process_vocabulary(vocabulary: Vocabulary,
     add_predefined_source(voc_builder)
     add_predefined_datatypes(voc_builder)
     add_owl_thing(voc_builder)
+    remove_duplicate_parents(voc_builder)
 
     log_and_clear_dependencies(voc_builder)
     compute_ancestor_classes(voc_builder)
@@ -318,6 +319,11 @@ def add_owl_thing(voc_builder: VocabularyBuilder):
     if root_class.iri not in voc_builder.vocabulary.classes:
         voc_builder.add_class(root_class)
         root_class.source_id = "PREDEFINED"
+
+
+def remove_duplicate_parents(voc_builder: VocabularyBuilder):
+    for class_ in voc_builder.vocabulary.classes.values():
+        class_.parent_class_iris = list(dict.fromkeys(class_.parent_class_iris))
 
 
 def make_labels_fiware_safe(voc_builder: VocabularyBuilder):
