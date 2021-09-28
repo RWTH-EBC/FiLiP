@@ -16,7 +16,7 @@ class TestSemanticModels(unittest.TestCase):
 
         generate_vocabulary_models(vocabulary, "./", "models")
 
-    def test_2_model(self):
+    def test_2_model_relation_validation(self):
         from models import Class1, Class13, Class2, Class4, Class123, Individual1
 
         class1 = Class1()
@@ -40,10 +40,13 @@ class TestSemanticModels(unittest.TestCase):
         self.assertFalse(class13.objProp2.validate())
         class13.objProp2.append(class1)
         self.assertFalse(class13.objProp2.validate())
-        class13.objProp2.append(Individual1())
+        class13.objProp2.append(Class123())
         self.assertFalse(class13.objProp2.validate())
-        class13.objProp2.append(Class2())
+        del class13.objProp2[1]
+        class13.objProp2.append(Individual1())
         self.assertTrue(class13.objProp2.validate())
+
+
 
 
 

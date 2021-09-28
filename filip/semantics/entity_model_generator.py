@@ -12,6 +12,7 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
     content: str = ""
 
     # imports
+    content += "import inspect, sys\n"
     content += "from pydantic import BaseModel, Field\n"
     content += "from typing import List, Union\n"
     content += "from filip.semantics.semantic_models import SemanticClass, " \
@@ -49,7 +50,23 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
 
         content += f"class {class_.get_label()}({parent_classes}):"
 
-        content += "\n\t"
+        content += "\n\n\t"
+        content += "def __init__(self):"
+        content += "\n\t\t"
+        content += "super().__init__()"
+        content += "\n\t\t"
+        content += "if __name__ in sys.modules:"
+        for cor in class_.get_combined_object_relations(vocabulary):
+            content += "\n\t\t\t"
+            content += f"self." \
+                       f"{cor.get_property_label(vocabulary)}._module_path = " \
+                       f"sys.modules[__name__].__file__"
+                       # f"inspect.getfile(self.__class__)"
+
+        if len(class_.get_combined_object_relations(vocabulary)) == 0:
+            content += "\n\t\t\tpass"
+
+        content += "\n\n\t"
         # Relation fields
         content += "#Relation fields"
         for cor in class_.get_combined_object_relations(vocabulary):
@@ -70,8 +87,8 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
             content += f"_rules={cor.export_rule(vocabulary)},"
             content += "\n\t)"
 
-        if len(class_.get_combined_object_relations(vocabulary)) == 0:
-            content += "\n\t pass"
+        # if len(class_.get_combined_object_relations(vocabulary)) == 0:
+        #     content += "\n\t pass"
 
     content += "\n\n\n"
     content += "##Individuals##"
@@ -94,16 +111,17 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
                 else:
                     properties.append(cor.get_property_label(vocabulary))
 
-        if len(properties) == 0:
-            content += "\n\t pass"
-        else:
-            content += "\n\t"
-            content += "def __init__(self):"
-            content += "\n\t\t"
-            content += "super().__init__()"
-            for label in properties:
-                content += "\n\t\t"
-                content += f"self.{label} = None"
+        content += "\n\tpass"
+        # if len(properties) == 0:
+        #     content += "\n\t pass"
+        # else:
+        #     content += "\n\t"
+        #     content += "def __init__(self):"
+        #     content += "\n\t\t"
+        #     content += "super().__init__()"
+        #     for label in properties:
+        #         content += "\n\t\t"
+        #         content += f"self.{label} = None"
 
             # content += "\n"
             # for label in properties:
