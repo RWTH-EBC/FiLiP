@@ -1,11 +1,14 @@
 """
 Test module for context broker models
 """
+import time
 import unittest
+from typing import List
+
 from pydantic import ValidationError
 from filip.clients.ngsi_v2 import ContextBrokerClient
 from filip.models.ngsi_v2.context import \
-    ActionType,\
+    ActionType, \
     Command, \
     ContextMetadata, \
     ContextAttribute, \
@@ -13,7 +16,7 @@ from filip.models.ngsi_v2.context import \
     create_context_entity_model, \
     NamedContextMetadata, \
     Subscription, \
-    Update
+    Update, NamedContextAttribute, ContextEntityKeyValues, NamedCommand
 from filip.models.base import FiwareHeader
 
 
@@ -171,7 +174,6 @@ class TestContextModels(unittest.TestCase):
             Command(value=NotSerializableObject())
             Command(type="cmd", value=5)
 
-
     def test_update_model(self):
         """
         Test model for bulk updates
@@ -183,3 +185,57 @@ class TestContextModels(unittest.TestCase):
         Update(actionType=action_type, entities=entities)
         with self.assertRaises(ValueError):
             Update(actionType='test', entities=entities)
+
+    def test_fiware_safe_fields(self):
+        """
+        Tests all fields of models/ngsi_v2/context.py that have a regex to
+        be FIWARE safe
+        Returns:
+            None
+        """
+
+        from pydantic.error_wrappers import ValidationError
+
+        valid_strings: List[str] = ["name", "test123", "3_:strange-Name!"]
+        invalid_strings: List[str] = ["my name", "Test?", "#False", "/notvalid"]
+
+        special_strings: List[str] = ["id", "type", "geo:location"]
+
+        # Test if all needed fields, detect all invalid strings
+        for string in invalid_strings:
+            self.assertRaises(ValidationError,
+                              ContextMetadata, type=string)
+            self.assertRaises(ValidationError,
+                              NamedContextMetadata, name=string)
+            self.assertRaises(ValidationError,
+                              ContextAttribute, type=string)
+            self.assertRaises(ValidationError,
+                              NamedContextAttribute, name=string)
+            self.assertRaises(ValidationError,
+                              ContextEntityKeyValues, id=string, type="name")
+            self.assertRaises(ValidationError,
+                              ContextEntityKeyValues, id="name", type=string)
+            self.assertRaises(ValidationError,
+                              NamedCommand, name=string)
+
+        # Test if all needed fields, do not trow wrong errors
+        for string in valid_strings:
+            ContextMetadata(type=string)
+            NamedContextMetadata(name=string)
+            ContextAttribute(type=string)
+            NamedContextAttribute(name=string)
+            ContextEntityKeyValues(id=string, type=string)
+            NamedCommand(id=string, name=string)
+
+        # Test for the special-string protected field if all strings are blocked
+        for string in special_strings:
+            self.assertRaises(ValidationError,
+                              NamedContextAttribute, name=string)
+            self.assertRaises(ValidationError,
+                              NamedCommand, name=string)
+        # Test for the normal protected field if all strings are allowed
+        for string in special_strings:
+            ContextMetadata(type=string)
+            NamedContextMetadata(name=string)
+            ContextAttribute(type=string)
+            ContextEntityKeyValues(id=string, type=string)

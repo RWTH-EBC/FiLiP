@@ -1,0 +1,317 @@
+@prefix : <http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@base <http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25> .
+
+<http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25> rdf:type owl:Ontology .
+
+#################################################################
+#    Datatypes
+#################################################################
+
+###  http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25#customDataType1
+:customDataType1 rdf:type rdfs:Datatype ;
+                 owl:equivalentClass [ rdf:type rdfs:Datatype ;
+                                       owl:oneOf [ rdf:type rdf:List ;
+                                                   rdf:first 0 ;
+                                                   rdf:rest [ rdf:type rdf:List ;
+                                                              rdf:first 15 ;
+                                                              rdf:rest [ rdf:type rdf:List ;
+                                                                         rdf:first 30 ;
+                                                                         rdf:rest rdf:nil
+                                                                       ]
+                                                            ]
+                                                 ]
+                                     ] .
+
+
+###  http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25#customDataType2
+:customDataType2 rdf:type rdfs:Datatype ;
+                 owl:equivalentClass xsd:decimal ,
+                                     xsd:hexBinary .
+
+
+###  http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25#customDataType3
+:customDataType3 rdf:type rdfs:Datatype .
+
+
+###  http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25#customDataType4
+:customDataType4 rdf:type rdfs:Datatype ;
+                 owl:equivalentClass [ rdf:type rdfs:Datatype ;
+                                       owl:oneOf [ rdf:type rdf:List ;
+                                                   rdf:first 1 ;
+                                                   rdf:rest [ rdf:type rdf:List ;
+                                                              rdf:first 2 ;
+                                                              rdf:rest rdf:nil
+                                                            ]
+                                                 ]
+                                     ] ,
+                                     [ rdf:type rdfs:Datatype ;
+                                       owl:oneOf [ rdf:type rdf:List ;
+                                                   rdf:first 3 ;
+                                                   rdf:rest [ rdf:type rdf:List ;
+                                                              rdf:first 4 ;
+                                                              rdf:rest rdf:nil
+                                                            ]
+                                                 ]
+                                     ] .
+
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25#oProp1
+:oProp1 rdf:type owl:ObjectProperty ;
+        rdfs:subPropertyOf owl:topObjectProperty ;
+        owl:inverseOf :objProp3 .
+
+
+###  http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25#objProp2
+:objProp2 rdf:type owl:ObjectProperty ;
+          rdfs:subPropertyOf owl:topObjectProperty .
+
+
+###  http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25#objProp3
+:objProp3 rdf:type owl:ObjectProperty ;
+          rdfs:subPropertyOf owl:topObjectProperty .
+
+
+###  http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25#objProp4
+:objProp4 rdf:type owl:ObjectProperty ;
+          rdfs:subPropertyOf owl:topObjectProperty .
+
+
+###  http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25#objProp5
+:objProp5 rdf:type owl:ObjectProperty ;
+          rdfs:subPropertyOf owl:topObjectProperty .
+
+
+#################################################################
+#    Data properties
+#################################################################
+
+###  http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25#dataProp1
+:dataProp1 rdf:type owl:DatatypeProperty .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25#Class1
+:Class1 rdf:type owl:Class ;
+        rdfs:subClassOf [ rdf:type owl:Restriction ;
+                          owl:onProperty :oProp1 ;
+                          owl:someValuesFrom [ rdf:type owl:Class ;
+                                               owl:unionOf ( :Class2
+                                                             :Class4
+                                                           )
+                                             ]
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :objProp2 ;
+                          owl:someValuesFrom [ owl:intersectionOf ( :Class1
+                                                                    :Class2
+                                                                  ) ;
+                                               rdf:type owl:Class
+                                             ]
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :objProp3 ;
+                          owl:someValuesFrom :Class3
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :objProp4 ;
+                          owl:someValuesFrom [ owl:intersectionOf ( :Class1
+                                                                    :Class2
+                                                                    :Class3
+                                                                  ) ;
+                                               rdf:type owl:Class
+                                             ]
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :objProp5 ;
+                          owl:someValuesFrom [ owl:intersectionOf ( :Class1
+                                                                    [ rdf:type owl:Class ;
+                                                                      owl:unionOf ( :Class2
+                                                                                    :Class3
+                                                                                  )
+                                                                    ]
+                                                                  ) ;
+                                               rdf:type owl:Class
+                                             ]
+                        ] ;
+        rdfs:comment "comment on class 1" ;
+        rdfs:label "Class1" .
+
+
+###  http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25#Class12
+:Class12 rdf:type owl:Class ;
+         rdfs:subClassOf :Class1 ,
+                         :Class2 ;
+         rdfs:label "Gertrude" .
+
+
+###  http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25#Class123
+:Class123 rdf:type owl:Class ;
+          rdfs:subClassOf [ owl:intersectionOf ( :Class1
+                                                 [ owl:intersectionOf ( :Class2
+                                                                        :Class3
+                                                                      ) ;
+                                                   rdf:type owl:Class
+                                                 ]
+                                               ) ;
+                            rdf:type owl:Class
+                          ] .
+
+
+###  http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25#Class13
+:Class13 rdf:type owl:Class ;
+         rdfs:subClassOf [ owl:intersectionOf ( :Class1
+                                                :Class3
+                                              ) ;
+                           rdf:type owl:Class
+                         ] .
+
+
+###  http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25#Class1a
+:Class1a rdf:type owl:Class ;
+         rdfs:subClassOf :Class1 .
+
+
+###  http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25#Class1aa
+:Class1aa rdf:type owl:Class ;
+          rdfs:subClassOf :Class1a .
+
+
+###  http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25#Class1b
+:Class1b rdf:type owl:Class ;
+         rdfs:subClassOf [ owl:intersectionOf ( :Class1
+                                                [ rdf:type owl:Restriction ;
+                                                  owl:onProperty :oProp1 ;
+                                                  owl:someValuesFrom :Class2
+                                                ]
+                                              ) ;
+                           rdf:type owl:Class
+                         ] .
+
+
+###  http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25#Class2
+:Class2 rdf:type owl:Class ;
+        rdfs:subClassOf [ rdf:type owl:Restriction ;
+                          owl:onProperty :objProp2 ;
+                          owl:allValuesFrom owl:Thing
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :oProp1 ;
+                          owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                          owl:onClass :Class1
+                        ] .
+
+
+###  http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25#Class3
+:Class3 rdf:type owl:Class ;
+        rdfs:subClassOf [ owl:intersectionOf ( [ rdf:type owl:Restriction ;
+                                                 owl:onProperty :objProp2 ;
+                                                 owl:someValuesFrom :Class1
+                                               ]
+                                               [ rdf:type owl:Restriction ;
+                                                 owl:onProperty :objProp2 ;
+                                                 owl:hasValue :Individual1
+                                               ]
+                                             ) ;
+                          rdf:type owl:Class
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :oProp1 ;
+                          owl:hasValue :Individual1
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :dataProp1 ;
+                          owl:allValuesFrom :customDataType4
+                        ] .
+
+
+###  http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25#Class3a
+:Class3a rdf:type owl:Class ;
+         rdfs:subClassOf :Class3 .
+
+
+###  http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25#Class4
+:Class4 rdf:type owl:Class ;
+        rdfs:subClassOf [ rdf:type owl:Class ;
+                          owl:unionOf ( [ rdf:type owl:Restriction ;
+                                          owl:onProperty :objProp2 ;
+                                          owl:someValuesFrom :Class1
+                                        ]
+                                        [ rdf:type owl:Restriction ;
+                                          owl:onProperty :objProp3 ;
+                                          owl:someValuesFrom :Class2
+                                        ]
+                                      )
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :objProp4 ;
+                          owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                          owl:onClass :Class1
+                        ] .
+
+
+###  http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25#Class12
+<http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25#Class12> rdf:type owl:Class ;
+                                                                                    rdfs:subClassOf [ owl:intersectionOf ( :Class1
+                                                                                                                           :Class2
+                                                                                                                         ) ;
+                                                                                                      rdf:type owl:Class
+                                                                                                    ] .
+
+
+###  http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25
+#Class3aa
+<http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25
+#Class3aa> rdf:type owl:Class ;
+                                                                                    rdfs:subClassOf :Class3a .
+
+
+#################################################################
+#    Individuals
+#################################################################
+
+###  http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25#Individual1
+:Individual1 rdf:type owl:NamedIndividual ,
+                      [ owl:intersectionOf ( :Class1
+                                             :Class2
+                                           ) ;
+                        rdf:type owl:Class
+                      ] .
+
+
+###  http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25#Individual2
+:Individual2 rdf:type owl:NamedIndividual ,
+                      :Class1 .
+
+
+###  http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25#Individual3
+:Individual3 rdf:type owl:NamedIndividual ,
+                      [ owl:intersectionOf ( :Class3
+                                             [ owl:intersectionOf ( :Class1
+                                                                    :Class2
+                                                                  ) ;
+                                               rdf:type owl:Class
+                                             ]
+                                           ) ;
+                        rdf:type owl:Class
+                      ] .
+
+
+###  http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25#Individual4
+:Individual4 rdf:type owl:NamedIndividual ,
+                      :Class1 ,
+                      :Class2 .
+
+
+###  Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi
