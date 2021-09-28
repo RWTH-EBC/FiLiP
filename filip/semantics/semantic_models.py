@@ -1,5 +1,6 @@
 from typing import List, Any, Tuple, Dict
 
+from filip.models import FiwareHeader
 from pydantic import BaseModel
 from pydantic.dataclasses import dataclass
 
@@ -9,7 +10,7 @@ class Relationship(list):
 
     rule: str
     _rules: Tuple[str, List[List]]
-    _models: Dict[str, type]
+    _model_catalogue: Dict[str, type]
 
     def validate(self) -> bool:
         """
@@ -53,7 +54,7 @@ class Relationship(list):
 
                     counter = 0
                     for c in inner_class_list:
-                        if isinstance(v, self._models[c]):
+                        if isinstance(v, self._model_catalogue[c]):
                             counter += 1
 
                     if len(inner_class_list) == counter:
@@ -100,8 +101,8 @@ class Relationship(list):
 
 class SemanticClass(BaseModel):
 
-    # _inheritance_dict: Dict[str, str] =
-    pass
+    def save(self, fiware_header: FiwareHeader, model_catalogue: Dict[str, type]):
+        pass
 
 
 class SemanticIndividual(SemanticClass):

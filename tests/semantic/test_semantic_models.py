@@ -18,13 +18,7 @@ class TestSemanticModels(unittest.TestCase):
 
     def test_2_model_relation_validation(self):
         from models import Class1, Class13, Class2, Class4, Class123, \
-            Individual1, models
-
-        # print(Models.models[0].__dict__)
-
-        # print(isinstance(Models.models[0](), Class13))
-
-        # print(models["Class13"]().__class__)
+            Individual1
 
         class1 = Class1()
         class13 = Class13()
@@ -53,6 +47,7 @@ class TestSemanticModels(unittest.TestCase):
         class13.objProp2.append(Individual1())
         self.assertTrue(class13.objProp2.validate())
 
+        # todo test statment cases: min, max,...
 
 
 

@@ -56,8 +56,10 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
         content += "super().__init__()"
         for cor in class_.get_combined_object_relations(vocabulary):
             content += "\n\t\t"
-            content += f"self.{cor.get_property_label(vocabulary)}._models = " \
-                       "models"
+            content += f"self." \
+                       f"" \
+                       f"{cor.get_property_label(vocabulary)}._model_catalogue = " \
+                       "ModelCatalogue.catalogue"
 
         if len(class_.get_combined_object_relations(vocabulary)) == 0:
             content += "\n\t\tpass"
@@ -141,15 +143,17 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
     #     content += f"{individual.get_label()}.update_forward_refs()"
 
     # build model dict
-    content += "models: Dict[str, type] = {"
+    content += "class ModelCatalogue:"
+    content += "\n\t"
+    content += "catalogue: Dict[str, type] = {"
     for class_ in vocabulary.get_classes_sorted_by_label():
-        content += "\n\t"
+        content += "\n\t\t"
         content += f"'{class_.get_label()}': {class_.get_label()},"
 
     for individual in vocabulary.individuals.values():
-        content += "\n\t"
+        content += "\n\t\t"
         content += f"'{individual.get_label()}': {individual.get_label()},"
-    content += "\n}"
+    content += "\n\t}"
 
     if not path[:-1] == "/":
         path += "/"
