@@ -17,7 +17,14 @@ class TestSemanticModels(unittest.TestCase):
         generate_vocabulary_models(vocabulary, "./", "models")
 
     def test_2_model_relation_validation(self):
-        from models import Class1, Class13, Class2, Class4, Class123, Individual1
+        from models import Class1, Class13, Class2, Class4, Class123, \
+            Individual1, models
+
+        # print(Models.models[0].__dict__)
+
+        # print(isinstance(Models.models[0](), Class13))
+
+        # print(models["Class13"]().__class__)
 
         class1 = Class1()
         class13 = Class13()

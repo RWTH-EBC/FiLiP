@@ -14,7 +14,7 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
     # imports
     content += "import inspect, sys\n"
     content += "from pydantic import BaseModel, Field\n"
-    content += "from typing import List, Union\n"
+    content += "from typing import List, Union, Dict\n"
     content += "from filip.semantics.semantic_models import SemanticClass, " \
                "SemanticIndividual, Relationship\n"
 
@@ -54,17 +54,13 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
         content += "def __init__(self):"
         content += "\n\t\t"
         content += "super().__init__()"
-        content += "\n\t\t"
-        content += "if __name__ in sys.modules:"
         for cor in class_.get_combined_object_relations(vocabulary):
-            content += "\n\t\t\t"
-            content += f"self." \
-                       f"{cor.get_property_label(vocabulary)}._module_path = " \
-                       f"sys.modules[__name__].__file__"
-                       # f"inspect.getfile(self.__class__)"
+            content += "\n\t\t"
+            content += f"self.{cor.get_property_label(vocabulary)}._models = " \
+                       "models"
 
         if len(class_.get_combined_object_relations(vocabulary)) == 0:
-            content += "\n\t\t\tpass"
+            content += "\n\t\tpass"
 
         content += "\n\n\t"
         # Relation fields
@@ -144,6 +140,16 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
     #     content += "\n"
     #     content += f"{individual.get_label()}.update_forward_refs()"
 
+    # build model dict
+    content += "models: Dict[str, type] = {"
+    for class_ in vocabulary.get_classes_sorted_by_label():
+        content += "\n\t"
+        content += f"'{class_.get_label()}': {class_.get_label()},"
+
+    for individual in vocabulary.individuals.values():
+        content += "\n\t"
+        content += f"'{individual.get_label()}': {individual.get_label()},"
+    content += "\n}"
 
     if not path[:-1] == "/":
         path += "/"

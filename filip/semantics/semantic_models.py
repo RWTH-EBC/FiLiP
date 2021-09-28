@@ -1,4 +1,4 @@
-from typing import List, Any, Tuple
+from typing import List, Any, Tuple, Dict
 
 from pydantic import BaseModel
 from pydantic.dataclasses import dataclass
@@ -9,7 +9,7 @@ class Relationship(list):
 
     rule: str
     _rules: Tuple[str, List[List]]
-    _module_path: str = ""
+    _models: Dict[str, type]
 
     def validate(self) -> bool:
         """
@@ -53,44 +53,7 @@ class Relationship(list):
 
                     counter = 0
                     for c in inner_class_list:
-
-                        # import the classes from the module to compute the
-                        # subclasses.
-                        # The path to the module file is given in the
-                        # constructor of the containing SemanticEntity
-
-                        import importlib.util
-                        spec = importlib.util.spec_from_file_location(
-                            "models", self._module_path)
-                        class_object = importlib.util.module_from_spec(spec)
-                        spec.loader.exec_module(class_object)
-
-                        # after the classes were imported, compute all possible
-                        # classes that v can have
-                        all_possible_classes: List[str] = eval(f'class_object'
-                                                     f'.{c}.__subclasses__()')
-                        all_possible_classes.\
-                            append(eval(f'class_object.{c}().__class__'))
-
-                        def extract_class_name(class_) -> str:
-                            """
-                            str(class_) has form: <class 'models.Class123'>
-                            extract: Class123
-                            """
-                            second_half = str(class_).split(".")[1]
-                            return second_half[:second_half.find("'")]
-
-                        # Due to the import the classes are not completly
-                        # identical for the system. We need to use string
-                        # parsing to compare the class names.
-                        # But due to the logic of the import there should be
-                        # no side-conditions
-                        all_possible_class_strings = \
-                            [extract_class_name(cls) for
-                             cls in all_possible_classes]
-
-                        if extract_class_name(v.__class__) in\
-                                all_possible_class_strings:
+                        if isinstance(v, self._models[c]):
                             counter += 1
 
                     if len(inner_class_list) == counter:

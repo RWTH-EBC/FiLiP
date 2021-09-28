@@ -1,6 +1,6 @@
 import inspect, sys
 from pydantic import BaseModel, Field
-from typing import List, Union
+from typing import List, Union, Dict
 from filip.semantics.semantic_models import SemanticClass, SemanticIndividual, Relationship
 
 ##CLASSES##
@@ -9,21 +9,20 @@ class Thing(SemanticClass):
 
 	def __init__(self):
 		super().__init__()
-		if __name__ in sys.modules:
-			pass
+		pass
 
 	#Relation fields
+
 
 class Class1(Thing):
 
 	def __init__(self):
 		super().__init__()
-		if __name__ in sys.modules:
-			self.oProp1._module_path = sys.modules[__name__].__file__
-			self.objProp2._module_path = sys.modules[__name__].__file__
-			self.objProp3._module_path = sys.modules[__name__].__file__
-			self.objProp4._module_path = sys.modules[__name__].__file__
-			self.objProp5._module_path = sys.modules[__name__].__file__
+		self.oProp1._models = models
+		self.objProp2._models = models
+		self.objProp3._models = models
+		self.objProp4._models = models
+		self.objProp5._models = models
 
 	#Relation fields
 
@@ -56,12 +55,11 @@ class Class1a(Class1):
 
 	def __init__(self):
 		super().__init__()
-		if __name__ in sys.modules:
-			self.oProp1._module_path = sys.modules[__name__].__file__
-			self.objProp2._module_path = sys.modules[__name__].__file__
-			self.objProp3._module_path = sys.modules[__name__].__file__
-			self.objProp4._module_path = sys.modules[__name__].__file__
-			self.objProp5._module_path = sys.modules[__name__].__file__
+		self.oProp1._models = models
+		self.objProp2._models = models
+		self.objProp3._models = models
+		self.objProp4._models = models
+		self.objProp5._models = models
 
 	#Relation fields
 
@@ -94,12 +92,11 @@ class Class1aa(Class1a):
 
 	def __init__(self):
 		super().__init__()
-		if __name__ in sys.modules:
-			self.oProp1._module_path = sys.modules[__name__].__file__
-			self.objProp2._module_path = sys.modules[__name__].__file__
-			self.objProp3._module_path = sys.modules[__name__].__file__
-			self.objProp4._module_path = sys.modules[__name__].__file__
-			self.objProp5._module_path = sys.modules[__name__].__file__
+		self.oProp1._models = models
+		self.objProp2._models = models
+		self.objProp3._models = models
+		self.objProp4._models = models
+		self.objProp5._models = models
 
 	#Relation fields
 
@@ -132,12 +129,11 @@ class Class1b(Class1):
 
 	def __init__(self):
 		super().__init__()
-		if __name__ in sys.modules:
-			self.oProp1._module_path = sys.modules[__name__].__file__
-			self.objProp2._module_path = sys.modules[__name__].__file__
-			self.objProp3._module_path = sys.modules[__name__].__file__
-			self.objProp4._module_path = sys.modules[__name__].__file__
-			self.objProp5._module_path = sys.modules[__name__].__file__
+		self.oProp1._models = models
+		self.objProp2._models = models
+		self.objProp3._models = models
+		self.objProp4._models = models
+		self.objProp5._models = models
 
 	#Relation fields
 
@@ -170,9 +166,8 @@ class Class2(Thing):
 
 	def __init__(self):
 		super().__init__()
-		if __name__ in sys.modules:
-			self.oProp1._module_path = sys.modules[__name__].__file__
-			self.objProp2._module_path = sys.modules[__name__].__file__
+		self.oProp1._models = models
+		self.objProp2._models = models
 
 	#Relation fields
 
@@ -190,9 +185,8 @@ class Class3(Thing):
 
 	def __init__(self):
 		super().__init__()
-		if __name__ in sys.modules:
-			self.oProp1._module_path = sys.modules[__name__].__file__
-			self.objProp2._module_path = sys.modules[__name__].__file__
+		self.oProp1._models = models
+		self.objProp2._models = models
 
 	#Relation fields
 
@@ -210,12 +204,11 @@ class Class123(Class1, Class2, Class3):
 
 	def __init__(self):
 		super().__init__()
-		if __name__ in sys.modules:
-			self.oProp1._module_path = sys.modules[__name__].__file__
-			self.objProp2._module_path = sys.modules[__name__].__file__
-			self.objProp3._module_path = sys.modules[__name__].__file__
-			self.objProp4._module_path = sys.modules[__name__].__file__
-			self.objProp5._module_path = sys.modules[__name__].__file__
+		self.oProp1._models = models
+		self.objProp2._models = models
+		self.objProp3._models = models
+		self.objProp4._models = models
+		self.objProp5._models = models
 
 	#Relation fields
 
@@ -248,12 +241,11 @@ class Class13(Class1, Class3):
 
 	def __init__(self):
 		super().__init__()
-		if __name__ in sys.modules:
-			self.oProp1._module_path = sys.modules[__name__].__file__
-			self.objProp2._module_path = sys.modules[__name__].__file__
-			self.objProp3._module_path = sys.modules[__name__].__file__
-			self.objProp4._module_path = sys.modules[__name__].__file__
-			self.objProp5._module_path = sys.modules[__name__].__file__
+		self.oProp1._models = models
+		self.objProp2._models = models
+		self.objProp3._models = models
+		self.objProp4._models = models
+		self.objProp5._models = models
 
 	#Relation fields
 
@@ -286,9 +278,8 @@ class Class3a(Class3):
 
 	def __init__(self):
 		super().__init__()
-		if __name__ in sys.modules:
-			self.oProp1._module_path = sys.modules[__name__].__file__
-			self.objProp2._module_path = sys.modules[__name__].__file__
+		self.oProp1._models = models
+		self.objProp2._models = models
 
 	#Relation fields
 
@@ -306,9 +297,8 @@ class Class3aa(Class3a):
 
 	def __init__(self):
 		super().__init__()
-		if __name__ in sys.modules:
-			self.oProp1._module_path = sys.modules[__name__].__file__
-			self.objProp2._module_path = sys.modules[__name__].__file__
+		self.oProp1._models = models
+		self.objProp2._models = models
 
 	#Relation fields
 
@@ -326,8 +316,7 @@ class Class4(Thing):
 
 	def __init__(self):
 		super().__init__()
-		if __name__ in sys.modules:
-			self.objProp4._module_path = sys.modules[__name__].__file__
+		self.objProp4._models = models
 
 	#Relation fields
 
@@ -340,12 +329,11 @@ class Gertrude(Class1, Class2):
 
 	def __init__(self):
 		super().__init__()
-		if __name__ in sys.modules:
-			self.oProp1._module_path = sys.modules[__name__].__file__
-			self.objProp2._module_path = sys.modules[__name__].__file__
-			self.objProp3._module_path = sys.modules[__name__].__file__
-			self.objProp4._module_path = sys.modules[__name__].__file__
-			self.objProp5._module_path = sys.modules[__name__].__file__
+		self.oProp1._models = models
+		self.objProp2._models = models
+		self.objProp3._models = models
+		self.objProp4._models = models
+		self.objProp5._models = models
 
 	#Relation fields
 
@@ -390,3 +378,22 @@ class Individual4(SemanticIndividual, Class1, Class2):
 	pass
 
 
+models: Dict[str, type] = {
+	'Class1': Class1,
+	'Class123': Class123,
+	'Class13': Class13,
+	'Class1a': Class1a,
+	'Class1aa': Class1aa,
+	'Class1b': Class1b,
+	'Class2': Class2,
+	'Class3': Class3,
+	'Class3a': Class3a,
+	'Class3aa': Class3aa,
+	'Class4': Class4,
+	'Gertrude': Gertrude,
+	'Thing': Thing,
+	'Individual1': Individual1,
+	'Individual2': Individual2,
+	'Individual3': Individual3,
+	'Individual4': Individual4,
+}
