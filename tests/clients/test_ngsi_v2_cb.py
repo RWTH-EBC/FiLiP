@@ -1,6 +1,7 @@
 """
 Tests for filip.cb.client
 """
+import copy
 import unittest
 import logging
 import time
@@ -530,6 +531,98 @@ class TestContextBroker(unittest.TestCase):
                                  apikey=service_group.apikey)
         client.cb.delete_entity(entity_id=entity.id, entity_type=entity.type)
 
+
+    def test_patch_entity(self) -> None:
+        """
+        Test the methode: patch_entity
+        Returns:
+           None
+        """
+
+        # setup test-entity
+        entity = ContextEntity(id="test_id1", type="test_type1")
+        attr1 = NamedContextAttribute(name="attr1", value="1")
+        attr1.metadata["m1"] = \
+            NamedContextMetadata(name="meta1", type="metatype", value="2")
+        attr2 = NamedContextAttribute(name="attr2", value="2")
+        attr1.metadata["m2"] = \
+            NamedContextMetadata(name="meta2", type="metatype", value="3")
+        entity.add_properties([attr1, attr2])
+
+        # sub-Test1: Post new
+        self.client.patch_entity(entity=entity)
+        self.assertEqual(entity,
+                         self.client.get_entity(entity_id=entity.id))
+        self.tearDown()
+
+        # sub-Test2: ID/type of old_entity changed
+        self.client.post_entity(entity=entity)
+        test_entity = ContextEntity(id="newID", type="newType")
+        test_entity.add_properties([attr1,attr2])
+        self.client.patch_entity(test_entity, old_entity=entity)
+        self.assertEqual(test_entity,
+                         self.client.get_entity(entity_id=test_entity.id))
+        self.assertRaises(RequestException, self.client.get_entity,
+                          entity_id=entity.id)
+        self.tearDown()
+
+        # sub-Test3: a non valid old_entity is provided, entity exists
+        self.client.post_entity(entity=entity)
+        old_entity = ContextEntity(id="newID", type="newType")
+
+        self.client.patch_entity(entity, old_entity=old_entity)
+        self.assertEqual(entity, self.client.get_entity(entity_id=entity.id))
+        self.tearDown()
+
+        # sub-Test4: no old_entity provided, entity is new
+        old_entity = ContextEntity(id="newID", type="newType")
+        self.client.patch_entity(entity, old_entity=old_entity)
+        self.assertEqual(entity, self.client.get_entity(entity_id=entity.id))
+        self.tearDown()
+
+        # sub-Test5: no old_entity provided, entity is new
+        old_entity = ContextEntity(id="newID", type="newType")
+        self.client.patch_entity(entity, old_entity=old_entity)
+        self.assertEqual(entity, self.client.get_entity(entity_id=entity.id))
+        self.tearDown()
+
+        # sub-Test6: New attr, attr del, and attr changed. No Old_entity given
+        self.client.post_entity(entity=entity)
+        test_entity = ContextEntity(id="test_id1", type="test_type1")
+        attr1_changed = NamedContextAttribute(name="attr1", value="2")
+        attr1_changed.metadata["m4"] = \
+            NamedContextMetadata(name="meta3", type="metatype5", value="4")
+        attr3 = NamedContextAttribute(name="attr3", value="3")
+        test_entity.add_properties([attr1_changed, attr3])
+        self.client.patch_entity(test_entity)
+
+        self.assertEqual(test_entity,
+                         self.client.get_entity(entity_id=entity.id))
+        self.tearDown()
+
+        # sub-Test7: Attr changes, concurrent changes in Fiware,
+        #            old_entity given
+
+        self.client.post_entity(entity=entity)
+
+        concurrent_entity = ContextEntity(id="test_id1", type="test_type1")
+        attr1_changed = copy.deepcopy(attr1)
+        attr1_changed.metadata["m1"].value = "3"
+        attr1_changed.value = "4"
+        concurrent_entity.add_properties([attr1_changed, attr2])
+        self.client.patch_entity(concurrent_entity)
+
+        user_entity = copy.deepcopy(entity)
+        attr3 = NamedContextAttribute(name="attr3", value="3")
+        user_entity.add_properties([attr3])
+        self.client.patch_entity(user_entity, old_entity=entity)
+
+        result_entity = concurrent_entity
+        result_entity.add_properties([attr2, attr3])
+
+        self.assertEqual(result_entity,
+                         self.client.get_entity(entity_id=entity.id))
+        self.tearDown()
 
     def tearDown(self) -> None:
         """
