@@ -12,14 +12,12 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
     content: str = ""
 
     # imports
-    content += "import inspect, sys\n"
-    content += "from pydantic import BaseModel, Field\n"
-    content += "from typing import List, Union, Dict\n"
-    content += "from filip.semantics.semantic_models import SemanticClass, " \
-               "SemanticIndividual, Relationship\n"
+    content += "from typing import Dict, Union\n"
+    content += "from filip.semantics.semantic_models import \\"\
+               "\n\tSemanticClass, SemanticIndividual, Relationship"
 
-    content += "\n"
-    content += "##CLASSES##"
+    content += "\n\n"
+    content += "# ---------CLASSES--------- #"
 
     classes: List[Class] = vocabulary.get_classes_sorted_by_label()
     class_order:  List[Class] = []
@@ -38,7 +36,7 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
     for class_ in class_order:
         relationship_validators_content = ""
 
-        content += "\n\n"
+        content += "\n\n\n"
         # Parent Classes
         parent_classes = ""
         for parent in class_.get_parent_classes(vocabulary):
@@ -58,38 +56,37 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
             content += "\n\t\t"
             content += f"self." \
                        f"" \
-                       f"{cor.get_property_label(vocabulary)}._model_catalogue = " \
-                       "ModelCatalogue.catalogue"
+                       f"{cor.get_property_label(vocabulary)}._rules = " \
+                       f"{cor.export_rule(vocabulary)}"
 
         if len(class_.get_combined_object_relations(vocabulary)) == 0:
             content += "\n\t\tpass"
 
         content += "\n\n\t"
-        # Relation fields
-        content += "#Relation fields"
-        for cor in class_.get_combined_object_relations(vocabulary):
-            content += "\n\n\t"
 
-            # target_names = cor.get_all_target_labels(vocabulary)
-            # if len(target_names)>1:
-            #     types = f'Union{[n for n in target_names]}'.replace("'","")
-            # else:
-            #     types = target_names.pop()
+        # Relation fields
+        content += "# Relation fields"
+        for cor in class_.get_combined_object_relations(vocabulary):
+            content += "\n\t"
+
+            target_names = cor.get_all_target_labels(vocabulary)
+            if len(target_names)>1:
+                types = f'Union{[n for n in target_names]}'
+            else:
+                types = f"'{target_names.pop()}'"
 
             label = cor.get_property_label(vocabulary)
             # field
-            content += f"{label}: Relationship = Relationship("
+            content += f"{label}: Relationship[{types}] = Relationship("
+            # content += f"{label}: Relationship = Relationship("
             content += "\n\t\t"
-            content += f"rule='{cor.get_all_targetstatements_as_string(vocabulary)}',"
+            content += f"name='{label}',"
             content += "\n\t\t"
-            content += f"_rules={cor.export_rule(vocabulary)},"
-            content += "\n\t)"
-
-        # if len(class_.get_combined_object_relations(vocabulary)) == 0:
-        #     content += "\n\t pass"
+            content += f"rule='" \
+                       f"{cor.get_all_targetstatements_as_string(vocabulary)}')"
 
     content += "\n\n\n"
-    content += "##Individuals##"
+    content += "# ---------Individuals--------- #"
 
     for individual in vocabulary.individuals.values():
         content += "\n\n"
@@ -141,7 +138,7 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
     # for individual in vocabulary.individuals.values():
     #     content += "\n"
     #     content += f"{individual.get_label()}.update_forward_refs()"
-
+    # content += "\n\n\n"
     # build model dict
     content += "class ModelCatalogue:"
     content += "\n\t"

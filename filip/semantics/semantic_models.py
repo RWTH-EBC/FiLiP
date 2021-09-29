@@ -1,18 +1,42 @@
-from typing import List, Any, Tuple, Dict
+import uuid
+from typing import List, Any, Tuple, Dict, Type, TypeVar, Generic
+
+from filip.models.base import DataType
+
+from filip.models.ngsi_v2.context import ContextEntity, NamedContextAttribute
+
+from filip.clients.ngsi_v2 import ContextBrokerClient
 
 from filip.models import FiwareHeader
 from pydantic import BaseModel
 from pydantic.dataclasses import dataclass
 
+import abc
 
-@dataclass
-class Relationship(list):
+T = TypeVar('T')
 
+
+class Field(List[T]):
     rule: str
-    _rules: Tuple[str, List[List]]
-    _model_catalogue: Dict[str, type]
+    name: str
 
-    def validate(self) -> bool:
+    def __init__(self, rule, name):
+        super().__init__()
+
+        self.rule = rule
+        self.name = name
+
+    def is_valid(self) -> bool:
+        pass
+
+
+class Relationship(Field[T]):
+    rule: str
+    _rules: List[Tuple[str, List[List[Type]]]]
+
+    # _model_catalogue: Dict[str, type]
+
+    def is_valid(self) -> bool:
         """
         Check if the values present in this relationship fulfill the semantic
         rule.
@@ -54,7 +78,7 @@ class Relationship(list):
 
                     counter = 0
                     for c in inner_class_list:
-                        if isinstance(v, self._model_catalogue[c]):
+                        if isinstance(v, c):
                             counter += 1
 
                     if len(inner_class_list) == counter:
@@ -90,19 +114,74 @@ class Relationship(list):
         # no rule failed -> relationship fulfilled
         return True
 
-    def __init__(self, rule, _rules):
-        super().__init__()
-        self.rule = rule
-        self._rules = _rules
+    def __init__(self, rule, name):
+        super().__init__(rule, name)
 
     def __str__(self):
         return str([item for item in self])
 
+    def build_context_attribute(self) -> NamedContextAttribute:
+        return NamedContextAttribute(
+            name=self.name,
+            type=DataType.RELATIONSHIP,
+            value=[v.id for v in self]
+        )
+
 
 class SemanticClass(BaseModel):
+    id: str = ''
+    old_state: ContextEntity = None
 
-    def save(self, fiware_header: FiwareHeader, model_catalogue: Dict[str, type]):
-        pass
+    def __init__(self):
+        super(SemanticClass, self).__init__()
+        self.id = f'{self._get_class_name()}-{uuid.uuid4().hex}'
+
+    def are_fields_valid(self) -> bool:
+        return len(self.get_invalid_fields()) == 0
+
+    def get_invalid_fields(self) -> List[Field]:
+        return [f for f in self.get_fields() if not f.is_valid()]
+
+    def _get_class_name(self):
+        return type(self).__name__
+
+    def save(self, fiware_header: FiwareHeader, assert_validity: bool = False):
+
+        if assert_validity:
+            assert self.are_fields_valid(), \
+                f"Attempted to save the SemanticEntity {self.id} of type " \
+                f"{self._get_class_name()} with invalid fields " \
+                f"{[f.name for f in self.get_invalid_fields()]}"
+
+        with ContextBrokerClient(fiware_header=fiware_header) as client:
+            client.patch_entity(entity=self.build_context_entity(),
+                                old_entity=self.old_state)
+
+    def get_fields(self) -> List[Field]:
+        fields: List[Field] = self.get_relationships()
+        # todo datafields
+        return fields
+
+    def get_relationships(self) -> List[Relationship]:
+        relationships = []
+        for key, value in self.__dict__.items():
+            if isinstance(value, Relationship):
+                rel: Relationship = value
+                relationships.append(rel)
+        return relationships
+
+    def build_context_entity(self) -> ContextEntity:
+
+        entity = ContextEntity(
+            id=self.id,
+            type=self._get_class_name()
+        )
+
+        for rel in self.get_relationships():
+            entity.add_properties([rel.build_context_attribute()])
+
+        # todo datafields
+        return entity
 
 
 class SemanticIndividual(SemanticClass):

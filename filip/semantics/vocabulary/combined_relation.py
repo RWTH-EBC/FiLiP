@@ -85,6 +85,5 @@ class CombinedRelation(BaseModel):
 
         rules= [vocabulary.get_relation_by_id(id).export_rule(vocabulary)
                 for id in self.relation_ids]
-
-        # return str(rules).replace("'","").replace('"', "'")
-        return str(rules).replace('"', "")
+        # return str(rules).replace('"', "")
+        return str(rules).replace("'","").replace('"', "'")

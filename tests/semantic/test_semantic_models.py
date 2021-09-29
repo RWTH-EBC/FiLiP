@@ -1,5 +1,7 @@
 import unittest
 
+from filip.models import FiwareHeader
+
 from filip.semantics.entity_model_generator import generate_vocabulary_models
 from filip.semantics.vocabulary_configurator import VocabularyConfigurator
 
@@ -29,26 +31,32 @@ class TestSemanticModels(unittest.TestCase):
                "some Class1, value Individual1, some (Class1 and Class2)")
 
         # test simple rule
-        self.assertFalse(class1.oProp1.validate())
+        self.assertFalse(class1.oProp1.is_valid())
         class1.oProp1.append(Class2())
-        self.assertTrue(class1.oProp1.validate())
+        self.assertTrue(class1.oProp1.is_valid())
         class1.oProp1.append(Class4())
-        self.assertTrue(class1.oProp1.validate())
+        self.assertTrue(class1.oProp1.is_valid())
         class1.oProp1.append(Class123())
-        self.assertTrue(class1.oProp1.validate())
+        self.assertTrue(class1.oProp1.is_valid())
 
         # test complex rule
-        self.assertFalse(class13.objProp2.validate())
+        self.assertFalse(class13.objProp2.is_valid())
         class13.objProp2.append(class1)
-        self.assertFalse(class13.objProp2.validate())
+        self.assertFalse(class13.objProp2.is_valid())
         class13.objProp2.append(Class123())
-        self.assertFalse(class13.objProp2.validate())
+        self.assertFalse(class13.objProp2.is_valid())
         del class13.objProp2[1]
         class13.objProp2.append(Individual1())
-        self.assertTrue(class13.objProp2.validate())
+        self.assertTrue(class13.objProp2.is_valid())
 
-        # todo test statment cases: min, max,...
+        # todo test statement cases: min, max,...
 
+    def test_3_test_saving_and_loading(self):
+        from models import Class1, Class13, Class3, Class4, Class123, \
+            Individual1, Gertrude
 
+        class13 = Class13()
+        class13.objProp3.append(Class1())
+        class13.save(FiwareHeader(), assert_validity=False)
 
 
