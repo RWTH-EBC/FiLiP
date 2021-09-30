@@ -169,7 +169,7 @@ class TestContextBroker(unittest.TestCase):
             client.update_entity(entity=res_entity)
             self.assertEqual(client.get_entity(entity_id=self.entity.id),
                              res_entity)
-            res_entity.add_properties({'pressure': ContextAttribute(
+            res_entity.add_attributes({'pressure': ContextAttribute(
                 type='Number', value=1050)})
             client.update_entity(entity=res_entity)
             self.assertEqual(client.get_entity(entity_id=self.entity.id),
@@ -196,7 +196,7 @@ class TestContextBroker(unittest.TestCase):
             attr_dict = NamedContextAttribute(name='attr_dict',
                                               type='StructuredValue',
                                               value={'key': 'value'})
-            entity.add_properties([attr_txt,
+            entity.add_attributes([attr_txt,
                                    attr_bool,
                                    attr_float,
                                    attr_list,
@@ -547,7 +547,7 @@ class TestContextBroker(unittest.TestCase):
         attr2 = NamedContextAttribute(name="attr2", value="2")
         attr1.metadata["m2"] = \
             NamedContextMetadata(name="meta2", type="metatype", value="3")
-        entity.add_properties([attr1, attr2])
+        entity.add_attributes([attr1, attr2])
 
         # sub-Test1: Post new
         self.client.patch_entity(entity=entity)
@@ -558,7 +558,7 @@ class TestContextBroker(unittest.TestCase):
         # sub-Test2: ID/type of old_entity changed
         self.client.post_entity(entity=entity)
         test_entity = ContextEntity(id="newID", type="newType")
-        test_entity.add_properties([attr1,attr2])
+        test_entity.add_attributes([attr1, attr2])
         self.client.patch_entity(test_entity, old_entity=entity)
         self.assertEqual(test_entity,
                          self.client.get_entity(entity_id=test_entity.id))
@@ -593,7 +593,7 @@ class TestContextBroker(unittest.TestCase):
         attr1_changed.metadata["m4"] = \
             NamedContextMetadata(name="meta3", type="metatype5", value="4")
         attr3 = NamedContextAttribute(name="attr3", value="3")
-        test_entity.add_properties([attr1_changed, attr3])
+        test_entity.add_attributes([attr1_changed, attr3])
         self.client.patch_entity(test_entity)
 
         self.assertEqual(test_entity,
@@ -609,16 +609,16 @@ class TestContextBroker(unittest.TestCase):
         attr1_changed = copy.deepcopy(attr1)
         attr1_changed.metadata["m1"].value = "3"
         attr1_changed.value = "4"
-        concurrent_entity.add_properties([attr1_changed, attr2])
+        concurrent_entity.add_attributes([attr1_changed, attr2])
         self.client.patch_entity(concurrent_entity)
 
         user_entity = copy.deepcopy(entity)
         attr3 = NamedContextAttribute(name="attr3", value="3")
-        user_entity.add_properties([attr3])
+        user_entity.add_attributes([attr3])
         self.client.patch_entity(user_entity, old_entity=entity)
 
         result_entity = concurrent_entity
-        result_entity.add_properties([attr2, attr3])
+        result_entity.add_attributes([attr2, attr3])
 
         self.assertEqual(result_entity,
                          self.client.get_entity(entity_id=entity.id))

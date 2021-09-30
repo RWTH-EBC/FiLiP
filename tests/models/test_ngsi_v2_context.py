@@ -99,7 +99,7 @@ class TestContextModels(unittest.TestCase):
             exclude={'name', 'metadata'}, exclude_unset=True)})
 
         new_attr = {'new_attr': ContextAttribute(type='Number', value=25)}
-        entity.add_properties(new_attr)
+        entity.add_attributes(new_attr)
 
         generated_model = create_context_entity_model(data=self.entity_data)
         entity = generated_model(**self.entity_data)

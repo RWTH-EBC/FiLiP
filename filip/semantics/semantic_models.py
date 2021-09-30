@@ -1,5 +1,7 @@
+import collections
 import uuid
-from typing import List, Any, Tuple, Dict, Type, TypeVar, Generic
+from enum import Enum
+from typing import List, Any, Tuple, Dict, Type, TypeVar, Generic, TYPE_CHECKING
 
 from filip.models.base import DataType
 
@@ -8,31 +10,93 @@ from filip.models.ngsi_v2.context import ContextEntity, NamedContextAttribute
 from filip.clients.ngsi_v2 import ContextBrokerClient
 
 from filip.models import FiwareHeader
-from pydantic import BaseModel
-from pydantic.dataclasses import dataclass
+from pydantic import BaseModel, validator
+from pydantic import Field as pyField
 
-import abc
+if TYPE_CHECKING:
+    from filip.semantics.semantic_manager import SemanticManager
 
 T = TypeVar('T')
 
 
-class Field(List[T]):
+class ClientSetting(str, Enum):
+    unset = "unset"
+    v2 = "v2"
+    LD = "LD"
+
+
+class InstanceIdentifier(BaseModel):
+    id: str
+    type: str
+    fiware_header: FiwareHeader
+
+    # def __eq__(self, other):
+    #     return self.__class__ == other.__class__ and self.id == other.id and \
+    #            self.type == other.type and self.fiware_header == f
+
+    def __hash__(self):
+        return hash(f'{self.type}-{self.id}-{self.fiware_header.service}-'
+                    f'{self.fiware_header.service_path}')
+
+
+class InstanceRegistry(BaseModel):
+    _registry: Dict[InstanceIdentifier, 'SemanticClass'] = {}
+
+    def register(self, instance: 'SemanticClass'):
+        identifier = instance.get_identifier()
+
+        if identifier in self._registry:
+            raise Exception #todo
+
+        self._registry[identifier] = instance
+
+    def get(self, identifier: InstanceIdentifier):
+        return self._registry[identifier]
+
+    def contains(self, identifier: InstanceIdentifier):
+        return identifier in self._registry
+
+
+class Field(collections.MutableSequence):
     rule: str
     name: str
+    instance_registry: InstanceRegistry
 
-    def __init__(self, rule, name):
+    def __init__(self, rule, name, semantic_manager):
         super().__init__()
 
         self.rule = rule
         self.name = name
+        self.instance_registry = semantic_manager.instance_registry
+
+        self.list = list()
 
     def is_valid(self) -> bool:
         pass
 
+    def __len__(self): return len(self.list)
 
-class Relationship(Field[T]):
+    def __getitem__(self, i): return self.list[i]
+
+    def __delitem__(self, i): del self.list[i]
+
+    def __setitem__(self, i, v):
+        self.list[i] = v
+
+    def insert(self, i, v):
+        self.list.insert(i, v)
+
+    def __str__(self):
+        return str(self.list)
+
+    def get_all(self):
+        return self.list
+
+
+class Relationship(Field):
     rule: str
     _rules: List[Tuple[str, List[List[Type]]]]
+    _class_identifier: InstanceIdentifier
 
     # _model_catalogue: Dict[str, type]
 
@@ -114,11 +178,8 @@ class Relationship(Field[T]):
         # no rule failed -> relationship fulfilled
         return True
 
-    def __init__(self, rule, name):
-        super().__init__(rule, name)
-
-    def __str__(self):
-        return str([item for item in self])
+    def __init__(self, rule, name, semantic_manager):
+        super().__init__(rule, name, semantic_manager)
 
     def build_context_attribute(self) -> NamedContextAttribute:
         return NamedContextAttribute(
@@ -127,14 +188,80 @@ class Relationship(Field[T]):
             value=[v.id for v in self]
         )
 
+    def _check(self, v):
+        assert isinstance(v, SemanticClass)
+
+    def __getitem__(self, i) -> 'SemanticClass':
+        return self.instance_registry.get(self.list[i])
+
+    def __setitem__(self, i, v: 'SemanticClass'):
+        self._check(v)
+        self.list[i] = v.get_identifier()
+        v.add_reference(self._class_identifier, self.name)
+
+    def __delitem__(self, i):
+        v: SemanticClass = self.instance_registry.get(self.list[i])
+        v.remove_reference(self._class_identifier, self.name)
+        del self.list[i]
+
+    def insert(self, i, v: 'SemanticClass'):
+        self._check(v)
+        identifier = v.get_identifier()
+        self.list.insert(i, identifier)
+        v.add_reference(self._class_identifier, self.name)
+
+
+def id_generator():
+    return uuid.uuid4().hex
+
 
 class SemanticClass(BaseModel):
-    id: str = ''
+
+    fiware_header: FiwareHeader = FiwareHeader()
+    id: str = pyField(default_factory=id_generator)
     old_state: ContextEntity = None
 
-    def __init__(self):
+    _references: Dict[InstanceIdentifier, List[str]] = {}
+
+    def add_reference(self, identifier: InstanceIdentifier, relation_name: str):
+        if not identifier in self._references:
+            self._references[identifier] = []
+        self._references[identifier].append(relation_name)
+
+    def remove_reference(self, identifier: InstanceIdentifier,
+                         relation_name: str):
+        self._references[identifier].remove(relation_name)
+        if len(self._references[identifier]) == 0:
+            del self._references[identifier]
+
+    def __new__(cls,
+                semantic_manager: 'SemanticManager',
+                id: str = "",
+                fiware_header: FiwareHeader = FiwareHeader()):
+
+        if not id == "":
+            identifier = InstanceIdentifier(id="", type=cls.__name__,
+                               fiware_header=fiware_header)
+
+            if semantic_manager.does_instance_exists(identifier=identifier):
+                return semantic_manager.load_instance(identifier=identifier)
+            else:
+                return super(SemanticClass,cls).__new__(cls,
+                                                        semantic_manager,
+                                                        id,
+                                                        fiware_header)
+
+    def __init__(self, semantic_manager: 'SemanticManager'):
         super(SemanticClass, self).__init__()
-        self.id = f'{self._get_class_name()}-{uuid.uuid4().hex}'
+
+        assert not semantic_manager.client_setting == ClientSetting.unset
+
+        # check if instance does exist, if yes downlaod it
+        # if semantic_manager.does_instance_exists(self.get_identifier()):
+        #     semantic_manager.load_instance(identifier=self.get_identifier(),
+        #                                    instance=self)
+
+        semantic_manager.instance_registry.register(self)
 
     def are_fields_valid(self) -> bool:
         return len(self.get_invalid_fields()) == 0
@@ -142,7 +269,10 @@ class SemanticClass(BaseModel):
     def get_invalid_fields(self) -> List[Field]:
         return [f for f in self.get_fields() if not f.is_valid()]
 
-    def _get_class_name(self):
+    def get_type(self) -> str:
+        return self._get_class_name()
+
+    def _get_class_name(self) -> str:
         return type(self).__name__
 
     def save(self, fiware_header: FiwareHeader, assert_validity: bool = False):
@@ -157,10 +287,18 @@ class SemanticClass(BaseModel):
             client.patch_entity(entity=self.build_context_entity(),
                                 old_entity=self.old_state)
 
+    def delete(self, assert_no_references: bool = False):
+        pass
+
     def get_fields(self) -> List[Field]:
         fields: List[Field] = self.get_relationships()
         # todo datafields
         return fields
+
+    def get_field_names(self) -> List[str]:
+        names = self.get_relationship_names()
+        # todo datafields
+        return names
 
     def get_relationships(self) -> List[Relationship]:
         relationships = []
@@ -170,6 +308,13 @@ class SemanticClass(BaseModel):
                 relationships.append(rel)
         return relationships
 
+    def get_relationship_names(self) -> List[str]:
+        names = []
+        for key, value in self.__dict__.items():
+            if isinstance(value, Relationship):
+                names.append(key)
+        return names
+
     def build_context_entity(self) -> ContextEntity:
 
         entity = ContextEntity(
@@ -178,10 +323,18 @@ class SemanticClass(BaseModel):
         )
 
         for rel in self.get_relationships():
-            entity.add_properties([rel.build_context_attribute()])
+            entity.add_attributes([rel.build_context_attribute()])
 
         # todo datafields
         return entity
+
+    def get_identifier(self) -> InstanceIdentifier:
+        return InstanceIdentifier(id=self.id, type=self.get_type(),
+                                  fiware_header=self.fiware_header)
+
+    class Config:
+        arbitrary_types_allowed = True
+        allow_mutation = False
 
 
 class SemanticIndividual(SemanticClass):
@@ -189,3 +342,9 @@ class SemanticIndividual(SemanticClass):
     @staticmethod
     def _validate(values: List[Any], rules: Tuple[str, List[List]]):
         assert False, "Object is an instance, Instances are valueless"
+
+
+class ModelCatalogue(BaseModel):
+    catalogue: Dict[str, type]
+
+

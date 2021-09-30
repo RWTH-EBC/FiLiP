@@ -3,6 +3,7 @@ import unittest
 from filip.models import FiwareHeader
 
 from filip.semantics.entity_model_generator import generate_vocabulary_models
+from filip.semantics.semantic_models import ClientSetting
 from filip.semantics.vocabulary_configurator import VocabularyConfigurator
 
 
@@ -20,7 +21,9 @@ class TestSemanticModels(unittest.TestCase):
 
     def test_2_model_relation_validation(self):
         from models import Class1, Class13, Class2, Class4, Class123, \
-            Individual1
+            Individual1, semantic_manager
+
+        semantic_manager.client_setting = ClientSetting.v2
 
         class1 = Class1()
         class13 = Class13()
@@ -49,14 +52,45 @@ class TestSemanticModels(unittest.TestCase):
         class13.objProp2.append(Individual1())
         self.assertTrue(class13.objProp2.is_valid())
 
+
         # todo test statement cases: min, max,...
 
-    def test_3_test_saving_and_loading(self):
+    def test_3_back_referencing(self):
+        from models import Class1, Class3, Class2, Class4
+
+        c1 = Class1()
+        c2 = Class2()
+        c3 = Class3()
+
+        c1.oProp1.append(c2)
+        self.assertEqual(c2._references[c1.get_identifier()], ["oProp1"])
+        c1.oProp1.extend([c2])
+        self.assertEqual(c2._references[c1.get_identifier()],
+                         ["oProp1", "oProp1"])
+        c1.objProp2.extend([c2])
+        c3.objProp2.append(c2)
+        self.assertEqual(c2._references[c1.get_identifier()],
+                         ["oProp1", "oProp1", "objProp2"])
+        self.assertEqual(c2._references[c3.get_identifier()], ["objProp2"])
+
+        c1.oProp1.remove(c2)
+        self.assertEqual(c2._references[c1.get_identifier()],
+                         ["oProp1", "objProp2"])
+
+        c1.oProp1.remove(c2)
+        del c1.objProp2[0]
+        self.assertNotIn(c1.get_identifier(), c2._references)
+
+
+
+
+    def test_4_test_saving_and_loading(self):
         from models import Class1, Class13, Class3, Class4, Class123, \
             Individual1, Gertrude
 
         class13 = Class13()
         class13.objProp3.append(Class1())
-        class13.save(FiwareHeader(), assert_validity=False)
+        # class13.save(FiwareHeader(), assert_validity=False)
+
 
 

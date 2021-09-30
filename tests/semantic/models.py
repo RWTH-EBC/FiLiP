@@ -1,14 +1,20 @@
 from typing import Dict, Union
 from filip.semantics.semantic_models import \
-	SemanticClass, SemanticIndividual, Relationship
+	SemanticClass, SemanticIndividual, Relationship, ModelCatalogue, InstanceRegistry
+from filip.semantics.semantic_manager import SemanticManager
+
+
+semantic_manager: SemanticManager = SemanticManager(
+	instance_registry=InstanceRegistry()
+)
 
 # ---------CLASSES--------- #
 
 
 class Thing(SemanticClass):
 
-	def __init__(self):
-		super().__init__()
+	def __new__(cls):
+		super().__new__(cls, semantic_manager = semantic_manager)
 		pass
 
 	# Relation fields
@@ -17,29 +23,39 @@ class Thing(SemanticClass):
 class Class1(Thing):
 
 	def __init__(self):
-		super().__init__()
+		super().__init__(semantic_manager = semantic_manager)
 		self.oProp1._rules = [('some', [[Class2], [Class4]])]
 		self.objProp2._rules = [('some', [[Class1, Class2]])]
 		self.objProp3._rules = [('some', [[Class3]])]
 		self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
 		self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]])]
+		self.oProp1._class_identifier = self.get_identifier()
+		self.objProp2._class_identifier = self.get_identifier()
+		self.objProp3._class_identifier = self.get_identifier()
+		self.objProp4._class_identifier = self.get_identifier()
+		self.objProp5._class_identifier = self.get_identifier()
 
 	# Relation fields
-	oProp1: Relationship[Union['Class4', 'Class2']] = Relationship(
+	oProp1: Relationship = Relationship(
 		name='oProp1',
-		rule='some (Class2 or Class4)')
-	objProp2: Relationship[Union['Class1', 'Class2']] = Relationship(
+		rule='some (Class2 or Class4)',
+		semantic_manager = semantic_manager)
+	objProp2: Relationship = Relationship(
 		name='objProp2',
-		rule='some (Class1 and Class2)')
-	objProp3: Relationship['Class3'] = Relationship(
+		rule='some (Class1 and Class2)',
+		semantic_manager = semantic_manager)
+	objProp3: Relationship = Relationship(
 		name='objProp3',
-		rule='some Class3')
-	objProp4: Relationship[Union['Class3', 'Class1', 'Class2']] = Relationship(
+		rule='some Class3',
+		semantic_manager = semantic_manager)
+	objProp4: Relationship = Relationship(
 		name='objProp4',
-		rule='some (Class1 and Class2) and Class3)')
-	objProp5: Relationship[Union['Class3', 'Class1', 'Class2']] = Relationship(
+		rule='some (Class1 and Class2) and Class3)',
+		semantic_manager = semantic_manager)
+	objProp5: Relationship = Relationship(
 		name='objProp5',
-		rule='some (Class1 and (Class2 or Class3))')
+		rule='some (Class1 and (Class2 or Class3))',
+		semantic_manager = semantic_manager)
 
 
 class Class1a(Class1):
@@ -51,23 +67,33 @@ class Class1a(Class1):
 		self.objProp3._rules = [('some', [[Class3]])]
 		self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
 		self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]])]
+		self.oProp1._class_identifier = self.get_identifier()
+		self.objProp2._class_identifier = self.get_identifier()
+		self.objProp3._class_identifier = self.get_identifier()
+		self.objProp4._class_identifier = self.get_identifier()
+		self.objProp5._class_identifier = self.get_identifier()
 
 	# Relation fields
-	oProp1: Relationship[Union['Class4', 'Class2']] = Relationship(
+	oProp1: Relationship = Relationship(
 		name='oProp1',
-		rule='some (Class2 or Class4)')
-	objProp2: Relationship[Union['Class1', 'Class2']] = Relationship(
+		rule='some (Class2 or Class4)',
+		semantic_manager = semantic_manager)
+	objProp2: Relationship = Relationship(
 		name='objProp2',
-		rule='some (Class1 and Class2)')
-	objProp3: Relationship['Class3'] = Relationship(
+		rule='some (Class1 and Class2)',
+		semantic_manager = semantic_manager)
+	objProp3: Relationship = Relationship(
 		name='objProp3',
-		rule='some Class3')
-	objProp4: Relationship[Union['Class3', 'Class1', 'Class2']] = Relationship(
+		rule='some Class3',
+		semantic_manager = semantic_manager)
+	objProp4: Relationship = Relationship(
 		name='objProp4',
-		rule='some (Class1 and Class2) and Class3)')
-	objProp5: Relationship[Union['Class3', 'Class1', 'Class2']] = Relationship(
+		rule='some (Class1 and Class2) and Class3)',
+		semantic_manager = semantic_manager)
+	objProp5: Relationship = Relationship(
 		name='objProp5',
-		rule='some (Class1 and (Class2 or Class3))')
+		rule='some (Class1 and (Class2 or Class3))',
+		semantic_manager = semantic_manager)
 
 
 class Class1aa(Class1a):
@@ -79,23 +105,33 @@ class Class1aa(Class1a):
 		self.objProp3._rules = [('some', [[Class3]])]
 		self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
 		self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]])]
+		self.oProp1._class_identifier = self.get_identifier()
+		self.objProp2._class_identifier = self.get_identifier()
+		self.objProp3._class_identifier = self.get_identifier()
+		self.objProp4._class_identifier = self.get_identifier()
+		self.objProp5._class_identifier = self.get_identifier()
 
 	# Relation fields
-	oProp1: Relationship[Union['Class4', 'Class2']] = Relationship(
+	oProp1: Relationship = Relationship(
 		name='oProp1',
-		rule='some (Class2 or Class4)')
-	objProp2: Relationship[Union['Class1', 'Class2']] = Relationship(
+		rule='some (Class2 or Class4)',
+		semantic_manager = semantic_manager)
+	objProp2: Relationship = Relationship(
 		name='objProp2',
-		rule='some (Class1 and Class2)')
-	objProp3: Relationship['Class3'] = Relationship(
+		rule='some (Class1 and Class2)',
+		semantic_manager = semantic_manager)
+	objProp3: Relationship = Relationship(
 		name='objProp3',
-		rule='some Class3')
-	objProp4: Relationship[Union['Class3', 'Class1', 'Class2']] = Relationship(
+		rule='some Class3',
+		semantic_manager = semantic_manager)
+	objProp4: Relationship = Relationship(
 		name='objProp4',
-		rule='some (Class1 and Class2) and Class3)')
-	objProp5: Relationship[Union['Class3', 'Class1', 'Class2']] = Relationship(
+		rule='some (Class1 and Class2) and Class3)',
+		semantic_manager = semantic_manager)
+	objProp5: Relationship = Relationship(
 		name='objProp5',
-		rule='some (Class1 and (Class2 or Class3))')
+		rule='some (Class1 and (Class2 or Class3))',
+		semantic_manager = semantic_manager)
 
 
 class Class1b(Class1):
@@ -107,23 +143,33 @@ class Class1b(Class1):
 		self.objProp3._rules = [('some', [[Class3]])]
 		self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
 		self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]])]
+		self.oProp1._class_identifier = self.get_identifier()
+		self.objProp2._class_identifier = self.get_identifier()
+		self.objProp3._class_identifier = self.get_identifier()
+		self.objProp4._class_identifier = self.get_identifier()
+		self.objProp5._class_identifier = self.get_identifier()
 
 	# Relation fields
-	oProp1: Relationship[Union['Class4', 'Class2']] = Relationship(
+	oProp1: Relationship = Relationship(
 		name='oProp1',
-		rule='some Class2, some (Class2 or Class4)')
-	objProp2: Relationship[Union['Class1', 'Class2']] = Relationship(
+		rule='some Class2, some (Class2 or Class4)',
+		semantic_manager = semantic_manager)
+	objProp2: Relationship = Relationship(
 		name='objProp2',
-		rule='some (Class1 and Class2)')
-	objProp3: Relationship['Class3'] = Relationship(
+		rule='some (Class1 and Class2)',
+		semantic_manager = semantic_manager)
+	objProp3: Relationship = Relationship(
 		name='objProp3',
-		rule='some Class3')
-	objProp4: Relationship[Union['Class3', 'Class1', 'Class2']] = Relationship(
+		rule='some Class3',
+		semantic_manager = semantic_manager)
+	objProp4: Relationship = Relationship(
 		name='objProp4',
-		rule='some (Class1 and Class2) and Class3)')
-	objProp5: Relationship[Union['Class3', 'Class1', 'Class2']] = Relationship(
+		rule='some (Class1 and Class2) and Class3)',
+		semantic_manager = semantic_manager)
+	objProp5: Relationship = Relationship(
 		name='objProp5',
-		rule='some (Class1 and (Class2 or Class3))')
+		rule='some (Class1 and (Class2 or Class3))',
+		semantic_manager = semantic_manager)
 
 
 class Class2(Thing):
@@ -132,14 +178,18 @@ class Class2(Thing):
 		super().__init__()
 		self.oProp1._rules = [('min|1', [[Class1]])]
 		self.objProp2._rules = [('only', [[Thing]])]
+		self.oProp1._class_identifier = self.get_identifier()
+		self.objProp2._class_identifier = self.get_identifier()
 
 	# Relation fields
-	oProp1: Relationship['Class1'] = Relationship(
+	oProp1: Relationship = Relationship(
 		name='oProp1',
-		rule='min 1 Class1')
-	objProp2: Relationship['Thing'] = Relationship(
+		rule='min 1 Class1',
+		semantic_manager = semantic_manager)
+	objProp2: Relationship = Relationship(
 		name='objProp2',
-		rule='only Thing')
+		rule='only Thing',
+		semantic_manager = semantic_manager)
 
 
 class Class3(Thing):
@@ -148,14 +198,18 @@ class Class3(Thing):
 		super().__init__()
 		self.oProp1._rules = [('value', [[Individual1]])]
 		self.objProp2._rules = [('some', [[Class1]]), ('value', [[Individual1]])]
+		self.oProp1._class_identifier = self.get_identifier()
+		self.objProp2._class_identifier = self.get_identifier()
 
 	# Relation fields
-	oProp1: Relationship['Individual1'] = Relationship(
+	oProp1: Relationship = Relationship(
 		name='oProp1',
-		rule='value Individual1')
-	objProp2: Relationship[Union['Class1', 'Individual1']] = Relationship(
+		rule='value Individual1',
+		semantic_manager = semantic_manager)
+	objProp2: Relationship = Relationship(
 		name='objProp2',
-		rule='some Class1, value Individual1')
+		rule='some Class1, value Individual1',
+		semantic_manager = semantic_manager)
 
 
 class Class123(Class1, Class2, Class3):
@@ -167,23 +221,33 @@ class Class123(Class1, Class2, Class3):
 		self.objProp3._rules = [('some', [[Class3]])]
 		self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
 		self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]])]
+		self.oProp1._class_identifier = self.get_identifier()
+		self.objProp2._class_identifier = self.get_identifier()
+		self.objProp3._class_identifier = self.get_identifier()
+		self.objProp4._class_identifier = self.get_identifier()
+		self.objProp5._class_identifier = self.get_identifier()
 
 	# Relation fields
-	oProp1: Relationship[Union['Class4', 'Class1', 'Class2', 'Individual1']] = Relationship(
+	oProp1: Relationship = Relationship(
 		name='oProp1',
-		rule='value Individual1, min 1 Class1, some (Class2 or Class4)')
-	objProp2: Relationship[Union['Thing', 'Class1', 'Class2', 'Individual1']] = Relationship(
+		rule='value Individual1, min 1 Class1, some (Class2 or Class4)',
+		semantic_manager = semantic_manager)
+	objProp2: Relationship = Relationship(
 		name='objProp2',
-		rule='some Class1, value Individual1, only Thing, some (Class1 and Class2)')
-	objProp3: Relationship['Class3'] = Relationship(
+		rule='some Class1, value Individual1, only Thing, some (Class1 and Class2)',
+		semantic_manager = semantic_manager)
+	objProp3: Relationship = Relationship(
 		name='objProp3',
-		rule='some Class3')
-	objProp4: Relationship[Union['Class3', 'Class1', 'Class2']] = Relationship(
+		rule='some Class3',
+		semantic_manager = semantic_manager)
+	objProp4: Relationship = Relationship(
 		name='objProp4',
-		rule='some (Class1 and Class2) and Class3)')
-	objProp5: Relationship[Union['Class3', 'Class1', 'Class2']] = Relationship(
+		rule='some (Class1 and Class2) and Class3)',
+		semantic_manager = semantic_manager)
+	objProp5: Relationship = Relationship(
 		name='objProp5',
-		rule='some (Class1 and (Class2 or Class3))')
+		rule='some (Class1 and (Class2 or Class3))',
+		semantic_manager = semantic_manager)
 
 
 class Class13(Class1, Class3):
@@ -195,23 +259,33 @@ class Class13(Class1, Class3):
 		self.objProp3._rules = [('some', [[Class3]])]
 		self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
 		self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]])]
+		self.oProp1._class_identifier = self.get_identifier()
+		self.objProp2._class_identifier = self.get_identifier()
+		self.objProp3._class_identifier = self.get_identifier()
+		self.objProp4._class_identifier = self.get_identifier()
+		self.objProp5._class_identifier = self.get_identifier()
 
 	# Relation fields
-	oProp1: Relationship[Union['Class4', 'Class2', 'Individual1']] = Relationship(
+	oProp1: Relationship = Relationship(
 		name='oProp1',
-		rule='value Individual1, some (Class2 or Class4)')
-	objProp2: Relationship[Union['Class1', 'Class2', 'Individual1']] = Relationship(
+		rule='value Individual1, some (Class2 or Class4)',
+		semantic_manager = semantic_manager)
+	objProp2: Relationship = Relationship(
 		name='objProp2',
-		rule='some Class1, value Individual1, some (Class1 and Class2)')
-	objProp3: Relationship['Class3'] = Relationship(
+		rule='some Class1, value Individual1, some (Class1 and Class2)',
+		semantic_manager = semantic_manager)
+	objProp3: Relationship = Relationship(
 		name='objProp3',
-		rule='some Class3')
-	objProp4: Relationship[Union['Class3', 'Class1', 'Class2']] = Relationship(
+		rule='some Class3',
+		semantic_manager = semantic_manager)
+	objProp4: Relationship = Relationship(
 		name='objProp4',
-		rule='some (Class1 and Class2) and Class3)')
-	objProp5: Relationship[Union['Class3', 'Class1', 'Class2']] = Relationship(
+		rule='some (Class1 and Class2) and Class3)',
+		semantic_manager = semantic_manager)
+	objProp5: Relationship = Relationship(
 		name='objProp5',
-		rule='some (Class1 and (Class2 or Class3))')
+		rule='some (Class1 and (Class2 or Class3))',
+		semantic_manager = semantic_manager)
 
 
 class Class3a(Class3):
@@ -220,14 +294,18 @@ class Class3a(Class3):
 		super().__init__()
 		self.oProp1._rules = [('value', [[Individual1]])]
 		self.objProp2._rules = [('some', [[Class1]]), ('value', [[Individual1]])]
+		self.oProp1._class_identifier = self.get_identifier()
+		self.objProp2._class_identifier = self.get_identifier()
 
 	# Relation fields
-	oProp1: Relationship['Individual1'] = Relationship(
+	oProp1: Relationship = Relationship(
 		name='oProp1',
-		rule='value Individual1')
-	objProp2: Relationship[Union['Class1', 'Individual1']] = Relationship(
+		rule='value Individual1',
+		semantic_manager = semantic_manager)
+	objProp2: Relationship = Relationship(
 		name='objProp2',
-		rule='some Class1, value Individual1')
+		rule='some Class1, value Individual1',
+		semantic_manager = semantic_manager)
 
 
 class Class3aa(Class3a):
@@ -236,14 +314,18 @@ class Class3aa(Class3a):
 		super().__init__()
 		self.oProp1._rules = [('value', [[Individual1]])]
 		self.objProp2._rules = [('some', [[Class1]]), ('value', [[Individual1]])]
+		self.oProp1._class_identifier = self.get_identifier()
+		self.objProp2._class_identifier = self.get_identifier()
 
 	# Relation fields
-	oProp1: Relationship['Individual1'] = Relationship(
+	oProp1: Relationship = Relationship(
 		name='oProp1',
-		rule='value Individual1')
-	objProp2: Relationship[Union['Class1', 'Individual1']] = Relationship(
+		rule='value Individual1',
+		semantic_manager = semantic_manager)
+	objProp2: Relationship = Relationship(
 		name='objProp2',
-		rule='some Class1, value Individual1')
+		rule='some Class1, value Individual1',
+		semantic_manager = semantic_manager)
 
 
 class Class4(Thing):
@@ -251,11 +333,13 @@ class Class4(Thing):
 	def __init__(self):
 		super().__init__()
 		self.objProp4._rules = [('min|1', [[Class1]])]
+		self.objProp4._class_identifier = self.get_identifier()
 
 	# Relation fields
-	objProp4: Relationship['Class1'] = Relationship(
+	objProp4: Relationship = Relationship(
 		name='objProp4',
-		rule='min 1 Class1')
+		rule='min 1 Class1',
+		semantic_manager = semantic_manager)
 
 
 class Gertrude(Class1, Class2):
@@ -267,23 +351,33 @@ class Gertrude(Class1, Class2):
 		self.objProp3._rules = [('some', [[Class3]])]
 		self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
 		self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]])]
+		self.oProp1._class_identifier = self.get_identifier()
+		self.objProp2._class_identifier = self.get_identifier()
+		self.objProp3._class_identifier = self.get_identifier()
+		self.objProp4._class_identifier = self.get_identifier()
+		self.objProp5._class_identifier = self.get_identifier()
 
 	# Relation fields
-	oProp1: Relationship[Union['Class4', 'Class1', 'Class2']] = Relationship(
+	oProp1: Relationship = Relationship(
 		name='oProp1',
-		rule='min 1 Class1, some (Class2 or Class4)')
-	objProp2: Relationship[Union['Thing', 'Class1', 'Class2']] = Relationship(
+		rule='min 1 Class1, some (Class2 or Class4)',
+		semantic_manager = semantic_manager)
+	objProp2: Relationship = Relationship(
 		name='objProp2',
-		rule='only Thing, some (Class1 and Class2)')
-	objProp3: Relationship['Class3'] = Relationship(
+		rule='only Thing, some (Class1 and Class2)',
+		semantic_manager = semantic_manager)
+	objProp3: Relationship = Relationship(
 		name='objProp3',
-		rule='some Class3')
-	objProp4: Relationship[Union['Class3', 'Class1', 'Class2']] = Relationship(
+		rule='some Class3',
+		semantic_manager = semantic_manager)
+	objProp4: Relationship = Relationship(
 		name='objProp4',
-		rule='some (Class1 and Class2) and Class3)')
-	objProp5: Relationship[Union['Class3', 'Class1', 'Class2']] = Relationship(
+		rule='some (Class1 and Class2) and Class3)',
+		semantic_manager = semantic_manager)
+	objProp5: Relationship = Relationship(
 		name='objProp5',
-		rule='some (Class1 and (Class2 or Class3))')
+		rule='some (Class1 and (Class2 or Class3))',
+		semantic_manager = semantic_manager)
 
 
 # ---------Individuals--------- #
@@ -301,23 +395,22 @@ class Individual4(SemanticIndividual, Class1, Class2):
 	pass
 
 
-class ModelCatalogue:
-	catalogue: Dict[str, type] = {
-		'Class1': Class1,
-		'Class123': Class123,
-		'Class13': Class13,
-		'Class1a': Class1a,
-		'Class1aa': Class1aa,
-		'Class1b': Class1b,
-		'Class2': Class2,
-		'Class3': Class3,
-		'Class3a': Class3a,
-		'Class3aa': Class3aa,
-		'Class4': Class4,
-		'Gertrude': Gertrude,
-		'Thing': Thing,
-		'Individual1': Individual1,
-		'Individual2': Individual2,
-		'Individual3': Individual3,
-		'Individual4': Individual4,
+semantic_manager.model_catalogue = {
+	'Class1': Class1,
+	'Class123': Class123,
+	'Class13': Class13,
+	'Class1a': Class1a,
+	'Class1aa': Class1aa,
+	'Class1b': Class1b,
+	'Class2': Class2,
+	'Class3': Class3,
+	'Class3a': Class3a,
+	'Class3aa': Class3aa,
+	'Class4': Class4,
+	'Gertrude': Gertrude,
+	'Thing': Thing,
+	'Individual1': Individual1,
+	'Individual2': Individual2,
+	'Individual3': Individual3,
+	'Individual4': Individual4,
 	}

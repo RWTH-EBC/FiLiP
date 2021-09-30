@@ -14,7 +14,17 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
     # imports
     content += "from typing import Dict, Union\n"
     content += "from filip.semantics.semantic_models import \\"\
-               "\n\tSemanticClass, SemanticIndividual, Relationship"
+               "\n\tSemanticClass, SemanticIndividual, Relationship, " \
+               "ModelCatalogue, InstanceRegistry"
+    content += "\n"
+    content += "from filip.semantics.semantic_manager import SemanticManager"
+
+    content += "\n\n\n"
+    content += "semantic_manager: SemanticManager = SemanticManager("
+    content += "\n\t"
+    content += "instance_registry=InstanceRegistry()"
+    content += "\n"
+    content += ")"
 
     content += "\n\n"
     content += "# ---------CLASSES--------- #"
@@ -51,13 +61,22 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
         content += "\n\n\t"
         content += "def __init__(self):"
         content += "\n\t\t"
-        content += "super().__init__()"
+        if class_.get_label() == "Thing":
+            content += "super().__init__(semantic_manager = " \
+                       "semantic_manager)"
+        else:
+            content += "super().__init__()"
         for cor in class_.get_combined_object_relations(vocabulary):
             content += "\n\t\t"
             content += f"self." \
                        f"" \
                        f"{cor.get_property_label(vocabulary)}._rules = " \
                        f"{cor.export_rule(vocabulary)}"
+        for cor in class_.get_combined_object_relations(vocabulary):
+            content += "\n\t\t"
+            content += f"self.{cor.get_property_label(vocabulary)}" \
+                       f"._class_identifier = " \
+                       f"self.get_identifier()"
 
         if len(class_.get_combined_object_relations(vocabulary)) == 0:
             content += "\n\t\tpass"
@@ -69,21 +88,24 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
         for cor in class_.get_combined_object_relations(vocabulary):
             content += "\n\t"
 
-            target_names = cor.get_all_target_labels(vocabulary)
-            if len(target_names)>1:
-                types = f'Union{[n for n in target_names]}'
-            else:
-                types = f"'{target_names.pop()}'"
+            # target_names = cor.get_all_target_labels(vocabulary)
+            # if len(target_names)>1:
+            #     types = f'Union{[n for n in target_names]}'
+            # else:
+            #     types = f"'{target_names.pop()}'"
 
             label = cor.get_property_label(vocabulary)
             # field
-            content += f"{label}: Relationship[{types}] = Relationship("
+            content += f"{label}: Relationship = Relationship("
             # content += f"{label}: Relationship = Relationship("
             content += "\n\t\t"
             content += f"name='{label}',"
             content += "\n\t\t"
             content += f"rule='" \
-                       f"{cor.get_all_targetstatements_as_string(vocabulary)}')"
+                       f"{cor.get_all_targetstatements_as_string(vocabulary)}',"
+
+            content += "\n\t\t"
+            content += "semantic_manager = semantic_manager)"
 
     content += "\n\n\n"
     content += "# ---------Individuals--------- #"
@@ -130,6 +152,7 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
 
 
     content += "\n\n\n"
+
     # update forware references
     # for class_ in vocabulary.get_classes_sorted_by_label():
     #     content += "\n"
@@ -139,18 +162,22 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
     #     content += "\n"
     #     content += f"{individual.get_label()}.update_forward_refs()"
     # content += "\n\n\n"
+
+
     # build model dict
-    content += "class ModelCatalogue:"
-    content += "\n\t"
-    content += "catalogue: Dict[str, type] = {"
+
+    content += "semantic_manager.model_catalogue = {"
     for class_ in vocabulary.get_classes_sorted_by_label():
-        content += "\n\t\t"
+        content += "\n\t"
         content += f"'{class_.get_label()}': {class_.get_label()},"
 
     for individual in vocabulary.individuals.values():
-        content += "\n\t\t"
+        content += "\n\t"
         content += f"'{individual.get_label()}': {individual.get_label()},"
     content += "\n\t}"
+    content += "\n"
+
+
 
     if not path[:-1] == "/":
         path += "/"

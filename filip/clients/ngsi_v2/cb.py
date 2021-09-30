@@ -1406,7 +1406,7 @@ class ContextBrokerClient(BaseHttpClient):
 
             if not attr_existed:
                 update_needed = True
-                update_entity.add_properties([new_attr])
+                update_entity.add_attributes([new_attr])
 
         if update_needed:
             self.update_entity(update_entity, append=True)
