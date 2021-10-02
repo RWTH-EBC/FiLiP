@@ -58,14 +58,25 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
 
         content += f"class {class_.get_label()}({parent_classes}):"
 
-        content += "\n\n\t"
-        content += "def __init__(self):"
-        content += "\n\t\t"
         if class_.get_label() == "Thing":
-            content += "super().__init__(semantic_manager = " \
-                       "semantic_manager)"
+            content += "\n\n\t"
+            content += "def __init__(self, *args, **kwargs):"
+            content += "\n\t\t"
+            content += "kwargs['semantic_manager'] = semantic_manager"
+            content += "\n\t\t"
+            content += "super().__init__(*args, **kwargs)"
+            content += "\n\n\t"
+            content += "def __new__(cls, *args, **kwargs):"
+            content += "\n\t\t"
+            content += "kwargs['semantic_manager'] = semantic_manager"
+            content += "\n\t\t"
+            content += "return super().__new__(cls, *args, **kwargs)"
         else:
-            content += "super().__init__()"
+            content += "\n\n\t"
+            content += "def __init__(self, *args, **kwargs):"
+            content += "\n\t\t"
+            content += "super().__init__(*args, **kwargs)"
+
         for cor in class_.get_combined_object_relations(vocabulary):
             content += "\n\t\t"
             content += f"self." \

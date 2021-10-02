@@ -21,11 +21,11 @@ class TestSemanticModels(unittest.TestCase):
 
     def test_2_model_relation_validation(self):
         from models import Class1, Class13, Class2, Class4, Class123, \
-            Individual1, semantic_manager
+            Individual1, semantic_manager, Thing
 
         semantic_manager.client_setting = ClientSetting.v2
 
-        class1 = Class1()
+        class1 = Class1(id="12")
         class13 = Class13()
 
         # check for correct rules

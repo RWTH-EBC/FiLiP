@@ -23,7 +23,7 @@ class VocabularyConfigurator:
         for source in vocabulary.sources.values():
             if not source_id == source.id:
                 parser.parse_source_into_vocabulary(
-                    source=copy.deepcopy(source),vocabulary=new_vocabulary)
+                    source=copy.deepcopy(source), vocabulary=new_vocabulary)
 
         return new_vocabulary
 

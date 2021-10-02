@@ -217,8 +217,8 @@ def id_generator():
 
 class SemanticClass(BaseModel):
 
-    fiware_header: FiwareHeader = FiwareHeader()
-    id: str = pyField(default_factory=id_generator)
+    fiware_header: FiwareHeader
+    id: str
     old_state: ContextEntity = None
 
     _references: Dict[InstanceIdentifier, List[str]] = {}
@@ -234,26 +234,34 @@ class SemanticClass(BaseModel):
         if len(self._references[identifier]) == 0:
             del self._references[identifier]
 
-    def __new__(cls,
-                semantic_manager: 'SemanticManager',
-                id: str = "",
-                fiware_header: FiwareHeader = FiwareHeader()):
+    def __new__(cls, *args, **kwargs):
+        semantic_manager = kwargs['semantic_manager']
 
-        if not id == "":
-            identifier = InstanceIdentifier(id="", type=cls.__name__,
-                               fiware_header=fiware_header)
+        if 'id' in kwargs:
+            instance_id = kwargs['id']
+            if not instance_id == "":
 
-            if semantic_manager.does_instance_exists(identifier=identifier):
-                return semantic_manager.load_instance(identifier=identifier)
-            else:
-                return super(SemanticClass,cls).__new__(cls,
-                                                        semantic_manager,
-                                                        id,
-                                                        fiware_header)
+                if 'fiware_header' in kwargs:
+                    fiware_header = kwargs['fiware_header']
+                else:
+                    fiware_header = FiwareHeader()
 
-    def __init__(self, semantic_manager: 'SemanticManager'):
-        super(SemanticClass, self).__init__()
+                identifier = InstanceIdentifier(id=instance_id,
+                                                type=cls.__name__,
+                                                fiware_header=fiware_header)
 
+                if semantic_manager.does_instance_exists(identifier=identifier):
+                    return semantic_manager.load_instance(identifier=identifier)
+
+        return super().__new__(cls)
+
+    def __init__(self,  *args, **kwargs):
+        semantic_manager = kwargs['semantic_manager']
+
+        instance_id = kwargs['id'] if 'id' in kwargs else str(uuid.uuid4())
+        fiware_header = kwargs['fiware_header'] if 'fiware_header' in kwargs else FiwareHeader()
+
+        super().__init__(id=instance_id, fiware_header=fiware_header)
         assert not semantic_manager.client_setting == ClientSetting.unset
 
         # check if instance does exist, if yes downlaod it

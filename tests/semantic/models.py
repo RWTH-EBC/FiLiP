@@ -13,8 +13,13 @@ semantic_manager: SemanticManager = SemanticManager(
 
 class Thing(SemanticClass):
 
-	def __new__(cls):
-		super().__new__(cls, semantic_manager = semantic_manager)
+	def __init__(self, *args, **kwargs):
+		kwargs['semantic_manager'] = semantic_manager
+		super().__init__(*args, **kwargs)
+
+	def __new__(cls, *args, **kwargs):
+		kwargs['semantic_manager'] = semantic_manager
+		return super().__new__(cls, *args, **kwargs)
 		pass
 
 	# Relation fields
@@ -22,8 +27,8 @@ class Thing(SemanticClass):
 
 class Class1(Thing):
 
-	def __init__(self):
-		super().__init__(semantic_manager = semantic_manager)
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
 		self.oProp1._rules = [('some', [[Class2], [Class4]])]
 		self.objProp2._rules = [('some', [[Class1, Class2]])]
 		self.objProp3._rules = [('some', [[Class3]])]
@@ -60,8 +65,8 @@ class Class1(Thing):
 
 class Class1a(Class1):
 
-	def __init__(self):
-		super().__init__()
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
 		self.oProp1._rules = [('some', [[Class2], [Class4]])]
 		self.objProp2._rules = [('some', [[Class1, Class2]])]
 		self.objProp3._rules = [('some', [[Class3]])]
@@ -98,8 +103,8 @@ class Class1a(Class1):
 
 class Class1aa(Class1a):
 
-	def __init__(self):
-		super().__init__()
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
 		self.oProp1._rules = [('some', [[Class2], [Class4]])]
 		self.objProp2._rules = [('some', [[Class1, Class2]])]
 		self.objProp3._rules = [('some', [[Class3]])]
@@ -136,8 +141,8 @@ class Class1aa(Class1a):
 
 class Class1b(Class1):
 
-	def __init__(self):
-		super().__init__()
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
 		self.oProp1._rules = [('some', [[Class2]]), ('some', [[Class2], [Class4]])]
 		self.objProp2._rules = [('some', [[Class1, Class2]])]
 		self.objProp3._rules = [('some', [[Class3]])]
@@ -174,8 +179,8 @@ class Class1b(Class1):
 
 class Class2(Thing):
 
-	def __init__(self):
-		super().__init__()
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
 		self.oProp1._rules = [('min|1', [[Class1]])]
 		self.objProp2._rules = [('only', [[Thing]])]
 		self.oProp1._class_identifier = self.get_identifier()
@@ -194,8 +199,8 @@ class Class2(Thing):
 
 class Class3(Thing):
 
-	def __init__(self):
-		super().__init__()
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
 		self.oProp1._rules = [('value', [[Individual1]])]
 		self.objProp2._rules = [('some', [[Class1]]), ('value', [[Individual1]])]
 		self.oProp1._class_identifier = self.get_identifier()
@@ -214,8 +219,8 @@ class Class3(Thing):
 
 class Class123(Class1, Class2, Class3):
 
-	def __init__(self):
-		super().__init__()
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
 		self.oProp1._rules = [('value', [[Individual1]]), ('min|1', [[Class1]]), ('some', [[Class2], [Class4]])]
 		self.objProp2._rules = [('some', [[Class1]]), ('value', [[Individual1]]), ('only', [[Thing]]), ('some', [[Class1, Class2]])]
 		self.objProp3._rules = [('some', [[Class3]])]
@@ -252,8 +257,8 @@ class Class123(Class1, Class2, Class3):
 
 class Class13(Class1, Class3):
 
-	def __init__(self):
-		super().__init__()
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
 		self.oProp1._rules = [('value', [[Individual1]]), ('some', [[Class2], [Class4]])]
 		self.objProp2._rules = [('some', [[Class1]]), ('value', [[Individual1]]), ('some', [[Class1, Class2]])]
 		self.objProp3._rules = [('some', [[Class3]])]
@@ -290,8 +295,8 @@ class Class13(Class1, Class3):
 
 class Class3a(Class3):
 
-	def __init__(self):
-		super().__init__()
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
 		self.oProp1._rules = [('value', [[Individual1]])]
 		self.objProp2._rules = [('some', [[Class1]]), ('value', [[Individual1]])]
 		self.oProp1._class_identifier = self.get_identifier()
@@ -310,8 +315,8 @@ class Class3a(Class3):
 
 class Class3aa(Class3a):
 
-	def __init__(self):
-		super().__init__()
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
 		self.oProp1._rules = [('value', [[Individual1]])]
 		self.objProp2._rules = [('some', [[Class1]]), ('value', [[Individual1]])]
 		self.oProp1._class_identifier = self.get_identifier()
@@ -330,8 +335,8 @@ class Class3aa(Class3a):
 
 class Class4(Thing):
 
-	def __init__(self):
-		super().__init__()
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
 		self.objProp4._rules = [('min|1', [[Class1]])]
 		self.objProp4._class_identifier = self.get_identifier()
 
@@ -344,8 +349,8 @@ class Class4(Thing):
 
 class Gertrude(Class1, Class2):
 
-	def __init__(self):
-		super().__init__()
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
 		self.oProp1._rules = [('min|1', [[Class1]]), ('some', [[Class2], [Class4]])]
 		self.objProp2._rules = [('only', [[Thing]]), ('some', [[Class1, Class2]])]
 		self.objProp3._rules = [('some', [[Class3]])]
