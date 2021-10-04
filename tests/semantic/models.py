@@ -13,14 +13,13 @@ semantic_manager: SemanticManager = SemanticManager(
 
 class Thing(SemanticClass):
 
-	def __init__(self, *args, **kwargs):
-		kwargs['semantic_manager'] = semantic_manager
-		super().__init__(*args, **kwargs)
-
 	def __new__(cls, *args, **kwargs):
 		kwargs['semantic_manager'] = semantic_manager
 		return super().__new__(cls, *args, **kwargs)
-		pass
+
+	def __init__(self, *args, **kwargs):
+		kwargs['semantic_manager'] = semantic_manager
+		super().__init__(*args, **kwargs)
 
 	# Relation fields
 

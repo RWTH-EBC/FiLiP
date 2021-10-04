@@ -17,37 +17,37 @@ class SemanticManager(BaseModel):
     model_catalogue: Dict[str, type] = {}
     client_setting: ClientSetting = ClientSetting.unset
 
-    def load_instance_2(self, identifier: InstanceIdentifier,
-                      instance: Optional[SemanticClass] = None):
-        if self.client_setting == ClientSetting.v2:
-            with ContextBrokerClient(fiware_header=identifier.fiware_header) \
-                    as client:
+    def _context_entity_to_semantic_class(self,
+                                         entity: ContextEntity,
+                                         identifier: InstanceIdentifier) \
+            -> SemanticClass:
 
-                entity = client.get_entity(entity_id=identifier.id,
-                                           entity_type=identifier.type)
+        class_name = entity.type
 
-                class_name = entity.type
+        class_: Type = self.get_class_by_name(class_name)
+        loaded_class: SemanticClass = class_(id=identifier.id,
+                              fiware_header=identifier.fiware_header)
 
-                if instance is not None:
-                    loaded_class = instance
-                    assert class_name == instance.get_type()
-                else:
-                    class_: Type = self._get_class_by_name(class_name)
-                    loaded_class = class_()
+        # todo catch if Fiware contains more fields than the model has?
+        for field in loaded_class.get_fields():
+            field_name = field.name
 
-                for field_name in loaded_class:
-                    field = loaded_class.get_property(field_name)
+            entity_attribute = entity.get_attribute(field_name)
+            if entity_attribute is None:
+                raise Exception(
+                    f"The corresponding entity in Fiware misses a field that "
+                    f"is required by the class_model: {field_name}. The "
+                    f"fiware state and the vocabulary are not compatible")
 
-                    entity_field_value = entity.get_attribute(field_name).value
-                    if isinstance(entity_field_value, List):
-                        field.extend(entity.get_attribute(field_name).value)
-                    else:
-                        field.append(entity.get_attribute(field_name).value)
+            entity_field_value = entity.get_attribute(field_name).value
+            if isinstance(entity_field_value, List):
+                field.extend(entity.get_attribute(field_name).value)
+            else:
+                field.append(entity.get_attribute(field_name).value)
 
-                return loaded_class
+        return loaded_class
 
-
-    def _get_class_by_name(self, class_name:str) -> Type:
+    def get_class_by_name(self, class_name:str) -> Type:
         return self.model_catalogue[class_name]
 
     def parse_context_entity_to_semantic_instance(self,
@@ -62,7 +62,15 @@ class SemanticManager(BaseModel):
             return self.instance_registry.get(identifier=identifier)
 
         elif self.client_setting == ClientSetting.v2:
-            assert False
+            with ContextBrokerClient(fiware_header=identifier.fiware_header) \
+                    as client:
+
+                entity = client.get_entity(entity_id=identifier.id,
+                                           entity_type=identifier.type)
+                return self._context_entity_to_semantic_class(
+                    entity=entity,
+                    identifier=identifier
+                )
 
         assert False
 

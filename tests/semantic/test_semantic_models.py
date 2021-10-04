@@ -3,7 +3,7 @@ import unittest
 from filip.models import FiwareHeader
 
 from filip.semantics.entity_model_generator import generate_vocabulary_models
-from filip.semantics.semantic_models import ClientSetting
+from filip.semantics.semantic_models import ClientSetting, InstanceRegistry
 from filip.semantics.vocabulary_configurator import VocabularyConfigurator
 
 
@@ -81,10 +81,28 @@ class TestSemanticModels(unittest.TestCase):
         del c1.objProp2[0]
         self.assertNotIn(c1.get_identifier(), c2._references)
 
+    def test_4_test_instance_creation_inject(self):
+        from models import Class1, Class13, Class3, Class4, Class123, \
+            Individual1, Gertrude, semantic_manager
+
+        # clear local state to ensure standard test condition
+        semantic_manager.instance_registry = InstanceRegistry()
+
+        class13 = Class13(id="13")
+        rel1 = class13.oProp1
+        class13.objProp3.append(Class1(id="1"))
+
+        class13_ = Class13(id="13")
+        class13__ = Class13(id="132")
+        self.assertTrue(class13_ == class13)
+        self.assertFalse(class13__ == class13)
+        self.assertTrue(class13_.oProp1 == rel1)
+
+        class1_ = Class1(id="1")
+        self.assertTrue(class1_ == class13.objProp3[0])
 
 
-
-    def test_4_test_saving_and_loading(self):
+    def test_5_test_saving_and_loading(self):
         from models import Class1, Class13, Class3, Class4, Class123, \
             Individual1, Gertrude
 

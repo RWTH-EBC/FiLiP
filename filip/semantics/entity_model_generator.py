@@ -60,17 +60,19 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
 
         if class_.get_label() == "Thing":
             content += "\n\n\t"
-            content += "def __init__(self, *args, **kwargs):"
-            content += "\n\t\t"
-            content += "kwargs['semantic_manager'] = semantic_manager"
-            content += "\n\t\t"
-            content += "super().__init__(*args, **kwargs)"
-            content += "\n\n\t"
             content += "def __new__(cls, *args, **kwargs):"
             content += "\n\t\t"
             content += "kwargs['semantic_manager'] = semantic_manager"
             content += "\n\t\t"
             content += "return super().__new__(cls, *args, **kwargs)"
+
+            content += "\n\n\t"
+            content += "def __init__(self, *args, **kwargs):"
+            content += "\n\t\t"
+            content += "kwargs['semantic_manager'] = semantic_manager"
+            content += "\n\t\t"
+            content += "super().__init__(*args, **kwargs)"
+
         else:
             content += "\n\n\t"
             content += "def __init__(self, *args, **kwargs):"
@@ -89,8 +91,8 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
                        f"._class_identifier = " \
                        f"self.get_identifier()"
 
-        if len(class_.get_combined_object_relations(vocabulary)) == 0:
-            content += "\n\t\tpass"
+        # if len(class_.get_combined_object_relations(vocabulary)) == 0:
+        #     content += "\n\t\tpass"
 
         content += "\n\n\t"
 

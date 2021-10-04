@@ -1,7 +1,9 @@
 import collections
+import copy
 import uuid
 from enum import Enum
-from typing import List, Any, Tuple, Dict, Type, TypeVar, Generic, TYPE_CHECKING
+from typing import List, Any, Tuple, Dict, Type, TypeVar, Generic, \
+    TYPE_CHECKING, Optional
 
 from filip.models.base import DataType
 
@@ -42,13 +44,14 @@ class InstanceIdentifier(BaseModel):
 class InstanceRegistry(BaseModel):
     _registry: Dict[InstanceIdentifier, 'SemanticClass'] = {}
 
-    def register(self, instance: 'SemanticClass'):
+    def register(self, instance: 'SemanticClass') -> bool:
         identifier = instance.get_identifier()
 
         if identifier in self._registry:
-            raise Exception #todo
-
-        self._registry[identifier] = instance
+            return False
+        else:
+            self._registry[identifier] = instance
+            return True
 
     def get(self, identifier: InstanceIdentifier):
         return self._registry[identifier]
@@ -95,7 +98,7 @@ class Field(collections.MutableSequence):
 
 class Relationship(Field):
     rule: str
-    _rules: List[Tuple[str, List[List[Type]]]]
+    _rules: List[Tuple[str, List[List[Type]]]] = []
     _class_identifier: InstanceIdentifier
 
     # _model_catalogue: Dict[str, type]
@@ -219,7 +222,7 @@ class SemanticClass(BaseModel):
 
     fiware_header: FiwareHeader
     id: str
-    old_state: ContextEntity = None
+    old_state: Optional[ContextEntity]
 
     _references: Dict[InstanceIdentifier, List[str]] = {}
 
@@ -258,18 +261,28 @@ class SemanticClass(BaseModel):
     def __init__(self,  *args, **kwargs):
         semantic_manager = kwargs['semantic_manager']
 
-        instance_id = kwargs['id'] if 'id' in kwargs else str(uuid.uuid4())
-        fiware_header = kwargs['fiware_header'] if 'fiware_header' in kwargs else FiwareHeader()
+        instance_id_ = kwargs['id'] if 'id' in kwargs else str(uuid.uuid4())
+        fiware_header_ = kwargs['fiware_header'] \
+            if 'fiware_header' in kwargs else FiwareHeader()
+        old_state_ = kwargs['old_state'] if 'old_state' in kwargs else None
 
-        super().__init__(id=instance_id, fiware_header=fiware_header)
+        identifier_ = InstanceIdentifier(
+                        id= instance_id_,
+                        type= self.get_type(),
+                        fiware_header= fiware_header_
+                    )
+        # test if this instance was taken out of the instance_registry instead
+        # of being newly created. If yes abort __init__(), to prevent state
+        # overwrite !
+        if semantic_manager.does_instance_exists(identifier_):
+            return
+
+        super().__init__(id=instance_id_, fiware_header=fiware_header_,
+                         old_state=old_state_)
         assert not semantic_manager.client_setting == ClientSetting.unset
 
-        # check if instance does exist, if yes downlaod it
-        # if semantic_manager.does_instance_exists(self.get_identifier()):
-        #     semantic_manager.load_instance(identifier=self.get_identifier(),
-        #                                    instance=self)
-
         semantic_manager.instance_registry.register(self)
+
 
     def are_fields_valid(self) -> bool:
         return len(self.get_invalid_fields()) == 0
@@ -293,7 +306,7 @@ class SemanticClass(BaseModel):
 
         with ContextBrokerClient(fiware_header=fiware_header) as client:
             client.patch_entity(entity=self.build_context_entity(),
-                                old_entity=self.old_state)
+                                old_entity=self._old_state)
 
     def delete(self, assert_no_references: bool = False):
         pass
@@ -322,6 +335,14 @@ class SemanticClass(BaseModel):
             if isinstance(value, Relationship):
                 names.append(key)
         return names
+
+    def get_field_by_name(self, field_name: str) -> Field:
+        for key, value in self.__dict__.items():
+            if isinstance(value, Field):
+                if value.name == field_name:
+                    return value
+
+        raise KeyError
 
     def build_context_entity(self) -> ContextEntity:
 
