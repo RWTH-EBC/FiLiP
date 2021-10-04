@@ -1,10 +1,11 @@
 """
-Base client module
+Base http client module
 """
 import logging
 from pydantic import AnyHttpUrl
 from typing import Dict, ByteString, List, IO, Tuple, Union
 import requests
+
 from filip.models.base import FiwareHeader
 from filip.utils import validate_url
 
@@ -349,7 +350,7 @@ class BaseHttpClient:
             elif err.response.text and not msg:
                 self.logger.error("%s", err.response.text)
         elif not err.response and msg:
-                self.logger.error("%s \n Reason: %s", msg, err)
+            self.logger.error("%s \n Reason: %s", msg, err)
         else:
             self.logger.error(err)
 
