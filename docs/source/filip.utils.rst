@@ -1,45 +1,27 @@
-filip.utils package
-===================
+filip.utils
+===========
 
-Submodules
-----------
 
-filip.utils.datamodel\_generator module
----------------------------------------
+filip.utils.datamodel\_generator
+--------------------------------
 
 .. automodule:: filip.utils.datamodel_generator
    :members:
    :undoc-members:
    :show-inheritance:
 
-filip.utils.simple\_ql module
------------------------------
+filip.utils.simple\_ql
+----------------------
 
 .. automodule:: filip.utils.simple_ql
    :members:
    :undoc-members:
    :show-inheritance:
 
-filip.utils.utils module
-------------------------
-
-.. automodule:: filip.utils.utils
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-filip.utils.validators module
------------------------------
+filip.utils.validators
+----------------------
 
 .. automodule:: filip.utils.validators
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: filip.utils
    :members:
    :undoc-members:
    :show-inheritance:

@@ -1,5 +1,5 @@
-filip.models package
-====================
+filip.models
+============
 
 Subpackages
 -----------
@@ -10,29 +10,13 @@ Subpackages
    filip.models.ngsi_ld
    filip.models.ngsi_v2
 
-Submodules
-----------
-
-filip.models.base module
-------------------------
+filip.models.base
+-----------------
 
 .. automodule:: filip.models.base
    :members:
    :undoc-members:
    :show-inheritance:
 
-filip.models.units module
--------------------------
 
-.. automodule:: filip.models.units
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
-Module contents
----------------
-
-.. automodule:: filip.models
-   :members:
-   :undoc-members:
-   :show-inheritance:
