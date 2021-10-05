@@ -1,10 +1,4 @@
-filip.clients.ngsi\_ld package
-==============================
+filip.clients.ngsi\_ld
+======================
 
-Module contents
----------------
-
-.. automodule:: filip.clients.ngsi_ld
-   :members:
-   :undoc-members:
-   :show-inheritance:
+This package will contain HTTP clients for FIWARE’s NGSI-LD APIs.

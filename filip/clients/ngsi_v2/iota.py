@@ -303,7 +303,7 @@ class IoTAClient(BaseHttpClient):
         return self.post_devices(devices=[device], update=update)
 
     def get_device_list(self, *, limit: int = None, offset: int = None,
-                        detailed: bool = None, entity: str = None,
+                        detailed: str = 'off', entity: str = None,
                         protocol: PayloadProtocol = None) -> List[Device]:
         """
         Returns a list of all the devices in the device registry with all
@@ -313,7 +313,8 @@ class IoTAClient(BaseHttpClient):
             list. Must be a number between 1 and 1000.
             offset: if present, skip that number of devices from the original
             query.
-            detailed:
+            detailed: 'on' return all device information, 'off' (default)
+                return only name.
             entity:
             protocol:
         Returns:

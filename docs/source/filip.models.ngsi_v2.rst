@@ -1,37 +1,35 @@
-filip.models.ngsi\_v2 package
-=============================
+filip.models.ngsi\_v2
+=====================
 
-Submodules
-----------
-
-filip.models.ngsi\_v2.context module
-------------------------------------
+filip.models.ngsi\_v2.context
+-----------------------------
 
 .. automodule:: filip.models.ngsi_v2.context
    :members:
    :undoc-members:
    :show-inheritance:
 
-filip.models.ngsi\_v2.iot module
---------------------------------
+filip.models.ngsi\_v2.iot
+-------------------------
 
 .. automodule:: filip.models.ngsi_v2.iot
    :members:
    :undoc-members:
    :show-inheritance:
 
-filip.models.ngsi\_v2.timeseries module
----------------------------------------
+filip.models.ngsi\_v2.timeseries
+--------------------------------
 
 .. automodule:: filip.models.ngsi_v2.timeseries
    :members:
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
+filip.models.units
+------------------
 
-.. automodule:: filip.models.ngsi_v2
+.. automodule:: filip.models.ngsi_v2.units
    :members:
    :undoc-members:
    :show-inheritance:
+
