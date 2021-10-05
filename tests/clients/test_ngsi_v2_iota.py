@@ -103,7 +103,7 @@ class TestAgent(unittest.TestCase):
                                             type='Text',
                                             entity_name='pressure')
             attr_static = StaticDeviceAttribute(name='hasRoom',
-                                                type='Relationship',
+                                                type='RelationField',
                                                 value='my_partner_id')
             device.add_attribute(attr)
             device.add_attribute(attr_command)

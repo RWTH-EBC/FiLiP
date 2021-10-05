@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List, Union
+from typing import List, Union, Dict
 
 from . import Entity
 
@@ -44,6 +44,14 @@ class Datatype(Entity):
     """If Type==String: Whitelisted chars"""
     enum_values: List[str] = []
     """If Type==Enum: Enum values"""
+
+    def export(self) -> Dict:
+        res = self.dict(include={'number_has_range',
+                                  'number_range_min', 'number_range_max',
+                                  'number_decimal_allowed', 'forbidden_chars',
+                                  'allowed_chars', 'enum_values'})
+        res['type'] = self.type.value
+        return res
 
     def value_is_valid(self, value:str) -> bool:
         """Test if value is valid for this datatype.

@@ -6,6 +6,8 @@ from enum import Enum
 from typing import List, Any, Tuple, Dict, Type, TypeVar, Generic, \
     TYPE_CHECKING, Optional
 
+from filip.semantics.vocabulary import Datatype
+
 from filip.models.base import DataType
 
 from filip.models.ngsi_v2.context import ContextEntity, NamedContextAttribute
@@ -72,6 +74,7 @@ class InstanceRegistry(BaseModel):
     def get(self, identifier: InstanceIdentifier):
         return self._registry[identifier]
 
+
     def contains(self, identifier: InstanceIdentifier):
         return identifier in self._registry
 
@@ -80,60 +83,31 @@ class InstanceRegistry(BaseModel):
 
 
 class Field(collections.MutableSequence):
+    _rules: List[Tuple[str, List[List[str]]]]
     rule: str
     name: str
-    instance_registry: InstanceRegistry
+    _semantic_manager: 'SemanticManager'
 
-    def __init__(self, rule, name, semantic_manager):
+    def __init__(self, rule, name):
         super().__init__()
 
         self.rule = rule
         self.name = name
-        self.instance_registry = semantic_manager.instance_registry
 
         self.list = list()
 
     def is_valid(self) -> bool:
-        pass
-
-    def __len__(self): return len(self.list)
-
-    def __getitem__(self, i): return self.list[i]
-
-    def __delitem__(self, i): del self.list[i]
-
-    def __setitem__(self, i, v):
-        self.list[i] = v
-
-    def insert(self, i, v):
-        self.list.insert(i, v)
-
-    def __str__(self):
-        return str(self.list)
-
-    def get_all(self):
-        return self.list
-
-
-class Relationship(Field):
-    rule: str
-    _rules: List[Tuple[str, List[List[Type]]]] = []
-    _class_identifier: InstanceIdentifier
-
-    # _model_catalogue: Dict[str, type]
-
-    def is_valid(self) -> bool:
         """
-        Check if the values present in this relationship fulfill the semantic
-        rule.
+                Check if the values present in this relationship fulfill the semantic
+                rule.
 
-        returns:
-            bool
-        """
+                returns:
+                    bool
+                """
 
         # rule has form: (STATEMENT, [[a,b],[c],[a,..],..])
-        # A value fulfills the rule if it is an instance of all the classes
-        #       listed in at least one innerlist
+        # A value fulfills the rule if it is an instance of all the classes,
+        #       datatypes listed in at least one innerlist
         # A field is fulfilled if a number of values fulfill the rule,
         #       the number is depending on the statement
 
@@ -151,7 +125,7 @@ class Relationship(Field):
         for rule in self._rules:
             # rule has form: (STATEMENT, [[a,b],[c],[a,..],..])
             statement: str = rule[0]
-            outer_class_list: List[List] = rule[1]
+            outer_list: List[List] = rule[1]
 
             # count how  many values fulfill this rule
             fulfilling_values = 0
@@ -160,14 +134,14 @@ class Relationship(Field):
                 # A value fulfills the rule if there exists an innerlist of
                 # which the value is an instance of each value
                 fulfilled = False
-                for inner_class_list in outer_class_list:
+                for inner_list in outer_list:
 
                     counter = 0
-                    for c in inner_class_list:
-                        if isinstance(v, c):
+                    for rule_value in inner_list:
+                        if self._value_is_valid(v, rule_value):
                             counter += 1
 
-                    if len(inner_class_list) == counter:
+                    if len(inner_list) == counter:
                         fulfilled = True
 
                 if fulfilled:
@@ -200,8 +174,59 @@ class Relationship(Field):
         # no rule failed -> relationship fulfilled
         return True
 
+    def _value_is_valid(self, value, rule_value) -> bool:
+        pass
+
+    def build_context_attribute(self) -> NamedContextAttribute:
+        pass
+
+    def __len__(self): return len(self.list)
+
+    def __getitem__(self, i): return self.list[i]
+
+    def __delitem__(self, i): del self.list[i]
+
+    def __setitem__(self, i, v):
+        self.list[i] = v
+
+    def insert(self, i, v):
+        self.list.insert(i, v)
+
+    def __str__(self):
+        return str(self.list)
+
+    def get_all(self):
+        return self.list
+
+
+class DataField(Field):
+    _rules: List[Tuple[str, List[List[Datatype]]]] = []
+
+    def _value_is_valid(self, value, rule_value: Datatype) -> bool:
+        return rule_value.value_is_valid(value)
+
+    def build_context_attribute(self) -> NamedContextAttribute:
+        return NamedContextAttribute(
+            name=self.name,
+            type=DataType.STRUCTUREDVALUE,
+            value=[v.dict() for v in self.get_all()]
+        )
+
+
+class RelationField(Field):
+    _rules: List[Tuple[str, List[List[Type]]]] = []
+    _class_identifier: InstanceIdentifier
+    _semantic_manager: 'SemanticManager'
+
+    # _model_catalogue: Dict[str, type]
+
     def __init__(self, rule, name, semantic_manager):
-        super().__init__(rule, name, semantic_manager)
+        self._semantic_manager = semantic_manager
+        super().__init__(rule, name)
+
+
+    def _value_is_valid(self, value, rule_value: type) -> bool:
+        return isinstance(value, rule_value)
 
     def build_context_attribute(self) -> NamedContextAttribute:
 
@@ -215,7 +240,7 @@ class Relationship(Field):
         assert isinstance(v, SemanticClass)
 
     def __getitem__(self, i) -> 'SemanticClass':
-        return self.instance_registry.get(self.list[i])
+        return self._semantic_manager.get_instance(self.list[i])
 
     def __setitem__(self, i, v: 'SemanticClass'):
         self._check(v)
@@ -223,7 +248,7 @@ class Relationship(Field):
         v.add_reference(self._class_identifier, self.name)
 
     def __delitem__(self, i):
-        v: SemanticClass = self.instance_registry.get(self.list[i])
+        v: SemanticClass = self._semantic_manager.get_instance(self.list[i])
         v.remove_reference(self._class_identifier, self.name)
         del self.list[i]
 
@@ -232,6 +257,10 @@ class Relationship(Field):
         identifier = v.get_identifier()
         self.list.insert(i, identifier)
         v.add_reference(self._class_identifier, self.name)
+
+
+    # def _inject(self, v: InstanceIdentifier):
+    #     self.list.insert(len(self.list), v)
 
 
 def id_generator():
@@ -352,7 +381,7 @@ class SemanticClass(BaseModel):
         pass
 
     def get_fields(self) -> List[Field]:
-        fields: List[Field] = self.get_relationships()
+        fields: List[Field] = self.get_relation_fields()
         # todo datafields
         return fields
 
@@ -361,18 +390,18 @@ class SemanticClass(BaseModel):
         # todo datafields
         return names
 
-    def get_relationships(self) -> List[Relationship]:
+    def get_relation_fields(self) -> List[RelationField]:
         relationships = []
         for key, value in self.__dict__.items():
-            if isinstance(value, Relationship):
-                rel: Relationship = value
+            if isinstance(value, RelationField):
+                rel: RelationField = value
                 relationships.append(rel)
         return relationships
 
     def get_relationship_names(self) -> List[str]:
         names = []
         for key, value in self.__dict__.items():
-            if isinstance(value, Relationship):
+            if isinstance(value, RelationField):
                 names.append(key)
         return names
 
@@ -391,7 +420,7 @@ class SemanticClass(BaseModel):
             type=self._get_class_name()
         )
 
-        for rel in self.get_relationships():
+        for rel in self.get_relation_fields():
             entity.add_attributes([rel.build_context_attribute()])
 
         # todo datafields

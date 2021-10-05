@@ -33,7 +33,7 @@ class TestContextModels(unittest.TestCase):
         self.attr = {'temperature': {'value': 20,
                                      'type': 'Number'}}
         self.relation = {'relation': {'value': 'OtherEntity',
-                                      'type': 'Relationship'}}
+                                      'type': 'RelationField'}}
         self.entity_data = {'id': 'MyId',
                             'type': 'MyType'}
         self.entity_data.update(self.attr)

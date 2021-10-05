@@ -14,8 +14,8 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
     # imports
     content += "from typing import Dict, Union\n"
     content += "from filip.semantics.semantic_models import \\"\
-               "\n\tSemanticClass, SemanticIndividual, Relationship, " \
-               "ModelCatalogue, InstanceRegistry"
+               "\n\tSemanticClass, SemanticIndividual, RelationField, " \
+               "DataField, InstanceRegistry"
     content += "\n"
     content += "from filip.semantics.semantic_manager import SemanticManager"
 
@@ -79,12 +79,14 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
             content += "\n\t\t"
             content += "super().__init__(*args, **kwargs)"
 
-        for cor in class_.get_combined_object_relations(vocabulary):
+        content += "\n"
+        for cdr in class_.get_combined_data_relations(vocabulary):
             content += "\n\t\t"
             content += f"self." \
                        f"" \
-                       f"{cor.get_property_label(vocabulary)}._rules = " \
-                       f"{cor.export_rule(vocabulary)}"
+                       f"{cdr.get_property_label(vocabulary)}._rules = " \
+                       f"{cdr.export_rule(vocabulary)}"
+        content += "\n"
         for cor in class_.get_combined_object_relations(vocabulary):
             content += "\n\t\t"
             content += f"self.{cor.get_property_label(vocabulary)}" \
@@ -96,29 +98,33 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
 
         content += "\n\n\t"
 
+        # Data fields
+        content += "# Data fields"
+        for cdr in class_.get_combined_data_relations(vocabulary):
+            content += "\n\t"
+            label = cdr.get_property_label(vocabulary)
+            content += f"{label}: DataField = DataField("
+            content += "\n\t\t"
+            content += f"name='{label}',"
+            content += "\n\t\t"
+            content += f"rule='" \
+                       f"{cdr.get_all_targetstatements_as_string(vocabulary)}')"
+
+        content += "\n\n\t"
+
         # Relation fields
         content += "# Relation fields"
         for cor in class_.get_combined_object_relations(vocabulary):
             content += "\n\t"
-
-            # target_names = cor.get_all_target_labels(vocabulary)
-            # if len(target_names)>1:
-            #     types = f'Union{[n for n in target_names]}'
-            # else:
-            #     types = f"'{target_names.pop()}'"
-
             label = cor.get_property_label(vocabulary)
-            # field
-            content += f"{label}: Relationship = Relationship("
-            # content += f"{label}: Relationship = Relationship("
+            content += f"{label}: RelationField = RelationField("
             content += "\n\t\t"
             content += f"name='{label}',"
             content += "\n\t\t"
             content += f"rule='" \
                        f"{cor.get_all_targetstatements_as_string(vocabulary)}',"
-
             content += "\n\t\t"
-            content += "semantic_manager = semantic_manager)"
+            content += "semantic_manager=semantic_manager)"
 
     content += "\n\n\n"
     content += "# ---------Individuals--------- #"
@@ -163,22 +169,24 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
             #     content += "\n\t\t"
             #     content += "assert False, 'Individuals have no values'"
 
-
     content += "\n\n\n"
 
-    # update forware references
-    # for class_ in vocabulary.get_classes_sorted_by_label():
-    #     content += "\n"
-    #     content += f"{class_.get_label()}.update_forward_refs()"
-    #
-    # for individual in vocabulary.individuals.values():
-    #     content += "\n"
-    #     content += f"{individual.get_label()}.update_forward_refs()"
-    # content += "\n\n\n"
+    content += "\n\n\n"
+    content += "# ---------Datatypes--------- #"
+    content += "\n"
 
+    content += "datatypes = {"
+
+    for name, datatype in vocabulary.datatypes.items():
+        definition = datatype.export()
+
+        content += "\n\t"
+        content += f"'{datatype.get_label()}': \t {definition},"
+    content += "\n"
+    content += "}"
 
     # build model dict
-
+    content += "\n\n"
     content += "semantic_manager.model_catalogue = {"
     for class_ in vocabulary.get_classes_sorted_by_label():
         content += "\n\t"

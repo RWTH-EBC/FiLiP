@@ -34,6 +34,7 @@ class SemanticManager(BaseModel):
         class_: Type = self.get_class_by_name(class_name)
         loaded_class: SemanticClass = class_(id=entity.id,
                                              fiware_header=header,
+                                             old_state=entity,
                                              enforce_new=True)
 
         # todo catch if Fiware contains more fields than the model has?
@@ -56,13 +57,14 @@ class SemanticManager(BaseModel):
                 json_list = [entity_field_value]
 
             for json in json_list:
-                # convert json to Identifier, use Identifier to load_class,
-                # give class to field
+                # convert json to Identifier, inject identifier in Relation,
+                # the class will be hotloaded if the value in the is
+                # relationship is accessed
 
                 identifier = InstanceIdentifier.parse_obj(json)
 
-                class_: SemanticClass = self.load_instance(identifier)
-                field.append(class_)
+                # class_: SemanticClass = self.load_instance(identifier)
+                field.list.insert(len(field.list), identifier)
 
         return loaded_class
 
@@ -99,6 +101,26 @@ class SemanticManager(BaseModel):
         client = self._get_client(identifier.header.get_fiware_header())
         return client.does_entity_exists(entity_id=identifier.id,
                                          entity_type=identifier.type)
+
+    def get_instance(self, identifier: InstanceIdentifier) -> SemanticClass:
+        return self.load_instance(identifier)
+
+    def get_all_local_instances_of_class(self, class_:type, class_name:str):
+
+        assert class_ is None or class_name is None, \
+            "Only one parameter is allowed"
+        assert class_ is not None or class_name is not None, \
+            "One parameter is required"
+
+        if class_ is not None:
+            class_name = class_.__name__
+
+        res = []
+        for instance in self.instance_registry.get_all():
+            if instance.get_type() == class_name:
+                res.append(instance)
+        return res
+
 
     def load_instances_from_fiware(
             self,

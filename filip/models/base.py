@@ -43,7 +43,7 @@ class DataType(str, Enum):
     TEXT = "Text", "https://schema.org/Text"
     TIME = "Time", "A point in time recurring on multiple days in the form " \
                    "hh:mm:ss[Z|(+|-)hh:mm] (see XML schema for details)."
-    RELATIONSHIP = "Relationship", "Reference to another context entity"
+    RELATIONSHIP = "RelationField", "Reference to another context entity"
     STRUCTUREDVALUE = "StructuredValue", "Structered datatype must be " \
                                          "serializable"
     ARRAY = "Array", "Array of the types above"

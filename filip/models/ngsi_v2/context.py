@@ -1112,7 +1112,7 @@ class NamedCommand(Command):
     )
 
 # TODO: Add Relationships
-# class Relationship:
+# class RelationField:
 #    """
 #    Class implements the concept of FIWARE Entity Relationships.
 #    """
@@ -1146,14 +1146,14 @@ class NamedCommand(Command):
 #        ref_type = self.object.type
 #        ref_key = "ref" + str(ref_type)
 #        ref_dict = dict()
-#        ref_dict[ref_key] = {"type": "Relationship",
+#        ref_dict[ref_key] = {"type": "RelationField",
 #                             "value": self.object.id}
 #
 #        return json.dumps(ref_dict)
 #
 #    def get_json(self):
 #        """
-#        Function returns a JSON to describe the Relationship,
+#        Function returns a JSON to describe the RelationField,
 #        which then can be pushed to orion
 #        :return: whole_dict
 #        """

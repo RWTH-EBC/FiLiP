@@ -141,8 +141,7 @@ class TestSemanticModels(unittest.TestCase):
                          class13_.objProp3.get_all())
         self.assertTrue(class13.get_identifier() in
                          semantic_manager.instance_registry._registry)
-
-
+        print(class13_.objProp3[0])
 
     def clear_registry(self):
         from models import semantic_manager
