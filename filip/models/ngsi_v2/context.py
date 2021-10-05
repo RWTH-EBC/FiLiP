@@ -378,8 +378,8 @@ class ContextEntity(ContextEntityKeyValues):
 
         response_format = PropertyFormat(response_format)
 
-        assert whitelisted_attribute_types is not None or \
-               blacklisted_attribute_types is not None,\
+        assert whitelisted_attribute_types is None or \
+               blacklisted_attribute_types is None,\
                "Only whitelist or blacklist is allowed"
 
         if whitelisted_attribute_types is not None:
@@ -404,10 +404,9 @@ class ContextEntity(ContextEntityKeyValues):
                     [att.value for att in attribute_types]]
 
     def get_attribute(self, attribute_name) -> NamedContextAttribute:
-        for key, value in self.dict().items():
-            if key not in ContextEntity.__fields__:
-                if value.get('name') == attribute_name:
-                    return NamedContextAttribute(name=key, **value)
+        for attr in self.get_attributes():
+            if attr.name == attribute_name:
+                return attr
 
     def get_properties(
             self,

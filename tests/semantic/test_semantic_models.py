@@ -1,5 +1,10 @@
 import unittest
 
+from filip.clients.ngsi_v2 import ContextBrokerClient
+from requests import RequestException
+
+from filip.models.ngsi_v2.context import ContextEntity
+
 from filip.models import FiwareHeader
 
 from filip.semantics.entity_model_generator import generate_vocabulary_models
@@ -8,6 +13,9 @@ from filip.semantics.vocabulary_configurator import VocabularyConfigurator
 
 
 class TestSemanticModels(unittest.TestCase):
+
+    def setUp(self) -> None:
+        pass
 
     def test_1_model_creation(self):
         vocabulary = VocabularyConfigurator.create_vocabulary()
@@ -86,7 +94,7 @@ class TestSemanticModels(unittest.TestCase):
             Individual1, Gertrude, semantic_manager
 
         # clear local state to ensure standard test condition
-        semantic_manager.instance_registry = InstanceRegistry()
+        self.clear_registry()
 
         class13 = Class13(id="13")
         rel1 = class13.oProp1
@@ -101,14 +109,58 @@ class TestSemanticModels(unittest.TestCase):
         class1_ = Class1(id="1")
         self.assertTrue(class1_ == class13.objProp3[0])
 
-
     def test_5_test_saving_and_loading(self):
         from models import Class1, Class13, Class3, Class4, Class123, \
-            Individual1, Gertrude
+            Individual1, Gertrude, semantic_manager
 
-        class13 = Class13()
-        class13.objProp3.append(Class1())
-        # class13.save(FiwareHeader(), assert_validity=False)
+        # clear local state to ensure standard test condition
+        self.clear_registry()
 
+        # TEST1: Save local instances to Fiware, clear the local
+        # state recreate an instance and check if it was properly loaded from
+        # Fiware
+
+        # created classes with cycle
+        class13 = Class13(id="13")
+        class1 = Class1(id="1")
+        class13.objProp3.append(class1)
+        class13.objProp3.append(class13)
+        class1.oProp1.append(class13)
+
+        semantic_manager.save_all_instances()
+
+        # clear local state to ensure standard test condition
+        self.clear_registry()
+        self.assertFalse(class13.get_identifier() in
+                         semantic_manager.instance_registry._registry)
+
+        class13_ = Class13(id="13")
+        self.assertEqual(class13.get_identifier(), class13_.get_identifier())
+        self.assertEqual(class13.id, class13_.id)
+        self.assertEqual(class13.objProp3.get_all(),
+                         class13_.objProp3.get_all())
+        self.assertTrue(class13.get_identifier() in
+                         semantic_manager.instance_registry._registry)
+
+
+
+    def clear_registry(self):
+        from models import semantic_manager
+        semantic_manager.instance_registry._registry.clear()
+
+    def tearDown(self) -> None:
+        """
+        Cleanup test server
+        """
+        client = ContextBrokerClient()
+
+        try:
+            entities = [ContextEntity(id=entity.id, type=entity.type) for
+                        entity in client.get_entity_list()]
+            client.update(entities=entities, action_type='delete')
+        except RequestException:
+            pass
+
+        client.close()
 
 

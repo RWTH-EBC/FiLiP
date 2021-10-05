@@ -1,5 +1,6 @@
 import collections
 import copy
+import json
 import uuid
 from enum import Enum
 from typing import List, Any, Tuple, Dict, Type, TypeVar, Generic, \
@@ -12,7 +13,7 @@ from filip.models.ngsi_v2.context import ContextEntity, NamedContextAttribute
 from filip.clients.ngsi_v2 import ContextBrokerClient
 
 from filip.models import FiwareHeader
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, validator, Field
 from pydantic import Field as pyField
 
 if TYPE_CHECKING:
@@ -27,19 +28,34 @@ class ClientSetting(str, Enum):
     LD = "LD"
 
 
+class InstanceHeader(FiwareHeader):
+
+    def get_fiware_header(self) -> FiwareHeader:
+        return FiwareHeader(service=self.service,
+                            service_path=self.service_path)
+    class Config:
+        frozen = True
+
+
 class InstanceIdentifier(BaseModel):
     id: str
     type: str
-    fiware_header: FiwareHeader
+    header: InstanceHeader
 
     # def __eq__(self, other):
     #     return self.__class__ == other.__class__ and self.id == other.id and \
-    #            self.type == other.type and self.fiware_header == f
+    #            self.type == other.type and self.header == f
 
-    def __hash__(self):
-        return hash(f'{self.type}-{self.id}-{self.fiware_header.service}-'
-                    f'{self.fiware_header.service_path}')
+    # def __hash__(self):
+    #     return hash(f'{self.type}-{self.id}-{self.header.service}-'
+    #                 f'{self.header.service_path}')
+    #
+    # def __str__(self):
+    #     return hash(f'{self.type}|{self.id}|{self.header.service}|'
+    #                 f'{self.header.service_path}')
 
+    class Config:
+        frozen = True
 
 class InstanceRegistry(BaseModel):
     _registry: Dict[InstanceIdentifier, 'SemanticClass'] = {}
@@ -58,6 +74,9 @@ class InstanceRegistry(BaseModel):
 
     def contains(self, identifier: InstanceIdentifier):
         return identifier in self._registry
+
+    def get_all(self) -> List['SemanticClass']:
+        return list(self._registry.values())
 
 
 class Field(collections.MutableSequence):
@@ -185,10 +204,11 @@ class Relationship(Field):
         super().__init__(rule, name, semantic_manager)
 
     def build_context_attribute(self) -> NamedContextAttribute:
+
         return NamedContextAttribute(
             name=self.name,
             type=DataType.RELATIONSHIP,
-            value=[v.id for v in self]
+            value=[v.dict() for v in self.get_all()]
         )
 
     def _check(self, v):
@@ -240,49 +260,69 @@ class SemanticClass(BaseModel):
     def __new__(cls, *args, **kwargs):
         semantic_manager = kwargs['semantic_manager']
 
-        if 'id' in kwargs:
-            instance_id = kwargs['id']
-            if not instance_id == "":
+        if 'enforce_new' in kwargs:
+            enforce_new = kwargs['enforce_new']
+        else:
+            enforce_new = False
 
-                if 'fiware_header' in kwargs:
-                    fiware_header = kwargs['fiware_header']
-                else:
-                    fiware_header = FiwareHeader()
+        if 'identifier' in kwargs:
+            instance_id = kwargs['identifier'].id
+            header = kwargs['identifier'].header
+            assert cls.__name__ == kwargs['identifier'].type
+        else:
+            instance_id = kwargs['id'] if 'id' in kwargs else ""
+            header = kwargs['header'] if 'header' in kwargs else InstanceHeader()
 
-                identifier = InstanceIdentifier(id=instance_id,
-                                                type=cls.__name__,
-                                                fiware_header=fiware_header)
+        if not instance_id == "" and not enforce_new:
 
-                if semantic_manager.does_instance_exists(identifier=identifier):
-                    return semantic_manager.load_instance(identifier=identifier)
+            identifier = InstanceIdentifier(id=instance_id,
+                                            type=cls.__name__,
+                                            header=header)
+
+            if semantic_manager.does_instance_exists(identifier=identifier):
+                return semantic_manager.load_instance(identifier=identifier)
 
         return super().__new__(cls)
 
     def __init__(self,  *args, **kwargs):
         semantic_manager = kwargs['semantic_manager']
 
-        instance_id_ = kwargs['id'] if 'id' in kwargs else str(uuid.uuid4())
-        fiware_header_ = kwargs['fiware_header'] \
-            if 'fiware_header' in kwargs else FiwareHeader()
+        if 'identifier' in kwargs:
+            instance_id_ = kwargs['identifier'].id
+            header_ = kwargs['identifier'].header
+            assert self.get_type() == kwargs['identifier'].type
+        else:
+            instance_id_ = kwargs['id'] if 'id' in kwargs \
+                                        else str(uuid.uuid4())
+            header_ = kwargs['header'] if 'header' in kwargs \
+                                        else InstanceHeader()
+
         old_state_ = kwargs['old_state'] if 'old_state' in kwargs else None
 
         identifier_ = InstanceIdentifier(
-                        id= instance_id_,
-                        type= self.get_type(),
-                        fiware_header= fiware_header_
+                        id=instance_id_,
+                        type=self.get_type(),
+                        header=header_
                     )
+
+        if 'enforce_new' in kwargs:
+            enforce_new = kwargs['enforce_new']
+        else:
+            enforce_new = False
+
         # test if this instance was taken out of the instance_registry instead
         # of being newly created. If yes abort __init__(), to prevent state
         # overwrite !
-        if semantic_manager.does_instance_exists(identifier_):
-            return
+        if not enforce_new:
+            if semantic_manager.does_instance_exists(identifier_):
+                return
 
-        super().__init__(id=instance_id_, fiware_header=fiware_header_,
+        super().__init__(id=instance_id_, fiware_header=header_,
                          old_state=old_state_)
         assert not semantic_manager.client_setting == ClientSetting.unset
 
+        print(f"registering {self.get_identifier()}")
         semantic_manager.instance_registry.register(self)
-
 
     def are_fields_valid(self) -> bool:
         return len(self.get_invalid_fields()) == 0
@@ -359,7 +399,7 @@ class SemanticClass(BaseModel):
 
     def get_identifier(self) -> InstanceIdentifier:
         return InstanceIdentifier(id=self.id, type=self.get_type(),
-                                  fiware_header=self.fiware_header)
+                                  header=self.fiware_header)
 
     class Config:
         arbitrary_types_allowed = True
