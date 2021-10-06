@@ -24,7 +24,9 @@ from filip.models.ngsi_v2.context import \
     Subscription, \
     Query, \
     Entity, \
-    ActionType
+    ActionType, \
+    Status
+
 from filip.models.ngsi_v2.iot import \
     Device, \
     DeviceCommand, \
@@ -42,6 +44,7 @@ class TestContextBroker(unittest.TestCase):
     """
     Test class for ContextBrokerClient
     """
+
     def setUp(self) -> None:
         """
         Setup test data
@@ -61,7 +64,6 @@ class TestContextBroker(unittest.TestCase):
                                           service_path='/testing')
 
         self.client = ContextBrokerClient(fiware_header=self.fiware_header)
-
 
     def test_management_endpoints(self):
         """
@@ -327,9 +329,9 @@ class TestContextBroker(unittest.TestCase):
             sub2 = Subscription(**sub_example)
             sub2.description = "Take this subscription to Fiware"
             sub2.subject.entities[0] = {
-                            "idPattern": ".*",
-                            "type": "Building"
-                        }
+                "idPattern": ".*",
+                "type": "Building"
+            }
             id3 = client.post_subscription(sub2)
             self.assertNotEqual(id1, id3)
 
@@ -337,6 +339,50 @@ class TestContextBroker(unittest.TestCase):
             subs = client.get_subscription_list()
             for sub in subs:
                 client.delete_subscription(subscription_id=sub.id)
+
+    def test_registration_set_status(self):
+        """
+        Test subscription operations of context broker client
+        """
+        with ContextBrokerClient(fiware_header=self.fiware_header) as client:
+            reg_example = {
+                "description": "One registration to catch them all",
+                "dataProvided": {
+                    "entities": [
+                        {
+                            "idPattern": ".*",
+                            "type": "Room"
+                        }
+                    ],
+                    "attrs": [
+                        "temperature"
+                    ],
+                },
+                "provider": {
+                    "http": {
+                        "url": "http://localhost:1234",
+                    },
+                    "supportedForwardingMode": "all"
+                }
+            }
+        reg = Registration(**reg_example)
+        reg_id = client.post_registration(registration=reg)
+        reg_res = client.get_registration(registration_id=reg_id)
+        self.assertEqual(reg_res.status, Status.ACTIVE)
+
+        reg_inactive = reg_res.copy(update={'status': Status.INACTIVE})
+        client.update_registration(registration=reg_inactive)
+        reg_res_inactive = client.get_registration(registration_id=reg_id)
+        self.assertEqual(reg_res_inactive.status, Status.INACTIVE)
+
+        reg_active = reg_res_inactive.copy(update={'status': Status.ACTIVE})
+        client.update_registration(registration=reg_active)
+        reg_res_active = client.get_registration(subscription_id=reg_id)
+        self.assertEqual(reg_res_active.status, Status.ACTIVE)
+
+        regs = client.get_registration_list()
+        for reg in regs:
+            client.delete_registration(registration_id=reg.id)
 
     def test_batch_operations(self):
         """
@@ -358,7 +404,6 @@ class TestContextBroker(unittest.TestCase):
             self.assertEqual(1000,
                              len(client.query(query=q,
                                               response_format='keyValues')))
-
 
     def test_command_with_mqtt(self):
         """
@@ -442,7 +487,6 @@ class TestContextBroker(unittest.TestCase):
         # check if the data entity is created in the context broker
         entity = client.cb.get_entity(entity_id=device.device_id,
                                       entity_type=device.entity_type)
-
 
         # create a mqtt client that we use as representation of an IoT device
         # following the official documentation of Paho-MQTT.
@@ -529,7 +573,6 @@ class TestContextBroker(unittest.TestCase):
         client.iota.delete_group(resource=service_group.resource,
                                  apikey=service_group.apikey)
         client.cb.delete_entity(entity_id=entity.id, entity_type=entity.type)
-
 
     def tearDown(self) -> None:
         """
