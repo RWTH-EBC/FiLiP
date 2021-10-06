@@ -19,9 +19,11 @@ from filip.config import settings
 if TYPE_CHECKING:
     from filip.semantics.semantic_manager import SemanticManager
 
+
 class FiwareVersion(str, Enum):
     v2 = "v2"
     LD = "LD"
+
 
 class InstanceHeader(FiwareHeader):
 
@@ -498,7 +500,6 @@ class SemanticClass(BaseModel):
         for field in self.get_fields():
             entity.add_attributes([field.build_context_attribute()])
 
-
         return entity
 
     def get_identifier(self) -> InstanceIdentifier:
@@ -515,14 +516,11 @@ class SemanticIndividual(SemanticClass):
     def __init__(self, *args, **kwargs):
 
         if not "id" in kwargs or (not (kwargs['id'] == "individual")):
-            # raise Exception("")
-            pass
+            raise Exception("Only one instanciation of an individual is "
+                            "allowed. That instanciation always has the id "
+                            "'individual'")
 
         super(SemanticIndividual, self).__init__(*args, **kwargs)
-
-
-
-
 
 
 class ModelCatalogue(BaseModel):

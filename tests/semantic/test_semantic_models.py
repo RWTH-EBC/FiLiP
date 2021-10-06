@@ -27,7 +27,13 @@ class TestSemanticModels(unittest.TestCase):
 
         generate_vocabulary_models(vocabulary, "./", "models")
 
-    def test_2_model_relation_field_validation(self):
+    def test_2_individuals(self):
+        from tests.semantic.models import Individual1
+
+        self.assertRaises(Exception, Individual1)
+        Individual1(id='individual')
+
+    def test_3_model_relation_field_validation(self):
         from models import Class1, Class13, Class2, Class4, Class123, \
             Individual1, semantic_manager, Thing
 
@@ -61,7 +67,7 @@ class TestSemanticModels(unittest.TestCase):
 
         # todo test statement cases: min, max,...
 
-    def test_3_model_data_field_validation(self):
+    def test_4_model_data_field_validation(self):
         from models import Class1, Class3, Class2, Class4, Class123, \
             Individual1, semantic_manager, Thing
         class3 = Class3()
@@ -77,7 +83,7 @@ class TestSemanticModels(unittest.TestCase):
         print(class3.dataProp1)
         self.assertTrue(class3.dataProp1.is_valid())
 
-    def test_4_back_referencing(self):
+    def test_5_back_referencing(self):
         from models import Class1, Class3, Class2, Class4
 
         c1 = Class1()
@@ -103,7 +109,7 @@ class TestSemanticModels(unittest.TestCase):
         del c1.objProp2[0]
         self.assertNotIn(c1.get_identifier(), c2._references)
 
-    def test_5_test_instance_creation_inject(self):
+    def test_6_test_instance_creation_inject(self):
         from models import Class1, Class13, Class3, Class4, Class123, \
             Individual1, Gertrude, semantic_manager
 
@@ -123,7 +129,7 @@ class TestSemanticModels(unittest.TestCase):
         class1_ = Class1(id="1")
         self.assertTrue(class1_ == class13.objProp3[0])
 
-    def test_6_test_saving_and_loading(self):
+    def test_7_test_saving_and_loading(self):
         from models import Class1, Class13, Class3, Class4, Class123, \
             Individual1, Gertrude, semantic_manager
 

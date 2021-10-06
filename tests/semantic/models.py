@@ -483,15 +483,19 @@ class Gertrude(Class1, Class2):
 
 class Individual1(SemanticIndividual, Class2, Class1):
 	pass
+individual1 = Individual1(id='individual')
 
 class Individual2(SemanticIndividual, Class1):
 	pass
+individual2 = Individual2(id='individual')
 
 class Individual3(SemanticIndividual, Class2, Class1, Class3):
 	pass
+individual3 = Individual3(id='individual')
 
 class Individual4(SemanticIndividual, Class1, Class2):
 	pass
+individual4 = Individual4(id='individual')
 
 
 

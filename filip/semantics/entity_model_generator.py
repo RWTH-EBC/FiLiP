@@ -1,4 +1,5 @@
 import json
+import re
 from typing import List
 
 from filip.semantics.vocabulary import Vocabulary, Class
@@ -143,42 +144,19 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
     for individual in vocabulary.individuals.values():
         content += "\n\n"
         parent_classes = "SemanticIndividual"
+        label = individual.get_label()
 
         for parent in individual.get_parent_classes(vocabulary):
             parent_classes += f", {parent.get_label()}"
 
-        content += f"class {individual.get_label()}({parent_classes}):"
-
-        # setter prevention
-        properties = []
-        for class_ in individual.get_parent_classes(vocabulary):
-            for cor in class_.get_combined_object_relations(vocabulary):
-                if cor.get_property_label(vocabulary) in properties:
-                    continue
-                else:
-                    properties.append(cor.get_property_label(vocabulary))
-
+        content += f"class {label}({parent_classes}):"
         content += "\n\tpass"
-        # if len(properties) == 0:
-        #     content += "\n\t pass"
-        # else:
-        #     content += "\n\t"
-        #     content += "def __init__(self):"
-        #     content += "\n\t\t"
-        #     content += "super().__init__()"
-        #     for label in properties:
-        #         content += "\n\t\t"
-        #         content += f"self.{label} = None"
 
-            # content += "\n"
-            # for label in properties:
-            #     content += "\n\t"
-            #     content += f"@{label}.setter"
-            #     content += "\n\t"
-            #     content += f"def {label}(self, " \
-            #                f"value):"
-            #     content += "\n\t\t"
-            #     content += "assert False, 'Individuals have no values'"
+        content += "\n"
+        variable_name = re.sub(r'(?<!^)(?=[A-Z])', '_', label).lower()
+        content += f"{variable_name} = {label}(id='individual')"
+
+
 
     content += "\n\n\n"
 
