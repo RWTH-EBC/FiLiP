@@ -340,49 +340,58 @@ class TestContextBroker(unittest.TestCase):
             for sub in subs:
                 client.delete_subscription(subscription_id=sub.id)
 
-    def test_registration_set_status(self):
+    def test_subscription_set_status(self):
         """
         Test subscription operations of context broker client
         """
         with ContextBrokerClient(fiware_header=self.fiware_header) as client:
-            reg_example = {
-                "description": "One registration to catch them all",
-                "dataProvided": {
+            sub_example = {
+                "description": "One subscription to rule them all",
+                "subject": {
                     "entities": [
                         {
                             "idPattern": ".*",
                             "type": "Room"
                         }
                     ],
-                    "attrs": [
-                        "temperature"
-                    ],
+                    "condition": {
+                        "attrs": [
+                            "temperature"
+                        ],
+                        "expression": {
+                            "q": "temperature>40"
+                        }
+                    }
                 },
-                "provider": {
+                "notification": {
                     "http": {
-                        "url": "http://localhost:1234",
+                        "url": "http://localhost:1234"
                     },
-                    "supportedForwardingMode": "all"
-                }
+                    "attrs": [
+                        "temperature",
+                        "humidity"
+                    ]
+                },
+                "throttling": 0
             }
-        reg = Registration(**reg_example)
-        reg_id = client.post_registration(registration=reg)
-        reg_res = client.get_registration(registration_id=reg_id)
-        self.assertEqual(reg_res.status, Status.ACTIVE)
+            sub = Subscription(**sub_example)
+            sub_id = client.post_subscription(subscription=sub)
+            sub_res = client.get_subscription(subscription_id=sub_id)
+            self.assertEqual(sub_res.status, Status.ACTIVE)
 
-        reg_inactive = reg_res.copy(update={'status': Status.INACTIVE})
-        client.update_registration(registration=reg_inactive)
-        reg_res_inactive = client.get_registration(registration_id=reg_id)
-        self.assertEqual(reg_res_inactive.status, Status.INACTIVE)
+            sub_inactive = sub_res.copy(update={'status': Status.INACTIVE})
+            client.update_subscription(subscription=sub_inactive)
+            sub_res_inactive = client.get_subscription(subscription_id=sub_id)
+            self.assertEqual(sub_res_inactive.status, Status.INACTIVE)
 
-        reg_active = reg_res_inactive.copy(update={'status': Status.ACTIVE})
-        client.update_registration(registration=reg_active)
-        reg_res_active = client.get_registration(subscription_id=reg_id)
-        self.assertEqual(reg_res_active.status, Status.ACTIVE)
+            sub_active = sub_res_inactive.copy(update={'status': Status.ACTIVE})
+            client.update_subscription(subscription=sub_active)
+            sub_res_active = client.get_subscription(subscription_id=sub_id)
+            self.assertEqual(sub_res_active.status, Status.ACTIVE)
 
-        regs = client.get_registration_list()
-        for reg in regs:
-            client.delete_registration(registration_id=reg.id)
+            subs = client.get_subscription_list()
+            for sub in subs:
+                client.delete_subscription(subscription_id=sub.id)
 
     def test_batch_operations(self):
         """
