@@ -24,6 +24,8 @@ class Thing(SemanticClass):
 
 
 
+
+
 	# Data fields
 
 	# Relation fields
@@ -34,12 +36,13 @@ class Class1(Thing):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 
+		self.dataProp2._rules = [('value', [[]])]
 
 		self.oProp1._rules = [('some', [[Class2], [Class4]])]
 		self.objProp2._rules = [('some', [[Class1, Class2]])]
 		self.objProp3._rules = [('some', [[Class3]])]
 		self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
-		self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]])]
+		self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]]), ('value', [[Individual1]])]
 
 		self.oProp1._class_identifier = self.get_identifier()
 		self.objProp2._class_identifier = self.get_identifier()
@@ -47,7 +50,15 @@ class Class1(Thing):
 		self.objProp4._class_identifier = self.get_identifier()
 		self.objProp5._class_identifier = self.get_identifier()
 
+		self.dataProp2.append(2)
+
+		self.objProp5.append(Individual1())
+
 	# Data fields
+	dataProp2: DataField = DataField(
+		name='dataProp2',
+		rule='value 2',
+		semantic_manager=semantic_manager)
 
 	# Relation fields
 	oProp1: RelationField = RelationField(
@@ -68,7 +79,7 @@ class Class1(Thing):
 		semantic_manager=semantic_manager)
 	objProp5: RelationField = RelationField(
 		name='objProp5',
-		rule='some (Class1 and (Class2 or Class3))',
+		rule='some (Class1 and (Class2 or Class3)), value Individual1',
 		semantic_manager=semantic_manager)
 
 
@@ -77,12 +88,13 @@ class Class1a(Class1):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 
+		self.dataProp2._rules = [('value', [[]])]
 
 		self.oProp1._rules = [('some', [[Class2], [Class4]])]
 		self.objProp2._rules = [('some', [[Class1, Class2]])]
 		self.objProp3._rules = [('some', [[Class3]])]
 		self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
-		self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]])]
+		self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]]), ('value', [[Individual1]])]
 
 		self.oProp1._class_identifier = self.get_identifier()
 		self.objProp2._class_identifier = self.get_identifier()
@@ -90,7 +102,13 @@ class Class1a(Class1):
 		self.objProp4._class_identifier = self.get_identifier()
 		self.objProp5._class_identifier = self.get_identifier()
 
+
+
 	# Data fields
+	dataProp2: DataField = DataField(
+		name='dataProp2',
+		rule='value 2',
+		semantic_manager=semantic_manager)
 
 	# Relation fields
 	oProp1: RelationField = RelationField(
@@ -111,7 +129,7 @@ class Class1a(Class1):
 		semantic_manager=semantic_manager)
 	objProp5: RelationField = RelationField(
 		name='objProp5',
-		rule='some (Class1 and (Class2 or Class3))',
+		rule='some (Class1 and (Class2 or Class3)), value Individual1',
 		semantic_manager=semantic_manager)
 
 
@@ -120,12 +138,13 @@ class Class1aa(Class1a):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 
+		self.dataProp2._rules = [('value', [[]])]
 
 		self.oProp1._rules = [('some', [[Class2], [Class4]])]
 		self.objProp2._rules = [('some', [[Class1, Class2]])]
 		self.objProp3._rules = [('some', [[Class3]])]
 		self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
-		self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]])]
+		self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]]), ('value', [[Individual1]])]
 
 		self.oProp1._class_identifier = self.get_identifier()
 		self.objProp2._class_identifier = self.get_identifier()
@@ -133,7 +152,13 @@ class Class1aa(Class1a):
 		self.objProp4._class_identifier = self.get_identifier()
 		self.objProp5._class_identifier = self.get_identifier()
 
+
+
 	# Data fields
+	dataProp2: DataField = DataField(
+		name='dataProp2',
+		rule='value 2',
+		semantic_manager=semantic_manager)
 
 	# Relation fields
 	oProp1: RelationField = RelationField(
@@ -154,7 +179,7 @@ class Class1aa(Class1a):
 		semantic_manager=semantic_manager)
 	objProp5: RelationField = RelationField(
 		name='objProp5',
-		rule='some (Class1 and (Class2 or Class3))',
+		rule='some (Class1 and (Class2 or Class3)), value Individual1',
 		semantic_manager=semantic_manager)
 
 
@@ -163,12 +188,13 @@ class Class1b(Class1):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 
+		self.dataProp2._rules = [('value', [[]])]
 
 		self.oProp1._rules = [('some', [[Class2]]), ('some', [[Class2], [Class4]])]
 		self.objProp2._rules = [('some', [[Class1, Class2]])]
 		self.objProp3._rules = [('some', [[Class3]])]
 		self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
-		self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]])]
+		self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]]), ('value', [[Individual1]])]
 
 		self.oProp1._class_identifier = self.get_identifier()
 		self.objProp2._class_identifier = self.get_identifier()
@@ -176,7 +202,13 @@ class Class1b(Class1):
 		self.objProp4._class_identifier = self.get_identifier()
 		self.objProp5._class_identifier = self.get_identifier()
 
+
+
 	# Data fields
+	dataProp2: DataField = DataField(
+		name='dataProp2',
+		rule='value 2',
+		semantic_manager=semantic_manager)
 
 	# Relation fields
 	oProp1: RelationField = RelationField(
@@ -197,7 +229,7 @@ class Class1b(Class1):
 		semantic_manager=semantic_manager)
 	objProp5: RelationField = RelationField(
 		name='objProp5',
-		rule='some (Class1 and (Class2 or Class3))',
+		rule='some (Class1 and (Class2 or Class3)), value Individual1',
 		semantic_manager=semantic_manager)
 
 
@@ -212,6 +244,8 @@ class Class2(Thing):
 
 		self.oProp1._class_identifier = self.get_identifier()
 		self.objProp2._class_identifier = self.get_identifier()
+
+
 
 	# Data fields
 
@@ -239,6 +273,10 @@ class Class3(Thing):
 		self.oProp1._class_identifier = self.get_identifier()
 		self.objProp2._class_identifier = self.get_identifier()
 
+
+		self.oProp1.append(Individual1())
+		self.objProp2.append(Individual1())
+
 	# Data fields
 	dataProp1: DataField = DataField(
 		name='dataProp1',
@@ -262,12 +300,13 @@ class Class123(Class1, Class2, Class3):
 		super().__init__(*args, **kwargs)
 
 		self.dataProp1._rules = [('only', [['customDataType4']])]
+		self.dataProp2._rules = [('value', [[]])]
 
 		self.oProp1._rules = [('value', [[Individual1]]), ('min|1', [[Class1]]), ('some', [[Class2], [Class4]])]
 		self.objProp2._rules = [('some', [[Class1]]), ('value', [[Individual1]]), ('only', [[Thing]]), ('some', [[Class1, Class2]])]
 		self.objProp3._rules = [('some', [[Class3]])]
 		self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
-		self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]])]
+		self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]]), ('value', [[Individual1]])]
 
 		self.oProp1._class_identifier = self.get_identifier()
 		self.objProp2._class_identifier = self.get_identifier()
@@ -275,10 +314,16 @@ class Class123(Class1, Class2, Class3):
 		self.objProp4._class_identifier = self.get_identifier()
 		self.objProp5._class_identifier = self.get_identifier()
 
+
+
 	# Data fields
 	dataProp1: DataField = DataField(
 		name='dataProp1',
 		rule='only customDataType4',
+		semantic_manager=semantic_manager)
+	dataProp2: DataField = DataField(
+		name='dataProp2',
+		rule='value 2',
 		semantic_manager=semantic_manager)
 
 	# Relation fields
@@ -300,7 +345,7 @@ class Class123(Class1, Class2, Class3):
 		semantic_manager=semantic_manager)
 	objProp5: RelationField = RelationField(
 		name='objProp5',
-		rule='some (Class1 and (Class2 or Class3))',
+		rule='some (Class1 and (Class2 or Class3)), value Individual1',
 		semantic_manager=semantic_manager)
 
 
@@ -310,19 +355,21 @@ class Class13(Class1, Class3):
 		super().__init__(*args, **kwargs)
 
 		self.dataProp1._rules = [('min|1', [['int']]), ('only', [['customDataType4']])]
-		self.dataProp2._rules = [('exactly|1', [['boolean']])]
+		self.dataProp2._rules = [('exactly|1', [['boolean']]), ('value', [[]])]
 
 		self.oProp1._rules = [('value', [[Individual1]]), ('some', [[Class2], [Class4]])]
 		self.objProp2._rules = [('some', [[Class1]]), ('value', [[Individual1]]), ('some', [[Class1, Class2]])]
 		self.objProp3._rules = [('some', [[Class3]])]
 		self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
-		self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]])]
+		self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]]), ('value', [[Individual1]])]
 
 		self.oProp1._class_identifier = self.get_identifier()
 		self.objProp2._class_identifier = self.get_identifier()
 		self.objProp3._class_identifier = self.get_identifier()
 		self.objProp4._class_identifier = self.get_identifier()
 		self.objProp5._class_identifier = self.get_identifier()
+
+
 
 	# Data fields
 	dataProp1: DataField = DataField(
@@ -331,7 +378,7 @@ class Class13(Class1, Class3):
 		semantic_manager=semantic_manager)
 	dataProp2: DataField = DataField(
 		name='dataProp2',
-		rule='exactly 1 boolean',
+		rule='exactly 1 boolean, value 2',
 		semantic_manager=semantic_manager)
 
 	# Relation fields
@@ -353,7 +400,7 @@ class Class13(Class1, Class3):
 		semantic_manager=semantic_manager)
 	objProp5: RelationField = RelationField(
 		name='objProp5',
-		rule='some (Class1 and (Class2 or Class3))',
+		rule='some (Class1 and (Class2 or Class3)), value Individual1',
 		semantic_manager=semantic_manager)
 
 
@@ -369,6 +416,8 @@ class Class3a(Class3):
 
 		self.oProp1._class_identifier = self.get_identifier()
 		self.objProp2._class_identifier = self.get_identifier()
+
+
 
 	# Data fields
 	dataProp1: DataField = DataField(
@@ -400,6 +449,8 @@ class Class3aa(Class3a):
 		self.oProp1._class_identifier = self.get_identifier()
 		self.objProp2._class_identifier = self.get_identifier()
 
+
+
 	# Data fields
 	dataProp1: DataField = DataField(
 		name='dataProp1',
@@ -427,6 +478,8 @@ class Class4(Thing):
 
 		self.objProp4._class_identifier = self.get_identifier()
 
+
+
 	# Data fields
 
 	# Relation fields
@@ -441,12 +494,13 @@ class Gertrude(Class1, Class2):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 
+		self.dataProp2._rules = [('value', [[]])]
 
 		self.oProp1._rules = [('min|1', [[Class1]]), ('some', [[Class2], [Class4]])]
 		self.objProp2._rules = [('only', [[Thing]]), ('some', [[Class1, Class2]])]
 		self.objProp3._rules = [('some', [[Class3]])]
 		self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
-		self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]])]
+		self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]]), ('value', [[Individual1]])]
 
 		self.oProp1._class_identifier = self.get_identifier()
 		self.objProp2._class_identifier = self.get_identifier()
@@ -454,7 +508,13 @@ class Gertrude(Class1, Class2):
 		self.objProp4._class_identifier = self.get_identifier()
 		self.objProp5._class_identifier = self.get_identifier()
 
+
+
 	# Data fields
+	dataProp2: DataField = DataField(
+		name='dataProp2',
+		rule='value 2',
+		semantic_manager=semantic_manager)
 
 	# Relation fields
 	oProp1: RelationField = RelationField(
@@ -475,7 +535,7 @@ class Gertrude(Class1, Class2):
 		semantic_manager=semantic_manager)
 	objProp5: RelationField = RelationField(
 		name='objProp5',
-		rule='some (Class1 and (Class2 or Class3))',
+		rule='some (Class1 and (Class2 or Class3)), value Individual1',
 		semantic_manager=semantic_manager)
 
 

@@ -56,6 +56,8 @@ class TestSemanticModels(unittest.TestCase):
         self.assertTrue(class1.oProp1.is_valid())
 
         # test complex rule
+        self.assertTrue(class13.objProp2.is_valid())
+        del class13.objProp2[0]
         self.assertFalse(class13.objProp2.is_valid())
         class13.objProp2.append(class1)
         self.assertFalse(class13.objProp2.is_valid())
@@ -79,10 +81,11 @@ class TestSemanticModels(unittest.TestCase):
         self.assertFalse(class3.dataProp1.is_valid())
         class3.dataProp1.append("2")
         self.assertFalse(class3.dataProp1.is_valid())
-        class3.dataProp1.insert(0,"1")
+        class3.dataProp1.insert(0, "1")
         del class3.dataProp1[1]
-        print(class3.dataProp1)
         self.assertTrue(class3.dataProp1.is_valid())
+
+        self.assertTrue(2 in Class1().dataProp2)
 
     def test_5_back_referencing(self):
         from models import Class1, Class3, Class2, Class4
@@ -160,7 +163,7 @@ class TestSemanticModels(unittest.TestCase):
                          semantic_manager.instance_registry._registry)
 
         class13_ = Class13(id="13")
-        print(class13_.old_state)
+        self.assertTrue(2 in class13_.dataProp2)
 
         self.assertEqual(class13.get_identifier(), class13_.get_identifier())
         self.assertEqual(class13.id, class13_.id)

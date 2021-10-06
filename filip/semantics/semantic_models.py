@@ -265,14 +265,19 @@ class Field(collections.MutableSequence):
 
     def __delitem__(self, i): del self.list[i]
 
-    def __setitem__(self, i, v):
-        self.list[i] = v
+    def __setitem__(self, i, v): self.list[i] = v
 
-    def insert(self, i, v):
-        self.list.insert(i, v)
+    def insert(self, i, v): self.list.insert(i, v)
 
     def __str__(self):
-        return str(self.list)
+        result = f'Field: {self.name},\n\tvalues: ['
+        values = self.get_all()
+        for value in values:
+            result += f'{value}, '
+        if len(values)>0:
+            result = result[:-2]
+        result += f'],\n\trule: ({self.rule})'
+        return result
 
     def get_all(self):
         return self.list
@@ -292,6 +297,8 @@ class DataField(Field):
             value=[v for v in self.get_all()]
         )
 
+    def __str__(self):
+        return 'Data'+super().__str__()
 
 class RelationField(Field):
     _rules: List[Tuple[str, List[List[Type]]]] = []
@@ -338,8 +345,7 @@ class RelationField(Field):
                                  "SemanticIndividual can be given as value")
 
     def __delitem__(self, i):
-        v = self.list[i]
-        if isinstance(v, InstanceIdentifier):
+        if isinstance(self.list[i], InstanceIdentifier):
             v: SemanticClass = self._semantic_manager.get_instance(self.list[i])
             v.remove_reference(self._class_identifier, self.name)
             del self.list[i]
@@ -358,8 +364,8 @@ class RelationField(Field):
             raise AttributeError("Only instances of a SemanticClass or a "
                                  "SemanticIndividual can be given as value")
 
-
-
+    def __str__(self):
+        return 'Relation'+super().__str__()
 
 class SemanticClass(BaseModel):
 

@@ -2,7 +2,7 @@ import json
 import re
 from typing import List
 
-from filip.semantics.vocabulary import Vocabulary, Class
+from filip.semantics.vocabulary import Vocabulary, Class, RestrictionType
 from filip.semantics.vocabulary.target_statment import StatementType
 from filip.utils.datamodel_generator import create_datamodel
 
@@ -102,6 +102,34 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
             content += f"self.{cor.get_property_label(vocabulary)}" \
                        f"._class_identifier = " \
                        f"self.get_identifier()"
+        content += "\n"
+        for cdr in class_.get_combined_data_relations(vocabulary):
+            # Add fixed values to fields, for CDRs these values need to be
+            # strings. Only add the statement on the uppermost occurring class
+            for rel in cdr.get_relations(vocabulary):
+                if rel.id in class_.relation_ids:
+                    if rel.restriction_type == RestrictionType.value:
+                        content += "\n\t\t"
+                        content += \
+                            f"self.{cdr.get_property_label(vocabulary)}" \
+                            f".append({rel.target_statement.target_data_value})"
+
+        content += "\n"
+        for cor in class_.get_combined_object_relations(vocabulary):
+            # Add fixed values to fields, for CORs these values need to be
+            # Individuals.
+            # Only add the statement on the uppermost occurring class
+            for rel in cor.get_relations(vocabulary):
+                if rel.id in class_.relation_ids:
+                    i = vocabulary.\
+                        get_label_for_entity_iri(rel.get_targets()[0][0])
+                    if rel.restriction_type == RestrictionType.value:
+                        content += "\n\t\t"
+                        content += f"self." \
+                                   f"{cor.get_property_label(vocabulary)}" \
+                                   f".append({i}())"
+
+
 
         # if len(class_.get_combined_object_relations(vocabulary)) == 0:
         #     content += "\n\t\tpass"

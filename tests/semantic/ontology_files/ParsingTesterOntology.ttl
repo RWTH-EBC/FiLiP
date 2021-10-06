@@ -149,6 +149,14 @@
                                                                   ) ;
                                                rdf:type owl:Class
                                              ]
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :objProp5 ;
+                          owl:hasValue :Individual1
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :dataProp2 ;
+                          owl:hasValue 2
                         ] ;
         rdfs:comment "comment on class 1" ;
         rdfs:label "Class1" .
