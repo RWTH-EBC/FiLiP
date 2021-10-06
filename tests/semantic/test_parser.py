@@ -127,7 +127,7 @@ class TestModels(unittest.TestCase):
         assertList(vocabulary.get_object_property(
             iri("objProp3")).inverse_property_iris, [iri("oProp1")])
 
-        # datatypes
+        # datatype_catalogue
         assertList(vocabulary.get_datatype(iri("customDataType1")).enum_values,
                    ["0", "15", "30"])
         assertList(vocabulary.get_datatype(iri("customDataType4")).enum_values,

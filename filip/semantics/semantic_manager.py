@@ -11,17 +11,17 @@ from filip.models import FiwareHeader
 from pydantic import BaseModel
 from filip.semantics.semantic_models import InstanceRegistry, FiwareVersion, \
     InstanceIdentifier, SemanticClass, InstanceHeader, Datatype, DataField, \
-    RelationField
+    RelationField, SemanticIndividual
 
 
 class SemanticManager(BaseModel):
 
     instance_registry: InstanceRegistry
-    model_catalogue: Dict[str, type] = {}
-    datatypes: Dict[str, Dict[str,str]] = {}
+    class_catalogue: Dict[str, type] = {}
+    datatype_catalogue: Dict[str, Dict[str, str]] = {}
+    individual_catalogue: Dict[str, type] = {}
 
     def _get_client(self, instance_header: InstanceHeader):
-        print(instance_header)
         if instance_header.fiware_version == FiwareVersion.v2:
             return ContextBrokerClient(
                 url=instance_header.url,
@@ -58,27 +58,29 @@ class SemanticManager(BaseModel):
             entity_field_value = entity.get_attribute(field_name).value
 
             if isinstance(entity_field_value, List):
-                json_list = entity_field_value
+                values = entity_field_value
             else:
-                json_list = [entity_field_value]
+                values = [entity_field_value]
 
-            for json in json_list:
+            for value in values:
                 if isinstance(field, DataField):
-                    field.list.insert(len(field.list), json)
+                    field.list.insert(len(field.list), value)
                 elif isinstance(field, RelationField):
                     # convert json to Identifier, inject identifier in Relation,
                     # the class will be hotloaded if the value in the is
                     # relationship is accessed
 
-                    identifier = InstanceIdentifier.parse_obj(json)
-
-                    # class_: SemanticClass = self.load_instance(identifier)
-                    field.list.insert(len(field.list), identifier)
+                    if not isinstance(value, dict):  # is an
+                        # individual
+                        field.list.insert(len(field.list), value)
+                    else:  # is an instance_identifier
+                        identifier = InstanceIdentifier.parse_obj(value)
+                        field.list.insert(len(field.list), identifier)
 
         return loaded_class
 
     def get_class_by_name(self, class_name:str) -> Type:
-        return self.model_catalogue[class_name]
+        return self.class_catalogue[class_name]
 
     def save_all_instances(self, assert_validity: bool = True,
                            assert_individual_validity: bool = False):
@@ -183,4 +185,7 @@ class SemanticManager(BaseModel):
 
 
     def get_datatype(self, datatype_name: str) -> Datatype:
-        return Datatype.parse_obj(self.datatypes[datatype_name])
+        return Datatype.parse_obj(self.datatype_catalogue[datatype_name])
+
+    def get_individual(self, individual_name: str) -> SemanticIndividual:
+        return self.individual_catalogue[individual_name]()

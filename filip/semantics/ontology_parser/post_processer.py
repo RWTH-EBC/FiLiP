@@ -86,7 +86,7 @@ def log_and_clear_dependencies(voc_builder: VocabularyBuilder):
 
 
 def add_predefined_datatypes(voc_builder: VocabularyBuilder):
-    """ Add predefinded datatypes to the PREDEFINED source; they are not
+    """ Add predefinded datatype_catalogue to the PREDEFINED source; they are not
         included in an OWL file
 
     Args:
@@ -95,7 +95,7 @@ def add_predefined_datatypes(voc_builder: VocabularyBuilder):
     Returns:
         None
     """
-    # Test if datatypes were already added, if yes skip
+    # Test if datatype_catalogue were already added, if yes skip
     if 'http://www.w3.org/2002/07/owl#rational' in \
             voc_builder.vocabulary.datatypes.keys():
         return

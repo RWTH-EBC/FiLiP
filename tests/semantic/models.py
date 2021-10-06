@@ -1,4 +1,4 @@
-from typing import Dict, Union
+from typing import Dict, Union, List
 from filip.semantics.semantic_models import \
 	SemanticClass, SemanticIndividual, RelationField, DataField, InstanceRegistry
 from filip.semantics.semantic_manager import SemanticManager
@@ -481,28 +481,28 @@ class Gertrude(Class1, Class2):
 
 # ---------Individuals--------- #
 
-class Individual1(SemanticIndividual, Class2, Class1):
-	pass
-individual1 = Individual1(id='individual')
 
-class Individual2(SemanticIndividual, Class1):
-	pass
-individual2 = Individual2(id='individual')
+class Individual1(SemanticIndividual):
+	_parent_classes: List[type] = [Class2, Class1]
 
-class Individual3(SemanticIndividual, Class2, Class1, Class3):
-	pass
-individual3 = Individual3(id='individual')
 
-class Individual4(SemanticIndividual, Class1, Class2):
-	pass
-individual4 = Individual4(id='individual')
+class Individual2(SemanticIndividual):
+	_parent_classes: List[type] = [Class1]
+
+
+class Individual3(SemanticIndividual):
+	_parent_classes: List[type] = [Class2, Class1, Class3]
+
+
+class Individual4(SemanticIndividual):
+	_parent_classes: List[type] = [Class1, Class2]
 
 
 
 
 
 # ---------Datatypes--------- #
-semantic_manager.datatypes = {
+semantic_manager.datatype_catalogue = {
 	'customDataType1': 	 {'type': 'enum', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': ['0', '15', '30'], 'number_has_range': False},
 	'customDataType2': 	 {'type': 'string', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
 	'customDataType3': 	 {'type': 'string', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
@@ -543,7 +543,7 @@ semantic_manager.datatypes = {
 	'unsignedShort': 	 {'type': 'number', 'number_range_min': 0, 'number_range_max': 65535, 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': True},
 }
 
-semantic_manager.model_catalogue = {
+semantic_manager.class_catalogue = {
 	'Class1': Class1,
 	'Class123': Class123,
 	'Class13': Class13,
@@ -557,6 +557,10 @@ semantic_manager.model_catalogue = {
 	'Class4': Class4,
 	'Gertrude': Gertrude,
 	'Thing': Thing,
+	}
+
+
+semantic_manager.individual_catalogue = {
 	'Individual1': Individual1,
 	'Individual2': Individual2,
 	'Individual3': Individual3,

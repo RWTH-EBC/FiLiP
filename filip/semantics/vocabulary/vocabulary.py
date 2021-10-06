@@ -404,7 +404,7 @@ class Vocabulary(BaseModel):
 
         Duplicates are only evaluated for class, and properties as Indivuals
         and Datatype labels are never used as keys in Fiware.
-        Multiple individuals/datatypes can have the same label, this is no issue
+        Multiple individuals/datatype_catalogue can have the same label, this is no issue
         for the system it may disturb the user, but it is his own choice
 
         Args:

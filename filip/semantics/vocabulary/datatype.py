@@ -22,7 +22,7 @@ class Datatype(Entity):
     values that are valid.
     This can be an ENUM, a number range, or a check for black/whitelisted chars
 
-    In the Parsing PostProcesseor predefined datatypes are added to the
+    In the Parsing PostProcesseor predefined datatype_catalogue are added to the
     vocabulary
     """
 

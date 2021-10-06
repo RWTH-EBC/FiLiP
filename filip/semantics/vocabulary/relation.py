@@ -48,7 +48,7 @@ class Relation(BaseModel):
     property_iri: str = ""
     """IRI of the property (data- or object-)"""
     target_statement: TargetStatement = None
-    """Complex statement which classes/datatypes are allowed/required"""
+    """Complex statement which classes/datatype_catalogue are allowed/required"""
 
     def get_targets(self) -> List[List[str]]:
         """Get all targets specified in the target statement in AND-OR Notation

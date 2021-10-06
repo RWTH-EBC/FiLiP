@@ -13,7 +13,7 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
     content: str = ""
 
     # imports
-    content += "from typing import Dict, Union\n"
+    content += "from typing import Dict, Union, List\n"
     content += "from filip.semantics.semantic_models import \\"\
                "\n\tSemanticClass, SemanticIndividual, RelationField, " \
                "DataField, InstanceRegistry"
@@ -142,19 +142,21 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
     content += "# ---------Individuals--------- #"
 
     for individual in vocabulary.individuals.values():
-        content += "\n\n"
-        parent_classes = "SemanticIndividual"
-        label = individual.get_label()
+        content += "\n\n\n"
 
+        parent_classes = ""
         for parent in individual.get_parent_classes(vocabulary):
             parent_classes += f", {parent.get_label()}"
+        parent_classes = parent_classes[2:]
 
-        content += f"class {label}({parent_classes}):"
-        content += "\n\tpass"
+        content += f"class {individual.get_label()}(SemanticIndividual):"
+        content += "\n\t"
+        content += f"_parent_classes: List[type] = [{parent_classes}]"
 
-        content += "\n"
-        variable_name = re.sub(r'(?<!^)(?=[A-Z])', '_', label).lower()
-        content += f"{variable_name} = {label}(id='individual')"
+
+        # content += "\n"
+        # variable_name = re.sub(r'(?<!^)(?=[A-Z])', '_', label).lower()
+        # content += f"{variable_name} = {label}(id='individual')"
 
 
 
@@ -168,7 +170,7 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
     # Datatypes dict
 
     # datatype_dict = {}
-    # for name, datatype in vocabulary.datatypes.items():
+    # for name, datatype in vocabulary.datatype_catalogue.items():
     #     definition = datatype.export()
     #     datatype_dict[datatype.get_label()] = definition
     #
@@ -176,7 +178,7 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
     # content += "\n"
 
     # Datatypes inline
-    content += "semantic_manager.datatypes = {"
+    content += "semantic_manager.datatype_catalogue = {"
     for name, datatype in vocabulary.datatypes.items():
         definition = datatype.export()
         content += "\n\t"
@@ -184,13 +186,18 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
     content += "\n"
     content += "}"
 
-    # build model dict
+    # build class dict
     content += "\n\n"
-    content += "semantic_manager.model_catalogue = {"
+    content += "semantic_manager.class_catalogue = {"
     for class_ in vocabulary.get_classes_sorted_by_label():
         content += "\n\t"
         content += f"'{class_.get_label()}': {class_.get_label()},"
+    content += "\n\t}"
+    content += "\n"
 
+    # build individual dict
+    content += "\n\n"
+    content += "semantic_manager.individual_catalogue = {"
     for individual in vocabulary.individuals.values():
         content += "\n\t"
         content += f"'{individual.get_label()}': {individual.get_label()},"

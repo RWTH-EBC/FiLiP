@@ -186,7 +186,7 @@ class Field(collections.MutableSequence):
 
         # rule has form: (STATEMENT, [[a,b],[c],[a,..],..])
         # A value fulfills the rule if it is an instance of all the classes,
-        #       datatypes listed in at least one innerlist
+        #       datatype_catalogue listed in at least one innerlist
         # A field is fulfilled if a number of values fulfill the rule,
         #       the number is depending on the statement
 
@@ -297,47 +297,68 @@ class RelationField(Field):
     _rules: List[Tuple[str, List[List[Type]]]] = []
     _class_identifier: InstanceIdentifier
 
-
     def _value_is_valid(self, value, rule_value: type) -> bool:
-        return isinstance(value, rule_value)
+        if isinstance(value, SemanticClass):
+            return isinstance(value, rule_value)
+        elif isinstance(value, SemanticIndividual):
+            return value.is_instance_of_class(rule_value)
+        else:
+            return False
 
     def build_context_attribute(self) -> NamedContextAttribute:
+
+        values = []
+        for v in self.get_all():
+            if isinstance(v, InstanceIdentifier):
+                values.append(v.dict())
+            else:
+                values.append(v)
 
         return NamedContextAttribute(
             name=self.name,
             type=DataType.RELATIONSHIP,
-            value=[v.dict() for v in self.get_all()]
+            value=values
         )
 
-    def _check(self, v):
-        assert isinstance(v, SemanticClass)
+    def __getitem__(self, i) -> Union['SemanticClass', 'SemanticIndividual']:
+        v = self.list[i]
+        if isinstance(v, InstanceIdentifier):
+            return self._semantic_manager.get_instance(v)
+        else:
+            return self._semantic_manager.get_individual(v)
 
-    def __getitem__(self, i) -> 'SemanticClass':
-        return self._semantic_manager.get_instance(self.list[i])
-
-    def __setitem__(self, i, v: 'SemanticClass'):
-        self._check(v)
-        self.list[i] = v.get_identifier()
-        v.add_reference(self._class_identifier, self.name)
+    def __setitem__(self, i, v: Union['SemanticClass', 'SemanticIndividual']):
+        if isinstance(v, SemanticClass):
+            self.list[i] = v.get_identifier()
+            v.add_reference(self._class_identifier, self.name)
+        elif isinstance(v, SemanticIndividual):
+            self.list[i] = v.get_name()
+        else:
+            raise AttributeError("Only instances of a SemanticClass or a "
+                                 "SemanticIndividual can be given as value")
 
     def __delitem__(self, i):
-        v: SemanticClass = self._semantic_manager.get_instance(self.list[i])
-        v.remove_reference(self._class_identifier, self.name)
-        del self.list[i]
+        v = self.list[i]
+        if isinstance(v, InstanceIdentifier):
+            v: SemanticClass = self._semantic_manager.get_instance(self.list[i])
+            v.remove_reference(self._class_identifier, self.name)
+            del self.list[i]
+        else:
+            del self.list[i]
 
-    def insert(self, i, v: 'SemanticClass'):
-        self._check(v)
-        identifier = v.get_identifier()
-        self.list.insert(i, identifier)
-        v.add_reference(self._class_identifier, self.name)
+    def insert(self, i, v: Union['SemanticClass', 'SemanticIndividual']):
+
+        if isinstance(v, SemanticClass):
+            identifier = v.get_identifier()
+            self.list.insert(i, identifier)
+            v.add_reference(self._class_identifier, self.name)
+        elif isinstance(v, SemanticIndividual):
+            self.list.insert(i, v.get_name())
+        else:
+            raise AttributeError("Only instances of a SemanticClass or a "
+                                 "SemanticIndividual can be given as value")
 
 
-    # def _inject(self, v: InstanceIdentifier):
-    #     self.list.insert(len(self.list), v)
-
-
-def id_generator():
-    return uuid.uuid4().hex
 
 
 class SemanticClass(BaseModel):
@@ -451,6 +472,7 @@ class SemanticClass(BaseModel):
     #                             old_entity=self.old_state)
 
     def delete(self, assert_no_references: bool = False):
+        # todo ?
         pass
 
     def get_fields(self) -> List[Field]:
@@ -511,19 +533,26 @@ class SemanticClass(BaseModel):
         allow_mutation = False
 
 
-class SemanticIndividual(SemanticClass):
+class SemanticIndividual(BaseModel):
+    _parent_classes: List[type]
 
-    def __init__(self, *args, **kwargs):
+    def __eq__(self, other):
+        return type(self) == type(other)
 
-        if not "id" in kwargs or (not (kwargs['id'] == "individual")):
-            raise Exception("Only one instanciation of an individual is "
-                            "allowed. That instanciation always has the id "
-                            "'individual'")
+    def __str__(self):
+        return type(self).__name__
 
-        super(SemanticIndividual, self).__init__(*args, **kwargs)
+    def get_name(self):
+        return type(self).__name__
 
+    def is_instance_of_class(self, class_: type) -> False:
 
-class ModelCatalogue(BaseModel):
-    catalogue: Dict[str, type]
+        if isinstance(self, class_):
+            return True
+        for parent in self._parent_classes:
+            if isinstance(parent(), class_):
+                return True
+        return False
+
 
 

@@ -239,7 +239,7 @@ class RdfParser:
                 voc_builder.add_data_property(data_prop)
 
         # OWLDataTypes
-        # only the custom created datatypes are listed in the file,
+        # only the custom created datatype_catalogue are listed in the file,
         # the predefined are automatically added at the start
         # of post processing
         for a in graph.subjects(
