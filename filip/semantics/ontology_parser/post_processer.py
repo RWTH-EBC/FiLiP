@@ -342,6 +342,7 @@ def make_labels_fiware_safe(voc_builder: VocabularyBuilder):
         if entity.is_label_protected(entity.label):
             entity.label = "Unallowed_Label"
 
+
 def compute_ancestor_classes(voc_builder: VocabularyBuilder):
     """Compute all ancestor classes of classes
 

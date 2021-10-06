@@ -6,31 +6,27 @@ from enum import Enum
 from typing import List, Any, Tuple, Dict, Type, TypeVar, Generic, \
     TYPE_CHECKING, Optional, Union
 
-from filip.semantics.vocabulary import Datatype
 
 from filip.models.base import DataType
 
 from filip.models.ngsi_v2.context import ContextEntity, NamedContextAttribute
 
-from filip.clients.ngsi_v2 import ContextBrokerClient
 
 from filip.models import FiwareHeader
-from pydantic import BaseModel, validator, Field
-from pydantic import Field as pyField
+from pydantic import BaseModel, validator, Field, AnyHttpUrl
+from filip.config import settings
 
 if TYPE_CHECKING:
     from filip.semantics.semantic_manager import SemanticManager
 
-T = TypeVar('T')
-
-
-class ClientSetting(str, Enum):
-    unset = "unset"
+class FiwareVersion(str, Enum):
     v2 = "v2"
     LD = "LD"
 
-
 class InstanceHeader(FiwareHeader):
+
+    url: str = Field(default=settings.CB_URL)
+    fiware_version: FiwareVersion = Field(default=FiwareVersion.v2)
 
     def get_fiware_header(self) -> FiwareHeader:
         return FiwareHeader(service=self.service,
@@ -58,6 +54,7 @@ class InstanceIdentifier(BaseModel):
 
     class Config:
         frozen = True
+
 
 class InstanceRegistry(BaseModel):
     _registry: Dict[InstanceIdentifier, 'SemanticClass'] = {}
@@ -343,7 +340,7 @@ def id_generator():
 
 class SemanticClass(BaseModel):
 
-    fiware_header: FiwareHeader
+    header: InstanceHeader
     id: str
     old_state: Optional[ContextEntity]
 
@@ -374,7 +371,8 @@ class SemanticClass(BaseModel):
             assert cls.__name__ == kwargs['identifier'].type
         else:
             instance_id = kwargs['id'] if 'id' in kwargs else ""
-            header = kwargs['header'] if 'header' in kwargs else InstanceHeader()
+            header = kwargs['header'] \
+                if 'header' in kwargs else InstanceHeader()
 
         if not instance_id == "" and not enforce_new:
 
@@ -420,11 +418,9 @@ class SemanticClass(BaseModel):
             if semantic_manager.does_instance_exists(identifier_):
                 return
 
-        super().__init__(id=instance_id_, fiware_header=header_,
+        super().__init__(id=instance_id_, header=header_,
                          old_state=old_state_)
-        assert not semantic_manager.client_setting == ClientSetting.unset
 
-        print(f"registering {self.get_identifier()}")
         semantic_manager.instance_registry.register(self)
 
     def are_fields_valid(self) -> bool:
@@ -439,17 +435,18 @@ class SemanticClass(BaseModel):
     def _get_class_name(self) -> str:
         return type(self).__name__
 
-    def save(self, fiware_header: FiwareHeader, assert_validity: bool = False):
-
-        if assert_validity:
-            assert self.are_fields_valid(), \
-                f"Attempted to save the SemanticEntity {self.id} of type " \
-                f"{self._get_class_name()} with invalid fields " \
-                f"{[f.name for f in self.get_invalid_fields()]}"
-
-        with ContextBrokerClient(fiware_header=fiware_header) as client:
-            client.patch_entity(entity=self.build_context_entity(),
-                                old_entity=self._old_state)
+    # def save(self, assert_validity: bool = False):
+    #
+    #     if assert_validity:
+    #         assert self.are_fields_valid(), \
+    #             f"Attempted to save the SemanticEntity {self.id} of type " \
+    #             f"{self._get_class_name()} with invalid fields " \
+    #             f"{[f.name for f in self.get_invalid_fields()]}"
+    #
+    #     with ContextBrokerClient(
+    #             fiware_header=self.header.get_fiware_header()) as client:
+    #         client.patch_entity(entity=self.build_context_entity(),
+    #                             old_entity=self.old_state)
 
     def delete(self, assert_no_references: bool = False):
         pass
@@ -506,7 +503,7 @@ class SemanticClass(BaseModel):
 
     def get_identifier(self) -> InstanceIdentifier:
         return InstanceIdentifier(id=self.id, type=self.get_type(),
-                                  header=self.fiware_header)
+                                  header=self.header)
 
     class Config:
         arbitrary_types_allowed = True
@@ -515,9 +512,17 @@ class SemanticClass(BaseModel):
 
 class SemanticIndividual(SemanticClass):
 
-    @staticmethod
-    def _validate(values: List[Any], rules: Tuple[str, List[List]]):
-        assert False, "Object is an instance, Instances are valueless"
+    def __init__(self, *args, **kwargs):
+
+        if not "id" in kwargs or (not (kwargs['id'] == "individual")):
+            # raise Exception("")
+            pass
+
+        super(SemanticIndividual, self).__init__(*args, **kwargs)
+
+
+
+
 
 
 class ModelCatalogue(BaseModel):

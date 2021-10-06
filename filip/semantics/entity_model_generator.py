@@ -186,19 +186,23 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
     content += "# ---------Datatypes--------- #"
     content += "\n"
 
-    # max_length = 0
+
+    # Datatypes dict
+
+    # datatype_dict = {}
     # for name, datatype in vocabulary.datatypes.items():
-    #     if len(datatype.get_label()) > max_length:
-    #         max_length = datatype.get_label()
+    #     definition = datatype.export()
+    #     datatype_dict[datatype.get_label()] = definition
+    #
+    # content += json.dumps(datatype_dict, indent=4)
+    # content += "\n"
 
+    # Datatypes inline
     content += "semantic_manager.datatypes = {"
-
     for name, datatype in vocabulary.datatypes.items():
         definition = datatype.export()
-
         content += "\n\t"
         content += f"'{datatype.get_label()}': \t {definition},"
-
     content += "\n"
     content += "}"
 

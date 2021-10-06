@@ -86,16 +86,12 @@ class VocabularyConfigurator:
         used_labels: Dict[str, List[Entity]] = {}
         duplicate_labels = set()
 
-        # process entities to find conflicts, ignore individuals and datatypes
-        # as they are never used as Keys in FIWARE
-        # Multiple individuals/datatypes can have the same label,
-        # this is no issue for the system
-        # it may disturb the user, but it is his own choice
+        # process entities to find conflicts
         entities_to_check = [vocabulary.classes,
                              vocabulary.object_properties,
                              vocabulary.data_properties,
-                             # vocabulary.datatypes,
-                             # vocabulary.individuals
+                             vocabulary.datatypes,
+                             vocabulary.individuals
                              ]
 
         for entity_list in entities_to_check:

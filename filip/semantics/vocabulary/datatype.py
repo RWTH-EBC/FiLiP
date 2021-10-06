@@ -46,7 +46,7 @@ class Datatype(Entity):
     """If Type==Enum: Enum values"""
 
     def export(self) -> Dict:
-        res = self.dict(include={'number_has_range',
+        res = self.dict(include={'type','number_has_range',
                                   'number_range_min', 'number_range_max',
                                   'number_decimal_allowed', 'forbidden_chars',
                                   'allowed_chars', 'enum_values'})

@@ -8,7 +8,7 @@ from filip.models.ngsi_v2.context import ContextEntity
 from filip.models import FiwareHeader
 
 from filip.semantics.entity_model_generator import generate_vocabulary_models
-from filip.semantics.semantic_models import ClientSetting, InstanceRegistry
+from filip.semantics.semantic_models import  InstanceRegistry
 from filip.semantics.vocabulary_configurator import VocabularyConfigurator
 
 
@@ -30,8 +30,6 @@ class TestSemanticModels(unittest.TestCase):
     def test_2_model_relation_field_validation(self):
         from models import Class1, Class13, Class2, Class4, Class123, \
             Individual1, semantic_manager, Thing
-
-        semantic_manager.client_setting = ClientSetting.v2
 
         class1 = Class1(id="12")
         class13 = Class13()
@@ -145,7 +143,8 @@ class TestSemanticModels(unittest.TestCase):
 
         class1.oProp1.append(class13)
 
-        semantic_manager.save_all_instances()
+        self.assertRaises(AssertionError, semantic_manager.save_all_instances)
+        semantic_manager.save_all_instances(assert_validity=False)
 
         # clear local state to ensure standard test condition
         self.clear_registry()
@@ -161,7 +160,6 @@ class TestSemanticModels(unittest.TestCase):
                          class13_.dataProp1.get_all())
         self.assertTrue(class13.get_identifier() in
                          semantic_manager.instance_registry._registry)
-
 
     def clear_registry(self):
         from models import semantic_manager

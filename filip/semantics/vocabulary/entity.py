@@ -112,7 +112,7 @@ class Entity(BaseModel):
             return self.label
 
         index = self.iri.find("#") + 1
-        return self.iri[index:]
+        return self.make_label_safe(self.iri[index:])
 
     def make_label_safe(self, label: str) -> str:
         """ make the given label FIWARE safe
@@ -124,6 +124,7 @@ class Entity(BaseModel):
             str
         """
         label = label.replace(" ", "_")
+        label = label + "*"
 
         for char in label:
             if not char.isalnum():

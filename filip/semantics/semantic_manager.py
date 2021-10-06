@@ -1,13 +1,15 @@
 from enum import Enum
 from typing import Optional, Dict, TYPE_CHECKING, Type, List
 
+from filip.semantics.vocabulary import Individual
+
 from filip.models.ngsi_v2.context import ContextEntity
 
 from filip.clients.ngsi_v2 import ContextBrokerClient
 
 from filip.models import FiwareHeader
 from pydantic import BaseModel
-from filip.semantics.semantic_models import InstanceRegistry, ClientSetting, \
+from filip.semantics.semantic_models import InstanceRegistry, FiwareVersion, \
     InstanceIdentifier, SemanticClass, InstanceHeader, Datatype, DataField, \
     RelationField
 
@@ -17,19 +19,21 @@ class SemanticManager(BaseModel):
     instance_registry: InstanceRegistry
     model_catalogue: Dict[str, type] = {}
     datatypes: Dict[str, Dict[str,str]] = {}
-    client_setting: ClientSetting = ClientSetting.unset
 
-    def _get_client(self, fiware_header: Optional[FiwareHeader] = None):
-        if self.client_setting == ClientSetting.v2:
-            return ContextBrokerClient(fiware_header=fiware_header)
+    def _get_client(self, instance_header: InstanceHeader):
+        print(instance_header)
+        if instance_header.fiware_version == FiwareVersion.v2:
+            return ContextBrokerClient(
+                url=instance_header.url,
+                fiware_header=instance_header.get_fiware_header())
         else:
             # todo LD
-            raise Exception
+            raise Exception("FiwareVersion not yet supported")
 
-    def _context_entity_to_semantic_class(self,
-                                          entity: ContextEntity,
-                                          header: InstanceHeader) \
-            -> SemanticClass:
+    def _context_entity_to_semantic_class(
+            self,
+            entity: ContextEntity,
+            header: InstanceHeader)-> SemanticClass:
 
         class_name = entity.type
 
@@ -42,7 +46,6 @@ class SemanticManager(BaseModel):
         # todo catch if Fiware contains more fields than the model has?
         for field in loaded_class.get_fields():
             field_name = field.name
-            print(field_name)
             entity_attribute = entity.get_attribute(field_name)
             if entity_attribute is None:
                 raise Exception(
@@ -61,7 +64,6 @@ class SemanticManager(BaseModel):
 
             for json in json_list:
                 if isinstance(field, DataField):
-                    print(json)
                     field.list.insert(len(field.list), json)
                 elif isinstance(field, RelationField):
                     # convert json to Identifier, inject identifier in Relation,
@@ -78,21 +80,32 @@ class SemanticManager(BaseModel):
     def get_class_by_name(self, class_name:str) -> Type:
         return self.model_catalogue[class_name]
 
-    def save_all_instances(self):
+    def save_all_instances(self, assert_validity: bool = True,
+                           assert_individual_validity: bool = False):
 
-        client = self._get_client()
+        if assert_validity:
+            for instance in self.instance_registry.get_all():
+                if isinstance(instance, Individual):
+                    if not assert_individual_validity:
+                        continue
+                assert instance.are_fields_valid(), \
+                    f"Attempted to save the SemanticEntity {instance.id} of " \
+                    f"type {instance._get_class_name()} with invalid fields " \
+                    f"{[f.name for f in instance.get_invalid_fields()]}"
 
         for instance in self.instance_registry.get_all():
-            client.patch_entity(entity=instance.build_context_entity(),
-                                old_entity=instance.old_state)
-        client.close()
+            client = self._get_client(instance_header=instance.header)
+            client.patch_entity(instance.build_context_entity(),
+                                instance.old_state)
+            client.close()
+
 
     def load_instance(self, identifier: InstanceIdentifier) -> SemanticClass:
 
         if self.instance_registry.contains(identifier=identifier):
             return self.instance_registry.get(identifier=identifier)
         else:
-            client = self._get_client()
+            client = self._get_client(identifier.header)
 
             entity = client.get_entity(entity_id=identifier.id,
                                        entity_type=identifier.type)
@@ -105,7 +118,7 @@ class SemanticManager(BaseModel):
         if self.instance_registry.contains(identifier=identifier):
             return True
 
-        client = self._get_client(identifier.header.get_fiware_header())
+        client = self._get_client(identifier.header)
         return client.does_entity_exists(entity_id=identifier.id,
                                          entity_type=identifier.type)
 
@@ -131,33 +144,43 @@ class SemanticManager(BaseModel):
     def load_instances_from_fiware(
             self,
             fiware_header: FiwareHeader,
+            fiware_version: FiwareVersion,
             entity_types: Optional[List[str]],
             entity_ids: Optional[List[str]],
-            identifiers: Optional[List[InstanceIdentifier]]) \
-        -> List[SemanticClass]:
+            url: Optional[str] = None) -> List[SemanticClass]:
 
-        number_of_filled_params = len([p for p in
-                                       [entity_types, entity_ids, identifiers]
-                                       if p is not None])
-        if number_of_filled_params > 1:
+        if len([p for p in [entity_types, entity_ids] if p is not None]) > 1:
             raise ValueError("Only one search parameter is allowed")
 
-        client = self._get_client(fiware_header=fiware_header)
-
-        if identifiers is None:
-            entities = client.get_entity_list(
-                entity_ids=entity_ids,
-                entity_types=entity_types)
+        if fiware_version == FiwareVersion.v2:
+            client = ContextBrokerClient(fiware_header=fiware_header, url=url)
         else:
-            entities = \
-                [client.get_entity(entity_id=i.id, entity_type=i.type)
-                 for i in identifiers]
+            raise Exception("FiwareVersion not yet supported")
 
-        header: InstanceHeader = InstanceHeader(service=fiware_header.service,
-                            service_path=fiware_header.service_path)
+        entities = client.get_entity_list(entity_ids=entity_ids,
+                                          entity_types=entity_types)
         client.close()
+
+        header: InstanceHeader = InstanceHeader(
+            service=fiware_header.service,
+            service_path=fiware_header.service_path,
+            url=url,
+            fiware_version=fiware_version
+        )
         return [self._context_entity_to_semantic_class(e, header)
                 for e in entities]
+
+    def load_instances(
+            self,
+            identifiers: Optional[List[InstanceIdentifier]]) \
+        -> List[SemanticClass]:
+        """
+        Load all instances, if no local state of it exists it will get taken
+        from Fiware and registered locally
+        """
+
+        return [self.load_instance(iden) for iden in identifiers]
+
 
     def get_datatype(self, datatype_name: str) -> Datatype:
         return Datatype.parse_obj(self.datatypes[datatype_name])
