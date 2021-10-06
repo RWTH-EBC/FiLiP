@@ -4,7 +4,7 @@ import json
 import uuid
 from enum import Enum
 from typing import List, Any, Tuple, Dict, Type, TypeVar, Generic, \
-    TYPE_CHECKING, Optional
+    TYPE_CHECKING, Optional, Union
 
 from filip.semantics.vocabulary import Datatype
 
@@ -82,13 +82,93 @@ class InstanceRegistry(BaseModel):
         return list(self._registry.values())
 
 
+class Datatype(BaseModel):
+    type: str
+    """Type of the datatype"""
+    number_has_range: bool
+    """If Type==Number: Does the datatype define a range"""
+    number_range_min: Union[int, str]
+    """If Type==Number: Min value of the datatype range, 
+        if a range is defined"""
+    number_range_max: Union[int, str]
+    """If Type==Number: Max value of the datatype range, 
+        if a range is defined"""
+    number_decimal_allowed: bool
+    """If Type==Number: Are decimal numbers allowed?"""
+    forbidden_chars: List[str]
+    """If Type==String: Blacklisted chars"""
+    allowed_chars: List[str]
+    """If Type==String: Whitelisted chars"""
+    enum_values: List[str]
+    """If Type==Enum: Enum values"""
+
+    def value_is_valid(self, value: str) -> bool:
+        """Test if value is valid for this datatype.
+        Numbers are also given as strings
+
+        Args:
+            value (str): value to be tested
+
+        Returns:
+            bool
+        """
+
+        if self.type == "string":
+            if len(self.allowed_chars) > 0:
+                # if allowed chars is empty all chars are allowed
+                for char in value:
+                    if char not in self.allowed_chars:
+                        return False
+            for char in self.forbidden_chars:
+                if char in value:
+                    return False
+            return True
+
+        if self.type == "number":
+
+            if self.number_decimal_allowed:
+                try:
+                    number = float(value)
+                except:
+                    return False
+            else:
+                try:
+                    number = int(value)
+                except:
+                    return False
+
+            if not self.number_range_min == "/":
+                if number < self.number_range_min:
+                    return False
+            if not self.number_range_max == "/":
+                if number > self.number_range_max:
+                    return False
+
+            return True
+
+        if self.type == "enum":
+            return value in self.enum_values
+
+        if self.type == "date":
+            try:
+                from dateutil.parser import parse
+                parse(value, fuzzy=False)
+                return True
+
+            except ValueError:
+                return False
+
+        return True
+
+
 class Field(collections.MutableSequence):
     _rules: List[Tuple[str, List[List[str]]]]
     rule: str
     name: str
     _semantic_manager: 'SemanticManager'
 
-    def __init__(self, rule, name):
+    def __init__(self, rule, name, semantic_manager):
+        self._semantic_manager = semantic_manager
         super().__init__()
 
         self.rule = rule
@@ -200,29 +280,23 @@ class Field(collections.MutableSequence):
 
 
 class DataField(Field):
-    _rules: List[Tuple[str, List[List[Datatype]]]] = []
+    _rules: List[Tuple[str, List[List[str]]]] = []
 
-    def _value_is_valid(self, value, rule_value: Datatype) -> bool:
-        return rule_value.value_is_valid(value)
+    def _value_is_valid(self, value, rule_value: str) -> bool:
+        datatype = self._semantic_manager.get_datatype(rule_value)
+        return datatype.value_is_valid(value)
 
     def build_context_attribute(self) -> NamedContextAttribute:
         return NamedContextAttribute(
             name=self.name,
             type=DataType.STRUCTUREDVALUE,
-            value=[v.dict() for v in self.get_all()]
+            value=[v for v in self.get_all()]
         )
 
 
 class RelationField(Field):
     _rules: List[Tuple[str, List[List[Type]]]] = []
     _class_identifier: InstanceIdentifier
-    _semantic_manager: 'SemanticManager'
-
-    # _model_catalogue: Dict[str, type]
-
-    def __init__(self, rule, name, semantic_manager):
-        self._semantic_manager = semantic_manager
-        super().__init__(rule, name)
 
 
     def _value_is_valid(self, value, rule_value: type) -> bool:
@@ -382,13 +456,11 @@ class SemanticClass(BaseModel):
 
     def get_fields(self) -> List[Field]:
         fields: List[Field] = self.get_relation_fields()
-        # todo datafields
+        fields.extend(self.get_data_fields())
         return fields
 
     def get_field_names(self) -> List[str]:
-        names = self.get_relationship_names()
-        # todo datafields
-        return names
+        return [f.name for f in self.get_fields()]
 
     def get_relation_fields(self) -> List[RelationField]:
         relationships = []
@@ -398,12 +470,18 @@ class SemanticClass(BaseModel):
                 relationships.append(rel)
         return relationships
 
-    def get_relationship_names(self) -> List[str]:
-        names = []
+    def get_data_fields(self) -> List[DataField]:
+        fields = []
         for key, value in self.__dict__.items():
-            if isinstance(value, RelationField):
-                names.append(key)
-        return names
+            if isinstance(value, DataField):
+                fields.append(value)
+        return fields
+
+    def get_relation_field_names(self) -> List[str]:
+        return [f.name for f in self.get_relation_fields()]
+
+    def get_data_field_names(self) -> List[str]:
+        return [f.name for f in self.get_data_fields()]
 
     def get_field_by_name(self, field_name: str) -> Field:
         for key, value in self.__dict__.items():
@@ -420,10 +498,10 @@ class SemanticClass(BaseModel):
             type=self._get_class_name()
         )
 
-        for rel in self.get_relation_fields():
-            entity.add_attributes([rel.build_context_attribute()])
+        for field in self.get_fields():
+            entity.add_attributes([field.build_context_attribute()])
 
-        # todo datafields
+
         return entity
 
     def get_identifier(self) -> InstanceIdentifier:

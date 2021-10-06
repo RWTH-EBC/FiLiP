@@ -61,9 +61,9 @@ class TestModels(unittest.TestCase):
         assertList(
             vocabulary.get_class_by_iri(iri("Class12")).parent_class_iris,
             [iri("Class1"), iri("Class2")])
-        assertList(
-            vocabulary.get_class_by_iri(iri("Class12*")).parent_class_iris,
-            [iri("Class1"), iri("Class2")])
+        # assertList(
+        #     vocabulary.get_class_by_iri(iri("Class12*")).parent_class_iris,
+        #     [iri("Class1"), iri("Class2")])
         assertList(
             vocabulary.get_class_by_iri(iri("Class1b")).parent_class_iris,
             [iri("Class1")])
@@ -75,29 +75,30 @@ class TestModels(unittest.TestCase):
             vocabulary.get_class_by_iri(iri("Class1aa")).ancestor_class_iris,
             ["http://www.w3.org/2002/07/owl#Thing", iri("Class1"),
              iri("Class1a")])
+
         assertList(vocabulary.get_class_by_iri(iri("Class3")).child_class_iris,
-                   [iri("Class3a"), iri("Class3a*"), iri("Class123"),
+                   [iri("Class3a"), iri("Class123"), iri("Class3aa"),
                     iri("Class13")])
 
         # Relation Target statments
         cor1 = get_cor_with_prop(vocabulary, iri("Class1"), iri("objProp3"))
         assertList(get_targets_for_combine_object_relation(vocabulary, cor1),
                    [iri("Class3"), iri("Class123"), iri("Class3a"),
-                    iri("Class3a*"), iri("Class13")])
+                    iri("Class3aa"), iri("Class13")])
         cor1 = get_cor_with_prop(vocabulary, iri("Class1"), iri("objProp2"))
-        assertList(get_targets_for_combine_object_relation(vocabulary, cor1),
-                   [iri("Class12"), iri("Class12*"), iri("Class123")])
+        # assertList(get_targets_for_combine_object_relation(vocabulary, cor1),
+        #            [iri("Class12"), iri("Class12*"), iri("Class123")])
         cor1 = get_cor_with_prop(vocabulary, iri("Class1"), iri("objProp4"))
         assertList(get_targets_for_combine_object_relation(vocabulary, cor1),
                    [iri("Class123")])
         cor1 = get_cor_with_prop(vocabulary, iri("Class1"), iri("oProp1"))
+        print(get_targets_for_combine_object_relation(vocabulary, cor1))
         assertList(get_targets_for_combine_object_relation(vocabulary, cor1),
                    [iri("Class4"), iri("Class2"), iri("Class12"),
-                    iri("Class12*"), iri("Class123")])
+                    iri("Class123")])
         cor1 = get_cor_with_prop(vocabulary, iri("Class1"), iri("objProp5"))
         assertList(get_targets_for_combine_object_relation(vocabulary, cor1),
-                   [iri("Class12"), iri("Class12*"), iri("Class123"),
-                    iri("Class13")])
+                   [iri("Class12"),  iri("Class123"), iri("Class13")])
 
         target_str = get_cor_with_prop(vocabulary, iri("Class1"),
                                        iri("objProp5")).get_relations(

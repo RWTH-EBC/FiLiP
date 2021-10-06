@@ -98,6 +98,11 @@
 :dataProp1 rdf:type owl:DatatypeProperty .
 
 
+###  http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25#dataProp2
+:dataProp2 rdf:type owl:DatatypeProperty ;
+           rdfs:subPropertyOf :dataProp1 .
+
+
 #################################################################
 #    Classes
 #################################################################
@@ -152,7 +157,12 @@
 ###  http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25#Class12
 :Class12 rdf:type owl:Class ;
          rdfs:subClassOf :Class1 ,
-                         :Class2 ;
+                         :Class2 ,
+                         [ owl:intersectionOf ( :Class1
+                                                :Class2
+                                              ) ;
+                           rdf:type owl:Class
+                         ] ;
          rdfs:label "Gertrude" .
 
 
@@ -175,6 +185,16 @@
                                                 :Class3
                                               ) ;
                            rdf:type owl:Class
+                         ] ,
+                         [ rdf:type owl:Restriction ;
+                           owl:onProperty :dataProp1 ;
+                           owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                           owl:onDataRange xsd:int
+                         ] ,
+                         [ rdf:type owl:Restriction ;
+                           owl:onProperty :dataProp2 ;
+                           owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                           owl:onDataRange xsd:boolean
                          ] .
 
 
@@ -241,6 +261,11 @@
          rdfs:subClassOf :Class3 .
 
 
+###  http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25#Class3aa
+:Class3aa rdf:type owl:Class ;
+          rdfs:subClassOf :Class3a .
+
+
 ###  http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25#Class4
 :Class4 rdf:type owl:Class ;
         rdfs:subClassOf [ rdf:type owl:Class ;
@@ -259,22 +284,6 @@
                           owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
                           owl:onClass :Class1
                         ] .
-
-
-###  http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25#Class12
-<http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25#Class12> rdf:type owl:Class ;
-                                                                                    rdfs:subClassOf [ owl:intersectionOf ( :Class1
-                                                                                                                           :Class2
-                                                                                                                         ) ;
-                                                                                                      rdf:type owl:Class
-                                                                                                    ] .
-
-
-###  http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25
-#Class3aa
-<http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25
-#Class3aa> rdf:type owl:Class ;
-                                                                                    rdfs:subClassOf :Class3a .
 
 
 #################################################################

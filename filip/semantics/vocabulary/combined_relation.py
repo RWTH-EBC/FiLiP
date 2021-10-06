@@ -81,9 +81,12 @@ class CombinedRelation(BaseModel):
         return {vocabulary.get_label_for_entity_iri(iri)
                 for iri in self.get_all_target_iris(vocabulary)}
 
-    def export_rule(self, vocabulary: 'Vocabulary') -> str:
+    def export_rule(self, vocabulary: 'Vocabulary',
+                    stringify_fields: bool) -> str:
 
         rules= [vocabulary.get_relation_by_id(id).export_rule(vocabulary)
                 for id in self.relation_ids]
-        # return str(rules).replace('"', "")
-        return str(rules).replace("'","").replace('"', "'")
+        if stringify_fields:
+            return str(rules).replace('"', "")
+        else:
+            return str(rules).replace("'","").replace('"', "'")

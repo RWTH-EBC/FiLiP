@@ -23,6 +23,7 @@ class Thing(SemanticClass):
 
 
 
+
 	# Data fields
 
 	# Relation fields
@@ -33,6 +34,12 @@ class Class1(Thing):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 
+
+		self.oProp1._rules = [('some', [[Class2], [Class4]])]
+		self.objProp2._rules = [('some', [[Class1, Class2]])]
+		self.objProp3._rules = [('some', [[Class3]])]
+		self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
+		self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]])]
 
 		self.oProp1._class_identifier = self.get_identifier()
 		self.objProp2._class_identifier = self.get_identifier()
@@ -71,6 +78,12 @@ class Class1a(Class1):
 		super().__init__(*args, **kwargs)
 
 
+		self.oProp1._rules = [('some', [[Class2], [Class4]])]
+		self.objProp2._rules = [('some', [[Class1, Class2]])]
+		self.objProp3._rules = [('some', [[Class3]])]
+		self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
+		self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]])]
+
 		self.oProp1._class_identifier = self.get_identifier()
 		self.objProp2._class_identifier = self.get_identifier()
 		self.objProp3._class_identifier = self.get_identifier()
@@ -107,6 +120,12 @@ class Class1aa(Class1a):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 
+
+		self.oProp1._rules = [('some', [[Class2], [Class4]])]
+		self.objProp2._rules = [('some', [[Class1, Class2]])]
+		self.objProp3._rules = [('some', [[Class3]])]
+		self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
+		self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]])]
 
 		self.oProp1._class_identifier = self.get_identifier()
 		self.objProp2._class_identifier = self.get_identifier()
@@ -145,6 +164,12 @@ class Class1b(Class1):
 		super().__init__(*args, **kwargs)
 
 
+		self.oProp1._rules = [('some', [[Class2]]), ('some', [[Class2], [Class4]])]
+		self.objProp2._rules = [('some', [[Class1, Class2]])]
+		self.objProp3._rules = [('some', [[Class3]])]
+		self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
+		self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]])]
+
 		self.oProp1._class_identifier = self.get_identifier()
 		self.objProp2._class_identifier = self.get_identifier()
 		self.objProp3._class_identifier = self.get_identifier()
@@ -182,6 +207,9 @@ class Class2(Thing):
 		super().__init__(*args, **kwargs)
 
 
+		self.oProp1._rules = [('min|1', [[Class1]])]
+		self.objProp2._rules = [('only', [[Thing]])]
+
 		self.oProp1._class_identifier = self.get_identifier()
 		self.objProp2._class_identifier = self.get_identifier()
 
@@ -203,7 +231,10 @@ class Class3(Thing):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 
-		self.dataProp1._rules = [('only', [[customDataType4]])]
+		self.dataProp1._rules = [('only', [['customDataType4']])]
+
+		self.oProp1._rules = [('value', [[Individual1]])]
+		self.objProp2._rules = [('some', [[Class1]]), ('value', [[Individual1]])]
 
 		self.oProp1._class_identifier = self.get_identifier()
 		self.objProp2._class_identifier = self.get_identifier()
@@ -211,7 +242,8 @@ class Class3(Thing):
 	# Data fields
 	dataProp1: DataField = DataField(
 		name='dataProp1',
-		rule='only customDataType4')
+		rule='only customDataType4',
+		semantic_manager=semantic_manager)
 
 	# Relation fields
 	oProp1: RelationField = RelationField(
@@ -229,7 +261,13 @@ class Class123(Class1, Class2, Class3):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 
-		self.dataProp1._rules = [('only', [[customDataType4]])]
+		self.dataProp1._rules = [('only', [['customDataType4']])]
+
+		self.oProp1._rules = [('value', [[Individual1]]), ('min|1', [[Class1]]), ('some', [[Class2], [Class4]])]
+		self.objProp2._rules = [('some', [[Class1]]), ('value', [[Individual1]]), ('only', [[Thing]]), ('some', [[Class1, Class2]])]
+		self.objProp3._rules = [('some', [[Class3]])]
+		self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
+		self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]])]
 
 		self.oProp1._class_identifier = self.get_identifier()
 		self.objProp2._class_identifier = self.get_identifier()
@@ -240,7 +278,8 @@ class Class123(Class1, Class2, Class3):
 	# Data fields
 	dataProp1: DataField = DataField(
 		name='dataProp1',
-		rule='only customDataType4')
+		rule='only customDataType4',
+		semantic_manager=semantic_manager)
 
 	# Relation fields
 	oProp1: RelationField = RelationField(
@@ -270,7 +309,14 @@ class Class13(Class1, Class3):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 
-		self.dataProp1._rules = [('only', [[customDataType4]])]
+		self.dataProp1._rules = [('min|1', [['int']]), ('only', [['customDataType4']])]
+		self.dataProp2._rules = [('exactly|1', [['boolean']])]
+
+		self.oProp1._rules = [('value', [[Individual1]]), ('some', [[Class2], [Class4]])]
+		self.objProp2._rules = [('some', [[Class1]]), ('value', [[Individual1]]), ('some', [[Class1, Class2]])]
+		self.objProp3._rules = [('some', [[Class3]])]
+		self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
+		self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]])]
 
 		self.oProp1._class_identifier = self.get_identifier()
 		self.objProp2._class_identifier = self.get_identifier()
@@ -281,7 +327,12 @@ class Class13(Class1, Class3):
 	# Data fields
 	dataProp1: DataField = DataField(
 		name='dataProp1',
-		rule='only customDataType4')
+		rule='min 1 int, only customDataType4',
+		semantic_manager=semantic_manager)
+	dataProp2: DataField = DataField(
+		name='dataProp2',
+		rule='exactly 1 boolean',
+		semantic_manager=semantic_manager)
 
 	# Relation fields
 	oProp1: RelationField = RelationField(
@@ -311,7 +362,10 @@ class Class3a(Class3):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 
-		self.dataProp1._rules = [('only', [[customDataType4]])]
+		self.dataProp1._rules = [('only', [['customDataType4']])]
+
+		self.oProp1._rules = [('value', [[Individual1]])]
+		self.objProp2._rules = [('some', [[Class1]]), ('value', [[Individual1]])]
 
 		self.oProp1._class_identifier = self.get_identifier()
 		self.objProp2._class_identifier = self.get_identifier()
@@ -319,7 +373,8 @@ class Class3a(Class3):
 	# Data fields
 	dataProp1: DataField = DataField(
 		name='dataProp1',
-		rule='only customDataType4')
+		rule='only customDataType4',
+		semantic_manager=semantic_manager)
 
 	# Relation fields
 	oProp1: RelationField = RelationField(
@@ -337,7 +392,10 @@ class Class3aa(Class3a):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 
-		self.dataProp1._rules = [('only', [[customDataType4]])]
+		self.dataProp1._rules = [('only', [['customDataType4']])]
+
+		self.oProp1._rules = [('value', [[Individual1]])]
+		self.objProp2._rules = [('some', [[Class1]]), ('value', [[Individual1]])]
 
 		self.oProp1._class_identifier = self.get_identifier()
 		self.objProp2._class_identifier = self.get_identifier()
@@ -345,7 +403,8 @@ class Class3aa(Class3a):
 	# Data fields
 	dataProp1: DataField = DataField(
 		name='dataProp1',
-		rule='only customDataType4')
+		rule='only customDataType4',
+		semantic_manager=semantic_manager)
 
 	# Relation fields
 	oProp1: RelationField = RelationField(
@@ -364,6 +423,8 @@ class Class4(Thing):
 		super().__init__(*args, **kwargs)
 
 
+		self.objProp4._rules = [('min|1', [[Class1]])]
+
 		self.objProp4._class_identifier = self.get_identifier()
 
 	# Data fields
@@ -380,6 +441,12 @@ class Gertrude(Class1, Class2):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 
+
+		self.oProp1._rules = [('min|1', [[Class1]]), ('some', [[Class2], [Class4]])]
+		self.objProp2._rules = [('only', [[Thing]]), ('some', [[Class1, Class2]])]
+		self.objProp3._rules = [('some', [[Class3]])]
+		self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
+		self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]])]
 
 		self.oProp1._class_identifier = self.get_identifier()
 		self.objProp2._class_identifier = self.get_identifier()
@@ -431,7 +498,7 @@ class Individual4(SemanticIndividual, Class1, Class2):
 
 
 # ---------Datatypes--------- #
-datatypes = {
+semantic_manager.datatypes = {
 	'customDataType1': 	 {'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': ['0', '15', '30'], 'number_has_range': False, 'type': 'enum'},
 	'customDataType2': 	 {'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False, 'type': 'string'},
 	'customDataType3': 	 {'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False, 'type': 'string'},

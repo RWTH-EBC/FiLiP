@@ -8,13 +8,15 @@ from filip.clients.ngsi_v2 import ContextBrokerClient
 from filip.models import FiwareHeader
 from pydantic import BaseModel
 from filip.semantics.semantic_models import InstanceRegistry, ClientSetting, \
-    InstanceIdentifier, SemanticClass, InstanceHeader
+    InstanceIdentifier, SemanticClass, InstanceHeader, Datatype, DataField, \
+    RelationField
 
 
 class SemanticManager(BaseModel):
 
     instance_registry: InstanceRegistry
     model_catalogue: Dict[str, type] = {}
+    datatypes: Dict[str, Dict[str,str]] = {}
     client_setting: ClientSetting = ClientSetting.unset
 
     def _get_client(self, fiware_header: Optional[FiwareHeader] = None):
@@ -40,6 +42,7 @@ class SemanticManager(BaseModel):
         # todo catch if Fiware contains more fields than the model has?
         for field in loaded_class.get_fields():
             field_name = field.name
+            print(field_name)
             entity_attribute = entity.get_attribute(field_name)
             if entity_attribute is None:
                 raise Exception(
@@ -57,14 +60,18 @@ class SemanticManager(BaseModel):
                 json_list = [entity_field_value]
 
             for json in json_list:
-                # convert json to Identifier, inject identifier in Relation,
-                # the class will be hotloaded if the value in the is
-                # relationship is accessed
+                if isinstance(field, DataField):
+                    print(json)
+                    field.list.insert(len(field.list), json)
+                elif isinstance(field, RelationField):
+                    # convert json to Identifier, inject identifier in Relation,
+                    # the class will be hotloaded if the value in the is
+                    # relationship is accessed
 
-                identifier = InstanceIdentifier.parse_obj(json)
+                    identifier = InstanceIdentifier.parse_obj(json)
 
-                # class_: SemanticClass = self.load_instance(identifier)
-                field.list.insert(len(field.list), identifier)
+                    # class_: SemanticClass = self.load_instance(identifier)
+                    field.list.insert(len(field.list), identifier)
 
         return loaded_class
 
@@ -121,7 +128,6 @@ class SemanticManager(BaseModel):
                 res.append(instance)
         return res
 
-
     def load_instances_from_fiware(
             self,
             fiware_header: FiwareHeader,
@@ -153,4 +159,5 @@ class SemanticManager(BaseModel):
         return [self._context_entity_to_semantic_class(e, header)
                 for e in entities]
 
-
+    def get_datatype(self, datatype_name: str) -> Datatype:
+        return Datatype.parse_obj(self.datatypes[datatype_name])

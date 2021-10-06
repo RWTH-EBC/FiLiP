@@ -85,7 +85,16 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
             content += f"self." \
                        f"" \
                        f"{cdr.get_property_label(vocabulary)}._rules = " \
-                       f"{cdr.export_rule(vocabulary)}"
+                       f"{cdr.export_rule(vocabulary, stringify_fields=True)}"
+
+        content += "\n"
+        for cor in class_.get_combined_object_relations(vocabulary):
+            content += "\n\t\t"
+            content += f"self." \
+                       f"" \
+                       f"{cor.get_property_label(vocabulary)}._rules = " \
+                       f"{cor.export_rule(vocabulary, stringify_fields=False)}"
+
         content += "\n"
         for cor in class_.get_combined_object_relations(vocabulary):
             content += "\n\t\t"
@@ -108,7 +117,9 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
             content += f"name='{label}',"
             content += "\n\t\t"
             content += f"rule='" \
-                       f"{cdr.get_all_targetstatements_as_string(vocabulary)}')"
+                       f"{cdr.get_all_targetstatements_as_string(vocabulary)}',"
+            content += "\n\t\t"
+            content += "semantic_manager=semantic_manager)"
 
         content += "\n\n\t"
 
@@ -175,13 +186,19 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
     content += "# ---------Datatypes--------- #"
     content += "\n"
 
-    content += "datatypes = {"
+    # max_length = 0
+    # for name, datatype in vocabulary.datatypes.items():
+    #     if len(datatype.get_label()) > max_length:
+    #         max_length = datatype.get_label()
+
+    content += "semantic_manager.datatypes = {"
 
     for name, datatype in vocabulary.datatypes.items():
         definition = datatype.export()
 
         content += "\n\t"
         content += f"'{datatype.get_label()}': \t {definition},"
+
     content += "\n"
     content += "}"
 
