@@ -2,7 +2,6 @@
 Test for iota http client
 """
 import unittest
-import logging
 import requests
 from uuid import uuid4
 
@@ -18,12 +17,7 @@ from filip.models.ngsi_v2.iot import \
     LazyDeviceAttribute, \
     StaticDeviceAttribute
 from filip.models.ngsi_v2.context import ContextEntity
-
-
-# Setting up logging
-logging.basicConfig(
-    level='ERROR',
-    format='%(asctime)s %(name)s %(levelname)s: %(message)s')
+from tests.config import settings
 
 
 class TestAgent(unittest.TestCase):
@@ -41,8 +35,8 @@ class TestAgent(unittest.TestCase):
             "transport": 'HTTP',
             "expressionLanguage": None
         }
-        self.fiware_header = FiwareHeader(service='filip',
-                                          service_path='/testing')
+        self.fiware_header = FiwareHeader(service=settings.FIWARE_SERVICE,
+                                          service_path=settings.FIWARE_SERVICEPATH)
         self.service_group1 = ServiceGroup(entity_type='Thing',
                                            resource='/iot/json',
                                            apikey=str(uuid4()))

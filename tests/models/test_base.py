@@ -1,13 +1,14 @@
 """
 Tests for filip.core.models
 """
-import unittest
 import json
+import unittest
 from pydantic import ValidationError
 from requests import RequestException
 from filip.models.base import FiwareHeader
 from filip.clients.ngsi_v2 import ContextBrokerClient
 from filip.models.ngsi_v2.context import ContextEntity
+from tests.config import settings, generate_servicepath
 
 
 class TestModels(unittest.TestCase):
@@ -15,9 +16,10 @@ class TestModels(unittest.TestCase):
     Test class for core.models
     """
     def setUp(self) -> None:
-        self.service_paths = ['/testing', '/testing2']
-        self.fiware_header = {'fiware-service': 'filip',
-                              'fiware-servicepath': self.service_paths[0]}
+        # create variables for test
+        self.service_paths = [generate_servicepath(), generate_servicepath()]
+        self.fiware_header = {'fiware-service': settings.FIWARE_SERVICE,
+                              'fiware-servicepath': settings.FIWARE_SERVICEPATH}
 
     def test_fiware_header(self):
         """
@@ -41,7 +43,8 @@ class TestModels(unittest.TestCase):
         self.assertRaises(ValidationError, FiwareHeader,
                           service='filip', service_path='#')
         headers = FiwareHeader.parse_obj(self.fiware_header)
-        with ContextBrokerClient(fiware_header=headers) as client:
+        with ContextBrokerClient(url=settings.CB_URL,
+                                 fiware_header=headers) as client:
             entity = ContextEntity(id='myId', type='MyType')
             for path in self.service_paths:
                 client.fiware_service_path = path
@@ -56,8 +59,8 @@ class TestModels(unittest.TestCase):
 
     def tearDown(self) -> None:
         # Cleanup test server
-        with ContextBrokerClient() as client:
-            client.fiware_service = 'filip'
+        with ContextBrokerClient(url=settings.CB_URL) as client:
+            client.fiware_service = settings.FIWARE_SERVICE
 
             for path in self.service_paths:
                 try:

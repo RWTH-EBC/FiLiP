@@ -2,7 +2,6 @@
 Tests for time series api client aka QuantumLeap
 """
 import unittest
-import logging
 from random import random
 import requests
 from filip.models.base import FiwareHeader
@@ -10,12 +9,7 @@ from filip.models.ngsi_v2.context import ContextEntity, NotificationMessage
 from filip.clients.ngsi_v2 import \
     ContextBrokerClient, \
     QuantumLeapClient
-
-
-# Setting up logging
-logging.basicConfig(
-    level='ERROR',
-    format='%(asctime)s %(name)s %(levelname)s: %(message)s')
+from tests.config import settings
 
 
 class TestTimeSeries(unittest.TestCase):
@@ -28,9 +22,11 @@ class TestTimeSeries(unittest.TestCase):
         Returns:
             None
         """
-        self.fiware_header = FiwareHeader(service='filip',
-                                          service_path='/testing')
-        self.client = QuantumLeapClient(fiware_header=self.fiware_header)
+        self.fiware_header = FiwareHeader(service=settings.FIWARE_SERVICE,
+                                          service_path=settings.FIWARE_SERVICEPATH)
+        self.ql_client = QuantumLeapClient(
+            url=settings.QL_URL,
+            fiware_header=self.fiware_header)
         self.attr = {'temperature': {'value': random(),
                                      'type': 'Number'},
                      'humidity': {'value': random(),
@@ -39,7 +35,9 @@ class TestTimeSeries(unittest.TestCase):
                              'type': 'Number'}}
         self.entity_1 = ContextEntity(id='Kitchen', type='Room', **self.attr)
         self.entity_2 = ContextEntity(id='LivingRoom', type='Room', **self.attr)
-        self.cb_client = ContextBrokerClient(fiware_header=self.fiware_header)
+        self.cb_client = ContextBrokerClient(
+            url=settings.CB_URL,
+            fiware_header=self.fiware_header)
 
         self.cb_client.post_entity(entity=self.entity_1)
         self.cb_client.post_entity(entity=self.entity_2)
@@ -50,7 +48,10 @@ class TestTimeSeries(unittest.TestCase):
         Returns:
             None
         """
-        with QuantumLeapClient(fiware_header=self.fiware_header) as client:
+        with QuantumLeapClient(
+                url=settings.QL_URL,
+                fiware_header=self.fiware_header) \
+                as client:
             self.assertIsNotNone(client.get_version())
             self.assertIsNotNone(client.get_health())
 
@@ -60,7 +61,10 @@ class TestTimeSeries(unittest.TestCase):
         Returns:
             None
         """
-        with QuantumLeapClient(fiware_header=self.fiware_header) as client:
+        with QuantumLeapClient(
+                url=settings.QL_URL,
+                fiware_header=self.fiware_header) \
+                as client:
             data = [self.entity_1, self.entity_2]
             notification_message = NotificationMessage(data=data,
                                                        subscriptionId="test")
@@ -73,7 +77,10 @@ class TestTimeSeries(unittest.TestCase):
         Returns:
             None
         """
-        with QuantumLeapClient(fiware_header=self.fiware_header) as client:
+        with QuantumLeapClient(
+                url=settings.QL_URL,
+                fiware_header=self.fiware_header) \
+                as client:
             entities = client.get_entities(entity_type='Room')
             for entity in entities:
                 print(entity.json(indent=2))
@@ -84,7 +91,17 @@ class TestTimeSeries(unittest.TestCase):
         Returns:
             None
         """
-        with QuantumLeapClient(fiware_header=self.fiware_header) as client:
+        with QuantumLeapClient(
+                url=settings.QL_URL,
+                fiware_header=self.fiware_header) \
+                as client:
+
+            for i in range(10):
+                self.entity_1.temperature.value = random()
+                self.entity_2.temperature.value = random()
+
+
+
             with self.assertRaises(requests.RequestException):
                 client.get_entity_by_id(entity_id=self.entity_1.id,
                                         entity_type='MyType')
@@ -138,11 +155,14 @@ class TestTimeSeries(unittest.TestCase):
                 self.cb_client.delete_subscription(sub.id)
         except:
             pass
-        try:
-            self.cb_client.delete_entity(entity_id=self.entity_1.id)
-            self.cb_client.delete_entity(entity_id=self.entity_2.id)
-        except:
-            pass
+        for entity in self.cb_client.get_entity_list():
+            try:
+                self.cb_client.delete_entity(entity_id=entity.id,
+                                             entity_type=entity.type)
+                self.ql_client.delete_entity(entity_id=entity.id,
+                                             entity_type=entity.type)
+            except:
+                pass
 
-        self.client.close()
+        self.ql_client.close()
         self.cb_client.close()

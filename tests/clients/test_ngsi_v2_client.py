@@ -4,18 +4,13 @@ Test for filip.core.client
 import os
 import unittest
 import json
-import logging
 import requests
 
 from pathlib import Path
 from filip.models.base import FiwareHeader
 from filip.clients.ngsi_v2.client import HttpClient
 
-
-# Setting up logging
-logging.basicConfig(
-    level='ERROR',
-    format='%(asctime)s %(name)s %(levelname)s: %(message)s')
+from tests.config import settings, generate_servicepath
 
 
 class TestClient(unittest.TestCase):
@@ -29,8 +24,9 @@ class TestClient(unittest.TestCase):
         Returns:
             None
         """
-        self.fh = FiwareHeader(service='filip',
-                               service_path='/testing')
+        self.fh = FiwareHeader(service=settings.FIWARE_SERVICE,
+                               service_path=settings.FIWARE_SERVICEPATH)
+
         with open(self.get_json_path()) as f:
             self.config = json.load(f)
 
@@ -77,7 +73,7 @@ class TestClient(unittest.TestCase):
                          client.timeseries.fiware_service_path,
                          'FIWARE service out of sync')
 
-        client.fiware_service_path = '/someOther'
+        client.fiware_service_path = generate_servicepath()
 
         self.assertEqual(client.fiware_service_path,
                          client.cb.fiware_service_path,

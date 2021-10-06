@@ -2,19 +2,17 @@
 Tests for filip.cb.client
 """
 import unittest
-import logging
 import time
 import random
 import json
 import paho.mqtt.client as mqtt
 from datetime import datetime
 from requests import RequestException
-from filip.models.base import FiwareHeader, DataType
+from filip.models.base import FiwareHeader
 from filip.utils.simple_ql import QueryString
-from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient
+from filip.clients.ngsi_v2 import ContextBrokerClient
 from urllib.parse import urlparse
 from filip.clients.ngsi_v2 import HttpClient, HttpClientConfig
-from filip.config import settings
 from filip.models.ngsi_v2.context import \
     AttrsFormat, \
     ContextEntity, \
@@ -31,11 +29,7 @@ from filip.models.ngsi_v2.iot import \
     DeviceAttribute, \
     ServiceGroup, \
     StaticDeviceAttribute
-
-# Setting up logging
-logging.basicConfig(
-    level='ERROR',
-    format='%(asctime)s %(name)s %(levelname)s: %(message)s')
+from tests.config import settings
 
 
 class TestContextBroker(unittest.TestCase):
@@ -57,8 +51,8 @@ class TestContextBroker(unittest.TestCase):
         self.attr = {'temperature': {'value': 20.0,
                                      'type': 'Number'}}
         self.entity = ContextEntity(id='MyId', type='MyType', **self.attr)
-        self.fiware_header = FiwareHeader(service='filip',
-                                          service_path='/testing')
+        self.fiware_header = FiwareHeader(service=settings.FIWARE_SERVICE,
+                                          service_path=settings.FIWARE_SERVICEPATH)
 
         self.client = ContextBrokerClient(fiware_header=self.fiware_header)
 
@@ -373,8 +367,7 @@ class TestContextBroker(unittest.TestCase):
         The main part of this test was taken out of the iot_mqtt_example, see
         there for a complete documentation
         """
-        import os
-        mqtt_broker_url = os.environ.get('MQTT_BROKER_URL')
+        mqtt_broker_url = settings.MQTT_BROKER_URL
 
         device_attr1 = DeviceAttribute(name='temperature',
                                        object_id='t',
@@ -511,13 +504,13 @@ class TestContextBroker(unittest.TestCase):
                                entity_type=entity.type,
                                command=context_command)
 
-        time.sleep(1)
+        time.sleep(2)
         # check the entity the command attribute should now show OK
         entity = client.cb.get_entity(entity_id=device.device_id,
                                       entity_type=device.entity_type)
 
         # The main part of this test, for all this setup was done
-        self.assertEqual(entity.heater_status.value, "OK")
+        self.assertEqual("OK", entity.heater_status.value)
 
         # close the mqtt listening thread
         mqtt_client.loop_stop()
@@ -535,11 +528,23 @@ class TestContextBroker(unittest.TestCase):
         """
         Cleanup test server
         """
+        self.client.close()
+        config = HttpClientConfig(cb_url=settings.CB_URL,
+                                  iota_url=settings.IOTA_URL)
+        client = HttpClient(fiware_header=self.fiware_header, config=config)
+
         try:
             entities = [ContextEntity(id=entity.id, type=entity.type) for
-                        entity in self.client.get_entity_list()]
-            self.client.update(entities=entities, action_type='delete')
+                        entity in client.cb.get_entity_list()]
+            client.cb.update(entities=entities, action_type='delete')
         except RequestException:
             pass
 
-        self.client.close()
+        try:
+            for device in client.iota.get_device_list():
+                client.iota.delete_device(device_id=device.device_id)
+            for group in client.iota.get_group_list():
+                client.iota.delete_group(resource=group.resource,
+                                         apikey=group.apikey)
+        except RequestException:
+            pass
