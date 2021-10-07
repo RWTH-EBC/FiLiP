@@ -596,13 +596,13 @@ class TestContextBroker(unittest.TestCase):
                                entity_type=entity.type,
                                command=context_command)
 
-        time.sleep(1)
+        time.sleep(2)
         # check the entity the command attribute should now show OK
         entity = client.cb.get_entity(entity_id=device.device_id,
                                       entity_type=device.entity_type)
 
         # The main part of this test, for all this setup was done
-        self.assertEqual(entity.heater_status.value, "OK")
+        self.assertEqual("OK", entity.heater_status.value)
 
         # close the mqtt listening thread
         mqtt_client.loop_stop()
