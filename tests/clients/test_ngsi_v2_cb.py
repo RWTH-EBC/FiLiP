@@ -35,9 +35,11 @@ from filip.models.ngsi_v2.iot import \
     DeviceAttribute, \
     ServiceGroup, \
     StaticDeviceAttribute
-
 from tests.config import settings
+
+
 logger = logging.getLogger(__name__)
+
 
 class TestContextBroker(unittest.TestCase):
     """
@@ -363,8 +365,8 @@ class TestContextBroker(unittest.TestCase):
 
 
     def test_mqtt_subscriptions(self):
-        import os
-        mqtt_url = os.environ.get('MQTT_BROKER_URL')
+
+        mqtt_url = settings.MQTT_BROKER_URL
         mqtt_topic = 'filip/testing'
         notification = self.subscription.notification.copy(
             update={'http': None, 'mqtt': Mqtt(url=mqtt_url,
@@ -449,9 +451,7 @@ class TestContextBroker(unittest.TestCase):
         """
         Test batch operations of context broker client
         """
-        fiware_header = FiwareHeader(service='filip',
-                                     service_path='/testing')
-        with ContextBrokerClient(fiware_header=fiware_header) as client:
+        with ContextBrokerClient(fiware_header=self.fiware_header) as client:
             entities = [ContextEntity(id=str(i),
                                       type=f'filip:object:TypeA') for i in
                         range(0, 1000)]
@@ -529,7 +529,7 @@ class TestContextBroker(unittest.TestCase):
         # general ngsiv2 httpClient for this.
         service_group = ServiceGroup(service=self.fiware_header.service,
                                      subservice=self.fiware_header.service_path,
-                                     apikey='filip-iot-test-service-group',
+                                     apikey='1234',
                                      resource='/iot/json')
 
         # create the Http client node that once sent the device cannot be posted
@@ -589,11 +589,11 @@ class TestContextBroker(unittest.TestCase):
         mqtt_client.on_message = on_message
         mqtt_client.on_disconnect = on_disconnect
 
-        # extract the MQTT_BROKER_URL form the environment
-        mqtt_url = urlparse(mqtt_broker_url)
+        # extract the form the environment
+        mqtt_broker_url = urlparse(mqtt_broker_url)
 
-        mqtt_client.connect(host=mqtt_url.hostname,
-                            port=mqtt_url.port,
+        mqtt_client.connect(host=mqtt_broker_url.hostname,
+                            port=mqtt_broker_url.port,
                             keepalive=60,
                             bind_address="",
                             bind_port=0,
@@ -607,7 +607,7 @@ class TestContextBroker(unittest.TestCase):
                 topic=f"/json/{service_group.apikey}/{device.device_id}/attrs",
                 payload=json.dumps({attr.object_id: random.randint(0, 9)}))
 
-        time.sleep(1)
+        time.sleep(5)
         entity = client.cb.get_entity(entity_id=device.device_id,
                                       entity_type=device.entity_type)
 
@@ -618,7 +618,7 @@ class TestContextBroker(unittest.TestCase):
                                entity_type=entity.type,
                                command=context_command)
 
-        time.sleep(2)
+        time.sleep(5)
         # check the entity the command attribute should now show OK
         entity = client.cb.get_entity(entity_id=device.device_id,
                                       entity_type=device.entity_type)
