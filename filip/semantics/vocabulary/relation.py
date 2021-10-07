@@ -112,7 +112,7 @@ class Relation(BaseModel):
     def get_dependency_statements(
             self, vocabulary: 'Vocabulary', ontology_iri: str, class_iri: str) \
             -> List[Dict[str, str]]:
-        """ Get a list of all pointers/iris that are not contained in the vocabulary
+        """ Get a _list of all pointers/iris that are not contained in the vocabulary
             Purging is done in class
 
         Args:

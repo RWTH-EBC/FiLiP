@@ -82,7 +82,7 @@ class VocabularyConfigurator:
     @staticmethod
     def get_label_conflicts_in_vocabulary(vocabulary: Vocabulary):
 
-        # maps label to list of entities with that label
+        # maps label to _list of entities with that label
         used_labels: Dict[str, List[Entity]] = {}
         duplicate_labels = set()
 
@@ -103,7 +103,7 @@ class VocabularyConfigurator:
                 else:
                     used_labels[label] = [entity]
 
-        # sort duplicate_labels to have alphabetical order in list
+        # sort duplicate_labels to have alphabetical order in _list
         dup_list = list(duplicate_labels)
         dup_list = sorted(dup_list, key=str.casefold)
 

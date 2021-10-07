@@ -166,7 +166,7 @@ class BaseHttpClient:
 
         Args:
             url (str): URL for the new :class:`Request` object.
-            params (optional): (optional) Dictionary, list of tuples or bytes
+            params (optional): (optional) Dictionary, _list of tuples or bytes
                 to send in the query string for the :class:`Request`.
             **kwargs: Optional arguments that ``request`` takes.
 
@@ -209,7 +209,7 @@ class BaseHttpClient:
 
         Args:
             url (str): URL for the new :class:`Request` object.
-            params (optional): Dictionary, list of tuples or bytes
+            params (optional): Dictionary, _list of tuples or bytes
                 to send in the query string for the :class:`Request`.
             **kwargs: Optional arguments that ``request`` takes.
 
@@ -234,7 +234,7 @@ class BaseHttpClient:
 
         Args:
             url: URL for the new :class:`Request` object.
-            data: Dictionary, list of tuples, bytes, or file-like object to
+            data: Dictionary, _list of tuples, bytes, or file-like object to
                 send in the body of the :class:`Request`.
             json: A JSON serializable Python object to send in the
                 body of the :class:`Request`.
@@ -262,7 +262,7 @@ class BaseHttpClient:
         Args:
             url: URL for the new :class:`Request` object.
             data (Union[Dict, ByteString, List[Tuple], IO]):
-                Dictionary, list of tuples, bytes, or file-like
+                Dictionary, _list of tuples, bytes, or file-like
                 object to send in the body of the :class:`Request`.
             json (Dict): A JSON serializable Python object to send in the
                 body of the :class:`Request`..
@@ -290,7 +290,7 @@ class BaseHttpClient:
         Args:
             url: URL for the new :class:`Request` object.
             data (Union[Dict, ByteString, List[Tuple], IO]):
-                Dictionary, list of tuples, bytes, or file-like
+                Dictionary, _list of tuples, bytes, or file-like
                 object to send in the body of the :class:`Request`.
             json (Dict): A JSON serializable Python object to send in the
                 body of the :class:`Request`..

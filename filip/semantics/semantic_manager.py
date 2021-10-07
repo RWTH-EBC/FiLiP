@@ -64,7 +64,7 @@ class SemanticManager(BaseModel):
 
             for value in values:
                 if isinstance(field, DataField):
-                    field.list.insert(len(field.list), value)
+                    field._list.insert(len(field._list), value)
                 elif isinstance(field, RelationField):
                     # convert json to Identifier, inject identifier in Relation,
                     # the class will be hotloaded if the value in the is
@@ -72,10 +72,10 @@ class SemanticManager(BaseModel):
 
                     if not isinstance(value, dict):  # is an
                         # individual
-                        field.list.insert(len(field.list), value)
+                        field._list.insert(len(field._list), value)
                     else:  # is an instance_identifier
                         identifier = InstanceIdentifier.parse_obj(value)
-                        field.list.insert(len(field.list), identifier)
+                        field._list.insert(len(field._list), identifier)
 
         return loaded_class
 

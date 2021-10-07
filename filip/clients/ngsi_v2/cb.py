@@ -238,7 +238,7 @@ class ContextBrokerClient(BaseHttpClient):
                                         ContextEntityKeyValues,
                                         Dict[str, Any]]]:
         r"""
-        Retrieves a list of context entities that match different criteria by
+        Retrieves a _list of context entities that match different criteria by
         id, type, pattern matching (either id or type) and/or those which
         match a query or geographical query (see Simple Query Language and
         Geographical Queries). A given entity has to match all the criteria
@@ -248,11 +248,11 @@ class ContextBrokerClient(BaseHttpClient):
         parameters, i.e. idPattern with id and typePattern with type.
 
         Args:
-            entity_ids: A comma-separated list of elements. Retrieve entities
-                whose ID matches one of the elements in the list.
+            entity_ids: A comma-separated _list of elements. Retrieve entities
+                whose ID matches one of the elements in the _list.
                 Incompatible with idPattern,e.g. Boe_Idarium
-            entity_types: comma-separated list of elements. Retrieve entities
-                whose type matches one of the elements in the list.
+            entity_types: comma-separated _list of elements. Retrieve entities
+                whose type matches one of the elements in the _list.
                 Incompatible with typePattern. Example: Room.
             id_pattern: A correctly formatted regular expression. Retrieve
                 entities whose ID matches the regular expression. Incompatible
@@ -260,12 +260,12 @@ class ContextBrokerClient(BaseHttpClient):
             type_pattern: A correctly formatted regular expression. Retrieve
                 entities whose type matches the regular expression.
                 Incompatible with type, e.g. room.*
-            q (SimpleQuery): A query expression, composed of a list of
+            q (SimpleQuery): A query expression, composed of a _list of
                 statements separated by ;, i.e.,
                 q=statement1;statement2;statement3. See Simple Query
                 Language specification. Example: temperature>40.
             mq (SimpleQuery): A  query expression for attribute metadata,
-                composed of a list of statements separated by ;, i.e.,
+                composed of a _list of statements separated by ;, i.e.,
                 mq=statement1;statement2;statement3. See Simple Query
                 Language specification. Example: temperature.accuracy<0.9.
             georel: Spatial relationship between matching entities and a
@@ -276,13 +276,13 @@ class ContextBrokerClient(BaseHttpClient):
                 by ';'. See Geographical Queries. Example: 41.390205,
                 2.154007;48.8566,2.3522.
             limit: Limits the number of entities to be retrieved Example: 20
-            attrs: Comma-separated list of attribute names whose data are to
+            attrs: Comma-separated _list of attribute names whose data are to
                 be included in the response. The attributes are retrieved in
                 the order specified by this parameter. If this parameter is
                 not included, the attributes are retrieved in arbitrary
                 order. See "Filtering out attributes and metadata" section
                 for more detail. Example: seatNumber.
-            metadata: A list of metadata names to include in the response.
+            metadata: A _list of metadata names to include in the response.
                 See "Filtering out attributes and metadata" section for more
                 detail. Example: accuracy.
             order_by: Criteria for ordering results. See "Ordering Results"
@@ -385,7 +385,7 @@ class ContextBrokerClient(BaseHttpClient):
                 retrieved in arbitrary order, and all the attributes of the
                 entity are included in the response.
                 Example: temperature, humidity.
-            metadata (List of Strings): A list of metadata names to include in
+            metadata (List of Strings): A _list of metadata names to include in
                 the response. See "Filtering out attributes and metadata"
                 section for more detail. Example: accuracy.
             response_format (AttrsFormat, str): Representation format of
@@ -450,7 +450,7 @@ class ContextBrokerClient(BaseHttpClient):
                 retrieved in arbitrary order, and all the attributes of the
                 entity are included in the response. Example: temperature,
                 humidity.
-            metadata (List of Strings): A list of metadata names to include in
+            metadata (List of Strings): A _list of metadata names to include in
                 the response. See "Filtering out attributes and metadata"
                 section for more detail. Example: accuracy.
             response_format (AttrsFormat, str): Representation format of
@@ -596,7 +596,7 @@ class ContextBrokerClient(BaseHttpClient):
             entity_id: Id of the entity. Example: Bcn_Welt
             attr_name: Name of the attribute to be retrieved.
             entity_type (Optional): Type of the entity to retrieve
-            metadata (Optional): A list of metadata names to include in the
+            metadata (Optional): A _list of metadata names to include in the
                 response. See "Filtering out attributes and metadata" section
                 for more detail.
 
@@ -857,11 +857,11 @@ class ContextBrokerClient(BaseHttpClient):
     def get_subscription_list(self,
                               limit: PositiveInt = inf) -> List[Subscription]:
         """
-        Returns a list of all the subscriptions present in the system.
+        Returns a _list of all the subscriptions present in the system.
         Args:
             limit: Limit the number of subscriptions to be retrieved
         Returns:
-            list of subscriptions
+            _list of subscriptions
         """
         url = urljoin(self.base_url, 'v2/subscriptions/')
         headers = self.headers.copy()
@@ -1465,7 +1465,7 @@ class ContextBrokerClient(BaseHttpClient):
 #        :param associated_type: if only associated data of one type should
 #        be returned, this parameter has to be the type
 #        :return: A dictionary, containing the data of the entity,
-#        a key "subjects" and "objects" that contain each a list
+#        a key "subjects" and "objects" that contain each a _list
 #                with the reflective data
 #        """
 #        data_dict = {}
@@ -1480,7 +1480,7 @@ class ContextBrokerClient(BaseHttpClient):
 #        if associated_objects is not None:
 #            object_json = json.loads(associated_objects)
 #            data_dict["objects"] = []
-#            if isinstance(object_json, list):
+#            if isinstance(object_json, _list):
 #                for associated_object in object_json:
 #                    entity_name = associated_object["id"]
 #                    object_data = json.loads(self.get_entity(
@@ -1584,7 +1584,7 @@ class ContextBrokerClient(BaseHttpClient):
 #                            # Get the attrs first, to avoid code duplication
 #                            # last thing to compare is the attributes
 #                            # Assumption -> position is the same as the
-#                            entities list
+#                            entities _list
 #                            # i == j
 #                            i = subscription_subject["entities"].index(entity)
 #                            j = existing_subscription["subject"][

@@ -21,67 +21,123 @@ if TYPE_CHECKING:
 
 
 class FiwareVersion(str, Enum):
+    """
+    Enum describing the used Fiware Version, NGSI-v2 or LD
+    """
     v2 = "v2"
     LD = "LD"
 
 
 class InstanceHeader(FiwareHeader):
+    """
+    Header of a SemanticClass instance, describes the Fiware Location were
+    the instance will be / is saved.
+    The header is not bound to one Fiware Setup, but can describe the
+    exact location in the web
+    """
 
-    url: str = Field(default=settings.CB_URL)
-    fiware_version: FiwareVersion = Field(default=FiwareVersion.v2)
+    url: str = Field(default=settings.CB_URL,
+                     description="Url of the Fiware setup")
+    fiware_version: FiwareVersion = Field(default=FiwareVersion.v2,
+                                          description="Used Version in the "
+                                                      "Fiware setup")
 
     def get_fiware_header(self) -> FiwareHeader:
+        """
+        Get a Filip FiwareHeader from the InstanceHeader
+        """
         return FiwareHeader(service=self.service,
                             service_path=self.service_path)
+
     class Config:
+        """
+        The location of the instance needs to be fixed, and is not changeable.
+        Frozen is further needed so that the header can be used as a hash key
+        """
         frozen = True
 
 
 class InstanceIdentifier(BaseModel):
-    id: str
-    type: str
-    header: InstanceHeader
-
-    # def __eq__(self, other):
-    #     return self.__class__ == other.__class__ and self.id == other.id and \
-    #            self.type == other.type and self.header == f
-
-    # def __hash__(self):
-    #     return hash(f'{self.type}-{self.id}-{self.header.service}-'
-    #                 f'{self.header.service_path}')
-    #
-    # def __str__(self):
-    #     return hash(f'{self.type}|{self.id}|{self.header.service}|'
-    #                 f'{self.header.service_path}')
+    """
+    Each Instance of a SemanticClass posses a unique identifier that is
+    directly linked to one Fiware entry
+    """
+    id: str = Field(description="Id of the entry in Fiware")
+    type: str = Field(description="Type of the entry in Fiware, equal to "
+                                  "class_name")
+    header: InstanceHeader = Field(description="describes the Fiware "
+                                               "Location were the instance "
+                                               "will be / is saved.")
 
     class Config:
+        """
+        The identifier of the instance needs to be fixed, and is not changeable.
+        Frozen is further needed so that the identifier can be used as a hash
+        key
+        """
         frozen = True
 
 
 class InstanceRegistry(BaseModel):
+    """
+    Holds all the references to the local SemanticClass instances.
+    The instance registry is a global object, that is directly inject in the
+    SemanticClass constructor over the SemanticManager
+    """
     _registry: Dict[InstanceIdentifier, 'SemanticClass'] = {}
+    """ Dict of the references to the local SemanticClass instances. 
+        Instances are saved with their identifier as key """
 
-    def register(self, instance: 'SemanticClass') -> bool:
+    def register(self, instance: 'SemanticClass'):
+        """
+        Register a new instance of a SemanticClass in the registry
+
+        Args:
+            instance(SemanticClass):  Instance to be registered
+        Raises:
+            AttributeError: if Instance is already registered
+        """
         identifier = instance.get_identifier()
 
         if identifier in self._registry:
-            return False
+            raise AttributeError('Instance already exists')
         else:
             self._registry[identifier] = instance
-            return True
 
-    def get(self, identifier: InstanceIdentifier):
+    def get(self, identifier: InstanceIdentifier) -> 'SemanticClass':
+        """Retrieve an registered instance with its identifier
+
+        Args:
+            identifier(InstanceIdentifier): identifier belonging to instance
+        Returns:
+            SemanticClass
+        """
         return self._registry[identifier]
 
+    def contains(self, identifier: InstanceIdentifier) -> bool:
+        """Test if an identifier is registered
 
-    def contains(self, identifier: InstanceIdentifier):
+        Args:
+            identifier(InstanceIdentifier): identifier belonging to instance
+        Returns:
+            bool, True if registered
+        """
         return identifier in self._registry
 
     def get_all(self) -> List['SemanticClass']:
+        """Get all registered instances
+
+        Returns:
+            List[SemanticClass]
+        """
         return list(self._registry.values())
 
 
 class Datatype(BaseModel):
+    """
+    Model of a vocabulary/ontology Datatype used to validate assignments in
+    DataFields
+    """
     type: str
     """Type of the datatype"""
     number_has_range: bool
@@ -161,28 +217,41 @@ class Datatype(BaseModel):
 
 
 class Field(collections.MutableSequence):
+    """
+    A Field corresponds to a CombinedRelation for a class from the vocabulary.
+    It itself is a _list, that is enhanced with methods to provide validation
+    of the values according to the rules stated in the vocabulary
+
+    The fields of a class are predefined. A field can contain standard values
+    on init
+    """
+
     _rules: List[Tuple[str, List[List[str]]]]
+    """rule formated for machine readability """
     rule: str
+    """rule formated for human readability """
     name: str
+    """Name of the Field, corresponds to the property name that it has in the 
+    SemanticClass"""
+
     _semantic_manager: 'SemanticManager'
+    """Reference to the global SemanticManager"""
 
     def __init__(self, rule, name, semantic_manager):
         self._semantic_manager = semantic_manager
         super().__init__()
-
         self.rule = rule
         self.name = name
-
-        self.list = list()
+        self._list = list()
 
     def is_valid(self) -> bool:
         """
-                Check if the values present in this relationship fulfill the semantic
-                rule.
+        Check if the values present in this relationship fulfills the semantic
+        rule.
 
-                returns:
-                    bool
-                """
+        returns:
+            bool
+        """
 
         # rule has form: (STATEMENT, [[a,b],[c],[a,..],..])
         # A value fulfills the rule if it is an instance of all the classes,
@@ -197,7 +266,7 @@ class Field(collections.MutableSequence):
         #       - max n | 0 | n
         #       - range n,m | n | m
 
-        # the relationship itself is a list
+        # the relationship itself is a _list
         values = self
 
         # loop over all rules, if a rule is not fulfilled return False
@@ -254,22 +323,42 @@ class Field(collections.MutableSequence):
         return True
 
     def _value_is_valid(self, value, rule_value) -> bool:
+        """
+        Test if a value of the field, fulfills a part of a rule
+
+        Args:
+            value: Value in field
+            rule_value: Value from inner List of rules_
+
+        Returns:
+            bool, True if valid
+        """
         pass
 
     def build_context_attribute(self) -> NamedContextAttribute:
+        """
+        Convert the field to a NamedContextAttribute that can eb added to a
+        ContextEntity
+
+        Returns:
+            NamedContextAttribute
+        """
         pass
 
-    def __len__(self): return len(self.list)
-
-    def __getitem__(self, i): return self.list[i]
-
-    def __delitem__(self, i): del self.list[i]
-
-    def __setitem__(self, i, v): self.list[i] = v
-
-    def insert(self, i, v): self.list.insert(i, v)
+    # List methods
+    def __len__(self): return len(self._list)
+    def __getitem__(self, i): return self._list[i]
+    def __delitem__(self, i): del self._list[i]
+    def __setitem__(self, i, v): self._list[i] = v
+    def insert(self, i, v): self._list.insert(i, v)
 
     def __str__(self):
+        """
+        Get Field in a nice readable way
+
+        Returns:
+            str
+        """
         result = f'Field: {self.name},\n\tvalues: ['
         values = self.get_all()
         for value in values:
@@ -280,11 +369,17 @@ class Field(collections.MutableSequence):
         return result
 
     def get_all(self):
-        return self.list
+        """
+        Get all values of the field
+        """
+        return self._list
 
 
 class DataField(Field):
-    _rules: List[Tuple[str, List[List[str]]]] = []
+    """
+    Field for CombinedDataRelation
+    A Field that contains literal values: str, int, ...
+    """
 
     def _value_is_valid(self, value, rule_value: str) -> bool:
         datatype = self._semantic_manager.get_datatype(rule_value)
@@ -300,9 +395,25 @@ class DataField(Field):
     def __str__(self):
         return 'Data'+super().__str__()
 
+
 class RelationField(Field):
+    """
+       Field for CombinedObjectRelation
+       A Field that contains links to other instances of SemanticClasses,
+       or Individuals
+
+       Internally this field only holds:
+            - InstanceIdentifiers for SemanticClasses. If a value is accessed
+                the corresponding instance is loaded form the local registry
+                or hot loaded form Fiware
+            - Names for Individuals. If a value is accessed a new object of
+                that individual is returned (All instances are equal)
+    """
     _rules: List[Tuple[str, List[List[Type]]]] = []
+
     _class_identifier: InstanceIdentifier
+    """Identifier of class, that has this field as property. Needed for 
+    back referencing (Needed for deletion fo values)"""
 
     def _value_is_valid(self, value, rule_value: type) -> bool:
         if isinstance(value, SemanticClass):
@@ -313,7 +424,6 @@ class RelationField(Field):
             return False
 
     def build_context_attribute(self) -> NamedContextAttribute:
-
         values = []
         for v in self.get_all():
             if isinstance(v, InstanceIdentifier):
@@ -328,60 +438,109 @@ class RelationField(Field):
         )
 
     def __getitem__(self, i) -> Union['SemanticClass', 'SemanticIndividual']:
-        v = self.list[i]
+        v = self._list[i]
         if isinstance(v, InstanceIdentifier):
             return self._semantic_manager.get_instance(v)
         else:
             return self._semantic_manager.get_individual(v)
 
     def __setitem__(self, i, v: Union['SemanticClass', 'SemanticIndividual']):
+        """ see class description
+        Raises:
+            AttributeError: if value not an instance of 'SemanticClass' or
+            'SemanticIndividual'
+        """
         if isinstance(v, SemanticClass):
-            self.list[i] = v.get_identifier()
+            self._list[i] = v.get_identifier()
             v.add_reference(self._class_identifier, self.name)
         elif isinstance(v, SemanticIndividual):
-            self.list[i] = v.get_name()
+            self._list[i] = v.get_name()
         else:
             raise AttributeError("Only instances of a SemanticClass or a "
                                  "SemanticIndividual can be given as value")
 
     def __delitem__(self, i):
-        if isinstance(self.list[i], InstanceIdentifier):
-            v: SemanticClass = self._semantic_manager.get_instance(self.list[i])
+        """ see class description"""
+        if isinstance(self._list[i], InstanceIdentifier):
+            v: SemanticClass = self._semantic_manager.get_instance(self._list[i])
             v.remove_reference(self._class_identifier, self.name)
-            del self.list[i]
+            del self._list[i]
         else:
-            del self.list[i]
+            del self._list[i]
 
     def insert(self, i, v: Union['SemanticClass', 'SemanticIndividual']):
+        """ see class description
+        Raises:
+            AttributeError: if value not an instance of 'SemanticClass' or
+            'SemanticIndividual'
+        """
 
         if isinstance(v, SemanticClass):
             identifier = v.get_identifier()
-            self.list.insert(i, identifier)
+            self._list.insert(i, identifier)
             v.add_reference(self._class_identifier, self.name)
         elif isinstance(v, SemanticIndividual):
-            self.list.insert(i, v.get_name())
+            self._list.insert(i, v.get_name())
         else:
             raise AttributeError("Only instances of a SemanticClass or a "
                                  "SemanticIndividual can be given as value")
 
     def __str__(self):
+        """ see class description"""
         return 'Relation'+super().__str__()
 
 class SemanticClass(BaseModel):
+    """
+    A class representing a vocabulary/ontology class.
+    A class has predefined fields
+    Each instance of a class links to a unique Fiware ContextEntity (by
+    Identifier)
+
+    If a class is initiated it is first looked if this instance (equal over
+    identifier) exists in the local registry. If yes that instance is returned
+
+    If no, it is looked if this instance exists in Fiware, if yes it is
+    loaded and returned, else a new instance of the class is initialised and
+    returned
+    """
 
     header: InstanceHeader
+    """Header of instance. Holds the information where the instance is saved 
+    in Fiware"""
     id: str
+    """Id of the instance, equal to Fiware ContextEntity Id"""
     old_state: Optional[ContextEntity]
+    """State in Fiware the moment the instance was loaded in the local 
+    registry. Used when saving. Only the made changes are reflected"""
 
     _references: Dict[InstanceIdentifier, List[str]] = {}
+    """references made to this instance in other instances RelationFields"""
 
     def add_reference(self, identifier: InstanceIdentifier, relation_name: str):
-        if not identifier in self._references:
+        """
+        Note that an isntance references this instance in the relation
+
+        Args:
+            identifier (InstanceIdentifier): Identifier of the referencing
+                                             instance
+            relation_name (str): Field name in which the reference is taking
+                                 place
+        """
+        if identifier not in self._references:
             self._references[identifier] = []
         self._references[identifier].append(relation_name)
 
     def remove_reference(self, identifier: InstanceIdentifier,
                          relation_name: str):
+        """
+        Remove the note of reference
+
+        Args:
+           identifier (InstanceIdentifier): Identifier of the referencing
+                                            instance
+           relation_name (str): Field name in which the reference is taking
+                                place
+        """
         self._references[identifier].remove(relation_name)
         if len(self._references[identifier]) == 0:
             del self._references[identifier]
@@ -453,43 +612,72 @@ class SemanticClass(BaseModel):
         semantic_manager.instance_registry.register(self)
 
     def are_fields_valid(self) -> bool:
+        """
+        Test if all fields are valid
+
+        Returns:
+            bool, True if all valid
+        """
         return len(self.get_invalid_fields()) == 0
 
     def get_invalid_fields(self) -> List[Field]:
+        """
+        Get all fields that are currently not valid
+
+        Returns:
+            List[Field]
+        """
         return [f for f in self.get_fields() if not f.is_valid()]
 
     def get_type(self) -> str:
+        """
+        Get type as used in Fiware, equal to class name
+
+        Returns:
+            str
+        """
         return self._get_class_name()
 
     def _get_class_name(self) -> str:
+        """
+        Get name of class
+
+        Returns:
+            str
+        """
         return type(self).__name__
 
-    # def save(self, assert_validity: bool = False):
-    #
-    #     if assert_validity:
-    #         assert self.are_fields_valid(), \
-    #             f"Attempted to save the SemanticEntity {self.id} of type " \
-    #             f"{self._get_class_name()} with invalid fields " \
-    #             f"{[f.name for f in self.get_invalid_fields()]}"
-    #
-    #     with ContextBrokerClient(
-    #             fiware_header=self.header.get_fiware_header()) as client:
-    #         client.patch_entity(entity=self.build_context_entity(),
-    #                             old_entity=self.old_state)
-
     def delete(self, assert_no_references: bool = False):
-        # todo ?
+        # todo
         pass
 
     def get_fields(self) -> List[Field]:
+        """
+        Get all fields of class
+
+        Returns:
+            List[Field]
+        """
         fields: List[Field] = self.get_relation_fields()
         fields.extend(self.get_data_fields())
         return fields
 
     def get_field_names(self) -> List[str]:
+        """
+        Get names of all fields of class
+
+        Returns:
+            List[str]
+        """
         return [f.name for f in self.get_fields()]
 
     def get_relation_fields(self) -> List[RelationField]:
+        """
+        Get all RelationFields of class
+
+        Returns:
+           List[RelationField]
+        """
         relationships = []
         for key, value in self.__dict__.items():
             if isinstance(value, RelationField):
@@ -498,6 +686,12 @@ class SemanticClass(BaseModel):
         return relationships
 
     def get_data_fields(self) -> List[DataField]:
+        """
+        Get all DataFields of class
+
+        Returns:
+          List[DataField]
+        """
         fields = []
         for key, value in self.__dict__.items():
             if isinstance(value, DataField):
@@ -505,12 +699,32 @@ class SemanticClass(BaseModel):
         return fields
 
     def get_relation_field_names(self) -> List[str]:
+        """
+        Get names of all RelationFields of class
+
+        Returns:
+            List[str]
+        """
         return [f.name for f in self.get_relation_fields()]
 
     def get_data_field_names(self) -> List[str]:
+        """
+        Get names of all DataFields of class
+
+        Returns:
+            List[str]
+        """
         return [f.name for f in self.get_data_fields()]
 
     def get_field_by_name(self, field_name: str) -> Field:
+        """
+        Get a field of class by its property name
+
+        Raises:
+            KeyError: If name does not belong to a field
+        Returns:
+            Field
+        """
         for key, value in self.__dict__.items():
             if isinstance(value, Field):
                 if value.name == field_name:
@@ -519,6 +733,13 @@ class SemanticClass(BaseModel):
         raise KeyError
 
     def build_context_entity(self) -> ContextEntity:
+        """
+        Convert the instance to a ContextEntity that contains all fields as
+        NamedContextAttribute
+
+        Returns:
+            ContextEntity
+        """
 
         entity = ContextEntity(
             id=self.id,
@@ -531,27 +752,67 @@ class SemanticClass(BaseModel):
         return entity
 
     def get_identifier(self) -> InstanceIdentifier:
+        """
+        Get identifier of instance, each instance's identifier is unique
+
+        Returns:
+            str
+        """
         return InstanceIdentifier(id=self.id, type=self.get_type(),
                                   header=self.header)
 
     class Config:
+        """
+        Forbid manipulation of class
+
+        No Fields can be added/removed
+
+        The identifier can not be changed
+        """
         arbitrary_types_allowed = True
         allow_mutation = False
 
 
 class SemanticIndividual(BaseModel):
+    """
+    A class representing a vocabulary/ontology Individual.
+    A Individual has no fields and no values can be assigned
+
+    It functions as some kind of enum value that can be inserted in
+    RelationFields
+
+    Each instance of an SemanticIndividual Class is equal
+    """
+
     _parent_classes: List[type]
+    """List of ontology parent classes needed to validate RelationFields"""
 
     def __eq__(self, other):
+        """Each instance of an SemanticIndividual Class is equal"""
         return type(self) == type(other)
 
     def __str__(self):
         return type(self).__name__
 
     def get_name(self):
+        """
+        Get the name of the class
+
+        Returns:
+            str
+        """
         return type(self).__name__
 
     def is_instance_of_class(self, class_: type) -> False:
+        """
+        Test if the individual is an instance of a class.
+
+        Args:
+            class_ (type): Class to be checked against
+
+        Returns:
+            bool, True if individual is of the searched class or one its parents
+        """
 
         if isinstance(self, class_):
             return True

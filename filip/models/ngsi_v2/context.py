@@ -294,7 +294,7 @@ class PropertyFormat(str, Enum):
     Format to decide if properties of ContextEntity class are returned as
     List of NamedContextAttributes or as Dict of ContextAttributes.
     """
-    LIST = 'list'
+    LIST = '_list'
     DICT = 'dict'
 
 
@@ -594,7 +594,7 @@ class Notification(BaseModel):
         description='List of attributes to be included in notification '
                     'messages. It also defines the order in which attributes '
                     'must appear in notifications when attrsFormat value is '
-                    'used (see "Notification Messages" section). An empty list '
+                    'used (see "Notification Messages" section). An empty _list '
                     'means that all attributes are to be included in '
                     'notifications. See "Filtering out attributes and '
                     'metadata" section for more detail.'
@@ -731,10 +731,10 @@ class Condition(BaseModel):
     """
     Notification rules are as follow:
     If attrs and expression are used, a notification is sent whenever one of
-    the attributes in the attrs list changes and at the same time expression
+    the attributes in the attrs _list changes and at the same time expression
     matches.
     If attrs is used and expression is not used, a notification is sent
-    whenever any of the attributes in the attrs list changes.
+    whenever any of the attributes in the attrs _list changes.
     If attrs is not used and expression is used, a notification is sent
     whenever any of the attributes of the entity changes and at the same time
     expression matches.
@@ -798,7 +798,7 @@ class Subject(BaseModel):
     Model for subscription subject
     """
     entities: List[Entity] = Field(
-        description="A list of objects, each one composed of by an Entity "
+        description="A _list of objects, each one composed of by an Entity "
                     "Object:"
     )
     condition: Optional[Condition] = Field()
@@ -938,7 +938,7 @@ class DataProvided(BaseModel):
     Model for provided data
     """
     entities: List[Entity] = Field(
-        description="A list of objects, each one composed by an entity object"
+        description="A _list of objects, each one composed by an entity object"
     )
     attrs: Optional[List[str]] = Field(
         description="List of attributes to be provided "
@@ -1009,7 +1009,7 @@ class Query(BaseModel):
     Model for queries
     """
     entities: List[Entity] = Field(
-        description="a list of entities to search for. Each element is "
+        description="a _list of entities to search for. Each element is "
                     "represented by a JSON object"
     )
     attrs: Optional[List[str]] = Field(
@@ -1021,7 +1021,7 @@ class Query(BaseModel):
                     "coords "
     )
     metadata: Optional[List[str]] = Field(
-        description='a list of metadata names to include in the response. '
+        description='a _list of metadata names to include in the response. '
                     'See "Filtering out attributes and metadata" section for '
                     'more detail.'
     )

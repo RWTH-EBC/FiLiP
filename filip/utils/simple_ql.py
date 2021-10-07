@@ -1,6 +1,6 @@
 """
 The Simple Query Language provides a simplified syntax to retrieve entities
-which match a set of conditions. A query is composed by a list of
+which match a set of conditions. A query is composed by a _list of
 statements separated by the ';' character. Each statement expresses a
 matching condition. The query returns all the entities that match all
 the matching conditions (AND logical operator).
@@ -16,7 +16,7 @@ from typing import Union, List, Tuple, Any
 
 class Operator(str, Enum):
     """
-    The list of operators (and the format of the values they use) is as follows:
+    The _list of operators (and the format of the values they use) is as follows:
     """
     _init_ = 'value __doc__'
 
@@ -24,11 +24,11 @@ class Operator(str, Enum):
                   "match, it must contain the target property (temperature) " \
                   "and the target property value must not be the query value " \
                   "(41). " \
-                  "A list of comma-separated values, e.g. color!=black," \
+                  "A _list of comma-separated values, e.g. color!=black," \
                   "red. For an entity to match, it must contain the target " \
                   "property and the target property value must not be any " \
-                  "of the values in the list (AND clause) (or not include any "\
-                  "of the values in the list in case the target property " \
+                  "of the values in the _list (AND clause) (or not include any "\
+                  "of the values in the _list in case the target property " \
                   "value is an array). Eg. entities whose attribute color is " \
                   "set to black will not match, while entities whose " \
                   "attribute color is set to white will match." \
@@ -42,11 +42,11 @@ class Operator(str, Enum):
     UNEQUAL = '!=', "Single element, e.g. temperature!=41. For an entity to " \
                     "match, it must contain the target property " \
                     "(temperature) and the target property value must not be " \
-                    "the query value (41). A list of comma-separated values, " \
+                    "the query value (41). A _list of comma-separated values, " \
                     "e.g. color!=black,red. For an entity to match, it must " \
                     "contain the target property and the target property " \
-                    "value must not be any of the values in the list (AND " \
-                    "clause) (or not include any of the values in the list " \
+                    "value must not be any of the values in the _list (AND " \
+                    "clause) (or not include any of the values in the _list " \
                     "in case the target property value is an array). Eg. " \
                     "entities whose attribute color is set to black will not " \
                     "match, while entities whose attribute color is set to " \
@@ -105,7 +105,7 @@ class Operator(str, Enum):
         """
 
         Returns:
-            list of all valid values
+            _list of all valid values
         """
         return list(map(lambda c: c.value, cls))
 

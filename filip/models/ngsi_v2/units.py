@@ -219,9 +219,9 @@ class Units:
     @property
     def quantities(self):
         """
-        Get list of units ordered by measured quantities
+        Get _list of units ordered by measured quantities
         Returns:
-            list of units ordered by measured quantities
+            _list of units ordered by measured quantities
         """
         raise NotImplementedError("The used dataset does currently not "
                                   "contain the information about quantity")
@@ -254,14 +254,14 @@ class Units:
     @classmethod
     def keys(cls, by_code: bool = False) -> List[str]:
         """
-        Returns list of all unit names or codes
+        Returns _list of all unit names or codes
 
         Args:
             by_code (bool): if 'True' the keys will contain the unit codes
                 instead of their names.
 
         Returns:
-            List[str] containing the names or list
+            List[str] containing the names or _list
         """
         if by_code:
             return cls.units.CommonCode.to_list()
@@ -270,17 +270,17 @@ class Units:
     @property
     def names(self) -> List[str]:
         """
-        Returns list of all unit names
+        Returns _list of all unit names
 
         Returns:
-            List[str] containing the names or list
+            List[str] containing the names or _list
         """
         return self.keys()
 
     @property
     def codes(self) -> List[str]:
         """
-        Returns list of all unit codes
+        Returns _list of all unit codes
 
         Returns:
             List[str] containing the codes
@@ -289,7 +289,7 @@ class Units:
 
     def values(self) -> List[Unit]:
         """
-        Get list of all units
+        Get _list of all units
 
         Returns:
             List[Unit] containing all units

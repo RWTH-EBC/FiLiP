@@ -89,7 +89,7 @@ class TargetStatement(BaseModel):
                 # example: col= [ [[1],[2]], [[3,4]] ] => [[1,3,4], [2,3,4]]
                 # we build the results in an all in one way, we compute the
                 # number of entries in the final solution
-                # for each list li we fill the i-th position of all results
+                # for each _list li we fill the i-th position of all results
 
                 # example: col= [ [[a,b]], [[c],[d]] , [[e],[f]] ] =>
                 # statement: (a and b) and (c or d) and (e or f)
@@ -217,7 +217,7 @@ class TargetStatement(BaseModel):
 
     def get_dependency_statements(self, vocabulary: 'Vocabulary',
                                   ontology_iri: str, class_iri: str):
-        """ Get a list of all pointers/iris that are not contained in the
+        """ Get a _list of all pointers/iris that are not contained in the
             vocabulary
             Purging is done in class
 

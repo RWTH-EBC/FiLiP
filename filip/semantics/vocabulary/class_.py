@@ -228,7 +228,7 @@ class Class(Entity):
 
     def treat_dependency_statements(self, vocabulary: 'Vocabulary') -> \
             List[Dict[str, str]]:
-        """ Purge and list all pointers/iris that are not contained in
+        """ Purge and _list all pointers/iris that are not contained in
         the vocabulary
 
         Args:

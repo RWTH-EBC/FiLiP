@@ -274,7 +274,7 @@ class RdfParser:
                 # a datatype can contain an enum of possible values ->
                 # most interesting
                 # under the predicate owl:equivalentClass is than a
-                # list(first, rest, nil) under the pred.
+                # _list(first, rest, nil) under the pred.
                 # oneOf with the values
 
                 enum_values = []
@@ -490,7 +490,7 @@ class RdfParser:
                     self._parse_relation_type(graph, relation,
                                               additional_statements)
 
-        # parentclass statement or empty list element
+        # parentclass statement or empty _list element
         else:
             # owlThing is the root object, but it is not declared as a class
             # in the file to prevent None pointer when looking up parents,
@@ -637,13 +637,13 @@ class RdfParser:
                     current_statement.target_statements.append(new_statement)
                     queue.append((child_node, new_statement))
 
-    # an intersection/union is a basic list, it consits out of a chain of bnode,
+    # an intersection/union is a basic _list, it consits out of a chain of bnode,
     # where each bnode has the "first"and "rest" predicate, first contains our
     # object, rest is a pointer to the next part of the chain.
-    # the list is over if rest points to "NIL"
+    # the _list is over if rest points to "NIL"
     # this methode extracts all objects of a single layered intersection,
     # if the intersection contains further intersections these are contained in
-    # the result list as BNode
+    # the result _list as BNode
     def _extract_objects_out_of_single_combination(self, graph: rdflib.Graph,
                                                    node: rdflib.term.BNode,
                                                    accept_and: bool,
