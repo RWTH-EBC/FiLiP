@@ -1,1 +1,3 @@
-"""This package contains models for FIWAREs NGSI-LD APIs"""
+"""
+This package contains models for FIWAREs NGSI-LD APIs
+"""
