@@ -24,7 +24,7 @@ class TestSettings(BaseSettings):
     https://pydantic-docs.helpmanual.io/usage/settings/
     """
 
-    LOG_LEVEL: LogLevel = Field(default=LogLevel.ERROR,
+    LOG_LEVEL: LogLevel = Field(default=LogLevel.INFO,
                                 env=['LOG_LEVEL', 'LOGLEVEL'])
 
     CB_URL: AnyHttpUrl = Field(default="http://127.0.0.1:1026",

@@ -2,7 +2,9 @@
 Test for iota http client
 """
 import unittest
+import logging
 import requests
+
 from uuid import uuid4
 
 from filip.models.base import FiwareHeader
@@ -20,12 +22,23 @@ from filip.models.ngsi_v2.context import ContextEntity
 from tests.config import settings
 
 
+logger = logging.getLogger(__name__)
+
+
 class TestAgent(unittest.TestCase):
     def setUp(self) -> None:
+        self.fiware_header = FiwareHeader(service=settings.FIWARE_SERVICE,
+                                          service_path=settings.FIWARE_SERVICEPATH)
+        self.service_group1 = ServiceGroup(entity_type='Thing',
+                                           resource='/iot/json',
+                                           apikey=str(uuid4()))
+        self.service_group2 = ServiceGroup(entity_type='OtherThing',
+                                           resource='/iot/json',
+                                           apikey=str(uuid4()))
         self.device = {
             "device_id": "test_device",
-            "service": None,
-            "service_path": "/",
+            "service": self.fiware_header.service,
+            "service_path": self.fiware_header.service_path,
             "entity_name": "test_entity",
             "entity_type": "test_entity_type",
             "timezone": 'Europe/Berlin',
@@ -35,14 +48,6 @@ class TestAgent(unittest.TestCase):
             "transport": 'HTTP',
             "expressionLanguage": None
         }
-        self.fiware_header = FiwareHeader(service=settings.FIWARE_SERVICE,
-                                          service_path=settings.FIWARE_SERVICEPATH)
-        self.service_group1 = ServiceGroup(entity_type='Thing',
-                                           resource='/iot/json',
-                                           apikey=str(uuid4()))
-        self.service_group2 = ServiceGroup(entity_type='OtherThing',
-                                           resource='/iot/json',
-                                           apikey=str(uuid4()))
         self.client = IoTAClient(fiware_header=self.fiware_header)
 
     def test_get_version(self):
@@ -81,9 +86,7 @@ class TestAgent(unittest.TestCase):
         except requests.RequestException:
             pass
 
-        fiware_header = FiwareHeader(service='filip',
-                                     service_path='/testing')
-        with IoTAClient(fiware_header=fiware_header) as client:
+        with IoTAClient(fiware_header=self.fiware_header) as client:
             client.get_device_list()
             device = Device(**self.device)
 
@@ -133,16 +136,14 @@ class TestAgent(unittest.TestCase):
         device.device_id = "device_with_meta"
         device.add_attribute(attribute=attr)
         print(device.json(indent=2))
-        fiware_header = FiwareHeader(service='filip',
-                                     service_path='/testing')
 
-        with IoTAClient(fiware_header=fiware_header) as client:
+        with IoTAClient(fiware_header=self.fiware_header) as client:
             client.post_device(device=device)
-            print(client.get_device(device_id=device.device_id).json(
+            logger.info(client.get_device(device_id=device.device_id).json(
                 indent=2, exclude_unset=True))
 
-        with ContextBrokerClient(fiware_header=fiware_header) as client:
-            print(client.get_entity(entity_id=device.entity_name).json(
+        with ContextBrokerClient(fiware_header=self.fiware_header) as client:
+            logger.info(client.get_entity(entity_id=device.entity_name).json(
                 indent=2))
 
     def tearDown(self) -> None:

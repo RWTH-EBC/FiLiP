@@ -3,16 +3,21 @@
 
 Tests for time series api client aka QuantumLeap
 """
+import logging
 import unittest
 from random import random
+
 import requests
-from filip.models.base import FiwareHeader
-from filip.models.ngsi_v2.context import ContextEntity
-from filip.models.ngsi_v2.subscriptions import Message
+
 from filip.clients.ngsi_v2 import \
     ContextBrokerClient, \
     QuantumLeapClient
+from filip.models.base import FiwareHeader
+from filip.models.ngsi_v2.context import ContextEntity
+from filip.models.ngsi_v2.subscriptions import Message
 from tests.config import settings
+
+logger = logging.getLogger(__name__)
 
 
 class TestTimeSeries(unittest.TestCase):
@@ -93,16 +98,23 @@ class TestTimeSeries(unittest.TestCase):
         Returns:
             None
         """
-        with QuantumLeapClient(
-                url=settings.QL_URL,
-                fiware_header=self.fiware_header) \
+        with QuantumLeapClient(url=settings.QL_URL,
+                               fiware_header=self.fiware_header) \
                 as client:
 
+
             for i in range(10):
+                self.entity_1.co2.value = random()
+                self.entity_1.humidity.value = random()
                 self.entity_1.temperature.value = random()
+                self.entity_2.co2.value = random()
+                self.entity_2.humidity.value = random()
                 self.entity_2.temperature.value = random()
 
-
+                data = [self.entity_1, self.entity_2]
+                notification_message = Message(data=data,
+                                               subscriptionId="test")
+                client.post_notification(notification_message)
 
             with self.assertRaises(requests.RequestException):
                 client.get_entity_by_id(entity_id=self.entity_1.id,
@@ -111,40 +123,40 @@ class TestTimeSeries(unittest.TestCase):
                                                aggr_period='minute',
                                                aggr_method='avg',
                                                attrs='temperature,co2')
-            print(attrs_id.json(indent=2))
-            print(attrs_id.to_pandas())
+            logger.info(attrs_id.json(indent=2))
+            logger.info(attrs_id.to_pandas())
 
             attrs_values_id = client.get_entity_values_by_id(
                 entity_id=self.entity_1.id)
-            print(attrs_values_id.to_pandas())
+            logger.info(attrs_values_id.to_pandas())
 
             attr_id = client.get_entity_attr_by_id(
                 entity_id=self.entity_1.id, attr_name="temperature")
-            print(attr_id.to_pandas())
+            logger.info(attr_id.to_pandas())
 
             attr_values_id = client.get_entity_attr_values_by_id(
                 entity_id=self.entity_1.id, attr_name="temperature")
-            print(attr_values_id.to_pandas())
+            logger.info(attr_values_id.to_pandas())
 
             attrs_type = client.get_entity_by_type(
                 entity_type=self.entity_1.type)
             for entity in attrs_type:
-                print(entity.to_pandas())
+                logger.info(entity.to_pandas())
 
             attrs_values_type = client.get_entity_values_by_type(
                  entity_type=self.entity_1.type)
             for entity in attrs_values_type:
-                print(entity.to_pandas())
+                logger.info(entity.to_pandas())
 
             attr_type = client.get_entity_attr_by_type(
                 entity_type=self.entity_1.type, attr_name="temperature")
             for entity in attr_type:
-                print(entity.to_pandas())
+                logger.info(entity.to_pandas())
 
             attr_values_type = client.get_entity_attr_values_by_type(
                 entity_type=self.entity_1.type, attr_name="temperature")
             for entity in attr_values_type:
-                print(entity.to_pandas())
+                logger.info(entity.to_pandas())
 
     def tearDown(self) -> None:
         """

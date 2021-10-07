@@ -51,8 +51,8 @@ class TestModels(unittest.TestCase):
                 client.post_entity(entity=entity)
                 client.get_entity(entity_id=entity.id)
             client.fiware_service_path = '/#'
-            self.assertEqual(len(client.get_entity_list()),
-                             len(self.service_paths))
+            self.assertEqual(len(self.service_paths),
+                             len(client.get_entity_list()))
             for path in self.service_paths:
                 client.fiware_service_path = path
                 client.delete_entity(entity_id=entity.id)
