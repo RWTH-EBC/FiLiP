@@ -17,6 +17,22 @@ filip.models.ngsi\_v2.iot
    :undoc-members:
    :show-inheritance:
 
+filip.models.ngsi\_v2.registrations
+-----------------------------------
+
+.. automodule:: filip.models.ngsi_v2.registrations
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+filip.models.ngsi\_v2.subscriptions
+-----------------------------------
+
+.. automodule:: filip.models.ngsi_v2.subscriptions
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 filip.models.ngsi\_v2.timeseries
 --------------------------------
 
@@ -32,4 +48,3 @@ filip.models.units
    :members:
    :undoc-members:
    :show-inheritance:
-

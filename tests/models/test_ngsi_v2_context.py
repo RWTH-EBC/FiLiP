@@ -1,12 +1,10 @@
 """
 Test module for context broker models
 """
-import time
 import unittest
 from typing import List
 
 from pydantic import ValidationError
-from filip.clients.ngsi_v2 import ContextBrokerClient
 from filip.models.ngsi_v2.context import \
     ActionType, \
     Command, \
@@ -15,9 +13,10 @@ from filip.models.ngsi_v2.context import \
     ContextEntity, \
     create_context_entity_model, \
     NamedContextMetadata, \
-    Subscription, \
-    Update, NamedContextAttribute, ContextEntityKeyValues, NamedCommand
-from filip.models.base import FiwareHeader
+    Update, \
+    NamedContextAttribute, \
+    ContextEntityKeyValues, \
+    NamedCommand
 
 
 class TestContextModels(unittest.TestCase):
@@ -107,57 +106,6 @@ class TestContextModels(unittest.TestCase):
         entity = generated_model.parse_obj(self.entity_data)
         self.assertEqual(self.entity_data, entity.dict(exclude_unset=True))
 
-    def test_cb_subscriptions(self) -> None:
-        """
-        Test subscription models
-        Returns:
-            None
-        """
-        sub_dict = {
-            "description": "One subscription to rule them all",
-            "subject": {
-                "entities": [
-                    {
-                        "idPattern": ".*",
-                        "type": "Room"
-                    }
-                ],
-                "condition": {
-                    "attrs": [
-                        "temperature"
-                    ],
-                    "expression": {
-                        "q": "temperature>40"
-                    }
-                }
-            },
-            "notification": {
-                "http": {
-                    "url": "http://localhost:1234"
-                },
-                "attrs": [
-                    "temperature",
-                    "humidity"
-                ]
-            },
-            "expires": "2016-04-05T14:00:00Z",
-            "throttling": 5
-        }
-
-        sub = Subscription.parse_obj(sub_dict)
-        fiware_header = FiwareHeader(service='filip',
-                                     service_path='/testing')
-        with ContextBrokerClient(fiware_header=fiware_header) as client:
-            sub_id = client.post_subscription(subscription=sub)
-            sub_res = client.get_subscription(subscription_id=sub_id)
-            self.assertEqual(sub.json(exclude={'id', 'status', 'expires'},
-                                      exclude_none=True),
-                             sub_res.json(exclude={'id', 'status', 'expires'},
-                                          exclude_none=True))
-            sub_ids = [sub.id for sub in client.get_subscription_list()]
-            for sub_id in sub_ids:
-                client.delete_subscription(subscription_id=sub_id)
-
     def test_command(self):
         """
         Test command model
@@ -239,3 +187,10 @@ class TestContextModels(unittest.TestCase):
             NamedContextMetadata(name=string)
             ContextAttribute(type=string)
             ContextEntityKeyValues(id=string, type=string)
+
+    def tearDown(self) -> None:
+        """
+        Cleanup test server
+        """
+        # There is no interaction with the server in this test case
+        pass

@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Dict
 import pandas as pd
 from pandas_datapackage_reader import read_datapackage
-from filip.utils.validators import validate_url
+from filip.utils.validators import validate_http_url
 
 logger = logging.getLogger(__name__)
 
@@ -20,11 +20,11 @@ def load_datapackage(url: str, filename: str) -> Dict[str, pd.DataFrame]:
         Dict of dataframes
     """
     # validate arguments
-    validate_url(url=url)
+    validate_http_url(url=url)
     assert filename.endswith('.hdf'), "Filename must end with '.hdf'"
 
     # create directory for data if not exists
-    validate_url(url=url)
+    validate_http_url(url=url)
     path = Path(__file__).parent.parent.absolute().joinpath('data')
     path.mkdir(parents=True, exist_ok=True)
     filepath = path.joinpath(filename)

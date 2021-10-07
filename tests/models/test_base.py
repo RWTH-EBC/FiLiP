@@ -67,6 +67,3 @@ class TestModels(unittest.TestCase):
                 except RequestException:
                     pass
             client.close()
-
-
-
