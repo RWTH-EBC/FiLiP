@@ -28,6 +28,7 @@ logging.basicConfig(
 logger = logging.getLogger('filip-iot-example')
 
 # Before running the example you should set some global variables
+# Please, enter your URLs here!
 CB_URL = "http://yourHost:yourPort"
 IOTA_URL = "http://yourHost:yourPort"
 MQTT_BROKER_URL = "//yourHost:yourPort"
@@ -35,6 +36,7 @@ DEVICE_APIKEY = 'filip-iot-example-device'
 SERVICE_GROUP_APIKEY= 'filip-iot-example-service-group'
 FIWARE_SERVICE = 'filip'
 FIWARE_SERVICE_PATH = '/iot_examples'
+
 
 if __name__ == '__main__':
     # Since we want to use the multi-tenancy concept of fiware we always start
@@ -119,7 +121,7 @@ if __name__ == '__main__':
     client.iota.post_group(service_group=service_group, update=True)
     client.iota.post_device(device=device, update=True)
 
-    time.sleep(0.5)
+    time.sleep(1)
 
     # check if the device is correctly configured. You will notice that
     # unfortunately the iot API does not return all the metadata. However,
@@ -154,6 +156,7 @@ if __name__ == '__main__':
     def on_connect(client, userdata, flags, reasonCode, properties=None):
         if reasonCode != 0:
             logger.error(f"Connection failed with error code: '{reasonCode}'")
+            raise ConnectionError
         else:
             logger.info("Successfully, connected with result code "+str(
                 reasonCode))
@@ -177,6 +180,7 @@ if __name__ == '__main__':
         logger.info(msg.topic+" "+str(msg.payload))
         data = json.loads(msg.payload)
         res = {k: v for k, v in data.items()}
+        print(msg.payload)
         client.publish(topic=f"/json/{service_group.apikey}"
                              f"/{device.device_id}/cmdexe",
                        payload=json.dumps(res))
@@ -219,19 +223,25 @@ if __name__ == '__main__':
                 "received: \n" + entity.json(indent=2))
 
     # create and send a command via the context broker
-    context_command = NamedCommand(name=device_command.name,
-                                   value=False)
-    client.cb.post_command(entity_id=entity.id,
-                           entity_type=entity.type,
-                           command=context_command)
+    for i in range(10):
+        if i % 2 == 1:
+            value = True
+        else:
+            value = False
+            
+        context_command = NamedCommand(name=device_command.name,
+                                       value=value)
+        client.cb.post_command(entity_id=entity.id,
+                               entity_type=entity.type,
+                               command=context_command)
 
-    time.sleep(1)
-    # check the entity the command attribute should now show the PENDING
-    entity = client.cb.get_entity(entity_id=device.device_id,
-                                  entity_type=device.entity_type)
-    logger.info("This is updated entity status after the command was sent "
-                "and the acknowledge message was received: "
-                "\n" + entity.json(indent=2))
+        time.sleep(1)
+        # check the entity the command attribute should now show the PENDING
+        entity = client.cb.get_entity(entity_id=device.device_id,
+                                      entity_type=device.entity_type)
+        logger.info("This is updated entity status after the command was sent "
+                    "and the acknowledge message was received: "
+                    "\n" + entity.json(indent=2))
 
     # close the mqtt listening thread
     mqtt_client.loop_stop()

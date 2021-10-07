@@ -1,36 +1,43 @@
 """
 Tests for filip.cb.client
+
+edited Sep 15, 2021
+
+@author Jeff Reding
+
 """
 import unittest
+import logging
 import time
 import random
 import json
 import paho.mqtt.client as mqtt
 from datetime import datetime
 from requests import RequestException
+from urllib.parse import urlparse
 from filip.models.base import FiwareHeader
 from filip.utils.simple_ql import QueryString
 from filip.clients.ngsi_v2 import ContextBrokerClient
-from urllib.parse import urlparse
 from filip.clients.ngsi_v2 import HttpClient, HttpClientConfig
+from filip.config import settings
 from filip.models.ngsi_v2.context import \
-    AttrsFormat, \
     ContextEntity, \
     ContextAttribute, \
     NamedContextAttribute, \
     NamedCommand, \
-    Subscription, \
     Query, \
-    Entity, \
     ActionType
+from filip.models.ngsi_v2.base import AttrsFormat, EntityPattern
+from filip.models.ngsi_v2.subscriptions import Mqtt, Message, Subscription
 from filip.models.ngsi_v2.iot import \
     Device, \
     DeviceCommand, \
     DeviceAttribute, \
     ServiceGroup, \
     StaticDeviceAttribute
-from tests.config import settings
 
+from tests.config import settings
+logger = logging.getLogger(__name__)
 
 class TestContextBroker(unittest.TestCase):
     """
@@ -55,7 +62,36 @@ class TestContextBroker(unittest.TestCase):
                                           service_path=settings.FIWARE_SERVICEPATH)
 
         self.client = ContextBrokerClient(fiware_header=self.fiware_header)
-
+        self.subscription = Subscription.parse_obj({
+            "description": "One subscription to rule them all",
+            "subject": {
+                "entities": [
+                    {
+                        "idPattern": ".*",
+                        "type": "Room"
+                    }
+                ],
+                "condition": {
+                    "attrs": [
+                        "temperature"
+                    ],
+                    "expression": {
+                        "q": "temperature>40"
+                    }
+                }
+            },
+            "notification": {
+                "http": {
+                    "url": "http://localhost:1234"
+                },
+                "attrs": [
+                    "temperature",
+                    "humidity"
+                ]
+            },
+            "expires": datetime.now(),
+            "throttling": 0
+        })
 
     def test_management_endpoints(self):
         """
@@ -77,9 +113,7 @@ class TestContextBroker(unittest.TestCase):
         Test pagination of context broker client
         Test pagination. only works if enough entities are available
         """
-        fiware_header = FiwareHeader(service='filip',
-                                     service_path='/testing')
-        with ContextBrokerClient(fiware_header=fiware_header) as client:
+        with ContextBrokerClient(fiware_header=self.fiware_header) as client:
             entities_a = [ContextEntity(id=str(i),
                                         type=f'filip:object:TypeA') for i in
                           range(0, 1000)]
@@ -300,7 +334,7 @@ class TestContextBroker(unittest.TestCase):
             self.assertGreaterEqual(sub_res_updated.expires, sub_res.expires)
 
             # test duplicate prevention and update
-            sub = Subscription(**sub_example)
+            sub = self.subscription.copy()
             id1 = client.post_subscription(sub)
             sub_first_version = client.get_subscription(id1)
             sub.description = "This subscription shall not pass"
@@ -318,7 +352,7 @@ class TestContextBroker(unittest.TestCase):
                                 sub_second_version.description)
 
             # test that duplicate prevention does not prevent to much
-            sub2 = Subscription(**sub_example)
+            sub2 = self.subscription.copy()
             sub2.description = "Take this subscription to Fiware"
             sub2.subject.entities[0] = {
                             "idPattern": ".*",
@@ -327,10 +361,89 @@ class TestContextBroker(unittest.TestCase):
             id3 = client.post_subscription(sub2)
             self.assertNotEqual(id1, id3)
 
-            # Clean up
-            subs = client.get_subscription_list()
-            for sub in subs:
-                client.delete_subscription(subscription_id=sub.id)
+
+    def test_mqtt_subscriptions(self):
+        import os
+        mqtt_url = os.environ.get('MQTT_BROKER_URL')
+        mqtt_topic = 'filip/testing'
+        notification = self.subscription.notification.copy(
+            update={'http': None, 'mqtt': Mqtt(url=mqtt_url,
+                                               topic=mqtt_topic)})
+        subscription = self.subscription.copy(
+            update={'notification': notification,
+                    'description': 'MQTT test subscription',
+                    'expires': None})
+        entity = ContextEntity(id='myID', type='Room', **self.attr)
+
+        self.client.post_entity(entity=entity)
+        sub_id = self.client.post_subscription(subscription)
+
+        sub_message = None
+
+        def on_connect(client, userdata, flags, reasonCode, properties=None):
+            if reasonCode != 0:
+                logger.error(f"Connection failed with error code: "
+                             f"'{reasonCode}'")
+                raise ConnectionError
+            else:
+                logger.info("Successfully, connected with result code " + str(
+                    reasonCode))
+            client.subscribe(mqtt_topic)
+
+        def on_subscribe(client, userdata, mid, granted_qos, properties=None):
+            logger.info("Successfully subscribed to with QoS: %s", granted_qos)
+
+        def on_message(client, userdata, msg):
+            logger.info(msg.topic + " " + str(msg.payload))
+            nonlocal sub_message
+            sub_message = Message.parse_raw(msg.payload)
+
+        def on_disconnect(client, userdata, reasonCode):
+            logger.info("MQTT client disconnected" + str(reasonCode))
+
+        import paho.mqtt.client as mqtt
+        mqtt_client = mqtt.Client(client_id="filip-test",
+                                  userdata=None,
+                                  protocol=mqtt.MQTTv5,
+                                  transport="tcp")
+        # add our callbacks to the client
+        mqtt_client.on_connect = on_connect
+        mqtt_client.on_subscribe = on_subscribe
+        mqtt_client.on_message = on_message
+        mqtt_client.on_disconnect = on_disconnect
+
+        # connect to the server
+        mqtt_url = urlparse(mqtt_url)
+        mqtt_client.connect(host=mqtt_url.hostname,
+                            port=mqtt_url.port,
+                            keepalive=60,
+                            bind_address="",
+                            bind_port=0,
+                            clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
+                            properties=None)
+
+        # create a non-blocking thread for mqtt communication
+        mqtt_client.loop_start()
+        new_value = 50
+
+        self.client.update_attribute_value(entity_id=entity.id,
+                                           attr_name='temperature',
+                                           value=new_value,
+                                           entity_type=entity.type)
+        time.sleep(5)
+
+        # test if the subscriptions arrives and the content aligns with updates
+        self.assertIsNotNone(sub_message)
+        self.assertEqual(sub_id, sub_message.subscriptionId)
+        self.assertEqual(new_value, sub_message.data[0].temperature.value)
+        mqtt_client.loop_stop()
+        mqtt_client.disconnect()
+        time.sleep(1)
+
+        # Clean up subscriptions
+        subs = self.client.get_subscription_list()
+        for sub in subs:
+            self.client.delete_subscription(subscription_id=sub.id)
 
     def test_batch_operations(self):
         """
@@ -347,12 +460,12 @@ class TestContextBroker(unittest.TestCase):
                                       type=f'filip:object:TypeB') for i in
                         range(0, 1000)]
             client.update(entities=entities, action_type=ActionType.APPEND)
-            e = Entity(idPattern=".*", typePattern=".*TypeA$")
-            q = Query.parse_obj({"entities": [e.dict(exclude_unset=True)]})
+            entity = EntityPattern(idPattern=".*", typePattern=".*TypeA$")
+            query = Query.parse_obj(
+                {"entities": [entity.dict(exclude_unset=True)]})
             self.assertEqual(1000,
-                             len(client.query(query=q,
+                             len(client.query(query=query,
                                               response_format='keyValues')))
-
 
     def test_command_with_mqtt(self):
         """
@@ -372,16 +485,17 @@ class TestContextBroker(unittest.TestCase):
         device_attr1 = DeviceAttribute(name='temperature',
                                        object_id='t',
                                        type="Number",
-                                       metadata={"unit":
-                                                     {"type": "Unit",
-                                                      "value": {
-                                                          "name": {
-                                                              "type": "Text",
-                                                              "value": "degree "
-                                                                       "Celsius"
-                                                          }
-                                                      }}
-                                                 })
+                                       metadata={
+                                           "unit":
+                                               {"type": "Unit",
+                                                "value": {
+                                                    "name": {
+                                                        "type": "Text",
+                                                        "value": "degree "
+                                                                 "Celsius"
+                                                    }
+                                                }}
+                                       })
 
         # creating a static attribute that holds additional information
         static_device_attr = StaticDeviceAttribute(name='info',
@@ -404,9 +518,10 @@ class TestContextBroker(unittest.TestCase):
         device_attr2 = DeviceAttribute(name='humidity',
                                        object_id='h',
                                        type="Number",
-                                       metadata={"unitText":
-                                                     {"value": "percent",
-                                                      "type": "Text"}})
+                                       metadata={
+                                           "unitText":
+                                               {"value": "percent",
+                                                "type": "Text"}})
 
         device.add_attribute(attribute=device_attr2)
 
@@ -436,7 +551,6 @@ class TestContextBroker(unittest.TestCase):
         entity = client.cb.get_entity(entity_id=device.device_id,
                                       entity_type=device.entity_type)
 
-
         # create a mqtt client that we use as representation of an IoT device
         # following the official documentation of Paho-MQTT.
         # https://www.eclipse.org/paho/index.php?page=clients/python/
@@ -464,7 +578,7 @@ class TestContextBroker(unittest.TestCase):
         def on_disconnect(client, userdata, reasonCode):
             pass
 
-        mqtt_client = mqtt.Client(client_id="filip-iot-example",
+        mqtt_client = mqtt.Client(client_id="filip-test",
                                   userdata=None,
                                   protocol=mqtt.MQTTv5,
                                   transport="tcp")
@@ -533,6 +647,7 @@ class TestContextBroker(unittest.TestCase):
                                   iota_url=settings.IOTA_URL)
         client = HttpClient(fiware_header=self.fiware_header, config=config)
 
+        # Clean up entities
         try:
             entities = [ContextEntity(id=entity.id, type=entity.type) for
                         entity in client.cb.get_entity_list()]
@@ -540,11 +655,20 @@ class TestContextBroker(unittest.TestCase):
         except RequestException:
             pass
 
+        # Clean up devices
         try:
             for device in client.iota.get_device_list():
                 client.iota.delete_device(device_id=device.device_id)
             for group in client.iota.get_group_list():
                 client.iota.delete_group(resource=group.resource,
                                          apikey=group.apikey)
+        except RequestException:
+            pass
+
+        # Clean up subscriptions
+        try:
+            subs = client.cb.get_subscription_list()
+            for sub in subs:
+                client.cb.delete_subscription(subscription_id=sub.id)
         except RequestException:
             pass

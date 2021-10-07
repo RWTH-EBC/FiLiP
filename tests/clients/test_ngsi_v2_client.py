@@ -85,7 +85,8 @@ class TestClient(unittest.TestCase):
                          client.timeseries.fiware_service_path,
                          'FIWARE Service path out of sync')
 
-    def _test_connections(self, client: HttpClient):
+    @staticmethod
+    def _test_connections(client: HttpClient):
         """
         Test connections of sub clients
         Args:

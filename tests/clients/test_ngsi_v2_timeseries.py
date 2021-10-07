@@ -1,11 +1,14 @@
 """
+@author Thomas Storek
+
 Tests for time series api client aka QuantumLeap
 """
 import unittest
 from random import random
 import requests
 from filip.models.base import FiwareHeader
-from filip.models.ngsi_v2.context import ContextEntity, NotificationMessage
+from filip.models.ngsi_v2.context import ContextEntity
+from filip.models.ngsi_v2.subscriptions import Message
 from filip.clients.ngsi_v2 import \
     ContextBrokerClient, \
     QuantumLeapClient
@@ -66,8 +69,7 @@ class TestTimeSeries(unittest.TestCase):
                 fiware_header=self.fiware_header) \
                 as client:
             data = [self.entity_1, self.entity_2]
-            notification_message = NotificationMessage(data=data,
-                                                       subscriptionId="test")
+            notification_message = Message(data=data, subscriptionId="test")
             client.post_subscription(entity_id=self.entity_1.id)
             client.post_notification(notification_message)
 
