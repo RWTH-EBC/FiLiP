@@ -102,14 +102,18 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
             content += f"self.{cor.get_property_label(vocabulary)}" \
                        f"._class_identifier = " \
                        f"self.get_identifier()"
-        content += "\n"
+
+        content += "\n\t\t"
+
+        content += "if 'is_existing_instance' not in kwargs or not kwargs[" \
+                   "'is_existing_instance']: "
         for cdr in class_.get_combined_data_relations(vocabulary):
             # Add fixed values to fields, for CDRs these values need to be
             # strings. Only add the statement on the uppermost occurring class
             for rel in cdr.get_relations(vocabulary):
                 if rel.id in class_.relation_ids:
                     if rel.restriction_type == RestrictionType.value:
-                        content += "\n\t\t"
+                        content += "\n\t\t\t"
                         content += \
                             f"self.{cdr.get_property_label(vocabulary)}" \
                             f".append({rel.target_statement.target_data_value})"
@@ -124,12 +128,12 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
                     i = vocabulary.\
                         get_label_for_entity_iri(rel.get_targets()[0][0])
                     if rel.restriction_type == RestrictionType.value:
-                        content += "\n\t\t"
+                        content += "\n\t\t\t"
                         content += f"self." \
                                    f"{cor.get_property_label(vocabulary)}" \
                                    f".append({i}())"
 
-
+        content += "\n\t\t\tpass"
 
         # if len(class_.get_combined_object_relations(vocabulary)) == 0:
         #     content += "\n\t\tpass"

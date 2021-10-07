@@ -1,6 +1,8 @@
 from enum import Enum
 from typing import Optional, Dict, TYPE_CHECKING, Type, List
 
+import requests
+
 from filip.semantics.vocabulary import Individual
 
 from filip.models.ngsi_v2.context import ContextEntity
@@ -20,6 +22,8 @@ class SemanticManager(BaseModel):
     class_catalogue: Dict[str, type] = {}
     datatype_catalogue: Dict[str, Dict[str, str]] = {}
     individual_catalogue: Dict[str, type] = {}
+
+    _deleted_identifiers: List[InstanceIdentifier]
 
     def _get_client(self, instance_header: InstanceHeader):
         if instance_header.fiware_version == FiwareVersion.v2:
@@ -77,30 +81,48 @@ class SemanticManager(BaseModel):
                         identifier = InstanceIdentifier.parse_obj(value)
                         field._list.insert(len(field._list), identifier)
 
+        references_attribute = entity.get_attribute("__references")
+        references = references_attribute.value
+
+        for identifier_str, prop_list in references.items():
+            for prop in prop_list:
+                loaded_class.add_reference(
+                    InstanceIdentifier.parse_raw(identifier_str), prop)
+
+
         return loaded_class
 
     def get_class_by_name(self, class_name:str) -> Type:
         return self.class_catalogue[class_name]
 
-    def save_all_instances(self, assert_validity: bool = True,
-                           assert_individual_validity: bool = False):
+    def save_state(self, assert_validity: bool = True):
 
         if assert_validity:
             for instance in self.instance_registry.get_all():
                 if isinstance(instance, Individual):
-                    if not assert_individual_validity:
                         continue
                 assert instance.are_fields_valid(), \
                     f"Attempted to save the SemanticEntity {instance.id} of " \
                     f"type {instance._get_class_name()} with invalid fields " \
                     f"{[f.name for f in instance.get_invalid_fields()]}"
 
+        # save, patch all local instances
         for instance in self.instance_registry.get_all():
             client = self._get_client(instance_header=instance.header)
             client.patch_entity(instance.build_context_entity(),
                                 instance.old_state)
             client.close()
+        # delete all instance that were loaded from Fiware and then deleted
+        # wrap in try, as the entity could have been deleted by a third party
+        for identifier in self.instance_registry.get_all_deleted_identifiers():
+            client = self._get_client(instance_header=identifier.header)
+            try:
+                client.delete_entity(entity_id=identifier.id,
+                                     entity_type=identifier.type)
+            except requests.RequestException:
+                pass
 
+            client.close()
 
     def load_instance(self, identifier: InstanceIdentifier) -> SemanticClass:
 
@@ -119,10 +141,12 @@ class SemanticManager(BaseModel):
     def does_instance_exists(self, identifier: InstanceIdentifier) -> bool:
         if self.instance_registry.contains(identifier=identifier):
             return True
-
-        client = self._get_client(identifier.header)
-        return client.does_entity_exists(entity_id=identifier.id,
-                                         entity_type=identifier.type)
+        elif self.instance_registry.instance_was_deleted(identifier):
+            return False
+        else:
+            client = self._get_client(identifier.header)
+            return client.does_entity_exists(entity_id=identifier.id,
+                                             entity_type=identifier.type)
 
     def get_instance(self, identifier: InstanceIdentifier) -> SemanticClass:
         return self.load_instance(identifier)
@@ -189,3 +213,6 @@ class SemanticManager(BaseModel):
 
     def get_individual(self, individual_name: str) -> SemanticIndividual:
         return self.individual_catalogue[individual_name]()
+
+
+

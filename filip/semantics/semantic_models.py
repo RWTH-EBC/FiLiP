@@ -88,6 +88,28 @@ class InstanceRegistry(BaseModel):
     """ Dict of the references to the local SemanticClass instances. 
         Instances are saved with their identifier as key """
 
+    _deleted_identifiers: List[InstanceIdentifier] = []
+
+    def delete(self, instance: 'SemanticClass'):
+        """
+
+        Raises:
+           KeyError, if identifier unknown
+        """
+        identifier = instance.get_identifier()
+        if not self.contains(identifier):
+            raise KeyError(f"Identifier {identifier} unknown, "
+                           f"can not delete")
+
+        # If instance was loaded from Fiware it has an old_state.
+        # if that is the case, we need to note that we have deleted the instance
+        # to delete it on save, and do not load it again from Fiware
+        if instance.old_state is not None:
+            self._deleted_identifiers.append(identifier)
+
+    def instance_was_deleted(self, identifier: InstanceIdentifier):
+        return identifier in self._deleted_identifiers
+
     def register(self, instance: 'SemanticClass'):
         """
         Register a new instance of a SemanticClass in the registry
@@ -131,6 +153,9 @@ class InstanceRegistry(BaseModel):
             List[SemanticClass]
         """
         return list(self._registry.values())
+
+    def get_all_deleted_identifiers(self) -> List['InstanceIdentifier']:
+        return self._deleted_identifiers
 
 
 class Datatype(BaseModel):
@@ -513,8 +538,10 @@ class SemanticClass(BaseModel):
     """State in Fiware the moment the instance was loaded in the local 
     registry. Used when saving. Only the made changes are reflected"""
 
-    _references: Dict[InstanceIdentifier, List[str]] = {}
+    references: Dict[InstanceIdentifier, List[str]] = {}
     """references made to this instance in other instances RelationFields"""
+
+    semantic_manager: BaseModel = None
 
     def add_reference(self, identifier: InstanceIdentifier, relation_name: str):
         """
@@ -526,9 +553,9 @@ class SemanticClass(BaseModel):
             relation_name (str): Field name in which the reference is taking
                                  place
         """
-        if identifier not in self._references:
-            self._references[identifier] = []
-        self._references[identifier].append(relation_name)
+        if identifier not in self.references:
+            self.references[identifier] = []
+        self.references[identifier].append(relation_name)
 
     def remove_reference(self, identifier: InstanceIdentifier,
                          relation_name: str):
@@ -541,12 +568,12 @@ class SemanticClass(BaseModel):
            relation_name (str): Field name in which the reference is taking
                                 place
         """
-        self._references[identifier].remove(relation_name)
-        if len(self._references[identifier]) == 0:
-            del self._references[identifier]
+        self.references[identifier].remove(relation_name)
+        if len(self.references[identifier]) == 0:
+            del self.references[identifier]
 
     def __new__(cls, *args, **kwargs):
-        semantic_manager = kwargs['semantic_manager']
+        semantic_manager_ = kwargs['semantic_manager']
 
         if 'enforce_new' in kwargs:
             enforce_new = kwargs['enforce_new']
@@ -568,13 +595,13 @@ class SemanticClass(BaseModel):
                                             type=cls.__name__,
                                             header=header)
 
-            if semantic_manager.does_instance_exists(identifier=identifier):
-                return semantic_manager.load_instance(identifier=identifier)
+            if semantic_manager_.does_instance_exists(identifier=identifier):
+                return semantic_manager_.load_instance(identifier=identifier)
 
         return super().__new__(cls)
 
     def __init__(self,  *args, **kwargs):
-        semantic_manager = kwargs['semantic_manager']
+        semantic_manager_ = kwargs['semantic_manager']
 
         if 'identifier' in kwargs:
             instance_id_ = kwargs['identifier'].id
@@ -591,7 +618,7 @@ class SemanticClass(BaseModel):
         identifier_ = InstanceIdentifier(
                         id=instance_id_,
                         type=self.get_type(),
-                        header=header_
+                        header=header_,
                     )
 
         if 'enforce_new' in kwargs:
@@ -603,13 +630,16 @@ class SemanticClass(BaseModel):
         # of being newly created. If yes abort __init__(), to prevent state
         # overwrite !
         if not enforce_new:
-            if semantic_manager.does_instance_exists(identifier_):
+            if semantic_manager_.does_instance_exists(identifier_):
                 return
 
-        super().__init__(id=instance_id_, header=header_,
-                         old_state=old_state_)
+        super().__init__(id=instance_id_,
+                         header=header_,
+                         old_state=old_state_,
+                         semantic_manager=semantic_manager_,
+                         references={})
 
-        semantic_manager.instance_registry.register(self)
+        semantic_manager_.instance_registry.register(self)
 
     def are_fields_valid(self) -> bool:
         """
@@ -648,8 +678,18 @@ class SemanticClass(BaseModel):
         return type(self).__name__
 
     def delete(self, assert_no_references: bool = False):
-        # todo
-        pass
+
+        if assert_no_references:
+            assert len(self.references) == 0
+
+        # remove all references in other instances
+        references = self.references.items()
+        for identifier, field_names in  self.references.copy().items():
+            for field_name in field_names:
+                instance = self.semantic_manager.get_instance(identifier)
+                instance.get_field_by_name(field_name).remove(self)
+
+        self.semantic_manager.instance_registry.delete(self)
 
     def get_fields(self) -> List[Field]:
         """
@@ -730,7 +770,8 @@ class SemanticClass(BaseModel):
                 if value.name == field_name:
                     return value
 
-        raise KeyError
+        raise KeyError(f'{field_name} is not a valid Field for class '
+                       f'{self._get_class_name()}')
 
     def build_context_entity(self) -> ContextEntity:
         """
@@ -748,6 +789,20 @@ class SemanticClass(BaseModel):
 
         for field in self.get_fields():
             entity.add_attributes([field.build_context_attribute()])
+
+        reference_str_dict = \
+            {identifier.json(): value
+             for (identifier, value) in self.references.items()}
+
+        # add meta attributes
+        entity.add_attributes([
+            NamedContextAttribute(
+                name="__references",
+                type=DataType.STRUCTUREDVALUE,
+                value=reference_str_dict
+            )
+        ])
+
 
         return entity
 
@@ -771,6 +826,17 @@ class SemanticClass(BaseModel):
         """
         arbitrary_types_allowed = True
         allow_mutation = False
+
+    def __str__(self):
+        def pretty(d, indent=0):
+            for key, value in d.items():
+                print('\t' * indent + str(key))
+                if isinstance(value, dict):
+                    pretty(value, indent + 1)
+                else:
+                    print('\t' * (indent + 1) + str(value))
+        return pretty(self.dict(exclude={'semantic_manager', 'old_state'}),
+                          indent=0)
 
 
 class SemanticIndividual(BaseModel):

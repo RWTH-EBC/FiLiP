@@ -95,23 +95,23 @@ class TestSemanticModels(unittest.TestCase):
         c3 = Class3()
 
         c1.oProp1.append(c2)
-        self.assertEqual(c2._references[c1.get_identifier()], ["oProp1"])
+        self.assertEqual(c2.references[c1.get_identifier()], ["oProp1"])
         c1.oProp1.extend([c2])
-        self.assertEqual(c2._references[c1.get_identifier()],
+        self.assertEqual(c2.references[c1.get_identifier()],
                          ["oProp1", "oProp1"])
         c1.objProp2.extend([c2])
         c3.objProp2.append(c2)
-        self.assertEqual(c2._references[c1.get_identifier()],
+        self.assertEqual(c2.references[c1.get_identifier()],
                          ["oProp1", "oProp1", "objProp2"])
-        self.assertEqual(c2._references[c3.get_identifier()], ["objProp2"])
+        self.assertEqual(c2.references[c3.get_identifier()], ["objProp2"])
 
         c1.oProp1.remove(c2)
-        self.assertEqual(c2._references[c1.get_identifier()],
+        self.assertEqual(c2.references[c1.get_identifier()],
                          ["oProp1", "objProp2"])
 
         c1.oProp1.remove(c2)
         del c1.objProp2[0]
-        self.assertNotIn(c1.get_identifier(), c2._references)
+        self.assertNotIn(c1.get_identifier(), c2.references)
 
     def test_6_test_instance_creation_inject(self):
         from models import Class1, Class13, Class3, Class4, Class123, \
@@ -154,8 +154,8 @@ class TestSemanticModels(unittest.TestCase):
 
         class1.oProp1.append(class13)
 
-        self.assertRaises(AssertionError, semantic_manager.save_all_instances)
-        semantic_manager.save_all_instances(assert_validity=False)
+        self.assertRaises(AssertionError, semantic_manager.save_state)
+        semantic_manager.save_state(assert_validity=False)
 
         # clear local state to ensure standard test condition
         self.clear_registry()
@@ -174,9 +174,78 @@ class TestSemanticModels(unittest.TestCase):
         self.assertTrue(class13.get_identifier() in
                          semantic_manager.instance_registry._registry)
 
+    def test_8_deleting(self):
+        from models import Class1, Class13, Class3, Class4, Class123, \
+            Individual1, Gertrude, semantic_manager
+
+        # clear local state to ensure standard test condition
+        self.clear_registry()
+
+
+        # Test 1: Local deletion
+
+        # create classes
+        class13 = Class13(id="13")
+        class1 = Class1(id="1")
+        class13.objProp3.append(class1)
+
+        # make sure references are not global in all SemanticClasses
+        # (happend in the past)
+        self.assertFalse(str(class13.references) == str(class1.references))
+        self.assertTrue(len(class13.references) == 0)
+        self.assertTrue(len(class1.references) == 1)
+
+        # test reference deletion
+        class1.delete()
+        self.assertTrue(len(class13.objProp3.get_all()) == 0)
+
+        # Test 2:  deletion with Fiware object
+        self.clear_registry()
+
+        class13 = Class13(id="13")
+        class1 = Class1(id="1")
+        class13.objProp3.append(class1)
+
+        semantic_manager.save_state(assert_validity=False)
+        self.clear_registry()
+
+        # load class1 from Fiware, and delete it
+        # class13 should be then also loaded have the reference deleted and
+        # be saved
+        class1 = Class1(id="1")
+        identifier1 = class1.get_identifier()
+        class1.delete()
+
+        semantic_manager.save_state(assert_validity=False)
+        self.clear_registry()
+
+        # class 1 no longer exists in fiware, and the fiware entry of class13
+        # should have no more reference to it
+        self.assertFalse(semantic_manager.does_instance_exists(identifier1))
+        self.assertTrue(len(Class13(id="13").objProp3.get_all()) == 0)
+
+        self.assertRaises(AssertionError, semantic_manager.save_state)
+        semantic_manager.save_state(assert_validity=False)
+
+        # Test 3:  if deleted locally, the instance should not be pulled
+        # again from fiware.
+        self.clear_registry()
+
+        class13 = Class13(id="13")
+        class13.dataProp1.append("Test")
+        semantic_manager.save_state(assert_validity=False)
+
+        class13.delete()
+        class13_ = Class13(id="13")
+        print(class13_)
+        self.assertTrue(len(class13_.dataProp1.get_all()) == 0)
+
+
+
     def clear_registry(self):
         from models import semantic_manager
         semantic_manager.instance_registry._registry.clear()
+
 
     def tearDown(self) -> None:
         """

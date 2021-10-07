@@ -23,8 +23,9 @@ class Thing(SemanticClass):
 
 
 
+		if 'is_existing_instance' not in kwargs or not kwargs['is_existing_instance']: 
 
-
+			pass
 
 	# Data fields
 
@@ -49,10 +50,11 @@ class Class1(Thing):
 		self.objProp3._class_identifier = self.get_identifier()
 		self.objProp4._class_identifier = self.get_identifier()
 		self.objProp5._class_identifier = self.get_identifier()
+		if 'is_existing_instance' not in kwargs or not kwargs['is_existing_instance']: 
+			self.dataProp2.append(2)
 
-		self.dataProp2.append(2)
-
-		self.objProp5.append(Individual1())
+			self.objProp5.append(Individual1())
+			pass
 
 	# Data fields
 	dataProp2: DataField = DataField(
@@ -101,8 +103,9 @@ class Class1a(Class1):
 		self.objProp3._class_identifier = self.get_identifier()
 		self.objProp4._class_identifier = self.get_identifier()
 		self.objProp5._class_identifier = self.get_identifier()
+		if 'is_existing_instance' not in kwargs or not kwargs['is_existing_instance']: 
 
-
+			pass
 
 	# Data fields
 	dataProp2: DataField = DataField(
@@ -151,8 +154,9 @@ class Class1aa(Class1a):
 		self.objProp3._class_identifier = self.get_identifier()
 		self.objProp4._class_identifier = self.get_identifier()
 		self.objProp5._class_identifier = self.get_identifier()
+		if 'is_existing_instance' not in kwargs or not kwargs['is_existing_instance']: 
 
-
+			pass
 
 	# Data fields
 	dataProp2: DataField = DataField(
@@ -201,8 +205,9 @@ class Class1b(Class1):
 		self.objProp3._class_identifier = self.get_identifier()
 		self.objProp4._class_identifier = self.get_identifier()
 		self.objProp5._class_identifier = self.get_identifier()
+		if 'is_existing_instance' not in kwargs or not kwargs['is_existing_instance']: 
 
-
+			pass
 
 	# Data fields
 	dataProp2: DataField = DataField(
@@ -244,8 +249,9 @@ class Class2(Thing):
 
 		self.oProp1._class_identifier = self.get_identifier()
 		self.objProp2._class_identifier = self.get_identifier()
+		if 'is_existing_instance' not in kwargs or not kwargs['is_existing_instance']: 
 
-
+			pass
 
 	# Data fields
 
@@ -272,10 +278,11 @@ class Class3(Thing):
 
 		self.oProp1._class_identifier = self.get_identifier()
 		self.objProp2._class_identifier = self.get_identifier()
+		if 'is_existing_instance' not in kwargs or not kwargs['is_existing_instance']: 
 
-
-		self.oProp1.append(Individual1())
-		self.objProp2.append(Individual1())
+			self.oProp1.append(Individual1())
+			self.objProp2.append(Individual1())
+			pass
 
 	# Data fields
 	dataProp1: DataField = DataField(
@@ -313,8 +320,9 @@ class Class123(Class1, Class2, Class3):
 		self.objProp3._class_identifier = self.get_identifier()
 		self.objProp4._class_identifier = self.get_identifier()
 		self.objProp5._class_identifier = self.get_identifier()
+		if 'is_existing_instance' not in kwargs or not kwargs['is_existing_instance']: 
 
-
+			pass
 
 	# Data fields
 	dataProp1: DataField = DataField(
@@ -368,8 +376,9 @@ class Class13(Class1, Class3):
 		self.objProp3._class_identifier = self.get_identifier()
 		self.objProp4._class_identifier = self.get_identifier()
 		self.objProp5._class_identifier = self.get_identifier()
+		if 'is_existing_instance' not in kwargs or not kwargs['is_existing_instance']: 
 
-
+			pass
 
 	# Data fields
 	dataProp1: DataField = DataField(
@@ -416,8 +425,9 @@ class Class3a(Class3):
 
 		self.oProp1._class_identifier = self.get_identifier()
 		self.objProp2._class_identifier = self.get_identifier()
+		if 'is_existing_instance' not in kwargs or not kwargs['is_existing_instance']: 
 
-
+			pass
 
 	# Data fields
 	dataProp1: DataField = DataField(
@@ -448,8 +458,9 @@ class Class3aa(Class3a):
 
 		self.oProp1._class_identifier = self.get_identifier()
 		self.objProp2._class_identifier = self.get_identifier()
+		if 'is_existing_instance' not in kwargs or not kwargs['is_existing_instance']: 
 
-
+			pass
 
 	# Data fields
 	dataProp1: DataField = DataField(
@@ -477,8 +488,9 @@ class Class4(Thing):
 		self.objProp4._rules = [('min|1', [[Class1]])]
 
 		self.objProp4._class_identifier = self.get_identifier()
+		if 'is_existing_instance' not in kwargs or not kwargs['is_existing_instance']: 
 
-
+			pass
 
 	# Data fields
 
@@ -507,8 +519,9 @@ class Gertrude(Class1, Class2):
 		self.objProp3._class_identifier = self.get_identifier()
 		self.objProp4._class_identifier = self.get_identifier()
 		self.objProp5._class_identifier = self.get_identifier()
+		if 'is_existing_instance' not in kwargs or not kwargs['is_existing_instance']: 
 
-
+			pass
 
 	# Data fields
 	dataProp2: DataField = DataField(
