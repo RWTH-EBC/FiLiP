@@ -19,7 +19,7 @@ from openapi documentation?
 A general prerequisite to do so is that the documentation is in depth and of 
 good quality. 
 While FIWARE generally provides 
-[openapi documentation](https://github.com/FIWARE/specifications/tree/master/OpenAPI),
+[openapi documentation](https://github.com/FIWARE/specifications),
 here are some thoughts on the challenges of auto-generating client code from 
 these documents:
 
