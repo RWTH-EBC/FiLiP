@@ -192,6 +192,16 @@ Therefore, FiLiP currently only covers the APIs of the following GEs:
     - [swagger](https://app.swaggerhub.com/apis/smartsdk/ngsi-tsdb/0.7) (*not 
       up to date*, newest API version is 8.0)
 
+## Automatic issue branch creation
+
+Issue branches are created automatically on issue assignment with 
+[robvanderleek/create-issue-branch](https://github.com/robvanderleek/create-issue-branch).
+
+See [workflow definition](.github/workflows/issue-tracker.yml) and 
+[configuration file](.github/issue-branch.yml) for customization.
+
+Branch creation is skipped for issues with label "question".
+
 ## Authors
 
 * [Thomas Storek](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Team2/~lhda/Thomas-Storek/?lidx=1) (corresponding)
