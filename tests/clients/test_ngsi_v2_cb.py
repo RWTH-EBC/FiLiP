@@ -27,8 +27,7 @@ from filip.models.ngsi_v2.context import \
     NamedCommand, \
     Query, \
     ActionType
-from filip.models.ngsi_v2.base import AttrsFormat
-from filip.models.ngsi_v2._base import EntityPattern
+from filip.models.ngsi_v2.base import AttrsFormat, EntityPattern
 from filip.models.ngsi_v2.subscriptions import Mqtt, Message, Subscription
 from filip.models.ngsi_v2.iot import \
     Device, \
