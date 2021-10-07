@@ -88,11 +88,10 @@ class TestSettings(BaseSettings):
 
 
 settings = TestSettings()
-# Setting up logging for all tests
+print(f"Running tests with the following settings: \n "
+      f"{settings.json(indent=2)}")
+
+# Configure logging for all tests
 logging.basicConfig(
     level=settings.LOG_LEVEL.value,
     format='%(asctime)s %(name)s %(levelname)s: %(message)s')
-logger = logging.getLogger(name=f"{__name__}")
-logger.info('Running tests with the following setup: \n %s',
-            settings.json(indent=2))
-
