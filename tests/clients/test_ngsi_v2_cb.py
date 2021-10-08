@@ -34,7 +34,7 @@ from filip.models.ngsi_v2.iot import \
     DeviceAttribute, \
     ServiceGroup, \
     StaticDeviceAttribute
-from filip.utils.cleanup import clear_all
+from filip.utils.cleanup import clear_all, clean_test
 from tests.config import settings
 
 
@@ -115,6 +115,10 @@ class TestContextBroker(unittest.TestCase):
         with ContextBrokerClient(fiware_header=self.fiware_header) as client:
             self.assertIsNotNone(client.get_statistics())
 
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                cb_url=settings.CB_URL,
+                iota_url=settings.IOTA_URL)
     def test_pagination(self):
         """
         Test pagination of context broker client
@@ -134,10 +138,9 @@ class TestContextBroker(unittest.TestCase):
             self.assertLessEqual(len(client.get_entity_list(limit=1001)), 1001)
             self.assertLessEqual(len(client.get_entity_list(limit=2001)), 2001)
 
-        # cleanup the server and delete everything
-        clear_all(fiware_header=self.fiware_header,
-                  cb_url=settings.CB_URL)
-
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                cb_url=settings.CB_URL)
     def test_entity_filtering(self):
         """
         Test filter operations of context broker client
@@ -188,10 +191,11 @@ class TestContextBroker(unittest.TestCase):
 
             client.update(action_type=ActionType.DELETE, entities=entities_b)
 
-        # cleanup the server and delete everything
-        clear_all(fiware_header=self.fiware_header,
-                  cb_url=settings.CB_URL)
 
+
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                cb_url=settings.CB_URL)
     def test_entity_operations(self):
         """
         Test entity operations of context broker client
@@ -213,10 +217,9 @@ class TestContextBroker(unittest.TestCase):
             self.assertEqual(client.get_entity(entity_id=self.entity.id),
                              res_entity)
 
-        # cleanup the server and delete everything
-        clear_all(fiware_header=self.fiware_header,
-                  cb_url=settings.CB_URL)
-
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                cb_url=settings.CB_URL)
     def test_attribute_operations(self):
         """
         Test attribute operations of context broker client
@@ -287,10 +290,9 @@ class TestContextBroker(unittest.TestCase):
                                                     attr_name='temperature')
             self.assertEqual(attr_value, new_value)
 
-            # cleanup the server and delete everything
-            clear_all(fiware_header=self.fiware_header,
-                      cb_url=settings.CB_URL)
-
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                cb_url=settings.CB_URL)
     def test_type_operations(self):
         """
         Test type operations of context broker client
@@ -304,10 +306,9 @@ class TestContextBroker(unittest.TestCase):
             client.get_entity_type(entity_type='MyType')
             client.delete_entity(entity_id=self.entity.id)
 
-        # cleanup the server and delete everything
-        clear_all(fiware_header=self.fiware_header,
-                  cb_url=settings.CB_URL)
-
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                cb_url=settings.CB_URL)
     def test_subscriptions(self):
         """
         Test subscription operations of context broker client
@@ -382,10 +383,10 @@ class TestContextBroker(unittest.TestCase):
             id3 = client.post_subscription(sub2)
             self.assertNotEqual(id1, id3)
 
-            # cleanup the server and delete everything
-            clear_all(fiware_header=self.fiware_header,
-                      cb_url=settings.CB_URL)
-
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                cb_url=settings.CB_URL,
+                iota_url=settings.IOTA_URL)
     def test_mqtt_subscriptions(self):
 
         mqtt_url = settings.MQTT_BROKER_URL
@@ -424,7 +425,8 @@ class TestContextBroker(unittest.TestCase):
             sub_message = Message.parse_raw(msg.payload)
 
         def on_disconnect(client, userdata, reasonCode):
-            logger.info("MQTT client disconnected" + str(reasonCode))
+            logger.info("MQTT client disconnected with reasonCode"
+                        + str(reasonCode))
 
         import paho.mqtt.client as mqtt
         mqtt_client = mqtt.Client(client_id="filip-test",
@@ -465,11 +467,9 @@ class TestContextBroker(unittest.TestCase):
         mqtt_client.disconnect()
         time.sleep(1)
 
-        # cleanup the server and delete everything
-        clear_all(fiware_header=self.fiware_header,
-                  cb_url=settings.CB_URL,
-                  iota_url=settings.IOTA_URL)
-
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                cb_url=settings.CB_URL)
     def test_batch_operations(self):
         """
         Test batch operations of context broker client
@@ -490,10 +490,10 @@ class TestContextBroker(unittest.TestCase):
                              len(client.query(query=query,
                                               response_format='keyValues')))
 
-        # cleanup the server and delete everything
-        clear_all(fiware_header=self.fiware_header,
-                  cb_url=settings.CB_URL)
-
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                cb_url=settings.CB_URL,
+                iota_url=settings.IOTA_URL)
     def test_command_with_mqtt(self):
         """
         Test if a command can be send to a device in FIWARE

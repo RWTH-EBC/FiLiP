@@ -5,7 +5,7 @@ created Oct 08, 2021
 
 @author Thomas Storek
 """
-
+import functools
 from requests import RequestException
 from filip.models import FiwareHeader
 from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient, QuantumLeapClient
@@ -86,7 +86,6 @@ def clear_ql(url: str, fiware_header: FiwareHeader):
 
     # clear data
     try:
-        entities = client.get_entities()
         for entity in client.get_entities():
             client.delete_entity(entity_id=entity.entityId,
                                  entity_type=entity.entityType)
@@ -98,7 +97,6 @@ def clear_ql(url: str, fiware_header: FiwareHeader):
                 raise
         else:
             raise
-
 
 
 def clear_all(*,
@@ -123,3 +121,37 @@ def clear_all(*,
         clear_cb(url=cb_url, fiware_header=fiware_header)
     if ql_url is not None:
         clear_ql(url=ql_url, fiware_header=fiware_header)
+
+def clean_test(*,
+               fiware_service: str,
+               fiware_servicepath: str,
+               cb_url: str = None,
+               iota_url: str = None,
+               ql_url: str =  None):
+    """
+    Decorator to clean up the server before and after the test
+    Args:
+        fiware_service: tenant
+        fiware_servicepath: tenant path
+        cb_url: url of context broker service
+        iota_url: url of IoT-Agent service
+        ql_url: url of quantumleap service
+
+    Returns:
+
+    """
+    fiware_header = FiwareHeader(service=fiware_service,
+                                 service_path=fiware_servicepath)
+    clear_all(fiware_header=fiware_header,
+              cb_url=cb_url,
+              iota_url=iota_url,
+              ql_url=ql_url)
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            return func(*args, **kwargs)
+        return wrapper
+    clear_all(fiware_header=fiware_header,
+              cb_url=cb_url,
+              iota_url=iota_url,
+              ql_url=ql_url)
+    return decorator
