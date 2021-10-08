@@ -23,7 +23,7 @@ class TestSettings(BaseSettings):
     Settings for the test case scenarios according to pydantic's documentaion
     https://pydantic-docs.helpmanual.io/usage/settings/
     """
-
+    # TODO: Check why logging is not overwritten
     LOG_LEVEL: LogLevel = Field(default=LogLevel.INFO,
                                 env=['LOG_LEVEL', 'LOGLEVEL'])
 
