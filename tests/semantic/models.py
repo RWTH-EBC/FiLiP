@@ -19,11 +19,12 @@ class Thing(SemanticClass):
 
 	def __init__(self, *args, **kwargs):
 		kwargs['semantic_manager'] = semantic_manager
+		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
+		if not is_initialised:
 
 
-
-		if 'is_existing_instance' not in kwargs or not kwargs['is_existing_instance']: 
+			
 
 			pass
 
@@ -35,22 +36,23 @@ class Thing(SemanticClass):
 class Class1(Thing):
 
 	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.dataProp2._rules = [('value', [[]])]
 
-		self.dataProp2._rules = [('value', [[]])]
+			self.oProp1._rules = [('some', [[Class2], [Class4]])]
+			self.objProp2._rules = [('some', [[Class1, Class2]])]
+			self.objProp3._rules = [('some', [[Class3]])]
+			self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
+			self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]]), ('value', [[Individual1]])]
 
-		self.oProp1._rules = [('some', [[Class2], [Class4]])]
-		self.objProp2._rules = [('some', [[Class1, Class2]])]
-		self.objProp3._rules = [('some', [[Class3]])]
-		self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
-		self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]]), ('value', [[Individual1]])]
-
-		self.oProp1._class_identifier = self.get_identifier()
-		self.objProp2._class_identifier = self.get_identifier()
-		self.objProp3._class_identifier = self.get_identifier()
-		self.objProp4._class_identifier = self.get_identifier()
-		self.objProp5._class_identifier = self.get_identifier()
-		if 'is_existing_instance' not in kwargs or not kwargs['is_existing_instance']: 
+			self.oProp1._class_identifier = self.get_identifier()
+			self.objProp2._class_identifier = self.get_identifier()
+			self.objProp3._class_identifier = self.get_identifier()
+			self.objProp4._class_identifier = self.get_identifier()
+			self.objProp5._class_identifier = self.get_identifier()
+			
 			self.dataProp2.append(2)
 
 			self.objProp5.append(Individual1())
@@ -88,22 +90,23 @@ class Class1(Thing):
 class Class1a(Class1):
 
 	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.dataProp2._rules = [('value', [[]])]
 
-		self.dataProp2._rules = [('value', [[]])]
+			self.oProp1._rules = [('some', [[Class2], [Class4]])]
+			self.objProp2._rules = [('some', [[Class1, Class2]])]
+			self.objProp3._rules = [('some', [[Class3]])]
+			self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
+			self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]]), ('value', [[Individual1]])]
 
-		self.oProp1._rules = [('some', [[Class2], [Class4]])]
-		self.objProp2._rules = [('some', [[Class1, Class2]])]
-		self.objProp3._rules = [('some', [[Class3]])]
-		self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
-		self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]]), ('value', [[Individual1]])]
-
-		self.oProp1._class_identifier = self.get_identifier()
-		self.objProp2._class_identifier = self.get_identifier()
-		self.objProp3._class_identifier = self.get_identifier()
-		self.objProp4._class_identifier = self.get_identifier()
-		self.objProp5._class_identifier = self.get_identifier()
-		if 'is_existing_instance' not in kwargs or not kwargs['is_existing_instance']: 
+			self.oProp1._class_identifier = self.get_identifier()
+			self.objProp2._class_identifier = self.get_identifier()
+			self.objProp3._class_identifier = self.get_identifier()
+			self.objProp4._class_identifier = self.get_identifier()
+			self.objProp5._class_identifier = self.get_identifier()
+			
 
 			pass
 
@@ -139,22 +142,23 @@ class Class1a(Class1):
 class Class1aa(Class1a):
 
 	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.dataProp2._rules = [('value', [[]])]
 
-		self.dataProp2._rules = [('value', [[]])]
+			self.oProp1._rules = [('some', [[Class2], [Class4]])]
+			self.objProp2._rules = [('some', [[Class1, Class2]])]
+			self.objProp3._rules = [('some', [[Class3]])]
+			self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
+			self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]]), ('value', [[Individual1]])]
 
-		self.oProp1._rules = [('some', [[Class2], [Class4]])]
-		self.objProp2._rules = [('some', [[Class1, Class2]])]
-		self.objProp3._rules = [('some', [[Class3]])]
-		self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
-		self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]]), ('value', [[Individual1]])]
-
-		self.oProp1._class_identifier = self.get_identifier()
-		self.objProp2._class_identifier = self.get_identifier()
-		self.objProp3._class_identifier = self.get_identifier()
-		self.objProp4._class_identifier = self.get_identifier()
-		self.objProp5._class_identifier = self.get_identifier()
-		if 'is_existing_instance' not in kwargs or not kwargs['is_existing_instance']: 
+			self.oProp1._class_identifier = self.get_identifier()
+			self.objProp2._class_identifier = self.get_identifier()
+			self.objProp3._class_identifier = self.get_identifier()
+			self.objProp4._class_identifier = self.get_identifier()
+			self.objProp5._class_identifier = self.get_identifier()
+			
 
 			pass
 
@@ -190,22 +194,23 @@ class Class1aa(Class1a):
 class Class1b(Class1):
 
 	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.dataProp2._rules = [('value', [[]])]
 
-		self.dataProp2._rules = [('value', [[]])]
+			self.oProp1._rules = [('some', [[Class2]]), ('some', [[Class2], [Class4]])]
+			self.objProp2._rules = [('some', [[Class1, Class2]])]
+			self.objProp3._rules = [('some', [[Class3]])]
+			self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
+			self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]]), ('value', [[Individual1]])]
 
-		self.oProp1._rules = [('some', [[Class2]]), ('some', [[Class2], [Class4]])]
-		self.objProp2._rules = [('some', [[Class1, Class2]])]
-		self.objProp3._rules = [('some', [[Class3]])]
-		self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
-		self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]]), ('value', [[Individual1]])]
-
-		self.oProp1._class_identifier = self.get_identifier()
-		self.objProp2._class_identifier = self.get_identifier()
-		self.objProp3._class_identifier = self.get_identifier()
-		self.objProp4._class_identifier = self.get_identifier()
-		self.objProp5._class_identifier = self.get_identifier()
-		if 'is_existing_instance' not in kwargs or not kwargs['is_existing_instance']: 
+			self.oProp1._class_identifier = self.get_identifier()
+			self.objProp2._class_identifier = self.get_identifier()
+			self.objProp3._class_identifier = self.get_identifier()
+			self.objProp4._class_identifier = self.get_identifier()
+			self.objProp5._class_identifier = self.get_identifier()
+			
 
 			pass
 
@@ -241,15 +246,16 @@ class Class1b(Class1):
 class Class2(Thing):
 
 	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
+		if not is_initialised:
 
+			self.oProp1._rules = [('min|1', [[Class1]])]
+			self.objProp2._rules = [('only', [[Thing]])]
 
-		self.oProp1._rules = [('min|1', [[Class1]])]
-		self.objProp2._rules = [('only', [[Thing]])]
-
-		self.oProp1._class_identifier = self.get_identifier()
-		self.objProp2._class_identifier = self.get_identifier()
-		if 'is_existing_instance' not in kwargs or not kwargs['is_existing_instance']: 
+			self.oProp1._class_identifier = self.get_identifier()
+			self.objProp2._class_identifier = self.get_identifier()
+			
 
 			pass
 
@@ -269,16 +275,17 @@ class Class2(Thing):
 class Class3(Thing):
 
 	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.dataProp1._rules = [('only', [['customDataType4']])]
 
-		self.dataProp1._rules = [('only', [['customDataType4']])]
+			self.oProp1._rules = [('value', [[Individual1]])]
+			self.objProp2._rules = [('some', [[Class1]]), ('value', [[Individual1]])]
 
-		self.oProp1._rules = [('value', [[Individual1]])]
-		self.objProp2._rules = [('some', [[Class1]]), ('value', [[Individual1]])]
-
-		self.oProp1._class_identifier = self.get_identifier()
-		self.objProp2._class_identifier = self.get_identifier()
-		if 'is_existing_instance' not in kwargs or not kwargs['is_existing_instance']: 
+			self.oProp1._class_identifier = self.get_identifier()
+			self.objProp2._class_identifier = self.get_identifier()
+			
 
 			self.oProp1.append(Individual1())
 			self.objProp2.append(Individual1())
@@ -304,23 +311,24 @@ class Class3(Thing):
 class Class123(Class1, Class2, Class3):
 
 	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.dataProp1._rules = [('only', [['customDataType4']])]
+			self.dataProp2._rules = [('value', [[]])]
 
-		self.dataProp1._rules = [('only', [['customDataType4']])]
-		self.dataProp2._rules = [('value', [[]])]
+			self.oProp1._rules = [('value', [[Individual1]]), ('min|1', [[Class1]]), ('some', [[Class2], [Class4]])]
+			self.objProp2._rules = [('some', [[Class1]]), ('value', [[Individual1]]), ('only', [[Thing]]), ('some', [[Class1, Class2]])]
+			self.objProp3._rules = [('some', [[Class3]])]
+			self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
+			self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]]), ('value', [[Individual1]])]
 
-		self.oProp1._rules = [('value', [[Individual1]]), ('min|1', [[Class1]]), ('some', [[Class2], [Class4]])]
-		self.objProp2._rules = [('some', [[Class1]]), ('value', [[Individual1]]), ('only', [[Thing]]), ('some', [[Class1, Class2]])]
-		self.objProp3._rules = [('some', [[Class3]])]
-		self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
-		self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]]), ('value', [[Individual1]])]
-
-		self.oProp1._class_identifier = self.get_identifier()
-		self.objProp2._class_identifier = self.get_identifier()
-		self.objProp3._class_identifier = self.get_identifier()
-		self.objProp4._class_identifier = self.get_identifier()
-		self.objProp5._class_identifier = self.get_identifier()
-		if 'is_existing_instance' not in kwargs or not kwargs['is_existing_instance']: 
+			self.oProp1._class_identifier = self.get_identifier()
+			self.objProp2._class_identifier = self.get_identifier()
+			self.objProp3._class_identifier = self.get_identifier()
+			self.objProp4._class_identifier = self.get_identifier()
+			self.objProp5._class_identifier = self.get_identifier()
+			
 
 			pass
 
@@ -360,23 +368,24 @@ class Class123(Class1, Class2, Class3):
 class Class13(Class1, Class3):
 
 	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.dataProp1._rules = [('min|1', [['int']]), ('only', [['customDataType4']])]
+			self.dataProp2._rules = [('exactly|1', [['boolean']]), ('value', [[]])]
 
-		self.dataProp1._rules = [('min|1', [['int']]), ('only', [['customDataType4']])]
-		self.dataProp2._rules = [('exactly|1', [['boolean']]), ('value', [[]])]
+			self.oProp1._rules = [('value', [[Individual1]]), ('some', [[Class2], [Class4]])]
+			self.objProp2._rules = [('some', [[Class1]]), ('value', [[Individual1]]), ('some', [[Class1, Class2]])]
+			self.objProp3._rules = [('some', [[Class3]])]
+			self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
+			self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]]), ('value', [[Individual1]])]
 
-		self.oProp1._rules = [('value', [[Individual1]]), ('some', [[Class2], [Class4]])]
-		self.objProp2._rules = [('some', [[Class1]]), ('value', [[Individual1]]), ('some', [[Class1, Class2]])]
-		self.objProp3._rules = [('some', [[Class3]])]
-		self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
-		self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]]), ('value', [[Individual1]])]
-
-		self.oProp1._class_identifier = self.get_identifier()
-		self.objProp2._class_identifier = self.get_identifier()
-		self.objProp3._class_identifier = self.get_identifier()
-		self.objProp4._class_identifier = self.get_identifier()
-		self.objProp5._class_identifier = self.get_identifier()
-		if 'is_existing_instance' not in kwargs or not kwargs['is_existing_instance']: 
+			self.oProp1._class_identifier = self.get_identifier()
+			self.objProp2._class_identifier = self.get_identifier()
+			self.objProp3._class_identifier = self.get_identifier()
+			self.objProp4._class_identifier = self.get_identifier()
+			self.objProp5._class_identifier = self.get_identifier()
+			
 
 			pass
 
@@ -416,16 +425,17 @@ class Class13(Class1, Class3):
 class Class3a(Class3):
 
 	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.dataProp1._rules = [('only', [['customDataType4']])]
 
-		self.dataProp1._rules = [('only', [['customDataType4']])]
+			self.oProp1._rules = [('value', [[Individual1]])]
+			self.objProp2._rules = [('some', [[Class1]]), ('value', [[Individual1]])]
 
-		self.oProp1._rules = [('value', [[Individual1]])]
-		self.objProp2._rules = [('some', [[Class1]]), ('value', [[Individual1]])]
-
-		self.oProp1._class_identifier = self.get_identifier()
-		self.objProp2._class_identifier = self.get_identifier()
-		if 'is_existing_instance' not in kwargs or not kwargs['is_existing_instance']: 
+			self.oProp1._class_identifier = self.get_identifier()
+			self.objProp2._class_identifier = self.get_identifier()
+			
 
 			pass
 
@@ -449,16 +459,17 @@ class Class3a(Class3):
 class Class3aa(Class3a):
 
 	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.dataProp1._rules = [('only', [['customDataType4']])]
 
-		self.dataProp1._rules = [('only', [['customDataType4']])]
+			self.oProp1._rules = [('value', [[Individual1]])]
+			self.objProp2._rules = [('some', [[Class1]]), ('value', [[Individual1]])]
 
-		self.oProp1._rules = [('value', [[Individual1]])]
-		self.objProp2._rules = [('some', [[Class1]]), ('value', [[Individual1]])]
-
-		self.oProp1._class_identifier = self.get_identifier()
-		self.objProp2._class_identifier = self.get_identifier()
-		if 'is_existing_instance' not in kwargs or not kwargs['is_existing_instance']: 
+			self.oProp1._class_identifier = self.get_identifier()
+			self.objProp2._class_identifier = self.get_identifier()
+			
 
 			pass
 
@@ -482,13 +493,14 @@ class Class3aa(Class3a):
 class Class4(Thing):
 
 	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
+		if not is_initialised:
 
+			self.objProp4._rules = [('min|1', [[Class1]])]
 
-		self.objProp4._rules = [('min|1', [[Class1]])]
-
-		self.objProp4._class_identifier = self.get_identifier()
-		if 'is_existing_instance' not in kwargs or not kwargs['is_existing_instance']: 
+			self.objProp4._class_identifier = self.get_identifier()
+			
 
 			pass
 
@@ -504,22 +516,23 @@ class Class4(Thing):
 class Gertrude(Class1, Class2):
 
 	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.dataProp2._rules = [('value', [[]])]
 
-		self.dataProp2._rules = [('value', [[]])]
+			self.oProp1._rules = [('min|1', [[Class1]]), ('some', [[Class2], [Class4]])]
+			self.objProp2._rules = [('only', [[Thing]]), ('some', [[Class1, Class2]])]
+			self.objProp3._rules = [('some', [[Class3]])]
+			self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
+			self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]]), ('value', [[Individual1]])]
 
-		self.oProp1._rules = [('min|1', [[Class1]]), ('some', [[Class2], [Class4]])]
-		self.objProp2._rules = [('only', [[Thing]]), ('some', [[Class1, Class2]])]
-		self.objProp3._rules = [('some', [[Class3]])]
-		self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
-		self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]]), ('value', [[Individual1]])]
-
-		self.oProp1._class_identifier = self.get_identifier()
-		self.objProp2._class_identifier = self.get_identifier()
-		self.objProp3._class_identifier = self.get_identifier()
-		self.objProp4._class_identifier = self.get_identifier()
-		self.objProp5._class_identifier = self.get_identifier()
-		if 'is_existing_instance' not in kwargs or not kwargs['is_existing_instance']: 
+			self.oProp1._class_identifier = self.get_identifier()
+			self.objProp2._class_identifier = self.get_identifier()
+			self.objProp3._class_identifier = self.get_identifier()
+			self.objProp4._class_identifier = self.get_identifier()
+			self.objProp5._class_identifier = self.get_identifier()
+			
 
 			pass
 

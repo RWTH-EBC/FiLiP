@@ -49,6 +49,7 @@ class SemanticManager(BaseModel):
 
         # todo catch if Fiware contains more fields than the model has?
         for field in loaded_class.get_fields():
+            field.clear()  # remove default values, from hasValue relations
             field_name = field.name
             entity_attribute = entity.get_attribute(field_name)
             if entity_attribute is None:
@@ -106,12 +107,6 @@ class SemanticManager(BaseModel):
                     f"type {instance._get_class_name()} with invalid fields " \
                     f"{[f.name for f in instance.get_invalid_fields()]}"
 
-        # save, patch all local instances
-        for instance in self.instance_registry.get_all():
-            client = self._get_client(instance_header=instance.header)
-            client.patch_entity(instance.build_context_entity(),
-                                instance.old_state)
-            client.close()
         # delete all instance that were loaded from Fiware and then deleted
         # wrap in try, as the entity could have been deleted by a third party
         for identifier in self.instance_registry.get_all_deleted_identifiers():
@@ -123,6 +118,14 @@ class SemanticManager(BaseModel):
                 pass
 
             client.close()
+
+        # save, patch all local instances
+        for instance in self.instance_registry.get_all():
+            client = self._get_client(instance_header=instance.header)
+            client.patch_entity(instance.build_context_entity(),
+                                instance.old_state)
+            client.close()
+
 
     def load_instance(self, identifier: InstanceIdentifier) -> SemanticClass:
 

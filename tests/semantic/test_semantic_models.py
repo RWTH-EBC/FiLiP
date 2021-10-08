@@ -235,9 +235,9 @@ class TestSemanticModels(unittest.TestCase):
         class13.dataProp1.append("Test")
         semantic_manager.save_state(assert_validity=False)
 
+
         class13.delete()
         class13_ = Class13(id="13")
-        print(class13_)
         self.assertTrue(len(class13_.dataProp1.get_all()) == 0)
 
 

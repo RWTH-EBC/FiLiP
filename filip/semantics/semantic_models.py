@@ -104,8 +104,11 @@ class InstanceRegistry(BaseModel):
         # If instance was loaded from Fiware it has an old_state.
         # if that is the case, we need to note that we have deleted the instance
         # to delete it on save, and do not load it again from Fiware
+
         if instance.old_state is not None:
             self._deleted_identifiers.append(identifier)
+
+        del self._registry[identifier]
 
     def instance_was_deleted(self, identifier: InstanceIdentifier):
         return identifier in self._deleted_identifiers
@@ -514,6 +517,7 @@ class RelationField(Field):
         """ see class description"""
         return 'Relation'+super().__str__()
 
+
 class SemanticClass(BaseModel):
     """
     A class representing a vocabulary/ontology class.
@@ -545,7 +549,7 @@ class SemanticClass(BaseModel):
 
     def add_reference(self, identifier: InstanceIdentifier, relation_name: str):
         """
-        Note that an isntance references this instance in the relation
+        Note that an instance references this instance in the relation
 
         Args:
             identifier (InstanceIdentifier): Identifier of the referencing
@@ -827,16 +831,16 @@ class SemanticClass(BaseModel):
         arbitrary_types_allowed = True
         allow_mutation = False
 
-    def __str__(self):
-        def pretty(d, indent=0):
-            for key, value in d.items():
-                print('\t' * indent + str(key))
-                if isinstance(value, dict):
-                    pretty(value, indent + 1)
-                else:
-                    print('\t' * (indent + 1) + str(value))
-        return pretty(self.dict(exclude={'semantic_manager', 'old_state'}),
-                          indent=0)
+    # def __str__(self):
+    #     def pretty(d, indent=0):
+    #         for key, value in d.items():
+    #             print('\t' * indent + str(key))
+    #             if isinstance(value, dict):
+    #                 pretty(value, indent + 1)
+    #             else:
+    #                 print('\t' * (indent + 1) + str(value))
+    #     return pretty(self.dict(exclude={'semantic_manager', 'old_state'}),
+    #                       indent=0)
 
 
 class SemanticIndividual(BaseModel):

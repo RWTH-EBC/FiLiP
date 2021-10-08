@@ -72,17 +72,22 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
             content += "\n\t\t"
             content += "kwargs['semantic_manager'] = semantic_manager"
             content += "\n\t\t"
+            content += "is_initialised = 'id' in self.__dict__"
+            content += "\n\t\t"
             content += "super().__init__(*args, **kwargs)"
 
         else:
             content += "\n\n\t"
             content += "def __init__(self, *args, **kwargs):"
             content += "\n\t\t"
+            content += "is_initialised = 'id' in self.__dict__"
+            content += "\n\t\t"
             content += "super().__init__(*args, **kwargs)"
 
-        content += "\n"
+        content += "\n\t\t"
+        content += "if not is_initialised:"
         for cdr in class_.get_combined_data_relations(vocabulary):
-            content += "\n\t\t"
+            content += "\n\t\t\t"
             content += f"self." \
                        f"" \
                        f"{cdr.get_property_label(vocabulary)}._rules = " \
@@ -90,7 +95,7 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
 
         content += "\n"
         for cor in class_.get_combined_object_relations(vocabulary):
-            content += "\n\t\t"
+            content += "\n\t\t\t"
             content += f"self." \
                        f"" \
                        f"{cor.get_property_label(vocabulary)}._rules = " \
@@ -98,15 +103,14 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
 
         content += "\n"
         for cor in class_.get_combined_object_relations(vocabulary):
-            content += "\n\t\t"
+            content += "\n\t\t\t"
             content += f"self.{cor.get_property_label(vocabulary)}" \
                        f"._class_identifier = " \
                        f"self.get_identifier()"
 
-        content += "\n\t\t"
+        content += "\n\t\t\t"
 
-        content += "if 'is_existing_instance' not in kwargs or not kwargs[" \
-                   "'is_existing_instance']: "
+
         for cdr in class_.get_combined_data_relations(vocabulary):
             # Add fixed values to fields, for CDRs these values need to be
             # strings. Only add the statement on the uppermost occurring class
