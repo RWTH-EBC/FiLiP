@@ -18,7 +18,7 @@ from filip.models.ngsi_v2.iot import \
     DeviceCommand, \
     LazyDeviceAttribute, \
     StaticDeviceAttribute
-from filip.models.ngsi_v2.context import ContextEntity
+from filip.utils.cleanup import clear_all
 from tests.config import settings
 
 
@@ -27,8 +27,12 @@ logger = logging.getLogger(__name__)
 
 class TestAgent(unittest.TestCase):
     def setUp(self) -> None:
-        self.fiware_header = FiwareHeader(service=settings.FIWARE_SERVICE,
-                                          service_path=settings.FIWARE_SERVICEPATH)
+        self.fiware_header = FiwareHeader(
+            service=settings.FIWARE_SERVICE,
+            service_path=settings.FIWARE_SERVICEPATH)
+        clear_all(fiware_header=self.fiware_header,
+                  cb_url=settings.CB_URL,
+                  iota_url=settings.IOTA_URL)
         self.service_group1 = ServiceGroup(entity_type='Thing',
                                            resource='/iot/json',
                                            apikey=str(uuid4()))
@@ -66,9 +70,9 @@ class TestAgent(unittest.TestCase):
 
         self.client.get_group(resource=self.service_group1.resource,
                               apikey=self.service_group1.apikey)
-        for gr in groups:
-            self.client.delete_group(resource=gr.resource,
-                                     apikey=gr.apikey)
+
+        clear_all(fiware_header=self.fiware_header,
+                  iota_url=settings.IOTA_URL)
 
     def test_device_model(self):
         device = Device(**self.device)
@@ -81,10 +85,9 @@ class TestAgent(unittest.TestCase):
         """
         # Clean up Fiware test state, this test can fail if the device was not
         # correctly removed before
-        try:
-            self.client.delete_device(device_id=Device(**self.device).device_id)
-        except requests.RequestException:
-            pass
+        clear_all(fiware_header=self.fiware_header,
+                  cb_url=settings.CB_URL,
+                  iota_url=settings.IOTA_URL)
 
         with IoTAClient(fiware_header=self.fiware_header) as client:
             client.get_device_list()
@@ -119,6 +122,11 @@ class TestAgent(unittest.TestCase):
             self.assertEqual(self.fiware_header.service_path,
                              device_res.service_path)
 
+            #cleanup
+            clear_all(fiware_header=self.fiware_header,
+                      cb_url=settings.CB_URL,
+                      iota_url=settings.IOTA_URL)
+
     def test_metadata(self):
         """
         Test for metadata works but the api of iot agent-json seems not
@@ -135,7 +143,7 @@ class TestAgent(unittest.TestCase):
         device = Device(**self.device)
         device.device_id = "device_with_meta"
         device.add_attribute(attribute=attr)
-        print(device.json(indent=2))
+        logger.info(device.json(indent=2))
 
         with IoTAClient(fiware_header=self.fiware_header) as client:
             client.post_device(device=device)
@@ -146,21 +154,17 @@ class TestAgent(unittest.TestCase):
             logger.info(client.get_entity(entity_id=device.entity_name).json(
                 indent=2))
 
+        #clean up
+        clear_all(fiware_header=self.fiware_header,
+                  cb_url=settings.CB_URL,
+                  iota_url=settings.IOTA_URL)
+
+
     def tearDown(self) -> None:
         """
         Cleanup test server
         """
-        try:
-            devices = self.client.get_device_list()
-            for device in devices:
-                self.client.delete_device(device_id=device.device_id)
-            with ContextBrokerClient(fiware_header=self.fiware_header) as \
-                    client:
-
-                entities = [ContextEntity(id=entity.id, type=entity.type) for
-                            entity in client.get_entity_list()]
-                client.update(entities=entities, action_type='delete')
-
-        except requests.RequestException:
-            pass
         self.client.close()
+        clear_all(fiware_header=self.fiware_header,
+                  cb_url=settings.CB_URL,
+                  iota_url=settings.IOTA_URL)

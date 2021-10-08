@@ -51,8 +51,9 @@ class TestContextBroker(unittest.TestCase):
         Returns:
             None
         """
-        self.fiware_header = FiwareHeader(service=settings.FIWARE_SERVICE,
-                                          service_path=settings.FIWARE_SERVICEPATH)
+        self.fiware_header = FiwareHeader(
+            service=settings.FIWARE_SERVICE,
+            service_path=settings.FIWARE_SERVICEPATH)
         clear_all(fiware_header=self.fiware_header,
                   cb_url=settings.CB_URL,
                   iota_url=settings.IOTA_URL)
