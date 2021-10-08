@@ -38,10 +38,9 @@ class TestClient(unittest.TestCase):
 
         # Test if the testcase was run directly or over in a global test-run.
         # Match the needed path to the config file in both cases
-        if os.getcwd().split("\\")[-1] == "clients":
-            return 'test_ngsi_v2_client.json'
-        else:
-            return './tests/clients/test_ngsi_v2_client.json'
+
+        path = Path(__file__).parent.resolve()
+        return str(path.joinpath('test_ngsi_v2_client.json'))
 
     def _test_change_of_headers(self, client: HttpClient):
         """

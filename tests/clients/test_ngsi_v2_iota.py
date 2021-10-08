@@ -18,7 +18,7 @@ from filip.models.ngsi_v2.iot import \
     DeviceCommand, \
     LazyDeviceAttribute, \
     StaticDeviceAttribute
-from filip.utils.cleanup import clear_all
+from filip.utils.cleanup import clear_all, clean_test
 from tests.config import settings
 
 
@@ -61,6 +61,9 @@ class TestAgent(unittest.TestCase):
     def test_service_group_model(self):
         pass
 
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                iota_url=settings.IOTA_URL)
     def test_service_group_endpoints(self):
         self.client.post_groups(service_groups=[self.service_group1,
                                                 self.service_group2])
@@ -79,6 +82,10 @@ class TestAgent(unittest.TestCase):
         self.assertEqual(self.device,
                          device.dict(exclude_unset=True))
 
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                cb_url=settings.CB_URL,
+                iota_url=settings.IOTA_URL)
     def test_device_endpoints(self):
         """
         Test device creation
@@ -127,6 +134,10 @@ class TestAgent(unittest.TestCase):
                       cb_url=settings.CB_URL,
                       iota_url=settings.IOTA_URL)
 
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                cb_url=settings.CB_URL,
+                iota_url=settings.IOTA_URL)
     def test_metadata(self):
         """
         Test for metadata works but the api of iot agent-json seems not
@@ -158,7 +169,6 @@ class TestAgent(unittest.TestCase):
         clear_all(fiware_header=self.fiware_header,
                   cb_url=settings.CB_URL,
                   iota_url=settings.IOTA_URL)
-
 
     def tearDown(self) -> None:
         """
