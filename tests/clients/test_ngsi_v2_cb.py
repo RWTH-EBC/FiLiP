@@ -27,7 +27,8 @@ from filip.models.ngsi_v2.context import \
     NamedCommand, \
     Query, \
     ActionType
-from filip.models.ngsi_v2.base import AttrsFormat, EntityPattern
+
+from filip.models.ngsi_v2.base import AttrsFormat, EntityPattern, Status
 from filip.models.ngsi_v2.subscriptions import Mqtt, Message, Subscription
 from filip.models.ngsi_v2.iot import \
     Device, \
@@ -47,6 +48,7 @@ class TestContextBroker(unittest.TestCase):
     """
     Test class for ContextBrokerClient
     """
+
     def setUp(self) -> None:
         """
         Setup test data
@@ -331,12 +333,65 @@ class TestContextBroker(unittest.TestCase):
             sub2 = self.subscription.copy()
             sub2.description = "Take this subscription to Fiware"
             sub2.subject.entities[0] = {
-                            "idPattern": ".*",
-                            "type": "Building"
-                        }
+                "idPattern": ".*",
+                "type": "Building"
+            }
             id3 = client.post_subscription(sub2)
             self.assertNotEqual(id1, id3)
 
+
+    def test_subscription_set_status(self):
+        """
+        Test subscription operations of context broker client
+        """
+        with ContextBrokerClient(fiware_header=self.fiware_header) as client:
+            sub_example = {
+                "description": "One subscription to rule them all",
+                "subject": {
+                    "entities": [
+                        {
+                            "idPattern": ".*",
+                            "type": "Room"
+                        }
+                    ],
+                    "condition": {
+                        "attrs": [
+                            "temperature"
+                        ],
+                        "expression": {
+                            "q": "temperature>40"
+                        }
+                    }
+                },
+                "notification": {
+                    "http": {
+                        "url": "http://localhost:1234"
+                    },
+                    "attrs": [
+                        "temperature",
+                        "humidity"
+                    ]
+                },
+                "throttling": 0
+            }
+            sub = Subscription(**sub_example)
+            sub_id = client.post_subscription(subscription=sub)
+            sub_res = client.get_subscription(subscription_id=sub_id)
+            self.assertEqual(sub_res.status, Status.ACTIVE)
+
+            sub_inactive = sub_res.copy(update={'status': Status.INACTIVE})
+            client.update_subscription(subscription=sub_inactive)
+            sub_res_inactive = client.get_subscription(subscription_id=sub_id)
+            self.assertEqual(sub_res_inactive.status, Status.INACTIVE)
+
+            sub_active = sub_res_inactive.copy(update={'status': Status.ACTIVE})
+            client.update_subscription(subscription=sub_active)
+            sub_res_active = client.get_subscription(subscription_id=sub_id)
+            self.assertEqual(sub_res_active.status, Status.ACTIVE)
+
+            subs = client.get_subscription_list()
+            for sub in subs:
+                client.delete_subscription(subscription_id=sub.id)
 
 
     def test_mqtt_subscriptions(self):

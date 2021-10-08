@@ -1020,7 +1020,7 @@ class ContextBrokerClient(BaseHttpClient):
                 headers=headers,
                 data=subscription.json(exclude={'id'},
                                        exclude_unset=True,
-                                       exclude_defaults=True,
+                                       exclude_defaults=False,
                                        exclude_none=True))
             if res.ok:
                 self.logger.info("Subscription successfully updated!")
