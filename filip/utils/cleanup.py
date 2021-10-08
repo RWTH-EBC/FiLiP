@@ -16,6 +16,10 @@ def clear_cb(url: str, fiware_header: FiwareHeader):
     Function deletes all entities, registrations and subscriptions for a
     given fiware header
 
+    Note:
+        Always clear the devices first because the IoT-Agent will otherwise
+        through errors if it cannot find its registration anymore.
+
     Args:
         url: Url of the context broker service
         fiware_header: header of the tenant
@@ -44,6 +48,8 @@ def clear_iota(url: str, fiware_header: FiwareHeader):
     """
     Function deletes all device groups and devices for a
     given fiware header
+
+
 
     Args:
         url: Url of the context broker service
@@ -111,9 +117,9 @@ def clear_all(*,
     Returns:
 
     """
-    if cb_url is not None:
-        clear_cb(url=cb_url, fiware_header=fiware_header)
     if iota_url is not None:
         clear_iota(url=iota_url, fiware_header=fiware_header)
+    if cb_url is not None:
+        clear_cb(url=cb_url, fiware_header=fiware_header)
     if ql_url is not None:
         clear_ql(url=ql_url, fiware_header=fiware_header)
