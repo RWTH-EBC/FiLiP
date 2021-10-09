@@ -17,14 +17,27 @@ class LogLevel(str, Enum):
     DEBUG = 'DEBUG'
     NOTSET = 'NOTSET'
 
+    @classmethod
+    def _missing_(cls, name):
+        """
+        Class method to realize case insensitive args
+        Args:
+            name: missing argument
+
+        Returns:
+            valid member of enum
+        """
+        for member in cls:
+            if member.value.casefold() == name.casefold():
+                return member
+
 
 class TestSettings(BaseSettings):
     """
     Settings for the test case scenarios according to pydantic's documentaion
     https://pydantic-docs.helpmanual.io/usage/settings/
     """
-    # TODO: Check why logging is not overwritten
-    LOG_LEVEL: LogLevel = Field(default=LogLevel.INFO,
+    LOG_LEVEL: LogLevel = Field(default=LogLevel.ERROR,
                                 env=['LOG_LEVEL', 'LOGLEVEL'])
 
     CB_URL: AnyHttpUrl = Field(default="http://127.0.0.1:1026",
@@ -85,7 +98,7 @@ class TestSettings(BaseSettings):
         env_file = find_dotenv('.env')
         env_file_encoding = 'utf-8'
         case_sensitive = False
-
+        use_enum_values = True
 
 settings = TestSettings()
 print(f"Running tests with the following settings: \n "
@@ -93,5 +106,5 @@ print(f"Running tests with the following settings: \n "
 
 # Configure logging for all tests
 logging.basicConfig(
-    level=settings.LOG_LEVEL.value,
+    level=settings.LOG_LEVEL,
     format='%(asctime)s %(name)s %(levelname)s: %(message)s')
