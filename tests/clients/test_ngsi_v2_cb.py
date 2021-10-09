@@ -559,7 +559,7 @@ class TestContextBroker(unittest.TestCase):
                         entity_type='Thing2',
                         protocol='IoTA-JSON',
                         transport='MQTT',
-                        apikey='filip-iot-test-device',
+                        apikey='filip_test_device',
                         attributes=[device_attr1],
                         static_attributes=[static_device_attr],
                         commands=[device_command])
@@ -578,7 +578,7 @@ class TestContextBroker(unittest.TestCase):
         # general ngsiv2 httpClient for this.
         service_group = ServiceGroup(service=self.fiware_header.service,
                                      subservice=self.fiware_header.service_path,
-                                     apikey='filip-iot-test-service-group',
+                                     apikey='filip_test_group',
                                      resource='/iot/json')
 
         # create the Http client node that once sent the device cannot be posted
