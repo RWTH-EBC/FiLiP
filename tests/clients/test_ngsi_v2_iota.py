@@ -52,10 +52,14 @@ class TestAgent(unittest.TestCase):
             "transport": 'HTTP',
             "expressionLanguage": None
         }
-        self.client = IoTAClient(fiware_header=self.fiware_header)
+        self.client = IoTAClient(
+            url=settings.IOTA_URL,
+            fiware_header=self.fiware_header)
 
     def test_get_version(self):
-        with IoTAClient(fiware_header=self.fiware_header) as client:
+        with IoTAClient(
+                url=settings.IOTA_URL,
+                fiware_header=self.fiware_header) as client:
             self.assertIsNotNone(client.get_version())
 
     def test_service_group_model(self):
@@ -96,7 +100,9 @@ class TestAgent(unittest.TestCase):
                   cb_url=settings.CB_URL,
                   iota_url=settings.IOTA_URL)
 
-        with IoTAClient(fiware_header=self.fiware_header) as client:
+        with IoTAClient(
+                url=settings.IOTA_URL,
+                fiware_header=self.fiware_header) as client:
             client.get_device_list()
             device = Device(**self.device)
 
@@ -156,12 +162,16 @@ class TestAgent(unittest.TestCase):
         device.add_attribute(attribute=attr)
         logger.info(device.json(indent=2))
 
-        with IoTAClient(fiware_header=self.fiware_header) as client:
+        with IoTAClient(
+                url=settings.IOTA_URL,
+                fiware_header=self.fiware_header) as client:
             client.post_device(device=device)
             logger.info(client.get_device(device_id=device.device_id).json(
                 indent=2, exclude_unset=True))
 
-        with ContextBrokerClient(fiware_header=self.fiware_header) as client:
+        with ContextBrokerClient(
+                url=settings.CB_URL,
+                fiware_header=self.fiware_header) as client:
             logger.info(client.get_entity(entity_id=device.entity_name).json(
                 indent=2))
 

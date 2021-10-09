@@ -32,8 +32,9 @@ class TestTimeSeries(unittest.TestCase):
         Returns:
             None
         """
-        self.fiware_header = FiwareHeader(service=settings.FIWARE_SERVICE,
-                                          service_path=settings.FIWARE_SERVICEPATH)
+        self.fiware_header = FiwareHeader(
+            service=settings.FIWARE_SERVICE,
+            service_path=settings.FIWARE_SERVICEPATH)
         self.ql_client = QuantumLeapClient(
             url=settings.QL_URL,
             fiware_header=self.fiware_header)

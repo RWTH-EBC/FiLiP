@@ -69,7 +69,9 @@ class TestContextBroker(unittest.TestCase):
         self.entity = ContextEntity(id='MyId', type='MyType', **self.attr)
 
 
-        self.client = ContextBrokerClient(fiware_header=self.fiware_header)
+        self.client = ContextBrokerClient(
+            url=settings.CB_URL,
+            fiware_header=self.fiware_header)
         self.subscription = Subscription.parse_obj({
             "description": "One subscription to rule them all",
             "subject": {
@@ -105,7 +107,9 @@ class TestContextBroker(unittest.TestCase):
         """
         Test management functions of context broker client
         """
-        with ContextBrokerClient(fiware_header=self.fiware_header) as client:
+        with ContextBrokerClient(
+                url=settings.CB_URL,
+                fiware_header=self.fiware_header) as client:
             self.assertIsNotNone(client.get_version())
             self.assertEqual(client.get_resources(), self.resources)
 
@@ -113,7 +117,9 @@ class TestContextBroker(unittest.TestCase):
         """
         Test statistics of context broker client
         """
-        with ContextBrokerClient(fiware_header=self.fiware_header) as client:
+        with ContextBrokerClient(
+                url=settings.CB_URL,
+                fiware_header=self.fiware_header) as client:
             self.assertIsNotNone(client.get_statistics())
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
@@ -125,7 +131,9 @@ class TestContextBroker(unittest.TestCase):
         Test pagination of context broker client
         Test pagination. only works if enough entities are available
         """
-        with ContextBrokerClient(fiware_header=self.fiware_header) as client:
+        with ContextBrokerClient(
+                url=settings.CB_URL,
+                fiware_header=self.fiware_header) as client:
             entities_a = [ContextEntity(id=str(i),
                                         type=f'filip:object:TypeA') for i in
                           range(0, 1000)]
@@ -146,7 +154,9 @@ class TestContextBroker(unittest.TestCase):
         """
         Test filter operations of context broker client
         """
-        with ContextBrokerClient(fiware_header=self.fiware_header) as client:
+        with ContextBrokerClient(
+                url=settings.CB_URL,
+                fiware_header=self.fiware_header) as client:
             # test patterns
             with self.assertRaises(ValueError):
                 client.get_entity_list(id_pattern='(&()?')
@@ -198,7 +208,9 @@ class TestContextBroker(unittest.TestCase):
         """
         Test entity operations of context broker client
         """
-        with ContextBrokerClient(fiware_header=self.fiware_header) as client:
+        with ContextBrokerClient(
+                url=settings.CB_URL,
+                fiware_header=self.fiware_header) as client:
             client.post_entity(entity=self.entity, update=True)
             res_entity = client.get_entity(entity_id=self.entity.id)
             client.get_entity(entity_id=self.entity.id, attrs=['temperature'])
@@ -222,7 +234,9 @@ class TestContextBroker(unittest.TestCase):
         """
         Test attribute operations of context broker client
         """
-        with ContextBrokerClient(fiware_header=self.fiware_header) as client:
+        with ContextBrokerClient(
+                url=settings.CB_URL,
+                fiware_header=self.fiware_header) as client:
             entity = self.entity
             attr_txt = NamedContextAttribute(name='attr_txt',
                                              type='Text',
@@ -295,7 +309,9 @@ class TestContextBroker(unittest.TestCase):
         """
         Test type operations of context broker client
         """
-        with ContextBrokerClient(fiware_header=self.fiware_header) as client:
+        with ContextBrokerClient(
+                url=settings.CB_URL,
+                fiware_header=self.fiware_header) as client:
             self.assertIsNotNone(client.post_entity(entity=self.entity,
                                                     update=True))
             client.get_entity_types()
@@ -311,7 +327,9 @@ class TestContextBroker(unittest.TestCase):
         """
         Test subscription operations of context broker client
         """
-        with ContextBrokerClient(fiware_header=self.fiware_header) as client:
+        with ContextBrokerClient(
+                url=settings.CB_URL,
+                fiware_header=self.fiware_header) as client:
             sub_id = client.post_subscription(subscription=self.subscription,
                                               skip_initial_notification=True)
             sub_res = client.get_subscription(subscription_id=sub_id)
@@ -360,7 +378,9 @@ class TestContextBroker(unittest.TestCase):
         Test subscription operations of context broker client
         """
         sub = self.subscription
-        with ContextBrokerClient(fiware_header=self.fiware_header) as client:
+        with ContextBrokerClient(
+                url=settings.CB_URL,
+                fiware_header=self.fiware_header) as client:
             sub_id = client.post_subscription(subscription=sub)
             sub_res = client.get_subscription(subscription_id=sub_id)
             self.assertEqual(sub_res.status, Status.ACTIVE)
@@ -385,7 +405,6 @@ class TestContextBroker(unittest.TestCase):
                 cb_url=settings.CB_URL,
                 iota_url=settings.IOTA_URL)
     def test_mqtt_subscriptions(self):
-
         mqtt_url = settings.MQTT_BROKER_URL
         mqtt_topic = ''.join([settings.FIWARE_SERVICE,
                               settings.FIWARE_SERVICEPATH])
@@ -471,7 +490,9 @@ class TestContextBroker(unittest.TestCase):
         """
         Test batch operations of context broker client
         """
-        with ContextBrokerClient(fiware_header=self.fiware_header) as client:
+        with ContextBrokerClient(
+                url=settings.CB_URL,
+                fiware_header=self.fiware_header) as client:
             entities = [ContextEntity(id=str(i),
                                       type=f'filip:object:TypeA') for i in
                         range(0, 1000)]
