@@ -12,7 +12,7 @@ import time
 import random
 import json
 import paho.mqtt.client as mqtt
-from datetime import datetime
+from datetime import datetime, timedelta
 from urllib.parse import urlparse
 from filip.models.base import FiwareHeader
 from filip.utils.simple_ql import QueryString
@@ -334,7 +334,8 @@ class TestContextBroker(unittest.TestCase):
                                               skip_initial_notification=True)
             sub_res = client.get_subscription(subscription_id=sub_id)
             time.sleep(1)
-            sub_update = sub_res.copy(update={'expires': datetime.now()})
+            sub_update = sub_res.copy(
+                update={'expires': datetime.now()})
             client.update_subscription(subscription=sub_update)
             sub_res_updated = client.get_subscription(subscription_id=sub_id)
             self.assertNotEqual(sub_res.expires, sub_res_updated.expires)
@@ -377,7 +378,8 @@ class TestContextBroker(unittest.TestCase):
         """
         Test subscription operations of context broker client
         """
-        sub = self.subscription
+        sub = self.subscription.copy(
+            update={'expires': datetime.now() + timedelta(days=1)})
         with ContextBrokerClient(
                 url=settings.CB_URL,
                 fiware_header=self.fiware_header) as client:
@@ -395,10 +397,11 @@ class TestContextBroker(unittest.TestCase):
             sub_res_active = client.get_subscription(subscription_id=sub_id)
             self.assertEqual(sub_res_active.status, Status.ACTIVE)
 
-            subs = client.get_subscription_list()
-            for sub in subs:
-                client.delete_subscription(subscription_id=sub.id)
-
+            sub_expired = sub_res_active.copy(
+                update={'expires': datetime.now() - timedelta(days=365)})
+            client.update_subscription(subscription=sub_expired)
+            sub_res_expired = client.get_subscription(subscription_id=sub_id)
+            self.assertEqual(sub_res_expired.status, Status.EXPIRED)
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
