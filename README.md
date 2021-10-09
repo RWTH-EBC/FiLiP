@@ -19,7 +19,7 @@ from openapi documentation?
 A general prerequisite to do so is that the documentation is in depth and of 
 good quality. 
 While FIWARE generally provides 
-[openapi documentation](https://github.com/FIWARE/specifications/tree/master/OpenAPI),
+[openapi documentation](https://github.com/FIWARE/specifications),
 here are some thoughts on the challenges of auto-generating client code from 
 these documents:
 
@@ -191,6 +191,16 @@ Therefore, FiLiP currently only covers the APIs of the following GEs:
     - [github](https://github.com/FIWARE-GEs/quantum-leap)
     - [swagger](https://app.swaggerhub.com/apis/smartsdk/ngsi-tsdb/0.7) (*not 
       up to date*, newest API version is 8.0)
+
+## Automatic issue branch creation
+
+Issue branches are created automatically on issue assignment with 
+[robvanderleek/create-issue-branch](https://github.com/robvanderleek/create-issue-branch).
+
+See [workflow definition](.github/workflows/issue-tracker.yml) and 
+[configuration file](.github/issue-branch.yml) for customization.
+
+Branch creation is skipped for issues with label "question".
 
 ## Authors
 

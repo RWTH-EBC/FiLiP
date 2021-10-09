@@ -24,6 +24,9 @@ def create_datamodel(*,
     can either downloaded from a url or passed as str or dict. Allowed input
     types are defined but the underlying toolbox.
 
+    Many datamodels suited for FIWARE are located here:
+    https://github.com/smart-data-models/data-models
+
     Args:
         output_path: path where the generated code should saved
         filename: filename for the generated code

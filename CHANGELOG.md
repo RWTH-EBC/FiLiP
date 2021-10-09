@@ -1,5 +1,6 @@
 #### v0.1.8
 - introduce concurrent testing ([#41](https://github.com/RWTH-EBC/FiLiP/issues/41))
+- include default values in subscription update ([#39](https://github.com/RWTH-EBC/FiLiP/issues/39))
 - move back to more simple docs design ([#32](https://github.com/RWTH-EBC/FiLiP/issues/32))
 - added MQTT notifications ([#24](https://github.com/RWTH-EBC/FiLiP/issues/24))
 - introduced [CHANGELOG.md](https://github.com/RWTH-EBC/FiLiP/blob/development/CHANGELOG.md) with versions

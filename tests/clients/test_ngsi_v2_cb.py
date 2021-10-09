@@ -26,7 +26,8 @@ from filip.models.ngsi_v2.context import \
     NamedCommand, \
     Query, \
     ActionType
-from filip.models.ngsi_v2.base import AttrsFormat, EntityPattern
+
+from filip.models.ngsi_v2.base import AttrsFormat, EntityPattern, Status
 from filip.models.ngsi_v2.subscriptions import Mqtt, Message, Subscription
 from filip.models.ngsi_v2.iot import \
     Device, \
@@ -145,7 +146,6 @@ class TestContextBroker(unittest.TestCase):
         """
         Test filter operations of context broker client
         """
-
         with ContextBrokerClient(fiware_header=self.fiware_header) as client:
             # test patterns
             with self.assertRaises(ValueError):
@@ -190,8 +190,6 @@ class TestContextBroker(unittest.TestCase):
             client.update(action_type=ActionType.DELETE, entities=entities_a)
 
             client.update(action_type=ActionType.DELETE, entities=entities_b)
-
-
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
@@ -314,38 +312,8 @@ class TestContextBroker(unittest.TestCase):
         Test subscription operations of context broker client
         """
         with ContextBrokerClient(fiware_header=self.fiware_header) as client:
-            sub_example = {
-                "description": "One subscription to rule them all",
-                "subject": {
-                    "entities": [
-                        {
-                            "idPattern": ".*",
-                            "type": "Room"
-                        }
-                    ],
-                    "condition": {
-                        "attrs": [
-                            "temperature"
-                        ],
-                        "expression": {
-                            "q": "temperature>40"
-                        }
-                    }
-                },
-                "notification": {
-                    "http": {
-                        "url": "http://localhost:1234"
-                    },
-                    "attrs": [
-                        "temperature",
-                        "humidity"
-                    ]
-                },
-                "expires": datetime.now(),
-                "throttling": 0
-            }
-            sub = Subscription(**sub_example)
-            sub_id = client.post_subscription(subscription=sub)
+            sub_id = client.post_subscription(subscription=self.subscription,
+                                              skip_initial_notification=True)
             sub_res = client.get_subscription(subscription_id=sub_id)
             time.sleep(1)
             sub_update = sub_res.copy(update={'expires': datetime.now()})
@@ -377,11 +345,40 @@ class TestContextBroker(unittest.TestCase):
             sub2 = self.subscription.copy()
             sub2.description = "Take this subscription to Fiware"
             sub2.subject.entities[0] = {
-                            "idPattern": ".*",
-                            "type": "Building"
-                        }
+                "idPattern": ".*",
+                "type": "Building"
+            }
             id3 = client.post_subscription(sub2)
             self.assertNotEqual(id1, id3)
+
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                cb_url=settings.CB_URL,
+                iota_url=settings.IOTA_URL)
+    def test_subscription_set_status(self):
+        """
+        Test subscription operations of context broker client
+        """
+        sub = self.subscription
+        with ContextBrokerClient(fiware_header=self.fiware_header) as client:
+            sub_id = client.post_subscription(subscription=sub)
+            sub_res = client.get_subscription(subscription_id=sub_id)
+            self.assertEqual(sub_res.status, Status.ACTIVE)
+
+            sub_inactive = sub_res.copy(update={'status': Status.INACTIVE})
+            client.update_subscription(subscription=sub_inactive)
+            sub_res_inactive = client.get_subscription(subscription_id=sub_id)
+            self.assertEqual(sub_res_inactive.status, Status.INACTIVE)
+
+            sub_active = sub_res_inactive.copy(update={'status': Status.ACTIVE})
+            client.update_subscription(subscription=sub_active)
+            sub_res_active = client.get_subscription(subscription_id=sub_id)
+            self.assertEqual(sub_res_active.status, Status.ACTIVE)
+
+            subs = client.get_subscription_list()
+            for sub in subs:
+                client.delete_subscription(subscription_id=sub.id)
+
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
@@ -556,7 +553,7 @@ class TestContextBroker(unittest.TestCase):
         # general ngsiv2 httpClient for this.
         service_group = ServiceGroup(service=self.fiware_header.service,
                                      subservice=self.fiware_header.service_path,
-                                     apikey='1234',
+                                     apikey='filip-iot-test-service-group',
                                      resource='/iot/json')
 
         # create the Http client node that once sent the device cannot be posted
@@ -657,11 +654,6 @@ class TestContextBroker(unittest.TestCase):
         mqtt_client.loop_stop()
         # disconnect the mqtt device
         mqtt_client.disconnect()
-
-        # cleanup the server and delete everything
-        clear_all(fiware_header=self.fiware_header,
-                  cb_url=settings.CB_URL,
-                  iota_url=settings.IOTA_URL)
 
     def tearDown(self) -> None:
         """
