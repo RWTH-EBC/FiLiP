@@ -335,7 +335,7 @@ class TestContextBroker(unittest.TestCase):
             sub_res = client.get_subscription(subscription_id=sub_id)
             time.sleep(1)
             sub_update = sub_res.copy(
-                update={'expires': datetime.now()})
+                update={'expires': datetime.now() + timedelta(days=1)})
             client.update_subscription(subscription=sub_update)
             sub_res_updated = client.get_subscription(subscription_id=sub_id)
             self.assertNotEqual(sub_res.expires, sub_res_updated.expires)
