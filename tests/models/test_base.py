@@ -8,6 +8,7 @@ from requests import RequestException
 from filip.models.base import FiwareHeader
 from filip.clients.ngsi_v2 import ContextBrokerClient
 from filip.models.ngsi_v2.context import ContextEntity
+from filip.utils.cleanup import clear_all, clean_test
 from tests.config import settings, generate_servicepath
 
 
@@ -21,6 +22,9 @@ class TestModels(unittest.TestCase):
         self.fiware_header = {'fiware-service': settings.FIWARE_SERVICE,
                               'fiware-servicepath': settings.FIWARE_SERVICEPATH}
 
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                cb_url=settings.CB_URL)
     def test_fiware_header(self):
         """
         Test for fiware header
@@ -51,8 +55,8 @@ class TestModels(unittest.TestCase):
                 client.post_entity(entity=entity)
                 client.get_entity(entity_id=entity.id)
             client.fiware_service_path = '/#'
-            self.assertEqual(len(self.service_paths),
-                             len(client.get_entity_list()))
+            self.assertGreaterEqual(len(client.get_entity_list()),
+                                    len(self.service_paths))
             for path in self.service_paths:
                 client.fiware_service_path = path
                 client.delete_entity(entity_id=entity.id)
@@ -63,10 +67,8 @@ class TestModels(unittest.TestCase):
             client.fiware_service = settings.FIWARE_SERVICE
 
             for path in self.service_paths:
-                try:
-                    client.fiware_service_path = path
-                    entities = client.get_entity_list()
-                    client.update(entities=entities, action_type='delete')
-                except RequestException:
-                    pass
+                header = FiwareHeader(
+                    service=settings.FIWARE_SERVICE,
+                    service_path=path)
+                clear_all(fiware_header=header, cb_url=settings.CB_URL)
             client.close()
