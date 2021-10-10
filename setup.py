@@ -9,7 +9,7 @@ LONG_DESCRIPTION = readme_path.read_text()
 
 INSTALL_REQUIRES = ['aenum',
                     'requests',
-                    'fuzzywuzzy',
+                    'rapidfuzz',
                     'PyYAML',
                     'pandas>=1.2',
                     'datamodel-code-generator>=0.10.2',
