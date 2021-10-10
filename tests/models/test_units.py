@@ -62,3 +62,15 @@ class TestUnitCodes(TestCase):
         for unit in units.values():
             cmdout = unit.json(indent=2)
             #print(cmdout)
+
+    def test_unit_validator(self):
+        """
+        Test if unit hints are given for typos
+        Returns:
+            None
+        """
+        unit_data = self.unit.copy()
+        unit_data['name']['value'] = "celcius"
+        with self.assertRaises(ValueError):
+            Unit(**unit_data)
+

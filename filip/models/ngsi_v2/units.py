@@ -13,7 +13,7 @@ import json
 import logging
 import pandas as pd
 from functools import lru_cache
-from fuzzywuzzy import process
+from rapidfuzz import process
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field, root_validator, validator
 from filip.models.base import NgsiVersion, DataType
@@ -93,7 +93,7 @@ class UnitText(BaseModel):
         if len(units.loc[(units.Name.str.casefold() == value.casefold())]) >= 1:
             return value
         names = units.Name.tolist()
-        suggestions = [item[0] for item in process.extractBests(
+        suggestions = [item[0] for item in process.extract(
             query=value.casefold(),
             choices=names,
             score_cutoff=50,
