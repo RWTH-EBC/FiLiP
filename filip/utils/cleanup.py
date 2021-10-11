@@ -5,13 +5,16 @@ created Oct 08, 2021
 
 @author Thomas Storek
 """
-import functools
 from requests import RequestException
+from typing import Callable
 from filip.models import FiwareHeader
-from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient, QuantumLeapClient
+from filip.clients.ngsi_v2 import \
+    ContextBrokerClient, \
+    IoTAClient, \
+    QuantumLeapClient
 
 
-def clear_cb(url: str, fiware_header: FiwareHeader):
+def clear_context_broker(url: str, fiware_header: FiwareHeader):
     """
     Function deletes all entities, registrations and subscriptions for a
     given fiware header
@@ -44,12 +47,10 @@ def clear_cb(url: str, fiware_header: FiwareHeader):
         client.delete_registration(registration_id=reg.id)
 
 
-def clear_iota(url: str, fiware_header: FiwareHeader):
+def clear_iot_agent(url: str, fiware_header: FiwareHeader):
     """
     Function deletes all device groups and devices for a
     given fiware header
-
-
 
     Args:
         url: Url of the context broker service
@@ -71,7 +72,7 @@ def clear_iota(url: str, fiware_header: FiwareHeader):
         client.delete_device(device_id=device.device_id)
 
 
-def clear_ql(url: str, fiware_header: FiwareHeader):
+def clear_quantumleap(url: str, fiware_header: FiwareHeader):
     """
     Function deletes all data for a given fiware header
     Args:
@@ -81,31 +82,50 @@ def clear_ql(url: str, fiware_header: FiwareHeader):
     Returns:
         None
     """
-    # create client
-    client = QuantumLeapClient(url=url, fiware_header=fiware_header)
+    def handle_emtpy_db_exception(err: RequestException) -> None:
+        """
+        When the database is empty for request quantumleap returns a 404
+        error with a error message. This will be handled here
+        evaluating the empty database error as 'OK'
 
-    # clear data
-    try:
-        for entity in client.get_entities():
-            client.delete_entity(entity_id=entity.entityId,
-                                 entity_type=entity.entityType)
-    except RequestException as err:
+        Args:
+            err: exception raised by delete function
+        """
         if err.response.status_code == 404:
             try:
-                err.response.json()['error'] == 'Not Found'
+                if not err.response.json()['error'] == 'Not Found':
+                    raise
             except KeyError:
                 raise
         else:
             raise
+    # create client
+    client = QuantumLeapClient(url=url, fiware_header=fiware_header)
+
+    # clear data
+    entities = []
+    try:
+        entities = client.get_entities()
+    except RequestException as err:
+        handle_emtpy_db_exception(err)
+
+    # will be executed for all found entities
+    for entity in entities:
+        try:
+            client.delete_entity(entity_id=entity.entityId,
+                                 entity_type=entity.entityType)
+        except RequestException as err:
+            handle_emtpy_db_exception(err)
 
 
 def clear_all(*,
               fiware_header: FiwareHeader,
               cb_url: str = None,
               iota_url: str = None,
-              ql_url: str =  None):
+              ql_url: str = None):
     """
     Clears all services that a url is provided for
+
     Args:
         fiware_header:
         cb_url: url of the context broker service
@@ -113,23 +133,31 @@ def clear_all(*,
         ql_url: url of the QuantumLeap service
 
     Returns:
-
+        None
     """
     if iota_url is not None:
-        clear_iota(url=iota_url, fiware_header=fiware_header)
+        clear_iot_agent(url=iota_url, fiware_header=fiware_header)
     if cb_url is not None:
-        clear_cb(url=cb_url, fiware_header=fiware_header)
+        clear_context_broker(url=cb_url, fiware_header=fiware_header)
     if ql_url is not None:
-        clear_ql(url=ql_url, fiware_header=fiware_header)
+        clear_quantumleap(url=ql_url, fiware_header=fiware_header)
+
 
 def clean_test(*,
                fiware_service: str,
                fiware_servicepath: str,
                cb_url: str = None,
                iota_url: str = None,
-               ql_url: str =  None):
+               ql_url: str = None) -> Callable:
     """
     Decorator to clean up the server before and after the test
+
+    Note:
+        This does not substitute a proper TearDown method, because a failing
+        test will not execute the clean up after the error. Since this would
+        mean an unnecessary error handling. We actually want a test to fail
+        with proper messages.
+
     Args:
         fiware_service: tenant
         fiware_servicepath: tenant path
@@ -138,7 +166,7 @@ def clean_test(*,
         ql_url: url of quantumleap service
 
     Returns:
-
+        Decorator for clean tests
     """
     fiware_header = FiwareHeader(service=fiware_service,
                                  service_path=fiware_servicepath)
@@ -146,12 +174,35 @@ def clean_test(*,
               cb_url=cb_url,
               iota_url=iota_url,
               ql_url=ql_url)
+
     def decorator(func):
+        """
+        Inner decorator function
+
+        Args:
+            func: func to be wrapped
+
+        Returns:
+            Wrapper with wrapped function
+        """
         def wrapper(*args, **kwargs):
+            """
+            Wrapper function for the decorated function
+
+            Args:
+                *args: any args of the wrapped function
+                **kwargs: any kwrags of the wrapped function
+
+            Returns:
+                Wrapped function
+            """
+
             return func(*args, **kwargs)
         return wrapper
+
     clear_all(fiware_header=fiware_header,
               cb_url=cb_url,
               iota_url=iota_url,
               ql_url=ql_url)
+
     return decorator

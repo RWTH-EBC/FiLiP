@@ -4,7 +4,6 @@ Tests for filip.core.models
 import json
 import unittest
 from pydantic import ValidationError
-from requests import RequestException
 from filip.models.base import FiwareHeader
 from filip.clients.ngsi_v2 import ContextBrokerClient
 from filip.models.ngsi_v2.context import ContextEntity

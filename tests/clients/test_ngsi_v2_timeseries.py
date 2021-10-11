@@ -43,10 +43,11 @@ class TestTimeSeries(unittest.TestCase):
             url=settings.CB_URL,
             fiware_header=self.fiware_header)
 
-    def __create_entities(self):
+    @staticmethod
+    def __create_entities():
         def create_attr():
             return {'temperature': {'value': random(),
-                                         'type': 'Number'},
+                                    'type': 'Number'},
                     'humidity': {'value': random(),
                                  'type': 'Number'},
                     'co2': {'value': random(),
@@ -90,6 +91,7 @@ class TestTimeSeries(unittest.TestCase):
                                            subscriptionId="test")
             client.post_subscription(entity_id=entities[0].id)
             client.post_notification(notification_message)
+        time.sleep(1)
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
@@ -126,8 +128,9 @@ class TestTimeSeries(unittest.TestCase):
         Returns:
             None
         """
-        with QuantumLeapClient(url=settings.QL_URL,
-                               fiware_header=self.fiware_header) \
+        with QuantumLeapClient(
+                url=settings.QL_URL,
+                fiware_header=self.fiware_header) \
                 as client:
 
             for i in range(10):
@@ -136,7 +139,7 @@ class TestTimeSeries(unittest.TestCase):
                                                subscriptionId="test")
                 client.post_notification(notification_message)
 
-            time.sleep(0.5)
+            time.sleep(1)
             with self.assertRaises(requests.RequestException):
                 client.get_entity_by_id(entity_id=entities[0].id,
                                         entity_type='MyType')
