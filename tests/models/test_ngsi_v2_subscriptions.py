@@ -114,7 +114,7 @@ class TestSubscriptions(unittest.TestCase):
                     "humidity"
                 ]
             },
-            "expires": "2016-04-05T14:00:00Z",
+            "expires": "2030-04-05T14:00:00Z",
             "throttling": 5
         }
 
@@ -126,10 +126,11 @@ class TestSubscriptions(unittest.TestCase):
                 fiware_header=fiware_header) as client:
             sub_id = client.post_subscription(subscription=sub)
             sub_res = client.get_subscription(subscription_id=sub_id)
-            self.assertEqual(sub.json(exclude={'id', 'status', 'expires'},
-                                      exclude_none=True),
-                             sub_res.json(exclude={'id', 'status', 'expires'},
-                                          exclude_none=True))
+            self.assertEqual(
+                sub.json(exclude={'id', 'status', 'expires'},
+                         exclude_none=True),
+                sub_res.json(exclude={'id', 'status', 'expires'},
+                             exclude_none=True))
 
     def tearDown(self) -> None:
         """
