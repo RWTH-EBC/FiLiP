@@ -137,7 +137,7 @@ class Unit(BaseModel):
         extra = 'ignore'
         allow_population_by_field_name = True
 
-    @root_validator(pre=False)
+    @root_validator(pre=False, allow_reuse=True)
     def check_consistency(cls, values):
         """
         Validate and auto complete unit data based on the UN/CEFACT data
