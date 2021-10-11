@@ -86,19 +86,26 @@ def clear_ql(url: str, fiware_header: FiwareHeader):
     client = QuantumLeapClient(url=url, fiware_header=fiware_header)
 
     # clear data
-    for entity in client.get_entities():
-        try:
-            client.delete_entity(entity_id=entity.entityId,
-                                 entity_type=entity.entityType)
-        except RequestException as err:
-            if err.response.status_code == 404:
-                try:
-                    if not err.response.json()['error'] == 'Not Found':
-                        raise
-                except KeyError:
+    entities = []
+    try:
+        entities = client.get_entities()
+    except RequestException as err:
+        # When the database is empty for request quantumleap returns a 404
+        # error with a error message. This will be handled here
+        # evaluating the empty database error as 'OK'
+        if err.response.status_code == 404:
+            try:
+                if not err.response.json()['error'] == 'Not Found':
                     raise
-            else:
+            except KeyError:
                 raise
+        else:
+            raise
+
+    # will be executed for all found entities
+    for entity in entities:
+        client.delete_entity(entity_id=entity.entityId,
+                             entity_type=entity.entityType)
 
 
 def clear_all(*,
