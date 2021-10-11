@@ -1306,11 +1306,19 @@ class ContextBrokerClient(BaseHttpClient):
             entity_type: Entity type
         Returns:
             bool; True if entity exists
+
+        Raises:
+            RequestException, if any error occurres (e.g: No Connection),
+            except that the entity is not found
         """
         try:
             self.get_entity(entity_id=entity_id, entity_type=entity_type)
-        except requests.RequestException:
+        except requests.RequestException as ex:
+            # couldn't find a better way to extract error code
+            if not str(ex)[0:36] == "404 Client Error: Not Found for url:":
+                raise
             return False
+        
         return True
 
     def patch_entity(self,

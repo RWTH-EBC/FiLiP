@@ -23,7 +23,9 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
     content += "\n\n\n"
     content += "semantic_manager: SemanticManager = SemanticManager("
     content += "\n\t"
-    content += "instance_registry=InstanceRegistry()"
+    content += "instance_registry=InstanceRegistry(),"
+    # content += "\n\t"
+    # content += "default_header= InstanceHeader(),"
     content += "\n"
     content += ")"
 

@@ -1,8 +1,10 @@
+import copy
 from enum import Enum
-from typing import Optional, Dict, TYPE_CHECKING, Type, List
+from typing import Optional, Dict, TYPE_CHECKING, Type, List, Any
 
 import requests
 
+from filip import settings
 from filip.semantics.vocabulary import Individual
 
 from filip.models.ngsi_v2.context import ContextEntity
@@ -23,7 +25,7 @@ class SemanticManager(BaseModel):
     datatype_catalogue: Dict[str, Dict[str, str]] = {}
     individual_catalogue: Dict[str, type] = {}
 
-    _deleted_identifiers: List[InstanceIdentifier]
+    default_header: InstanceHeader = InstanceHeader()
 
     def _get_client(self, instance_header: InstanceHeader):
         if instance_header.fiware_version == FiwareVersion.v2:
@@ -90,7 +92,6 @@ class SemanticManager(BaseModel):
                 loaded_class.add_reference(
                     InstanceIdentifier.parse_raw(identifier_str), prop)
 
-
         return loaded_class
 
     def get_class_by_name(self, class_name:str) -> Type:
@@ -126,7 +127,6 @@ class SemanticManager(BaseModel):
                                 instance.old_state)
             client.close()
 
-
     def load_instance(self, identifier: InstanceIdentifier) -> SemanticClass:
 
         if self.instance_registry.contains(identifier=identifier):
@@ -144,12 +144,15 @@ class SemanticManager(BaseModel):
     def does_instance_exists(self, identifier: InstanceIdentifier) -> bool:
         if self.instance_registry.contains(identifier=identifier):
             return True
-        elif self.instance_registry.instance_was_deleted(identifier):
+        elif self.was_instance_deleted(identifier):
             return False
         else:
             client = self._get_client(identifier.header)
             return client.does_entity_exists(entity_id=identifier.id,
                                              entity_type=identifier.type)
+
+    def was_instance_deleted(self, identifier: InstanceIdentifier) -> bool:
+        return self.instance_registry.instance_was_deleted(identifier)
 
     def get_instance(self, identifier: InstanceIdentifier) -> SemanticClass:
         return self.load_instance(identifier)
@@ -210,6 +213,16 @@ class SemanticManager(BaseModel):
 
         return [self.load_instance(iden) for iden in identifiers]
 
+    def set_default_header(self, header: InstanceHeader):
+        self.default_header = copy.deepcopy(header)
+
+    def get_default_header(self) -> InstanceHeader:
+        """
+        Instance header is read-only, therefore giving back a copy is
+        theoraticaly not needed, but it is cleaner that all instance has an
+        own header object that is not shared
+        """
+        return copy.deepcopy(self.default_header)
 
     def get_datatype(self, datatype_name: str) -> Datatype:
         return Datatype.parse_obj(self.datatype_catalogue[datatype_name])

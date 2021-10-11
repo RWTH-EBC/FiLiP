@@ -5,7 +5,7 @@ from filip.semantics.semantic_manager import SemanticManager
 
 
 semantic_manager: SemanticManager = SemanticManager(
-	instance_registry=InstanceRegistry()
+	instance_registry=InstanceRegistry(),
 )
 
 # ---------CLASSES--------- #

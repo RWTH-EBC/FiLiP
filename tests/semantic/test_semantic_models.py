@@ -1,5 +1,7 @@
+import copy
 import unittest
 
+from filip import settings
 from filip.clients.ngsi_v2 import ContextBrokerClient
 from requests import RequestException
 
@@ -8,7 +10,8 @@ from filip.models.ngsi_v2.context import ContextEntity
 from filip.models import FiwareHeader
 
 from filip.semantics.entity_model_generator import generate_vocabulary_models
-from filip.semantics.semantic_models import InstanceRegistry, SemanticClass
+from filip.semantics.semantic_models import InstanceRegistry, SemanticClass, \
+    InstanceHeader
 from filip.semantics.vocabulary_configurator import VocabularyConfigurator
 
 
@@ -27,15 +30,29 @@ class TestSemanticModels(unittest.TestCase):
 
         generate_vocabulary_models(vocabulary, "./", "models")
 
-    def test_2_individuals(self):
-        from tests.semantic.models import Individual1, Individual2
+    def test_2_default_header(self):
+        from tests.semantic.models import Class1, semantic_manager
+
+        test_header = InstanceHeader(
+            url=settings.CB_URL,
+            service="testing",
+            service_path="/"
+        )
+        semantic_manager.set_default_header(test_header)
+
+        class1 = Class1()
+
+        self.assertEqual(class1.header, test_header)
+
+    def test_3_individuals(self):
+        from tests.semantic.models import Individual1, Individual2, semantic_manager
 
         individual1 = Individual1()
         self.assertTrue(Individual1() == individual1)
         self.assertFalse(Individual2() == individual1)
 
-    def test_3_model_relation_field_validation(self):
-        from models import Class1, Class13, Class2, Class4, Class123, \
+    def test_4_model_relation_field_validation(self):
+        from tests.semantic.models import Class1, Class13, Class2, Class4, Class123, \
             Individual1, semantic_manager, Thing
 
         class1 = Class1(id="12")
@@ -70,8 +87,8 @@ class TestSemanticModels(unittest.TestCase):
 
         # todo test statement cases: min, max,...
 
-    def test_4_model_data_field_validation(self):
-        from models import Class1, Class3, Class2, Class4, Class123, \
+    def test_5_model_data_field_validation(self):
+        from tests.semantic.models import Class1, Class3, Class2, Class4, Class123, \
             Individual1, semantic_manager, Thing
         class3 = Class3()
 
@@ -87,8 +104,8 @@ class TestSemanticModels(unittest.TestCase):
 
         self.assertTrue(2 in Class1().dataProp2)
 
-    def test_5_back_referencing(self):
-        from models import Class1, Class3, Class2, Class4
+    def test_6_back_referencing(self):
+        from tests.semantic.models import Class1, Class3, Class2, Class4
 
         c1 = Class1()
         c2 = Class2()
@@ -113,9 +130,10 @@ class TestSemanticModels(unittest.TestCase):
         del c1.objProp2[0]
         self.assertNotIn(c1.get_identifier(), c2.references)
 
-    def test_6_test_instance_creation_inject(self):
-        from models import Class1, Class13, Class3, Class4, Class123, \
+    def test_7_test_instance_creation_inject(self):
+        from tests.semantic.models import Class1, Class13, Class3, Class4, Class123, \
             Individual1, Gertrude, semantic_manager
+
 
         # clear local state to ensure standard test condition
         self.clear_registry()
@@ -133,8 +151,8 @@ class TestSemanticModels(unittest.TestCase):
         class1_ = Class1(id="1")
         self.assertTrue(class1_ == class13.objProp3[0])
 
-    def test_7_test_saving_and_loading(self):
-        from models import Class1, Class13, Class3, Class4, Class123, \
+    def test_8_test_saving_and_loading(self):
+        from tests.semantic.models import Class1, Class13, Class3, Class4, Class123, \
             Individual1, Gertrude, semantic_manager
 
         # clear local state to ensure standard test condition
@@ -174,18 +192,18 @@ class TestSemanticModels(unittest.TestCase):
         self.assertTrue(class13.get_identifier() in
                          semantic_manager.instance_registry._registry)
 
-    def test_8_deleting(self):
-        from models import Class1, Class13, Class3, Class4, Class123, \
+    def test_9_deleting(self):
+        from tests.semantic.models import Class1, Class13, Class3, Class4, Class123, \
             Individual1, Gertrude, semantic_manager
 
         # clear local state to ensure standard test condition
         self.clear_registry()
 
-
         # Test 1: Local deletion
 
         # create classes
         class13 = Class13(id="13")
+
         class1 = Class1(id="1")
         class13.objProp3.append(class1)
 
@@ -194,6 +212,7 @@ class TestSemanticModels(unittest.TestCase):
         self.assertFalse(str(class13.references) == str(class1.references))
         self.assertTrue(len(class13.references) == 0)
         self.assertTrue(len(class1.references) == 1)
+
 
         # test reference deletion
         class1.delete()
@@ -218,6 +237,7 @@ class TestSemanticModels(unittest.TestCase):
 
         semantic_manager.save_state(assert_validity=False)
         self.clear_registry()
+        self.assertTrue(len(semantic_manager.instance_registry.get_all()) == 0)
 
         # class 1 no longer exists in fiware, and the fiware entry of class13
         # should have no more reference to it
@@ -235,31 +255,58 @@ class TestSemanticModels(unittest.TestCase):
         class13.dataProp1.append("Test")
         semantic_manager.save_state(assert_validity=False)
 
-
         class13.delete()
         class13_ = Class13(id="13")
         self.assertTrue(len(class13_.dataProp1.get_all()) == 0)
 
+    def test__10_field_set_methode(self):
+        from tests.semantic.models import Class1, Class13, Class3, Class4, Class123, \
+            Individual1, Gertrude, semantic_manager
 
+        # clear local state to ensure standard test condition
+        self.clear_registry()
+
+        class13 = Class13(id="13")
+        class1 = Class1(id="1")
+        class13.objProp3.append(class1)
+
+        class13.dataProp1.append(1)
+        class13.dataProp1.append(2)
+
+        class13.dataProp1.set([9, 8, 7, 6])
+        c123 = Class123(id=2)
+        c3 = Class3()
+        class13.objProp3.set([c3, c123])
+        self.assertTrue(class13.dataProp1._list == [9, 8, 7, 6])
+        self.assertTrue(class13.objProp3._list == [c3.get_identifier(),
+                                                   c123.get_identifier()])
 
     def clear_registry(self):
-        from models import semantic_manager
+        from tests.semantic.models import semantic_manager
         semantic_manager.instance_registry._registry.clear()
+        semantic_manager.instance_registry._deleted_identifiers.clear()
 
+    # def test__11_test(self):
+    #     from tests.semantic.models import semantic_manager
+    #     with ContextBrokerClient(
+    #             fiware_header=semantic_manager.default_header.get_fiware_header()) as client:
+    #
+    #         client.does_entity_exists(entity_id="231", entity_type="13124")
 
     def tearDown(self) -> None:
         """
         Cleanup test server
         """
-        client = ContextBrokerClient()
+        from tests.semantic.models import semantic_manager
 
-        try:
-            entities = [ContextEntity(id=entity.id, type=entity.type) for
-                        entity in client.get_entity_list()]
-            client.update(entities=entities, action_type='delete')
-        except RequestException:
-            pass
+        self.clear_registry()
 
-        client.close()
+        with ContextBrokerClient(
+                fiware_header=semantic_manager.
+                default_header.get_fiware_header()) as client:
+            for entity in client.get_entity_list():
+                client.delete_entity(entity_id=entity.id,
+                                     entity_type=entity.type)
+
 
 

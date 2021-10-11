@@ -255,9 +255,9 @@ class Field(collections.MutableSequence):
     """
 
     _rules: List[Tuple[str, List[List[str]]]]
-    """rule formated for machine readability """
+    """rule formatted for machine readability """
     rule: str
-    """rule formated for human readability """
+    """rule formatted for human readability """
     name: str
     """Name of the Field, corresponds to the property name that it has in the 
     SemanticClass"""
@@ -380,6 +380,23 @@ class Field(collections.MutableSequence):
     def __setitem__(self, i, v): self._list[i] = v
     def insert(self, i, v): self._list.insert(i, v)
 
+    def set(self, values: List):
+        """
+        Set the values of the field equal to the given list
+
+        Args:
+            values: List of values fitting for the field
+
+        Returns:
+            None
+        """
+        self.clear()
+
+        i = 0
+        for v in values:
+            self.insert(i, v)
+            i +=1
+
     def __str__(self):
         """
         Get Field in a nice readable way
@@ -490,8 +507,10 @@ class RelationField(Field):
     def __delitem__(self, i):
         """ see class description"""
         if isinstance(self._list[i], InstanceIdentifier):
-            v: SemanticClass = self._semantic_manager.get_instance(self._list[i])
-            v.remove_reference(self._class_identifier, self.name)
+            if not self._semantic_manager.was_instance_deleted(self._list[i]):
+                v: SemanticClass = self._semantic_manager.get_instance(self._list[i])
+
+                v.remove_reference(self._class_identifier, self.name)
             del self._list[i]
         else:
             del self._list[i]
@@ -591,7 +610,8 @@ class SemanticClass(BaseModel):
         else:
             instance_id = kwargs['id'] if 'id' in kwargs else ""
             header = kwargs['header'] \
-                if 'header' in kwargs else InstanceHeader()
+                if 'header' in kwargs else \
+                semantic_manager_.get_default_header()
 
         if not instance_id == "" and not enforce_new:
 
@@ -614,8 +634,8 @@ class SemanticClass(BaseModel):
         else:
             instance_id_ = kwargs['id'] if 'id' in kwargs \
                                         else str(uuid.uuid4())
-            header_ = kwargs['header'] if 'header' in kwargs \
-                                        else InstanceHeader()
+            header_ = kwargs['header'] if 'header' in kwargs else \
+                semantic_manager_.get_default_header()
 
         old_state_ = kwargs['old_state'] if 'old_state' in kwargs else None
 
@@ -686,12 +706,17 @@ class SemanticClass(BaseModel):
         if assert_no_references:
             assert len(self.references) == 0
 
+        # remove all notes in other instances that they are referenced
+        # clear all field data, this automatically handles the references
+        for field in self.get_fields():
+            field.clear()
+
         # remove all references in other instances
-        references = self.references.items()
-        for identifier, field_names in  self.references.copy().items():
+        for identifier, field_names in self.references.copy().items():
             for field_name in field_names:
-                instance = self.semantic_manager.get_instance(identifier)
-                instance.get_field_by_name(field_name).remove(self)
+                if not self.semantic_manager.was_instance_deleted(identifier):
+                    instance = self.semantic_manager.get_instance(identifier)
+                    instance.get_field_by_name(field_name).remove(self)
 
         self.semantic_manager.instance_registry.delete(self)
 
@@ -841,6 +866,9 @@ class SemanticClass(BaseModel):
     #                 print('\t' * (indent + 1) + str(value))
     #     return pretty(self.dict(exclude={'semantic_manager', 'old_state'}),
     #                       indent=0)
+
+    def __str__(self):
+        return str(self.dict(exclude={'semantic_manager', 'old_state'}))
 
 
 class SemanticIndividual(BaseModel):
