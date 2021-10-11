@@ -85,18 +85,19 @@ def clear_ql(url: str, fiware_header: FiwareHeader):
     client = QuantumLeapClient(url=url, fiware_header=fiware_header)
 
     # clear data
-    try:
-        for entity in client.get_entities():
+    for entity in client.get_entities():
+        try:
             client.delete_entity(entity_id=entity.entityId,
                                  entity_type=entity.entityType)
-    except RequestException as err:
-        if err.response.status_code == 404:
-            try:
-                err.response.json()['error'] == 'Not Found'
-            except KeyError:
+        except RequestException as err:
+            if err.response.status_code == 404:
+                try:
+                    if not err.response.json()['error'] == 'Not Found':
+                        raise
+                except KeyError:
+                    raise
+            else:
                 raise
-        else:
-            raise
 
 
 def clear_all(*,
