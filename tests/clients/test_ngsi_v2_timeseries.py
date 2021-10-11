@@ -128,8 +128,9 @@ class TestTimeSeries(unittest.TestCase):
         Returns:
             None
         """
-        with QuantumLeapClient(url=settings.QL_URL,
-                               fiware_header=self.fiware_header) \
+        with QuantumLeapClient(
+                url=settings.QL_URL,
+                fiware_header=self.fiware_header) \
                 as client:
 
             for i in range(10):
@@ -138,7 +139,7 @@ class TestTimeSeries(unittest.TestCase):
                                                subscriptionId="test")
                 client.post_notification(notification_message)
 
-            time.sleep(0.5)
+            time.sleep(1)
             with self.assertRaises(requests.RequestException):
                 client.get_entity_by_id(entity_id=entities[0].id,
                                         entity_type='MyType')
