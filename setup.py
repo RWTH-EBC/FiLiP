@@ -40,7 +40,7 @@ setuptools.setup(
                  'Programming Language :: Python :: 3.8',
                  "License :: OSI Approve :: BSD 3-Clause License"],
     keywords=['iot', 'fiware', 'semantic'],
-    packages=setuptools.find_packages(exclude=['img']),
+    packages=setuptools.find_packages(exclude=['tests','tests.*','img']),
     setup_requires=SETUP_REQUIRES,
     install_requires=INSTALL_REQUIRES,
     python_requires=">=3.7",

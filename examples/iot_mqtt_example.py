@@ -31,7 +31,7 @@ logger = logging.getLogger('filip-iot-example')
 # Please, enter your URLs here!
 CB_URL = "http://yourHost:yourPort"
 IOTA_URL = "http://yourHost:yourPort"
-MQTT_BROKER_URL = "http://yourHost:yourPort"
+MQTT_BROKER_URL = "//yourHost:yourPort"
 DEVICE_APIKEY = 'filip-iot-example-device'
 SERVICE_GROUP_APIKEY= 'filip-iot-example-service-group'
 FIWARE_SERVICE = 'filip'
