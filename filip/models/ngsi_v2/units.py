@@ -60,7 +60,7 @@ class UnitCode(BaseModel):
                        min_length=2,
                        max_length=3)
 
-    @validator('value')
+    @validator('value', allow_reuse=True)
     def validate_code(cls, value):
         units = load_units()
         if len(units.loc[units.CommonCode == value.upper()]) == 1:
@@ -86,7 +86,7 @@ class UnitText(BaseModel):
                                    "spelling in singular form, "
                                    "e.g. 'newton second per metre'")
 
-    @validator('value')
+    @validator('value', allow_reuse=True)
     def validate_text(cls, value):
         units = load_units()
 
@@ -170,11 +170,12 @@ class Unit(BaseModel):
             idx = units.index[(units.Name == name)]
             if idx.empty:
                 names = units.Name.tolist()
-                suggestions = [item[0] for item in process.extractBests(
+                suggestions = [item[0] for item in process.extract(
                     query=name.casefold(),
                     choices=names,
                     score_cutoff=50,
                     limit=5)]
+
                 raise ValueError(f"Invalid 'name' for unit! '{name}' \n "
                                  f"Did you mean one of the following? \n "
                                  f"{suggestions}")
@@ -240,7 +241,7 @@ class Units:
                                 (self.units.Name == item.casefold()))]
         if idx.empty:
             names = self.units.Name.tolist()
-            suggestions = [item[0] for item in process.extractBests(
+            suggestions = [item[0] for item in process.extract(
                 query=item.casefold(),
                 choices=names,
                 score_cutoff=50,
