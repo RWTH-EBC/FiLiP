@@ -43,10 +43,11 @@ class TestTimeSeries(unittest.TestCase):
             url=settings.CB_URL,
             fiware_header=self.fiware_header)
 
-    def __create_entities(self):
+    @staticmethod
+    def __create_entities():
         def create_attr():
             return {'temperature': {'value': random(),
-                                         'type': 'Number'},
+                                    'type': 'Number'},
                     'humidity': {'value': random(),
                                  'type': 'Number'},
                     'co2': {'value': random(),
@@ -90,6 +91,7 @@ class TestTimeSeries(unittest.TestCase):
                                            subscriptionId="test")
             client.post_subscription(entity_id=entities[0].id)
             client.post_notification(notification_message)
+        time.sleep(1)
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,

@@ -14,7 +14,7 @@ from filip.clients.ngsi_v2 import \
     QuantumLeapClient
 
 
-def clear_cb(url: str, fiware_header: FiwareHeader):
+def clear_context_broker(url: str, fiware_header: FiwareHeader):
     """
     Function deletes all entities, registrations and subscriptions for a
     given fiware header
@@ -47,7 +47,7 @@ def clear_cb(url: str, fiware_header: FiwareHeader):
         client.delete_registration(registration_id=reg.id)
 
 
-def clear_iota(url: str, fiware_header: FiwareHeader):
+def clear_iot_agent(url: str, fiware_header: FiwareHeader):
     """
     Function deletes all device groups and devices for a
     given fiware header
@@ -72,7 +72,7 @@ def clear_iota(url: str, fiware_header: FiwareHeader):
         client.delete_device(device_id=device.device_id)
 
 
-def clear_ql(url: str, fiware_header: FiwareHeader):
+def clear_quantumleap(url: str, fiware_header: FiwareHeader):
     """
     Function deletes all data for a given fiware header
     Args:
@@ -82,17 +82,15 @@ def clear_ql(url: str, fiware_header: FiwareHeader):
     Returns:
         None
     """
-    # create client
-    client = QuantumLeapClient(url=url, fiware_header=fiware_header)
+    def handle_emtpy_db_exception(err: RequestException) -> None:
+        """
+        When the database is empty for request quantumleap returns a 404
+        error with a error message. This will be handled here
+        evaluating the empty database error as 'OK'
 
-    # clear data
-    entities = []
-    try:
-        entities = client.get_entities()
-    except RequestException as err:
-        # When the database is empty for request quantumleap returns a 404
-        # error with a error message. This will be handled here
-        # evaluating the empty database error as 'OK'
+        Args:
+            err: exception raised by delete function
+        """
         if err.response.status_code == 404:
             try:
                 if not err.response.json()['error'] == 'Not Found':
@@ -101,11 +99,23 @@ def clear_ql(url: str, fiware_header: FiwareHeader):
                 raise
         else:
             raise
+    # create client
+    client = QuantumLeapClient(url=url, fiware_header=fiware_header)
+
+    # clear data
+    entities = []
+    try:
+        entities = client.get_entities()
+    except RequestException as err:
+        handle_emtpy_db_exception(err)
 
     # will be executed for all found entities
     for entity in entities:
-        client.delete_entity(entity_id=entity.entityId,
-                             entity_type=entity.entityType)
+        try:
+            client.delete_entity(entity_id=entity.entityId,
+                                 entity_type=entity.entityType)
+        except RequestException as err:
+            handle_emtpy_db_exception(err)
 
 
 def clear_all(*,
@@ -126,11 +136,11 @@ def clear_all(*,
         None
     """
     if iota_url is not None:
-        clear_iota(url=iota_url, fiware_header=fiware_header)
+        clear_iot_agent(url=iota_url, fiware_header=fiware_header)
     if cb_url is not None:
-        clear_cb(url=cb_url, fiware_header=fiware_header)
+        clear_context_broker(url=cb_url, fiware_header=fiware_header)
     if ql_url is not None:
-        clear_ql(url=ql_url, fiware_header=fiware_header)
+        clear_quantumleap(url=ql_url, fiware_header=fiware_header)
 
 
 def clean_test(*,
