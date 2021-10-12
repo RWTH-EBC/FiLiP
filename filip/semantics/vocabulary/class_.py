@@ -2,6 +2,8 @@
 from . import Entity
 from typing import List, TYPE_CHECKING, Dict, Union
 
+from .data_property import DataFieldType
+
 if TYPE_CHECKING:
     from . import CombinedObjectRelation, CombinedDataRelation, \
         CombinedRelation, Relation, Vocabulary
@@ -23,12 +25,6 @@ class Class(Entity):
     # while it is slightly faster than the indirect
     #        loading this is mostly a legacy style.
 
-    _is_agent_class: bool = False
-    """Stating that this class is an node_agent_class, each instance of this 
-    class will be a node agent"""
-    _is_iot_class: bool = False
-    """Stating that this class is an device_class, each instance of this 
-    class will represent a physical IoT device"""
 
     # The objects whose ids/iris are listed here can be looked up in the
     # vocabulary of this class
@@ -426,34 +422,12 @@ class Class(Entity):
 
         return res
 
-    def _set_as_device_class(self, is_device_class: bool,
-                             vocabulary: 'Vocabulary'):
-
-        if not is_device_class:
-            for ancestor_iri in self.ancestor_class_iris:
-                ancestor = vocabulary.get_class_by_iri(ancestor_iri)
-                if ancestor._is_iot_class:
-                    is_device_class = True
-
-        self._is_iot_class = is_device_class
-
-        for child_iri in self.child_class_iris:
-            child = vocabulary.get_class_by_iri(child_iri)
-            child._set_as_device_class(is_device_class, vocabulary)
-
-    def set_as_device_class(self, is_device_class: bool,
-                            vocabulary: 'Vocabulary'):
-        if not is_device_class:
-            for ancestor_iri in self.ancestor_class_iris:
-                ancestor = vocabulary.get_class_by_iri(ancestor_iri)
-                assert not ancestor._is_iot_class, \
-                f"Can not unset this class as device class, as its ancestor " \
-                f"{ancestor.get_label()} is a device class"
-
-        self._is_iot_class = is_device_class
-        for child_iri in self.child_class_iris:
-            child = vocabulary.get_class_by_iri(child_iri)
-            child._set_as_device_class(is_device_class, vocabulary)
-
-    class Config:
-        underscore_attrs_are_private = True
+    def is_iot_class(self, vocabulary: 'Vocabulary') -> bool:
+        """
+        A class is an iot/device class if it contains one CDR, where the
+        relation is marked as a device relation: DeviceAttribute/Command
+        """
+        for cdr_id in self.combined_data_relation_ids:
+            cdr = vocabulary.get_combined_data_relation_by_id(cdr_id)
+            prop = vocabulary.get_data_property(cdr.property_iri)
+            return not prop.field_type == DataFieldType.simple

@@ -5,6 +5,7 @@ import json
 import unittest
 
 from filip.semantics.vocabulary import Vocabulary
+from filip.semantics.vocabulary.data_property import DataFieldType
 from filip.semantics.vocabulary_configurator import VocabularyConfigurator
 
 
@@ -143,47 +144,34 @@ class TestModels(unittest.TestCase):
             "http://www.semanticweb.org/redin/ontologies/2020/11/untitled"
             "-ontology-25#Class123")
 
-        class_thing.set_as_device_class(True, vocabulary)
+        data_prop_1 = vocabulary.get_data_property(
+            "http://www.semanticweb.org/redin/ontologies/2020/11/untitled"
+            "-ontology-25#dataProp1")
+        data_prop_2 = vocabulary.get_data_property(
+            "http://www.semanticweb.org/redin/ontologies/2020/11/untitled"
+            "-ontology-25#dataProp2")
 
-        self.assertTrue(class_thing._is_iot_class)
-        self.assertTrue(class_1._is_iot_class)
-        self.assertTrue(class_2._is_iot_class)
-        self.assertTrue(class_3._is_iot_class)
-        self.assertTrue(class_123._is_iot_class)
+        self.assertFalse(class_thing.is_iot_class(vocabulary))
+        self.assertFalse(class_1.is_iot_class(vocabulary))
+        self.assertFalse(class_2.is_iot_class(vocabulary))
+        self.assertFalse(class_3.is_iot_class(vocabulary))
+        self.assertFalse(class_123.is_iot_class(vocabulary))
 
-        self.assertRaises(AssertionError, class_1.set_as_device_class,
-                          False, vocabulary)
-        self.assertRaises(AssertionError, class_123.set_as_device_class,
-                          False, vocabulary)
+        data_prop_1.field_type = DataFieldType.command
 
-        class_thing.set_as_device_class(False, vocabulary)
-        self.assertFalse(class_thing._is_iot_class)
-        self.assertFalse(class_1._is_iot_class)
-        self.assertFalse(class_2._is_iot_class)
-        self.assertFalse(class_3._is_iot_class)
-        self.assertFalse(class_123._is_iot_class)
+        self.assertFalse(class_thing.is_iot_class(vocabulary))
+        self.assertFalse(class_1.is_iot_class(vocabulary))
+        self.assertFalse(class_2.is_iot_class(vocabulary))
+        self.assertTrue(class_3.is_iot_class(vocabulary))
+        self.assertTrue(class_123.is_iot_class(vocabulary))
 
-        class_1.set_as_device_class(True, vocabulary)
-        self.assertFalse(class_thing._is_iot_class)
-        self.assertTrue(class_1._is_iot_class)
-        self.assertFalse(class_2._is_iot_class)
-        self.assertFalse(class_3._is_iot_class)
-        self.assertTrue(class_123._is_iot_class)
+        data_prop_2.field_type = DataFieldType.device_attribute
 
-        class_2.set_as_device_class(True, vocabulary)
-        self.assertFalse(class_thing._is_iot_class)
-        self.assertTrue(class_1._is_iot_class)
-        self.assertTrue(class_2._is_iot_class)
-        self.assertFalse(class_3._is_iot_class)
-        self.assertTrue(class_123._is_iot_class)
-
-        class_1.set_as_device_class(False, vocabulary)
-        self.assertFalse(class_thing._is_iot_class)
-        self.assertFalse(class_1._is_iot_class)
-        self.assertTrue(class_2._is_iot_class)
-        self.assertFalse(class_3._is_iot_class)
-        self.assertTrue(class_123._is_iot_class)
-
+        self.assertFalse(class_thing.is_iot_class(vocabulary))
+        self.assertTrue(class_1.is_iot_class(vocabulary))
+        self.assertFalse(class_2.is_iot_class(vocabulary))
+        self.assertTrue(class_3.is_iot_class(vocabulary))
+        self.assertTrue(class_123.is_iot_class(vocabulary))
 
     def tearDown(self) -> None:
         pass
