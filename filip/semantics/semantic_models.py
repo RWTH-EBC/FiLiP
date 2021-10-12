@@ -78,89 +78,6 @@ class InstanceIdentifier(BaseModel):
         frozen = True
 
 
-class InstanceRegistry(BaseModel):
-    """
-    Holds all the references to the local SemanticClass instances.
-    The instance registry is a global object, that is directly inject in the
-    SemanticClass constructor over the SemanticManager
-    """
-    _registry: Dict[InstanceIdentifier, 'SemanticClass'] = {}
-    """ Dict of the references to the local SemanticClass instances. 
-        Instances are saved with their identifier as key """
-
-    _deleted_identifiers: List[InstanceIdentifier] = []
-
-    def delete(self, instance: 'SemanticClass'):
-        """
-
-        Raises:
-           KeyError, if identifier unknown
-        """
-        identifier = instance.get_identifier()
-        if not self.contains(identifier):
-            raise KeyError(f"Identifier {identifier} unknown, "
-                           f"can not delete")
-
-        # If instance was loaded from Fiware it has an old_state.
-        # if that is the case, we need to note that we have deleted the instance
-        # to delete it on save, and do not load it again from Fiware
-
-        if instance.old_state is not None:
-            self._deleted_identifiers.append(identifier)
-
-        del self._registry[identifier]
-
-    def instance_was_deleted(self, identifier: InstanceIdentifier):
-        return identifier in self._deleted_identifiers
-
-    def register(self, instance: 'SemanticClass'):
-        """
-        Register a new instance of a SemanticClass in the registry
-
-        Args:
-            instance(SemanticClass):  Instance to be registered
-        Raises:
-            AttributeError: if Instance is already registered
-        """
-        identifier = instance.get_identifier()
-
-        if identifier in self._registry:
-            raise AttributeError('Instance already exists')
-        else:
-            self._registry[identifier] = instance
-
-    def get(self, identifier: InstanceIdentifier) -> 'SemanticClass':
-        """Retrieve an registered instance with its identifier
-
-        Args:
-            identifier(InstanceIdentifier): identifier belonging to instance
-        Returns:
-            SemanticClass
-        """
-        return self._registry[identifier]
-
-    def contains(self, identifier: InstanceIdentifier) -> bool:
-        """Test if an identifier is registered
-
-        Args:
-            identifier(InstanceIdentifier): identifier belonging to instance
-        Returns:
-            bool, True if registered
-        """
-        return identifier in self._registry
-
-    def get_all(self) -> List['SemanticClass']:
-        """Get all registered instances
-
-        Returns:
-            List[SemanticClass]
-        """
-        return list(self._registry.values())
-
-    def get_all_deleted_identifiers(self) -> List['InstanceIdentifier']:
-        return self._deleted_identifiers
-
-
 class Datatype(BaseModel):
     """
     Model of a vocabulary/ontology Datatype used to validate assignments in
@@ -244,9 +161,206 @@ class Datatype(BaseModel):
         return True
 
 
+class DeviceProperty(BaseModel):
+    name: str
+    _instance_identifier: Optional[InstanceIdentifier] = None
+    _semantic_manager: Optional['SemanticManager'] = None
+    _field_name: Optional[str] = None
+
+    def _get_instance(self) -> 'SemanticClass':
+        return self._semantic_manager.get_instance(self._instance_identifier)
+
+
+class Command(DeviceProperty):
+
+    def send(self):
+        pass
+
+    def get_status_info(self):
+        pass
+
+    def get_status_result(self):
+        pass
+
+
+class DeviceAttributeType(str, Enum):
+    lazy = "lazy"
+    active = "active"
+
+
+class DeviceAttribute(DeviceProperty):
+    attribute_type: DeviceAttributeType
+
+    def get_value(self):
+        pass
+
+    def get_full_field_name(self) -> str:
+        return f'{self._get_instance()}_{self.name}'
+
+
 class Field(collections.MutableSequence):
     """
     A Field corresponds to a CombinedRelation for a class from the vocabulary.
+    It itself is a _list, that is enhanced with methods to provide validation
+    of the values according to the rules stated in the vocabulary
+
+    The fields of a class are predefined. A field can contain standard values
+    on init
+    """
+
+    name: str
+    """Name of the Field, corresponds to the property name that it has in the 
+    SemanticClass"""
+
+    _semantic_manager: 'SemanticManager'
+    """Reference to the global SemanticManager"""
+
+    _instance_identifier: InstanceIdentifier
+    """Identifier of instance, that has this field as property"""
+
+    def __init__(self,  name, semantic_manager):
+        self._semantic_manager = semantic_manager
+        super().__init__()
+        self.name = name
+        self._list = list()
+
+    def is_valid(self) -> bool:
+        pass
+
+    def build_context_attributes(self) -> List[NamedContextAttribute]:
+        """
+        Convert the field to a NamedContextAttribute that can eb added to a
+        ContextEntity
+
+        Returns:
+            NamedContextAttribute
+        """
+        pass
+
+    # List methods
+    def __len__(self): return len(self._list)
+    def __getitem__(self, i): return self._list[i]
+    def __delitem__(self, i): del self._list[i]
+    def __setitem__(self, i, v): self._list[i] = v
+    def insert(self, i, v): self._list.insert(i, v)
+
+    def set(self, values: List):
+        """
+        Set the values of the field equal to the given list
+
+        Args:
+            values: List of values fitting for the field
+
+        Returns:
+            None
+        """
+        self.clear()
+
+        i = 0
+        for v in values:
+            self.insert(i, v)
+            i += 1
+
+    def __str__(self):
+        """
+        Get Field in a nice readable way
+
+        Returns:
+            str
+        """
+        result = f'Field: {self.name},\n\tvalues: ['
+        values = self.get_all()
+        for value in values:
+            result += f'{value}, '
+        if len(values) > 0:
+            result = result[:-2]
+        return result
+
+    def get_all(self):
+        """
+        Get all values of the field
+        """
+        return self._list
+
+
+class DeviceField(Field):
+
+    internal_type: type = DeviceProperty
+
+    def is_valid(self) -> bool:
+        for value in self.get_all():
+            if not isinstance(value, self.internal_type):
+                return False
+        return True
+
+    def _pre_set(self, v):
+        assert isinstance(v, self.internal_type)
+        assert v._instance_identifier is None, "DeviceProperty can only " \
+                                               "belong to one device instance"
+        v._instance_identifier = self._instance_identifier
+        v._semantic_manager = self._semantic_manager
+        v._field_name = self.name
+
+    def __setitem__(self, i, v):
+        self._pre_set(v)
+        self._list[i] = v
+
+    def insert(self, i, v):
+        self._pre_set(v)
+        self._list.insert(i, v)
+
+    def __delitem__(self, i):
+        v = self._list[i]
+        v._instance_identifier = None
+        v._semantic_manager = None
+        v.name = None
+        del self._list[i]
+
+
+class CommandField(DeviceField):
+
+    internal_type = Command
+
+    def get_all(self) -> List[Command]:
+        return super().get_all()
+
+    def build_context_attributes(self) -> List[NamedContextAttribute]:
+        """
+        Convert the field to a NamedContextAttribute that can eb added to a
+        ContextEntity
+
+        Returns:
+            NamedContextAttribute
+        """
+        return [NamedContextAttribute(
+            name=self.name,
+            type=DataType.STRUCTUREDVALUE,
+            value=[v for v in self.get_all()]
+        )]
+
+
+class DeviceAttributeField(DeviceField):
+    internal_type = DeviceAttribute
+
+    def get_all(self) -> List[DeviceAttribute]:
+        return super().get_all()
+
+    def build_context_attribute(self) -> List[NamedContextAttribute]:
+
+        res = []
+        for attribute in self.get_all():
+            res.append(NamedContextAttribute(
+                name=attribute.get_full_field_name(),
+                type=DataType.STRUCTUREDVALUE,
+                value=""
+            ))
+        return res
+
+
+class RuleField(Field):
+    """
+    A RuleField corresponds to a CombinedRelation for a class from the
+    vocabulary.
     It itself is a _list, that is enhanced with methods to provide validation
     of the values according to the rules stated in the vocabulary
 
@@ -258,19 +372,11 @@ class Field(collections.MutableSequence):
     """rule formatted for machine readability """
     rule: str
     """rule formatted for human readability """
-    name: str
-    """Name of the Field, corresponds to the property name that it has in the 
-    SemanticClass"""
-
-    _semantic_manager: 'SemanticManager'
-    """Reference to the global SemanticManager"""
 
     def __init__(self, rule, name, semantic_manager):
         self._semantic_manager = semantic_manager
-        super().__init__()
+        super().__init__(name, semantic_manager)
         self.rule = rule
-        self.name = name
-        self._list = list()
 
     def is_valid(self) -> bool:
         """
@@ -363,39 +469,12 @@ class Field(collections.MutableSequence):
         """
         pass
 
-    def build_context_attribute(self) -> NamedContextAttribute:
-        """
-        Convert the field to a NamedContextAttribute that can eb added to a
-        ContextEntity
-
-        Returns:
-            NamedContextAttribute
-        """
-        pass
-
     # List methods
     def __len__(self): return len(self._list)
     def __getitem__(self, i): return self._list[i]
     def __delitem__(self, i): del self._list[i]
     def __setitem__(self, i, v): self._list[i] = v
     def insert(self, i, v): self._list.insert(i, v)
-
-    def set(self, values: List):
-        """
-        Set the values of the field equal to the given list
-
-        Args:
-            values: List of values fitting for the field
-
-        Returns:
-            None
-        """
-        self.clear()
-
-        i = 0
-        for v in values:
-            self.insert(i, v)
-            i +=1
 
     def __str__(self):
         """
@@ -404,12 +483,7 @@ class Field(collections.MutableSequence):
         Returns:
             str
         """
-        result = f'Field: {self.name},\n\tvalues: ['
-        values = self.get_all()
-        for value in values:
-            result += f'{value}, '
-        if len(values)>0:
-            result = result[:-2]
+        result = super(RuleField, self).__str__()
         result += f'],\n\trule: ({self.rule})'
         return result
 
@@ -420,7 +494,7 @@ class Field(collections.MutableSequence):
         return self._list
 
 
-class DataField(Field):
+class DataField(RuleField):
     """
     Field for CombinedDataRelation
     A Field that contains literal values: str, int, ...
@@ -430,18 +504,18 @@ class DataField(Field):
         datatype = self._semantic_manager.get_datatype(rule_value)
         return datatype.value_is_valid(value)
 
-    def build_context_attribute(self) -> NamedContextAttribute:
-        return NamedContextAttribute(
+    def build_context_attributes(self) -> List[NamedContextAttribute]:
+        return [NamedContextAttribute(
             name=self.name,
             type=DataType.STRUCTUREDVALUE,
             value=[v for v in self.get_all()]
-        )
+        )]
 
     def __str__(self):
         return 'Data'+super().__str__()
 
 
-class RelationField(Field):
+class RelationField(RuleField):
     """
        Field for CombinedObjectRelation
        A Field that contains links to other instances of SemanticClasses,
@@ -456,10 +530,6 @@ class RelationField(Field):
     """
     _rules: List[Tuple[str, List[List[Type]]]] = []
 
-    _class_identifier: InstanceIdentifier
-    """Identifier of class, that has this field as property. Needed for 
-    back referencing (Needed for deletion fo values)"""
-
     def _value_is_valid(self, value, rule_value: type) -> bool:
         if isinstance(value, SemanticClass):
             return isinstance(value, rule_value)
@@ -468,7 +538,7 @@ class RelationField(Field):
         else:
             return False
 
-    def build_context_attribute(self) -> NamedContextAttribute:
+    def build_context_attributes(self) -> List[NamedContextAttribute]:
         values = []
         for v in self.get_all():
             if isinstance(v, InstanceIdentifier):
@@ -476,11 +546,11 @@ class RelationField(Field):
             else:
                 values.append(v)
 
-        return NamedContextAttribute(
+        return [NamedContextAttribute(
             name=self.name,
             type=DataType.RELATIONSHIP,
             value=values
-        )
+        )]
 
     def __getitem__(self, i) -> Union['SemanticClass', 'SemanticIndividual']:
         v = self._list[i]
@@ -497,7 +567,7 @@ class RelationField(Field):
         """
         if isinstance(v, SemanticClass):
             self._list[i] = v.get_identifier()
-            v.add_reference(self._class_identifier, self.name)
+            v.add_reference(self._instance_identifier, self.name)
         elif isinstance(v, SemanticIndividual):
             self._list[i] = v.get_name()
         else:
@@ -510,7 +580,7 @@ class RelationField(Field):
             if not self._semantic_manager.was_instance_deleted(self._list[i]):
                 v: SemanticClass = self._semantic_manager.get_instance(self._list[i])
 
-                v.remove_reference(self._class_identifier, self.name)
+                v.remove_reference(self._instance_identifier, self.name)
             del self._list[i]
         else:
             del self._list[i]
@@ -525,7 +595,7 @@ class RelationField(Field):
         if isinstance(v, SemanticClass):
             identifier = v.get_identifier()
             self._list.insert(i, identifier)
-            v.add_reference(self._class_identifier, self.name)
+            v.add_reference(self._instance_identifier, self.name)
         elif isinstance(v, SemanticIndividual):
             self._list.insert(i, v.get_name())
         else:
@@ -685,7 +755,7 @@ class SemanticClass(BaseModel):
 
     def get_type(self) -> str:
         """
-        Get type as used in Fiware, equal to class name
+        Get internal_type as used in Fiware, equal to class name
 
         Returns:
             str
@@ -817,7 +887,7 @@ class SemanticClass(BaseModel):
         )
 
         for field in self.get_fields():
-            entity.add_attributes([field.build_context_attribute()])
+            entity.add_attributes(field.build_context_attributes())
 
         reference_str_dict = \
             {identifier.json(): value
@@ -831,7 +901,6 @@ class SemanticClass(BaseModel):
                 value=reference_str_dict
             )
         ])
-
 
         return entity
 
@@ -869,6 +938,113 @@ class SemanticClass(BaseModel):
 
     def __str__(self):
         return str(self.dict(exclude={'semantic_manager', 'old_state'}))
+
+
+class SemanticDeviceClass(SemanticClass):
+
+    # old_device_state: Optional[ContextDevice]
+    """needed ?"""
+
+    transport: str = ""
+    """Transport Protocol used to communicate with the device"""
+    endpoint: str = ""
+    """Device endpoint to which commands will be send"""
+
+    def delete(self, assert_no_references: bool = False):
+
+        #todo
+        pass
+
+    def get_rule_fields(self) -> List[Field]:
+        """
+        Get all RuleFields of class
+
+        Returns:
+            List[Field]
+        """
+        return super(SemanticDeviceClass, self).get_fields()
+
+    def get_fields(self) -> List[Field]:
+        """
+        Get all fields of class
+
+        Returns:
+            List[str]
+        """
+        res = []
+        for key, value in self.__dict__.items():
+            if isinstance(value, Field):
+                res.append(value)
+        return res
+
+    def get_field_names(self) -> List[str]:
+        """
+        Get names of all fields of class
+
+        Returns:
+            List[str]
+        """
+        return [f.name for f in self.get_fields()]
+
+    def get_command_fields(self) -> List[CommandField]:
+        """
+        Get all CommandFields of class
+
+        Returns:
+           List[CommandField]
+        """
+        commands = []
+        for key, value in self.__dict__.items():
+            if isinstance(value, CommandField):
+                commands.append(value)
+        return commands
+
+    def get_device_attribute_fields(self) -> List[DeviceAttributeField]:
+        """
+        Get all DeviceAttributeField of class
+
+        Returns:
+          List[DeviceAttributeField]
+        """
+        fields = []
+        for key, value in self.__dict__.items():
+            if isinstance(value, DeviceAttributeField):
+                fields.append(value)
+        return fields
+
+    def get_command_field_names(self) -> List[str]:
+        """
+        Get names of all CommandFields of class
+
+        Returns:
+            List[str]
+        """
+        return [f.name for f in self.get_command_fields()]
+
+    def get_device_attribute_field_names(self) -> List[str]:
+        """
+        Get names of all DeviceAttributeFields of class
+
+        Returns:
+            List[str]
+        """
+        return [f.name for f in self.get_device_attribute_fields()]
+
+
+    def build_context_entity(self) -> ContextEntity:
+        pass
+        #todo
+
+    class Config:
+        """
+        Forbid manipulation of class
+
+        No Fields can be added/removed
+
+        The identifier can not be changed
+        """
+        arbitrary_types_allowed = True
+        allow_mutation = False
 
 
 class SemanticIndividual(BaseModel):

@@ -1,7 +1,7 @@
 from typing import Dict, Union, List
 from filip.semantics.semantic_models import \
-	SemanticClass, SemanticIndividual, RelationField, DataField, InstanceRegistry
-from filip.semantics.semantic_manager import SemanticManager
+	SemanticClass, SemanticIndividual, RelationField, DataField
+from filip.semantics.semantic_manager import SemanticManager, InstanceRegistry
 
 
 semantic_manager: SemanticManager = SemanticManager(
@@ -47,11 +47,12 @@ class Class1(Thing):
 			self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
 			self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]]), ('value', [[Individual1]])]
 
-			self.oProp1._class_identifier = self.get_identifier()
-			self.objProp2._class_identifier = self.get_identifier()
-			self.objProp3._class_identifier = self.get_identifier()
-			self.objProp4._class_identifier = self.get_identifier()
-			self.objProp5._class_identifier = self.get_identifier()
+			self.oProp1._instance_identifier = self.get_identifier()
+			self.objProp2._instance_identifier = self.get_identifier()
+			self.objProp3._instance_identifier = self.get_identifier()
+			self.objProp4._instance_identifier = self.get_identifier()
+			self.objProp5._instance_identifier = self.get_identifier()
+			self.dataProp2._instance_identifier = self.get_identifier()
 			
 			self.dataProp2.append(2)
 
@@ -101,11 +102,12 @@ class Class1a(Class1):
 			self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
 			self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]]), ('value', [[Individual1]])]
 
-			self.oProp1._class_identifier = self.get_identifier()
-			self.objProp2._class_identifier = self.get_identifier()
-			self.objProp3._class_identifier = self.get_identifier()
-			self.objProp4._class_identifier = self.get_identifier()
-			self.objProp5._class_identifier = self.get_identifier()
+			self.oProp1._instance_identifier = self.get_identifier()
+			self.objProp2._instance_identifier = self.get_identifier()
+			self.objProp3._instance_identifier = self.get_identifier()
+			self.objProp4._instance_identifier = self.get_identifier()
+			self.objProp5._instance_identifier = self.get_identifier()
+			self.dataProp2._instance_identifier = self.get_identifier()
 			
 
 			pass
@@ -153,11 +155,12 @@ class Class1aa(Class1a):
 			self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
 			self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]]), ('value', [[Individual1]])]
 
-			self.oProp1._class_identifier = self.get_identifier()
-			self.objProp2._class_identifier = self.get_identifier()
-			self.objProp3._class_identifier = self.get_identifier()
-			self.objProp4._class_identifier = self.get_identifier()
-			self.objProp5._class_identifier = self.get_identifier()
+			self.oProp1._instance_identifier = self.get_identifier()
+			self.objProp2._instance_identifier = self.get_identifier()
+			self.objProp3._instance_identifier = self.get_identifier()
+			self.objProp4._instance_identifier = self.get_identifier()
+			self.objProp5._instance_identifier = self.get_identifier()
+			self.dataProp2._instance_identifier = self.get_identifier()
 			
 
 			pass
@@ -205,11 +208,12 @@ class Class1b(Class1):
 			self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
 			self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]]), ('value', [[Individual1]])]
 
-			self.oProp1._class_identifier = self.get_identifier()
-			self.objProp2._class_identifier = self.get_identifier()
-			self.objProp3._class_identifier = self.get_identifier()
-			self.objProp4._class_identifier = self.get_identifier()
-			self.objProp5._class_identifier = self.get_identifier()
+			self.oProp1._instance_identifier = self.get_identifier()
+			self.objProp2._instance_identifier = self.get_identifier()
+			self.objProp3._instance_identifier = self.get_identifier()
+			self.objProp4._instance_identifier = self.get_identifier()
+			self.objProp5._instance_identifier = self.get_identifier()
+			self.dataProp2._instance_identifier = self.get_identifier()
 			
 
 			pass
@@ -253,8 +257,8 @@ class Class2(Thing):
 			self.oProp1._rules = [('min|1', [[Class1]])]
 			self.objProp2._rules = [('only', [[Thing]])]
 
-			self.oProp1._class_identifier = self.get_identifier()
-			self.objProp2._class_identifier = self.get_identifier()
+			self.oProp1._instance_identifier = self.get_identifier()
+			self.objProp2._instance_identifier = self.get_identifier()
 			
 
 			pass
@@ -283,8 +287,9 @@ class Class3(Thing):
 			self.oProp1._rules = [('value', [[Individual1]])]
 			self.objProp2._rules = [('some', [[Class1]]), ('value', [[Individual1]])]
 
-			self.oProp1._class_identifier = self.get_identifier()
-			self.objProp2._class_identifier = self.get_identifier()
+			self.oProp1._instance_identifier = self.get_identifier()
+			self.objProp2._instance_identifier = self.get_identifier()
+			self.dataProp1._instance_identifier = self.get_identifier()
 			
 
 			self.oProp1.append(Individual1())
@@ -323,11 +328,13 @@ class Class123(Class1, Class2, Class3):
 			self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
 			self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]]), ('value', [[Individual1]])]
 
-			self.oProp1._class_identifier = self.get_identifier()
-			self.objProp2._class_identifier = self.get_identifier()
-			self.objProp3._class_identifier = self.get_identifier()
-			self.objProp4._class_identifier = self.get_identifier()
-			self.objProp5._class_identifier = self.get_identifier()
+			self.oProp1._instance_identifier = self.get_identifier()
+			self.objProp2._instance_identifier = self.get_identifier()
+			self.objProp3._instance_identifier = self.get_identifier()
+			self.objProp4._instance_identifier = self.get_identifier()
+			self.objProp5._instance_identifier = self.get_identifier()
+			self.dataProp1._instance_identifier = self.get_identifier()
+			self.dataProp2._instance_identifier = self.get_identifier()
 			
 
 			pass
@@ -380,11 +387,13 @@ class Class13(Class1, Class3):
 			self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
 			self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]]), ('value', [[Individual1]])]
 
-			self.oProp1._class_identifier = self.get_identifier()
-			self.objProp2._class_identifier = self.get_identifier()
-			self.objProp3._class_identifier = self.get_identifier()
-			self.objProp4._class_identifier = self.get_identifier()
-			self.objProp5._class_identifier = self.get_identifier()
+			self.oProp1._instance_identifier = self.get_identifier()
+			self.objProp2._instance_identifier = self.get_identifier()
+			self.objProp3._instance_identifier = self.get_identifier()
+			self.objProp4._instance_identifier = self.get_identifier()
+			self.objProp5._instance_identifier = self.get_identifier()
+			self.dataProp1._instance_identifier = self.get_identifier()
+			self.dataProp2._instance_identifier = self.get_identifier()
 			
 
 			pass
@@ -433,8 +442,9 @@ class Class3a(Class3):
 			self.oProp1._rules = [('value', [[Individual1]])]
 			self.objProp2._rules = [('some', [[Class1]]), ('value', [[Individual1]])]
 
-			self.oProp1._class_identifier = self.get_identifier()
-			self.objProp2._class_identifier = self.get_identifier()
+			self.oProp1._instance_identifier = self.get_identifier()
+			self.objProp2._instance_identifier = self.get_identifier()
+			self.dataProp1._instance_identifier = self.get_identifier()
 			
 
 			pass
@@ -467,8 +477,9 @@ class Class3aa(Class3a):
 			self.oProp1._rules = [('value', [[Individual1]])]
 			self.objProp2._rules = [('some', [[Class1]]), ('value', [[Individual1]])]
 
-			self.oProp1._class_identifier = self.get_identifier()
-			self.objProp2._class_identifier = self.get_identifier()
+			self.oProp1._instance_identifier = self.get_identifier()
+			self.objProp2._instance_identifier = self.get_identifier()
+			self.dataProp1._instance_identifier = self.get_identifier()
 			
 
 			pass
@@ -499,7 +510,7 @@ class Class4(Thing):
 
 			self.objProp4._rules = [('min|1', [[Class1]])]
 
-			self.objProp4._class_identifier = self.get_identifier()
+			self.objProp4._instance_identifier = self.get_identifier()
 			
 
 			pass
@@ -527,11 +538,12 @@ class Gertrude(Class1, Class2):
 			self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
 			self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]]), ('value', [[Individual1]])]
 
-			self.oProp1._class_identifier = self.get_identifier()
-			self.objProp2._class_identifier = self.get_identifier()
-			self.objProp3._class_identifier = self.get_identifier()
-			self.objProp4._class_identifier = self.get_identifier()
-			self.objProp5._class_identifier = self.get_identifier()
+			self.oProp1._instance_identifier = self.get_identifier()
+			self.objProp2._instance_identifier = self.get_identifier()
+			self.objProp3._instance_identifier = self.get_identifier()
+			self.objProp4._instance_identifier = self.get_identifier()
+			self.objProp5._instance_identifier = self.get_identifier()
+			self.dataProp2._instance_identifier = self.get_identifier()
 			
 
 			pass

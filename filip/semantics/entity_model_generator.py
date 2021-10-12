@@ -16,9 +16,9 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
     content += "from typing import Dict, Union, List\n"
     content += "from filip.semantics.semantic_models import \\"\
                "\n\tSemanticClass, SemanticIndividual, RelationField, " \
-               "DataField, InstanceRegistry"
+               "DataField"
     content += "\n"
-    content += "from filip.semantics.semantic_manager import SemanticManager"
+    content += "from filip.semantics.semantic_manager import SemanticManager, InstanceRegistry"
 
     content += "\n\n\n"
     content += "semantic_manager: SemanticManager = SemanticManager("
@@ -104,10 +104,10 @@ def generate_vocabulary_models(vocabulary: Vocabulary, path: str,
                        f"{cor.export_rule(vocabulary, stringify_fields=False)}"
 
         content += "\n"
-        for cor in class_.get_combined_object_relations(vocabulary):
+        for cr in class_.get_combined_relations(vocabulary):
             content += "\n\t\t\t"
-            content += f"self.{cor.get_property_label(vocabulary)}" \
-                       f"._class_identifier = " \
+            content += f"self.{cr.get_property_label(vocabulary)}" \
+                       f"._instance_identifier = " \
                        f"self.get_identifier()"
 
         content += "\n\t\t\t"

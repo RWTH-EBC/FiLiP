@@ -25,7 +25,7 @@ from filip.models.ngsi_v2.context import \
     Subscription, \
     Query, \
     Entity, \
-    ActionType
+    ActionType, NamedContextMetadata
 from filip.models.ngsi_v2.iot import \
     Device, \
     DeviceCommand, \

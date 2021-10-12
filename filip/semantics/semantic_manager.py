@@ -13,9 +13,92 @@ from filip.clients.ngsi_v2 import ContextBrokerClient
 
 from filip.models import FiwareHeader
 from pydantic import BaseModel
-from filip.semantics.semantic_models import InstanceRegistry, FiwareVersion, \
+from filip.semantics.semantic_models import  FiwareVersion, \
     InstanceIdentifier, SemanticClass, InstanceHeader, Datatype, DataField, \
     RelationField, SemanticIndividual
+
+class InstanceRegistry(BaseModel):
+    """
+    Holds all the references to the local SemanticClass instances.
+    The instance registry is a global object, that is directly inject in the
+    SemanticClass constructor over the SemanticManager
+    """
+    _registry: Dict[InstanceIdentifier, 'SemanticClass'] = {}
+    """ Dict of the references to the local SemanticClass instances. 
+        Instances are saved with their identifier as key """
+
+    _deleted_identifiers: List[InstanceIdentifier] = []
+
+    def delete(self, instance: 'SemanticClass'):
+        """
+
+        Raises:
+           KeyError, if identifier unknown
+        """
+        identifier = instance.get_identifier()
+        if not self.contains(identifier):
+            raise KeyError(f"Identifier {identifier} unknown, "
+                           f"can not delete")
+
+        # If instance was loaded from Fiware it has an old_state.
+        # if that is the case, we need to note that we have deleted the instance
+        # to delete it on save, and do not load it again from Fiware
+
+        if instance.old_state is not None:
+            self._deleted_identifiers.append(identifier)
+
+        del self._registry[identifier]
+
+    def instance_was_deleted(self, identifier: InstanceIdentifier):
+        return identifier in self._deleted_identifiers
+
+    def register(self, instance: 'SemanticClass'):
+        """
+        Register a new instance of a SemanticClass in the registry
+
+        Args:
+            instance(SemanticClass):  Instance to be registered
+        Raises:
+            AttributeError: if Instance is already registered
+        """
+        identifier = instance.get_identifier()
+
+        if identifier in self._registry:
+            raise AttributeError('Instance already exists')
+        else:
+            self._registry[identifier] = instance
+
+    def get(self, identifier: InstanceIdentifier) -> 'SemanticClass':
+        """Retrieve an registered instance with its identifier
+
+        Args:
+            identifier(InstanceIdentifier): identifier belonging to instance
+        Returns:
+            SemanticClass
+        """
+        return self._registry[identifier]
+
+    def contains(self, identifier: InstanceIdentifier) -> bool:
+        """Test if an identifier is registered
+
+        Args:
+            identifier(InstanceIdentifier): identifier belonging to instance
+        Returns:
+            bool, True if registered
+        """
+        return identifier in self._registry
+
+    def get_all(self) -> List['SemanticClass']:
+        """Get all registered instances
+
+        Returns:
+            List[SemanticClass]
+        """
+        return list(self._registry.values())
+
+    def get_all_deleted_identifiers(self) -> List['InstanceIdentifier']:
+        return self._deleted_identifiers
+
 
 
 class SemanticManager(BaseModel):

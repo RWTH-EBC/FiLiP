@@ -10,8 +10,7 @@ from filip.models.ngsi_v2.context import ContextEntity
 from filip.models import FiwareHeader
 
 from filip.semantics.entity_model_generator import generate_vocabulary_models
-from filip.semantics.semantic_models import InstanceRegistry, SemanticClass, \
-    InstanceHeader
+from filip.semantics.semantic_models import SemanticClass, InstanceHeader
 from filip.semantics.vocabulary_configurator import VocabularyConfigurator
 
 
