@@ -80,7 +80,7 @@ class TestModels(unittest.TestCase):
 
         # test content of vocabulary
         self.assertEqual(len(vocabulary_2.classes), 10)
-        self.assertEqual(len(vocabulary_3.classes), 19)
+        self.assertEqual(len(vocabulary_3.classes), 18)
 
         # test deletion of source
         source_id = [s.id for s in vocabulary_3.sources.values()
@@ -103,7 +103,7 @@ class TestModels(unittest.TestCase):
 
         self.assertIn('Sensor', conflict_dict.keys())
         self.assertIn('isOnFloor', conflict_dict.keys())
-        self.assertEqual(len(conflict_dict.keys()), 2)
+        self.assertEqual(len(conflict_dict.keys()), 3)
 
         self.assertEqual(len(conflict_dict['Sensor']), 2)
 
@@ -123,6 +123,66 @@ class TestModels(unittest.TestCase):
 
     def test_build_models(self):
         VocabularyConfigurator.build_class_models(vocabulary=self.vocabulary_1)
+
+    def test_device_class(self):
+        vocabulary = self.vocabulary_3
+
+        class_thing = vocabulary.get_class_by_iri(
+            "http://www.w3.org/2002/07/owl#Thing")
+
+        class_1 = vocabulary.get_class_by_iri(
+            "http://www.semanticweb.org/redin/ontologies/2020/11/untitled"
+            "-ontology-25#Class1")
+        class_2 = vocabulary.get_class_by_iri(
+            "http://www.semanticweb.org/redin/ontologies/2020/11/untitled"
+            "-ontology-25#Class2")
+        class_3 = vocabulary.get_class_by_iri(
+            "http://www.semanticweb.org/redin/ontologies/2020/11/untitled"
+            "-ontology-25#Class3")
+        class_123 = vocabulary.get_class_by_iri(
+            "http://www.semanticweb.org/redin/ontologies/2020/11/untitled"
+            "-ontology-25#Class123")
+
+        class_thing.set_as_device_class(True, vocabulary)
+
+        self.assertTrue(class_thing._is_iot_class)
+        self.assertTrue(class_1._is_iot_class)
+        self.assertTrue(class_2._is_iot_class)
+        self.assertTrue(class_3._is_iot_class)
+        self.assertTrue(class_123._is_iot_class)
+
+        self.assertRaises(AssertionError, class_1.set_as_device_class,
+                          False, vocabulary)
+        self.assertRaises(AssertionError, class_123.set_as_device_class,
+                          False, vocabulary)
+
+        class_thing.set_as_device_class(False, vocabulary)
+        self.assertFalse(class_thing._is_iot_class)
+        self.assertFalse(class_1._is_iot_class)
+        self.assertFalse(class_2._is_iot_class)
+        self.assertFalse(class_3._is_iot_class)
+        self.assertFalse(class_123._is_iot_class)
+
+        class_1.set_as_device_class(True, vocabulary)
+        self.assertFalse(class_thing._is_iot_class)
+        self.assertTrue(class_1._is_iot_class)
+        self.assertFalse(class_2._is_iot_class)
+        self.assertFalse(class_3._is_iot_class)
+        self.assertTrue(class_123._is_iot_class)
+
+        class_2.set_as_device_class(True, vocabulary)
+        self.assertFalse(class_thing._is_iot_class)
+        self.assertTrue(class_1._is_iot_class)
+        self.assertTrue(class_2._is_iot_class)
+        self.assertFalse(class_3._is_iot_class)
+        self.assertTrue(class_123._is_iot_class)
+
+        class_1.set_as_device_class(False, vocabulary)
+        self.assertFalse(class_thing._is_iot_class)
+        self.assertFalse(class_1._is_iot_class)
+        self.assertTrue(class_2._is_iot_class)
+        self.assertFalse(class_3._is_iot_class)
+        self.assertTrue(class_123._is_iot_class)
 
 
     def tearDown(self) -> None:

@@ -31,7 +31,7 @@ class CombinedRelation(BaseModel):
     """user settings for field: Should this CR be displayed as column in a 
     table. Default: FALSE """
     inspect: bool = True
-    """user settings for field: Does this field needs to fulfiled to deem the 
+    """user settings for field: Does this field needs to fulfilled to deem the 
     instance fulfilled. Default: TRUE """
 
     def get_relations(self, vocabulary: 'Vocabulary') -> List[Relation]:

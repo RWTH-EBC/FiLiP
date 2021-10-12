@@ -562,10 +562,10 @@ def transfer_settings(new_vocabulary: Vocabulary, old_vocabulary: Vocabulary):
     # agent&device settings
     for class_ in old_vocabulary.get_classes():
         if class_.iri in new_vocabulary.classes:
-            new_vocabulary.get_class_by_iri(class_.iri).is_agent_class = \
-                class_.is_agent_class
-            new_vocabulary.get_class_by_iri(class_.iri).is_iot_class = \
-                class_.is_iot_class
+            new_vocabulary.get_class_by_iri(class_.iri)._is_agent_class = \
+                class_._is_agent_class
+            new_vocabulary.get_class_by_iri(class_.iri)._is_iot_class = \
+                class_._is_iot_class
 
     # label settings
     for entity in old_vocabulary.get_all_entities():
