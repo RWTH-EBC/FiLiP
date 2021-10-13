@@ -11,6 +11,7 @@ from filip.models import FiwareHeader
 
 from filip.semantics.entity_model_generator import generate_vocabulary_models
 from filip.semantics.semantic_models import SemanticClass, InstanceHeader
+from filip.semantics.vocabulary.data_property import DataFieldType
 from filip.semantics.vocabulary_configurator import VocabularyConfigurator
 
 
@@ -26,6 +27,14 @@ class TestSemanticModels(unittest.TestCase):
             VocabularyConfigurator.add_ontology_to_vocabulary_as_file(
                 vocabulary=vocabulary,
                 path_to_file='./ontology_files/ParsingTesterOntology.ttl')
+
+        vocabulary.get_data_property(
+            "http://www.semanticweb.org/redin/ontologies/2020/11/untitled"
+            "-ontology-25#commandProp").field_type = DataFieldType.command
+        vocabulary.get_data_property(
+            "http://www.semanticweb.org/redin/ontologies/2020/11/untitled"
+            "-ontology-25#attributeProp").field_type = \
+            DataFieldType.device_attribute
 
         generate_vocabulary_models(vocabulary, "./", "models")
 
@@ -300,12 +309,12 @@ class TestSemanticModels(unittest.TestCase):
 
         self.clear_registry()
 
-        with ContextBrokerClient(
-                fiware_header=semantic_manager.
-                default_header.get_fiware_header()) as client:
-            for entity in client.get_entity_list():
-                client.delete_entity(entity_id=entity.id,
-                                     entity_type=entity.type)
+        # with ContextBrokerClient(
+        #         fiware_header=semantic_manager.
+        #         default_header.get_fiware_header()) as client:
+        #     for entity in client.get_entity_list():
+        #         client.delete_entity(entity_id=entity.id,
+        #                              entity_type=entity.type)
 
 
 

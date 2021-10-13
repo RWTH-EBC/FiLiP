@@ -2,6 +2,7 @@ from enum import Enum
 from typing import List, TYPE_CHECKING
 
 from . import CombinedRelation
+from .data_property import DataFieldType
 
 if TYPE_CHECKING:
     from . import Vocabulary
@@ -25,15 +26,6 @@ class CombinedDataRelation(CombinedRelation):
     """
     Combines all data relations of a class that share the same DataProperty
     Represents one Data Field of a class
-    """
-
-    type: CDRType = CDRType.UserSetData
-    """Type of this CDR, it is either:
-        -   UserSetData (Default): The user defines values (ex: RoomNumber)
-        -   DeviceData (Device Only): The field hods values that are read from 
-                the device (ex: TemperaturMeasrument)
-        -   Command (Device Only): The field holds the name of the command 
-                that needs to be send to the device
     """
 
     def get_property_label(self, vocabulary: 'Vocabulary') -> str:
@@ -65,3 +57,10 @@ class CombinedDataRelation(CombinedRelation):
                 enum_values.add(value)
 
         return sorted(list(enum_values))
+
+    def get_field_type(self, vocabulary: 'Vocabulary') -> DataFieldType:
+        property = vocabulary.get_data_property(self.property_iri)
+        return property.field_type
+
+    def is_device_relation(self, vocabulary: 'Vocabulary') -> bool:
+        return not self.get_field_type(vocabulary) == DataFieldType.simple

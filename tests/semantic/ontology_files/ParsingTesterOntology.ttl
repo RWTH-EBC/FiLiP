@@ -94,6 +94,14 @@
 #    Data properties
 #################################################################
 
+###  http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25#attributeProp
+:attributeProp rdf:type owl:DatatypeProperty .
+
+
+###  http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25#commandProp
+:commandProp rdf:type owl:DatatypeProperty .
+
+
 ###  http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25#dataProp1
 :dataProp1 rdf:type owl:DatatypeProperty .
 
@@ -238,6 +246,10 @@
                           owl:onProperty :oProp1 ;
                           owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
                           owl:onClass :Class1
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :attributeProp ;
+                          owl:someValuesFrom :customDataType1
                         ] .
 
 
@@ -257,6 +269,14 @@
                         [ rdf:type owl:Restriction ;
                           owl:onProperty :oProp1 ;
                           owl:hasValue :Individual1
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :attributeProp ;
+                          owl:someValuesFrom xsd:string
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :commandProp ;
+                          owl:someValuesFrom xsd:string
                         ] ,
                         [ rdf:type owl:Restriction ;
                           owl:onProperty :dataProp1 ;

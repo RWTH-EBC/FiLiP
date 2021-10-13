@@ -237,12 +237,21 @@ class Field(collections.MutableSequence):
         """
         pass
 
+    def _pre_set(self, v):
+        pass
+
     # List methods
     def __len__(self): return len(self._list)
     def __getitem__(self, i): return self._list[i]
     def __delitem__(self, i): del self._list[i]
-    def __setitem__(self, i, v): self._list[i] = v
-    def insert(self, i, v): self._list.insert(i, v)
+
+    def __setitem__(self, i, v):
+        self._pre_set(v)
+        self._list[i] = v
+
+    def insert(self, i, v):
+        self._pre_set(v)
+        self._list.insert(i, v)
 
     def set(self, values: List):
         """
@@ -283,31 +292,55 @@ class Field(collections.MutableSequence):
         return self._list
 
 
+# class SettingField(Field):
+#
+#     allowed_type: type
+#     value_is_required: bool
+#
+#     def is_valid(self) -> bool:
+#         if len(self.get_all()) == 1:
+#             return True
+#         for value in self.get_all():
+#             if not isinstance(value, self.allowed_type):
+#                 return False
+#         return True
+#
+#     def _pre_set(self, v):
+#         assert isinstance(v, self.allowed_type)
+#         assert len(self._list) == 0, "Setting field can only have one value"
+#
+#     def build_context_attributes(self) -> List[NamedContextAttribute]:
+#         """
+#         Convert the field to a NamedContextAttribute that can eb added to a
+#         ContextEntity
+#
+#         Returns:
+#             NamedContextAttribute
+#         """
+#         return [NamedContextAttribute(
+#             name=f"__{self.name}",
+#             type=DataType.STRUCTUREDVALUE,
+#             value=[v for v in self.get_all()]
+#         )]
+
+
 class DeviceField(Field):
 
-    internal_type: type = DeviceProperty
+    _internal_type: type = DeviceProperty
 
     def is_valid(self) -> bool:
         for value in self.get_all():
-            if not isinstance(value, self.internal_type):
+            if not isinstance(value, self._internal_type):
                 return False
         return True
 
     def _pre_set(self, v):
-        assert isinstance(v, self.internal_type)
+        assert isinstance(v, self._internal_type)
         assert v._instance_identifier is None, "DeviceProperty can only " \
                                                "belong to one device instance"
         v._instance_identifier = self._instance_identifier
         v._semantic_manager = self._semantic_manager
         v._field_name = self.name
-
-    def __setitem__(self, i, v):
-        self._pre_set(v)
-        self._list[i] = v
-
-    def insert(self, i, v):
-        self._pre_set(v)
-        self._list.insert(i, v)
 
     def __delitem__(self, i):
         v = self._list[i]
@@ -317,9 +350,10 @@ class DeviceField(Field):
         del self._list[i]
 
 
+
 class CommandField(DeviceField):
 
-    internal_type = Command
+    _internal_type = Command
 
     def get_all(self) -> List[Command]:
         return super().get_all()
@@ -340,7 +374,7 @@ class CommandField(DeviceField):
 
 
 class DeviceAttributeField(DeviceField):
-    internal_type = DeviceAttribute
+    _internal_type = DeviceAttribute
 
     def get_all(self) -> List[DeviceAttribute]:
         return super().get_all()
@@ -755,7 +789,7 @@ class SemanticClass(BaseModel):
 
     def get_type(self) -> str:
         """
-        Get internal_type as used in Fiware, equal to class name
+        Get _internal_type as used in Fiware, equal to class name
 
         Returns:
             str
@@ -945,9 +979,9 @@ class SemanticDeviceClass(SemanticClass):
     # old_device_state: Optional[ContextDevice]
     """needed ?"""
 
-    transport: str = ""
+    transport: str
     """Transport Protocol used to communicate with the device"""
-    endpoint: str = ""
+    endpoint: str
     """Device endpoint to which commands will be send"""
 
     def delete(self, assert_no_references: bool = False):
@@ -1032,8 +1066,23 @@ class SemanticDeviceClass(SemanticClass):
 
 
     def build_context_entity(self) -> ContextEntity:
-        pass
-        #todo
+        entity = super().build_context_entity()
+
+        # endpoint attribute
+        entity.add_attributes([NamedContextAttribute(
+            name="__endpoint",
+            type=DataType.TEXT,
+            value=self.endpoint)
+        ])
+
+        # transport attribute
+        entity.add_attributes([NamedContextAttribute(
+            name="__transport",
+            type=DataType.TEXT,
+            value=self.transport)
+        ])
+
+        return entity
 
     class Config:
         """

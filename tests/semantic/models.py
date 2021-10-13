@@ -1,6 +1,6 @@
 from typing import Dict, Union, List
 from filip.semantics.semantic_models import \
-	SemanticClass, SemanticIndividual, RelationField, DataField
+	SemanticClass, SemanticIndividual, RelationField, DataField, SemanticDeviceClass, DeviceAttributeField,CommandField, SettingsField
 from filip.semantics.semantic_manager import SemanticManager, InstanceRegistry
 
 
@@ -24,7 +24,6 @@ class Thing(SemanticClass):
 		if not is_initialised:
 
 
-			
 
 			pass
 
@@ -53,7 +52,6 @@ class Class1(Thing):
 			self.objProp4._instance_identifier = self.get_identifier()
 			self.objProp5._instance_identifier = self.get_identifier()
 			self.dataProp2._instance_identifier = self.get_identifier()
-			
 			self.dataProp2.append(2)
 
 			self.objProp5.append(Individual1())
@@ -108,7 +106,6 @@ class Class1a(Class1):
 			self.objProp4._instance_identifier = self.get_identifier()
 			self.objProp5._instance_identifier = self.get_identifier()
 			self.dataProp2._instance_identifier = self.get_identifier()
-			
 
 			pass
 
@@ -161,7 +158,6 @@ class Class1aa(Class1a):
 			self.objProp4._instance_identifier = self.get_identifier()
 			self.objProp5._instance_identifier = self.get_identifier()
 			self.dataProp2._instance_identifier = self.get_identifier()
-			
 
 			pass
 
@@ -214,7 +210,6 @@ class Class1b(Class1):
 			self.objProp4._instance_identifier = self.get_identifier()
 			self.objProp5._instance_identifier = self.get_identifier()
 			self.dataProp2._instance_identifier = self.get_identifier()
-			
 
 			pass
 
@@ -247,7 +242,7 @@ class Class1b(Class1):
 		semantic_manager=semantic_manager)
 
 
-class Class2(Thing):
+class Class2(SemanticDeviceClass, Thing):
 
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
@@ -259,11 +254,14 @@ class Class2(Thing):
 
 			self.oProp1._instance_identifier = self.get_identifier()
 			self.objProp2._instance_identifier = self.get_identifier()
-			
+			self.attributeProp._instance_identifier = self.get_identifier()
 
 			pass
 
 	# Data fields
+	attributeProp: DeviceAttributeField = DeviceAttributeField(
+		name='attributeProp',
+		semantic_manager=semantic_manager)
 
 	# Relation fields
 	oProp1: RelationField = RelationField(
@@ -275,8 +273,18 @@ class Class2(Thing):
 		rule='only Thing',
 		semantic_manager=semantic_manager)
 
+	# Setting fields
+	SETTING_transport: SettingsField = SettingsField(
+		name='transport',
+		type=str,
+		semantic_manager=semantic_manager)
+	SETTING_endpoint: SettingsField = SettingsField(
+		name='endpoint',
+		type=str,
+		semantic_manager=semantic_manager)
 
-class Class3(Thing):
+
+class Class3(SemanticDeviceClass, Thing):
 
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
@@ -289,14 +297,21 @@ class Class3(Thing):
 
 			self.oProp1._instance_identifier = self.get_identifier()
 			self.objProp2._instance_identifier = self.get_identifier()
+			self.attributeProp._instance_identifier = self.get_identifier()
+			self.commandProp._instance_identifier = self.get_identifier()
 			self.dataProp1._instance_identifier = self.get_identifier()
-			
 
 			self.oProp1.append(Individual1())
 			self.objProp2.append(Individual1())
 			pass
 
 	# Data fields
+	attributeProp: DeviceAttributeField = DeviceAttributeField(
+		name='attributeProp',
+		semantic_manager=semantic_manager)
+	commandProp: CommandField = CommandField(
+		name='commandProp',
+		semantic_manager=semantic_manager)
 	dataProp1: DataField = DataField(
 		name='dataProp1',
 		rule='only customDataType4',
@@ -310,6 +325,16 @@ class Class3(Thing):
 	objProp2: RelationField = RelationField(
 		name='objProp2',
 		rule='some Class1, value Individual1',
+		semantic_manager=semantic_manager)
+
+	# Setting fields
+	SETTING_transport: SettingsField = SettingsField(
+		name='transport',
+		type=str,
+		semantic_manager=semantic_manager)
+	SETTING_endpoint: SettingsField = SettingsField(
+		name='endpoint',
+		type=str,
 		semantic_manager=semantic_manager)
 
 
@@ -333,13 +358,20 @@ class Class123(Class1, Class2, Class3):
 			self.objProp3._instance_identifier = self.get_identifier()
 			self.objProp4._instance_identifier = self.get_identifier()
 			self.objProp5._instance_identifier = self.get_identifier()
+			self.attributeProp._instance_identifier = self.get_identifier()
+			self.commandProp._instance_identifier = self.get_identifier()
 			self.dataProp1._instance_identifier = self.get_identifier()
 			self.dataProp2._instance_identifier = self.get_identifier()
-			
 
 			pass
 
 	# Data fields
+	attributeProp: DeviceAttributeField = DeviceAttributeField(
+		name='attributeProp',
+		semantic_manager=semantic_manager)
+	commandProp: CommandField = CommandField(
+		name='commandProp',
+		semantic_manager=semantic_manager)
 	dataProp1: DataField = DataField(
 		name='dataProp1',
 		rule='only customDataType4',
@@ -392,13 +424,20 @@ class Class13(Class1, Class3):
 			self.objProp3._instance_identifier = self.get_identifier()
 			self.objProp4._instance_identifier = self.get_identifier()
 			self.objProp5._instance_identifier = self.get_identifier()
+			self.attributeProp._instance_identifier = self.get_identifier()
+			self.commandProp._instance_identifier = self.get_identifier()
 			self.dataProp1._instance_identifier = self.get_identifier()
 			self.dataProp2._instance_identifier = self.get_identifier()
-			
 
 			pass
 
 	# Data fields
+	attributeProp: DeviceAttributeField = DeviceAttributeField(
+		name='attributeProp',
+		semantic_manager=semantic_manager)
+	commandProp: CommandField = CommandField(
+		name='commandProp',
+		semantic_manager=semantic_manager)
 	dataProp1: DataField = DataField(
 		name='dataProp1',
 		rule='min 1 int, only customDataType4',
@@ -444,12 +483,19 @@ class Class3a(Class3):
 
 			self.oProp1._instance_identifier = self.get_identifier()
 			self.objProp2._instance_identifier = self.get_identifier()
+			self.attributeProp._instance_identifier = self.get_identifier()
+			self.commandProp._instance_identifier = self.get_identifier()
 			self.dataProp1._instance_identifier = self.get_identifier()
-			
 
 			pass
 
 	# Data fields
+	attributeProp: DeviceAttributeField = DeviceAttributeField(
+		name='attributeProp',
+		semantic_manager=semantic_manager)
+	commandProp: CommandField = CommandField(
+		name='commandProp',
+		semantic_manager=semantic_manager)
 	dataProp1: DataField = DataField(
 		name='dataProp1',
 		rule='only customDataType4',
@@ -479,12 +525,19 @@ class Class3aa(Class3a):
 
 			self.oProp1._instance_identifier = self.get_identifier()
 			self.objProp2._instance_identifier = self.get_identifier()
+			self.attributeProp._instance_identifier = self.get_identifier()
+			self.commandProp._instance_identifier = self.get_identifier()
 			self.dataProp1._instance_identifier = self.get_identifier()
-			
 
 			pass
 
 	# Data fields
+	attributeProp: DeviceAttributeField = DeviceAttributeField(
+		name='attributeProp',
+		semantic_manager=semantic_manager)
+	commandProp: CommandField = CommandField(
+		name='commandProp',
+		semantic_manager=semantic_manager)
 	dataProp1: DataField = DataField(
 		name='dataProp1',
 		rule='only customDataType4',
@@ -511,7 +564,6 @@ class Class4(Thing):
 			self.objProp4._rules = [('min|1', [[Class1]])]
 
 			self.objProp4._instance_identifier = self.get_identifier()
-			
 
 			pass
 
@@ -543,12 +595,15 @@ class Gertrude(Class1, Class2):
 			self.objProp3._instance_identifier = self.get_identifier()
 			self.objProp4._instance_identifier = self.get_identifier()
 			self.objProp5._instance_identifier = self.get_identifier()
+			self.attributeProp._instance_identifier = self.get_identifier()
 			self.dataProp2._instance_identifier = self.get_identifier()
-			
 
 			pass
 
 	# Data fields
+	attributeProp: DeviceAttributeField = DeviceAttributeField(
+		name='attributeProp',
+		semantic_manager=semantic_manager)
 	dataProp2: DataField = DataField(
 		name='dataProp2',
 		rule='value 2',
