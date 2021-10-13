@@ -22,13 +22,13 @@ project = 'FiLiP'
 copyright = f'2021-{datetime.datetime.now().year}, RWTH Aachen University, ' \
             f'E.ON Energy Research Center, ' \
             f'Institute for Energy Efficient Buildings and Indoor Climate'
-author = 'EON ERC - EBC'
+author = 'E.ON ERC - EBC'
 
 # The full version, including alpha/beta/rc tags
-release = filip.__version__
+release = "0.1.8"
 
 # The short X.Y version.
-version = '.'.join(filip.__version__.split('.')[0:2])
+version = '.'.join(release.split('.')[0:2])
 
 
 # -- General configuration ------------------------------------------------
@@ -49,7 +49,7 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.coverage',
               'm2r2',  # Enable .md files
               'sphinx.ext.napoleon',  # Enable google docstrings
-              'sphinxcontrib.autodoc_pydantic' # add support for pydantic
+              'sphinxcontrib.autodoc_pydantic'  # add support for pydantic
               ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -104,45 +104,45 @@ html_theme = 'sphinx_rtd_theme'
 # documentation.
 
 # Material theme options (see theme.conf for more information)
-#html_theme_options = {
+# html_theme_options = {
 #
 #    # Set the name of the project to appear in the navigation.
 #    'nav_title': project,
 
-    # Set you GA account ID to enable tracking
-    # 'google_analytics_account': 'UA-XXXXX',
+# Set you GA account ID to enable tracking
+# 'google_analytics_account': 'UA-XXXXX',
 
-    # Specify a base_url used to generate sitemap.xml. If not
-    # specified, then no sitemap will be built.
-    # 'base_url': 'https://project.github.io/project',
+# Specify a base_url used to generate sitemap.xml. If not
+# specified, then no sitemap will be built.
+# 'base_url': 'https://project.github.io/project',
 
-    # Set the color and the accent color
+# Set the color and the accent color
 #    'color_primary': 'red',
 #    'color_accent': 'red',
 
-    # Set the repo location to get a badge with stats
+# Set the repo location to get a badge with stats
 #    'repo_url': 'https://github.com/rwth-ebc/filip',
 #    'repo_name': 'Fiware Library for Python',
 
-    # Visible levels of the global TOC; -1 means unlimited
+# Visible levels of the global TOC; -1 means unlimited
 #    'globaltoc_depth': 4,
-    # If False, expand all TOC entries
+# If False, expand all TOC entries
 #    'globaltoc_collapse': True,
-    # If True, show hidden TOC entries
+# If True, show hidden TOC entries
 #    'globaltoc_includehidden': False,
-    # Little logo on top left
+# Little logo on top left
 #    'logo_icon': '&#xe869',
-#}
+# }
 
 html_context = {
-    "display_github": True, # Integrate GitHub
-    "github_user": "RWTH-EBC", # Username
-    "github_repo": "filip", # Repo name
-    "github_version": "master", # Version
-    "conf_py_path": "/docs/source/", # Path in the checkout to the docs root
+    "display_github": True,  # Integrate GitHub
+    "github_user": "RWTH-EBC",  # Username/Group name
+    "github_repo": "filip",  # Repo name
+    "github_version": "master",  # Version
+    "conf_py_path": "/docs/source/",  # Path in the checkout to the docs root
 }
 
-#html_logo = ""
+# html_logo = ""
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
