@@ -347,7 +347,7 @@ class QuantumLeapClient(BaseHttpClient):
             if res.ok:
                 self.logger.info("Successfully received entity data")
                 self.logger.debug('Received: %s', res.json())
-                return res.json(), int(res.headers['Content-Length'])
+                return res.json()
             res.raise_for_status()
         except requests.exceptions.RequestException as err:
             msg = "Could not load entity data"
@@ -386,7 +386,7 @@ class QuantumLeapClient(BaseHttpClient):
             List of TimeSeriesHeader
         """
         url = urljoin(self.base_url, 'v2/entities')
-        res, content_length = self.__query_builder(url=url,
+        res = self.__query_builder(url=url,
                                    entity_type=entity_type,
                                    from_date=from_date,
                                    to_date=to_date,
@@ -444,7 +444,7 @@ class QuantumLeapClient(BaseHttpClient):
             TimeSeries
         """
         url = urljoin(self.base_url, f'/v2/entities/{entity_id}')
-        res, content_length = self.__query_builder(url=url,
+        res = self.__query_builder(url=url,
                                    attrs=attrs,
                                    options=options,
                                    entity_type=entity_type,
@@ -513,7 +513,7 @@ class QuantumLeapClient(BaseHttpClient):
                 limit = inf
         if offset is None:
             offset = 0
-        ts, content_length = self.__query_builder(url=url,
+        ts = self.__query_builder(url=url,
                                        attrs=attrs,
                                        options=options,
                                        entity_type=entity_type,
@@ -528,14 +528,12 @@ class QuantumLeapClient(BaseHttpClient):
                                        geometry=geometry,
                                        coords=coords)
         res = TimeSeries.parse_obj(ts)
-        if limit > content_length:
-            limit = content_length
         if limit > 10000:
             offset += 10000
             for i in range(offset, limit, 10000):
                 max_requests = 10000 if limit - i > 10000 else limit -i
                 try:
-                    ts, content_length = self.__query_builder(url=url,
+                    ts = self.__query_builder(url=url,
                                         attrs=attrs,
                                         options=options,
                                         entity_type=entity_type,
@@ -610,7 +608,7 @@ class QuantumLeapClient(BaseHttpClient):
         """
         url = urljoin(self.base_url, f'/v2/entities/{entity_id}/attrs'
                                      f'/{attr_name}')
-        res, content_length = self.__query_builder(url=url,
+        res = self.__query_builder(url=url,
                                    entity_id=entity_id,
                                    options=options,
                                    entity_type=entity_type,
@@ -677,7 +675,7 @@ class QuantumLeapClient(BaseHttpClient):
         """
         url = urljoin(self.base_url, f'v2/entities/{entity_id}/attrs'
                                      f'/{attr_name}/value')
-        res, content_length = self.__query_builder(url=url,
+        res = self.__query_builder(url=url,
                                    options=options,
                                    entity_type=entity_type,
                                    aggr_method=aggr_method,
@@ -721,7 +719,7 @@ class QuantumLeapClient(BaseHttpClient):
         this month in all the weather stations.
         """
         url = urljoin(self.base_url, f'/v2/types/{entity_type}')
-        res, content_length = self.__query_builder(url=url,
+        res = self.__query_builder(url=url,
                                    entity_id=entity_id,
                                    attrs=attrs,
                                    options=options,
@@ -765,7 +763,7 @@ class QuantumLeapClient(BaseHttpClient):
         all the weather stations.
         """
         url = urljoin(self.base_url, f'/v2/types/{entity_type}/value')
-        res, content_length = self.__query_builder(url=url,
+        res = self.__query_builder(url=url,
                                    entity_id=entity_id,
                                    attrs=attrs,
                                    options=options,
@@ -844,7 +842,7 @@ class QuantumLeapClient(BaseHttpClient):
         """
         url = urljoin(self.base_url, f'/v2/types/{entity_type}/attrs'
                                      f'/{attr_name}')
-        res, content_length = self.__query_builder(url=url,
+        res = self.__query_builder(url=url,
                                    entity_id=entity_id,
                                    options=options,
                                    entity_type=entity_type,
@@ -921,7 +919,7 @@ class QuantumLeapClient(BaseHttpClient):
         """
         url = urljoin(self.base_url, f'/v2/types/{entity_type}/attrs/'
                                      f'{attr_name}/value')
-        res, content_length = self.__query_builder(url=url,
+        res = self.__query_builder(url=url,
                                    entity_id=entity_id,
                                    options=options,
                                    entity_type=entity_type,
