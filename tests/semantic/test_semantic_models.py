@@ -28,13 +28,13 @@ class TestSemanticModels(unittest.TestCase):
                 vocabulary=vocabulary,
                 path_to_file='./ontology_files/ParsingTesterOntology.ttl')
 
-        vocabulary.get_data_property(
-            "http://www.semanticweb.org/redin/ontologies/2020/11/untitled"
-            "-ontology-25#commandProp").field_type = DataFieldType.command
-        vocabulary.get_data_property(
-            "http://www.semanticweb.org/redin/ontologies/2020/11/untitled"
-            "-ontology-25#attributeProp").field_type = \
-            DataFieldType.device_attribute
+        # vocabulary.get_data_property(
+        #     "http://www.semanticweb.org/redin/ontologies/2020/11/untitled"
+        #     "-ontology-25#commandProp").field_type = DataFieldType.command
+        # vocabulary.get_data_property(
+        #     "http://www.semanticweb.org/redin/ontologies/2020/11/untitled"
+        #     "-ontology-25#attributeProp").field_type = \
+        #     DataFieldType.device_attribute
 
         generate_vocabulary_models(vocabulary, "./", "models")
 
@@ -289,17 +289,29 @@ class TestSemanticModels(unittest.TestCase):
         self.assertTrue(class13.objProp3._list == [c3.get_identifier(),
                                                    c123.get_identifier()])
 
+    def test__11_model_creation_with_devices(self):
+        vocabulary = VocabularyConfigurator.create_vocabulary()
+
+        vocabulary = \
+            VocabularyConfigurator.add_ontology_to_vocabulary_as_file(
+                vocabulary=vocabulary,
+                path_to_file='./ontology_files/ParsingTesterOntology.ttl')
+
+        vocabulary.get_data_property(
+            "http://www.semanticweb.org/redin/ontologies/2020/11/untitled"
+            "-ontology-25#commandProp").field_type = DataFieldType.command
+        vocabulary.get_data_property(
+            "http://www.semanticweb.org/redin/ontologies/2020/11/untitled"
+            "-ontology-25#attributeProp").field_type = \
+            DataFieldType.device_attribute
+
+        generate_vocabulary_models(vocabulary, "./", "models")
+
     def clear_registry(self):
         from tests.semantic.models import semantic_manager
         semantic_manager.instance_registry._registry.clear()
         semantic_manager.instance_registry._deleted_identifiers.clear()
 
-    # def test__11_test(self):
-    #     from tests.semantic.models import semantic_manager
-    #     with ContextBrokerClient(
-    #             fiware_header=semantic_manager.default_header.get_fiware_header()) as client:
-    #
-    #         client.does_entity_exists(entity_id="231", entity_type="13124")
 
     def tearDown(self) -> None:
         """
@@ -309,12 +321,12 @@ class TestSemanticModels(unittest.TestCase):
 
         self.clear_registry()
 
-        # with ContextBrokerClient(
-        #         fiware_header=semantic_manager.
-        #         default_header.get_fiware_header()) as client:
-        #     for entity in client.get_entity_list():
-        #         client.delete_entity(entity_id=entity.id,
-        #                              entity_type=entity.type)
+        with ContextBrokerClient(
+                fiware_header=semantic_manager.
+                default_header.get_fiware_header()) as client:
+            for entity in client.get_entity_list():
+                client.delete_entity(entity_id=entity.id,
+                                     entity_type=entity.type)
 
 
 

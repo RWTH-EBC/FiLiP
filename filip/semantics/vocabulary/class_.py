@@ -416,9 +416,10 @@ class Class(Entity):
         from .combined_data_relation import CDRType
         res = []
         for cdr_id in self.combined_data_relation_ids:
-            if vocabulary.get_combined_data_relation_by_id(cdr_id).type == \
-                    CDRType.DeviceData:
-                res.append(vocabulary.get_combined_data_relation_by_id(cdr_id))
+            cdr = vocabulary.get_combined_data_relation_by_id(cdr_id)
+            prop = vocabulary.get_data_property(cdr.property_iri)
+            if not prop.field_type == DataFieldType.simple:
+                res.append(cdr)
 
         return res
 
@@ -427,7 +428,10 @@ class Class(Entity):
         A class is an iot/device class if it contains one CDR, where the
         relation is marked as a device relation: DeviceAttribute/Command
         """
+
         for cdr_id in self.combined_data_relation_ids:
             cdr = vocabulary.get_combined_data_relation_by_id(cdr_id)
             prop = vocabulary.get_data_property(cdr.property_iri)
-            return not prop.field_type == DataFieldType.simple
+            if not prop.field_type == DataFieldType.simple:
+                return True
+        return False

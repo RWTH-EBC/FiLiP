@@ -1,6 +1,6 @@
 from typing import Dict, Union, List
 from filip.semantics.semantic_models import \
-	SemanticClass, SemanticIndividual, RelationField, DataField, SemanticDeviceClass, DeviceAttributeField,CommandField, SettingsField
+	SemanticClass, SemanticIndividual, RelationField, DataField, SemanticDeviceClass, DeviceAttributeField,CommandField
 from filip.semantics.semantic_manager import SemanticManager, InstanceRegistry
 
 
@@ -273,16 +273,6 @@ class Class2(SemanticDeviceClass, Thing):
 		rule='only Thing',
 		semantic_manager=semantic_manager)
 
-	# Setting fields
-	SETTING_transport: SettingsField = SettingsField(
-		name='transport',
-		type=str,
-		semantic_manager=semantic_manager)
-	SETTING_endpoint: SettingsField = SettingsField(
-		name='endpoint',
-		type=str,
-		semantic_manager=semantic_manager)
-
 
 class Class3(SemanticDeviceClass, Thing):
 
@@ -325,16 +315,6 @@ class Class3(SemanticDeviceClass, Thing):
 	objProp2: RelationField = RelationField(
 		name='objProp2',
 		rule='some Class1, value Individual1',
-		semantic_manager=semantic_manager)
-
-	# Setting fields
-	SETTING_transport: SettingsField = SettingsField(
-		name='transport',
-		type=str,
-		semantic_manager=semantic_manager)
-	SETTING_endpoint: SettingsField = SettingsField(
-		name='endpoint',
-		type=str,
 		semantic_manager=semantic_manager)
 
 
