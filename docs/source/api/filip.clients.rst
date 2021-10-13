@@ -17,10 +17,4 @@ filip.clients.base\_http\_client
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
 
-.. automodule:: filip.clients
-   :members:
-   :undoc-members:
-   :show-inheritance:

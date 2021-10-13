@@ -191,9 +191,9 @@ using validated data model structures.
 
 ## Testing
 
-Currently, we are working on a CI workflow for continuous testing of the 
-library. 
-
+We use unittests to write our test cases.
+To test the source code of the library in our a CI workflow, the CI does 
+execute all tests located in the `tests`-directory and prefixed with `test_` .
 
 ## How to contribute
 

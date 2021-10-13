@@ -10,7 +10,7 @@
 import datetime
 import os
 import sys
-import filip
+
 # pylint: disable-all
 
 sys.path.insert(0, os.path.abspath('../..'))

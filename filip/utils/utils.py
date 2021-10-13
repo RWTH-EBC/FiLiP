@@ -1,7 +1,6 @@
 """
 utility functions
 """
-from fuzzywuzzy import fuzz
 
 
 def create_type(inputstr: str):

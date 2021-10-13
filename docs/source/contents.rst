@@ -15,7 +15,7 @@ Documentation for FILiP
    index
    api/index
    examples
-   contribution
+   contributing
    about/index
 
 
