@@ -105,6 +105,18 @@ class TimeSeries(TimeSeriesHeader):
 
         return pd.DataFrame(data=values, index=index, columns=columns)
 
+    def extend(self, other: TimeSeries) -> None:
+        """
+        Extends time series data with another time series object
+        """
+        assert self.entityId == other.entityId
+        assert self.entityType == other.entityType
+        assert self.index[-1] < other.index[0]
+        for attr, other_attr in zip(self.attributes, other.attributes):
+            assert attr.attrName == other_attr.attrName
+            attr.values.extend(other_attr.values)
+        self.index.extend(other.index)
+
     class Config:
         """
         Pydantic configuration
