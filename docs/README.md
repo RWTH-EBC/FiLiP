@@ -6,7 +6,7 @@
    pip install -r ./docs/requirements.txt
    ```
 
-2. Run sphinx apidoc to generate the documentation from docstings in the code. 
+2. Run sphinx apidoc to generate the documentation from docstrings in the code. 
    The official documentation is located 
    [here](https://www.sphinx-doc.org/en/master/man/sphinx-apidoc.html).
     
