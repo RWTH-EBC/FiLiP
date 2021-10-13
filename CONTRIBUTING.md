@@ -11,11 +11,20 @@ Consider labeling the issue using the flag `bug` or `documentation` / `question`
 If you instead want to contribute new features or fix bugs yourself, we are more than happy.
 
 Please also [raise an issue](https://github.com/RWTH-EBC/filip/issues/new) 
-and create a new branch labeled `issueXY_some_name`.
-Here, `XY` is the number of your issue and `some_name` is a meaingful description.
+and create a new branch labeled `XY_some_name`.
+Here, `XY` is the number of your issue and `some_name` is a meaningful 
+description.
+Alternatively, issue branches are created automatically on issue assignment with 
+[robvanderleek/create-issue-branch](https://github.com/robvanderleek/create-issue-branch).
+
+See [workflow definition](.github/workflows/issue-tracker.yml) and 
+[configuration file](.github/issue-branch.yml) for customization.
+
+Branch creation is skipped for issues with label "question".
 
 Once you're feature is ready, create a pull request and check if the pipeline succeeds.
-Assign a reviewer before merging. Once review is finished, you can merge.
+Assign a reviewer before merging. 
+Once review is finished, you can merge.
 
 **Before** implementing or modifying modules, classes or functions, please read the following page.
 
