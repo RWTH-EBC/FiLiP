@@ -8,7 +8,7 @@ from typing import List, Any, Tuple, Dict, Type, TypeVar, Generic, \
 
 from filip.models.ngsi_v2.iot import Device, ExpressionLanguage, \
     TransportProtocol
-
+import filip.models.ngsi_v2.iot as iot
 from filip.models.base import DataType, NgsiVersion
 
 from filip.models.ngsi_v2.context import ContextEntity, NamedContextAttribute
@@ -221,7 +221,7 @@ class Field(collections.MutableSequence):
     def is_valid(self) -> bool:
         pass
 
-    def build_context_attributes(self) -> List[NamedContextAttribute]:
+    def build_context_attribute(self) -> NamedContextAttribute:
         """
         Convert the field to a NamedContextAttribute that can eb added to a
         ContextEntity
@@ -230,6 +230,23 @@ class Field(collections.MutableSequence):
             NamedContextAttribute
         """
         pass
+    
+    def build_device_attributes(self) -> List[Union[iot.DeviceAttribute,
+                                                    iot.LazyDeviceAttribute,
+                                                    iot.StaticDeviceAttribute,
+                                                    iot.DeviceCommand]]:
+        return [
+            iot.StaticDeviceAttribute(
+                name=self.name,
+                type=DataType.STRUCTUREDVALUE,
+                value=self.get_all(),
+                entity_name=self._get_instance().id,
+                entity_type=self._get_instance().get_type(),
+                reverse=None,
+                expression=None,
+                metadata=None
+            )
+        ]
 
     def _pre_set(self, v):
         pass
@@ -285,37 +302,9 @@ class Field(collections.MutableSequence):
         """
         return self._list
 
+    def _get_instance(self) -> 'SemanticClass':
+        return self._semantic_manager.get_instance(self._instance_identifier)
 
-# class SettingField(Field):
-#
-#     allowed_type: type
-#     value_is_required: bool
-#
-#     def is_valid(self) -> bool:
-#         if len(self.get_all()) == 1:
-#             return True
-#         for value in self.get_all():
-#             if not isinstance(value, self.allowed_type):
-#                 return False
-#         return True
-#
-#     def _pre_set(self, v):
-#         assert isinstance(v, self.allowed_type)
-#         assert len(self._list) == 0, "Setting field can only have one value"
-#
-#     def build_context_attributes(self) -> List[NamedContextAttribute]:
-#         """
-#         Convert the field to a NamedContextAttribute that can eb added to a
-#         ContextEntity
-#
-#         Returns:
-#             NamedContextAttribute
-#         """
-#         return [NamedContextAttribute(
-#             name=f"__{self.name}",
-#             type=DataType.STRUCTUREDVALUE,
-#             value=[v for v in self.get_all()]
-#         )]
 
 
 class DeviceField(Field):
@@ -343,6 +332,7 @@ class DeviceField(Field):
         v.name = None
         del self._list[i]
 
+    
 
 
 class CommandField(DeviceField):
@@ -352,19 +342,21 @@ class CommandField(DeviceField):
     def get_all(self) -> List[Command]:
         return super().get_all()
 
-    def build_context_attributes(self) -> List[NamedContextAttribute]:
-        """
-        Convert the field to a NamedContextAttribute that can eb added to a
-        ContextEntity
+    def build_device_attributes(self) -> List[Union[iot.DeviceAttribute,
+                                                    iot.LazyDeviceAttribute,
+                                                    iot.StaticDeviceAttribute,
+                                                    iot.DeviceCommand]]:
 
-        Returns:
-            NamedContextAttribute
-        """
-        return [NamedContextAttribute(
-            name=self.name,
-            type=DataType.STRUCTUREDVALUE,
-            value=[v for v in self.get_all()]
-        )]
+        attrs = super().build_device_attributes()
+
+        for command in self.get_all():
+            attrs.append(
+                iot.DeviceCommand(
+                    name=command.name,
+                )
+            )
+
+        return attrs
 
 
 class DeviceAttributeField(DeviceField):
@@ -373,16 +365,42 @@ class DeviceAttributeField(DeviceField):
     def get_all(self) -> List[DeviceAttribute]:
         return super().get_all()
 
-    def build_context_attributes(self) -> List[NamedContextAttribute]:
+    def build_device_attributes(self) -> List[Union[iot.DeviceAttribute,
+                                                    iot.LazyDeviceAttribute,
+                                                    iot.StaticDeviceAttribute,
+                                                    iot.DeviceCommand]]:
+        attrs = super().build_device_attributes()
 
-        res = []
         for attribute in self.get_all():
-            res.append(NamedContextAttribute(
-                name=attribute.get_full_field_name(),
-                type=DataType.STRUCTUREDVALUE,
-                value=""
-            ))
-        return res
+
+            if attribute.attribute_type == DeviceAttributeType.active:
+                attrs.append(
+                    iot.DeviceAttribute(
+                        object_id=attribute.name,
+                        name=f"{self.name}_{attribute.name}",
+                        type=DataType.STRUCTUREDVALUE,
+                        entity_name=self._get_instance().id,
+                        entity_type=self._get_instance().get_type(),
+                        reverse=None,
+                        expression=None,
+                        metadata=None
+                    )
+                )
+            else:
+                attrs.append(
+                    iot.LazyDeviceAttribute(
+                        object_id=attribute.name,
+                        name=f"{self.name}_{attribute.name}",
+                        type=DataType.STRUCTUREDVALUE,
+                        entity_name=self._get_instance().id,
+                        entity_type=self._get_instance().get_type(),
+                        reverse=None,
+                        expression=None,
+                        metadata=None
+                    )
+                )
+
+        return attrs
 
 
 class RuleField(Field):
@@ -532,12 +550,12 @@ class DataField(RuleField):
         datatype = self._semantic_manager.get_datatype(rule_value)
         return datatype.value_is_valid(value)
 
-    def build_context_attributes(self) -> List[NamedContextAttribute]:
-        return [NamedContextAttribute(
+    def build_context_attribute(self) -> NamedContextAttribute:
+        return NamedContextAttribute(
             name=self.name,
             type=DataType.STRUCTUREDVALUE,
             value=[v for v in self.get_all()]
-        )]
+        )
 
     def __str__(self):
         return 'Data'+super().__str__()
@@ -566,7 +584,7 @@ class RelationField(RuleField):
         else:
             return False
 
-    def build_context_attributes(self) -> List[NamedContextAttribute]:
+    def build_context_attribute(self) -> NamedContextAttribute:
         values = []
         for v in self.get_all():
             if isinstance(v, InstanceIdentifier):
@@ -574,11 +592,11 @@ class RelationField(RuleField):
             else:
                 values.append(v)
 
-        return [NamedContextAttribute(
+        return NamedContextAttribute(
             name=self.name,
             type=DataType.RELATIONSHIP,
             value=values
-        )]
+        )
 
     def __getitem__(self, i) -> Union['SemanticClass', 'SemanticIndividual']:
         v = self._list[i]
@@ -915,7 +933,7 @@ class SemanticClass(BaseModel):
         )
 
         for field in self.get_fields():
-            entity.add_attributes(field.build_context_attributes())
+            entity.add_attributes([field.build_context_attribute()])
 
         reference_str_dict = \
             {identifier.json(): value
@@ -967,7 +985,9 @@ class SemanticClass(BaseModel):
     def __str__(self):
         return str(self.dict(exclude={'semantic_manager', 'old_state'}))
 
+
 T = TypeVar('T')
+
 
 class ProtectedProperty(Generic[T], BaseModel):
     _value: T = None
@@ -984,7 +1004,6 @@ class ProtectedProperty(Generic[T], BaseModel):
 
     class Config:
         underscore_attrs_are_private = True
-
 
 
 class SemanticDeviceClass(SemanticClass):
@@ -1085,7 +1104,20 @@ class SemanticDeviceClass(SemanticClass):
         """
         return [f.name for f in self.get_device_attribute_fields()]
 
-    def build_context_device(self) -> Device:
+    def get_property_dict(self) -> Dict[str, ProtectedProperty]:
+        """
+        Get all DeviceAttributeField of class
+
+        Returns:
+          List[DeviceAttributeField]
+        """
+        res = {}
+        for key, value in self.__dict__.items():
+            if isinstance(value, ProtectedProperty):
+                res[key] = value
+        return res
+
+    def build_context_device(self) -> iot.Device:
         """
         Convert the instance to a ContextEntity that contains all fields as
         NamedContextAttribute
@@ -1098,7 +1130,7 @@ class SemanticDeviceClass(SemanticClass):
         assert self.transport.get() is not None, \
             "Device needs to be given a transport setting"
 
-        device = Device(
+        device = iot.Device(
             device_id=self.id,
             service=self.header.service,
             service_path=self.header.service_path,
@@ -1113,26 +1145,40 @@ class SemanticDeviceClass(SemanticClass):
             ngsiVersion=self.header.fiware_version
 
         )
-        entity = ContextEntity(
-            id=self.id,
-            type=self._get_class_name()
-        )
 
-        for field in self.get_fields():
-            entity.add_attributes(field.build_context_attributes())
+        for field in self.get_rule_fields():
+            for attr in field.build_device_attributes():
+                device.add_attribute(attr)
 
         reference_str_dict = \
             {identifier.json(): value
              for (identifier, value) in self.references.items()}
 
         # add meta attributes
-        entity.add_attributes([
-            NamedContextAttribute(
+        device.add_attribute(
+            iot.StaticDeviceAttribute(
                 name="__references",
                 type=DataType.STRUCTUREDVALUE,
-                value=reference_str_dict
+                value=reference_str_dict,
+                entity_name=self.id,
+                entity_type=self.get_type(),
+                reverse=None,
+                expression=None,
+                metadata=None
             )
-        ])
+        )
+        device.add_attribute(
+            iot.StaticDeviceAttribute(
+                name="__device_settings",
+                type=DataType.STRUCTUREDVALUE,
+                value=self.get_property_dict(),
+                entity_name=self.id,
+                entity_type=self.get_type(),
+                reverse=None,
+                expression=None,
+                metadata=None
+            )
+        )
 
         return device
 
