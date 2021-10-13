@@ -242,13 +242,12 @@ class Class1b(Class1):
 		semantic_manager=semantic_manager)
 
 
-class Class2(Thing):
+class Class2(SemanticDeviceClass, Thing):
 
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
 		if not is_initialised:
-			self.attributeProp._rules = [('some', [['customDataType1']])]
 
 			self.oProp1._rules = [('min|1', [[Class1]])]
 			self.objProp2._rules = [('only', [[Thing]])]
@@ -260,9 +259,8 @@ class Class2(Thing):
 			pass
 
 	# Data fields
-	attributeProp: DataField = DataField(
+	attributeProp: DeviceAttributeField = DeviceAttributeField(
 		name='attributeProp',
-		rule='some customDataType1',
 		semantic_manager=semantic_manager)
 
 	# Relation fields
@@ -276,14 +274,12 @@ class Class2(Thing):
 		semantic_manager=semantic_manager)
 
 
-class Class3(Thing):
+class Class3(SemanticDeviceClass, Thing):
 
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
 		if not is_initialised:
-			self.attributeProp._rules = [('some', [['string']])]
-			self.commandProp._rules = [('some', [['string']])]
 			self.dataProp1._rules = [('only', [['customDataType4']])]
 
 			self.oProp1._rules = [('value', [[Individual1]])]
@@ -300,13 +296,11 @@ class Class3(Thing):
 			pass
 
 	# Data fields
-	attributeProp: DataField = DataField(
+	attributeProp: DeviceAttributeField = DeviceAttributeField(
 		name='attributeProp',
-		rule='some string',
 		semantic_manager=semantic_manager)
-	commandProp: DataField = DataField(
+	commandProp: CommandField = CommandField(
 		name='commandProp',
-		rule='some string',
 		semantic_manager=semantic_manager)
 	dataProp1: DataField = DataField(
 		name='dataProp1',
@@ -330,8 +324,6 @@ class Class123(Class1, Class2, Class3):
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
 		if not is_initialised:
-			self.attributeProp._rules = [('some', [['string']]), ('some', [['customDataType1']])]
-			self.commandProp._rules = [('some', [['string']])]
 			self.dataProp1._rules = [('only', [['customDataType4']])]
 			self.dataProp2._rules = [('value', [[]])]
 
@@ -354,13 +346,11 @@ class Class123(Class1, Class2, Class3):
 			pass
 
 	# Data fields
-	attributeProp: DataField = DataField(
+	attributeProp: DeviceAttributeField = DeviceAttributeField(
 		name='attributeProp',
-		rule='some string, some customDataType1',
 		semantic_manager=semantic_manager)
-	commandProp: DataField = DataField(
+	commandProp: CommandField = CommandField(
 		name='commandProp',
-		rule='some string',
 		semantic_manager=semantic_manager)
 	dataProp1: DataField = DataField(
 		name='dataProp1',
@@ -400,8 +390,6 @@ class Class13(Class1, Class3):
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
 		if not is_initialised:
-			self.attributeProp._rules = [('some', [['string']])]
-			self.commandProp._rules = [('some', [['string']])]
 			self.dataProp1._rules = [('min|1', [['int']]), ('only', [['customDataType4']])]
 			self.dataProp2._rules = [('exactly|1', [['boolean']]), ('value', [[]])]
 
@@ -424,13 +412,11 @@ class Class13(Class1, Class3):
 			pass
 
 	# Data fields
-	attributeProp: DataField = DataField(
+	attributeProp: DeviceAttributeField = DeviceAttributeField(
 		name='attributeProp',
-		rule='some string',
 		semantic_manager=semantic_manager)
-	commandProp: DataField = DataField(
+	commandProp: CommandField = CommandField(
 		name='commandProp',
-		rule='some string',
 		semantic_manager=semantic_manager)
 	dataProp1: DataField = DataField(
 		name='dataProp1',
@@ -470,8 +456,6 @@ class Class3a(Class3):
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
 		if not is_initialised:
-			self.attributeProp._rules = [('some', [['string']])]
-			self.commandProp._rules = [('some', [['string']])]
 			self.dataProp1._rules = [('only', [['customDataType4']])]
 
 			self.oProp1._rules = [('value', [[Individual1]])]
@@ -486,13 +470,11 @@ class Class3a(Class3):
 			pass
 
 	# Data fields
-	attributeProp: DataField = DataField(
+	attributeProp: DeviceAttributeField = DeviceAttributeField(
 		name='attributeProp',
-		rule='some string',
 		semantic_manager=semantic_manager)
-	commandProp: DataField = DataField(
+	commandProp: CommandField = CommandField(
 		name='commandProp',
-		rule='some string',
 		semantic_manager=semantic_manager)
 	dataProp1: DataField = DataField(
 		name='dataProp1',
@@ -516,8 +498,6 @@ class Class3aa(Class3a):
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
 		if not is_initialised:
-			self.attributeProp._rules = [('some', [['string']])]
-			self.commandProp._rules = [('some', [['string']])]
 			self.dataProp1._rules = [('only', [['customDataType4']])]
 
 			self.oProp1._rules = [('value', [[Individual1]])]
@@ -532,13 +512,11 @@ class Class3aa(Class3a):
 			pass
 
 	# Data fields
-	attributeProp: DataField = DataField(
+	attributeProp: DeviceAttributeField = DeviceAttributeField(
 		name='attributeProp',
-		rule='some string',
 		semantic_manager=semantic_manager)
-	commandProp: DataField = DataField(
+	commandProp: CommandField = CommandField(
 		name='commandProp',
-		rule='some string',
 		semantic_manager=semantic_manager)
 	dataProp1: DataField = DataField(
 		name='dataProp1',
@@ -584,7 +562,6 @@ class Gertrude(Class1, Class2):
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
 		if not is_initialised:
-			self.attributeProp._rules = [('some', [['customDataType1']])]
 			self.dataProp2._rules = [('value', [[]])]
 
 			self.oProp1._rules = [('min|1', [[Class1]]), ('some', [[Class2], [Class4]])]
@@ -604,9 +581,8 @@ class Gertrude(Class1, Class2):
 			pass
 
 	# Data fields
-	attributeProp: DataField = DataField(
+	attributeProp: DeviceAttributeField = DeviceAttributeField(
 		name='attributeProp',
-		rule='some customDataType1',
 		semantic_manager=semantic_manager)
 	dataProp2: DataField = DataField(
 		name='dataProp2',

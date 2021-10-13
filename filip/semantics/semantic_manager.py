@@ -3,6 +3,7 @@ from enum import Enum
 from typing import Optional, Dict, TYPE_CHECKING, Type, List, Any
 
 import requests
+from filip.models.base import NgsiVersion
 
 from filip import settings
 from filip.semantics.vocabulary import Individual
@@ -13,7 +14,7 @@ from filip.clients.ngsi_v2 import ContextBrokerClient
 
 from filip.models import FiwareHeader
 from pydantic import BaseModel
-from filip.semantics.semantic_models import  FiwareVersion, \
+from filip.semantics.semantic_models import \
     InstanceIdentifier, SemanticClass, InstanceHeader, Datatype, DataField, \
     RelationField, SemanticIndividual
 
@@ -111,7 +112,7 @@ class SemanticManager(BaseModel):
     default_header: InstanceHeader = InstanceHeader()
 
     def _get_client(self, instance_header: InstanceHeader):
-        if instance_header.fiware_version == FiwareVersion.v2:
+        if instance_header.fiware_version == NgsiVersion.v2:
             return ContextBrokerClient(
                 url=instance_header.url,
                 fiware_header=instance_header.get_fiware_header())
@@ -259,7 +260,7 @@ class SemanticManager(BaseModel):
     def load_instances_from_fiware(
             self,
             fiware_header: FiwareHeader,
-            fiware_version: FiwareVersion,
+            fiware_version: NgsiVersion,
             entity_types: Optional[List[str]],
             entity_ids: Optional[List[str]],
             url: Optional[str] = None) -> List[SemanticClass]:
@@ -267,7 +268,7 @@ class SemanticManager(BaseModel):
         if len([p for p in [entity_types, entity_ids] if p is not None]) > 1:
             raise ValueError("Only one search parameter is allowed")
 
-        if fiware_version == FiwareVersion.v2:
+        if fiware_version == NgsiVersion.v2:
             client = ContextBrokerClient(fiware_header=fiware_header, url=url)
         else:
             raise Exception("FiwareVersion not yet supported")

@@ -6,7 +6,8 @@ from enum import Enum
 from typing import List, Any, Tuple, Dict, Type, TypeVar, Generic, \
     TYPE_CHECKING, Optional, Union
 
-from filip.models.ngsi_v2.iot import Device, ExpressionLanguage
+from filip.models.ngsi_v2.iot import Device, ExpressionLanguage, \
+    TransportProtocol
 
 from filip.models.base import DataType, NgsiVersion
 
@@ -968,15 +969,18 @@ class SemanticClass(BaseModel):
 
 T = TypeVar('T')
 
-class ProtectedProperty(BaseModel, T):
+class ProtectedProperty(Generic[T], BaseModel):
     _value: T = None
+
+    def __init__(self, default_value: T = None, **data: Any):
+        super().__init__(**data)
+        self._value = default_value
 
     def get(self) -> T:
         return self._value
 
     def set(self, value: T):
-        assert isinstance(value, T())
-        self._value = T
+        self._value = value
 
     class Config:
         underscore_attrs_are_private = True
@@ -987,20 +991,19 @@ class SemanticDeviceClass(SemanticClass):
 
     # old_device_state: Optional[ContextDevice]
     """needed ?"""
-    _device_configuration: Dict[str, Optional[str, bool, ExpressionLanguage]]\
-        = {
-        "transport": None,
-        # Transport Protocol used to communicate with the device
-        "endpoint": None,
-        # Device endpoint to which commands will be send,
-        "apikey": None,
-        "protocol": None,
-        "timezone": None,
-        "timestamp": False,
-        "expressionLanguage": ExpressionLanguage.LEGACY,
-        "explicitAttrs": False
-    }
+
     # Used an internal dict to bypass objects immutability
+
+    transport: ProtectedProperty[TransportProtocol] = ProtectedProperty()
+    endpoint: ProtectedProperty[AnyHttpUrl] = ProtectedProperty()
+    apikey: ProtectedProperty[str] = ProtectedProperty()
+    protocol: ProtectedProperty[str] = ProtectedProperty()
+    timezone: ProtectedProperty[str] = ProtectedProperty()
+    timestamp: ProtectedProperty[bool] = ProtectedProperty()
+    expressionLanguage: ProtectedProperty[ExpressionLanguage] = \
+        ProtectedProperty()
+    explicitAttrs: ProtectedProperty[bool] = ProtectedProperty(False)
+
 
     def delete(self, assert_no_references: bool = False):
 
@@ -1090,11 +1093,9 @@ class SemanticDeviceClass(SemanticClass):
         Returns:
             ContextEntity
         """
-        assert 'endpoint' in self._device_configuration and \
-               self._device_configuration['endpoint'] is not None, \
+        assert self.endpoint.get() is not None, \
             "Device needs to be given an endpoint"
-        assert 'transport' in self._device_configuration and \
-               self._device_configuration['transport'] is not None, \
+        assert self.transport.get() is not None, \
             "Device needs to be given a transport setting"
 
         device = Device(
@@ -1103,12 +1104,12 @@ class SemanticDeviceClass(SemanticClass):
             service_path=self.header.service_path,
             entity_name=self.id,
             entity_type=self._get_class_name(),
-            apikey=self._device_configuration['apikey'],
-            endpoint=self._device_configuration['endpoint'],
-            protocol=self._device_configuration['protocol'],
-            transport=self._device_configuration['transport'],
-            timestamp=self._device_configuration['timestamp'],
-            expressionLanguage=self._device_configuration['timestamp'],
+            apikey=self.apikey.get(),
+            endpoint=self.endpoint.get(),
+            protocol=self.protocol.get(),
+            transport=self.transport.get(),
+            timestamp=self.timestamp.get(),
+            expressionLanguage=self.expressionLanguage.get(),
             ngsiVersion=self.header.fiware_version
 
         )
@@ -1134,89 +1135,6 @@ class SemanticDeviceClass(SemanticClass):
         ])
 
         return device
-
-
-    def build_context_entity(self) -> ContextEntity:
-
-        assert 'endpoint' in self._device_configuration and \
-               self._device_configuration['endpoint'] is not None, \
-                "Device needs to be given an endpoint"
-        assert 'transport' in self._device_configuration and \
-               self._device_configuration['transport'] is not None, \
-               "Device needs to be given a transport setting"
-
-        entity = super().build_context_entity()
-
-        # endpoint attribute
-        entity.add_attributes([NamedContextAttribute(
-            name="__endpoint",
-            type=DataType.TEXT,
-            value=self.endpoint)
-        ])
-
-        # transport attribute
-        entity.add_attributes([NamedContextAttribute(
-            name="__transport",
-            type=DataType.TEXT,
-            value=self.transport)
-        ])
-
-        return entity
-
-    def get_endpoint(self) -> Optional[str]:
-        return self._device_configuration['endpoint']
-
-    def get_transport(self) -> Optional[str]:
-        return self._device_configuration['transport']
-    
-    def get_apikey(self) -> Optional[str]:
-        return self._device_configuration['apikey']
-
-    def get_protocol(self) -> Optional[str]:
-        return self._device_configuration['protocol']
-
-    def get_timezone(self) -> Optional[str]:
-        return self._device_configuration['timezone']
-
-    def get_timestamp(self) -> Optional[bool]:
-        return self._device_configuration['timestamp']
-
-    def get_expression_language(self) -> Optional[ExpressionLanguage]:
-        return self._device_configuration['expressionLanguage']
-
-    def get_explicit_attrs(self) -> Optional[bool]:
-        return self._device_configuration['explicitAttrs']
-
-    def set_device_configuration(
-             self, 
-             endpoint: Optional[str] = None,
-             transport: Optional[str] = None,
-             apikey: Optional[str] = None,
-             protocol: Optional[str] = None,
-             timezone: Optional[str] = None,
-             timestamp: Optional[bool] = None,
-             expressionLanguage: Optional[ExpressionLanguage] = None,
-             explicitAttrs:  Optional[bool] = None):
-        
-        if endpoint is not None:
-            self._device_configuration['endpoint'] = endpoint
-        if transport is not None:
-            self._device_configuration['transport'] = transport
-        if apikey is not None:
-            self._device_configuration['apikey'] = apikey
-        if protocol is not None:
-            self._device_configuration['protocol'] = protocol
-        if timezone is not None:
-            self._device_configuration['timezone'] = timezone
-        if timestamp is not None:
-            self._device_configuration['timestamp'] = timestamp
-        if expressionLanguage is not None:
-            self._device_configuration['expressionLanguage'] = \
-                expressionLanguage
-        if explicitAttrs is not None:
-            self._device_configuration['explicitAttrs'] = explicitAttrs
-
-
 
 
 class SemanticIndividual(BaseModel):

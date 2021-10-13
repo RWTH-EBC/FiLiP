@@ -289,6 +289,11 @@ class TestSemanticModels(unittest.TestCase):
         self.assertTrue(class13.objProp3._list == [c3.get_identifier(),
                                                    c123.get_identifier()])
 
+    def clear_registry(self):
+        from tests.semantic.models import semantic_manager
+        semantic_manager.instance_registry._registry.clear()
+        semantic_manager.instance_registry._deleted_identifiers.clear()
+
     def test__11_model_creation_with_devices(self):
         vocabulary = VocabularyConfigurator.create_vocabulary()
 
@@ -305,12 +310,19 @@ class TestSemanticModels(unittest.TestCase):
             "-ontology-25#attributeProp").field_type = \
             DataFieldType.device_attribute
 
-        generate_vocabulary_models(vocabulary, "./", "models")
+        generate_vocabulary_models(vocabulary, "./", "models2")
 
-    def clear_registry(self):
-        from tests.semantic.models import semantic_manager
-        semantic_manager.instance_registry._registry.clear()
-        semantic_manager.instance_registry._deleted_identifiers.clear()
+
+
+    def test__13_device_creation(self):
+        from tests.semantic.models2 import Class1, Class13, Class3, Class4, \
+            Class123, Individual1, Gertrude, semantic_manager
+
+        class3_ = Class3()
+        class3_.endpoint.set("http://test.com")
+        self.assertEqual(class3_.endpoint.get(), "http://test.com" )
+
+
 
 
     def tearDown(self) -> None:
