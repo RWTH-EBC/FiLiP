@@ -1,6 +1,6 @@
 ![E.ON EBC RWTH Aachen University](https://raw.githubusercontent.com/N5GEH/n5geh.tools.FiLiP/development/docs/logos/EBC_Logo.png)
 
-# FiLiP - Fiware Library for Python
+# FiLiP
 
 [![pylint](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/ebcpy/master/pylint/pylint.svg )](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/pylint/pylint.html)
 [![Documentation](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/development/docs/doc.svg)](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/docs/index.html)

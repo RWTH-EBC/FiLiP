@@ -11,7 +11,7 @@
    [here](https://www.sphinx-doc.org/en/master/man/sphinx-apidoc.html).
     
    ```
-   sphinx-apidoc -o ./docs/source filip
+   sphinx-apidoc filip -o ./docs/source/api --tocfile index
    ```
    
 3. Build html by running

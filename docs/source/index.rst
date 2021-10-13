@@ -4,19 +4,7 @@
    contain the root `toctree` directive.
 
 
-.. toctree::
-   :maxdepth: 5
-
-   introduction
-   filip
-   examples
-   contribution
-   version_his
+.. mdinclude::  ../../README.md
 
 
-Indices and tables
-==================
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
