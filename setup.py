@@ -25,7 +25,7 @@ setuptools.setup(
     author='RWTH Aachen University, E.ON Energy Research Center, Institute\
         of Energy Efficient Buildings and Indoor Climate',
     author_email='tstorek@eonerc.rwth-aachen.de',
-    description='[FI]WARE [li]brary for [P]ython',
+    description='[FI]WARE [Li]brary for [P]ython',
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
     url="https://github.com/RWTH-EBC/filip",
@@ -41,6 +41,7 @@ setuptools.setup(
                  "License :: OSI Approve :: BSD 3-Clause License"],
     keywords=['iot', 'fiware', 'semantic'],
     packages=setuptools.find_packages(exclude=['tests','tests.*','img']),
+    package_data={'filip': ['data/*.hdf']},
     setup_requires=SETUP_REQUIRES,
     install_requires=INSTALL_REQUIRES,
     python_requires=">=3.7",
