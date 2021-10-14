@@ -1,8 +1,11 @@
 import copy
 import unittest
 
+from filip.models.ngsi_v2.iot import TransportProtocol
+from pydantic import AnyHttpUrl
+
 from filip import settings
-from filip.clients.ngsi_v2 import ContextBrokerClient
+from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient
 from requests import RequestException
 
 from filip.models.ngsi_v2.context import ContextEntity
@@ -10,7 +13,8 @@ from filip.models.ngsi_v2.context import ContextEntity
 from filip.models import FiwareHeader
 
 from filip.semantics.entity_model_generator import generate_vocabulary_models
-from filip.semantics.semantic_models import SemanticClass, InstanceHeader
+from filip.semantics.semantic_models import SemanticClass, InstanceHeader, \
+    Command, DeviceAttribute, DeviceAttributeType
 from filip.semantics.vocabulary.data_property import DataFieldType
 from filip.semantics.vocabulary_configurator import VocabularyConfigurator
 
@@ -42,7 +46,7 @@ class TestSemanticModels(unittest.TestCase):
         from tests.semantic.models import Class1, semantic_manager
 
         test_header = InstanceHeader(
-            url=settings.CB_URL,
+            cb_url=settings.CB_URL,
             service="testing",
             service_path="/"
         )
@@ -318,11 +322,40 @@ class TestSemanticModels(unittest.TestCase):
         from tests.semantic.models2 import Class1, Class13, Class3, Class4, \
             Class123, Individual1, Gertrude, semantic_manager
 
+        test_header = InstanceHeader(
+            cb_url=settings.CB_URL,
+            iota_url=settings.IOTA_URL,
+            service="testing",
+            service_path="/"
+        )
+        semantic_manager.set_default_header(test_header)
+
         class3_ = Class3()
         class3_.endpoint.set("http://test.com")
         self.assertEqual(class3_.endpoint.get(), "http://test.com" )
 
+    def test__14_device_saving_and_loading(self):
+        from tests.semantic.models2 import Class1, Class13, Class3, Class4, \
+            Class123, Individual1, Gertrude, semantic_manager
 
+
+        class3_ = Class3(id="3")
+        class3_.endpoint.set('http://www.example.com')
+        class3_.transport.set(TransportProtocol.HTTP)
+
+        class3_.oProp1.append(Class1(id="1"))
+        class3_.dataProp1.append("Test")
+
+        class3_.commandProp.append(Command(name="on"))
+        class3_.commandProp.append(Command(name="off"))
+        class3_.attributeProp.append(
+            DeviceAttribute(name="d1",
+                            attribute_type=DeviceAttributeType.lazy))
+        class3_.attributeProp.append(
+            DeviceAttribute(name="d2",
+                            attribute_type=DeviceAttributeType.active))
+
+        semantic_manager.save_state(assert_validity=False)
 
 
     def tearDown(self) -> None:
@@ -333,12 +366,20 @@ class TestSemanticModels(unittest.TestCase):
 
         self.clear_registry()
 
+        with IoTAClient(
+                fiware_header=semantic_manager.
+                        default_header.get_fiware_header()) as client:
+            for device in client.get_device_list():
+                client.delete_device(device_id=device.device_id)
+
         with ContextBrokerClient(
                 fiware_header=semantic_manager.
                 default_header.get_fiware_header()) as client:
             for entity in client.get_entity_list():
                 client.delete_entity(entity_id=entity.id,
                                      entity_type=entity.type)
+
+
 
 
 

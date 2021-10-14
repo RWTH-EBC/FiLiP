@@ -30,8 +30,13 @@ class InstanceHeader(FiwareHeader):
     exact location in the web
     """
 
-    url: str = Field(default=settings.CB_URL,
-                     description="Url of the Fiware setup")
+    cb_url: str = Field(default=settings.CB_URL,
+                        description="Url of the ContextBroker from the Fiware "
+                                    "setup")
+    iota_url: str = Field(default=settings.IOTA_URL,
+                        description="Url of the IoTABroker from the Fiware "
+                                    "setup")
+
     fiware_version: NgsiVersion = Field(default=NgsiVersion.v2,
                                         description="Used Version in the "
                                                       "Fiware setup")
@@ -248,21 +253,12 @@ class Field(collections.MutableSequence):
             )
         ]
 
-    def _pre_set(self, v):
-        pass
-
     # List methods
     def __len__(self): return len(self._list)
     def __getitem__(self, i): return self._list[i]
     def __delitem__(self, i): del self._list[i]
-
-    def __setitem__(self, i, v):
-        self._pre_set(v)
-        self._list[i] = v
-
-    def insert(self, i, v):
-        self._pre_set(v)
-        self._list.insert(i, v)
+    def __setitem__(self, i, v): self._list[i] = v
+    def insert(self, i, v): self._list.insert(i, v)
 
     def set(self, values: List):
         """
@@ -304,7 +300,6 @@ class Field(collections.MutableSequence):
 
     def _get_instance(self) -> 'SemanticClass':
         return self._semantic_manager.get_instance(self._instance_identifier)
-
 
 
 class DeviceField(Field):
@@ -781,7 +776,7 @@ class SemanticClass(BaseModel):
 
         semantic_manager_.instance_registry.register(self)
 
-    def are_fields_valid(self) -> bool:
+    def are_rule_fields_valid(self) -> bool:
         """
         Test if all fields are valid
 
@@ -797,7 +792,18 @@ class SemanticClass(BaseModel):
         Returns:
             List[Field]
         """
-        return [f for f in self.get_fields() if not f.is_valid()]
+        return [f for f in self.get_rule_fields() if not f.is_valid()]
+
+    def get_rule_fields(self) -> List[Field]:
+        """
+        Get all RuleFields of class
+
+        Returns:
+            List[Field]
+        """
+        res: List[Field] = self.get_relation_fields()
+        res.extend(self.get_data_fields())
+        return res
 
     def get_type(self) -> str:
         """
@@ -1029,14 +1035,6 @@ class SemanticDeviceClass(SemanticClass):
         #todo
         pass
 
-    def get_rule_fields(self) -> List[Field]:
-        """
-        Get all RuleFields of class
-
-        Returns:
-            List[Field]
-        """
-        return super(SemanticDeviceClass, self).get_fields()
 
     def get_fields(self) -> List[Field]:
         """
@@ -1117,6 +1115,13 @@ class SemanticDeviceClass(SemanticClass):
                 res[key] = value
         return res
 
+    # def device_config_is_valid(self) -> bool:
+    #     if self.endpoint.get() is None:
+    #         return False
+    #     if self.transport.get() is None:
+    #         return False
+    #     return True
+
     def build_context_device(self) -> iot.Device:
         """
         Convert the instance to a ContextEntity that contains all fields as
@@ -1125,13 +1130,9 @@ class SemanticDeviceClass(SemanticClass):
         Returns:
             ContextEntity
         """
-        assert self.endpoint.get() is not None, \
-            "Device needs to be given an endpoint"
-        assert self.transport.get() is not None, \
-            "Device needs to be given a transport setting"
-
+        print(self.header.service_path)
         device = iot.Device(
-            device_id=self.id,
+            device_id=f'{self.get_type()}_{self.id}',
             service=self.header.service,
             service_path=self.header.service_path,
             entity_name=self.id,
