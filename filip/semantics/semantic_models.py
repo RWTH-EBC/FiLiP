@@ -240,13 +240,22 @@ class Field(collections.MutableSequence):
                                                     iot.LazyDeviceAttribute,
                                                     iot.StaticDeviceAttribute,
                                                     iot.DeviceCommand]]:
+        values = []
+        for v in self.get_all():
+            if isinstance(v, BaseModel):
+                values.append(v.json())
+            else:
+                values.append(v)
+
+
+        print(values)
         return [
             iot.StaticDeviceAttribute(
                 name=self.name,
                 type=DataType.STRUCTUREDVALUE,
-                value=self.get_all(),
-                entity_name=self._get_instance().id,
-                entity_type=self._get_instance().get_type(),
+                value=values,
+                entity_name=None,
+                entity_type=None,
                 reverse=None,
                 expression=None,
                 metadata=None
@@ -374,8 +383,8 @@ class DeviceAttributeField(DeviceField):
                         object_id=attribute.name,
                         name=f"{self.name}_{attribute.name}",
                         type=DataType.STRUCTUREDVALUE,
-                        entity_name=self._get_instance().id,
-                        entity_type=self._get_instance().get_type(),
+                        entity_name=None,
+                        entity_type=None,
                         reverse=None,
                         expression=None,
                         metadata=None
@@ -387,8 +396,8 @@ class DeviceAttributeField(DeviceField):
                         object_id=attribute.name,
                         name=f"{self.name}_{attribute.name}",
                         type=DataType.STRUCTUREDVALUE,
-                        entity_name=self._get_instance().id,
-                        entity_type=self._get_instance().get_type(),
+                        entity_name=None,
+                        entity_type=None,
                         reverse=None,
                         expression=None,
                         metadata=None
@@ -1112,7 +1121,7 @@ class SemanticDeviceClass(SemanticClass):
         res = {}
         for key, value in self.__dict__.items():
             if isinstance(value, ProtectedProperty):
-                res[key] = value
+                res[key] = value.get()
         return res
 
     # def device_config_is_valid(self) -> bool:
@@ -1132,7 +1141,7 @@ class SemanticDeviceClass(SemanticClass):
         """
         print(self.header.service_path)
         device = iot.Device(
-            device_id=f'{self.get_type()}_{self.id}',
+            device_id=f'{self.id}',
             service=self.header.service,
             service_path=self.header.service_path,
             entity_name=self.id,
@@ -1147,7 +1156,7 @@ class SemanticDeviceClass(SemanticClass):
 
         )
 
-        for field in self.get_rule_fields():
+        for field in self.get_fields():
             for attr in field.build_device_attributes():
                 device.add_attribute(attr)
 
@@ -1161,8 +1170,8 @@ class SemanticDeviceClass(SemanticClass):
                 name="__references",
                 type=DataType.STRUCTUREDVALUE,
                 value=reference_str_dict,
-                entity_name=self.id,
-                entity_type=self.get_type(),
+                entity_name=None,
+                entity_type=None,
                 reverse=None,
                 expression=None,
                 metadata=None
@@ -1173,13 +1182,14 @@ class SemanticDeviceClass(SemanticClass):
                 name="__device_settings",
                 type=DataType.STRUCTUREDVALUE,
                 value=self.get_property_dict(),
-                entity_name=self.id,
-                entity_type=self.get_type(),
+                entity_name=None,
+                entity_type=None,
                 reverse=None,
                 expression=None,
                 metadata=None
             )
         )
+
 
         return device
 

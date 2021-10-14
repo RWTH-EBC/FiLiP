@@ -120,19 +120,19 @@ class DeviceAttribute(BaseAttribute):
                     "e.g. 'unitCode'"
     )
 
-    @validator('metadata')
-    def validate_metadata(cls, data):
-        """
-        Check metadata object for serialization and units if present.
-        Args:
-            value: value of metadata field
-        Returns:
-
-        """
-        assert json.dumps(data), "metadata not serializable"
-        for k, v in data.items():
-            data.update(NamedContextMetadata(name=k, **v).to_context_metadata())
-        return data
+    # @validator('metadata')
+    # def validate_metadata(cls, data):
+    #     """
+    #     Check metadata object for serialization and units if present.
+    #     Args:
+    #         value: value of metadata field
+    #     Returns:
+    #
+    #     """
+    #     assert json.dumps(data), "metadata not serializable"
+    #     for k, v in data.items():
+    #         data.update(NamedContextMetadata(name=k, **v).to_context_metadata())
+    #     return data
 
 class LazyDeviceAttribute(DeviceAttribute):
     """

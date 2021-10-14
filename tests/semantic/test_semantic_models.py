@@ -338,6 +338,26 @@ class TestSemanticModels(unittest.TestCase):
         from tests.semantic.models2 import Class1, Class13, Class3, Class4, \
             Class123, Individual1, Gertrude, semantic_manager
 
+        test_header = InstanceHeader(
+            cb_url=settings.CB_URL,
+            iota_url=settings.IOTA_URL,
+            service="testing",
+            service_path="/"
+        )
+        semantic_manager.set_default_header(test_header)
+
+        with IoTAClient(
+                fiware_header=semantic_manager.
+                        default_header.get_fiware_header()) as client:
+            for device in client.get_device_list():
+                client.delete_device(device_id=device.device_id)
+
+        with ContextBrokerClient(
+                fiware_header=semantic_manager.
+                default_header.get_fiware_header()) as client:
+            for entity in client.get_entity_list():
+                client.delete_entity(entity_id=entity.id,
+                                     entity_type=entity.type)
 
         class3_ = Class3(id="3")
         class3_.endpoint.set('http://www.example.com')
@@ -357,6 +377,12 @@ class TestSemanticModels(unittest.TestCase):
 
         semantic_manager.save_state(assert_validity=False)
 
+        print(class3_.header)
+
+        self.clear_registry()
+
+        print(Class3(id="3"))
+
 
     def tearDown(self) -> None:
         """
@@ -366,18 +392,26 @@ class TestSemanticModels(unittest.TestCase):
 
         self.clear_registry()
 
-        with IoTAClient(
-                fiware_header=semantic_manager.
-                        default_header.get_fiware_header()) as client:
-            for device in client.get_device_list():
-                client.delete_device(device_id=device.device_id)
+        test_header = InstanceHeader(
+            cb_url=settings.CB_URL,
+            iota_url=settings.IOTA_URL,
+            service="testing",
+            service_path="/"
+        )
+        semantic_manager.set_default_header(test_header)
 
-        with ContextBrokerClient(
-                fiware_header=semantic_manager.
-                default_header.get_fiware_header()) as client:
-            for entity in client.get_entity_list():
-                client.delete_entity(entity_id=entity.id,
-                                     entity_type=entity.type)
+        # with IoTAClient(
+        #         fiware_header=semantic_manager.
+        #                 default_header.get_fiware_header()) as client:
+        #     for device in client.get_device_list():
+        #         client.delete_device(device_id=device.device_id)
+        #
+        # with ContextBrokerClient(
+        #         fiware_header=semantic_manager.
+        #         default_header.get_fiware_header()) as client:
+        #     for entity in client.get_entity_list():
+        #         client.delete_entity(entity_id=entity.id,
+        #                              entity_type=entity.type)
 
 
 

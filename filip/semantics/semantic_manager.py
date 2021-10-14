@@ -138,16 +138,25 @@ class SemanticManager(BaseModel):
         class_name = entity.type
 
         class_: Type = self.get_class_by_name(class_name)
-        loaded_class: SemanticClass = class_(id=entity.id,
-                                             fiware_header=header,
-                                             old_state=entity,
-                                             enforce_new=True)
+
+        if not self.is_class_name_an_device_class(class_name):
+
+            loaded_class: SemanticClass = class_(id=entity.id,
+                                                 fiware_header=header,
+                                                 old_state=entity,
+                                                 enforce_new=True)
+        else:
+            loaded_class: SemanticDeviceClass = class_(id=entity.id,
+                                                       fiware_header=header,
+                                                       old_state=entity,
+                                                       enforce_new=True)
 
         # todo catch if Fiware contains more fields than the model has?
-        for field in loaded_class.get_fields():
+        for field in loaded_class.get_rule_fields():
             field.clear()  # remove default values, from hasValue relations
             field_name = field.name
             entity_attribute = entity.get_attribute(field_name)
+            print(field_name)
             if entity_attribute is None:
                 raise Exception(
                     f"The corresponding entity for ({entity.id},{entity.type}) "
@@ -171,8 +180,7 @@ class SemanticManager(BaseModel):
                     # the class will be hotloaded if the value in the is
                     # relationship is accessed
 
-                    if not isinstance(value, dict):  # is an
-                        # individual
+                    if not isinstance(value, dict):  # is an individual
                         field._list.insert(len(field._list), value)
                     else:  # is an instance_identifier
                         identifier = InstanceIdentifier.parse_obj(value)
@@ -191,7 +199,7 @@ class SemanticManager(BaseModel):
     def get_class_by_name(self, class_name:str) -> Type:
         return self.class_catalogue[class_name]
 
-    def does_class_name_is_an_device_class(self, class_name:str) -> bool:
+    def is_class_name_an_device_class(self, class_name:str) -> bool:
         class_type = self.get_class_by_name(class_name)
         return isinstance(class_type, SemanticDeviceClass)
 
@@ -222,7 +230,7 @@ class SemanticManager(BaseModel):
 
             # we need to handle devices and normal classes with different
             # clients
-            if not self.does_class_name_is_an_device_class(identifier.type):
+            if not self.is_class_name_an_device_class(identifier.type):
                 client = self._get_client(instance_header=identifier.header)
                 try:
                     client.delete_entity(entity_id=identifier.id,
@@ -256,6 +264,7 @@ class SemanticManager(BaseModel):
                     client.delete_device(device_id=instance.id)
                 except:
                     pass
+
                 client.post_device(device=instance.build_context_device())
                 client.close()
 
