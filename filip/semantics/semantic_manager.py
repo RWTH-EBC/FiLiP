@@ -102,7 +102,6 @@ class InstanceRegistry(BaseModel):
         return self._deleted_identifiers
 
 
-
 class SemanticManager(BaseModel):
 
     instance_registry: InstanceRegistry
@@ -156,7 +155,6 @@ class SemanticManager(BaseModel):
             field.clear()  # remove default values, from hasValue relations
             field_name = field.name
             entity_attribute = entity.get_attribute(field_name)
-            print(field_name)
             if entity_attribute is None:
                 raise Exception(
                     f"The corresponding entity for ({entity.id},{entity.type}) "

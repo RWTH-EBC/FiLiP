@@ -243,12 +243,9 @@ class Field(collections.MutableSequence):
         values = []
         for v in self.get_all():
             if isinstance(v, BaseModel):
-                values.append(v.json())
+                values.append(v.dict())
             else:
                 values.append(v)
-
-
-        print(values)
         return [
             iot.StaticDeviceAttribute(
                 name=self.name,
@@ -1139,7 +1136,6 @@ class SemanticDeviceClass(SemanticClass):
         Returns:
             ContextEntity
         """
-        print(self.header.service_path)
         device = iot.Device(
             device_id=f'{self.id}',
             service=self.header.service,
@@ -1158,6 +1154,7 @@ class SemanticDeviceClass(SemanticClass):
 
         for field in self.get_fields():
             for attr in field.build_device_attributes():
+
                 device.add_attribute(attr)
 
         reference_str_dict = \

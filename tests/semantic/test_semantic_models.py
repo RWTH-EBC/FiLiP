@@ -363,7 +363,7 @@ class TestSemanticModels(unittest.TestCase):
         class3_.endpoint.set('http://www.example.com')
         class3_.transport.set(TransportProtocol.HTTP)
 
-        class3_.oProp1.append(Class1(id="1"))
+        class3_.oProp1.append(Class1(id="19"))
         class3_.dataProp1.append("Test")
 
         class3_.commandProp.append(Command(name="on"))
@@ -381,7 +381,6 @@ class TestSemanticModels(unittest.TestCase):
 
         self.clear_registry()
 
-        print(Class3(id="3"))
 
 
     def tearDown(self) -> None:
