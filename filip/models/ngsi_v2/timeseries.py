@@ -1,4 +1,8 @@
 """
+Created April 1, 2021
+
+@author Thomas Storek
+
 Data models for interacting with FIWARE's time series-api (aka QuantumLeap)
 """
 from __future__ import annotations
@@ -9,7 +13,6 @@ import numpy as np
 import pandas as pd
 from aenum import Enum
 from pydantic import BaseModel, Field
-
 
 
 logger = logging.getLogger(__name__)

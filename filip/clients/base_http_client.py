@@ -1,12 +1,13 @@
 """
-Base client module
+Base http client module
 """
 import logging
 from pydantic import AnyHttpUrl
 from typing import Dict, ByteString, List, IO, Tuple, Union
 import requests
+
 from filip.models.base import FiwareHeader
-from filip.utils import validate_url
+from filip.utils import validate_http_url
 
 
 class BaseHttpClient:
@@ -36,7 +37,7 @@ class BaseHttpClient:
 
         if url:
             self.logger.debug("Checking url style...")
-            self.base_url = validate_url(url)
+            self.base_url = validate_http_url(url)
 
         if session:
             self.session = session
@@ -349,7 +350,7 @@ class BaseHttpClient:
             elif err.response.text and not msg:
                 self.logger.error("%s", err.response.text)
         elif not err.response and msg:
-                self.logger.error("%s \n Reason: %s", msg, err)
+            self.logger.error("%s \n Reason: %s", msg, err)
         else:
             self.logger.error(err)
 

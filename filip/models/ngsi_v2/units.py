@@ -13,7 +13,7 @@ import json
 import logging
 import pandas as pd
 from functools import lru_cache
-from fuzzywuzzy import process
+from rapidfuzz import process
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field, root_validator, validator
 from filip.models.base import NgsiVersion, DataType
@@ -60,7 +60,7 @@ class UnitCode(BaseModel):
                        min_length=2,
                        max_length=3)
 
-    @validator('value')
+    @validator('value', allow_reuse=True)
     def validate_code(cls, value):
         units = load_units()
         if len(units.loc[units.CommonCode == value.upper()]) == 1:
@@ -86,14 +86,14 @@ class UnitText(BaseModel):
                                    "spelling in singular form, "
                                    "e.g. 'newton second per metre'")
 
-    @validator('value')
+    @validator('value', allow_reuse=True)
     def validate_text(cls, value):
         units = load_units()
 
         if len(units.loc[(units.Name.str.casefold() == value.casefold())]) >= 1:
             return value
         names = units.Name.tolist()
-        suggestions = [item[0] for item in process.extractBests(
+        suggestions = [item[0] for item in process.extract(
             query=value.casefold(),
             choices=names,
             score_cutoff=50,
@@ -137,7 +137,7 @@ class Unit(BaseModel):
         extra = 'ignore'
         allow_population_by_field_name = True
 
-    @root_validator(pre=False)
+    @root_validator(pre=False, allow_reuse=True)
     def check_consistency(cls, values):
         """
         Validate and auto complete unit data based on the UN/CEFACT data
@@ -170,11 +170,12 @@ class Unit(BaseModel):
             idx = units.index[(units.Name == name)]
             if idx.empty:
                 names = units.Name.tolist()
-                suggestions = [item[0] for item in process.extractBests(
+                suggestions = [item[0] for item in process.extract(
                     query=name.casefold(),
                     choices=names,
                     score_cutoff=50,
                     limit=5)]
+
                 raise ValueError(f"Invalid 'name' for unit! '{name}' \n "
                                  f"Did you mean one of the following? \n "
                                  f"{suggestions}")
@@ -240,7 +241,7 @@ class Units:
                                 (self.units.Name == item.casefold()))]
         if idx.empty:
             names = self.units.Name.tolist()
-            suggestions = [item[0] for item in process.extractBests(
+            suggestions = [item[0] for item in process.extract(
                 query=item.casefold(),
                 choices=names,
                 score_cutoff=50,

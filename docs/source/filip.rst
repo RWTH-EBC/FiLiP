@@ -1,8 +1,5 @@
-filip package
-=============
-
-Subpackages
------------
+Library
+=======
 
 .. toctree::
    :maxdepth: 4
@@ -11,21 +8,18 @@ Subpackages
    filip.models
    filip.utils
 
-Submodules
-----------
-
-filip.config module
--------------------
+filip.config
+------------
 
 .. automodule:: filip.config
    :members:
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
+filip.types
+-----------
 
-.. automodule:: filip
+.. automodule:: filip.types
    :members:
    :undoc-members:
    :show-inheritance:

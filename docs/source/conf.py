@@ -23,7 +23,7 @@ copyright = '2021, RWTH Aachen University, ' \
 author = 'EON EBC'
 
 # The full version, including alpha/beta/rc tags
-release = '0.1.7'
+release = '0.1.8'
 
 # The short X.Y version.
 version = '0.1'
@@ -93,17 +93,17 @@ autodoc_pydantic_model_show_validator_summary = True
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'sphinx_material'
+html_theme = 'sphinx_rtd_theme'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 
 # Material theme options (see theme.conf for more information)
-html_theme_options = {
-
-    # Set the name of the project to appear in the navigation.
-    'nav_title': project,
+#html_theme_options = {
+#
+#    # Set the name of the project to appear in the navigation.
+#    'nav_title': project,
 
     # Set you GA account ID to enable tracking
     # 'google_analytics_account': 'UA-XXXXX',
@@ -113,22 +113,22 @@ html_theme_options = {
     # 'base_url': 'https://project.github.io/project',
 
     # Set the color and the accent color
-    'color_primary': 'red',
-    'color_accent': 'red',
+#    'color_primary': 'red',
+#    'color_accent': 'red',
 
     # Set the repo location to get a badge with stats
-    'repo_url': 'https://github.com/rwth-ebc/filip',
-    'repo_name': 'Fiware Library for Python',
+#    'repo_url': 'https://github.com/rwth-ebc/filip',
+#    'repo_name': 'Fiware Library for Python',
 
     # Visible levels of the global TOC; -1 means unlimited
-    'globaltoc_depth': 4,
+#    'globaltoc_depth': 4,
     # If False, expand all TOC entries
-    'globaltoc_collapse': True,
+#    'globaltoc_collapse': True,
     # If True, show hidden TOC entries
-    'globaltoc_includehidden': False,
+#    'globaltoc_includehidden': False,
     # Little logo on top left
-    'logo_icon': '&#xe869',
-}
+#    'logo_icon': '&#xe869',
+#}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
