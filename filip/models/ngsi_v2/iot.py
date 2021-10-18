@@ -14,7 +14,7 @@ import json
 import pytz
 from pydantic import BaseModel, Field, validator, AnyHttpUrl
 from filip.models.base import NgsiVersion, DataType, FiwareRegex
-from filip.models.ngsi_v2.context import NamedContextMetadata
+from filip.models.ngsi_v2.context import NamedContextMetadata, ContextMetadata
 
 
 logger = logging.getLogger()
@@ -63,10 +63,10 @@ class BaseAttribute(BaseModel):
         description="name of the type of the attribute in the target entity. ",
         regex=FiwareRegex.string_protect.value
     )
-    metadata: Optional[Dict[str, Any]] = Field(
-        description="additional static metadata for the attribute "
-                    "in the target entity. (e.g. unitCode)"
-    )
+    # metadata: Optional[Union[Dict[str, Any], List[Dict[str, Any]]]] = Field(
+    #     description="additional static metadata for the attribute "
+    #                 "in the target entity. (e.g. unitCode)"
+    # )
     expression: Optional[str] = Field(
         description="indicates that the value of the target attribute will "
                     "not be the plain value or the measurement, but an "
@@ -109,11 +109,38 @@ class BaseAttribute(BaseModel):
                     "index.html#data-mapping-plugins)"
     )
 
+    metadata: Optional[Union[Dict[str, ContextMetadata],
+                             NamedContextMetadata,
+                             List[NamedContextMetadata]]] = Field(
+        default={},
+        title="Metadata",
+        description="optional metadata describing properties of the attribute "
+                    "value like e.g. accuracy, provider, or a timestamp")
+
     def __eq__(self, other):
         if isinstance(other, BaseAttribute):
             return self.name == other.name
         else:
             return self.dict == other
+
+    @validator('metadata')
+    def validate_metadata_type(cls, value):
+        """validator for field 'metadata'"""
+        if isinstance(value, NamedContextMetadata):
+            value = [value]
+        elif isinstance(value, dict):
+            if all(isinstance(item, ContextMetadata)
+                   for item in value.values()):
+                return value
+            json.dumps(value)
+            return {key: ContextMetadata(**item) for key, item in value.items()}
+        if isinstance(value, list):
+            if all(isinstance(item, NamedContextMetadata) for item in value):
+                return {item.name: ContextMetadata(**item.dict(exclude={
+                    'name'})) for item in value}
+            if all(isinstance(item, Dict) for item in value):
+                return {key: ContextMetadata(**item) for key, item in value}
+        raise TypeError(f"Invalid type {type(value)}")
 
 
 class DeviceAttribute(BaseAttribute):
@@ -122,10 +149,6 @@ class DeviceAttribute(BaseAttribute):
     """
     object_id: Optional[str] = Field(
         description="name of the attribute as coming from the device."
-    )
-    metadata: Optional[Dict[str, Union[Dict, str]]] = Field(
-        description="Additional meta information for the attribute, "
-                    "e.g. 'unitCode'"
     )
 
     @validator('metadata')
@@ -175,10 +198,42 @@ class StaticDeviceAttribute(BaseAttribute):
     value: Optional[Union[Dict, List, str, float]] = Field(
         description="Constant value for this attribute"
     )
-    metadata: Optional[Dict[str, Dict]] = Field(
-        description="Additional meta information for the attribute, "
-                    "e.g. 'unitCode'"
-    )
+
+    @validator('value')
+    def validate_value_type(cls, value, values):
+        """validator for field 'value'"""
+        type_ = values['type']
+        if value:
+            if type_ == DataType.TEXT:
+                if isinstance(value, list):
+                    return [str(item) for item in value]
+                return str(value)
+            if type_ == DataType.BOOLEAN:
+                if isinstance(value, list):
+                    return [bool(item) for item in value]
+                return bool(value)
+            if type_ in (DataType.NUMBER, DataType.FLOAT):
+                if isinstance(value, list):
+                    return [float(item) for item in value]
+                return float(value)
+            if type_ == DataType.INTEGER:
+                if isinstance(value, list):
+                    return [int(item) for item in value]
+                return int(value)
+            if type_ == DataType.DATETIME:
+                return value
+            if type_ == DataType.ARRAY:
+                if isinstance(value, list):
+                    return value
+                raise TypeError(f"{type(value)} does not match "
+                                f"{DataType.ARRAY}")
+            if type_ == DataType.STRUCTUREDVALUE:
+                value = json.dumps(value)
+                return json.loads(value)
+            else:
+                value = json.dumps(value)
+                return json.loads(value)
+        return value
 
 
 class ServiceGroup(BaseModel):
