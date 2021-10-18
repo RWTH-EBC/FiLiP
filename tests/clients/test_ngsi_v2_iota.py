@@ -201,7 +201,7 @@ class TestAgent(unittest.TestCase):
         self.client.delete_device(device_id=device_id)
         self.assertTrue(
             len(cb_client.get_entity_list(entity_ids=[entity_id])) == 1)
-        cb_client.delete_entity(entity_id=entity_id)
+        cb_client.delete_entity(entity_id=entity_id, entity_type='Thing2')
 
         # Test 2:Delete device and corresponding entity
         # delete with optional parameter -> entity needs to be deleted
@@ -227,7 +227,7 @@ class TestAgent(unittest.TestCase):
         # Test 4: Only delete entity
         # delete without optional parameter -> device needs to continue existing
         self.client.post_device(device=device)
-        cb_client.delete_entity(entity_id=entity_id)
+        cb_client.delete_entity(entity_id=entity_id, entity_type='Thing2')
         self.client.get_device(device_id=device_id)
         self.client.delete_device(device_id=device_id)
 
@@ -237,7 +237,8 @@ class TestAgent(unittest.TestCase):
         device2 = copy.deepcopy(device)
         device2.device_id = "device_id2"
         self.client.post_device(device=device2)
-        cb_client.delete_entity(entity_id=entity_id, delete_devices=True)
+        cb_client.delete_entity(entity_id=entity_id, delete_devices=True,
+                                entity_type='Thing2')
         self.assertEqual(len(self.client.get_device_list()), 0)
 
         cb_client.close()

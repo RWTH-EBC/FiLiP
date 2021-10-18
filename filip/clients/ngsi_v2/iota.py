@@ -452,7 +452,8 @@ class IoTAClient(BaseHttpClient):
                     client = ContextBrokerClient(
                         fiware_header=self.fiware_headers)
 
-                    client.delete_entity(entity_id=device.entity_name)
+                    client.delete_entity(entity_id=device.entity_name,
+                                         entity_type=device.entity_type)
 
                 except requests.RequestException as err:
                     # Do not throw an error

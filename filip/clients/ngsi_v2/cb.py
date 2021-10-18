@@ -522,7 +522,7 @@ class ContextBrokerClient(BaseHttpClient):
             self.log_error(err=err, msg=msg)
             raise
 
-    def delete_entity(self, entity_id: str, entity_type: str = None,
+    def delete_entity(self, entity_id: str, entity_type: str,
                       delete_devices: bool = False) -> None:
 
         """
@@ -539,10 +539,8 @@ class ContextBrokerClient(BaseHttpClient):
         """
         url = urljoin(self.base_url, f'v2/entities/{entity_id}')
         headers = self.headers.copy()
-        if entity_type:
-            params = {'type': entity_type}
-        else:
-            params = {}
+        params = {'type': entity_type}
+
         try:
             res = self.delete(url=url, params=params, headers=headers)
             if res.ok:
@@ -559,7 +557,11 @@ class ContextBrokerClient(BaseHttpClient):
             iota_client = IoTAClient(fiware_header=self.fiware_headers)
 
             for device in iota_client.get_device_list(entity=entity_id):
-                iota_client.delete_device(device_id=device.device_id)
+                print(device.entity_type)
+                print(entity_type)
+                print("---")
+                if device.entity_type == entity_type:
+                    iota_client.delete_device(device_id=device.device_id)
 
     def replace_entity_attributes(self,
                                   entity: ContextEntity,
