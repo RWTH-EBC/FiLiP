@@ -164,7 +164,9 @@ class StaticDeviceAttribute(BaseAttribute):
     """
     Model for static device attributes
     """
-    value: Optional[Union[Dict, List, str, float]] = Field(
+    value: Optional[Union[Union[float, int, bool, str, List, Dict[str, Any]],
+                          List[Union[float, int, bool, str, List,
+                                     Dict[str, Any]]]]] = Field(
         description="Constant value for this attribute"
     )
     metadata: Optional[Dict[str, Dict]] = Field(

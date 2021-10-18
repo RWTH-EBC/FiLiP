@@ -366,6 +366,8 @@ class TestSemanticModels(unittest.TestCase):
         class3_.oProp1.append(Class1(id="19"))
         class3_.dataProp1.append("Test")
 
+        # Class1(id="19").oProp1.append(class3_)
+
         class3_.commandProp.append(Command(name="on"))
         class3_.commandProp.append(Command(name="off"))
         class3_.attributeProp.append(

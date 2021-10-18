@@ -243,21 +243,37 @@ class Field(collections.MutableSequence):
         values = []
         for v in self.get_all():
             if isinstance(v, BaseModel):
+
                 values.append(v.dict())
+
             else:
                 values.append(v)
-        return [
+
+        v = values
+        if isinstance(self, DeviceAttributeField):
+           v = 'test\"'
+
+        x = [
             iot.StaticDeviceAttribute(
                 name=self.name,
                 type=DataType.STRUCTUREDVALUE,
-                value=values,
+                value=v,
                 entity_name=None,
                 entity_type=None,
                 reverse=None,
                 expression=None,
-                metadata=None
+                metadata=None,
             )
         ]
+
+
+        # if isinstance(self, DeviceAttributeField):
+        #     print(values)
+        #     print("-------")
+        #     print(x)
+        #     print("----")
+
+        return x
 
     # List methods
     def __len__(self): return len(self._list)
@@ -308,6 +324,7 @@ class Field(collections.MutableSequence):
         return self._semantic_manager.get_instance(self._instance_identifier)
 
 
+
 class DeviceField(Field):
 
     _internal_type: type = DeviceProperty
@@ -333,7 +350,7 @@ class DeviceField(Field):
         v.name = None
         del self._list[i]
 
-    
+
 
 
 class CommandField(DeviceField):
@@ -951,6 +968,7 @@ class SemanticClass(BaseModel):
             {identifier.json(): value
              for (identifier, value) in self.references.items()}
 
+
         # add meta attributes
         entity.add_attributes([
             NamedContextAttribute(
@@ -1154,12 +1172,12 @@ class SemanticDeviceClass(SemanticClass):
 
         for field in self.get_fields():
             for attr in field.build_device_attributes():
-
                 device.add_attribute(attr)
 
         reference_str_dict = \
             {identifier.json(): value
              for (identifier, value) in self.references.items()}
+
 
         # add meta attributes
         device.add_attribute(
@@ -1174,6 +1192,7 @@ class SemanticDeviceClass(SemanticClass):
                 metadata=None
             )
         )
+
         device.add_attribute(
             iot.StaticDeviceAttribute(
                 name="__device_settings",
@@ -1186,7 +1205,6 @@ class SemanticDeviceClass(SemanticClass):
                 metadata=None
             )
         )
-
 
         return device
 
