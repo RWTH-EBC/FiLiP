@@ -6,6 +6,9 @@ from enum import Enum
 from typing import List, Any, Tuple, Dict, Type, TypeVar, Generic, \
     TYPE_CHECKING, Optional, Union
 
+import requests
+from dominate.tags import sup
+
 from filip.models.ngsi_v2.iot import Device, ExpressionLanguage, \
     TransportProtocol
 import filip.models.ngsi_v2.iot as iot
@@ -34,8 +37,8 @@ class InstanceHeader(FiwareHeader):
                         description="Url of the ContextBroker from the Fiware "
                                     "setup")
     iota_url: str = Field(default=settings.IOTA_URL,
-                        description="Url of the IoTABroker from the Fiware "
-                                    "setup")
+                          description="Url of the IoTABroker from the Fiware "
+                                      "setup")
 
     fiware_version: NgsiVersion = Field(default=NgsiVersion.v2,
                                         description="Used Version in the "
@@ -169,17 +172,67 @@ class DeviceProperty(BaseModel):
     def _get_instance(self) -> 'SemanticClass':
         return self._semantic_manager.get_instance(self._instance_identifier)
 
+    # def __eq__(self, other):
+    #     return type(other) == type(self) and self.name == other.name and \
+    #            self._field_name == other._field_name
+
+    def _get_field_from_fiware(self, field_name: str, required_type: str) \
+            -> NamedContextAttribute:
+
+        if self._field_name is None:
+            raise Exception("This DeviceProperty needs to be added to a "
+                            "device field of an SemanticDeviceClass instance "
+                            "and the state saved before this methode can be "
+                            "executed")
+
+        try:
+            entity = self._semantic_manager.get_entity_from_fiware(
+                            instance_identifier=self._instance_identifier)
+        except requests.RequestException:
+            raise Exception("The instance to which this property belongs is "
+                            "not yet present in Fiware, you need to save the "
+                            "state first")
+        try:
+            attr = entity.get_attribute(field_name)
+        except requests.RequestException:
+            raise Exception("This property was not yet saved in Fiware. "
+                            "You need to save the state first before this "
+                            "methode can be executed")
+
+        if not attr.type == required_type:
+            raise Exception("The field in Fiware has a wrong type, "
+                            "an uncaught naming conflict happened")
+
+        if not attr.type == required_type:
+            raise Exception("The field in Fiware has a wrong type, "
+                            "an uncaught naming conflict happened")
+        return attr
+
+    class Config:
+        underscore_attrs_are_private = True
+
 
 class Command(DeviceProperty):
 
     def send(self):
-        pass
 
-    def get_status_info(self):
-        pass
+        attr = self._get_field_from_fiware(field_name=self.name,
+                                           required_type="command")
+        client = self._semantic_manager.get_client(
+                 self._instance_identifier.header)
 
-    def get_status_result(self):
-        pass
+        client.update_entity_attribute(entity_id=self._instance_identifier.id,
+                                       attr=attr)
+        client.close()
+
+
+    def get_info(self) -> str:
+        return self._get_field_from_fiware(field_name=f'{self.name}_info',
+                                           required_type="commandResult").value
+
+    def get_status(self):
+        return self._get_field_from_fiware(field_name=f'{self.name}_status',
+                                           required_type="commandStatus").value
 
 
 class DeviceAttributeType(str, Enum):
@@ -191,10 +244,16 @@ class DeviceAttribute(DeviceProperty):
     attribute_type: DeviceAttributeType
 
     def get_value(self):
-        pass
+        return self._get_field_from_fiware(
+            field_name=f'{self._field_name}_{self.name}',
+            required_type="StructuredValue").value
 
     def get_full_field_name(self) -> str:
         return f'{self._get_instance()}_{self.name}'
+
+    # def __eq__(self, other):
+    #     return super.__eq__(self, other) and \
+    #            self.attribute_type == other.attribute_type
 
 
 class Field(collections.MutableSequence):
@@ -249,15 +308,11 @@ class Field(collections.MutableSequence):
             else:
                 values.append(v)
 
-        v = values
-        if isinstance(self, DeviceAttributeField):
-           v = 'test\"'
-
         x = [
             iot.StaticDeviceAttribute(
                 name=self.name,
                 type=DataType.STRUCTUREDVALUE,
-                value=v,
+                value=values,
                 entity_name=None,
                 entity_type=None,
                 reverse=None,
@@ -265,13 +320,6 @@ class Field(collections.MutableSequence):
                 metadata=None,
             )
         ]
-
-
-        # if isinstance(self, DeviceAttributeField):
-        #     print(values)
-        #     print("-------")
-        #     print(x)
-        #     print("----")
 
         return x
 
@@ -323,6 +371,15 @@ class Field(collections.MutableSequence):
     def _get_instance(self) -> 'SemanticClass':
         return self._semantic_manager.get_instance(self._instance_identifier)
 
+    # def __eq__(self, other):
+    #     if not type(self) == type(other):
+    #         return False
+    #     if not len(self._list) == len(other._list):
+    #         return False
+    #     for i in range(len(self._list)):
+    #         if not self._list[i] == other._list[i]:
+    #             return False
+    #     return True
 
 
 class DeviceField(Field):
@@ -349,8 +406,14 @@ class DeviceField(Field):
         v._semantic_manager = None
         v.name = None
         del self._list[i]
-
-
+        
+    def __setitem__(self, i, v): 
+        self._pre_set(v)
+        super(DeviceField, self).__setitem__(i, v)
+        
+    def insert(self, i, v):
+        self._pre_set(v)
+        super(DeviceField, self).insert(i, v)
 
 
 class CommandField(DeviceField):
@@ -359,6 +422,9 @@ class CommandField(DeviceField):
 
     def get_all(self) -> List[Command]:
         return super().get_all()
+
+    def __getitem__(self, i) -> Command:
+        return super(CommandField, self).__getitem__(i)
 
     def build_device_attributes(self) -> List[Union[iot.DeviceAttribute,
                                                     iot.LazyDeviceAttribute,
@@ -379,6 +445,9 @@ class CommandField(DeviceField):
 
 class DeviceAttributeField(DeviceField):
     _internal_type = DeviceAttribute
+
+    def __getitem__(self, i) -> DeviceAttribute:
+        return super().__getitem__(i)
 
     def get_all(self) -> List[DeviceAttribute]:
         return super().get_all()
@@ -1000,17 +1069,6 @@ class SemanticClass(BaseModel):
         """
         arbitrary_types_allowed = True
         allow_mutation = False
-
-    # def __str__(self):
-    #     def pretty(d, indent=0):
-    #         for key, value in d.items():
-    #             print('\t' * indent + str(key))
-    #             if isinstance(value, dict):
-    #                 pretty(value, indent + 1)
-    #             else:
-    #                 print('\t' * (indent + 1) + str(value))
-    #     return pretty(self.dict(exclude={'semantic_manager', 'old_state'}),
-    #                       indent=0)
 
     def __str__(self):
         return str(self.dict(exclude={'semantic_manager', 'old_state'}))

@@ -3,6 +3,8 @@ from enum import Enum
 from typing import Optional, Dict, TYPE_CHECKING, Type, List, Any
 
 import requests
+from requests import RequestException
+
 from filip.models.base import NgsiVersion
 
 from filip import settings
@@ -16,7 +18,8 @@ from filip.models import FiwareHeader
 from pydantic import BaseModel
 from filip.semantics.semantic_models import \
     InstanceIdentifier, SemanticClass, InstanceHeader, Datatype, DataField, \
-    RelationField, SemanticIndividual, SemanticDeviceClass
+    RelationField, SemanticIndividual, SemanticDeviceClass, CommandField, \
+    Command, DeviceAttributeField, DeviceAttribute
 
 
 class InstanceRegistry(BaseModel):
@@ -111,7 +114,8 @@ class SemanticManager(BaseModel):
 
     default_header: InstanceHeader = InstanceHeader()
 
-    def _get_client(self, instance_header: InstanceHeader):
+
+    def get_client(self, instance_header: InstanceHeader):
         if instance_header.fiware_version == NgsiVersion.v2:
             return ContextBrokerClient(
                 url=instance_header.cb_url,
@@ -120,7 +124,7 @@ class SemanticManager(BaseModel):
             # todo LD
             raise Exception("FiwareVersion not yet supported")
 
-    def _get_iota_client(self, instance_header: InstanceHeader):
+    def get_iota_client(self, instance_header: InstanceHeader):
         if instance_header.fiware_version == NgsiVersion.v2:
             return IoTAClient(
                 url=instance_header.iota_url,
@@ -151,7 +155,7 @@ class SemanticManager(BaseModel):
                                                        enforce_new=True)
 
         # todo catch if Fiware contains more fields than the model has?
-        for field in loaded_class.get_rule_fields():
+        for field in loaded_class.get_fields():
             field.clear()  # remove default values, from hasValue relations
             field_name = field.name
             entity_attribute = entity.get_attribute(field_name)
@@ -183,6 +187,16 @@ class SemanticManager(BaseModel):
                     else:  # is an instance_identifier
                         identifier = InstanceIdentifier.parse_obj(value)
                         field._list.insert(len(field._list), identifier)
+                elif isinstance(field, CommandField):
+                    field._list.insert(len(field._list),
+                                       Command(name=value['name']))
+                elif isinstance(field, DeviceAttributeField):
+                    field._list.insert(len(field._list),
+                                       DeviceAttribute(
+                                           name=value['name'],
+                                           attribute_type=value[
+                                               "attribute_type"]
+                                       ))
 
         references_attribute = entity.get_attribute("__references")
         references = references_attribute.value
@@ -229,7 +243,7 @@ class SemanticManager(BaseModel):
             # we need to handle devices and normal classes with different
             # clients
             if not self.is_class_name_an_device_class(identifier.type):
-                client = self._get_client(instance_header=identifier.header)
+                client = self.get_client(instance_header=identifier.header)
                 try:
                     client.delete_entity(entity_id=identifier.id,
                                          entity_type=identifier.type)
@@ -238,7 +252,7 @@ class SemanticManager(BaseModel):
 
                 client.close()
             else:
-                client = self._get_iota_client(
+                client = self.get_iota_client(
                     instance_header=identifier.header)
                 try:
                     client.delete_device(device_id=identifier.id)
@@ -250,12 +264,12 @@ class SemanticManager(BaseModel):
         # save, patch all local instances
         for instance in self.instance_registry.get_all():
             if not isinstance(instance, SemanticDeviceClass):
-                client = self._get_client(instance_header=instance.header)
+                client = self.get_client(instance_header=instance.header)
                 client.patch_entity(instance.build_context_entity(),
                                     instance.old_state)
                 client.close()
             else:
-                client = self._get_iota_client(instance_header=instance.header)
+                client = self.get_iota_client(instance_header=instance.header)
                 # todo: Not propper as we lose state info, patch_device needs
                 #  to be implemented
                 try:
@@ -271,7 +285,7 @@ class SemanticManager(BaseModel):
         if self.instance_registry.contains(identifier=identifier):
             return self.instance_registry.get(identifier=identifier)
         else:
-            client = self._get_client(identifier.header)
+            client = self.get_client(identifier.header)
 
             entity = client.get_entity(entity_id=identifier.id,
                                        entity_type=identifier.type)
@@ -281,12 +295,13 @@ class SemanticManager(BaseModel):
                 header=identifier.header)
 
     def does_instance_exists(self, identifier: InstanceIdentifier) -> bool:
+
         if self.instance_registry.contains(identifier=identifier):
             return True
         elif self.was_instance_deleted(identifier):
             return False
         else:
-            client = self._get_client(identifier.header)
+            client = self.get_client(identifier.header)
             return client.does_entity_exists(entity_id=identifier.id,
                                              entity_type=identifier.type)
 
@@ -324,16 +339,6 @@ class SemanticManager(BaseModel):
         if len([p for p in [entity_types, entity_ids] if p is not None]) > 1:
             raise ValueError("Only one search parameter is allowed")
 
-        if fiware_version == NgsiVersion.v2:
-            client = ContextBrokerClient(fiware_header=fiware_header,
-                                         url=cb_url)
-        else:
-            raise Exception("FiwareVersion not yet supported")
-
-        entities = client.get_entity_list(entity_ids=entity_ids,
-                                          entity_types=entity_types)
-        client.close()
-
         header: InstanceHeader = InstanceHeader(
             service=fiware_header.service,
             service_path=fiware_header.service_path,
@@ -341,8 +346,22 @@ class SemanticManager(BaseModel):
             iota_url=iota_url,
             fiware_version=fiware_version
         )
+
+        client = self.get_client(header)
+
+        entities = client.get_entity_list(entity_ids=entity_ids,
+                                          entity_types=entity_types)
+        client.close()
+
         return [self._context_entity_to_semantic_class(e, header)
                 for e in entities]
+
+    def get_entity_from_fiware(self, instance_identifier: InstanceIdentifier)\
+            -> ContextEntity:
+        client = self.get_client(instance_identifier.header)
+
+        return client.get_entity(entity_id=instance_identifier.id,
+                                 entity_type=instance_identifier.type)
 
     def load_instances(
             self,

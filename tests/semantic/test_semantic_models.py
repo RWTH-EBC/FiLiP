@@ -225,7 +225,6 @@ class TestSemanticModels(unittest.TestCase):
         self.assertTrue(len(class13.references) == 0)
         self.assertTrue(len(class1.references) == 1)
 
-
         # test reference deletion
         class1.delete()
         self.assertTrue(len(class13.objProp3.get_all()) == 0)
@@ -297,6 +296,7 @@ class TestSemanticModels(unittest.TestCase):
         from tests.semantic.models import semantic_manager
         semantic_manager.instance_registry._registry.clear()
         semantic_manager.instance_registry._deleted_identifiers.clear()
+        self.assertTrue(len(semantic_manager.instance_registry._registry) == 0)
 
     def test__11_model_creation_with_devices(self):
         vocabulary = VocabularyConfigurator.create_vocabulary()
@@ -315,8 +315,6 @@ class TestSemanticModels(unittest.TestCase):
             DataFieldType.device_attribute
 
         generate_vocabulary_models(vocabulary, "./", "models2")
-
-
 
     def test__13_device_creation(self):
         from tests.semantic.models2 import Class1, Class13, Class3, Class4, \
@@ -377,13 +375,45 @@ class TestSemanticModels(unittest.TestCase):
             DeviceAttribute(name="d2",
                             attribute_type=DeviceAttributeType.active))
 
+        # test that live access methods fail, because state was not saved
+        self.assertRaises(Exception, class3_.attributeProp[0].get_value)
+        self.assertRaises(Exception, class3_.commandProp[0].get_info)
+        self.assertRaises(Exception, class3_.commandProp[0].get_status)
+        self.assertRaises(Exception, class3_.commandProp[0].send)
+
         semantic_manager.save_state(assert_validity=False)
 
-        print(class3_.header)
+        # Test if device could be processed correctly -> corresponding entity
+        # in Fiware
+        with ContextBrokerClient(
+                fiware_header=test_header.get_fiware_header()) as client:
+            assert client.get_entity(entity_id="3", entity_type="Class3")
 
         self.clear_registry()
 
+        loaded_class = Class3(id="3")
 
+        attr2 = class3_.attributeProp[1]
+        attr2_ = class3_.attributeProp[1]
+        self.assertEqual(attr2.name, attr2_.name)
+        self.assertEqual(attr2.attribute_type, attr2_.attribute_type)
+        self.assertEqual(attr2._instance_identifier, attr2_._instance_identifier)
+        self.assertEqual(attr2._field_name, attr2_._field_name)
+
+        com2 = class3_.commandProp[1]
+        com2_ = class3_.commandProp[1]
+        self.assertEqual(com2.name, com2_.name)
+        self.assertEqual(com2._instance_identifier,
+                         com2_._instance_identifier)
+        self.assertEqual(attr2._field_name, attr2_._field_name)
+
+        self.assertEqual(class3_.references, loaded_class.references)
+
+        # test that live access methods succeed, because state was saved
+        class3_.attributeProp[0].get_value()
+        class3_.commandProp[0].get_info()
+        class3_.commandProp[0].get_status()
+        class3_.commandProp[0].send()
 
     def tearDown(self) -> None:
         """
@@ -401,18 +431,18 @@ class TestSemanticModels(unittest.TestCase):
         )
         semantic_manager.set_default_header(test_header)
 
-        # with IoTAClient(
-        #         fiware_header=semantic_manager.
-        #                 default_header.get_fiware_header()) as client:
-        #     for device in client.get_device_list():
-        #         client.delete_device(device_id=device.device_id)
-        #
-        # with ContextBrokerClient(
-        #         fiware_header=semantic_manager.
-        #         default_header.get_fiware_header()) as client:
-        #     for entity in client.get_entity_list():
-        #         client.delete_entity(entity_id=entity.id,
-        #                              entity_type=entity.type)
+        with IoTAClient(
+                fiware_header=semantic_manager.
+                        default_header.get_fiware_header()) as client:
+            for device in client.get_device_list():
+                client.delete_device(device_id=device.device_id)
+
+        with ContextBrokerClient(
+                fiware_header=semantic_manager.
+                default_header.get_fiware_header()) as client:
+            for entity in client.get_entity_list():
+                client.delete_entity(entity_id=entity.id,
+                                     entity_type=entity.type)
 
 
 
