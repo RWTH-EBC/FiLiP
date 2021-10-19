@@ -397,7 +397,8 @@ class TestSemanticModels(unittest.TestCase):
         attr2_ = class3_.attributeProp[1]
         self.assertEqual(attr2.name, attr2_.name)
         self.assertEqual(attr2.attribute_type, attr2_.attribute_type)
-        self.assertEqual(attr2._instance_identifier, attr2_._instance_identifier)
+        self.assertEqual(attr2._instance_identifier,
+                         attr2_._instance_identifier)
         self.assertEqual(attr2._field_name, attr2_._field_name)
 
         com2 = class3_.commandProp[1]

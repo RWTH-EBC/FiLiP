@@ -114,7 +114,6 @@ class SemanticManager(BaseModel):
 
     default_header: InstanceHeader = InstanceHeader()
 
-
     def get_client(self, instance_header: InstanceHeader):
         if instance_header.fiware_version == NgsiVersion.v2:
             return ContextBrokerClient(

@@ -43,7 +43,6 @@ class VocabularyBuilder(BaseModel):
         for source in self.vocabulary.sources.values():
             source.clear()
 
-
     def add_class(self, class_: Class):
         """Add a class to the vocabulary
 
@@ -79,7 +78,6 @@ class VocabularyBuilder(BaseModel):
         self.vocabulary.id_types[obj_prop.iri] = IdType.object_property
         obj_prop.source_id = self.current_source.id
 
-
     def add_data_property(self, data_prop: DataProperty):
         """Add an DataProperty to the vocabulary
 
@@ -96,7 +94,6 @@ class VocabularyBuilder(BaseModel):
         self.vocabulary.data_properties[data_prop.iri] = data_prop
         self.vocabulary.id_types[data_prop.iri] = IdType.data_property
         data_prop.source_id = self.current_source.id
-
 
     def add_datatype(self, datatype: Datatype):
         """Add a DataType to the vocabulary

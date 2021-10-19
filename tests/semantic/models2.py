@@ -631,9 +631,6 @@ class Individual4(SemanticIndividual):
 	_parent_classes: List[type] = [Class1, Class2]
 
 
-
-
-
 # ---------Datatypes--------- #
 semantic_manager.datatype_catalogue = {
 	'customDataType1': 	 {'type': 'enum', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': ['0', '15', '30'], 'number_has_range': False},

@@ -99,14 +99,16 @@ class TestModels(unittest.TestCase):
 
         conflict_voc = self.vocabulary_2
 
-        conflict_dict = VocabularyConfigurator.\
+        conflict_summary = VocabularyConfigurator.\
             get_label_conflicts_in_vocabulary(conflict_voc)
 
-        self.assertIn('Sensor', conflict_dict.keys())
-        self.assertIn('isOnFloor', conflict_dict.keys())
-        self.assertEqual(len(conflict_dict.keys()), 3)
+        self.assertIn('Sensor', conflict_summary.class_label_duplicates)
+        self.assertIn('isOnFloor', conflict_summary.field_label_duplicates)
+        self.assertIn('MeasurmentType',
+                      conflict_summary.datatype_label_duplicates)
 
-        self.assertEqual(len(conflict_dict['Sensor']), 2)
+        self.assertEqual(len(conflict_summary.class_label_duplicates[
+                                 'Sensor']), 2)
 
     def test_valid_test(self):
         self.assertEqual(
