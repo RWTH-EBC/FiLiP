@@ -2,7 +2,8 @@ import copy
 import keyword
 import os
 from datetime import datetime
-from typing import List, Optional, Dict
+from string import ascii_letters, digits
+from typing import List, Optional, Dict, Tuple
 
 from pydantic import BaseModel
 
@@ -20,19 +21,29 @@ from filip.semantics.vocabulary import Vocabulary, Source, Entity, Class, \
 #     'Datatype_duplicates': get_conflicts_in_group([
 #         vocabulary.datatypes])}
 
+label_blacklist = list(keyword.kwlist)
+label_blacklist.extend(["__references", "__device_settings"])
+label_blacklist.extend(["id", "type", "class"])
+label_blacklist.extend(["str", "int", "float", "complex", "list", "tuple",
+                        "range","dict", "list", "set", "frozenset", "bool",
+                        "bytes", "bytearray","memoryview"])
+
+label_char_whitelist = ascii_letters + digits + "_"
 
 class LabelSummary(BaseModel):
     class_label_duplicates: Dict[str, List[Entity]]
     field_label_duplicates: Dict[str, List[Entity]]
     datatype_label_duplicates: Dict[str, List[Entity]]
 
-    black_listed_labels: Dict[str, List[Entity]]
+    blacklisted_labels: List[Tuple[str, Entity]]
+    labels_with_illegal_chars: List[Tuple[str, Entity]]
 
     def is_valid(self) -> bool:
         return len(self.datatype_label_duplicates) == 0 and \
                len(self.field_label_duplicates) == 0 and \
                len(self.datatype_label_duplicates) == 0 and \
-               len(self.black_listed_labels) == 0
+               len(self.blacklisted_labels) == 0 and \
+               len(self.labels_with_illegal_chars) == 0
 
     def __str__(self):
         res = ""
@@ -49,6 +60,15 @@ class LabelSummary(BaseModel):
                 sub_res +=f"\t/"
             return sub_res
 
+        def print_list(collection):
+            sub_res = ""
+            for key, value in collection:
+                sub_res += f"\t{key}: \t {value.iri}"
+                sub_res += "\n"
+            if len(collection) == 0:
+                sub_res +=f"\t/"
+            return sub_res
+
         res += "class_label_duplicates:\n"
         res += print_collection(self.class_label_duplicates)
         res += "field_label_duplicates:\n"
@@ -56,7 +76,9 @@ class LabelSummary(BaseModel):
         res += "datatype_label_duplicates:\n"
         res += print_collection(self.datatype_label_duplicates)
         res += "blacklisted_labels:\n"
-        res += print_collection(self.black_listed_labels)
+        res += print_list(self.blacklisted_labels)
+        res += "labels_with_illegal_chars:\n"
+        res += print_list(self.labels_with_illegal_chars)
         return res
 
 
@@ -161,19 +183,28 @@ class VocabularyConfigurator:
 
         def get_blacklisted_labels(entities_to_check: List[Dict]):
 
-            result: Dict[str, List[Entity]] = {}
+            blacklist = label_blacklist
 
-            blacklist = list(keyword.kwlist)
-            blacklist.extend(["__references", "__device_settings"])
-
-            result: Dict[str, List[Entity]] = {}
+            result: List[Tuple[str, Entity]] = []
             for entity_list in entities_to_check:
                 for entity in entity_list.values():
                     label = entity.get_label()
                     if label in blacklist:
-                        if label not in result:
-                            result[label] = []
-                        result[label].append(entity)
+                        result.append((label, entity))
+
+            return result
+
+        def get_illegal_labels(entities_to_check: List[Dict]):
+
+            whitelist = label_char_whitelist
+
+            result: List[Tuple[str, Entity]] = []
+            for entity_list in entities_to_check:
+                for entity in entity_list.values():
+                    label = entity.get_label()
+                    for c in label:
+                        if c not in whitelist:
+                            result.append((label, entity))
 
             return result
 
@@ -184,11 +215,16 @@ class VocabularyConfigurator:
                 [vocabulary.data_properties, vocabulary.object_properties]),
             datatype_label_duplicates=get_conflicts_in_group(
                 [vocabulary.datatypes]),
-            black_listed_labels=get_blacklisted_labels([
+            blacklisted_labels=get_blacklisted_labels([
                 vocabulary.classes, vocabulary.individuals,
                 vocabulary.data_properties, vocabulary.object_properties,
                 vocabulary.datatypes
-            ])
+            ]),
+            labels_with_illegal_chars=get_illegal_labels([
+                vocabulary.classes, vocabulary.individuals,
+                vocabulary.data_properties, vocabulary.object_properties,
+                vocabulary.datatypes
+            ]),
         )
 
         return summary

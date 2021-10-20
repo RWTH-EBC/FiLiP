@@ -20,6 +20,8 @@ from filip.models.ngsi_v2.context import ContextEntity, NamedContextAttribute
 from filip.models import FiwareHeader
 from pydantic import BaseModel, validator, Field, AnyHttpUrl
 from filip.config import settings
+from filip.semantics.vocabulary_configurator import label_blacklist, \
+    label_char_whitelist
 
 if TYPE_CHECKING:
     from filip.semantics.semantic_manager import SemanticManager
@@ -208,6 +210,9 @@ class DeviceProperty(BaseModel):
                             "an uncaught naming conflict happened")
         return attr
 
+    def get_all_field_names(self) -> List[str]:
+        pass
+
     class Config:
         underscore_attrs_are_private = True
 
@@ -234,6 +239,9 @@ class Command(DeviceProperty):
         return self._get_field_from_fiware(field_name=f'{self.name}_status',
                                            required_type="commandStatus").value
 
+    def get_all_field_names(self) -> List[str]:
+        return [self.name, f"{self.name}_info", f"{self.name}_result"]
+
 
 class DeviceAttributeType(str, Enum):
     lazy = "lazy"
@@ -248,8 +256,11 @@ class DeviceAttribute(DeviceProperty):
             field_name=f'{self._field_name}_{self.name}',
             required_type="StructuredValue").value
 
-    def get_full_field_name(self) -> str:
-        return f'{self._get_instance()}_{self.name}'
+    # def get_full_field_name(self) -> str:
+    #     return f'{self._field_name}_{self.name}'
+
+    def get_all_field_names(self) -> List[str]:
+        return [f'{self._field_name}_{self.name}']
 
     # def __eq__(self, other):
     #     return super.__eq__(self, other) and \
@@ -381,6 +392,9 @@ class Field(collections.MutableSequence):
     #             return False
     #     return True
 
+    def get_field_names(self) -> List[str]:
+        return [self.name]
+
 
 class DeviceField(Field):
 
@@ -400,6 +414,25 @@ class DeviceField(Field):
         v._semantic_manager = self._semantic_manager
         v._field_name = self.name
 
+    def _name_check(self, v: _internal_type):
+        taken_fields = self._get_instance().get_all_field_names()
+        for name in v.get_all_field_names():
+            if name in taken_fields:
+                raise NameError(f"The property can not be added to the field "
+                                 f"{self.name}, because the instance already"
+                                 f" posses a field with the name {name}")
+            if name in label_blacklist:
+                raise NameError(f"The property can not be added to the field "
+                                f"{self.name}, because the name {name} is "
+                                f"forbidden")
+
+            for c in name:
+                if c not in label_char_whitelist:
+                    raise NameError(
+                        f"The property can not be added to the field "
+                        f"{self.name}, because the name {name} "
+                        f"contains the forbidden character {c}")
+
     def __delitem__(self, i):
         v = self._list[i]
         v._instance_identifier = None
@@ -409,11 +442,19 @@ class DeviceField(Field):
         
     def __setitem__(self, i, v): 
         self._pre_set(v)
+        self._name_check(v)
         super(DeviceField, self).__setitem__(i, v)
         
     def insert(self, i, v):
         self._pre_set(v)
+        self._name_check(v)
         super(DeviceField, self).insert(i, v)
+
+    def get_field_names(self) -> List[str]:
+        names = super().get_field_names()
+        for v in self.get_all():
+            names.extend(v.get_all_field_names())
+        return names
 
 
 class CommandField(DeviceField):
@@ -945,14 +986,14 @@ class SemanticClass(BaseModel):
         fields.extend(self.get_data_fields())
         return fields
 
-    def get_field_names(self) -> List[str]:
-        """
-        Get names of all fields of class
-
-        Returns:
-            List[str]
-        """
-        return [f.name for f in self.get_fields()]
+    # def get_field_names(self) -> List[str]:
+    #     """
+    #     Get names of all fields of class
+    #
+    #     Returns:
+    #         List[str]
+    #     """
+    #     return [f.name for f in self.get_fields()]
 
     def get_relation_fields(self) -> List[RelationField]:
         """
@@ -1059,6 +1100,12 @@ class SemanticClass(BaseModel):
         return InstanceIdentifier(id=self.id, type=self.get_type(),
                                   header=self.header)
 
+    def get_all_field_names(self) -> List[str]:
+        res = []
+        for field in self.get_fields():
+            res.extend(field.get_field_names())
+        return res
+
     class Config:
         """
         Forbid manipulation of class
@@ -1131,14 +1178,6 @@ class SemanticDeviceClass(SemanticClass):
                 res.append(value)
         return res
 
-    def get_field_names(self) -> List[str]:
-        """
-        Get names of all fields of class
-
-        Returns:
-            List[str]
-        """
-        return [f.name for f in self.get_fields()]
 
     def get_command_fields(self) -> List[CommandField]:
         """
@@ -1265,6 +1304,8 @@ class SemanticDeviceClass(SemanticClass):
         )
 
         return device
+
+
 
 
 class SemanticIndividual(BaseModel):

@@ -344,19 +344,6 @@ class TestSemanticModels(unittest.TestCase):
         )
         semantic_manager.set_default_header(test_header)
 
-        with IoTAClient(
-                fiware_header=semantic_manager.
-                        default_header.get_fiware_header()) as client:
-            for device in client.get_device_list():
-                client.delete_device(device_id=device.device_id)
-
-        with ContextBrokerClient(
-                fiware_header=semantic_manager.
-                default_header.get_fiware_header()) as client:
-            for entity in client.get_entity_list():
-                client.delete_entity(entity_id=entity.id,
-                                     entity_type=entity.type)
-
         class3_ = Class3(id="3")
         class3_.endpoint.set('http://www.example.com')
         class3_.transport.set(TransportProtocol.HTTP)
@@ -415,6 +402,42 @@ class TestSemanticModels(unittest.TestCase):
         class3_.commandProp[0].get_info()
         class3_.commandProp[0].get_status()
         class3_.commandProp[0].send()
+
+    def test__15_field_name_checks(self):
+        from tests.semantic.models2 import Class3
+
+        class3 = Class3(id="13")
+
+        c = Command(name="dataProp1")
+
+        self.assertEqual(c.get_all_field_names(),
+                         ['dataProp1', 'dataProp1_info', 'dataProp1_result'])
+        self.assertRaises(NameError, class3.commandProp.append, c)
+
+        class3.commandProp.append(Command(name="c1"))
+        self.assertRaises(NameError, class3.commandProp.append, Command(
+            name="c1_info"))
+        self.assertRaises(NameError, class3.commandProp.append, Command(
+            name="type"))
+        self.assertRaises(NameError, class3.commandProp.append, Command(
+            name="__references"))
+
+        class3.attributeProp.append(
+            DeviceAttribute(name="_type",
+                            attribute_type=DeviceAttributeType.active))
+
+        self.assertRaises(
+            NameError,
+            class3.attributeProp.append,
+            DeviceAttribute(name="!type",
+                            attribute_type=DeviceAttributeType.active))
+
+        self.assertEqual(
+            class3.get_all_field_names(),
+            ['attributeProp', 'attributeProp__type', 'commandProp',
+             'c1', 'c1_info', 'c1_result', 'dataProp1', 'oProp1', 'objProp2'])
+
+
 
     def tearDown(self) -> None:
         """
