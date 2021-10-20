@@ -10,16 +10,8 @@ from pydantic import BaseModel
 from filip.semantics.ontology_parser.post_processer import \
     post_process_vocabulary
 from filip.semantics.ontology_parser.rdfparser import RdfParser
-from filip.semantics.vocabulary import Vocabulary, Source, Entity, Class, \
-    Individual, Datatype, DataProperty, ObjectProperty
+from filip.semantics.vocabulary import Vocabulary, Source, Entity
 
-# result: Dict[str, Dict[str, List[Entity]]] = {
-#     'Class_duplicates': get_conflicts_in_group([
-#         vocabulary.classes, vocabulary.individuals]),
-#     'Field_duplicates': get_conflicts_in_group([
-#         vocabulary.data_properties, vocabulary.object_properties]),
-#     'Datatype_duplicates': get_conflicts_in_group([
-#         vocabulary.datatypes])}
 
 label_blacklist = list(keyword.kwlist)
 label_blacklist.extend(["__references", "__device_settings"])

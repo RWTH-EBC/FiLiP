@@ -329,8 +329,8 @@ class TestSemanticModels(unittest.TestCase):
         semantic_manager.set_default_header(test_header)
 
         class3_ = Class3()
-        class3_.endpoint.set("http://test.com")
-        self.assertEqual(class3_.endpoint.get(), "http://test.com" )
+        class3_.device_settings.endpoint = "http://test.com"
+        self.assertEqual(class3_.device_settings.endpoint, "http://test.com" )
 
     def test__14_device_saving_and_loading(self):
         from tests.semantic.models2 import Class1, Class13, Class3, Class4, \
@@ -345,8 +345,8 @@ class TestSemanticModels(unittest.TestCase):
         semantic_manager.set_default_header(test_header)
 
         class3_ = Class3(id="3")
-        class3_.endpoint.set('http://www.example.com')
-        class3_.transport.set(TransportProtocol.HTTP)
+        class3_.device_settings.endpoint = "http://test.com"
+        class3_.device_settings.transport = TransportProtocol.HTTP
 
         class3_.oProp1.append(Class1(id="19"))
         class3_.dataProp1.append("Test")
@@ -436,6 +436,22 @@ class TestSemanticModels(unittest.TestCase):
             class3.get_all_field_names(),
             ['attributeProp', 'attributeProp__type', 'commandProp',
              'c1', 'c1_info', 'c1_result', 'dataProp1', 'oProp1', 'objProp2'])
+
+    def test__16_save_and_load_local_state(self):
+        from tests.semantic.models2 import Class3, Class1, semantic_manager
+
+        class3 = Class3(id="15")
+        class3.commandProp.append(Command(name="c1"))
+        class3.attributeProp.append(
+            DeviceAttribute(name="_type",
+                            attribute_type=DeviceAttributeType.active))
+
+        class3.dataProp1.append("test")
+        class3.objProp2.append(Class1(id="11"))
+
+        save = semantic_manager.save_local_state_as_json()
+
+        print(save)
 
 
 

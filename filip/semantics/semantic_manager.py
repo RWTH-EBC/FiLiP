@@ -104,6 +104,44 @@ class InstanceRegistry(BaseModel):
     def get_all_deleted_identifiers(self) -> List['InstanceIdentifier']:
         return self._deleted_identifiers
 
+    def save(self):
+        res = {}
+        res['registry'] = {}
+
+        registry = copy.deepcopy(self._registry)
+
+        # for instance in registry.values():
+        #     for field in instance.get_fields():
+        #         dict = field.dict()
+        #         dict["values"] = field._list
+        #
+        #         print(dict)
+
+
+        for identifier, instance in registry.items():
+            instance_dict = instance.dict(exclude={"semantic_manager",
+                                                   "references"})
+
+            for field in instance.get_fields():
+                field_dict = field.dict()
+                field_dict["values"] = field._list
+                instance_dict[field.name] = field_dict
+
+            instance_dict["references"] = instance.references
+
+            if isinstance(instance, SemanticDeviceClass):
+                instance_dict["device_settings"] = instance.references
+
+            print(identifier.id)
+            print(instance_dict)
+            print("")
+        #     res['registry'][identifier.dict()] = [instance.dict(exclude={
+        #         "semantic_manager", "references"})]
+        #
+        # print(res)
+
+
+
 
 class SemanticManager(BaseModel):
 
@@ -228,10 +266,10 @@ class SemanticManager(BaseModel):
                     f"Local state was not saved"
         for instance in self.instance_registry.get_all():
             if isinstance(instance, SemanticDeviceClass):
-                assert instance.endpoint.get() is not None, \
+                assert instance.device_settings.endpoint is not None, \
                     "Device needs to be given an endpoint. " \
                     "Local state was not saved"
-                assert instance.transport.get() is not None, \
+                assert instance.device_settings.transport is not None, \
                     "Device needs to be given a transport setting. " \
                     "Local state was not saved"
 
@@ -390,5 +428,10 @@ class SemanticManager(BaseModel):
     def get_individual(self, individual_name: str) -> SemanticIndividual:
         return self.individual_catalogue[individual_name]()
 
+    def save_local_state_as_json(self) -> str:
+        return self.instance_registry.save()
+
+    def load_local_state_from_json(self, json:str):
+        pass
 
 

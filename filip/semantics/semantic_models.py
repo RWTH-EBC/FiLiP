@@ -267,7 +267,7 @@ class DeviceAttribute(DeviceProperty):
     #            self.attribute_type == other.attribute_type
 
 
-class Field(collections.MutableSequence):
+class Field(collections.MutableSequence, BaseModel):
     """
     A Field corresponds to a CombinedRelation for a class from the vocabulary.
     It itself is a _list, that is enhanced with methods to provide validation
@@ -277,7 +277,7 @@ class Field(collections.MutableSequence):
     on init
     """
 
-    name: str
+    name: str = ""
     """Name of the Field, corresponds to the property name that it has in the 
     SemanticClass"""
 
@@ -286,6 +286,8 @@ class Field(collections.MutableSequence):
 
     _instance_identifier: InstanceIdentifier
     """Identifier of instance, that has this field as property"""
+
+    _list: List = list()
 
     def __init__(self,  name, semantic_manager):
         self._semantic_manager = semantic_manager
@@ -394,6 +396,10 @@ class Field(collections.MutableSequence):
 
     def get_field_names(self) -> List[str]:
         return [self.name]
+
+    class Config:
+        underscore_attrs_are_private = True
+
 
 
 class DeviceField(Field):
@@ -544,7 +550,7 @@ class RuleField(Field):
 
     _rules: List[Tuple[str, List[List[str]]]]
     """rule formatted for machine readability """
-    rule: str
+    rule: str = ""
     """rule formatted for human readability """
 
     def __init__(self, rule, name, semantic_manager):
@@ -1140,6 +1146,18 @@ class ProtectedProperty(Generic[T], BaseModel):
     class Config:
         underscore_attrs_are_private = True
 
+class DeviceSettings(BaseModel):
+    transport: Optional[TransportProtocol]
+    endpoint: Optional[AnyHttpUrl]
+    apikey: Optional[str]
+    protocol: Optional[str]
+    timezone: Optional[str]
+    timestamp: Optional[bool]
+    expressionLanguage: Optional[ExpressionLanguage]
+    explicitAttrs: Optional[bool]
+
+    class Config:
+        validate_assignment=True
 
 class SemanticDeviceClass(SemanticClass):
 
@@ -1148,22 +1166,21 @@ class SemanticDeviceClass(SemanticClass):
 
     # Used an internal dict to bypass objects immutability
 
-    transport: ProtectedProperty[TransportProtocol] = ProtectedProperty()
-    endpoint: ProtectedProperty[AnyHttpUrl] = ProtectedProperty()
-    apikey: ProtectedProperty[str] = ProtectedProperty()
-    protocol: ProtectedProperty[str] = ProtectedProperty()
-    timezone: ProtectedProperty[str] = ProtectedProperty()
-    timestamp: ProtectedProperty[bool] = ProtectedProperty()
-    expressionLanguage: ProtectedProperty[ExpressionLanguage] = \
-        ProtectedProperty()
-    explicitAttrs: ProtectedProperty[bool] = ProtectedProperty(False)
+    # transport: ProtectedProperty[TransportProtocol] = ProtectedProperty()
+    # endpoint: ProtectedProperty[AnyHttpUrl] = ProtectedProperty()
+    # apikey: ProtectedProperty[str] = ProtectedProperty()
+    # protocol: ProtectedProperty[str] = ProtectedProperty()
+    # timezone: ProtectedProperty[str] = ProtectedProperty()
+    # timestamp: ProtectedProperty[bool] = ProtectedProperty()
+    # expressionLanguage: ProtectedProperty[ExpressionLanguage] = \
+    #     ProtectedProperty()
+    # explicitAttrs: ProtectedProperty[bool] = ProtectedProperty(False)
 
+    device_settings: DeviceSettings = DeviceSettings()
 
     def delete(self, assert_no_references: bool = False):
-
         #todo
         pass
-
 
     def get_fields(self) -> List[Field]:
         """
@@ -1177,7 +1194,6 @@ class SemanticDeviceClass(SemanticClass):
             if isinstance(value, Field):
                 res.append(value)
         return res
-
 
     def get_command_fields(self) -> List[CommandField]:
         """
@@ -1257,14 +1273,13 @@ class SemanticDeviceClass(SemanticClass):
             service_path=self.header.service_path,
             entity_name=self.id,
             entity_type=self._get_class_name(),
-            apikey=self.apikey.get(),
-            endpoint=self.endpoint.get(),
-            protocol=self.protocol.get(),
-            transport=self.transport.get(),
-            timestamp=self.timestamp.get(),
-            expressionLanguage=self.expressionLanguage.get(),
+            apikey=self.device_settings.apikey,
+            endpoint=self.device_settings.endpoint,
+            protocol=self.device_settings.protocol,
+            transport=self.device_settings.transport,
+            timestamp=self.device_settings.timestamp,
+            expressionLanguage=self.device_settings.expressionLanguage,
             ngsiVersion=self.header.fiware_version
-
         )
 
         for field in self.get_fields():
@@ -1294,7 +1309,7 @@ class SemanticDeviceClass(SemanticClass):
             iot.StaticDeviceAttribute(
                 name="__device_settings",
                 type=DataType.STRUCTUREDVALUE,
-                value=self.get_property_dict(),
+                value=self.device_settings.dict(),
                 entity_name=None,
                 entity_type=None,
                 reverse=None,
