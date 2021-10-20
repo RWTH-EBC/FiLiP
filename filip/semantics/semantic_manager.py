@@ -1,4 +1,6 @@
+import ast
 import copy
+import json
 from enum import Enum
 from typing import Optional, Dict, TYPE_CHECKING, Type, List, Any
 
@@ -105,40 +107,50 @@ class InstanceRegistry(BaseModel):
         return self._deleted_identifiers
 
     def save(self):
-        res = {}
-        res['registry'] = {}
+        res = {'instances': [], 'deleted_identifiers': []}
 
-        registry = copy.deepcopy(self._registry)
-
-        # for instance in registry.values():
-        #     for field in instance.get_fields():
-        #         dict = field.dict()
-        #         dict["values"] = field._list
-        #
-        #         print(dict)
-
-
-        for identifier, instance in registry.items():
-            instance_dict = instance.dict(exclude={"semantic_manager",
-                                                   "references"})
-
-            for field in instance.get_fields():
-                field_dict = field.dict()
-                field_dict["values"] = field._list
-                instance_dict[field.name] = field_dict
-
-            instance_dict["references"] = instance.references
-
-            if isinstance(instance, SemanticDeviceClass):
-                instance_dict["device_settings"] = instance.references
-
-            print(identifier.id)
-            print(instance_dict)
+        # todo: old-state, device-settings
+        for identifier, instance in self._registry.items():
             print("")
-        #     res['registry'][identifier.dict()] = [instance.dict(exclude={
-        #         "semantic_manager", "references"})]
-        #
-        # print(res)
+            print(instance.build_context_entity())
+            old_state = None
+            if instance.old_state is not None:
+                old_state = instance.old_state.json()
+            instance_dict = {
+                "entity": instance.build_context_entity().json(),
+                "header": instance.header.json(),
+                "old_state": old_state
+            }
+            res['instances'].append(instance_dict)
+
+        for identifier in self._deleted_identifiers:
+            res['deleted_identifiers'].append(identifier.json())
+
+        return json.dumps(res, indent=4)
+
+    def clear(self):
+        self._registry.clear()
+        self._deleted_identifiers.clear()
+
+    def load(self, json_string: str, semantic_manager: 'SemanticManager'):
+
+        self.clear()
+
+        # print(json_string)
+
+        save = json.loads(json_string)
+        for instance_dict in save['instances']:
+
+            entity_json = instance_dict['entity']
+            header = InstanceHeader.parse_raw(instance_dict['header'])
+
+            context_entity = ContextEntity.parse_raw(entity_json)
+            print("")
+            print(context_entity)
+
+
+            instance = semantic_manager._context_entity_to_semantic_class(
+                context_entity, header)
 
 
 
@@ -212,28 +224,10 @@ class SemanticManager(BaseModel):
                 values = [entity_field_value]
 
             for value in values:
-                if isinstance(field, DataField):
-                    field._list.insert(len(field._list), value)
-                elif isinstance(field, RelationField):
-                    # convert json to Identifier, inject identifier in Relation,
-                    # the class will be hotloaded if the value in the is
-                    # relationship is accessed
+                converted_value = self._convert_value_fitting_for_field(
+                    field, value)
+                field._list.insert(len(field._list), converted_value)
 
-                    if not isinstance(value, dict):  # is an individual
-                        field._list.insert(len(field._list), value)
-                    else:  # is an instance_identifier
-                        identifier = InstanceIdentifier.parse_obj(value)
-                        field._list.insert(len(field._list), identifier)
-                elif isinstance(field, CommandField):
-                    field._list.insert(len(field._list),
-                                       Command(name=value['name']))
-                elif isinstance(field, DeviceAttributeField):
-                    field._list.insert(len(field._list),
-                                       DeviceAttribute(
-                                           name=value['name'],
-                                           attribute_type=value[
-                                               "attribute_type"]
-                                       ))
 
         references_attribute = entity.get_attribute("__references")
         references = references_attribute.value
@@ -244,6 +238,32 @@ class SemanticManager(BaseModel):
                     InstanceIdentifier.parse_raw(identifier_str), prop)
 
         return loaded_class
+
+    def _convert_value_fitting_for_field(self, field, value):
+        if isinstance(field, DataField):
+            return value
+        elif isinstance(field, RelationField):
+            # convert json to Identifier, inject identifier in Relation,
+            # the class will be hotloaded if the value in the is
+            # relationship is accessed
+
+            if not isinstance(value, dict):  # is an individual
+                return value
+            else:  # is an instance_identifier
+                return InstanceIdentifier.parse_obj(value)
+        elif isinstance(field, CommandField):
+            return Command(name=value['name'])
+        elif isinstance(field, DeviceAttributeField):
+
+            print("")
+            print(value)
+            if not isinstance(value, dict):
+                value = json.loads(value.replace("'",'"'))
+            return DeviceAttribute(
+                                   name=value['name'],
+                                   attribute_type=value[
+                                       "attribute_type"]
+                               )
 
     def get_class_by_name(self, class_name:str) -> Type:
         return self.class_catalogue[class_name]
@@ -279,6 +299,7 @@ class SemanticManager(BaseModel):
 
             # we need to handle devices and normal classes with different
             # clients
+
             if not self.is_class_name_an_device_class(identifier.type):
                 client = self.get_client(instance_header=identifier.header)
                 try:
@@ -316,6 +337,11 @@ class SemanticManager(BaseModel):
 
                 client.post_device(device=instance.build_context_device())
                 client.close()
+
+        # delete the local state, if new changes are made, the entities are
+        # pulled from fiware with new up-to-date states
+        # self.instance_registry.clear()
+
 
     def load_instance(self, identifier: InstanceIdentifier) -> SemanticClass:
 
@@ -432,6 +458,7 @@ class SemanticManager(BaseModel):
         return self.instance_registry.save()
 
     def load_local_state_from_json(self, json:str):
-        pass
+        self.instance_registry.load(json, self)
+
 
 

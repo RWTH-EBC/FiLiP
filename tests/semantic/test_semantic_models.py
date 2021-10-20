@@ -451,7 +451,7 @@ class TestSemanticModels(unittest.TestCase):
 
         save = semantic_manager.save_local_state_as_json()
 
-        print(save)
+        semantic_manager.load_local_state_from_json(json=save)
 
 
 

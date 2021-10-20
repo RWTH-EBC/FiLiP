@@ -315,9 +315,7 @@ class Field(collections.MutableSequence, BaseModel):
         values = []
         for v in self.get_all():
             if isinstance(v, BaseModel):
-
                 values.append(v.dict())
-
             else:
                 values.append(v)
 
@@ -400,6 +398,14 @@ class Field(collections.MutableSequence, BaseModel):
     class Config:
         underscore_attrs_are_private = True
 
+    def values_to_json(self) -> List[str]:
+        res = []
+        for v in self.get_all():
+            if isinstance(v, BaseModel):
+                res.append(v.json())
+            else:
+                res.append(v)
+        return res
 
 
 class DeviceField(Field):
@@ -462,6 +468,14 @@ class DeviceField(Field):
             names.extend(v.get_all_field_names())
         return names
 
+    def build_context_attribute(self) -> NamedContextAttribute:
+        values = []
+        for v in self.get_all():
+            if isinstance(v, BaseModel):
+                values.append(v.dict())
+            else:
+                values.append(v)
+        return NamedContextAttribute(name=self.name, value=values)
 
 class CommandField(DeviceField):
 
@@ -1083,7 +1097,6 @@ class SemanticClass(BaseModel):
         reference_str_dict = \
             {identifier.json(): value
              for (identifier, value) in self.references.items()}
-
 
         # add meta attributes
         entity.add_attributes([
