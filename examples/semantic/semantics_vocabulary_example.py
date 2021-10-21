@@ -39,10 +39,30 @@ if __name__ == '__main__':
     # The ontologies can be inserted via a file, a weblink or as content string.
     # The ontologies need to be Turtle encoded
     # We always get a new vocabulary object returned
+
+    # as file
     vocabulary = \
         VocabularyConfigurator.add_ontology_to_vocabulary_as_file(
             vocabulary=vocabulary,
-            path_to_file='./ontology_files/ParsingTesterOntology.ttl')
+            path_to_file='./ontology_files/RoomFloorOntology.ttl')
+
+    # as string
+    with open('./ontology_files/RoomFloor_Duplicate_Labels.ttl', 'r') as file:
+        data = file.read()
+    vocabulary = \
+        VocabularyConfigurator.add_ontology_to_vocabulary_as_string(
+            vocabulary=vocabulary,
+            source_content=data,
+            source_name="My Name"
+        )
+
+    # as link
+    # if no source name is given, the name is extracted form the uri, here: "saref.tll"
+    vocabulary = \
+        VocabularyConfigurator.add_ontology_to_vocabulary_as_link(
+            vocabulary=vocabulary,
+            link="https://ontology.tno.nl/saref.ttl"
+        )
 
     # todo
 
@@ -110,7 +130,7 @@ if __name__ == '__main__':
         DataFieldType.device_attribute
 
     VocabularyConfigurator.generate_vocabulary_models(
-        vocabulary, "./", "models2")
+        vocabulary, "../", "models2")
 
     # 7. We export our configured dictionary as python models.
     # On export the each is converted to a SemanticClass Model and gets a
@@ -132,6 +152,6 @@ if __name__ == '__main__':
     # it creates the file: path_to_file/file_name.py overridden any existing
     # file
 
-    VocabularyConfigurator.generate_vocabulary_models(vocabulary, "./",
+    VocabularyConfigurator.generate_vocabulary_models(vocabulary, "../",
                                                       "models")
 

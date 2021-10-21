@@ -7,7 +7,6 @@ from typing import List, Any, Tuple, Dict, Type, TypeVar, Generic, \
     TYPE_CHECKING, Optional, Union
 
 import requests
-from dominate.tags import sup
 
 from filip.models.ngsi_v2.iot import Device, ExpressionLanguage, \
     TransportProtocol

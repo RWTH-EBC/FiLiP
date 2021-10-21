@@ -24,13 +24,14 @@ class TestSemanticModels(unittest.TestCase):
                 vocabulary=vocabulary,
                 path_to_file='./ontology_files/ParsingTesterOntology.ttl')
 
-        # vocabulary.get_data_property(
-        #     "http://www.semanticweb.org/redin/ontologies/2020/11/untitled"
-        #     "-ontology-25#commandProp").field_type = DataFieldType.command
-        # vocabulary.get_data_property(
-        #     "http://www.semanticweb.org/redin/ontologies/2020/11/untitled"
-        #     "-ontology-25#attributeProp").field_type = \
-        #     DataFieldType.device_attribute
+        # Test part can only be executed locally, as the gitlab runner can´t access the WWW
+        vocabulary = \
+            VocabularyConfigurator.add_ontology_to_vocabulary_as_link(
+                vocabulary=vocabulary,
+                link="https://ontology.tno.nl/saref.ttl")
+
+        self.assertEqual(vocabulary.get_source_list()[1].source_name, "saref.ttl")
+        self.assertTrue("https://w3id.org/saref#LightingDevice" in vocabulary.classes)
 
         VocabularyConfigurator.generate_vocabulary_models(vocabulary,
                                                           "./",

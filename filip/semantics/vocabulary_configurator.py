@@ -1,11 +1,14 @@
 import copy
+import io
 import keyword
 import os
 from datetime import datetime
 from string import ascii_letters, digits
 from typing import List, Optional, Dict, Tuple
 
-from pydantic import BaseModel
+import requests
+import wget
+from pydantic import BaseModel, AnyHttpUrl
 
 from filip.semantics.ontology_parser.post_processer import \
     post_process_vocabulary
@@ -92,6 +95,24 @@ class VocabularyConfigurator:
                     source=copy.deepcopy(source), vocabulary=new_vocabulary)
 
         return new_vocabulary
+
+    @classmethod
+    def add_ontology_to_vocabulary_as_link(
+            cls,
+            vocabulary: Vocabulary,
+            link: str,
+            source_name: Optional[str] = None) -> Vocabulary:
+
+        downloaded_obj = requests.get(link)
+        file_bytes = io.BytesIO(downloaded_obj.content)
+        if source_name is None:
+            source_name = wget.filename_from_url(link)
+
+        file_str = io.TextIOWrapper(file_bytes, encoding='utf-8').read()
+
+        return cls.add_ontology_to_vocabulary_as_string(vocabulary=vocabulary,
+                                                        source_name=source_name,
+                                                        source_content=file_str)
 
     @classmethod
     def add_ontology_to_vocabulary_as_file(
