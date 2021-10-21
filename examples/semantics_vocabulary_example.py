@@ -77,8 +77,7 @@ if __name__ == '__main__':
     #
     # To check if our vocabulary has Label conflicts we can call:
 
-
-
+    # todo
 
     # 6. Currently all our classes in the vocabulary are ContextEntities.
     # They can be used to model real world properties, but if we want to
@@ -113,9 +112,26 @@ if __name__ == '__main__':
     VocabularyConfigurator.generate_vocabulary_models(
         vocabulary, "./", "models2")
 
-
-
+    # 7. We export our configured dictionary as python models.
+    # On export the each is converted to a SemanticClass Model and gets a
+    # property field for each CombinedRelation it possess.
+    # A CombinedObjectRelation gets converted to a RelationField that will
+    # point to other instances of SemanticClass models.
+    # On CombinedDataRelation gets converted to a :
+    #  - DataField that will contain a list of basic values (string, int,..),
+    #       if the dataproperty has the field_type: simple
+    #  - CommandFiled that will contain a list of Command objects,
+    #       if the dataproperty has the field_type: command
+    #  - DeviceAttributeFiled that will contain a list of DeviceAttribute
+    #    objects,
+    #       if the dataproperty has the field_type: device_attribute
     #
-    # On export the class is converted to a SemanticClass Model and gets a
-    # property for each CombinedRelation it possess.
-    # A CombinedObjectRelation gets converted to a RelationField that
+    # for more details refer to the semantics_model_example
+    #
+    # The export function takes two arguments: path_to_file and file_name
+    # it creates the file: path_to_file/file_name.py overridden any existing
+    # file
+
+    VocabularyConfigurator.generate_vocabulary_models(vocabulary, "./",
+                                                      "models")
+
