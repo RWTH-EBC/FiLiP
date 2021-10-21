@@ -381,7 +381,7 @@ class TestSemanticModels(unittest.TestCase):
         loaded_class = Class3(id="3")
 
         attr2 = class3_.attributeProp[1]
-        attr2_ = class3_.attributeProp[1]
+        attr2_ = loaded_class.attributeProp[1]
         self.assertEqual(attr2.name, attr2_.name)
         self.assertEqual(attr2.attribute_type, attr2_.attribute_type)
         self.assertEqual(attr2._instance_identifier,
@@ -389,13 +389,16 @@ class TestSemanticModels(unittest.TestCase):
         self.assertEqual(attr2._field_name, attr2_._field_name)
 
         com2 = class3_.commandProp[1]
-        com2_ = class3_.commandProp[1]
+        com2_ = loaded_class.commandProp[1]
         self.assertEqual(com2.name, com2_.name)
         self.assertEqual(com2._instance_identifier,
                          com2_._instance_identifier)
         self.assertEqual(attr2._field_name, attr2_._field_name)
 
         self.assertEqual(class3_.references, loaded_class.references)
+
+        self.assertEqual(class3_.device_settings.dict(),
+                         loaded_class.device_settings.dict())
 
         # test that live access methods succeed, because state was saved
         class3_.attributeProp[0].get_value()
@@ -447,13 +450,29 @@ class TestSemanticModels(unittest.TestCase):
                             attribute_type=DeviceAttributeType.active))
 
         class3.dataProp1.append("test")
-        class3.objProp2.append(Class1(id="11"))
+        class3.device_settings.apikey = "ttt"
+        class1 = Class1(id="11")
+        class3.objProp2.append(class1)
 
         save = semantic_manager.save_local_state_as_json()
+        semantic_manager.instance_registry.clear()
 
         semantic_manager.load_local_state_from_json(json=save)
 
+        class3_ = Class3(id="15")
+        class1_ = Class1(id="11")
+        self.assertTrue("test" in class3_.dataProp1.get_all())
+        self.assertEqual(class3_.device_settings.dict(),
+                         class3.device_settings.dict())
+        self.assertTrue(class3_.commandProp[0].name == "c1")
+        self.assertTrue(class3_.attributeProp[0].name == "_type")
+        self.assertTrue(class3_.attributeProp[0].attribute_type ==
+                        DeviceAttributeType.active)
 
+        self.assertTrue(class3_.objProp2[1].id == "11")
+        self.assertTrue(class3_.objProp2[1].get_type() == class1.get_type())
+
+        self.assertTrue(class1_.references == class1.references)
 
     def tearDown(self) -> None:
         """

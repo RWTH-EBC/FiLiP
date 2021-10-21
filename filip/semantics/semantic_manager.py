@@ -21,7 +21,7 @@ from pydantic import BaseModel
 from filip.semantics.semantic_models import \
     InstanceIdentifier, SemanticClass, InstanceHeader, Datatype, DataField, \
     RelationField, SemanticIndividual, SemanticDeviceClass, CommandField, \
-    Command, DeviceAttributeField, DeviceAttribute
+    Command, DeviceAttributeField, DeviceAttribute, DeviceField, DeviceSettings
 
 
 class InstanceRegistry(BaseModel):
@@ -51,7 +51,7 @@ class InstanceRegistry(BaseModel):
         # if that is the case, we need to note that we have deleted the instance
         # to delete it on save, and do not load it again from Fiware
 
-        if instance.old_state is not None:
+        if instance.old_state.state is not None:
             self._deleted_identifiers.append(identifier)
 
         del self._registry[identifier]
@@ -114,8 +114,8 @@ class InstanceRegistry(BaseModel):
             print("")
             print(instance.build_context_entity())
             old_state = None
-            if instance.old_state is not None:
-                old_state = instance.old_state.json()
+            if instance.old_state.state is not None:
+                old_state = instance.old_state.state.json()
             instance_dict = {
                 "entity": instance.build_context_entity().json(),
                 "header": instance.header.json(),
@@ -136,8 +136,6 @@ class InstanceRegistry(BaseModel):
 
         self.clear()
 
-        # print(json_string)
-
         save = json.loads(json_string)
         for instance_dict in save['instances']:
 
@@ -145,13 +143,16 @@ class InstanceRegistry(BaseModel):
             header = InstanceHeader.parse_raw(instance_dict['header'])
 
             context_entity = ContextEntity.parse_raw(entity_json)
-            print("")
-            print(context_entity)
-
 
             instance = semantic_manager._context_entity_to_semantic_class(
-                context_entity, header)
+                                                        context_entity, header)
 
+            instance.old_state.state = instance_dict['old_state']
+
+            self._registry[instance.get_identifier()] = instance
+
+        for identifier in save['deleted_identifiers']:
+            self._deleted_identifiers.append(identifier)
 
 
 
@@ -185,7 +186,7 @@ class SemanticManager(BaseModel):
     def _context_entity_to_semantic_class(
             self,
             entity: ContextEntity,
-            header: InstanceHeader)-> SemanticClass:
+            header: InstanceHeader) -> SemanticClass:
 
         class_name = entity.type
 
@@ -195,15 +196,16 @@ class SemanticManager(BaseModel):
 
             loaded_class: SemanticClass = class_(id=entity.id,
                                                  fiware_header=header,
-                                                 old_state=entity,
                                                  enforce_new=True)
         else:
             loaded_class: SemanticDeviceClass = class_(id=entity.id,
                                                        fiware_header=header,
-                                                       old_state=entity,
                                                        enforce_new=True)
+        loaded_class.old_state.state = entity
 
         # todo catch if Fiware contains more fields than the model has?
+
+        # load values of class from the context_entity into the instance
         for field in loaded_class.get_fields():
             field.clear()  # remove default values, from hasValue relations
             field_name = field.name
@@ -226,9 +228,15 @@ class SemanticManager(BaseModel):
             for value in values:
                 converted_value = self._convert_value_fitting_for_field(
                     field, value)
-                field._list.insert(len(field._list), converted_value)
+                if isinstance(field, RelationField):
+                    # we need to bypass the main setter, as it expects an
+                    # instance and we do not want to load the instance if it
+                    # is not used
+                    field._list.append(converted_value)
+                else:
+                    field.append(converted_value)
 
-
+        # load references into instance
         references_attribute = entity.get_attribute("__references")
         references = references_attribute.value
 
@@ -236,6 +244,14 @@ class SemanticManager(BaseModel):
             for prop in prop_list:
                 loaded_class.add_reference(
                     InstanceIdentifier.parse_raw(identifier_str), prop)
+
+        # load device_settings into instance, if instance is a device
+        if isinstance(loaded_class, SemanticDeviceClass):
+            settings_attribute = entity.get_attribute("__device_settings")
+            device_settings = DeviceSettings.parse_obj(settings_attribute.value)
+
+            for key, value in device_settings.dict().items():
+                loaded_class.device_settings.__setattr__(key, value)
 
         return loaded_class
 
@@ -252,13 +268,19 @@ class SemanticManager(BaseModel):
             else:  # is an instance_identifier
                 return InstanceIdentifier.parse_obj(value)
         elif isinstance(field, CommandField):
+            # if loading local state, the wrong string delimters are used,
+            # and the string is not automatically converted to a dict
+            if not isinstance(value, dict):
+                value = json.loads(value.replace("'", '"'))
+
             return Command(name=value['name'])
         elif isinstance(field, DeviceAttributeField):
 
-            print("")
-            print(value)
+            # if loading local state, the wrong string delimters are used,
+            # and the string is not automatically converted to a dict
             if not isinstance(value, dict):
                 value = json.loads(value.replace("'",'"'))
+
             return DeviceAttribute(
                                    name=value['name'],
                                    attribute_type=value[
@@ -324,11 +346,11 @@ class SemanticManager(BaseModel):
             if not isinstance(instance, SemanticDeviceClass):
                 client = self.get_client(instance_header=instance.header)
                 client.patch_entity(instance.build_context_entity(),
-                                    instance.old_state)
+                                    instance.old_state.state)
                 client.close()
             else:
                 client = self.get_iota_client(instance_header=instance.header)
-                # todo: Not propper as we lose state info, patch_device needs
+                # todo : Not propper as we lose state info, patch_device needs
                 #  to be implemented
                 try:
                     client.delete_device(device_id=instance.id)
@@ -338,10 +360,9 @@ class SemanticManager(BaseModel):
                 client.post_device(device=instance.build_context_device())
                 client.close()
 
-        # delete the local state, if new changes are made, the entities are
-        # pulled from fiware with new up-to-date states
-        # self.instance_registry.clear()
-
+        # update old_state
+        for instance in self.instance_registry.get_all():
+            instance.old_state.state = instance.build_context_entity()
 
     def load_instance(self, identifier: InstanceIdentifier) -> SemanticClass:
 

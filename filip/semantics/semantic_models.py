@@ -266,6 +266,9 @@ class DeviceAttribute(DeviceProperty):
     #     return super.__eq__(self, other) and \
     #            self.attribute_type == other.attribute_type
 
+    class Config:
+        use_enum_values = True
+
 
 class Field(collections.MutableSequence, BaseModel):
     """
@@ -468,6 +471,7 @@ class DeviceField(Field):
             names.extend(v.get_all_field_names())
         return names
 
+    # needed when saving local state
     def build_context_attribute(self) -> NamedContextAttribute:
         values = []
         for v in self.get_all():
@@ -801,6 +805,10 @@ class RelationField(RuleField):
         return 'Relation'+super().__str__()
 
 
+class InstanceState(BaseModel):
+    state: Optional[ContextEntity]
+
+
 class SemanticClass(BaseModel):
     """
     A class representing a vocabulary/ontology class.
@@ -821,7 +829,7 @@ class SemanticClass(BaseModel):
     in Fiware"""
     id: str
     """Id of the instance, equal to Fiware ContextEntity Id"""
-    old_state: Optional[ContextEntity]
+    old_state: InstanceState = InstanceState()
     """State in Fiware the moment the instance was loaded in the local 
     registry. Used when saving. Only the made changes are reflected"""
 
@@ -901,7 +909,7 @@ class SemanticClass(BaseModel):
             header_ = kwargs['header'] if 'header' in kwargs else \
                 semantic_manager_.get_default_header()
 
-        old_state_ = kwargs['old_state'] if 'old_state' in kwargs else None
+        # old_state_ = kwargs['old_state'] if 'old_state' in kwargs else None
 
         identifier_ = InstanceIdentifier(
                         id=instance_id_,
@@ -923,7 +931,6 @@ class SemanticClass(BaseModel):
 
         super().__init__(id=instance_id_,
                          header=header_,
-                         old_state=old_state_,
                          semantic_manager=semantic_manager_,
                          references={})
 
@@ -1135,6 +1142,7 @@ class SemanticClass(BaseModel):
         """
         arbitrary_types_allowed = True
         allow_mutation = False
+        underscore_attrs_are_private = True
 
     def __str__(self):
         return str(self.dict(exclude={'semantic_manager', 'old_state'}))
@@ -1143,21 +1151,21 @@ class SemanticClass(BaseModel):
 T = TypeVar('T')
 
 
-class ProtectedProperty(Generic[T], BaseModel):
-    _value: T = None
-
-    def __init__(self, default_value: T = None, **data: Any):
-        super().__init__(**data)
-        self._value = default_value
-
-    def get(self) -> T:
-        return self._value
-
-    def set(self, value: T):
-        self._value = value
-
-    class Config:
-        underscore_attrs_are_private = True
+# class ProtectedProperty(Generic[T], BaseModel):
+#     _value: T = None
+#
+#     def __init__(self, default_value: T = None, **data: Any):
+#         super().__init__(**data)
+#         self._value = default_value
+#
+#     def get(self) -> T:
+#         return self._value
+#
+#     def set(self, value: T):
+#         self._value = value
+#
+#     class Config:
+#         underscore_attrs_are_private = True
 
 class DeviceSettings(BaseModel):
     transport: Optional[TransportProtocol]
@@ -1252,25 +1260,31 @@ class SemanticDeviceClass(SemanticClass):
         """
         return [f.name for f in self.get_device_attribute_fields()]
 
-    def get_property_dict(self) -> Dict[str, ProtectedProperty]:
-        """
-        Get all DeviceAttributeField of class
+    # def get_property_dict(self) -> Dict[str, ProtectedProperty]:
+    #     """
+    #     Get all DeviceAttributeField of class
+    #
+    #     Returns:
+    #       List[DeviceAttributeField]
+    #     """
+    #     res = {}
+    #     for key, value in self.__dict__.items():
+    #         if isinstance(value, ProtectedProperty):
+    #             res[key] = value.get()
+    #     return res
 
-        Returns:
-          List[DeviceAttributeField]
-        """
-        res = {}
-        for key, value in self.__dict__.items():
-            if isinstance(value, ProtectedProperty):
-                res[key] = value.get()
-        return res
+    # needed when saving local state
+    def build_context_entity(self) -> ContextEntity:
+        entity = super(SemanticDeviceClass, self).build_context_entity()
 
-    # def device_config_is_valid(self) -> bool:
-    #     if self.endpoint.get() is None:
-    #         return False
-    #     if self.transport.get() is None:
-    #         return False
-    #     return True
+        entity.add_attributes([
+            NamedContextAttribute(
+                name="__device_settings",
+                type=DataType.STRUCTUREDVALUE,
+                value=self.device_settings.dict()
+            )
+        ])
+        return entity
 
     def build_context_device(self) -> iot.Device:
         """
