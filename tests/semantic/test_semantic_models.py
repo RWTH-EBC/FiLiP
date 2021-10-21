@@ -2,17 +2,9 @@ import copy
 import unittest
 
 from filip.models.ngsi_v2.iot import TransportProtocol
-from pydantic import AnyHttpUrl
 
 from filip import settings
 from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient
-from requests import RequestException
-
-from filip.models.ngsi_v2.context import ContextEntity
-
-from filip.models import FiwareHeader
-
-from filip.semantics.entity_model_generator import generate_vocabulary_models
 from filip.semantics.semantic_models import SemanticClass, InstanceHeader, \
     Command, DeviceAttribute, DeviceAttributeType
 from filip.semantics.vocabulary.data_property import DataFieldType
@@ -40,7 +32,9 @@ class TestSemanticModels(unittest.TestCase):
         #     "-ontology-25#attributeProp").field_type = \
         #     DataFieldType.device_attribute
 
-        generate_vocabulary_models(vocabulary, "./", "models")
+        VocabularyConfigurator.generate_vocabulary_models(vocabulary,
+                                                          "./",
+                                                          "models")
 
     def test_2_default_header(self):
         from tests.semantic.models import Class1, semantic_manager
@@ -314,7 +308,8 @@ class TestSemanticModels(unittest.TestCase):
             "-ontology-25#attributeProp").field_type = \
             DataFieldType.device_attribute
 
-        generate_vocabulary_models(vocabulary, "./", "models2")
+        VocabularyConfigurator.generate_vocabulary_models(
+            vocabulary, "./", "models2")
 
     def test__13_device_creation(self):
         from tests.semantic.models2 import Class1, Class13, Class3, Class4, \
