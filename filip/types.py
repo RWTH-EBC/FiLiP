@@ -10,4 +10,3 @@ class AnyMqttUrl(AnyUrl):
     """
     allowed_schemes = {'mqtt'}
 
-

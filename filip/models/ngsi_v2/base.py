@@ -15,7 +15,8 @@ from typing import Union, Optional, Pattern, List, Dict, Any, TYPE_CHECKING
 from filip.models.base import DataType, FiwareRegex
 from filip.models.ngsi_v2.units import validate_unit_data
 from filip.utils.simple_ql import QueryString, QueryStatement
-from filip.utils.validators import validate_http_url
+from filip.utils.validators import validate_http_url, \
+    validate_escape_character_free
 
 
 class Http(BaseModel):
@@ -335,6 +336,8 @@ class BaseValueAttribute(BaseModel):
         """validator for field 'value'"""
 
         type_ = values['type']
+        validate_escape_character_free(value)
+
         if value:
             if type_ == DataType.TEXT:
                 if isinstance(value, list):
@@ -365,4 +368,5 @@ class BaseValueAttribute(BaseModel):
             else:
                 value = json.dumps(value)
                 return json.loads(value)
+
         return value
