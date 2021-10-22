@@ -5,14 +5,14 @@ import unittest
 from typing import List
 
 from pydantic import ValidationError
+
+from filip.models.ngsi_v2.base import ContextMetadata, NamedContextMetadata
 from filip.models.ngsi_v2.context import \
     ActionType, \
     Command, \
-    ContextMetadata, \
     ContextAttribute, \
     ContextEntity, \
     create_context_entity_model, \
-    NamedContextMetadata, \
     Update, \
     NamedContextAttribute, \
     ContextEntityKeyValues, \
@@ -177,6 +177,7 @@ class TestContextModels(unittest.TestCase):
 
         # Test for the special-string protected field if all strings are blocked
         for string in special_strings:
+            self.assertRaises(ValidationError, ContextAttribute, type=string)
             self.assertRaises(ValidationError,
                               NamedContextAttribute, name=string)
             self.assertRaises(ValidationError,
@@ -185,7 +186,6 @@ class TestContextModels(unittest.TestCase):
         for string in special_strings:
             ContextMetadata(type=string)
             NamedContextMetadata(name=string)
-            ContextAttribute(type=string)
             ContextEntityKeyValues(id=string, type=string)
 
     def tearDown(self) -> None:

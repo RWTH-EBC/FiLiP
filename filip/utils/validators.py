@@ -22,6 +22,7 @@ def validate_http_url(url: AnyHttpUrl) -> str:
     """
     return url
 
+
 @validate_arguments
 def validate_mqtt_url(url: AnyMqttUrl) -> str:
     """

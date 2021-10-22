@@ -12,10 +12,10 @@ Steps :
 # import
 from filip.clients.ngsi_v2.cb import ContextBrokerClient
 from filip.models.base import FiwareHeader
+from filip.models.ngsi_v2.base import NamedContextMetadata
 from filip.models.ngsi_v2.context import \
     ContextAttribute, \
-    ContextEntity, \
-    NamedContextMetadata
+    ContextEntity
 from filip.models.ngsi_v2.units import Unit
 from filip.models.ngsi_v2.registrations import Http, Provider, Registration
 
