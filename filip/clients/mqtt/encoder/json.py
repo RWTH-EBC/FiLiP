@@ -1,5 +1,5 @@
 import json
-from typing import Dict, Tuple
+from typing import Any, Dict, Literal, Tuple
 from filip.clients.mqtt.encoder import BaseEncoder
 
 class IoTA_Json(BaseEncoder):
@@ -9,11 +9,13 @@ class IoTA_Json(BaseEncoder):
     def decode_message(cls, msg, decoder='utf-8') -> Tuple[str, str, Dict]:
         apikey, device_id, payload = super().decode_message(msg=msg,
                                                             decoder=decoder)
-        payload = json.loads(msg.payload.decode(decoder))
-
+        payload = json.loads(payload)
         return apikey, device_id, payload
 
-
-    @staticmethod
-    def encode_msg(device_id, payload: Dict) -> str:
-        return json.dumps(payload)
+    @classmethod
+    def encode_msg(cls, payload: Any, msg_type: Literal['single', 'multi'])  \
+            -> str:
+        if msg_type == 'single':
+            return payload
+        elif msg_type == 'multi':
+            return json.dumps(payload)
