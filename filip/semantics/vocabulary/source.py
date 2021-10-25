@@ -1,25 +1,16 @@
 import datetime
-import io
 from enum import Enum
-from typing import TYPE_CHECKING, Dict, List, Union
+from typing import TYPE_CHECKING, Dict, List, Union, ForwardRef
 
-import requests
 from pydantic import BaseModel
 
 if TYPE_CHECKING:
-    from . import Vocabulary,IdType
-
-
-class LoggingLevel(str, Enum):
-    """LoggingLevel for parsing statements"""
-    severe = "severe"
-    warning = "warning"
-    info = "info"
+    from . import Vocabulary, IdType, ParsingError, LoggingLevel
 
 
 class DependencyStatement(BaseModel):
-    """Information about one statement in the source
-
+    """Information about one dependency statement in the source
+    A dependency is a reference of one iri in an other entity definition
     """
     source_iri: str = ""
     """Iri of the source containing the statement"""
@@ -49,7 +40,7 @@ class Source(BaseModel):
     content: str = ""
     """File content of the provided ontology file"""
 
-    parsing_log: List[Dict[str, Union[LoggingLevel, 'IdType', str]]] = []
+    parsing_log: List['ParsingError'] = []
     """Log containing all issues that were discovered while parsing"""
     dependency_statements: List[DependencyStatement] = []
     """List of all statements in source"""
@@ -141,7 +132,7 @@ class Source(BaseModel):
 
         self.dependency_statements = dependency_statements
 
-    def add_parsing_log_entry(self, level: LoggingLevel, entity_type: 'IdType',
+    def add_parsing_log_entry(self, level: 'LoggingLevel', entity_type: 'IdType',
                               entity_iri: str,  msg: str):
         """Add a parsing log entry for an entity, if an issue in parsing
         was discovered
@@ -155,12 +146,18 @@ class Source(BaseModel):
         Returns:
             None
         """
-        entry = {"level": level, "entity_type": entity_type,
-                 "entity_iri": entity_iri, "message": msg}
-        self.parsing_log.append(entry)
+
+        from . import ParsingError
+        self.parsing_log.append(ParsingError(
+            level=level,
+            entity_type=entity_type,
+            entity_iri=entity_iri,
+            message=msg,
+            source_iri=self.ontology_iri
+        ))
 
     def get_parsing_log(self, vocabulary: 'Vocabulary') -> \
-            List[Dict[str, Union[LoggingLevel, 'IdType', str]]]:
+            List[Dict[str, Union['LoggingLevel', 'IdType', str]]]:
         """get the Parsinglog, where the labels of the entities are filled in
 
         Args:
@@ -169,7 +166,6 @@ class Source(BaseModel):
         Returns:
             List[Dict[str, Union[LoggingLevel,'IdType',str]]]
         """
-
         for entry in self.parsing_log:
             label = None
             if not entry['entity_iri'] == "unknown":
@@ -188,4 +184,5 @@ class Source(BaseModel):
         """
         self.parsing_log = []
         self.dependency_statements = []
+
 

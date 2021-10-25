@@ -40,13 +40,17 @@ if __name__ == '__main__':
     # The ontologies need to be Turtle encoded
     # We always get a new vocabulary object returned
 
-    # as file
+    # 2.0.1 as file
     vocabulary = \
         VocabularyConfigurator.add_ontology_to_vocabulary_as_file(
             vocabulary=vocabulary,
             path_to_file='./ontology_files/RoomFloorOntology.ttl')
+    vocabulary = \
+        VocabularyConfigurator.add_ontology_to_vocabulary_as_file(
+            vocabulary=vocabulary,
+            path_to_file='./ontology_files/ParsingTesterOntology.ttl')
 
-    # as string
+    # 2.0.2 as string
     with open('./ontology_files/RoomFloor_Duplicate_Labels.ttl', 'r') as file:
         data = file.read()
     vocabulary = \
@@ -56,7 +60,7 @@ if __name__ == '__main__':
             source_name="My Name"
         )
 
-    # as link
+    # 2.0.3 as link
     # if no source name is given, the name is extracted form the uri,
     # here: "saref.tll"
     vocabulary = \
@@ -65,19 +69,25 @@ if __name__ == '__main__':
             link="https://ontology.tno.nl/saref.ttl"
         )
 
-    # The ontologies are added to the vocabulary as sources we can check the
-    # details of already contained sources by accessing the source list.
+    # 2.1 The ontologies are added to the vocabulary as sources.
+    # We can check the details of already contained sources by accessing the
+    # source list.
     # Here we print out the names and adding time of all contained sources:
     print("\u0332".join("Sources in vocabulary:"))
     for source in vocabulary.get_source_list():
         print(f'Name: {source.source_name}; Added: {source.timestamp}')
     print()
 
-    # Each vocabulary always contains the source "Predefined". This source
+    # 2.2 Each vocabulary always contains the source "Predefined". This source
     # contains all fundamental objects of an ontology, as owl:Thing and
     # predefined datatype.
 
+    # 2.3
+
     # todo: PARSING LOGS
+    for source in vocabulary.get_source_list():
+        print(source.source_name)
+        print(source.parsing_log)
 
     # 3. Each entity (class, property, datatype, individual) is uniquely
     # referenced by an IRI. An entity in a vocabulary file can reference

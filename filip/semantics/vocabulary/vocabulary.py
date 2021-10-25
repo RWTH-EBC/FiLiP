@@ -19,6 +19,29 @@ class IdType(str, Enum):
     source = 'Source'
 
 
+class LoggingLevel(str, Enum):
+    """LoggingLevel for parsing statements"""
+    severe = "severe"
+    warning = "warning"
+    info = "info"
+
+
+class ParsingError(BaseModel):
+    level: LoggingLevel
+    """Severity of error"""
+    source_iri: str
+    """Iri of the source containing the error"""
+    entity_type: 'IdType'
+    "Type of the problematic entity: Class, Individual,.."
+    entity_iri: str
+    """Iri of the problematic entity"""
+    message: str
+    """Message describing the error"""
+
+    class Config:
+        use_enum_values = True
+
+
 class Vocabulary(BaseModel):
     """
     Semantic Vocabulary of a project

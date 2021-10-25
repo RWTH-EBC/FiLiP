@@ -9,7 +9,7 @@ from .datatype import Datatype,DatatypeType
 from .combined_relation import CombinedRelation
 from .combined_object_relation import CombinedObjectRelation
 from .combined_data_relation import CombinedDataRelation
-from .source import Source, LoggingLevel
+from .source import Source
 
-from .vocabulary import Vocabulary, IdType
+from .vocabulary import Vocabulary, IdType, LoggingLevel, ParsingError
 
