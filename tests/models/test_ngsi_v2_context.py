@@ -6,7 +6,7 @@ from typing import List
 
 from pydantic import ValidationError
 
-from filip.models.ngsi_v2.base import ContextMetadata, NamedContextMetadata
+from filip.models.ngsi_v2.base import Metadata, NamedMetadata
 from filip.models.ngsi_v2.context import \
     ActionType, \
     Command, \
@@ -61,9 +61,9 @@ class TestContextModels(unittest.TestCase):
         Returns:
             None
         """
-        md1 = ContextMetadata(type='Text', value='test')
-        md2 = NamedContextMetadata(name='info', type='Text', value='test')
-        md3 = [NamedContextMetadata(name='info', type='Text', value='test')]
+        md1 = Metadata(type='Text', value='test')
+        md2 = NamedMetadata(name='info', type='Text', value='test')
+        md3 = [NamedMetadata(name='info', type='Text', value='test')]
         attr1 = ContextAttribute(value=20,
                                  type='Integer',
                                  metadata={'info': md1})
@@ -152,9 +152,9 @@ class TestContextModels(unittest.TestCase):
         # Test if all needed fields, detect all invalid strings
         for string in invalid_strings:
             self.assertRaises(ValidationError,
-                              ContextMetadata, type=string)
+                              Metadata, type=string)
             self.assertRaises(ValidationError,
-                              NamedContextMetadata, name=string)
+                              NamedMetadata, name=string)
             self.assertRaises(ValidationError,
                               ContextAttribute, type=string)
             self.assertRaises(ValidationError,
@@ -168,8 +168,8 @@ class TestContextModels(unittest.TestCase):
 
         # Test if all needed fields, do not trow wrong errors
         for string in valid_strings:
-            ContextMetadata(type=string)
-            NamedContextMetadata(name=string)
+            Metadata(type=string)
+            NamedMetadata(name=string)
             ContextAttribute(type=string)
             NamedContextAttribute(name=string)
             ContextEntityKeyValues(id=string, type=string)
@@ -184,8 +184,8 @@ class TestContextModels(unittest.TestCase):
                               NamedCommand, name=string)
         # Test for the normal protected field if all strings are allowed
         for string in special_strings:
-            ContextMetadata(type=string)
-            NamedContextMetadata(name=string)
+            Metadata(type=string)
+            NamedMetadata(name=string)
             ContextEntityKeyValues(id=string, type=string)
 
     def tearDown(self) -> None:

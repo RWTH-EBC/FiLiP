@@ -158,7 +158,7 @@ class AttrsFormat(str, Enum):
 
 
 # NGSIv2 entity models
-class ContextMetadata(BaseModel):
+class Metadata(BaseModel):
     """
     Context metadata is used in FIWARE NGSI in several places, one of them being
     an optional part of the attribute value as described above. Similar to
@@ -188,7 +188,7 @@ class ContextMetadata(BaseModel):
         return value
 
 
-class NamedContextMetadata(ContextMetadata):
+class NamedMetadata(Metadata):
     """
     Model for metadata including a name
     """
@@ -214,7 +214,7 @@ class NamedContextMetadata(ContextMetadata):
         return values
 
     def to_context_metadata(self):
-        return {self.name: ContextMetadata(**self.dict())}
+        return {self.name: Metadata(**self.dict())}
 
 
 class BaseAttribute(BaseModel):
@@ -254,9 +254,9 @@ class BaseAttribute(BaseModel):
         min_length=1,
         regex=FiwareRegex.string_protect.value,  # Make it FIWARE-Safe
     )
-    metadata: Optional[Union[Dict[str, ContextMetadata],
-                             NamedContextMetadata,
-                             List[NamedContextMetadata]]] = Field(
+    metadata: Optional[Union[Dict[str, Metadata],
+                             NamedMetadata,
+                             List[NamedMetadata]]] = Field(
         default={},
         title="Metadata",
         description="optional metadata describing properties of the attribute "
@@ -265,20 +265,20 @@ class BaseAttribute(BaseModel):
     @validator('metadata')
     def validate_metadata_type(cls, value):
         """validator for field 'metadata'"""
-        if isinstance(value, NamedContextMetadata):
+        if isinstance(value, NamedMetadata):
             value = [value]
         elif isinstance(value, dict):
-            if all(isinstance(item, ContextMetadata)
+            if all(isinstance(item, Metadata)
                    for item in value.values()):
                 return value
             json.dumps(value)
-            return {key: ContextMetadata(**item) for key, item in value.items()}
+            return {key: Metadata(**item) for key, item in value.items()}
         if isinstance(value, list):
-            if all(isinstance(item, NamedContextMetadata) for item in value):
-                return {item.name: ContextMetadata(**item.dict(exclude={
+            if all(isinstance(item, NamedMetadata) for item in value):
+                return {item.name: Metadata(**item.dict(exclude={
                     'name'})) for item in value}
             if all(isinstance(item, Dict) for item in value):
-                return {key: ContextMetadata(**item) for key, item in value}
+                return {key: Metadata(**item) for key, item in value}
         raise TypeError(f"Invalid type {type(value)}")
 
 
