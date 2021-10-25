@@ -94,13 +94,11 @@ class TestModels(unittest.TestCase):
                         def test(dictionary: Dict):
                             # either the assignment throws an error or
                             # the entity can get posted and gets found
-                            print("----------------------")
-                            print(dictionary)
+
                             assignment_error = False
                             try:
                                 entity = ContextEntity(**dictionary)
                             except:
-                                print("Validation error")
                                 assignment_error = True
                                 self.assertFalse(needs_to_succeed)
 
@@ -110,8 +108,6 @@ class TestModels(unittest.TestCase):
                                                   entity_type=entity.type)
                                 client.delete_entity(entity_id=entity.id,
                                                      entity_type=entity.type)
-
-                                print("Valid")
                         new_dict = copy.deepcopy(entity_dict)
 
                         dict_field = new_dict
