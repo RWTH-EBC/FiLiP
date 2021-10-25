@@ -5,6 +5,7 @@ from enum import Enum
 
 
 from . import TargetStatement, StatementType
+from .source import DependencyStatement
 
 if TYPE_CHECKING:
     from . import Vocabulary, Class
@@ -111,7 +112,7 @@ class Relation(BaseModel):
 
     def get_dependency_statements(
             self, vocabulary: 'Vocabulary', ontology_iri: str, class_iri: str) \
-            -> List[Dict[str, str]]:
+            -> List[DependencyStatement]:
         """ Get a _list of all pointers/iris that are not contained in the vocabulary
             Purging is done in class
 
@@ -128,8 +129,11 @@ class Relation(BaseModel):
 
         found = self.property_iri in vocabulary.object_properties or \
                 self.property_iri in vocabulary.data_properties
-        statements.append({"type": "Relation Property", "class": class_iri,
-                           "dependency": self.property_iri, "fulfilled": found})
+
+        statements.append(DependencyStatement(type="Relation Property",
+                                              class_iri=class_iri,
+                                              dependency_iri=self.property_iri,
+                                              fulfilled=found))
 
         statements.extend(self.target_statement.get_dependency_statements(
             vocabulary, ontology_iri, class_iri))

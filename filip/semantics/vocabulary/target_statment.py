@@ -2,6 +2,9 @@ from enum import Enum
 from typing import ForwardRef, List, TYPE_CHECKING
 
 from pydantic import BaseModel
+
+from .source import DependencyStatement
+
 if TYPE_CHECKING:
     from . import Vocabulary,IdType
 
@@ -215,8 +218,11 @@ class TargetStatement(BaseModel):
                 return vocabulary.get_label_for_entity_iri(self.target_iri)
         return ""
 
-    def get_dependency_statements(self, vocabulary: 'Vocabulary',
-                                  ontology_iri: str, class_iri: str):
+    def get_dependency_statements(
+            self,
+            vocabulary: 'Vocabulary',
+            ontology_iri: str,
+            class_iri: str) -> List[DependencyStatement]:
         """ Get a _list of all pointers/iris that are not contained in the
             vocabulary
             Purging is done in class
@@ -240,10 +246,13 @@ class TargetStatement(BaseModel):
                     found = self.target_iri in vocabulary.classes or \
                             self.target_iri in vocabulary.datatypes or \
                             self.target_iri in vocabulary.individuals
-                    statements.append({"type": "Relation Target",
-                                       "class": class_iri,
-                                       "dependency": self.target_iri,
-                                       "fulfilled": found})
+                    statements.append(
+                        DependencyStatement(
+                            type="Relation Target",
+                            class_iri=class_iri,
+                            dependency_iri=self.target_iri,
+                            fulfilled=found)
+                    )
         else:
             for target_statement in self.target_statements:
                 statements.extend(

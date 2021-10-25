@@ -57,24 +57,57 @@ if __name__ == '__main__':
         )
 
     # as link
-    # if no source name is given, the name is extracted form the uri, here: "saref.tll"
+    # if no source name is given, the name is extracted form the uri,
+    # here: "saref.tll"
     vocabulary = \
         VocabularyConfigurator.add_ontology_to_vocabulary_as_link(
             vocabulary=vocabulary,
             link="https://ontology.tno.nl/saref.ttl"
         )
 
-    # todo
+    # The ontologies are added to the vocabulary as sources we can check the
+    # details of already contained sources by accessing the source list.
+    # Here we print out the names and adding time of all contained sources:
+    print("\u0332".join("Sources in vocabulary:"))
+    for source in vocabulary.get_source_list():
+        print(f'Name: {source.source_name}; Added: {source.timestamp}')
+    print()
+
+    # Each vocabulary always contains the source "Predefined". This source
+    # contains all fundamental objects of an ontology, as owl:Thing and
+    # predefined datatype.
+
+    # todo: PARSING LOGS
 
     # 3. Each entity (class, property, datatype, individual) is uniquely
     # referenced by an IRI. An entity in a vocabulary file can reference
     # entities that are not present in the same file.
     # If an entity references an other entity that we have not added in the
-    # vocabulary that reference gets automatically discarded.
-    # We can check if entities are missing, and decide if we want to add
-    # them
+    # vocabulary that reference gets automatically blended out.
 
-    # todo
+    # We can check if entities are missing, and decide if we want to add
+    # them:
+    print("\u0332".join("List of missing dependencies with details:"))
+    print(VocabularyConfigurator.get_missing_dependency_statements(vocabulary))
+    print("")
+
+    # To get only the missing iris we can also call:
+    print("\u0332".join("List of missing dependency iris:"))
+    print(VocabularyConfigurator.get_missing_dependencies(vocabulary))
+    print("")
+
+    # Here are two entities missing:
+    # o 'http://www.w3.org/2006/time#TemporalEntity'
+    #    This entity was globally imported into the ontology using an import
+    #    statement
+    # 'https://w3id.org/saref#UnitOfMeasure'
+    #    This entity was locally imported into the ontology by using the
+    #    rdfs_tag: isDefinedBy
+    #
+    # For both entities only the reference is imported, and the ontology file
+    # does not contain all the needed information about these entities to
+    # parse them into the vocabulary
+
 
     # 4. We can now configure the vocabulary
     # We can change the names of the the different entities in our vocabulary

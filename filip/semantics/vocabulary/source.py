@@ -17,6 +17,24 @@ class LoggingLevel(str, Enum):
     info = "info"
 
 
+class DependencyStatement(BaseModel):
+    """Information about one statement in the source
+
+    """
+    source_iri: str = ""
+    """Iri of the source containing the statement"""
+    source_name: str = ""
+    """Name of the source containing the statement"""
+    type: str
+    """Possible types: Parent Class, Relation Property, Relation Target"""
+    class_iri: str
+    """Iri of the class containing the statement"""
+    dependency_iri: str
+    """Entity Iri of the dependency"""
+    fulfilled: bool
+    """True if the dependency_iri is registered in the vocabulary"""
+
+
 class Source(BaseModel):
     """
     A source represent one file that was provided via file upload or link to the
@@ -33,9 +51,8 @@ class Source(BaseModel):
 
     parsing_log: List[Dict[str, Union[LoggingLevel, 'IdType', str]]] = []
     """Log containing all issues that were discovered while parsing"""
-    dependency_statements: List[Dict[str, str]] = []
-    """ List[Dict[str, str]]: List of purged statements dicts with keys: 
-    Parent Class, class, dependency, fulfilled"""
+    dependency_statements: List[DependencyStatement] = []
+    """List of all statements in source"""
     timestamp: datetime.datetime
     """timestamp when the source was added to the project"""
     ontology_iri: str = None
@@ -117,6 +134,10 @@ class Source(BaseModel):
             if individual.get_source_id() == self.id:
                 dependency_statements.extend(
                     individual.treat_dependency_statements(vocabulary))
+
+        for statement in dependency_statements:
+            statement.source_iri = self.ontology_iri
+            statement.source_name = self.source_name
 
         self.dependency_statements = dependency_statements
 

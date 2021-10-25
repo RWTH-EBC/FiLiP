@@ -4,7 +4,7 @@ import keyword
 import os
 from datetime import datetime
 from string import ascii_letters, digits
-from typing import List, Optional, Dict, Tuple
+from typing import List, Optional, Dict, Tuple, Set
 
 import requests
 import wget
@@ -16,15 +16,19 @@ from filip.semantics.ontology_parser.rdfparser import RdfParser
 from filip.semantics.vocabulary import Vocabulary, Source, Entity, \
     RestrictionType, Class
 from filip.semantics.vocabulary.data_property import DataFieldType
+from filip.semantics.vocabulary.source import DependencyStatement
 
 label_blacklist = list(keyword.kwlist)
 label_blacklist.extend(["__references", "__device_settings"])
+label_blacklist.extend(["references", "device_settings", "header",
+                        "old_state", ""])
 label_blacklist.extend(["id", "type", "class"])
 label_blacklist.extend(["str", "int", "float", "complex", "list", "tuple",
                         "range","dict", "list", "set", "frozenset", "bool",
                         "bytes", "bytearray","memoryview"])
 
 label_char_whitelist = ascii_letters + digits + "_"
+
 
 class LabelSummary(BaseModel):
     class_label_duplicates: Dict[str, List[Entity]]
@@ -162,8 +166,8 @@ class VocabularyConfigurator:
                 parser.parse_source_into_vocabulary(source=source,
                                                     vocabulary=new_vocabulary)
             post_process_vocabulary(vocabulary=new_vocabulary)
-        except Exception:
-            raise ParsingException
+        except Exception as e:
+            raise ParsingException(e.args)
 
         return new_vocabulary
 
@@ -259,6 +263,25 @@ class VocabularyConfigurator:
         for class_ in vocabulary.classes.values():
             print()
             print(class_.dict())
+
+    @classmethod
+    def get_missing_dependency_statements(cls, vocabulary: Vocabulary) -> \
+            List[DependencyStatement]:
+        missing_dependencies: List[DependencyStatement] = []
+        for source in vocabulary.get_source_list():
+            for statement in source.dependency_statements:
+                if not statement.fulfilled:
+                    missing_dependencies.append(statement)
+        return missing_dependencies
+
+    @classmethod
+    def get_missing_dependencies(cls, vocabulary: Vocabulary) -> List[str]:
+        missing_dependencies: Set[str] = set()
+        for source in vocabulary.get_source_list():
+            for statement in source.dependency_statements:
+                if not statement.fulfilled:
+                    missing_dependencies.add(statement.dependency_iri)
+        return list(missing_dependencies)
 
     @classmethod
     def generate_vocabulary_models(cls, vocabulary: Vocabulary, path: str,

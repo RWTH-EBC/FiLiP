@@ -506,4 +506,3 @@ class Vocabulary(BaseModel):
                     res.append(entity)
 
         return res
-

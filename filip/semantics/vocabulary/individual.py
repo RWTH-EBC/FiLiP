@@ -1,6 +1,8 @@
 from typing import List, TYPE_CHECKING, Dict
 
 from . import Entity
+from .source import DependencyStatement
+
 if TYPE_CHECKING:
     from . import Vocabulary, Class
 
@@ -81,7 +83,7 @@ class Individual(Entity):
         return True
 
     def treat_dependency_statements(self, vocabulary: 'Vocabulary') -> \
-            List[Dict[str, str]]:
+            List[DependencyStatement]:
         """ Purge and _list all pointers/iris that are not contained in the
         vocabulary
 
@@ -96,8 +98,11 @@ class Individual(Entity):
 
         for parent_iri in self.parent_class_iris:
             found = parent_iri in vocabulary.classes
-            statements.append({"type": "Parent Class", "class": self.iri,
-                               "dependency": parent_iri, "fulfilled": found})
+            statements.append(DependencyStatement(type="Parent Class",
+                                                  class_iri=self.iri,
+                                                  dependency_iri=parent_iri,
+                                                  fulfilled=found
+                                                  ))
 
             if not found:
                 self.parent_class_iris.remove(parent_iri)

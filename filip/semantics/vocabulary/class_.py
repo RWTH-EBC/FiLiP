@@ -3,6 +3,7 @@ from . import Entity
 from typing import List, TYPE_CHECKING, Dict, Union
 
 from .data_property import DataFieldType
+from .source import DependencyStatement
 
 if TYPE_CHECKING:
     from . import CombinedObjectRelation, CombinedDataRelation, \
@@ -223,7 +224,7 @@ class Class(Entity):
         return parents
 
     def treat_dependency_statements(self, vocabulary: 'Vocabulary') -> \
-            List[Dict[str, str]]:
+            List[DependencyStatement]:
         """ Purge and _list all pointers/iris that are not contained in
         the vocabulary
 
@@ -240,8 +241,11 @@ class Class(Entity):
         parents_to_purge = []
         for parent_iri in self.parent_class_iris:
             found = parent_iri in vocabulary.classes
-            statements.append({"type": "Parent Class", "class": self.iri,
-                               "dependency": parent_iri, "fulfilled": found})
+            statements.append(DependencyStatement(type="Parent Class",
+                                                  class_iri=self.iri,
+                                                  dependency_iri=parent_iri,
+                                                  fulfilled=found
+                                                  ))
             if not found:
                 parents_to_purge.append(parent_iri)
         for iri in parents_to_purge:
@@ -254,7 +258,7 @@ class Class(Entity):
             relation_statements = relation.get_dependency_statements(
                 vocabulary, self.get_ontology_iri(), self.iri)
             for statement in relation_statements:
-                if statement['fulfilled'] == False:
+                if statement.fulfilled == False:
                     relation_ids_to_purge.append(relation.id)
             statements.extend(relation_statements)
 
