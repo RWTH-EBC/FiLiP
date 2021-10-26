@@ -96,9 +96,6 @@ class MQTTClient(mqtt.Client):
                 Encoder class that will automatically parse the supported
                 payload formats to a dictionary and vice versa. This
                 essentially saves boiler plate code.
-
-        Raises:
-            Value Error
         """
         # initialize parent client
         super().__init__(client_id=client_id,
@@ -244,7 +241,7 @@ class MQTTClient(mqtt.Client):
             ServiceGroup
 
         Raises:
-            KeyError
+            KeyError: if service group not yet registered
 
         Example::
 
@@ -270,7 +267,7 @@ class MQTTClient(mqtt.Client):
             None
 
         Raises:
-            ValueError if service group already exists
+            ValueError: if service group already exists
         """
         if isinstance(service_group, dict):
             service_group = ServiceGroup.parse_obj(service_group)
@@ -314,7 +311,7 @@ class MQTTClient(mqtt.Client):
             None
 
         Raises:
-            KeyError if service group not yet registered
+            KeyError: if service group not yet registered
         """
         if isinstance(service_group, dict):
             service_group = ServiceGroup.parse_obj(service_group)
@@ -338,10 +335,12 @@ class MQTTClient(mqtt.Client):
            Device: Device model of the requested device
 
         Raises:
-            KeyError: If requested device is not registered with the client
+            KeyError: if requested device is not registered with the client
 
         Example::
 
+            >>> from filip.clients.mqtt import MQTTClient
+            >>> mqttc = MQTTClient()
             >>> device = mqttc.get_device(device_id="MyDeviceId")
             >>> print(device.json(indent=2))
             >>> print(type(device))
@@ -374,7 +373,7 @@ class MQTTClient(mqtt.Client):
             None
 
         Raises:
-            ValueError if device configuration already exists
+            ValueError: if device configuration already exists
         """
         if isinstance(device, dict):
             device = Device.parse_obj(device)
@@ -431,7 +430,7 @@ class MQTTClient(mqtt.Client):
             None
 
         Raises:
-            KeyError if device not yet registered
+            KeyError: if device not yet registered
         """
         if isinstance(device, dict):
             device = Device.parse_obj(device)
@@ -517,7 +516,7 @@ class MQTTClient(mqtt.Client):
             None
 
         Raises:
-            KeyError if device configuration is not registered with client or
+            KeyError: if device configuration is not registered with client or
             if the keys of a multi-measurement payload do not match the
             object_ids of the device's attributes.
         """
