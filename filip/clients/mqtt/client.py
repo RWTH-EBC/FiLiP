@@ -1,4 +1,7 @@
 """
+Implementation of an extended MQTT client that automatically handles the
+topic subscription for FIWARE's IoT communication pattern.
+
 Created 21st Oct, 2021
 
 @author: Thomas Storek
@@ -7,108 +10,9 @@ import json
 import logging
 import paho.mqtt.client as mqtt
 import warnings
-from pydantic import BaseModel, Field, validator, ValidationError
 from typing import Any, Callable, Dict, List, Literal, Tuple, Type, Union
-from filip.types import AnyMqttUrl
 from filip.clients.mqtt.encoder import BaseEncoder
 from filip.models.ngsi_v2.iot import Device, ServiceGroup
-
-
-class MQTTClientConfig(BaseModel):
-    url: AnyMqttUrl = Field(
-        default=None,
-        title='Host',
-        description='host is the hostname or IP address '
-                    'of the remote broker.'
-    )
-    host: str = Field(
-        default=None,
-        title='Host',
-        description='host is the hostname or IP address '
-                    'of the remote broker.'
-    )
-    port: int = Field(
-        default=1883,
-        title='Port',
-        ge=0,
-        lt=65535,
-        description="Network port of the server host to "
-                    "connect to. Defaults to 1883. Note "
-                    "that the default port for MQTT "
-                    "over SSL/TLS is 8883 so if you are "
-                    "using tls_set() the port may need "
-                    "providing."
-    )
-    keepalive: int = Field(
-        default=60,
-        description='Maximum period in seconds between '
-                    'communications with the broker. '
-                    'If no other messages are being '
-                    'exchanged, this controls the '
-                    'rate at which the client will '
-                    'send ping messages to the '
-                    'broker.'
-    )
-    clean_start: bool = Field(
-        default=True,
-        description="True, False or "
-                    "MQTT_CLEAN_START_FIRST_ONLY."
-                    "Sets the MQTT v5.0 clean_start "
-                    "flag always, never or on the "
-                    "first successful connect "
-                    "only, respectively.  "
-                    "MQTT session data (such as "
-                    "outstanding messages and "
-                    "subscriptions) is cleared "
-                    "on successful connect when "
-                    "the clean_start flag is set."
-    )
-    qos: int = Field(
-        default=0,
-        description='Quality of Service',
-        ge=0,
-        le=2
-    )
-    connection_timeout: float = Field(
-        default=10,
-        description="Number of seconds to wait for the initial connection "
-                    "until throwing an Error."
-    )
-    encoder: BaseEncoder = Field(
-        default='agentlib',
-        title='encoder',
-        description="Encoder to be used for "
-                    "composing the message format"
-    )
-
-    @validator('url', always=True)
-    def check_url(cls, url):
-        if url is None:
-            raise ValueError(
-                "You have to pass an url as a parameter "
-                "in order for the mqtt communicator to work"
-            )
-        if url.scheme in ['mqtts', 'mqtt']:
-            return url
-        if url.scheme is None:
-            url.scheme = 'mqtt'
-            return url
-        raise ValidationError
-
-    @validator('host', always=True)
-    def check_host(cls, host, values):
-        if host is None and 'url' in values:
-            return values['url'].host
-        return host
-
-    @validator('port', always=True)
-    def check_port(cls, port, values):
-        if 'url' in values and values['url'].port:
-            return values['url'].port
-        return port
-
-    class Config:
-        arbitrary_types_allowed = True
 
 
 class MQTTClient(mqtt.Client):
@@ -125,6 +29,10 @@ class MQTTClient(mqtt.Client):
     Note:
         The extension does not effect the normal workflow or any other
         functionality known from the original client.
+
+        The client does not yet support the retrieval of command
+        configurations via mqtt documented here:
+        https://fiware-iotagent-json.readthedocs.io/en/latest/usermanual/index.html#api-overview
     """
     def __init__(self,
                  client_id="",
@@ -192,17 +100,18 @@ class MQTTClient(mqtt.Client):
         Raises:
             Value Error
         """
+        # initialize parent client
+        super().__init__(client_id=client_id,
+                         clean_session=clean_session,
+                         userdata=userdata,
+                         protocol=protocol,
+                         transport=transport)
 
         # setup logging functionality
         self.logger = logging.getLogger(
             name=f"{self.__class__.__module__}."
                  f"{self.__class__.__name__}")
         self.logger.addHandler(logging.NullHandler())
-        super().__init__(client_id=client_id,
-                         clean_session=clean_session,
-                         userdata=userdata,
-                         protocol=protocol,
-                         transport=transport)
         self.enable_logger(self.logger)
 
         # create dictionary holding the registered device configurations
@@ -215,18 +124,21 @@ class MQTTClient(mqtt.Client):
         # create dictionary holding the registered service groups
         self.service_groups: Dict[Tuple[str, str], ServiceGroup]
         if service_groups:
-            self.service_groups = {(gr.apikey, gr.resource): gr
-                                   for gr in service_groups}
+            self.service_groups = {gr.apikey: gr for gr in service_groups}
         else:
             self.service_groups = {}
 
         # add encoder for message parsing
-        self.encoder: BaseEncoder = encoder() or BaseEncoder()
+        if encoder:
+            self.encoder: BaseEncoder = encoder()
+        else:
+            self.encoder: BaseEncoder = BaseEncoder()
 
-    def __create_topic(self,
+    def __create_topic(self, *,
                        topic_type: Literal['attrs',
                                            'cmd',
-                                           'cmdexe'],
+                                           'cmdexe',
+                                           'configuration'],
                        device: Device,
                        attribute: str = None) -> str:
         """
@@ -239,11 +151,11 @@ class MQTTClient(mqtt.Client):
                 'attrs' for topics that the device is suppose to publish on.
                 'cmd' for topic the device is expecting its commands on.
                 'cmdexe' for topic the device can acknowledge its commands on.
+                'configuration' for topic the device can request command
+                    configurations on
         Returns:
             string with topic
-        # TODO: add configuration topic
         """
-        topic = None
         if topic_type == 'attrs':
             if attribute:
                 attr = next(attr for attr in device.attributes
@@ -262,18 +174,21 @@ class MQTTClient(mqtt.Client):
                                   device.apikey,
                                   device.device_id,
                                   'attrs'))
-
         elif topic_type == 'cmd':
             topic = '/' + '/'.join((device.apikey, device.device_id, 'cmd'))
         elif topic_type == 'cmdexe':
-            '/'.join((self.encoder.prefix,
-                      device.apikey,
-                      device.device_id, 'cmd'))
+            topic = '/'.join((self.encoder.prefix,
+                              device.apikey,
+                              device.device_id, 'cmd'))
+        elif topic_type == 'configuration':
+            topic = '/'.join((self.encoder.prefix,
+                              device.apikey,
+                              device.device_id, 'configuration'))
         else:
             raise KeyError
         return topic
 
-    def __subscribe_commands(self,
+    def __subscribe_commands(self, *,
                              device: Device = None,
                              qos=0,
                              options=None,
@@ -294,11 +209,9 @@ class MQTTClient(mqtt.Client):
         Returns:
             None
         """
-        apikeys = [gr.apikey for gr in self.service_groups.values()]
-
         if Device:
             if len(device.commands) > 0:
-                if device.apikey in apikeys:
+                if device.apikey in self.service_groups.keys():
                     pass
                 # check if matching service group is registered
                 else:
@@ -319,6 +232,100 @@ class MQTTClient(mqtt.Client):
                                           qos=qos,
                                           options=options,
                                           properties=properties)
+
+    def get_service_group(self, apikey: str) -> ServiceGroup:
+        """
+        Returns registered service group configuration
+
+        Args:
+            apikey: Unique APIKey of the service group
+
+        Returns:
+            ServiceGroup
+
+        Raises:
+            KeyError
+
+        Example::
+
+            >>> from filip.clients.mqtt import MQTTClient
+            >>> mqttc = MQTTClient()
+            >>> group = mqttc.get_service_group(apikey="MyAPIKEY")
+            >>> print(group.json(indent=2))
+            >>> print(type(group))
+        """
+        group = self.service_groups.get(apikey, None)
+        if group is None:
+            raise KeyError("Service group with apikey %s not found!", apikey)
+        return group
+
+    def add_service_group(self, service_group: Union[ServiceGroup, Dict]):
+        """
+        Registers a device service group with the client
+
+        Args:
+            service_group: Service group configuration
+
+        Returns:
+            None
+
+        Raises:
+            ValueError if service group already exists
+        """
+        if isinstance(service_group, dict):
+            service_group = ServiceGroup.parse_obj(service_group)
+        assert isinstance(service_group, ServiceGroup), \
+            "Invalid content for service group!"
+
+        if self.service_groups.get(service_group.apikey, None) is None:
+            pass
+        else:
+            raise ValueError("Service group already exists! %s",
+                             service_group.apikey)
+        # add service group configuration to the service group list
+        self.service_groups[service_group.apikey] = service_group
+
+    def delete_service_group(self, apikey):
+        """
+        Unregisters a service group and removes
+        Args:
+            apikey: Unique APIKey of the service group
+        Returns:
+            None
+        """
+        group = self.service_groups.pop(apikey, None)
+        if group:
+            self.logger.info("Successfully unregistered Service Group '%s'!",
+                             apikey)
+        else:
+            self.logger.error("Could not unregister service group '%s'!",
+                              apikey)
+
+    def update_service_group(self, service_group: Union[ServiceGroup, Dict]):
+        """
+        Updates a registered service group configuration. There is no
+        opportunity to only partially update the device. Hence, your service
+        group model should be complete.
+
+        Args:
+            service_group: Service group configuration
+
+        Returns:
+            None
+
+        Raises:
+            KeyError if service group not yet registered
+        """
+        if isinstance(service_group, dict):
+            service_group = ServiceGroup.parse_obj(service_group)
+        assert isinstance(service_group, Device), "Invalid content for " \
+                                                  "service group"
+
+        if self.service_groups.get(service_group.apikey, None) is None:
+            raise KeyError("Service group not found! %s",
+                             service_group.apikey)
+        # add service group configuration to the service group list
+        self.service_groups[service_group.apikey] = service_group
 
     def get_device(self, device_id: str) -> Device:
         """
@@ -365,11 +372,18 @@ class MQTTClient(mqtt.Client):
 
         Returns:
             None
+
+        Raises:
+            ValueError if device configuration already exists
         """
         if isinstance(device, dict):
             device = Device.parse_obj(device)
         assert isinstance(device, Device), "Invalid content for device"
 
+        if self.devices.get(device.device_id, None) is None:
+            pass
+        else:
+            raise ValueError("Device already exists! %s", device.device_id)
         # add device configuration to the device list
         self.devices[device.device_id] = device
         # subscribes to the command topic
@@ -397,6 +411,44 @@ class MQTTClient(mqtt.Client):
         else:
             self.logger.error("Could not unregister device '%s'", device_id)
 
+    def update_device(self,
+                      device: Union[Device, Dict],
+                      qos=0,
+                      options=None,
+                      properties=None):
+        """
+        Updates a registered device configuration. There is no opportunity
+        to only partially update the device. Hence, your device model should
+        be complete.
+
+        Args:
+            device: Configuration of an IoT device
+            qos: Quality of service can be 0, 1 or 2
+            options: MQTT v5.0 subscribe options
+            properties: MQTT v5.0 properties
+
+        Returns:
+            None
+
+        Raises:
+            KeyError if device not yet registered
+        """
+        if isinstance(device, dict):
+            device = Device.parse_obj(device)
+        assert isinstance(device, Device), "Invalid content for device"
+
+        if self.devices.get(device.device_id, None) is None:
+            raise KeyError("Device not found! %s", device.device_id)
+
+        # update device configuration in the device list
+        self.devices[device.device_id] = device
+        # subscribes to the command topic
+        self.__subscribe_commands(device=device,
+                                  qos=qos,
+                                  options=options,
+                                  properties=properties)
+
+
     def add_command_callback(self, device_id: str, callback: Callable):
         """
 
@@ -407,12 +459,12 @@ class MQTTClient(mqtt.Client):
         Returns:
             None
         """
-        assert self.devices.get(device_id, None) is not None, \
-            "Device does not exist!"
+        device = self.devices.get(device_id, None)
+        if device is None:
+            raise KeyError("Device does not exist! %s", device_id)
         self.__subscribe_commands(device=device)
-        topic = self.__create_topic(device=self.devices[device_id],
+        topic = self.__create_topic(device=device,
                                     topic_type='cmd')
-        print(topic)
         self.message_callback_add(topic, callback)
 
     def publish(self,
@@ -424,20 +476,53 @@ class MQTTClient(mqtt.Client):
                 device_id: str = None,
                 attribute_name: str = None):
         """
+        Publish an MQTT Message to a specified topic. If you want to publish
+        a device specific message to a device use the device_id argument for
+        multi-measurement. The function will then automatically validate
+        against the registered device configuration if the payload keys are
+        valid. If you want to publish a single measurement the attribute_name
+        argument is required as well.
+
+        Note:
+            If the device_id argument is set, the topic argument will be
+            ignored.
 
         Args:
             topic:
+                The topic that the message should be published on.
             payload:
+                The actual message to send. If not given, or set to None a
+                zero length message will be used. Passing an int or float will
+                result in the payload being converted to a string
+                representing that number. If you wish to send a true
+                int/float, use struct.pack() to create the
+                payload you require. For publishing to a device use a dict
+                containing the object_ids as keys.
             qos:
+                The quality of service level to use.
             retain:
+                If set to true, the message will be set as the "last known
+                good"/retained message for the topic.
             properties:
+                (MQTT v5.0 only) the MQTT v5.0 properties to be included.
+                Use the Properties class.
             device_id:
+                Id of the IoT device you want to publish for. The topics will
+                automatically created.
             attribute_name:
-        Returns:
+                Name of an attribute of the device. Do only use this for
+                single measurements.
 
+        Returns:
+            None
+
+        Raises:
+            KeyError if device configuration is not registered with client or
+            if the keys of a multi-measurement payload do not match the
+            object_ids of the device's attributes.
         """
         if device_id:
-            device = self.devices[device_id]
+            device = self.get_device(device_id=device_id)
             if isinstance(payload, Dict):
                 # validate if dict keys match device configuration
                 attr_object_ids = [attr.object_id for attr in device.attributes]
@@ -465,6 +550,9 @@ class MQTTClient(mqtt.Client):
 
     def subscribe(self, topic=None, qos=0, options=None, properties=None):
         """
+        Extends the normal subscribe function of the paho.mqtt.client.
+        If the topic argument is omitted the client will subscribe to all
+        registered device command topics.
 
         Args:
             topic:
@@ -484,142 +572,8 @@ class MQTTClient(mqtt.Client):
                               options=options,
                               properties=properties)
         else:
-            self.__subscribe_commands(device=device,
-                                      qos=qos,
-                                      options=options,
-                                      properties=properties)
-
-
-if __name__ == '__main__':
-    import time
-    # setup logging
-    logging.basicConfig(level=logging.DEBUG)
-
-    # create a device configuration
-    # creating a command that the IoT device will liston to
-    from filip.models.ngsi_v2.iot import DeviceCommand, DeviceAttribute
-    command = DeviceCommand(name='heater', type="Boolean")
-    attribute = DeviceAttribute(name='temperature',
-                                object_id='t',
-                                type='Number')
-    device = Device(device_id="device_id",
-                    apikey="apikey",
-                    entity_name="device_name",
-                    entity_type="device_type",
-                    transport="MQTT",
-                    commands=[command],
-                    attributes=[attribute])
-
-    from filip.clients.mqtt.encoder import IoTA_Json
-    mqttc = MQTTClient(client_id="test",
-                       devices=[device],
-                       encoder=IoTA_Json)
-
-    # demonstrate normal client behavior
-    # For additional examples on how to use the client please check:
-    # https://github.com/eclipse/paho.mqtt.python/tree/master/examples
-    # define callbacks methods
-    def on_connect(mqttc, obj, flags, rc):
-        print("rc: "+str(rc))
-
-    def on_connect_fail(mqttc, obj):
-        print("Connect failed")
-
-    def on_message(mqttc, obj, msg):
-        print(msg.topic+" "+str(msg.qos)+" "+str(msg.payload))
-        #print(mqttc.encoder.decode_msg(msg))
-
-    def on_publish(mqttc, obj, mid):
-        print("mid: "+str(mid))
-
-    def on_subscribe(mqttc, obj, mid, granted_qos):
-        print("Subscribed: "+str(mid)+" "+str(granted_qos))
-
-    def on_log(mqttc, obj, level, string):
-        print(string)
-
-    # add callbacks to the client
-    mqttc.on_connect = on_connect
-    mqttc.on_connect_fail = on_connect_fail
-    mqttc.on_message = on_message
-    mqttc.on_publish = on_publish
-    mqttc.on_subscribe = on_subscribe
-    mqttc.on_log = on_log
-
-    first_topic = "/filip/testing/first"
-    second_topic = "/filip/testing/second"
-    mqttc.connect("mqtt.eclipseprojects.io", 1883, 60)
-    mqttc.subscribe(first_topic)
-
-    # create a non blocking loop
-    mqttc.loop_start()
-
-    mqttc.publish(topic=first_topic, payload="first")
-
-    # add additional subscription to connection
-    mqttc.subscribe(topic=second_topic)
-    mqttc.publish(topic=second_topic, payload="second")
-
-    time.sleep(5)
-    # stop network loop and disconnect cleanly
-    mqttc.loop_stop()
-    mqttc.disconnect()
-
-    # create command callback
-    def on_command(client: MQTTClient, obj, msg):
-        """
-        Example callback for an incoming command message. For real
-        applications the message content should be written to queue or
-        trigger some subsquential process. Keep in mind that callback should
-        return
-        very quickly.
-        Args:
-            client: client object
-            obj:
-            msg:
-        Returns:
-            None
-        """
-        print(100 * '*')
-        apikey, device_id, payload = client.encoder.decode_message(msg=msg)
-        print(apikey, device_id, payload)
-        print(100 * '*')
-
-    # demonstrate magic FIWARE behavior
-    mqttc.connect("mqtt.eclipseprojects.io", 1883, 60)
-    mqttc.subscribe()
-
-    topic = '/' + '/'.join((device.apikey, device.device_id, 'cmd'))
-    mqttc.publish(topic=topic, payload="test_cmd")
-
-    # add additional device
-    other_device = Device(device_id="other_device",
-                          apikey="apikey",
-                          entity_name="other_device_name",
-                          entity_type="other_device_type",
-                          transport="MQTT",
-                          commands=[command],
-                          attributes=[attribute])
-    mqttc.add_device(device=other_device)
-    topic = '/' + '/'.join((other_device.apikey, other_device.device_id, 'cmd'))
-
-    # create a non blocking loop
-    mqttc.loop_start()
-
-    # additional device callback
-    mqttc.add_command_callback(device_id=other_device.device_id,
-                               callback=on_command)
-
-
-    mqttc.publish(topic=topic,
-                  payload=json.dumps({command.name: "test_command"}))
-    mqttc.publish(topic=topic,
-                  payload=json.dumps({command.name: "other_additional_cmd"}))
-    mqttc.publish(device_id=other_device.device_id,
-                  attribute_name=attribute.name,
-                  payload=50)
-
-    time.sleep(1)
-    # stop network loop and disconnect cleanly
-    mqttc.loop_stop()
-    mqttc.disconnect()
+            for device in self.devices:
+                self.__subscribe_commands(device=device,
+                                          qos=qos,
+                                          options=options,
+                                          properties=properties)

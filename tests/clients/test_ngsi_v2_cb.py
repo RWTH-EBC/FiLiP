@@ -320,7 +320,7 @@ class TestContextBroker(unittest.TestCase):
             client.get_entity_type(entity_type='MyType')
             client.delete_entity(entity_id=self.entity.id)
 
-    @unittest.skip('Does not currently not work in CI')
+    @unittest.skip('Does currently not work in CI')
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
                 cb_url=settings.CB_URL)
@@ -444,7 +444,7 @@ class TestContextBroker(unittest.TestCase):
             nonlocal sub_message
             sub_message = Message.parse_raw(msg.payload)
 
-        def on_disconnect(client, userdata, reasonCode):
+        def on_disconnect(client, userdata, reasonCode, properties=None):
             logger.info("MQTT client disconnected with reasonCode"
                         + str(reasonCode))
 
@@ -624,7 +624,7 @@ class TestContextBroker(unittest.TestCase):
                                  f"/{device.device_id}/cmdexe",
                            payload=json.dumps(res))
 
-        def on_disconnect(client, userdata, reasonCode):
+        def on_disconnect(client, userdata, reasonCode, properties=None):
             pass
 
         mqtt_client = mqtt.Client(client_id="filip-test",
