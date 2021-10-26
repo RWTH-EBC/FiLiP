@@ -6,7 +6,8 @@ from enum import Enum
 
 from pydantic import BaseModel
 from . import *
-from typing import List, Dict, Union, Set
+from typing import List, Dict, Union, Set, Optional
+
 
 class IdType(str, Enum):
     class_ = 'Class'
@@ -31,15 +32,27 @@ class ParsingError(BaseModel):
     """Severity of error"""
     source_iri: str
     """Iri of the source containing the error"""
+    source_name: Optional[str] = None
+    """Name of the source, only set in get_function"""
     entity_type: 'IdType'
     "Type of the problematic entity: Class, Individual,.."
     entity_iri: str
     """Iri of the problematic entity"""
+    entity_label: Optional[str] = None
+    """Name of the source, only set in get_function"""
     message: str
     """Message describing the error"""
 
     class Config:
         use_enum_values = True
+
+
+class VocabularySettings(BaseModel):
+    replace_white_spaces: bool = True
+    camel_case_class_labels: bool = False
+    camel_case_individual_labels: bool = False
+    snake_case_property_labels: bool = False
+    snake_case_datatype_labels: bool = False
 
 
 class Vocabulary(BaseModel):
@@ -83,6 +96,8 @@ class Vocabulary(BaseModel):
     id_types: Dict[str, IdType] = {}
     """Maps all entity iris and (combined)relations to their Entity/Object 
         type, to speed up lookups"""
+
+    settings: VocabularySettings = VocabularySettings()
 
     def get_type_of_id(self, id: str) -> Union[IdType,None]:
         """Get the type (class, relation,...) of an iri/id

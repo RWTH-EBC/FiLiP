@@ -156,8 +156,7 @@ class Source(BaseModel):
             source_iri=self.ontology_iri
         ))
 
-    def get_parsing_log(self, vocabulary: 'Vocabulary') -> \
-            List[Dict[str, Union['LoggingLevel', 'IdType', str]]]:
+    def get_parsing_log(self, vocabulary: 'Vocabulary') -> List['ParsingError']:
         """get the Parsinglog, where the labels of the entities are filled in
 
         Args:
@@ -167,13 +166,14 @@ class Source(BaseModel):
             List[Dict[str, Union[LoggingLevel,'IdType',str]]]
         """
         for entry in self.parsing_log:
-            label = None
-            if not entry['entity_iri'] == "unknown":
-                label = vocabulary.get_label_for_entity_iri(entry['entity_iri'])
-            if label is None:
-                entry['entity_label'] = entry['entity_iri']
-            else:
-                entry['entity_label'] = label
+
+            entry.source_name = self.source_name
+            try:
+                label = vocabulary.get_label_for_entity_iri(entry.entity_iri)
+                entry.entity_label = label
+            except Exception:
+                pass
+
         return self.parsing_log
 
     def clear(self):

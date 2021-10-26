@@ -1,5 +1,8 @@
 import datetime
+import re
 from typing import List, Dict, Set, Optional
+
+import stringcase
 
 from filip.semantics.ontology_parser.vocabulary_builder import VocabularyBuilder
 from filip.semantics.vocabulary import Source, IdType, Vocabulary, \
@@ -33,6 +36,7 @@ def post_process_vocabulary(vocabulary: Vocabulary,
     # all methods have to reset the state that they are editing first.
     # consecutive calls of post_process_vocabulary need to have the same result
     voc_builder = VocabularyBuilder(vocabulary=vocabulary)
+    set_labels(voc_builder)
     add_predefined_source(voc_builder)
     add_predefined_datatypes(voc_builder)
     add_owl_thing(voc_builder)
@@ -46,11 +50,22 @@ def post_process_vocabulary(vocabulary: Vocabulary,
     if old_vocabulary is not None:
         transfer_settings(new_vocabulary=vocabulary,
                           old_vocabulary=old_vocabulary)
-    make_labels_fiware_safe(voc_builder)
+    apply_vocabulary_settings(voc_builder)
 
     sort_relations(voc_builder)
     mirror_object_property_inverses(voc_builder)
 
+def set_labels(voc_builder: VocabularyBuilder):
+    """ If entities have no label, extract their label from the iri
+
+    Args:
+        voc_builder: Builder object for Vocabulary
+
+    Returns:
+        None
+    """
+    for entity in voc_builder.vocabulary.get_all_entities():
+        entity.label = entity.get_original_label()
 
 def add_predefined_source(voc_builder: VocabularyBuilder):
     """ Add a special source to the vocabulary: PREDEFINED
@@ -62,8 +77,7 @@ def add_predefined_source(voc_builder: VocabularyBuilder):
         None
     """
     if "PREDEFINED" not in voc_builder.vocabulary.sources:
-        source = Source(was_link=False, source_path="/",
-                        source_name="Predefined",
+        source = Source(source_name="Predefined",
                         timestamp=datetime.datetime.now(), predefined=True)
         voc_builder.add_source(source, "PREDEFINED")
 
@@ -326,7 +340,7 @@ def remove_duplicate_parents(voc_builder: VocabularyBuilder):
         class_.parent_class_iris = list(dict.fromkeys(class_.parent_class_iris))
 
 
-def make_labels_fiware_safe(voc_builder: VocabularyBuilder):
+def apply_vocabulary_settings(voc_builder: VocabularyBuilder):
     """Make the labels of all entities FIWARE safe, so that they can be used as
      field keys
 
@@ -336,11 +350,37 @@ def make_labels_fiware_safe(voc_builder: VocabularyBuilder):
         None
     """
     vocabulary = voc_builder.vocabulary
-    for entity in vocabulary.get_all_entities():
-        entity.label = entity.make_label_safe(entity.label)
+    settings = vocabulary.settings
 
-        if entity.is_label_protected(entity.label):
-            entity.label = "Unallowed_Label"
+    def to_pascal_case(string: str) -> str:
+        return stringcase.pascalcase(string).replace("_", "").replace(" ", "")\
+            .replace("-", "")
+
+    def to_snake_case(string: str) -> str:
+        camel_string = to_pascal_case(string)
+        return re.sub(r'(?<!^)(?=[A-Z])', '_', camel_string).lower()
+
+    if settings.replace_white_spaces:
+        for entity in vocabulary.get_all_entities():
+            entity.label = entity.label.replace(" ", "_")
+
+    if settings.camel_case_class_labels:
+        for class_ in vocabulary.get_classes():
+            class_.label = to_pascal_case(class_.label)
+
+    if settings.camel_case_individual_labels:
+        for individual in vocabulary.individuals.values():
+            individual.label = to_pascal_case(individual.label)
+
+    if settings.snake_case_property_labels:
+        props = list(vocabulary.data_properties.values())
+        props.extend(vocabulary.object_properties.values())
+        for prop in props:
+            prop.label = to_snake_case(prop.label)
+
+    if settings.snake_case_datatype_labels:
+        for datatype in vocabulary.datatypes.values():
+            datatype.label = to_snake_case(datatype.label)
 
 
 def compute_ancestor_classes(voc_builder: VocabularyBuilder):
@@ -559,38 +599,15 @@ def transfer_settings(new_vocabulary: Vocabulary, old_vocabulary: Vocabulary):
         None
     """
 
-    # agent&device settings
-    for class_ in old_vocabulary.get_classes():
-        if class_.iri in new_vocabulary.classes:
-            new_vocabulary.get_class_by_iri(class_.iri)._is_agent_class = \
-                class_._is_agent_class
-            new_vocabulary.get_class_by_iri(class_.iri)._is_iot_class = \
-                class_._is_iot_class
-
     # label settings
     for entity in old_vocabulary.get_all_entities():
         new_entity = new_vocabulary.get_entity_by_iri(entity.iri)
         if new_entity is not None:
             new_entity.user_set_label = entity.user_set_label
 
-    # combined relation settings
-    combined_relation_pairs = [(old_vocabulary.combined_object_relations,
-                                new_vocabulary.combined_object_relations),
-                               (old_vocabulary.combined_data_relations,
-                                new_vocabulary.combined_data_relations)]
-    for (old_list, new_list) in combined_relation_pairs:
-        for cr_id in old_list:
-            if cr_id in new_list:
+    # device settings
+    for iri, data_property in old_vocabulary.data_properties.items():
+        if iri in new_vocabulary.data_properties:
+            new_data_property = new_vocabulary.data_properties[iri]
+            new_data_property.field_type = data_property.field_type
 
-                old_cr = old_vocabulary.get_combined_relation_by_id(cr_id)
-                new_cr = new_vocabulary.get_combined_relation_by_id(cr_id)
-                new_cr.is_key_information = old_cr.is_key_information
-                new_cr.inspect = old_cr.inspect
-
-    # CombinedDataRelation additional Settings
-    for cdr_id in old_vocabulary.combined_data_relations:
-        if cdr_id in new_vocabulary.combined_data_relations:
-            old_cdr = old_vocabulary.get_combined_data_relation_by_id(cdr_id)
-            new_cdr = new_vocabulary.\
-                get_combined_data_relation_by_id(cdr_id)
-            new_cdr.type = old_cdr.type

@@ -39,6 +39,7 @@ once in the rdfparser code
 def get_iri_from_uriref(uriref: rdflib.URIRef):
     return str(uriref)
 
+
 def get_base_out_of_iri(iri: str):
 
     if "#" in iri:

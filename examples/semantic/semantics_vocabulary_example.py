@@ -6,6 +6,9 @@ and exported as a python model file
 """
 import logging
 import requests
+
+from filip.semantics.vocabulary.data_property import DataFieldType
+from filip.semantics.vocabulary.vocabulary import VocabularySettings
 from filip.semantics.vocabulary_configurator import VocabularyConfigurator
 
 from filip.clients.ngsi_v2 import \
@@ -28,12 +31,21 @@ if __name__ == '__main__':
     # CombinedRelation (CombinedObject- or CombinedDataRelation depending on
     # the property type)
     #
-    #
     # A vocabulary can also contain Individuals. An individual is an
     # immutable instance of a class without values. It can be regarded as a
     # type of enum value.
 
-    vocabulary = VocabularyConfigurator.create_vocabulary()
+    # 1.1 To automatically adapt the label of the entities in the ontology we
+    # can pass some settings to our vocabulary:
+    settings = VocabularySettings(
+        replace_white_spaces=True,
+        camel_case_class_labels=True,
+        camel_case_individual_labels=True,
+        snake_case_property_labels=True,
+        snake_case_datatype_labels=True
+    )
+    # We create our new blank vocabulary:
+    vocabulary = VocabularyConfigurator.create_vocabulary(settings=settings)
 
     # 2. We now add the wanted ontologies to our vocabulary.
     # The ontologies can be inserted via a file, a weblink or as content string.
@@ -45,19 +57,15 @@ if __name__ == '__main__':
         VocabularyConfigurator.add_ontology_to_vocabulary_as_file(
             vocabulary=vocabulary,
             path_to_file='./ontology_files/RoomFloorOntology.ttl')
-    vocabulary = \
-        VocabularyConfigurator.add_ontology_to_vocabulary_as_file(
-            vocabulary=vocabulary,
-            path_to_file='./ontology_files/ParsingTesterOntology.ttl')
 
     # 2.0.2 as string
-    with open('./ontology_files/RoomFloor_Duplicate_Labels.ttl', 'r') as file:
+    with open('./ontology_files/ParsingTesterOntology.ttl', 'r') as file:
         data = file.read()
     vocabulary = \
         VocabularyConfigurator.add_ontology_to_vocabulary_as_string(
             vocabulary=vocabulary,
             source_content=data,
-            source_name="My Name"
+            source_name="ParsingExample"
         )
 
     # 2.0.3 as link
@@ -75,19 +83,35 @@ if __name__ == '__main__':
     # Here we print out the names and adding time of all contained sources:
     print("\u0332".join("Sources in vocabulary:"))
     for source in vocabulary.get_source_list():
-        print(f'Name: {source.source_name}; Added: {source.timestamp}')
+        print(f'Name: {source.source_name}; Added: {source.timestamp}; '
+              f'Id: {source.id}')
     print()
 
     # 2.2 Each vocabulary always contains the source "Predefined". This source
     # contains all fundamental objects of an ontology, as owl:Thing and
     # predefined datatype.
 
-    # 2.3
+    # 2.3 To see if an ontology could be parsed completely we have to look at
+    # the parsing logs:
+    print("\u0332".join("Parsing Logs of vocabulary:"))
+    print(VocabularyConfigurator.get_parsing_logs(vocabulary))
+    print()
+    # Here we see that a statement in the ParsingTesterOntology was dropped
+    # as it was in a non supported OR format. The semantic logic is not
+    # compatible with the OR combination of two relations.
 
-    # todo: PARSING LOGS
-    for source in vocabulary.get_source_list():
-        print(source.source_name)
-        print(source.parsing_log)
+    # 2.4 We could still use the rest of the ParsingTesterOntology, as only
+    # the problematic statement was dropped or we remove it again from our
+    # vocabulary. Here we need the source id, which was given to us in
+    # the parsing logs. We could also look it up in the vocabulary as shown
+    # above
+
+    source_id = [source.id for source in vocabulary.get_source_list() if
+                 source.source_name == "ParsingExample"][0]
+
+    vocabulary = VocabularyConfigurator.delete_source_from_vocabulary(
+                    vocabulary=vocabulary,
+                    source_id=source_id)
 
     # 3. Each entity (class, property, datatype, individual) is uniquely
     # referenced by an IRI. An entity in a vocabulary file can reference
@@ -110,24 +134,17 @@ if __name__ == '__main__':
     # o 'http://www.w3.org/2006/time#TemporalEntity'
     #    This entity was globally imported into the ontology using an import
     #    statement
-    # 'https://w3id.org/saref#UnitOfMeasure'
+    # o 'https://w3id.org/saref#UnitOfMeasure'
     #    This entity was locally imported into the ontology by using the
     #    rdfs_tag: isDefinedBy
     #
     # For both entities only the reference is imported, and the ontology file
     # does not contain all the needed information about these entities to
-    # parse them into the vocabulary
+    # parse them into the vocabulary. We here decide to not include these
+    # sources
 
-
-    # 4. We can now configure the vocabulary
-    # We can change the names of the the different entities in our vocabulary
-    # by setting their label.
-    # To get the used label of an entity always use .get_label()
-
-    # todo
-
-    # 5. Labels of entities need to unique as the represent a namespace
-    # There are three seperated namespaces, in which the labels need to be
+    # 4. Labels of entities need to unique as they represent a namespace
+    # There are three separated namespaces, in which the labels need to be
     # unique:
     #   - Classes and Individuals
     #   - DataProperties and RelationProperties
@@ -137,10 +154,26 @@ if __name__ == '__main__':
     # python, fiware or the model logic.
     #
     # A vocabulary needs to be free of label conflicts before it gets exported
-    #
-    # To check if our vocabulary has Label conflicts we can call:
 
-    # todo
+    # 4.1 To check if our vocabulary is valid  we can call:
+    print("\u0332".join("Vocabulary is valid:"))
+    print(VocabularyConfigurator.is_vocabulary_valid(vocabulary))
+    print("")
+
+    # 4.2 To check which label conflicts our vocabulary posses we can call:
+    print("\u0332".join("Label Conflicts:"))
+    print(VocabularyConfigurator.get_label_conflicts_in_vocabulary(vocabulary))
+    print("")
+
+    # 5. We can rename entities by setting their label to resolve conflicts
+    # or to better adapt the ontology to our liking.
+    # To get the used label of an entity always use .get_label()
+
+    # The easiest way to access an entity is the get_entity_by_iri function
+    entity = vocabulary.get_entity_by_iri('https://w3id.org/saref#Sensor')
+    entity.set_label("SarefSensor")
+    entity = vocabulary.get_entity_by_iri('https://w3id.org/saref#hasValue')
+    entity.set_label("has_values_saref")
 
     # 6. Currently all our classes in the vocabulary are ContextEntities.
     # They can be used to model real world properties, but if we want to
@@ -152,7 +185,7 @@ if __name__ == '__main__':
     #   - The CommandRelations, contain a set of commands that can be send to
     #   device
     #   - The DeviceAttributeRelations, contain a set of DeviceAttributes. A
-    #   DeviceAttribute models and reads out one measurment/datapoint of the
+    #   DeviceAttribute models and reads out one measurement/datapoint of the
     #   device
     #
     # Which DataProperties are CommandProperties or DeviceAttributeProperties
@@ -163,17 +196,28 @@ if __name__ == '__main__':
     # To configure the devices of our vocabulary we change the field_type of
     # the DataProperties
 
-    # todo
+    # 6.1 To see a list of all our available data-properties we can use:
+    print("\u0332".join("Available Data-properties:"))
+    for prop_iri, prop in vocabulary.data_properties.items():
+        print(f'Label: {prop.get_label()}, Iri: {prop.iri}')
+    print("")
+    # This logic is the same if we want to look into classes,
+    # object-properties, datatypes or individuals of our vocabulary.
+
+    # 6.2 We access the wanted properties over the specialised getter,
+    # the general getter, or directly
     vocabulary.get_data_property(
-        "http://www.semanticweb.org/redin/ontologies/2020/11/untitled"
-        "-ontology-25#commandProp").field_type = DataFieldType.command
-    vocabulary.get_data_property(
-        "http://www.semanticweb.org/redin/ontologies/2020/11/untitled"
-        "-ontology-25#attributeProp").field_type = \
+        "https://w3id.org/saref#hasModel").field_type = DataFieldType.command
+    vocabulary.get_entity_by_iri(
+        "https://w3id.org/saref#hasValue").field_type = \
         DataFieldType.device_attribute
 
-    VocabularyConfigurator.generate_vocabulary_models(
-        vocabulary, "../", "models2")
+    # To see which classes are now device classes we can use:
+    print("\u0332".join("Device Classes:"))
+    for class_ in vocabulary.get_classes():
+        if class_.is_iot_class(vocabulary=vocabulary):
+            print(f'Label: {class_.get_label()}, Iri: {class_.iri}')
+    print("")
 
     # 7. We export our configured dictionary as python models.
     # On export the each is converted to a SemanticClass Model and gets a
@@ -195,6 +239,6 @@ if __name__ == '__main__':
     # it creates the file: path_to_file/file_name.py overridden any existing
     # file
 
-    VocabularyConfigurator.generate_vocabulary_models(vocabulary, "../",
+    VocabularyConfigurator.generate_vocabulary_models(vocabulary, ".",
                                                       "models")
 

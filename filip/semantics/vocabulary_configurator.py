@@ -8,15 +8,16 @@ from typing import List, Optional, Dict, Tuple, Set
 
 import requests
 import wget
-from pydantic import BaseModel, AnyHttpUrl
+from pydantic import BaseModel
 
 from filip.semantics.ontology_parser.post_processer import \
-    post_process_vocabulary
+    post_process_vocabulary, transfer_settings
 from filip.semantics.ontology_parser.rdfparser import RdfParser
 from filip.semantics.vocabulary import Vocabulary, Source, Entity, \
-    RestrictionType, Class
+    RestrictionType, Class, ParsingError
 from filip.semantics.vocabulary.data_property import DataFieldType
 from filip.semantics.vocabulary.source import DependencyStatement
+from filip.semantics.vocabulary.vocabulary import VocabularySettings
 
 label_blacklist = list(keyword.kwlist)
 label_blacklist.extend(["__references", "__device_settings"])
@@ -39,7 +40,7 @@ class LabelSummary(BaseModel):
     labels_with_illegal_chars: List[Tuple[str, Entity]]
 
     def is_valid(self) -> bool:
-        return len(self.datatype_label_duplicates) == 0 and \
+        return len(self.class_label_duplicates) == 0 and \
                len(self.field_label_duplicates) == 0 and \
                len(self.datatype_label_duplicates) == 0 and \
                len(self.blacklisted_labels) == 0 and \
@@ -57,7 +58,7 @@ class LabelSummary(BaseModel):
                 sub_res += "\n"
 
             if len(collection) == 0:
-                sub_res +=f"\t/"
+                sub_res +="\t/\n"
             return sub_res
 
         def print_list(collection):
@@ -66,7 +67,7 @@ class LabelSummary(BaseModel):
                 sub_res += f"\t{key}: \t {value.iri}"
                 sub_res += "\n"
             if len(collection) == 0:
-                sub_res +=f"\t/"
+                sub_res += "\t/\n"
             return sub_res
 
         res += "class_label_duplicates:\n"
@@ -85,18 +86,34 @@ class LabelSummary(BaseModel):
 class VocabularyConfigurator:
 
     @classmethod
-    def create_vocabulary(cls) -> Vocabulary:
-        return Vocabulary()
+    def create_vocabulary(cls,
+                          settings: VocabularySettings = VocabularySettings()) \
+            -> Vocabulary:
+
+        return Vocabulary(settings=settings)
 
     @classmethod
     def delete_source_from_vocabulary(cls, vocabulary: Vocabulary,
                                       source_id: str) -> Vocabulary:
-        new_vocabulary = Vocabulary()
+        new_vocabulary = Vocabulary(settings=copy.copy(vocabulary.settings))
         parser = RdfParser()
+        found = False
         for source in vocabulary.sources.values():
             if not source_id == source.id:
                 parser.parse_source_into_vocabulary(
                     source=copy.deepcopy(source), vocabulary=new_vocabulary)
+            else:
+                found = True
+
+        post_process_vocabulary(vocabulary=new_vocabulary,
+                                old_vocabulary=vocabulary)
+
+        if not found:
+            raise ValueError(
+                f"Source with source_id {source_id} not in vocabulary")
+
+        transfer_settings(new_vocabulary=new_vocabulary,
+                          old_vocabulary=vocabulary)
 
         return new_vocabulary
 
@@ -135,7 +152,7 @@ class VocabularyConfigurator:
                         content=data,
                         timestamp=datetime.now())
 
-        return VocabularyConfigurator.__parse_sources_into_vocabulary(
+        return VocabularyConfigurator._parse_sources_into_vocabulary(
             vocabulary=vocabulary, sources=[source])
 
     @classmethod
@@ -146,17 +163,18 @@ class VocabularyConfigurator:
                         content=source_content,
                         timestamp=datetime.now())
 
-        return VocabularyConfigurator.__parse_sources_into_vocabulary(
+        return VocabularyConfigurator._parse_sources_into_vocabulary(
             vocabulary=vocabulary, sources=[source])
 
     @classmethod
-    def __parse_sources_into_vocabulary(cls, vocabulary: Vocabulary,
-                                        sources: List[Source]) -> Vocabulary:
+    def _parse_sources_into_vocabulary(cls, vocabulary: Vocabulary,
+                                       sources: List[Source]) -> Vocabulary:
 
         # create a new vocabulary by reparsing the existing sources
-        new_vocabulary = Vocabulary()
+        new_vocabulary = Vocabulary(settings=copy.copy(vocabulary.settings))
         parser = RdfParser()
         for source in vocabulary.sources.values():
+            source.clear()
             parser.parse_source_into_vocabulary(source=copy.deepcopy(source),
                                                 vocabulary=new_vocabulary)
 
@@ -165,7 +183,8 @@ class VocabularyConfigurator:
             for source in sources:
                 parser.parse_source_into_vocabulary(source=source,
                                                     vocabulary=new_vocabulary)
-            post_process_vocabulary(vocabulary=new_vocabulary)
+            post_process_vocabulary(vocabulary=new_vocabulary,
+                                    old_vocabulary=vocabulary)
         except Exception as e:
             raise ParsingException(e.args)
 
@@ -237,8 +256,7 @@ class VocabularyConfigurator:
                 [vocabulary.datatypes]),
             blacklisted_labels=get_blacklisted_labels([
                 vocabulary.classes, vocabulary.individuals,
-                vocabulary.data_properties, vocabulary.object_properties,
-                vocabulary.datatypes
+                vocabulary.data_properties, vocabulary.object_properties
             ]),
             labels_with_illegal_chars=get_illegal_labels([
                 vocabulary.classes, vocabulary.individuals,
@@ -282,6 +300,13 @@ class VocabularyConfigurator:
                 if not statement.fulfilled:
                     missing_dependencies.add(statement.dependency_iri)
         return list(missing_dependencies)
+
+    @classmethod
+    def get_parsing_logs(cls, vocabulary: Vocabulary) -> List[ParsingError]:
+        res = []
+        for source in vocabulary.sources.values():
+            res.extend(source.get_parsing_log(vocabulary))
+        return res
 
     @classmethod
     def generate_vocabulary_models(cls, vocabulary: Vocabulary, path: str,

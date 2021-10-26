@@ -53,6 +53,14 @@ class Entity(BaseModel):
 
         return self.get_original_label()
 
+    def set_label(self, label:str):
+        """ Change the display label of the entity
+
+        Args:
+            label (str): Label that the label should have
+        """
+        self.user_set_label = label
+
     def get_ontology_iri(self) -> str:
         """ Get the IRI of the ontology that this entity belongs to
         (extracted from IRI)
@@ -112,26 +120,7 @@ class Entity(BaseModel):
             return self.label
 
         index = self.iri.find("#") + 1
-        return self.make_label_safe(self.iri[index:])
-
-    def make_label_safe(self, label: str) -> str:
-        """ make the given label FIWARE safe
-
-        Args:
-            label (str): LAble to make Fiware safe
-
-        Returns:
-            str
-        """
-        label = label.replace(" ", "_")
-        label = label + "*"
-
-        for char in label:
-            if not char.isalnum():
-                if char not in allowed_label_symbols:
-                    label = label.replace(char, "")
-
-        return label
+        return self.iri[index:]
 
     @staticmethod
     def is_label_protected(label: str) -> bool:
