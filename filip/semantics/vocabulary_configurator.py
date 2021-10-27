@@ -22,7 +22,7 @@ from filip.semantics.vocabulary.vocabulary import VocabularySettings
 label_blacklist = list(keyword.kwlist)
 label_blacklist.extend(["__references", "__device_settings"])
 label_blacklist.extend(["references", "device_settings", "header",
-                        "old_state", ""])
+                        "old_state", "", "semantic_manager"])
 label_blacklist.extend(["id", "type", "class"])
 label_blacklist.extend(["str", "int", "float", "complex", "list", "tuple",
                         "range","dict", "list", "set", "frozenset", "bool",
@@ -174,8 +174,9 @@ class VocabularyConfigurator:
         new_vocabulary = Vocabulary(settings=copy.copy(vocabulary.settings))
         parser = RdfParser()
         for source in vocabulary.sources.values():
-            source.clear()
-            parser.parse_source_into_vocabulary(source=copy.deepcopy(source),
+            source_copy = copy.deepcopy(source)
+            source_copy.clear()
+            parser.parse_source_into_vocabulary(source=source_copy,
                                                 vocabulary=new_vocabulary)
 
         # try to parse in the new sources and post_process

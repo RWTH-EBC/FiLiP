@@ -74,7 +74,7 @@ class FiwareHeader(BaseModel):
         alias="fiware-service",
         default="",
         max_length=50,
-        description="Fiware service used for multitancy",
+        description="Fiware service used for multi-tenancy",
         regex=r"\w*$"
     )
     service_path: str = Field(

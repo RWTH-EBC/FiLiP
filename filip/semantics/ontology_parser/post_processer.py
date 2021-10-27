@@ -364,11 +364,11 @@ def apply_vocabulary_settings(voc_builder: VocabularyBuilder):
         for entity in vocabulary.get_all_entities():
             entity.label = entity.label.replace(" ", "_")
 
-    if settings.camel_case_class_labels:
+    if settings.pascal_case_class_labels:
         for class_ in vocabulary.get_classes():
             class_.label = to_pascal_case(class_.label)
 
-    if settings.camel_case_individual_labels:
+    if settings.pascal_case_individual_labels:
         for individual in vocabulary.individuals.values():
             individual.label = to_pascal_case(individual.label)
 

@@ -49,8 +49,8 @@ class ParsingError(BaseModel):
 
 class VocabularySettings(BaseModel):
     replace_white_spaces: bool = True
-    camel_case_class_labels: bool = False
-    camel_case_individual_labels: bool = False
+    pascal_case_class_labels: bool = False
+    pascal_case_individual_labels: bool = False
     snake_case_property_labels: bool = False
     snake_case_datatype_labels: bool = False
 

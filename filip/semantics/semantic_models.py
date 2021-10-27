@@ -58,6 +58,7 @@ class InstanceHeader(FiwareHeader):
         Frozen is further needed so that the header can be used as a hash key
         """
         frozen = True
+        use_enum_values = True
 
 
 class InstanceIdentifier(BaseModel):
@@ -315,7 +316,7 @@ class Field(collections.MutableSequence, BaseModel):
                                                     iot.StaticDeviceAttribute,
                                                     iot.DeviceCommand]]:
         values = []
-        for v in self.get_all():
+        for v in self.get_all_raw():
             if isinstance(v, BaseModel):
                 values.append(v.dict())
             else:
@@ -368,18 +369,21 @@ class Field(collections.MutableSequence, BaseModel):
             str
         """
         result = f'Field: {self.name},\n\tvalues: ['
-        values = self.get_all()
+        values = self.get_all_raw()
         for value in values:
             result += f'{value}, '
         if len(values) > 0:
             result = result[:-2]
         return result
 
-    def get_all(self):
+    def get_all_raw(self) -> List:
         """
         Get all values of the field
         """
         return self._list
+    
+    def get_all(self) -> List:
+        return [self.__getitem__(i) for i in range(len(self._list))]
 
     def _get_instance(self) -> 'SemanticClass':
         return self._semantic_manager.get_instance(self._instance_identifier)
@@ -402,7 +406,7 @@ class Field(collections.MutableSequence, BaseModel):
 
     def values_to_json(self) -> List[str]:
         res = []
-        for v in self.get_all():
+        for v in self.get_all_raw():
             if isinstance(v, BaseModel):
                 res.append(v.json())
             else:
@@ -415,7 +419,7 @@ class DeviceField(Field):
     _internal_type: type = DeviceProperty
 
     def is_valid(self) -> bool:
-        for value in self.get_all():
+        for value in self.get_all_raw():
             if not isinstance(value, self._internal_type):
                 return False
         return True
@@ -466,14 +470,14 @@ class DeviceField(Field):
 
     def get_field_names(self) -> List[str]:
         names = super().get_field_names()
-        for v in self.get_all():
+        for v in self.get_all_raw():
             names.extend(v.get_all_field_names())
         return names
 
     # needed when saving local state
     def build_context_attribute(self) -> NamedContextAttribute:
         values = []
-        for v in self.get_all():
+        for v in self.get_all_raw():
             if isinstance(v, BaseModel):
                 values.append(v.dict())
             else:
@@ -484,8 +488,8 @@ class CommandField(DeviceField):
 
     _internal_type = Command
 
-    def get_all(self) -> List[Command]:
-        return super().get_all()
+    def get_all_raw(self) -> List[Command]:
+        return super().get_all_raw()
 
     def __getitem__(self, i) -> Command:
         return super(CommandField, self).__getitem__(i)
@@ -497,7 +501,7 @@ class CommandField(DeviceField):
 
         attrs = super().build_device_attributes()
 
-        for command in self.get_all():
+        for command in self.get_all_raw():
             attrs.append(
                 iot.DeviceCommand(
                     name=command.name,
@@ -513,8 +517,8 @@ class DeviceAttributeField(DeviceField):
     def __getitem__(self, i) -> DeviceAttribute:
         return super().__getitem__(i)
 
-    def get_all(self) -> List[DeviceAttribute]:
-        return super().get_all()
+    def get_all_raw(self) -> List[DeviceAttribute]:
+        return super().get_all_raw()
 
     def build_device_attributes(self) -> List[Union[iot.DeviceAttribute,
                                                     iot.LazyDeviceAttribute,
@@ -522,7 +526,7 @@ class DeviceAttributeField(DeviceField):
                                                     iot.DeviceCommand]]:
         attrs = super().build_device_attributes()
 
-        for attribute in self.get_all():
+        for attribute in self.get_all_raw():
 
             if attribute.attribute_type == DeviceAttributeType.active:
                 attrs.append(
@@ -684,12 +688,6 @@ class RuleField(Field):
         result += f'],\n\trule: ({self.rule})'
         return result
 
-    def get_all(self):
-        """
-        Get all values of the field
-        """
-        return self._list
-
 
 class DataField(RuleField):
     """
@@ -705,7 +703,7 @@ class DataField(RuleField):
         return NamedContextAttribute(
             name=self.name,
             type=DataType.STRUCTUREDVALUE,
-            value=[v for v in self.get_all()]
+            value=[v for v in self.get_all_raw()]
         )
 
     def __str__(self):
@@ -737,7 +735,7 @@ class RelationField(RuleField):
 
     def build_context_attribute(self) -> NamedContextAttribute:
         values = []
-        for v in self.get_all():
+        for v in self.get_all_raw():
             if isinstance(v, InstanceIdentifier):
                 values.append(v.dict())
             else:
@@ -802,6 +800,9 @@ class RelationField(RuleField):
     def __str__(self):
         """ see class description"""
         return 'Relation'+super().__str__()
+
+    def get_all(self) -> List['SemanticClass']:
+        return super(RelationField, self).get_all()
 
 
 class InstanceState(BaseModel):
@@ -1001,14 +1002,14 @@ class SemanticClass(BaseModel):
 
         self.semantic_manager.instance_registry.delete(self)
 
-    def get_fields(self) -> List[Field]:
+    def get_fields(self) -> List[RuleField]:
         """
         Get all fields of class
 
         Returns:
             List[Field]
         """
-        fields: List[Field] = self.get_relation_fields()
+        fields: List[RuleField] = self.get_relation_fields()
         fields.extend(self.get_data_fields())
         return fields
 

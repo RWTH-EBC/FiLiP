@@ -39,8 +39,8 @@ if __name__ == '__main__':
     # can pass some settings to our vocabulary:
     settings = VocabularySettings(
         replace_white_spaces=True,
-        camel_case_class_labels=True,
-        camel_case_individual_labels=True,
+        pascal_case_class_labels=True,
+        pascal_case_individual_labels=True,
         snake_case_property_labels=True,
         snake_case_datatype_labels=True
     )
@@ -56,7 +56,7 @@ if __name__ == '__main__':
     vocabulary = \
         VocabularyConfigurator.add_ontology_to_vocabulary_as_file(
             vocabulary=vocabulary,
-            path_to_file='./ontology_files/RoomFloorOntology.ttl')
+            path_to_file='./ontology_files/building circuits.owl')
 
     # 2.0.2 as string
     with open('./ontology_files/ParsingTesterOntology.ttl', 'r') as file:
@@ -70,7 +70,9 @@ if __name__ == '__main__':
 
     # 2.0.3 as link
     # if no source name is given, the name is extracted form the uri,
-    # here: "saref.tll"
+    # here: "saref.tll". Only for demonstration of the function, we do not need
+    # saref in our example vocabulary
+
     vocabulary = \
         VocabularyConfigurator.add_ontology_to_vocabulary_as_link(
             vocabulary=vocabulary,
@@ -172,8 +174,7 @@ if __name__ == '__main__':
     # The easiest way to access an entity is the get_entity_by_iri function
     entity = vocabulary.get_entity_by_iri('https://w3id.org/saref#Sensor')
     entity.set_label("SarefSensor")
-    entity = vocabulary.get_entity_by_iri('https://w3id.org/saref#hasValue')
-    entity.set_label("has_values_saref")
+
 
     # 6. Currently all our classes in the vocabulary are ContextEntities.
     # They can be used to model real world properties, but if we want to
@@ -207,9 +208,13 @@ if __name__ == '__main__':
     # 6.2 We access the wanted properties over the specialised getter,
     # the general getter, or directly
     vocabulary.get_data_property(
-        "https://w3id.org/saref#hasModel").field_type = DataFieldType.command
+        "http://www.semanticweb.org/building#controlCommand").field_type = \
+        DataFieldType.command
     vocabulary.get_entity_by_iri(
-        "https://w3id.org/saref#hasValue").field_type = \
+        "http://www.semanticweb.org/building#measurement").field_type = \
+        DataFieldType.device_attribute
+    vocabulary.get_entity_by_iri(
+        "http://www.semanticweb.org/building#state").field_type = \
         DataFieldType.device_attribute
 
     # To see which classes are now device classes we can use:
@@ -220,25 +225,31 @@ if __name__ == '__main__':
     print("")
 
     # 7. We export our configured dictionary as python models.
-    # On export the each is converted to a SemanticClass Model and gets a
+    # On the export each class is converted to a SemanticClass Model and gets a
     # property field for each CombinedRelation it possess.
     # A CombinedObjectRelation gets converted to a RelationField that will
     # point to other instances of SemanticClass models.
-    # On CombinedDataRelation gets converted to a :
+    # A CombinedDataRelation gets converted to a :
     #  - DataField that will contain a list of basic values (string, int,..),
     #       if the dataproperty has the field_type: simple
     #  - CommandFiled that will contain a list of Command objects,
     #       if the dataproperty has the field_type: command
     #  - DeviceAttributeFiled that will contain a list of DeviceAttribute
-    #    objects,
-    #       if the dataproperty has the field_type: device_attribute
+    #    objects, if the dataproperty has the field_type: device_attribute
     #
     # for more details refer to the semantics_model_example
-    #
-    # The export function takes two arguments: path_to_file and file_name
-    # it creates the file: path_to_file/file_name.py overridden any existing
-    # file
 
+    # The saref ontology was good to display some functions of the vocabulary
+    # configurator, but to simplify the next example we remove it here
+    source_id = [source.id for source in vocabulary.get_source_list() if
+                 source.source_name == "saref.ttl"][0]
+    vocabulary = VocabularyConfigurator.delete_source_from_vocabulary(
+        vocabulary=vocabulary,
+        source_id=source_id)
+
+    # The export function takes two arguments: path_to_file and file_name
+    # it creates the file: path_to_file/file_name.py overriding any existing
+    # file
     VocabularyConfigurator.generate_vocabulary_models(vocabulary, ".",
                                                       "models")
 

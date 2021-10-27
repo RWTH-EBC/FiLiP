@@ -192,10 +192,10 @@ class TestSemanticModels(unittest.TestCase):
 
         self.assertEqual(class13.get_identifier(), class13_.get_identifier())
         self.assertEqual(class13.id, class13_.id)
-        self.assertEqual(class13.objProp3.get_all(),
-                         class13_.objProp3.get_all())
-        self.assertEqual(class13.dataProp1.get_all(),
-                         class13_.dataProp1.get_all())
+        self.assertEqual(class13.objProp3.get_all_raw(),
+                         class13_.objProp3.get_all_raw())
+        self.assertEqual(class13.dataProp1.get_all_raw(),
+                         class13_.dataProp1.get_all_raw())
         self.assertTrue(class13.get_identifier() in
                          semantic_manager.instance_registry._registry)
 
@@ -222,7 +222,7 @@ class TestSemanticModels(unittest.TestCase):
 
         # test reference deletion
         class1.delete()
-        self.assertTrue(len(class13.objProp3.get_all()) == 0)
+        self.assertTrue(len(class13.objProp3.get_all_raw()) == 0)
 
         # Test 2:  deletion with Fiware object
         self.clear_registry()
@@ -248,7 +248,7 @@ class TestSemanticModels(unittest.TestCase):
         # class 1 no longer exists in fiware, and the fiware entry of class13
         # should have no more reference to it
         self.assertFalse(semantic_manager.does_instance_exists(identifier1))
-        self.assertTrue(len(Class13(id="13").objProp3.get_all()) == 0)
+        self.assertTrue(len(Class13(id="13").objProp3.get_all_raw()) == 0)
 
         self.assertRaises(AssertionError, semantic_manager.save_state)
         semantic_manager.save_state(assert_validity=False)
@@ -263,7 +263,7 @@ class TestSemanticModels(unittest.TestCase):
 
         class13.delete()
         class13_ = Class13(id="13")
-        self.assertTrue(len(class13_.dataProp1.get_all()) == 0)
+        self.assertTrue(len(class13_.dataProp1.get_all_raw()) == 0)
 
     def test__10_field_set_methode(self):
         from tests.semantic.models import Class1, Class13, Class3, Class4, Class123, \
@@ -457,7 +457,7 @@ class TestSemanticModels(unittest.TestCase):
 
         class3_ = Class3(id="15")
         class1_ = Class1(id="11")
-        self.assertTrue("test" in class3_.dataProp1.get_all())
+        self.assertTrue("test" in class3_.dataProp1.get_all_raw())
         self.assertEqual(class3_.device_settings.dict(),
                          class3.device_settings.dict())
         self.assertTrue(class3_.commandProp[0].name == "c1")
