@@ -443,14 +443,14 @@ semantic_manager.datatype_catalogue = {
 
 
 class MeasurementType(str, Enum):
-	Air_Quality = 'Air_Quality'
-	Temperature = 'Temperature'
+	value_Air_Quality = 'Air_Quality'
+	value_Temperature = 'Temperature'
 
 
 class Unit(str, Enum):
-	Celsius = 'Celsius'
-	Kelvin = 'Kelvin'
-	Relative_Humidity = 'Relative_Humidity'
+	value_Celsius = 'Celsius'
+	value_Kelvin = 'Kelvin'
+	value_Relative_Humidity = 'Relative_Humidity'
 
 
 # ---------Class Dict--------- #

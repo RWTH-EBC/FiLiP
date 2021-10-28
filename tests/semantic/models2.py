@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import Dict, Union, List
 from filip.semantics.semantic_models import \
 	SemanticClass, SemanticIndividual, RelationField, DataField, SemanticDeviceClass, DeviceAttributeField,CommandField
@@ -675,6 +676,22 @@ semantic_manager.datatype_catalogue = {
 	'unsignedLong': 	 {'type': 'number', 'number_range_min': 0, 'number_range_max': 18446744073709551615, 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': True},
 	'unsignedShort': 	 {'type': 'number', 'number_range_min': 0, 'number_range_max': 65535, 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': True},
 }
+
+
+class customDataType1(str, Enum):
+	value_0 = '0'
+	value_15 = '15'
+	value_30 = '30'
+
+
+class customDataType4(str, Enum):
+	value_1 = '1'
+	value_2 = '2'
+	value_3 = '3'
+	value_4 = '4'
+
+
+# ---------Class Dict--------- #
 
 semantic_manager.class_catalogue = {
 	'Class1': Class1,

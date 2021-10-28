@@ -528,22 +528,6 @@ class Vocabulary(BaseModel):
             res.extend(l)
         return res
 
-    def get_entities_with_overwritten_labels_without_conflict(self) ->\
-            List[Entity]:
-        """Get all entities that have a userset label and whose original label
-        is unique
-
-        Returns:
-            List[Entity]
-        """
-        res = []
-        for entity in self.get_all_entities():
-            if entity.is_renamed():
-                if not entity.get_original_label() in \
-                       self.conflicting_original_labels:
-                    res.append(entity)
-
-        return res
 
     def get_enum_dataytypes(self) -> Dict[str, Datatype]:
         return {datatype.iri: datatype for datatype in self.datatypes.values()

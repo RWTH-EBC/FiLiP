@@ -8,6 +8,7 @@ from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient
 from filip.semantics.semantic_models import SemanticClass, InstanceHeader, \
     Command, DeviceAttribute, DeviceAttributeType
 from filip.semantics.vocabulary.data_property import DataFieldType
+from filip.semantics.vocabulary.vocabulary import VocabularySettings
 from filip.semantics.vocabulary_configurator import VocabularyConfigurator
 
 
@@ -17,7 +18,14 @@ class TestSemanticModels(unittest.TestCase):
         pass
 
     def test_1_model_creation(self):
-        vocabulary = VocabularyConfigurator.create_vocabulary()
+        vocabulary = VocabularyConfigurator.create_vocabulary(
+            VocabularySettings(
+                pascal_case_class_labels=False,
+                pascal_case_individual_labels=False,
+                snake_case_property_labels=False,
+                snake_case_datatype_labels=False,
+                pascal_case_datatype_enum_labels=False
+            ))
 
         vocabulary = \
             VocabularyConfigurator.add_ontology_to_vocabulary_as_file(
@@ -294,7 +302,14 @@ class TestSemanticModels(unittest.TestCase):
         self.assertTrue(len(semantic_manager.instance_registry._registry) == 0)
 
     def test__11_model_creation_with_devices(self):
-        vocabulary = VocabularyConfigurator.create_vocabulary()
+        vocabulary = VocabularyConfigurator.create_vocabulary(
+            VocabularySettings(
+                pascal_case_class_labels=False,
+                pascal_case_individual_labels=False,
+                snake_case_property_labels=False,
+                snake_case_datatype_labels=False,
+                pascal_case_datatype_enum_labels=False
+            ))
 
         vocabulary = \
             VocabularyConfigurator.add_ontology_to_vocabulary_as_file(

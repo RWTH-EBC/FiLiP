@@ -22,7 +22,7 @@ from filip.semantics.vocabulary.vocabulary import VocabularySettings
 label_blacklist = list(keyword.kwlist)
 label_blacklist.extend(["__references", "__device_settings"])
 label_blacklist.extend(["references", "device_settings", "header",
-                        "old_state", "", "semantic_manager"])
+                        "old_state", "", "semantic_manager", "delete"])
 label_blacklist.extend(["id", "type", "class"])
 label_blacklist.extend(["str", "int", "float", "complex", "list", "tuple",
                         "range","dict", "list", "set", "frozenset", "bool",
@@ -562,7 +562,7 @@ class VocabularyConfigurator:
         for datatype in vocabulary.get_enum_dataytypes().values():
             content += f"class {datatype.get_label()}(str, Enum):"
             for value in datatype.enum_values:
-                content += f"\n\t{value} = '{value}'"
+                content += f"\n\tvalue_{value} = '{value}'"
             content += "\n\n\n"
 
         content += "# ---------Class Dict--------- #"

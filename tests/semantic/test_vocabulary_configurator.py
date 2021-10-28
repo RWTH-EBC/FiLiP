@@ -6,6 +6,7 @@ import unittest
 
 from filip.semantics.vocabulary import Vocabulary
 from filip.semantics.vocabulary.data_property import DataFieldType
+from filip.semantics.vocabulary.vocabulary import VocabularySettings
 from filip.semantics.vocabulary_configurator import VocabularyConfigurator
 
 
@@ -15,7 +16,15 @@ class TestModels(unittest.TestCase):
     """
     def setUp(self) -> None:
         # Build vocabularies
-        vocabulary = VocabularyConfigurator.create_vocabulary()
+        vocabulary = VocabularyConfigurator.create_vocabulary(
+            VocabularySettings(
+                pascal_case_class_labels=False,
+                pascal_case_individual_labels=False,
+                snake_case_property_labels=False,
+                snake_case_datatype_labels=False,
+                pascal_case_datatype_enum_labels=False
+            )
+        )
 
         vocabulary_1 = \
             VocabularyConfigurator.add_ontology_to_vocabulary_as_file(

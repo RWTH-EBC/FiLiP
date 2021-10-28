@@ -5,8 +5,7 @@ and check if they are valid.
 The whole modeling state is then saved at once to fiware.
 Following the fiware state will be edited with automatic partial loading
 """
-
-
+from filip.clients.ngsi_v2 import IoTAClient, ContextBrokerClient
 
 """
 To run this example you need a working Fiware v2 setup with a context-broker 
@@ -16,6 +15,19 @@ cb_url = "http://localhost:1026"
 iota_url = "http://localhost:4041"
 
 if __name__ == '__main__':
+
+    # 0. Clean up Fiware state:
+    # For this example to work the fiware state needs to be clean:
+    from filip.models.base import FiwareHeader
+    fiware_header = FiwareHeader(service="example", service_path="/")
+    with IoTAClient(fiware_header=fiware_header, url=iota_url) as client:
+        for device in client.get_device_list():
+            client.delete_device(device_id=device.device_id)
+
+    with ContextBrokerClient(fiware_header=fiware_header, url=cb_url) as client:
+        for entity in client.get_entity_list():
+            client.delete_entity(entity_id=entity.id,
+                                 entity_type=entity.type)
 
     # 1. First we need to import the models that we have created in the
     # "semantics_vocabulary_example" and exported into the file "models.py".
@@ -171,8 +183,9 @@ if __name__ == '__main__':
     # Datafields can also specify rules with Datatype enums, in that case we
     # can either directly add the string, or use the enum of the model
     # In each case only the string value gets saved without enum information
+    # Each enum value has the prefix value_ to prevent name clashes
     sensor = Sensor(id="sensor1")
-    sensor.measures.append(MeasurementType.Air_Quality)
+    sensor.measures.append(MeasurementType.value_Air_Quality)
     sensor.measures.append("Air_Quality")
     print("\u0332".join("DataFields with enum values:"))
     print(f"Raw Values: {sensor.measures.get_all_raw()}")
@@ -227,6 +240,10 @@ if __name__ == '__main__':
     for field in my_building.get_relation_fields():
         print(my_floor.has_room.get_all_raw())
     print("")
+
+    # As we save the InstanceIdentifier as refernces, who holds all needed
+    # lookup information we can reference instances in other services,
+    # service-paths or even FiwareSetups
 
     # 3.2 DeviceFields. Each ComplexDataProperty in our vocabulary with a
     # type other than "simple" was converted to this field type. Only device
@@ -346,35 +363,63 @@ if __name__ == '__main__':
     # Saving
     json_save = semantic_manager.save_local_state_as_json()
     # Loading
+    # --> semantic_manager.load_local_state_from_json(json_save)
     # Be aware: If we load the local state, our current pointers will not be
     # correct anymore. Loading from json should only be done on a save place
     # where no active scopes are open.
-    # semantic_manager.load_local_state_from_json(json_save)
 
     # We now model the state a bit so that it can be saved
     del my_floor.has_room[1]
     my_floor.name.append("Office 201")
 
-    Sensor(id="sensor1").measures.append(MeasurementType.Air_Quality)
+    Sensor(id="sensor1").measures.set([MeasurementType.value_Air_Quality])
+    Sensor(id="sensor1").unit.append(Unit.value_Relative_Humidity)
 
-    from filip.semantics.semantic_models import RuleField
-    inst = Sensor(id="sensor1")
-    print("\u0332".join(f"Inspect field validity of instance {inst.id}:"))
-    for field in inst.get_fields():
-        print(f'{field.name}')
-        print(f'\t Valid: {field.is_valid()}')
-        if(isinstance(field, RuleField)):
-             print(f'\t rule: {field.rule}')
-        print(f'\t values:{field.get_all_raw()}')
+    my_outlet.connected_to.set([Circuit(id="c1"), Room(id="r1")])
+    my_outlet.device_settings.endpoint = "http://test.com"
+    my_outlet.device_settings.transport = TransportProtocol.MQTT
 
-    print("")
+    Floor(id="second_floor").name.append("Second Floor")
 
-    # We can check this for each instance by calling:
-    print("\u0332".join("Check instance validity:"))
-    for instance in semantic_manager.get_all_local_instances():
-        print(f'({instance.get_type()}, {instance.id}) is valid: '
-              f'{instance.is_valid()}')
+    r1 = Room(id="r1")
+    r1.goal_temperature.set(["21"])
+    r1.name.append("Room45")
+    r1.volume.append(80)
 
-    print("")
+    Circuit(id="c1").has_outlet.append(my_outlet)
+    Circuit(id="c1").name.set(["MainCircuit"])
+    p1 = Producer(id="p1")
+    Circuit(id="c1").has_producer.insert(0, p1)
 
-    print(my_floor.is_valid())
+    p1.name.insert(0, "CHU")
+    p1.device_settings.endpoint = "http://test2.com"
+    p1.device_settings.transport = TransportProtocol.AMQP
+
+    # Now our state is completely valid and we can save:
+    semantic_manager.save_state(assert_validity=True)
+    # We could also force an invalid state to be saved, in that case the
+    # fulfillment of RuleFields is not checked, but Devices still need an
+    # endpoint and transport
+
+    # If we save to Fiware it is tried to merge the changes made locally with
+    # the current Fiware state. Each instance that gets loaded from fiware
+    # holds it old_state internally on save_state() the old_state gets
+    # compared to the current state of the instance and only the changes as
+    # saved as small grained as possible
+
+    # 4.3 Deleting instances
+
+    # to delete an instance, we can simply call:
+    my_outlet.delete(assert_no_references=False)
+
+    # The parameter assert_no_references is optional; if true the instance is
+    # only deleted if no other instance had a reference to it.
+    # If we add an instance i1 into a RelationField f of an instance i2. i1
+    # will hold the information that it is referenced in the field f of i2.
+    # If we delete an instance, the instances is automatically removed from
+    # all fields in other instances that it was referenced in.
+    # If we delete i1, the value i1 will be removed from teh field f in i2.
+    # If needed i2 is hot-loaded from Fiware
+    #
+    # The delete is as all other changes only a local change. It gets only
+    # transferred to the Fiware state on the call: save_state()
