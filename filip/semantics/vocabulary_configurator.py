@@ -248,9 +248,12 @@ class VocabularyConfigurator:
 
             return result
 
+
+
         summary = LabelSummary(
             class_label_duplicates=get_conflicts_in_group(
-                [vocabulary.classes, vocabulary.individuals]),
+                [vocabulary.classes, vocabulary.individuals,
+                 vocabulary.get_enum_dataytypes()]),
             field_label_duplicates=get_conflicts_in_group(
                 [vocabulary.data_properties, vocabulary.object_properties]),
             datatype_label_duplicates=get_conflicts_in_group(
@@ -316,6 +319,7 @@ class VocabularyConfigurator:
         content: str = ""
 
         # imports
+        content += "from enum import Enum\n"
         content += "from typing import Dict, Union, List\n"
         content += "from filip.semantics.semantic_models import \\" \
                    "\n\tSemanticClass, SemanticIndividual, RelationField, " \
@@ -519,33 +523,6 @@ class VocabularyConfigurator:
                 content += "\n\t\t"
                 content += "semantic_manager=semantic_manager)"
 
-            # # ------Add Settings Fields------
-            # if class_.is_iot_class(vocabulary):
-            #     if True not in [p.is_iot_class(vocabulary) for p in parents]:
-            #         content += "\n\n\t"
-            #         content += "# Setting fields"
-            #
-            #
-            #         # device transport field
-            #         content += "\n\t"
-            #         content += "SETTING_transport: SettingsField = SettingsField("
-            #         content += "\n\t\t"
-            #         content += "name='transport',"
-            #         content += "\n\t\t"
-            #         content += "type=str,"
-            #         content += "\n\t\t"
-            #         content += "semantic_manager=semantic_manager)"
-            #
-            #         # device endpoint field
-            #         content += "\n\t"
-            #         content += "SETTING_endpoint: SettingsField = SettingsField("
-            #         content += "\n\t\t"
-            #         content += "name='endpoint',"
-            #         content += "\n\t\t"
-            #         content += "type=str,"
-            #         content += "\n\t\t"
-            #         content += "semantic_manager=semantic_manager)"
-
         content += "\n\n\n"
         content += "# ---------Individuals--------- #"
 
@@ -571,17 +548,7 @@ class VocabularyConfigurator:
         content += "# ---------Datatypes--------- #"
         content += "\n"
 
-        # Datatypes dict
-
-        # datatype_dict = {}
-        # for name, datatype in vocabulary.datatype_catalogue.items():
-        #     definition = datatype.export()
-        #     datatype_dict[datatype.get_label()] = definition
-        #
-        # content += json.dumps(datatype_dict, indent=4)
-        # content += "\n"
-
-        # Datatypes inline
+        # Datatypes catalogue
         content += "semantic_manager.datatype_catalogue = {"
         for name, datatype in vocabulary.datatypes.items():
             definition = datatype.export()
@@ -589,6 +556,16 @@ class VocabularyConfigurator:
             content += f"'{datatype.get_label()}': \t {definition},"
         content += "\n"
         content += "}"
+
+        # Build datatypes with enums as Enums
+        content +="\n\n\n"
+        for datatype in vocabulary.get_enum_dataytypes().values():
+            content += f"class {datatype.get_label()}(str, Enum):"
+            for value in datatype.enum_values:
+                content += f"\n\t{value} = '{value}'"
+            content += "\n\n\n"
+
+        content += "# ---------Class Dict--------- #"
 
         # build class dict
         content += "\n\n"

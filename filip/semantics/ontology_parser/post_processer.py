@@ -360,9 +360,16 @@ def apply_vocabulary_settings(voc_builder: VocabularyBuilder):
         camel_string = to_pascal_case(string)
         return re.sub(r'(?<!^)(?=[A-Z])', '_', camel_string).lower()
 
-    if settings.replace_white_spaces:
-        for entity in vocabulary.get_all_entities():
-            entity.label = entity.label.replace(" ", "_")
+    # replace all whitespaces
+    for entity in vocabulary.get_all_entities():
+        entity.label = entity.label.replace(" ", "_")
+
+    # replace al whitespaces in enum_values
+    for datatype in vocabulary.datatypes.values():
+        new_enums = []
+        for enum in datatype.enum_values:
+            new_enums.append(enum.replace(" ", "_"))
+        datatype.enum_values = new_enums
 
     if settings.pascal_case_class_labels:
         for class_ in vocabulary.get_classes():
@@ -381,6 +388,10 @@ def apply_vocabulary_settings(voc_builder: VocabularyBuilder):
     if settings.snake_case_datatype_labels:
         for datatype in vocabulary.datatypes.values():
             datatype.label = to_snake_case(datatype.label)
+
+    if settings.pascal_case_datatype_enum_labels:
+        for datatype in vocabulary.get_enum_dataytypes().values():
+            datatype.label = to_pascal_case(datatype.label)
 
 
 def compute_ancestor_classes(voc_builder: VocabularyBuilder):

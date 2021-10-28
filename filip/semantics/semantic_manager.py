@@ -109,10 +109,7 @@ class InstanceRegistry(BaseModel):
     def save(self):
         res = {'instances': [], 'deleted_identifiers': []}
 
-        # todo: old-state, device-settings
         for identifier, instance in self._registry.items():
-            print("")
-            print(instance.build_context_entity())
             old_state = None
             if instance.old_state.state is not None:
                 old_state = instance.old_state.state.json()
@@ -395,6 +392,9 @@ class SemanticManager(BaseModel):
     def get_instance(self, identifier: InstanceIdentifier) -> SemanticClass:
         return self.load_instance(identifier)
 
+    def get_all_local_instances(self):
+        return  self.instance_registry.get_all()
+
     def get_all_local_instances_of_class(self, class_:type, class_name:str):
 
         assert class_ is None or class_name is None, \
@@ -415,10 +415,11 @@ class SemanticManager(BaseModel):
             self,
             fiware_header: FiwareHeader,
             fiware_version: NgsiVersion,
-            entity_types: Optional[List[str]],
-            entity_ids: Optional[List[str]],
             cb_url: str,
-            iota_url: str) -> List[SemanticClass]:
+            iota_url: str,
+            entity_types: Optional[List[str]] = None,
+            entity_ids: Optional[List[str]] = None
+            ) -> List[SemanticClass]:
 
         if len([p for p in [entity_types, entity_ids] if p is not None]) > 1:
             raise ValueError("Only one search parameter is allowed")

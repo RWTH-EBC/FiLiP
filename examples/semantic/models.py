@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import Dict, Union, List
 from filip.semantics.semantic_models import \
 	SemanticClass, SemanticIndividual, RelationField, DataField, SemanticDeviceClass, DeviceAttributeField,CommandField
@@ -336,8 +337,8 @@ class Sensor(SemanticDeviceClass, Thing):
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
 		if not is_initialised:
-			self.measures._rules = [('exactly|1', [['measurement_type']])]
-			self.unit._rules = [('exactly|1', [['unit']])]
+			self.measures._rules = [('exactly|1', [['MeasurementType']])]
+			self.unit._rules = [('exactly|1', [['Unit']])]
 
 
 			self.measurement._instance_identifier = self.get_identifier()
@@ -352,11 +353,11 @@ class Sensor(SemanticDeviceClass, Thing):
 		semantic_manager=semantic_manager)
 	measures: DataField = DataField(
 		name='measures',
-		rule='exactly 1 measurement_type',
+		rule='exactly 1 MeasurementType',
 		semantic_manager=semantic_manager)
 	unit: DataField = DataField(
 		name='unit',
-		rule='exactly 1 unit',
+		rule='exactly 1 Unit',
 		semantic_manager=semantic_manager)
 
 	# Relation fields
@@ -393,13 +394,17 @@ class Tenant(Thing):
 # ---------Individuals--------- #
 
 
+class ExampleIndividual(SemanticIndividual):
+	_parent_classes: List[type] = []
+
+
 
 
 
 # ---------Datatypes--------- #
 semantic_manager.datatype_catalogue = {
-	'measurement_type': 	 {'type': 'enum', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': ['Air Quality', 'Temperature'], 'number_has_range': False},
-	'unit': 	 {'type': 'enum', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': ['Celsius', 'Kelvin', 'Relative Humidity'], 'number_has_range': False},
+	'MeasurementType': 	 {'type': 'enum', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': ['Air_Quality', 'Temperature'], 'number_has_range': False},
+	'Unit': 	 {'type': 'enum', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': ['Celsius', 'Kelvin', 'Relative_Humidity'], 'number_has_range': False},
 	'rational': 	 {'type': 'number', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': True, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
 	'real': 	 {'type': 'number', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
 	'PlainLiteral': 	 {'type': 'string', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
@@ -436,6 +441,20 @@ semantic_manager.datatype_catalogue = {
 	'unsignedShort': 	 {'type': 'number', 'number_range_min': 0, 'number_range_max': 65535, 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': True},
 }
 
+
+class MeasurementType(str, Enum):
+	Air_Quality = 'Air_Quality'
+	Temperature = 'Temperature'
+
+
+class Unit(str, Enum):
+	Celsius = 'Celsius'
+	Kelvin = 'Kelvin'
+	Relative_Humidity = 'Relative_Humidity'
+
+
+# ---------Class Dict--------- #
+
 semantic_manager.class_catalogue = {
 	'AirProducer': AirProducer,
 	'Building': Building,
@@ -453,4 +472,5 @@ semantic_manager.class_catalogue = {
 
 
 semantic_manager.individual_catalogue = {
+	'ExampleIndividual': ExampleIndividual,
 	}

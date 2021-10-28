@@ -230,7 +230,6 @@ class Command(DeviceProperty):
                                        attr=attr)
         client.close()
 
-
     def get_info(self) -> str:
         return self._get_field_from_fiware(field_name=f'{self.name}_info',
                                            required_type="commandResult").value
@@ -706,6 +705,18 @@ class DataField(RuleField):
             value=[v for v in self.get_all_raw()]
         )
 
+    def __setitem__(self, i, v):
+        if isinstance(v, Enum):
+            self._list[i] = v.value
+        else:
+            self._list[i] = v
+
+    def insert(self, i, v):
+        if isinstance(v, Enum):
+            self._list.insert(i, v.value)
+        else:
+            self._list.insert(i, v)
+
     def __str__(self):
         return 'Data'+super().__str__()
 
@@ -935,6 +946,9 @@ class SemanticClass(BaseModel):
                          references={})
 
         semantic_manager_.instance_registry.register(self)
+
+    def is_valid(self) -> bool:
+        return self.are_rule_fields_valid()
 
     def are_rule_fields_valid(self) -> bool:
         """
@@ -1180,24 +1194,21 @@ class DeviceSettings(BaseModel):
     class Config:
         validate_assignment=True
 
+
 class SemanticDeviceClass(SemanticClass):
 
     # old_device_state: Optional[ContextDevice]
     """needed ?"""
 
     # Used an internal dict to bypass objects immutability
-
-    # transport: ProtectedProperty[TransportProtocol] = ProtectedProperty()
-    # endpoint: ProtectedProperty[AnyHttpUrl] = ProtectedProperty()
-    # apikey: ProtectedProperty[str] = ProtectedProperty()
-    # protocol: ProtectedProperty[str] = ProtectedProperty()
-    # timezone: ProtectedProperty[str] = ProtectedProperty()
-    # timestamp: ProtectedProperty[bool] = ProtectedProperty()
-    # expressionLanguage: ProtectedProperty[ExpressionLanguage] = \
-    #     ProtectedProperty()
-    # explicitAttrs: ProtectedProperty[bool] = ProtectedProperty(False)
-
     device_settings: DeviceSettings = DeviceSettings()
+
+    def is_valid(self):
+        return super().is_valid() and self.are_device_settings_valid()
+
+    def are_device_settings_valid(self):
+        return self.device_settings.endpoint is not None and \
+               self.device_settings.transport is not None
 
     def delete(self, assert_no_references: bool = False):
         #todo

@@ -48,11 +48,11 @@ class ParsingError(BaseModel):
 
 
 class VocabularySettings(BaseModel):
-    replace_white_spaces: bool = True
-    pascal_case_class_labels: bool = False
-    pascal_case_individual_labels: bool = False
-    snake_case_property_labels: bool = False
-    snake_case_datatype_labels: bool = False
+    pascal_case_class_labels: bool = True
+    pascal_case_individual_labels: bool = True
+    snake_case_property_labels: bool = True
+    snake_case_datatype_labels: bool = True
+    pascal_case_datatype_enum_labels: bool = True
 
 
 class Vocabulary(BaseModel):
@@ -544,3 +544,7 @@ class Vocabulary(BaseModel):
                     res.append(entity)
 
         return res
+
+    def get_enum_dataytypes(self) -> Dict[str, Datatype]:
+        return {datatype.iri: datatype for datatype in self.datatypes.values()
+                if len(datatype.enum_values) > 0 and not datatype.predefined}

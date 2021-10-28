@@ -168,6 +168,18 @@ if __name__ == '__main__':
               f"{field.get_all_raw()}, Valid: {field.is_valid()}")
     print("")
 
+    # Datafields can also specify rules with Datatype enums, in that case we
+    # can either directly add the string, or use the enum of the model
+    # In each case only the string value gets saved without enum information
+    sensor = Sensor(id="sensor1")
+    sensor.measures.append(MeasurementType.Air_Quality)
+    sensor.measures.append("Air_Quality")
+    print("\u0332".join("DataFields with enum values:"))
+    print(f"Raw Values: {sensor.measures.get_all_raw()}")
+    print(f"Values: {sensor.measures.get_all()}")
+    print("")
+
+
     # 3.1.1 RelationFields: Each ComplexRelationProperty in our vocabulary was
     # converted to this field type.
     # As values it takes instances of classes
@@ -198,8 +210,22 @@ if __name__ == '__main__':
 
     one_instance.has_room.append(Room(id="r1"))
     print("\u0332".join("Inspect my_floor.has_room:"))
+    print(my_floor.has_room)
+    print("")
+
+    # A relation field can also take Individuals as values, or even require
+    # them via rules. Instances are globally static, final  classes,
+    # each instance of an Individual is equal
+
+    my_floor.has_room.append(ExampleIndividual())
+
+    # An individual is not saved as Identifier as it is not directly saved in
+    # Fiware instead it is only saved as string, as a
+    # kind of enum.
+
+    print("\u0332".join("Individual internal saving:"))
     for field in my_building.get_relation_fields():
-        print(my_floor.has_room)
+        print(my_floor.has_room.get_all_raw())
     print("")
 
     # 3.2 DeviceFields. Each ComplexDataProperty in our vocabulary with a
@@ -270,9 +296,85 @@ if __name__ == '__main__':
     # This means that in the construction and initiating process of a new object
     # not always a new object is generated
 
-    # If on two seperate places in the same runtime an object with the same
+    # If on two separate places in the same runtime an object with the same
     # Identifier is created, both pointers will point to the same object!
 
     # This logic is most beneficial for hot-loading from Fiware.
-    # If we want to edit a state
+    # If we want to edit an existing state on Fiware we can directly access
+    # the objects that we need by creating Objects of the corresponding
+    # class, id and header. The object probably also has references to other
+    # objects, which again reference objects and so on.
+    # To prevent long unnecessary loading, a referenced object is only loaded
+    # if it is directly accessed.
+    # Example:
+    #   In Fiware we have saved: Building b and Floor f, b references f in
+    #   hasFloor index 1.
+    #   If we load b, f is not loaded. f gets loaded the moment we access
+    #   b.hasFloor[1] and is then present in the local state
 
+    # If we want/need to batch load a set of entities in the local state,
+    # we can use the corresponding functions in the semantic_manager:
+
+    from filip.models.base import FiwareHeader
+    semantic_manager.load_instances_from_fiware(
+        fiware_version=NgsiVersion.v2,
+        fiware_header=FiwareHeader(service="Example", service_path="/"),
+        cb_url=cb_url,
+        iota_url=iota_url,
+        entity_ids=[], # list of ids to load
+        # or entity_types=[...],  # list of types to load
+    )
+
+    # 4.2 Saving the Local State
+
+    # If we have finished editing in the local state we can publish our
+    # changes to the Fiware State.
+    # Before we can do that all instances in the local state need to be valid.
+
+    # We can check this for each instance by calling:
+    print("\u0332".join("Check instance validity:"))
+    for instance in semantic_manager.get_all_local_instances():
+        print(f'({instance.get_type()}, {instance.id}) is valid: '
+              f'{instance.is_valid()}')
+    print("")
+
+    # if we want to save the LocalState to fiware with an invalid instance
+    # an error will be raised.
+    # But we maybe want to save the LocalState to continue working later.
+    # Here we can save and load the LocalState as json:
+
+    # Saving
+    json_save = semantic_manager.save_local_state_as_json()
+    # Loading
+    # Be aware: If we load the local state, our current pointers will not be
+    # correct anymore. Loading from json should only be done on a save place
+    # where no active scopes are open.
+    # semantic_manager.load_local_state_from_json(json_save)
+
+    # We now model the state a bit so that it can be saved
+    del my_floor.has_room[1]
+    my_floor.name.append("Office 201")
+
+    Sensor(id="sensor1").measures.append(MeasurementType.Air_Quality)
+
+    from filip.semantics.semantic_models import RuleField
+    inst = Sensor(id="sensor1")
+    print("\u0332".join(f"Inspect field validity of instance {inst.id}:"))
+    for field in inst.get_fields():
+        print(f'{field.name}')
+        print(f'\t Valid: {field.is_valid()}')
+        if(isinstance(field, RuleField)):
+             print(f'\t rule: {field.rule}')
+        print(f'\t values:{field.get_all_raw()}')
+
+    print("")
+
+    # We can check this for each instance by calling:
+    print("\u0332".join("Check instance validity:"))
+    for instance in semantic_manager.get_all_local_instances():
+        print(f'({instance.get_type()}, {instance.id}) is valid: '
+              f'{instance.is_valid()}')
+
+    print("")
+
+    print(my_floor.is_valid())

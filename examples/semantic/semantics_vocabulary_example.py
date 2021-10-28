@@ -38,11 +38,11 @@ if __name__ == '__main__':
     # 1.1 To automatically adapt the label of the entities in the ontology we
     # can pass some settings to our vocabulary:
     settings = VocabularySettings(
-        replace_white_spaces=True,
         pascal_case_class_labels=True,
         pascal_case_individual_labels=True,
         snake_case_property_labels=True,
-        snake_case_datatype_labels=True
+        snake_case_datatype_labels=True,
+        pascal_case_datatype_enum_labels=True
     )
     # We create our new blank vocabulary:
     vocabulary = VocabularyConfigurator.create_vocabulary(settings=settings)
