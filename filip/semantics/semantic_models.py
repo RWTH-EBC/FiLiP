@@ -43,7 +43,7 @@ class InstanceHeader(FiwareHeader):
 
     fiware_version: NgsiVersion = Field(default=NgsiVersion.v2,
                                         description="Used Version in the "
-                                                      "Fiware setup")
+                                                    "Fiware setup")
 
     def get_fiware_header(self) -> FiwareHeader:
         """
@@ -100,9 +100,9 @@ class Datatype(BaseModel):
     number_decimal_allowed: bool
     """If Type==Number: Are decimal numbers allowed?"""
     forbidden_chars: List[str]
-    """If Type==String: Blacklisted chars"""
+    """If Type==String: Blacklisted chars; if empty none are forbidden"""
     allowed_chars: List[str]
-    """If Type==String: Whitelisted chars"""
+    """If Type==String: Whitelisted chars; if empty all chars are allowed"""
     enum_values: List[str]
     """If Type==Enum: Enum values"""
 
@@ -116,10 +116,8 @@ class Datatype(BaseModel):
         Returns:
             bool
         """
-
         if self.type == "string":
             if len(self.allowed_chars) > 0:
-                # if allowed chars is empty all chars are allowed
                 for char in value:
                     if char not in self.allowed_chars:
                         return False
@@ -129,16 +127,15 @@ class Datatype(BaseModel):
             return True
 
         if self.type == "number":
-
             if self.number_decimal_allowed:
                 try:
                     number = float(value)
-                except:
+                except ValueError:
                     return False
             else:
                 try:
                     number = int(value)
-                except:
+                except ValueError:
                     return False
 
             if not self.number_range_min == "/":
@@ -173,10 +170,6 @@ class DeviceProperty(BaseModel):
 
     def _get_instance(self) -> 'SemanticClass':
         return self._semantic_manager.get_instance(self._instance_identifier)
-
-    # def __eq__(self, other):
-    #     return type(other) == type(self) and self.name == other.name and \
-    #            self._field_name == other._field_name
 
     def _get_field_from_fiware(self, field_name: str, required_type: str) \
             -> NamedContextAttribute:
@@ -220,7 +213,6 @@ class DeviceProperty(BaseModel):
 class Command(DeviceProperty):
 
     def send(self):
-
         attr = self._get_field_from_fiware(field_name=self.name,
                                            required_type="command")
         client = self._semantic_manager.get_client(
@@ -255,15 +247,8 @@ class DeviceAttribute(DeviceProperty):
             field_name=f'{self._field_name}_{self.name}',
             required_type="StructuredValue").value
 
-    # def get_full_field_name(self) -> str:
-    #     return f'{self._field_name}_{self.name}'
-
     def get_all_field_names(self) -> List[str]:
         return [f'{self._field_name}_{self.name}']
-
-    # def __eq__(self, other):
-    #     return super.__eq__(self, other) and \
-    #            self.attribute_type == other.attribute_type
 
     class Config:
         use_enum_values = True
