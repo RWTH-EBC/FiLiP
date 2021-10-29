@@ -163,16 +163,42 @@ class Datatype(BaseModel):
 
 
 class DeviceProperty(BaseModel):
+    """
+    Model describing one specific property of an IoT device.
+    It is either a command that can be executed or an attribute that can be read
+
+    A property can only belong to one field of one instance. Assigning it to
+    multiple fields will result in an error.
+    """
+
     name: str
+    """Internally used name in the IoT Device"""
     _instance_identifier: Optional[InstanceIdentifier] = None
+    """Identifier of the instance holding this Property"""
     _semantic_manager: Optional['SemanticManager'] = None
+    """Link to the governing semantic_manager"""
     _field_name: Optional[str] = None
+    """Name of the field to which this property was added in the instance"""
 
     def _get_instance(self) -> 'SemanticClass':
+        """Get the instance object to which this property was added"""
         return self._semantic_manager.get_instance(self._instance_identifier)
 
     def _get_field_from_fiware(self, field_name: str, required_type: str) \
             -> NamedContextAttribute:
+        """
+        Retrieves live information about a field from the assigned instance
+        from Fiware
+
+        Args:
+            field_name (str): Name of the to retrieving field
+            required_type (str): Type that the retrieved field is required to
+                                 have
+        Raises:
+            Exception;  if the instance or the field is not present in Fiware
+                        (the instance  state was not yet saved)
+            Exception;  The field_type does not match
+        """
 
         if self._field_name is None:
             raise Exception("This DeviceProperty needs to be added to a "
@@ -197,13 +223,13 @@ class DeviceProperty(BaseModel):
         if not attr.type == required_type:
             raise Exception("The field in Fiware has a wrong type, "
                             "an uncaught naming conflict happened")
-
-        if not attr.type == required_type:
-            raise Exception("The field in Fiware has a wrong type, "
-                            "an uncaught naming conflict happened")
         return attr
 
     def get_all_field_names(self) -> List[str]:
+        """
+        Get all field names which this property creates in the fiware
+        instance
+        """
         pass
 
     class Config:
@@ -211,8 +237,25 @@ class DeviceProperty(BaseModel):
 
 
 class Command(DeviceProperty):
+    """
+    Model describing a command property of an IoT device.
+
+    The command will add three fields to the fiware instance:
+        - name - Used to execute the command, function: send()
+        - name_info - Used to retrieve the command result: get_info()
+        - name_status - Used to see the current status: get_status()
+
+    A command can only belong to one field of one instance. Assigning it to
+    multiple fields will result in an error.
+    """
 
     def send(self):
+        """
+        Execute the command on the IoT device
+
+        Raises:
+            Exception: If the command was not yet saved to Fiware
+        """
         attr = self._get_field_from_fiware(field_name=self.name,
                                            required_type="command")
         client = self._semantic_manager.get_client(
@@ -223,31 +266,72 @@ class Command(DeviceProperty):
         client.close()
 
     def get_info(self) -> str:
+        """
+        Retrieve the executed command result from the IoT-Device
+
+        Raises:
+            Exception: If the command was not yet saved to Fiware
+        """
         return self._get_field_from_fiware(field_name=f'{self.name}_info',
                                            required_type="commandResult").value
 
     def get_status(self):
+        """
+        Retrieve the executed command status from the IoT-Device
+
+        Raises:
+            Exception: If the command was not yet saved to Fiware
+        """
         return self._get_field_from_fiware(field_name=f'{self.name}_status',
                                            required_type="commandStatus").value
 
     def get_all_field_names(self) -> List[str]:
+        """
+        Get all the field names that this command will add to Fiware
+        """
         return [self.name, f"{self.name}_info", f"{self.name}_result"]
 
 
 class DeviceAttributeType(str, Enum):
+    """
+    Retrieval type of the DeviceAttribute value from the IoT Device into Fiware
+    """
     lazy = "lazy"
+    """The value is only read out if it is requested"""
     active = "active"
+    """The value is kept up-to-date"""
 
 
 class DeviceAttribute(DeviceProperty):
+    """
+    Model describing an attribute property of an IoT device.
+
+    The attribute will add one field to the fiware instance:
+        - {NameOfInstanceField}_{Name}, holds the value of the Iot device
+        attribute: get_value()
+
+    A DeviceAttribute can only belong to one field of one instance. Assigning
+    it to multiple fields will result in an error.
+    """
     attribute_type: DeviceAttributeType
+    """States if the attribute is read actively or lazy from the IoT Device 
+    into Fiware"""
 
     def get_value(self):
+        """
+        Retrieve the current value from the Iot Device
+
+        Raises:
+            Exception: If the DeviceAttribute was not yet saved to Fiware
+        """
         return self._get_field_from_fiware(
             field_name=f'{self._field_name}_{self.name}',
             required_type="StructuredValue").value
 
     def get_all_field_names(self) -> List[str]:
+        """
+        Get all the field names that this command will add to Fiware
+        """
         return [f'{self._field_name}_{self.name}']
 
     class Config:
@@ -275,6 +359,7 @@ class Field(collections.MutableSequence, BaseModel):
     """Identifier of instance, that has this field as property"""
 
     _list: List = list()
+    """Internal list of the field, to which values are saved"""
 
     def __init__(self,  name, semantic_manager):
         self._semantic_manager = semantic_manager
@@ -283,6 +368,9 @@ class Field(collections.MutableSequence, BaseModel):
         self._list = list()
 
     def is_valid(self) -> bool:
+        """
+        Check if the current state is valid -> Can be saved to Fiware
+        """
         pass
 
     def build_context_attribute(self) -> NamedContextAttribute:
@@ -299,6 +387,16 @@ class Field(collections.MutableSequence, BaseModel):
                                                     iot.LazyDeviceAttribute,
                                                     iot.StaticDeviceAttribute,
                                                     iot.DeviceCommand]]:
+        """
+        Convert the field to a DeviceAttribute that can eb added to a
+        DeviceEntity
+
+        Returns:
+            List[Union[iot.DeviceAttribute,
+                       iot.LazyDeviceAttribute,
+                       iot.StaticDeviceAttribute,
+                       iot.DeviceCommand]]
+        """
         values = []
         for v in self.get_all_raw():
             if isinstance(v, BaseModel):
@@ -362,33 +460,40 @@ class Field(collections.MutableSequence, BaseModel):
 
     def get_all_raw(self) -> List:
         """
-        Get all values of the field
+        Get all values of the field exactly as they are hold inside the
+        internal list
         """
         return self._list
     
     def get_all(self) -> List:
+        """
+        Get all values of the field in usable form
+        """
         return [self.__getitem__(i) for i in range(len(self._list))]
 
     def _get_instance(self) -> 'SemanticClass':
+        """
+        Get the instance object to which this field belongs
+        """
         return self._semantic_manager.get_instance(self._instance_identifier)
 
-    # def __eq__(self, other):
-    #     if not type(self) == type(other):
-    #         return False
-    #     if not len(self._list) == len(other._list):
-    #         return False
-    #     for i in range(len(self._list)):
-    #         if not self._list[i] == other._list[i]:
-    #             return False
-    #     return True
-
     def get_field_names(self) -> List[str]:
+        """
+        Get the names of all fields this field will create in the Fiware entity.
+        (DeviceProperties can create additional fields)
+
+        Returns:
+            List[str]
+        """
         return [self.name]
 
-    class Config:
-        underscore_attrs_are_private = True
-
     def values_to_json(self) -> List[str]:
+        """
+        Convert each value of the field to a json string
+
+        Returns:
+            List[str]
+        """
         res = []
         for v in self.get_all_raw():
             if isinstance(v, BaseModel):
@@ -397,18 +502,41 @@ class Field(collections.MutableSequence, BaseModel):
                 res.append(v)
         return res
 
+    class Config:
+        underscore_attrs_are_private = True
+
 
 class DeviceField(Field):
 
     _internal_type: type = DeviceProperty
+    """
+    Type which is allowed to be stored in the field.
+    Set in the subclasses, but has to be a subclass of DeviceProperty
+    """
 
     def is_valid(self) -> bool:
+        """
+        Check if the current state is valid -> Can be saved to Fiware
+
+        Returns:
+            True, if all values are of type _internal_type
+        """
         for value in self.get_all_raw():
             if not isinstance(value, self._internal_type):
                 return False
         return True
 
     def _pre_set(self, v):
+        """
+        Executes checks before value v is assigned to field values
+        And sets internal values of v to link it to this field
+
+        Args:
+             v (Any): Value to be added to the field
+        Raises:
+            AssertionError: if v not of type: internal_type
+                            if v does already belong to a field
+        """
         assert isinstance(v, self._internal_type)
         assert v._instance_identifier is None, "DeviceProperty can only " \
                                                "belong to one device instance"
@@ -417,6 +545,18 @@ class DeviceField(Field):
         v._field_name = self.name
 
     def _name_check(self, v: _internal_type):
+        """
+        Executes name checks before value v is assigned to field values
+        Each field name that v will add to the Fiware instance needs to be
+        available
+
+        Args:
+            v (_internal_type): Value to be added to the field
+        Raises:
+            NameError: if a field name of v is not available
+                       if a field name of v is blacklisted
+                       if the name of v contains a forbidden character
+        """
         taken_fields = self._get_instance().get_all_field_names()
         for name in v.get_all_field_names():
             if name in taken_fields:
@@ -427,7 +567,6 @@ class DeviceField(Field):
                 raise NameError(f"The property can not be added to the field "
                                 f"{self.name}, because the name {name} is "
                                 f"forbidden")
-
             for c in name:
                 if c not in label_char_whitelist:
                     raise NameError(
@@ -436,20 +575,27 @@ class DeviceField(Field):
                         f"contains the forbidden character {c}")
 
     def __delitem__(self, i):
+        """List function: Remove a values
+        Makes the value available again to be added to other fields/instances
+        """
         v = self._list[i]
         v._instance_identifier = None
         v._semantic_manager = None
         v.name = None
         del self._list[i]
         
-    def __setitem__(self, i, v): 
-        self._pre_set(v)
+    def __setitem__(self, i, v):
+        """List function: If checks pass , add value
+        """
         self._name_check(v)
+        self._pre_set(v)
         super(DeviceField, self).__setitem__(i, v)
         
     def insert(self, i, v):
-        self._pre_set(v)
+        """List function: If checks pass , add value at position i
+        """
         self._name_check(v)
+        self._pre_set(v)
         super(DeviceField, self).insert(i, v)
 
     def get_field_names(self) -> List[str]:
@@ -458,8 +604,8 @@ class DeviceField(Field):
             names.extend(v.get_all_field_names())
         return names
 
-    # needed when saving local state
     def build_context_attribute(self) -> NamedContextAttribute:
+        """only needed when saving local state as json"""
         values = []
         for v in self.get_all_raw():
             if isinstance(v, BaseModel):
@@ -467,6 +613,7 @@ class DeviceField(Field):
             else:
                 values.append(v)
         return NamedContextAttribute(name=self.name, value=values)
+
 
 class CommandField(DeviceField):
 
@@ -482,16 +629,13 @@ class CommandField(DeviceField):
                                                     iot.LazyDeviceAttribute,
                                                     iot.StaticDeviceAttribute,
                                                     iot.DeviceCommand]]:
-
         attrs = super().build_device_attributes()
-
         for command in self.get_all_raw():
             attrs.append(
                 iot.DeviceCommand(
                     name=command.name,
                 )
             )
-
         return attrs
 
 
@@ -802,6 +946,9 @@ class RelationField(RuleField):
 
 
 class InstanceState(BaseModel):
+    """State of instance that it had in Fiware on the moment of the last load
+    Wrapped in an object to bypass the SemanticClass immutability
+    """
     state: Optional[ContextEntity]
 
 
@@ -833,6 +980,7 @@ class SemanticClass(BaseModel):
     """references made to this instance in other instances RelationFields"""
 
     semantic_manager: BaseModel = None
+    """Pointer to the governing semantic_manager"""
 
     def add_reference(self, identifier: InstanceIdentifier, relation_name: str):
         """
@@ -933,11 +1081,18 @@ class SemanticClass(BaseModel):
         semantic_manager_.instance_registry.register(self)
 
     def is_valid(self) -> bool:
+        """
+        Test if instance is valid -> Is correctly defined and can be saved to
+        Fiware
+
+        Returns:
+            bool
+        """
         return self.are_rule_fields_valid()
 
     def are_rule_fields_valid(self) -> bool:
         """
-        Test if all fields are valid
+        Test if all rule fields are valid
 
         Returns:
             bool, True if all valid
@@ -983,6 +1138,16 @@ class SemanticClass(BaseModel):
         return type(self).__name__
 
     def delete(self, assert_no_references: bool = False):
+        """
+        Delete this instance.
+        All references made to this instance by other instances will be removed
+        On save_state it will also be deleted from Fiware
+
+        Args:
+            assert_no_references (bool): If True the instance is not deleted
+            and an Error is raised, if some other instance references this
+            instance.
+        """
 
         if assert_no_references:
             assert len(self.references) == 0
@@ -1011,15 +1176,6 @@ class SemanticClass(BaseModel):
         fields: List[RuleField] = self.get_relation_fields()
         fields.extend(self.get_data_fields())
         return fields
-
-    # def get_field_names(self) -> List[str]:
-    #     """
-    #     Get names of all fields of class
-    #
-    #     Returns:
-    #         List[str]
-    #     """
-    #     return [f.name for f in self.get_fields()]
 
     def get_relation_fields(self) -> List[RelationField]:
         """
@@ -1147,26 +1303,10 @@ class SemanticClass(BaseModel):
         return str(self.dict(exclude={'semantic_manager', 'old_state'}))
 
 
-T = TypeVar('T')
-
-
-# class ProtectedProperty(Generic[T], BaseModel):
-#     _value: T = None
-#
-#     def __init__(self, default_value: T = None, **data: Any):
-#         super().__init__(**data)
-#         self._value = default_value
-#
-#     def get(self) -> T:
-#         return self._value
-#
-#     def set(self, value: T):
-#         self._value = value
-#
-#     class Config:
-#         underscore_attrs_are_private = True
-
 class DeviceSettings(BaseModel):
+    """Settings configuring the communication with an IoT Device
+    Wrapped in a model to bypass SemanticDeviceClass immutability
+    """
     transport: Optional[TransportProtocol]
     endpoint: Optional[AnyHttpUrl]
     apikey: Optional[str]
@@ -1181,17 +1321,44 @@ class DeviceSettings(BaseModel):
 
 
 class SemanticDeviceClass(SemanticClass):
+    """
+    A class representing a vocabulary/ontology class.
+    A class has predefined fields
+    Each instance of a class links to a unique Fiware ContextDevice (by
+    Identifier) and represents one IoT Device of the real world.
+
+    If a class is initiated it is first looked if this instance (equal over
+    identifier) exists in the local registry. If yes that instance is returned
+
+    If no, it is looked if this instance exists in Fiware, if yes it is
+    loaded and returned, else a new instance of the class is initialised and
+    returned
+    """
 
     # old_device_state: Optional[ContextDevice]
     """needed ?"""
 
-    # Used an internal dict to bypass objects immutability
     device_settings: DeviceSettings = DeviceSettings()
+    """Settings configuring the communication with an IoT Device 
+    Wrapped in a model to bypass SemanticDeviceClass immutability"""
 
     def is_valid(self):
+        """
+        Test if instance is valid -> Is correctly defined and can be saved to
+        Fiware
+
+        Returns:
+           bool
+        """
         return super().is_valid() and self.are_device_settings_valid()
 
     def are_device_settings_valid(self):
+        """
+        Test if device settings are valid
+
+        Returns:
+             bool, True if endpoint and transport are not None
+        """
         return self.device_settings.endpoint is not None and \
                self.device_settings.transport is not None
 
@@ -1255,19 +1422,6 @@ class SemanticDeviceClass(SemanticClass):
             List[str]
         """
         return [f.name for f in self.get_device_attribute_fields()]
-
-    # def get_property_dict(self) -> Dict[str, ProtectedProperty]:
-    #     """
-    #     Get all DeviceAttributeField of class
-    #
-    #     Returns:
-    #       List[DeviceAttributeField]
-    #     """
-    #     res = {}
-    #     for key, value in self.__dict__.items():
-    #         if isinstance(value, ProtectedProperty):
-    #             res[key] = value.get()
-    #     return res
 
     # needed when saving local state
     def build_context_entity(self) -> ContextEntity:
@@ -1342,8 +1496,6 @@ class SemanticDeviceClass(SemanticClass):
         )
 
         return device
-
-
 
 
 class SemanticIndividual(BaseModel):

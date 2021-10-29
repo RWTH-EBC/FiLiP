@@ -289,6 +289,14 @@ if __name__ == '__main__':
     # - c1.get_info(): View the result of the executed command
     # - c1.get_status(): See the current status of the sent command
 
+    # 3.2.3 Uniqueness
+    # A property (Command, DeviceAttribute) can only be added to one instance
+    # A property will add fields to the Fiware instance, as field names need
+    # to be unique, a name check is made if a new property is added to an
+    # instance field.
+    # If a required field of the new property is already existing an error is
+    # raised
+
     # 4. We now have seen how the models can be instantiated, filled with
     # values and used to interact with iot-devices.
     # We will now see how the state is managed and how it can be saved and
