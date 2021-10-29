@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from typing import Dict, Literal, Tuple
 from paho.mqtt.client import MQTTMessage
 
@@ -6,6 +6,7 @@ from paho.mqtt.client import MQTTMessage
 class BaseEncoder(ABC):
     prefix: str = ''
 
+    @abstractmethod
     @classmethod
     def decode_message(cls,
                        msg: MQTTMessage,
@@ -24,7 +25,30 @@ class BaseEncoder(ABC):
 
         return apikey, device_id, payload
 
+    @abstractmethod
     @classmethod
-    def encode_msg(cls, payload: Dict, msg_type: Literal['single', 'multi']) \
+    def encode_msg(cls, payload: Dict, msg_type: Literal['single',
+                                                         'multi',
+                                                         'cmdexe']) \
             -> str:
-        return NotImplemented
+        raise NotImplementedError
+
+    @classmethod
+    def __raise_encoding_error(cls, payload: Dict,
+                               msg_type: Literal['single', 'multi', 'cmdexe']):
+        """
+        Helper function to provide consistent error messages
+        Args:
+            payload: Invalid message content
+            msg_type: Invalid message type
+
+        Returns:
+            None
+
+        Raises:
+            ValueError
+        """
+        ValueError(f"Message format not supported! \n "
+                   f"Message Type: {msg_type} \n "
+                   f"Payload: {payload}")
+

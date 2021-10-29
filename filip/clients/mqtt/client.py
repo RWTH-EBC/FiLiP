@@ -10,6 +10,8 @@ import json
 import logging
 import paho.mqtt.client as mqtt
 import warnings
+import itertools
+from datetime import datetime
 from typing import Any, Callable, Dict, List, Literal, Tuple, Type, Union
 from filip.clients.mqtt.encoder import BaseEncoder
 from filip.models.ngsi_v2.iot import Device, ServiceGroup
@@ -473,7 +475,10 @@ class MQTTClient(mqtt.Client):
                 retain: bool=False,
                 properties=None,
                 device_id: str = None,
-                attribute_name: str = None):
+                attribute_name: str = None,
+                command_name: str = None,
+                timestamp: bool = False
+                ):
         """
         Publish an MQTT Message to a specified topic. If you want to publish
         a device specific message to a device use the device_id argument for
@@ -507,40 +512,79 @@ class MQTTClient(mqtt.Client):
                 Use the Properties class.
             device_id:
                 Id of the IoT device you want to publish for. The topics will
-                automatically created.
+                automatically created. If set, the message type will be
+                assumed to be multi measurement.
             attribute_name:
                 Name of an attribute of the device. Do only use this for
-                single measurements.
+                single measurements. If set, `command_name` must
+                be omitted.
+            command_name:
+                Name of a command of the device that should be acknowledged. If
+                set `attribute_name` must be omitted.
+            timestamp:
+                If `true` the client will generate a valid timestamp based on
+                its current system time and added to the multi measurement
+                payload. If a `timeInstant` is already contained in the
+                message payload.
 
         Returns:
             None
 
         Raises:
-            KeyError: if device configuration is not registered with client or
-            if the keys of a multi-measurement payload do not match the
-            object_ids of the device's attributes.
+            KeyError: if device configuration is not registered with client
+            ValueError: if the passed arguments are inconsistent or a
+                timestamp does not match the ISO 8601 format.
+            AssertionError: if the message payload does not match the device
+                configuration.
         """
         if device_id:
             device = self.get_device(device_id=device_id)
-            if isinstance(payload, Dict):
-                # validate if dict keys match device configuration
-                attr_object_ids = [attr.object_id for attr in device.attributes]
-                for key in payload.keys():
-                    if key in attr_object_ids:
-                        pass
-                    else:
-                        raise KeyError("Attribute key is not allowed for this "
-                                       "device")
 
-                topic = self.__create_topic(device=device, topic_type='attrs')
+            # create message for multi measurement payload
+            if attribute_name is None and command_name is None:
+                assert isinstance(payload, Dict), "Payload must be " \
+                                                  "dictionary"
+                if timestamp:
+                    payload["timeInstant"] = \
+                        datetime.now().astimezone().isoformat()
+
+                # validate if dict keys match device configuration
+                for key, attr in itertools.product(payload.keys(),
+                                                   device.attributes):
+                    if key in attr.object_id:
+                           pass
+                    elif key == attr.name:
+                        if attr.object_id:
+                            payload[attr.object_id] = payload.pop(key)
+                    elif key == 'timeInstant':
+                            payload["timeInstant"] = \
+                                datetime.fromisoformat(payload["timeInstant"])
+                    else:
+                        raise KeyError("Attribute key is not allowed for "
+                                       "this device")
+
+            # create message for command acknowledgement
+            elif attribute_name is None and command_name:
+                assert isinstance(payload, Dict), "Payload must be a dictionary"
+                assert len(payload.keys()) == 1, \
+                        "Cannot acknowledge multiple commands simultaneously"
+                assert next(iter(payload.keys())) in \
+                       [cmd.name for cmd in device.commands], \
+                    "Unknown command for this device!"
+                topic = self.__create_topic(device=device, topic_type='cmdexe')
                 payload = self.encoder.encode_msg(payload=payload,
-                                                  msg_type='multi')
-            elif attribute_name:
+                                                  msg_type='cmdexe')
+
+            # create message for single measurement
+            elif attribute_name and command_name is None:
                 topic = self.__create_topic(device=device,
                                             topic_type='attrs',
                                             attribute=attribute_name)
                 payload = self.encoder.encode_msg(payload=payload,
                                                   msg_type='single')
+            else:
+                raise ValueError("Inconsistent arguments!")
+
         super().publish(topic=topic,
                         payload=payload,
                         qos=qos,
