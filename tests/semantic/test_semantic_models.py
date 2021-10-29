@@ -32,14 +32,17 @@ class TestSemanticModels(unittest.TestCase):
                 vocabulary=vocabulary,
                 path_to_file='./ontology_files/ParsingTesterOntology.ttl')
 
-        # Test part can only be executed locally, as the gitlab runner can´t access the WWW
+        # Test part can only be executed locally, as the gitlab runner can´t
+        # access the WWW
         vocabulary = \
             VocabularyConfigurator.add_ontology_to_vocabulary_as_link(
                 vocabulary=vocabulary,
                 link="https://ontology.tno.nl/saref.ttl")
 
-        self.assertEqual(vocabulary.get_source_list()[1].source_name, "saref.ttl")
-        self.assertTrue("https://w3id.org/saref#LightingDevice" in vocabulary.classes)
+        self.assertEqual(vocabulary.get_source_list()[1].source_name,
+                         "saref.ttl")
+        self.assertTrue("https://w3id.org/saref#LightingDevice"
+                        in vocabulary.classes)
 
         VocabularyConfigurator.generate_vocabulary_models(vocabulary,
                                                           "./",
@@ -60,15 +63,15 @@ class TestSemanticModels(unittest.TestCase):
         self.assertEqual(class1.header, test_header)
 
     def test_3_individuals(self):
-        from tests.semantic.models import Individual1, Individual2, semantic_manager
+        from tests.semantic.models import Individual1, Individual2
 
         individual1 = Individual1()
         self.assertTrue(Individual1() == individual1)
         self.assertFalse(Individual2() == individual1)
 
     def test_4_model_relation_field_validation(self):
-        from tests.semantic.models import Class1, Class13, Class2, Class4, Class123, \
-            Individual1, semantic_manager, Thing
+        from tests.semantic.models import Class1, Class13, Class2, Class4, \
+            Class123, Individual1
 
         class1 = Class1(id="12")
         class13 = Class13()
@@ -103,7 +106,7 @@ class TestSemanticModels(unittest.TestCase):
         # todo test statement cases: min, max,...
 
     def test_5_model_data_field_validation(self):
-        from tests.semantic.models import Class1, Class3, Class2, Class4, Class123, \
+        from tests.semantic.models import Class1, Class3, Class2, Class123, \
             Individual1, semantic_manager, Thing
         class3 = Class3()
 
@@ -146,7 +149,7 @@ class TestSemanticModels(unittest.TestCase):
         self.assertNotIn(c1.get_identifier(), c2.references)
 
     def test_7_test_instance_creation_inject(self):
-        from tests.semantic.models import Class1, Class13, Class3, Class4, Class123, \
+        from tests.semantic.models import Class1, Class13, Class123, \
             Individual1, Gertrude, semantic_manager
 
 
@@ -167,7 +170,7 @@ class TestSemanticModels(unittest.TestCase):
         self.assertTrue(class1_ == class13.objProp3[0])
 
     def test_8_test_saving_and_loading(self):
-        from tests.semantic.models import Class1, Class13, Class3, Class4, Class123, \
+        from tests.semantic.models import Class1, Class13, Class123, \
             Individual1, Gertrude, semantic_manager
 
         # clear local state to ensure standard test condition
@@ -208,7 +211,7 @@ class TestSemanticModels(unittest.TestCase):
                          semantic_manager.instance_registry._registry)
 
     def test_9_deleting(self):
-        from tests.semantic.models import Class1, Class13, Class3, Class4, Class123, \
+        from tests.semantic.models import Class1, Class13, Class123, \
             Individual1, Gertrude, semantic_manager
 
         # clear local state to ensure standard test condition
@@ -274,7 +277,7 @@ class TestSemanticModels(unittest.TestCase):
         self.assertTrue(len(class13_.dataProp1.get_all_raw()) == 0)
 
     def test__10_field_set_methode(self):
-        from tests.semantic.models import Class1, Class13, Class3, Class4, Class123, \
+        from tests.semantic.models import Class1, Class13, Class3, Class123, \
             Individual1, Gertrude, semantic_manager
 
         # clear local state to ensure standard test condition

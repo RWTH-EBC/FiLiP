@@ -443,6 +443,18 @@ class SemanticManager(BaseModel):
 
     def get_entity_from_fiware(self, instance_identifier: InstanceIdentifier)\
             -> ContextEntity:
+        """
+        Retrieve the current entry of an instance in Fiware
+
+        Args:
+            instance_identifier (InstanceIdentifier): Identifier to load
+
+        Raises:
+            Exception, if Entity is not present
+
+        Returns:
+              ContextEntity
+        """
         client = self.get_client(instance_identifier.header)
 
         return client.get_entity(entity_id=instance_identifier.id,
@@ -450,27 +462,54 @@ class SemanticManager(BaseModel):
 
     def load_instances(
             self,
-            identifiers: Optional[List[InstanceIdentifier]]) \
-        -> List[SemanticClass]:
+            identifiers: List[InstanceIdentifier]) -> List[SemanticClass]:
         """
         Load all instances, if no local state of it exists it will get taken
         from Fiware and registered locally
+
+        Args:
+            identifiers List[InstanceIdentifier]: Identifiers of instances
+                that should be loaded
+        Raises:
+            Exception, if one Entity is not present
+
+        Returns:
+           List[SemanticClass]
         """
 
         return [self.load_instance(iden) for iden in identifiers]
 
     def set_default_header(self, header: InstanceHeader):
+        """
+        Set the default header, which all new instance that does not specify a
+        header in the constructor receives
+
+        Args:
+            header (InstanceHeader): new default header
+
+        Returns:
+            None
+        """
         self.default_header = copy.deepcopy(header)
 
     def get_default_header(self) -> InstanceHeader:
         """
         Instance header is read-only, therefore giving back a copy is
-        theoraticaly not needed, but it is cleaner that all instance has an
+        theoretically not needed, but it is cleaner that all instance has an
         own header object that is not shared
         """
         return copy.deepcopy(self.default_header)
 
     def get_datatype(self, datatype_name: str) -> Datatype:
+        """
+        Get a Datatype object with the name as key as specified in the model
+
+        Args:
+            datatype_name (str): key label of the datatype
+
+        Returns:
+            Datatype
+        """
         return Datatype.parse_obj(self.datatype_catalogue[datatype_name])
 
     def get_individual(self, individual_name: str) -> SemanticIndividual:

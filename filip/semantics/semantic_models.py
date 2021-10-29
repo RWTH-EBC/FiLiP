@@ -1,15 +1,11 @@
 import collections
-import copy
-import json
 import uuid
 from enum import Enum
-from typing import List, Any, Tuple, Dict, Type, TypeVar, Generic, \
-    TYPE_CHECKING, Optional, Union
+from typing import List, Tuple, Dict, Type, TYPE_CHECKING, Optional, Union
 
 import requests
 
-from filip.models.ngsi_v2.iot import Device, ExpressionLanguage, \
-    TransportProtocol
+from filip.models.ngsi_v2.iot import ExpressionLanguage, TransportProtocol
 import filip.models.ngsi_v2.iot as iot
 from filip.models.base import DataType, NgsiVersion
 
@@ -17,7 +13,7 @@ from filip.models.ngsi_v2.context import ContextEntity, NamedContextAttribute
 
 
 from filip.models import FiwareHeader
-from pydantic import BaseModel, validator, Field, AnyHttpUrl
+from pydantic import BaseModel, Field, AnyHttpUrl
 from filip.config import settings
 from filip.semantics.vocabulary_configurator import label_blacklist, \
     label_char_whitelist

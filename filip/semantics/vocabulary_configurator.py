@@ -76,7 +76,7 @@ class LabelSummary(BaseModel):
                 sub_res += "\n"
 
             if len(collection) == 0:
-                sub_res +="\t/\n"
+                sub_res += "\t/\n"
             return sub_res
 
         def print_list(collection):
@@ -586,7 +586,7 @@ class VocabularyConfigurator:
                 content += "\n\t\t\t"
                 content += f"self." \
                            f"{cor.get_property_label(vocabulary)}._rules = " \
-                           f"{cor.export_rule(vocabulary,stringify_fields=False)}"
+                           f"{cor.export_rule(vocabulary, stringify_fields=False)}"
 
             content += "\n"
             for cr in class_.get_combined_relations(vocabulary):
@@ -718,7 +718,7 @@ class VocabularyConfigurator:
         content += "}"
 
         # Build datatypes with enums as Enums
-        content +="\n\n\n"
+        content += "\n\n\n"
         for datatype in vocabulary.get_enum_dataytypes().values():
             content += f"class {datatype.get_label()}(str, Enum):"
             for value in datatype.enum_values:
