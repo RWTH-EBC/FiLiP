@@ -25,21 +25,39 @@ label_blacklist.extend(["references", "device_settings", "header",
                         "old_state", "", "semantic_manager", "delete"])
 label_blacklist.extend(["id", "type", "class"])
 label_blacklist.extend(["str", "int", "float", "complex", "list", "tuple",
-                        "range","dict", "list", "set", "frozenset", "bool",
-                        "bytes", "bytearray","memoryview"])
+                        "range", "dict", "list", "set", "frozenset", "bool",
+                        "bytes", "bytearray", "memoryview"])
 
 label_char_whitelist = ascii_letters + digits + "_"
 
 
 class LabelSummary(BaseModel):
+    """
+    Model holding all information for label conflicts in a vocabulary
+    """
     class_label_duplicates: Dict[str, List[Entity]]
+    """All Labels that are used more than once for class_names on export. 
+    Key: Label, Values: List of entities with key label"""
     field_label_duplicates: Dict[str, List[Entity]]
+    """All Labels that are used more than once for property_names on export 
+        Key: Label, Values: List of entities with key label"""
     datatype_label_duplicates: Dict[str, List[Entity]]
+    """All Labels that are used more than once for datatype on export 
+        Key: Label, Values: List of entities with key label"""
 
     blacklisted_labels: List[Tuple[str, Entity]]
+    """All Labels that are blacklisted, 
+    Tuple(Label, Entity with label)"""
     labels_with_illegal_chars: List[Tuple[str, Entity]]
+    """All Labels that contain illegal characters, 
+    Tuple(Label, Entity with label)"""
 
     def is_valid(self) -> bool:
+        """Test if Labels are valid
+
+        Returns:
+            bool, True if no entries exist
+        """
         return len(self.class_label_duplicates) == 0 and \
                len(self.field_label_duplicates) == 0 and \
                len(self.datatype_label_duplicates) == 0 and \
@@ -84,17 +102,44 @@ class LabelSummary(BaseModel):
 
 
 class VocabularyConfigurator:
+    """
+    Class that provides static interfaces to manipulate the sources of a
+    vocabulary, validate and save it.
+    """
 
     @classmethod
     def create_vocabulary(cls,
                           settings: VocabularySettings = VocabularySettings()) \
             -> Vocabulary:
+        """
+        Create a new blank vocabulary with given settings
+
+        Args:
+            settings: VocabularySettings
+
+        Returns:
+            Vocabulary
+        """
 
         return Vocabulary(settings=settings)
 
     @classmethod
     def delete_source_from_vocabulary(cls, vocabulary: Vocabulary,
                                       source_id: str) -> Vocabulary:
+        """
+        Delete a source from the vocabulary
+
+        Args:
+            vocabulary (Vocabulary): Vocabulary from which the source should
+            be removed
+            source_id (str): Id of source to remove
+
+        Raises:
+            ValueError:  If no source with given Id exists in Vocabulary
+
+        Returns:
+            New Vocabulary without the given source
+        """
         new_vocabulary = Vocabulary(settings=copy.copy(vocabulary.settings))
         parser = RdfParser()
         found = False
@@ -123,6 +168,23 @@ class VocabularyConfigurator:
             vocabulary: Vocabulary,
             link: str,
             source_name: Optional[str] = None) -> Vocabulary:
+        """
+        Add a source to the vocabulary with via a weblink. Source name will
+        be extracted from link, if no name is given
+
+        Args:
+            vocabulary (Vocabulary): Vocabulary to which the source should
+            be added
+            link (str): Weblink to the source
+            source_name (Optional[str]): Name for the source
+
+        Raises:
+            ParsingException:  If the given source was not valid and could not
+            be parsed
+
+        Returns:
+            New Vocabulary with the given source added to it
+        """
 
         downloaded_obj = requests.get(link)
         file_bytes = io.BytesIO(downloaded_obj.content)
@@ -141,6 +203,23 @@ class VocabularyConfigurator:
             vocabulary: Vocabulary,
             path_to_file: str,
             source_name: Optional[str] = None) -> Vocabulary:
+        """
+        Add a source to the vocabulary with via a file path. Source name will
+        be extracted from path, if no name is given
+
+        Args:
+            vocabulary (Vocabulary): Vocabulary to which the source should
+            be added
+            path_to_file (str): Path to the source file
+            source_name (Optional[str]): Name for the source
+
+        Raises:
+            ParsingException:  If the given source was not valid and could not
+            be parsed
+
+        Returns:
+            New Vocabulary with the given source added to it
+        """
 
         with open(path_to_file, 'r') as file:
             data = file.read()
@@ -159,6 +238,23 @@ class VocabularyConfigurator:
     def add_ontology_to_vocabulary_as_string(cls, vocabulary: Vocabulary,
                                              source_name: str,
                                              source_content: str) -> Vocabulary:
+        """
+        Add a source to the vocabulary by giving the source content as string.
+        Source name needs to be given
+
+        Args:
+            vocabulary (Vocabulary): Vocabulary to which the source should
+            be added
+            source_content (str): Content of source
+            source_name (str): Name for the source
+
+        Raises:
+            ParsingException:  If the given source was not valid and could not
+            be parsed
+
+        Returns:
+            New Vocabulary with the given source added to it
+        """
         source = Source(source_name=source_name,
                         content=source_content,
                         timestamp=datetime.now())
@@ -169,6 +265,21 @@ class VocabularyConfigurator:
     @classmethod
     def _parse_sources_into_vocabulary(cls, vocabulary: Vocabulary,
                                        sources: List[Source]) -> Vocabulary:
+        """
+        Parse the given source objects into the vocabulary
+
+        Args:
+            vocabulary (Vocabulary): Vocabulary to which the source should
+            be added
+            sources (List[Source]): Source objects to be added
+
+        Raises:
+            ParsingException:  If the given source was not valid and could not
+            be parsed
+
+        Returns:
+            New Vocabulary with the given sources added to it
+        """
 
         # create a new vocabulary by reparsing the existing sources
         new_vocabulary = Vocabulary(settings=copy.copy(vocabulary.settings))
@@ -194,6 +305,16 @@ class VocabularyConfigurator:
     @classmethod
     def get_label_conflicts_in_vocabulary(cls, vocabulary: Vocabulary) -> \
             LabelSummary:
+        """
+        Compute a summary for all labels present in the vocabulary.
+        The summary contains all naming clashes and illegal labels.
+
+        Args:
+            vocabulary (Vocabulary): Vocabulary to analyse
+
+        Returns:
+            LabelSummary
+        """
 
         def get_conflicts_in_group(entities_to_check: List[Dict]):
             # maps label to _list of entities with that label
@@ -248,8 +369,6 @@ class VocabularyConfigurator:
 
             return result
 
-
-
         summary = LabelSummary(
             class_label_duplicates=get_conflicts_in_group(
                 [vocabulary.classes, vocabulary.individuals,
@@ -272,23 +391,33 @@ class VocabularyConfigurator:
         return summary
 
     @classmethod
-    def is_vocabulary_valid(cls, vocabulary: Vocabulary):
+    def is_vocabulary_valid(cls, vocabulary: Vocabulary) -> bool:
+        """
+        Test if the given vocabulary is valid -> all labels are unique and
+        correct
+
+        Args:
+            vocabulary (Vocabulary): Vocabulary to analyse
+
+        Returns:
+            bool
+        """
         return VocabularyConfigurator.get_label_conflicts_in_vocabulary(
             vocabulary).is_valid()
 
     @classmethod
-    def build_class_models(cls, vocabulary: Vocabulary):
-
-        if not VocabularyConfigurator.is_vocabulary_valid(vocabulary):
-            raise Exception
-
-        for class_ in vocabulary.classes.values():
-            print()
-            print(class_.dict())
-
-    @classmethod
     def get_missing_dependency_statements(cls, vocabulary: Vocabulary) -> \
             List[DependencyStatement]:
+        """
+        Get a list of all Dependencies that are currently missing in the
+        vocabulary in form of DependencyStatements
+
+        Args:
+            vocabulary (Vocabulary): Vocabulary to analyse
+
+        Returns:
+            List[DependencyStatement]
+        """
         missing_dependencies: List[DependencyStatement] = []
         for source in vocabulary.get_source_list():
             for statement in source.dependency_statements:
@@ -298,6 +427,17 @@ class VocabularyConfigurator:
 
     @classmethod
     def get_missing_dependencies(cls, vocabulary: Vocabulary) -> List[str]:
+        """
+        Get a list of all Dependencies that are currently missing in the
+        vocabulary in form of iris
+
+        Args:
+            vocabulary (Vocabulary): Vocabulary to analyse
+
+        Returns:
+            List[str]: List of missing iris
+        """
+
         missing_dependencies: Set[str] = set()
         for source in vocabulary.get_source_list():
             for statement in source.dependency_statements:
@@ -307,6 +447,15 @@ class VocabularyConfigurator:
 
     @classmethod
     def get_parsing_logs(cls, vocabulary: Vocabulary) -> List[ParsingError]:
+        """
+        Get the parsing logs of a vocabulary
+
+        Args:
+            vocabulary (Vocabulary): Vocabulary to analyse
+
+        Returns:
+            List[ParsingError]
+        """
         res = []
         for source in vocabulary.sources.values():
             res.extend(source.get_parsing_log(vocabulary))
@@ -315,7 +464,23 @@ class VocabularyConfigurator:
     @classmethod
     def generate_vocabulary_models(cls, vocabulary: Vocabulary, path: str,
                                    filename: str):
+        """
+        Export the given vocabulary as python model file.
+        All vocabulary classes will be converted to python classes,
+        with their CRs as property fields.
 
+        Args:
+            vocabulary (Vocabulary): Vocabulary to export
+            path (str): Path where the file should be saved
+            filename (str): Name of the file
+
+        Raises:
+            Exception: if file can not be saved as specified with path and
+                       filename
+
+        Returns:
+            None
+        """
         content: str = ""
 
         # imports
@@ -333,8 +498,6 @@ class VocabularyConfigurator:
         content += "semantic_manager: SemanticManager = SemanticManager("
         content += "\n\t"
         content += "instance_registry=InstanceRegistry(),"
-        # content += "\n\t"
-        # content += "default_header= InstanceHeader(),"
         content += "\n"
         content += ")"
 
@@ -357,15 +520,14 @@ class VocabularyConfigurator:
                 index += 1
 
         for class_ in class_order:
-            relationship_validators_content = ""
 
             content += "\n\n\n"
             # Parent Classes
             parent_class_string = ""
             parents = class_.get_parent_classes(vocabulary)
 
-            # Device Class, only add if this is a device class and it was not added
-            # for a parent
+            # Device Class, only add if this is a device class and it was not
+            # added for a parent
             if class_.is_iot_class(vocabulary):
                 if True not in [p.is_iot_class(vocabulary) for p in
                                 parents]:
@@ -424,7 +586,7 @@ class VocabularyConfigurator:
                 content += "\n\t\t\t"
                 content += f"self." \
                            f"{cor.get_property_label(vocabulary)}._rules = " \
-                           f"{cor.export_rule(vocabulary, stringify_fields=False)}"
+                           f"{cor.export_rule(vocabulary,stringify_fields=False)}"
 
             content += "\n"
             for cr in class_.get_combined_relations(vocabulary):
@@ -436,7 +598,8 @@ class VocabularyConfigurator:
             # ------Add preset Values------
             for cdr in class_.get_combined_data_relations(vocabulary):
                 # Add fixed values to fields, for CDRs these values need to be
-                # strings. Only add the statement on the uppermost occurring class
+                # strings. Only add the statement on the uppermost occurring
+                # class
                 if not cdr.is_device_relation(vocabulary):
                     for rel in cdr.get_relations(vocabulary):
                         if rel.id in class_.relation_ids:
@@ -445,7 +608,8 @@ class VocabularyConfigurator:
                             if rel.restriction_type == RestrictionType.value:
                                 content += "\n\t\t\t"
                                 content += \
-                                    f"self.{cdr.get_property_label(vocabulary)}" \
+                                    f"self." \
+                                    f"{cdr.get_property_label(vocabulary)}" \
                                     f".append(" \
                                     f"{rel.target_statement.target_data_value})"
 
@@ -537,10 +701,6 @@ class VocabularyConfigurator:
             content += f"class {individual.get_label()}(SemanticIndividual):"
             content += "\n\t"
             content += f"_parent_classes: List[type] = [{parent_class_string}]"
-
-            # content += "\n"
-            # variable_name = re.sub(r'(?<!^)(?=[A-Z])', '_', label).lower()
-            # content += f"{variable_name} = {label}(id='individual')"
 
         content += "\n\n\n"
 
