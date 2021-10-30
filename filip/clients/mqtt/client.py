@@ -14,7 +14,7 @@ import itertools
 from datetime import datetime
 from typing import Any, Callable, Dict, List, Literal, Tuple, Type, Union
 from filip.clients.mqtt.encoder import BaseEncoder
-from filip.models.ngsi_v2.iot import Device, ServiceGroup
+from filip.models.ngsi_v2.iot import Device, ServiceGroup, TransportProtocol
 
 
 class MQTTClient(mqtt.Client):
@@ -29,12 +29,94 @@ class MQTTClient(mqtt.Client):
     bi-directional communication with the IoT-Agent.
 
     Note:
+        The client does not sync the device configuration with the IoT-Agent.
+        This is up to the user!
+
+    Note:
         The extension does not effect the normal workflow or any other
         functionality known from the original client.
 
         The client does not yet support the retrieval of command
         configurations via mqtt documented here:
         https://fiware-iotagent-json.readthedocs.io/en/latest/usermanual/index.html#api-overview
+
+    Example:
+        This example shows the basic usage of the client. It does not
+        demonstrate its whole capabilities. Please check the single methods
+        for more details. Please also keep in mind that this still requires
+        provisioning of the device in the IoT-Agent and sending the commands
+        via the context broker. For more details check the additional example
+        section::
+
+            from filip.models.ngsi_v2.iot import Device, DeviceAttribute, DeviceCommand, ServiceGroup
+            from filip.clients.mqtt import MQTTClient
+            from filip.clients.mqtt.encoder import IoTA_Json
+
+            # create a device configuration
+            device_attr = DeviceAttribute(name='temperature',
+                                          object_id='t',
+                                          type="Number")
+            device_command = DeviceCommand(name='heater', type="Boolean")
+            device = Device(device_id='MyDevice',
+                            entity_name='MyDevice',
+                            entity_type='Thing',
+                            protocol='IoTA-JSON',
+                            transport='MQTT',
+                            apikey=YourApiKey,
+                            attributes=[device_attr],
+                            commands=[device_command])
+
+            service_group = ServiceGroup(apikey="YourApiKey", resource="/iot")
+
+            mqttc = MQTTClient(client_id="YourID",
+                               userdata=None,
+                               protocol=mqtt.MQTTv5,
+                               transport="tcp",
+                               devices = [device],
+                               service_groups = [service_group],
+                               encoder = IoTA_Json)
+
+            # create a callback function that will be called for incoming
+            # commands and add it for a single device
+            def on_command(client, obj, msg):
+                apikey, device_id, payload = client.encoder.decode_message(msg=msg)
+
+                # do_something with the message. For instance write into a queue.
+
+                # acknowledge a command
+                client.publish(device_id=device_id,
+                               command_name=next(payload.keys())
+                               payload=payload)
+
+            mqttc.add_command_callback(on_command)
+
+            # create a non blocking loop
+            mqttc.loop_start()
+
+            # publish a multi-measurement for a device
+            mqttc.publish(device_id='MyDevice', payload={'t': 50})
+
+            # publish a single measurement for a device
+            mqttc.publish(device_id='MyDevice',
+                          attribute_name='temperature',
+                          payload=50)
+
+            # adding timestamps to measurements using the client
+
+
+            # adding timestamps to measurements in payload
+            from datetime import datetime
+
+            mqttc.publish(device_id='MyDevice',
+                          payload={'t': 50,
+                                   'timeInstant': datetime.now().astimezone().isoformat()},
+                          timestamp=true)
+
+            # stop network loop and disconnect cleanly
+            mqttc.loop_stop()
+            mqttc.disconnect()
+
+
     """
     def __init__(self,
                  client_id="",
@@ -114,9 +196,15 @@ class MQTTClient(mqtt.Client):
         self.enable_logger(self.logger)
 
         # create dictionary holding the registered device configurations
+        # check if all devices have the right transport protocol
         self.devices: Dict[str, Device]
         if devices:
-            self.devices = {dev.device_id: dev for dev in devices}
+            for device in devices:
+                if device.transport == TransportProtocol.MQTT:
+                    self.devices[device.device_id] = device
+                else:
+                    raise ValueError(f"Unsupported transport protocol found "
+                                     f"in device confguration!")
         else:
             self.devices = {}
 
@@ -132,6 +220,7 @@ class MQTTClient(mqtt.Client):
             self.encoder: BaseEncoder = encoder()
         else:
             self.encoder: BaseEncoder = BaseEncoder()
+
 
     def __create_topic(self, *,
                        topic_type: Literal['attrs',
@@ -247,11 +336,12 @@ class MQTTClient(mqtt.Client):
 
         Example::
 
-            >>> from filip.clients.mqtt import MQTTClient
-            >>> mqttc = MQTTClient()
-            >>> group = mqttc.get_service_group(apikey="MyAPIKEY")
-            >>> print(group.json(indent=2))
-            >>> print(type(group))
+            from filip.clients.mqtt import MQTTClient
+
+            mqttc = MQTTClient()
+            group = mqttc.get_service_group(apikey="MyAPIKEY")
+            print(group.json(indent=2))
+            print(type(group))
         """
         group = self.service_groups.get(apikey, None)
         if group is None:
@@ -341,11 +431,12 @@ class MQTTClient(mqtt.Client):
 
         Example::
 
-            >>> from filip.clients.mqtt import MQTTClient
-            >>> mqttc = MQTTClient()
-            >>> device = mqttc.get_device(device_id="MyDeviceId")
-            >>> print(device.json(indent=2))
-            >>> print(type(device))
+            from filip.clients.mqtt import MQTTClient
+
+            mqttc = MQTTClient()
+            device = mqttc.get_device(device_id="MyDeviceId")
+            print(device.json(indent=2))
+            print(type(device))
         """
         return self.devices[device_id]
 
@@ -452,10 +543,30 @@ class MQTTClient(mqtt.Client):
 
     def add_command_callback(self, device_id: str, callback: Callable):
         """
+        Adds callback function for a device configuration.
 
         Args:
-            device_id: id of and IoT device
+            device_id:
+                id of and IoT device
             callback:
+                function that will be called for incoming commands.
+                This function should have the following format:
+
+        Example::
+
+            def on_command(client, obj, msg):
+                apikey, device_id, payload = client.encoder.decode_message(msg=msg)
+
+                # do_something with the message. For instance write into a queue.
+
+                # acknowledge a command. Here command are usually single
+                # messages. The first key is equal to the commands name.
+                client.publish(device_id=device_id,
+                               command_name=next(payload.keys())
+                               payload=payload)
+
+            mqttc.add_command_callback(device_id="MyDevice",
+                                       callback=on_command)
 
         Returns:
             None

@@ -6,7 +6,6 @@ from paho.mqtt.client import MQTTMessage
 class BaseEncoder(ABC):
     prefix: str = ''
 
-    @abstractmethod
     @classmethod
     def decode_message(cls,
                        msg: MQTTMessage,
@@ -25,7 +24,6 @@ class BaseEncoder(ABC):
 
         return apikey, device_id, payload
 
-    @abstractmethod
     @classmethod
     def encode_msg(cls, payload: Dict, msg_type: Literal['single',
                                                          'multi',

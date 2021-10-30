@@ -13,8 +13,8 @@ from urllib.parse import urlparse
 from filip.models import FiwareHeader
 from filip.models.ngsi_v2.iot import \
     Device, \
-    DeviceCommand, \
     DeviceAttribute, \
+    DeviceCommand, \
     ServiceGroup, \
     StaticDeviceAttribute
 from filip.models.ngsi_v2.context import NamedCommand
