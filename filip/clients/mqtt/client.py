@@ -79,13 +79,15 @@ class MQTTClient(mqtt.Client):
             # create a callback function that will be called for incoming
             # commands and add it for a single device
             def on_command(client, obj, msg):
-                apikey, device_id, payload = client.encoder.decode_message(msg=msg)
+                apikey, device_id, payload = \
+                    client.encoder.decode_message(msg=msg)
 
-                # do_something with the message. For instance write into a queue.
+                # do_something with the message.
+                # For instance write into a queue.
 
                 # acknowledge a command
                 client.publish(device_id=device_id,
-                               command_name=next(payload.keys())
+                               command_name=next(iter(payload))
                                payload=payload)
 
             mqttc.add_command_callback(on_command)
@@ -118,6 +120,7 @@ class MQTTClient(mqtt.Client):
 
 
     """
+
     def __init__(self,
                  client_id="",
                  clean_session=None,
@@ -199,12 +202,9 @@ class MQTTClient(mqtt.Client):
         # check if all devices have the right transport protocol
         self.devices: Dict[str, Device]
         if devices:
-            for device in devices:
-                if device.transport == TransportProtocol.MQTT:
-                    self.devices[device.device_id] = device
-                else:
-                    raise ValueError(f"Unsupported transport protocol found "
-                                     f"in device confguration!")
+           self.device = {
+               device.device_id: self.__validate_device(device=device)
+               for device in devices}
         else:
             self.devices = {}
 
@@ -217,10 +217,41 @@ class MQTTClient(mqtt.Client):
 
         # add encoder for message parsing
         if encoder:
-            self.encoder: BaseEncoder = encoder()
+            self.encoder = encoder
         else:
-            self.encoder: BaseEncoder = BaseEncoder()
+            self.encoder = BaseEncoder
 
+    @property
+    def encoder(self):
+        return self.__encoder
+
+    @encoder.setter
+    def encoder(self, encoder: Type[BaseEncoder]):
+        assert issubclass(encoder, BaseEncoder)
+        self.__encoder = encoder()
+
+    def __validate_device(self, device: Union[Device, Dict]) -> Device:
+        """
+        Validates configuration of an IoT Device
+
+        Args:
+            device: device model to check on
+
+        Returns:
+            Device: validated model
+
+        Raises:
+            AssertionError: for faulty configurations
+        """
+        if isinstance(device, dict):
+            device = Device.parse_obj(device)
+
+        assert isinstance(device, Device), "Invalid device configuration!"
+
+        assert device.transport == TransportProtocol.MQTT, \
+            "Unsupported transport protocol found in device configuration!"
+
+        return device
 
     def __create_topic(self, *,
                        topic_type: Literal['attrs',
@@ -267,7 +298,7 @@ class MQTTClient(mqtt.Client):
         elif topic_type == 'cmdexe':
             topic = '/'.join((self.encoder.prefix,
                               device.apikey,
-                              device.device_id, 'cmd'))
+                              device.device_id, 'cmdexe'))
         elif topic_type == 'configuration':
             topic = '/'.join((self.encoder.prefix,
                               device.apikey,
@@ -307,6 +338,7 @@ class MQTTClient(mqtt.Client):
                           "may not be received correctly!"
                     self.logger.warning(msg=msg)
                     warnings.warn(message=msg)
+
                 topic = self.__create_topic(device=device,
                                             topic_type='cmd')
                 super().subscribe(topic=topic,
@@ -377,8 +409,10 @@ class MQTTClient(mqtt.Client):
     def delete_service_group(self, apikey):
         """
         Unregisters a service group and removes
+
         Args:
             apikey: Unique APIKey of the service group
+
         Returns:
             None
         """
@@ -389,6 +423,7 @@ class MQTTClient(mqtt.Client):
         else:
             self.logger.error("Could not unregister service group '%s'!",
                               apikey)
+            raise KeyError("Device not found!")
 
     def update_service_group(self, service_group: Union[ServiceGroup, Dict]):
         """
@@ -407,12 +442,12 @@ class MQTTClient(mqtt.Client):
         """
         if isinstance(service_group, dict):
             service_group = ServiceGroup.parse_obj(service_group)
-        assert isinstance(service_group, Device), "Invalid content for " \
-                                                  "service group"
+        assert isinstance(service_group, ServiceGroup), \
+            "Invalid content for service group"
 
         if self.service_groups.get(service_group.apikey, None) is None:
             raise KeyError("Service group not found! %s",
-                             service_group.apikey)
+                           service_group.apikey)
         # add service group configuration to the service group list
         self.service_groups[service_group.apikey] = service_group
 
@@ -468,9 +503,7 @@ class MQTTClient(mqtt.Client):
         Raises:
             ValueError: if device configuration already exists
         """
-        if isinstance(device, dict):
-            device = Device.parse_obj(device)
-        assert isinstance(device, Device), "Invalid content for device"
+        device = self.__validate_device(device=device)
 
         if self.devices.get(device.device_id, None) is None:
             pass
@@ -487,6 +520,7 @@ class MQTTClient(mqtt.Client):
     def delete_device(self, device_id: str):
         """
         Unregisters a device and removes its subscriptions and callbacks
+
         Args:
             device_id: id of and IoT device
 
@@ -499,7 +533,8 @@ class MQTTClient(mqtt.Client):
                                         topic_type='cmd')
             self.unsubscribe(topic=topic)
             self.message_callback_remove(sub=topic)
-            self.logger.info("Successfully unregistered Device '%s'!", device_id)
+            self.logger.info("Successfully unregistered Device '%s'!",
+                             device_id)
         else:
             self.logger.error("Could not unregister device '%s'", device_id)
 
@@ -525,9 +560,7 @@ class MQTTClient(mqtt.Client):
         Raises:
             KeyError: if device not yet registered
         """
-        if isinstance(device, dict):
-            device = Device.parse_obj(device)
-        assert isinstance(device, Device), "Invalid content for device"
+        device = self.__validate_device(device=device)
 
         if self.devices.get(device.device_id, None) is None:
             raise KeyError("Device not found! %s", device.device_id)
@@ -539,7 +572,6 @@ class MQTTClient(mqtt.Client):
                                   qos=qos,
                                   options=options,
                                   properties=properties)
-
 
     def add_command_callback(self, device_id: str, callback: Callable):
         """
@@ -555,14 +587,16 @@ class MQTTClient(mqtt.Client):
         Example::
 
             def on_command(client, obj, msg):
-                apikey, device_id, payload = client.encoder.decode_message(msg=msg)
+                apikey, device_id, payload = \
+                    client.encoder.decode_message(msg=msg)
 
-                # do_something with the message. For instance write into a queue.
+                # do_something with the message.
+                # For instance write into a queue.
 
                 # acknowledge a command. Here command are usually single
                 # messages. The first key is equal to the commands name.
                 client.publish(device_id=device_id,
-                               command_name=next(payload.keys())
+                               command_name=next(iter(payload)),
                                payload=payload)
 
             mqttc.add_command_callback(device_id="MyDevice",
@@ -580,10 +614,10 @@ class MQTTClient(mqtt.Client):
         self.message_callback_add(topic, callback)
 
     def publish(self,
-                topic = None,
+                topic=None,
                 payload: Union[Dict, Any] = None,
-                qos: int=0,
-                retain: bool=False,
+                qos: int = 0,
+                retain: bool = False,
                 properties=None,
                 device_id: str = None,
                 attribute_name: str = None,
@@ -648,37 +682,46 @@ class MQTTClient(mqtt.Client):
             AssertionError: if the message payload does not match the device
                 configuration.
         """
+
+        # TODO: time stamps do not work yet
+
         if device_id:
             device = self.get_device(device_id=device_id)
 
             # create message for multi measurement payload
             if attribute_name is None and command_name is None:
-                assert isinstance(payload, Dict), "Payload must be " \
-                                                  "dictionary"
+                assert isinstance(payload, dict), \
+                    "Payload must be a dictionary"
+
                 if timestamp:
                     payload["timeInstant"] = \
                         datetime.now().astimezone().isoformat()
-
                 # validate if dict keys match device configuration
                 for key, attr in itertools.product(payload.keys(),
                                                    device.attributes):
+
                     if key in attr.object_id:
-                           pass
+                        pass
                     elif key == attr.name:
                         if attr.object_id:
                             payload[attr.object_id] = payload.pop(key)
                     elif key == 'timeInstant':
-                            payload["timeInstant"] = \
+                        payload["timeInstant"] = \
                                 datetime.fromisoformat(payload["timeInstant"])
+                        payload["timeInstant"] = str(payload["timeInstant"])
                     else:
                         raise KeyError("Attribute key is not allowed for "
                                        "this device")
+                topic = self.__create_topic(device=device,
+                                                topic_type='attrs')
+                payload = self.encoder.encode_msg(payload=payload,
+                                                  msg_type='multi')
 
             # create message for command acknowledgement
             elif attribute_name is None and command_name:
                 assert isinstance(payload, Dict), "Payload must be a dictionary"
                 assert len(payload.keys()) == 1, \
-                        "Cannot acknowledge multiple commands simultaneously"
+                    "Cannot acknowledge multiple commands simultaneously"
                 assert next(iter(payload.keys())) in \
                        [cmd.name for cmd in device.commands], \
                     "Unknown command for this device!"
@@ -726,7 +769,7 @@ class MQTTClient(mqtt.Client):
                               options=options,
                               properties=properties)
         else:
-            for device in self.devices:
+            for device in self.devices.values():
                 self.__subscribe_commands(device=device,
                                           qos=qos,
                                           options=options,
