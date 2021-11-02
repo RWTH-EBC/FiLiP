@@ -245,6 +245,19 @@ if __name__ == '__main__':
     # lookup information we can reference instances in other services,
     # service-paths or even FiwareSetups
 
+    # RelationFields can have a property inverse_of. (Linked to the
+    # object_property property "inverse_of" of owl ontologies)
+    # Example:
+    # in_building is the inverse_of has_room and vis-versa
+    # If the instance room1 adds the instance building1 as a value int the
+    # RelationField in_building, room1 will be automatically added as value
+    # in the field has_room of building1.
+    # This mechanism is not executed if the inverse field does not exist in
+    # the added instance.
+    # The same logic is also applied to the deletion of value from a
+    # RelationField
+    # One field can have multiple inverse_ofs
+
     # 3.2 DeviceFields. Each ComplexDataProperty in our vocabulary with a
     # type other than "simple" was converted to this field type. Only device
     # classes posses fields of this type.
