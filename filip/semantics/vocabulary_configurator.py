@@ -581,14 +581,16 @@ class VocabularyConfigurator:
                         f"{cdr.get_property_label(vocabulary)}._rules = " \
                         f"{cdr.export_rule(vocabulary, stringify_fields=True)}"
 
-            content += "\n"
+            if len(class_.get_combined_object_relations(vocabulary)) > 0:
+                content += "\n"
             for cor in class_.get_combined_object_relations(vocabulary):
                 content += "\n\t\t\t"
                 content += f"self." \
                            f"{cor.get_property_label(vocabulary)}._rules = " \
                            f"{cor.export_rule(vocabulary, stringify_fields=False)}"
 
-            content += "\n"
+            if len(class_.get_combined_relations(vocabulary)) > 0:
+                content += "\n"
             for cr in class_.get_combined_relations(vocabulary):
                 content += "\n\t\t\t"
                 content += f"self.{cr.get_property_label(vocabulary)}" \
@@ -613,7 +615,8 @@ class VocabularyConfigurator:
                                     f".append(" \
                                     f"{rel.target_statement.target_data_value})"
 
-            content += "\n"
+            if len(class_.get_combined_object_relations(vocabulary)) > 0:
+                content += "\n"
             for cor in class_.get_combined_object_relations(vocabulary):
                 # Add fixed values to fields, for CORs these values need to be
                 # Individuals.
@@ -629,15 +632,15 @@ class VocabularyConfigurator:
                                        f"{cor.get_property_label(vocabulary)}" \
                                        f".append({i}())"
 
-            content += "\n\t\t\tpass"
-
-            # if len(class_.get_combined_object_relations(vocabulary)) == 0:
-            #     content += "\n\t\tpass"
-
-            content += "\n\n\t"
+            # if no content was added af the not initialised if, removed it
+            # again, and its preceding \n
+            if content[-22:] == "if not is_initialised:":
+                content = content[:-25]
 
             # ------Add Data Fields------
-            content += "# Data fields"
+            if len(class_.get_combined_data_relations(vocabulary)) > 0:
+                content += "\n\n\t"
+                content += "# Data fields"
             for cdr in class_.get_combined_data_relations(vocabulary):
                 cdr_type = cdr.get_field_type(vocabulary)
                 if cdr_type == DataFieldType.simple:
@@ -671,10 +674,10 @@ class VocabularyConfigurator:
                     content += "\n\t\t"
                     content += "semantic_manager=semantic_manager)"
 
-            content += "\n\n\t"
-
             # ------Add Relation Fields------
-            content += "# Relation fields"
+            if len(class_.get_combined_object_relations(vocabulary)) > 0:
+                content += "\n\n\t"
+                content += "# Relation fields"
             for cor in class_.get_combined_object_relations(vocabulary):
                 content += "\n\t"
                 label = cor.get_property_label(vocabulary)
@@ -704,7 +707,6 @@ class VocabularyConfigurator:
 
         content += "\n\n\n"
 
-        content += "\n\n\n"
         content += "# ---------Datatypes--------- #"
         content += "\n"
 

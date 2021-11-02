@@ -22,15 +22,6 @@ class Thing(SemanticClass):
 		kwargs['semantic_manager'] = semantic_manager
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
-		if not is_initialised:
-
-
-
-			pass
-
-	# Data fields
-
-	# Relation fields
 
 
 class Class1(Thing):
@@ -56,7 +47,6 @@ class Class1(Thing):
 			self.dataProp2.append(2)
 
 			self.objProp5.append(Individual1())
-			pass
 
 	# Data fields
 	dataProp2: DataField = DataField(
@@ -108,7 +98,6 @@ class Class1a(Class1):
 			self.objProp5._instance_identifier = self.get_identifier()
 			self.dataProp2._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	dataProp2: DataField = DataField(
@@ -160,7 +149,6 @@ class Class1aa(Class1a):
 			self.objProp5._instance_identifier = self.get_identifier()
 			self.dataProp2._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	dataProp2: DataField = DataField(
@@ -212,7 +200,6 @@ class Class1b(Class1):
 			self.objProp5._instance_identifier = self.get_identifier()
 			self.dataProp2._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	dataProp2: DataField = DataField(
@@ -257,7 +244,6 @@ class Class2(SemanticDeviceClass, Thing):
 			self.objProp2._instance_identifier = self.get_identifier()
 			self.attributeProp._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	attributeProp: DeviceAttributeField = DeviceAttributeField(
@@ -294,7 +280,6 @@ class Class3(SemanticDeviceClass, Thing):
 
 			self.oProp1.append(Individual1())
 			self.objProp2.append(Individual1())
-			pass
 
 	# Data fields
 	attributeProp: DeviceAttributeField = DeviceAttributeField(
@@ -344,7 +329,6 @@ class Class123(Class1, Class2, Class3):
 			self.dataProp1._instance_identifier = self.get_identifier()
 			self.dataProp2._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	attributeProp: DeviceAttributeField = DeviceAttributeField(
@@ -410,7 +394,6 @@ class Class13(Class1, Class3):
 			self.dataProp1._instance_identifier = self.get_identifier()
 			self.dataProp2._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	attributeProp: DeviceAttributeField = DeviceAttributeField(
@@ -468,7 +451,6 @@ class Class3a(Class3):
 			self.commandProp._instance_identifier = self.get_identifier()
 			self.dataProp1._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	attributeProp: DeviceAttributeField = DeviceAttributeField(
@@ -510,7 +492,6 @@ class Class3aa(Class3a):
 			self.commandProp._instance_identifier = self.get_identifier()
 			self.dataProp1._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	attributeProp: DeviceAttributeField = DeviceAttributeField(
@@ -546,9 +527,6 @@ class Class4(Thing):
 
 			self.objProp4._instance_identifier = self.get_identifier()
 
-			pass
-
-	# Data fields
 
 	# Relation fields
 	objProp4: RelationField = RelationField(
@@ -579,7 +557,6 @@ class Gertrude(Class1, Class2):
 			self.attributeProp._instance_identifier = self.get_identifier()
 			self.dataProp2._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	attributeProp: DeviceAttributeField = DeviceAttributeField(
@@ -630,9 +607,6 @@ class Individual3(SemanticIndividual):
 
 class Individual4(SemanticIndividual):
 	_parent_classes: List[type] = [Class1, Class2]
-
-
-
 
 
 # ---------Datatypes--------- #

@@ -138,11 +138,6 @@ class TestModels(unittest.TestCase):
         if not VocabularyConfigurator.is_vocabulary_valid(self.vocabulary_1):
             raise Exception
 
-        for class_ in self.vocabulary_1.classes.values():
-            print()
-            print(class_.dict())
-
-
     def test_device_class(self):
         vocabulary = self.vocabulary_3
 

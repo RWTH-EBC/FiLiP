@@ -452,6 +452,9 @@ class SemanticManager(BaseModel):
         for instance in self.instance_registry.get_all():
             if not isinstance(instance, SemanticDeviceClass):
                 client = self.get_client(instance_header=instance.header)
+                # it is important that we patch the values else the
+                # references field would reach an invalid state if we worked
+                # in parallel on an instance
                 client.patch_entity(instance.build_context_entity(),
                                     instance.old_state.state)
                 client.close()

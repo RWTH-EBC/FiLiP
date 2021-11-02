@@ -17,15 +17,6 @@ class Currency(SemanticClass):
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
-		if not is_initialised:
-
-
-
-			pass
-
-	# Data fields
-
-	# Relation fields
 
 
 class Energy_Unit(SemanticClass):
@@ -33,15 +24,6 @@ class Energy_Unit(SemanticClass):
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
-		if not is_initialised:
-
-
-
-			pass
-
-	# Data fields
-
-	# Relation fields
 
 
 class Illuminance_Unit(SemanticClass):
@@ -49,15 +31,6 @@ class Illuminance_Unit(SemanticClass):
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
-		if not is_initialised:
-
-
-
-			pass
-
-	# Data fields
-
-	# Relation fields
 
 
 class Power_Unit(SemanticClass):
@@ -65,15 +38,6 @@ class Power_Unit(SemanticClass):
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
-		if not is_initialised:
-
-
-
-			pass
-
-	# Data fields
-
-	# Relation fields
 
 
 class Pressure_Unit(SemanticClass):
@@ -81,15 +45,6 @@ class Pressure_Unit(SemanticClass):
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
-		if not is_initialised:
-
-
-
-			pass
-
-	# Data fields
-
-	# Relation fields
 
 
 class Temperature_Unit(SemanticClass):
@@ -97,15 +52,6 @@ class Temperature_Unit(SemanticClass):
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
-		if not is_initialised:
-
-
-
-			pass
-
-	# Data fields
-
-	# Relation fields
 
 
 class Thing(SemanticClass):
@@ -118,15 +64,6 @@ class Thing(SemanticClass):
 		kwargs['semantic_manager'] = semantic_manager
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
-		if not is_initialised:
-
-
-
-			pass
-
-	# Data fields
-
-	# Relation fields
 
 
 class Class1(Thing):
@@ -152,7 +89,6 @@ class Class1(Thing):
 			self.dataProp2.append(2)
 
 			self.objProp5.append(Individual1())
-			pass
 
 	# Data fields
 	dataProp2: DataField = DataField(
@@ -204,7 +140,6 @@ class Class1a(Class1):
 			self.objProp5._instance_identifier = self.get_identifier()
 			self.dataProp2._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	dataProp2: DataField = DataField(
@@ -256,7 +191,6 @@ class Class1aa(Class1a):
 			self.objProp5._instance_identifier = self.get_identifier()
 			self.dataProp2._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	dataProp2: DataField = DataField(
@@ -308,7 +242,6 @@ class Class1b(Class1):
 			self.objProp5._instance_identifier = self.get_identifier()
 			self.dataProp2._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	dataProp2: DataField = DataField(
@@ -354,7 +287,6 @@ class Class2(Thing):
 			self.objProp2._instance_identifier = self.get_identifier()
 			self.attributeProp._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	attributeProp: DataField = DataField(
@@ -394,7 +326,6 @@ class Class3(Thing):
 
 			self.oProp1.append(Individual1())
 			self.objProp2.append(Individual1())
-			pass
 
 	# Data fields
 	attributeProp: DataField = DataField(
@@ -448,7 +379,6 @@ class Class123(Class1, Class2, Class3):
 			self.dataProp1._instance_identifier = self.get_identifier()
 			self.dataProp2._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	attributeProp: DataField = DataField(
@@ -518,7 +448,6 @@ class Class13(Class1, Class3):
 			self.dataProp1._instance_identifier = self.get_identifier()
 			self.dataProp2._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	attributeProp: DataField = DataField(
@@ -580,7 +509,6 @@ class Class3a(Class3):
 			self.commandProp._instance_identifier = self.get_identifier()
 			self.dataProp1._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	attributeProp: DataField = DataField(
@@ -626,7 +554,6 @@ class Class3aa(Class3a):
 			self.commandProp._instance_identifier = self.get_identifier()
 			self.dataProp1._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	attributeProp: DataField = DataField(
@@ -664,9 +591,6 @@ class Class4(Thing):
 
 			self.objProp4._instance_identifier = self.get_identifier()
 
-			pass
-
-	# Data fields
 
 	# Relation fields
 	objProp4: RelationField = RelationField(
@@ -690,7 +614,6 @@ class Command(Thing):
 			self.Is_Command_Of._instance_identifier = self.get_identifier()
 			self.Has_Description._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -724,7 +647,6 @@ class Close_Command(Command):
 			self.Is_Command_Of._instance_identifier = self.get_identifier()
 			self.Has_Description._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -748,15 +670,6 @@ class Commodity(Thing):
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
-		if not is_initialised:
-
-
-
-			pass
-
-	# Data fields
-
-	# Relation fields
 
 
 class Coal(Commodity):
@@ -764,15 +677,6 @@ class Coal(Commodity):
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
-		if not is_initialised:
-
-
-
-			pass
-
-	# Data fields
-
-	# Relation fields
 
 
 class Device(Thing):
@@ -812,7 +716,6 @@ class Device(Thing):
 			self.Has_Manufacturer._instance_identifier = self.get_identifier()
 			self.Has_Model._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -912,7 +815,6 @@ class Building_Related(Device):
 			self.Has_Manufacturer._instance_identifier = self.get_identifier()
 			self.Has_Model._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -980,15 +882,6 @@ class Electricity(Commodity):
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
-		if not is_initialised:
-
-
-
-			pass
-
-	# Data fields
-
-	# Relation fields
 
 
 class Energy_Related(Device):
@@ -1028,7 +921,6 @@ class Energy_Related(Device):
 			self.Has_Manufacturer._instance_identifier = self.get_identifier()
 			self.Has_Model._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -1102,9 +994,6 @@ class Function(Thing):
 
 			self.Has_Command._instance_identifier = self.get_identifier()
 
-			pass
-
-	# Data fields
 
 	# Relation fields
 	Has_Command: RelationField = RelationField(
@@ -1124,9 +1013,6 @@ class Actuating_Function(Function):
 
 			self.Has_Command._instance_identifier = self.get_identifier()
 
-			pass
-
-	# Data fields
 
 	# Relation fields
 	Has_Command: RelationField = RelationField(
@@ -1148,9 +1034,6 @@ class Event_Function(Function):
 			self.Has_Command._instance_identifier = self.get_identifier()
 			self.Has_Threshold_Measurement._instance_identifier = self.get_identifier()
 
-			pass
-
-	# Data fields
 
 	# Relation fields
 	Has_Command: RelationField = RelationField(
@@ -1200,7 +1083,6 @@ class Function_Related(Device):
 			self.Has_Manufacturer._instance_identifier = self.get_identifier()
 			self.Has_Model._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -1300,7 +1182,6 @@ class Actuator(Function_Related):
 			self.Has_Manufacturer._instance_identifier = self.get_identifier()
 			self.Has_Model._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -1400,7 +1281,6 @@ class Appliance(Function_Related):
 			self.Has_Manufacturer._instance_identifier = self.get_identifier()
 			self.Has_Model._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -1468,15 +1348,6 @@ class Gas(Commodity):
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
-		if not is_initialised:
-
-
-
-			pass
-
-	# Data fields
-
-	# Relation fields
 
 
 class Generator(Energy_Related):
@@ -1516,7 +1387,6 @@ class Generator(Energy_Related):
 			self.Has_Manufacturer._instance_identifier = self.get_identifier()
 			self.Has_Model._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -1602,7 +1472,6 @@ class Gertrude(Class1, Class2):
 			self.attributeProp._instance_identifier = self.get_identifier()
 			self.dataProp2._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	attributeProp: DataField = DataField(
@@ -1652,7 +1521,6 @@ class Get_Command(Command):
 			self.Is_Command_Of._instance_identifier = self.get_identifier()
 			self.Has_Description._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -1686,7 +1554,6 @@ class Get_Current_Meter_Value_Command(Get_Command):
 			self.Is_Command_Of._instance_identifier = self.get_identifier()
 			self.Has_Description._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -1720,7 +1587,6 @@ class Get_Meter_Data_Command(Get_Command):
 			self.Is_Command_Of._instance_identifier = self.get_identifier()
 			self.Has_Description._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -1754,7 +1620,6 @@ class Get_Meter_History_Command(Get_Command):
 			self.Is_Command_Of._instance_identifier = self.get_identifier()
 			self.Has_Description._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -1788,7 +1653,6 @@ class Get_Sensing_Data_Command(Get_Command):
 			self.Is_Command_Of._instance_identifier = self.get_identifier()
 			self.Has_Description._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -1845,7 +1709,6 @@ class Hvac(Function_Related):
 			self.Has_Model._instance_identifier = self.get_identifier()
 
 			self.Accomplishes.append(Comfort())
-			pass
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -1919,9 +1782,6 @@ class Level_Control_Function(Actuating_Function):
 
 			self.Has_Command._instance_identifier = self.get_identifier()
 
-			pass
-
-	# Data fields
 
 	# Relation fields
 	Has_Command: RelationField = RelationField(
@@ -1968,7 +1828,6 @@ class Lighting_Device(Function_Related):
 			self.Has_Model._instance_identifier = self.get_identifier()
 
 			self.Accomplishes.append(Comfort())
-			pass
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -2068,7 +1927,6 @@ class Load(Energy_Related):
 			self.Has_Manufacturer._instance_identifier = self.get_identifier()
 			self.Has_Model._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -2146,7 +2004,6 @@ class Measurement(Thing):
 			self.Has_Timestamp._instance_identifier = self.get_identifier()
 			self.Has_Value._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	Has_Timestamp: DataField = DataField(
@@ -2202,7 +2059,6 @@ class Meter(Function_Related):
 			self.Has_Manufacturer._instance_identifier = self.get_identifier()
 			self.Has_Model._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -2304,7 +2160,6 @@ class Energy_Meter(Meter):
 
 			self.Accomplishes.append(Energyefficiency())
 			self.Accomplishes.append(Meter_Reading())
-			pass
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -2382,9 +2237,6 @@ class Metering_Function(Function):
 			self.Has_Meter_Reading_Type._instance_identifier = self.get_identifier()
 			self.Has_Meter_Reading._instance_identifier = self.get_identifier()
 
-			pass
-
-	# Data fields
 
 	# Relation fields
 	Has_Command: RelationField = RelationField(
@@ -2439,7 +2291,6 @@ class Micro_Renewable(Function_Related):
 			self.Has_Model._instance_identifier = self.get_identifier()
 
 			self.Accomplishes.append(Energyefficiency())
-			pass
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -2540,7 +2391,6 @@ class Multimedia(Function_Related):
 			self.Has_Model._instance_identifier = self.get_identifier()
 
 			self.Accomplishes.append(Entertainment())
-			pass
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -2640,7 +2490,6 @@ class Network(Function_Related):
 			self.Has_Manufacturer._instance_identifier = self.get_identifier()
 			self.Has_Model._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -2718,7 +2567,6 @@ class Notify_Command(Command):
 			self.Is_Command_Of._instance_identifier = self.get_identifier()
 			self.Has_Description._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -2752,7 +2600,6 @@ class Off_Command(Command):
 			self.Is_Command_Of._instance_identifier = self.get_identifier()
 			self.Has_Description._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -2786,7 +2633,6 @@ class On_Command(Command):
 			self.Is_Command_Of._instance_identifier = self.get_identifier()
 			self.Has_Description._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -2816,9 +2662,6 @@ class On_Off_Function(Actuating_Function):
 
 			self.Has_Command._instance_identifier = self.get_identifier()
 
-			pass
-
-	# Data fields
 
 	# Relation fields
 	Has_Command: RelationField = RelationField(
@@ -2838,9 +2681,6 @@ class Open_Close_Function(Actuating_Function):
 
 			self.Has_Command._instance_identifier = self.get_identifier()
 
-			pass
-
-	# Data fields
 
 	# Relation fields
 	Has_Command: RelationField = RelationField(
@@ -2864,7 +2704,6 @@ class Open_Command(Command):
 			self.Is_Command_Of._instance_identifier = self.get_identifier()
 			self.Has_Description._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -2898,7 +2737,6 @@ class Pause_Command(Command):
 			self.Is_Command_Of._instance_identifier = self.get_identifier()
 			self.Has_Description._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -2934,9 +2772,6 @@ class Profile(Thing):
 			self.Has_Time._instance_identifier = self.get_identifier()
 			self.Isabout._instance_identifier = self.get_identifier()
 
-			pass
-
-	# Data fields
 
 	# Relation fields
 	Consists_Of: RelationField = RelationField(
@@ -2972,9 +2807,6 @@ class Property(Thing):
 			self.Is_Measured_By_Device._instance_identifier = self.get_identifier()
 			self.Relates_To_Measurement._instance_identifier = self.get_identifier()
 
-			pass
-
-	# Data fields
 
 	# Relation fields
 	Is_Controlled_By_Device: RelationField = RelationField(
@@ -3006,9 +2838,6 @@ class Energy(Property):
 			self.Is_Measured_By_Device._instance_identifier = self.get_identifier()
 			self.Relates_To_Measurement._instance_identifier = self.get_identifier()
 
-			pass
-
-	# Data fields
 
 	# Relation fields
 	Is_Controlled_By_Device: RelationField = RelationField(
@@ -3040,9 +2869,6 @@ class Humidity(Property):
 			self.Is_Measured_By_Device._instance_identifier = self.get_identifier()
 			self.Relates_To_Measurement._instance_identifier = self.get_identifier()
 
-			pass
-
-	# Data fields
 
 	# Relation fields
 	Is_Controlled_By_Device: RelationField = RelationField(
@@ -3074,9 +2900,6 @@ class Light(Property):
 			self.Is_Measured_By_Device._instance_identifier = self.get_identifier()
 			self.Relates_To_Measurement._instance_identifier = self.get_identifier()
 
-			pass
-
-	# Data fields
 
 	# Relation fields
 	Is_Controlled_By_Device: RelationField = RelationField(
@@ -3108,9 +2931,6 @@ class Motion(Property):
 			self.Is_Measured_By_Device._instance_identifier = self.get_identifier()
 			self.Relates_To_Measurement._instance_identifier = self.get_identifier()
 
-			pass
-
-	# Data fields
 
 	# Relation fields
 	Is_Controlled_By_Device: RelationField = RelationField(
@@ -3142,9 +2962,6 @@ class Occupancy(Property):
 			self.Is_Measured_By_Device._instance_identifier = self.get_identifier()
 			self.Relates_To_Measurement._instance_identifier = self.get_identifier()
 
-			pass
-
-	# Data fields
 
 	# Relation fields
 	Is_Controlled_By_Device: RelationField = RelationField(
@@ -3176,9 +2993,6 @@ class Power(Property):
 			self.Is_Measured_By_Device._instance_identifier = self.get_identifier()
 			self.Relates_To_Measurement._instance_identifier = self.get_identifier()
 
-			pass
-
-	# Data fields
 
 	# Relation fields
 	Is_Controlled_By_Device: RelationField = RelationField(
@@ -3210,9 +3024,6 @@ class Pressure(Property):
 			self.Is_Measured_By_Device._instance_identifier = self.get_identifier()
 			self.Relates_To_Measurement._instance_identifier = self.get_identifier()
 
-			pass
-
-	# Data fields
 
 	# Relation fields
 	Is_Controlled_By_Device: RelationField = RelationField(
@@ -3244,9 +3055,6 @@ class Price(Property):
 			self.Is_Measured_By_Device._instance_identifier = self.get_identifier()
 			self.Relates_To_Measurement._instance_identifier = self.get_identifier()
 
-			pass
-
-	# Data fields
 
 	# Relation fields
 	Is_Controlled_By_Device: RelationField = RelationField(
@@ -3278,9 +3086,6 @@ class Sensing_Function(Function):
 			self.Has_Sensing_Range_._instance_identifier = self.get_identifier()
 			self.Has_Sensor_Type._instance_identifier = self.get_identifier()
 
-			pass
-
-	# Data fields
 
 	# Relation fields
 	Has_Command: RelationField = RelationField(
@@ -3334,7 +3139,6 @@ class Sensor(Function_Related):
 			self.Has_Manufacturer._instance_identifier = self.get_identifier()
 			self.Has_Model._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -3410,9 +3214,6 @@ class Service(Thing):
 			self.Is_Offered_By._instance_identifier = self.get_identifier()
 			self.Represents._instance_identifier = self.get_identifier()
 
-			pass
-
-	# Data fields
 
 	# Relation fields
 	Is_Offered_By: RelationField = RelationField(
@@ -3440,7 +3241,6 @@ class Set_Level_Command(Command):
 			self.Is_Command_Of._instance_identifier = self.get_identifier()
 			self.Has_Description._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -3474,7 +3274,6 @@ class Set_Absolute_Level_Command(Set_Level_Command):
 			self.Is_Command_Of._instance_identifier = self.get_identifier()
 			self.Has_Description._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -3508,7 +3307,6 @@ class Set_Relative_Level_Command(Set_Level_Command):
 			self.Is_Command_Of._instance_identifier = self.get_identifier()
 			self.Has_Description._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -3542,9 +3340,6 @@ class Smoke(Property):
 			self.Is_Measured_By_Device._instance_identifier = self.get_identifier()
 			self.Relates_To_Measurement._instance_identifier = self.get_identifier()
 
-			pass
-
-	# Data fields
 
 	# Relation fields
 	Is_Controlled_By_Device: RelationField = RelationField(
@@ -3599,7 +3394,6 @@ class Smoke_Sensor(Sensor):
 			self.Has_Model._instance_identifier = self.get_identifier()
 
 			self.Accomplishes.append(Safety())
-			pass
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -3677,7 +3471,6 @@ class Start_Command(Command):
 			self.Is_Command_Of._instance_identifier = self.get_identifier()
 			self.Has_Description._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -3707,9 +3500,6 @@ class Start_Stop_Function(Actuating_Function):
 
 			self.Has_Command._instance_identifier = self.get_identifier()
 
-			pass
-
-	# Data fields
 
 	# Relation fields
 	Has_Command: RelationField = RelationField(
@@ -3723,15 +3513,6 @@ class State(Thing):
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
-		if not is_initialised:
-
-
-
-			pass
-
-	# Data fields
-
-	# Relation fields
 
 
 class Multi_Level_State(State):
@@ -3739,15 +3520,6 @@ class Multi_Level_State(State):
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
-		if not is_initialised:
-
-
-
-			pass
-
-	# Data fields
-
-	# Relation fields
 
 
 class On_Off_State(State):
@@ -3755,15 +3527,6 @@ class On_Off_State(State):
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
-		if not is_initialised:
-
-
-
-			pass
-
-	# Data fields
-
-	# Relation fields
 
 
 class Off_State(On_Off_State):
@@ -3771,15 +3534,6 @@ class Off_State(On_Off_State):
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
-		if not is_initialised:
-
-
-
-			pass
-
-	# Data fields
-
-	# Relation fields
 
 
 class On_State(On_Off_State):
@@ -3787,15 +3541,6 @@ class On_State(On_Off_State):
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
-		if not is_initialised:
-
-
-
-			pass
-
-	# Data fields
-
-	# Relation fields
 
 
 class Open_Close_State(State):
@@ -3803,15 +3548,6 @@ class Open_Close_State(State):
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
-		if not is_initialised:
-
-
-
-			pass
-
-	# Data fields
-
-	# Relation fields
 
 
 class Close_State(Open_Close_State):
@@ -3819,15 +3555,6 @@ class Close_State(Open_Close_State):
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
-		if not is_initialised:
-
-
-
-			pass
-
-	# Data fields
-
-	# Relation fields
 
 
 class Open_State(Open_Close_State):
@@ -3835,15 +3562,6 @@ class Open_State(Open_Close_State):
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
-		if not is_initialised:
-
-
-
-			pass
-
-	# Data fields
-
-	# Relation fields
 
 
 class Start_Stop_State(State):
@@ -3851,15 +3569,6 @@ class Start_Stop_State(State):
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
-		if not is_initialised:
-
-
-
-			pass
-
-	# Data fields
-
-	# Relation fields
 
 
 class Start_State(Start_Stop_State):
@@ -3867,15 +3576,6 @@ class Start_State(Start_Stop_State):
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
-		if not is_initialised:
-
-
-
-			pass
-
-	# Data fields
-
-	# Relation fields
 
 
 class Step_Down_Command(Command):
@@ -3893,7 +3593,6 @@ class Step_Down_Command(Command):
 			self.Is_Command_Of._instance_identifier = self.get_identifier()
 			self.Has_Description._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -3927,7 +3626,6 @@ class Step_Up_Command(Command):
 			self.Is_Command_Of._instance_identifier = self.get_identifier()
 			self.Has_Description._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -3961,7 +3659,6 @@ class Stop_Command(Command):
 			self.Is_Command_Of._instance_identifier = self.get_identifier()
 			self.Has_Description._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -3985,15 +3682,6 @@ class Stop_State(Start_Stop_State):
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
-		if not is_initialised:
-
-
-
-			pass
-
-	# Data fields
-
-	# Relation fields
 
 
 class Storage(Energy_Related):
@@ -4033,7 +3721,6 @@ class Storage(Energy_Related):
 			self.Has_Manufacturer._instance_identifier = self.get_identifier()
 			self.Has_Model._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -4133,7 +3820,6 @@ class Switch(Actuator):
 			self.Has_Manufacturer._instance_identifier = self.get_identifier()
 			self.Has_Model._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -4234,7 +3920,6 @@ class Door_Switch(Switch):
 			self.Has_Model._instance_identifier = self.get_identifier()
 
 			self.Accomplishes.append(Safety())
-			pass
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -4335,7 +4020,6 @@ class Light_Switch(Switch):
 			self.Has_Model._instance_identifier = self.get_identifier()
 
 			self.Accomplishes.append(Lighting())
-			pass
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -4411,9 +4095,6 @@ class Switch_On_Service(Service):
 			self.Is_Offered_By._instance_identifier = self.get_identifier()
 			self.Represents._instance_identifier = self.get_identifier()
 
-			pass
-
-	# Data fields
 
 	# Relation fields
 	Is_Offered_By: RelationField = RelationField(
@@ -4437,9 +4118,6 @@ class Task(Thing):
 
 			self.Is_Accomplished_By._instance_identifier = self.get_identifier()
 
-			pass
-
-	# Data fields
 
 	# Relation fields
 	Is_Accomplished_By: RelationField = RelationField(
@@ -4463,9 +4141,6 @@ class Temperature(Property):
 			self.Is_Measured_By_Device._instance_identifier = self.get_identifier()
 			self.Relates_To_Measurement._instance_identifier = self.get_identifier()
 
-			pass
-
-	# Data fields
 
 	# Relation fields
 	Is_Controlled_By_Device: RelationField = RelationField(
@@ -4520,7 +4195,6 @@ class Temperature_Sensor(Sensor):
 			self.Has_Model._instance_identifier = self.get_identifier()
 
 			self.Accomplishes.append(Comfort())
-			pass
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -4598,9 +4272,6 @@ class Time(Property):
 			self.Is_Measured_By_Device._instance_identifier = self.get_identifier()
 			self.Relates_To_Measurement._instance_identifier = self.get_identifier()
 
-			pass
-
-	# Data fields
 
 	# Relation fields
 	Is_Controlled_By_Device: RelationField = RelationField(
@@ -4632,7 +4303,6 @@ class Toggle_Command(Command):
 			self.Is_Command_Of._instance_identifier = self.get_identifier()
 			self.Has_Description._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -4689,7 +4359,6 @@ class Washing_Machine(Appliance, Load):
 			self.Has_Model._instance_identifier = self.get_identifier()
 
 			self.Accomplishes.append(Washing())
-			pass
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -4757,15 +4426,6 @@ class Water(Commodity):
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
-		if not is_initialised:
-
-
-
-			pass
-
-	# Data fields
-
-	# Relation fields
 
 
 # ---------Individuals--------- #
@@ -4947,9 +4607,6 @@ class Watt_Hour(SemanticIndividual):
 	_parent_classes: List[type] = [Energy_Unit]
 
 
-
-
-
 # ---------Datatypes--------- #
 semantic_manager.datatype_catalogue = {
 	'customDataType1': 	 {'type': 'enum', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': ['0', '15', '30'], 'number_has_range': False},
@@ -4992,10 +4649,12 @@ semantic_manager.datatype_catalogue = {
 	'unsignedShort': 	 {'type': 'number', 'number_range_min': 0, 'number_range_max': 65535, 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': True},
 }
 
+
 class customDataType1(str, Enum):
 	value_0 = '0'
 	value_15 = '15'
 	value_30 = '30'
+
 
 class customDataType4(str, Enum):
 	value_1 = '1'
