@@ -904,6 +904,8 @@ class RelationField(RuleField):
             AttributeError: if value not an instance of 'SemanticClass' or
             'SemanticIndividual'
         """
+        self._uniqueness_check(v)
+
         if isinstance(v, SemanticClass):
             self._list[i] = v.get_identifier()
             v.add_reference(self._instance_identifier, self.name)
@@ -946,7 +948,7 @@ class RelationField(RuleField):
             AttributeError: if value not an instance of 'SemanticClass' or
             'SemanticIndividual'
         """
-
+        self._uniqueness_check(v)
         if isinstance(v, SemanticClass):
             identifier = v.get_identifier()
             self._list.insert(i, identifier)
@@ -965,6 +967,14 @@ class RelationField(RuleField):
                     field = v.get_field_by_name(inverse_field_name)
                     if self._instance_identifier not in field.get_all_raw():
                         field.append(self._get_instance())
+
+    def _uniqueness_check(self, v):
+        if isinstance(v, SemanticClass):
+            if v.get_identifier() in self.get_all_raw():
+                raise ValueError("Value already added")
+        else:
+            if v in self.get_all_raw():
+                raise ValueError("Value already added")
 
     def __str__(self):
         """ see class description"""

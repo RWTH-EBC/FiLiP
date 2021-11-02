@@ -131,20 +131,17 @@ class TestSemanticModels(unittest.TestCase):
 
         c1.oProp1.append(c2)
         self.assertEqual(c2.references[c1.get_identifier()], ["oProp1"])
-        c1.oProp1.extend([c2])
-        self.assertEqual(c2.references[c1.get_identifier()],
-                         ["oProp1", "oProp1"])
+        self.assertRaises(ValueError, c1.oProp1.extend, [c2])
+        self.assertEqual(c2.references[c1.get_identifier()], ["oProp1"])
         c1.objProp2.extend([c2])
         c3.objProp2.append(c2)
         self.assertEqual(c2.references[c1.get_identifier()],
-                         ["oProp1", "oProp1", "objProp2"])
+                         ["oProp1", "objProp2"])
         self.assertEqual(c2.references[c3.get_identifier()], ["objProp2"])
 
         c1.oProp1.remove(c2)
-        self.assertEqual(c2.references[c1.get_identifier()],
-                         ["oProp1", "objProp2"])
+        self.assertEqual(c2.references[c1.get_identifier()], ["objProp2"])
 
-        c1.oProp1.remove(c2)
         del c1.objProp2[0]
         self.assertNotIn(c1.get_identifier(), c2.references)
 
@@ -188,7 +185,7 @@ class TestSemanticModels(unittest.TestCase):
         class13.objProp3.append(Individual1())
         class13.dataProp1.extend([1,2,4])
 
-        class1.oProp1.append(class13)
+        # class1.oProp1.append(class13)
 
         self.assertRaises(AssertionError, semantic_manager.save_state)
         semantic_manager.save_state(assert_validity=False)

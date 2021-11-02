@@ -217,7 +217,7 @@ if __name__ == '__main__':
     # we added my_floor as first value into has_floor, therefore one_instance
     # now points to exactly the same object as my_floor
 
-    # as the value inside the has_floor field is dynamicaly set, we can not
+    # as the value inside the has_floor field is dynamically set, we can not
     # use type hints when working with it. But if we assign a value and then
     # inspect my_floor we see that they are correctly linked.
 
@@ -241,7 +241,10 @@ if __name__ == '__main__':
         print(my_floor.has_room.get_all_raw())
     print("")
 
-    # As we save the InstanceIdentifier as refernces, who holds all needed
+    # To each field each Instance or Individual can only be added once.
+    # For example adding i1 twice to the field f of i1 will throw an ValueError
+
+    # As we save the InstanceIdentifier as references, who holds all needed
     # lookup information we can reference instances in other services,
     # service-paths or even FiwareSetups
 
