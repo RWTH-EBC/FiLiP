@@ -980,7 +980,7 @@ class RelationField(RuleField):
         """ see class description"""
         return 'Relation'+super().__str__()
 
-    def get_all(self) -> List['SemanticClass']:
+    def get_all(self) -> List[Union['SemanticClass', 'SemanticIndividual']]:
         return super(RelationField, self).get_all()
 
 

@@ -447,3 +447,7 @@ if __name__ == '__main__':
     #
     # The delete is as all other changes only a local change. It gets only
     # transferred to the Fiware state on the call: save_state()
+
+    # Concluding we can always have a look inside the local loaded state by
+    # calling:
+    semantic_manager.visualise_local_state()

@@ -713,5 +713,54 @@ class SemanticManager(BaseModel):
     def load_local_state_from_json(self, json:str):
         self.instance_registry.load(json, self)
 
+    def visualise_local_state(self):
+        # import networkx as nx
+        # g = nx.DiGraph()
+        #
+        # for instance in self.get_all_local_instances():
+        #     g.add_node(instance.id)
+        #
+        # for instance in self.get_all_local_instances():
+        #     for field in instance.get_relation_fields():
+        #         for linked in field.get_all():
+        #             if isinstance(linked, SemanticClass):
+        #                 g.add_edge(instance.id, linked.id)
+        #             elif isinstance(linked, SemanticIndividual):
+        #                 g.add_edge(instance.id, linked.get_name())
+        #
+        # import matplotlib.pyplot as plt
+        # nx.draw(g)
 
+        import igraph
+        g = igraph.Graph(directed=True)
 
+        for instance in self.get_all_local_instances():
+            g.add_vertex(name=instance.id,
+                         label=f"\n\n\n {instance.get_type()} \n {instance.id}",
+                         color="green")
+
+        for individual in [self.get_individual(name) for name in
+                           self.individual_catalogue]:
+            g.add_vertex(label=f"\n\n\n{individual.get_name()}",
+                         name=individual.get_name(),
+                         color="blue")
+
+        for instance in self.get_all_local_instances():
+            for field in instance.get_relation_fields():
+                for linked in field.get_all():
+                    if isinstance(linked, SemanticClass):
+                        g.add_edge(instance.id, linked.id, name=field.name)
+                        # g.es[-1]["name"] = field.name
+
+                    elif isinstance(linked, SemanticIndividual):
+                        g.add_edge(instance.id, linked.get_name())
+
+        layout = g.layout("fr")
+        visual_style = {"vertex_size": 20,
+                        "vertex_color": g.vs["color"],
+                        "vertex_label": g.vs["label"],
+                        "edge_label": g.es["name"],
+                        "layout": layout,
+                        "bbox": (len(g.vs) * 100,len(g.vs) * 100)}
+
+        igraph.plot(g, **visual_style)

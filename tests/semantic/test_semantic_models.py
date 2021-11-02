@@ -71,7 +71,7 @@ class TestSemanticModels(unittest.TestCase):
 
     def test_4_model_relation_field_validation(self):
         from tests.semantic.models import Class1, Class13, Class2, Class4, \
-            Class123, Individual1
+            Class123, Individual1, semantic_manager
 
         class1 = Class1(id="12")
         class13 = Class13()
