@@ -228,7 +228,7 @@ class TestSemanticModels(unittest.TestCase):
         # make sure references are not global in all SemanticClasses
         # (happend in the past)
         self.assertFalse(str(class13.references) == str(class1.references))
-        self.assertTrue(len(class13.references) == 0)
+        self.assertTrue(len(class13.references) == 1)  # inverse_ added
         self.assertTrue(len(class1.references) == 1)
 
         # test reference deletion
@@ -344,7 +344,7 @@ class TestSemanticModels(unittest.TestCase):
 
         class3_ = Class3()
         class3_.device_settings.endpoint = "http://test.com"
-        self.assertEqual(class3_.device_settings.endpoint, "http://test.com" )
+        self.assertEqual(class3_.device_settings.endpoint, "http://test.com")
 
     def test__14_device_saving_and_loading(self):
         from tests.semantic.models2 import Class1, Class13, Class3, Class4, \
@@ -487,6 +487,24 @@ class TestSemanticModels(unittest.TestCase):
         self.assertTrue(class3_.objProp2[1].get_type() == class1.get_type())
 
         self.assertTrue(class1_.references == class1.references)
+
+    def test__17_inverse_relations(self):
+        from tests.semantic.models2 import Class1, semantic_manager
+
+        inst_1 = Class1(id="100")
+        inst_2 = Class1(id="101")
+        inst_1.oProp1.append(inst_2)
+
+        self.assertTrue(inst_2.get_identifier()
+                        in inst_1.oProp1.get_all_raw())
+        self.assertTrue(inst_1.get_identifier()
+                        in inst_2.objProp3.get_all_raw())
+
+        inst_2.objProp3.remove(inst_1)
+        self.assertFalse(inst_2.get_identifier()
+                         in inst_1.oProp1.get_all_raw())
+        self.assertFalse(inst_1.get_identifier()
+                         in inst_2.objProp3.get_all_raw())
 
     def tearDown(self) -> None:
         """

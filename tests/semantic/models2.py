@@ -58,6 +58,7 @@ class Class1(Thing):
 	oProp1: RelationField = RelationField(
 		name='oProp1',
 		rule='some (Class2 or Class4)',
+		inverse_of=['objProp3'],
 		semantic_manager=semantic_manager)
 	objProp2: RelationField = RelationField(
 		name='objProp2',
@@ -66,6 +67,7 @@ class Class1(Thing):
 	objProp3: RelationField = RelationField(
 		name='objProp3',
 		rule='some Class3',
+		inverse_of=['oProp1'],
 		semantic_manager=semantic_manager)
 	objProp4: RelationField = RelationField(
 		name='objProp4',
@@ -109,6 +111,7 @@ class Class1a(Class1):
 	oProp1: RelationField = RelationField(
 		name='oProp1',
 		rule='some (Class2 or Class4)',
+		inverse_of=['objProp3'],
 		semantic_manager=semantic_manager)
 	objProp2: RelationField = RelationField(
 		name='objProp2',
@@ -117,6 +120,7 @@ class Class1a(Class1):
 	objProp3: RelationField = RelationField(
 		name='objProp3',
 		rule='some Class3',
+		inverse_of=['oProp1'],
 		semantic_manager=semantic_manager)
 	objProp4: RelationField = RelationField(
 		name='objProp4',
@@ -160,6 +164,7 @@ class Class1aa(Class1a):
 	oProp1: RelationField = RelationField(
 		name='oProp1',
 		rule='some (Class2 or Class4)',
+		inverse_of=['objProp3'],
 		semantic_manager=semantic_manager)
 	objProp2: RelationField = RelationField(
 		name='objProp2',
@@ -168,6 +173,7 @@ class Class1aa(Class1a):
 	objProp3: RelationField = RelationField(
 		name='objProp3',
 		rule='some Class3',
+		inverse_of=['oProp1'],
 		semantic_manager=semantic_manager)
 	objProp4: RelationField = RelationField(
 		name='objProp4',
@@ -211,6 +217,7 @@ class Class1b(Class1):
 	oProp1: RelationField = RelationField(
 		name='oProp1',
 		rule='some Class2, some (Class2 or Class4)',
+		inverse_of=['objProp3'],
 		semantic_manager=semantic_manager)
 	objProp2: RelationField = RelationField(
 		name='objProp2',
@@ -219,6 +226,7 @@ class Class1b(Class1):
 	objProp3: RelationField = RelationField(
 		name='objProp3',
 		rule='some Class3',
+		inverse_of=['oProp1'],
 		semantic_manager=semantic_manager)
 	objProp4: RelationField = RelationField(
 		name='objProp4',
@@ -254,6 +262,7 @@ class Class2(SemanticDeviceClass, Thing):
 	oProp1: RelationField = RelationField(
 		name='oProp1',
 		rule='min 1 Class1',
+		inverse_of=['objProp3'],
 		semantic_manager=semantic_manager)
 	objProp2: RelationField = RelationField(
 		name='objProp2',
@@ -297,6 +306,7 @@ class Class3(SemanticDeviceClass, Thing):
 	oProp1: RelationField = RelationField(
 		name='oProp1',
 		rule='value Individual1',
+		inverse_of=['objProp3'],
 		semantic_manager=semantic_manager)
 	objProp2: RelationField = RelationField(
 		name='objProp2',
@@ -350,6 +360,7 @@ class Class123(Class1, Class2, Class3):
 	oProp1: RelationField = RelationField(
 		name='oProp1',
 		rule='value Individual1, min 1 Class1, some (Class2 or Class4)',
+		inverse_of=['objProp3'],
 		semantic_manager=semantic_manager)
 	objProp2: RelationField = RelationField(
 		name='objProp2',
@@ -358,6 +369,7 @@ class Class123(Class1, Class2, Class3):
 	objProp3: RelationField = RelationField(
 		name='objProp3',
 		rule='some Class3',
+		inverse_of=['oProp1'],
 		semantic_manager=semantic_manager)
 	objProp4: RelationField = RelationField(
 		name='objProp4',
@@ -415,6 +427,7 @@ class Class13(Class1, Class3):
 	oProp1: RelationField = RelationField(
 		name='oProp1',
 		rule='value Individual1, some (Class2 or Class4)',
+		inverse_of=['objProp3'],
 		semantic_manager=semantic_manager)
 	objProp2: RelationField = RelationField(
 		name='objProp2',
@@ -423,6 +436,7 @@ class Class13(Class1, Class3):
 	objProp3: RelationField = RelationField(
 		name='objProp3',
 		rule='some Class3',
+		inverse_of=['oProp1'],
 		semantic_manager=semantic_manager)
 	objProp4: RelationField = RelationField(
 		name='objProp4',
@@ -468,6 +482,7 @@ class Class3a(Class3):
 	oProp1: RelationField = RelationField(
 		name='oProp1',
 		rule='value Individual1',
+		inverse_of=['objProp3'],
 		semantic_manager=semantic_manager)
 	objProp2: RelationField = RelationField(
 		name='objProp2',
@@ -509,6 +524,7 @@ class Class3aa(Class3a):
 	oProp1: RelationField = RelationField(
 		name='oProp1',
 		rule='value Individual1',
+		inverse_of=['objProp3'],
 		semantic_manager=semantic_manager)
 	objProp2: RelationField = RelationField(
 		name='objProp2',
@@ -571,6 +587,7 @@ class Gertrude(Class1, Class2):
 	oProp1: RelationField = RelationField(
 		name='oProp1',
 		rule='min 1 Class1, some (Class2 or Class4)',
+		inverse_of=['objProp3'],
 		semantic_manager=semantic_manager)
 	objProp2: RelationField = RelationField(
 		name='objProp2',
@@ -579,6 +596,7 @@ class Gertrude(Class1, Class2):
 	objProp3: RelationField = RelationField(
 		name='objProp3',
 		rule='some Class3',
+		inverse_of=['oProp1'],
 		semantic_manager=semantic_manager)
 	objProp4: RelationField = RelationField(
 		name='objProp4',

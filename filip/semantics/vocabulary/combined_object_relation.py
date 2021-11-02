@@ -35,3 +35,16 @@ class CombinedObjectRelation(CombinedRelation):
             str
         """
         return vocabulary.get_object_property(self.property_iri).get_label()
+
+    def get_inverse_of_labels(self, vocabulary: 'Vocabulary') -> List[str]:
+        """Get the labels of the inverse_of properties of this COR
+
+         Args:
+             vocabulary (Vocabulary): Vocabulary of the project
+
+         Returns:
+             List[str]
+         """
+        property = vocabulary.get_object_property(self.property_iri)
+        return [vocabulary.get_entity_by_iri(iri).label
+                for iri in property.inverse_property_iris]

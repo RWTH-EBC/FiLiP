@@ -688,6 +688,11 @@ class VocabularyConfigurator:
                 content += f"rule='" \
                            f"{cor.get_all_targetstatements_as_string(vocabulary)}',"
                 content += "\n\t\t"
+                if not len(cor.get_inverse_of_labels(vocabulary)) == 0:
+                    content += "inverse_of="
+                    content += str(cor.get_inverse_of_labels(vocabulary))
+                    content += ",\n\t\t"
+
                 content += "semantic_manager=semantic_manager)"
 
         content += "\n\n\n"

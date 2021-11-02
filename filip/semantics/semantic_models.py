@@ -860,6 +860,14 @@ class RelationField(RuleField):
                 that individual is returned (All instances are equal)
     """
     _rules: List[Tuple[str, List[List[Type]]]] = []
+    inverse_of: List[str] = []
+    """List of all field names which are inverse to this field.
+    If an instance i1 is added to this field, the instance i2 belonging to this 
+    field is added to all fields of i1 that are stated in this list by name"""
+
+    def __init__(self, rule, name, semantic_manager, inverse_of=None):
+        super().__init__(rule, name, semantic_manager)
+        self.inverse_of = inverse_of
 
     def _value_is_valid(self, value, rule_value: type) -> bool:
         if isinstance(value, SemanticClass):
@@ -899,6 +907,8 @@ class RelationField(RuleField):
         if isinstance(v, SemanticClass):
             self._list[i] = v.get_identifier()
             v.add_reference(self._instance_identifier, self.name)
+
+            self._add_inverse(v)
         elif isinstance(v, SemanticIndividual):
             self._list[i] = v.get_name()
         else:
@@ -908,11 +918,25 @@ class RelationField(RuleField):
     def __delitem__(self, i):
         """ see class description"""
         if isinstance(self._list[i], InstanceIdentifier):
+
+            # delete reference
             if not self._semantic_manager.was_instance_deleted(self._list[i]):
                 v: SemanticClass = self._semantic_manager.get_instance(self._list[i])
-
                 v.remove_reference(self._instance_identifier, self.name)
+
+            # delete value in field
+            identifier = self._list[i]
             del self._list[i]
+
+            # inverse of deletion
+            if not self._semantic_manager.was_instance_deleted(identifier):
+                # remove this instance in reverse fields
+                if self.inverse_of is not None:
+                    for inverse_field_name in self.inverse_of:
+                        if inverse_field_name in v.get_all_field_names():
+                            field = v.get_field_by_name(inverse_field_name)
+                            if self._instance_identifier in field.get_all_raw():
+                                field.remove(self._get_instance())
         else:
             del self._list[i]
 
@@ -927,11 +951,20 @@ class RelationField(RuleField):
             identifier = v.get_identifier()
             self._list.insert(i, identifier)
             v.add_reference(self._instance_identifier, self.name)
+            self._add_inverse(v)
         elif isinstance(v, SemanticIndividual):
             self._list.insert(i, v.get_name())
         else:
             raise AttributeError("Only instances of a SemanticClass or a "
                                  "SemanticIndividual can be given as value")
+
+    def _add_inverse(self, v: 'SemanticClass'):
+        if self.inverse_of is not None:
+            for inverse_field_name in self.inverse_of:
+                if inverse_field_name in v.get_all_field_names():
+                    field = v.get_field_by_name(inverse_field_name)
+                    if self._instance_identifier not in field.get_all_raw():
+                        field.append(self._get_instance())
 
     def __str__(self):
         """ see class description"""
@@ -1003,6 +1036,7 @@ class SemanticClass(BaseModel):
            relation_name (str): Field name in which the reference is taking
                                 place
         """
+
         self.references[identifier].remove(relation_name)
         if len(self.references[identifier]) == 0:
             del self.references[identifier]

@@ -100,6 +100,7 @@ class Class1(Thing):
 	oProp1: RelationField = RelationField(
 		name='oProp1',
 		rule='some (Class2 or Class4)',
+		inverse_of=['objProp3'],
 		semantic_manager=semantic_manager)
 	objProp2: RelationField = RelationField(
 		name='objProp2',
@@ -108,6 +109,7 @@ class Class1(Thing):
 	objProp3: RelationField = RelationField(
 		name='objProp3',
 		rule='some Class3',
+		inverse_of=['oProp1'],
 		semantic_manager=semantic_manager)
 	objProp4: RelationField = RelationField(
 		name='objProp4',
@@ -151,6 +153,7 @@ class Class1a(Class1):
 	oProp1: RelationField = RelationField(
 		name='oProp1',
 		rule='some (Class2 or Class4)',
+		inverse_of=['objProp3'],
 		semantic_manager=semantic_manager)
 	objProp2: RelationField = RelationField(
 		name='objProp2',
@@ -159,6 +162,7 @@ class Class1a(Class1):
 	objProp3: RelationField = RelationField(
 		name='objProp3',
 		rule='some Class3',
+		inverse_of=['oProp1'],
 		semantic_manager=semantic_manager)
 	objProp4: RelationField = RelationField(
 		name='objProp4',
@@ -202,6 +206,7 @@ class Class1aa(Class1a):
 	oProp1: RelationField = RelationField(
 		name='oProp1',
 		rule='some (Class2 or Class4)',
+		inverse_of=['objProp3'],
 		semantic_manager=semantic_manager)
 	objProp2: RelationField = RelationField(
 		name='objProp2',
@@ -210,6 +215,7 @@ class Class1aa(Class1a):
 	objProp3: RelationField = RelationField(
 		name='objProp3',
 		rule='some Class3',
+		inverse_of=['oProp1'],
 		semantic_manager=semantic_manager)
 	objProp4: RelationField = RelationField(
 		name='objProp4',
@@ -253,6 +259,7 @@ class Class1b(Class1):
 	oProp1: RelationField = RelationField(
 		name='oProp1',
 		rule='some Class2, some (Class2 or Class4)',
+		inverse_of=['objProp3'],
 		semantic_manager=semantic_manager)
 	objProp2: RelationField = RelationField(
 		name='objProp2',
@@ -261,6 +268,7 @@ class Class1b(Class1):
 	objProp3: RelationField = RelationField(
 		name='objProp3',
 		rule='some Class3',
+		inverse_of=['oProp1'],
 		semantic_manager=semantic_manager)
 	objProp4: RelationField = RelationField(
 		name='objProp4',
@@ -298,6 +306,7 @@ class Class2(Thing):
 	oProp1: RelationField = RelationField(
 		name='oProp1',
 		rule='min 1 Class1',
+		inverse_of=['objProp3'],
 		semantic_manager=semantic_manager)
 	objProp2: RelationField = RelationField(
 		name='objProp2',
@@ -345,6 +354,7 @@ class Class3(Thing):
 	oProp1: RelationField = RelationField(
 		name='oProp1',
 		rule='value Individual1',
+		inverse_of=['objProp3'],
 		semantic_manager=semantic_manager)
 	objProp2: RelationField = RelationField(
 		name='objProp2',
@@ -402,6 +412,7 @@ class Class123(Class1, Class2, Class3):
 	oProp1: RelationField = RelationField(
 		name='oProp1',
 		rule='value Individual1, min 1 Class1, some (Class2 or Class4)',
+		inverse_of=['objProp3'],
 		semantic_manager=semantic_manager)
 	objProp2: RelationField = RelationField(
 		name='objProp2',
@@ -410,6 +421,7 @@ class Class123(Class1, Class2, Class3):
 	objProp3: RelationField = RelationField(
 		name='objProp3',
 		rule='some Class3',
+		inverse_of=['oProp1'],
 		semantic_manager=semantic_manager)
 	objProp4: RelationField = RelationField(
 		name='objProp4',
@@ -471,6 +483,7 @@ class Class13(Class1, Class3):
 	oProp1: RelationField = RelationField(
 		name='oProp1',
 		rule='value Individual1, some (Class2 or Class4)',
+		inverse_of=['objProp3'],
 		semantic_manager=semantic_manager)
 	objProp2: RelationField = RelationField(
 		name='objProp2',
@@ -479,6 +492,7 @@ class Class13(Class1, Class3):
 	objProp3: RelationField = RelationField(
 		name='objProp3',
 		rule='some Class3',
+		inverse_of=['oProp1'],
 		semantic_manager=semantic_manager)
 	objProp4: RelationField = RelationField(
 		name='objProp4',
@@ -528,6 +542,7 @@ class Class3a(Class3):
 	oProp1: RelationField = RelationField(
 		name='oProp1',
 		rule='value Individual1',
+		inverse_of=['objProp3'],
 		semantic_manager=semantic_manager)
 	objProp2: RelationField = RelationField(
 		name='objProp2',
@@ -573,6 +588,7 @@ class Class3aa(Class3a):
 	oProp1: RelationField = RelationField(
 		name='oProp1',
 		rule='value Individual1',
+		inverse_of=['objProp3'],
 		semantic_manager=semantic_manager)
 	objProp2: RelationField = RelationField(
 		name='objProp2',
@@ -629,6 +645,7 @@ class Command(Thing):
 	Is_Command_Of: RelationField = RelationField(
 		name='Is_Command_Of',
 		rule='min 1 Function',
+		inverse_of=['Has_Command'],
 		semantic_manager=semantic_manager)
 
 
@@ -662,6 +679,7 @@ class Close_Command(Command):
 	Is_Command_Of: RelationField = RelationField(
 		name='Is_Command_Of',
 		rule='min 1 Function',
+		inverse_of=['Has_Command'],
 		semantic_manager=semantic_manager)
 
 
@@ -735,6 +753,7 @@ class Device(Thing):
 	Accomplishes: RelationField = RelationField(
 		name='Accomplishes',
 		rule='min 1 Task',
+		inverse_of=['Is_Accomplished_By'],
 		semantic_manager=semantic_manager)
 	Consists_Of: RelationField = RelationField(
 		name='Consists_Of',
@@ -775,6 +794,7 @@ class Device(Thing):
 	Offers: RelationField = RelationField(
 		name='Offers',
 		rule='only Service',
+		inverse_of=['Is_Offered_By'],
 		semantic_manager=semantic_manager)
 
 
@@ -834,6 +854,7 @@ class Building_Related(Device):
 	Accomplishes: RelationField = RelationField(
 		name='Accomplishes',
 		rule='min 1 Task',
+		inverse_of=['Is_Accomplished_By'],
 		semantic_manager=semantic_manager)
 	Consists_Of: RelationField = RelationField(
 		name='Consists_Of',
@@ -874,6 +895,7 @@ class Building_Related(Device):
 	Offers: RelationField = RelationField(
 		name='Offers',
 		rule='only Service',
+		inverse_of=['Is_Offered_By'],
 		semantic_manager=semantic_manager)
 
 
@@ -940,6 +962,7 @@ class Energy_Related(Device):
 	Accomplishes: RelationField = RelationField(
 		name='Accomplishes',
 		rule='min 1 Task',
+		inverse_of=['Is_Accomplished_By'],
 		semantic_manager=semantic_manager)
 	Consists_Of: RelationField = RelationField(
 		name='Consists_Of',
@@ -980,6 +1003,7 @@ class Energy_Related(Device):
 	Offers: RelationField = RelationField(
 		name='Offers',
 		rule='only Service',
+		inverse_of=['Is_Offered_By'],
 		semantic_manager=semantic_manager)
 
 
@@ -999,6 +1023,7 @@ class Function(Thing):
 	Has_Command: RelationField = RelationField(
 		name='Has_Command',
 		rule='min 1 Command',
+		inverse_of=['Is_Command_Of'],
 		semantic_manager=semantic_manager)
 
 
@@ -1018,6 +1043,7 @@ class Actuating_Function(Function):
 	Has_Command: RelationField = RelationField(
 		name='Has_Command',
 		rule='min 1 Command',
+		inverse_of=['Is_Command_Of'],
 		semantic_manager=semantic_manager)
 
 
@@ -1039,6 +1065,7 @@ class Event_Function(Function):
 	Has_Command: RelationField = RelationField(
 		name='Has_Command',
 		rule='only Notify_Command, min 1 Command',
+		inverse_of=['Is_Command_Of'],
 		semantic_manager=semantic_manager)
 	Has_Threshold_Measurement: RelationField = RelationField(
 		name='Has_Threshold_Measurement',
@@ -1102,6 +1129,7 @@ class Function_Related(Device):
 	Accomplishes: RelationField = RelationField(
 		name='Accomplishes',
 		rule='min 1 Task',
+		inverse_of=['Is_Accomplished_By'],
 		semantic_manager=semantic_manager)
 	Consists_Of: RelationField = RelationField(
 		name='Consists_Of',
@@ -1142,6 +1170,7 @@ class Function_Related(Device):
 	Offers: RelationField = RelationField(
 		name='Offers',
 		rule='only Service',
+		inverse_of=['Is_Offered_By'],
 		semantic_manager=semantic_manager)
 
 
@@ -1201,6 +1230,7 @@ class Actuator(Function_Related):
 	Accomplishes: RelationField = RelationField(
 		name='Accomplishes',
 		rule='min 1 Task',
+		inverse_of=['Is_Accomplished_By'],
 		semantic_manager=semantic_manager)
 	Consists_Of: RelationField = RelationField(
 		name='Consists_Of',
@@ -1241,6 +1271,7 @@ class Actuator(Function_Related):
 	Offers: RelationField = RelationField(
 		name='Offers',
 		rule='only Service',
+		inverse_of=['Is_Offered_By'],
 		semantic_manager=semantic_manager)
 
 
@@ -1300,6 +1331,7 @@ class Appliance(Function_Related):
 	Accomplishes: RelationField = RelationField(
 		name='Accomplishes',
 		rule='min 1 Task',
+		inverse_of=['Is_Accomplished_By'],
 		semantic_manager=semantic_manager)
 	Consists_Of: RelationField = RelationField(
 		name='Consists_Of',
@@ -1340,6 +1372,7 @@ class Appliance(Function_Related):
 	Offers: RelationField = RelationField(
 		name='Offers',
 		rule='only Service',
+		inverse_of=['Is_Offered_By'],
 		semantic_manager=semantic_manager)
 
 
@@ -1406,6 +1439,7 @@ class Generator(Energy_Related):
 	Accomplishes: RelationField = RelationField(
 		name='Accomplishes',
 		rule='min 1 Task',
+		inverse_of=['Is_Accomplished_By'],
 		semantic_manager=semantic_manager)
 	Consists_Of: RelationField = RelationField(
 		name='Consists_Of',
@@ -1446,6 +1480,7 @@ class Generator(Energy_Related):
 	Offers: RelationField = RelationField(
 		name='Offers',
 		rule='only Service',
+		inverse_of=['Is_Offered_By'],
 		semantic_manager=semantic_manager)
 
 
@@ -1487,6 +1522,7 @@ class Gertrude(Class1, Class2):
 	oProp1: RelationField = RelationField(
 		name='oProp1',
 		rule='min 1 Class1, some (Class2 or Class4)',
+		inverse_of=['objProp3'],
 		semantic_manager=semantic_manager)
 	objProp2: RelationField = RelationField(
 		name='objProp2',
@@ -1495,6 +1531,7 @@ class Gertrude(Class1, Class2):
 	objProp3: RelationField = RelationField(
 		name='objProp3',
 		rule='some Class3',
+		inverse_of=['oProp1'],
 		semantic_manager=semantic_manager)
 	objProp4: RelationField = RelationField(
 		name='objProp4',
@@ -1536,6 +1573,7 @@ class Get_Command(Command):
 	Is_Command_Of: RelationField = RelationField(
 		name='Is_Command_Of',
 		rule='min 1 Function',
+		inverse_of=['Has_Command'],
 		semantic_manager=semantic_manager)
 
 
@@ -1569,6 +1607,7 @@ class Get_Current_Meter_Value_Command(Get_Command):
 	Is_Command_Of: RelationField = RelationField(
 		name='Is_Command_Of',
 		rule='min 1 Function',
+		inverse_of=['Has_Command'],
 		semantic_manager=semantic_manager)
 
 
@@ -1602,6 +1641,7 @@ class Get_Meter_Data_Command(Get_Command):
 	Is_Command_Of: RelationField = RelationField(
 		name='Is_Command_Of',
 		rule='min 1 Function',
+		inverse_of=['Has_Command'],
 		semantic_manager=semantic_manager)
 
 
@@ -1635,6 +1675,7 @@ class Get_Meter_History_Command(Get_Command):
 	Is_Command_Of: RelationField = RelationField(
 		name='Is_Command_Of',
 		rule='min 1 Function',
+		inverse_of=['Has_Command'],
 		semantic_manager=semantic_manager)
 
 
@@ -1668,6 +1709,7 @@ class Get_Sensing_Data_Command(Get_Command):
 	Is_Command_Of: RelationField = RelationField(
 		name='Is_Command_Of',
 		rule='min 1 Function',
+		inverse_of=['Has_Command'],
 		semantic_manager=semantic_manager)
 
 
@@ -1728,6 +1770,7 @@ class Hvac(Function_Related):
 	Accomplishes: RelationField = RelationField(
 		name='Accomplishes',
 		rule='value Comfort, min 1 Task',
+		inverse_of=['Is_Accomplished_By'],
 		semantic_manager=semantic_manager)
 	Consists_Of: RelationField = RelationField(
 		name='Consists_Of',
@@ -1768,6 +1811,7 @@ class Hvac(Function_Related):
 	Offers: RelationField = RelationField(
 		name='Offers',
 		rule='only Service',
+		inverse_of=['Is_Offered_By'],
 		semantic_manager=semantic_manager)
 
 
@@ -1787,6 +1831,7 @@ class Level_Control_Function(Actuating_Function):
 	Has_Command: RelationField = RelationField(
 		name='Has_Command',
 		rule='only (Set_Absolute_Level_Command or Set_Relative_Level_Command) or Step_Down_Command) or Step_Up_Command), min 1 Command',
+		inverse_of=['Is_Command_Of'],
 		semantic_manager=semantic_manager)
 
 
@@ -1847,6 +1892,7 @@ class Lighting_Device(Function_Related):
 	Accomplishes: RelationField = RelationField(
 		name='Accomplishes',
 		rule='value Comfort, min 1 Task',
+		inverse_of=['Is_Accomplished_By'],
 		semantic_manager=semantic_manager)
 	Consists_Of: RelationField = RelationField(
 		name='Consists_Of',
@@ -1887,6 +1933,7 @@ class Lighting_Device(Function_Related):
 	Offers: RelationField = RelationField(
 		name='Offers',
 		rule='only Service',
+		inverse_of=['Is_Offered_By'],
 		semantic_manager=semantic_manager)
 
 
@@ -1946,6 +1993,7 @@ class Load(Energy_Related):
 	Accomplishes: RelationField = RelationField(
 		name='Accomplishes',
 		rule='min 1 Task',
+		inverse_of=['Is_Accomplished_By'],
 		semantic_manager=semantic_manager)
 	Consists_Of: RelationField = RelationField(
 		name='Consists_Of',
@@ -1986,6 +2034,7 @@ class Load(Energy_Related):
 	Offers: RelationField = RelationField(
 		name='Offers',
 		rule='only Service',
+		inverse_of=['Is_Offered_By'],
 		semantic_manager=semantic_manager)
 
 
@@ -2078,6 +2127,7 @@ class Meter(Function_Related):
 	Accomplishes: RelationField = RelationField(
 		name='Accomplishes',
 		rule='min 1 Task',
+		inverse_of=['Is_Accomplished_By'],
 		semantic_manager=semantic_manager)
 	Consists_Of: RelationField = RelationField(
 		name='Consists_Of',
@@ -2118,6 +2168,7 @@ class Meter(Function_Related):
 	Offers: RelationField = RelationField(
 		name='Offers',
 		rule='only Service',
+		inverse_of=['Is_Offered_By'],
 		semantic_manager=semantic_manager)
 
 
@@ -2179,6 +2230,7 @@ class Energy_Meter(Meter):
 	Accomplishes: RelationField = RelationField(
 		name='Accomplishes',
 		rule='value Energyefficiency, value Meter_Reading, min 1 Task',
+		inverse_of=['Is_Accomplished_By'],
 		semantic_manager=semantic_manager)
 	Consists_Of: RelationField = RelationField(
 		name='Consists_Of',
@@ -2219,6 +2271,7 @@ class Energy_Meter(Meter):
 	Offers: RelationField = RelationField(
 		name='Offers',
 		rule='only Service',
+		inverse_of=['Is_Offered_By'],
 		semantic_manager=semantic_manager)
 
 
@@ -2242,6 +2295,7 @@ class Metering_Function(Function):
 	Has_Command: RelationField = RelationField(
 		name='Has_Command',
 		rule='only (Get_Current_Meter_Value_Command or Get_Meter_Data_Command) or Get_Meter_History_Command), min 1 Command',
+		inverse_of=['Is_Command_Of'],
 		semantic_manager=semantic_manager)
 	Has_Meter_Reading_Type: RelationField = RelationField(
 		name='Has_Meter_Reading_Type',
@@ -2310,6 +2364,7 @@ class Micro_Renewable(Function_Related):
 	Accomplishes: RelationField = RelationField(
 		name='Accomplishes',
 		rule='value Energyefficiency, min 1 Task',
+		inverse_of=['Is_Accomplished_By'],
 		semantic_manager=semantic_manager)
 	Consists_Of: RelationField = RelationField(
 		name='Consists_Of',
@@ -2350,6 +2405,7 @@ class Micro_Renewable(Function_Related):
 	Offers: RelationField = RelationField(
 		name='Offers',
 		rule='only Service',
+		inverse_of=['Is_Offered_By'],
 		semantic_manager=semantic_manager)
 
 
@@ -2410,6 +2466,7 @@ class Multimedia(Function_Related):
 	Accomplishes: RelationField = RelationField(
 		name='Accomplishes',
 		rule='value Entertainment, min 1 Task',
+		inverse_of=['Is_Accomplished_By'],
 		semantic_manager=semantic_manager)
 	Consists_Of: RelationField = RelationField(
 		name='Consists_Of',
@@ -2450,6 +2507,7 @@ class Multimedia(Function_Related):
 	Offers: RelationField = RelationField(
 		name='Offers',
 		rule='only Service',
+		inverse_of=['Is_Offered_By'],
 		semantic_manager=semantic_manager)
 
 
@@ -2509,6 +2567,7 @@ class Network(Function_Related):
 	Accomplishes: RelationField = RelationField(
 		name='Accomplishes',
 		rule='min 1 Task',
+		inverse_of=['Is_Accomplished_By'],
 		semantic_manager=semantic_manager)
 	Consists_Of: RelationField = RelationField(
 		name='Consists_Of',
@@ -2549,6 +2608,7 @@ class Network(Function_Related):
 	Offers: RelationField = RelationField(
 		name='Offers',
 		rule='only Service',
+		inverse_of=['Is_Offered_By'],
 		semantic_manager=semantic_manager)
 
 
@@ -2582,6 +2642,7 @@ class Notify_Command(Command):
 	Is_Command_Of: RelationField = RelationField(
 		name='Is_Command_Of',
 		rule='min 1 Function',
+		inverse_of=['Has_Command'],
 		semantic_manager=semantic_manager)
 
 
@@ -2615,6 +2676,7 @@ class Off_Command(Command):
 	Is_Command_Of: RelationField = RelationField(
 		name='Is_Command_Of',
 		rule='min 1 Function',
+		inverse_of=['Has_Command'],
 		semantic_manager=semantic_manager)
 
 
@@ -2648,6 +2710,7 @@ class On_Command(Command):
 	Is_Command_Of: RelationField = RelationField(
 		name='Is_Command_Of',
 		rule='min 1 Function',
+		inverse_of=['Has_Command'],
 		semantic_manager=semantic_manager)
 
 
@@ -2667,6 +2730,7 @@ class On_Off_Function(Actuating_Function):
 	Has_Command: RelationField = RelationField(
 		name='Has_Command',
 		rule='only (Off_Command or On_Command) or Toggle_Command), min 1 Command',
+		inverse_of=['Is_Command_Of'],
 		semantic_manager=semantic_manager)
 
 
@@ -2686,6 +2750,7 @@ class Open_Close_Function(Actuating_Function):
 	Has_Command: RelationField = RelationField(
 		name='Has_Command',
 		rule='only (Close_Command or Open_Command), min 1 Command',
+		inverse_of=['Is_Command_Of'],
 		semantic_manager=semantic_manager)
 
 
@@ -2719,6 +2784,7 @@ class Open_Command(Command):
 	Is_Command_Of: RelationField = RelationField(
 		name='Is_Command_Of',
 		rule='min 1 Function',
+		inverse_of=['Has_Command'],
 		semantic_manager=semantic_manager)
 
 
@@ -2752,6 +2818,7 @@ class Pause_Command(Command):
 	Is_Command_Of: RelationField = RelationField(
 		name='Is_Command_Of',
 		rule='min 1 Function',
+		inverse_of=['Has_Command'],
 		semantic_manager=semantic_manager)
 
 
@@ -3091,6 +3158,7 @@ class Sensing_Function(Function):
 	Has_Command: RelationField = RelationField(
 		name='Has_Command',
 		rule='only Get_Sensing_Data_Command, min 1 Command',
+		inverse_of=['Is_Command_Of'],
 		semantic_manager=semantic_manager)
 	Has_Sensing_Range_: RelationField = RelationField(
 		name='Has_Sensing_Range_',
@@ -3158,6 +3226,7 @@ class Sensor(Function_Related):
 	Accomplishes: RelationField = RelationField(
 		name='Accomplishes',
 		rule='min 1 Task',
+		inverse_of=['Is_Accomplished_By'],
 		semantic_manager=semantic_manager)
 	Consists_Of: RelationField = RelationField(
 		name='Consists_Of',
@@ -3198,6 +3267,7 @@ class Sensor(Function_Related):
 	Offers: RelationField = RelationField(
 		name='Offers',
 		rule='only Service',
+		inverse_of=['Is_Offered_By'],
 		semantic_manager=semantic_manager)
 
 
@@ -3219,6 +3289,7 @@ class Service(Thing):
 	Is_Offered_By: RelationField = RelationField(
 		name='Is_Offered_By',
 		rule='min 1 Device',
+		inverse_of=['Offers'],
 		semantic_manager=semantic_manager)
 	Represents: RelationField = RelationField(
 		name='Represents',
@@ -3256,6 +3327,7 @@ class Set_Level_Command(Command):
 	Is_Command_Of: RelationField = RelationField(
 		name='Is_Command_Of',
 		rule='min 1 Function',
+		inverse_of=['Has_Command'],
 		semantic_manager=semantic_manager)
 
 
@@ -3289,6 +3361,7 @@ class Set_Absolute_Level_Command(Set_Level_Command):
 	Is_Command_Of: RelationField = RelationField(
 		name='Is_Command_Of',
 		rule='min 1 Function',
+		inverse_of=['Has_Command'],
 		semantic_manager=semantic_manager)
 
 
@@ -3322,6 +3395,7 @@ class Set_Relative_Level_Command(Set_Level_Command):
 	Is_Command_Of: RelationField = RelationField(
 		name='Is_Command_Of',
 		rule='min 1 Function',
+		inverse_of=['Has_Command'],
 		semantic_manager=semantic_manager)
 
 
@@ -3413,6 +3487,7 @@ class Smoke_Sensor(Sensor):
 	Accomplishes: RelationField = RelationField(
 		name='Accomplishes',
 		rule='value Safety, min 1 Task',
+		inverse_of=['Is_Accomplished_By'],
 		semantic_manager=semantic_manager)
 	Consists_Of: RelationField = RelationField(
 		name='Consists_Of',
@@ -3453,6 +3528,7 @@ class Smoke_Sensor(Sensor):
 	Offers: RelationField = RelationField(
 		name='Offers',
 		rule='only Service',
+		inverse_of=['Is_Offered_By'],
 		semantic_manager=semantic_manager)
 
 
@@ -3486,6 +3562,7 @@ class Start_Command(Command):
 	Is_Command_Of: RelationField = RelationField(
 		name='Is_Command_Of',
 		rule='min 1 Function',
+		inverse_of=['Has_Command'],
 		semantic_manager=semantic_manager)
 
 
@@ -3505,6 +3582,7 @@ class Start_Stop_Function(Actuating_Function):
 	Has_Command: RelationField = RelationField(
 		name='Has_Command',
 		rule='only (Start_Command or Stop_Command), min 1 Command',
+		inverse_of=['Is_Command_Of'],
 		semantic_manager=semantic_manager)
 
 
@@ -3608,6 +3686,7 @@ class Step_Down_Command(Command):
 	Is_Command_Of: RelationField = RelationField(
 		name='Is_Command_Of',
 		rule='min 1 Function',
+		inverse_of=['Has_Command'],
 		semantic_manager=semantic_manager)
 
 
@@ -3641,6 +3720,7 @@ class Step_Up_Command(Command):
 	Is_Command_Of: RelationField = RelationField(
 		name='Is_Command_Of',
 		rule='min 1 Function',
+		inverse_of=['Has_Command'],
 		semantic_manager=semantic_manager)
 
 
@@ -3674,6 +3754,7 @@ class Stop_Command(Command):
 	Is_Command_Of: RelationField = RelationField(
 		name='Is_Command_Of',
 		rule='min 1 Function',
+		inverse_of=['Has_Command'],
 		semantic_manager=semantic_manager)
 
 
@@ -3740,6 +3821,7 @@ class Storage(Energy_Related):
 	Accomplishes: RelationField = RelationField(
 		name='Accomplishes',
 		rule='min 1 Task',
+		inverse_of=['Is_Accomplished_By'],
 		semantic_manager=semantic_manager)
 	Consists_Of: RelationField = RelationField(
 		name='Consists_Of',
@@ -3780,6 +3862,7 @@ class Storage(Energy_Related):
 	Offers: RelationField = RelationField(
 		name='Offers',
 		rule='only Service',
+		inverse_of=['Is_Offered_By'],
 		semantic_manager=semantic_manager)
 
 
@@ -3839,6 +3922,7 @@ class Switch(Actuator):
 	Accomplishes: RelationField = RelationField(
 		name='Accomplishes',
 		rule='min 1 Task',
+		inverse_of=['Is_Accomplished_By'],
 		semantic_manager=semantic_manager)
 	Consists_Of: RelationField = RelationField(
 		name='Consists_Of',
@@ -3879,6 +3963,7 @@ class Switch(Actuator):
 	Offers: RelationField = RelationField(
 		name='Offers',
 		rule='only Service',
+		inverse_of=['Is_Offered_By'],
 		semantic_manager=semantic_manager)
 
 
@@ -3939,6 +4024,7 @@ class Door_Switch(Switch):
 	Accomplishes: RelationField = RelationField(
 		name='Accomplishes',
 		rule='value Safety, min 1 Task',
+		inverse_of=['Is_Accomplished_By'],
 		semantic_manager=semantic_manager)
 	Consists_Of: RelationField = RelationField(
 		name='Consists_Of',
@@ -3979,6 +4065,7 @@ class Door_Switch(Switch):
 	Offers: RelationField = RelationField(
 		name='Offers',
 		rule='only Service',
+		inverse_of=['Is_Offered_By'],
 		semantic_manager=semantic_manager)
 
 
@@ -4039,6 +4126,7 @@ class Light_Switch(Switch):
 	Accomplishes: RelationField = RelationField(
 		name='Accomplishes',
 		rule='value Lighting, min 1 Task',
+		inverse_of=['Is_Accomplished_By'],
 		semantic_manager=semantic_manager)
 	Consists_Of: RelationField = RelationField(
 		name='Consists_Of',
@@ -4079,6 +4167,7 @@ class Light_Switch(Switch):
 	Offers: RelationField = RelationField(
 		name='Offers',
 		rule='some Switch_On_Service, only Service',
+		inverse_of=['Is_Offered_By'],
 		semantic_manager=semantic_manager)
 
 
@@ -4100,6 +4189,7 @@ class Switch_On_Service(Service):
 	Is_Offered_By: RelationField = RelationField(
 		name='Is_Offered_By',
 		rule='some Light_Switch, min 1 Device',
+		inverse_of=['Offers'],
 		semantic_manager=semantic_manager)
 	Represents: RelationField = RelationField(
 		name='Represents',
@@ -4123,6 +4213,7 @@ class Task(Thing):
 	Is_Accomplished_By: RelationField = RelationField(
 		name='Is_Accomplished_By',
 		rule='min 1 Device',
+		inverse_of=['Accomplishes'],
 		semantic_manager=semantic_manager)
 
 
@@ -4214,6 +4305,7 @@ class Temperature_Sensor(Sensor):
 	Accomplishes: RelationField = RelationField(
 		name='Accomplishes',
 		rule='value Comfort, min 1 Task',
+		inverse_of=['Is_Accomplished_By'],
 		semantic_manager=semantic_manager)
 	Consists_Of: RelationField = RelationField(
 		name='Consists_Of',
@@ -4254,6 +4346,7 @@ class Temperature_Sensor(Sensor):
 	Offers: RelationField = RelationField(
 		name='Offers',
 		rule='only Service',
+		inverse_of=['Is_Offered_By'],
 		semantic_manager=semantic_manager)
 
 
@@ -4318,6 +4411,7 @@ class Toggle_Command(Command):
 	Is_Command_Of: RelationField = RelationField(
 		name='Is_Command_Of',
 		rule='min 1 Function',
+		inverse_of=['Has_Command'],
 		semantic_manager=semantic_manager)
 
 
@@ -4378,6 +4472,7 @@ class Washing_Machine(Appliance, Load):
 	Accomplishes: RelationField = RelationField(
 		name='Accomplishes',
 		rule='value Washing, min 1 Task',
+		inverse_of=['Is_Accomplished_By'],
 		semantic_manager=semantic_manager)
 	Consists_Of: RelationField = RelationField(
 		name='Consists_Of',
@@ -4418,6 +4513,7 @@ class Washing_Machine(Appliance, Load):
 	Offers: RelationField = RelationField(
 		name='Offers',
 		rule='only Service',
+		inverse_of=['Is_Offered_By'],
 		semantic_manager=semantic_manager)
 
 
