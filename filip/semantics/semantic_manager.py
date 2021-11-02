@@ -35,6 +35,7 @@ class InstanceRegistry(BaseModel):
         Instances are saved with their identifier as key """
 
     _deleted_identifiers: List[InstanceIdentifier] = []
+    """List of all identifiers that were deleted"""
 
     def delete(self, instance: 'SemanticClass'):
         """
@@ -56,7 +57,16 @@ class InstanceRegistry(BaseModel):
 
         del self._registry[identifier]
 
-    def instance_was_deleted(self, identifier: InstanceIdentifier):
+    def instance_was_deleted(self, identifier: InstanceIdentifier) -> bool:
+        """
+        Check if an instance was deleted
+
+        Args:
+            identifier (InstanceIdentifier): Identifier of instance to check
+
+        Returns:
+            bool
+        """
         return identifier in self._deleted_identifiers
 
     def register(self, instance: 'SemanticClass'):
@@ -104,9 +114,21 @@ class InstanceRegistry(BaseModel):
         return list(self._registry.values())
 
     def get_all_deleted_identifiers(self) -> List['InstanceIdentifier']:
+        """
+        Get all identifiers that were deleted by the user
+
+        Returns:
+            List[InstanceIdentifier]
+        """
         return self._deleted_identifiers
 
-    def save(self):
+    def save(self) -> str:
+        """
+        Save the state of the registry out of a json string.
+
+        Returns:
+             str, json string of registry state
+        """
         res = {'instances': [], 'deleted_identifiers': []}
 
         for identifier, instance in self._registry.items():
@@ -126,11 +148,22 @@ class InstanceRegistry(BaseModel):
         return json.dumps(res, indent=4)
 
     def clear(self):
+        """Clear the local state"""
         self._registry.clear()
         self._deleted_identifiers.clear()
 
     def load(self, json_string: str, semantic_manager: 'SemanticManager'):
+        """
+        Load the state of the registry out of a json string. The current
+        state will be discarded
 
+        Args:
+            json_string (str): State expressed as json string
+            semantic_manager (SemanticManager): manager to which registry
+                belongs
+        Returns:
+             None
+        """
         self.clear()
 
         save = json.loads(json_string)
@@ -152,17 +185,34 @@ class InstanceRegistry(BaseModel):
             self._deleted_identifiers.append(identifier)
 
 
-
 class SemanticManager(BaseModel):
+    """
+    The Semantic Manager is a static unique object that is delivered with
+    each vocabulary model export.
+
+    It provides the interface to interact with the local state and Fiware
+    """
 
     instance_registry: InstanceRegistry
+    """Registry managing the local state"""
     class_catalogue: Dict[str, type] = {}
+    """Register of class names to classes"""
     datatype_catalogue: Dict[str, Dict[str, str]] = {}
+    """Register of datatype names to Dict representation of datatypes"""
     individual_catalogue: Dict[str, type] = {}
+    """Register of individual names to their classes"""
 
     default_header: InstanceHeader = InstanceHeader()
 
-    def get_client(self, instance_header: InstanceHeader):
+    def get_client(self, instance_header: InstanceHeader) \
+            -> ContextBrokerClient:
+        """Get the correct ContextBrokerClient to be used with the given header
+
+        Args:
+            instance_header (InstanceHeader): Header to be used with client
+        Returns:
+            ContextBrokerClient
+        """
         if instance_header.fiware_version == NgsiVersion.v2:
             return ContextBrokerClient(
                 url=instance_header.cb_url,
@@ -171,7 +221,14 @@ class SemanticManager(BaseModel):
             # todo LD
             raise Exception("FiwareVersion not yet supported")
 
-    def get_iota_client(self, instance_header: InstanceHeader):
+    def get_iota_client(self, instance_header: InstanceHeader) -> IoTAClient:
+        """Get the correct IotaClient to be used with the given header
+
+        Args:
+            instance_header (InstanceHeader): Header to be used with client
+        Returns:
+            IoTAClient
+        """
         if instance_header.fiware_version == NgsiVersion.v2:
             return IoTAClient(
                 url=instance_header.iota_url,
@@ -184,6 +241,16 @@ class SemanticManager(BaseModel):
             self,
             entity: ContextEntity,
             header: InstanceHeader) -> SemanticClass:
+
+        """Converts a ContextEntity to a SemanticClass
+
+        Args:
+            entity (ContextEntity): entity to convert
+            header (InstanceHeader): Header of the new instance
+
+        Returns:
+            SemanticClass or SemanticDeviceClass
+        """
 
         class_name = entity.type
 
@@ -252,7 +319,18 @@ class SemanticManager(BaseModel):
 
         return loaded_class
 
+
     def _convert_value_fitting_for_field(self, field, value):
+        """
+        Converts a given value into the correct format for the given field
+
+        Args:
+            field: SemanticField
+            value: Value to convert
+
+        Returns:
+            converted value
+        """
         if isinstance(field, DataField):
             return value
         elif isinstance(field, RelationField):
@@ -285,13 +363,45 @@ class SemanticManager(BaseModel):
                                )
 
     def get_class_by_name(self, class_name:str) -> Type:
+        """
+        Get the class object by its type in string form
+
+        Args:
+            class_name (str)
+        Raises:
+            KeyError: if class_name not registered as a SemanticClass
+
+        Returns:
+            Type
+        """
         return self.class_catalogue[class_name]
 
-    def is_class_name_an_device_class(self, class_name:str) -> bool:
+    def is_class_name_an_device_class(self, class_name: str) -> bool:
+        """
+        Test if the name/type of a class belongs to a SemanticDeviceClass
+
+        Args:
+            class_name (str): class name to check
+        Returns:
+            bool, True if belongs to a SemanticDeviceClass
+        """
         class_type = self.get_class_by_name(class_name)
         return isinstance(class_type, SemanticDeviceClass)
 
     def save_state(self, assert_validity: bool = True):
+        """
+        Save the local state completely to Fiware.
+
+        Args:
+            assert_validity (bool): It true an error is raised if the
+            RuleFields of one instance are invalid
+
+        Raises:
+            AssertionError: If a device endpoint or transport is not defined
+
+        Returns:
+            None
+        """
 
         if assert_validity:
             for instance in self.instance_registry.get_all():
@@ -362,6 +472,16 @@ class SemanticManager(BaseModel):
             instance.old_state.state = instance.build_context_entity()
 
     def load_instance(self, identifier: InstanceIdentifier) -> SemanticClass:
+        """
+        Get the instance with the given identifier. It is either loaded from
+        local state or retrieved from fiware
+
+        Args:
+            identifier (InstanceIdentifier): Identifier to load
+
+        Returns:
+            SemanticClass
+        """
 
         if self.instance_registry.contains(identifier=identifier):
             return self.instance_registry.get(identifier=identifier)
@@ -376,6 +496,16 @@ class SemanticManager(BaseModel):
                 header=identifier.header)
 
     def does_instance_exists(self, identifier: InstanceIdentifier) -> bool:
+        """
+        Check if an instance with the given identifier already exists in
+        local state or in Fiware
+
+        Args:
+            identifier (InstanceIdentifier): Identifier to check
+
+        Returns:
+            bool, true if exists
+        """
 
         if self.instance_registry.contains(identifier=identifier):
             return True
@@ -387,15 +517,54 @@ class SemanticManager(BaseModel):
                                              entity_type=identifier.type)
 
     def was_instance_deleted(self, identifier: InstanceIdentifier) -> bool:
+        """
+        Check if the instance with the given identifier was deleted.
+
+        Args:
+            identifier (InstanceIdentifier): Identifier to check
+
+        Returns:
+            bool, true if deleted
+        """
         return self.instance_registry.instance_was_deleted(identifier)
 
     def get_instance(self, identifier: InstanceIdentifier) -> SemanticClass:
+        """
+        Get the instance with the given identifier. It is either loaded from
+        local state or retrieved from fiware
+
+        Args:
+            identifier (InstanceIdentifier): Identifier to load
+
+        Returns:
+            SemanticClass
+        """
         return self.load_instance(identifier)
 
-    def get_all_local_instances(self):
-        return  self.instance_registry.get_all()
+    def get_all_local_instances(self) -> List[SemanticClass]:
+        """
+        Retrieve all SemanticClass instances in the local state
 
-    def get_all_local_instances_of_class(self, class_:type, class_name:str):
+        Returns:
+            List[SemanticClass]
+        """
+        return self.instance_registry.get_all()
+
+    def get_all_local_instances_of_class(self, class_:type, class_name:str) \
+            -> List[SemanticClass]:
+        """
+        Retrieve all instances of a SemanitcClass from Local Storage
+
+        Args:
+            class_ (type): Type of classes to retrieve
+            class_name (Str): Type of classes to retrieve as string
+
+        Raises:
+            AssertionError: If both parameters are non None
+
+        Returns:
+            List[SemanticClass]
+        """
 
         assert class_ is None or class_name is None, \
             "Only one parameter is allowed"
@@ -420,6 +589,26 @@ class SemanticManager(BaseModel):
             entity_types: Optional[List[str]] = None,
             entity_ids: Optional[List[str]] = None
             ) -> List[SemanticClass]:
+        """
+        Loads the instances of given types or ids from Fiware into the local
+        state and returns the loaded instances
+
+        Args:
+            fiware_header (FiwareHeader): Fiware location to load
+            fiware_version (NgsiVersion): Used fiware version
+            cb_url (str): URL of the ContextBroker
+            iota_url (str): URL of the IotaBroker
+            entity_types (Optional[str]): List of the entities types that
+                should be loaded
+            entity_ids (Optional[str]): List of the entities ids that
+                should be loaded
+
+        Raises:
+           ValueError: if both entity_types and entity_ids are given
+           ValueError: if Retrival of Context-entities fails
+        Returns:
+             List[SemanticClass]
+        """
 
         if len([p for p in [entity_types, entity_ids] if p is not None]) > 1:
             raise ValueError("Only one search parameter is allowed")
