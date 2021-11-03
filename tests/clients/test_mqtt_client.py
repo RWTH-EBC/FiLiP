@@ -13,7 +13,7 @@ from filip.models.ngsi_v2.iot import \
     ServiceGroup
 from filip.clients.mqtt import MQTTClient, encoder
 from tests.config import settings
-from filip.utils.cleanup import clean_test
+from filip.utils.cleanup import clean_test, clear_all
 
 
 logger = logging.getLogger(__name__)
@@ -24,7 +24,6 @@ class TestMQTTClient(TestCase):
         self.fiware_header = FiwareHeader(
             service=settings.FIWARE_SERVICE,
             service_path=settings.FIWARE_SERVICEPATH)
-
         self.service_group=ServiceGroup(
             apikey=settings.FIWARE_SERVICE,
             resource="/iot/json")
@@ -156,7 +155,7 @@ class TestMQTTClient(TestCase):
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
                 cb_url=settings.CB_URL,
                 iota_url=settings.IOTA_JSON_URL)
-    def test_add_command_callback(self):
+    def test_add_command_callback_json(self):
         """
         Test for receiving commands for a specific device
         Returns:
@@ -230,7 +229,7 @@ class TestMQTTClient(TestCase):
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
                 cb_url=settings.CB_URL,
                 iota_url=settings.IOTA_JSON_URL)
-    def test_publish(self):
+    def test_publish_json(self):
         """
         Test for receiving commands for a specific device
         Returns:
@@ -308,5 +307,170 @@ class TestMQTTClient(TestCase):
         # disconnect the mqtt device
         self.mqttc.disconnect()
 
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                cb_url=settings.CB_URL,
+                iota_url=settings.IOTA_UL_URL)
+    def test_add_command_callback_ultralight(self):
+        """
+        Test for receiving commands for a specific device
+        Returns:
+            None
+        """
+        for group in self.mqttc.service_groups:
+            self.mqttc.delete_service_group(group.apikey)
 
+        for device in self.mqttc.devices:
+            self.mqttc.delete_device(device.device_id)
 
+        def on_command(client, obj, msg):
+            apikey, device_id, payload = \
+                client.encoder.decode_message(msg=msg)
+
+            # acknowledge a command. Here command are usually single
+            # messages. The first key is equal to the commands name.
+            client.publish(device_id=device_id,
+                           command_name=next(iter(payload)),
+                           payload=payload)
+
+        self.mqttc.add_service_group(self.service_group)
+        self.mqttc.add_device(self.device)
+        self.mqttc.add_command_callback(device_id=self.device.device_id,
+                                        callback=on_command)
+
+        self.mqttc.encoder = encoder.Ultralight
+
+        from filip.clients.ngsi_v2 import HttpClient, HttpClientConfig
+        httpc_config = HttpClientConfig(cb_url=settings.CB_URL,
+                                        iota_url=settings.IOTA_UL_URL)
+        httpc = HttpClient(fiware_header=self.fiware_header,
+                           config=httpc_config)
+        httpc.iota.post_group(service_group=self.service_group, update=True)
+        httpc.iota.post_device(device=self.device, update=True)
+
+        mqtt_broker_url = urlparse(settings.MQTT_BROKER_URL)
+
+        self.mqttc.connect(host=mqtt_broker_url.hostname,
+                           port=mqtt_broker_url.port,
+                           keepalive=60,
+                           bind_address="",
+                           bind_port=0,
+                           clean_start=MQTT_CLEAN_START_FIRST_ONLY,
+                           properties=None)
+        self.mqttc.subscribe()
+
+        entity = httpc.cb.get_entity(entity_id=self.device.device_id,
+                                     entity_type=self.device.entity_type)
+        context_command = NamedCommand(name=self.device.commands[0].name,
+                                       value=False)
+        self.mqttc.loop_start()
+
+        httpc.cb.post_command(entity_id=entity.id,
+                              entity_type=entity.type,
+                              command=context_command)
+
+        time.sleep(2)
+        # close the mqtt listening thread
+        self.mqttc.loop_stop()
+        # disconnect the mqtt device
+        self.mqttc.disconnect()
+
+        entity = httpc.cb.get_entity(entity_id=self.device.device_id,
+                                     entity_type=self.device.entity_type)
+
+        # The main part of this test, for all this setup was done
+        self.assertEqual("OK", entity.heater_status.value)
+
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                cb_url=settings.CB_URL,
+                iota_url=settings.IOTA_UL_URL)
+    def test_publish_ultralight(self):
+        """
+        Test for receiving commands for a specific device
+        Returns:
+            None
+        """
+        for group in self.mqttc.service_groups:
+            self.mqttc.delete_service_group(group.apikey)
+
+        for device in self.mqttc.devices:
+            self.mqttc.delete_device(device.device_id)
+
+        service_group = ServiceGroup(
+            apikey=settings.FIWARE_SERVICE,
+            resource="/iot/d")
+
+        self.mqttc.add_service_group(service_group)
+        self.mqttc.add_device(self.device)
+
+        self.mqttc.encoder = encoder.Ultralight
+
+        from filip.clients.ngsi_v2 import HttpClient, HttpClientConfig
+        httpc_config = HttpClientConfig(cb_url=settings.CB_URL,
+                                        iota_url=settings.IOTA_UL_URL)
+        httpc = HttpClient(fiware_header=self.fiware_header,
+                           config=httpc_config)
+        httpc.iota.post_group(service_group=self.service_group, update=True)
+        httpc.iota.post_device(device=self.device, update=True)
+
+        mqtt_broker_url = urlparse(settings.MQTT_BROKER_URL)
+
+        self.mqttc.connect(host=mqtt_broker_url.hostname,
+                           port=mqtt_broker_url.port,
+                           keepalive=60,
+                           bind_address="",
+                           bind_port=0,
+                           clean_start=MQTT_CLEAN_START_FIRST_ONLY,
+                           properties=None)
+        self.mqttc.loop_start()
+
+        self.mqttc.publish(device_id=self.device.device_id,
+                           payload={self.device.attributes[0].object_id: 50})
+        time.sleep(1)
+        entity = httpc.cb.get_entity(entity_id=self.device.device_id,
+                                     entity_type=self.device.entity_type)
+        self.assertEqual(50, entity.temperature.value)
+
+        self.mqttc.publish(device_id=self.device.device_id,
+                           attribute_name="temperature",
+                           payload=60)
+        time.sleep(1)
+        entity = httpc.cb.get_entity(entity_id=self.device.device_id,
+                                     entity_type=self.device.entity_type)
+        self.assertEqual(60, entity.temperature.value)
+
+        self.mqttc.publish(device_id=self.device.device_id,
+                           payload={self.device.attributes[0].object_id: 50},
+                           timestamp=True)
+        time.sleep(1)
+        entity = httpc.cb.get_entity(entity_id=self.device.device_id,
+                                     entity_type=self.device.entity_type)
+        self.assertEqual(50, entity.temperature.value)
+
+        from datetime import datetime, timedelta
+        timestamp = datetime.now() + timedelta(days=1)
+        timestamp = timestamp.astimezone().isoformat()
+        self.mqttc.publish(device_id=self.device.device_id,
+                           payload={self.device.attributes[0].object_id: 60,
+                                    'timeInstant': timestamp})
+        time.sleep(1)
+        entity = httpc.cb.get_entity(entity_id=self.device.device_id,
+                                     entity_type=self.device.entity_type)
+        self.assertEqual(60, entity.temperature.value)
+        self.assertEqual(timestamp, entity.TimeInstant.value)
+
+        print(entity.json(indent=2))
+
+        # close the mqtt listening thread
+        self.mqttc.loop_stop()
+        # disconnect the mqtt device
+        self.mqttc.disconnect()
+
+    def tearDown(self) -> None:
+        """
+        Cleanup test server
+        """
+        clear_all(fiware_header=self.fiware_header,
+                  cb_url=settings.CB_URL,
+                  iota_url=[settings.IOTA_JSON_URL, settings.IOTA_UL_URL])

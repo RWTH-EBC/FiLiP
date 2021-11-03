@@ -1,5 +1,6 @@
-
-from typing import Any, Dict, Literal, Tuple
+import json
+from pydantic import validate_arguments
+from typing import Any, Dict, Literal, Tuple, Union
 from filip.clients.mqtt.encoder import BaseEncoder
 
 
@@ -9,23 +10,28 @@ class Ultralight(BaseEncoder):
     def __init__(self):
         super().__init__()
 
+    @staticmethod
+    @validate_arguments
+    def __eval_value(value: Union[bool, float, str]):
+        return value
+
     def decode_message(self, msg, decoder='utf-8') -> Tuple[str, str, Dict]:
         apikey, device_id, payload = super().decode_message(msg=msg,
                                                             decoder=decoder)
         payload = payload.split('@')
-        if device_id == payload[0]:
+        if not device_id == payload[0]:
             self.logger.warning("Received invalid command")
 
         payload = payload[1].split('|')
-        payload = {payload[i]: eval(payload[i + 1])
+        payload = {payload[i]: self.__eval_value(payload[i + 1])
                    for i in range(0, len(payload), 2)}
 
         return apikey, device_id, payload
 
-    def encode_msg(self, payload: Any, msg_type: Literal['single',
-                                                         'multi',
-                                                         'cmdexe'])  \
-            -> str:
+    def encode_msg(self,
+                   device_id: str,
+                   payload: Any,
+                   msg_type: Literal['single', 'multi', 'cmdexe']) -> str:
         if msg_type == 'single':
             return payload
         elif msg_type == 'multi':
@@ -36,6 +42,14 @@ class Ultralight(BaseEncoder):
             data = '|'.join([timestamp, data])
             return data
         elif msg_type == 'cmdexe':
-            return '|'.join([f"{key}|{value}" for key, value in
-                             payload.items()])
-        self.__raise_encoding_error(payload=payload, msg_type=msg_type)
+            for key, value in payload.items():
+                if isinstance(value, bool):
+                    value = str(value).lower()
+                elif isinstance(value, (float, int)):
+                    value = str(value)
+                elif isinstance(value, str):
+                    pass
+                else:
+                    raise ValueError("Cannot parse command acknowledge!")
+                return f"{device_id}@{key}|{value}"
+        super()._raise_encoding_error(payload=payload, msg_type=msg_type)

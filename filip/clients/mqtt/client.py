@@ -119,7 +119,6 @@ class MQTTClient(mqtt.Client):
 
 
     """
-
     def __init__(self,
                  client_id="",
                  clean_session=None,
@@ -708,7 +707,8 @@ class MQTTClient(mqtt.Client):
                                        "this device")
                 topic = self.__create_topic(device=device,
                                                 topic_type='attrs')
-                payload = self.encoder.encode_msg(payload=payload,
+                payload = self.encoder.encode_msg(device_id=device_id,
+                                                  payload=payload,
                                                   msg_type='multi')
 
             # create message for command acknowledgement
@@ -720,7 +720,8 @@ class MQTTClient(mqtt.Client):
                        [cmd.name for cmd in device.commands], \
                     "Unknown command for this device!"
                 topic = self.__create_topic(device=device, topic_type='cmdexe')
-                payload = self.encoder.encode_msg(payload=payload,
+                payload = self.encoder.encode_msg(device_id=device_id,
+                                                  payload=payload,
                                                   msg_type='cmdexe')
 
             # create message for single measurement
@@ -728,7 +729,8 @@ class MQTTClient(mqtt.Client):
                 topic = self.__create_topic(device=device,
                                             topic_type='attrs',
                                             attribute=attribute_name)
-                payload = self.encoder.encode_msg(payload=payload,
+                payload = self.encoder.encode_msg(device_id=device_id,
+                                                  payload=payload,
                                                   msg_type='single')
             else:
                 raise ValueError("Inconsistent arguments!")

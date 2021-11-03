@@ -15,10 +15,10 @@ class Json(BaseEncoder):
         payload = json.loads(payload)
         return apikey, device_id, payload
 
-    def encode_msg(self, payload: Any, msg_type: Literal['single',
-                                                         'multi',
-                                                         'cmdexe'])  \
-            -> str:
+    def encode_msg(self,
+                   device_id,
+                   payload: Any,
+                   msg_type: Literal['single', 'multi', 'cmdexe']) -> str:
         if msg_type == 'single':
             return payload
         elif msg_type == 'multi':

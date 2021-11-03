@@ -6,7 +6,7 @@ created Oct 08, 2021
 @author Thomas Storek
 """
 from requests import RequestException
-from typing import Callable
+from typing import Callable, List, Union
 from filip.models import FiwareHeader
 from filip.clients.ngsi_v2 import \
     ContextBrokerClient, \
@@ -121,7 +121,7 @@ def clear_quantumleap(url: str, fiware_header: FiwareHeader):
 def clear_all(*,
               fiware_header: FiwareHeader,
               cb_url: str = None,
-              iota_url: str = None,
+              iota_url: Union[str, List[str]] = None,
               ql_url: str = None):
     """
     Clears all services that a url is provided for
@@ -136,7 +136,10 @@ def clear_all(*,
         None
     """
     if iota_url is not None:
-        clear_iot_agent(url=iota_url, fiware_header=fiware_header)
+        if isinstance(iota_url, str):
+            iota_url = [iota_url]
+        for url in iota_url:
+            clear_iot_agent(url=url, fiware_header=fiware_header)
     if cb_url is not None:
         clear_context_broker(url=cb_url, fiware_header=fiware_header)
     if ql_url is not None:
@@ -147,7 +150,7 @@ def clean_test(*,
                fiware_service: str,
                fiware_servicepath: str,
                cb_url: str = None,
-               iota_url: str = None,
+               iota_url: Union[str, List[str]] = None,
                ql_url: str = None) -> Callable:
     """
     Decorator to clean up the server before and after the test

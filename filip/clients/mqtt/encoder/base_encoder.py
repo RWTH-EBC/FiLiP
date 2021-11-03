@@ -32,10 +32,10 @@ class BaseEncoder(ABC):
 
         return apikey, device_id, payload
 
-    def encode_msg(self, payload: Dict, msg_type: Literal['single',
-                                                         'multi',
-                                                         'cmdexe']) \
-            -> str:
+    def encode_msg(self,
+                   device_id: str,
+                   payload: Dict,
+                   msg_type: Literal['single', 'multi', 'cmdexe']) -> str:
         raise NotImplementedError
 
     @classmethod
