@@ -566,9 +566,9 @@ class ContextBrokerClient(BaseHttpClient):
         # attributes.
         entities_with_attributes: List[ContextEntity] = []
         for entity in entities:
-            property_names = [key for key in entity.dict() if key not in
+            attribute_names = [key for key in entity.dict() if key not in
                               ContextEntity.__fields__]
-            if len(property_names) > 0:
+            if len(attribute_names) > 0:
                 entities_with_attributes.append(
                     ContextEntity(id=entity.id, type=entity.type))
 
