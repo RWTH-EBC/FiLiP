@@ -26,9 +26,22 @@ class TestClient(unittest.TestCase):
         """
         self.fh = FiwareHeader(service=settings.FIWARE_SERVICE,
                                service_path=settings.FIWARE_SERVICEPATH)
-
+        self.create_json_file()
         with open(self.get_json_path()) as f:
             self.config = json.load(f)
+
+    def create_json_file(self) -> None:
+        """
+        Create a json settings file based on the current environment settings
+        """
+        content = {
+          "cb_url": str(settings.CB_URL),
+          "iota_url": str(settings.IOTA_URL),
+          "ql_url": str(settings.QL_URL)
+        }
+        f = open(self.get_json_path(), "w")
+        f.write(json.dumps(content, indent=4) )
+        f.close()
 
     @staticmethod
     def get_json_path() -> str:
@@ -161,4 +174,7 @@ class TestClient(unittest.TestCase):
         Returns:
             None
         """
-        pass
+
+        # remove create json config file
+        import os
+        os.remove(self.get_json_path())
