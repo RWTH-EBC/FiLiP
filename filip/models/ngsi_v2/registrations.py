@@ -55,11 +55,13 @@ class ForwardingInformation(BaseModel):
                     "Last forwarding timestamp in ISO8601 format."
     )
     lastFailure: Optional[datetime] = Field(
+        default=None,
         description="(not editable, only present in GET operations): "
                     "Last failure timestamp in ISO8601 format. Not present "
                     "if registration has never had a problem with forwarding."
     )
     lastSuccess: Optional[datetime] = Field(
+        default=None,
         description="(not editable, only present in GET operations): "
                     "Timestamp in ISO8601 format for last successful "
                     "request forwarding. Not present if registration has "
@@ -81,10 +83,12 @@ class DataProvided(BaseModel):
         description="A list of objects, each one composed by an entity object"
     )
     attrs: Optional[List[str]] = Field(
+        default=None,
         description="List of attributes to be provided "
                     "(if not specified, all attributes)"
     )
     expression: Optional[Union[str, Expression]] = Field(
+        default=None,
         description="By means of a filtering expression, allows to express "
                     "what is the scope of the data provided. Currently only "
                     "geographical scopes are supported "
@@ -99,10 +103,12 @@ class Registration(BaseModel):
     located at specific geographical areas.
     """
     id: Optional[str] = Field(
+        default=None,
         description="Unique identifier assigned to the registration. "
                     "Automatically generated at creation time."
     )
     description: Optional[str] = Field(
+        default=None,
         description="A free text used by the client to describe the "
                     "registration.",
         example="Relative Humidity Context Source"
@@ -132,10 +138,12 @@ class Registration(BaseModel):
                     "again, the status is changed back to active."
     )
     expires: Optional[datetime] = Field(
+        default=None,
         description="Registration expiration date in ISO8601 format. "
                     "Permanent registrations must omit this field."
     )
     forwardingInformation: Optional[ForwardingInformation] = Field(
+        default=None,
         description="Information related to the forwarding operations made "
                     "against the provider. Automatically provided by the "
                     "implementation, in the case such implementation supports "

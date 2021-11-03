@@ -39,10 +39,10 @@ class EntityPattern(BaseModel):
     """
     Entity pattern used to create subscriptions or registrations
     """
-    id: Optional[str] = Field(regex=r"\w")
-    idPattern: Optional[Pattern]
-    type: Optional[str] = Field(regex=r'\w')
-    typePattern: Optional[Pattern]
+    id: Optional[str] = Field(default=None, regex=r"\w")
+    idPattern: Optional[Pattern] = None
+    type: Optional[str] = Field(default=None, regex=r'\w')
+    typePattern: Optional[Pattern] = None
 
     @root_validator()
     def validate_conditions(cls, values):
@@ -168,6 +168,7 @@ class Metadata(BaseModel):
          In NGSI it is not foreseen that metadata may contain nested metadata.
     """
     type: Optional[Union[DataType, str]] = Field(
+        default=None,
         title="metadata type",
         description="a metadata type, describing the NGSI value type of the "
                     "metadata value Allowed characters "
@@ -178,6 +179,7 @@ class Metadata(BaseModel):
         regex=FiwareRegex.standard.value  # Make it FIWARE-Safe
     )
     value: Optional[Any] = Field(
+        default=None,
         title="metadata value",
         description="a metadata value containing the actual metadata"
     )

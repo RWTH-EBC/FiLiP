@@ -317,14 +317,17 @@ class Query(BaseModel):
                     "represented by a JSON object"
     )
     attrs: Optional[List[str]] = Field(
+        default=None,
         description="List of attributes to be provided "
                     "(if not specified, all attributes)."
     )
     expression: Optional[Expression] = Field(
+        default=None,
         description="An expression composed of q, mq, georel, geometry and "
                     "coords "
     )
     metadata: Optional[List[str]] = Field(
+        default=None,
         description='a list of metadata names to include in the response. '
                     'See "Filtering out attributes and metadata" section for '
                     'more detail.'
@@ -414,44 +417,3 @@ class NamedCommand(Command):
         min_length=1,
         regex=FiwareRegex.string_protect.value
     )
-
-# TODO: Add Relationships
-# class Relationship:
-#    """
-#    Class implements the concept of FIWARE Entity Relationships.
-#    """
-#    def __init__(self, ref_object: Entity, subject: Entity,
-#    predicate: str = None):
-#        """
-#        :param ref_object:  The parent / object of the relationship
-#        :param subject: The child / subject of the relationship
-#        :param predicate: currently not supported -> describes the
-#        relationship between object and subject
-#        """
-#        self.object = ref_object
-#        self.subject = subject
-#        self.predicate = predicate
-#        self.add_ref()
-#
-#    def add_ref(self):
-#        """
-#        Function updates the subject Attribute with the relationship attribute
-#        :return:
-#        """
-#        ref_attr = json.loads(self.get_ref())
-#        self.subject.add_attribute(ref_attr)
-#
-#    def get_ref(self):
-#        """
-#        Function creates the NGSI Ref schema in a ref_dict, needed for the
-#        subject
-#        :return: ref_dict
-#        """
-#        ref_type = self.object.type
-#        ref_key = "ref" + str(ref_type)
-#        ref_dict = dict()
-#        ref_dict[ref_key] = {"type": "Relationship",
-#                             "value": self.object.id}
-#
-#        return json.dumps(ref_dict)
-#
