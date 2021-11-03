@@ -5,8 +5,6 @@ created Oct 08, 2021
 
 @author Thomas Storek
 """
-import time
-
 from requests import RequestException
 from typing import Callable
 from filip.models import FiwareHeader

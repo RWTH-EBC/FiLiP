@@ -555,7 +555,7 @@ class ContextBrokerClient(BaseHttpClient):
         Args:
             entities: List[ContextEntity]: List of entities to be deleted
         Raises:
-            Exception, if
+            Exception, if one of the entities is not in the ContextBroker
         Returns:
             None
         """
@@ -567,7 +567,7 @@ class ContextBrokerClient(BaseHttpClient):
         entities_with_attributes: List[ContextEntity] = []
         for entity in entities:
             attribute_names = [key for key in entity.dict() if key not in
-                              ContextEntity.__fields__]
+                               ContextEntity.__fields__]
             if len(attribute_names) > 0:
                 entities_with_attributes.append(
                     ContextEntity(id=entity.id, type=entity.type))
