@@ -1,6 +1,7 @@
 import ast
 import copy
 import json
+import logging
 from enum import Enum
 from typing import Optional, Dict, TYPE_CHECKING, Type, List, Any
 
@@ -22,6 +23,8 @@ from filip.semantics.semantic_models import \
     InstanceIdentifier, SemanticClass, InstanceHeader, Datatype, DataField, \
     RelationField, SemanticIndividual, SemanticDeviceClass, CommandField, \
     Command, DeviceAttributeField, DeviceAttribute, DeviceField, DeviceSettings
+
+logger = logging.getLogger('semantics')
 
 
 class InstanceRegistry(BaseModel):
@@ -204,7 +207,8 @@ class SemanticManager(BaseModel):
 
     default_header: InstanceHeader = InstanceHeader()
 
-    def get_client(self, instance_header: InstanceHeader) \
+    @staticmethod
+    def get_client(instance_header: InstanceHeader) \
             -> ContextBrokerClient:
         """Get the correct ContextBrokerClient to be used with the given header
 
@@ -221,7 +225,8 @@ class SemanticManager(BaseModel):
             # todo LD
             raise Exception("FiwareVersion not yet supported")
 
-    def get_iota_client(self, instance_header: InstanceHeader) -> IoTAClient:
+    @staticmethod
+    def get_iota_client(instance_header: InstanceHeader) -> IoTAClient:
         """Get the correct IotaClient to be used with the given header
 
         Args:
@@ -319,8 +324,8 @@ class SemanticManager(BaseModel):
 
         return loaded_class
 
-
-    def _convert_value_fitting_for_field(self, field, value):
+    @staticmethod
+    def _convert_value_fitting_for_field(field, value):
         """
         Converts a given value into the correct format for the given field
 
@@ -494,6 +499,11 @@ class SemanticManager(BaseModel):
             entity = client.get_entity(entity_id=identifier.id,
                                        entity_type=identifier.type)
             client.close()
+
+            logger.info(f"Instance ({identifier.id}, {identifier.type}) "
+                        f"loaded from Fiware({identifier.header.cb_url}"
+                        f", {identifier.header.service}"
+                        f"{identifier.header.service_path})")
             return self._context_entity_to_semantic_class(
                 entity=entity,
                 header=identifier.header)
@@ -705,32 +715,47 @@ class SemanticManager(BaseModel):
         return Datatype.parse_obj(self.datatype_catalogue[datatype_name])
 
     def get_individual(self, individual_name: str) -> SemanticIndividual:
+        """
+        Get an individual by its name
+
+        Args:
+            individual_name (str)
+        Raises:
+            KeyError, if name not registered
+        Returns:
+            SemanticIndividual
+        """
         return self.individual_catalogue[individual_name]()
 
     def save_local_state_as_json(self) -> str:
+        """
+        Save the local state with all made changes as json string
+
+        Returns:
+            Json String, containing all information about the local state
+        """
         return self.instance_registry.save()
 
     def load_local_state_from_json(self, json:str):
+        """
+        Loads the local state from a json string. The current local state gets
+        discarded
+
+        Raises:
+            Error, if not a correct json string
+
+        """
         self.instance_registry.load(json, self)
 
     def visualise_local_state(self):
-        # import networkx as nx
-        # g = nx.DiGraph()
-        #
-        # for instance in self.get_all_local_instances():
-        #     g.add_node(instance.id)
-        #
-        # for instance in self.get_all_local_instances():
-        #     for field in instance.get_relation_fields():
-        #         for linked in field.get_all():
-        #             if isinstance(linked, SemanticClass):
-        #                 g.add_edge(instance.id, linked.id)
-        #             elif isinstance(linked, SemanticIndividual):
-        #                 g.add_edge(instance.id, linked.get_name())
-        #
-        # import matplotlib.pyplot as plt
-        # nx.draw(g)
+        """
+        Visualise all instances in the local state in a network graph that
+        shows which instances reference each other over which fields
 
+        On execution of the methode a temporary image file is created and
+        automatically displayed in the standard image viewing software of the
+        system
+        """
         import igraph
         g = igraph.Graph(directed=True)
 

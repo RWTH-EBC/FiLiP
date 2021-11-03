@@ -1,4 +1,5 @@
 import copy
+import logging
 import unittest
 
 from filip.models.ngsi_v2.iot import TransportProtocol
