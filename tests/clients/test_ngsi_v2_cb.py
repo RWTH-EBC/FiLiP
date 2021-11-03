@@ -11,6 +11,8 @@ import logging
 import time
 import random
 import json
+import uuid
+
 import paho.mqtt.client as mqtt
 from datetime import datetime, timedelta
 from urllib.parse import urlparse
@@ -576,10 +578,11 @@ class TestContextBroker(unittest.TestCase):
 
         # Send device configuration to FIWARE via the IoT-Agent. We use the
         # general ngsiv2 httpClient for this.
-        service_group = ServiceGroup(service=self.fiware_header.service,
-                                     subservice=self.fiware_header.service_path,
-                                     apikey='filip_test_group',
-                                     resource='/iot/json')
+        service_group = ServiceGroup(
+            service=self.fiware_header.service,
+            subservice=self.fiware_header.service_path,
+            apikey=settings.FIWARE_SERVICEPATH.strip('/'),
+            resource='/iot/json')
 
         # create the Http client node that once sent the device cannot be posted
         # again and you need to use the update command
