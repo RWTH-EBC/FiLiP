@@ -34,7 +34,7 @@ from filip.models.ngsi_v2.iot import \
     DeviceCommand, \
     DeviceAttribute, \
     ServiceGroup, \
-    StaticDeviceAttribute
+    StaticDeviceAttribute, TransportProtocol
 from filip.utils.cleanup import clear_all, clean_test
 from tests.config import settings
 
@@ -558,7 +558,7 @@ class TestContextBroker(unittest.TestCase):
                         entity_name='MyDevice',
                         entity_type='Thing2',
                         protocol='IoTA-JSON',
-                        transport='MQTT',
+                        transport=TransportProtocol.MQTT,
                         apikey='filip_test_device',
                         attributes=[device_attr1],
                         static_attributes=[static_device_attr],

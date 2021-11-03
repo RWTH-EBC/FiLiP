@@ -152,11 +152,9 @@ class ServiceGroup(BaseModel):
     https://iotagent-node-lib.readthedocs.io/en/latest/api/index.html#service-group-api
     """
     service: Optional[str] = Field(
-        default=None,
         description="ServiceGroup of the devices of this type"
     )
     subservice: Optional[str] = Field(
-        default=None,
         description="Subservice of the devices of this type.",
         regex="^/"
     )
@@ -171,7 +169,6 @@ class ServiceGroup(BaseModel):
                     "apikey, but it must be specified."
     )
     timestamp: Optional[bool] = Field(
-        default=None,
         description="Optional flag about whether or not to add the TimeInstant "
                     "attribute to the device entity created, as well as a "
                     "TimeInstant metadata to each attribute, with the current "
@@ -179,7 +176,6 @@ class ServiceGroup(BaseModel):
                     "property-of-a-property is created instead."
     )
     entity_type: Optional[str] = Field(
-        default=None,
         description="name of the Entity type to assign to the group. "
                     "Allowed characters "
                     "are the ones in the plain ASCII set, except the following "
@@ -189,7 +185,6 @@ class ServiceGroup(BaseModel):
         regex=FiwareRegex.standard.value  # Make it FIWARE-Safe
     )
     trust: Optional[str] = Field(
-        default=None,
         description="trust token to use for secured access to the "
                     "Context Broker for this type of devices (optional; only "
                     "needed for secured scenarios)."
@@ -256,7 +251,6 @@ class ServiceGroup(BaseModel):
                     "v2 or ld. The default is v2. When not running in mixed "
                     "mode, this field is ignored.")
     defaultEntityNameConjunction: Optional[str] = Field(
-        default=None,
         description="optional string value to set default conjunction string "
                     "used to compose a default entity_name when is not "
                     "provided at device provisioning time."

@@ -258,7 +258,8 @@ class BaseAttribute(BaseModel):
     )
     metadata: Optional[Union[Dict[str, Metadata],
                              NamedMetadata,
-                             List[NamedMetadata]]] = Field(
+                             List[NamedMetadata],
+                             Dict[str, Dict[str, str]]]] = Field(
         default={},
         title="Metadata",
         description="optional metadata describing properties of the attribute "
