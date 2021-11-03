@@ -547,6 +547,39 @@ class ContextBrokerClient(BaseHttpClient):
             self.log_error(err=err, msg=msg)
             raise
 
+    def delete_entities(self, entities: List[ContextEntity]) -> None:
+        """
+        Remove a list of entities from the context broker. This methode is
+        more efficient than to call delete_entity() for each entity
+
+        Args:
+            entities: List[ContextEntity]: List of entities to be deleted
+        Raises:
+            Exception, if
+        Returns:
+            None
+        """
+
+        # update() delete, deletes all entities without attributes completely,
+        # and removes the attributes for the other
+        # The entities are sorted based on the fact if they have
+        # attributes.
+        entities_with_attributes: List[ContextEntity] = []
+        for entity in entities:
+            property_names = [key for key in entity.dict() if key not in
+                              ContextEntity.__fields__]
+            if len(property_names) > 0:
+                entities_with_attributes.append(
+                    ContextEntity(id=entity.id, type=entity.type))
+
+        # Post update_delete for those without attribute only once,
+        # for the other post update_delete again but for the changed entity
+        # in the ContextBroker (only id and type left)
+        if len(entities) > 0:
+            self.update(entities=entities, action_type="delete")
+        if len(entities_with_attributes) > 0:
+            self.update(entities=entities_with_attributes, action_type="delete")
+
     def replace_entity_attributes(self,
                                   entity: ContextEntity,
                                   options: str = None,

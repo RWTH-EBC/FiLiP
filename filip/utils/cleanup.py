@@ -5,6 +5,8 @@ created Oct 08, 2021
 
 @author Thomas Storek
 """
+import time
+
 from requests import RequestException
 from typing import Callable
 from filip.models import FiwareHeader
@@ -32,11 +34,8 @@ def clear_context_broker(url: str, fiware_header: FiwareHeader):
     """
     # create client
     client = ContextBrokerClient(url=url, fiware_header=fiware_header)
-
-    # clear entities
-    entities = client.get_entity_list()
-    if entities:
-        client.update(entities=entities, action_type='delete')
+    # clean entities
+    client.delete_entities(entities=client.get_entity_list())
 
     # clear subscriptions
     for sub in client.get_subscription_list():

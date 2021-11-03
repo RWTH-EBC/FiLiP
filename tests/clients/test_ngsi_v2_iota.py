@@ -78,8 +78,6 @@ class TestAgent(unittest.TestCase):
         self.client.get_group(resource=self.service_group1.resource,
                               apikey=self.service_group1.apikey)
 
-        clear_all(fiware_header=self.fiware_header,
-                  iota_url=settings.IOTA_URL)
 
     def test_device_model(self):
         device = Device(**self.device)
@@ -94,12 +92,6 @@ class TestAgent(unittest.TestCase):
         """
         Test device creation
         """
-        # Clean up Fiware test state, this test can fail if the device was not
-        # correctly removed before
-        clear_all(fiware_header=self.fiware_header,
-                  cb_url=settings.CB_URL,
-                  iota_url=settings.IOTA_URL)
-
         with IoTAClient(
                 url=settings.IOTA_URL,
                 fiware_header=self.fiware_header) as client:
@@ -135,10 +127,6 @@ class TestAgent(unittest.TestCase):
             self.assertEqual(self.fiware_header.service_path,
                              device_res.service_path)
 
-            #cleanup
-            clear_all(fiware_header=self.fiware_header,
-                      cb_url=settings.CB_URL,
-                      iota_url=settings.IOTA_URL)
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
@@ -174,11 +162,6 @@ class TestAgent(unittest.TestCase):
                 fiware_header=self.fiware_header) as client:
             logger.info(client.get_entity(entity_id=device.entity_name).json(
                 indent=2))
-
-        #clean up
-        clear_all(fiware_header=self.fiware_header,
-                  cb_url=settings.CB_URL,
-                  iota_url=settings.IOTA_URL)
 
     def tearDown(self) -> None:
         """
