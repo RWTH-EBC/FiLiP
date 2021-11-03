@@ -6,7 +6,6 @@ Created 21st Oct, 2021
 
 @author: Thomas Storek
 """
-import json
 import logging
 import paho.mqtt.client as mqtt
 import warnings
@@ -670,7 +669,7 @@ class MQTTClient(mqtt.Client):
                 If `true` the client will generate a valid timestamp based on
                 its current system time and added to the multi measurement
                 payload. If a `timeInstant` is already contained in the
-                message payload.
+                message payload it will not overwritten.
 
         Returns:
             None
@@ -693,22 +692,17 @@ class MQTTClient(mqtt.Client):
                 assert isinstance(payload, dict), \
                     "Payload must be a dictionary"
 
-                if timestamp:
-                    payload["timeInstant"] = \
-                        datetime.now().astimezone().isoformat()
+                if timestamp and 'timeInstant' not in payload.keys():
+                    payload["timeInstant"] = datetime.now()
                 # validate if dict keys match device configuration
                 for key, attr in itertools.product(payload.keys(),
                                                    device.attributes):
 
-                    if key in attr.object_id:
+                    if key in attr.object_id or key == 'timeInstant':
                         pass
                     elif key == attr.name:
                         if attr.object_id:
                             payload[attr.object_id] = payload.pop(key)
-                    elif key == 'timeInstant':
-                        payload["timeInstant"] = \
-                                datetime.fromisoformat(payload["timeInstant"])
-                        payload["timeInstant"] = str(payload["timeInstant"])
                     else:
                         raise KeyError("Attribute key is not allowed for "
                                        "this device")

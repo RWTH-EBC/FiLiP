@@ -299,7 +299,7 @@ class TestMQTTClient(TestCase):
         entity = httpc.cb.get_entity(entity_id=self.device.device_id,
                                      entity_type=self.device.entity_type)
         self.assertEqual(60, entity.temperature.value)
-
+        self.assertEqual(timestamp, entity.TimeInstant.value)
 
         print(entity.json(indent=2))
 
