@@ -3,7 +3,7 @@ from typing import Any, Dict, Literal, Tuple
 from filip.clients.mqtt.encoder import BaseEncoder
 
 
-class IoTA_Ultralight(BaseEncoder):
+class Ultralight(BaseEncoder):
     prefix = '/ul'
 
     def __init__(self):

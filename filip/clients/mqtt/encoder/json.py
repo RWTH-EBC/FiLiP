@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import Any, Dict, Literal, Tuple
 from filip.clients.mqtt.encoder import BaseEncoder
 
-class IoTA_Json(BaseEncoder):
+class Json(BaseEncoder):
     prefix = '/json'
 
     def __init__(self):

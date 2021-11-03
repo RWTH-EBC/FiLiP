@@ -57,7 +57,7 @@ class TestContextBroker(unittest.TestCase):
             service_path=settings.FIWARE_SERVICEPATH)
         clear_all(fiware_header=self.fiware_header,
                   cb_url=settings.CB_URL,
-                  iota_url=settings.IOTA_URL)
+                  iota_url=settings.IOTA_JSON_URL)
         self.resources = {
             "entities_url": "/v2/entities",
             "types_url": "/v2/types",
@@ -125,7 +125,7 @@ class TestContextBroker(unittest.TestCase):
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
                 cb_url=settings.CB_URL,
-                iota_url=settings.IOTA_URL)
+                iota_url=settings.IOTA_JSON_URL)
     def test_pagination(self):
         """
         Test pagination of context broker client
@@ -374,7 +374,7 @@ class TestContextBroker(unittest.TestCase):
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
                 cb_url=settings.CB_URL,
-                iota_url=settings.IOTA_URL)
+                iota_url=settings.IOTA_JSON_URL)
     def test_subscription_set_status(self):
         """
         Test subscription operations of context broker client
@@ -407,7 +407,7 @@ class TestContextBroker(unittest.TestCase):
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
                 cb_url=settings.CB_URL,
-                iota_url=settings.IOTA_URL)
+                iota_url=settings.IOTA_JSON_URL)
     def test_mqtt_subscriptions(self):
         mqtt_url = settings.MQTT_BROKER_URL
         mqtt_topic = ''.join([settings.FIWARE_SERVICE,
@@ -515,7 +515,7 @@ class TestContextBroker(unittest.TestCase):
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
                 cb_url=settings.CB_URL,
-                iota_url=settings.IOTA_URL)
+                iota_url=settings.IOTA_JSON_URL)
     def test_command_with_mqtt(self):
         """
         Test if a command can be send to a device in FIWARE
@@ -584,7 +584,7 @@ class TestContextBroker(unittest.TestCase):
         # create the Http client node that once sent the device cannot be posted
         # again and you need to use the update command
         config = HttpClientConfig(cb_url=settings.CB_URL,
-                                  iota_url=settings.IOTA_URL)
+                                  iota_url=settings.IOTA_JSON_URL)
         client = HttpClient(fiware_header=self.fiware_header, config=config)
         client.iota.post_group(service_group=service_group, update=True)
         client.iota.post_device(device=device, update=True)
@@ -687,4 +687,4 @@ class TestContextBroker(unittest.TestCase):
         self.client.close()
         clear_all(fiware_header=self.fiware_header,
                   cb_url=settings.CB_URL,
-                  iota_url=settings.IOTA_URL)
+                  iota_url=settings.IOTA_JSON_URL)

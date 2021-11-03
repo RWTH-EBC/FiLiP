@@ -47,8 +47,12 @@ class TestSettings(BaseSettings):
                                     'CONTEXTBROKER_URL',
                                     'OCB_URL'])
 
-    IOTA_URL: AnyHttpUrl = Field(default="http://127.0.0.1:4041",
-                                 env='IOTA_URL')
+    IOTA_JSON_URL: AnyHttpUrl = Field(default="http://127.0.0.1:4041",
+                                      env='IOTA_JSON_URL')
+
+    IOTA_UL_URL: AnyHttpUrl = Field(default="http://127.0.0.1:4061",
+                                    env='IOTA_UL_URL')
+
 
     QL_URL: AnyHttpUrl = Field(default="http://127.0.0.1:8668",
                                env=['QUANTUMLEAP_URL',

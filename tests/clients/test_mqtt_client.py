@@ -155,7 +155,7 @@ class TestMQTTClient(TestCase):
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
                 cb_url=settings.CB_URL,
-                iota_url=settings.IOTA_URL)
+                iota_url=settings.IOTA_JSON_URL)
     def test_add_command_callback(self):
         """
         Test for receiving commands for a specific device
@@ -183,11 +183,11 @@ class TestMQTTClient(TestCase):
         self.mqttc.add_command_callback(device_id=self.device.device_id,
                                         callback=on_command)
 
-        self.mqttc.encoder = encoder.IoTA_Json
+        self.mqttc.encoder = encoder.Json
 
         from filip.clients.ngsi_v2 import HttpClient, HttpClientConfig
         httpc_config = HttpClientConfig(cb_url=settings.CB_URL,
-                                  iota_url=settings.IOTA_URL)
+                                        iota_url=settings.IOTA_JSON_URL)
         httpc = HttpClient(fiware_header=self.fiware_header,
                            config=httpc_config)
         httpc.iota.post_group(service_group=self.service_group, update=True)
@@ -229,7 +229,7 @@ class TestMQTTClient(TestCase):
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
                 cb_url=settings.CB_URL,
-                iota_url=settings.IOTA_URL)
+                iota_url=settings.IOTA_JSON_URL)
     def test_publish(self):
         """
         Test for receiving commands for a specific device
@@ -245,11 +245,11 @@ class TestMQTTClient(TestCase):
         self.mqttc.add_service_group(self.service_group)
         self.mqttc.add_device(self.device)
 
-        self.mqttc.encoder = encoder.IoTA_Json
+        self.mqttc.encoder = encoder.Json
 
         from filip.clients.ngsi_v2 import HttpClient, HttpClientConfig
         httpc_config = HttpClientConfig(cb_url=settings.CB_URL,
-                                  iota_url=settings.IOTA_URL)
+                                        iota_url=settings.IOTA_JSON_URL)
         httpc = HttpClient(fiware_header=self.fiware_header,
                            config=httpc_config)
         httpc.iota.post_group(service_group=self.service_group, update=True)
