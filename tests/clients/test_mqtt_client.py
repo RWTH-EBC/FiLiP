@@ -32,14 +32,24 @@ class TestMQTTClient(TestCase):
                                       object_id='t',
                                       type="Number")
         device_command = DeviceCommand(name='heater', type="Boolean")
-        self.device = Device(device_id='MyDevice',
-                             entity_name='MyDevice',
-                             entity_type='Thing',
-                             protocol='IoTA-JSON',
-                             transport='MQTT',
-                             apikey=settings.FIWARE_SERVICE,
-                             attributes=[device_attr],
-                             commands=[device_command])
+        self.device_json = Device(device_id='MyDevice',
+                                  entity_name='MyDevice',
+                                  entity_type='Thing',
+                                  protocol='IoTA-JSON',
+                                  transport='MQTT',
+                                  apikey=settings.FIWARE_SERVICE,
+                                  attributes=[device_attr],
+                                  commands=[device_command])
+
+        self.device_ul = Device(device_id='MyDevice',
+                                entity_name='MyDevice',
+                                entity_type='Thing',
+                                protocol='PDI-IoTA-UltraLight',
+                                transport='MQTT',
+                                apikey=settings.FIWARE_SERVICE,
+                                attributes=[device_attr],
+                                commands=[device_command])
+
 
         self.mqttc = MQTTClient()
 
@@ -138,18 +148,18 @@ class TestMQTTClient(TestCase):
         self.mqttc.delete_service_group(apikey=self.service_group.apikey)
 
     def test_devices(self):
-        self.mqttc.add_device(device=self.device)
+        self.mqttc.add_device(device=self.device_json)
         with self.assertRaises(ValueError):
-            self.mqttc.add_device(device=self.device)
-        self.mqttc.get_device(self.device.device_id)
+            self.mqttc.add_device(device=self.device_json)
+        self.mqttc.get_device(self.device_json.device_id)
 
-        self.mqttc.update_device(device=self.device)
+        self.mqttc.update_device(device=self.device_json)
         with self.assertRaises(KeyError):
             self.mqttc.update_device(
-                device=self.device.copy(
+                device=self.device_json.copy(
                     update={'device_id': "somethingRandom"}))
 
-        self.mqttc.delete_device(device_id=self.device.device_id)
+        self.mqttc.delete_device(device_id=self.device_json.device_id)
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
@@ -178,8 +188,8 @@ class TestMQTTClient(TestCase):
                            payload=payload)
 
         self.mqttc.add_service_group(self.service_group)
-        self.mqttc.add_device(self.device)
-        self.mqttc.add_command_callback(device_id=self.device.device_id,
+        self.mqttc.add_device(self.device_json)
+        self.mqttc.add_command_callback(device_id=self.device_json.device_id,
                                         callback=on_command)
 
         self.mqttc.encoder = encoder.Json
@@ -190,7 +200,7 @@ class TestMQTTClient(TestCase):
         httpc = HttpClient(fiware_header=self.fiware_header,
                            config=httpc_config)
         httpc.iota.post_group(service_group=self.service_group, update=True)
-        httpc.iota.post_device(device=self.device, update=True)
+        httpc.iota.post_device(device=self.device_json, update=True)
 
         mqtt_broker_url = urlparse(settings.MQTT_BROKER_URL)
 
@@ -203,9 +213,9 @@ class TestMQTTClient(TestCase):
                            properties=None)
         self.mqttc.subscribe()
 
-        entity = httpc.cb.get_entity(entity_id=self.device.device_id,
-                                      entity_type=self.device.entity_type)
-        context_command = NamedCommand(name=self.device.commands[0].name,
+        entity = httpc.cb.get_entity(entity_id=self.device_json.device_id,
+                                     entity_type=self.device_json.entity_type)
+        context_command = NamedCommand(name=self.device_json.commands[0].name,
                                        value=False)
         self.mqttc.loop_start()
 
@@ -219,8 +229,8 @@ class TestMQTTClient(TestCase):
         # disconnect the mqtt device
         self.mqttc.disconnect()
 
-        entity = httpc.cb.get_entity(entity_id=self.device.device_id,
-                                     entity_type=self.device.entity_type)
+        entity = httpc.cb.get_entity(entity_id=self.device_json.device_id,
+                                     entity_type=self.device_json.entity_type)
 
         # The main part of this test, for all this setup was done
         self.assertEqual("OK", entity.heater_status.value)
@@ -242,7 +252,7 @@ class TestMQTTClient(TestCase):
             self.mqttc.delete_device(device.device_id)
 
         self.mqttc.add_service_group(self.service_group)
-        self.mqttc.add_device(self.device)
+        self.mqttc.add_device(self.device_json)
 
         self.mqttc.encoder = encoder.Json
 
@@ -252,7 +262,7 @@ class TestMQTTClient(TestCase):
         httpc = HttpClient(fiware_header=self.fiware_header,
                            config=httpc_config)
         httpc.iota.post_group(service_group=self.service_group, update=True)
-        httpc.iota.post_device(device=self.device, update=True)
+        httpc.iota.post_device(device=self.device_json, update=True)
 
         mqtt_broker_url = urlparse(settings.MQTT_BROKER_URL)
 
@@ -265,38 +275,38 @@ class TestMQTTClient(TestCase):
                            properties=None)
         self.mqttc.loop_start()
 
-        self.mqttc.publish(device_id=self.device.device_id,
-                           payload={self.device.attributes[0].object_id: 50})
+        self.mqttc.publish(device_id=self.device_json.device_id,
+                           payload={self.device_json.attributes[0].object_id: 50})
         time.sleep(1)
-        entity = httpc.cb.get_entity(entity_id=self.device.device_id,
-                                     entity_type=self.device.entity_type)
+        entity = httpc.cb.get_entity(entity_id=self.device_json.device_id,
+                                     entity_type=self.device_json.entity_type)
         self.assertEqual(50, entity.temperature.value)
 
-        self.mqttc.publish(device_id=self.device.device_id,
+        self.mqttc.publish(device_id=self.device_json.device_id,
                            attribute_name="temperature",
                            payload=60)
         time.sleep(1)
-        entity = httpc.cb.get_entity(entity_id=self.device.device_id,
-                                     entity_type=self.device.entity_type)
+        entity = httpc.cb.get_entity(entity_id=self.device_json.device_id,
+                                     entity_type=self.device_json.entity_type)
         self.assertEqual(60, entity.temperature.value)
 
-        self.mqttc.publish(device_id=self.device.device_id,
-                           payload={self.device.attributes[0].object_id: 50},
+        self.mqttc.publish(device_id=self.device_json.device_id,
+                           payload={self.device_json.attributes[0].object_id: 50},
                            timestamp=True)
         time.sleep(1)
-        entity = httpc.cb.get_entity(entity_id=self.device.device_id,
-                                     entity_type=self.device.entity_type)
+        entity = httpc.cb.get_entity(entity_id=self.device_json.device_id,
+                                     entity_type=self.device_json.entity_type)
         self.assertEqual(50, entity.temperature.value)
 
         from datetime import datetime, timedelta
         timestamp = datetime.now() + timedelta(days=1)
         timestamp = timestamp.astimezone().isoformat()
-        self.mqttc.publish(device_id=self.device.device_id,
-                           payload={self.device.attributes[0].object_id: 60,
+        self.mqttc.publish(device_id=self.device_json.device_id,
+                           payload={self.device_json.attributes[0].object_id: 60,
                                     'timeInstant': timestamp})
         time.sleep(1)
-        entity = httpc.cb.get_entity(entity_id=self.device.device_id,
-                                     entity_type=self.device.entity_type)
+        entity = httpc.cb.get_entity(entity_id=self.device_json.device_id,
+                                     entity_type=self.device_json.entity_type)
         self.assertEqual(60, entity.temperature.value)
         self.assertEqual(timestamp, entity.TimeInstant.value)
 
@@ -334,8 +344,8 @@ class TestMQTTClient(TestCase):
                            payload=payload)
 
         self.mqttc.add_service_group(self.service_group)
-        self.mqttc.add_device(self.device)
-        self.mqttc.add_command_callback(device_id=self.device.device_id,
+        self.mqttc.add_device(self.device_ul)
+        self.mqttc.add_command_callback(device_id=self.device_ul.device_id,
                                         callback=on_command)
 
         self.mqttc.encoder = encoder.Ultralight
@@ -346,7 +356,7 @@ class TestMQTTClient(TestCase):
         httpc = HttpClient(fiware_header=self.fiware_header,
                            config=httpc_config)
         httpc.iota.post_group(service_group=self.service_group, update=True)
-        httpc.iota.post_device(device=self.device, update=True)
+        httpc.iota.post_device(device=self.device_ul, update=True)
 
         mqtt_broker_url = urlparse(settings.MQTT_BROKER_URL)
 
@@ -359,9 +369,9 @@ class TestMQTTClient(TestCase):
                            properties=None)
         self.mqttc.subscribe()
 
-        entity = httpc.cb.get_entity(entity_id=self.device.device_id,
-                                     entity_type=self.device.entity_type)
-        context_command = NamedCommand(name=self.device.commands[0].name,
+        entity = httpc.cb.get_entity(entity_id=self.device_ul.device_id,
+                                     entity_type=self.device_ul.entity_type)
+        context_command = NamedCommand(name=self.device_ul.commands[0].name,
                                        value=False)
         self.mqttc.loop_start()
 
@@ -375,8 +385,8 @@ class TestMQTTClient(TestCase):
         # disconnect the mqtt device
         self.mqttc.disconnect()
 
-        entity = httpc.cb.get_entity(entity_id=self.device.device_id,
-                                     entity_type=self.device.entity_type)
+        entity = httpc.cb.get_entity(entity_id=self.device_ul.device_id,
+                                     entity_type=self.device_ul.entity_type)
 
         # The main part of this test, for all this setup was done
         self.assertEqual("OK", entity.heater_status.value)
@@ -402,7 +412,7 @@ class TestMQTTClient(TestCase):
             resource="/iot/d")
 
         self.mqttc.add_service_group(service_group)
-        self.mqttc.add_device(self.device)
+        self.mqttc.add_device(self.device_ul)
 
         self.mqttc.encoder = encoder.Ultralight
 
@@ -411,8 +421,8 @@ class TestMQTTClient(TestCase):
                                         iota_url=settings.IOTA_UL_URL)
         httpc = HttpClient(fiware_header=self.fiware_header,
                            config=httpc_config)
-        httpc.iota.post_group(service_group=self.service_group, update=True)
-        httpc.iota.post_device(device=self.device, update=True)
+        httpc.iota.post_group(service_group=service_group, update=True)
+        httpc.iota.post_device(device=self.device_ul, update=True)
 
         mqtt_broker_url = urlparse(settings.MQTT_BROKER_URL)
 
@@ -425,38 +435,38 @@ class TestMQTTClient(TestCase):
                            properties=None)
         self.mqttc.loop_start()
 
-        self.mqttc.publish(device_id=self.device.device_id,
-                           payload={self.device.attributes[0].object_id: 50})
+        self.mqttc.publish(device_id=self.device_ul.device_id,
+                           payload={self.device_ul.attributes[0].object_id: 50})
         time.sleep(1)
-        entity = httpc.cb.get_entity(entity_id=self.device.device_id,
-                                     entity_type=self.device.entity_type)
+        entity = httpc.cb.get_entity(entity_id=self.device_ul.device_id,
+                                     entity_type=self.device_ul.entity_type)
         self.assertEqual(50, entity.temperature.value)
 
-        self.mqttc.publish(device_id=self.device.device_id,
+        self.mqttc.publish(device_id=self.device_ul.device_id,
                            attribute_name="temperature",
                            payload=60)
         time.sleep(1)
-        entity = httpc.cb.get_entity(entity_id=self.device.device_id,
-                                     entity_type=self.device.entity_type)
+        entity = httpc.cb.get_entity(entity_id=self.device_ul.device_id,
+                                     entity_type=self.device_ul.entity_type)
         self.assertEqual(60, entity.temperature.value)
 
-        self.mqttc.publish(device_id=self.device.device_id,
-                           payload={self.device.attributes[0].object_id: 50},
+        self.mqttc.publish(device_id=self.device_ul.device_id,
+                           payload={self.device_ul.attributes[0].object_id: 50},
                            timestamp=True)
         time.sleep(1)
-        entity = httpc.cb.get_entity(entity_id=self.device.device_id,
-                                     entity_type=self.device.entity_type)
+        entity = httpc.cb.get_entity(entity_id=self.device_ul.device_id,
+                                     entity_type=self.device_ul.entity_type)
         self.assertEqual(50, entity.temperature.value)
 
         from datetime import datetime, timedelta
         timestamp = datetime.now() + timedelta(days=1)
         timestamp = timestamp.astimezone().isoformat()
-        self.mqttc.publish(device_id=self.device.device_id,
-                           payload={self.device.attributes[0].object_id: 60,
+        self.mqttc.publish(device_id=self.device_ul.device_id,
+                           payload={self.device_ul.attributes[0].object_id: 60,
                                     'timeInstant': timestamp})
         time.sleep(1)
-        entity = httpc.cb.get_entity(entity_id=self.device.device_id,
-                                     entity_type=self.device.entity_type)
+        entity = httpc.cb.get_entity(entity_id=self.device_ul.device_id,
+                                     entity_type=self.device_ul.entity_type)
         self.assertEqual(60, entity.temperature.value)
         self.assertEqual(timestamp, entity.TimeInstant.value)
 
