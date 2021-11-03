@@ -11,5 +11,5 @@ paho-mqtt>=1.5.1
 pandas_datapackage_reader>=0.18.0
 tables>=3.6.1
 python-Levenshtein>=0.12.2
-paho-mqtt
+paho-mqtt==1.5.1
 datamodel_code_generator>=0.11.14
