@@ -1,3 +1,10 @@
+"""
+created April 1st, 2021
+
+@author Thomas Storek
+
+Module contains models for accessing and interaction with FIWARE's IoT-Agents.
+"""
 from __future__ import annotations
 import logging
 import itertools
@@ -8,6 +15,7 @@ import pytz
 from pydantic import BaseModel, Field, validator, AnyHttpUrl
 from filip.models.base import NgsiVersion, DataType, FiwareRegex
 from filip.models.ngsi_v2.context import NamedContextMetadata
+
 
 logger = logging.getLogger()
 
@@ -177,7 +185,8 @@ class StaticDeviceAttribute(BaseAttribute):
 
 class ServiceGroup(BaseModel):
     """
-    Model for device service group
+    Model for device service group.
+    https://iotagent-node-lib.readthedocs.io/en/latest/api/index.html#service-group-api
     """
     service: Optional[str] = Field(
         description="ServiceGroup of the devices of this type"
@@ -251,17 +260,28 @@ class ServiceGroup(BaseModel):
                     "in the Device Registry."
     )
     expressionLanguage: Optional[ExpressionLanguage] = Field(
+        default="legacy",
         description="optional boolean value, to set expression language used "
                     "to compute expressions, possible values are: "
                     "legacy or jexl. When not set or wrongly set, legacy "
                     "is used as default value."
     )
     explicitAttrs: Optional[bool] = Field(
+        default=False,
         description="optional boolean value, to support selective ignore "
                     "of measures so that IOTA does not progress. If not "
                     "specified default is false."
     )
+    autoprovision: Optional[bool] = Field(
+        default=True,
+        description="optional boolean: If false, autoprovisioned devices "
+                    "(i.e. devices that are not created with an explicit "
+                    "provision operation but when the first measure arrives) "
+                    "are not allowed in this group. "
+                    "Default (in the case of omitting the field) is true."
+    )
     ngsiVersion: Optional[NgsiVersion] = Field(
+        default="v2",
         description="optional string value used in mixed mode to switch between"
                     " NGSI-v2 and NGSI-LD payloads. Possible values are: "
                     "v2 or ld. The default is v2. When not running in mixed "
@@ -275,7 +295,8 @@ class ServiceGroup(BaseModel):
 
 class Device(BaseModel):
     """
-    Model for device
+    Model for iot devices.
+    https://iotagent-node-lib.readthedocs.io/en/latest/api/index.html#device-api
     """
     device_id: str = Field(
         description="Device ID that will be used to identify the device"

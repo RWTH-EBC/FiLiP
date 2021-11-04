@@ -18,21 +18,42 @@ def create_datamodel(*,
                      schema_type: Union[str, InputFileType] =
                      InputFileType.JsonSchema,
                      class_name: str = None
-                     ):
+                     ) -> None:
     """
-    Examples:
-        {
-        "type": "object",
-        "properties": {
-            "number": {"type": "number"},
-            "street_name": {"type": "string"},
-            "street_type": {"type": "string",
-                            "enum": ["Street", "Avenue", "Boulevard"]
+    This will create a data model from data model definitions. The schemas
+    can either downloaded from a url or passed as str or dict. Allowed input
+    types are defined but the underlying toolbox.
+
+    Many datamodels suited for FIWARE are located here:
+    https://github.com/smart-data-models/data-models
+
+    Args:
+        output_path: path where the generated code should saved
+        filename: filename for the generated code
+        url: url to download the definition from
+        schema_type (str): auto, openapi, 'jsonschema', 'json', 'yaml',
+            'dict', 'csv'
+        class_name: dummy
+
+    Returns:
+        None
+
+    Examples::
+
+        {"type": "object",
+         "properties": {
+            "number": {
+                "type": "number"
+                    },
+                "street_name": {
+                    "type": "string"
+                   },
+                "street_type": {
+                    "type": "string",
+                    "enum": ["Street", "Avenue", "Boulevard"]
                 }
             }
         }
-    Returns:
-
     """
     if isinstance(output_path, str):
         output_path = Path(output_path)

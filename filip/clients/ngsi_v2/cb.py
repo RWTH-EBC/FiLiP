@@ -1,33 +1,38 @@
 """
 Context Broker Module for API Client
 """
-import re
-import warnings
 from math import inf
 from typing import Any, Dict, List, Union, Optional
 from urllib.parse import urljoin
 import requests
+from filip.models.ngsi_v2.iot import Device
+from pkg_resources import parse_version
 from pydantic import \
     parse_obj_as, \
     PositiveInt, \
     PositiveFloat
+from typing import Any, Dict, List, Union, Optional
+import re
+import requests
+from urllib.parse import urljoin
+import warnings
 from filip.clients.base_http_client import BaseHttpClient
 from filip.config import settings
 from filip.models.base import FiwareHeader, PaginationMethod
 from filip.utils.simple_ql import QueryString
 from filip.models.ngsi_v2.context import \
     ActionType, \
-    AttrsFormat, \
     Command, \
     ContextEntity, \
     ContextEntityKeyValues, \
     ContextAttribute, \
     NamedCommand, \
     NamedContextAttribute, \
-    Subscription, \
-    Registration, \
     Query, \
     Update
+from filip.models.ngsi_v2.base import AttrsFormat
+from filip.models.ngsi_v2.subscriptions import Subscription
+from filip.models.ngsi_v2.registrations import Registration
 
 
 class ContextBrokerClient(BaseHttpClient):
@@ -517,7 +522,8 @@ class ContextBrokerClient(BaseHttpClient):
             self.log_error(err=err, msg=msg)
             raise
 
-    def delete_entity(self, entity_id: str, entity_type: str = None) -> None:
+    def delete_entity(self, entity_id: str, entity_type: str,
+                      delete_devices: bool = False) -> None:
 
         """
         Remove a entity from the context broker. No payload is required
@@ -526,15 +532,15 @@ class ContextBrokerClient(BaseHttpClient):
         Args:
             entity_id: Id of the entity to be deleted
             entity_type: several entities with the same entity id.
+            delete_devices: If True, also delete all devices that reference this
+                            entity (entity_id as entity_name)
         Returns:
             None
         """
         url = urljoin(self.base_url, f'v2/entities/{entity_id}')
         headers = self.headers.copy()
-        if entity_type:
-            params = {'type': entity_type}
-        else:
-            params = {}
+        params = {'type': entity_type}
+
         try:
             res = self.delete(url=url, params=params, headers=headers)
             if res.ok:
@@ -545,6 +551,47 @@ class ContextBrokerClient(BaseHttpClient):
             msg = f"Could not delete entity {entity_id} !"
             self.log_error(err=err, msg=msg)
             raise
+
+        if delete_devices:
+            from filip.clients.ngsi_v2 import IoTAClient
+            iota_client = IoTAClient(fiware_header=self.fiware_headers)
+
+            for device in iota_client.get_device_list(entity=entity_id):
+                if device.entity_type == entity_type:
+                    iota_client.delete_device(device_id=device.device_id)
+
+    def delete_entities(self, entities: List[ContextEntity]) -> None:
+        """
+        Remove a list of entities from the context broker. This methode is
+        more efficient than to call delete_entity() for each entity
+
+        Args:
+            entities: List[ContextEntity]: List of entities to be deleted
+        Raises:
+            Exception, if one of the entities is not in the ContextBroker
+        Returns:
+            None
+        """
+
+        # update() delete, deletes all entities without attributes completely,
+        # and removes the attributes for the other
+        # The entities are sorted based on the fact if they have
+        # attributes.
+        entities_with_attributes: List[ContextEntity] = []
+        for entity in entities:
+            attribute_names = [key for key in entity.dict() if key not in
+                               ContextEntity.__fields__]
+            if len(attribute_names) > 0:
+                entities_with_attributes.append(
+                    ContextEntity(id=entity.id, type=entity.type))
+
+        # Post update_delete for those without attribute only once,
+        # for the other post update_delete again but for the changed entity
+        # in the ContextBroker (only id and type left)
+        if len(entities) > 0:
+            self.update(entities=entities, action_type="delete")
+        if len(entities_with_attributes) > 0:
+            self.update(entities=entities_with_attributes, action_type="delete")
 
     def replace_entity_attributes(self,
                                   entity: ContextEntity,
@@ -881,8 +928,10 @@ class ContextBrokerClient(BaseHttpClient):
             self.log_error(err=err, msg=msg)
             raise
 
-    def post_subscription(self, subscription: Subscription,
-                          update: bool = False) -> str:
+    def post_subscription(self,
+                          subscription: Subscription,
+                          update: bool = False,
+                          skip_initial_notification: bool = False) -> str:
         """
         Creates a new subscription. The subscription is represented by a
         Subscription object defined in filip.cb.models.
@@ -898,6 +947,10 @@ class ContextBrokerClient(BaseHttpClient):
             subscription: Subscription
             update: True - If the subscription already exists, update it
                     False- If the subscription already exists, throw warning
+            skip_initial_notification: True - Initial Notifications will be
+                send to recipient containing the whole data. This is
+                deprecated and removed from version 3.0 of the context broker.
+                False - skip the initial notification
         Returns:
             str: Id of the (created) subscription
 
@@ -917,6 +970,21 @@ class ContextBrokerClient(BaseHttpClient):
                                   f" {ex_sub.id}")
                 return ex_sub.id
 
+        params = {}
+        if skip_initial_notification:
+            version = self.get_version()['orion']['version']
+            if parse_version(version) <= parse_version('3.1'):
+                params.update({'options': "skipInitialNotification"})
+            else:
+                pass
+            warnings.warn(f"Skip initial notifications is a deprecated "
+                          f"feature of older versions <=3.1 of the context "
+                          f"broker. The Context Broker that you requesting has "
+                          f"version: {version}. For newer versions we "
+                          f"automatically skip this option. Consider "
+                          f"refactoring and updating your services",
+                          DeprecationWarning)
+
         url = urljoin(self.base_url, 'v2/subscriptions')
         headers = self.headers.copy()
         headers.update({'Content-Type': 'application/json'})
@@ -927,7 +995,8 @@ class ContextBrokerClient(BaseHttpClient):
                 data=subscription.json(exclude={'id'},
                                        exclude_unset=True,
                                        exclude_defaults=True,
-                                       exclude_none=True))
+                                       exclude_none=True),
+                params=params)
             if res.ok:
                 self.logger.info("Subscription successfully created!")
                 return res.headers['Location'].split('/')[-1]
@@ -959,14 +1028,35 @@ class ContextBrokerClient(BaseHttpClient):
             self.log_error(err=err, msg=msg)
             raise
 
-    def update_subscription(self, subscription: Subscription):
+    def update_subscription(self,
+                            subscription: Subscription,
+                            skip_initial_notification: bool = False):
         """
         Only the fields included in the request are updated in the subscription.
         Args:
             subscription: Subscription to update
+            skip_initial_notification: True - Initial Notifications will be
+                send to recipient containing the whole data. This is
+                deprecated and removed from version 3.0 of the context broker.
+                False - skip the initial notification
         Returns:
 
         """
+        params = {}
+        if skip_initial_notification:
+            version = self.get_version()['orion']['version']
+            if parse_version(version) <= parse_version('3.1'):
+                params.update({'options': "skipInitialNotification"})
+            else:
+                pass
+            warnings.warn(f"Skip initial notifications is a deprecated "
+                          f"feature of older versions <3.1 of the context "
+                          f"broker. The Context Broker that you requesting has "
+                          f"version: {version}. For newer versions we "
+                          f"automatically skip this option. Consider "
+                          f"refactoring and updating your services",
+                          DeprecationWarning)
+
         url = urljoin(self.base_url, f'v2/subscriptions/{subscription.id}')
         headers = self.headers.copy()
         headers.update({'Content-Type': 'application/json'})
@@ -976,7 +1066,7 @@ class ContextBrokerClient(BaseHttpClient):
                 headers=headers,
                 data=subscription.json(exclude={'id'},
                                        exclude_unset=True,
-                                       exclude_defaults=True,
+                                       exclude_defaults=False,
                                        exclude_none=True))
             if res.ok:
                 self.logger.info("Subscription successfully updated!")

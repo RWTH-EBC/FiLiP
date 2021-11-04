@@ -1,6 +1,5 @@
 import logging
 from unittest import TestCase
-from filip.config import settings
 
 
 class TestLoggingConfig(TestCase):

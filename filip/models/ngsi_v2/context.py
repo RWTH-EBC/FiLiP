@@ -1,21 +1,24 @@
 """
+created Sep 21, 2021
+
+@author Thomas Storek
+
 NGSIv2 models for context broker interaction
 """
 import json
-from typing import Any, Type, List, Dict, Union, Optional, Pattern
-from datetime import datetime
+from typing import Any, Type, List, Dict, Union, Optional
 from aenum import Enum
 from pydantic import \
-    AnyHttpUrl, \
     BaseModel, \
     create_model, \
     Field, \
-    Json, \
     root_validator, \
     validator
-from filip.utils.simple_ql import QueryString, QueryStatement
+
+from filip.models.ngsi_v2.base import EntityPattern, Expression
 from filip.models.base import DataType, FiwareRegex
 from filip.models.ngsi_v2.units import validate_unit_data
+
 
 class GetEntitiesOptions(str, Enum):
     """ Options for queries"""
@@ -100,7 +103,7 @@ class NamedContextMetadata(ContextMetadata):
         if values.get("name", "").casefold() in ["unit",
                                                  "unittext",
                                                  "unitcode"]:
-             values.update(validate_unit_data(values))
+            values.update(validate_unit_data(values))
         return values
 
     def to_context_metadata(self):
@@ -331,10 +334,7 @@ class ContextEntity(ContextEntityKeyValues):
         >>> entity = ContextEntity(**data)
 
     """
-    def __init__(self,
-                 id: str,
-                 type: str,
-                 **data):
+    def __init__(self, id: str, type: str, **data):
 
         # There is currently no validation for extra fields
         data.update(self._validate_attributes(data))

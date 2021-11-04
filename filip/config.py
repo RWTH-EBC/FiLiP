@@ -1,6 +1,4 @@
-import logging
-from typing import Union
-from pydantic import BaseSettings, Field, AnyHttpUrl, validator
+from pydantic import BaseSettings, Field, AnyHttpUrl
 
 
 class Settings(BaseSettings):

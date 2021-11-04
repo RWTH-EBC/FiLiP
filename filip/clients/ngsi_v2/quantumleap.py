@@ -9,7 +9,7 @@ from pydantic import parse_obj_as
 from filip import settings
 from filip.clients.base_http_client import BaseHttpClient
 from filip.models.base import FiwareHeader
-from filip.models.ngsi_v2.context import NotificationMessage
+from filip.models.ngsi_v2.subscriptions import Message
 from filip.models.ngsi_v2.timeseries import \
     AggrPeriod, \
     AggrMethod, \
@@ -98,7 +98,7 @@ class QuantumLeapClient(BaseHttpClient):
         raise NotImplementedError("Endpoint to be implemented..")
 
     # INPUT API ENDPOINTS
-    def post_notification(self, notification: NotificationMessage):
+    def post_notification(self, notification: Message):
         """
         Notify QuantumLeap the arrival of a new NGSI notification.
 

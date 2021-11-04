@@ -8,7 +8,12 @@ __pycache__
 *.log
 .project
 .pydevproject
+
 *.yml
+# include issue branch workflows
+!.github/workflows/issue-tracker.yml
+!.github/issue-branch.yml
+
 *.yaml
 
 # pip install #
@@ -30,6 +35,7 @@ venv
 #####################
 .pytest_cache
 /filip.egg-info/
+/tests/.env
 
 #filip-development
 secrets-tst.json
@@ -37,3 +43,4 @@ secrets-tst.json
 /filip/external_resources/unece-units-of-measure.hdf
 /external_resources/
 /playground.py
+/docs/diagrams/src/clients.wsd
