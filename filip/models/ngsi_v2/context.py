@@ -6,14 +6,16 @@ created Sep 21, 2021
 NGSIv2 models for context broker interaction
 """
 import json
-from typing import Any, Type, List, Dict, Union, Optional
+from datetime import datetime
+from typing import Any, Type, List, Dict, Union, Optional, Pattern
 from aenum import Enum
+from filip.utils.simple_ql import QueryString, QueryStatement
 from pydantic import \
     BaseModel, \
     create_model, \
     Field, \
     root_validator, \
-    validator
+    validator, AnyHttpUrl, Json
 
 from filip.models.ngsi_v2.base import EntityPattern, Expression
 from filip.models.base import DataType, FiwareRegex
