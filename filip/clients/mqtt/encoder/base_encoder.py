@@ -1,7 +1,7 @@
 import logging
 from abc import ABC
 from datetime import datetime
-from typing import Dict, Literal, Tuple
+from typing import Dict, Tuple
 from paho.mqtt.client import MQTTMessage
 from filip.models.mqtt import IotaMqttMessageType
 
@@ -35,7 +35,7 @@ class BaseEncoder(ABC):
     def encode_msg(self,
                    device_id: str,
                    payload: Dict,
-                   msg_type: Literal['single', 'multi', 'cmdexe']) -> str:
+                   msg_type: IotaMqttMessageType) -> str:
         raise NotImplementedError
 
     @classmethod

@@ -1,5 +1,5 @@
 import json
-from typing import Any, Dict,  Tuple
+from typing import Any, Dict, Tuple
 from filip.clients.mqtt.encoder import BaseEncoder
 from filip.models.mqtt import IotaMqttMessageType
 
