@@ -32,7 +32,7 @@ class TestContextModels(unittest.TestCase):
         self.attr = {'temperature': {'value': 20,
                                      'type': 'Number'}}
         self.relation = {'relation': {'value': 'OtherEntity',
-                                      'type': 'RelationField'}}
+                                      'type': 'Relationship'}}
         self.entity_data = {'id': 'MyId',
                             'type': 'MyType'}
         self.entity_data.update(self.attr)
@@ -85,7 +85,7 @@ class TestContextModels(unittest.TestCase):
         entity = ContextEntity.parse_obj(self.entity_data)
         self.assertEqual(self.entity_data, entity.dict(exclude_unset=True))
 
-        properties = entity.get_properties(response_format='_list')
+        properties = entity.get_properties(response_format='list')
         self.assertEqual(self.attr, {properties[0].name: properties[0].dict(
             exclude={'name', 'metadata'}, exclude_unset=True)})
         properties = entity.get_properties(response_format='dict')

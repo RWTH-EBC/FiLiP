@@ -306,11 +306,11 @@ class IoTAClient(BaseHttpClient):
                         detailed: str = 'off', entity: str = None,
                         protocol: PayloadProtocol = None) -> List[Device]:
         """
-        Returns a _list of all the devices in the device registry with all
+        Returns a list of all the devices in the device registry with all
         its data.
         Args:
             limit: if present, limits the number of devices returned in the
-            _list. Must be a number between 1 and 1000.
+            list. Must be a number between 1 and 1000.
             offset: if present, skip that number of devices from the original
             query.
             detailed: 'on' return all device information, 'off' (default)

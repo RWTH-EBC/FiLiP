@@ -15,6 +15,9 @@ import json
 import paho.mqtt.client as mqtt
 from datetime import datetime, timedelta
 from urllib.parse import urlparse
+
+from requests import RequestException
+
 from filip.models.base import FiwareHeader
 from filip.utils.simple_ql import QueryString
 from filip.clients.ngsi_v2 import ContextBrokerClient
@@ -26,7 +29,6 @@ from filip.models.ngsi_v2.context import \
     NamedContextAttribute, \
     NamedCommand, \
     Query, \
-    Entity, \
     ActionType, NamedContextMetadata
 
 from filip.models.ngsi_v2.base import AttrsFormat, EntityPattern, Status

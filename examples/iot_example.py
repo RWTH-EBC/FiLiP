@@ -111,7 +111,7 @@ def delete_device(device_id):
         logger.info("------Deleting example device from device registry------")
         iota_client.delete_device(device_id=device_id)
         # logger.info("------Deleting entities from context broker------")
-    # with ContextBrokerClient(header=FiwareHeader(service='filip',
+    # with ContextBrokerClient(fiware_header=FiwareHeader(service='filip',
     #                                                     service_path='/testing')) as \
     #         cb_client:
     #     cb_client.delete_entity(entity_id=device.entity_name,

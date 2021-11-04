@@ -158,11 +158,11 @@ class QuantumLeapClient(BaseHttpClient):
             id_pattern (String): The pattern covering the entity ids for which
                 to subscribe. If not specified, QL will track all entities of
                 the specified type.
-            attributes (String): Comma-separated _list of attribute names to
+            attributes (String): Comma-separated list of attribute names to
                 track.
-            observed_attributes (String): Comma-separated _list of attribute
+            observed_attributes (String): Comma-separated list of attribute
                 names to track.
-            notified_attributes (String): Comma-separated _list of attribute
+            notified_attributes (String): Comma-separated list of attribute
                 names to be used to restrict the data of which QL will keep a
                 history.
             throttling (int): Minimal period of time in seconds which must
@@ -362,11 +362,11 @@ class QuantumLeapClient(BaseHttpClient):
                      offset: int = None
                      ) -> List[TimeSeriesHeader]:
         """
-        Get _list of all available entities and their context information
+        Get list of all available entities and their context information
         about EntityType and last update date.
 
         Args:
-            entity_type (str): Comma-separated _list of entity types whose data
+            entity_type (str): Comma-separated list of entity types whose data
                 are to be included in the response. Use only one (no comma)
                 when required. If used to resolve ambiguity for the given
                 entityId, make sure the given entityId exists for this
@@ -420,8 +420,8 @@ class QuantumLeapClient(BaseHttpClient):
 
         Args:
             entity_id (String): Entity id is required.
-            attrs (String): Comma-separated _list of attribute names
-            entity_type (String): Comma-separated _list of entity types whose
+            attrs (String): Comma-separated list of attribute names
+            entity_type (String): Comma-separated list of entity types whose
                 data are to be included in the response.
             aggr_method (String): The function to apply to the raw data
                 filtered. count, sum, avg, min, max
@@ -485,8 +485,8 @@ class QuantumLeapClient(BaseHttpClient):
 
         Args:
             entity_id (String): Entity id is required.
-            attrs (String): Comma-separated _list of attribute names
-            entity_type (String): Comma-separated _list of entity types whose
+            attrs (String): Comma-separated list of attribute names
+            entity_type (String): Comma-separated list of entity types whose
                 data are to be included in the response.
             aggr_method (String): The function to apply to the raw data
                 filtered. count, sum, avg, min, max
@@ -551,7 +551,7 @@ class QuantumLeapClient(BaseHttpClient):
         Args:
             entity_id (String): Entity id is required.
             attr_name (String): The attribute name is required.
-            entity_type (String): Comma-separated _list of entity types whose
+            entity_type (String): Comma-separated list of entity types whose
                 data are to be included in the response.
             aggr_method (String): The function to apply to the raw data
                 filtered. count, sum, avg, min, max
@@ -618,7 +618,7 @@ class QuantumLeapClient(BaseHttpClient):
         Args:
             entity_id (String): Entity id is required.
             attr_name (String): The attribute name is required.
-            entity_type (String): Comma-separated _list of entity types whose
+            entity_type (String): Comma-separated list of entity types whose
                 data are to be included in the response.
             aggr_method (String): The function to apply to the raw data
                 filtered. count, sum, avg, min, max
@@ -780,7 +780,7 @@ class QuantumLeapClient(BaseHttpClient):
         Args:
             entity_type (String): Entity type is required.
             attr_name (String): The attribute name is required.
-            entity_id (String): Comma-separated _list of entity ids whose data
+            entity_id (String): Comma-separated list of entity ids whose data
                 are to be included in the response.
             aggr_method (String): The function to apply to the raw data
                 filtered. count, sum, avg, min, max
@@ -861,7 +861,7 @@ class QuantumLeapClient(BaseHttpClient):
             aggr_scope:
             entity_type (String): Entity type is required.
             attr_name (String): The attribute name is required.
-            entity_id (String): Comma-separated _list of entity ids whose data
+            entity_id (String): Comma-separated list of entity ids whose data
                 are to be included in the response.
             aggr_method (String): The function to apply to the raw data
                 filtered. count, sum, avg, min, max

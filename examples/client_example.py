@@ -61,7 +61,7 @@ if __name__ == '__main__':
     # e.g. headers, params etc.
     """
     iota_client = ContextBrokerClient(url="http://<yourHost>:1026",
-                                      header=header)
+                                      fiware_header=fiware_header)
     """
 
     # The library also contains a client that contains all the other

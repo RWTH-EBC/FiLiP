@@ -117,11 +117,11 @@ def create_inventory(fiware_header: FiwareHeader):
         inventory_dict = {
             "id": "urn:ngsi-ld:InventoryItem:001", "type": "InventoryItem",
             "refStore": {
-                "type": "RelationField",
+                "type": "Relationship",
                 "value": "urn:ngsi-ld:Store:001"
             },
             "refProduct": {
-                "type": "RelationField",
+                "type": "Relationship",
                 "value": "urn:ngsi-ld:Product:001"
             },
             "stockCount": {
