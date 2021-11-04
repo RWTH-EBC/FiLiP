@@ -434,24 +434,16 @@ class SemanticManager(BaseModel):
             # we need to handle devices and normal classes with different
             # clients
 
-            if not self.is_class_name_an_device_class(identifier.type):
-                client = self.get_client(instance_header=identifier.header)
-                try:
-                    client.delete_entity(entity_id=identifier.id,
-                                         entity_type=identifier.type)
-                except requests.RequestException:
-                    pass
+            client = self.get_client(instance_header=identifier.header)
+            try:
+                client.delete_entity(entity_id=identifier.id,
+                                     entity_type=identifier.type,
+                                     delete_devices=True)
+            except requests.RequestException:
+                pass
 
-                client.close()
-            else:
-                client = self.get_iota_client(
-                    instance_header=identifier.header)
-                try:
-                    client.delete_device(device_id=identifier.id)
-                except requests.RequestException:
-                    pass
+            client.close()
 
-                client.close()
 
         # save, patch all local instances
         for instance in self.instance_registry.get_all():

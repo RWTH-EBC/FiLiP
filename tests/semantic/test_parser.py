@@ -6,6 +6,7 @@ import datetime
 import unittest
 
 import rdflib.util
+from pathlib import Path
 
 from filip.semantics.ontology_parser.post_processer import \
     post_process_vocabulary
@@ -28,7 +29,8 @@ class TestModels(unittest.TestCase):
         """
 
         vocabulary = Vocabulary()
-        with open('./ontology_files/ParsingTesterOntology.ttl', 'rb') as file:
+        with open(get_file_path('ontology_files/ParsingTesterOntology.ttl'),
+                  'r') as file:
             data = file.read()
 
         # source = Source(id="my_unique_id", source_name="TestSource",
@@ -197,3 +199,14 @@ def get_targets_for_combine_object_relation(vocabulary: Vocabulary,
             possible_class_iris.add(target_iri)
 
     return list(possible_class_iris)
+
+def get_file_path(path_end: str) -> str:
+    """
+    Get the correct path to the file needed for this test
+    """
+
+    # Test if the testcase was run directly or over in a global test-run.
+    # Match the needed path to the config file in both cases
+
+    path = Path(__file__).parent.resolve()
+    return str(path.joinpath(path_end))

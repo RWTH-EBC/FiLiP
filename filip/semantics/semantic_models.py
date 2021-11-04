@@ -557,8 +557,8 @@ class DeviceField(Field):
         for name in v.get_all_field_names():
             if name in taken_fields:
                 raise NameError(f"The property can not be added to the field "
-                                 f"{self.name}, because the instance already"
-                                 f" posses a field with the name {name}")
+                                f"{self.name}, because the instance already"
+                                f" posses a field with the name {name}")
             if name in label_blacklist:
                 raise NameError(f"The property can not be added to the field "
                                 f"{self.name}, because the name {name} is "
@@ -895,7 +895,7 @@ class RelationField(RuleField):
         v = self._list[i]
         if isinstance(v, InstanceIdentifier):
             return self._semantic_manager.get_instance(v)
-        else:
+        elif isinstance(v, str):
             return self._semantic_manager.get_individual(v)
 
     def __setitem__(self, i, v: Union['SemanticClass', 'SemanticIndividual']):
@@ -923,7 +923,8 @@ class RelationField(RuleField):
 
             # delete reference
             if not self._semantic_manager.was_instance_deleted(self._list[i]):
-                v: SemanticClass = self._semantic_manager.get_instance(self._list[i])
+                v: SemanticClass = \
+                    self._semantic_manager.get_instance(self._list[i])
                 v.remove_reference(self._instance_identifier, self.name)
 
             # delete value in field
@@ -1400,11 +1401,7 @@ class SemanticDeviceClass(SemanticClass):
              bool, True if endpoint and transport are not None
         """
         return self.device_settings.endpoint is not None and \
-               self.device_settings.transport is not None
-
-    def delete(self, assert_no_references: bool = False):
-        #todo
-        pass
+            self.device_settings.transport is not None
 
     def get_fields(self) -> List[Field]:
         """

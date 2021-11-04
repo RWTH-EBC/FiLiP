@@ -4,6 +4,8 @@ Tests for filip.semantics.vocabulary_configurator
 import json
 import unittest
 
+from pathlib import Path
+
 from filip.semantics.vocabulary import Vocabulary
 from filip.semantics.vocabulary.data_property import DataFieldType
 from filip.semantics.vocabulary.vocabulary import VocabularySettings
@@ -29,10 +31,11 @@ class TestModels(unittest.TestCase):
         vocabulary_1 = \
             VocabularyConfigurator.add_ontology_to_vocabulary_as_file(
                 vocabulary=vocabulary,
-                path_to_file='./ontology_files/RoomFloorOntology.ttl')
+                path_to_file=self.get_file_path(
+                    'ontology_files/RoomFloorOntology.ttl'))
 
-        with open(
-                './ontology_files/RoomFloor_Duplicate_Labels.ttl', 'r') \
+        with open(self.get_file_path(
+                'ontology_files/RoomFloor_Duplicate_Labels.ttl'), 'r') \
                 as file:
             data = file.read()
 
@@ -46,13 +49,15 @@ class TestModels(unittest.TestCase):
         vocabulary_3 = \
             VocabularyConfigurator.add_ontology_to_vocabulary_as_file(
                 vocabulary=vocabulary,
-                path_to_file='./ontology_files/RoomFloorOntology.ttl',
+                path_to_file=self.get_file_path(
+                    'ontology_files/RoomFloorOntology.ttl'),
                 source_name='test_name'
             )
         vocabulary_3 = \
             VocabularyConfigurator.add_ontology_to_vocabulary_as_file(
                 vocabulary=vocabulary_3,
-                path_to_file='./ontology_files/ParsingTesterOntology.ttl'
+                path_to_file=self.get_file_path(
+                    'ontology_files/ParsingTesterOntology.ttl')
             )
 
         self.vocabulary = vocabulary
@@ -188,3 +193,15 @@ class TestModels(unittest.TestCase):
 
     def tearDown(self) -> None:
         pass
+
+    @staticmethod
+    def get_file_path(path_end: str) -> str:
+        """
+        Get the correct path to the file needed for this test
+        """
+
+        # Test if the testcase was run directly or over in a global test-run.
+        # Match the needed path to the config file in both cases
+
+        path = Path(__file__).parent.resolve()
+        return str(path.joinpath(path_end))

@@ -1,6 +1,8 @@
-import copy
-import logging
 import unittest
+
+from pathlib import Path
+
+from filip.models import FiwareHeader
 
 from filip.models.ngsi_v2.iot import TransportProtocol
 
@@ -11,6 +13,7 @@ from filip.semantics.semantic_models import SemanticClass, InstanceHeader, \
 from filip.semantics.vocabulary.data_property import DataFieldType
 from filip.semantics.vocabulary.vocabulary import VocabularySettings
 from filip.semantics.vocabulary_configurator import VocabularyConfigurator
+from filip.utils.cleanup import clear_all
 
 
 class TestSemanticModels(unittest.TestCase):
@@ -19,6 +22,9 @@ class TestSemanticModels(unittest.TestCase):
         pass
 
     def test_1_model_creation(self):
+        """
+        Build the model used by all other tests
+        """
         vocabulary = VocabularyConfigurator.create_vocabulary(
             VocabularySettings(
                 pascal_case_class_labels=False,
@@ -31,7 +37,8 @@ class TestSemanticModels(unittest.TestCase):
         vocabulary = \
             VocabularyConfigurator.add_ontology_to_vocabulary_as_file(
                 vocabulary=vocabulary,
-                path_to_file='./ontology_files/ParsingTesterOntology.ttl')
+                path_to_file=self.get_file_path(
+                    'ontology_files/ParsingTesterOntology.ttl'))
 
         # Test part can only be executed locally, as the gitlab runner can´t
         # access the WWW
@@ -50,6 +57,9 @@ class TestSemanticModels(unittest.TestCase):
                                                           "models")
 
     def test_2_default_header(self):
+        """
+        Test if a new class without header gets teh default header
+        """
         from tests.semantic.models import Class1, semantic_manager
 
         test_header = InstanceHeader(
@@ -64,6 +74,9 @@ class TestSemanticModels(unittest.TestCase):
         self.assertEqual(class1.header, test_header)
 
     def test_3_individuals(self):
+        """
+        Test the instantiation of Individuals and their uniqueness
+        """
         from tests.semantic.models import Individual1, Individual2
 
         individual1 = Individual1()
@@ -71,8 +84,11 @@ class TestSemanticModels(unittest.TestCase):
         self.assertFalse(Individual2() == individual1)
 
     def test_4_model_relation_field_validation(self):
+        """
+        Test if relation field rules are correctly validated
+        """
         from tests.semantic.models import Class1, Class13, Class2, Class4, \
-            Class123, Individual1, semantic_manager
+            Class123, Individual1
 
         class1 = Class1(id="12")
         class13 = Class13()
@@ -103,12 +119,13 @@ class TestSemanticModels(unittest.TestCase):
         class13.objProp2.append(Individual1())
         self.assertTrue(class13.objProp2.is_valid())
 
-
         # todo test statement cases: min, max,...
 
     def test_5_model_data_field_validation(self):
-        from tests.semantic.models import Class1, Class3, Class2, Class123, \
-            Individual1, semantic_manager, Thing
+        """
+        Test if data fields are correctly validated
+        """
+        from tests.semantic.models import Class1, Class3
         class3 = Class3()
 
         self.assertTrue(class3.dataProp1.is_valid())
@@ -124,6 +141,9 @@ class TestSemanticModels(unittest.TestCase):
         self.assertTrue(2 in Class1().dataProp2)
 
     def test_6_back_referencing(self):
+        """
+        Test if referencing of relations correctly works
+        """
         from tests.semantic.models import Class1, Class3, Class2, Class4
 
         c1 = Class1()
@@ -147,6 +167,9 @@ class TestSemanticModels(unittest.TestCase):
         self.assertNotIn(c1.get_identifier(), c2.references)
 
     def test_7_test_instance_creation_inject(self):
+        """
+        Test if instances with the same id point to the same object
+        """
         from tests.semantic.models import Class1, Class13, Class123, \
             Individual1, Gertrude, semantic_manager
 
@@ -168,6 +191,9 @@ class TestSemanticModels(unittest.TestCase):
         self.assertTrue(class1_ == class13.objProp3[0])
 
     def test_8_test_saving_and_loading(self):
+        """
+        Test if instances can be saved to Fiware and correctly loaded again
+        """
         from tests.semantic.models import Class1, Class13, Class123, \
             Individual1, Gertrude, semantic_manager
 
@@ -184,7 +210,7 @@ class TestSemanticModels(unittest.TestCase):
         class13.objProp3.append(class1)
         class13.objProp3.append(class13)
         class13.objProp3.append(Individual1())
-        class13.dataProp1.extend([1,2,4])
+        class13.dataProp1.extend([1, 2, 4])
 
         # class1.oProp1.append(class13)
 
@@ -206,9 +232,14 @@ class TestSemanticModels(unittest.TestCase):
         self.assertEqual(class13.dataProp1.get_all_raw(),
                          class13_.dataProp1.get_all_raw())
         self.assertTrue(class13.get_identifier() in
-                         semantic_manager.instance_registry._registry)
+                        semantic_manager.instance_registry._registry)
 
     def test_9_deleting(self):
+        """
+        Test if a device is correctly deleted from fiware,
+        deleted from other instances fields if deleted,
+        and not be pulled again from Fiware once deleted locally
+        """
         from tests.semantic.models import Class1, Class13, Class123, \
             Individual1, Gertrude, semantic_manager
 
@@ -275,8 +306,10 @@ class TestSemanticModels(unittest.TestCase):
         self.assertTrue(len(class13_.dataProp1.get_all_raw()) == 0)
 
     def test__10_field_set_methode(self):
-        from tests.semantic.models import Class1, Class13, Class3, Class123, \
-            Individual1, Gertrude, semantic_manager
+        """
+        Test if the values of fields are correctly set with the list methods
+        """
+        from tests.semantic.models import Class1, Class13, Class3, Class123
 
         # clear local state to ensure standard test condition
         self.clear_registry()
@@ -297,12 +330,20 @@ class TestSemanticModels(unittest.TestCase):
                                                    c123.get_identifier()])
 
     def clear_registry(self):
+        """
+        Clear the local state. Needed to test the interaction with Fiware if
+        the local state of an instance is missing
+        """
         from tests.semantic.models import semantic_manager
         semantic_manager.instance_registry._registry.clear()
         semantic_manager.instance_registry._deleted_identifiers.clear()
         self.assertTrue(len(semantic_manager.instance_registry._registry) == 0)
 
     def test__11_model_creation_with_devices(self):
+        """
+        Test the creation of a models file with DeviceClasses.
+        The models are used for further tests
+        """
         vocabulary = VocabularyConfigurator.create_vocabulary(
             VocabularySettings(
                 pascal_case_class_labels=False,
@@ -315,7 +356,8 @@ class TestSemanticModels(unittest.TestCase):
         vocabulary = \
             VocabularyConfigurator.add_ontology_to_vocabulary_as_file(
                 vocabulary=vocabulary,
-                path_to_file='./ontology_files/ParsingTesterOntology.ttl')
+                path_to_file=self.get_file_path(
+                    'ontology_files/ParsingTesterOntology.ttl'))
 
         vocabulary.get_data_property(
             "http://www.semanticweb.org/redin/ontologies/2020/11/untitled"
@@ -329,8 +371,11 @@ class TestSemanticModels(unittest.TestCase):
             vocabulary, "./", "models2")
 
     def test__13_device_creation(self):
-        from tests.semantic.models2 import Class1, Class13, Class3, Class4, \
-            Class123, Individual1, Gertrude, semantic_manager
+        """
+        Test if a device is correctly instantiated
+        And the settings can be set
+        """
+        from tests.semantic.models2 import Class3, semantic_manager
 
         test_header = InstanceHeader(
             cb_url=settings.CB_URL,
@@ -345,8 +390,11 @@ class TestSemanticModels(unittest.TestCase):
         self.assertEqual(class3_.device_settings.endpoint, "http://test.com")
 
     def test__14_device_saving_and_loading(self):
-        from tests.semantic.models2 import Class1, Class13, Class3, Class4, \
-            Class123, Individual1, Gertrude, semantic_manager
+        """
+        Test if a Device can be correctly saved and loaded.
+        And the live methods of Commands and DeviceAttributes
+        """
+        from tests.semantic.models2 import Class1,  Class3, semantic_manager
 
         test_header = InstanceHeader(
             cb_url=settings.CB_URL,
@@ -418,7 +466,51 @@ class TestSemanticModels(unittest.TestCase):
         class3_.commandProp[0].get_status()
         class3_.commandProp[0].send()
 
-    def test__15_field_name_checks(self):
+    def test__15_device_deleting(self):
+        """
+        Test if SemanticDeviceClass.delete() completly removes the device and
+        context entry from Fiware.
+        All other interactions are covered in the "deleting test"
+        """
+        from tests.semantic.models2 import Class1, Class3, semantic_manager
+
+        # clear local state to ensure standard test condition
+        self.clear_registry()
+
+        # Test 1: Local deletion
+
+        # create class
+        class3_ = Class3(id="13")
+        class3_.device_settings.endpoint = "http://test.com"
+        class3_.device_settings.transport = TransportProtocol.HTTP
+
+        semantic_manager.save_state(assert_validity=False)
+        self.clear_registry()
+
+        # load class from Fiware, and delete it
+        class3_ = Class3(id="13")
+        class3_.delete()
+
+        semantic_manager.save_state(assert_validity=False)
+        self.clear_registry()
+        self.assertTrue(len(semantic_manager.instance_registry.get_all()) == 0)
+
+        # class no longer exists in fiware iota or context broker
+        with IoTAClient(
+                fiware_header=semantic_manager.
+                default_header.get_fiware_header()) as client:
+            self.assertEqual(len(client.get_device_list()), 0)
+
+        with ContextBrokerClient(
+                fiware_header=semantic_manager.
+                default_header.get_fiware_header()) as client:
+            self.assertEqual(len(client.get_entity_list()), 0)
+
+    def test__16_field_name_checks(self):
+        """
+        Test if Commands and Attributes are prevented from having blacklised
+        names
+        """
         from tests.semantic.models2 import Class3
 
         class3 = Class3(id="13")
@@ -452,7 +544,10 @@ class TestSemanticModels(unittest.TestCase):
             ['attributeProp', 'attributeProp__type', 'commandProp',
              'c1', 'c1_info', 'c1_result', 'dataProp1', 'oProp1', 'objProp2'])
 
-    def test__16_save_and_load_local_state(self):
+    def test__17_save_and_load_local_state(self):
+        """
+        Test if the local state can be correctly saved as json and loaded again
+        """
         from tests.semantic.models2 import Class3, Class1, semantic_manager
 
         class3 = Class3(id="15")
@@ -486,8 +581,12 @@ class TestSemanticModels(unittest.TestCase):
 
         self.assertTrue(class1_.references == class1.references)
 
-    def test__17_inverse_relations(self):
-        from tests.semantic.models2 import Class1, semantic_manager
+    def test__18_inverse_relations(self):
+        """
+        Test if a instance is added to the added instance, if an inverse
+        logic exists
+        """
+        from tests.semantic.models2 import Class1
 
         inst_1 = Class1(id="100")
         inst_2 = Class1(id="101")
@@ -508,30 +607,25 @@ class TestSemanticModels(unittest.TestCase):
         """
         Cleanup test server
         """
-        from tests.semantic.models import semantic_manager
 
         self.clear_registry()
+        clear_all(fiware_header=FiwareHeader(service="testing",
+                                             service_path="/"),
+                  cb_url=settings.CB_URL,
+                  iota_url=settings.IOTA_URL)
 
-        test_header = InstanceHeader(
-            cb_url=settings.CB_URL,
-            iota_url=settings.IOTA_URL,
-            service="testing",
-            service_path="/"
-        )
-        semantic_manager.set_default_header(test_header)
+    @staticmethod
+    def get_file_path(path_end: str) -> str:
+        """
+        Get the correct path to the file needed for this test
+        """
 
-        with IoTAClient(
-                fiware_header=semantic_manager.
-                        default_header.get_fiware_header()) as client:
-            for device in client.get_device_list():
-                client.delete_device(device_id=device.device_id)
+        # Test if the testcase was run directly or over in a global test-run.
+        # Match the needed path to the config file in both cases
 
-        with ContextBrokerClient(
-                fiware_header=semantic_manager.
-                default_header.get_fiware_header()) as client:
-            for entity in client.get_entity_list():
-                client.delete_entity(entity_id=entity.id,
-                                     entity_type=entity.type)
+        path = Path(__file__).parent.resolve()
+        return str(path.joinpath(path_end))
+
 
 
 
