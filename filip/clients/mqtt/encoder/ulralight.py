@@ -1,8 +1,7 @@
-import json
 from pydantic import validate_arguments
-from typing import Any, Dict, Literal, Tuple, Union
+from typing import Any, Dict, Tuple, Union
 from filip.clients.mqtt.encoder import BaseEncoder
-
+from filip.models.mqtt import IotaMqttMessageType
 
 class Ultralight(BaseEncoder):
     prefix = '/ul'
@@ -31,17 +30,17 @@ class Ultralight(BaseEncoder):
     def encode_msg(self,
                    device_id: str,
                    payload: Any,
-                   msg_type: Literal['single', 'multi', 'cmdexe']) -> str:
-        if msg_type == 'single':
+                   msg_type: IotaMqttMessageType) -> str:
+        if msg_type == IotaMqttMessageType.SINGLE:
             return payload
-        elif msg_type == 'multi':
+        elif msg_type == IotaMqttMessageType.MULTI:
             payload = super()._parse_timestamp(payload=payload)
             timestamp = str(payload.pop('timeInstant', ''))
             data = '|'.join([f"{key}|{value}" for key, value in
                              payload.items()])
             data = '|'.join([timestamp, data])
             return data
-        elif msg_type == 'cmdexe':
+        elif msg_type == IotaMqttMessageType.CMDEXE:
             for key, value in payload.items():
                 if isinstance(value, bool):
                     value = str(value).lower()

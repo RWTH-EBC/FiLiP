@@ -6,13 +6,16 @@ Created 21st Oct, 2021
 
 @author: Thomas Storek
 """
-import logging
-import paho.mqtt.client as mqtt
-import warnings
 import itertools
+import logging
+import warnings
 from datetime import datetime
-from typing import Any, Callable, Dict, List, Literal, Tuple, Type, Union
+from typing import Any, Callable, Dict, List, Tuple, Type, Union
+
+import paho.mqtt.client as mqtt
+
 from filip.clients.mqtt.encoder import BaseEncoder
+from filip.models.mqtt import IotaMqttMessageType
 from filip.models.ngsi_v2.iot import Device, ServiceGroup, TransportProtocol
 
 
@@ -251,29 +254,44 @@ class MQTTClient(mqtt.Client):
 
         return device
 
-    def __create_topic(self, *,
-                       topic_type: Literal['attrs',
-                                           'cmd',
-                                           'cmdexe',
-                                           'configuration'],
+    def __create_topic(self,
+                       *,
+                       topic_type: IotaMqttMessageType,
                        device: Device,
                        attribute: str = None) -> str:
         """
         Creates a topic for a device configuration based on the requested
         topic type.
+
         Args:
-            device: Configuration of an IoT device
+            device:
+                Configuration of an IoT device
             topic_type:
                 type of the topic to be created,
-                'attrs' for topics that the device is suppose to publish on.
+                'multi' for topics that the device is suppose to publish on.
+                'single' for topics that the device is suppose to publish on.
                 'cmd' for topic the device is expecting its commands on.
                 'cmdexe' for topic the device can acknowledge its commands on.
                 'configuration' for topic the device can request command
                     configurations on
+            attribute:
+                attribute needs to be set for single measurements
         Returns:
             string with topic
+
+        Raises:
+            KeyError:
+                If unknown message type is used
+            ValueError:
+                If attribute name is missing for single measurements
         """
-        if topic_type == 'attrs':
+
+        if topic_type == IotaMqttMessageType.MULTI:
+            topic = '/'.join((self.encoder.prefix,
+                              device.apikey,
+                              device.device_id,
+                              'attrs'))
+        elif topic_type == IotaMqttMessageType.SINGLE:
             if attribute:
                 attr = next(attr for attr in device.attributes
                             if attr.name == attribute)
@@ -287,20 +305,19 @@ class MQTTClient(mqtt.Client):
                                   'attrs',
                                   attr_suffix))
             else:
-                topic = '/'.join((self.encoder.prefix,
-                                  device.apikey,
-                                  device.device_id,
-                                  'attrs'))
-        elif topic_type == 'cmd':
+                raise ValueError("Missing argument name for single measurement")
+        elif topic_type == IotaMqttMessageType.CMD:
             topic = '/' + '/'.join((device.apikey, device.device_id, 'cmd'))
-        elif topic_type == 'cmdexe':
+        elif topic_type == IotaMqttMessageType.CMDEXE:
             topic = '/'.join((self.encoder.prefix,
                               device.apikey,
-                              device.device_id, 'cmdexe'))
-        elif topic_type == 'configuration':
+                              device.device_id,
+                              'cmdexe'))
+        elif topic_type == IotaMqttMessageType.CONFIG:
             topic = '/'.join((self.encoder.prefix,
                               device.apikey,
-                              device.device_id, 'configuration'))
+                              device.device_id,
+                              'configuration'))
         else:
             raise KeyError
         return topic
@@ -608,7 +625,7 @@ class MQTTClient(mqtt.Client):
             raise KeyError("Device does not exist! %s", device_id)
         self.__subscribe_commands(device=device)
         topic = self.__create_topic(device=device,
-                                    topic_type='cmd')
+                                    topic_type=IotaMqttMessageType.CMD)
         self.message_callback_add(topic, callback)
 
     def publish(self,
@@ -705,11 +722,13 @@ class MQTTClient(mqtt.Client):
                     else:
                         raise KeyError("Attribute key is not allowed for "
                                        "this device")
-                topic = self.__create_topic(device=device,
-                                                topic_type='attrs')
-                payload = self.encoder.encode_msg(device_id=device_id,
-                                                  payload=payload,
-                                                  msg_type='multi')
+                topic = self.__create_topic(
+                    device=device,
+                    topic_type=IotaMqttMessageType.MULTI)
+                payload = self.encoder.encode_msg(
+                    device_id=device_id,
+                    payload=payload,
+                    msg_type=IotaMqttMessageType.MULTI)
 
             # create message for command acknowledgement
             elif attribute_name is None and command_name:
@@ -719,19 +738,24 @@ class MQTTClient(mqtt.Client):
                 assert next(iter(payload.keys())) in \
                        [cmd.name for cmd in device.commands], \
                     "Unknown command for this device!"
-                topic = self.__create_topic(device=device, topic_type='cmdexe')
-                payload = self.encoder.encode_msg(device_id=device_id,
-                                                  payload=payload,
-                                                  msg_type='cmdexe')
+                topic = self.__create_topic(
+                    device=device,
+                    topic_type=IotaMqttMessageType.CMDEXE)
+                payload = self.encoder.encode_msg(
+                    device_id=device_id,
+                    payload=payload,
+                    msg_type=IotaMqttMessageType.CMDEXE)
 
             # create message for single measurement
             elif attribute_name and command_name is None:
-                topic = self.__create_topic(device=device,
-                                            topic_type='attrs',
-                                            attribute=attribute_name)
-                payload = self.encoder.encode_msg(device_id=device_id,
-                                                  payload=payload,
-                                                  msg_type='single')
+                topic = self.__create_topic(
+                    device=device,
+                    topic_type=IotaMqttMessageType.SINGLE,
+                    attribute=attribute_name)
+                payload = self.encoder.encode_msg(
+                    device_id=device_id,
+                    payload=payload,
+                    msg_type=IotaMqttMessageType.SINGLE)
             else:
                 raise ValueError("Inconsistent arguments!")
 

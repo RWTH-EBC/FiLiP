@@ -3,7 +3,7 @@ from abc import ABC
 from datetime import datetime
 from typing import Dict, Literal, Tuple
 from paho.mqtt.client import MQTTMessage
-
+from filip.models.mqtt import IotaMqttMessageType
 
 class BaseEncoder(ABC):
     prefix: str = ''
@@ -51,8 +51,9 @@ class BaseEncoder(ABC):
         return payload
 
     @classmethod
-    def _raise_encoding_error(cls, payload: Dict,
-                               msg_type: Literal['single', 'multi', 'cmdexe']):
+    def _raise_encoding_error(cls,
+                              payload: Dict,
+                              msg_type: IotaMqttMessageType):
         """
         Helper function to provide consistent error messages
         Args:

@@ -1,7 +1,8 @@
 import json
-from datetime import datetime
-from typing import Any, Dict, Literal, Tuple
+from typing import Any, Dict,  Tuple
 from filip.clients.mqtt.encoder import BaseEncoder
+from filip.models.mqtt import IotaMqttMessageType
+
 
 class Json(BaseEncoder):
     prefix = '/json'
@@ -18,12 +19,12 @@ class Json(BaseEncoder):
     def encode_msg(self,
                    device_id,
                    payload: Any,
-                   msg_type: Literal['single', 'multi', 'cmdexe']) -> str:
-        if msg_type == 'single':
+                   msg_type: IotaMqttMessageType) -> str:
+        if msg_type == IotaMqttMessageType.SINGLE:
             return payload
-        elif msg_type == 'multi':
+        elif msg_type == IotaMqttMessageType.MULTI:
             payload = super()._parse_timestamp(payload=payload)
             return json.dumps(payload, default=str)
-        elif msg_type == 'cmdexe':
+        elif msg_type == IotaMqttMessageType.CMDEXE:
             return json.dumps(payload)
         super()._raise_encoding_error(payload=payload, msg_type=msg_type)
