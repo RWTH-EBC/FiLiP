@@ -2,7 +2,6 @@
 Helper functions to prohibit boiler plate code
 """
 import logging
-from typing import Union
 from pydantic import AnyHttpUrl, validate_arguments
 from filip.types import AnyMqttUrl
 

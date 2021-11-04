@@ -91,12 +91,6 @@ class TestAgent(unittest.TestCase):
         """
         Test device creation
         """
-        # Clean up Fiware test state, this test can fail if the device was not
-        # correctly removed before
-        clear_all(fiware_header=self.fiware_header,
-                  cb_url=settings.CB_URL,
-                  iota_url=settings.IOTA_JSON_URL)
-
         with IoTAClient(
                 url=settings.IOTA_JSON_URL,
                 fiware_header=self.fiware_header) as client:

@@ -559,7 +559,7 @@ class TestContextBroker(unittest.TestCase):
                         entity_type='Thing2',
                         protocol='IoTA-JSON',
                         transport='MQTT',
-                        apikey='filip_test_device',
+                        apikey=settings.FIWARE_SERVICEPATH.strip('/'),
                         attributes=[device_attr1],
                         static_attributes=[static_device_attr],
                         commands=[device_command])
@@ -576,10 +576,11 @@ class TestContextBroker(unittest.TestCase):
 
         # Send device configuration to FIWARE via the IoT-Agent. We use the
         # general ngsiv2 httpClient for this.
-        service_group = ServiceGroup(service=self.fiware_header.service,
-                                     subservice=self.fiware_header.service_path,
-                                     apikey='filip_test_group',
-                                     resource='/iot/json')
+        service_group = ServiceGroup(
+            service=self.fiware_header.service,
+            subservice=self.fiware_header.service_path,
+            apikey=settings.FIWARE_SERVICEPATH.strip('/'),
+            resource='/iot/json')
 
         # create the Http client node that once sent the device cannot be posted
         # again and you need to use the update command
