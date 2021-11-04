@@ -203,7 +203,7 @@ class MQTTClient(mqtt.Client):
         # check if all devices have the right transport protocol
         self.devices: Dict[str, Device]
         if devices:
-           self.device = {
+           self.devices = {
                device.device_id: self.__validate_device(device=device)
                for device in devices}
         else:
