@@ -59,14 +59,14 @@ def clear_iot_agent(url: str, fiware_header: FiwareHeader):
     # create client
     client = IoTAClient(url=url, fiware_header=fiware_header)
 
+    # clear registrations
+    for device in client.get_device_list():
+        client.delete_device(device_id=device.device_id)
+
     # clear groups
     for group in client.get_group_list():
         client.delete_group(resource=group.resource,
                             apikey=group.apikey)
-
-    # clear registrations
-    for device in client.get_device_list():
-        client.delete_device(device_id=device.device_id)
 
 
 def clear_quantumleap(url: str, fiware_header: FiwareHeader):

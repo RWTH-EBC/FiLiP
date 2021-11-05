@@ -74,7 +74,7 @@ class MQTTClient(mqtt.Client):
                                userdata=None,
                                protocol=mqtt.MQTTv5,
                                transport="tcp",
-                               devices = [device],
+                               _devices = [device],
                                service_groups = [service_group],
                                encoder = IoTA_Json)
 
@@ -172,7 +172,7 @@ class MQTTClient(mqtt.Client):
                 with the client. Consequently, the client will be able to
                 subscribe to all registered device topics. Furthermore,
                 after registration messages can simply published by the
-                devices id.
+                _devices id.
             service_groups:
                 List of service group configurations that will be registered
                 with the client. These should be known upon subscribing
@@ -199,16 +199,6 @@ class MQTTClient(mqtt.Client):
         self.logger.addHandler(logging.NullHandler())
         self.enable_logger(self.logger)
 
-        # create dictionary holding the registered device configurations
-        # check if all devices have the right transport protocol
-        self.devices: Dict[str, Device]
-        if devices:
-           self.devices = {
-               device.device_id: self.__validate_device(device=device)
-               for device in devices}
-        else:
-            self.devices = {}
-
         # create dictionary holding the registered service groups
         self.service_groups: Dict[Tuple[str, str], ServiceGroup]
         if service_groups:
@@ -216,11 +206,46 @@ class MQTTClient(mqtt.Client):
         else:
             self.service_groups = {}
 
+        # create dictionary holding the registered device configurations
+        # check if all _devices have the right transport protocol
+        self._devices: Dict[str, Device] = {}
+        if devices:
+            self.devices = devices
+
         # add encoder for message parsing
         if encoder:
             self.encoder = encoder
         else:
             self.encoder = BaseEncoder
+
+    @property
+    def devices(self):
+        """
+        Returns as list of all registered device configurations
+        Returns:
+
+        """
+        return list(self._devices.values())
+
+    @devices.setter
+    def devices(self, devices: List[Device]):
+        """
+        Sets list of device configurations
+
+        Args:
+            devices: List of device configurations
+
+        Returns:
+            None
+
+        Raises:
+            ValueError: if duplicate device id was found
+        """
+        for device in devices:
+            try:
+                self.add_device(device=device)
+            except ValueError:
+                raise ValueError(f"Duplicate device_id: {device.device_id}")
 
     @property
     def encoder(self):
@@ -251,6 +276,15 @@ class MQTTClient(mqtt.Client):
 
         assert device.transport == TransportProtocol.MQTT, \
             "Unsupported transport protocol found in device configuration!"
+
+        if device.apikey in self.service_groups.keys():
+            pass
+        # check if matching service group is registered
+        else:
+            msg = "Could not find matching service group! " \
+                  "Communication may not work correctly!"
+            self.logger.warning(msg=msg)
+            warnings.warn(message=msg)
 
         return device
 
@@ -330,7 +364,7 @@ class MQTTClient(mqtt.Client):
         """
         Subscribes commands based on device configuration. If device argument is
         omitted the function will subscribe to all topics of already registered
-        devices.
+        _devices.
         Additionally, it will also check if a matching service group is
         registered with the client. If nor a warning will be raised.
 
@@ -345,24 +379,15 @@ class MQTTClient(mqtt.Client):
         """
         if Device:
             if len(device.commands) > 0:
-                if device.apikey in self.service_groups.keys():
-                    pass
-                # check if matching service group is registered
-                else:
-                    msg = "Could not find matching service group! Commands " \
-                          "may not be received correctly!"
-                    self.logger.warning(msg=msg)
-                    warnings.warn(message=msg)
-
                 topic = self.__create_topic(device=device,
-                                            topic_type='cmd')
+                                            topic_type=IotaMqttMessageType.CMD)
                 super().subscribe(topic=topic,
                                   qos=qos,
                                   options=options,
                                   properties=properties)
         else:
-            # call itself but with device argument for all registered devices
-            for device in self.devices.values():
+            # call itself but with device argument for all registered _devices
+            for device in self._devices.values():
                 self.__subscribe_commands(device=device,
                                           qos=qos,
                                           options=options,
@@ -488,7 +513,7 @@ class MQTTClient(mqtt.Client):
             print(device.json(indent=2))
             print(type(device))
         """
-        return self.devices[device_id]
+        return self._devices[device_id]
 
     def add_device(self,
                    device: Union[Device, Dict],
@@ -520,12 +545,12 @@ class MQTTClient(mqtt.Client):
         """
         device = self.__validate_device(device=device)
 
-        if self.devices.get(device.device_id, None) is None:
+        if self._devices.get(device.device_id, None) is None:
             pass
         else:
             raise ValueError("Device already exists! %s", device.device_id)
         # add device configuration to the device list
-        self.devices[device.device_id] = device
+        self._devices[device.device_id] = device
         # subscribes to the command topic
         self.__subscribe_commands(device=device,
                                   qos=qos,
@@ -542,10 +567,10 @@ class MQTTClient(mqtt.Client):
         Returns:
             None
         """
-        device = self.devices.pop(device_id, None)
+        device = self._devices.pop(device_id, None)
         if device:
             topic = self.__create_topic(device=device,
-                                        topic_type='cmd')
+                                        topic_type=IotaMqttMessageType.CMD)
             self.unsubscribe(topic=topic)
             self.message_callback_remove(sub=topic)
             self.logger.info("Successfully unregistered Device '%s'!",
@@ -577,11 +602,11 @@ class MQTTClient(mqtt.Client):
         """
         device = self.__validate_device(device=device)
 
-        if self.devices.get(device.device_id, None) is None:
+        if self._devices.get(device.device_id, None) is None:
             raise KeyError("Device not found! %s", device.device_id)
 
         # update device configuration in the device list
-        self.devices[device.device_id] = device
+        self._devices[device.device_id] = device
         # subscribes to the command topic
         self.__subscribe_commands(device=device,
                                   qos=qos,
@@ -620,7 +645,7 @@ class MQTTClient(mqtt.Client):
         Returns:
             None
         """
-        device = self.devices.get(device_id, None)
+        device = self._devices.get(device_id, None)
         if device is None:
             raise KeyError("Device does not exist! %s", device_id)
         self.__subscribe_commands(device=device)
@@ -720,8 +745,10 @@ class MQTTClient(mqtt.Client):
                         if attr.object_id:
                             payload[attr.object_id] = payload.pop(key)
                     else:
-                        raise KeyError("Attribute key is not allowed for "
-                                       "this device")
+                        raise KeyError(f"Attribute key '{key}'is not allowed "
+                                       f"a message payload for this device "
+                                       f"configuration with device_id "
+                                       f"'{device_id}'")
                 topic = self.__create_topic(
                     device=device,
                     topic_type=IotaMqttMessageType.MULTI)
@@ -789,7 +816,7 @@ class MQTTClient(mqtt.Client):
                               options=options,
                               properties=properties)
         else:
-            for device in self.devices.values():
+            for device in self._devices.values():
                 self.__subscribe_commands(device=device,
                                           qos=qos,
                                           options=options,

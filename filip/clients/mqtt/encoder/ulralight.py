@@ -38,7 +38,7 @@ class Ultralight(BaseEncoder):
             timestamp = str(payload.pop('timeInstant', ''))
             data = '|'.join([f"{key}|{value}" for key, value in
                              payload.items()])
-            data = '|'.join([timestamp, data])
+            data = '|'.join([timestamp, data]).strip('|')
             return data
         elif msg_type == IotaMqttMessageType.CMDEXE:
             for key, value in payload.items():
@@ -49,6 +49,6 @@ class Ultralight(BaseEncoder):
                 elif isinstance(value, str):
                     pass
                 else:
-                    raise ValueError("Cannot parse command acknowledge!")
+                    raise ValueError("Cannot parse command acknowledgement!")
                 return f"{device_id}@{key}|{value}"
         super()._raise_encoding_error(payload=payload, msg_type=msg_type)

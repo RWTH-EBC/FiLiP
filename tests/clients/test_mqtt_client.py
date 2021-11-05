@@ -1,7 +1,7 @@
 import logging
 import time
 import unittest
-
+from random import randrange
 from paho.mqtt.client import MQTT_CLEAN_START_FIRST_ONLY
 from urllib.parse import urlparse
 from filip.models import FiwareHeader
@@ -31,8 +31,8 @@ class TestMQTTClient(unittest.TestCase):
                                       object_id='t',
                                       type="Number")
         device_command = DeviceCommand(name='heater', type="Boolean")
-        self.device_json = Device(device_id='MyDevice',
-                                  entity_name='MyDevice',
+        self.device_json = Device(device_id='MyJsonDevice',
+                                  entity_name='MyJsonDevice',
                                   entity_type='Thing',
                                   protocol='IoTA-JSON',
                                   transport='MQTT',
@@ -40,8 +40,8 @@ class TestMQTTClient(unittest.TestCase):
                                   attributes=[device_attr],
                                   commands=[device_command])
 
-        self.device_ul = Device(device_id='MyDevice',
-                                entity_name='MyDevice',
+        self.device_ul = Device(device_id='my_ul_device',
+                                entity_name='my_ul_device',
                                 entity_type='Thing',
                                 protocol='PDI-IoTA-UltraLight',
                                 transport='MQTT',
@@ -122,6 +122,12 @@ class TestMQTTClient(unittest.TestCase):
         self.mqttc.loop_stop()
         self.mqttc.disconnect()
 
+    def test_init(self):
+        devices = [self.device_json, self.device_ul]
+        mqttc = MQTTClient(devices=devices,
+                           service_groups=[self.service_group])
+        self.assertListEqual(mqttc.devices, devices)
+
     def test_service_groups(self):
         self.mqttc.add_service_group(service_group=self.service_group)
         with self.assertRaises(AssertionError):
@@ -147,6 +153,9 @@ class TestMQTTClient(unittest.TestCase):
         self.mqttc.delete_service_group(apikey=self.service_group.apikey)
 
     def test_devices(self):
+        with self.assertRaises(ValueError):
+            self.mqttc.devices = [self.device_ul, self.device_ul]
+
         self.mqttc.add_device(device=self.device_json)
         with self.assertRaises(ValueError):
             self.mqttc.add_device(device=self.device_json)
@@ -173,7 +182,7 @@ class TestMQTTClient(unittest.TestCase):
         for group in self.mqttc.service_groups:
             self.mqttc.delete_service_group(group.apikey)
 
-        for device in self.mqttc.devices:
+        for device in self.mqttc._devices:
             self.mqttc.delete_device(device.device_id)
 
         def on_command(client, obj, msg):
@@ -274,20 +283,23 @@ class TestMQTTClient(unittest.TestCase):
                            properties=None)
         self.mqttc.loop_start()
 
+        payload = payload = randrange(0, 100, 1)/1000
         self.mqttc.publish(device_id=self.device_json.device_id,
-                           payload={self.device_json.attributes[0].object_id: 50})
+                           payload={self.device_json.attributes[0].object_id:
+                                        payload})
         time.sleep(1)
         entity = httpc.cb.get_entity(entity_id=self.device_json.device_id,
                                      entity_type=self.device_json.entity_type)
-        self.assertEqual(50, entity.temperature.value)
+        self.assertEqual(payload, entity.temperature.value)
 
+        payload = payload = randrange(0, 100, 1) / 1000
         self.mqttc.publish(device_id=self.device_json.device_id,
                            attribute_name="temperature",
-                           payload=60)
+                           payload=payload)
         time.sleep(1)
         entity = httpc.cb.get_entity(entity_id=self.device_json.device_id,
                                      entity_type=self.device_json.entity_type)
-        self.assertEqual(60, entity.temperature.value)
+        self.assertEqual(payload, entity.temperature.value)
 
 
         # These test do currently not workt due to time stamp parsing
@@ -320,7 +332,6 @@ class TestMQTTClient(unittest.TestCase):
         # disconnect the mqtt device
         self.mqttc.disconnect()
 
-    @unittest.skip('Does currently not work with Ultralight')
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
                 cb_url=settings.CB_URL,
@@ -337,6 +348,10 @@ class TestMQTTClient(unittest.TestCase):
         for device in self.mqttc.devices:
             self.mqttc.delete_device(device.device_id)
 
+        service_group = ServiceGroup(
+            apikey=settings.FIWARE_SERVICE,
+            resource="/iot/d")
+
         def on_command(client, obj, msg):
             apikey, device_id, payload = \
                 client.encoder.decode_message(msg=msg)
@@ -345,9 +360,9 @@ class TestMQTTClient(unittest.TestCase):
             # messages. The first key is equal to the commands name.
             client.publish(device_id=device_id,
                            command_name=next(iter(payload)),
-                           payload=payload)
+                           payload={'heater': True})
 
-        self.mqttc.add_service_group(self.service_group)
+        self.mqttc.add_service_group(service_group)
         self.mqttc.add_device(self.device_ul)
         self.mqttc.add_command_callback(device_id=self.device_ul.device_id,
                                         callback=on_command)
@@ -359,8 +374,10 @@ class TestMQTTClient(unittest.TestCase):
                                         iota_url=settings.IOTA_UL_URL)
         httpc = HttpClient(fiware_header=self.fiware_header,
                            config=httpc_config)
-        httpc.iota.post_group(service_group=self.service_group, update=True)
+        httpc.iota.post_group(service_group=service_group)
         httpc.iota.post_device(device=self.device_ul, update=True)
+
+        print(self.service_group)
 
         mqtt_broker_url = urlparse(settings.MQTT_BROKER_URL)
 
@@ -383,7 +400,7 @@ class TestMQTTClient(unittest.TestCase):
                               entity_type=entity.type,
                               command=context_command)
 
-        time.sleep(2)
+        time.sleep(5)
         # close the mqtt listening thread
         self.mqttc.loop_stop()
         # disconnect the mqtt device
@@ -408,7 +425,7 @@ class TestMQTTClient(unittest.TestCase):
         for group in self.mqttc.service_groups:
             self.mqttc.delete_service_group(group.apikey)
 
-        for device in self.mqttc.devices:
+        for device in self.mqttc._devices:
             self.mqttc.delete_device(device.device_id)
 
         service_group = ServiceGroup(
@@ -439,20 +456,23 @@ class TestMQTTClient(unittest.TestCase):
                            properties=None)
         self.mqttc.loop_start()
 
+        payload = randrange(0, 100, 1)/1000
         self.mqttc.publish(device_id=self.device_ul.device_id,
-                           payload={self.device_ul.attributes[0].object_id: 50})
+                           payload={self.device_ul.attributes[0].object_id:
+                                        payload})
         time.sleep(1)
         entity = httpc.cb.get_entity(entity_id=self.device_ul.device_id,
                                      entity_type=self.device_ul.entity_type)
-        self.assertEqual(50, entity.temperature.value)
+        self.assertEqual(payload, entity.temperature.value)
 
+        payload = randrange(0, 100, 1)/1000
         self.mqttc.publish(device_id=self.device_ul.device_id,
                            attribute_name="temperature",
-                           payload=60)
+                           payload=payload)
         time.sleep(1)
         entity = httpc.cb.get_entity(entity_id=self.device_ul.device_id,
                                      entity_type=self.device_ul.entity_type)
-        self.assertEqual(60, entity.temperature.value)
+        self.assertEqual(payload, entity.temperature.value)
 
         # These test do currently not workt due to time stamp parsing
         # self.mqttc.publish(device_id=self.device_ul.device_id,
