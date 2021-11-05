@@ -7,7 +7,7 @@ NGSIv2 models for context broker interaction
 """
 import json
 from datetime import datetime
-from typing import Any, Type, List, Dict, Union, Optional, Pattern
+from typing import Any, Type, List, Dict, Union, Optional, Pattern, Set
 from aenum import Enum
 from filip.utils.simple_ql import QueryString, QueryStatement
 from pydantic import \
@@ -404,6 +404,44 @@ class ContextEntity(ContextEntityKeyValues):
                     if key not in ContextEntity.__fields__
                     and value.get('type') in
                     [att.value for att in attribute_types]]
+
+    def get_attribute_names(self) -> Set[str]:
+        """
+        Returns a set with all attribute names of this entity
+
+        Returns:
+            set[str]
+        """
+
+        return {key for key in self.dict()
+                if key not in ContextEntity.__fields__}
+
+    def delete_attributes(self, attrs: Union[Dict[str, ContextAttribute],
+                                             List[NamedContextAttribute],
+                                             List[str]]):
+        """
+        Delete the given attributes from the entity
+
+        Args:
+            attrs:  - Dict {name: ContextAttribute}
+                    - List[NamedContextAttribute]
+                    - List[str] -> names of attributes
+        Raises:
+            Exception: if one of the given attrs does not represent an
+                       existing argument
+        """
+
+        names: List[str] = []
+        if isinstance(attrs, list):
+            for entry in attrs:
+                if isinstance(entry, str):
+                    names.append(entry)
+                elif isinstance(entry, NamedContextAttribute):
+                    names.append(entry.name)
+        else:
+            names.extend(list(attrs.keys()))
+        for name in names:
+            delattr(self, name)
 
     def get_attribute(self, attribute_name) -> NamedContextAttribute:
         for attr in self.get_attributes():
