@@ -23,20 +23,25 @@ class TestMQTTClient(unittest.TestCase):
         self.fiware_header = FiwareHeader(
             service=settings.FIWARE_SERVICE,
             service_path=settings.FIWARE_SERVICEPATH)
-        self.service_group=ServiceGroup(
-            apikey=settings.FIWARE_SERVICE,
+        self.service_group_json=ServiceGroup(
+            apikey=settings.FIWARE_SERVICEPATH.strip('/'),
             resource="/iot/json")
+        self.service_group_ul=ServiceGroup(
+            apikey=settings.FIWARE_SERVICEPATH.strip('/'),
+            resource="/iot/d")
+
         # create a device configuration
         device_attr = DeviceAttribute(name='temperature',
                                       object_id='t',
                                       type="Number")
         device_command = DeviceCommand(name='heater', type="Boolean")
-        self.device_json = Device(device_id='MyJsonDevice',
-                                  entity_name='MyJsonDevice',
+
+        self.device_json = Device(device_id='my_json_device',
+                                  entity_name='my_json_device',
                                   entity_type='Thing',
                                   protocol='IoTA-JSON',
                                   transport='MQTT',
-                                  apikey=settings.FIWARE_SERVICE,
+                                  apikey=self.service_group_json.apikey,
                                   attributes=[device_attr],
                                   commands=[device_command])
 
@@ -45,7 +50,7 @@ class TestMQTTClient(unittest.TestCase):
                                 entity_type='Thing',
                                 protocol='PDI-IoTA-UltraLight',
                                 transport='MQTT',
-                                apikey=settings.FIWARE_SERVICE,
+                                apikey=self.service_group_ul.apikey,
                                 attributes=[device_attr],
                                 commands=[device_command])
 
@@ -125,32 +130,32 @@ class TestMQTTClient(unittest.TestCase):
     def test_init(self):
         devices = [self.device_json, self.device_ul]
         mqttc = MQTTClient(devices=devices,
-                           service_groups=[self.service_group])
+                           service_groups=[self.service_group_json])
         self.assertListEqual(mqttc.devices, devices)
 
     def test_service_groups(self):
-        self.mqttc.add_service_group(service_group=self.service_group)
+        self.mqttc.add_service_group(service_group=self.service_group_json)
         with self.assertRaises(AssertionError):
             self.mqttc.add_service_group(service_group="SomethingRandom")
         with self.assertRaises(ValueError):
             self.mqttc.add_service_group(
-                service_group=self.service_group.dict())
+                service_group=self.service_group_json.dict())
 
         self.assertEqual(
-            self.service_group,
-            self.mqttc.get_service_group(self.service_group.apikey))
+            self.service_group_json,
+            self.mqttc.get_service_group(self.service_group_json.apikey))
 
-        self.mqttc.update_service_group(service_group=self.service_group)
+        self.mqttc.update_service_group(service_group=self.service_group_json)
 
         with self.assertRaises(KeyError):
             self.mqttc.update_service_group(
-                service_group=self.service_group.copy(
+                service_group=self.service_group_json.copy(
                     update={'apikey': 'someOther'}))
 
         with self.assertRaises(KeyError):
             self.mqttc.delete_service_group(apikey="SomethingRandom")
 
-        self.mqttc.delete_service_group(apikey=self.service_group.apikey)
+        self.mqttc.delete_service_group(apikey=self.service_group_json.apikey)
 
     def test_devices(self):
         with self.assertRaises(ValueError):
@@ -182,7 +187,7 @@ class TestMQTTClient(unittest.TestCase):
         for group in self.mqttc.service_groups:
             self.mqttc.delete_service_group(group.apikey)
 
-        for device in self.mqttc._devices:
+        for device in self.mqttc.devices:
             self.mqttc.delete_device(device.device_id)
 
         def on_command(client, obj, msg):
@@ -195,7 +200,7 @@ class TestMQTTClient(unittest.TestCase):
                            command_name=next(iter(payload)),
                            payload=payload)
 
-        self.mqttc.add_service_group(self.service_group)
+        self.mqttc.add_service_group(self.service_group_json)
         self.mqttc.add_device(self.device_json)
         self.mqttc.add_command_callback(device_id=self.device_json.device_id,
                                         callback=on_command)
@@ -207,7 +212,7 @@ class TestMQTTClient(unittest.TestCase):
                                         iota_url=settings.IOTA_JSON_URL)
         httpc = HttpClient(fiware_header=self.fiware_header,
                            config=httpc_config)
-        httpc.iota.post_group(service_group=self.service_group, update=True)
+        httpc.iota.post_group(service_group=self.service_group_json, update=True)
         httpc.iota.post_device(device=self.device_json, update=True)
 
         mqtt_broker_url = urlparse(settings.MQTT_BROKER_URL)
@@ -259,7 +264,7 @@ class TestMQTTClient(unittest.TestCase):
         for device in self.mqttc.devices:
             self.mqttc.delete_device(device.device_id)
 
-        self.mqttc.add_service_group(self.service_group)
+        self.mqttc.add_service_group(self.service_group_json)
         self.mqttc.add_device(self.device_json)
 
         self.mqttc.encoder = encoder.Json
@@ -269,7 +274,7 @@ class TestMQTTClient(unittest.TestCase):
                                         iota_url=settings.IOTA_JSON_URL)
         httpc = HttpClient(fiware_header=self.fiware_header,
                            config=httpc_config)
-        httpc.iota.post_group(service_group=self.service_group, update=True)
+        httpc.iota.post_group(service_group=self.service_group_json, update=True)
         httpc.iota.post_device(device=self.device_json, update=True)
 
         mqtt_broker_url = urlparse(settings.MQTT_BROKER_URL)
@@ -348,10 +353,6 @@ class TestMQTTClient(unittest.TestCase):
         for device in self.mqttc.devices:
             self.mqttc.delete_device(device.device_id)
 
-        service_group = ServiceGroup(
-            apikey=settings.FIWARE_SERVICE,
-            resource="/iot/d")
-
         def on_command(client, obj, msg):
             apikey, device_id, payload = \
                 client.encoder.decode_message(msg=msg)
@@ -362,7 +363,7 @@ class TestMQTTClient(unittest.TestCase):
                            command_name=next(iter(payload)),
                            payload={'heater': True})
 
-        self.mqttc.add_service_group(service_group)
+        self.mqttc.add_service_group(self.service_group_ul)
         self.mqttc.add_device(self.device_ul)
         self.mqttc.add_command_callback(device_id=self.device_ul.device_id,
                                         callback=on_command)
@@ -374,10 +375,10 @@ class TestMQTTClient(unittest.TestCase):
                                         iota_url=settings.IOTA_UL_URL)
         httpc = HttpClient(fiware_header=self.fiware_header,
                            config=httpc_config)
-        httpc.iota.post_group(service_group=service_group)
+        httpc.iota.post_group(service_group=self.service_group_ul)
         httpc.iota.post_device(device=self.device_ul, update=True)
 
-        print(self.service_group)
+        print(self.service_group_json)
 
         mqtt_broker_url = urlparse(settings.MQTT_BROKER_URL)
 
@@ -425,14 +426,10 @@ class TestMQTTClient(unittest.TestCase):
         for group in self.mqttc.service_groups:
             self.mqttc.delete_service_group(group.apikey)
 
-        for device in self.mqttc._devices:
+        for device in self.mqttc.devices:
             self.mqttc.delete_device(device.device_id)
 
-        service_group = ServiceGroup(
-            apikey=settings.FIWARE_SERVICE,
-            resource="/iot/d")
-
-        self.mqttc.add_service_group(service_group)
+        self.mqttc.add_service_group(self.service_group_ul)
         self.mqttc.add_device(self.device_ul)
 
         self.mqttc.encoder = encoder.Ultralight
@@ -442,8 +439,11 @@ class TestMQTTClient(unittest.TestCase):
                                         iota_url=settings.IOTA_UL_URL)
         httpc = HttpClient(fiware_header=self.fiware_header,
                            config=httpc_config)
-        httpc.iota.post_group(service_group=service_group, update=True)
+        httpc.iota.post_group(service_group=self.service_group_ul,
+                              update=True)
         httpc.iota.post_device(device=self.device_ul, update=True)
+
+        time.sleep(0.5)
 
         mqtt_broker_url = urlparse(settings.MQTT_BROKER_URL)
 
@@ -457,9 +457,9 @@ class TestMQTTClient(unittest.TestCase):
         self.mqttc.loop_start()
 
         payload = randrange(0, 100, 1)/1000
-        self.mqttc.publish(device_id=self.device_ul.device_id,
-                           payload={self.device_ul.attributes[0].object_id:
-                                        payload})
+        self.mqttc.publish(
+            device_id=self.device_ul.device_id,
+            payload={self.device_ul.attributes[0].object_id: payload})
         time.sleep(1)
         entity = httpc.cb.get_entity(entity_id=self.device_ul.device_id,
                                      entity_type=self.device_ul.entity_type)
