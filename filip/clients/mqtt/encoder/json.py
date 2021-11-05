@@ -1,3 +1,10 @@
+"""
+Json encoder class for all IoTA-JSON MQTT message encoders
+
+created 5th November, 2021
+
+@author Thomas Storek
+"""
 import json
 from typing import Any, Dict, Tuple
 from filip.clients.mqtt.encoder import BaseEncoder
@@ -5,6 +12,9 @@ from filip.models.mqtt import IotaMqttMessageType
 
 
 class Json(BaseEncoder):
+    """
+    Json encoder class for all IoTA-JSON MQTT message encoders
+    """
     prefix = '/json'
 
     def __init__(self):

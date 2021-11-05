@@ -1,3 +1,10 @@
+"""
+Abstract class for all IoTA MQTT message encoders
+
+created 5th November, 2021
+
+@author Thomas Storek
+"""
 import logging
 from abc import ABC
 from datetime import datetime
@@ -6,6 +13,9 @@ from paho.mqtt.client import MQTTMessage
 from filip.models.mqtt import IotaMqttMessageType
 
 class BaseEncoder(ABC):
+    """
+    Abstract class for all IoTA MQTT message encoders
+    """
     prefix: str = ''
 
     def __init__(self):
@@ -18,6 +28,17 @@ class BaseEncoder(ABC):
     def decode_message(self,
                        msg: MQTTMessage,
                        decoder: str = 'utf-8') -> Tuple[str, str, str]:
+        """
+        Decode message for ingoing traffic
+        Args:
+            msg: Message class
+            decoder: encoding identifier
+
+        Returns:
+            apikey
+            device_id
+            payload
+        """
         topic = msg.topic.strip('/')
         topic = topic.split('/')
         apikey = None
@@ -36,10 +57,28 @@ class BaseEncoder(ABC):
                    device_id: str,
                    payload: Dict,
                    msg_type: IotaMqttMessageType) -> str:
+        """
+        Encode message for outgoing traffic
+
+        Args:
+            device_id: id of the iot device
+            payload: payload to send
+            msg_type: kind of message to send
+
+        """
         raise NotImplementedError
 
     @classmethod
     def _parse_timestamp(cls, payload: Dict) -> Dict:
+        """
+        Helper function to parse timestamps
+
+        Args:
+            payload: payload to reformat
+
+        Returns:
+            Dictionary containing the formatted payload
+        """
         if payload.get('timeInstant', None):
             timestamp = payload['timeInstant']
             if isinstance(timestamp, str):
