@@ -54,23 +54,23 @@ class TestMQTTClient(unittest.TestCase):
                                 attributes=[device_attr],
                                 commands=[device_command])
 
-
         self.mqttc = MQTTClient()
 
         def on_connect(mqttc, obj, flags, rc):
-            print("rc: " + str(rc))
+            mqttc.logger.info("rc: " + str(rc))
 
         def on_connect_fail(mqttc, obj):
-            print("Connect failed")
+            mqttc.logger.info("Connect failed")
 
         def on_publish(mqttc, obj, mid):
-            print("mid: " + str(mid))
+            mqttc.logger.info("mid: " + str(mid))
 
         def on_subscribe(mqttc, obj, mid, granted_qos):
-            print("Subscribed: " + str(mid) + " " + str(granted_qos))
+            mqttc.logger.info("Subscribed: " + str(mid)
+                              + " " + str(granted_qos))
 
         def on_log(mqttc, obj, level, string):
-            print(string)
+            mqttc.logger.info(string)
 
         self.mqttc.on_connect = on_connect
         self.mqttc.on_connect_fail = on_connect_fail
