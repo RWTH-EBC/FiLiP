@@ -10,13 +10,17 @@ import itertools
 import logging
 import warnings
 from datetime import datetime
-from typing import Any, Callable, Dict, List, Tuple, Type, Union
+from typing import Any, Callable, Dict, List, Tuple, Union
 
 import paho.mqtt.client as mqtt
 
-from filip.clients.mqtt.encoder import BaseEncoder
-from filip.models.mqtt import IotaMqttMessageType
-from filip.models.ngsi_v2.iot import Device, ServiceGroup, TransportProtocol
+from filip.clients.mqtt.encoder import BaseEncoder, Json, Ultralight
+from filip.models.mqtt import IoTAMQTTMessageType
+from filip.models.ngsi_v2.iot import \
+    Device, \
+    PayloadProtocol, \
+    ServiceGroup, \
+    TransportProtocol
 
 
 class MQTTClient(mqtt.Client):
@@ -75,14 +79,13 @@ class MQTTClient(mqtt.Client):
                                protocol=mqtt.MQTTv5,
                                transport="tcp",
                                _devices = [device],
-                               service_groups = [service_group],
-                               encoder = IoTA_Json)
+                               service_groups = [service_group])
 
             # create a callback function that will be called for incoming
             # commands and add it for a single device
             def on_command(client, obj, msg):
                 apikey, device_id, payload = \
-                    client.encoder.decode_message(msg=msg)
+                    client.get_encoder().decode_message(msg=msg)
 
                 # do_something with the message.
                 # For instance write into a queue.
@@ -120,7 +123,6 @@ class MQTTClient(mqtt.Client):
             mqttc.loop_stop()
             mqttc.disconnect()
 
-
     """
     def __init__(self,
                  client_id="",
@@ -130,7 +132,7 @@ class MQTTClient(mqtt.Client):
                  transport="tcp",
                  devices: List[Device] = None,
                  service_groups: List[ServiceGroup] = None,
-                 encoder: Type[BaseEncoder] = None):
+                 custom_encoder: Dict[str, BaseEncoder] = None):
         """
         Args:
             client_id:
@@ -212,11 +214,13 @@ class MQTTClient(mqtt.Client):
         if devices:
             self.devices = devices
 
-        # add encoder for message parsing
-        if encoder:
-            self.encoder = encoder
-        else:
-            self.encoder = BaseEncoder
+        # create dict with available encoders
+        self._encoders = {'IoTA-JSON': Json(),
+                          'PDI-IoTA-UltraLight': Ultralight()}
+
+        # add custom encoder for message parsing
+        if custom_encoder:
+            self.add_encoder(custom_encoder)
 
     @property
     def devices(self):
@@ -247,14 +251,24 @@ class MQTTClient(mqtt.Client):
             except ValueError:
                 raise ValueError(f"Duplicate device_id: {device.device_id}")
 
-    @property
-    def encoder(self):
-        return self.__encoder
+    def get_encoder(self, encoder: Union[str, PayloadProtocol]):
+        """
+        Returns the encoder by key
 
-    @encoder.setter
-    def encoder(self, encoder: Type[BaseEncoder]):
-        assert issubclass(encoder, BaseEncoder)
-        self.__encoder = encoder()
+        Args:
+            encoder: encoder name
+
+        Returns:
+            Subclass of Baseencoder
+        """
+        return self._encoders.get(encoder)
+
+    def add_encoder(self, encoder: Dict[str, BaseEncoder]):
+        for value in encoder.values():
+            assert isinstance(value, BaseEncoder), \
+            f"Encoder must be a subclass of {type(BaseEncoder)}"
+
+        self._encoders.update(encoder)
 
     def __validate_device(self, device: Union[Device, Dict]) -> Device:
         """
@@ -290,7 +304,7 @@ class MQTTClient(mqtt.Client):
 
     def __create_topic(self,
                        *,
-                       topic_type: IotaMqttMessageType,
+                       topic_type: IoTAMQTTMessageType,
                        device: Device,
                        attribute: str = None) -> str:
         """
@@ -319,13 +333,12 @@ class MQTTClient(mqtt.Client):
             ValueError:
                 If attribute name is missing for single measurements
         """
-
-        if topic_type == IotaMqttMessageType.MULTI:
-            topic = '/'.join((self.encoder.prefix,
+        if topic_type == IoTAMQTTMessageType.MULTI:
+            topic = '/'.join((self._encoders[device.protocol].prefix,
                               device.apikey,
                               device.device_id,
                               'attrs'))
-        elif topic_type == IotaMqttMessageType.SINGLE:
+        elif topic_type == IoTAMQTTMessageType.SINGLE:
             if attribute:
                 attr = next(attr for attr in device.attributes
                             if attr.name == attribute)
@@ -333,22 +346,22 @@ class MQTTClient(mqtt.Client):
                     attr_suffix = attr.object_id
                 else:
                     attr_suffix = attr.name
-                topic = '/'.join((self.encoder.prefix,
+                topic = '/'.join((self._encoders[device.protocol].prefix,
                                   device.apikey,
                                   device.device_id,
                                   'attrs',
                                   attr_suffix))
             else:
                 raise ValueError("Missing argument name for single measurement")
-        elif topic_type == IotaMqttMessageType.CMD:
+        elif topic_type == IoTAMQTTMessageType.CMD:
             topic = '/' + '/'.join((device.apikey, device.device_id, 'cmd'))
-        elif topic_type == IotaMqttMessageType.CMDEXE:
-            topic = '/'.join((self.encoder.prefix,
+        elif topic_type == IoTAMQTTMessageType.CMDEXE:
+            topic = '/'.join((self._encoders[device.protocol].prefix,
                               device.apikey,
                               device.device_id,
                               'cmdexe'))
-        elif topic_type == IotaMqttMessageType.CONFIG:
-            topic = '/'.join((self.encoder.prefix,
+        elif topic_type == IoTAMQTTMessageType.CONFIG:
+            topic = '/'.join((self._encoders[device.protocol].prefix,
                               device.apikey,
                               device.device_id,
                               'configuration'))
@@ -380,7 +393,7 @@ class MQTTClient(mqtt.Client):
         if Device:
             if len(device.commands) > 0:
                 topic = self.__create_topic(device=device,
-                                            topic_type=IotaMqttMessageType.CMD)
+                                            topic_type=IoTAMQTTMessageType.CMD)
                 super().subscribe(topic=topic,
                                   qos=qos,
                                   options=options,
@@ -570,7 +583,7 @@ class MQTTClient(mqtt.Client):
         device = self._devices.pop(device_id, None)
         if device:
             topic = self.__create_topic(device=device,
-                                        topic_type=IotaMqttMessageType.CMD)
+                                        topic_type=IoTAMQTTMessageType.CMD)
             self.unsubscribe(topic=topic)
             self.message_callback_remove(sub=topic)
             self.logger.info("Successfully unregistered Device '%s'!",
@@ -650,7 +663,7 @@ class MQTTClient(mqtt.Client):
             raise KeyError("Device does not exist! %s", device_id)
         self.__subscribe_commands(device=device)
         topic = self.__create_topic(device=device,
-                                    topic_type=IotaMqttMessageType.CMD)
+                                    topic_type=IoTAMQTTMessageType.CMD)
         self.message_callback_add(topic, callback)
 
     def publish(self,
@@ -751,11 +764,11 @@ class MQTTClient(mqtt.Client):
                                        f"'{device_id}'")
                 topic = self.__create_topic(
                     device=device,
-                    topic_type=IotaMqttMessageType.MULTI)
-                payload = self.encoder.encode_msg(
+                    topic_type=IoTAMQTTMessageType.MULTI)
+                payload = self._encoders[device.protocol].encode_msg(
                     device_id=device_id,
                     payload=payload,
-                    msg_type=IotaMqttMessageType.MULTI)
+                    msg_type=IoTAMQTTMessageType.MULTI)
 
             # create message for command acknowledgement
             elif attribute_name is None and command_name:
@@ -767,22 +780,22 @@ class MQTTClient(mqtt.Client):
                     "Unknown command for this device!"
                 topic = self.__create_topic(
                     device=device,
-                    topic_type=IotaMqttMessageType.CMDEXE)
-                payload = self.encoder.encode_msg(
+                    topic_type=IoTAMQTTMessageType.CMDEXE)
+                payload = self._encoders[device.protocol].encode_msg(
                     device_id=device_id,
                     payload=payload,
-                    msg_type=IotaMqttMessageType.CMDEXE)
+                    msg_type=IoTAMQTTMessageType.CMDEXE)
 
             # create message for single measurement
             elif attribute_name and command_name is None:
                 topic = self.__create_topic(
                     device=device,
-                    topic_type=IotaMqttMessageType.SINGLE,
+                    topic_type=IoTAMQTTMessageType.SINGLE,
                     attribute=attribute_name)
-                payload = self.encoder.encode_msg(
+                payload = self._encoders[device.protocol].encode_msg(
                     device_id=device_id,
                     payload=payload,
-                    msg_type=IotaMqttMessageType.SINGLE)
+                    msg_type=IoTAMQTTMessageType.SINGLE)
             else:
                 raise ValueError("Inconsistent arguments!")
 

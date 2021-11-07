@@ -10,7 +10,7 @@ from abc import ABC
 from datetime import datetime
 from typing import Dict, Tuple
 from paho.mqtt.client import MQTTMessage
-from filip.models.mqtt import IotaMqttMessageType
+from filip.models.mqtt import IoTAMQTTMessageType
 
 class BaseEncoder(ABC):
     """
@@ -56,7 +56,7 @@ class BaseEncoder(ABC):
     def encode_msg(self,
                    device_id: str,
                    payload: Dict,
-                   msg_type: IotaMqttMessageType) -> str:
+                   msg_type: IoTAMQTTMessageType) -> str:
         """
         Encode message for outgoing traffic
 
@@ -92,7 +92,7 @@ class BaseEncoder(ABC):
     @classmethod
     def _raise_encoding_error(cls,
                               payload: Dict,
-                              msg_type: IotaMqttMessageType):
+                              msg_type: IoTAMQTTMessageType):
         """
         Helper function to provide consistent error messages
         Args:

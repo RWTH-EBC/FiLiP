@@ -8,7 +8,7 @@ Module contains models for MQTT communication with FIWARE's IoT-Agents.
 from aenum import Enum
 
 
-class IotaMqttMessageType(str, Enum):
+class IoTAMQTTMessageType(str, Enum):
     """
     Options for mqtt message type
     """

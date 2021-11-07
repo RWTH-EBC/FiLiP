@@ -10,10 +10,11 @@ from filip.models.ngsi_v2.iot import \
     Device, \
     DeviceAttribute, \
     DeviceCommand, \
-    ServiceGroup
-from filip.clients.mqtt import MQTTClient, encoder
+    ServiceGroup, PayloadProtocol
+from filip.clients.mqtt import MQTTClient
 from filip.utils.cleanup import clean_test, clear_all
 from tests.config import settings
+
 
 logger = logging.getLogger(__name__)
 
@@ -192,7 +193,8 @@ class TestMQTTClient(unittest.TestCase):
 
         def on_command(client, obj, msg):
             apikey, device_id, payload = \
-                client.encoder.decode_message(msg=msg)
+                client.get_encoder(PayloadProtocol.IOTA_JSON).decode_message(
+                    msg=msg)
 
             # acknowledge a command. Here command are usually single
             # messages. The first key is equal to the commands name.
@@ -204,8 +206,6 @@ class TestMQTTClient(unittest.TestCase):
         self.mqttc.add_device(self.device_json)
         self.mqttc.add_command_callback(device_id=self.device_json.device_id,
                                         callback=on_command)
-
-        self.mqttc.encoder = encoder.Json
 
         from filip.clients.ngsi_v2 import HttpClient, HttpClientConfig
         httpc_config = HttpClientConfig(cb_url=settings.CB_URL,
@@ -266,8 +266,6 @@ class TestMQTTClient(unittest.TestCase):
 
         self.mqttc.add_service_group(self.service_group_json)
         self.mqttc.add_device(self.device_json)
-
-        self.mqttc.encoder = encoder.Json
 
         from filip.clients.ngsi_v2 import HttpClient, HttpClientConfig
         httpc_config = HttpClientConfig(cb_url=settings.CB_URL,
@@ -355,7 +353,8 @@ class TestMQTTClient(unittest.TestCase):
 
         def on_command(client, obj, msg):
             apikey, device_id, payload = \
-                client.encoder.decode_message(msg=msg)
+                client.get_encoder(PayloadProtocol.IOTA_UL).decode_message(
+                    msg=msg)
 
             # acknowledge a command. Here command are usually single
             # messages. The first key is equal to the commands name.
@@ -367,8 +366,6 @@ class TestMQTTClient(unittest.TestCase):
         self.mqttc.add_device(self.device_ul)
         self.mqttc.add_command_callback(device_id=self.device_ul.device_id,
                                         callback=on_command)
-
-        self.mqttc.encoder = encoder.Ultralight
 
         from filip.clients.ngsi_v2 import HttpClient, HttpClientConfig
         httpc_config = HttpClientConfig(cb_url=settings.CB_URL,
@@ -431,8 +428,6 @@ class TestMQTTClient(unittest.TestCase):
 
         self.mqttc.add_service_group(self.service_group_ul)
         self.mqttc.add_device(self.device_ul)
-
-        self.mqttc.encoder = encoder.Ultralight
 
         from filip.clients.ngsi_v2 import HttpClient, HttpClientConfig
         httpc_config = HttpClientConfig(cb_url=settings.CB_URL,

@@ -8,7 +8,7 @@ created 5th November, 2021
 import json
 from typing import Any, Dict, Tuple
 from filip.clients.mqtt.encoder import BaseEncoder
-from filip.models.mqtt import IotaMqttMessageType
+from filip.models.mqtt import IoTAMQTTMessageType
 
 
 class Json(BaseEncoder):
@@ -29,12 +29,12 @@ class Json(BaseEncoder):
     def encode_msg(self,
                    device_id,
                    payload: Any,
-                   msg_type: IotaMqttMessageType) -> str:
-        if msg_type == IotaMqttMessageType.SINGLE:
+                   msg_type: IoTAMQTTMessageType) -> str:
+        if msg_type == IoTAMQTTMessageType.SINGLE:
             return payload
-        elif msg_type == IotaMqttMessageType.MULTI:
+        elif msg_type == IoTAMQTTMessageType.MULTI:
             payload = super()._parse_timestamp(payload=payload)
             return json.dumps(payload, default=str)
-        elif msg_type == IotaMqttMessageType.CMDEXE:
+        elif msg_type == IoTAMQTTMessageType.CMDEXE:
             return json.dumps(payload)
         super()._raise_encoding_error(payload=payload, msg_type=msg_type)
