@@ -23,7 +23,7 @@ from filip.models.ngsi_v2.iot import \
     TransportProtocol
 
 
-class MQTTClient(mqtt.Client):
+class IoTAMQTTClient(mqtt.Client):
     """
     This class is an extension to the MQTT client from the well established
     Eclipse Paho™ MQTT Python Client. The official documentation is located

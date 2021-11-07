@@ -11,7 +11,7 @@ from filip.models.ngsi_v2.iot import \
     DeviceAttribute, \
     DeviceCommand, \
     ServiceGroup, PayloadProtocol
-from filip.clients.mqtt import MQTTClient
+from filip.clients.mqtt import IoTAMQTTClient
 from filip.utils.cleanup import clean_test, clear_all
 from tests.config import settings
 
@@ -55,7 +55,7 @@ class TestMQTTClient(unittest.TestCase):
                                 attributes=[device_attr],
                                 commands=[device_command])
 
-        self.mqttc = MQTTClient()
+        self.mqttc = IoTAMQTTClient()
 
         def on_connect(mqttc, obj, flags, rc):
             mqttc.logger.info("rc: " + str(rc))
@@ -130,8 +130,8 @@ class TestMQTTClient(unittest.TestCase):
 
     def test_init(self):
         devices = [self.device_json, self.device_ul]
-        mqttc = MQTTClient(devices=devices,
-                           service_groups=[self.service_group_json])
+        mqttc = IoTAMQTTClient(devices=devices,
+                               service_groups=[self.service_group_json])
         self.assertListEqual(mqttc.devices, devices)
 
     def test_service_groups(self):
