@@ -40,8 +40,8 @@ if __name__ == '__main__':
     settings = VocabularySettings(
         pascal_case_class_labels=True,
         pascal_case_individual_labels=True,
-        snake_case_property_labels=True,
-        snake_case_datatype_labels=True,
+        camel_case_property_labels=True,
+        camel_case_datatype_labels=True,
         pascal_case_datatype_enum_labels=True
     )
     # We create our new blank vocabulary:

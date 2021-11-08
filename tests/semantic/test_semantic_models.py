@@ -29,8 +29,8 @@ class TestSemanticModels(unittest.TestCase):
             VocabularySettings(
                 pascal_case_class_labels=False,
                 pascal_case_individual_labels=False,
-                snake_case_property_labels=False,
-                snake_case_datatype_labels=False,
+                camel_case_property_labels=False,
+                camel_case_datatype_labels=False,
                 pascal_case_datatype_enum_labels=False
             ))
 
@@ -348,8 +348,8 @@ class TestSemanticModels(unittest.TestCase):
             VocabularySettings(
                 pascal_case_class_labels=False,
                 pascal_case_individual_labels=False,
-                snake_case_property_labels=False,
-                snake_case_datatype_labels=False,
+                camel_case_property_labels=False,
+                camel_case_datatype_labels=False,
                 pascal_case_datatype_enum_labels=False
             ))
 
@@ -527,7 +527,7 @@ class TestSemanticModels(unittest.TestCase):
         self.assertRaises(NameError, class3.commandProp.append, Command(
             name="type"))
         self.assertRaises(NameError, class3.commandProp.append, Command(
-            name="__references"))
+            name="referencedBy"))
 
         class3.attributeProp.append(
             DeviceAttribute(name="_type",

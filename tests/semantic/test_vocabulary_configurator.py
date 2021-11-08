@@ -22,8 +22,8 @@ class TestModels(unittest.TestCase):
             VocabularySettings(
                 pascal_case_class_labels=False,
                 pascal_case_individual_labels=False,
-                snake_case_property_labels=False,
-                snake_case_datatype_labels=False,
+                camel_case_property_labels=False,
+                camel_case_datatype_labels=False,
                 pascal_case_datatype_enum_labels=False
             )
         )

@@ -299,6 +299,9 @@ if __name__ == '__main__':
     c1 = Command(name="open")
     my_outlet.control_command.append(c1)
 
+    my_floor.has_room.append(my_building)
+    print(my_building.build_context_entity().json(indent=2))
+
     # After the current state was saved. We can interact with the command. It
     # offers three functions:
     # - c1.send(): Send the command to the device to execute it

@@ -306,7 +306,8 @@ class SemanticManager(BaseModel):
                     field.append(converted_value)
 
         # load references into instance
-        references_attribute = entity.get_attribute("__references")
+        print(entity.get_attribute_names())
+        references_attribute = entity.get_attribute("referencedBy")
         references = references_attribute.value
 
         for identifier_str, prop_list in references.items():
@@ -316,7 +317,7 @@ class SemanticManager(BaseModel):
 
         # load device_settings into instance, if instance is a device
         if isinstance(loaded_class, SemanticDeviceClass):
-            settings_attribute = entity.get_attribute("__device_settings")
+            settings_attribute = entity.get_attribute("deviceSettings")
             device_settings = DeviceSettings.parse_obj(settings_attribute.value)
 
             for key, value in device_settings.dict().items():

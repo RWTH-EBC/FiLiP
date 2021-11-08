@@ -1304,7 +1304,7 @@ class SemanticClass(BaseModel):
         # add meta attributes
         entity.add_attributes([
             NamedContextAttribute(
-                name="__references",
+                name="referencedBy",
                 type=DataType.STRUCTUREDVALUE,
                 value=reference_str_dict
             )
@@ -1466,7 +1466,7 @@ class SemanticDeviceClass(SemanticClass):
 
         entity.add_attributes([
             NamedContextAttribute(
-                name="__device_settings",
+                name="deviceSettings",
                 type=DataType.STRUCTUREDVALUE,
                 value=self.device_settings.dict()
             )
@@ -1508,7 +1508,7 @@ class SemanticDeviceClass(SemanticClass):
         # add meta attributes
         device.add_attribute(
             iot.StaticDeviceAttribute(
-                name="__references",
+                name="referencedBy",
                 type=DataType.STRUCTUREDVALUE,
                 value=reference_str_dict,
                 entity_name=None,
@@ -1521,7 +1521,7 @@ class SemanticDeviceClass(SemanticClass):
 
         device.add_attribute(
             iot.StaticDeviceAttribute(
-                name="__device_settings",
+                name="deviceSettings",
                 type=DataType.STRUCTUREDVALUE,
                 value=self.device_settings.dict(),
                 entity_name=None,

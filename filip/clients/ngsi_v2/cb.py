@@ -1510,6 +1510,49 @@ class ContextBrokerClient(BaseHttpClient):
         if update_needed:
             self.update_entity(update_entity, append=True)
 
+    def _merge_states(self, old_values: List, current_values: List,
+                      live_values: List) -> Set:
+
+        old_set = set(old_values)
+        current_set = set(current_values)
+        new_set = set(live_values)
+
+
+        # remove deleted values from live state, it can be that the value was
+        # also deleted in the live state
+        for value in old_set:
+            if value not in current_set:
+                if value in new_set:
+                    new_set.remove(value)
+
+        # add added values
+        for value in current_set:
+            if value not in old_set:
+                new_set.add(value)
+
+        return new_set
+
+    def _get_added_and_removed_values(self, old_values: Union[List, Set],
+                                      current_values: Union[List, Set]) -> (Set, Set):
+
+        old_set = set(old_values)
+        current_set = set(current_values)
+        added_values = set()
+        removed_values = set()
+
+        # remove deleted values from live state, it can be that the value was
+        # also deleted in the live state
+        for value in old_set:
+            if value not in current_set:
+                removed_values.add(value)
+
+        # add added values
+        for value in current_set:
+            if value not in old_set:
+                added_values.add(value)
+
+        return added_values, removed_values
+
     def concurrent_safe_entity_patch(
             self,
             entity: ContextEntity,
@@ -1525,8 +1568,7 @@ class ContextBrokerClient(BaseHttpClient):
             - No metadata in fields
         """
 
-        merged_entity = copy.deepcopy(entity)
-        current_entity = entity
+        current_entity = copy.deepcopy(entity)
 
         try:
             live_entity = self.get_entity(entity_id=entity.id,
@@ -1534,22 +1576,44 @@ class ContextBrokerClient(BaseHttpClient):
         except requests.RequestException:
             # entity does not exists, post entity
             self.post_entity(entity=entity)
-            return merged_entity
+            return current_entity
 
-        # Add each field to the merged state that exists in the live state
-        # but not in the current state
+        merged_entity = copy.deepcopy(live_entity)
 
-        for attribute in live_entity.get_attributes():
+        (added_attribute_names, removed_attribute_names) = \
+            self._get_added_and_removed_values(
+                old_entity.get_attribute_names(),
+                current_entity.get_attribute_names())
+
+        # add fields to merged that are completely new
+        for name in added_attribute_names:
+            if name not in merged_entity.get_attribute_names():
+                merged_entity.add_attributes(
+                    [current_entity.get_attribute(name)])
+
+        # remove fields from merged that were removed locally
+        for name in added_attribute_names:
+            if name in merged_entity.get_attribute_names():
+                merged_entity.delete_attributes([name])
+
+        for attribute in merged_entity.get_attributes():
+
+            if attribute.name not in live_entity.get_attribute_names():
+                # the attribute was added from the current state, and the
+                # values are already correctly set
+                continue
+
             if attribute.name not in current_entity.get_attribute_names():
-                merged_entity.add_attributes([attribute])
+                # the attribute was added in an other session, we have no
+                # conflict, the values are already correctly set
+                continue
 
-        # for each field that was actively deleted, but re-added again from
-        # the live_state -> delete it
-        if old_entity is not None:
-            for attribute in old_entity.get_attributes():
-                if attribute.name not in current_entity.get_attribute_names():
-                    if attribute.name in merged_entity.get_attribute_names():
-                        merged_entity.delete_attributes([attribute])
+            # we know here that the attribute exists in the current_state and
+            # in the live_state. We now need to merge the value state of the
+            # attribute. We do this by add/delete all values that were
+            # actively added/deleted in the current session
+
+
 
         def value_list_of_attribute(attribute: NamedContextAttribute) -> \
                 List[Any]:
@@ -1572,6 +1636,8 @@ class ContextBrokerClient(BaseHttpClient):
                     list_2_rest.remove(v)
                     res_list.append(v)
             return res_list
+
+
 
         # merge values of live_state and current_state for each attribute
         for attribute in live_entity.get_attributes():

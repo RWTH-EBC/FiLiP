@@ -50,8 +50,8 @@ class ParsingError(BaseModel):
 class VocabularySettings(BaseModel):
     pascal_case_class_labels: bool = True
     pascal_case_individual_labels: bool = True
-    snake_case_property_labels: bool = True
-    snake_case_datatype_labels: bool = True
+    camel_case_property_labels: bool = True
+    camel_case_datatype_labels: bool = True
     pascal_case_datatype_enum_labels: bool = True
 
 

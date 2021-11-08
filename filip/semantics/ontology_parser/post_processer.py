@@ -356,9 +356,14 @@ def apply_vocabulary_settings(voc_builder: VocabularyBuilder):
         return stringcase.pascalcase(string).replace("_", "").replace(" ", "")\
             .replace("-", "")
 
+    def to_camel_case(string: str) -> str:
+        camel_string = stringcase.camelcase(string)
+        return camel_string
+
     def to_snake_case(string: str) -> str:
         camel_string = to_pascal_case(string)
         return re.sub(r'(?<!^)(?=[A-Z])', '_', camel_string).lower()
+
 
     # replace all whitespaces
     for entity in vocabulary.get_all_entities():
@@ -379,15 +384,15 @@ def apply_vocabulary_settings(voc_builder: VocabularyBuilder):
         for individual in vocabulary.individuals.values():
             individual.label = to_pascal_case(individual.label)
 
-    if settings.snake_case_property_labels:
+    if settings.camel_case_property_labels:
         props = list(vocabulary.data_properties.values())
         props.extend(vocabulary.object_properties.values())
         for prop in props:
-            prop.label = to_snake_case(prop.label)
+            prop.label = to_camel_case(prop.label)
 
-    if settings.snake_case_datatype_labels:
+    if settings.camel_case_datatype_labels:
         for datatype in vocabulary.datatypes.values():
-            datatype.label = to_snake_case(datatype.label)
+            datatype.label = to_camel_case(datatype.label)
 
     if settings.pascal_case_datatype_enum_labels:
         for datatype in vocabulary.get_enum_dataytypes().values():

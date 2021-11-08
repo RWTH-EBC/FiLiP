@@ -20,7 +20,7 @@ from filip.semantics.vocabulary.source import DependencyStatement
 from filip.semantics.vocabulary.vocabulary import VocabularySettings
 
 label_blacklist = list(keyword.kwlist)
-label_blacklist.extend(["__references", "__device_settings"])
+label_blacklist.extend(["referencedBy", "deviceSettings"])
 label_blacklist.extend(["references", "device_settings", "header",
                         "old_state", "", "semantic_manager", "delete"])
 label_blacklist.extend(["id", "type", "class"])
