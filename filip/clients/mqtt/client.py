@@ -124,6 +124,7 @@ class IoTAMQTTClient(mqtt.Client):
             mqttc.disconnect()
 
     """
+
     def __init__(self,
                  client_id="",
                  clean_session=None,
