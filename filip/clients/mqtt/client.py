@@ -182,8 +182,8 @@ class IoTAMQTTClient(mqtt.Client):
                 this is not known or registered with the IoT-Agent service
                 the receiving of commands will fail. Please check the
                 official documentation of the IoT-Agents API for more details.
-            encoder:
-                Encoder class that will automatically parse the supported
+            custom_encoder:
+                Custom encoder class that will automatically parse the supported
                 payload formats to a dictionary and vice versa. This
                 essentially saves boiler plate code.
         """
@@ -266,7 +266,7 @@ class IoTAMQTTClient(mqtt.Client):
     def add_encoder(self, encoder: Dict[str, BaseEncoder]):
         for value in encoder.values():
             assert isinstance(value, BaseEncoder), \
-            f"Encoder must be a subclass of {type(BaseEncoder)}"
+                f"Encoder must be a subclass of {type(BaseEncoder)}"
 
         self._encoders.update(encoder)
 
@@ -721,8 +721,8 @@ class IoTAMQTTClient(mqtt.Client):
                 set `attribute_name` must be omitted.
             timestamp:
                 If `true` the client will generate a valid timestamp based on
-                its current system time and added to the multi measurement
-                payload. If a `timeInstant` is already contained in the
+                utc and added to the multi measurement payload.
+                If a `timeInstant` is already contained in the
                 message payload it will not overwritten.
 
         Returns:
@@ -736,7 +736,7 @@ class IoTAMQTTClient(mqtt.Client):
                 configuration.
         """
 
-        # TODO: time stamps do not work yet
+        # TODO: time stamps are not tested yet
 
         if device_id:
             device = self.get_device(device_id=device_id)
@@ -747,7 +747,7 @@ class IoTAMQTTClient(mqtt.Client):
                     "Payload must be a dictionary"
 
                 if timestamp and 'timeInstant' not in payload.keys():
-                    payload["timeInstant"] = datetime.now()
+                    payload["timeInstant"] = datetime.utcnow()
                 # validate if dict keys match device configuration
                 for key, attr in itertools.product(payload.keys(),
                                                    device.attributes):

@@ -14,9 +14,11 @@ def validate_http_url(url: AnyHttpUrl) -> str:
     """
     Function checks whether the host has "http" added in case of http as
     protocol.
+
     Args:
         url (AnyHttpUrl): the url for the host / port
-    Returns:
+
+    #Returns:
         validated url
     """
     return url
@@ -25,8 +27,10 @@ def validate_http_url(url: AnyHttpUrl) -> str:
 def validate_mqtt_url(url: AnyMqttUrl) -> str:
     """
     Function that checks whether a url is valid mqtt endpoint
+
     Args:
         url: the url for the target endpoint
+
     Returns:
        validated url
     """

@@ -11,6 +11,8 @@ from datetime import datetime
 from typing import Dict, Tuple
 from paho.mqtt.client import MQTTMessage
 from filip.models.mqtt import IoTAMQTTMessageType
+from filip.utils import convert_datetime_to_iso_8601_with_z_suffix
+
 
 class BaseEncoder(ABC):
     """
@@ -84,7 +86,9 @@ class BaseEncoder(ABC):
             if isinstance(timestamp, str):
                 timestamp = datetime.fromisoformat(payload["timeInstant"])
             if isinstance(timestamp, datetime):
-                payload['timeInstant'] = timestamp.astimezone().isoformat()
+                payload['timeInstant'] = \
+                    convert_datetime_to_iso_8601_with_z_suffix(
+                        payload['timeInstant'])
             else:
                 raise ValueError('Not able to parse datetime')
         return payload

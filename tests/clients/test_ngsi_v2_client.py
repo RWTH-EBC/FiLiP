@@ -64,10 +64,10 @@ class TestClient(unittest.TestCase):
         path = Path(__file__).parent.resolve()
         return str(path.joinpath('.env.filip'))
 
-
     def _test_change_of_headers(self, client: HttpClient):
         """
         Test changes in fiware headers
+
         Args:
             client (HttpClient): Client under test
         Returns:
@@ -141,12 +141,13 @@ class TestClient(unittest.TestCase):
         """
         Test configuration using .env.filip or environment variables the
         latter is handled in core.config
+
         Returns:
             None
         """
         with open(self.get_env_path(), "w") as file:
             for key, value in self.config.items():
-                file.write(key.upper() + "=" + str(value)+ "\n")
+                file.write(key.upper() + "=" + str(value) + "\n")
 
         # ToDo: check how to reload the settings
         # reload .env.filip
@@ -158,6 +159,7 @@ class TestClient(unittest.TestCase):
     def test_session_handling(self):
         """
         Test session handling for performance boost and credential handling
+
         Returns:
             None
         """
@@ -189,6 +191,7 @@ class TestClient(unittest.TestCase):
     def tearDown(self) -> None:
         """
         Clean up artifacts
+
         Returns:
             None
         """
