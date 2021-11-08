@@ -7,12 +7,6 @@ stages:
 variables:
     EXCLUDE_PYTHON: 36
     PAGES_BRANCH: master
-    CB_URL: http://134.130.166.184:1026
-    IOTA_URL: http://134.130.166.184:4041
-    QL_URL: http://134.130.166.184:8668
-    MQTT_BROKER_URL: mqtt://134.130.166.184:1883
-    
-
 
 include:
     - project: 'EBC/EBC_all/gitlab_ci/templates'
