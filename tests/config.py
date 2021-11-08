@@ -1,12 +1,18 @@
 import logging
-from dotenv import find_dotenv
 from enum import Enum
+from uuid import uuid4
+from dotenv import find_dotenv
 from pydantic import AnyUrl, AnyHttpUrl, BaseSettings, Field, root_validator
-
+from filip.models.base import FiwareHeader
 
 def generate_servicepath():
-    from uuid import uuid4
-    return f'/{str(uuid4()).replace("-","")}'
+    """
+    Generates a random service path
+
+    Returns:
+        String: unique service path
+    """
+    return f'/{str(uuid4()).replace("-", "")}'
 
 
 class LogLevel(str, Enum):
@@ -21,6 +27,7 @@ class LogLevel(str, Enum):
     def _missing_(cls, name):
         """
         Class method to realize case insensitive args
+
         Args:
             name: missing argument
 
@@ -53,7 +60,6 @@ class TestSettings(BaseSettings):
     IOTA_UL_URL: AnyHttpUrl = Field(default="http://127.0.0.1:4061",
                                     env='IOTA_UL_URL')
 
-
     QL_URL: AnyHttpUrl = Field(default="http://127.0.0.1:8668",
                                env=['QUANTUMLEAP_URL',
                                     'QL_URL'])
@@ -76,9 +82,7 @@ class TestSettings(BaseSettings):
                                          'FIWARE_SERVICEPATH',
                                          'FIWARE_SERVICE_PATH'])
 
-
-
-    @root_validator()
+    @root_validator
     def generate_mutltitenancy_setup(cls, values):
         """
         Tests if the fields for multi tenancy in fiware are consistent.
@@ -92,23 +96,27 @@ class TestSettings(BaseSettings):
         if values.get('CI_JOB_ID', None):
             values['FIWARE_SERVICEPATH'] = f"/{values['CI_JOB_ID']}"
 
-        from filip.models.base import FiwareHeader
         FiwareHeader(service=values['FIWARE_SERVICE'],
                      service_path=values['FIWARE_SERVICEPATH'])
 
         return values
 
     class Config:
+        """
+        Pydantic configuration
+        """
         env_file = find_dotenv('.env')
         env_file_encoding = 'utf-8'
         case_sensitive = False
         use_enum_values = True
 
+
+# create settings object
 settings = TestSettings()
 print(f"Running tests with the following settings: \n "
       f"{settings.json(indent=2)}")
 
-# Configure logging for all tests
+# configure logging for all tests
 logging.basicConfig(
     level=settings.LOG_LEVEL,
     format='%(asctime)s %(name)s %(levelname)s: %(message)s')
