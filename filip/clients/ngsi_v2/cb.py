@@ -1532,156 +1532,150 @@ class ContextBrokerClient(BaseHttpClient):
 
         return new_set
 
-    def _get_added_and_removed_values(self, old_values: Union[List, Set],
-                                      current_values: Union[List, Set]) -> (Set, Set):
-
-        old_set = set(old_values)
-        current_set = set(current_values)
-        added_values = set()
-        removed_values = set()
-
-        # remove deleted values from live state, it can be that the value was
-        # also deleted in the live state
-        for value in old_set:
-            if value not in current_set:
-                removed_values.add(value)
-
-        # add added values
-        for value in current_set:
-            if value not in old_set:
-                added_values.add(value)
-
-        return added_values, removed_values
-
-    def concurrent_safe_entity_patch(
-            self,
-            entity: ContextEntity,
-            old_entity: Optional[ContextEntity] = None) -> ContextEntity:
-        """
-        Merges an entity state with the live_state on Fiware. Allows
-        concurrent made changes to the entity to be merged to a consistent state
-
-        Conditions for use:
-            - entity type and id do not change
-            - field types do not change and fields are not renamed
-            - fields values are not in Dict form, and are comparable
-            - No metadata in fields
-        """
-
-        current_entity = copy.deepcopy(entity)
-
-        try:
-            live_entity = self.get_entity(entity_id=entity.id,
-                                          entity_type=entity.type)
-        except requests.RequestException:
-            # entity does not exists, post entity
-            self.post_entity(entity=entity)
-            return current_entity
-
-        merged_entity = copy.deepcopy(live_entity)
-
-        (added_attribute_names, removed_attribute_names) = \
-            self._get_added_and_removed_values(
-                old_entity.get_attribute_names(),
-                current_entity.get_attribute_names())
-
-        # add fields to merged that are completely new
-        for name in added_attribute_names:
-            if name not in merged_entity.get_attribute_names():
-                merged_entity.add_attributes(
-                    [current_entity.get_attribute(name)])
-
-        # remove fields from merged that were removed locally
-        for name in added_attribute_names:
-            if name in merged_entity.get_attribute_names():
-                merged_entity.delete_attributes([name])
-
-        for attribute in merged_entity.get_attributes():
-
-            if attribute.name not in live_entity.get_attribute_names():
-                # the attribute was added from the current state, and the
-                # values are already correctly set
-                continue
-
-            if attribute.name not in current_entity.get_attribute_names():
-                # the attribute was added in an other session, we have no
-                # conflict, the values are already correctly set
-                continue
-
-            # we know here that the attribute exists in the current_state and
-            # in the live_state. We now need to merge the value state of the
-            # attribute. We do this by add/delete all values that were
-            # actively added/deleted in the current session
 
 
-
-        def value_list_of_attribute(attribute: NamedContextAttribute) -> \
-                List[Any]:
-            """get the values of an attribute in list form an throw an error if
-            it is a dict"""
-            if isinstance(attribute.value, dict):
-                raise AssertionError("Dict used as value")
-            elif not isinstance(attribute.value, list):
-                values = [attribute.value]
-            else:
-                values = attribute.value
-            return values
-
-        def list_intersection(list_1: List, list_2: List):
-            """Get the intersection of two lists with duplicates"""
-            list_2_rest = copy.deepcopy(list_2)
-            res_list = []
-            for v in list_1:
-                if v in list_2_rest:
-                    list_2_rest.remove(v)
-                    res_list.append(v)
-            return res_list
-
-
-
-        # merge values of live_state and current_state for each attribute
-        for attribute in live_entity.get_attributes():
-            merged_attribute = merged_entity.get_attribute(attribute.name)
-
-            live_values = value_list_of_attribute(attribute)
-            merged_values = value_list_of_attribute(merged_attribute)
-
-            # merge values completely
-            new_values = []
-            new_values.extend(live_values)
-            new_values.extend(value_list_of_attribute(merged_attribute))
-
-            # remove created duplicates by subtracting intersection
-            intersection = list_intersection(live_values, merged_values)
-            for value in intersection:
-                new_values.remove(value)
-
-            # if a value was actively deleted but re-added again from the live
-            # state, delete it again
-            if old_entity is not None:
-
-                old_values = value_list_of_attribute(attribute)
-
-                current_attribute = current_entity.get_attribute(
-                    attribute.name)
-                current_values = value_list_of_attribute(current_attribute)
-
-                intersection = list_intersection(old_values, current_values)
-                # deleted values are exactly those values that were actively
-                # deleted in teh current session.
-                # They will be actively removed form the new state
-                deleted_values = copy.deepcopy(current_values)
-                for value in intersection:
-                    deleted_values.remove(value)
-
-                for value in deleted_values:
-                    merged_values.remove(value)
-
-            # set final values
-            merged_attribute.value = new_values
-
-        self.patch_entity(entity=merged_entity)
-        return merged_entity
+    # def concurrent_safe_entity_patch(
+    #         self,
+    #         entity: ContextEntity,
+    #         old_entity: Optional[ContextEntity] = None) -> ContextEntity:
+    #     """
+    #     Merges an entity state with the live_state on Fiware. Allows
+    #     concurrent made changes to the entity to be merged to a consistent state
+    #
+    #     Conditions for use:
+    #         - entity type and id do not change
+    #         - field types do not change and fields are not renamed
+    #         - fields values are not in Dict form, and are comparable
+    #         - No metadata in fields
+    #     """
+    #
+    #     current_entity = copy.deepcopy(entity)
+    #
+    #     try:
+    #         live_entity = self.get_entity(entity_id=entity.id,
+    #                                       entity_type=entity.type)
+    #     except requests.RequestException:
+    #         # entity does not exists, post entity
+    #         self.post_entity(entity=entity)
+    #         return current_entity
+    #
+    #     merged_entity = copy.deepcopy(live_entity)
+    #
+    #     (added_attribute_names, removed_attribute_names) = \
+    #         self._get_added_and_removed_values(
+    #             old_entity.get_attribute_names(),
+    #             current_entity.get_attribute_names())
+    #
+    #     # add fields to merged that are completely new
+    #     for name in added_attribute_names:
+    #         if name not in merged_entity.get_attribute_names():
+    #             merged_entity.add_attributes(
+    #                 [current_entity.get_attribute(name)])
+    #
+    #     # remove fields from merged that were removed locally
+    #     for name in added_attribute_names:
+    #         if name in merged_entity.get_attribute_names():
+    #             merged_entity.delete_attributes([name])
+    #
+    #     for attribute in merged_entity.get_attributes():
+    #
+    #         if attribute.name not in live_entity.get_attribute_names():
+    #             # the attribute was added from the current state, and the
+    #             # values are already correctly set
+    #             continue
+    #
+    #         if attribute.name not in current_entity.get_attribute_names():
+    #             # the attribute was added in an other session, we have no
+    #             # conflict, the values are already correctly set
+    #             continue
+    #
+    #         # we know here that the attribute exists in the current_state and
+    #         # in the live_state. We now need to merge the value state of the
+    #         # attribute. We do this by add/delete all values that were
+    #         # actively added/deleted in the current session
+    #
+    #         def value_list_of_attribute(attribute: NamedContextAttribute) -> \
+    #                 List[Any]:
+    #             """get the values of an attribute in list form an throw an error if
+    #             it is a dict"""
+    #             if isinstance(attribute.value, dict):
+    #                 raise AssertionError("Dict used as value")
+    #             elif not isinstance(attribute.value, list):
+    #                 values = [attribute.value]
+    #             else:
+    #                 values = attribute.value
+    #             return values
+    #
+    #         current_attr_value = value_list_of_attribute(
+    #             current_entity.get_attribute(attribute.name))
+    #
+    #         old_attr_value = None
+    #         if attribute.name in old_entity.get_attribute_names():
+    #             old_attr_value = value_list_of_attribute(
+    #                 old_entity.get_attribute(attribute.name))
+    #
+    #         if old_attr_value is None:
+    #
+    #
+    #
+    #
+    #
+    #
+    #     def list_intersection(list_1: List, list_2: List):
+    #         """Get the intersection of two lists with duplicates"""
+    #         list_2_rest = copy.deepcopy(list_2)
+    #         res_list = []
+    #         for v in list_1:
+    #             if v in list_2_rest:
+    #                 list_2_rest.remove(v)
+    #                 res_list.append(v)
+    #         return res_list
+    #
+    #
+    #
+    #     # merge values of live_state and current_state for each attribute
+    #     for attribute in live_entity.get_attributes():
+    #         merged_attribute = merged_entity.get_attribute(attribute.name)
+    #
+    #         live_values = value_list_of_attribute(attribute)
+    #         merged_values = value_list_of_attribute(merged_attribute)
+    #
+    #         # merge values completely
+    #         new_values = []
+    #         new_values.extend(live_values)
+    #         new_values.extend(value_list_of_attribute(merged_attribute))
+    #
+    #         # remove created duplicates by subtracting intersection
+    #         intersection = list_intersection(live_values, merged_values)
+    #         for value in intersection:
+    #             new_values.remove(value)
+    #
+    #         # if a value was actively deleted but re-added again from the live
+    #         # state, delete it again
+    #         if old_entity is not None:
+    #
+    #             old_values = value_list_of_attribute(attribute)
+    #
+    #             current_attribute = current_entity.get_attribute(
+    #                 attribute.name)
+    #             current_values = value_list_of_attribute(current_attribute)
+    #
+    #             intersection = list_intersection(old_values, current_values)
+    #             # deleted values are exactly those values that were actively
+    #             # deleted in teh current session.
+    #             # They will be actively removed form the new state
+    #             deleted_values = copy.deepcopy(current_values)
+    #             for value in intersection:
+    #                 deleted_values.remove(value)
+    #
+    #             for value in deleted_values:
+    #                 merged_values.remove(value)
+    #
+    #         # set final values
+    #         merged_attribute.value = new_values
+    #
+    #     self.patch_entity(entity=merged_entity)
+    #     return merged_entity
 
 #    def get_subjects(self, object_entity_name: str, object_entity_type: str, subject_type=None):
 #        """

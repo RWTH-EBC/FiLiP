@@ -3,7 +3,7 @@ import copy
 import json
 import logging
 from enum import Enum
-from typing import Optional, Dict, TYPE_CHECKING, Type, List, Any
+from typing import Optional, Dict, TYPE_CHECKING, Type, List, Any, Union, Set
 
 import requests
 from requests import RequestException
@@ -171,14 +171,13 @@ class InstanceRegistry(BaseModel):
 
         save = json.loads(json_string)
         for instance_dict in save['instances']:
-
             entity_json = instance_dict['entity']
             header = InstanceHeader.parse_raw(instance_dict['header'])
 
             context_entity = ContextEntity.parse_raw(entity_json)
 
             instance = semantic_manager._context_entity_to_semantic_class(
-                                                        context_entity, header)
+                context_entity, header)
 
             instance.old_state.state = instance_dict['old_state']
 
@@ -360,15 +359,15 @@ class SemanticManager(BaseModel):
             # if loading local state, the wrong string delimters are used,
             # and the string is not automatically converted to a dict
             if not isinstance(value, dict):
-                value = json.loads(value.replace("'",'"'))
+                value = json.loads(value.replace("'", '"'))
 
             return DeviceAttribute(
-                                   name=value['name'],
-                                   attribute_type=value[
-                                       "attribute_type"]
-                               )
+                name=value['name'],
+                attribute_type=value[
+                    "attribute_type"]
+            )
 
-    def get_class_by_name(self, class_name:str) -> Type:
+    def get_class_by_name(self, class_name: str) -> Type:
         """
         Get the class object by its type in string form
 
@@ -445,6 +444,10 @@ class SemanticManager(BaseModel):
 
             client.close()
 
+        # merge with live state
+        for instance in self.instance_registry.get_all():
+            if not isinstance(instance, SemanticDeviceClass):
+                self.merge_local_and_live_instance_state(instance)
 
         # save, patch all local instances
         for instance in self.instance_registry.get_all():
@@ -556,7 +559,7 @@ class SemanticManager(BaseModel):
         """
         return self.instance_registry.get_all()
 
-    def get_all_local_instances_of_class(self, class_:type, class_name:str) \
+    def get_all_local_instances_of_class(self, class_: type, class_name: str) \
             -> List[SemanticClass]:
         """
         Retrieve all instances of a SemanitcClass from Local Storage
@@ -594,7 +597,7 @@ class SemanticManager(BaseModel):
             iota_url: str,
             entity_types: Optional[List[str]] = None,
             entity_ids: Optional[List[str]] = None
-            ) -> List[SemanticClass]:
+    ) -> List[SemanticClass]:
         """
         Loads the instances of given types or ids from Fiware into the local
         state and returns the loaded instances
@@ -636,7 +639,7 @@ class SemanticManager(BaseModel):
         return [self._context_entity_to_semantic_class(e, header)
                 for e in entities]
 
-    def get_entity_from_fiware(self, instance_identifier: InstanceIdentifier)\
+    def get_entity_from_fiware(self, instance_identifier: InstanceIdentifier) \
             -> ContextEntity:
         """
         Retrieve the current entry of an instance in Fiware
@@ -729,7 +732,7 @@ class SemanticManager(BaseModel):
         """
         return self.instance_registry.save()
 
-    def load_local_state_from_json(self, json:str):
+    def load_local_state_from_json(self, json: str):
         """
         Loads the local state from a json string. The current local state gets
         discarded
@@ -779,6 +782,125 @@ class SemanticManager(BaseModel):
                         "vertex_label": g.vs["label"],
                         "edge_label": g.es["name"],
                         "layout": layout,
-                        "bbox": (len(g.vs) * 100,len(g.vs) * 100)}
+                        "bbox": (len(g.vs) * 100, len(g.vs) * 100)}
 
         igraph.plot(g, **visual_style)
+
+    def merge_local_and_live_instance_state(self, instance: SemanticClass):
+
+        def converted_attribute_values(field, attribute) -> Set:
+            return {self._convert_value_fitting_for_field(field, value) for
+                    value in attribute.value}
+
+        def _get_added_and_removed_values(
+                old_values: Union[List, Set, Any],
+                current_values: Union[List, Set, Any]) -> (Set, Set):
+
+            old_set = set(old_values)
+            current_set = set(current_values)
+            added_values = set()
+            removed_values = set()
+
+            # remove deleted values from live state, it can be that the value
+            # was also deleted in the live state
+            for value in old_set:
+                if value not in current_set:
+                    removed_values.add(value)
+
+            # add added values
+            for value in current_set:
+                if value not in old_set:
+                    added_values.add(value)
+
+            return added_values, removed_values
+
+        # instance is new. Save it as is
+        client = self.get_client(instance.header)
+        if not client.does_entity_exists(entity_id=instance.id,
+                                         entity_type=instance.get_type()):
+            return instance.build_context_entity()
+
+        client = self.get_client(instance.header)
+        live_entity = client.get_entity(entity_id=instance.id,
+                                        entity_type=instance.get_type())
+        client.close()
+
+        current_entity = instance.build_context_entity()
+        old_entity = instance.old_state.state
+
+        # instance exists already, add all locally added and delete all
+        # locally deleted values to the/from the live_state
+        for field in instance.get_rule_fields():
+            print(live_entity.get_attribute(field.name).value)
+            # live_values = set(live_entity.get_attribute(field.name).value)
+            live_values = converted_attribute_values(
+                field, live_entity.get_attribute(field.name))
+            old_values = converted_attribute_values(
+                field, old_entity.get_attribute(field.name))
+            current_values = converted_attribute_values(
+                field, current_entity.get_attribute(field.name))
+
+            (added_values, deleted_values) = \
+                _get_added_and_removed_values(
+                    old_values, current_values
+                    # old_entity.get_attribute(field.name).value,
+                    # current_entity.get_attribute(field.name).value
+                )
+
+            for value in added_values:
+                live_values.add(value)
+            for value in deleted_values:
+                if value in live_values:
+                    live_values.remove(value)
+
+            new_values = list(live_values)
+            # update local stated with merged result
+            field.clear()
+            for value in new_values:
+                converted_value = self._convert_value_fitting_for_field(
+                    field, value)
+                if isinstance(field, RelationField):
+                    # we need to bypass the main setter, as it expects an
+                    # instance and we do not want to load the instance if it
+                    # is not used
+                    field._list.append(converted_value)
+                else:
+                    field.append(converted_value)
+
+        # merge references
+        merged_references: Dict = live_entity.get_attribute(
+            "referencedBy").value
+        current_references: Dict = current_entity.get_attribute(
+            "referencedBy").value
+        old_references: Dict = old_entity.get_attribute("referencedBy").value
+
+        for key in current_references:
+            current_values = current_references[key]
+            old_values = []
+            if key in old_references:
+                old_values = old_references[key]
+
+            (added_values, deleted_values) = _get_added_and_removed_values(
+                current_values, old_values)
+
+            # ensure the merged state has each key
+            if key not in merged_references.keys():
+                merged_references[key] = []
+
+            # add, added values that did not exist before
+            for value in added_values:
+                if value not in merged_references[key]:
+                    merged_references[key].append(value)
+
+            # delete deleted values if they were not already deleted
+            for value in deleted_values:
+                if value in merged_references[key]:
+                    merged_references[key].remove(value)
+
+            # delete all keys that point to empty lists
+            keys_to_delete = []
+            for key, value in merged_references.items():
+                if len(value) == 0:
+                    keys_to_delete.append(key)
+            for key in keys_to_delete:
+                del merged_references[key]
