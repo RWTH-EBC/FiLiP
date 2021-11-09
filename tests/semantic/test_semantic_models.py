@@ -603,11 +603,47 @@ class TestSemanticModels(unittest.TestCase):
         self.assertFalse(inst_1.get_identifier()
                          in inst_2.objProp3.get_all_raw())
 
+    def test__19_merge_states(self):
+        """
+        Tests if a local state is correctly merged with changes on the live
+        state
+        """
+        from tests.semantic.models2 import Class1, semantic_manager
+
+        # create state
+        inst_1 = Class1(id="100")
+        inst_1.dataProp2.remove(2)  # default value
+        inst_1.dataProp2.append("Test")
+        inst_1.dataProp2.append("Test2")
+
+        old_state = inst_1.build_context_entity()
+        semantic_manager.save_state(assert_validity=False)
+
+        # change live state
+        inst_1.dataProp2.append("Test3")
+        inst_1.dataProp2.remove("Test")
+        self.assertEqual(set(inst_1.dataProp2.get_all()), {"Test2", "Test3"})
+        semantic_manager.save_state(assert_validity=False)
+        self.assertEqual(set(inst_1.dataProp2.get_all()), {"Test2", "Test3"})
+
+        # reset local state and change it
+        inst_1.dataProp2.set(["Test", "Test4"])
+        inst_1.old_state.state = old_state
+        self.assertEqual(set(inst_1.dataProp2.get_all()), {"Test", "Test4"})
+        semantic_manager.save_state(assert_validity=False)
+
+        # local state is merged correctly
+        self.assertEqual(set(inst_1.dataProp2.get_all()), {"Test3", "Test4"})
+
+        # live state is merged correctly
+        self.clear_registry()
+        inst_1 = Class1(id="100")
+        self.assertEqual(set(inst_1.dataProp2.get_all()), {"Test3", "Test4"})
+
     def tearDown(self) -> None:
         """
         Cleanup test server
         """
-
         self.clear_registry()
         clear_all(fiware_header=FiwareHeader(service="testing",
                                              service_path="/"),
