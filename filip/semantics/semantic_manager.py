@@ -305,7 +305,6 @@ class SemanticManager(BaseModel):
                     field.append(converted_value)
 
         # load references into instance
-        print(entity.get_attribute_names())
         references_attribute = entity.get_attribute("referencedBy")
         references = references_attribute.value
 
@@ -818,7 +817,7 @@ class SemanticManager(BaseModel):
         client = self.get_client(instance.header)
         if not client.does_entity_exists(entity_id=instance.id,
                                          entity_type=instance.get_type()):
-            return instance.build_context_entity()
+            return
 
         client = self.get_client(instance.header)
         live_entity = client.get_entity(entity_id=instance.id,
@@ -831,7 +830,6 @@ class SemanticManager(BaseModel):
         # instance exists already, add all locally added and delete all
         # locally deleted values to the/from the live_state
         for field in instance.get_rule_fields():
-            print(live_entity.get_attribute(field.name).value)
             # live_values = set(live_entity.get_attribute(field.name).value)
             live_values = converted_attribute_values(
                 field, live_entity.get_attribute(field.name))
@@ -855,7 +853,9 @@ class SemanticManager(BaseModel):
 
             new_values = list(live_values)
             # update local stated with merged result
-            field.clear()
+            field._list.clear()  # very important to not use field.clear,
+                                 # as that methode would also delete values
+                                 # in other instances
             for value in new_values:
                 converted_value = self._convert_value_fitting_for_field(
                     field, value)
@@ -865,23 +865,29 @@ class SemanticManager(BaseModel):
                     # is not used
                     field._list.append(converted_value)
                 else:
-                    field.append(converted_value)
+                    field._list.append(converted_value)
 
         # merge references
         merged_references: Dict = live_entity.get_attribute(
             "referencedBy").value
         current_references: Dict = current_entity.get_attribute(
             "referencedBy").value
-        old_references: Dict = old_entity.get_attribute("referencedBy").value
+        old_references: Dict = old_entity.get_attribute(
+            "referencedBy").value
 
-        for key in current_references:
-            current_values = current_references[key]
+        keys = list(current_references.keys())
+        keys.extend(list(old_references.keys()))
+
+        for key in keys:
+            current_values = []
             old_values = []
+            if key in current_references:
+                current_values = current_references[key]
             if key in old_references:
                 old_values = old_references[key]
 
             (added_values, deleted_values) = _get_added_and_removed_values(
-                current_values, old_values)
+                current_values=current_values, old_values=old_values)
 
             # ensure the merged state has each key
             if key not in merged_references.keys():
@@ -904,3 +910,10 @@ class SemanticManager(BaseModel):
                     keys_to_delete.append(key)
             for key in keys_to_delete:
                 del merged_references[key]
+
+        # save merged references
+        instance.references.clear()
+        for key, value in merged_references.items():
+            instance.references[InstanceIdentifier.parse_raw(key)] = value
+
+            

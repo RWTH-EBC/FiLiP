@@ -610,35 +610,75 @@ class TestSemanticModels(unittest.TestCase):
         """
         from tests.semantic.models2 import Class1, semantic_manager
 
+        test_header = InstanceHeader(
+            cb_url=settings.CB_URL,
+            service="testing",
+            service_path="/"
+        )
+        semantic_manager.set_default_header(test_header)
+
+        # used instances
+        c1 = Class1(id="1")
+        c2 = Class1(id="2")
+        c3 = Class1(id="3")
+        c4 = Class1(id="4")
+
         # create state
         inst_1 = Class1(id="100")
         inst_1.dataProp2.remove(2)  # default value
         inst_1.dataProp2.append("Test")
         inst_1.dataProp2.append("Test2")
 
+        inst_1.oProp1.extend([c1,c2])
+
         old_state = inst_1.build_context_entity()
+
         semantic_manager.save_state(assert_validity=False)
 
         # change live state
         inst_1.dataProp2.append("Test3")
         inst_1.dataProp2.remove("Test")
+        inst_1.oProp1.remove(c1)
+        inst_1.oProp1.append(c3)
+
         self.assertEqual(set(inst_1.dataProp2.get_all()), {"Test2", "Test3"})
+        self.assertEqual(set(inst_1.oProp1.get_all_raw()),
+                         {c2.get_identifier(), c3.get_identifier()})
+        self.assertEqual(inst_1.references.keys(),
+                         {c2.get_identifier(), c3.get_identifier()})
         semantic_manager.save_state(assert_validity=False)
         self.assertEqual(set(inst_1.dataProp2.get_all()), {"Test2", "Test3"})
+        self.assertEqual(set(inst_1.oProp1.get_all_raw()),
+                         {c2.get_identifier(), c3.get_identifier()})
 
         # reset local state and change it
         inst_1.dataProp2.set(["Test", "Test4"])
+        inst_1.oProp1.set([c1, c4])
         inst_1.old_state.state = old_state
+
         self.assertEqual(set(inst_1.dataProp2.get_all()), {"Test", "Test4"})
+        self.assertEqual(set(inst_1.oProp1.get_all_raw()),
+                         {c1.get_identifier(), c4.get_identifier()})
+        self.assertEqual(inst_1.references.keys(),
+                         {c1.get_identifier(), c4.get_identifier()})
+
         semantic_manager.save_state(assert_validity=False)
 
         # local state is merged correctly
         self.assertEqual(set(inst_1.dataProp2.get_all()), {"Test3", "Test4"})
+        self.assertEqual(set(inst_1.oProp1.get_all_raw()),
+                         {c3.get_identifier(), c4.get_identifier()})
+        self.assertEqual(inst_1.references.keys(),
+                         {c3.get_identifier(), c4.get_identifier()})
 
         # live state is merged correctly
         self.clear_registry()
         inst_1 = Class1(id="100")
         self.assertEqual(set(inst_1.dataProp2.get_all()), {"Test3", "Test4"})
+        self.assertEqual(set(inst_1.oProp1.get_all_raw()),
+                         {c3.get_identifier(), c4.get_identifier()})
+        self.assertEqual(inst_1.references.keys(),
+                         {c3.get_identifier(), c4.get_identifier()})
 
     def tearDown(self) -> None:
         """
