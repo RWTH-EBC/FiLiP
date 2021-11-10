@@ -14,6 +14,7 @@ from filip.semantics.vocabulary.data_property import DataFieldType
 from filip.semantics.vocabulary.vocabulary import VocabularySettings
 from filip.semantics.vocabulary_configurator import VocabularyConfigurator
 from filip.utils.cleanup import clear_all
+from tests.models2 import customDataType4
 
 
 class TestSemanticModels(unittest.TestCase):
@@ -680,7 +681,6 @@ class TestSemanticModels(unittest.TestCase):
         SemanticDeviceClass the general things are covered by test 120
         """
         from tests.semantic.models2 import Class3, semantic_manager
-        self.clear_registry()
 
         test_header = InstanceHeader(
             cb_url=settings.CB_URL,
@@ -714,6 +714,7 @@ class TestSemanticModels(unittest.TestCase):
         inst_1.attributeProp.append(
             DeviceAttribute(name="test2",
                             attribute_type=DeviceAttributeType.lazy))
+        inst_1.dataProp1.append(customDataType4.value_1)
 
         semantic_manager.save_state()
         self.assertEqual(inst_1.device_settings.apikey, "test")
@@ -751,7 +752,6 @@ class TestSemanticModels(unittest.TestCase):
         self.assertEqual({inst_1.attributeProp[0].name, inst_1.attributeProp[
             1].name}, {"test2", "test3"})
 
-
         # live state is merged correctly
         self.clear_registry()
         inst_1 = Class3(id="3")
@@ -764,6 +764,14 @@ class TestSemanticModels(unittest.TestCase):
         self.assertEqual(len(inst_1.attributeProp), 2)
         self.assertEqual({inst_1.attributeProp[0].name, inst_1.attributeProp[
             1].name}, {"test2", "test3"})
+
+        # test if data in device gets updated, not only in the context entity
+        with IoTAClient(url=settings.IOTA_URL, fiware_header=inst_1.header) as client:
+            device_entity = client.get_device(device_id=inst_1.get_device_id())
+
+            for attr in device_entity.static_attributes:
+                if attr.name == "dataProp1":
+                    self.assertEqual(attr.value, ['1'])
 
     def tearDown(self) -> None:
         """

@@ -466,7 +466,7 @@ class SemanticManager(BaseModel):
                 # todo : Not propper as we lose state info, patch_device needs
                 #  to be implemented
                 try:
-                    client.delete_device(device_id=instance.id)
+                    client.delete_device(device_id=instance.get_device_id())
                 except:
                     pass
 
@@ -842,15 +842,6 @@ class SemanticManager(BaseModel):
                 field, old_entity.get_attribute(field.name))
             current_values = converted_attribute_values(
                 field, current_entity.get_attribute(field.name))
-
-            print(field.name)
-            print("live:")
-            print(live_entity.get_attribute(field.name))
-            print("old:")
-            print(old_entity.get_attribute(field.name))
-            print("new:")
-            print(old_entity.get_attribute(field.name))
-            print("")
 
             (added_values, deleted_values) = \
                 _get_added_and_removed_values(

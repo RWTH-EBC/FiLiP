@@ -1497,6 +1497,9 @@ class SemanticDeviceClass(SemanticClass):
         ])
         return entity
 
+    def get_device_id(self) -> str:
+        return f'{self.get_type()}|{self.id}'
+
     def build_context_device(self) -> iot.Device:
         """
         Convert the instance to a ContextEntity that contains all fields as
@@ -1506,10 +1509,10 @@ class SemanticDeviceClass(SemanticClass):
             ContextEntity
         """
         device = iot.Device(
-            device_id=f'{self.id}',
+            device_id=self.get_device_id(),
             service=self.header.service,
             service_path=self.header.service_path,
-            entity_name=self.id,
+            entity_name=f'{self.id}',
             entity_type=self._get_class_name(),
             apikey=self.device_settings.apikey,
             endpoint=self.device_settings.endpoint,
