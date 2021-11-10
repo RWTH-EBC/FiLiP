@@ -417,7 +417,6 @@ class SemanticManager(BaseModel):
                     f"Local state was not saved"
 
         for instance in self.instance_registry.get_all():
-            print(type(instance))
             if isinstance(instance, SemanticDeviceClass):
                 assert instance.device_settings.endpoint is not None, \
                     "Device needs to be given an endpoint. " \
@@ -445,8 +444,7 @@ class SemanticManager(BaseModel):
 
         # merge with live state
         for instance in self.instance_registry.get_all():
-            if not isinstance(instance, SemanticDeviceClass):
-                self.merge_local_and_live_instance_state(instance)
+            self.merge_local_and_live_instance_state(instance)
 
         # save, patch all local instances
         for instance in self.instance_registry.get_all():
@@ -828,6 +826,7 @@ class SemanticManager(BaseModel):
         current_entity = instance.build_context_entity()
         old_entity = instance.old_state.state
 
+        # ------merge rule fields-----------------------------------------------
         # instance exists already, add all locally added and delete all
         # locally deleted values to the/from the live_state
         for field in instance.get_rule_fields():
@@ -868,7 +867,7 @@ class SemanticManager(BaseModel):
                 else:
                     field._list.append(converted_value)
 
-        # merge references
+        # ------merge references-----------------------------------------------
         merged_references: Dict = live_entity.get_attribute(
             "referencedBy").value
         current_references: Dict = current_entity.get_attribute(
@@ -917,3 +916,16 @@ class SemanticManager(BaseModel):
         for key, value in merged_references.items():
             instance.references[InstanceIdentifier.parse_raw(key)] = value
 
+        # ------merge device settings----------------------------------------
+        if isinstance(instance, SemanticDeviceClass):
+            old_settings = old_entity.get_attribute("deviceSettings").value
+            current_settings = \
+                current_entity.get_attribute("deviceSettings").value
+            new_settings = live_entity.get_attribute("deviceSettings").value
+
+            # keys are always the same
+            # override live state with local changes
+            for key in old_settings:
+                if old_settings[key] is not current_settings[key]:
+                    new_settings[key] = current_settings[key]
+                instance.device_settings.__setattr__(key, new_settings[key])

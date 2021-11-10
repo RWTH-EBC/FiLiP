@@ -869,13 +869,10 @@ class RelationField(RuleField):
         self.inverse_of = inverse_of
 
     def _value_is_valid(self, value, rule_value: type) -> bool:
-        print(f"C3 {len(self._semantic_manager.get_all_local_instances())}")
         if isinstance(value, SemanticClass):
             return isinstance(value, rule_value)
         elif isinstance(value, SemanticIndividual):
-            print(f"C4 {len(self._semantic_manager.get_all_local_instances())}")
             value.is_instance_of_class(rule_value)
-            print(f"C5 {len(self._semantic_manager.get_all_local_instances())}")
             return value.is_instance_of_class(rule_value)
         else:
             return False

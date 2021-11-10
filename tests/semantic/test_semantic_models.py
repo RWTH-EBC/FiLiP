@@ -714,11 +714,7 @@ class TestSemanticModels(unittest.TestCase):
 
         inst_1.device_settings.timezone = "MyNewZone"
 
-        print("")
-        print(inst_1.device_settings)
         semantic_manager.save_state()
-        print("")
-        print(inst_1.device_settings)
 
         # local state is merged correctly
         self.assertEqual(inst_1.device_settings.endpoint, "http://localhost:21")
