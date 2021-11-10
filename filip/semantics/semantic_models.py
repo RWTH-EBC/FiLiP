@@ -1,7 +1,8 @@
 import collections
 import uuid
 from enum import Enum
-from typing import List, Tuple, Dict, Type, TYPE_CHECKING, Optional, Union
+from typing import List, Tuple, Dict, Type, TYPE_CHECKING, Optional, Union, Set, \
+    Iterator, Any
 
 import requests
 
@@ -358,7 +359,7 @@ class DeviceAttribute(DeviceProperty):
         use_enum_values = True
 
 
-class Field(collections.MutableSequence, BaseModel):
+class Field(BaseModel):
     """
     A Field corresponds to a CombinedRelation for a class from the vocabulary.
     It itself is a _list, that is enhanced with methods to provide validation
@@ -378,14 +379,14 @@ class Field(collections.MutableSequence, BaseModel):
     _instance_identifier: InstanceIdentifier
     """Identifier of instance, that has this field as property"""
 
-    _list: List = list()
+    _set: Set = set()
     """Internal list of the field, to which values are saved"""
 
     def __init__(self,  name, semantic_manager):
         self._semantic_manager = semantic_manager
         super().__init__()
         self.name = name
-        self._list = list()
+        self._set = set()
 
     def is_valid(self) -> bool:
         """
@@ -439,12 +440,18 @@ class Field(collections.MutableSequence, BaseModel):
 
         return x
 
-    # List methods
-    def __len__(self): return len(self._list)
-    def __getitem__(self, i): return self._list[i]
-    def __delitem__(self, i): del self._list[i]
-    def __setitem__(self, i, v): self._list[i] = v
-    def insert(self, i, v): self._list.insert(i, v)
+    def __len__(self): return len(self._set)
+    def size(self): return self.__len__()
+
+    def remove(self, v):
+        self._set.remove(v)
+
+    def add(self, v):
+        self._set.add(v)
+
+    def update(self, values: Union[List, Set]):
+        for v in values:
+            self.add(v)
 
     def set(self, values: List):
         """
@@ -457,11 +464,12 @@ class Field(collections.MutableSequence, BaseModel):
             None
         """
         self.clear()
-
-        i = 0
         for v in values:
-            self.insert(i, v)
-            i += 1
+            self.add(v)
+
+    def clear(self):
+        for v in self.get_all():
+            self.remove(v)
 
     def __str__(self):
         """
@@ -478,18 +486,21 @@ class Field(collections.MutableSequence, BaseModel):
             result = result[:-2]
         return result
 
-    def get_all_raw(self) -> List:
+    def get_all_raw(self) -> Set:
         """
         Get all values of the field exactly as they are hold inside the
         internal list
         """
-        return self._list
+        return self._set
     
     def get_all(self) -> List:
         """
         Get all values of the field in usable form
         """
-        return [self.__getitem__(i) for i in range(len(self._list))]
+        return [self._convert_value(v) for v in self._set]
+
+    def _convert_value(self, v):
+        return v
 
     def _get_instance(self) -> 'SemanticClass':
         """
@@ -521,6 +532,12 @@ class Field(collections.MutableSequence, BaseModel):
             else:
                 res.append(v)
         return res
+
+    def __contains__(self, item):
+        return item in self.get_all()
+
+    def __iter__(self) -> Iterator[Any]:
+        return self.get_all().__iter__()
 
     class Config:
         underscore_attrs_are_private = True
@@ -558,6 +575,7 @@ class DeviceField(Field):
                             if v does already belong to a field
         """
         assert isinstance(v, self._internal_type)
+        assert isinstance(v, DeviceProperty)
         assert v._instance_link.instance_identifier is None, "DeviceProperty can only " \
                                                "belong to one device instance"
         v._instance_link.instance_identifier = self._instance_identifier
@@ -594,29 +612,21 @@ class DeviceField(Field):
                         f"{self.name}, because the name {name} "
                         f"contains the forbidden character {c}")
 
-    def __delitem__(self, i):
+    def remove(self, v):
         """List function: Remove a values
         Makes the value available again to be added to other fields/instances
         """
-        v = self._list[i]
         v._instance_link.instance_identifier = None
         v._instance_link.semantic_manager = None
         v._instance_link.field_name = None
-        del self._list[i]
+        super(DeviceField, self).remove(v)
         
-    def __setitem__(self, i, v):
+    def add(self, v):
         """List function: If checks pass , add value
         """
         self._name_check(v)
         self._pre_set(v)
-        super(DeviceField, self).__setitem__(i, v)
-        
-    def insert(self, i, v):
-        """List function: If checks pass , add value at position i
-        """
-        self._name_check(v)
-        self._pre_set(v)
-        super(DeviceField, self).insert(i, v)
+        super(DeviceField, self).add(v)
 
     def get_field_names(self) -> List[str]:
         names = super().get_field_names()
@@ -639,11 +649,14 @@ class CommandField(DeviceField):
 
     _internal_type = Command
 
-    def get_all_raw(self) -> List[Command]:
+    def get_all_raw(self) -> Set[Command]:
         return super().get_all_raw()
 
-    def __getitem__(self, i) -> Command:
-        return super(CommandField, self).__getitem__(i)
+    def get_all(self) -> List[Command]:
+        return super().get_all()
+
+    def __iter__(self) -> Iterator[Command]:
+        return super().__iter__()
 
     def build_device_attributes(self) -> List[Union[iot.DeviceAttribute,
                                                     iot.LazyDeviceAttribute,
@@ -662,11 +675,14 @@ class CommandField(DeviceField):
 class DeviceAttributeField(DeviceField):
     _internal_type = DeviceAttribute
 
-    def __getitem__(self, i) -> DeviceAttribute:
-        return super().__getitem__(i)
-
-    def get_all_raw(self) -> List[DeviceAttribute]:
+    def get_all_raw(self) -> Set[DeviceAttribute]:
         return super().get_all_raw()
+
+    def get_all(self) -> List[DeviceAttribute]:
+        return super().get_all()
+
+    def __iter__(self) -> Iterator[DeviceAttribute]:
+        return super().__iter__()
 
     def build_device_attributes(self) -> List[Union[iot.DeviceAttribute,
                                                     iot.LazyDeviceAttribute,
@@ -751,7 +767,7 @@ class RuleField(Field):
 
         # the relationship itself is a _list
 
-        values = self
+        values = self.get_all()
 
         # loop over all rules, if a rule is not fulfilled return False
         for rule in self._rules:
@@ -817,13 +833,6 @@ class RuleField(Field):
         """
         pass
 
-    # List methods
-    def __len__(self): return len(self._list)
-    def __getitem__(self, i): return self._list[i]
-    def __delitem__(self, i): del self._list[i]
-    def __setitem__(self, i, v): self._list[i] = v
-    def insert(self, i, v): self._list.insert(i, v)
-
     def __str__(self):
         """
         Get Field in a nice readable way
@@ -853,17 +862,11 @@ class DataField(RuleField):
             value=[v for v in self.get_all_raw()]
         )
 
-    def __setitem__(self, i, v):
+    def add(self, v):
         if isinstance(v, Enum):
-            self._list[i] = v.value
+            self._set.add(v.value)
         else:
-            self._list[i] = v
-
-    def insert(self, i, v):
-        if isinstance(v, Enum):
-            self._list.insert(i, v.value)
-        else:
-            self._list.insert(i, v)
+            self._set.add(v)
 
     def __str__(self):
         return 'Data'+super().__str__()
@@ -896,7 +899,6 @@ class RelationField(RuleField):
         if isinstance(value, SemanticClass):
             return isinstance(value, rule_value)
         elif isinstance(value, SemanticIndividual):
-            value.is_instance_of_class(rule_value)
             return value.is_instance_of_class(rule_value)
         else:
             return False
@@ -915,14 +917,13 @@ class RelationField(RuleField):
             value=values
         )
 
-    def __getitem__(self, i) -> Union['SemanticClass', 'SemanticIndividual']:
-        v = self._list[i]
+    def _convert_value(self, v):
         if isinstance(v, InstanceIdentifier):
             return self._semantic_manager.get_instance(v)
         elif isinstance(v, str):
             return self._semantic_manager.get_individual(v)
 
-    def __setitem__(self, i, v: Union['SemanticClass', 'SemanticIndividual']):
+    def add(self, v: Union['SemanticClass', 'SemanticIndividual']):
         """ see class description
         Raises:
             AttributeError: if value not an instance of 'SemanticClass' or
@@ -931,29 +932,29 @@ class RelationField(RuleField):
         self._uniqueness_check(v)
 
         if isinstance(v, SemanticClass):
-            self._list[i] = v.get_identifier()
+            self._set.add(v.get_identifier())
             v.add_reference(self._instance_identifier, self.name)
 
             self._add_inverse(v)
         elif isinstance(v, SemanticIndividual):
-            self._list[i] = v.get_name()
+            self._set.add(v.get_name())
         else:
             raise AttributeError("Only instances of a SemanticClass or a "
                                  "SemanticIndividual can be given as value")
 
-    def __delitem__(self, i):
+    def remove(self, v):
         """ see class description"""
-        if isinstance(self._list[i], InstanceIdentifier):
+
+        if isinstance(v, SemanticClass):
+            identifier = v.get_identifier()
+            assert identifier in self._set
 
             # delete reference
-            if not self._semantic_manager.was_instance_deleted(self._list[i]):
-                v: SemanticClass = \
-                    self._semantic_manager.get_instance(self._list[i])
+            if not self._semantic_manager.was_instance_deleted(identifier):
                 v.remove_reference(self._instance_identifier, self.name)
 
             # delete value in field
-            identifier = self._list[i]
-            del self._list[i]
+            self._set.remove(identifier)
 
             # inverse of deletion
             if not self._semantic_manager.was_instance_deleted(identifier):
@@ -964,26 +965,10 @@ class RelationField(RuleField):
                             field = v.get_field_by_name(inverse_field_name)
                             if self._instance_identifier in field.get_all_raw():
                                 field.remove(self._get_instance())
-        else:
-            del self._list[i]
-
-    def insert(self, i, v: Union['SemanticClass', 'SemanticIndividual']):
-        """ see class description
-        Raises:
-            AttributeError: if value not an instance of 'SemanticClass' or
-            'SemanticIndividual'
-        """
-        self._uniqueness_check(v)
-        if isinstance(v, SemanticClass):
-            identifier = v.get_identifier()
-            self._list.insert(i, identifier)
-            v.add_reference(self._instance_identifier, self.name)
-            self._add_inverse(v)
         elif isinstance(v, SemanticIndividual):
-            self._list.insert(i, v.get_name())
+            self._set.remove(v.get_name())
         else:
-            raise AttributeError("Only instances of a SemanticClass or a "
-                                 "SemanticIndividual can be given as value")
+            raise KeyError
 
     def _add_inverse(self, v: 'SemanticClass'):
         if self.inverse_of is not None:
@@ -991,22 +976,29 @@ class RelationField(RuleField):
                 if inverse_field_name in v.get_all_field_names():
                     field = v.get_field_by_name(inverse_field_name)
                     if self._instance_identifier not in field.get_all_raw():
-                        field.append(self._get_instance())
+                        field.add(self._get_instance())
 
     def _uniqueness_check(self, v):
         if isinstance(v, SemanticClass):
             if v.get_identifier() in self.get_all_raw():
                 raise ValueError("Value already added")
         else:
-            if v in self.get_all_raw():
+            if v.get_name() in self.get_all_raw():
                 raise ValueError("Value already added")
 
     def __str__(self):
         """ see class description"""
         return 'Relation'+super().__str__()
 
+    def __iter__(self) -> \
+            Iterator[Union['SemanticClass', 'SemanticIndividual']]:
+        return super().__iter__()
+
     def get_all(self) -> List[Union['SemanticClass', 'SemanticIndividual']]:
         return super(RelationField, self).get_all()
+
+    def get_all_raw(self) -> Set[Union[InstanceIdentifier, str]]:
+        return super().get_all_raw()
 
 
 class InstanceState(BaseModel):
@@ -1227,6 +1219,8 @@ class SemanticClass(BaseModel):
             for field_name in field_names:
                 if not self.semantic_manager.was_instance_deleted(identifier):
                     instance = self.semantic_manager.get_instance(identifier)
+                    print(instance.id)
+                    print(field_name)
                     instance.get_field_by_name(field_name).remove(self)
 
         self.semantic_manager.instance_registry.delete(self)
@@ -1399,9 +1393,6 @@ class SemanticDeviceClass(SemanticClass):
     loaded and returned, else a new instance of the class is initialised and
     returned
     """
-
-    # old_device_state: Optional[ContextDevice]
-    """needed ?"""
 
     device_settings: DeviceSettings = DeviceSettings()
     """Settings configuring the communication with an IoT Device 
@@ -1608,6 +1599,9 @@ class SemanticIndividual(BaseModel):
             if parent == class_:
                 return True
         return False
+
+    class Config:
+        frozen = True
 
 
 

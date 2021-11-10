@@ -86,9 +86,9 @@ class Class1(Thing):
 			self.objProp4._instance_identifier = self.get_identifier()
 			self.objProp5._instance_identifier = self.get_identifier()
 			self.dataProp2._instance_identifier = self.get_identifier()
-			self.dataProp2.append(2)
+			self.dataProp2.add(2)
 
-			self.objProp5.append(Individual1())
+			self.objProp5.add(Individual1())
 
 	# Data fields
 	dataProp2: DataField = DataField(
@@ -333,8 +333,8 @@ class Class3(Thing):
 			self.commandProp._instance_identifier = self.get_identifier()
 			self.dataProp1._instance_identifier = self.get_identifier()
 
-			self.oProp1.append(Individual1())
-			self.objProp2.append(Individual1())
+			self.oProp1.add(Individual1())
+			self.objProp2.add(Individual1())
 
 	# Data fields
 	attributeProp: DataField = DataField(
@@ -1750,7 +1750,7 @@ class Hvac(Function_Related):
 			self.Has_Manufacturer._instance_identifier = self.get_identifier()
 			self.Has_Model._instance_identifier = self.get_identifier()
 
-			self.Accomplishes.append(Comfort())
+			self.Accomplishes.add(Comfort())
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -1872,7 +1872,7 @@ class Lighting_Device(Function_Related):
 			self.Has_Manufacturer._instance_identifier = self.get_identifier()
 			self.Has_Model._instance_identifier = self.get_identifier()
 
-			self.Accomplishes.append(Comfort())
+			self.Accomplishes.add(Comfort())
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -2209,8 +2209,8 @@ class Energy_Meter(Meter):
 			self.Has_Manufacturer._instance_identifier = self.get_identifier()
 			self.Has_Model._instance_identifier = self.get_identifier()
 
-			self.Accomplishes.append(Energyefficiency())
-			self.Accomplishes.append(Meter_Reading())
+			self.Accomplishes.add(Energyefficiency())
+			self.Accomplishes.add(Meter_Reading())
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -2344,7 +2344,7 @@ class Micro_Renewable(Function_Related):
 			self.Has_Manufacturer._instance_identifier = self.get_identifier()
 			self.Has_Model._instance_identifier = self.get_identifier()
 
-			self.Accomplishes.append(Energyefficiency())
+			self.Accomplishes.add(Energyefficiency())
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -2446,7 +2446,7 @@ class Multimedia(Function_Related):
 			self.Has_Manufacturer._instance_identifier = self.get_identifier()
 			self.Has_Model._instance_identifier = self.get_identifier()
 
-			self.Accomplishes.append(Entertainment())
+			self.Accomplishes.add(Entertainment())
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -3467,7 +3467,7 @@ class Smoke_Sensor(Sensor):
 			self.Has_Manufacturer._instance_identifier = self.get_identifier()
 			self.Has_Model._instance_identifier = self.get_identifier()
 
-			self.Accomplishes.append(Safety())
+			self.Accomplishes.add(Safety())
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -4004,7 +4004,7 @@ class Door_Switch(Switch):
 			self.Has_Manufacturer._instance_identifier = self.get_identifier()
 			self.Has_Model._instance_identifier = self.get_identifier()
 
-			self.Accomplishes.append(Safety())
+			self.Accomplishes.add(Safety())
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -4106,7 +4106,7 @@ class Light_Switch(Switch):
 			self.Has_Manufacturer._instance_identifier = self.get_identifier()
 			self.Has_Model._instance_identifier = self.get_identifier()
 
-			self.Accomplishes.append(Lighting())
+			self.Accomplishes.add(Lighting())
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -4285,7 +4285,7 @@ class Temperature_Sensor(Sensor):
 			self.Has_Manufacturer._instance_identifier = self.get_identifier()
 			self.Has_Model._instance_identifier = self.get_identifier()
 
-			self.Accomplishes.append(Comfort())
+			self.Accomplishes.add(Comfort())
 
 	# Data fields
 	Has_Description: DataField = DataField(
@@ -4452,7 +4452,7 @@ class Washing_Machine(Appliance, Load):
 			self.Has_Manufacturer._instance_identifier = self.get_identifier()
 			self.Has_Model._instance_identifier = self.get_identifier()
 
-			self.Accomplishes.append(Washing())
+			self.Accomplishes.add(Washing())
 
 	# Data fields
 	Has_Description: DataField = DataField(

@@ -300,9 +300,9 @@ class SemanticManager(BaseModel):
                     # we need to bypass the main setter, as it expects an
                     # instance and we do not want to load the instance if it
                     # is not used
-                    field._list.append(converted_value)
+                    field._set.add(converted_value)
                 else:
-                    field.append(converted_value)
+                    field.add(converted_value)
 
         # load references into instance
         references_attribute = entity.get_attribute("referencedBy")
@@ -816,7 +816,6 @@ class SemanticManager(BaseModel):
 
             return added_values, removed_values
 
-
         # instance is new. Save it as is
         client = self.get_client(instance.header)
         if not client.does_entity_exists(entity_id=instance.id,
@@ -831,7 +830,7 @@ class SemanticManager(BaseModel):
         current_entity = instance.build_context_entity()
         old_entity = instance.old_state.state
 
-        # ------merge rule fields-----------------------------------------------
+        # ------merge fields-----------------------------------------------
         # instance exists already, add all locally added and delete all
         # locally deleted values to the/from the live_state
         for field in instance.get_fields():
@@ -858,14 +857,12 @@ class SemanticManager(BaseModel):
 
             new_values = list(live_values)
             # update local stated with merged result
-            field._list.clear()  # very important to not use field.clear,
-                                 # as that methode would also delete values
-                                 # in other instances
+            field._set.clear()  # very important to not use field.clear,
+                                 # as that methode would also delete references
             for value in new_values:
                 converted_value = self._convert_value_fitting_for_field(
                     field, value)
-
-                field._list.append(converted_value)
+                field._set.add(converted_value)
 
         # ------merge references-----------------------------------------------
         merged_references: Dict = live_entity.get_attribute(
@@ -875,8 +872,8 @@ class SemanticManager(BaseModel):
         old_references: Dict = old_entity.get_attribute(
             "referencedBy").value
 
-        keys = list(current_references.keys())
-        keys.extend(list(old_references.keys()))
+        keys = set(current_references.keys())
+        keys.update(old_references.keys())
 
         for key in keys:
             current_values = []

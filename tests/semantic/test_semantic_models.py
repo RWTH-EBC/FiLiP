@@ -97,27 +97,27 @@ class TestSemanticModels(unittest.TestCase):
         # check for correct rules
         self.assertEqual(class1.oProp1.rule, "some (Class2 or Class4)")
         self.assertEqual(class13.objProp2.rule,
-               "some Class1, value Individual1, some (Class1 and Class2)")
+                         "some Class1, value Individual1, some (Class1 and Class2)")
 
         # test simple rule
         self.assertFalse(class1.oProp1.is_valid())
-        class1.oProp1.append(Class2())
+        class1.oProp1.add(Class2())
         self.assertTrue(class1.oProp1.is_valid())
-        class1.oProp1.append(Class4())
+        class1.oProp1.add(Class4())
         self.assertTrue(class1.oProp1.is_valid())
-        class1.oProp1.append(Class123())
+        class1.oProp1.add(Class123())
         self.assertTrue(class1.oProp1.is_valid())
 
         # test complex rule
         self.assertTrue(class13.objProp2.is_valid())
-        del class13.objProp2[0]
+        class13.objProp2.clear()
         self.assertFalse(class13.objProp2.is_valid())
-        class13.objProp2.append(class1)
+        class13.objProp2.add(class1)
         self.assertFalse(class13.objProp2.is_valid())
-        class13.objProp2.append(Class123())
+        class13.objProp2.add(Class123(id="311"))
         self.assertFalse(class13.objProp2.is_valid())
-        del class13.objProp2[1]
-        class13.objProp2.append(Individual1())
+        class13.objProp2.remove(Class123(id="311"))
+        class13.objProp2.add(Individual1())
         self.assertTrue(class13.objProp2.is_valid())
 
         # todo test statement cases: min, max,...
@@ -131,15 +131,16 @@ class TestSemanticModels(unittest.TestCase):
 
         self.assertTrue(class3.dataProp1.is_valid())
 
-        class3.dataProp1.append("12")
+        class3.dataProp1.add("12")
         self.assertFalse(class3.dataProp1.is_valid())
-        class3.dataProp1.append("2")
+        class3.dataProp1.add("2")
         self.assertFalse(class3.dataProp1.is_valid())
-        class3.dataProp1.insert(0, "1")
-        del class3.dataProp1[1]
+        class3.dataProp1.add("1")
+        class3.dataProp1.remove("12")
+        print(class3.dataProp1)
         self.assertTrue(class3.dataProp1.is_valid())
 
-        self.assertTrue(2 in Class1().dataProp2)
+        self.assertTrue(2 in Class1().dataProp2.get_all())
 
     def test_6_back_referencing(self):
         """
@@ -151,12 +152,12 @@ class TestSemanticModels(unittest.TestCase):
         c2 = Class2()
         c3 = Class3()
 
-        c1.oProp1.append(c2)
+        c1.oProp1.add(c2)
         self.assertEqual(c2.references[c1.get_identifier()], ["oProp1"])
-        self.assertRaises(ValueError, c1.oProp1.extend, [c2])
+        self.assertRaises(ValueError, c1.oProp1.update, [c2])
         self.assertEqual(c2.references[c1.get_identifier()], ["oProp1"])
-        c1.objProp2.extend([c2])
-        c3.objProp2.append(c2)
+        c1.objProp2.update([c2])
+        c3.objProp2.add(c2)
         self.assertEqual(c2.references[c1.get_identifier()],
                          ["oProp1", "objProp2"])
         self.assertEqual(c2.references[c3.get_identifier()], ["objProp2"])
@@ -164,7 +165,7 @@ class TestSemanticModels(unittest.TestCase):
         c1.oProp1.remove(c2)
         self.assertEqual(c2.references[c1.get_identifier()], ["objProp2"])
 
-        del c1.objProp2[0]
+        c1.objProp2.remove(c2)
         self.assertNotIn(c1.get_identifier(), c2.references)
 
     def test_7_test_instance_creation_inject(self):
@@ -174,13 +175,12 @@ class TestSemanticModels(unittest.TestCase):
         from tests.semantic.models import Class1, Class13, Class123, \
             Individual1, Gertrude, semantic_manager
 
-
         # clear local state to ensure standard test condition
         self.clear_registry()
 
         class13 = Class13(id="13")
         rel1 = class13.oProp1
-        class13.objProp3.append(Class1(id="1"))
+        class13.objProp3.add(Class1(id="1"))
 
         class13_ = Class13(id="13")
         class13__ = Class13(id="132")
@@ -189,7 +189,7 @@ class TestSemanticModels(unittest.TestCase):
         self.assertTrue(class13_.oProp1 == rel1)
 
         class1_ = Class1(id="1")
-        self.assertTrue(class1_ == class13.objProp3[0])
+        self.assertTrue(class1_ == class13.objProp3.get_all()[0])
 
     def test_8_test_saving_and_loading(self):
         """
@@ -208,12 +208,12 @@ class TestSemanticModels(unittest.TestCase):
         # created classes with cycle
         class13 = Class13(id="13")
         class1 = Class1(id="1")
-        class13.objProp3.append(class1)
-        class13.objProp3.append(class13)
-        class13.objProp3.append(Individual1())
-        class13.dataProp1.extend([1, 2, 4])
+        class13.objProp3.add(class1)
+        class13.objProp3.add(class13)
+        class13.objProp3.add(Individual1())
+        class13.dataProp1.update([1, 2, 4])
 
-        # class1.oProp1.append(class13)
+        # class1.oProp1.add(class13)
 
         self.assertRaises(AssertionError, semantic_manager.save_state)
         semantic_manager.save_state(assert_validity=False)
@@ -253,7 +253,7 @@ class TestSemanticModels(unittest.TestCase):
         class13 = Class13(id="13")
 
         class1 = Class1(id="1")
-        class13.objProp3.append(class1)
+        class13.objProp3.add(class1)
 
         # make sure references are not global in all SemanticClasses
         # (happend in the past)
@@ -270,7 +270,7 @@ class TestSemanticModels(unittest.TestCase):
 
         class13 = Class13(id="13")
         class1 = Class1(id="1")
-        class13.objProp3.append(class1)
+        class13.objProp3.add(class1)
 
         semantic_manager.save_state(assert_validity=False)
         self.clear_registry()
@@ -299,7 +299,7 @@ class TestSemanticModels(unittest.TestCase):
         self.clear_registry()
 
         class13 = Class13(id="13")
-        class13.dataProp1.append("Test")
+        class13.dataProp1.add("Test")
         semantic_manager.save_state(assert_validity=False)
 
         class13.delete()
@@ -317,18 +317,18 @@ class TestSemanticModels(unittest.TestCase):
 
         class13 = Class13(id="13")
         class1 = Class1(id="1")
-        class13.objProp3.append(class1)
+        class13.objProp3.add(class1)
 
-        class13.dataProp1.append(1)
-        class13.dataProp1.append(2)
+        class13.dataProp1.add(1)
+        class13.dataProp1.add(2)
 
         class13.dataProp1.set([9, 8, 7, 6])
         c123 = Class123(id=2)
         c3 = Class3()
         class13.objProp3.set([c3, c123])
-        self.assertTrue(class13.dataProp1._list == [9, 8, 7, 6])
-        self.assertTrue(class13.objProp3._list == [c3.get_identifier(),
-                                                   c123.get_identifier()])
+        self.assertTrue(class13.dataProp1._set == {9, 8, 7, 6})
+        self.assertTrue(class13.objProp3._set == {c3.get_identifier(),
+                                                  c123.get_identifier()})
 
     def clear_registry(self):
         """
@@ -395,7 +395,7 @@ class TestSemanticModels(unittest.TestCase):
         Test if a Device can be correctly saved and loaded.
         And the live methods of Commands and DeviceAttributes
         """
-        from tests.semantic.models2 import Class1,  Class3, semantic_manager
+        from tests.semantic.models2 import Class1, Class3, semantic_manager
 
         test_header = InstanceHeader(
             cb_url=settings.CB_URL,
@@ -409,25 +409,29 @@ class TestSemanticModels(unittest.TestCase):
         class3_.device_settings.endpoint = "http://test.com"
         class3_.device_settings.transport = TransportProtocol.HTTP
 
-        class3_.oProp1.append(Class1(id="19"))
-        class3_.dataProp1.append("Test")
+        class3_.oProp1.add(Class1(id="19"))
+        class3_.dataProp1.add("Test")
 
-        # Class1(id="19").oProp1.append(class3_)
+        # Class1(id="19").oProp1.add(class3_)
 
-        class3_.commandProp.append(Command(name="on"))
-        class3_.commandProp.append(Command(name="off"))
-        class3_.attributeProp.append(
+        class3_.commandProp.add(Command(name="on"))
+        class3_.commandProp.add(Command(name="off"))
+        class3_.attributeProp.add(
             DeviceAttribute(name="d1",
                             attribute_type=DeviceAttributeType.lazy))
-        class3_.attributeProp.append(
+        class3_.attributeProp.add(
             DeviceAttribute(name="d2",
                             attribute_type=DeviceAttributeType.active))
 
         # test that live access methods fail, because state was not saved
-        self.assertRaises(Exception, class3_.attributeProp[0].get_value)
-        self.assertRaises(Exception, class3_.commandProp[0].get_info)
-        self.assertRaises(Exception, class3_.commandProp[0].get_status)
-        self.assertRaises(Exception, class3_.commandProp[0].send)
+        self.assertRaises(Exception,
+                          class3_.attributeProp.get_all()[0].get_value)
+        self.assertRaises(Exception,
+                          class3_.commandProp.get_all()[0].get_info)
+        self.assertRaises(Exception,
+                          class3_.commandProp.get_all()[0].get_status)
+        self.assertRaises(Exception,
+                          class3_.commandProp.get_all()[0].send)
 
         semantic_manager.save_state(assert_validity=False)
 
@@ -441,20 +445,26 @@ class TestSemanticModels(unittest.TestCase):
 
         loaded_class = Class3(id="3")
 
-        attr2 = class3_.attributeProp[1]
-        attr2_ = loaded_class.attributeProp[1]
+        attr2 = [a for a in class3_.attributeProp.get_all()
+                 if a.name == "d2"][ 0]
+        attr2_ = [a for a in loaded_class.attributeProp.get_all() if
+                  a.name == "d2"][0]
         self.assertEqual(attr2.name, attr2_.name)
         self.assertEqual(attr2.attribute_type, attr2_.attribute_type)
         self.assertEqual(attr2._instance_link.instance_identifier,
                          attr2_._instance_link.instance_identifier)
-        self.assertEqual(attr2._instance_link.field_name, attr2_._instance_link.field_name)
+        self.assertEqual(attr2._instance_link.field_name,
+                         attr2_._instance_link.field_name)
 
-        com2 = class3_.commandProp[1]
-        com2_ = loaded_class.commandProp[1]
+        com2 = [c for c in class3_.commandProp.get_all()
+                 if c.name == "off"][0]
+        com2_ = [c for c in loaded_class.commandProp.get_all()
+                 if c.name == "off"][0]
         self.assertEqual(com2.name, com2_.name)
         self.assertEqual(com2._instance_link.instance_identifier,
                          com2_._instance_link.instance_identifier)
-        self.assertEqual(attr2._instance_link.field_name, attr2_._instance_link.field_name)
+        self.assertEqual(attr2._instance_link.field_name,
+                         attr2_._instance_link.field_name)
 
         self.assertEqual(class3_.references, loaded_class.references)
 
@@ -462,10 +472,10 @@ class TestSemanticModels(unittest.TestCase):
                          loaded_class.device_settings.dict())
 
         # test that live access methods succeed, because state was saved
-        class3_.attributeProp[0].get_value()
-        class3_.commandProp[0].get_info()
-        class3_.commandProp[0].get_status()
-        class3_.commandProp[0].send()
+        class3_.attributeProp.get_all()[0].get_value()
+        class3_.commandProp.get_all()[0].get_info()
+        class3_.commandProp.get_all()[0].get_status()
+        class3_.commandProp.get_all()[0].send()
 
     def test__15_device_deleting(self):
         """
@@ -499,12 +509,12 @@ class TestSemanticModels(unittest.TestCase):
         # class no longer exists in fiware iota or context broker
         with IoTAClient(
                 fiware_header=semantic_manager.
-                default_header.get_fiware_header()) as client:
+                        default_header.get_fiware_header()) as client:
             self.assertEqual(len(client.get_device_list()), 0)
 
         with ContextBrokerClient(
                 fiware_header=semantic_manager.
-                default_header.get_fiware_header()) as client:
+                        default_header.get_fiware_header()) as client:
             self.assertEqual(len(client.get_entity_list()), 0)
 
     def test__16_field_name_checks(self):
@@ -520,23 +530,23 @@ class TestSemanticModels(unittest.TestCase):
 
         self.assertEqual(c.get_all_field_names(),
                          ['dataProp1', 'dataProp1_info', 'dataProp1_result'])
-        self.assertRaises(NameError, class3.commandProp.append, c)
+        self.assertRaises(NameError, class3.commandProp.add, c)
 
-        class3.commandProp.append(Command(name="c1"))
-        self.assertRaises(NameError, class3.commandProp.append, Command(
+        class3.commandProp.add(Command(name="c1"))
+        self.assertRaises(NameError, class3.commandProp.add, Command(
             name="c1_info"))
-        self.assertRaises(NameError, class3.commandProp.append, Command(
+        self.assertRaises(NameError, class3.commandProp.add, Command(
             name="type"))
-        self.assertRaises(NameError, class3.commandProp.append, Command(
+        self.assertRaises(NameError, class3.commandProp.add, Command(
             name="referencedBy"))
 
-        class3.attributeProp.append(
+        class3.attributeProp.add(
             DeviceAttribute(name="_type",
                             attribute_type=DeviceAttributeType.active))
 
         self.assertRaises(
             NameError,
-            class3.attributeProp.append,
+            class3.attributeProp.add,
             DeviceAttribute(name="!type",
                             attribute_type=DeviceAttributeType.active))
 
@@ -552,15 +562,15 @@ class TestSemanticModels(unittest.TestCase):
         from tests.semantic.models2 import Class3, Class1, semantic_manager
 
         class3 = Class3(id="15")
-        class3.commandProp.append(Command(name="c1"))
-        class3.attributeProp.append(
+        class3.commandProp.add(Command(name="c1"))
+        class3.attributeProp.add(
             DeviceAttribute(name="_type",
                             attribute_type=DeviceAttributeType.active))
 
-        class3.dataProp1.append("test")
+        class3.dataProp1.add("test")
         class3.device_settings.apikey = "ttt"
         class1 = Class1(id="11")
-        class3.objProp2.append(class1)
+        class3.objProp2.add(class1)
 
         save = semantic_manager.save_local_state_as_json()
         semantic_manager.instance_registry.clear()
@@ -572,13 +582,15 @@ class TestSemanticModels(unittest.TestCase):
         self.assertTrue("test" in class3_.dataProp1.get_all_raw())
         self.assertEqual(class3_.device_settings.dict(),
                          class3.device_settings.dict())
-        self.assertTrue(class3_.commandProp[0].name == "c1")
-        self.assertTrue(class3_.attributeProp[0].name == "_type")
-        self.assertTrue(class3_.attributeProp[0].attribute_type ==
+        self.assertTrue(class3_.commandProp.get_all()[0].name == "c1")
+        self.assertTrue(class3_.attributeProp.get_all()[0].name == "_type")
+        self.assertTrue(class3_.attributeProp.get_all()[0].attribute_type ==
                         DeviceAttributeType.active)
 
-        self.assertTrue(class3_.objProp2[1].id == "11")
-        self.assertTrue(class3_.objProp2[1].get_type() == class1.get_type())
+        added_class = [c for c in class3_.objProp2.get_all() if
+                       isinstance(c, SemanticClass)][0]
+        self.assertTrue(added_class.id == "11")
+        self.assertTrue(added_class.get_type() == class1.get_type())
 
         self.assertTrue(class1_.references == class1.references)
 
@@ -591,7 +603,7 @@ class TestSemanticModels(unittest.TestCase):
 
         inst_1 = Class1(id="100")
         inst_2 = Class1(id="101")
-        inst_1.oProp1.append(inst_2)
+        inst_1.oProp1.add(inst_2)
 
         self.assertTrue(inst_2.get_identifier()
                         in inst_1.oProp1.get_all_raw())
@@ -620,27 +632,29 @@ class TestSemanticModels(unittest.TestCase):
         # create state
         inst_1 = Class1(id="100")
         inst_1.dataProp2.remove(2)  # default value
-        inst_1.dataProp2.append("Test")
-        inst_1.dataProp2.append("Test2")
+        inst_1.dataProp2.add("Test")
+        inst_1.dataProp2.add("Test2")
 
-        inst_1.oProp1.extend([c1,c2])
+        inst_1.oProp1.update([c1, c2])
 
         old_state = inst_1.build_context_entity()
 
         semantic_manager.save_state(assert_validity=False)
 
         # change live state
-        inst_1.dataProp2.append("Test3")
+        inst_1.dataProp2.add("Test3")
         inst_1.dataProp2.remove("Test")
         inst_1.oProp1.remove(c1)
-        inst_1.oProp1.append(c3)
+        inst_1.oProp1.add(c3)
 
         self.assertEqual(set(inst_1.dataProp2.get_all()), {"Test2", "Test3"})
         self.assertEqual(set(inst_1.oProp1.get_all_raw()),
                          {c2.get_identifier(), c3.get_identifier()})
         self.assertEqual(inst_1.references.keys(),
                          {c2.get_identifier(), c3.get_identifier()})
+
         semantic_manager.save_state(assert_validity=False)
+
         self.assertEqual(set(inst_1.dataProp2.get_all()), {"Test2", "Test3"})
         self.assertEqual(set(inst_1.oProp1.get_all_raw()),
                          {c2.get_identifier(), c3.get_identifier()})
@@ -653,7 +667,7 @@ class TestSemanticModels(unittest.TestCase):
         self.assertEqual(set(inst_1.dataProp2.get_all()), {"Test", "Test4"})
         self.assertEqual(set(inst_1.oProp1.get_all_raw()),
                          {c1.get_identifier(), c4.get_identifier()})
-        self.assertEqual(inst_1.references.keys(),
+        self.assertEqual({k for k in inst_1.references.keys()},
                          {c1.get_identifier(), c4.get_identifier()})
 
         semantic_manager.save_state(assert_validity=False)
@@ -694,11 +708,10 @@ class TestSemanticModels(unittest.TestCase):
 
         inst_1.device_settings.endpoint = "http://localhost:88"
         inst_1.device_settings.transport = TransportProtocol.HTTP
-        inst_1.commandProp.append(Command(name="testC"))
-        inst_1.attributeProp.append(
+        inst_1.commandProp.add(Command(name="testC"))
+        inst_1.attributeProp.add(
             DeviceAttribute(name="test",
                             attribute_type=DeviceAttributeType.active))
-
 
         old_state = inst_1.build_context_entity()
 
@@ -708,22 +721,22 @@ class TestSemanticModels(unittest.TestCase):
         # change live state
         inst_1.device_settings.apikey = "test"
         inst_1.device_settings.timezone = "MyZone"
-        del inst_1.commandProp[0]
-        inst_1.commandProp.append(Command(name="testC2"))
-        del inst_1.attributeProp[0]
-        inst_1.attributeProp.append(
-            DeviceAttribute(name="test2",
-                            attribute_type=DeviceAttributeType.lazy))
-        inst_1.dataProp1.append(customDataType4.value_1)
+        inst_1.commandProp.remove(Command(name="testC"))
+        inst_1.commandProp.add(Command(name="testC2"))
+        inst_1.attributeProp.remove(
+            DeviceAttribute(name="test",
+                            attribute_type=DeviceAttributeType.active))
+        at2 = DeviceAttribute(name="test2",
+                              attribute_type=DeviceAttributeType.lazy)
+        inst_1.attributeProp.add(at2)
+        inst_1.dataProp1.add(customDataType4.value_1)
 
         semantic_manager.save_state()
         self.assertEqual(inst_1.device_settings.apikey, "test")
         self.assertEqual(len(inst_1.commandProp), 1)
-        self.assertEqual(inst_1.commandProp[0].name, "testC2")
+        self.assertIn(Command(name="testC2"), inst_1.commandProp.get_all())
         self.assertEqual(len(inst_1.attributeProp), 1)
-        self.assertEqual(inst_1.attributeProp[0].name, "test2")
-        self.assertEqual(inst_1.attributeProp[0].attribute_type,
-                         DeviceAttributeType.lazy)
+        self.assertIn(at2, inst_1.attributeProp)
 
         # reset local state and change it
         inst_1.old_state.state = old_state
@@ -732,8 +745,8 @@ class TestSemanticModels(unittest.TestCase):
         inst_1.device_settings.apikey = None
         inst_1.attributeProp.clear()
         inst_1.commandProp.clear()
-        inst_1.commandProp.append(Command(name="testC3"))
-        inst_1.attributeProp.append(
+        inst_1.commandProp.add(Command(name="testC3"))
+        inst_1.attributeProp.add(
             DeviceAttribute(name="test3",
                             attribute_type=DeviceAttributeType.active))
 
@@ -746,11 +759,11 @@ class TestSemanticModels(unittest.TestCase):
         self.assertEqual(inst_1.device_settings.apikey, "test")
         self.assertEqual(inst_1.device_settings.timezone, "MyNewZone")
         self.assertEqual(len(inst_1.commandProp), 2)
-        self.assertEqual({inst_1.commandProp[0].name, inst_1.commandProp[
-            1].name}, {"testC3", "testC2"})
+        self.assertEqual({c.name for c in inst_1.commandProp},
+                         {"testC3", "testC2"})
         self.assertEqual(len(inst_1.attributeProp), 2)
-        self.assertEqual({inst_1.attributeProp[0].name, inst_1.attributeProp[
-            1].name}, {"test2", "test3"})
+        self.assertEqual({a.name for a in inst_1.attributeProp},
+                         {"test2", "test3"})
 
         # live state is merged correctly
         self.clear_registry()
@@ -759,14 +772,15 @@ class TestSemanticModels(unittest.TestCase):
         self.assertEqual(inst_1.device_settings.apikey, "test")
         self.assertEqual(inst_1.device_settings.timezone, "MyNewZone")
         self.assertEqual(len(inst_1.commandProp), 2)
-        self.assertEqual({inst_1.commandProp[0].name, inst_1.commandProp[
-            1].name}, {"testC3", "testC2"})
+        self.assertEqual({c.name for c in inst_1.commandProp},
+                         {"testC3", "testC2"})
         self.assertEqual(len(inst_1.attributeProp), 2)
-        self.assertEqual({inst_1.attributeProp[0].name, inst_1.attributeProp[
-            1].name}, {"test2", "test3"})
+        self.assertEqual({a.name for a in inst_1.attributeProp},
+                         {"test2", "test3"})
 
         # test if data in device gets updated, not only in the context entity
-        with IoTAClient(url=settings.IOTA_URL, fiware_header=inst_1.header) as client:
+        with IoTAClient(url=settings.IOTA_URL,
+                        fiware_header=inst_1.header) as client:
             device_entity = client.get_device(device_id=inst_1.get_device_id())
 
             for attr in device_entity.static_attributes:
@@ -794,9 +808,3 @@ class TestSemanticModels(unittest.TestCase):
 
         path = Path(__file__).parent.resolve()
         return str(path.joinpath(path_end))
-
-
-
-
-
-

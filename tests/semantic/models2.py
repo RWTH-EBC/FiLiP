@@ -44,9 +44,9 @@ class Class1(Thing):
 			self.objProp4._instance_identifier = self.get_identifier()
 			self.objProp5._instance_identifier = self.get_identifier()
 			self.dataProp2._instance_identifier = self.get_identifier()
-			self.dataProp2.append(2)
+			self.dataProp2.add(2)
 
-			self.objProp5.append(Individual1())
+			self.objProp5.add(Individual1())
 
 	# Data fields
 	dataProp2: DataField = DataField(
@@ -287,8 +287,8 @@ class Class3(SemanticDeviceClass, Thing):
 			self.commandProp._instance_identifier = self.get_identifier()
 			self.dataProp1._instance_identifier = self.get_identifier()
 
-			self.oProp1.append(Individual1())
-			self.objProp2.append(Individual1())
+			self.oProp1.add(Individual1())
+			self.objProp2.add(Individual1())
 
 	# Data fields
 	attributeProp: DeviceAttributeField = DeviceAttributeField(

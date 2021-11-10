@@ -612,7 +612,7 @@ class VocabularyConfigurator:
                                 content += \
                                     f"self." \
                                     f"{cdr.get_property_label(vocabulary)}" \
-                                    f".append(" \
+                                    f".add(" \
                                     f"{rel.target_statement.target_data_value})"
 
             if len(class_.get_combined_object_relations(vocabulary)) > 0:
@@ -630,7 +630,7 @@ class VocabularyConfigurator:
                             content += "\n\t\t\t"
                             content += f"self." \
                                        f"{cor.get_property_label(vocabulary)}" \
-                                       f".append({i}())"
+                                       f".add({i}())"
 
             # if no content was added af the not initialised if, removed it
             # again, and its preceding \n
