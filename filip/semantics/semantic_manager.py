@@ -347,6 +347,8 @@ class SemanticManager(BaseModel):
             else:  # is an instance_identifier
                 return InstanceIdentifier.parse_obj(value)
         elif isinstance(field, CommandField):
+            if isinstance(value, Command):
+                return value
             # if loading local state, the wrong string delimters are used,
             # and the string is not automatically converted to a dict
             if not isinstance(value, dict):
@@ -357,6 +359,9 @@ class SemanticManager(BaseModel):
 
             # if loading local state, the wrong string delimters are used,
             # and the string is not automatically converted to a dict
+
+            if isinstance(value, DeviceAttribute):
+                return value
             if not isinstance(value, dict):
                 value = json.loads(value.replace("'", '"'))
 
@@ -829,7 +834,7 @@ class SemanticManager(BaseModel):
         # ------merge rule fields-----------------------------------------------
         # instance exists already, add all locally added and delete all
         # locally deleted values to the/from the live_state
-        for field in instance.get_rule_fields():
+        for field in instance.get_fields():
             # live_values = set(live_entity.get_attribute(field.name).value)
             live_values = converted_attribute_values(
                 field, live_entity.get_attribute(field.name))
@@ -837,6 +842,15 @@ class SemanticManager(BaseModel):
                 field, old_entity.get_attribute(field.name))
             current_values = converted_attribute_values(
                 field, current_entity.get_attribute(field.name))
+
+            print(field.name)
+            print("live:")
+            print(live_entity.get_attribute(field.name))
+            print("old:")
+            print(old_entity.get_attribute(field.name))
+            print("new:")
+            print(old_entity.get_attribute(field.name))
+            print("")
 
             (added_values, deleted_values) = \
                 _get_added_and_removed_values(
@@ -859,13 +873,8 @@ class SemanticManager(BaseModel):
             for value in new_values:
                 converted_value = self._convert_value_fitting_for_field(
                     field, value)
-                if isinstance(field, RelationField):
-                    # we need to bypass the main setter, as it expects an
-                    # instance and we do not want to load the instance if it
-                    # is not used
-                    field._list.append(converted_value)
-                else:
-                    field._list.append(converted_value)
+
+                field._list.append(converted_value)
 
         # ------merge references-----------------------------------------------
         merged_references: Dict = live_entity.get_attribute(

@@ -444,16 +444,16 @@ class TestSemanticModels(unittest.TestCase):
         attr2_ = loaded_class.attributeProp[1]
         self.assertEqual(attr2.name, attr2_.name)
         self.assertEqual(attr2.attribute_type, attr2_.attribute_type)
-        self.assertEqual(attr2._instance_identifier,
-                         attr2_._instance_identifier)
-        self.assertEqual(attr2._field_name, attr2_._field_name)
+        self.assertEqual(attr2._instance_link.instance_identifier,
+                         attr2_._instance_link.instance_identifier)
+        self.assertEqual(attr2._instance_link.field_name, attr2_._instance_link.field_name)
 
         com2 = class3_.commandProp[1]
         com2_ = loaded_class.commandProp[1]
         self.assertEqual(com2.name, com2_.name)
-        self.assertEqual(com2._instance_identifier,
-                         com2_._instance_identifier)
-        self.assertEqual(attr2._field_name, attr2_._field_name)
+        self.assertEqual(com2._instance_link.instance_identifier,
+                         com2_._instance_link.instance_identifier)
+        self.assertEqual(attr2._instance_link.field_name, attr2_._instance_link.field_name)
 
         self.assertEqual(class3_.references, loaded_class.references)
 
@@ -694,6 +694,11 @@ class TestSemanticModels(unittest.TestCase):
 
         inst_1.device_settings.endpoint = "http://localhost:88"
         inst_1.device_settings.transport = TransportProtocol.HTTP
+        inst_1.commandProp.append(Command(name="testC"))
+        inst_1.attributeProp.append(
+            DeviceAttribute(name="test",
+                            attribute_type=DeviceAttributeType.active))
+
 
         old_state = inst_1.build_context_entity()
 
@@ -703,14 +708,33 @@ class TestSemanticModels(unittest.TestCase):
         # change live state
         inst_1.device_settings.apikey = "test"
         inst_1.device_settings.timezone = "MyZone"
+        del inst_1.commandProp[0]
+        inst_1.commandProp.append(Command(name="testC2"))
+        del inst_1.attributeProp[0]
+        inst_1.attributeProp.append(
+            DeviceAttribute(name="test2",
+                            attribute_type=DeviceAttributeType.lazy))
+
         semantic_manager.save_state()
         self.assertEqual(inst_1.device_settings.apikey, "test")
+        self.assertEqual(len(inst_1.commandProp), 1)
+        self.assertEqual(inst_1.commandProp[0].name, "testC2")
+        self.assertEqual(len(inst_1.attributeProp), 1)
+        self.assertEqual(inst_1.attributeProp[0].name, "test2")
+        self.assertEqual(inst_1.attributeProp[0].attribute_type,
+                         DeviceAttributeType.lazy)
 
         # reset local state and change it
         inst_1.old_state.state = old_state
         inst_1.device_settings.endpoint = "http://localhost:21"
         inst_1.device_settings.transport = TransportProtocol.HTTP
         inst_1.device_settings.apikey = None
+        inst_1.attributeProp.clear()
+        inst_1.commandProp.clear()
+        inst_1.commandProp.append(Command(name="testC3"))
+        inst_1.attributeProp.append(
+            DeviceAttribute(name="test3",
+                            attribute_type=DeviceAttributeType.active))
 
         inst_1.device_settings.timezone = "MyNewZone"
 
@@ -720,6 +744,13 @@ class TestSemanticModels(unittest.TestCase):
         self.assertEqual(inst_1.device_settings.endpoint, "http://localhost:21")
         self.assertEqual(inst_1.device_settings.apikey, "test")
         self.assertEqual(inst_1.device_settings.timezone, "MyNewZone")
+        self.assertEqual(len(inst_1.commandProp), 2)
+        self.assertEqual({inst_1.commandProp[0].name, inst_1.commandProp[
+            1].name}, {"testC3", "testC2"})
+        self.assertEqual(len(inst_1.attributeProp), 2)
+        self.assertEqual({inst_1.attributeProp[0].name, inst_1.attributeProp[
+            1].name}, {"test2", "test3"})
+
 
         # live state is merged correctly
         self.clear_registry()
@@ -727,6 +758,12 @@ class TestSemanticModels(unittest.TestCase):
         self.assertEqual(inst_1.device_settings.endpoint, "http://localhost:21")
         self.assertEqual(inst_1.device_settings.apikey, "test")
         self.assertEqual(inst_1.device_settings.timezone, "MyNewZone")
+        self.assertEqual(len(inst_1.commandProp), 2)
+        self.assertEqual({inst_1.commandProp[0].name, inst_1.commandProp[
+            1].name}, {"testC3", "testC2"})
+        self.assertEqual(len(inst_1.attributeProp), 2)
+        self.assertEqual({inst_1.attributeProp[0].name, inst_1.attributeProp[
+            1].name}, {"test2", "test3"})
 
     def tearDown(self) -> None:
         """

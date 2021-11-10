@@ -158,6 +158,15 @@ class Datatype(BaseModel):
         return True
 
 
+class DevicePropertyInstanceLink(BaseModel):
+    instance_identifier: Optional[InstanceIdentifier] = None
+    """Identifier of the instance holding this Property"""
+    semantic_manager: Optional['SemanticManager'] = None
+    """Link to the governing semantic_manager"""
+    field_name: Optional[str] = None
+    """Name of the field to which this property was added in the instance"""
+
+
 class DeviceProperty(BaseModel):
     """
     Model describing one specific property of an IoT device.
@@ -169,16 +178,19 @@ class DeviceProperty(BaseModel):
 
     name: str
     """Internally used name in the IoT Device"""
-    _instance_identifier: Optional[InstanceIdentifier] = None
-    """Identifier of the instance holding this Property"""
-    _semantic_manager: Optional['SemanticManager'] = None
-    """Link to the governing semantic_manager"""
-    _field_name: Optional[str] = None
-    """Name of the field to which this property was added in the instance"""
+    _instance_link: DevicePropertyInstanceLink = DevicePropertyInstanceLink()
+    # _instance_identifier: Optional[InstanceIdentifier] = None
+    # """Identifier of the instance holding this Property"""
+    # _semantic_manager: Optional['SemanticManager'] = None
+    # """Link to the governing semantic_manager"""
+    # _field_name: Optional[str] = None
+    # """Name of the field to which this property was added in the instance"""
 
     def _get_instance(self) -> 'SemanticClass':
         """Get the instance object to which this property was added"""
-        return self._semantic_manager.get_instance(self._instance_identifier)
+
+        return self._instance_link.semantic_manager.get_instance(
+            self._instance_link.instance_identifier)
 
     def _get_field_from_fiware(self, field_name: str, required_type: str) \
             -> NamedContextAttribute:
@@ -196,15 +208,16 @@ class DeviceProperty(BaseModel):
             Exception;  The field_type does not match
         """
 
-        if self._field_name is None:
+        if self._instance_link.field_name is None:
             raise Exception("This DeviceProperty needs to be added to a "
                             "device field of an SemanticDeviceClass instance "
                             "and the state saved before this methode can be "
                             "executed")
 
         try:
-            entity = self._semantic_manager.get_entity_from_fiware(
-                            instance_identifier=self._instance_identifier)
+            entity = self._instance_link.semantic_manager.\
+                get_entity_from_fiware(
+                    instance_identifier=self._instance_link.instance_identifier)
         except requests.RequestException:
             raise Exception("The instance to which this property belongs is "
                             "not yet present in Fiware, you need to save the "
@@ -254,11 +267,12 @@ class Command(DeviceProperty):
         """
         attr = self._get_field_from_fiware(field_name=self.name,
                                            required_type="command")
-        client = self._semantic_manager.get_client(
-                 self._instance_identifier.header)
+        client = self._instance_link.semantic_manager.get_client(
+                 self._instance_link.instance_identifier.header)
 
-        client.update_entity_attribute(entity_id=self._instance_identifier.id,
-                                       attr=attr)
+        client.update_entity_attribute(
+            entity_id=self._instance_link.instance_identifier.id,
+            attr=attr)
         client.close()
 
     def get_info(self) -> str:
@@ -286,6 +300,12 @@ class Command(DeviceProperty):
         Get all the field names that this command will add to Fiware
         """
         return [self.name, f"{self.name}_info", f"{self.name}_result"]
+
+    class Config:
+        """if the name is changed the attribute needs to be removed
+        and re-added to the device. With frozen that logic is more clearly
+        given in the library. Further it allows us to hash the object"""
+        frozen = True
 
 
 class DeviceAttributeType(str, Enum):
@@ -321,16 +341,20 @@ class DeviceAttribute(DeviceProperty):
             Exception: If the DeviceAttribute was not yet saved to Fiware
         """
         return self._get_field_from_fiware(
-            field_name=f'{self._field_name}_{self.name}',
+            field_name=f'{self._instance_link.field_name}_{self.name}',
             required_type="StructuredValue").value
 
     def get_all_field_names(self) -> List[str]:
         """
         Get all the field names that this command will add to Fiware
         """
-        return [f'{self._field_name}_{self.name}']
+        return [f'{self._instance_link.field_name}_{self.name}']
 
     class Config:
+        """if the name or type is changed the attribute needs to be removed
+        and readded to the device. With frozen that logic is more clearly
+        given in the library. Further it allows us to hash the object"""
+        frozen = True
         use_enum_values = True
 
 
@@ -534,11 +558,11 @@ class DeviceField(Field):
                             if v does already belong to a field
         """
         assert isinstance(v, self._internal_type)
-        assert v._instance_identifier is None, "DeviceProperty can only " \
+        assert v._instance_link.instance_identifier is None, "DeviceProperty can only " \
                                                "belong to one device instance"
-        v._instance_identifier = self._instance_identifier
-        v._semantic_manager = self._semantic_manager
-        v._field_name = self.name
+        v._instance_link.instance_identifier = self._instance_identifier
+        v._instance_link.semantic_manager = self._semantic_manager
+        v._instance_link.field_name = self.name
 
     def _name_check(self, v: _internal_type):
         """
@@ -575,9 +599,9 @@ class DeviceField(Field):
         Makes the value available again to be added to other fields/instances
         """
         v = self._list[i]
-        v._instance_identifier = None
-        v._semantic_manager = None
-        v.name = None
+        v._instance_link.instance_identifier = None
+        v._instance_link.semantic_manager = None
+        v._instance_link.field_name = None
         del self._list[i]
         
     def __setitem__(self, i, v):
