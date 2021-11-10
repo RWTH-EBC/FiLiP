@@ -3,7 +3,6 @@ TimeSeries Module for QuantumLeap API Client
 """
 import logging
 from math import inf
-from itertools import product
 from typing import Dict, List, Union
 from urllib.parse import urljoin
 import requests
@@ -20,14 +19,13 @@ from filip.models.ngsi_v2.timeseries import \
     TimeSeries, \
     TimeSeriesHeader
 
-
 logger = logging.getLogger(__name__)
 
 
 class QuantumLeapClient(BaseHttpClient):
     """
-    Implements functions to use the FIWAREs QuantumLeap, which subscribes to an
-    Orion Context Broker and stores the subscription data in a timeseries
+    Implements functions to use the FIWARE's QuantumLeap, which subscribes to an
+    Orion Context Broker and stores the subscription data in a time series
     database (CrateDB). Further Information:
     https://smartsdk.github.io/ngsi-timeseries-api/#quantumleap
     https://app.swaggerhub.com/apis/heikkilv/quantumleap-api/
@@ -38,6 +36,7 @@ class QuantumLeapClient(BaseHttpClient):
         fiware_header:
         **kwargs:
     """
+
     def __init__(self,
                  url: str = None,
                  *,
@@ -340,7 +339,8 @@ class QuantumLeapClient(BaseHttpClient):
         if limit is None:
             limit = inf
         if limit > max_entries_per_request:
-            params['limit'] = max_entries_per_request  # maximum items per request
+            params[
+                'limit'] = max_entries_per_request  # maximum items per request
         else:
             params['limit'] = limit
         if offset is None:
@@ -373,9 +373,9 @@ class QuantumLeapClient(BaseHttpClient):
 
             except requests.exceptions.RequestException as err:
                 if err.response.status_code == 404 and \
-                    err.response.json().get('error') == 'Not Found' and \
-                    len(list_of_res) > 0:
-                        break
+                        err.response.json().get('error') == 'Not Found' and \
+                        len(list_of_res) > 0:
+                    break
                 else:
                     msg = "Could not load entity data"
                     self.log_error(err=err, msg=msg)
@@ -504,9 +504,9 @@ class QuantumLeapClient(BaseHttpClient):
                 perform geographical queries with the same semantics as in the
                 FIWARE-NGSI v2 Specification. Full details can be found in the
                 Geographical Queries section of the specification:
-                http://fiware.github.io/specifications/ngsiv2/stable/.
-            geometry (String): Required if georel is specified.  point, line,
-                polygon, box
+                https://fiware.github.io/specifications/ngsiv2/stable/.
+            geometry (String):
+                Required if georel is specified.  point, line, polygon, box
             coords (String):
                 Optional but required if georel is specified. This parameter
                 defines the reference shape (geometry) in terms of WGS 84
@@ -515,7 +515,7 @@ class QuantumLeapClient(BaseHttpClient):
                 in decimal degrees---e.g. 40.714,-74.006 is okay, but not
                 40 42' 51'',74 0' 21''. Full details can be found in the
                 Geographical Queries section of the specification:
-                http://fiware.github.io/specifications/ngsiv2/stable/.
+                https://fiware.github.io/specifications/ngsiv2/stable/.
             options (String): Key value pair options.
 
         Returns:
@@ -593,19 +593,19 @@ class QuantumLeapClient(BaseHttpClient):
         """
         url = urljoin(self.base_url, f'/v2/entities/{entity_id}/value')
         list_of_res = self.__query_builder(url=url,
-                                   attrs=attrs,
-                                   options=options,
-                                   entity_type=entity_type,
-                                   aggr_method=aggr_method,
-                                   aggr_period=aggr_period,
-                                   from_date=from_date,
-                                   to_date=to_date,
-                                   last_n=last_n,
-                                   limit=limit,
-                                   offset=offset,
-                                   georel=georel,
-                                   geometry=geometry,
-                                   coords=coords)
+                                           attrs=attrs,
+                                           options=options,
+                                           entity_type=entity_type,
+                                           aggr_method=aggr_method,
+                                           aggr_period=aggr_period,
+                                           from_date=from_date,
+                                           to_date=to_date,
+                                           last_n=last_n,
+                                           limit=limit,
+                                           offset=offset,
+                                           georel=georel,
+                                           geometry=geometry,
+                                           coords=coords)
 
         # merge response chunks
         res = TimeSeries(entityId=entity_id, **list_of_res[0])
@@ -685,8 +685,8 @@ class QuantumLeapClient(BaseHttpClient):
                               attributes=[AttributeValues(**res[0])])
         for item in res[1:]:
             response.extend(TimeSeries(entityId=entity_id,
-                          index=item.get('index'),
-                          attributes=[AttributeValues(**item)]))
+                                       index=item.get('index'),
+                                       attributes=[AttributeValues(**item)]))
 
         return response
 
@@ -936,45 +936,44 @@ class QuantumLeapClient(BaseHttpClient):
         url = urljoin(self.base_url, f'/v2/types/{entity_type}/attrs'
                                      f'/{attr_name}')
         list_of_res = self.__query_builder(url=url,
-                                   entity_id=entity_id,
-                                   options=options,
-                                   entity_type=entity_type,
-                                   aggr_method=aggr_method,
-                                   aggr_period=aggr_period,
-                                   from_date=from_date,
-                                   to_date=to_date,
-                                   last_n=last_n,
-                                   limit=limit,
-                                   offset=offset,
-                                   georel=georel,
-                                   geometry=geometry,
-                                   coords=coords,
-                                   aggr_scope=aggr_scope)
+                                           entity_id=entity_id,
+                                           options=options,
+                                           entity_type=entity_type,
+                                           aggr_method=aggr_method,
+                                           aggr_period=aggr_period,
+                                           from_date=from_date,
+                                           to_date=to_date,
+                                           last_n=last_n,
+                                           limit=limit,
+                                           offset=offset,
+                                           georel=georel,
+                                           geometry=geometry,
+                                           coords=coords,
+                                           aggr_scope=aggr_scope)
 
         # merge chunks of response
         res = [TimeSeries(index=item.get('index'),
-                           entityType=entity_type,
-                           entityId=item.get('entityId'),
-                           attributes=[
-                               AttributeValues(
-                                   attrName=list_of_res[0].get('attrName'),
-                                   values=item.get('values'))])
+                          entityType=entity_type,
+                          entityId=item.get('entityId'),
+                          attributes=[
+                              AttributeValues(
+                                  attrName=list_of_res[0].get('attrName'),
+                                  values=item.get('values'))])
                for item in list_of_res[0].get('entities')]
 
         for chunk in list_of_res[1:]:
             chunk = [TimeSeries(index=item.get('index'),
-                           entityType=entity_type,
-                           entityId=item.get('entityId'),
-                           attributes=[
-                               AttributeValues(
-                                   attrName=chunk.get('attrName'),
-                                   values=item.get('values'))])
+                                entityType=entity_type,
+                                entityId=item.get('entityId'),
+                                attributes=[
+                                    AttributeValues(
+                                        attrName=chunk.get('attrName'),
+                                        values=item.get('values'))])
                      for item in chunk.get('entities')]
             for new, old in zip(chunk, res):
                 old.extend(new)
 
         return res
-
 
     # /types/{entityType}/attrs/{attrName}/value
     def get_entity_attr_values_by_type(self,
@@ -1053,15 +1052,15 @@ class QuantumLeapClient(BaseHttpClient):
                           attributes=[
                               AttributeValues(attrName=attr_name,
                                               values=item.get('values'))])
-                for item in list_of_res[0].get('values')]
+               for item in list_of_res[0].get('values')]
 
         for chunk in list_of_res[1:]:
             chunk = [TimeSeries(index=item.get('index'),
-                          entityType=entity_type,
-                          entityId=item.get('entityId'),
-                          attributes=[
-                              AttributeValues(attrName=attr_name,
-                                              values=item.get('values'))])
+                                entityType=entity_type,
+                                entityId=item.get('entityId'),
+                                attributes=[
+                                    AttributeValues(attrName=attr_name,
+                                                    values=item.get('values'))])
                      for item in chunk.get('values')]
 
             for new, old in zip(chunk, res):
