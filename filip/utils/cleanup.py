@@ -91,12 +91,9 @@ def clear_quantumleap(url: str, fiware_header: FiwareHeader):
         Args:
             err: exception raised by delete function
         """
-        if err.response.status_code == 404:
-            try:
-                if not err.response.json()['error'] == 'Not Found':
-                    raise
-            except KeyError:
-                raise
+        if err.response.status_code == 404 \
+                and err.response.json().get('error', None) == 'Not Found':
+            pass
         else:
             raise
     # create client
@@ -174,29 +171,10 @@ def clean_test(*,
               cb_url=cb_url,
               iota_url=iota_url,
               ql_url=ql_url)
-
+    # Inner decorator function
     def decorator(func):
-        """
-        Inner decorator function
-
-        Args:
-            func: func to be wrapped
-
-        Returns:
-            Wrapper with wrapped function
-        """
+        #  Wrapper function for the decorated function
         def wrapper(*args, **kwargs):
-            """
-            Wrapper function for the decorated function
-
-            Args:
-                *args: any args of the wrapped function
-                **kwargs: any kwrags of the wrapped function
-
-            Returns:
-                Wrapped function
-            """
-
             return func(*args, **kwargs)
         return wrapper
 

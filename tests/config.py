@@ -72,9 +72,7 @@ class TestSettings(BaseSettings):
                                          'FIWARE_SERVICEPATH',
                                          'FIWARE_SERVICE_PATH'])
 
-
-
-    @root_validator()
+    @root_validator
     def generate_mutltitenancy_setup(cls, values):
         """
         Tests if the fields for multi tenancy in fiware are consistent.
@@ -99,6 +97,7 @@ class TestSettings(BaseSettings):
         env_file_encoding = 'utf-8'
         case_sensitive = False
         use_enum_values = True
+
 
 settings = TestSettings()
 print(f"Running tests with the following settings: \n "

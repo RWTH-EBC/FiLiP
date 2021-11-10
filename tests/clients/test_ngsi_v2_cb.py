@@ -449,8 +449,7 @@ class TestContextBroker(unittest.TestCase):
                         + str(reasonCode))
 
         import paho.mqtt.client as mqtt
-        mqtt_client = mqtt.Client(client_id="filip-test",
-                                  userdata=None,
+        mqtt_client = mqtt.Client(userdata=None,
                                   protocol=mqtt.MQTTv5,
                                   transport="tcp")
         # add our callbacks to the client
