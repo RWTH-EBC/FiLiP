@@ -610,13 +610,6 @@ class TestSemanticModels(unittest.TestCase):
         """
         from tests.semantic.models2 import Class1, semantic_manager
 
-        test_header = InstanceHeader(
-            cb_url=settings.CB_URL,
-            service="testing",
-            service_path="/"
-        )
-        semantic_manager.set_default_header(test_header)
-
         # used instances
         c1 = Class1(id="1")
         c2 = Class1(id="2")
@@ -679,6 +672,65 @@ class TestSemanticModels(unittest.TestCase):
                          {c3.get_identifier(), c4.get_identifier()})
         self.assertEqual(inst_1.references.keys(),
                          {c3.get_identifier(), c4.get_identifier()})
+
+    def test__20_merge_states_for_devices(self):
+        """
+        Tests if a local state is correctly merged with changes on the live
+        state. This test focuses on the special details of a
+        SemanticDeviceClass the general things are covered by test 120
+        """
+        from tests.semantic.models2 import Class3, semantic_manager
+        self.clear_registry()
+
+        test_header = InstanceHeader(
+            cb_url=settings.CB_URL,
+            service="testing",
+            service_path="/"
+        )
+        semantic_manager.set_default_header(test_header)
+
+        # setup state
+        inst_1 = Class3(id="3")
+
+        inst_1.device_settings.endpoint = "http://localhost:88"
+        inst_1.device_settings.transport = TransportProtocol.HTTP
+
+        old_state = inst_1.build_context_entity()
+
+        semantic_manager.save_state()
+        self.assertEqual(inst_1.device_settings.apikey, None)
+
+        # change live state
+        inst_1.device_settings.apikey = "test"
+        inst_1.device_settings.timezone = "MyZone"
+        semantic_manager.save_state()
+        self.assertEqual(inst_1.device_settings.apikey, "test")
+
+        # reset local state and change it
+        inst_1.old_state.state = old_state
+        inst_1.device_settings.endpoint = "http://localhost:21"
+        inst_1.device_settings.transport = TransportProtocol.HTTP
+        inst_1.device_settings.apikey = None
+
+        inst_1.device_settings.timezone = "MyNewZone"
+
+        print("")
+        print(inst_1.device_settings)
+        semantic_manager.save_state()
+        print("")
+        print(inst_1.device_settings)
+
+        # local state is merged correctly
+        self.assertEqual(inst_1.device_settings.endpoint, "http://localhost:21")
+        self.assertEqual(inst_1.device_settings.apikey, "test")
+        self.assertEqual(inst_1.device_settings.timezone, "MyNewZone")
+
+        # live state is merged correctly
+        self.clear_registry()
+        inst_1 = Class3(id="3")
+        self.assertEqual(inst_1.device_settings.endpoint, "http://localhost:21")
+        self.assertEqual(inst_1.device_settings.apikey, "test")
+        self.assertEqual(inst_1.device_settings.timezone, "MyNewZone")
 
     def tearDown(self) -> None:
         """

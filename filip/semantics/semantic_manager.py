@@ -406,18 +406,18 @@ class SemanticManager(BaseModel):
         Returns:
             None
         """
-
         if assert_validity:
             for instance in self.instance_registry.get_all():
                 if isinstance(instance, Individual):
                     continue
-
                 assert instance.are_rule_fields_valid(), \
                     f"Attempted to save the SemanticEntity {instance.id} of " \
                     f"type {instance._get_class_name()} with invalid fields " \
-                    f"{[f.name for f in instance.get_invalid_fields()]}. " \
+                    f"{[f.name for f in instance.get_invalid_rule_fields()]}. " \
                     f"Local state was not saved"
+
         for instance in self.instance_registry.get_all():
+            print(type(instance))
             if isinstance(instance, SemanticDeviceClass):
                 assert instance.device_settings.endpoint is not None, \
                     "Device needs to be given an endpoint. " \
@@ -813,6 +813,7 @@ class SemanticManager(BaseModel):
 
             return added_values, removed_values
 
+
         # instance is new. Save it as is
         client = self.get_client(instance.header)
         if not client.does_entity_exists(entity_id=instance.id,
@@ -916,4 +917,3 @@ class SemanticManager(BaseModel):
         for key, value in merged_references.items():
             instance.references[InstanceIdentifier.parse_raw(key)] = value
 
-            

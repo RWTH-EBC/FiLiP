@@ -726,6 +726,7 @@ class RuleField(Field):
         #       - range n,m | n | m
 
         # the relationship itself is a _list
+
         values = self
 
         # loop over all rules, if a rule is not fulfilled return False
@@ -742,12 +743,10 @@ class RuleField(Field):
                 # which the value is an instance of each value
                 fulfilled = False
                 for inner_list in outer_list:
-
                     counter = 0
                     for rule_value in inner_list:
                         if self._value_is_valid(v, rule_value):
                             counter += 1
-
                     if len(inner_list) == counter:
                         fulfilled = True
 
@@ -870,9 +869,13 @@ class RelationField(RuleField):
         self.inverse_of = inverse_of
 
     def _value_is_valid(self, value, rule_value: type) -> bool:
+        print(f"C3 {len(self._semantic_manager.get_all_local_instances())}")
         if isinstance(value, SemanticClass):
             return isinstance(value, rule_value)
         elif isinstance(value, SemanticIndividual):
+            print(f"C4 {len(self._semantic_manager.get_all_local_instances())}")
+            value.is_instance_of_class(rule_value)
+            print(f"C5 {len(self._semantic_manager.get_all_local_instances())}")
             return value.is_instance_of_class(rule_value)
         else:
             return False
@@ -1138,9 +1141,9 @@ class SemanticClass(BaseModel):
         Returns:
             bool, True if all valid
         """
-        return len(self.get_invalid_fields()) == 0
+        return len(self.get_invalid_rule_fields()) == 0
 
-    def get_invalid_fields(self) -> List[Field]:
+    def get_invalid_rule_fields(self) -> List[Field]:
         """
         Get all fields that are currently not valid
 
@@ -1575,11 +1578,10 @@ class SemanticIndividual(BaseModel):
         Returns:
             bool, True if individual is of the searched class or one its parents
         """
-
         if isinstance(self, class_):
             return True
         for parent in self._parent_classes:
-            if isinstance(parent(), class_):
+            if parent == class_:
                 return True
         return False
 
