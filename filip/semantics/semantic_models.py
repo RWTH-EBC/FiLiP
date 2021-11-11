@@ -1596,7 +1596,13 @@ class SemanticIndividual(BaseModel):
         if isinstance(self, class_):
             return True
         for parent in self._parent_classes:
-            if parent == class_:
+            # to test all subclasses correctly we need to instanciate parent
+            # but it needs to be deleted directly again, as it is no real
+            # instance that we want to keep in the local state
+            parent = parent()
+            is_instance = isinstance(parent, class_)
+            parent.delete()
+            if is_instance:
                 return True
         return False
 
