@@ -154,7 +154,7 @@ class TestSemanticModels(unittest.TestCase):
 
         c1.oProp1.add(c2)
         self.assertEqual(c2.references[c1.get_identifier()], ["oProp1"])
-        self.assertRaises(ValueError, c1.oProp1.update, [c2])
+        # self.assertRaises(ValueError, c1.oProp1.update, [c2])
         self.assertEqual(c2.references[c1.get_identifier()], ["oProp1"])
         c1.objProp2.update([c2])
         c3.objProp2.add(c2)
@@ -371,7 +371,7 @@ class TestSemanticModels(unittest.TestCase):
         VocabularyConfigurator.generate_vocabulary_models(
             vocabulary, "./", "models2")
 
-    def test__13_device_creation(self):
+    def test__12_device_creation(self):
         """
         Test if a device is correctly instantiated
         And the settings can be set
@@ -390,7 +390,7 @@ class TestSemanticModels(unittest.TestCase):
         class3_.device_settings.endpoint = "http://test.com"
         self.assertEqual(class3_.device_settings.endpoint, "http://test.com")
 
-    def test__14_device_saving_and_loading(self):
+    def test__13_device_saving_and_loading(self):
         """
         Test if a Device can be correctly saved and loaded.
         And the live methods of Commands and DeviceAttributes
@@ -457,7 +457,7 @@ class TestSemanticModels(unittest.TestCase):
                          attr2_._instance_link.field_name)
 
         com2 = [c for c in class3_.commandProp.get_all()
-                 if c.name == "off"][0]
+                if c.name == "off"][0]
         com2_ = [c for c in loaded_class.commandProp.get_all()
                  if c.name == "off"][0]
         self.assertEqual(com2.name, com2_.name)
@@ -477,7 +477,28 @@ class TestSemanticModels(unittest.TestCase):
         class3_.commandProp.get_all()[0].get_status()
         class3_.commandProp.get_all()[0].send()
 
-    def test__15_device_deleting(self):
+        # test if fields are removed and updated
+        class3_.commandProp.clear()
+        class3_.attributeProp.clear()
+        class3_.commandProp.add(Command(name="NEW_COMMAND"))
+        class3_.attributeProp.add(
+            DeviceAttribute(name="NEW_ATT",
+                            attribute_type=DeviceAttributeType.lazy))
+
+        class3_.dataProp1.add("TEST!!!")
+        print()
+        print(class3_.commandProp)
+        print()
+        semantic_manager.save_state(assert_validity=False)
+        print(class3_.commandProp)
+        self.clear_registry()
+        with semantic_manager.get_iota_client(class3_.header) as client:
+            device = client.get_device(device_id=class3_.get_device_id())
+            print(device)
+
+
+
+    def test__14_device_deleting(self):
         """
         Test if SemanticDeviceClass.delete() completly removes the device and
         context entry from Fiware.
@@ -517,7 +538,7 @@ class TestSemanticModels(unittest.TestCase):
                         default_header.get_fiware_header()) as client:
             self.assertEqual(len(client.get_entity_list()), 0)
 
-    def test__16_field_name_checks(self):
+    def test__15_field_name_checks(self):
         """
         Test if Commands and Attributes are prevented from having blacklised
         names
@@ -555,7 +576,7 @@ class TestSemanticModels(unittest.TestCase):
             ['attributeProp', 'attributeProp__type', 'commandProp',
              'c1', 'c1_info', 'c1_result', 'dataProp1', 'oProp1', 'objProp2'])
 
-    def test__17_save_and_load_local_state(self):
+    def test__16_save_and_load_local_state(self):
         """
         Test if the local state can be correctly saved as json and loaded again
         """
@@ -594,7 +615,7 @@ class TestSemanticModels(unittest.TestCase):
 
         self.assertTrue(class1_.references == class1.references)
 
-    def test__18_inverse_relations(self):
+    def test__17_inverse_relations(self):
         """
         Test if a instance is added to the added instance, if an inverse
         logic exists
@@ -616,7 +637,7 @@ class TestSemanticModels(unittest.TestCase):
         self.assertFalse(inst_1.get_identifier()
                          in inst_2.objProp3.get_all_raw())
 
-    def test__19_merge_states(self):
+    def test__18_merge_states(self):
         """
         Tests if a local state is correctly merged with changes on the live
         state
@@ -688,7 +709,7 @@ class TestSemanticModels(unittest.TestCase):
         self.assertEqual(inst_1.references.keys(),
                          {c3.get_identifier(), c4.get_identifier()})
 
-    def test__20_merge_states_for_devices(self):
+    def test__19_merge_states_for_devices(self):
         """
         Tests if a local state is correctly merged with changes on the live
         state. This test focuses on the special details of a
