@@ -535,11 +535,17 @@ class Field(BaseModel):
         """
         return self._set
     
-    def get_all(self) -> Set:
+    def get_all(self) -> List:
         """
-        Get all values of the field in usable form
+        Get all values of the field in usable form.
+        Returns the set in List for as some values are not hashable in
+        converted form.
+        But the order is random
+
+        Returns:
+            List, unsorted
         """
-        return {self._convert_value(v) for v in self._set}
+        return [self._convert_value(v) for v in self._set]
 
     def _convert_value(self, v):
         """
@@ -713,7 +719,7 @@ class CommandField(DeviceField):
     def get_all_raw(self) -> Set[Command]:
         return super().get_all_raw()
 
-    def get_all(self) -> Set[Command]:
+    def get_all(self) -> List[Command]:
         return super().get_all()
 
     def __iter__(self) -> Iterator[Command]:
@@ -739,7 +745,7 @@ class DeviceAttributeField(DeviceField):
     def get_all_raw(self) -> Set[DeviceAttribute]:
         return super().get_all_raw()
 
-    def get_all(self) -> Set[DeviceAttribute]:
+    def get_all(self) -> List[DeviceAttribute]:
         return super().get_all()
 
     def __iter__(self) -> Iterator[DeviceAttribute]:
@@ -1066,7 +1072,7 @@ class RelationField(RuleField):
             Iterator[Union['SemanticClass', 'SemanticIndividual']]:
         return super().__iter__()
 
-    def get_all(self) -> Set[Union['SemanticClass', 'SemanticIndividual']]:
+    def get_all(self) -> List[Union['SemanticClass', 'SemanticIndividual']]:
         return super(RelationField, self).get_all()
 
     def get_all_raw(self) -> Set[Union[InstanceIdentifier, str]]:

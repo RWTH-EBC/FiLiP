@@ -118,8 +118,11 @@ if __name__ == '__main__':
 
     # 3. Our classes possess fields that we use to model the state. There are
     # multiple types of fields a normal-class or device-class can have.
-    # Basically a field is a list to which values can be added, but that posses
-    # additional functions and internal logic.
+    # Basically a field is a set to which values can be added, but that posses
+    # additional functions and internal logic. Therefore values of a field
+    # are without duplicates and without order
+    # (These requirements are needed to manage the state merge of concurrent
+    # changes)
 
     # To view all fields a class possesses we can either:
     #   - try the autocompletion hint when typing building.
@@ -129,11 +132,12 @@ if __name__ == '__main__':
     print(my_building.get_all_field_names())
     print("")
 
-    # To manipulate data inside a field all standard list interactions are
+    # To manipulate data inside a field all standard set interactions are
     # given:
-    my_building.goal_temperature.append(23)
-    my_building.goal_temperature[0] = 12
-    del my_building.goal_temperature[0]
+    my_building.goal_temperature.add(23)
+    my_building.goal_temperature.update([12])
+    my_building.goal_temperature.remove(23)
+    my_building.goal_temperature.clear()
 
     # 3.1 RuleFields: Contains 1 or multiple rules that need to be fulfilled
     # for the field to be valid. RuleFields are separated into Relation- and
@@ -170,8 +174,8 @@ if __name__ == '__main__':
     # type "simple" was converted to this field type. (All for normal classes)
     # As values it takes basic types as string, int, bool,..
 
-    my_building.goal_temperature.append(23)
-    my_building.name.append("Main Building")
+    my_building.goal_temperature.add(23)
+    my_building.name.add("Main Building")
 
     # we can check again if all DataFields are now valid:
     print("\u0332".join("DataFields of my_building:"))
@@ -185,8 +189,8 @@ if __name__ == '__main__':
     # In each case only the string value gets saved without enum information
     # Each enum value has the prefix value_ to prevent name clashes
     sensor = Sensor(id="sensor1")
-    sensor.measures.append(MeasurementType.value_Air_Quality)
-    sensor.measures.append("Air_Quality")
+    sensor.measures.add(MeasurementType.value_Air_Quality)
+    sensor.measures.add("Air_Quality")
     print("\u0332".join("DataFields with enum values:"))
     print(f"Raw Values: {sensor.measures.get_all_raw()}")
     print(f"Values: {sensor.measures.get_all()}")
@@ -197,8 +201,8 @@ if __name__ == '__main__':
     # converted to this field type.
     # As values it takes instances of classes
 
-    my_building.has_floor.append(my_floor)
-    my_building.has_floor.append(Floor(id="second_floor"))
+    my_building.has_floor.add(my_floor)
+    my_building.has_floor.add(Floor(id="second_floor"))
 
     # we can check again if all RelationFields are now valid:
     print("\u0332".join("RelationFields of my_building:"))
@@ -209,10 +213,13 @@ if __name__ == '__main__':
 
     # As we can see the RelationField internally only saves the references to
     # the instances that he was given as values.
-    # But we can access the instances comfortably:
+    # But we can access the instances comfortably by calling get_all or even
+    # iterating over the field:
 
-    one_instance = my_building.has_floor[0]
     all_instances = my_building.has_floor.get_all()
+
+    for instance in my_building.has_floor:
+        instance.has_room.add(Room(id="r1"))
 
     # we added my_floor as first value into has_floor, therefore one_instance
     # now points to exactly the same object as my_floor
@@ -221,16 +228,18 @@ if __name__ == '__main__':
     # use type hints when working with it. But if we assign a value and then
     # inspect my_floor we see that they are correctly linked.
 
-    one_instance.has_room.append(Room(id="r1"))
     print("\u0332".join("Inspect my_floor.has_room:"))
     print(my_floor.has_room)
     print("")
+
+    # DO NOT CAST an instance to a type ex: Floor(instance) this will result
+    # in an internally different state !
 
     # A relation field can also take Individuals as values, or even require
     # them via rules. Instances are globally static, final  classes,
     # each instance of an Individual is equal
 
-    my_floor.has_room.append(ExampleIndividual())
+    my_floor.has_room.add(ExampleIndividual())
 
     # An individual is not saved as Identifier as it is not directly saved in
     # Fiware instead it is only saved as string, as a
@@ -280,7 +289,7 @@ if __name__ == '__main__':
 
     from filip.semantics.semantic_models import \
         DeviceAttribute, DeviceAttributeType
-    my_sensor.measurement.append(
+    my_sensor.measurement.add(
         DeviceAttribute(name="m", attribute_type=DeviceAttributeType.active))
 
     # To access the value of the attribute we could call:
@@ -297,9 +306,9 @@ if __name__ == '__main__':
     # - name: The internal name that the specific device uses for this purpose
     from filip.semantics.semantic_models import Command
     c1 = Command(name="open")
-    my_outlet.control_command.append(c1)
+    my_outlet.control_command.add(c1)
 
-    my_floor.has_room.append(my_building)
+    my_floor.has_room.add(my_building)
     print(my_building.build_context_entity().json(indent=2))
 
     # After the current state was saved. We can interact with the command. It
@@ -396,31 +405,33 @@ if __name__ == '__main__':
     # where no active scopes are open.
 
     # We now model the state a bit so that it can be saved
-    del my_floor.has_room[1]
-    my_floor.name.append("Office 201")
+    my_floor.has_room.clear()
+    my_floor.name.add("Office 201")
 
     Sensor(id="sensor1").measures.set([MeasurementType.value_Air_Quality])
-    Sensor(id="sensor1").unit.append(Unit.value_Relative_Humidity)
+    Sensor(id="sensor1").unit.add(Unit.value_Relative_Humidity)
 
     my_outlet.connected_to.set([Circuit(id="c1"), Room(id="r1")])
     my_outlet.device_settings.endpoint = "http://test.com"
     my_outlet.device_settings.transport = TransportProtocol.MQTT
 
-    Floor(id="second_floor").name.append("Second Floor")
+    Floor(id="second_floor").name.add("Second Floor")
 
     r1 = Room(id="r1")
     r1.goal_temperature.set(["21"])
-    r1.name.append("Room45")
-    r1.volume.append(80)
+    r1.name.add("Room45")
+    r1.volume.add(80)
+    r1.has_outlet.add(my_outlet)
 
-    Circuit(id="c1").has_outlet.append(my_outlet)
+    Circuit(id="c1").has_outlet.add(my_outlet)
     Circuit(id="c1").name.set(["MainCircuit"])
     p1 = Producer(id="p1")
-    Circuit(id="c1").has_producer.insert(0, p1)
+    Circuit(id="c1").has_producer.add(p1)
 
-    p1.name.insert(0, "CHU")
+    p1.name.add("CHU")
     p1.device_settings.endpoint = "http://test2.com"
     p1.device_settings.transport = TransportProtocol.AMQP
+
 
     # Now our state is completely valid and we can save:
     semantic_manager.save_state(assert_validity=True)
@@ -437,7 +448,7 @@ if __name__ == '__main__':
     # 4.3 Deleting instances
 
     # to delete an instance, we can simply call:
-    my_outlet.delete(assert_no_references=False)
+    my_sensor.delete(assert_no_references=False)
 
     # The parameter assert_no_references is optional; if true the instance is
     # only deleted if no other instance had a reference to it.
@@ -451,6 +462,7 @@ if __name__ == '__main__':
     # The delete is as all other changes only a local change. It gets only
     # transferred to the Fiware state on the call: save_state()
 
+    # 5. Visualisation
     # Concluding we can always have a look inside the local loaded state by
     # calling:
     semantic_manager.visualise_local_state()
