@@ -9,4 +9,3 @@ class AnyMqttUrl(AnyUrl):
     Url used for MQTT communication
     """
     allowed_schemes = {'mqtt'}
-

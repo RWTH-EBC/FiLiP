@@ -40,6 +40,7 @@ class PickleProtocolManager:
 def pickle_protocol(level: int) -> PickleProtocolManager:
     """
     Caller for pickle protocol handler
+
     Args:
         level: int
 
@@ -53,9 +54,11 @@ def load_datapackage(url: str, filename: str) -> Dict[str, pd.DataFrame]:
     """
     Downloads data package from online source and stores it as hdf-file in
     filip.data named by the <filename>.hdf.
+
     Args:
         url (str): Valid url to where the data package is hosted
         filename (str): name of the cached file.
+
     Returns:
         Dict of dataframes
     """

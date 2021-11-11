@@ -9,6 +9,7 @@ from random import random
 
 import requests
 import time
+
 from filip.clients.ngsi_v2 import \
     ContextBrokerClient, \
     QuantumLeapClient
@@ -89,7 +90,8 @@ class TestTimeSeries(unittest.TestCase):
 
             notification_message = Message(data=entities,
                                            subscriptionId="test")
-            client.post_subscription(entity_id=entities[0].id)
+            client.post_subscription(cb_url=settings.CB_URL,
+                                     entity_id=entities[0].id)
             client.post_notification(notification_message)
         time.sleep(1)
 

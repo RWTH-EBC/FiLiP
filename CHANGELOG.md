@@ -1,4 +1,5 @@
 #### v0.1.8
+- introduce mqtt client ([#45](https://github.com/RWTH-EBC/FiLiP/issues/45))
 - introduce concurrent testing ([#41](https://github.com/RWTH-EBC/FiLiP/issues/41))
 - include default values in subscription update ([#39](https://github.com/RWTH-EBC/FiLiP/issues/39))
 - move back to more simple docs design ([#32](https://github.com/RWTH-EBC/FiLiP/issues/32))

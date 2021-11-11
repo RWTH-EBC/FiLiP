@@ -1,4 +1,4 @@
 """
 MQTT client for streaming data via FIWARE's IoT-Agent
 """
-from .client import MQTTClient
+from .client import IoTAMQTTClient
