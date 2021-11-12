@@ -5,8 +5,10 @@ created Oct 08, 2021
 
 @author Thomas Storek
 """
+import time
+
 from requests import RequestException
-from typing import Callable
+from typing import Callable, List, Union
 from filip.models import FiwareHeader
 from filip.clients.ngsi_v2 import \
     ContextBrokerClient, \
@@ -32,11 +34,8 @@ def clear_context_broker(url: str, fiware_header: FiwareHeader):
     """
     # create client
     client = ContextBrokerClient(url=url, fiware_header=fiware_header)
-
-    # clear entities
-    entities = client.get_entity_list()
-    if entities:
-        client.update(entities=entities, action_type='delete')
+    # clean entities
+    client.delete_entities(entities=client.get_entity_list())
 
     # clear subscriptions
     for sub in client.get_subscription_list():
@@ -46,6 +45,7 @@ def clear_context_broker(url: str, fiware_header: FiwareHeader):
     for reg in client.get_registration_list():
         client.delete_registration(registration_id=reg.id)
 
+    time.sleep(0.5)
 
 def clear_iot_agent(url: str, fiware_header: FiwareHeader):
     """
@@ -62,14 +62,16 @@ def clear_iot_agent(url: str, fiware_header: FiwareHeader):
     # create client
     client = IoTAClient(url=url, fiware_header=fiware_header)
 
+    # clear registrations
+    for device in client.get_device_list():
+        client.delete_device(device_id=device.device_id)
+
     # clear groups
     for group in client.get_group_list():
         client.delete_group(resource=group.resource,
                             apikey=group.apikey)
 
-    # clear registrations
-    for device in client.get_device_list():
-        client.delete_device(device_id=device.device_id)
+    time.sleep(0.5)
 
 
 def clear_quantumleap(url: str, fiware_header: FiwareHeader):
@@ -114,11 +116,12 @@ def clear_quantumleap(url: str, fiware_header: FiwareHeader):
         except RequestException as err:
             handle_emtpy_db_exception(err)
 
+    time.sleep(0.5)
 
 def clear_all(*,
               fiware_header: FiwareHeader,
               cb_url: str = None,
-              iota_url: str = None,
+              iota_url: Union[str, List[str]] = None,
               ql_url: str = None):
     """
     Clears all services that a url is provided for
@@ -133,18 +136,20 @@ def clear_all(*,
         None
     """
     if iota_url is not None:
-        clear_iot_agent(url=iota_url, fiware_header=fiware_header)
+        if isinstance(iota_url, str):
+            iota_url = [iota_url]
+        for url in iota_url:
+            clear_iot_agent(url=url, fiware_header=fiware_header)
     if cb_url is not None:
         clear_context_broker(url=cb_url, fiware_header=fiware_header)
     if ql_url is not None:
         clear_quantumleap(url=ql_url, fiware_header=fiware_header)
 
-
 def clean_test(*,
                fiware_service: str,
                fiware_servicepath: str,
                cb_url: str = None,
-               iota_url: str = None,
+               iota_url: Union[str, List[str]] = None,
                ql_url: str = None) -> Callable:
     """
     Decorator to clean up the server before and after the test

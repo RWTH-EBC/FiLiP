@@ -128,8 +128,10 @@ class QueryStatement(Tuple):
     def validate(cls, value):
         """
         Validates statements
+
         Args:
             value:
+
         Returns:
         """
         if isinstance(value, (tuple, QueryStatement)):
@@ -156,13 +158,14 @@ class QueryStatement(Tuple):
     def to_str(self):
         """
         Parses QueryStatement to String
+
         Returns:
             String
         """
         if not isinstance(self[2], str):
             right = str(self[2])
         elif self[2].isnumeric():
-            right = f"'{self[2]}'"
+            right = f"{self[2]}"
         else:
             right = self[2]
         return ''.join([self[0], self[1], right])
@@ -171,6 +174,7 @@ class QueryStatement(Tuple):
     def parse_str(cls, string: str):
         """
         Generates QueryStatement form string
+
         Args:
             string:
 
@@ -178,7 +182,7 @@ class QueryStatement(Tuple):
             QueryStatement
         """
         for op in Operator.list():
-            if re.fullmatch(rf"^\w(\w*|\.(?=\w))*{op}\w*", string):
+            if re.fullmatch(rf"^\w((\w|[^&,?,/,#,\*,\s]\w)?)*{op}\w+$", string):
                 args = string.split(op)
                 if len(args) == 2:
                     if args[1].isnumeric():
@@ -213,8 +217,10 @@ class QueryString:
     def __check_arguments(cls, qs):
         """
         Check arguments on consistency
+
         Args:
             qs: queny statement object
+
         returns:
             List of QueryStatements
         """
@@ -236,8 +242,10 @@ class QueryString:
         """
         Adds or updates QueryStatement within QueryString. First to arguments
         must match an existing argument for update. This redundant rules
+
         Args:
             qs: Query statement to add to the string object
+
         Returns:
             None
         """
@@ -274,6 +282,7 @@ class QueryString:
     def to_str(self):
         """
         Parsing self.qs to string object
+
         Returns:
             String: query string that can be added to requests as parameter
         """
@@ -283,6 +292,7 @@ class QueryString:
     def parse_str(cls, string: str):
         """
         Creates QueryString from string
+
         Args:
             string:
 

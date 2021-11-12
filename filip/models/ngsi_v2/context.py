@@ -325,7 +325,7 @@ class ContextEntity(ContextEntityKeyValues):
     "ContextAttribute"-model. Obviously, id and type are
     not allowed to be used as attribute names.
 
-    Example:
+    Example::
 
         >>> data = {'id': 'MyId',
                     'type': 'MyType',
@@ -605,4 +605,3 @@ class NamedCommand(Command):
 #                             "value": self.object.id}
 #
 #        return json.dumps(ref_dict)
-#

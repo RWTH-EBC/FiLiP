@@ -33,10 +33,6 @@ these documents:
   and dicts in Python. So there is no real benefit.
   Furthermore, there is no chance for reasonable validation and error handling.
 
-## Structure of FiLiP
-
-![Library Structure](https://raw.githubusercontent.com/N5GEH/n5geh.tools.FiLiP/development/docs/diagrams/out/architecture.png)
-
 ## Getting started
 
 The following section shortly describes use of the library.
@@ -67,44 +63,12 @@ If you want to benefit from the latest changes, use the development branch:
 pip install -U git+git://github.com/RWTH-EBC/filip@development
 ```
 
-## Documentation
-
-We are still working on the documentation.
-You can find our current documentation 
-[here](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/development/docs/index.html).
-
-### Running examples or tests
-
-Once you have installed the library, you can check the [examples](/examples)
-to learn how to use the different components. 
-
-Currently, we provide basic examples for the usage of FiLiP for the FIWARE 
-GEs mentioned above.
-We suggest to start with the config-example in order to understand the 
-configuration of clients (*Note: This may change in the future*).
-Also, we provide more advanced examples for the semantic 
-context data modeling within a context broker using 
-[relationships](/examples/relationship_example.py).
-Furthermore, the context broker provides a mechanism for an event-based 
-http-notification.
-Using this mechanism is shown [here](/examples/subscription_example.py).
-
-**NOTE**: Currently, we are refactoring the library in order to provide a 
-better validation mechanism. 
-After this big step we will work on further examples, and on the integration of 
-further advanced functions supporting effective context data modeling 
-using validated data model structures. 
-
-## Testing
-
-Currently, we are working on a CI workflow for continuous testing of the library.
-
-## FIWARE
+### Introduction to FIWARE
 
 The following section introduces FIWARE. If you are already familiar with 
 FIWARE, you can skip this section and go straight to [Getting Started](#getting-started).
 
-### What is FIWARE?
+#### What is FIWARE?
 
 FIWARE is a framework of open-source cloud platform components, created 
 to facilitate the development of smart solutions within various application 
@@ -126,7 +90,7 @@ FIWARE also offers extended lessons through their
 However, usually one only requires a small set of components. 
 Hence, we recommend using the cited pages only as needed.
 
-### How to set up a FIWARE platform?
+#### How to set up a FIWARE platform?
 
 The easiest way to set up a FIWARE platform is by using docker as all GEs are 
 open-source and distributed as docker containers on dockerhub.
@@ -136,7 +100,7 @@ Hence, we wrote a small [tutorial](https://github.com/N5GEH/n5geh.platform)
 explaining how to set up a platform suited for most use cases within the energy 
 domain. 
 
-### FIWARE GEs covered by FiLiP
+#### FIWARE GEs covered by FiLiP
 
 FiLiP is a library developed on demand.
 Hence, we do not aim to cover the APIs of all GEs that are included in the 
@@ -192,22 +156,58 @@ Therefore, FiLiP currently only covers the APIs of the following GEs:
     - [swagger](https://app.swaggerhub.com/apis/smartsdk/ngsi-tsdb/0.7) (*not 
       up to date*, newest API version is 8.0)
 
-## Automatic issue branch creation
+## Structure of FiLiP
 
-Issue branches are created automatically on issue assignment with 
-[robvanderleek/create-issue-branch](https://github.com/robvanderleek/create-issue-branch).
+![Library Structure](https://raw.githubusercontent.com/N5GEH/n5geh.tools.FiLiP/development/docs/diagrams/out/architecture.png)
 
-See [workflow definition](.github/workflows/issue-tracker.yml) and 
-[configuration file](.github/issue-branch.yml) for customization.
 
-Branch creation is skipped for issues with label "question".
+## Documentation
+
+We are still working on the documentation.
+You can find our current documentation 
+[here](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/development/docs/index.html).
+
+## Running examples or tests
+
+Once you have installed the library, you can check the [examples](/examples)
+to learn how to use the different components. 
+
+Currently, we provide basic examples for the usage of FiLiP for the FIWARE 
+GEs mentioned above.
+We suggest to start with the config-example in order to understand the 
+configuration of clients (*Note: This may change in the future*).
+Also, we provide more advanced examples for the semantic 
+context data modeling within a context broker using 
+[relationships](/examples/relationship_example.py).
+Furthermore, the context broker provides a mechanism for an event-based 
+http-notification.
+Using this mechanism is shown [here](/examples/subscription_example.py).
+
+**NOTE**: Currently, we are refactoring the library in order to provide a 
+better validation mechanism. 
+After this big step we will work on further examples, and on the integration of 
+further advanced functions supporting effective context data modeling 
+using validated data model structures. 
+
+## Testing
+
+Currently, we are working on a CI workflow for continuous testing of the 
+library. 
+
+
+## How to contribute
+
+Please see our [contribution guide](./CONTRIBUTING.md) for more details on 
+how you can contribute to this project.
 
 ## Authors
 
 * [Thomas Storek](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Team2/~lhda/Thomas-Storek/?lidx=1) (corresponding)
 * [Saira Bano](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Systemadministration/~ohhca/Bano-Saira/)
+* [Daniel Nikolay](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Systemadministration/~qcqxq/Nikolay-Daniel/)
 * [Stephan Göbel](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Team3/~ccdhp/Goebel-Stephan/)
 * [Sebastian Borges](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Team3/~mvoee/Borges-Sebastian/)
+* Jeff Reding
 
 ## Alumni
 
@@ -246,7 +246,6 @@ Efficient Buildings and Indoor Climate
 
 ## Related projects
 
-
 <a href="https://n5geh.de/"> <img alt="National 5G Energy Hub" 
 src="https://avatars.githubusercontent.com/u/43948851?s=200&v=4" height="100"></a>
 
@@ -257,3 +256,4 @@ for Economic Affairs and Energy (BMWi), promotional reference 03ET1561B.
 
 <a href="https://www.bmwi.de/Navigation/EN/Home/home.html"> <img alt="BMWE" src="https://www.bmwi.de/SiteGlobals/BMWI/StyleBundles/Bilder/bmwi_logo_en.svgz?__blob=normal&v=10" height="100"> </a>
 
+[CHANGELOG.md](./CHANGELOG.md)

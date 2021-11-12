@@ -1,9 +1,6 @@
 """
 utility functions
 """
-from fuzzywuzzy import fuzz
-
-
 def create_type(inputstr: str):
     """
     Creating entity type of measurement based on datamodel and substring
@@ -48,7 +45,7 @@ def create_type(inputstr: str):
     print("max partial ratio = " + str(max_partial))
     return max_partial_entitytype
 
-# Todo this should be converted to a regular expresion string
+# TODO: this should be converted to a regular expresion string
 def str2fiware(string: str):
     """
     Fiware does not support all characters.
