@@ -468,7 +468,9 @@ class SemanticManager(BaseModel):
                     client.delete_device(device_id=instance.get_device_id())
                 except:
                     pass
-
+                print("---")
+                print(instance.build_context_entity().json(indent=2))
+                print("---")
                 client.post_device(device=instance.build_context_device())
 
                 # client.update_device(device=instance.build_context_device(),
