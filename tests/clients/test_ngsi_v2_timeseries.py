@@ -117,7 +117,7 @@ class TestTimeSeries(unittest.TestCase):
             time.sleep(1)
             entities = client.get_entities(entity_type=entities[0].type)
             for entity in entities:
-                logger.info(entity.json(indent=2))
+                logger.debug(entity.json(indent=2))
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,

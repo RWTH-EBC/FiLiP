@@ -1,5 +1,9 @@
+import logging
 import unittest
 from filip.models.ngsi_v2.timeseries import TimeSeries
+
+
+logger = logging.getLogger(__name__)
 
 
 class TestTimeSeriesModel(unittest.TestCase):
@@ -23,7 +27,7 @@ class TestTimeSeriesModel(unittest.TestCase):
                     ]
                 }
             ],
-            "entityId": "Kitchen1",
+            "entityId": "Kitchen",
             "index": [
                 "2018-01-05T15:44:34",
                 "2018-01-06T15:44:59",
@@ -49,7 +53,7 @@ class TestTimeSeriesModel(unittest.TestCase):
                     ]
                 }
             ],
-            "entityId": "Kitchen1",
+            "entityId": "Kitchen",
             "index": [
                 "2018-01-08T15:44:34",
                 "2018-01-09T15:44:59",
@@ -62,10 +66,10 @@ class TestTimeSeriesModel(unittest.TestCase):
 
     def test_extend(self):
         ts1 = TimeSeries.parse_obj(self.data1)
-        print(f"Initial data set: \n {ts1.to_pandas()}")
+        logger.debug(f"Initial data set: \n {ts1.to_pandas()}")
         ts2 = TimeSeries.parse_obj(self.data2)
         ts1.extend(ts2)
-        print(f"Extended data set: \n {ts1.to_pandas()}")
+        logger.debug(f"Extended data set: \n {ts1.to_pandas()}")
 
 
 if __name__ == '__main__':
