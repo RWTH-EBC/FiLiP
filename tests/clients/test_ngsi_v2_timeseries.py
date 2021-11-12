@@ -19,7 +19,6 @@ from filip.models.ngsi_v2.subscriptions import Message
 from filip.utils.cleanup import clean_test, clear_all
 from tests.config import settings
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -27,6 +26,7 @@ class TestTimeSeries(unittest.TestCase):
     """
     Test class for time series api client
     """
+
     def setUp(self) -> None:
         """
         Setup test data
@@ -53,6 +53,7 @@ class TestTimeSeries(unittest.TestCase):
                                  'type': 'Number'},
                     'co2': {'value': random(),
                             'type': 'Number'}}
+
         return [ContextEntity(id='Kitchen', type='Room', **create_attr()),
                 ContextEntity(id='LivingRoom', type='Room', **create_attr())]
 
@@ -87,7 +88,6 @@ class TestTimeSeries(unittest.TestCase):
                 url=settings.QL_URL,
                 fiware_header=self.fiware_header) \
                 as client:
-
             notification_message = Message(data=entities,
                                            subscriptionId="test")
             client.post_subscription(cb_url=settings.CB_URL,
@@ -109,7 +109,6 @@ class TestTimeSeries(unittest.TestCase):
                 url=settings.QL_URL,
                 fiware_header=self.fiware_header) \
                 as client:
-
             notification_message = Message(data=entities,
                                            subscriptionId="test")
             client.post_notification(notification_message)
@@ -173,7 +172,7 @@ class TestTimeSeries(unittest.TestCase):
                     logger.debug(entity_id.to_pandas())
 
                 attrs_values_type = client.get_entity_values_by_type(
-                     entity_type=entity.type)
+                    entity_type=entity.type)
                 for entity_id in attrs_values_type:
                     logger.debug(entity_id.to_pandas())
 
@@ -234,3 +233,7 @@ class TestTimeSeries(unittest.TestCase):
 
         self.ql_client.close()
         self.cb_client.close()
+
+
+if __name__ == '__main__':
+    unittest.main()

@@ -1,3 +1,8 @@
+"""
+@author Thomas Storek
+
+Tests for time series model
+"""
 import logging
 import unittest
 from filip.models.ngsi_v2.timeseries import TimeSeries
@@ -7,7 +12,15 @@ logger = logging.getLogger(__name__)
 
 
 class TestTimeSeriesModel(unittest.TestCase):
+    """
+    Test class for time series model
+    """
     def setUp(self) -> None:
+        """
+        Setup test data
+        Returns:
+            None
+        """
         self.data1 = {
             "attributes": [
                 {
@@ -62,14 +75,24 @@ class TestTimeSeriesModel(unittest.TestCase):
         }
 
     def test_model_creation(self):
+        """
+        Test model creation
+        """
         TimeSeries.parse_obj(self.data1)
 
     def test_extend(self):
+        """
+        Test merging of multiple time series objects
+        """
+
         ts1 = TimeSeries.parse_obj(self.data1)
         logger.debug(f"Initial data set: \n {ts1.to_pandas()}")
         ts2 = TimeSeries.parse_obj(self.data2)
         ts1.extend(ts2)
         logger.debug(f"Extended data set: \n {ts1.to_pandas()}")
+
+        with self.assertRaises(AssertionError):
+            ts1.extend(ts2)
 
 
 if __name__ == '__main__':
