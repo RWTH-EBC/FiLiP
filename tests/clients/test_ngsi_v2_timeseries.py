@@ -19,6 +19,7 @@ from filip.models.ngsi_v2.subscriptions import Message
 from filip.utils.cleanup import clean_test, clear_all
 from tests.config import settings
 
+
 logger = logging.getLogger(__name__)
 
 
