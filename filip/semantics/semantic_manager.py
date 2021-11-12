@@ -461,8 +461,9 @@ class SemanticManager(BaseModel):
                 client.close()
             else:
                 client = self.get_iota_client(instance_header=instance.header)
-                # todo : Not propper as we lose state info, patch_device needs
-                #  to be implemented
+                # todo : Not propper as we lose state info, we need to
+                #  selectively delete and add commands/attributes and update
+                #  static field data
                 try:
                     client.delete_device(device_id=instance.get_device_id())
                 except:
@@ -789,7 +790,30 @@ class SemanticManager(BaseModel):
 
         igraph.plot(g, **visual_style)
 
-    def merge_local_and_live_instance_state(self, instance: SemanticClass):
+    def merge_local_and_live_instance_state(self, instance: SemanticClass) ->\
+            None:
+        """
+        The live state of the instance is fetched from Fiware (if it exists)
+        and the two states are merged:
+        For each Field:
+            - each added value (compared to old_state) is added to
+              the live state
+            - each deleted value (compared to old_state) is removed from
+              the live state
+        For each Device Settings (if instance is device):
+            - If the device setting changed (compared to old_state) the
+              live setting is overwritten
+        For each Reference:
+            - each added value (compared to old_state) is added to
+              the live state
+            - each deleted value (compared to old_state) is removed from
+              the live state
+
+        The new state is directly saved in the instance
+
+        Args:
+              instance (SemanticClass): instanced to be treated
+        """
 
         def converted_attribute_values(field, attribute) -> Set:
             return {self._convert_value_fitting_for_field(field, value) for
@@ -834,6 +858,7 @@ class SemanticManager(BaseModel):
         # ------merge fields-----------------------------------------------
         # instance exists already, add all locally added and delete all
         # locally deleted values to the/from the live_state
+
         for field in instance.get_fields():
             # live_values = set(live_entity.get_attribute(field.name).value)
             live_values = converted_attribute_values(
