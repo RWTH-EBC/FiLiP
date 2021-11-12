@@ -1298,8 +1298,6 @@ class SemanticClass(BaseModel):
             for field_name in field_names:
                 if not self.semantic_manager.was_instance_deleted(identifier):
                     instance = self.semantic_manager.get_instance(identifier)
-                    print(instance.id)
-                    print(field_name)
                     instance.get_field_by_name(field_name).remove(self)
 
         self.semantic_manager.instance_registry.delete(self)
@@ -1377,6 +1375,21 @@ class SemanticClass(BaseModel):
         raise KeyError(f'{field_name} is not a valid Field for class '
                        f'{self._get_class_name()}')
 
+    def _build_reference_dict(self) -> Dict:
+        """
+        Build the reference dict that is set as value in the context entity.
+        We need to replace the . as it is a forbidden char for json keys,
+        and IPs have .'s.
+
+        The load  _context_entity_to_semantic_class loading teh object back
+        again will reverse this swap
+
+        Returns:
+            Dict, with . replaced by ---
+        """
+        return {identifier.json().replace(".", "---"): value
+                for (identifier, value) in self.references.items()}
+
     def build_context_entity(self) -> ContextEntity:
         """
         Convert the instance to a ContextEntity that contains all fields as
@@ -1394,9 +1407,7 @@ class SemanticClass(BaseModel):
         for field in self.get_fields():
             entity.add_attributes([field.build_context_attribute()])
 
-        reference_str_dict = \
-            {identifier.json(): value
-             for (identifier, value) in self.references.items()}
+        reference_str_dict = self._build_reference_dict()
 
         # add meta attributes
         entity.add_attributes([
@@ -1598,9 +1609,7 @@ class SemanticDeviceClass(SemanticClass):
             for attr in field.build_device_attributes():
                 device.add_attribute(attr)
 
-        reference_str_dict = \
-            {identifier.json(): value
-             for (identifier, value) in self.references.items()}
+        reference_str_dict = self._build_reference_dict()
 
         # add meta attributes
         device.add_attribute(

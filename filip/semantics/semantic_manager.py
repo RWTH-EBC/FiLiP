@@ -309,7 +309,8 @@ class SemanticManager(BaseModel):
         for identifier_str, prop_list in references.items():
             for prop in prop_list:
                 loaded_class.add_reference(
-                    InstanceIdentifier.parse_raw(identifier_str), prop)
+                    InstanceIdentifier.parse_raw(identifier_str.replace(
+                        "---", ".")), prop)
 
         # load device_settings into instance, if instance is a device
         if isinstance(loaded_class, SemanticDeviceClass):
@@ -468,9 +469,7 @@ class SemanticManager(BaseModel):
                     client.delete_device(device_id=instance.get_device_id())
                 except:
                     pass
-                print("---")
-                print(instance.build_context_entity().json(indent=2))
-                print("---")
+
                 client.post_device(device=instance.build_context_device())
 
                 # client.update_device(device=instance.build_context_device(),
