@@ -58,7 +58,8 @@ class TestModels(unittest.TestCase):
                                     len(self.service_paths))
             for path in self.service_paths:
                 client.fiware_service_path = path
-                client.delete_entity(entity_id=entity.id)
+                client.delete_entity(entity_id=entity.id,
+                                     entity_type=entity.type)
 
     def tearDown(self) -> None:
         # Cleanup test server

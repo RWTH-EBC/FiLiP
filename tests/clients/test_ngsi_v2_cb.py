@@ -318,7 +318,8 @@ class TestContextBroker(unittest.TestCase):
             client.get_entity_types(options='count')
             client.get_entity_types(options='values')
             client.get_entity_type(entity_type='MyType')
-            client.delete_entity(entity_id=self.entity.id)
+            client.delete_entity(entity_id=self.entity.id,
+                                 entity_type=self.entity.type)
 
     @unittest.skip('Does currently not work in CI')
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
