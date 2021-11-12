@@ -13,8 +13,8 @@ from urllib.parse import urlparse
 from filip.models import FiwareHeader
 from filip.models.ngsi_v2.iot import \
     Device, \
-    DeviceCommand, \
     DeviceAttribute, \
+    DeviceCommand, \
     ServiceGroup, \
     StaticDeviceAttribute
 from filip.models.ngsi_v2.context import NamedCommand
@@ -162,11 +162,11 @@ if __name__ == '__main__':
                 reasonCode))
         # Subscribing in on_connect() means that if we lose the connection and
         # reconnect then subscriptions will be renewed.
-        # We do subscribe to the topic that the platfrom will publish our
+        # We do subscribe to the topic that the platform will publish our
         # commands on
         client.subscribe(f"/{device.apikey}/{device.device_id}/cmd")
 
-    # Callback when the command topic is succesfully subscribed
+    # Callback when the command topic is successfully subscribed
     def on_subscribe(client, userdata, mid, granted_qos, properties=None):
         logger.info("Successfully subscribed to with QoS: %s", granted_qos)
 

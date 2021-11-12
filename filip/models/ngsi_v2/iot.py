@@ -302,7 +302,7 @@ class Device(BaseModel):
         description="Device ID that will be used to identify the device"
     )
     service: Optional[str] = Field(
-        description="Name of the service_group the device belongs to "
+        description="Name of the service the device belongs to "
                     "(will be used in the fiware-service header).",
         max_length=50
     )

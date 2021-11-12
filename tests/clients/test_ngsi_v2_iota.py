@@ -33,7 +33,7 @@ class TestAgent(unittest.TestCase):
             service_path=settings.FIWARE_SERVICEPATH)
         clear_all(fiware_header=self.fiware_header,
                   cb_url=settings.CB_URL,
-                  iota_url=settings.IOTA_URL)
+                  iota_url=settings.IOTA_JSON_URL)
         self.service_group1 = ServiceGroup(entity_type='Thing',
                                            resource='/iot/json',
                                            apikey=str(uuid4()))
@@ -54,12 +54,12 @@ class TestAgent(unittest.TestCase):
             "expressionLanguage": None
         }
         self.client = IoTAClient(
-            url=settings.IOTA_URL,
+            url=settings.IOTA_JSON_URL,
             fiware_header=self.fiware_header)
 
     def test_get_version(self):
         with IoTAClient(
-                url=settings.IOTA_URL,
+                url=settings.IOTA_JSON_URL,
                 fiware_header=self.fiware_header) as client:
             self.assertIsNotNone(client.get_version())
 
@@ -68,7 +68,7 @@ class TestAgent(unittest.TestCase):
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
-                iota_url=settings.IOTA_URL)
+                iota_url=settings.IOTA_JSON_URL)
     def test_service_group_endpoints(self):
         self.client.post_groups(service_groups=[self.service_group1,
                                                 self.service_group2])
@@ -79,7 +79,6 @@ class TestAgent(unittest.TestCase):
         self.client.get_group(resource=self.service_group1.resource,
                               apikey=self.service_group1.apikey)
 
-
     def test_device_model(self):
         device = Device(**self.device)
         self.assertEqual(self.device,
@@ -88,13 +87,13 @@ class TestAgent(unittest.TestCase):
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
                 cb_url=settings.CB_URL,
-                iota_url=settings.IOTA_URL)
+                iota_url=settings.IOTA_JSON_URL)
     def test_device_endpoints(self):
         """
         Test device creation
         """
         with IoTAClient(
-                url=settings.IOTA_URL,
+                url=settings.IOTA_JSON_URL,
                 fiware_header=self.fiware_header) as client:
             client.get_device_list()
             device = Device(**self.device)
@@ -132,7 +131,7 @@ class TestAgent(unittest.TestCase):
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
                 cb_url=settings.CB_URL,
-                iota_url=settings.IOTA_URL)
+                iota_url=settings.IOTA_JSON_URL)
     def test_metadata(self):
         """
         Test for metadata works but the api of iot agent-json seems not
@@ -152,7 +151,7 @@ class TestAgent(unittest.TestCase):
         logger.info(device.json(indent=2))
 
         with IoTAClient(
-                url=settings.IOTA_URL,
+                url=settings.IOTA_JSON_URL,
                 fiware_header=self.fiware_header) as client:
             client.post_device(device=device)
             logger.info(client.get_device(device_id=device.device_id).json(
@@ -243,4 +242,4 @@ class TestAgent(unittest.TestCase):
         self.client.close()
         clear_all(fiware_header=self.fiware_header,
                   cb_url=settings.CB_URL,
-                  iota_url=settings.IOTA_URL)
+                  iota_url=settings.IOTA_JSON_URL)

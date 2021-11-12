@@ -5,7 +5,7 @@ import logging
 from typing import Dict, List, Union
 from urllib.parse import urljoin
 import requests
-from pydantic import parse_obj_as
+from pydantic import parse_obj_as, AnyHttpUrl
 from filip import settings
 from filip.clients.base_http_client import BaseHttpClient
 from filip.models.base import FiwareHeader
@@ -17,6 +17,7 @@ from filip.models.ngsi_v2.timeseries import \
     AttributeValues, \
     TimeSeries, \
     TimeSeriesHeader
+from filip.utils.validators import validate_http_url
 
 
 logger = logging.getLogger(__name__)
@@ -133,6 +134,7 @@ class QuantumLeapClient(BaseHttpClient):
             raise
 
     def post_subscription(self,
+                          cb_url: Union[AnyHttpUrl, str],
                           entity_type: str = None,
                           entity_id: str = None,
                           id_pattern: str = None,
@@ -150,10 +152,14 @@ class QuantumLeapClient(BaseHttpClient):
         at your will. This endpoint just aims to simplify the common use case.
 
         Args:
-            entity_type (String): The type of entities for which to create a
+            cb_url:
+                url of the context broker
+            entity_type (String):
+                The type of entities for which to create a
                 subscription, so as to persist historical data of entities of
                 this type.
-            entity_id (String): Id of the entity to track. If specified, it
+            entity_id (String):
+                Id of the entity to track. If specified, it
                 takes precedence over the idPattern parameter.
             id_pattern (String): The pattern covering the entity ids for which
                 to subscribe. If not specified, QL will track all entities of
@@ -174,7 +180,8 @@ class QuantumLeapClient(BaseHttpClient):
         headers = self.headers.copy()
         params = {}
         url = urljoin(self.base_url, '/v2/subscribe')
-        orion_url = urljoin(settings.CB_URL, '/v2')
+        validate_http_url(cb_url)
+        orion_url = urljoin(cb_url, '/v2')
         ql_url = urljoin(self.base_url, '/v2')
         params.update({'orionUrl': orion_url.encode('utf-8')})
         params.update({'quantumleapUrl': ql_url.encode('utf-8')})
