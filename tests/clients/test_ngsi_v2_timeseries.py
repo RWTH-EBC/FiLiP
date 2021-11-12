@@ -197,7 +197,7 @@ class TestTimeSeries(unittest.TestCase):
                 fiware_header=self.fiware_header) \
                 as client:
 
-            num_records = 20001
+            num_records = 10001
             for i in range(num_records):
                 entities = self.__create_entities()
                 notification_message = Message(data=entities,
@@ -206,7 +206,7 @@ class TestTimeSeries(unittest.TestCase):
             time.sleep(1)
 
             for entity in entities:
-                offset = randint(0, num_records)
+                offset = randint(0, num_records - 1)
                 limit = randint(1, num_records - offset)
                 last_n = randint(1, num_records - offset)
 
