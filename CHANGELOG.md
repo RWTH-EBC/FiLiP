@@ -4,7 +4,7 @@
 - move back to more simple docs design ([#32](https://github.com/RWTH-EBC/FiLiP/issues/32))
 - added MQTT notifications ([#24](https://github.com/RWTH-EBC/FiLiP/issues/24))
 - introduced [CHANGELOG.md](https://github.com/RWTH-EBC/FiLiP/blob/development/CHANGELOG.md) with versions
-
+- semantic model features [#30](https://github.com/RWTH-EBC/FiLiP/issues/30)
 #### v0.1.7
 - introduced automatic testing
 ([#18](https://github.com/RWTH-EBC/FiLiP/issues/18))
