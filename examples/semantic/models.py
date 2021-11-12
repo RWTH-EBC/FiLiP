@@ -22,15 +22,6 @@ class Thing(SemanticClass):
 		kwargs['semantic_manager'] = semantic_manager
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
-		if not is_initialised:
-
-
-
-			pass
-
-	# Data fields
-
-	# Relation fields
 
 
 class Building(Thing):
@@ -39,20 +30,19 @@ class Building(Thing):
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
 		if not is_initialised:
-			self.goal_temperature._rules = [('exactly|1', [['integer']])]
+			self.goalTemperature._rules = [('exactly|1', [['integer']])]
 			self.name._rules = [('exactly|1', [['string']])]
 
-			self.has_floor._rules = [('min|1', [[Floor]])]
+			self.hasFloor._rules = [('min|1', [[Floor]])]
 
-			self.has_floor._instance_identifier = self.get_identifier()
-			self.goal_temperature._instance_identifier = self.get_identifier()
+			self.hasFloor._instance_identifier = self.get_identifier()
+			self.goalTemperature._instance_identifier = self.get_identifier()
 			self.name._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
-	goal_temperature: DataField = DataField(
-		name='goal_temperature',
+	goalTemperature: DataField = DataField(
+		name='goalTemperature',
 		rule='exactly 1 integer',
 		semantic_manager=semantic_manager)
 	name: DataField = DataField(
@@ -61,8 +51,8 @@ class Building(Thing):
 		semantic_manager=semantic_manager)
 
 	# Relation fields
-	has_floor: RelationField = RelationField(
-		name='has_floor',
+	hasFloor: RelationField = RelationField(
+		name='hasFloor',
 		rule='min 1 Floor',
 		semantic_manager=semantic_manager)
 
@@ -75,14 +65,13 @@ class Circuit(Thing):
 		if not is_initialised:
 			self.name._rules = [('exactly|1', [['string']])]
 
-			self.has_outlet._rules = [('min|1', [[Outlet]])]
-			self.has_producer._rules = [('min|1', [[Producer]])]
+			self.hasOutlet._rules = [('min|1', [[Outlet]])]
+			self.hasProducer._rules = [('min|1', [[Producer]])]
 
-			self.has_outlet._instance_identifier = self.get_identifier()
-			self.has_producer._instance_identifier = self.get_identifier()
+			self.hasOutlet._instance_identifier = self.get_identifier()
+			self.hasProducer._instance_identifier = self.get_identifier()
 			self.name._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	name: DataField = DataField(
@@ -91,12 +80,13 @@ class Circuit(Thing):
 		semantic_manager=semantic_manager)
 
 	# Relation fields
-	has_outlet: RelationField = RelationField(
-		name='has_outlet',
+	hasOutlet: RelationField = RelationField(
+		name='hasOutlet',
 		rule='min 1 Outlet',
+		inverse_of=['connectedTo'],
 		semantic_manager=semantic_manager)
-	has_producer: RelationField = RelationField(
-		name='has_producer',
+	hasProducer: RelationField = RelationField(
+		name='hasProducer',
 		rule='min 1 Producer',
 		semantic_manager=semantic_manager)
 
@@ -109,12 +99,11 @@ class Floor(Thing):
 		if not is_initialised:
 			self.name._rules = [('exactly|1', [['string']])]
 
-			self.has_room._rules = [('only', [[Room]])]
+			self.hasRoom._rules = [('only', [[Room]])]
 
-			self.has_room._instance_identifier = self.get_identifier()
+			self.hasRoom._instance_identifier = self.get_identifier()
 			self.name._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
 	name: DataField = DataField(
@@ -123,8 +112,8 @@ class Floor(Thing):
 		semantic_manager=semantic_manager)
 
 	# Relation fields
-	has_room: RelationField = RelationField(
-		name='has_room',
+	hasRoom: RelationField = RelationField(
+		name='hasRoom',
 		rule='only Room',
 		semantic_manager=semantic_manager)
 
@@ -136,26 +125,26 @@ class Outlet(SemanticDeviceClass, Thing):
 		super().__init__(*args, **kwargs)
 		if not is_initialised:
 
-			self.connected_to._rules = [('min|1', [[Circuit]]), ('exactly|1', [[Room]])]
+			self.connectedTo._rules = [('min|1', [[Circuit]]), ('exactly|1', [[Room]])]
 
-			self.connected_to._instance_identifier = self.get_identifier()
-			self.control_command._instance_identifier = self.get_identifier()
+			self.connectedTo._instance_identifier = self.get_identifier()
+			self.controlCommand._instance_identifier = self.get_identifier()
 			self.state._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
-	control_command: CommandField = CommandField(
-		name='control_command',
+	controlCommand: CommandField = CommandField(
+		name='controlCommand',
 		semantic_manager=semantic_manager)
 	state: DeviceAttributeField = DeviceAttributeField(
 		name='state',
 		semantic_manager=semantic_manager)
 
 	# Relation fields
-	connected_to: RelationField = RelationField(
-		name='connected_to',
+	connectedTo: RelationField = RelationField(
+		name='connectedTo',
 		rule='min 1 Circuit, exactly 1 Room',
+		inverse_of=['hasOutlet'],
 		semantic_manager=semantic_manager)
 
 
@@ -167,16 +156,13 @@ class Producer(SemanticDeviceClass, Thing):
 		if not is_initialised:
 			self.name._rules = [('exactly|1', [['string']])]
 
-
-			self.control_command._instance_identifier = self.get_identifier()
+			self.controlCommand._instance_identifier = self.get_identifier()
 			self.name._instance_identifier = self.get_identifier()
 			self.state._instance_identifier = self.get_identifier()
 
-			pass
-
 	# Data fields
-	control_command: CommandField = CommandField(
-		name='control_command',
+	controlCommand: CommandField = CommandField(
+		name='controlCommand',
 		semantic_manager=semantic_manager)
 	name: DataField = DataField(
 		name='name',
@@ -185,8 +171,6 @@ class Producer(SemanticDeviceClass, Thing):
 	state: DeviceAttributeField = DeviceAttributeField(
 		name='state',
 		semantic_manager=semantic_manager)
-
-	# Relation fields
 
 
 class AirProducer(Producer):
@@ -197,16 +181,13 @@ class AirProducer(Producer):
 		if not is_initialised:
 			self.name._rules = [('exactly|1', [['string']])]
 
-
-			self.control_command._instance_identifier = self.get_identifier()
+			self.controlCommand._instance_identifier = self.get_identifier()
 			self.name._instance_identifier = self.get_identifier()
 			self.state._instance_identifier = self.get_identifier()
 
-			pass
-
 	# Data fields
-	control_command: CommandField = CommandField(
-		name='control_command',
+	controlCommand: CommandField = CommandField(
+		name='controlCommand',
 		semantic_manager=semantic_manager)
 	name: DataField = DataField(
 		name='name',
@@ -215,8 +196,6 @@ class AirProducer(Producer):
 	state: DeviceAttributeField = DeviceAttributeField(
 		name='state',
 		semantic_manager=semantic_manager)
-
-	# Relation fields
 
 
 class ColdProducer(Producer):
@@ -227,16 +206,13 @@ class ColdProducer(Producer):
 		if not is_initialised:
 			self.name._rules = [('exactly|1', [['string']])]
 
-
-			self.control_command._instance_identifier = self.get_identifier()
+			self.controlCommand._instance_identifier = self.get_identifier()
 			self.name._instance_identifier = self.get_identifier()
 			self.state._instance_identifier = self.get_identifier()
 
-			pass
-
 	# Data fields
-	control_command: CommandField = CommandField(
-		name='control_command',
+	controlCommand: CommandField = CommandField(
+		name='controlCommand',
 		semantic_manager=semantic_manager)
 	name: DataField = DataField(
 		name='name',
@@ -245,8 +221,6 @@ class ColdProducer(Producer):
 	state: DeviceAttributeField = DeviceAttributeField(
 		name='state',
 		semantic_manager=semantic_manager)
-
-	# Relation fields
 
 
 class HeatProducer(Producer):
@@ -257,16 +231,13 @@ class HeatProducer(Producer):
 		if not is_initialised:
 			self.name._rules = [('exactly|1', [['string']])]
 
-
-			self.control_command._instance_identifier = self.get_identifier()
+			self.controlCommand._instance_identifier = self.get_identifier()
 			self.name._instance_identifier = self.get_identifier()
 			self.state._instance_identifier = self.get_identifier()
 
-			pass
-
 	# Data fields
-	control_command: CommandField = CommandField(
-		name='control_command',
+	controlCommand: CommandField = CommandField(
+		name='controlCommand',
 		semantic_manager=semantic_manager)
 	name: DataField = DataField(
 		name='name',
@@ -276,8 +247,6 @@ class HeatProducer(Producer):
 		name='state',
 		semantic_manager=semantic_manager)
 
-	# Relation fields
-
 
 class Room(Thing):
 
@@ -285,26 +254,25 @@ class Room(Thing):
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
 		if not is_initialised:
-			self.goal_temperature._rules = [('exactly|1', [['integer']])]
+			self.goalTemperature._rules = [('exactly|1', [['integer']])]
 			self.name._rules = [('exactly|1', [['string']])]
 			self.volume._rules = [('some', [['rational']])]
 
-			self.has_outlet._rules = [('only', [[Outlet]])]
-			self.has_sensor._rules = [('only', [[Sensor]])]
-			self.has_tenant._rules = [('only', [[Tenant]])]
+			self.hasOutlet._rules = [('only', [[Outlet]])]
+			self.hasSensor._rules = [('only', [[Sensor]])]
+			self.hasTenant._rules = [('only', [[Tenant]])]
 
-			self.has_outlet._instance_identifier = self.get_identifier()
-			self.has_sensor._instance_identifier = self.get_identifier()
-			self.has_tenant._instance_identifier = self.get_identifier()
-			self.goal_temperature._instance_identifier = self.get_identifier()
+			self.hasOutlet._instance_identifier = self.get_identifier()
+			self.hasSensor._instance_identifier = self.get_identifier()
+			self.hasTenant._instance_identifier = self.get_identifier()
+			self.goalTemperature._instance_identifier = self.get_identifier()
 			self.name._instance_identifier = self.get_identifier()
 			self.volume._instance_identifier = self.get_identifier()
 
-			pass
 
 	# Data fields
-	goal_temperature: DataField = DataField(
-		name='goal_temperature',
+	goalTemperature: DataField = DataField(
+		name='goalTemperature',
 		rule='exactly 1 integer',
 		semantic_manager=semantic_manager)
 	name: DataField = DataField(
@@ -317,16 +285,17 @@ class Room(Thing):
 		semantic_manager=semantic_manager)
 
 	# Relation fields
-	has_outlet: RelationField = RelationField(
-		name='has_outlet',
+	hasOutlet: RelationField = RelationField(
+		name='hasOutlet',
 		rule='only Outlet',
+		inverse_of=['connectedTo'],
 		semantic_manager=semantic_manager)
-	has_sensor: RelationField = RelationField(
-		name='has_sensor',
+	hasSensor: RelationField = RelationField(
+		name='hasSensor',
 		rule='only Sensor',
 		semantic_manager=semantic_manager)
-	has_tenant: RelationField = RelationField(
-		name='has_tenant',
+	hasTenant: RelationField = RelationField(
+		name='hasTenant',
 		rule='only Tenant',
 		semantic_manager=semantic_manager)
 
@@ -340,12 +309,9 @@ class Sensor(SemanticDeviceClass, Thing):
 			self.measures._rules = [('exactly|1', [['MeasurementType']])]
 			self.unit._rules = [('exactly|1', [['Unit']])]
 
-
 			self.measurement._instance_identifier = self.get_identifier()
 			self.measures._instance_identifier = self.get_identifier()
 			self.unit._instance_identifier = self.get_identifier()
-
-			pass
 
 	# Data fields
 	measurement: DeviceAttributeField = DeviceAttributeField(
@@ -360,8 +326,6 @@ class Sensor(SemanticDeviceClass, Thing):
 		rule='exactly 1 Unit',
 		semantic_manager=semantic_manager)
 
-	# Relation fields
-
 
 class Tenant(Thing):
 
@@ -369,18 +333,15 @@ class Tenant(Thing):
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
 		if not is_initialised:
-			self.goal_temperature._rules = [('exactly|1', [['integer']])]
+			self.goalTemperature._rules = [('exactly|1', [['integer']])]
 			self.name._rules = [('exactly|1', [['string']])]
 
-
-			self.goal_temperature._instance_identifier = self.get_identifier()
+			self.goalTemperature._instance_identifier = self.get_identifier()
 			self.name._instance_identifier = self.get_identifier()
 
-			pass
-
 	# Data fields
-	goal_temperature: DataField = DataField(
-		name='goal_temperature',
+	goalTemperature: DataField = DataField(
+		name='goalTemperature',
 		rule='exactly 1 integer',
 		semantic_manager=semantic_manager)
 	name: DataField = DataField(
@@ -388,17 +349,12 @@ class Tenant(Thing):
 		rule='exactly 1 string',
 		semantic_manager=semantic_manager)
 
-	# Relation fields
-
 
 # ---------Individuals--------- #
 
 
 class ExampleIndividual(SemanticIndividual):
 	_parent_classes: List[type] = []
-
-
-
 
 
 # ---------Datatypes--------- #

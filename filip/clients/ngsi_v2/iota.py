@@ -378,7 +378,7 @@ class IoTAClient(BaseHttpClient):
             if res.ok:
                 self.logger.info("Device '%s' successfully updated!",
                                  device.device_id)
-            elif (res.status_code == 409) & (add is True):
+            elif (res.status_code == 404) & (add is True):
                 self.post_device(device=device, update=False)
             else:
                 res.raise_for_status()

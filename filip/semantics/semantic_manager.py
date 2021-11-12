@@ -271,8 +271,6 @@ class SemanticManager(BaseModel):
                                                        enforce_new=True)
         loaded_class.old_state.state = entity
 
-        # todo catch if Fiware contains more fields than the model has?
-
         # load values of class from the context_entity into the instance
         for field in loaded_class.get_fields():
             field.clear()  # remove default values, from hasValue relations
@@ -471,6 +469,9 @@ class SemanticManager(BaseModel):
                     pass
 
                 client.post_device(device=instance.build_context_device())
+
+                # client.update_device(device=instance.build_context_device(),
+                #                      add=True)
                 client.close()
 
         # update old_state

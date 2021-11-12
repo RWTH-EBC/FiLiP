@@ -120,7 +120,54 @@ class TestSemanticModels(unittest.TestCase):
         class13.objProp2.add(Individual1())
         self.assertTrue(class13.objProp2.is_valid())
 
-        # todo test statement cases: min, max,...
+        # Test statement cases:
+
+        # min
+        c4 = Class4(id="c4")
+        self.assertFalse(c4.objProp4.is_valid())
+        c4.objProp4.add(c4)
+        self.assertFalse(c4.objProp4.is_valid())
+        c4.objProp4.add(Class1(id="c1"))
+        self.assertTrue(c4.objProp4.is_valid())
+        c4.objProp4.add(Class1(id="c1"))
+        self.assertTrue(c4.objProp4.is_valid())
+
+        # max
+        from models import Close_Command, State, Open_Close_State, Measurement
+        ccc = Close_Command(id="ccc")
+        self.assertTrue(ccc.Has_Description.is_valid())
+        ccc.Has_Description.add("2")
+        self.assertTrue(ccc.Has_Description.is_valid())
+        ccc.Has_Description.add("3")
+        self.assertFalse(ccc.Has_Description.is_valid())
+
+        # only
+        self.assertTrue(ccc.Acts_Upon.is_valid())
+        ccc.Acts_Upon.add(State(id="s1"))
+        self.assertFalse(ccc.Acts_Upon.is_valid())
+        ccc.Acts_Upon.clear()
+        ccc.Acts_Upon.add(Open_Close_State())
+        self.assertTrue(ccc.Acts_Upon.is_valid())
+        ccc.Acts_Upon.add(Open_Close_State())
+        self.assertTrue(ccc.Acts_Upon.is_valid())
+        ccc.Acts_Upon.add(ccc)
+        self.assertFalse(ccc.Acts_Upon.is_valid())
+
+        # some
+        c13 = Class13(id="c13")
+        self.assertFalse(c13.objProp3.is_valid())
+        c13.objProp3.add(ccc)
+        self.assertFalse(c13.objProp3.is_valid())
+        c13.objProp3.add(c13)
+        self.assertTrue(c13.objProp3.is_valid())
+
+        # exactly
+        m = Measurement(id="m")
+        self.assertFalse(m.Has_Value.is_valid())
+        m.Has_Value.add(1.2)
+        self.assertTrue(m.Has_Value.is_valid())
+        m.Has_Value.add(5)
+        self.assertFalse(m.Has_Value.is_valid())
 
     def test_5_model_data_field_validation(self):
         """
@@ -137,9 +184,7 @@ class TestSemanticModels(unittest.TestCase):
         self.assertFalse(class3.dataProp1.is_valid())
         class3.dataProp1.add("1")
         class3.dataProp1.remove("12")
-        print(class3.dataProp1)
         self.assertTrue(class3.dataProp1.is_valid())
-
         self.assertTrue(2 in Class1().dataProp2.get_all())
 
     def test_6_back_referencing(self):
@@ -486,15 +531,20 @@ class TestSemanticModels(unittest.TestCase):
                             attribute_type=DeviceAttributeType.lazy))
 
         class3_.dataProp1.add("TEST!!!")
-        print()
-        print(class3_.commandProp)
-        print()
         semantic_manager.save_state(assert_validity=False)
-        print(class3_.commandProp)
         self.clear_registry()
         with semantic_manager.get_iota_client(class3_.header) as client:
             device = client.get_device(device_id=class3_.get_device_id())
-            print(device)
+            self.assertTrue(len(device.commands), 1)
+            self.assertTrue(len(device.attributes), 1)
+            for command in device.commands:
+                self.assertTrue(command.name, "NEW_COMMAND")
+            for attr in device.attributes:
+                self.assertTrue(attr.name, "NEW_ATT")
+
+            for static_attr in device.static_attributes:
+                if static_attr.name == "dataProp1":
+                    self.assertTrue(static_attr.value, ["TEST!!!"])
 
 
 

@@ -134,10 +134,10 @@ if __name__ == '__main__':
 
     # To manipulate data inside a field all standard set interactions are
     # given:
-    my_building.goal_temperature.add(23)
-    my_building.goal_temperature.update([12])
-    my_building.goal_temperature.remove(23)
-    my_building.goal_temperature.clear()
+    my_building.goalTemperature.add(23)
+    my_building.goalTemperature.update([12])
+    my_building.goalTemperature.remove(23)
+    my_building.goalTemperature.clear()
 
     # 3.1 RuleFields: Contains 1 or multiple rules that need to be fulfilled
     # for the field to be valid. RuleFields are separated into Relation- and
@@ -174,7 +174,7 @@ if __name__ == '__main__':
     # type "simple" was converted to this field type. (All for normal classes)
     # As values it takes basic types as string, int, bool,..
 
-    my_building.goal_temperature.add(23)
+    my_building.goalTemperature.add(23)
     my_building.name.add("Main Building")
 
     # we can check again if all DataFields are now valid:
@@ -201,8 +201,8 @@ if __name__ == '__main__':
     # converted to this field type.
     # As values it takes instances of classes
 
-    my_building.has_floor.add(my_floor)
-    my_building.has_floor.add(Floor(id="second_floor"))
+    my_building.hasFloor.add(my_floor)
+    my_building.hasFloor.add(Floor(id="second_floor"))
 
     # we can check again if all RelationFields are now valid:
     print("\u0332".join("RelationFields of my_building:"))
@@ -216,20 +216,20 @@ if __name__ == '__main__':
     # But we can access the instances comfortably by calling get_all or even
     # iterating over the field:
 
-    all_instances = my_building.has_floor.get_all()
+    all_instances = my_building.hasFloor.get_all()
 
-    for instance in my_building.has_floor:
-        instance.has_room.add(Room(id="r1"))
+    for instance in my_building.hasFloor:
+        instance.hasRoom.add(Room(id="r1"))
 
-    # we added my_floor as first value into has_floor, therefore one_instance
+    # we added my_floor as first value into hasFloor, therefore one_instance
     # now points to exactly the same object as my_floor
 
-    # as the value inside the has_floor field is dynamically set, we can not
+    # as the value inside the hasFloor field is dynamically set, we can not
     # use type hints when working with it. But if we assign a value and then
     # inspect my_floor we see that they are correctly linked.
 
-    print("\u0332".join("Inspect my_floor.has_room:"))
-    print(my_floor.has_room)
+    print("\u0332".join("Inspect my_floor.hasRoom:"))
+    print(my_floor.hasRoom)
     print("")
 
     # DO NOT CAST an instance to a type ex: Floor(instance) this will result
@@ -239,7 +239,7 @@ if __name__ == '__main__':
     # them via rules. Instances are globally static, final  classes,
     # each instance of an Individual is equal
 
-    my_floor.has_room.add(ExampleIndividual())
+    my_floor.hasRoom.add(ExampleIndividual())
 
     # An individual is not saved as Identifier as it is not directly saved in
     # Fiware instead it is only saved as string, as a
@@ -247,7 +247,7 @@ if __name__ == '__main__':
 
     print("\u0332".join("Individual internal saving:"))
     for field in my_building.get_relation_fields():
-        print(my_floor.has_room.get_all_raw())
+        print(my_floor.hasRoom.get_all_raw())
     print("")
 
     # To each field each Instance or Individual can only be added once.
@@ -260,10 +260,10 @@ if __name__ == '__main__':
     # RelationFields can have a property inverse_of. (Linked to the
     # object_property property "inverse_of" of owl ontologies)
     # Example:
-    # in_building is the inverse_of has_room and vis-versa
+    # in_building is the inverse_of hasRoom and vis-versa
     # If the instance room1 adds the instance building1 as a value int the
     # RelationField in_building, room1 will be automatically added as value
-    # in the field has_room of building1.
+    # in the field hasRoom of building1.
     # This mechanism is not executed if the inverse field does not exist in
     # the added instance.
     # The same logic is also applied to the deletion of value from a
@@ -306,9 +306,9 @@ if __name__ == '__main__':
     # - name: The internal name that the specific device uses for this purpose
     from filip.semantics.semantic_models import Command
     c1 = Command(name="open")
-    my_outlet.control_command.add(c1)
+    my_outlet.controlCommand.add(c1)
 
-    my_floor.has_room.add(my_building)
+    my_floor.hasRoom.add(my_building)
     print(my_building.build_context_entity().json(indent=2))
 
     # After the current state was saved. We can interact with the command. It
@@ -405,33 +405,32 @@ if __name__ == '__main__':
     # where no active scopes are open.
 
     # We now model the state a bit so that it can be saved
-    my_floor.has_room.clear()
+    my_floor.hasRoom.clear()
     my_floor.name.add("Office 201")
 
     Sensor(id="sensor1").measures.set([MeasurementType.value_Air_Quality])
     Sensor(id="sensor1").unit.add(Unit.value_Relative_Humidity)
 
-    my_outlet.connected_to.set([Circuit(id="c1"), Room(id="r1")])
+    my_outlet.connectedTo.set([Circuit(id="c1"), Room(id="r1")])
     my_outlet.device_settings.endpoint = "http://test.com"
     my_outlet.device_settings.transport = TransportProtocol.MQTT
 
     Floor(id="second_floor").name.add("Second Floor")
 
     r1 = Room(id="r1")
-    r1.goal_temperature.set(["21"])
+    r1.goalTemperature.set(["21"])
     r1.name.add("Room45")
     r1.volume.add(80)
-    r1.has_outlet.add(my_outlet)
+    r1.hasOutlet.add(my_outlet)
 
-    Circuit(id="c1").has_outlet.add(my_outlet)
+    Circuit(id="c1").hasOutlet.add(my_outlet)
     Circuit(id="c1").name.set(["MainCircuit"])
     p1 = Producer(id="p1")
-    Circuit(id="c1").has_producer.add(p1)
+    Circuit(id="c1").hasProducer.add(p1)
 
     p1.name.add("CHU")
     p1.device_settings.endpoint = "http://test2.com"
     p1.device_settings.transport = TransportProtocol.AMQP
-
 
     # Now our state is completely valid and we can save:
     semantic_manager.save_state(assert_validity=True)
@@ -444,6 +443,10 @@ if __name__ == '__main__':
     # holds it old_state internally on save_state() the old_state gets
     # compared to the current state of the instance and only the changes as
     # saved as small grained as possible
+
+    # The state is merged locally before posting it on Fiware. After
+    # .save_state() the values hold inside the local individuals can be
+    # changed, as they now hold the same values as the live state on Fiware
 
     # 4.3 Deleting instances
 
