@@ -5,7 +5,7 @@ Tests for time series api client aka QuantumLeap
 """
 import logging
 import unittest
-from random import random
+from random import random, randint
 
 import requests
 import time
@@ -145,45 +145,80 @@ class TestTimeSeries(unittest.TestCase):
                                         entity_type='MyType')
             for entity in entities:
                 # get by id
-                attrs_id = client.get_entity_by_id(entity_id=entities[0].id,
+                attrs_id = client.get_entity_by_id(entity_id=entity.id,
                                                    aggr_period='minute',
                                                    aggr_method='avg',
                                                    attrs='temperature,co2')
-                logger.info(attrs_id.json(indent=2))
-                logger.info(attrs_id.to_pandas())
+                logger.debug(attrs_id.json(indent=2))
+                logger.debug(attrs_id.to_pandas())
 
                 attrs_values_id = client.get_entity_values_by_id(
                     entity_id=entity.id)
-                logger.info(attrs_values_id.to_pandas())
+                logger.debug(attrs_values_id.to_pandas())
 
                 attr_id = client.get_entity_attr_by_id(
                     entity_id=entity.id, attr_name="temperature")
-                logger.info(attr_id.to_pandas())
+                logger.debug(attr_id.to_pandas())
 
                 attr_values_id = client.get_entity_attr_values_by_id(
                     entity_id=entity.id, attr_name="temperature")
-                logger.info(attr_values_id.to_pandas())
+                logger.debug(attr_values_id.to_pandas())
 
                 # get by type
                 attrs_type = client.get_entity_by_type(
                     entity_type=entity.type)
                 for entity_id in attrs_type:
-                    logger.info(entity_id.to_pandas())
+                    logger.debug(entity_id.to_pandas())
 
                 attrs_values_type = client.get_entity_values_by_type(
                      entity_type=entity.type)
                 for entity_id in attrs_values_type:
-                    logger.info(entity_id.to_pandas())
+                    logger.debug(entity_id.to_pandas())
 
                 attr_type = client.get_entity_attr_by_type(
                     entity_type=entity.type, attr_name="temperature")
                 for entity_id in attr_type:
-                    logger.info(entity_id.to_pandas())
+                    logger.debug(entity_id.to_pandas())
 
                 attr_values_type = client.get_entity_attr_values_by_type(
                     entity_type=entity.type, attr_name="temperature")
                 for entity_id in attr_values_type:
-                    logger.info(entity_id.to_pandas())
+                    logger.debug(entity_id.to_pandas())
+
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                ql_url=settings.QL_URL,
+                )
+    def test_test_query_endpoints_with_args(self):
+        with QuantumLeapClient(
+                url=settings.QL_URL,
+                fiware_header=self.fiware_header) \
+                as client:
+
+            num_records = 20001
+            for i in range(num_records):
+                entities = self.__create_entities()
+                notification_message = Message(data=entities,
+                                               subscriptionId="test")
+                client.post_notification(notification_message)
+            time.sleep(1)
+
+            for entity in entities:
+                offset = randint(0, num_records)
+                limit = randint(1, num_records - offset)
+                last_n = randint(1, num_records - offset)
+
+                # get by id
+                attrs_id = client.get_entity_by_id(entity_id=entity.id,
+                                                   attrs='temperature,co2',
+                                                   last_n=last_n,
+                                                   limit=limit,
+                                                   offset=offset)
+
+                logger.debug(attrs_id.json(indent=2))
+                logger.debug(attrs_id.to_pandas())
+
+                self.assertEqual(len(attrs_id.index), min(limit, last_n))
 
     def tearDown(self) -> None:
         """

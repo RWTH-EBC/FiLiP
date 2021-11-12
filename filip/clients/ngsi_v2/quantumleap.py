@@ -3,7 +3,9 @@ TimeSeries Module for QuantumLeap API Client
 """
 import logging
 from math import inf
-from typing import Dict, List, Union
+from collections import deque
+from itertools import count
+from typing import Dict, List, Union, Deque
 from urllib.parse import urljoin
 import requests
 from pydantic import parse_obj_as
@@ -282,7 +284,7 @@ class QuantumLeapClient(BaseHttpClient):
                         coords: str = None,
                         attrs: str = None,
                         aggr_scope: Union[str, AggrScope] = None
-                        ) -> List[Dict]:
+                        ) -> Deque[Dict]:
         """
         Private Function to call respective API endpoints, chops large
         requests into multiple single requests and merges the
@@ -316,8 +318,9 @@ class QuantumLeapClient(BaseHttpClient):
         """
         params = {}
         headers = self.headers.copy()
-        max_entries_per_request = 5
-        list_of_res: List[Dict] = []
+        max_records_per_request = 10000
+        # create a double ending queue
+        res_q: Deque[Dict] = deque([])
 
         if options:
             params.update({'options': options})
@@ -333,16 +336,10 @@ class QuantumLeapClient(BaseHttpClient):
             params.update({'fromDate': from_date})
         if to_date:
             params.update({'toDate': to_date})
-        if last_n:
-            params.update({'lastN': last_n})
         # These values are required for the integrated pagination mechanism
+        # maximum items per request
         if limit is None:
             limit = inf
-        if limit > max_entries_per_request:
-            params[
-                'limit'] = max_entries_per_request  # maximum items per request
-        else:
-            params['limit'] = limit
         if offset is None:
             offset = 0
         if georel:
@@ -361,20 +358,34 @@ class QuantumLeapClient(BaseHttpClient):
 
         # This loop will chop large requests into smaller junks.
         # The individual functions will then merge the final response models
-        while offset < limit:
+        for i in count(0, max_records_per_request):
             try:
-                params['offset'] = offset
+                params['offset'] = offset + i
+
+                params['limit'] = min(limit - i, max_records_per_request)
+                if params['limit'] <= 0:
+                    break
+
+                if last_n:
+                    params['lastN'] = min(last_n - i, max_records_per_request)
+                    if params['lastN'] <= 0:
+                        break
+
                 res = self.get(url=url, params=params, headers=headers)
+
                 if res.ok:
                     self.logger.debug('Received: %s', res.json())
-                    list_of_res.append(res.json())
+                    # revert append direction when using last_n
+                    if last_n:
+                        res_q.appendleft(res.json())
+                    else:
+                        res_q.append(res.json())
                 res.raise_for_status()
-                offset = offset + max_entries_per_request
 
             except requests.exceptions.RequestException as err:
                 if err.response.status_code == 404 and \
                         err.response.json().get('error') == 'Not Found' and \
-                        len(list_of_res) > 0:
+                        len(res_q) > 0:
                     break
                 else:
                     msg = "Could not load entity data"
@@ -382,7 +393,7 @@ class QuantumLeapClient(BaseHttpClient):
                     raise
 
         self.logger.info("Successfully retrieved entity data")
-        return list_of_res
+        return res_q
 
     # v2/entities
     def get_entities(self, *,
@@ -522,7 +533,7 @@ class QuantumLeapClient(BaseHttpClient):
             TimeSeries
         """
         url = urljoin(self.base_url, f'/v2/entities/{entity_id}')
-        list_of_res = self.__query_builder(url=url,
+        res_q = self.__query_builder(url=url,
                                            attrs=attrs,
                                            options=options,
                                            entity_type=entity_type,
@@ -537,8 +548,8 @@ class QuantumLeapClient(BaseHttpClient):
                                            geometry=geometry,
                                            coords=coords)
         # merge response chunks
-        res = TimeSeries.parse_obj(list_of_res[0])
-        for item in list_of_res[1:]:
+        res = TimeSeries.parse_obj(res_q.popleft())
+        for item in res_q:
             res.extend(TimeSeries.parse_obj(item))
 
         return res
@@ -592,7 +603,7 @@ class QuantumLeapClient(BaseHttpClient):
             Response Model
         """
         url = urljoin(self.base_url, f'/v2/entities/{entity_id}/value')
-        list_of_res = self.__query_builder(url=url,
+        res_q = self.__query_builder(url=url,
                                            attrs=attrs,
                                            options=options,
                                            entity_type=entity_type,
@@ -608,8 +619,8 @@ class QuantumLeapClient(BaseHttpClient):
                                            coords=coords)
 
         # merge response chunks
-        res = TimeSeries(entityId=entity_id, **list_of_res[0])
-        for item in list_of_res[1:]:
+        res = TimeSeries(entityId=entity_id, **res_q.popleft())
+        for item in res_q:
             res.extend(TimeSeries(entityId=entity_id, **item))
 
         return res
@@ -664,7 +675,7 @@ class QuantumLeapClient(BaseHttpClient):
         """
         url = urljoin(self.base_url, f'/v2/entities/{entity_id}/attrs'
                                      f'/{attr_name}')
-        res = self.__query_builder(url=url,
+        req_q = self.__query_builder(url=url,
                                    entity_id=entity_id,
                                    options=options,
                                    entity_type=entity_type,
@@ -680,15 +691,16 @@ class QuantumLeapClient(BaseHttpClient):
                                    coords=coords)
 
         # merge response chunks
-        response = TimeSeries(entityId=entity_id,
-                              index=res[0].get('index'),
-                              attributes=[AttributeValues(**res[0])])
-        for item in res[1:]:
-            response.extend(TimeSeries(entityId=entity_id,
+        first = req_q.popleft()
+        res = TimeSeries(entityId=entity_id,
+                              index=first.get('index'),
+                              attributes=[AttributeValues(**first)])
+        for item in req_q:
+            res.extend(TimeSeries(entityId=entity_id,
                                        index=item.get('index'),
                                        attributes=[AttributeValues(**item)]))
 
-        return response
+        return res
 
     # /entities/{entityId}/attrs/{attrName}/value
     def get_entity_attr_values_by_id(self,
@@ -739,7 +751,7 @@ class QuantumLeapClient(BaseHttpClient):
         """
         url = urljoin(self.base_url, f'v2/entities/{entity_id}/attrs'
                                      f'/{attr_name}/value')
-        list_of_res = self.__query_builder(url=url,
+        res_q = self.__query_builder(url=url,
                                            options=options,
                                            entity_type=entity_type,
                                            aggr_method=aggr_method,
@@ -753,12 +765,13 @@ class QuantumLeapClient(BaseHttpClient):
                                            geometry=geometry,
                                            coords=coords)
         # merge response chunks
+        first = res_q.popleft()
         res = TimeSeries(
             entityId=entity_id,
-            index=list_of_res[0].get('index'),
+            index=first.get('index'),
             attributes=[AttributeValues(attrName=attr_name,
-                                        values=list_of_res[0].get('values'))])
-        for item in list_of_res[1:]:
+                                        values=first.get('values'))])
+        for item in res_q:
             res.extend(
                 TimeSeries(
                     entityId=entity_id,
@@ -793,7 +806,7 @@ class QuantumLeapClient(BaseHttpClient):
         this month in all the weather stations.
         """
         url = urljoin(self.base_url, f'/v2/types/{entity_type}')
-        list_of_res = self.__query_builder(url=url,
+        res_q = self.__query_builder(url=url,
                                            entity_id=entity_id,
                                            attrs=attrs,
                                            options=options,
@@ -811,9 +824,9 @@ class QuantumLeapClient(BaseHttpClient):
 
         # merge chunks of response
         res = [TimeSeries(entityType=entity_type, **item)
-               for item in list_of_res[0].get('entities')]
+               for item in res_q.popleft().get('entities')]
 
-        for chunk in list_of_res[1:]:
+        for chunk in res_q:
             chunk = [TimeSeries(entityType=entity_type, **item)
                      for item in chunk.get('entities')]
             for new, old in zip(chunk, res):
@@ -847,27 +860,27 @@ class QuantumLeapClient(BaseHttpClient):
         all the weather stations.
         """
         url = urljoin(self.base_url, f'/v2/types/{entity_type}/value')
-        list_of_res = self.__query_builder(url=url,
-                                           entity_id=entity_id,
-                                           attrs=attrs,
-                                           options=options,
-                                           entity_type=entity_type,
-                                           aggr_method=aggr_method,
-                                           aggr_period=aggr_period,
-                                           from_date=from_date,
-                                           to_date=to_date,
-                                           last_n=last_n,
-                                           limit=limit,
-                                           offset=offset,
-                                           georel=georel,
-                                           geometry=geometry,
-                                           coords=coords,
-                                           aggr_scope=aggr_scope)
+        res_q = self.__query_builder(url=url,
+                                     entity_id=entity_id,
+                                     attrs=attrs,
+                                     options=options,
+                                     entity_type=entity_type,
+                                     aggr_method=aggr_method,
+                                     aggr_period=aggr_period,
+                                     from_date=from_date,
+                                     to_date=to_date,
+                                     last_n=last_n,
+                                     limit=limit,
+                                     offset=offset,
+                                     georel=georel,
+                                     geometry=geometry,
+                                     coords=coords,
+                                     aggr_scope=aggr_scope)
         # merge chunks of response
         res = [TimeSeries(entityType=entity_type, **item)
-               for item in list_of_res[0].get('values')]
+               for item in res_q.popleft().get('values')]
 
-        for chunk in list_of_res[1:]:
+        for chunk in res_q:
             chunk = [TimeSeries(entityType=entity_type, **item)
                      for item in chunk.get('values')]
             for new, old in zip(chunk, res):
@@ -935,33 +948,34 @@ class QuantumLeapClient(BaseHttpClient):
         """
         url = urljoin(self.base_url, f'/v2/types/{entity_type}/attrs'
                                      f'/{attr_name}')
-        list_of_res = self.__query_builder(url=url,
-                                           entity_id=entity_id,
-                                           options=options,
-                                           entity_type=entity_type,
-                                           aggr_method=aggr_method,
-                                           aggr_period=aggr_period,
-                                           from_date=from_date,
-                                           to_date=to_date,
-                                           last_n=last_n,
-                                           limit=limit,
-                                           offset=offset,
-                                           georel=georel,
-                                           geometry=geometry,
-                                           coords=coords,
-                                           aggr_scope=aggr_scope)
+        res_q = self.__query_builder(url=url,
+                                     entity_id=entity_id,
+                                     options=options,
+                                     entity_type=entity_type,
+                                     aggr_method=aggr_method,
+                                     aggr_period=aggr_period,
+                                     from_date=from_date,
+                                     to_date=to_date,
+                                     last_n=last_n,
+                                     limit=limit,
+                                     offset=offset,
+                                     georel=georel,
+                                     geometry=geometry,
+                                     coords=coords,
+                                     aggr_scope=aggr_scope)
 
         # merge chunks of response
+        first = res_q.popleft()
         res = [TimeSeries(index=item.get('index'),
                           entityType=entity_type,
                           entityId=item.get('entityId'),
                           attributes=[
                               AttributeValues(
-                                  attrName=list_of_res[0].get('attrName'),
+                                  attrName=first.get('attrName'),
                                   values=item.get('values'))])
-               for item in list_of_res[0].get('entities')]
+               for item in first.get('entities')]
 
-        for chunk in list_of_res[1:]:
+        for chunk in res_q:
             chunk = [TimeSeries(index=item.get('index'),
                                 entityType=entity_type,
                                 entityId=item.get('entityId'),
@@ -1029,21 +1043,21 @@ class QuantumLeapClient(BaseHttpClient):
         """
         url = urljoin(self.base_url, f'/v2/types/{entity_type}/attrs/'
                                      f'{attr_name}/value')
-        list_of_res = self.__query_builder(url=url,
-                                           entity_id=entity_id,
-                                           options=options,
-                                           entity_type=entity_type,
-                                           aggr_method=aggr_method,
-                                           aggr_period=aggr_period,
-                                           from_date=from_date,
-                                           to_date=to_date,
-                                           last_n=last_n,
-                                           limit=limit,
-                                           offset=offset,
-                                           georel=georel,
-                                           geometry=geometry,
-                                           coords=coords,
-                                           aggr_scope=aggr_scope)
+        res_q = self.__query_builder(url=url,
+                                     entity_id=entity_id,
+                                     options=options,
+                                     entity_type=entity_type,
+                                     aggr_method=aggr_method,
+                                     aggr_period=aggr_period,
+                                     from_date=from_date,
+                                     to_date=to_date,
+                                     last_n=last_n,
+                                     limit=limit,
+                                     offset=offset,
+                                     georel=georel,
+                                     geometry=geometry,
+                                     coords=coords,
+                                     aggr_scope=aggr_scope)
 
         # merge chunks of response
         res = [TimeSeries(index=item.get('index'),
@@ -1052,9 +1066,9 @@ class QuantumLeapClient(BaseHttpClient):
                           attributes=[
                               AttributeValues(attrName=attr_name,
                                               values=item.get('values'))])
-               for item in list_of_res[0].get('values')]
+               for item in res_q.popleft().get('values')]
 
-        for chunk in list_of_res[1:]:
+        for chunk in res_q:
             chunk = [TimeSeries(index=item.get('index'),
                                 entityType=entity_type,
                                 entityId=item.get('entityId'),
