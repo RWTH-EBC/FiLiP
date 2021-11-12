@@ -233,7 +233,7 @@ class TestAgent(unittest.TestCase):
         #clean up
         clear_all(fiware_header=self.fiware_header,
                   cb_url=settings.CB_URL,
-                  iota_url=settings.IOTA_URL)
+                  iota_url=settings.IOTA_JSON_URL)
 
     def tearDown(self) -> None:
         """

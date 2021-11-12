@@ -14,7 +14,6 @@ from filip.semantics.vocabulary.data_property import DataFieldType
 from filip.semantics.vocabulary.vocabulary import VocabularySettings
 from filip.semantics.vocabulary_configurator import VocabularyConfigurator
 from filip.utils.cleanup import clear_all
-from tests.models2 import customDataType4
 
 
 class TestSemanticModels(unittest.TestCase):
@@ -53,9 +52,8 @@ class TestSemanticModels(unittest.TestCase):
         self.assertTrue("https://w3id.org/saref#LightingDevice"
                         in vocabulary.classes)
 
-        VocabularyConfigurator.generate_vocabulary_models(vocabulary,
-                                                          "./",
-                                                          "models")
+        VocabularyConfigurator.generate_vocabulary_models(
+            vocabulary, f"{self.get_file_path('')}/","models")
 
     def test_2_default_header(self):
         """
@@ -89,7 +87,8 @@ class TestSemanticModels(unittest.TestCase):
         Test if relation field rules are correctly validated
         """
         from tests.semantic.models import Class1, Class13, Class2, Class4, \
-            Class123, Individual1
+            Class123, Individual1, Close_Command, State, Open_Close_State, \
+            Measurement
 
         class1 = Class1(id="12")
         class13 = Class13()
@@ -133,7 +132,6 @@ class TestSemanticModels(unittest.TestCase):
         self.assertTrue(c4.objProp4.is_valid())
 
         # max
-        from models import Close_Command, State, Open_Close_State, Measurement
         ccc = Close_Command(id="ccc")
         self.assertTrue(ccc.Has_Description.is_valid())
         ccc.Has_Description.add("2")
@@ -414,7 +412,7 @@ class TestSemanticModels(unittest.TestCase):
             DataFieldType.device_attribute
 
         VocabularyConfigurator.generate_vocabulary_models(
-            vocabulary, "./", "models2")
+            vocabulary, f"{self.get_file_path('')}/", "models2")
 
     def test__12_device_creation(self):
         """
@@ -765,7 +763,8 @@ class TestSemanticModels(unittest.TestCase):
         state. This test focuses on the special details of a
         SemanticDeviceClass the general things are covered by test 120
         """
-        from tests.semantic.models2 import Class3, semantic_manager
+        from tests.semantic.models2 import Class3, semantic_manager, \
+            customDataType4
 
         test_header = InstanceHeader(
             cb_url=settings.CB_URL,
