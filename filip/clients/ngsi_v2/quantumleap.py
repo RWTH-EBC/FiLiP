@@ -382,6 +382,7 @@ class QuantumLeapClient(BaseHttpClient):
 
                 if res.ok:
                     self.logger.debug('Received: %s', res.json())
+
                     # revert append direction when using last_n
                     if last_n:
                         res_q.appendleft(res.json())
@@ -407,7 +408,7 @@ class QuantumLeapClient(BaseHttpClient):
                      entity_type: str = None,
                      from_date: str = None,
                      to_date: str = None,
-                     limit: int = None,
+                     limit: int = 10000,
                      offset: int = None
                      ) -> List[TimeSeriesHeader]:
         """
@@ -541,19 +542,19 @@ class QuantumLeapClient(BaseHttpClient):
         """
         url = urljoin(self.base_url, f'/v2/entities/{entity_id}')
         res_q = self.__query_builder(url=url,
-                                           attrs=attrs,
-                                           options=options,
-                                           entity_type=entity_type,
-                                           aggr_method=aggr_method,
-                                           aggr_period=aggr_period,
-                                           from_date=from_date,
-                                           to_date=to_date,
-                                           last_n=last_n,
-                                           limit=limit,
-                                           offset=offset,
-                                           georel=georel,
-                                           geometry=geometry,
-                                           coords=coords)
+                                     attrs=attrs,
+                                     options=options,
+                                     entity_type=entity_type,
+                                     aggr_method=aggr_method,
+                                     aggr_period=aggr_period,
+                                     from_date=from_date,
+                                     to_date=to_date,
+                                     last_n=last_n,
+                                     limit=limit,
+                                     offset=offset,
+                                     georel=georel,
+                                     geometry=geometry,
+                                     coords=coords)
         # merge response chunks
         res = TimeSeries.parse_obj(res_q.popleft())
         for item in res_q:
@@ -572,7 +573,7 @@ class QuantumLeapClient(BaseHttpClient):
                                 from_date: str = None,
                                 to_date: str = None,
                                 last_n: int = None,
-                                limit: int = None,
+                                limit: int = 10000,
                                 offset: int = None,
                                 georel: str = None,
                                 geometry: str = None,
@@ -611,19 +612,19 @@ class QuantumLeapClient(BaseHttpClient):
         """
         url = urljoin(self.base_url, f'/v2/entities/{entity_id}/value')
         res_q = self.__query_builder(url=url,
-                                           attrs=attrs,
-                                           options=options,
-                                           entity_type=entity_type,
-                                           aggr_method=aggr_method,
-                                           aggr_period=aggr_period,
-                                           from_date=from_date,
-                                           to_date=to_date,
-                                           last_n=last_n,
-                                           limit=limit,
-                                           offset=offset,
-                                           georel=georel,
-                                           geometry=geometry,
-                                           coords=coords)
+                                     attrs=attrs,
+                                     options=options,
+                                     entity_type=entity_type,
+                                     aggr_method=aggr_method,
+                                     aggr_period=aggr_period,
+                                     from_date=from_date,
+                                     to_date=to_date,
+                                     last_n=last_n,
+                                     limit=limit,
+                                     offset=offset,
+                                     georel=georel,
+                                     geometry=geometry,
+                                     coords=coords)
 
         # merge response chunks
         res = TimeSeries(entityId=entity_id, **res_q.popleft())
@@ -643,7 +644,7 @@ class QuantumLeapClient(BaseHttpClient):
                               from_date: str = None,
                               to_date: str = None,
                               last_n: int = None,
-                              limit: int = None,
+                              limit: int = 10000,
                               offset: int = None,
                               georel: str = None,
                               geometry: str = None,
@@ -683,29 +684,29 @@ class QuantumLeapClient(BaseHttpClient):
         url = urljoin(self.base_url, f'/v2/entities/{entity_id}/attrs'
                                      f'/{attr_name}')
         req_q = self.__query_builder(url=url,
-                                   entity_id=entity_id,
-                                   options=options,
-                                   entity_type=entity_type,
-                                   aggr_method=aggr_method,
-                                   aggr_period=aggr_period,
-                                   from_date=from_date,
-                                   to_date=to_date,
-                                   last_n=last_n,
-                                   limit=limit,
-                                   offset=offset,
-                                   georel=georel,
-                                   geometry=geometry,
-                                   coords=coords)
+                                     entity_id=entity_id,
+                                     options=options,
+                                     entity_type=entity_type,
+                                     aggr_method=aggr_method,
+                                     aggr_period=aggr_period,
+                                     from_date=from_date,
+                                     to_date=to_date,
+                                     last_n=last_n,
+                                     limit=limit,
+                                     offset=offset,
+                                     georel=georel,
+                                     geometry=geometry,
+                                     coords=coords)
 
         # merge response chunks
         first = req_q.popleft()
         res = TimeSeries(entityId=entity_id,
-                              index=first.get('index'),
-                              attributes=[AttributeValues(**first)])
+                         index=first.get('index'),
+                         attributes=[AttributeValues(**first)])
         for item in req_q:
             res.extend(TimeSeries(entityId=entity_id,
-                                       index=item.get('index'),
-                                       attributes=[AttributeValues(**item)]))
+                                  index=item.get('index'),
+                                  attributes=[AttributeValues(**item)]))
 
         return res
 
@@ -720,7 +721,7 @@ class QuantumLeapClient(BaseHttpClient):
                                      from_date: str = None,
                                      to_date: str = None,
                                      last_n: int = None,
-                                     limit: int = None,
+                                     limit: int = 10000,
                                      offset: int = None,
                                      georel: str = None,
                                      geometry: str = None,
@@ -759,18 +760,18 @@ class QuantumLeapClient(BaseHttpClient):
         url = urljoin(self.base_url, f'v2/entities/{entity_id}/attrs'
                                      f'/{attr_name}/value')
         res_q = self.__query_builder(url=url,
-                                           options=options,
-                                           entity_type=entity_type,
-                                           aggr_method=aggr_method,
-                                           aggr_period=aggr_period,
-                                           from_date=from_date,
-                                           to_date=to_date,
-                                           last_n=last_n,
-                                           limit=limit,
-                                           offset=offset,
-                                           georel=georel,
-                                           geometry=geometry,
-                                           coords=coords)
+                                     options=options,
+                                     entity_type=entity_type,
+                                     aggr_method=aggr_method,
+                                     aggr_period=aggr_period,
+                                     from_date=from_date,
+                                     to_date=to_date,
+                                     last_n=last_n,
+                                     limit=limit,
+                                     offset=offset,
+                                     georel=georel,
+                                     geometry=geometry,
+                                     coords=coords)
         # merge response chunks
         first = res_q.popleft()
         res = TimeSeries(
@@ -799,7 +800,7 @@ class QuantumLeapClient(BaseHttpClient):
                            from_date: str = None,
                            to_date: str = None,
                            last_n: int = None,
-                           limit: int = None,
+                           limit: int = 10000,
                            offset: int = None,
                            georel: str = None,
                            geometry: str = None,
@@ -814,20 +815,20 @@ class QuantumLeapClient(BaseHttpClient):
         """
         url = urljoin(self.base_url, f'/v2/types/{entity_type}')
         res_q = self.__query_builder(url=url,
-                                           entity_id=entity_id,
-                                           attrs=attrs,
-                                           options=options,
-                                           aggr_method=aggr_method,
-                                           aggr_period=aggr_period,
-                                           from_date=from_date,
-                                           to_date=to_date,
-                                           last_n=last_n,
-                                           limit=limit,
-                                           offset=offset,
-                                           georel=georel,
-                                           geometry=geometry,
-                                           coords=coords,
-                                           aggr_scope=aggr_scope)
+                                     entity_id=entity_id,
+                                     attrs=attrs,
+                                     options=options,
+                                     aggr_method=aggr_method,
+                                     aggr_period=aggr_period,
+                                     from_date=from_date,
+                                     to_date=to_date,
+                                     last_n=last_n,
+                                     limit=limit,
+                                     offset=offset,
+                                     georel=georel,
+                                     geometry=geometry,
+                                     coords=coords,
+                                     aggr_scope=aggr_scope)
 
         # merge chunks of response
         res = [TimeSeries(entityType=entity_type, **item)
@@ -852,7 +853,7 @@ class QuantumLeapClient(BaseHttpClient):
                                   from_date: str = None,
                                   to_date: str = None,
                                   last_n: int = None,
-                                  limit: int = None,
+                                  limit: int = 10000,
                                   offset: int = None,
                                   georel: str = None,
                                   geometry: str = None,
@@ -906,7 +907,7 @@ class QuantumLeapClient(BaseHttpClient):
                                 from_date: str = None,
                                 to_date: str = None,
                                 last_n: int = None,
-                                limit: int = None,
+                                limit: int = 10000,
                                 offset: int = None,
                                 georel: str = None,
                                 geometry: str = None,
@@ -1009,7 +1010,7 @@ class QuantumLeapClient(BaseHttpClient):
                                        from_date: str = None,
                                        to_date: str = None,
                                        last_n: int = None,
-                                       limit: int = None,
+                                       limit: int = 10000,
                                        offset: int = None,
                                        georel: str = None,
                                        geometry: str = None,
