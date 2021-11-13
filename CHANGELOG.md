@@ -1,4 +1,5 @@
 #### v0.1.8
+- QuantumLeap request pagination ([#47](https://github.com/RWTH-EBC/FiLiP/issues/47))
 - introduce mqtt client ([#45](https://github.com/RWTH-EBC/FiLiP/issues/45))
 - introduce concurrent testing ([#41](https://github.com/RWTH-EBC/FiLiP/issues/41))
 - include default values in subscription update ([#39](https://github.com/RWTH-EBC/FiLiP/issues/39))
