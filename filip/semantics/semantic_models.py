@@ -281,6 +281,10 @@ class Command(DeviceProperty):
 
         print("3.")
         print(client.base_url)
+        print(client.headers)
+
+        print("4.")
+        print(self._instance_link.instance_identifier)
 
         client.update_entity_attribute(
             entity_id=self._instance_link.instance_identifier.id,
