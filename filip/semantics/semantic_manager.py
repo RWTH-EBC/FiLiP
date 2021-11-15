@@ -942,6 +942,7 @@ class SemanticManager(BaseModel):
         # save merged references
         instance.references.clear()
         for key, value in merged_references.items():
+            # replace back the protected . (. not allowed in keys in fiware)
             instance.references[InstanceIdentifier.parse_raw(key.replace(
                 "---", "."))] = value
 

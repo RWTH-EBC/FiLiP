@@ -714,26 +714,11 @@ class TestSemanticModels(unittest.TestCase):
         self.assertEqual(inst_1.references.keys(),
                          {c2.get_identifier(), c3.get_identifier()})
 
-        print("A")
-        print("inst1")
-        print(inst_1.references)
-        print("c2")
-        print(c1.references)
-        print("c3")
-        print(c3.references)
         semantic_manager.save_state(assert_validity=False)
 
         self.assertEqual(set(inst_1.dataProp2.get_all()), {"Test2", "Test3"})
         self.assertEqual(set(inst_1.oProp1.get_all_raw()),
                          {c2.get_identifier(), c3.get_identifier()})
-
-        print("B")
-        print("inst1")
-        print(inst_1.references)
-        print("c2")
-        print(c2.references)
-        print("c3")
-        print(c3.references)
 
         # reset local state and change it
         inst_1.dataProp2.set(["Test", "Test4"])
