@@ -1,12 +1,10 @@
 """
 Tests for filip.semantics.vocabulary_configurator
 """
-import json
 import unittest
 
 from pathlib import Path
 
-from filip.semantics.vocabulary import Vocabulary
 from filip.semantics.vocabulary.data_property import DataFieldType
 from filip.semantics.vocabulary.vocabulary import VocabularySettings
 from filip.semantics.vocabulary_configurator import VocabularyConfigurator
@@ -64,7 +62,6 @@ class TestModels(unittest.TestCase):
         self.vocabulary_1 = vocabulary_1
         self.vocabulary_2 = vocabulary_2
         self.vocabulary_3 = vocabulary_3
-
 
     def test_vocabulary_composition(self):
         """

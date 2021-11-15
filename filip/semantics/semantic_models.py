@@ -266,10 +266,21 @@ class Command(DeviceProperty):
         Raises:
             Exception: If the command was not yet saved to Fiware
         """
+        print(
+            "==============================================================================================")
+
         attr = self._get_field_from_fiware(field_name=self.name,
                                            required_type="command")
+        print("1.")
+        print(attr)
         client = self._instance_link.semantic_manager.get_client(
                  self._instance_link.instance_identifier.header)
+
+        print("2.")
+        print(client.get_entity_list())
+
+        print("3.")
+        print(client.base_url)
 
         client.update_entity_attribute(
             entity_id=self._instance_link.instance_identifier.id,

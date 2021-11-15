@@ -537,8 +537,6 @@ class TestSemanticModels(unittest.TestCase):
                 if static_attr.name == "dataProp1":
                     self.assertTrue(static_attr.value, ["TEST!!!"])
 
-
-
     def test__14_device_deleting(self):
         """
         Test if SemanticDeviceClass.delete() completly removes the device and
