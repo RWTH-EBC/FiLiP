@@ -942,7 +942,8 @@ class SemanticManager(BaseModel):
         # save merged references
         instance.references.clear()
         for key, value in merged_references.items():
-            instance.references[InstanceIdentifier.parse_raw(key)] = value
+            instance.references[InstanceIdentifier.parse_raw(key.replace(
+                "---", "."))] = value
 
         # ------merge device settings----------------------------------------
         if isinstance(instance, SemanticDeviceClass):
