@@ -269,7 +269,7 @@ class Command(DeviceProperty):
         """
 
         print(
-            "==============================================================================================")
+            "=====================================================")
 
         attr = self._get_field_from_fiware(field_name=self.name,
                                            required_type="command")

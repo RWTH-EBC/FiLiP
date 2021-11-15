@@ -442,20 +442,6 @@ class TestSemanticModels(unittest.TestCase):
         """
         from tests.semantic.models2 import Class1, Class3, semantic_manager
 
-        service_group = ServiceGroup(service=settings.FIWARE_SERVICE,
-                                     subservice=settings.FIWARE_SERVICEPATH,
-                                     apikey=f"SERVICE_GROUP_{settings.FIWARE_SERVICE}",
-                                     resource='/iot/json')
-
-        # create the Http client node that once sent the device cannot be posted again
-        # and you need to use the update command
-        with IoTAClient(url=settings.IOTA_JSON_URL,
-                        fiware_header=FiwareHeader(
-                            service=settings.FIWARE_SERVICE,
-                            service_path=settings.FIWARE_SERVICEPATH)) as \
-                client:
-            client.post_group(service_group=service_group, update=True)
-
         class3_ = Class3(id="3")
         class3_.device_settings.endpoint = "http://test.com"
         class3_.device_settings.transport = TransportProtocol.HTTP
@@ -728,11 +714,26 @@ class TestSemanticModels(unittest.TestCase):
         self.assertEqual(inst_1.references.keys(),
                          {c2.get_identifier(), c3.get_identifier()})
 
+        print("A")
+        print("inst1")
+        print(inst_1.references)
+        print("c1")
+        print(c1.references)
+        print("c3")
+        print(c3.references)
         semantic_manager.save_state(assert_validity=False)
 
         self.assertEqual(set(inst_1.dataProp2.get_all()), {"Test2", "Test3"})
         self.assertEqual(set(inst_1.oProp1.get_all_raw()),
                          {c2.get_identifier(), c3.get_identifier()})
+
+        print("B")
+        print("inst1")
+        print(inst_1.references)
+        print("c1")
+        print(c1.references)
+        print("c3")
+        print(c3.references)
 
         # reset local state and change it
         inst_1.dataProp2.set(["Test", "Test4"])
