@@ -513,6 +513,11 @@ class Field(BaseModel):
         Raises:
             KeyError: if value not in field
         """
+        print(type(v))
+        print(f'Remove from {self._instance_identifier.id} ({self.name}):  value:'
+              f' {v}, '
+              f'type: '
+              f'{type(v)}')
         self._set.remove(v)
 
     def add(self, v):
