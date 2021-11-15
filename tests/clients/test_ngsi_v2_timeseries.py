@@ -27,6 +27,8 @@ class TestTimeSeries(unittest.TestCase):
     """
     Test class for time series api client
     """
+
+    @unittest.skip("debugging")
     def setUp(self) -> None:
         """
         Setup test data

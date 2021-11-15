@@ -50,6 +50,8 @@ class TestContextBroker(unittest.TestCase):
     """
     Test class for ContextBrokerClient
     """
+
+    @unittest.skip("debugging")
     def setUp(self) -> None:
         """
         Setup test data

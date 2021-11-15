@@ -284,6 +284,7 @@ class Command(DeviceProperty):
 
         client.update_entity_attribute(
             entity_id=self._instance_link.instance_identifier.id,
+            entity_type=self._instance_link.instance_identifier.type,
             attr=attr)
         client.close()
 
