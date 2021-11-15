@@ -1,4 +1,5 @@
 #### v0.1.8
+- QuantumLeap request pagination ([#47](https://github.com/RWTH-EBC/FiLiP/issues/47))
 - introduce mqtt client ([#45](https://github.com/RWTH-EBC/FiLiP/issues/45))
 - introduce concurrent testing ([#41](https://github.com/RWTH-EBC/FiLiP/issues/41))
 - include default values in subscription update ([#39](https://github.com/RWTH-EBC/FiLiP/issues/39))
@@ -6,6 +7,7 @@
 - added MQTT notifications ([#24](https://github.com/RWTH-EBC/FiLiP/issues/24))
 - introduced [CHANGELOG.md](https://github.com/RWTH-EBC/FiLiP/blob/development/CHANGELOG.md) with versions
 - remodeled ngsi-v2 models ([#58,#59,#60](https://github.com/RWTH-EBC/FiLiP/issues/60))
+- improved ContextEntity and Device deleting methods ([#27](https://github.com/RWTH-EBC/FiLiP/issues/28))
 
 #### v0.1.7
 - introduced automatic testing

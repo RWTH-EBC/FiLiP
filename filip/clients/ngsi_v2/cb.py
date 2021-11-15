@@ -2,6 +2,10 @@
 Context Broker Module for API Client
 """
 from math import inf
+from typing import Any, Dict, List, Union, Optional
+from urllib.parse import urljoin
+import requests
+from filip.models.ngsi_v2.iot import Device
 from pkg_resources import parse_version
 from pydantic import \
     parse_obj_as, \
@@ -518,7 +522,8 @@ class ContextBrokerClient(BaseHttpClient):
             self.log_error(err=err, msg=msg)
             raise
 
-    def delete_entity(self, entity_id: str, entity_type: str = None) -> None:
+    def delete_entity(self, entity_id: str, entity_type: str,
+                      delete_devices: bool = False) -> None:
 
         """
         Remove a entity from the context broker. No payload is required
@@ -527,15 +532,15 @@ class ContextBrokerClient(BaseHttpClient):
         Args:
             entity_id: Id of the entity to be deleted
             entity_type: several entities with the same entity id.
+            delete_devices: If True, also delete all devices that reference this
+                            entity (entity_id as entity_name)
         Returns:
             None
         """
         url = urljoin(self.base_url, f'v2/entities/{entity_id}')
         headers = self.headers.copy()
-        if entity_type:
-            params = {'type': entity_type}
-        else:
-            params = {}
+        params = {'type': entity_type}
+
         try:
             res = self.delete(url=url, params=params, headers=headers)
             if res.ok:
@@ -546,6 +551,14 @@ class ContextBrokerClient(BaseHttpClient):
             msg = f"Could not delete entity {entity_id} !"
             self.log_error(err=err, msg=msg)
             raise
+
+        if delete_devices:
+            from filip.clients.ngsi_v2 import IoTAClient
+            iota_client = IoTAClient(fiware_header=self.fiware_headers)
+
+            for device in iota_client.get_device_list(entity=entity_id):
+                if device.entity_type == entity_type:
+                    iota_client.delete_device(device_id=device.device_id)
 
     def delete_entities(self, entities: List[ContextEntity]) -> None:
         """
@@ -1372,6 +1385,7 @@ class ContextBrokerClient(BaseHttpClient):
             msg = "Query operation failed!"
             self.log_error(err=err, msg=msg)
             raise
+
 
 #    def get_subjects(self, object_entity_name: str, object_entity_type: str, subject_type=None):
 #        """
