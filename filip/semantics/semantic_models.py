@@ -1,4 +1,4 @@
-
+import time
 import uuid
 import requests
 from enum import Enum
@@ -266,6 +266,8 @@ class Command(DeviceProperty):
         Raises:
             Exception: If the command was not yet saved to Fiware
         """
+
+        time.sleep(5)
         print(
             "==============================================================================================")
 
