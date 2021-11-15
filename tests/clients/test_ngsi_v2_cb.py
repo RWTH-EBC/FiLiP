@@ -36,7 +36,7 @@ from filip.models.ngsi_v2.iot import \
     DeviceCommand, \
     DeviceAttribute, \
     ServiceGroup, \
-    StaticDeviceAttribute, TransportProtocol
+    StaticDeviceAttribute
 from filip.utils.cleanup import clear_all, clean_test
 from tests.config import settings
 

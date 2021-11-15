@@ -45,7 +45,7 @@ class TransportProtocol(str, Enum):
     HTTP = "HTTP"
 
 
-class IoTaBaseAttribute(BaseAttribute, BaseNameAttribute):
+class IoTABaseAttribute(BaseAttribute, BaseNameAttribute):
     """
     Base model for device attributes
     """
@@ -103,7 +103,7 @@ class IoTaBaseAttribute(BaseAttribute, BaseNameAttribute):
             return self.dict == other
 
 
-class DeviceAttribute(IoTaBaseAttribute):
+class DeviceAttribute(IoTABaseAttribute):
     """
     Model for active device attributes
     """
@@ -139,7 +139,7 @@ class DeviceCommand(BaseModel):
     )
 
 
-class StaticDeviceAttribute(IoTaBaseAttribute, BaseValueAttribute):
+class StaticDeviceAttribute(IoTABaseAttribute, BaseValueAttribute):
     """
     Model for static device attributes
     """
