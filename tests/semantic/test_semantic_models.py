@@ -18,6 +18,11 @@ from filip.utils.cleanup import clear_all
 
 
 class TestSemanticModels(unittest.TestCase):
+    """
+    Tests to confirm the correctness of the semantic model mechanism.
+    Do not execute single tests, always the full test suite else the header
+    is not correctly set
+    """
 
     def setUp(self) -> None:
         pass
@@ -442,7 +447,7 @@ class TestSemanticModels(unittest.TestCase):
         """
         from tests.semantic.models2 import Class1, Class3, semantic_manager
 
-        class3_ = Class3(id="3")
+        class3_ = Class3(id="c3")
         class3_.device_settings.endpoint = "http://test.com"
         class3_.device_settings.transport = TransportProtocol.HTTP
 
@@ -476,11 +481,11 @@ class TestSemanticModels(unittest.TestCase):
         # in Fiware
         with ContextBrokerClient(
                 fiware_header=class3_.header.get_fiware_header()) as client:
-            assert client.get_entity(entity_id="3", entity_type="Class3")
+            assert client.get_entity(entity_id="c3", entity_type="Class3")
 
         self.clear_registry()
 
-        loaded_class = Class3(id="3")
+        loaded_class = Class3(id="c3")
 
         attr2 = [a for a in class3_.attributeProp.get_all()
                  if a.name == "d2"][ 0]
