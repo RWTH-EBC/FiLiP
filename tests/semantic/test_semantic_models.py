@@ -5,7 +5,7 @@ from pathlib import Path
 
 from filip.models import FiwareHeader
 
-from filip.models.ngsi_v2.iot import TransportProtocol
+from filip.models.ngsi_v2.iot import TransportProtocol, ServiceGroup
 
 from tests.config import settings
 from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient
@@ -434,12 +434,27 @@ class TestSemanticModels(unittest.TestCase):
         class3_.device_settings.endpoint = "http://test.com"
         self.assertEqual(class3_.device_settings.endpoint, "http://test.com")
 
+
     def test__13_device_saving_and_loading(self):
         """
         Test if a Device can be correctly saved and loaded.
         And the live methods of Commands and DeviceAttributes
         """
         from tests.semantic.models2 import Class1, Class3, semantic_manager
+
+        service_group = ServiceGroup(service=settings.FIWARE_SERVICE,
+                                     subservice=settings.FIWARE_SERVICEPATH,
+                                     apikey=f"SERVICE_GROUP_{settings.FIWARE_SERVICE}",
+                                     resource='/iot/json')
+
+        # create the Http client node that once sent the device cannot be posted again
+        # and you need to use the update command
+        with IoTAClient(url=settings.IOTA_JSON_URL,
+                        fiware_header=FiwareHeader(
+                            service=settings.FIWARE_SERVICE,
+                            service_path=settings.FIWARE_SERVICEPATH)) as \
+                client:
+            client.post_group(service_group=service_group, update=True)
 
         class3_ = Class3(id="3")
         class3_.device_settings.endpoint = "http://test.com"
