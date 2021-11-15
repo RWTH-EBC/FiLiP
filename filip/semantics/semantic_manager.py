@@ -344,7 +344,11 @@ class SemanticManager(BaseModel):
             if not isinstance(value, dict):  # is an individual
                 return value
             else:  # is an instance_identifier
-                return InstanceIdentifier.parse_obj(value)
+                # we need to replace back --- with . that we switched,
+                # as a . is not allowed in the dic in Fiware
+                return InstanceIdentifier.parse_raw(
+                    str(value).replace("---", ".").replace("'", '"'))
+
         elif isinstance(field, CommandField):
             if isinstance(value, Command):
                 return value

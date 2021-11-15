@@ -7,7 +7,7 @@ from filip.models import FiwareHeader
 
 from filip.models.ngsi_v2.iot import TransportProtocol
 
-from filip import settings
+from tests.config import settings
 from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient
 from filip.semantics.semantic_models import SemanticClass, InstanceHeader, \
     Command, DeviceAttribute, DeviceAttributeType
@@ -64,8 +64,9 @@ class TestSemanticModels(unittest.TestCase):
 
         test_header = InstanceHeader(
             cb_url=settings.CB_URL,
-            service="testing",
-            service_path="/"
+            iota_url=settings.IOTA_JSON_URL,
+            service=settings.FIWARE_SERVICE,
+            service_path=settings.FIWARE_SERVICEPATH
         )
         semantic_manager.set_default_header(test_header)
 
@@ -421,12 +422,11 @@ class TestSemanticModels(unittest.TestCase):
         And the settings can be set
         """
         from tests.semantic.models2 import Class3, semantic_manager
-
         test_header = InstanceHeader(
             cb_url=settings.CB_URL,
-            iota_url=settings.IOTA_URL,
-            service="testing",
-            service_path="/"
+            iota_url=settings.IOTA_JSON_URL,
+            service=settings.FIWARE_SERVICE,
+            service_path=settings.FIWARE_SERVICEPATH
         )
         semantic_manager.set_default_header(test_header)
 
@@ -440,14 +440,6 @@ class TestSemanticModels(unittest.TestCase):
         And the live methods of Commands and DeviceAttributes
         """
         from tests.semantic.models2 import Class1, Class3, semantic_manager
-
-        test_header = InstanceHeader(
-            cb_url=settings.CB_URL,
-            iota_url=settings.IOTA_URL,
-            service="testing",
-            service_path="/"
-        )
-        semantic_manager.set_default_header(test_header)
 
         class3_ = Class3(id="3")
         class3_.device_settings.endpoint = "http://test.com"
@@ -482,7 +474,7 @@ class TestSemanticModels(unittest.TestCase):
         # Test if device could be processed correctly -> corresponding entity
         # in Fiware
         with ContextBrokerClient(
-                fiware_header=test_header.get_fiware_header()) as client:
+                fiware_header=class3_.header.get_fiware_header()) as client:
             assert client.get_entity(entity_id="3", entity_type="Class3")
 
         self.clear_registry()
@@ -767,12 +759,6 @@ class TestSemanticModels(unittest.TestCase):
         from tests.semantic.models2 import Class3, semantic_manager, \
             customDataType4
 
-        test_header = InstanceHeader(
-            cb_url=settings.CB_URL,
-            service="testing",
-            service_path="/"
-        )
-        semantic_manager.set_default_header(test_header)
 
         # setup state
         inst_1 = Class3(id="3")
@@ -850,7 +836,7 @@ class TestSemanticModels(unittest.TestCase):
                          {"test2", "test3"})
 
         # test if data in device gets updated, not only in the context entity
-        with IoTAClient(url=settings.IOTA_URL,
+        with IoTAClient(url=settings.IOTA_JSON_URL,
                         fiware_header=inst_1.header) as client:
             device_entity = client.get_device(device_id=inst_1.get_device_id())
 
@@ -863,10 +849,11 @@ class TestSemanticModels(unittest.TestCase):
         Cleanup test server
         """
         self.clear_registry()
-        clear_all(fiware_header=FiwareHeader(service="testing",
-                                             service_path="/"),
-                  cb_url=settings.CB_URL,
-                  iota_url=settings.IOTA_URL)
+        clear_all(fiware_header=FiwareHeader(
+            service=settings.FIWARE_SERVICE,
+            service_path=settings.FIWARE_SERVICEPATH),
+            cb_url=settings.CB_URL,
+            iota_url=settings.IOTA_JSON_URL)
 
     @staticmethod
     def get_file_path(path_end: str) -> str:
