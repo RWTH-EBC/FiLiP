@@ -267,7 +267,6 @@ class Command(DeviceProperty):
             Exception: If the command was not yet saved to Fiware
         """
 
-        time.sleep(5)
         print(
             "==============================================================================================")
 
@@ -288,10 +287,35 @@ class Command(DeviceProperty):
         print("4.")
         print(self._instance_link.instance_identifier)
 
-        client.update_entity_attribute(
-            entity_id=self._instance_link.instance_identifier.id,
-            entity_type=self._instance_link.instance_identifier.type,
-            attr=attr)
+        # client.update_entity_attribute(
+        #     entity_id=self._instance_link.instance_identifier.id,
+        #     entity_type=self._instance_link.instance_identifier.type,
+        #     attr=attr)
+
+        from urllib.parse import urljoin
+        url = urljoin(client.base_url,
+                      f'v2/entities/{self._instance_link.instance_identifier.id}'
+                      f'/attrs/')
+        params = {}
+        try:
+            body = {
+                self.name:{
+                    "type": "command",
+                    "value": ""
+                }
+
+            }
+            print(body)
+            res = client.patch(url=url,
+                               headers=client.headers,
+                               json=body)
+            if res.ok:
+                pass
+            else:
+                res.raise_for_status()
+        except requests.RequestException as err:
+            msg = f"Could not update attribute  of entity "
+            raise
         client.close()
 
     def get_info(self) -> str:
