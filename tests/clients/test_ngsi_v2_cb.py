@@ -11,6 +11,8 @@ import logging
 import time
 import random
 import json
+import uuid
+
 import paho.mqtt.client as mqtt
 from datetime import datetime, timedelta
 from urllib.parse import urlparse

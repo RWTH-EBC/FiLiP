@@ -14,8 +14,7 @@ import json
 import pytz
 from pydantic import BaseModel, Field, validator, AnyHttpUrl
 from filip.models.base import NgsiVersion, DataType, FiwareRegex
-from filip.models.ngsi_v2.context import NamedContextMetadata
-
+from filip.models.ngsi_v2.base import BaseAttribute, BaseValueAttribute, BaseNameAttribute
 
 logger = logging.getLogger()
 
@@ -46,28 +45,13 @@ class TransportProtocol(str, Enum):
     HTTP = "HTTP"
 
 
-class BaseAttribute(BaseModel):
+class IoTABaseAttribute(BaseAttribute, BaseNameAttribute):
     """
     Base model for device attributes
     """
-    name: str = Field(
-        description="ID of the attribute in the target entity in the "
-                    "Context Broker. Allowed characters "
-                    "are the ones in the plain ASCII set, except the following "
-                    "ones: control characters, whitespace, &, ?, / and #.",
-        max_length=256,
-        min_length=1,
-        regex=FiwareRegex.string_protect.value
-    )
-    type: Union[DataType, str] = Field(
-        description="name of the type of the attribute in the target entity. ",
-        regex=FiwareRegex.string_protect.value
-    )
-    metadata: Optional[Dict[str, Any]] = Field(
-        description="additional static metadata for the attribute "
-                    "in the target entity. (e.g. unitCode)"
-    )
+
     expression: Optional[str] = Field(
+        default=None,
         description="indicates that the value of the target attribute will "
                     "not be the plain value or the measurement, but an "
                     "expression based on a combination of the reported values. "
@@ -76,6 +60,7 @@ class BaseAttribute(BaseModel):
                     "expressionLanguage/index.html)"
     )
     entity_name: Optional[str] = Field(
+        default=None,
         description="entity_name: the presence of this attribute indicates "
                     "that the value will not be stored in the original device "
                     "entity but in a new entity with an ID given by this "
@@ -93,6 +78,7 @@ class BaseAttribute(BaseModel):
         regex=FiwareRegex.standard.value  # Make it FIWARE-Safe"
     )
     entity_type: Optional[str] = Field(
+        default=None,
         description="configures the type of an alternative entity. "
                     "Allowed characters "
                     "are the ones in the plain ASCII set, except the following "
@@ -102,6 +88,7 @@ class BaseAttribute(BaseModel):
         regex=FiwareRegex.standard.value
     )
     reverse: Optional[str] = Field(
+        default=None,
         description="add bidirectionality expressions to the attribute. See "
                     "the bidirectionality transformation plugin in the "
                     "Data Mapping Plugins section for details. "
@@ -116,31 +103,15 @@ class BaseAttribute(BaseModel):
             return self.dict == other
 
 
-class DeviceAttribute(BaseAttribute):
+class DeviceAttribute(IoTABaseAttribute):
     """
     Model for active device attributes
     """
     object_id: Optional[str] = Field(
+        default=None,
         description="name of the attribute as coming from the device."
     )
-    metadata: Optional[Dict[str, Union[Dict, str]]] = Field(
-        description="Additional meta information for the attribute, "
-                    "e.g. 'unitCode'"
-    )
 
-    @validator('metadata')
-    def validate_metadata(cls, data):
-        """
-        Check metadata object for serialization and units if present.
-        Args:
-            value: value of metadata field
-        Returns:
-
-        """
-        assert json.dumps(data), "metadata not serializable"
-        for k, v in data.items():
-            data.update(NamedContextMetadata(name=k, **v).to_context_metadata())
-        return data
 
 class LazyDeviceAttribute(DeviceAttribute):
     """
@@ -168,17 +139,11 @@ class DeviceCommand(BaseModel):
     )
 
 
-class StaticDeviceAttribute(BaseAttribute):
+class StaticDeviceAttribute(IoTABaseAttribute, BaseValueAttribute):
     """
     Model for static device attributes
     """
-    value: Optional[Union[Dict, List, str, float]] = Field(
-        description="Constant value for this attribute"
-    )
-    metadata: Optional[Dict[str, Dict]] = Field(
-        description="Additional meta information for the attribute, "
-                    "e.g. 'unitCode'"
-    )
+    pass
 
 
 class ServiceGroup(BaseModel):
@@ -187,9 +152,11 @@ class ServiceGroup(BaseModel):
     https://iotagent-node-lib.readthedocs.io/en/latest/api/index.html#service-group-api
     """
     service: Optional[str] = Field(
+        default=None,
         description="ServiceGroup of the devices of this type"
     )
     subservice: Optional[str] = Field(
+        default=None,
         description="Subservice of the devices of this type.",
         regex="^/"
     )
@@ -204,6 +171,7 @@ class ServiceGroup(BaseModel):
                     "apikey, but it must be specified."
     )
     timestamp: Optional[bool] = Field(
+        default=None,
         description="Optional flag about whether or not to add the TimeInstant "
                     "attribute to the device entity created, as well as a "
                     "TimeInstant metadata to each attribute, with the current "
@@ -211,6 +179,7 @@ class ServiceGroup(BaseModel):
                     "property-of-a-property is created instead."
     )
     entity_type: Optional[str] = Field(
+        default=None,
         description="name of the Entity type to assign to the group. "
                     "Allowed characters "
                     "are the ones in the plain ASCII set, except the following "
@@ -220,11 +189,13 @@ class ServiceGroup(BaseModel):
         regex=FiwareRegex.standard.value  # Make it FIWARE-Safe
     )
     trust: Optional[str] = Field(
+        default=None,
         description="trust token to use for secured access to the "
                     "Context Broker for this type of devices (optional; only "
                     "needed for secured scenarios)."
     )
     cbHost: Optional[AnyHttpUrl] = Field(
+        default=None,
         description="Context Broker connection information. This options can "
                     "be used to override the global ones for specific types of "
                     "devices."
@@ -285,6 +256,7 @@ class ServiceGroup(BaseModel):
                     "v2 or ld. The default is v2. When not running in mixed "
                     "mode, this field is ignored.")
     defaultEntityNameConjunction: Optional[str] = Field(
+        default=None,
         description="optional string value to set default conjunction string "
                     "used to compose a default entity_name when is not "
                     "provided at device provisioning time."
@@ -300,6 +272,7 @@ class Device(BaseModel):
         description="Device ID that will be used to identify the device"
     )
     service: Optional[str] = Field(
+        default=None,
         description="Name of the service the device belongs to "
                     "(will be used in the fiware-service header).",
         max_length=50
@@ -334,6 +307,7 @@ class Device(BaseModel):
         description="Time zone of the sensor if it has any"
     )
     timestamp: Optional[bool] = Field(
+        default=None,
         description="Optional flag about whether or not to add the TimeInstant "
                     "attribute to the device entity created, as well as a "
                     "TimeInstant metadata to each attribute, with the current "
@@ -341,17 +315,21 @@ class Device(BaseModel):
                     "property-of-a-property is created instead."
     )
     apikey: Optional[str] = Field(
+        default=None,
         description="Optional Apikey key string to use instead of group apikey"
     )
     endpoint: Optional[AnyHttpUrl] = Field(
+        default=None,
         description="Endpoint where the device is going to receive commands, "
                     "if any."
     )
     protocol: Optional[str] = Field(
+        default=None,
         description="Name of the device protocol, for its use with an "
                     "IoT Manager."
     )
     transport: TransportProtocol = Field(
+        default=None,
         description="Name of the device transport protocol, for the IoT Agents "
                     "with multiple transport protocols."
     )
@@ -379,6 +357,7 @@ class Device(BaseModel):
                     "IoT Agent configuration"
     )
     expressionLanguage: Optional[ExpressionLanguage] = Field(
+        default=None,
         description="optional boolean value, to set expression language used "
                     "to compute expressions, possible values are: "
                     "legacy or jexl. When not set or wrongly set, legacy "

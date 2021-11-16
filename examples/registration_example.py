@@ -12,10 +12,10 @@ Steps :
 # import
 from filip.clients.ngsi_v2.cb import ContextBrokerClient
 from filip.models.base import FiwareHeader
+from filip.models.ngsi_v2.base import NamedMetadata
 from filip.models.ngsi_v2.context import \
     ContextAttribute, \
-    ContextEntity, \
-    NamedContextMetadata
+    ContextEntity
 from filip.models.ngsi_v2.units import Unit
 from filip.models.ngsi_v2.registrations import Http, Provider, Registration
 
@@ -24,10 +24,8 @@ from filip.models.ngsi_v2.registrations import Http, Provider, Registration
 # using the api of the Context Entity Model
 
 # Create unit metadata for the temperature sensor of the weather staion
-temperature_metadata = NamedContextMetadata(name="unit",
-                                            type="Unit",
-                                            value=Unit(name="degree "
-                                                            "Celsius").dict())
+temperature_metadata = NamedMetadata(name="unit",
+                                     value=Unit(name="degree Celsius").dict())
 # create the temperature attribute of the weather station
 temperature = ContextAttribute(type="Number",
                                value=20.5)
@@ -44,9 +42,9 @@ print("+"*80)
 print(weather_station.json(indent=2))
 
 # create additional properties of the weather station
-windspeed_metadata = NamedContextMetadata(name="unit",
-                                          type="Unit",
-                                          value=Unit(name="kilometre per "
+windspeed_metadata = NamedMetadata(name="unit",
+                                   type="Unit",
+                                   value=Unit(name="kilometre per "
                                                           "hour").dict())
 # create the temperature attribute of the weather station
 windspeed = ContextAttribute(type="Number",
