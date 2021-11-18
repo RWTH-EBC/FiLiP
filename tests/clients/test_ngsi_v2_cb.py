@@ -6,6 +6,7 @@ edited Sep 15, 2021
 @author Jeff Reding
 
 """
+import copy
 import unittest
 import logging
 import time
@@ -16,6 +17,7 @@ import uuid
 import paho.mqtt.client as mqtt
 from datetime import datetime, timedelta
 from urllib.parse import urlparse
+from requests import RequestException
 from filip.models.base import FiwareHeader
 from filip.utils.simple_ql import QueryString
 from filip.clients.ngsi_v2 import ContextBrokerClient
@@ -29,7 +31,8 @@ from filip.models.ngsi_v2.context import \
     Query, \
     ActionType
 
-from filip.models.ngsi_v2.base import AttrsFormat, EntityPattern, Status
+from filip.models.ngsi_v2.base import AttrsFormat, EntityPattern, Status, \
+    NamedMetadata
 from filip.models.ngsi_v2.subscriptions import Mqtt, Message, Subscription
 from filip.models.ngsi_v2.iot import \
     Device, \
@@ -682,6 +685,99 @@ class TestContextBroker(unittest.TestCase):
         mqtt_client.loop_stop()
         # disconnect the mqtt device
         mqtt_client.disconnect()
+
+    def test_patch_entity(self) -> None:
+        """
+        Test the methode: patch_entity
+        Returns:
+           None
+        """
+
+
+        # setup test-entity
+        entity = ContextEntity(id="test_id1", type="test_type1")
+        attr1 = NamedContextAttribute(name="attr1", value="1")
+        attr1.metadata["m1"] = \
+            NamedMetadata(name="meta1", type="metatype", value="2")
+        attr2 = NamedContextAttribute(name="attr2", value="2")
+        attr1.metadata["m2"] = \
+            NamedMetadata(name="meta2", type="metatype", value="3")
+        entity.add_attributes([attr1, attr2])
+
+        # sub-Test1: Post new
+        self.client.patch_entity(entity=entity)
+        self.assertEqual(entity,
+                         self.client.get_entity(entity_id=entity.id))
+        self.tearDown()
+
+        # sub-Test2: ID/type of old_entity changed
+        self.client.post_entity(entity=entity)
+        test_entity = ContextEntity(id="newID", type="newType")
+        test_entity.add_attributes([attr1, attr2])
+        self.client.patch_entity(test_entity, old_entity=entity)
+        self.assertEqual(test_entity,
+                         self.client.get_entity(entity_id=test_entity.id))
+        self.assertRaises(RequestException, self.client.get_entity,
+                          entity_id=entity.id)
+        self.tearDown()
+
+        # sub-Test3: a non valid old_entity is provided, entity exists
+        self.client.post_entity(entity=entity)
+        old_entity = ContextEntity(id="newID", type="newType")
+
+        self.client.patch_entity(entity, old_entity=old_entity)
+        self.assertEqual(entity, self.client.get_entity(entity_id=entity.id))
+        self.tearDown()
+
+        # sub-Test4: no old_entity provided, entity is new
+        old_entity = ContextEntity(id="newID", type="newType")
+        self.client.patch_entity(entity, old_entity=old_entity)
+        self.assertEqual(entity, self.client.get_entity(entity_id=entity.id))
+        self.tearDown()
+
+        # sub-Test5: no old_entity provided, entity is new
+        old_entity = ContextEntity(id="newID", type="newType")
+        self.client.patch_entity(entity, old_entity=old_entity)
+        self.assertEqual(entity, self.client.get_entity(entity_id=entity.id))
+        self.tearDown()
+
+        # sub-Test6: New attr, attr del, and attr changed. No Old_entity given
+        self.client.post_entity(entity=entity)
+        test_entity = ContextEntity(id="test_id1", type="test_type1")
+        attr1_changed = NamedContextAttribute(name="attr1", value="2")
+        attr1_changed.metadata["m4"] = \
+            NamedMetadata(name="meta3", type="metatype5", value="4")
+        attr3 = NamedContextAttribute(name="attr3", value="3")
+        test_entity.add_attributes([attr1_changed, attr3])
+        self.client.patch_entity(test_entity)
+
+        self.assertEqual(test_entity,
+                         self.client.get_entity(entity_id=entity.id))
+        self.tearDown()
+
+        # sub-Test7: Attr changes, concurrent changes in Fiware,
+        #            old_entity given
+
+        self.client.post_entity(entity=entity)
+
+        concurrent_entity = ContextEntity(id="test_id1", type="test_type1")
+        attr1_changed = copy.deepcopy(attr1)
+        attr1_changed.metadata["m1"].value = "3"
+        attr1_changed.value = "4"
+        concurrent_entity.add_attributes([attr1_changed, attr2])
+        self.client.patch_entity(concurrent_entity)
+
+        user_entity = copy.deepcopy(entity)
+        attr3 = NamedContextAttribute(name="attr3", value="3")
+        user_entity.add_attributes([attr3])
+        self.client.patch_entity(user_entity, old_entity=entity)
+
+        result_entity = concurrent_entity
+        result_entity.add_attributes([attr2, attr3])
+
+        self.assertEqual(result_entity,
+                         self.client.get_entity(entity_id=entity.id))
+        self.tearDown()
 
     def tearDown(self) -> None:
         """

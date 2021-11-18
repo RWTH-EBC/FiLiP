@@ -274,9 +274,15 @@ class ContextEntity(ContextEntityKeyValues):
                          attrs: Union[Dict[str, ContextAttribute],
                                       List[NamedContextAttribute]]) -> None:
         """
-        Update an attribute of an entity
+        Update attributes of an entity. Overwrite the current held value
+        for the attribute with the value contained in the corresponding given
+        attribute
+
         Args:
-            attrs:
+            attrs: List of NamedContextAttributes,
+                   Dict of {attribute_name: ContextAttribute}
+        Raises:
+            NameError, if the attribute does not currently exists in the entity
         Returns:
             None
         """
