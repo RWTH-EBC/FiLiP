@@ -10,7 +10,8 @@ from pkg_resources import parse_version
 from pydantic import \
     parse_obj_as, \
     PositiveInt, \
-    PositiveFloat, AnyHttpUrl
+    PositiveFloat, \
+    AnyHttpUrl
 from typing import Any, Dict, List, Union, Optional
 import re
 import requests
