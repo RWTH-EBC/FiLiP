@@ -233,7 +233,8 @@ class IoTAClient(BaseHttpClient):
 
     def delete_group(self, *, resource: str, apikey: str):
         """
-
+        Deletes a service group in in the IoT-Agent
+        
         Args:
             resource:
             apikey:
@@ -294,7 +295,8 @@ class IoTAClient(BaseHttpClient):
 
     def post_device(self, *, device: Device, update: bool = False) -> None:
         """
-
+        Post a device configuration to the IoT-Agent
+        
         Args:
             device:
             update:
@@ -343,6 +345,7 @@ class IoTAClient(BaseHttpClient):
     def get_device(self, *, device_id: str) -> Device:
         """
         Returns all the information about a particular device.
+        
         Args:
             device_id:
         Raises:
@@ -419,6 +422,7 @@ class IoTAClient(BaseHttpClient):
         """
         Remove a device from the device registry. No payload is required
         or received.
+        
         Args:
             device_id: str, ID of Device
             delete_entity:  False -> Only delete the device entry,
@@ -624,6 +628,7 @@ class IoTAClient(BaseHttpClient):
     def change_loglevel_of_agent(self, level: str):
         """
         Change current loglevel of agent
+        
         Args:
             level:
 
