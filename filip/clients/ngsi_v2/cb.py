@@ -11,7 +11,8 @@ from pkg_resources import parse_version
 from pydantic import \
     parse_obj_as, \
     PositiveInt, \
-    PositiveFloat
+    PositiveFloat, \
+    AnyHttpUrl
 from typing import Any, Dict, List, Union, Optional
 import re
 import requests
@@ -31,6 +32,7 @@ from filip.models.ngsi_v2.context import \
     NamedContextAttribute, \
     Query, \
     Update
+from filip.models.base import DataType
 from filip.models.ngsi_v2.base import AttrsFormat
 from filip.models.ngsi_v2.subscriptions import Subscription
 from filip.models.ngsi_v2.registrations import Registration
@@ -524,7 +526,8 @@ class ContextBrokerClient(BaseHttpClient):
             raise
 
     def delete_entity(self, entity_id: str, entity_type: str,
-                      delete_devices: bool = False) -> None:
+                      delete_devices: bool = False,
+                      iota_url: AnyHttpUrl = settings.IOTA_URL) -> None:
 
         """
         Remove a entity from the context broker. No payload is required
@@ -535,6 +538,7 @@ class ContextBrokerClient(BaseHttpClient):
             entity_type: several entities with the same entity id.
             delete_devices: If True, also delete all devices that reference this
                             entity (entity_id as entity_name)
+            iota_url: URL of the corresponding IotaClient
         Returns:
             None
         """
@@ -555,7 +559,8 @@ class ContextBrokerClient(BaseHttpClient):
 
         if delete_devices:
             from filip.clients.ngsi_v2 import IoTAClient
-            iota_client = IoTAClient(fiware_header=self.fiware_headers)
+            iota_client = IoTAClient(url=iota_url,
+                                     fiware_header=self.fiware_headers)
 
             for device in iota_client.get_device_list(entity=entity_id):
                 if device.entity_type == entity_type:
@@ -1404,9 +1409,8 @@ class ContextBrokerClient(BaseHttpClient):
         """
         try:
             self.get_entity(entity_id=entity_id, entity_type=entity_type)
-        except requests.RequestException as ex:
-            # couldn't find a better way to extract error code
-            if not str(ex)[0:36] == "404 Client Error: Not Found for url:":
+        except requests.RequestException as err:
+            if not err.response.status_code == 404:
                 raise
             return False
         
@@ -1416,14 +1420,14 @@ class ContextBrokerClient(BaseHttpClient):
                      entity: ContextEntity,
                      old_entity: Optional[ContextEntity] = None) -> None:
         """
-           Takes a given entity and updates the state in the CB to match it.
-           Args:
-               entity: Entity to update
-               old_entity: OPTIONAL, if given only the differences between the
-                           old_entity and entity are updated in the CB.
-                           Other changes made to the entity in CB, can be kept.
-           Returns:
-               None
+        Takes a given entity and updates the state in the CB to match it.
+        Args:
+           entity: Entity to update
+           old_entity: OPTIONAL, if given only the differences between the
+                       old_entity and entity are updated in the CB.
+                       Other changes made to the entity in CB, can be kept.
+        Returns:
+           None
         """
 
         new_entity = entity
@@ -1475,7 +1479,9 @@ class ContextBrokerClient(BaseHttpClient):
 
         # Manage attributes that existed before
         for old_attr in old_attributes:
-
+            # commands do not exist in the ContextEntity and are only
+            # registrations to the corresponding device. Operations as
+            # delete will fail as it does not technically exists
             corresponding_new_attr = None
             for new_attr in new_attributes:
                 if new_attr.name == old_attr.name:
@@ -1483,21 +1489,37 @@ class ContextBrokerClient(BaseHttpClient):
 
             if corresponding_new_attr is None:
                 # Attribute no longer exists, delete it
-                self.delete_entity_attribute(entity_id=new_entity.id,
-                                             entity_type=new_entity.type,
-                                             attr_name=old_attr.name)
+                try:
+                    self.delete_entity_attribute(entity_id=new_entity.id,
+                                                 entity_type=new_entity.type,
+                                                 attr_name=old_attr.name)
+                except requests.RequestException as err:
+                    # if the attribute is provided by a registration the
+                    # deletion will fail
+                    if not err.response.status_code == 404:
+                        raise
             else:
                 # Check if attributed changed in any way, if yes update
                 # else do nothing and keep current state
                 if not old_attr.__eq__(corresponding_new_attr):
-                    self.update_entity_attribute(entity_id=new_entity.id,
-                                                 entity_type=new_entity.type,
-                                                 attr=corresponding_new_attr)
+                    try:
+                        self.update_entity_attribute(
+                            entity_id=new_entity.id,
+                            entity_type=new_entity.type,
+                            attr=corresponding_new_attr)
+                    except requests.RequestException as err:
+                        # if the attribute is provided by a registration the
+                        # update will fail
+                        if not err.response.status_code == 404:
+                            raise
 
         # Create new attributes
         update_entity = ContextEntity(id=entity.id, type=entity.type)
         update_needed = False
         for new_attr in new_attributes:
+            # commands do not exist in the ContextEntity and are only
+            # registrations to the corresponding device. Operations as
+            # delete will fail as it does not technically exists
             attr_existed = False
             for old_attr in old_attributes:
                 if new_attr.name == old_attr.name:
@@ -1510,172 +1532,6 @@ class ContextBrokerClient(BaseHttpClient):
         if update_needed:
             self.update_entity(update_entity, append=True)
 
-    def _merge_states(self, old_values: List, current_values: List,
-                      live_values: List) -> Set:
-
-        old_set = set(old_values)
-        current_set = set(current_values)
-        new_set = set(live_values)
-
-
-        # remove deleted values from live state, it can be that the value was
-        # also deleted in the live state
-        for value in old_set:
-            if value not in current_set:
-                if value in new_set:
-                    new_set.remove(value)
-
-        # add added values
-        for value in current_set:
-            if value not in old_set:
-                new_set.add(value)
-
-        return new_set
-
-
-
-    # def concurrent_safe_entity_patch(
-    #         self,
-    #         entity: ContextEntity,
-    #         old_entity: Optional[ContextEntity] = None) -> ContextEntity:
-    #     """
-    #     Merges an entity state with the live_state on Fiware. Allows
-    #     concurrent made changes to the entity to be merged to a consistent state
-    #
-    #     Conditions for use:
-    #         - entity type and id do not change
-    #         - field types do not change and fields are not renamed
-    #         - fields values are not in Dict form, and are comparable
-    #         - No metadata in fields
-    #     """
-    #
-    #     current_entity = copy.deepcopy(entity)
-    #
-    #     try:
-    #         live_entity = self.get_entity(entity_id=entity.id,
-    #                                       entity_type=entity.type)
-    #     except requests.RequestException:
-    #         # entity does not exists, post entity
-    #         self.post_entity(entity=entity)
-    #         return current_entity
-    #
-    #     merged_entity = copy.deepcopy(live_entity)
-    #
-    #     (added_attribute_names, removed_attribute_names) = \
-    #         self._get_added_and_removed_values(
-    #             old_entity.get_attribute_names(),
-    #             current_entity.get_attribute_names())
-    #
-    #     # add fields to merged that are completely new
-    #     for name in added_attribute_names:
-    #         if name not in merged_entity.get_attribute_names():
-    #             merged_entity.add_attributes(
-    #                 [current_entity.get_attribute(name)])
-    #
-    #     # remove fields from merged that were removed locally
-    #     for name in added_attribute_names:
-    #         if name in merged_entity.get_attribute_names():
-    #             merged_entity.delete_attributes([name])
-    #
-    #     for attribute in merged_entity.get_attributes():
-    #
-    #         if attribute.name not in live_entity.get_attribute_names():
-    #             # the attribute was added from the current state, and the
-    #             # values are already correctly set
-    #             continue
-    #
-    #         if attribute.name not in current_entity.get_attribute_names():
-    #             # the attribute was added in an other session, we have no
-    #             # conflict, the values are already correctly set
-    #             continue
-    #
-    #         # we know here that the attribute exists in the current_state and
-    #         # in the live_state. We now need to merge the value state of the
-    #         # attribute. We do this by add/delete all values that were
-    #         # actively added/deleted in the current session
-    #
-    #         def value_list_of_attribute(attribute: NamedContextAttribute) -> \
-    #                 List[Any]:
-    #             """get the values of an attribute in list form an throw an error if
-    #             it is a dict"""
-    #             if isinstance(attribute.value, dict):
-    #                 raise AssertionError("Dict used as value")
-    #             elif not isinstance(attribute.value, list):
-    #                 values = [attribute.value]
-    #             else:
-    #                 values = attribute.value
-    #             return values
-    #
-    #         current_attr_value = value_list_of_attribute(
-    #             current_entity.get_attribute(attribute.name))
-    #
-    #         old_attr_value = None
-    #         if attribute.name in old_entity.get_attribute_names():
-    #             old_attr_value = value_list_of_attribute(
-    #                 old_entity.get_attribute(attribute.name))
-    #
-    #         if old_attr_value is None:
-    #
-    #
-    #
-    #
-    #
-    #
-    #     def list_intersection(list_1: List, list_2: List):
-    #         """Get the intersection of two lists with duplicates"""
-    #         list_2_rest = copy.deepcopy(list_2)
-    #         res_list = []
-    #         for v in list_1:
-    #             if v in list_2_rest:
-    #                 list_2_rest.remove(v)
-    #                 res_list.append(v)
-    #         return res_list
-    #
-    #
-    #
-    #     # merge values of live_state and current_state for each attribute
-    #     for attribute in live_entity.get_attributes():
-    #         merged_attribute = merged_entity.get_attribute(attribute.name)
-    #
-    #         live_values = value_list_of_attribute(attribute)
-    #         merged_values = value_list_of_attribute(merged_attribute)
-    #
-    #         # merge values completely
-    #         new_values = []
-    #         new_values.extend(live_values)
-    #         new_values.extend(value_list_of_attribute(merged_attribute))
-    #
-    #         # remove created duplicates by subtracting intersection
-    #         intersection = list_intersection(live_values, merged_values)
-    #         for value in intersection:
-    #             new_values.remove(value)
-    #
-    #         # if a value was actively deleted but re-added again from the live
-    #         # state, delete it again
-    #         if old_entity is not None:
-    #
-    #             old_values = value_list_of_attribute(attribute)
-    #
-    #             current_attribute = current_entity.get_attribute(
-    #                 attribute.name)
-    #             current_values = value_list_of_attribute(current_attribute)
-    #
-    #             intersection = list_intersection(old_values, current_values)
-    #             # deleted values are exactly those values that were actively
-    #             # deleted in teh current session.
-    #             # They will be actively removed form the new state
-    #             deleted_values = copy.deepcopy(current_values)
-    #             for value in intersection:
-    #                 deleted_values.remove(value)
-    #
-    #             for value in deleted_values:
-    #                 merged_values.remove(value)
-    #
-    #         # set final values
-    #         merged_attribute.value = new_values
-    #
-    #     self.patch_entity(entity=merged_entity)
-    #     return merged_entity
 
 #    def get_subjects(self, object_entity_name: str, object_entity_type: str, subject_type=None):
 #        """

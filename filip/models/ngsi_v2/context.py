@@ -6,8 +6,7 @@ created Sep 21, 2021
 NGSIv2 models for context broker interaction
 """
 import json
-from datetime import datetime
-from typing import Any, Type, List, Dict, Union, Optional, Pattern, Set
+from typing import Any, Type, List, Dict, Union, Optional, Set
 from aenum import Enum
 from filip.utils.simple_ql import QueryString, QueryStatement
 from pydantic import \
@@ -17,7 +16,7 @@ from pydantic import \
     root_validator, \
     validator, AnyHttpUrl, Json
 
-from filip.models.ngsi_v2.base import EntityPattern, Expression
+from filip.models.ngsi_v2.base import EntityPattern, Expression, BaseAttribute, BaseValueAttribute, BaseNameAttribute
 from filip.models.base import DataType, FiwareRegex
 from filip.models.ngsi_v2.units import validate_unit_data
 
@@ -52,67 +51,7 @@ class GetEntitiesOptions(str, Enum):
                        "except that values are not repeated"
 
 
-# NGSIv2 entity models
-class ContextMetadata(BaseModel):
-    """
-    Context metadata is used in FIWARE NGSI in several places, one of them being
-    an optional part of the attribute value as described above. Similar to
-    attributes, each piece of metadata has.
-
-    Note:
-         In NGSI it is not foreseen that metadata may contain nested metadata.
-    """
-    type: Optional[Union[DataType, str]] = Field(
-        title="metadata type",
-        description="a metadata type, describing the NGSI value type of the "
-                    "metadata value Allowed characters "
-                    "are the ones in the plain ASCII set, except the following "
-                    "ones: control characters, whitespace, &, ?, / and #.",
-        max_length=256,
-        min_length=1,
-        regex=FiwareRegex.standard.value  # Make it FIWARE-Safe
-    )
-    value: Optional[Any] = Field(
-        title="metadata value",
-        description="a metadata value containing the actual metadata"
-    )
-
-    @validator('value', allow_reuse=True)
-    def validate_value(cls, value):
-        assert json.dumps(value), "metadata not serializable"
-        return value
-
-
-class NamedContextMetadata(ContextMetadata):
-    """
-    Model for metadata including a name
-    """
-    name: str = Field(
-        titel="metadata name",
-        description="a metadata name, describing the role of the metadata in "
-                    "the place where it occurs; for example, the metadata name "
-                    "accuracy indicates that the metadata value describes how "
-                    "accurate a given attribute value is. Allowed characters "
-                    "are the ones in the plain ASCII set, except the following "
-                    "ones: control characters, whitespace, &, ?, / and #.",
-        max_length=256,
-        min_length=1,
-        regex=FiwareRegex.standard.value  # Make it FIWARE-Safe
-    )
-
-    @root_validator
-    def validate_data(cls, values):
-        if values.get("name", "").casefold() in ["unit",
-                                                 "unittext",
-                                                 "unitcode"]:
-            values.update(validate_unit_data(values))
-        return values
-
-    def to_context_metadata(self):
-        return {self.name: ContextMetadata(**self.dict())}
-
-
-class ContextAttribute(BaseModel):
+class ContextAttribute(BaseAttribute, BaseValueAttribute):
     """
     Model for an attribute is represented by a JSON object with the following
     syntax:
@@ -140,90 +79,10 @@ class ContextAttribute(BaseModel):
         >>> attr = ContextAttribute(**data)
 
     """
-    type: Union[DataType, str] = Field(
-        default=DataType.TEXT,
-        description="The attribute type represents the NGSI value type of the "
-                    "attribute value. Note that FIWARE NGSI has its own type "
-                    "system for attribute values, so NGSI value types are not "
-                    "the same as JSON types. Allowed characters "
-                    "are the ones in the plain ASCII set, except the following "
-                    "ones: control characters, whitespace, &, ?, / and #.",
-        max_length=256,
-        min_length=1,
-        regex=FiwareRegex.standard.value,  # Make it FIWARE-Safe
-    )
-    value: Optional[Union[Union[float, int, bool, str, List, Dict[str, Any]],
-                          List[Union[float, int, bool, str, List,
-                                     Dict[str, Any]]]]] = Field(
-        default=None,
-        title="Attribute value",
-        description="the actual data"
-    )
-    metadata: Optional[Union[Dict[str, ContextMetadata],
-                             NamedContextMetadata,
-                             List[NamedContextMetadata]]] = Field(
-        default={},
-        title="Metadata",
-        description="optional metadata describing properties of the attribute "
-                    "value like e.g. accuracy, provider, or a timestamp")
-
-    @validator('value')
-    def validate_value_type(cls, value, values):
-        """validator for field 'value'"""
-        type_ = values['type']
-        if value:
-            if type_ == DataType.TEXT:
-                if isinstance(value, list):
-                    return [str(item) for item in value]
-                return str(value)
-            if type_ == DataType.BOOLEAN:
-                if isinstance(value, list):
-                    return [bool(item) for item in value]
-                return bool(value)
-            if type_ in (DataType.NUMBER, DataType.FLOAT):
-                if isinstance(value, list):
-                    return [float(item) for item in value]
-                return float(value)
-            if type_ == DataType.INTEGER:
-                if isinstance(value, list):
-                    return [int(item) for item in value]
-                return int(value)
-            if type_ == DataType.DATETIME:
-                return value
-            if type_ == DataType.ARRAY:
-                if isinstance(value, list):
-                    return value
-                raise TypeError(f"{type(value)} does not match "
-                                f"{DataType.ARRAY}")
-            if type_ == DataType.STRUCTUREDVALUE:
-                value = json.dumps(value)
-                return json.loads(value)
-            else:
-                value = json.dumps(value)
-                return json.loads(value)
-        return value
-
-    @validator('metadata')
-    def validate_metadata_type(cls, value):
-        """validator for field 'metadata'"""
-        if isinstance(value, NamedContextMetadata):
-            value = [value]
-        elif isinstance(value, dict):
-            if all(isinstance(item, ContextMetadata)
-                   for item in value.values()):
-                return value
-            json.dumps(value)
-            return {key: ContextMetadata(**item) for key, item in value.items()}
-        if isinstance(value, list):
-            if all(isinstance(item, NamedContextMetadata) for item in value):
-                return {item.name: ContextMetadata(**item.dict(exclude={
-                    'name'})) for item in value}
-            if all(isinstance(item, Dict) for item in value):
-                return {key: ContextMetadata(**item) for key, item in value}
-        raise TypeError(f"Invalid type {type(value)}")
+    pass
 
 
-class NamedContextAttribute(ContextAttribute):
+class NamedContextAttribute(ContextAttribute, BaseNameAttribute):
     """
     Context attributes are properties of context entities. For example, the
     current speed of a car could be modeled as attribute current_speed of entity
@@ -232,18 +91,7 @@ class NamedContextAttribute(ContextAttribute):
     In the NGSI data model, attributes have an attribute name, an attribute type
     an attribute value and metadata.
     """
-    name: str = Field(
-        titel="Attribute name",
-        description="The attribute name describes what kind of property the "
-                    "attribute value represents of the entity, for example "
-                    "current_speed. Allowed characters "
-                    "are the ones in the plain ASCII set, except the following "
-                    "ones: control characters, whitespace, &, ?, / and #.",
-        max_length=256,
-        min_length=1,
-        regex=FiwareRegex.string_protect.value,
-        # Make it FIWARE-Safe
-    )
+    pass
 
 
 class ContextEntityKeyValues(BaseModel):
@@ -359,9 +207,11 @@ class ContextEntity(ContextEntityKeyValues):
     def add_attributes(self, attrs: Union[Dict[str, ContextAttribute],
                                           List[NamedContextAttribute]]) -> None:
         """
-        Add property to entity
+        Add attributes (properties, relationships) to entity
         Args:
-            attrs:
+            attrs: Dict[str, ContextAttribute]: {NAME for attr : Attribute}
+                    or
+                   List[NamedContextAttribute]
         Returns:
             None
         """
@@ -377,6 +227,22 @@ class ContextEntity(ContextEntityKeyValues):
             blacklisted_attribute_types: Optional[List[DataType]] = None,
             response_format: Union[str, PropertyFormat] = PropertyFormat.LIST) \
             -> Union[List[NamedContextAttribute], Dict[str, ContextAttribute]]:
+        """
+        Get attributes or a subset from the entity.
+
+        Args:
+            whitelisted_attribute_types: Optional list, if given only
+                attributes matching one of the types are returned
+            blacklisted_attribute_types: Optional list, if given all
+                attributes are returned that do not match a list entry
+            response_format: Wanted result format,
+                                List -> list of NamedContextAttributes
+                                Dict -> dict of {name: ContextAttribute}
+        Raises:
+            AssertionError, if both a white and a black list is given
+        Returns:
+            List[NamedContextAttribute] or Dict[str, ContextAttribute]
+        """
 
         response_format = PropertyFormat(response_format)
 
@@ -405,12 +271,38 @@ class ContextEntity(ContextEntityKeyValues):
                     and value.get('type') in
                     [att.value for att in attribute_types]]
 
+    def update_attribute(self,
+                         attrs: Union[Dict[str, ContextAttribute],
+                                      List[NamedContextAttribute]]) -> None:
+        """
+        Update attributes of an entity. Overwrite the current held value
+        for the attribute with the value contained in the corresponding given
+        attribute
+
+        Args:
+            attrs: List of NamedContextAttributes,
+                   Dict of {attribute_name: ContextAttribute}
+        Raises:
+            NameError, if the attribute does not currently exists in the entity
+        Returns:
+            None
+        """
+        if isinstance(attrs, list):
+            attrs = {attr.name: ContextAttribute(**attr.dict(exclude={'name'}))
+                     for attr in attrs}
+
+        existing_attribute_names = self.get_attribute_names()
+        for key, attr in attrs.items():
+            if key not in existing_attribute_names:
+                raise NameError
+            self.__setattr__(name=key, value=attr)
+
     def get_attribute_names(self) -> Set[str]:
         """
         Returns a set with all attribute names of this entity
 
         Returns:
-            set[str]
+            Set[str]
         """
 
         return {key for key in self.dict()
@@ -443,10 +335,22 @@ class ContextEntity(ContextEntityKeyValues):
         for name in names:
             delattr(self, name)
 
-    def get_attribute(self, attribute_name) -> NamedContextAttribute:
+    def get_attribute(self, attribute_name: str) -> NamedContextAttribute:
+        """
+        Get the attribute of the entity with the given name
+
+        Args:
+            attribute_name (str): Name of attribute
+        Raises:
+            KeyError, if no attribute with given name exists
+        Returns:
+            NamedContextAttribute
+
+        """
         for attr in self.get_attributes():
             if attr.name == attribute_name:
                 return attr
+        raise KeyError
 
     def get_properties(
             self,
@@ -530,15 +434,18 @@ class Query(BaseModel):
                     "represented by a JSON object"
     )
     attrs: Optional[List[str]] = Field(
+        default=None,
         description="List of attributes to be provided "
                     "(if not specified, all attributes)."
     )
     expression: Optional[Expression] = Field(
+        default=None,
         description="An expression composed of q, mq, georel, geometry and "
                     "coords "
     )
     metadata: Optional[List[str]] = Field(
-        description='a _list of metadata names to include in the response. '
+        default=None,
+        description='a list of metadata names to include in the response. '
                     'See "Filtering out attributes and metadata" section for '
                     'more detail.'
     )

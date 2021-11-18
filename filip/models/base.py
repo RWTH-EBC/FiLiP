@@ -97,12 +97,12 @@ class FiwareRegex(str, Enum):
     """
     _init_ = 'value __doc__'
 
-    standard = r"(^((?![?&#/ ])[\x00-\x7F])*$)", \
+    standard = r"(^((?![?&#/\"' ])[\x00-\x7F])*$)", \
                "Prevents any string that contains at least one of the " \
-               "symbols: ? & # / or a whitespace"
+               "symbols: ? & # / ' \" or a whitespace"
     string_protect = r"(?!^id$)(?!^type$)(?!^geo:location$)" \
-                     r"(^((?![?&#/ ])[\x00-\x7F])*$)",\
+                     r"(^((?![?&#/\"' ])[\x00-\x7F])*$)",\
                      "Prevents any string that contains at least one of " \
-                     "the symbols: ? & # / or a whitespace." \
+                     "the symbols: ? & # / ' \" or a whitespace." \
                      "AND the strings: id, type, geo:location"
 

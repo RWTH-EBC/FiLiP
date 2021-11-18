@@ -1,10 +1,10 @@
 """
 IoT-Agent Module for API Client
 """
-from typing import List, Dict, Set, Union
+from typing import List, Dict, Set, Union, Optional
 from urllib.parse import urljoin
 import requests
-from pydantic import parse_obj_as
+from pydantic import parse_obj_as, AnyHttpUrl
 from filip.config import settings
 from filip.clients.base_http_client import BaseHttpClient
 from filip.models.base import FiwareHeader
@@ -23,6 +23,7 @@ class IoTAClient(BaseHttpClient):
         fiware_header (FiwareHeader): fiware service and fiware service path
         **kwargs (Optional): Optional arguments that ``request`` takes.
     """
+
     def __init__(self,
                  url: str = None,
                  *,
@@ -195,6 +196,7 @@ class IoTAClient(BaseHttpClient):
         by the resource and apikey query parameters. Takes a service group body
         as the payload. The body does not have to be complete: for incomplete
         bodies, just the existing attributes will be updated
+        
         Args:
             service_group (ServiceGroup): Service to update.
             fields: Fields of the service_group to update. If 'None' all allowed
@@ -231,7 +233,8 @@ class IoTAClient(BaseHttpClient):
 
     def delete_group(self, *, resource: str, apikey: str):
         """
-
+        Deletes a service group in in the IoT-Agent
+        
         Args:
             resource:
             apikey:
@@ -292,7 +295,8 @@ class IoTAClient(BaseHttpClient):
 
     def post_device(self, *, device: Device, update: bool = False) -> None:
         """
-
+        Post a device configuration to the IoT-Agent
+        
         Args:
             device:
             update:
@@ -341,9 +345,11 @@ class IoTAClient(BaseHttpClient):
     def get_device(self, *, device_id: str) -> Device:
         """
         Returns all the information about a particular device.
+        
         Args:
             device_id:
-
+        Raises:
+            requests.RequestException, if device does not exist
         Returns:
             Device
 
@@ -363,6 +369,12 @@ class IoTAClient(BaseHttpClient):
     def update_device(self, *, device: Device, add: bool = True) -> None:
         """
         Updates a device from the device registry.
+        Adds, removes attributes from the device entry and changes
+        attributes values.
+        It does not change device settings (endpoint,..) and only adds
+        attributes to the corresponding entity, their it does not
+        change any attribute value and does not delete removed attributes
+
         Args:
             device:
             add (bool): If device not found add it
@@ -404,10 +416,13 @@ class IoTAClient(BaseHttpClient):
             self.update_device(device=device, add=add)
 
     def delete_device(self, *, device_id: str,
-                      delete_entity: bool = False) -> None:
+                      delete_entity: bool = False,
+                      cb_url: AnyHttpUrl = settings.IOTA_URL,
+                      force_entity_deletion: bool = False) -> None:
         """
         Remove a device from the device registry. No payload is required
         or received.
+        
         Args:
             device_id: str, ID of Device
             delete_entity:  False -> Only delete the device entry,
@@ -419,6 +434,11 @@ class IoTAClient(BaseHttpClient):
                                     If multiple devices are linked to this
                                     entity, this operation is not executed and
                                     an exception is raised
+            cb_url: AnyHttpUrl ->   ContextBroker Url where the corresponding
+                                    entity resigns
+            force_entity_deletion: bool, if delete_entity is true and
+                                    multiple devices are linked to the linked
+                                    entity, delete it and do not raise an error
         Returns:
             None
         """
@@ -442,7 +462,7 @@ class IoTAClient(BaseHttpClient):
             # An entity can technically belong to multiple devices
             # Only delete the entity if
             devices = self.get_device_list(entity=device.entity_name)
-            if len(devices) > 0:
+            if len(devices) > 0 and not force_entity_deletion:
                 raise Exception(f"The Corresponding Entity to the device "
                                 "{device_id} is linked to multiple devices, "
                                 "it was not deleted")
@@ -450,6 +470,7 @@ class IoTAClient(BaseHttpClient):
                 try:
                     from filip.clients.ngsi_v2 import ContextBrokerClient
                     client = ContextBrokerClient(
+                        url=cb_url,
                         fiware_header=self.fiware_headers)
 
                     client.delete_entity(entity_id=device.entity_name,
@@ -460,6 +481,129 @@ class IoTAClient(BaseHttpClient):
                     # It is only important that the entity does not exists after
                     # this methode, not if this methode actively deleted it
                     pass
+
+    def patch_device(self,
+                     device: Device,
+                     patch_entity: bool = True,
+                     cb_url: AnyHttpUrl = settings.CB_URL) -> None:
+        """
+        Updates a device state in Fiware, if the device does not exists it
+        is created, else its values are updated.
+        If the device settings (endpoint,..) were changed the device and
+        entity are deleted and re-added.
+
+        If patch_entity is true the corresponding entity in the ContextBroker is
+        also correctly updated. Else only new attributes are added there.
+
+        Args:
+            device (Device): Device to be posted to /updated in Fiware
+            patch_entity (bool): If true the corresponding entity is
+                completely synced
+            cb_url (AnyHttpUrl): Url of the ContextBroker where the entity is
+                found
+
+        Returns:
+            None
+        """
+
+        try:
+            live_device = self.get_device(device_id=device.device_id)
+        except requests.RequestException:
+            # device does not exist yet, post it
+            self.post_device(device=device)
+            return
+
+        # if the device settings were changed we need to delete the device
+        # and repost it
+        settings_dict = {"device_id", "service", "service_path",
+                         "entity_name", "entity_type",
+                         "timestamp", "apikey", "endpoint",
+                         "protocol", "transport",
+                         "expressionLanguage"}
+        import json
+        live_settings = live_device.dict(include=settings_dict)
+        new_settings = device.dict(include=settings_dict)
+
+        if not live_settings == new_settings:
+            self.delete_device(device_id=device.device_id,
+                               delete_entity=True, force_entity_deletion=True)
+            self.post_device(device=device)
+            return
+
+        # We are at a state where the device exists, but only attributes were
+        # changed.
+        # we need to update the device, and the context entry separately,
+        # as update device only takes over a part of the changes to the
+        # ContextBroker.
+
+        # update device
+        self.update_device(device=device)
+
+        # update context entry
+        # 1. build context entity from information in device
+        # 2. patch it
+        from filip.models.ngsi_v2.context import \
+            ContextEntity, NamedContextAttribute
+
+        def build_context_entity_from_device(device: Device) -> ContextEntity:
+            from filip.models.base import DataType
+            entity = ContextEntity(id=device.entity_name,
+                                   type=device.entity_type)
+
+            for command in device.commands:
+                entity.add_attributes([
+                    # Command attribute will be registered by the device_update
+                    NamedContextAttribute(
+                        name=f"{command.name}_info",
+                        type=DataType.COMMAND_RESULT
+                    ),
+                    NamedContextAttribute(
+                        name=f"{command.name}_status",
+                        type=DataType.COMMAND_STATUS
+                    )
+                ])
+            for attribute in device.attributes:
+                # todo metadata
+                entity.add_attributes([
+                    NamedContextAttribute(
+                        name=f"{attribute.name}",
+                        type=DataType.STRUCTUREDVALUE
+                    )
+                ])
+            for static_attribute in device.static_attributes:
+                # todo metadata
+                entity.add_attributes([
+                    NamedContextAttribute(
+                        name=f"{static_attribute.name}",
+                        type=static_attribute.type,
+                        value=static_attribute.value
+                    )
+                ])
+            return entity
+
+        if patch_entity:
+            from filip.clients.ngsi_v2 import ContextBrokerClient
+            with ContextBrokerClient(
+                    url=cb_url,
+                    fiware_header=self.fiware_headers) as client:
+                client.patch_entity(
+                    entity=build_context_entity_from_device(device))
+
+    def does_device_exists(self, device_id: str) -> bool:
+        """
+        Test if a device with the given id exists in Fiware
+        Args:
+            device_id (str)
+        Returns:
+            bool
+        """
+        try:
+            self.get_device(device_id=device_id)
+            return True
+        except requests.RequestException as err:
+            if not err.response.status_code == 404:
+                raise
+            return False
 
     # LOG API
     def get_loglevel_of_agent(self):
@@ -484,6 +628,7 @@ class IoTAClient(BaseHttpClient):
     def change_loglevel_of_agent(self, level: str):
         """
         Change current loglevel of agent
+        
         Args:
             level:
 

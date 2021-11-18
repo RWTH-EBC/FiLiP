@@ -12,12 +12,12 @@ import logging
 import time
 import random
 import json
+import uuid
+
 import paho.mqtt.client as mqtt
 from datetime import datetime, timedelta
 from urllib.parse import urlparse
-
 from requests import RequestException
-
 from filip.models.base import FiwareHeader
 from filip.utils.simple_ql import QueryString
 from filip.clients.ngsi_v2 import ContextBrokerClient
@@ -31,7 +31,8 @@ from filip.models.ngsi_v2.context import \
     Query, \
     ActionType, NamedContextMetadata
 
-from filip.models.ngsi_v2.base import AttrsFormat, EntityPattern, Status
+from filip.models.ngsi_v2.base import AttrsFormat, EntityPattern, Status, \
+    NamedMetadata
 from filip.models.ngsi_v2.subscriptions import Mqtt, Message, Subscription
 from filip.models.ngsi_v2.iot import \
     Device, \
@@ -455,8 +456,7 @@ class TestContextBroker(unittest.TestCase):
                         + str(reasonCode))
 
         import paho.mqtt.client as mqtt
-        mqtt_client = mqtt.Client(client_id="filip-test",
-                                  userdata=None,
+        mqtt_client = mqtt.Client(userdata=None,
                                   protocol=mqtt.MQTTv5,
                                   transport="tcp")
         # add our callbacks to the client
@@ -687,13 +687,6 @@ class TestContextBroker(unittest.TestCase):
         # disconnect the mqtt device
         mqtt_client.disconnect()
 
-        # cleanup the server and delete everything
-        client.iota.delete_device(device_id=device.device_id)
-        client.iota.delete_group(resource=service_group.resource,
-                                 apikey=service_group.apikey)
-        client.cb.delete_entity(entity_id=entity.id, entity_type=entity.type)
-
-
     def test_patch_entity(self) -> None:
         """
         Test the methode: patch_entity
@@ -705,10 +698,10 @@ class TestContextBroker(unittest.TestCase):
         entity = ContextEntity(id="test_id1", type="test_type1")
         attr1 = NamedContextAttribute(name="attr1", value="1")
         attr1.metadata["m1"] = \
-            NamedContextMetadata(name="meta1", type="metatype", value="2")
+            NamedMetadata(name="meta1", type="metatype", value="2")
         attr2 = NamedContextAttribute(name="attr2", value="2")
         attr1.metadata["m2"] = \
-            NamedContextMetadata(name="meta2", type="metatype", value="3")
+            NamedMetadata(name="meta2", type="metatype", value="3")
         entity.add_attributes([attr1, attr2])
 
         # sub-Test1: Post new
@@ -753,7 +746,7 @@ class TestContextBroker(unittest.TestCase):
         test_entity = ContextEntity(id="test_id1", type="test_type1")
         attr1_changed = NamedContextAttribute(name="attr1", value="2")
         attr1_changed.metadata["m4"] = \
-            NamedContextMetadata(name="meta3", type="metatype5", value="4")
+            NamedMetadata(name="meta3", type="metatype5", value="4")
         attr3 = NamedContextAttribute(name="attr3", value="3")
         test_entity.add_attributes([attr1_changed, attr3])
         self.client.patch_entity(test_entity)
