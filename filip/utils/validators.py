@@ -41,8 +41,8 @@ def validate_mqtt_url(url: AnyMqttUrl) -> str:
 
 def validate_escape_character_free(value: Any) -> Any:
     """
-    Function that checks whether a value does not contain in any of its
-    string parts ' or ".
+    Function that checks whether a value contains a string part that starts
+    or end with ' or ".
     the function iterates to break down each complex data-structure to its
     fundamental string parts.
     Each value of a list is examined
@@ -50,6 +50,7 @@ def validate_escape_character_free(value: Any) -> Any:
     for Fiware
     Args:
         value: the string to check
+
     Returns:
        validated string
     """
@@ -69,10 +70,10 @@ def validate_escape_character_free(value: Any) -> Any:
         else:
             # if a value here is not a string, it will also not contain ' or "
             v = str(v)
-            if '"' in v:
+            if '"' == v[-1:] or '"' == v[0:1]:
                 raise ValueError(f"The value {v} contains "
-                                  f"the forbidden char \"")
-            if "'" in v:
+                                 f"the forbidden char \"")
+            if "'" == v[-1:] or "'" == v[0:1]:
                 raise ValueError(f"The value {v} contains "
-                                  f"the forbidden char '")
+                                 f"the forbidden char '")
     return value

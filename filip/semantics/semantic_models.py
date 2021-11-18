@@ -434,10 +434,7 @@ class Field(BaseModel):
                 type=DataType.STRUCTUREDVALUE,
                 value=values,
                 entity_name=None,
-                entity_type=None,
-                reverse=None,
-                expression=None,
-                metadata=None,
+                entity_type=None
             )
         ]
 
@@ -767,10 +764,7 @@ class DeviceAttributeField(DeviceField):
                         name=f"{self.name}_{attribute.name}",
                         type=DataType.STRUCTUREDVALUE,
                         entity_name=None,
-                        entity_type=None,
-                        reverse=None,
-                        expression=None,
-                        metadata=None
+                        entity_type=None
                     )
                 )
             else:
@@ -780,10 +774,7 @@ class DeviceAttributeField(DeviceField):
                         name=f"{self.name}_{attribute.name}",
                         type=DataType.STRUCTUREDVALUE,
                         entity_name=None,
-                        entity_type=None,
-                        reverse=None,
-                        expression=None,
-                        metadata=None
+                        entity_type=None
                     )
                 )
 
@@ -1620,9 +1611,6 @@ class SemanticDeviceClass(SemanticClass):
                 value=reference_str_dict,
                 entity_name=None,
                 entity_type=None,
-                reverse=None,
-                expression=None,
-                metadata=None
             )
         )
 
@@ -1633,9 +1621,6 @@ class SemanticDeviceClass(SemanticClass):
                 value=self.device_settings.dict(),
                 entity_name=None,
                 entity_type=None,
-                reverse=None,
-                expression=None,
-                metadata=None
             )
         )
 
