@@ -196,6 +196,7 @@ class IoTAClient(BaseHttpClient):
         by the resource and apikey query parameters. Takes a service group body
         as the payload. The body does not have to be complete: for incomplete
         bodies, just the existing attributes will be updated
+        
         Args:
             service_group (ServiceGroup): Service to update.
             fields: Fields of the service_group to update. If 'None' all allowed
