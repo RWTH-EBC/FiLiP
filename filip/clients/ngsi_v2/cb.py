@@ -1408,9 +1408,8 @@ class ContextBrokerClient(BaseHttpClient):
         """
         try:
             self.get_entity(entity_id=entity_id, entity_type=entity_type)
-        except requests.RequestException as ex:
-            # couldn't find a better way to extract error code
-            if not str(ex)[0:36] == "404 Client Error: Not Found for url:":
+        except requests.RequestException as err:
+            if not err.response.status_code == 404:
                 raise
             return False
         
@@ -1420,14 +1419,14 @@ class ContextBrokerClient(BaseHttpClient):
                      entity: ContextEntity,
                      old_entity: Optional[ContextEntity] = None) -> None:
         """
-           Takes a given entity and updates the state in the CB to match it.
-           Args:
-               entity: Entity to update
-               old_entity: OPTIONAL, if given only the differences between the
-                           old_entity and entity are updated in the CB.
-                           Other changes made to the entity in CB, can be kept.
-           Returns:
-               None
+        Takes a given entity and updates the state in the CB to match it.
+        Args:
+           entity: Entity to update
+           old_entity: OPTIONAL, if given only the differences between the
+                       old_entity and entity are updated in the CB.
+                       Other changes made to the entity in CB, can be kept.
+        Returns:
+           None
         """
 
         new_entity = entity
@@ -1479,44 +1478,55 @@ class ContextBrokerClient(BaseHttpClient):
 
         # Manage attributes that existed before
         for old_attr in old_attributes:
-            if not old_attr.type == DataType.COMMAND:
-                # commands do not exist in the ContextEntity and are only
-                # registrations to the corresponding device. Operations as
-                # delete will fail as it does not technically exists
-                corresponding_new_attr = None
-                for new_attr in new_attributes:
-                    if new_attr.name == old_attr.name:
-                        corresponding_new_attr = new_attr
+            # commands do not exist in the ContextEntity and are only
+            # registrations to the corresponding device. Operations as
+            # delete will fail as it does not technically exists
+            corresponding_new_attr = None
+            for new_attr in new_attributes:
+                if new_attr.name == old_attr.name:
+                    corresponding_new_attr = new_attr
 
-                if corresponding_new_attr is None:
-                    # Attribute no longer exists, delete it
+            if corresponding_new_attr is None:
+                # Attribute no longer exists, delete it
+                try:
                     self.delete_entity_attribute(entity_id=new_entity.id,
-                                             entity_type=new_entity.type,
-                                             attr_name=old_attr.name)
-                else:
-                    # Check if attributed changed in any way, if yes update
-                    # else do nothing and keep current state
-                    if not old_attr.__eq__(corresponding_new_attr):
-                        self.update_entity_attribute(entity_id=new_entity.id,
                                                  entity_type=new_entity.type,
-                                                 attr=corresponding_new_attr)
+                                                 attr_name=old_attr.name)
+                except requests.RequestException as err:
+                    # if the attribute is provided by a registration the
+                    # deletion will fail
+                    if not err.response.status_code == 404:
+                        raise
+            else:
+                # Check if attributed changed in any way, if yes update
+                # else do nothing and keep current state
+                if not old_attr.__eq__(corresponding_new_attr):
+                    try:
+                        self.update_entity_attribute(
+                            entity_id=new_entity.id,
+                            entity_type=new_entity.type,
+                            attr=corresponding_new_attr)
+                    except requests.RequestException as err:
+                        # if the attribute is provided by a registration the
+                        # update will fail
+                        if not err.response.status_code == 404:
+                            raise
 
         # Create new attributes
         update_entity = ContextEntity(id=entity.id, type=entity.type)
         update_needed = False
         for new_attr in new_attributes:
-            if not new_attr.type == DataType.COMMAND:
-                # commands do not exist in the ContextEntity and are only
-                # registrations to the corresponding device. Operations as
-                # delete will fail as it does not technically exists
-                attr_existed = False
-                for old_attr in old_attributes:
-                    if new_attr.name == old_attr.name:
-                        attr_existed = True
+            # commands do not exist in the ContextEntity and are only
+            # registrations to the corresponding device. Operations as
+            # delete will fail as it does not technically exists
+            attr_existed = False
+            for old_attr in old_attributes:
+                if new_attr.name == old_attr.name:
+                    attr_existed = True
 
-                if not attr_existed:
-                    update_needed = True
-                    update_entity.add_attributes([new_attr])
+            if not attr_existed:
+                update_needed = True
+                update_entity.add_attributes([new_attr])
 
         if update_needed:
             self.update_entity(update_entity, append=True)

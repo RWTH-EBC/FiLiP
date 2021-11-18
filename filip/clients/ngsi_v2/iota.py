@@ -547,10 +547,7 @@ class IoTAClient(BaseHttpClient):
 
             for command in device.commands:
                 entity.add_attributes([
-                    NamedContextAttribute(
-                        name=f"{command.name}",
-                        type=DataType.COMMAND
-                    ),
+                    # Command attribute will be registered by the device_update
                     NamedContextAttribute(
                         name=f"{command.name}_info",
                         type=DataType.COMMAND_RESULT
@@ -584,7 +581,6 @@ class IoTAClient(BaseHttpClient):
             with ContextBrokerClient(
                     url=cb_url,
                     fiware_header=self.fiware_headers) as client:
-
                 client.patch_entity(
                     entity=build_context_entity_from_device(device))
 
@@ -599,7 +595,9 @@ class IoTAClient(BaseHttpClient):
         try:
             self.get_device(device_id=device_id)
             return True
-        except requests.RequestException:
+        except requests.RequestException as err:
+            if not err.response.status_code == 404:
+                raise
             return False
 
     # LOG API
