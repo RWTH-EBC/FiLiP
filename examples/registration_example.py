@@ -50,7 +50,7 @@ windspeed_metadata = NamedMetadata(name="unit",
 windspeed = ContextAttribute(type="Number",
                              value=60)#,
                              #metadata=windspeed_metadata)
-weather_station.add_properties(attrs={"windspeed": windspeed})
+weather_station.add_attributes(attrs={"windspeed": windspeed})
 
 # print complete model
 print("+"*80)

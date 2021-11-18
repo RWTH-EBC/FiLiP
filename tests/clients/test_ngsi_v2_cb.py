@@ -223,7 +223,7 @@ class TestContextBroker(unittest.TestCase):
             client.update_entity(entity=res_entity)
             self.assertEqual(client.get_entity(entity_id=self.entity.id),
                              res_entity)
-            res_entity.add_properties({'pressure': ContextAttribute(
+            res_entity.add_attributes({'pressure': ContextAttribute(
                 type='Number', value=1050)})
             client.update_entity(entity=res_entity)
             self.assertEqual(client.get_entity(entity_id=self.entity.id),
@@ -255,7 +255,7 @@ class TestContextBroker(unittest.TestCase):
             attr_dict = NamedContextAttribute(name='attr_dict',
                                               type='StructuredValue',
                                               value={'key': 'value'})
-            entity.add_properties([attr_txt,
+            entity.add_attributes([attr_txt,
                                    attr_bool,
                                    attr_float,
                                    attr_list,

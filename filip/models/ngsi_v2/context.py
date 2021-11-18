@@ -6,7 +6,7 @@ created Sep 21, 2021
 NGSIv2 models for context broker interaction
 """
 import json
-from typing import Any, Type, List, Dict, Union, Optional
+from typing import Any, Type, List, Dict, Union, Optional, Set
 from aenum import Enum
 from pydantic import \
     BaseModel, \
@@ -203,35 +203,14 @@ class ContextEntity(ContextEntityKeyValues):
                  data.items() if key not in ContextEntity.__fields__}
         return attrs
 
-    def get_properties(self,
-                       response_format: Union[str, PropertyFormat] =
-                       PropertyFormat.LIST) -> \
-            Union[List[NamedContextAttribute],
-                  Dict[str, ContextAttribute]]:
-        """
-        Args:
-            response_format:
-
-        Returns:
-
-        """
-        response_format = PropertyFormat(response_format)
-        if response_format == PropertyFormat.DICT:
-            return {key: ContextAttribute(**value) for key, value in
-                    self.dict().items() if key not in ContextEntity.__fields__
-                    and value.get('type') != DataType.RELATIONSHIP}
-
-        return [NamedContextAttribute(name=key, **value) for key, value in
-                self.dict().items() if key not in
-                ContextEntity.__fields__ and
-                value.get('type') != DataType.RELATIONSHIP]
-
-    def add_properties(self, attrs: Union[Dict[str, ContextAttribute],
+    def add_attributes(self, attrs: Union[Dict[str, ContextAttribute],
                                           List[NamedContextAttribute]]) -> None:
         """
-        Add property to entity
+        Add attributes (properties, relationships) to entity
         Args:
-            attrs:
+            attrs: Dict[str, ContextAttribute]: {NAME for attr : Attribute}
+                    or
+                   List[NamedContextAttribute]
         Returns:
             None
         """
@@ -241,11 +220,150 @@ class ContextEntity(ContextEntityKeyValues):
         for key, attr in attrs.items():
             self.__setattr__(name=key, value=attr)
 
-    def get_relationships(self,
-                          response_format: Union[str, PropertyFormat] =
-                          PropertyFormat.LIST) \
-            -> Union[List[NamedContextAttribute],
-                     Dict[str, ContextAttribute]]:
+    def get_attributes(
+            self,
+            whitelisted_attribute_types: Optional[List[DataType]] = None,
+            blacklisted_attribute_types: Optional[List[DataType]] = None,
+            response_format: Union[str, PropertyFormat] = PropertyFormat.LIST) \
+            -> Union[List[NamedContextAttribute], Dict[str, ContextAttribute]]:
+        """
+        Get attributes or a subset from the entity.
+
+        Args:
+            whitelisted_attribute_types: Optional list, if given only
+                attributes matching one of the types are returned
+            blacklisted_attribute_types: Optional list, if given all
+                attributes are returned that do not match a list entry
+            response_format: Wanted result format,
+                                List -> list of NamedContextAttributes
+                                Dict -> dict of {name: ContextAttribute}
+        Raises:
+            AssertionError, if both a white and a black list is given
+        Returns:
+            List[NamedContextAttribute] or Dict[str, ContextAttribute]
+        """
+
+        response_format = PropertyFormat(response_format)
+
+        assert whitelisted_attribute_types is None or \
+               blacklisted_attribute_types is None,\
+               "Only whitelist or blacklist is allowed"
+
+        if whitelisted_attribute_types is not None:
+            attribute_types = whitelisted_attribute_types
+        elif blacklisted_attribute_types is not None:
+            attribute_types = [att_type for att_type in list(DataType)
+                               if att_type not in blacklisted_attribute_types]
+        else:
+            attribute_types = [att_type for att_type in list(DataType)]
+
+        if response_format == PropertyFormat.DICT:
+            return {key: ContextAttribute(**value)
+                    for key, value in self.dict().items()
+                    if key not in ContextEntity.__fields__
+                    and value.get('type') in
+                    [att.value for att in attribute_types]}
+        else:
+            return [NamedContextAttribute(name=key, **value)
+                    for key, value in self.dict().items()
+                    if key not in ContextEntity.__fields__
+                    and value.get('type') in
+                    [att.value for att in attribute_types]]
+
+    def update_attribute(self,
+                         attrs: Union[Dict[str, ContextAttribute],
+                                      List[NamedContextAttribute]]) -> None:
+        """
+        Update an attribute of an entity
+        Args:
+            attrs:
+        Returns:
+            None
+        """
+        if isinstance(attrs, list):
+            attrs = {attr.name: ContextAttribute(**attr.dict(exclude={'name'}))
+                     for attr in attrs}
+
+        existing_attribute_names = self.get_attribute_names()
+        for key, attr in attrs.items():
+            if key not in existing_attribute_names:
+                raise NameError
+            self.__setattr__(name=key, value=attr)
+
+    def get_attribute_names(self) -> Set[str]:
+        """
+        Returns a set with all attribute names of this entity
+
+        Returns:
+            Set[str]
+        """
+
+        return {key for key in self.dict()
+                if key not in ContextEntity.__fields__}
+
+    def delete_attributes(self, attrs: Union[Dict[str, ContextAttribute],
+                                             List[NamedContextAttribute],
+                                             List[str]]):
+        """
+        Delete the given attributes from the entity
+
+        Args:
+            attrs:  - Dict {name: ContextAttribute}
+                    - List[NamedContextAttribute]
+                    - List[str] -> names of attributes
+        Raises:
+            Exception: if one of the given attrs does not represent an
+                       existing argument
+        """
+
+        names: List[str] = []
+        if isinstance(attrs, list):
+            for entry in attrs:
+                if isinstance(entry, str):
+                    names.append(entry)
+                elif isinstance(entry, NamedContextAttribute):
+                    names.append(entry.name)
+        else:
+            names.extend(list(attrs.keys()))
+        for name in names:
+            delattr(self, name)
+
+    def get_attribute(self, attribute_name: str) -> NamedContextAttribute:
+        """
+        Get the attribute of the entity with the given name
+
+        Args:
+            attribute_name (str): Name of attribute
+        Raises:
+            KeyError, if no attribute with given name exists
+        Returns:
+            NamedContextAttribute
+
+        """
+        for attr in self.get_attributes():
+            if attr.name == attribute_name:
+                return attr
+        raise KeyError
+
+    def get_properties(
+            self,
+            response_format: Union[str, PropertyFormat] = PropertyFormat.LIST)\
+            -> Union[List[NamedContextAttribute], Dict[str, ContextAttribute]]:
+        """
+        Args:
+            response_format:
+
+        Returns:
+
+        """
+        return self.get_attributes(blacklisted_attribute_types=[
+            DataType.RELATIONSHIP], response_format=response_format)
+
+    def get_relationships(
+            self,
+            response_format: Union[str, PropertyFormat] = PropertyFormat.LIST)\
+            -> Union[List[NamedContextAttribute], Dict[str, ContextAttribute]]:
+
         """
         Get all relationships of the context entity
 
