@@ -16,7 +16,6 @@ class TestModels(unittest.TestCase):
     Test class for core.models
     """
 
-    @unittest.skip("debugging")
     def setUp(self) -> None:
         # create variables for test
         self.service_paths = [generate_servicepath(), generate_servicepath()]

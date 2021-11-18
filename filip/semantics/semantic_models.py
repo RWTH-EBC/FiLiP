@@ -267,58 +267,10 @@ class Command(DeviceProperty):
         Raises:
             Exception: If the command was not yet saved to Fiware
         """
-
-        print(
-            "=====================================================")
-
-        attr = self._get_field_from_fiware(field_name=self.name,
-                                           required_type="command")
-        print("1.")
-        print(attr)
         client = self._instance_link.semantic_manager.get_client(
                  self._instance_link.instance_identifier.header)
 
-        print("2.")
-        print(client.get_entity_list())
-
-        print("3.")
-        print(client.base_url)
-        print(client.headers)
-
-        print("4.")
-        print(self._instance_link.instance_identifier)
-
-        # client.update_entity_attribute(
-        #     entity_id=self._instance_link.instance_identifier.id,
-        #     entity_type=self._instance_link.instance_identifier.type,
-        #     attr=attr)
-
-        # from urllib.parse import urljoin
-        # url = urljoin(client.base_url,
-        #               f'v2/entities/{self._instance_link.instance_identifier.id}'
-        #               f'/attrs/')
-        # params = {}
-        # try:
-        #     body = {
-        #         self.name:{
-        #             "type": "command",
-        #             "value": ""
-        #         }
-        #
-        #     }
-        #     print(body)
-        #     res = client.patch(url=url,
-        #                        headers=client.headers,
-        #                        json=body)
-        #     if res.ok:
-        #         pass
-        #     else:
-        #         res.raise_for_status()
-        # except requests.RequestException as err:
-        #     msg = f"Could not update attribute  of entity "
-        #     raise
-        context_command = NamedCommand(name=self.name,
-                                       value="")
+        context_command = NamedCommand(name=self.name, value="")
         identifier = self._instance_link.instance_identifier
         client.post_command(entity_id=identifier.id,
                             entity_type=identifier.type,

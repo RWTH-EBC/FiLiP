@@ -28,7 +28,6 @@ logger = logging.getLogger(__name__)
 
 class TestAgent(unittest.TestCase):
 
-    @unittest.skip("debugging")
     def setUp(self) -> None:
         self.fiware_header = FiwareHeader(
             service=settings.FIWARE_SERVICE,

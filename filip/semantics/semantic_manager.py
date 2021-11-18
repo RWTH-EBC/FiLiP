@@ -466,18 +466,10 @@ class SemanticManager(BaseModel):
                 client.close()
             else:
                 client = self.get_iota_client(instance_header=instance.header)
-                # todo : Not propper as we lose state info, we need to
-                #  selectively delete and add commands/attributes and update
-                #  static field data
-                try:
-                    client.delete_device(device_id=instance.get_device_id())
-                except:
-                    pass
+                client.patch_device(device=instance.build_context_device(),
+                                    patch_entity=True,
+                                    cb_url=instance.header.cb_url)
 
-                client.post_device(device=instance.build_context_device())
-
-                # client.update_device(device=instance.build_context_device(),
-                #                      add=True)
                 client.close()
 
         # update old_state

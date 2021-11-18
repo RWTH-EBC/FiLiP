@@ -6,7 +6,7 @@ from filip.utils.simple_ql import \
 
 
 class TestContextBroker(unittest.TestCase):
-    @unittest.skip("debugging")
+
     def setUp(self) -> None:
         self.left_hand_side = 'attr'
         self.numeric_right_hand_side = 20

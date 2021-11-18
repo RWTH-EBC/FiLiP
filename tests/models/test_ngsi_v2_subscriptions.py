@@ -26,7 +26,6 @@ class TestSubscriptions(unittest.TestCase):
     Test class for context broker models
     """
 
-    @unittest.skip("debugging")
     def setUp(self) -> None:
         """
         Setup test data

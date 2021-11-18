@@ -18,7 +18,6 @@ class TestClient(unittest.TestCase):
     Test case for global client
     """
 
-    @unittest.skip("debugging")
     def setUp(self) -> None:
         """
         Setup test data

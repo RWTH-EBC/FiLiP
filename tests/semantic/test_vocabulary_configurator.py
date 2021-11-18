@@ -15,7 +15,6 @@ class TestModels(unittest.TestCase):
     Test class for Vocabulary Configuration
     """
 
-    @unittest.skip("debugging")
     def setUp(self) -> None:
         # Build vocabularies
         vocabulary = VocabularyConfigurator.create_vocabulary(
