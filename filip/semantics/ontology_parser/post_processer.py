@@ -1,23 +1,22 @@
+"""
+The PostProcessing gets called after the vocabulary was parsed from sources
+
+The postprocessing has the goal to add predefined values,
+compute combinedRelations, reload usersettings, and precompute
+information as: duplicate labels or sort relations
+"""
+
 import datetime
 import re
-from typing import List, Dict, Set, Optional
+from typing import List, Optional
 
 import stringcase
 
 from filip.semantics.ontology_parser.vocabulary_builder import VocabularyBuilder
 from filip.semantics.vocabulary import Source, IdType, Vocabulary, \
     DatatypeType, Datatype, Class
-from filip.semantics.vocabulary import Entity, CombinedDataRelation, \
+from filip.semantics.vocabulary import CombinedDataRelation, \
     CombinedObjectRelation, CombinedRelation
-
-
-"""
-The PostProcessing gets called after the vocabulary was parsed from sources
-
-The postprocessing has the goal to add predefined values, 
-compute combinedRelations, reload usersettings, and precompute 
-information as: duplicate labels or sort relations
-"""
 
 
 def post_process_vocabulary(vocabulary: Vocabulary,

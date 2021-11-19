@@ -8,7 +8,7 @@ from . import TargetStatement, StatementType
 from .source import DependencyStatement
 
 if TYPE_CHECKING:
-    from . import Vocabulary, Class
+    from . import Vocabulary
 
 
 class RestrictionType(str, Enum):

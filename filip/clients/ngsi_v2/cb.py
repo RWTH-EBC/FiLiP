@@ -1,12 +1,8 @@
 """
 Context Broker Module for API Client
 """
-import copy
+
 from math import inf
-from typing import Any, Dict, List, Union, Optional, Set
-from urllib.parse import urljoin
-import requests
-from filip.models.ngsi_v2.iot import Device
 from pkg_resources import parse_version
 from pydantic import \
     parse_obj_as, \
@@ -32,7 +28,6 @@ from filip.models.ngsi_v2.context import \
     NamedContextAttribute, \
     Query, \
     Update
-from filip.models.base import DataType
 from filip.models.ngsi_v2.base import AttrsFormat
 from filip.models.ngsi_v2.subscriptions import Subscription
 from filip.models.ngsi_v2.registrations import Registration

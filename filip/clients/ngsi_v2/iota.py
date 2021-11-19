@@ -8,7 +8,6 @@ from pydantic import parse_obj_as, AnyHttpUrl
 from filip.config import settings
 from filip.clients.base_http_client import BaseHttpClient
 from filip.models.base import FiwareHeader
-from filip.models.ngsi_v2.base import NamedMetadata
 from filip.models.ngsi_v2.iot import Device, ServiceGroup, PayloadProtocol
 
 

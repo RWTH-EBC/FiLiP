@@ -8,17 +8,19 @@ NGSIv2 models for context broker interaction
 import json
 from typing import Any, Type, List, Dict, Union, Optional, Set
 from aenum import Enum
-from filip.utils.simple_ql import QueryString, QueryStatement
 from pydantic import \
     BaseModel, \
     create_model, \
     Field, \
-    root_validator, \
-    validator, AnyHttpUrl, Json
+    validator
 
-from filip.models.ngsi_v2.base import EntityPattern, Expression, BaseAttribute, BaseValueAttribute, BaseNameAttribute
+from filip.models.ngsi_v2.base import \
+    EntityPattern, \
+    Expression, \
+    BaseAttribute, \
+    BaseValueAttribute, \
+    BaseNameAttribute
 from filip.models.base import DataType, FiwareRegex
-from filip.models.ngsi_v2.units import validate_unit_data
 
 
 class GetEntitiesOptions(str, Enum):

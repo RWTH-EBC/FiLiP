@@ -6,7 +6,7 @@ from enum import Enum
 
 from pydantic import BaseModel
 from . import *
-from typing import List, Dict, Union, Set, Optional
+from typing import List, Dict, Union, Optional
 
 
 class IdType(str, Enum):

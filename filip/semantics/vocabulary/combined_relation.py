@@ -1,7 +1,6 @@
 
 from pydantic import BaseModel
 from typing import List, TYPE_CHECKING, Set
-import uuid
 from . import Relation
 
 if TYPE_CHECKING:

@@ -2,16 +2,11 @@
 Tests for filip.semantics.ontology_parser.parser
 """
 import collections
-import datetime
 import unittest
 
-import rdflib.util
 from pathlib import Path
 
-from filip.semantics.ontology_parser.post_processer import \
-    post_process_vocabulary
-from filip.semantics.ontology_parser.rdfparser import RdfParser
-from filip.semantics.vocabulary import Vocabulary, Source, DatatypeType
+from filip.semantics.vocabulary import Vocabulary, DatatypeType
 from filip.semantics.vocabulary_configurator import VocabularyConfigurator
 
 

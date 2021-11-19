@@ -4,7 +4,7 @@ from enum import Enum
 
 from pydantic import BaseModel
 from filip.semantics.vocabulary import *
-from typing import List, Dict, Union, Set
+from typing import Dict
 
 
 class IdType(str, Enum):

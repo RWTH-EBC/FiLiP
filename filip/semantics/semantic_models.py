@@ -1,4 +1,3 @@
-import time
 import uuid
 import requests
 from enum import Enum

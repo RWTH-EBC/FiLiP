@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import ForwardRef, List, TYPE_CHECKING
+from typing import List, TYPE_CHECKING
 
 from pydantic import BaseModel
 

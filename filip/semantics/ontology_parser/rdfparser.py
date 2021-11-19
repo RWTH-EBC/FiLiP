@@ -1,7 +1,6 @@
 import uuid
-import io
 from enum import Enum
-from typing import List, Tuple, Dict
+from typing import List, Tuple
 
 import rdflib
 
@@ -23,6 +22,10 @@ description language not the ontology itself
 
 
 class Tags(str, Enum):
+    """
+    Collection of tags used as structures in ontologies, that were used more than
+    once in the rdfparser code
+    """
     rdf_type = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
     owl_intersection = 'http://www.w3.org/2002/07/owl#intersectionOf',
     owl_union = 'http://www.w3.org/2002/07/owl#unionOf',
@@ -30,10 +33,6 @@ class Tags(str, Enum):
     owl_individual = 'http://www.w3.org/2002/07/owl#NamedIndividual',
     owl_on_class = 'http://www.w3.org/2002/07/owl#onClass',
     owl_on_data_range = 'http://www.w3.org/2002/07/owl#onDataRange'
-"""
-Collection of tags used as structures in ontologies, that were used more than 
-once in the rdfparser code
-"""
 
 
 def get_iri_from_uriref(uriref: rdflib.URIRef):
@@ -50,6 +49,7 @@ def get_base_out_of_iri(iri: str):
         # http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH
         index = iri.rfind("/")
         return iri[:index]
+
 
 class RdfParser:
     """

@@ -1,16 +1,12 @@
-import ast
 import copy
 import json
 import logging
-from enum import Enum
-from typing import Optional, Dict, TYPE_CHECKING, Type, List, Any, Union, Set
+from typing import Optional, Dict, Type, List, Any, Union, Set
 
 import requests
-from requests import RequestException
 
 from filip.models.base import NgsiVersion
 
-from filip import settings
 from filip.semantics.vocabulary import Individual
 
 from filip.models.ngsi_v2.context import ContextEntity
@@ -22,7 +18,7 @@ from pydantic import BaseModel
 from filip.semantics.semantic_models import \
     InstanceIdentifier, SemanticClass, InstanceHeader, Datatype, DataField, \
     RelationField, SemanticIndividual, SemanticDeviceClass, CommandField, \
-    Command, DeviceAttributeField, DeviceAttribute, DeviceField, DeviceSettings
+    Command, DeviceAttributeField, DeviceAttribute, DeviceSettings
 
 logger = logging.getLogger('semantics')
 
