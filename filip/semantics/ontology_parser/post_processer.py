@@ -420,7 +420,6 @@ def compute_ancestor_classes(voc_builder: VocabularyBuilder):
             parent = queue.pop()
 
             if not voc_builder.entity_is_known(parent):
-                # todo: parsing log
                 continue
 
             class_.ancestor_class_iris.append(parent)
@@ -450,7 +449,6 @@ def compute_child_classes(voc_builder: VocabularyBuilder):
         for parent in class_.ancestor_class_iris:
 
             if not voc_builder.entity_is_known(parent):
-                # todo: parsing log
                 continue
 
             parent_class = vocabulary.get_class_by_iri(parent)
@@ -483,7 +481,6 @@ def combine_relations(voc_builder: VocabularyBuilder):
         for ancestor_iri in class_.ancestor_class_iris:
 
             if not voc_builder.entity_is_known(ancestor_iri):
-                #todo: parsing log
                 continue
             ancestor = vocabulary.get_class_by_iri(ancestor_iri)
             all_relation_ids.extend(ancestor.get_relation_ids())
@@ -527,7 +524,6 @@ def combine_relations(voc_builder: VocabularyBuilder):
                     class_iri=class_.iri, crel=combi)
             else:
                 pass
-                # todo?
 
 
 def sort_relations(voc_builder: VocabularyBuilder):

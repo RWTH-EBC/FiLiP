@@ -29,7 +29,7 @@ from filip.models.ngsi_v2.context import \
     NamedContextAttribute, \
     NamedCommand, \
     Query, \
-    ActionType, NamedContextMetadata
+    ActionType
 
 from filip.models.ngsi_v2.base import AttrsFormat, EntityPattern, Status, \
     NamedMetadata

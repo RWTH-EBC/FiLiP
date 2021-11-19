@@ -8,6 +8,7 @@ from pydantic import parse_obj_as, AnyHttpUrl
 from filip.config import settings
 from filip.clients.base_http_client import BaseHttpClient
 from filip.models.base import FiwareHeader
+from filip.models.ngsi_v2.base import NamedMetadata
 from filip.models.ngsi_v2.iot import Device, ServiceGroup, PayloadProtocol
 
 
@@ -563,20 +564,20 @@ class IoTAClient(BaseHttpClient):
                     )
                 ])
             for attribute in device.attributes:
-                # todo metadata
                 entity.add_attributes([
                     NamedContextAttribute(
-                        name=f"{attribute.name}",
-                        type=DataType.STRUCTUREDVALUE
+                        name=attribute.name,
+                        type=DataType.STRUCTUREDVALUE,
+                        metadata=attribute.metadata
                     )
                 ])
             for static_attribute in device.static_attributes:
-                # todo metadata
                 entity.add_attributes([
                     NamedContextAttribute(
-                        name=f"{static_attribute.name}",
+                        name=static_attribute.name,
                         type=static_attribute.type,
-                        value=static_attribute.value
+                        value=static_attribute.value,
+                        metadata=static_attribute.metadata
                     )
                 ])
             return entity

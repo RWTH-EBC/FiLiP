@@ -19,7 +19,7 @@ from filip.models.base import FiwareHeader
 
 if __name__ == '__main__':
 
-    # 1. First we create a new blank vocabulary
+    # # 1. First we create a new blank vocabulary
     # A vocabulary consists out of a class hierarchy
     # Each classes posses a set of relations and inherits all relations of
     # its parents.
@@ -35,7 +35,7 @@ if __name__ == '__main__':
     # immutable instance of a class without values. It can be regarded as a
     # type of enum value.
 
-    # 1.1 To automatically adapt the label of the entities in the ontology we
+    # ## 1.1 To automatically adapt the label of the entities in the ontology we
     # can pass some settings to our vocabulary:
     settings = VocabularySettings(
         pascal_case_class_labels=True,
@@ -47,18 +47,18 @@ if __name__ == '__main__':
     # We create our new blank vocabulary:
     vocabulary = VocabularyConfigurator.create_vocabulary(settings=settings)
 
-    # 2. We now add the wanted ontologies to our vocabulary.
+    # # 2. We now add the wanted ontologies to our vocabulary.
     # The ontologies can be inserted via a file, a weblink or as content string.
     # The ontologies need to be Turtle encoded
     # We always get a new vocabulary object returned
 
-    # 2.0.1 as file
+    # ### 2.0.1 as file
     vocabulary = \
         VocabularyConfigurator.add_ontology_to_vocabulary_as_file(
             vocabulary=vocabulary,
             path_to_file='./ontology_files/building circuits.owl')
 
-    # 2.0.2 as string
+    # ### 2.0.2 as string
     with open('./ontology_files/ParsingTesterOntology.ttl', 'r') as file:
         data = file.read()
     vocabulary = \
@@ -68,7 +68,7 @@ if __name__ == '__main__':
             source_name="ParsingExample"
         )
 
-    # 2.0.3 as link
+    # ### 2.0.3 as link
     # if no source name is given, the name is extracted form the uri,
     # here: "saref.tll". Only for demonstration of the function, we do not need
     # saref in our example vocabulary
@@ -79,7 +79,7 @@ if __name__ == '__main__':
             link="https://ontology.tno.nl/saref.ttl"
         )
 
-    # 2.1 The ontologies are added to the vocabulary as sources.
+    # ## 2.1 The ontologies are added to the vocabulary as sources.
     # We can check the details of already contained sources by accessing the
     # source list.
     # Here we print out the names and adding time of all contained sources:
@@ -89,11 +89,12 @@ if __name__ == '__main__':
               f'Id: {source.id}')
     print()
 
-    # 2.2 Each vocabulary always contains the source "Predefined". This source
+    # ## 2.2 Each vocabulary always contains the source "Predefined". This
+    # source
     # contains all fundamental objects of an ontology, as owl:Thing and
     # predefined datatype.
 
-    # 2.3 To see if an ontology could be parsed completely we have to look at
+    # ## 2.3 To see if an ontology could be parsed completely we have to look at
     # the parsing logs:
     print("\u0332".join("Parsing Logs of vocabulary:"))
     print(VocabularyConfigurator.get_parsing_logs(vocabulary))
@@ -102,7 +103,7 @@ if __name__ == '__main__':
     # as it was in a non supported OR format. The semantic logic is not
     # compatible with the OR combination of two relations.
 
-    # 2.4 We could still use the rest of the ParsingTesterOntology, as only
+    # ## 2.4 We could still use the rest of the ParsingTesterOntology, as only
     # the problematic statement was dropped or we remove it again from our
     # vocabulary. Here we need the source id, which was given to us in
     # the parsing logs. We could also look it up in the vocabulary as shown
@@ -115,7 +116,7 @@ if __name__ == '__main__':
                     vocabulary=vocabulary,
                     source_id=source_id)
 
-    # 3. Each entity (class, property, datatype, individual) is uniquely
+    # # 3. Each entity (class, property, datatype, individual) is uniquely
     # referenced by an IRI. An entity in a vocabulary file can reference
     # entities that are not present in the same file.
     # If an entity references an other entity that we have not added in the
@@ -145,7 +146,7 @@ if __name__ == '__main__':
     # parse them into the vocabulary. We here decide to not include these
     # sources
 
-    # 4. Labels of entities need to unique as they represent a namespace
+    # # 4. Labels of entities need to unique as they represent a namespace
     # There are three separated namespaces, in which the labels need to be
     # unique:
     #   - Classes and Individuals
@@ -157,17 +158,17 @@ if __name__ == '__main__':
     #
     # A vocabulary needs to be free of label conflicts before it gets exported
 
-    # 4.1 To check if our vocabulary is valid  we can call:
+    # ## 4.1 To check if our vocabulary is valid  we can call:
     print("\u0332".join("Vocabulary is valid:"))
     print(VocabularyConfigurator.is_vocabulary_valid(vocabulary))
     print("")
 
-    # 4.2 To check which label conflicts our vocabulary posses we can call:
+    # ## 4.2 To check which label conflicts our vocabulary posses we can call:
     print("\u0332".join("Label Conflicts:"))
     print(VocabularyConfigurator.get_label_conflicts_in_vocabulary(vocabulary))
     print("")
 
-    # 5. We can rename entities by setting their label to resolve conflicts
+    # # 5. We can rename entities by setting their label to resolve conflicts
     # or to better adapt the ontology to our liking.
     # To get the used label of an entity always use .get_label()
 
@@ -176,7 +177,7 @@ if __name__ == '__main__':
     entity.set_label("SarefSensor")
 
 
-    # 6. Currently all our classes in the vocabulary are ContextEntities.
+    # # 6. Currently all our classes in the vocabulary are ContextEntities.
     # They can be used to model real world properties, but if we want to
     # interact with the world we need to configure some classes as device
     # classes. An instance of a device class represents 1 Iot-Device in the
@@ -197,7 +198,7 @@ if __name__ == '__main__':
     # To configure the devices of our vocabulary we change the field_type of
     # the DataProperties
 
-    # 6.1 To see a list of all our available data-properties we can use:
+    # # 6.1 To see a list of all our available data-properties we can use:
     print("\u0332".join("Available Data-properties:"))
     for prop_iri, prop in vocabulary.data_properties.items():
         print(f'Label: {prop.get_label()}, Iri: {prop.iri}')
@@ -205,7 +206,7 @@ if __name__ == '__main__':
     # This logic is the same if we want to look into classes,
     # object-properties, datatypes or individuals of our vocabulary.
 
-    # 6.2 We access the wanted properties over the specialised getter,
+    # # 6.2 We access the wanted properties over the specialised getter,
     # the general getter, or directly
     vocabulary.get_data_property(
         "http://www.semanticweb.org/building#controlCommand").field_type = \
@@ -224,7 +225,7 @@ if __name__ == '__main__':
             print(f'Label: {class_.get_label()}, Iri: {class_.iri}')
     print("")
 
-    # 7. We export our configured dictionary as python models.
+    # # 7. We export our configured dictionary as python models.
     # On the export each class is converted to a SemanticClass Model and gets a
     # property field for each CombinedRelation it possess.
     # A CombinedObjectRelation gets converted to a RelationField that will

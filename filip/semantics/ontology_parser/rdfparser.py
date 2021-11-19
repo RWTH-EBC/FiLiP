@@ -286,7 +286,6 @@ class RdfParser:
 
                     if isinstance(equivalent_class, rdflib.term.URIRef):
                         # points to an other defined datatype, ignore
-                        # todo
                         pass
                     else:
                         # is a bNode and points to owl:oneOf
