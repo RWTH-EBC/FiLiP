@@ -1,12 +1,12 @@
-import copy
-import datetime
 import operator
-import uuid
 from enum import Enum
 
 from pydantic import BaseModel
 from . import *
-from typing import List, Dict, Union, Optional
+from typing import List, Dict, Union, Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from filip.semantics.vocabulary_configurator import LabelSummary
 
 
 class IdType(str, Enum):
@@ -96,6 +96,9 @@ class Vocabulary(BaseModel):
     id_types: Dict[str, IdType] = {}
     """Maps all entity iris and (combined)relations to their Entity/Object 
         type, to speed up lookups"""
+
+    original_label_summary: Optional['LabelSummary']
+    """Original label after parsing, before the user made changes"""
 
     settings: VocabularySettings = VocabularySettings()
 
@@ -434,50 +437,6 @@ class Vocabulary(BaseModel):
                 return self.get_data_property(iri)
             else:
                 return None
-
-    def is_label_a_duplicate(self, label: str, entity_iri: str = "",
-                             id_type: IdType = None,
-                             ignore_iri: str = "" ) -> bool:
-        """Tests if an entity has currently the same label as the given label.
-
-        Duplicates are only evaluated for class, and properties as Indivuals
-        and Datatype labels are never used as keys in Fiware.
-        Multiple individuals/datatype_catalogue can have the same label, this is no issue
-        for the system it may disturb the user, but it is his own choice
-
-        Args:
-            label (str): label to test
-            entity_iri (str): Iri of the entity to whcih the checked label will
-                belong
-            id_type (IdType): Alternativ to entity_iri, directly give the
-                entity_type. Exactly One of both needs to ge given
-            ignore_iri (str): OPTIONAL, iri of an entity to ignore when testing
-
-        Returns:
-            bool
-        """
-
-        assert not entity_iri == "" or id_type is not None
-        assert not(entity_iri == "" and id_type is None)
-
-        if not entity_iri == "":
-            id_type = self.get_type_of_id(entity_iri)
-
-        if id_type == IdType.class_ or id_type == IdType.object_property or \
-                id_type == IdType.data_property:
-            lists = [self.classes.values(), self.object_properties.values(),
-                     self.data_properties.values()]
-        else:
-            return False
-            # do not check label for this categories duplicates are allowed
-
-        for l in lists:
-            for entity in l:
-                label_2 = entity.get_label()
-                if label == label_2 and not entity.iri == ignore_iri:
-                    return True
-
-        return False
 
     def is_iri_registered(self, iri: str) -> bool:
         """Test if iri/id is registered (Entities or (Combined)relations)

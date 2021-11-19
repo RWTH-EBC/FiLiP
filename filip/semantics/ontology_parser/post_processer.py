@@ -54,6 +54,8 @@ def post_process_vocabulary(vocabulary: Vocabulary,
     sort_relations(voc_builder)
     mirror_object_property_inverses(voc_builder)
 
+    save_initial_label_summary(vocabulary)
+
 def set_labels(voc_builder: VocabularyBuilder):
     """ If entities have no label, extract their label from the iri
 
@@ -396,6 +398,14 @@ def apply_vocabulary_settings(voc_builder: VocabularyBuilder):
     if settings.pascal_case_datatype_enum_labels:
         for datatype in vocabulary.get_enum_dataytypes().values():
             datatype.label = to_pascal_case(datatype.label)
+
+
+def save_initial_label_summary(vocabulary: Vocabulary):
+    from filip.semantics.vocabulary_configurator import VocabularyConfigurator
+    vocabulary.original_label_summary = \
+        VocabularyConfigurator.get_label_conflicts_in_vocabulary(
+            vocabulary=vocabulary)
+
 
 
 def compute_ancestor_classes(voc_builder: VocabularyBuilder):
