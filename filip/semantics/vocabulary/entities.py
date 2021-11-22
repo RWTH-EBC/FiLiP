@@ -26,20 +26,25 @@ class Entity(BaseModel):
     field key. The user can overwrite the given
     label
     """
-    iri: str
-    """Unique Internationalized Resource Identifier """
-    label: str = ""
-    """Label (displayname) extracted from source file 
-            (multiple Entities could have the same label)"""
-    user_set_label = ""
-    """Given by user and overwrites 'label'. Needed to make labels unique """
-    comment: str = ""
-    """Comment extracted from the ontology/source"""
-    source_id: str = ""
-    """ID of the source"""
-    predefined: bool = False
-    """Stats if the entity is not extracted from a source, but predefined 
-    in the program (Standard Datatypes)"""
+    iri: str = Field(description="Unique Internationalized Resource Identifier")
+    label: str = Field(
+        default="",
+        description="Label (displayname) extracted from source file "
+                    "(multiple Entities could have the same label)")
+    user_set_label = Field(
+        default="",
+        description="Given by user and overwrites 'label'."
+                    " Needed to make labels unique")
+    comment: str = Field(
+        default="",
+        description="Comment extracted from the ontology/source")
+    source_id: str = Field(
+        default="",
+        description="ID of the source")
+    predefined: bool = Field(
+        default=False,
+        description="Stats if the entity is not extracted from a source, "
+                    "but predefined in the program (Standard Datatypes)")
 
     # if no specific label was given, extract the name out of the iri
     def get_label(self) -> str:
@@ -382,24 +387,6 @@ class Class(Entity):
 
         return statements
 
-    def get_key_column_ids(self, vocabulary: 'Vocabulary') -> List[str]:
-        """Get all CombinedRelation ids that should be listed in tables
-
-        Args:
-            vocabulary (Vocabulary): Vocabulary of this project
-
-        Returns:
-            List[str]: CombinedRelation ids
-        """
-        res = []
-        for id_ in self.combined_data_relation_ids:
-            if vocabulary.get_combined_relation_by_id(id_).is_key_information:
-                res.append(id_)
-        for id_ in self.combined_object_relation_ids:
-            if vocabulary.get_combined_relation_by_id(id_).is_key_information:
-                res.append(id_)
-        return res
-
     def get_next_combined_relation_id(self, current_cr_id: str,
                                       object_relations: bool) -> str:
         """Get the alphabetically(Property label) next CombinedRelation.
@@ -577,24 +564,31 @@ class Datatype(Entity):
     vocabulary
     """
 
-    type: DatatypeType = DatatypeType.string
-    """Type of the datatype"""
-    number_has_range = False
-    """If Type==Number: Does the datatype define a range"""
-    number_range_min: Union[int, str] = "/"
-    """If Type==Number: Min value of the datatype range, 
-        if a range is defined"""
-    number_range_max: Union[int, str] = "/"
-    """If Type==Number: Max value of the datatype range, 
-        if a range is defined"""
-    number_decimal_allowed: bool = False
-    """If Type==Number: Are decimal numbers allowed?"""
-    forbidden_chars: List[str] = []
-    """If Type==String: Blacklisted chars"""
-    allowed_chars: List[str] = []
-    """If Type==String: Whitelisted chars"""
-    enum_values: List[str] = []
-    """If Type==Enum: Enum values"""
+    type: DatatypeType = Field(default= DatatypeType.string,
+                               description="Type of the datatype")
+    number_has_range = Field(
+        default=False,
+        description="If Type==Number: Does the datatype define a range")
+    number_range_min: Union[int, str] = Field(
+        default="/",
+        description="If Type==Number: Min value of the datatype range, "
+                    "if a range is defined")
+    number_range_max: Union[int, str] = Field(
+        default="/",
+        description="If Type==Number: Max value of the datatype range, "
+                    "if a range is defined")
+    number_decimal_allowed: bool = Field(
+        default=False,
+        description="If Type==Number: Are decimal numbers allowed?")
+    forbidden_chars: List[str] = Field(
+        default=[],
+        description="If Type==String: Blacklisted chars")
+    allowed_chars: List[str] = Field(
+        default=[],
+        description="If Type==String: Whitelisted chars")
+    enum_values: List[str] = Field(
+        default=[],
+        description="If Type==Enum: Enum values")
 
     def export(self) -> Dict:
         res = self.dict(include={'type', 'number_has_range',
@@ -698,8 +692,11 @@ class Individual(Entity):
     agents or devices
     """
 
-    parent_class_iris: List[str] = []
-    """List of all parent class iris, an individual can have multiple parents"""
+    parent_class_iris: List[str] = Field(
+        default=[],
+        description="List of all parent class iris, "
+                    "an individual can have multiple parents"
+    )
 
     def to_string(self) -> str:
         """Get a string representation of the Individual
@@ -801,7 +798,11 @@ class DataProperty(Entity):
     Representation of OWL:DataProperty
     """
 
-    field_type: DataFieldType = DataFieldType.simple
+    field_type: DataFieldType = Field(
+        default=DataFieldType.simple,
+        description="Type of the dataproperty; set by the user while "
+                    "configuring the vocabulary"
+    )
 
 
 class ObjectProperty(Entity):
@@ -809,12 +810,12 @@ class ObjectProperty(Entity):
     Representation of OWL:ObjectProperty
     """
 
-    inverse_property_iris: Set[str] = set()
-    """List of property iris that are inverse:Of; 
-    If an instance i2 is added in an instance i1 for this property. 
-    Then i1 is added to i2 under the inverseProperty 
-    (if the class has that property)
-    """
+    inverse_property_iris: Set[str] = Field(
+        default=set(),
+        description="List of property iris that are inverse:Of; "
+                    "If an instance i2 is added in an instance i1 "
+                    "for this property. Then i1 is added to i2 under the"
+                    " inverseProperty (if the class has that property)")
 
     def add_inverse_property_iri(self, iri: str):
         """Add an inverse property
@@ -830,7 +831,6 @@ class ObjectProperty(Entity):
     def is_logically_equivalent_to(self, object_property: 'ObjectProperty',
                                    vocabulary: 'Vocabulary',
                                    old_vocabulary: 'Vocabulary') -> bool:
-
         """Test if this Property in the new_vocabulary is logically equivalent
         to the object_property in the old_vocabulary
 

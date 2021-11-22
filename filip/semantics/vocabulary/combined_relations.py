@@ -2,7 +2,7 @@
 from enum import Enum
 
 from filip.semantics.vocabulary import DataFieldType
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import List, TYPE_CHECKING, Set
 from . import Relation
 
@@ -19,22 +19,15 @@ class CombinedRelation(BaseModel):
         CombinedObjectRelation, CombinedDataRelation
     """
 
-    id: str
-    """Generated unique ID of the CR"""
-    relation_ids: List[str]
-    """List of all relations of the class that are bundled; 
-    have the same property"""
-    property_iri: str
-    """IRI of the property, under which the relations are bundled"""
-    class_iri: str
-    """IRI of the class the relations and this CR belongs to"""
-
-    is_key_information: bool = False
-    """user settings for field: Should this CR be displayed as column in a 
-    table. Default: FALSE """
-    inspect: bool = True
-    """user settings for field: Does this field needs to fulfilled to deem the 
-    instance fulfilled. Default: TRUE """
+    id: str = Field(description="Generated unique ID of the CR")
+    relation_ids: List[str] = Field(
+        default=[],
+        description="List of all relations of the class that are "
+                    "bundled; have the same property")
+    property_iri: str = Field(description="IRI of the property, under which "
+                                          "the relations are bundled")
+    class_iri: str = Field(description="IRI of the class the relations and "
+                                       "this CR belongs to")
 
     def get_relations(self, vocabulary: 'Vocabulary') -> List[Relation]:
         result = []

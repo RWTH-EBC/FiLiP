@@ -1,13 +1,14 @@
 """Vocabulary Models for Relations"""
 
-from typing import Set, Dict, TYPE_CHECKING
+from typing import Set, Dict, TYPE_CHECKING, Optional
+
 if TYPE_CHECKING:
     from . import Vocabulary
 
-from enum import Enum
+from aenum import Enum
 from typing import List, TYPE_CHECKING
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from .source import DependencyStatement
 
@@ -40,15 +41,19 @@ class TargetStatement(BaseModel):
         it does not need two separate devices.
     """
 
-    target_data_value: str = None
-    """Holds the value if the relation is a hasValue (LEAF only)"""
-    target_iri: str = ""
-    """The IRI of the target (LEAF only)"""
-    target_statements: List['TargetStatement'] = []
-    """The targetstatements that are combined with this targetstatement 
-     (and/or only)"""
-    type: StatementType = StatementType.LEAF
-    """Statement types"""
+    target_data_value: Optional[str] = Field(
+        default=None,
+        description="Holds the value if the relation is a hasValue (LEAF only)")
+    target_iri: str = Field(
+        default="",
+        description="The IRI of the target (LEAF only)")
+    target_statements: List['TargetStatement'] = Field(
+        default=[],
+        description="The targetstatements that are combined with this "
+                    "targetstatement (and/or only)"
+    )
+    type: StatementType = Field(default=StatementType.LEAF,
+                                description="Statement types")
 
     def set_target(self, target_iri: str, target_data_value: str = None):
         """ Set target for this statement and make it a LEAF statement
@@ -114,7 +119,7 @@ class TargetStatement(BaseModel):
                     lengths.append(len(sublist))
 
                 # init with empty lists
-                for c in range(number_of_entries):
+                for empty in range(number_of_entries):
                     result.append([])
 
                 for i in range(0, len(collection)):
@@ -273,20 +278,15 @@ TargetStatement.update_forward_refs()
 
 
 class RestrictionType(str, Enum):
-    """RestrictionTypes, as defined for OWL:
-        some: at least 1 value of that target
-        only: only value of that target
-        min: min n values of that target
-        max: max n values of that target
-        exactly: exactly n values of that target
-        value: predefined value
-    """
-    some = 'some'
-    only = 'only'
-    min = 'min'
-    max = 'max'
-    exactly = 'exactly'
-    value = 'value'
+    """RestrictionTypes, as defined for OWL"""
+    _init_ = 'value __doc__'
+
+    some = 'some', 'at least 1 value of that target'
+    only = 'only', 'only value of that target'
+    min = 'min', 'min n values of that target'
+    max = 'max', 'max n values of that target'
+    exactly = 'exactly', 'exactly n values of that target'
+    value = 'value', 'predefined value'
 
 
 class Relation(BaseModel):
@@ -301,16 +301,21 @@ class Relation(BaseModel):
     inherit it
     """
 
-    id: str
-    """Unique generated Relation ID, for internal use"""
-    restriction_type: RestrictionType = None
-    """Restriction type of this relation"""
-    restriction_cardinality: int = -1
-    """Only needed for min, max, equaly states the 'n'"""
-    property_iri: str = ""
-    """IRI of the property (data- or object-)"""
-    target_statement: TargetStatement = None
-    """Complex statement which classes/datatype_catalogue are allowed/required"""
+    id: str = Field(description="Unique generated Relation ID, "
+                                "for internal use")
+    restriction_type: RestrictionType = Field(
+        default=None,
+        description="Restriction type of this relation")
+    restriction_cardinality: int = Field(
+        default=-1,
+        description="Only needed for min, max, equaly states the 'n'")
+    property_iri: str = Field(
+        default="",
+        description="IRI of the property (data- or object-)")
+    target_statement: TargetStatement = Field(
+        default=None,
+        description="Complex statement which classes/datatype_catalogue "
+                    "are allowed/required")
 
     def get_targets(self) -> List[List[str]]:
         """Get all targets specified in the target statement in AND-OR Notation
@@ -373,7 +378,8 @@ class Relation(BaseModel):
     def get_dependency_statements(
             self, vocabulary: 'Vocabulary', ontology_iri: str, class_iri: str) \
             -> List[DependencyStatement]:
-        """ Get a list of all pointers/iris that are not contained in the vocabulary
+        """ Get a list of all pointers/iris that are not contained in the
+            vocabulary
             Purging is done in class
 
         Args:

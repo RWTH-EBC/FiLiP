@@ -3,7 +3,7 @@
 import datetime
 from typing import TYPE_CHECKING,  List
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 if TYPE_CHECKING:
     from . import Vocabulary, IdType, ParsingError, LoggingLevel
@@ -13,18 +13,21 @@ class DependencyStatement(BaseModel):
     """Information about one dependency statement in the source
     A dependency is a reference of one iri in an other entity definition
     """
-    source_iri: str = ""
-    """Iri of the source containing the statement"""
-    source_name: str = ""
-    """Name of the source containing the statement"""
-    type: str
-    """Possible types: Parent Class, Relation Property, Relation Target"""
-    class_iri: str
-    """Iri of the class containing the statement"""
-    dependency_iri: str
-    """Entity Iri of the dependency"""
-    fulfilled: bool
-    """True if the dependency_iri is registered in the vocabulary"""
+    source_iri: str = Field(
+        default="",
+        description="Iri of the source containing the statement")
+    source_name: str = Field(
+        default="",
+        description="Name of the source containing the statement")
+    type: str = Field(
+        description="Possible types: Parent Class, Relation Property, "
+                    "Relation Target")
+    class_iri: str = Field(
+        description="Iri of the class containing the statement")
+    dependency_iri: str = Field(description="Entity Iri of the dependency")
+    fulfilled: bool = Field(
+        description="True if the dependency_iri is registered in the "
+                    "vocabulary")
 
 
 class Source(BaseModel):
@@ -34,25 +37,30 @@ class Source(BaseModel):
     vocabulary
     """
 
-    id: str = ""
-    """unique ID of the source; for internal use"""
-    source_name: str = ""
-    """Name of the source """
-    content: str = ""
-    """File content of the provided ontology file"""
-
-    parsing_log: List['ParsingError'] = []
-    """Log containing all issues that were discovered while parsing"""
-    dependency_statements: List[DependencyStatement] = []
-    """List of all statements in source"""
-    timestamp: datetime.datetime
-    """timestamp when the source was added to the project"""
-    ontology_iri: str = None
-    """Iri of the ontology of the source"""
-    predefined: bool = False
-    """Stating if the source is a predefined source; a predefined source is 
-    added to each project containing owl:Thing
-    and predefined Datatypes"""
+    id: str = Field(default="",
+                    description="unique ID of the source; for internal use")
+    source_name: str = Field(default="",
+                             description="Name of the source ")
+    content: str = Field(
+        default="",
+        description="File content of the provided ontology file")
+    parsing_log: List['ParsingError'] = Field(
+        default=[],
+        description="Log containing all issues that were discovered while "
+                    "parsing")
+    dependency_statements: List[DependencyStatement] = Field(
+        default=[],
+        description="List of all statements in source")
+    timestamp: datetime.datetime = Field(
+        description="timestamp when the source was added to the project")
+    ontology_iri: str = Field(
+        default=None,
+        description="Iri of the ontology of the source")
+    predefined: bool = Field(
+        default=False,
+        description="Stating if the source is a predefined source; "
+                    "a predefined source is added to each project containing "
+                    "owl:Thing and predefined Datatypes")
 
     def get_number_of_id_type(self, vocabulary: 'Vocabulary',
                               id_type: 'IdType') -> int:
