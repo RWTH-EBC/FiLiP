@@ -1,3 +1,5 @@
+"""Vocabulary Models for Ontology Sources"""
+
 import datetime
 from typing import TYPE_CHECKING,  List
 

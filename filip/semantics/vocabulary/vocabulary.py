@@ -1,3 +1,5 @@
+"""Main Vocabulary Model"""
+
 import operator
 from enum import Enum
 
@@ -48,6 +50,10 @@ class ParsingError(BaseModel):
 
 
 class VocabularySettings(BaseModel):
+    """
+    Settings that state how labels of ontology entities should be
+    automatically converted on parsing
+    """
     pascal_case_class_labels: bool = True
     pascal_case_individual_labels: bool = True
     camel_case_property_labels: bool = True

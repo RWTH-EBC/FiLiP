@@ -13,11 +13,18 @@ from pydantic import BaseModel
 from filip.semantics.ontology_parser.post_processer import \
     post_process_vocabulary, transfer_settings
 from filip.semantics.ontology_parser.rdfparser import RdfParser
-from filip.semantics.vocabulary import Vocabulary, Source, Entity, \
-    RestrictionType, Class, ParsingError, CombinedRelation
-from filip.semantics.vocabulary.data_property import DataFieldType
-from filip.semantics.vocabulary.source import DependencyStatement
-from filip.semantics.vocabulary.vocabulary import VocabularySettings
+from filip.semantics.vocabulary import \
+    Vocabulary, \
+    Source,\
+    Entity, \
+    RestrictionType, \
+    Class, \
+    ParsingError, \
+    CombinedRelation, \
+    DataFieldType, \
+    DependencyStatement, \
+    VocabularySettings
+
 
 label_blacklist = list(keyword.kwlist)
 label_blacklist.extend(["referencedBy", "deviceSettings"])

@@ -1,15 +1,128 @@
-from pydantic import Field
+"""Vocabulary Models for Ontology Entities"""
 
-from . import Entity
-from typing import List, TYPE_CHECKING, Dict, Union
+from enum import Enum
+from pydantic import BaseModel, Field
+from typing import List, TYPE_CHECKING, Dict, Union, Set
 
-from .data_property import DataFieldType
 from .source import DependencyStatement
 
 if TYPE_CHECKING:
-    from . import CombinedObjectRelation, CombinedDataRelation, \
-        CombinedRelation, Relation, Vocabulary
-    from .combined_data_relation import CombinedDataRelation
+    from . import \
+        CombinedObjectRelation, \
+        CombinedDataRelation, \
+        CombinedRelation, \
+        Relation, \
+        Vocabulary
+
+
+class Entity(BaseModel):
+    """
+    Representing an OWL Entity (Class, Datatype, DataProperty, ObjectProperty,
+                                Individual)
+
+    An Entity is characterised by a unique IRI and originates from a source
+
+    An Entity needs a unique Label (displayname) as it is used in FIWARE as
+    field key. The user can overwrite the given
+    label
+    """
+    iri: str
+    """Unique Internationalized Resource Identifier """
+    label: str = ""
+    """Label (displayname) extracted from source file 
+            (multiple Entities could have the same label)"""
+    user_set_label = ""
+    """Given by user and overwrites 'label'. Needed to make labels unique """
+    comment: str = ""
+    """Comment extracted from the ontology/source"""
+    source_id: str = ""
+    """ID of the source"""
+    predefined: bool = False
+    """Stats if the entity is not extracted from a source, but predefined 
+    in the program (Standard Datatypes)"""
+
+    # if no specific label was given, extract the name out of the iri
+    def get_label(self) -> str:
+        """ Get the label for the entity.
+        If the user has set a label it is returned, else the label extracted
+        from the source
+
+        Returns:
+             str
+        """
+        if not self.user_set_label == "":
+            return self.user_set_label
+
+        return self.get_original_label()
+
+    def set_label(self, label:str):
+        """ Change the display label of the entity
+
+        Args:
+            label (str): Label that the label should have
+        """
+        self.user_set_label = label
+
+    def get_ontology_iri(self) -> str:
+        """ Get the IRI of the ontology that this entity belongs to
+        (extracted from IRI)
+
+        Returns:
+            str
+        """
+        index = self.iri.find("#")
+        return self.iri[:index]
+
+    def get_source_id(self) -> str:
+        """ Get ID of the source
+
+        Returns:
+            str
+        """
+        return self.source_id
+
+    def get_source_name(self, vocabulary: 'Vocabulary') -> str:
+        """ Get name of the source
+
+        Args:
+            vocabulary (Vocabulary): Vocabulary of the project
+
+        Returns:
+            str
+        """
+        return vocabulary.get_source(self.source_id).get_name()
+
+    def _lists_are_identical(self, a: List, b: List) -> bool:
+        """ Methode to test if to lists contain the same entries
+
+        Args:
+            a (List): first list
+            b (List): second list
+        Returns:
+            bool
+        """
+        return len(set(a).intersection(b)) == len(set(a)) and len(a) == len(b)
+
+    def is_renamed(self) -> bool:
+        """ Check if the entity was renamed by the user
+
+        Returns:
+            bool
+        """
+        return not self.user_set_label == ""
+
+    def get_original_label(self) -> str:
+        """ Get label as defined in the source
+        It can be that the label is empty, then extract the label from the iri
+
+        Returns:
+            str
+        """
+        if not self.label == "":
+            return self.label
+
+        index = self.iri.find("#") + 1
+        return self.iri[index:]
 
 
 class Class(Entity):
@@ -279,12 +392,12 @@ class Class(Entity):
             List[str]: CombinedRelation ids
         """
         res = []
-        for id in self.combined_data_relation_ids:
-            if vocabulary.get_combined_relation_by_id(id).is_key_information:
-                res.append(id)
-        for id in self.combined_object_relation_ids:
-            if vocabulary.get_combined_relation_by_id(id).is_key_information:
-                res.append(id)
+        for id_ in self.combined_data_relation_ids:
+            if vocabulary.get_combined_relation_by_id(id_).is_key_information:
+                res.append(id_)
+        for id_ in self.combined_object_relation_ids:
+            if vocabulary.get_combined_relation_by_id(id_).is_key_information:
+                res.append(id_)
         return res
 
     def get_next_combined_relation_id(self, current_cr_id: str,
@@ -295,21 +408,22 @@ class Class(Entity):
 
         Args:
             current_cr_id (str): ID of the CombinedRelation of which the next
-            should be found object_relations (bool):
+                should be found
+            object_relations (bool):
                 True if Searching for  CombinedObjectRelations
 
         Returns:
             str: ID of next CR
         """
-        list = self.combined_data_relation_ids
+        list_ = self.combined_data_relation_ids
         if object_relations:
-            list = self.combined_object_relation_ids
+            list_ = self.combined_object_relation_ids
 
-        current_index = list.index(current_cr_id)
+        current_index = list_.index(current_cr_id)
         res_index = current_index+1
-        if res_index >= len(list):
+        if res_index >= len(list_):
             res_index = 0
-        return list[res_index]
+        return list_[res_index]
 
     def get_previous_combined_relation_id(self, current_cr_id: str,
                                           object_relations: bool) -> str:
@@ -327,15 +441,15 @@ class Class(Entity):
             str: ID of previous CR
         """
 
-        list = self.combined_data_relation_ids
+        list_ = self.combined_data_relation_ids
         if object_relations:
-            list = self.combined_object_relation_ids
+            list_ = self.combined_object_relation_ids
 
-        current_index = list.index(current_cr_id)
+        current_index = list_.index(current_cr_id)
         res_index = current_index - 1
         if res_index < 0:
-            res_index = len(list)-1
-        return list[res_index]
+            res_index = len(list_)-1
+        return list_[res_index]
 
     def is_logically_equivalent_to(self, class_: 'Class',
                                    vocabulary: 'Vocabulary',
@@ -397,7 +511,7 @@ class Class(Entity):
             List[CombinedDataRelation]
         """
 
-        from .combined_data_relation import CDRType
+        from . import CDRType
         res = []
         for cdr_id in self.combined_data_relation_ids:
             if vocabulary.get_combined_data_relation_by_id(cdr_id).type == \
@@ -418,7 +532,6 @@ class Class(Entity):
             List[CombinedDataRelation]
         """
 
-        from .combined_data_relation import CDRType
         res = []
         for cdr_id in self.combined_data_relation_ids:
             cdr = vocabulary.get_combined_data_relation_by_id(cdr_id)
@@ -440,3 +553,300 @@ class Class(Entity):
             if not prop.field_type == DataFieldType.simple:
                 return True
         return False
+
+
+class DatatypeType(str, Enum):
+    """
+    Types of a Datatype
+    """
+    string = 'string'
+    number = 'number'
+    date = 'date'
+    enum = 'enum'
+
+
+class Datatype(Entity):
+    """
+    Represents OWL:Datatype
+
+    A Datatype is the target of a DataRelation. The Datatype stats a set of
+    values that are valid.
+    This can be an ENUM, a number range, or a check for black/whitelisted chars
+
+    In the Parsing PostProcesseor predefined datatype_catalogue are added to the
+    vocabulary
+    """
+
+    type: DatatypeType = DatatypeType.string
+    """Type of the datatype"""
+    number_has_range = False
+    """If Type==Number: Does the datatype define a range"""
+    number_range_min: Union[int, str] = "/"
+    """If Type==Number: Min value of the datatype range, 
+        if a range is defined"""
+    number_range_max: Union[int, str] = "/"
+    """If Type==Number: Max value of the datatype range, 
+        if a range is defined"""
+    number_decimal_allowed: bool = False
+    """If Type==Number: Are decimal numbers allowed?"""
+    forbidden_chars: List[str] = []
+    """If Type==String: Blacklisted chars"""
+    allowed_chars: List[str] = []
+    """If Type==String: Whitelisted chars"""
+    enum_values: List[str] = []
+    """If Type==Enum: Enum values"""
+
+    def export(self) -> Dict:
+        res = self.dict(include={'type', 'number_has_range',
+                                 'number_range_min', 'number_range_max',
+                                 'number_decimal_allowed', 'forbidden_chars',
+                                 'allowed_chars', 'enum_values'})
+        res['type'] = self.type.value
+        return res
+
+    def value_is_valid(self, value:str) -> bool:
+        """Test if value is valid for this datatype.
+        Numbers are also given as strings
+
+        Args:
+            value (str): value to be tested
+
+        Returns:
+            bool
+        """
+
+        if self.type == DatatypeType.string:
+            if len(self.allowed_chars) > 0:
+                # if allowed chars is empty all chars are allowed
+                for char in value:
+                    if char not in self.allowed_chars:
+                        return False
+            for char in self.forbidden_chars:
+                if char in value:
+                    return False
+            return True
+
+        if self.type == DatatypeType.number:
+
+            if self.number_decimal_allowed:
+                try:
+                    number = float(value)
+                except:
+                    return False
+            else:
+                try:
+                    number = int(value)
+                except:
+                    return False
+
+            if not self.number_range_min == "/":
+                if number < self.number_range_min:
+                    return False
+            if not self.number_range_max == "/":
+                if number > self.number_range_max:
+                    return False
+
+            return True
+
+        if self.type == DatatypeType.enum:
+            return value in self.enum_values
+
+        if self.type == DatatypeType.date:
+            try:
+                from dateutil.parser import parse
+                parse(value, fuzzy=False)
+                return True
+
+            except ValueError:
+                return False
+
+        return True
+
+    def is_logically_equivalent_to(self, datatype:'Datatype',
+                                   vocabulary: 'Vocabulary',
+                                   old_vocabulary: 'Vocabulary') -> bool:
+        """Test if this datatype is logically equivalent to the given datatype
+
+        Args:
+            datatype (Datatype): Datatype to compare against
+            vocabulary (Vocabulary): Not used, but needed to keep signature the
+                same as other entities
+            old_vocabulary (Vocabulary): Not used, but needed to keep signature
+                the same as other entities
+        Returns:
+            bool
+        """
+
+        if not self.type == datatype.type:
+            return False
+        if not self.number_has_range == datatype.number_has_range:
+            return False
+        if not self.enum_values == datatype.enum_values:
+            return False
+
+        return True
+
+
+class Individual(Entity):
+    """
+    Represents OWL:Individual
+
+    An individual is a predefined "instance" of a class
+    But they are here only used as values for Relations
+
+    They are not instances, no value can be assigned to them, they are no
+    agents or devices
+    """
+
+    parent_class_iris: List[str] = []
+    """List of all parent class iris, an individual can have multiple parents"""
+
+    def to_string(self) -> str:
+        """Get a string representation of the Individual
+
+        Returns:
+            str
+        """
+        return "(Individual)"+self.get_label()
+
+    def get_ancestor_iris(self, vocabulary: 'Vocabulary') -> List[str]:
+        """ Get all iris of ancestor classes
+
+        Args:
+            vocabulary (Vocabulary): Vocabulary of the project
+
+        Returns:
+            List[str]
+        """
+        ancestor_iris = set()
+        for parent_iri in self.parent_class_iris:
+            ancestor_iris.add(parent_iri)
+            ancestor_iris.update(vocabulary.get_class_by_iri(parent_iri).
+                                 ancestor_class_iris)
+
+        return list(ancestor_iris)
+
+    def get_parent_classes(self, vocabulary: 'Vocabulary') -> List['Class']:
+        """ Get all parent class objects
+
+        Args:
+            vocabulary (Vocabulary): Vocabulary of the project
+
+        Returns:
+            List[Class]
+        """
+        parents = []
+        for parent_iri in self.parent_class_iris:
+            parents.append(vocabulary.get_class_by_iri(parent_iri))
+        return parents
+
+    def is_logically_equivalent_to(self, individual: 'Individual',
+                                   vocabulary: 'Vocabulary',
+                                   old_vocabulary: 'Vocabulary') -> bool:
+        """Test if this individal is logically equivalent in two vocabularies.
+
+        Args:
+            individual (Individual): Individual to be tested against, from the
+                old vocabulary
+            vocabulary (Vocabulary): New project vocabulary, not used but needed
+                to keep signature the same
+            old_vocabulary (Vocabulary): Old project vocabulary, not used but
+                needed to keep signature the same
+
+        Returns:
+            bool
+        """
+
+        if not self._lists_are_identical(self.parent_class_iris,
+                                         individual.parent_class_iris):
+            return False
+        return True
+
+    def treat_dependency_statements(self, vocabulary: 'Vocabulary') -> \
+            List[DependencyStatement]:
+        """ Purge and list all pointers/iris that are not contained in the
+        vocabulary
+
+        Args:
+            vocabulary (Vocabulary): Vocabulary of this project
+
+        Returns:
+            List[Dict[str, str]]: List of purged statements dicts with keys:
+            Parent Class, class, dependency, fulfilled
+        """
+        statements = []
+
+        for parent_iri in self.parent_class_iris:
+            found = parent_iri in vocabulary.classes
+            statements.append(DependencyStatement(type="Parent Class",
+                                                  class_iri=self.iri,
+                                                  dependency_iri=parent_iri,
+                                                  fulfilled=found
+                                                  ))
+
+            if not found:
+                self.parent_class_iris.remove(parent_iri)
+
+        return statements
+
+
+class DataFieldType(str, Enum):
+    command = "command"
+    device_attribute = "device_attribute"
+    simple = "simple"
+
+
+class DataProperty(Entity):
+    """
+    Representation of OWL:DataProperty
+    """
+
+    field_type: DataFieldType = DataFieldType.simple
+
+
+class ObjectProperty(Entity):
+    """
+    Representation of OWL:ObjectProperty
+    """
+
+    inverse_property_iris: Set[str] = set()
+    """List of property iris that are inverse:Of; 
+    If an instance i2 is added in an instance i1 for this property. 
+    Then i1 is added to i2 under the inverseProperty 
+    (if the class has that property)
+    """
+
+    def add_inverse_property_iri(self, iri: str):
+        """Add an inverse property
+
+        Args:
+            iri (str): Iri of the inverse objectProperty
+
+        Returns:
+            None
+        """
+        self.inverse_property_iris.add(iri)
+
+    def is_logically_equivalent_to(self, object_property: 'ObjectProperty',
+                                   vocabulary: 'Vocabulary',
+                                   old_vocabulary: 'Vocabulary') -> bool:
+
+        """Test if this Property in the new_vocabulary is logically equivalent
+        to the object_property in the old_vocabulary
+
+        Args:
+            object_property (ObjectProperty): ObjectProperty to be tested
+                against, from the old vocabulary
+            vocabulary (Vocabulary): New project vocabulary, not used but
+                needed to keep signature the same
+            old_vocabulary (Vocabulary): Old project vocabulary, not used but
+                needed to keep signature the same
+
+        Returns:
+            bool
+        """
+        if not self.inverse_property_iris == \
+                object_property.inverse_property_iris:
+            return False
+
+        return True

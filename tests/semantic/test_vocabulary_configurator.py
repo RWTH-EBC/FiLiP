@@ -5,9 +5,8 @@ import unittest
 
 from pathlib import Path
 
-from filip.semantics.vocabulary.data_property import DataFieldType
-from filip.semantics.vocabulary.vocabulary import VocabularySettings
 from filip.semantics.vocabulary_configurator import VocabularyConfigurator
+from filip.semantics.vocabulary import DataFieldType, VocabularySettings
 
 
 class TestModels(unittest.TestCase):
