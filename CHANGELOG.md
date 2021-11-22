@@ -10,7 +10,6 @@
 - remodeled ngsi-v2 models ([#58,#59,#60](https://github.com/RWTH-EBC/FiLiP/issues/60))
 - improved ContextEntity and Device deleting methods ([#27](https://github.com/RWTH-EBC/FiLiP/issues/28))
 - patch methods for ContextEntity and Device ([#74](https://github.com/RWTH-EBC/FiLiP/issues/74))
-- semantic model features [#30](https://github.com/RWTH-EBC/FiLiP/issues/30)
 
 #### v0.1.7
 - introduced automatic testing

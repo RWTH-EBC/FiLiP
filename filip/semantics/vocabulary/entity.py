@@ -94,8 +94,8 @@ class Entity(BaseModel):
         """ Methode to test if to lists contain the same entries
 
         Args:
-            a (List): first _list
-            b (List): second _list
+            a (List): first list
+            b (List): second list
         Returns:
             bool
         """

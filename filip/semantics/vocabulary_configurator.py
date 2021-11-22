@@ -14,7 +14,7 @@ from filip.semantics.ontology_parser.post_processer import \
     post_process_vocabulary, transfer_settings
 from filip.semantics.ontology_parser.rdfparser import RdfParser
 from filip.semantics.vocabulary import Vocabulary, Source, Entity, \
-    RestrictionType, Class, ParsingError
+    RestrictionType, Class, ParsingError, CombinedRelation
 from filip.semantics.vocabulary.data_property import DataFieldType
 from filip.semantics.vocabulary.source import DependencyStatement
 from filip.semantics.vocabulary.vocabulary import VocabularySettings
@@ -317,7 +317,7 @@ class VocabularyConfigurator:
         """
 
         def get_conflicts_in_group(entities_to_check: List[Dict]):
-            # maps label to _list of entities with that label
+            # maps label to list of entities with that label
             used_labels: Dict[str, List[Entity]] = {}
             duplicate_labels = set()
 
@@ -331,7 +331,7 @@ class VocabularyConfigurator:
                     else:
                         used_labels[label] = [entity]
 
-            # sort duplicate_labels to have alphabetical order in _list
+            # sort duplicate_labels to have alphabetical order in list
             dup_list = list(duplicate_labels)
             dup_list = sorted(dup_list, key=str.casefold)
 
@@ -481,18 +481,59 @@ class VocabularyConfigurator:
         Returns:
             None
         """
+
+        def split_string_into_lines(string: str, limit: int) -> [str]:
+            """Helper methode, takes a long string and splits it into
+            multiple parts that each represent one line
+
+            Args:
+                string: value to split
+                limit: line limit
+            Returns:
+                [str], string separated into lines
+            """
+            last_space_index = 0
+            last_split_index = 0
+            current_index = 0
+            result = []
+
+            for char in string:
+                if char == " ":
+                    last_space_index = current_index
+                if current_index-last_split_index > limit:
+                    result.append(string[last_split_index: last_space_index])
+                    last_split_index = last_space_index+1
+                current_index += 1
+
+            # add the remaining part, if the last character of the string was
+            # not a space at the perfect position
+            if not last_split_index == len(string):
+                result.append(string[last_split_index:current_index])
+            return result
+
         content: str = ""
 
         # imports
         content += "from enum import Enum\n"
         content += "from typing import Dict, Union, List\n"
-        content += "from filip.semantics.semantic_models import \\" \
-                   "\n\tSemanticClass, SemanticIndividual, RelationField, " \
-                   "DataField, SemanticDeviceClass, DeviceAttributeField," \
-                   "CommandField"
+        content += "from filip.semantics.semantic_models import\\" \
+                   "\n\tSemanticClass,\\" \
+                   "\n\tSemanticIndividual,\\" \
+                   "\n\tRelationField,\\" \
+                   "\n\tDataField,\\" \
+                   "\n\tSemanticDeviceClass,\\" \
+                   "\n\tDeviceAttributeField,\\" \
+                   "\n\tCommandField"
         content += "\n"
-        content += "from filip.semantics.semantic_manager import " \
-                   "SemanticManager, InstanceRegistry"
+        content += "from filip.semantics.semantic_manager import\\" \
+                   "\n\tSemanticManager,\\" \
+                   "\n\tInstanceRegistry"
+
+        content += "\n\n\n"
+        content += '"""\n' \
+                   'Generated models file from vocabulary.\n'\
+                   'Models can be used for semantical descriptions.\n'\
+                   '"""'
 
         content += "\n\n\n"
         content += "semantic_manager: SemanticManager = SemanticManager("
@@ -542,6 +583,12 @@ class VocabularyConfigurator:
                 parent_class_string = "SemanticClass"
 
             content += f"class {class_.get_label()}({parent_class_string}):"
+
+            if class_.comment is not "":
+                content += f'\n\t"""'
+                for line in split_string_into_lines(class_.comment, 75):
+                    content += f"\n\t{line}"
+                content += f'\n\t"""'
 
             # ------Constructors------
             if class_.get_label() == "Thing":
@@ -637,6 +684,20 @@ class VocabularyConfigurator:
             if content[-22:] == "if not is_initialised:":
                 content = content[:-25]
 
+            # make space the same for each case above
+            if "\n" in content[-2:]:
+                content = content[:-1]
+
+            def build_field_comment(cr: CombinedRelation) -> str:
+                comment = vocabulary.get_entity_by_iri(cr.property_iri).comment
+                res = ""
+                if comment is not "":
+                    res += f'\n\t"""'
+                    for line in split_string_into_lines(comment, 75):
+                        res += f'\n\t{line}'
+                    res += f'\n\t"""'
+                return res
+
             # ------Add Data Fields------
             if len(class_.get_combined_data_relations(vocabulary)) > 0:
                 content += "\n\n\t"
@@ -644,7 +705,7 @@ class VocabularyConfigurator:
             for cdr in class_.get_combined_data_relations(vocabulary):
                 cdr_type = cdr.get_field_type(vocabulary)
                 if cdr_type == DataFieldType.simple:
-                    content += "\n\t"
+                    content += "\n\n\t"
                     label = cdr.get_property_label(vocabulary)
                     content += f"{label}: DataField = DataField("
                     content += "\n\t\t"
@@ -655,17 +716,20 @@ class VocabularyConfigurator:
                         f"{cdr.get_all_targetstatements_as_string(vocabulary)}',"
                     content += "\n\t\t"
                     content += "semantic_manager=semantic_manager)"
+                    content += build_field_comment(cdr)
+
                 elif cdr_type == DataFieldType.command:
-                    content += "\n\t"
+                    content += "\n\n\t"
                     label = cdr.get_property_label(vocabulary)
                     content += f"{label}: CommandField = CommandField("
                     content += "\n\t\t"
                     content += f"name='{label}',"
                     content += "\n\t\t"
                     content += "semantic_manager=semantic_manager)"
+                    content += build_field_comment(cdr)
 
                 elif cdr_type == DataFieldType.device_attribute:
-                    content += "\n\t"
+                    content += "\n\n\t"
                     label = cdr.get_property_label(vocabulary)
                     content += f"{label}: DeviceAttributeField " \
                                f"= DeviceAttributeField("
@@ -673,13 +737,14 @@ class VocabularyConfigurator:
                     content += f"name='{label}',"
                     content += "\n\t\t"
                     content += "semantic_manager=semantic_manager)"
+                    content += build_field_comment(cdr)
 
             # ------Add Relation Fields------
             if len(class_.get_combined_object_relations(vocabulary)) > 0:
                 content += "\n\n\t"
                 content += "# Relation fields"
             for cor in class_.get_combined_object_relations(vocabulary):
-                content += "\n\t"
+                content += "\n\n\t"
                 label = cor.get_property_label(vocabulary)
                 content += f"{label}: RelationField = RelationField("
                 content += "\n\t\t"
@@ -694,6 +759,7 @@ class VocabularyConfigurator:
                     content += ",\n\t\t"
 
                 content += "semantic_manager=semantic_manager)"
+                content += build_field_comment(cor)
 
         content += "\n\n\n"
         content += "# ---------Individuals--------- #"

@@ -84,7 +84,7 @@ class Individual(Entity):
 
     def treat_dependency_statements(self, vocabulary: 'Vocabulary') -> \
             List[DependencyStatement]:
-        """ Purge and _list all pointers/iris that are not contained in the
+        """ Purge and list all pointers/iris that are not contained in the
         vocabulary
 
         Args:

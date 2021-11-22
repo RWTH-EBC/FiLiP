@@ -35,8 +35,8 @@ class InstanceHeader(FiwareHeader):
                           description="Url of the IoTABroker from the Fiware "
                                       "setup")
 
-    fiware_version: NgsiVersion = Field(default=NgsiVersion.v2,
-                                        description="Used Version in the "
+    ngsi_version: NgsiVersion = Field(default=NgsiVersion.v2,
+                                      description="Used Version in the "
                                                     "Fiware setup")
 
     def get_fiware_header(self) -> FiwareHeader:
@@ -784,7 +784,7 @@ class RuleField(Field):
     """
     A RuleField corresponds to a CombinedRelation for a class from the
     vocabulary.
-    It itself is a _list, that is enhanced with methods to provide validation
+    It itself is a list, that is enhanced with methods to provide validation
     of the values according to the rules stated in the vocabulary
 
     The fields of a class are predefined. A field can contain standard values
@@ -823,7 +823,7 @@ class RuleField(Field):
         #       - max n | 0 | n
         #       - range n,m | n | m
 
-        # the relationship itself is a _list
+        # the relationship itself is a list
 
         values = self.get_all()
 
@@ -1593,7 +1593,7 @@ class SemanticDeviceClass(SemanticClass):
             transport=self.device_settings.transport,
             timestamp=self.device_settings.timestamp,
             expressionLanguage=self.device_settings.expressionLanguage,
-            ngsiVersion=self.header.fiware_version
+            ngsiVersion=self.header.ngsi_version
         )
 
         for field in self.get_fields():

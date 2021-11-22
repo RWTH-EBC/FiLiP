@@ -563,7 +563,7 @@ def sort_list_of_combined_relations(combined_relations: List[CombinedRelation],
         vocabulary (Vocabulary)
         combined_relations (List[CombinedRelation]): CRs to sort
     Returns:
-        List[str], _list of cr_id, sorted according to their label
+        List[str], list of cr_id, sorted according to their label
     """
 
     property_dic = {}

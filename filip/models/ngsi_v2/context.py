@@ -432,7 +432,7 @@ class Query(BaseModel):
     Model for queries
     """
     entities: List[EntityPattern] = Field(
-        description="a _list of entities to search for. Each element is "
+        description="a list of entities to search for. Each element is "
                     "represented by a JSON object"
     )
     attrs: Optional[List[str]] = Field(

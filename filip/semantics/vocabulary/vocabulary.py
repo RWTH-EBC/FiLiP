@@ -244,12 +244,12 @@ class Vocabulary(BaseModel):
 
     def get_entity_list_sorted_by_label(self, list: List[Entity]) \
             -> List[Entity]:
-        """Sort a given entity _list by their labels
+        """Sort a given entity list by their labels
 
         Args:
             list (List[Entity]) : entities to be sorted
         Returns:
-            List[Entity]: sorted _list
+            List[Entity]: sorted list
         """
         return sorted(list, key=operator.methodcaller("get_label"),
                       reverse=False)
@@ -346,7 +346,7 @@ class Vocabulary(BaseModel):
         return self.sources[source_id]
 
     def get_source_list(self) -> List[Source]:
-        """Get all source objects of the vocabulary as _list
+        """Get all source objects of the vocabulary as list
 
         Returns:
             List[Source]

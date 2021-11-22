@@ -1,3 +1,4 @@
+from pydantic import Field
 
 from . import Entity
 from typing import List, TYPE_CHECKING, Dict, Union
@@ -22,27 +23,27 @@ class Class(Entity):
     A class can represent Devices, Agents, None or both
     """
 
-    # Note: Most methods need to be given the vocabulary of this project,
-    # while it is slightly faster than the indirect
-    #        loading this is mostly a legacy style.
-
-
     # The objects whose ids/iris are listed here can be looked up in the
     # vocabulary of this class
-    child_class_iris: List[str] = []
-    """All class_iris of classes that inherit from this class"""
-    ancestor_class_iris: List[str] = []
-    """All class_iris of classes from which this class inherits"""
-    parent_class_iris: List[str] = []
-    """All class_iris of classes that are direct parents of this class"""
-
-    relation_ids: List[str] = []
-    """All ids of relations defined for this class"""
-
-    combined_object_relation_ids: List[str] = []
-    """All combined_object_relations ids defined for this class"""
-    combined_data_relation_ids: List[str] = []
-    """All combined_data_relations ids defined for this class"""
+    child_class_iris: List[str] = Field(
+        default=[],
+        description="All class_iris of classes that inherit from this class")
+    ancestor_class_iris: List[str] = Field(
+        default=[],
+        description="All class_iris of classes from which this class inherits")
+    parent_class_iris: List[str] = Field(
+        default=[],
+        description="All class_iris of classes that are direct parents of this "
+                    "class")
+    relation_ids: List[str] = Field(
+        default=[],
+        description="All ids of relations defined for this class")
+    combined_object_relation_ids: List[str] = Field(
+        default=[],
+        description="All combined_object_relations ids defined for this class")
+    combined_data_relation_ids: List[str] = Field(
+        default=[],
+        description="All combined_data_relations ids defined for this class")
 
     def get_relation_ids(self) -> List[str]:
         """Get all ids of relations belonging to this class
@@ -225,7 +226,7 @@ class Class(Entity):
 
     def treat_dependency_statements(self, vocabulary: 'Vocabulary') -> \
             List[DependencyStatement]:
-        """ Purge and _list all pointers/iris that are not contained in
+        """ Purge and list all pointers/iris that are not contained in
         the vocabulary
 
         Args:

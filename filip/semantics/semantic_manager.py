@@ -14,7 +14,7 @@ from filip.models.ngsi_v2.context import ContextEntity
 from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient
 
 from filip.models import FiwareHeader
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from filip.semantics.semantic_models import \
     InstanceIdentifier, SemanticClass, InstanceHeader, Datatype, DataField, \
     RelationField, SemanticIndividual, SemanticDeviceClass, CommandField, \
@@ -185,22 +185,34 @@ class InstanceRegistry(BaseModel):
 
 class SemanticManager(BaseModel):
     """
-    The Semantic Manager is a static unique object that is delivered with
+    The Semantic Manager is a static object that is delivered with
     each vocabulary model export.
 
     It provides the interface to interact with the local state and Fiware
     """
 
-    instance_registry: InstanceRegistry
-    """Registry managing the local state"""
-    class_catalogue: Dict[str, type] = {}
-    """Register of class names to classes"""
-    datatype_catalogue: Dict[str, Dict[str, str]] = {}
-    """Register of datatype names to Dict representation of datatypes"""
-    individual_catalogue: Dict[str, type] = {}
-    """Register of individual names to their classes"""
+    instance_registry: InstanceRegistry = Field(
+        description="Registry managing the local state"
+    )
+    class_catalogue: Dict[str, type] = Field(
+        default={},
+        description="Register of class names to classes"
+    )
+    datatype_catalogue: Dict[str, Dict[str, str]] = Field(
+        default={},
+        description="Register of datatype names to Dict representation of "
+                    "datatypes"
+    )
+    individual_catalogue: Dict[str, type] = Field(
+        default={},
+        description="Register of individual names to their classes"
+    )
 
-    default_header: InstanceHeader = InstanceHeader()
+    default_header: InstanceHeader = Field(
+        default=InstanceHeader(),
+        description="Default header that each new instance receives if it "
+                    "does not specify an own header"
+    )
 
     @staticmethod
     def get_client(instance_header: InstanceHeader) \
@@ -212,7 +224,7 @@ class SemanticManager(BaseModel):
         Returns:
             ContextBrokerClient
         """
-        if instance_header.fiware_version == NgsiVersion.v2:
+        if instance_header.ngsi_version == NgsiVersion.v2:
             return ContextBrokerClient(
                 url=instance_header.cb_url,
                 fiware_header=instance_header.get_fiware_header())
@@ -229,7 +241,7 @@ class SemanticManager(BaseModel):
         Returns:
             IoTAClient
         """
-        if instance_header.fiware_version == NgsiVersion.v2:
+        if instance_header.ngsi_version == NgsiVersion.v2:
             return IoTAClient(
                 url=instance_header.iota_url,
                 fiware_header=instance_header.get_fiware_header())
@@ -376,6 +388,7 @@ class SemanticManager(BaseModel):
 
         Args:
             class_name (str)
+
         Raises:
             KeyError: if class_name not registered as a SemanticClass
 
@@ -390,6 +403,7 @@ class SemanticManager(BaseModel):
 
         Args:
             class_name (str): class name to check
+
         Returns:
             bool, True if belongs to a SemanticDeviceClass
         """
@@ -624,7 +638,7 @@ class SemanticManager(BaseModel):
             service_path=fiware_header.service_path,
             cb_url=cb_url,
             iota_url=iota_url,
-            fiware_version=fiware_version
+            ngsi_version=fiware_version
         )
 
         client = self.get_client(header)
@@ -740,7 +754,7 @@ class SemanticManager(BaseModel):
         """
         self.instance_registry.load(json, self)
 
-    def visualise_local_state(self):
+    def visualize_local_state(self):
         """
         Visualise all instances in the local state in a network graph that
         shows which instances reference each other over which fields

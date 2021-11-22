@@ -47,14 +47,14 @@ class TestSettings(BaseSettings):
     LOG_LEVEL: LogLevel = Field(default=LogLevel.ERROR,
                                 env=['LOG_LEVEL', 'LOGLEVEL'])
 
-    CB_URL: AnyHttpUrl = Field(default="http://127.0.0.1:1026",
+    CB_URL: AnyHttpUrl = Field(default="http://localhost:1026",
                                env=['ORION_URL',
                                     'CB_URL',
                                     'CB_HOST',
                                     'CONTEXTBROKER_URL',
                                     'OCB_URL'])
 
-    IOTA_JSON_URL: AnyHttpUrl = Field(default="http://127.0.0.1:4041",
+    IOTA_JSON_URL: AnyHttpUrl = Field(default="http://localhost:4041",
                                       env='IOTA_JSON_URL')
 
     IOTA_UL_URL: AnyHttpUrl = Field(default="http://127.0.0.1:4061",

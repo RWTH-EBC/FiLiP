@@ -1,8 +1,22 @@
 from enum import Enum
 from typing import Dict, Union, List
-from filip.semantics.semantic_models import \
-	SemanticClass, SemanticIndividual, RelationField, DataField, SemanticDeviceClass, DeviceAttributeField,CommandField
-from filip.semantics.semantic_manager import SemanticManager, InstanceRegistry
+from filip.semantics.semantic_models import\
+	SemanticClass,\
+	SemanticIndividual,\
+	RelationField,\
+	DataField,\
+	SemanticDeviceClass,\
+	DeviceAttributeField,\
+	CommandField
+from filip.semantics.semantic_manager import\
+	SemanticManager,\
+	InstanceRegistry
+
+
+"""
+Generated models file from vocabulary.
+Models can be used for semantical descriptions.
+"""
 
 
 semantic_manager: SemanticManager = SemanticManager(
@@ -13,6 +27,9 @@ semantic_manager: SemanticManager = SemanticManager(
 
 
 class Thing(SemanticClass):
+	"""
+	Predefined root_class
+	"""
 
 	def __new__(cls, *args, **kwargs):
 		kwargs['semantic_manager'] = semantic_manager
@@ -25,6 +42,9 @@ class Thing(SemanticClass):
 
 
 class Class1(Thing):
+	"""
+	Comment On Class 1
+	"""
 
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
@@ -49,30 +69,36 @@ class Class1(Thing):
 			self.objProp5.add(Individual1())
 
 	# Data fields
+
 	dataProp2: DataField = DataField(
 		name='dataProp2',
 		rule='value 2',
 		semantic_manager=semantic_manager)
 
 	# Relation fields
+
 	oProp1: RelationField = RelationField(
 		name='oProp1',
 		rule='some (Class2 or Class4)',
 		inverse_of=['objProp3'],
 		semantic_manager=semantic_manager)
+
 	objProp2: RelationField = RelationField(
 		name='objProp2',
 		rule='some (Class1 and Class2)',
 		semantic_manager=semantic_manager)
+
 	objProp3: RelationField = RelationField(
 		name='objProp3',
 		rule='some Class3',
 		inverse_of=['oProp1'],
 		semantic_manager=semantic_manager)
+
 	objProp4: RelationField = RelationField(
 		name='objProp4',
 		rule='some (Class1 and Class2) and Class3)',
 		semantic_manager=semantic_manager)
+
 	objProp5: RelationField = RelationField(
 		name='objProp5',
 		rule='some (Class1 and (Class2 or Class3)), value Individual1',
@@ -100,32 +126,37 @@ class Class1a(Class1):
 			self.objProp5._instance_identifier = self.get_identifier()
 			self.dataProp2._instance_identifier = self.get_identifier()
 
-
 	# Data fields
+
 	dataProp2: DataField = DataField(
 		name='dataProp2',
 		rule='value 2',
 		semantic_manager=semantic_manager)
 
 	# Relation fields
+
 	oProp1: RelationField = RelationField(
 		name='oProp1',
 		rule='some (Class2 or Class4)',
 		inverse_of=['objProp3'],
 		semantic_manager=semantic_manager)
+
 	objProp2: RelationField = RelationField(
 		name='objProp2',
 		rule='some (Class1 and Class2)',
 		semantic_manager=semantic_manager)
+
 	objProp3: RelationField = RelationField(
 		name='objProp3',
 		rule='some Class3',
 		inverse_of=['oProp1'],
 		semantic_manager=semantic_manager)
+
 	objProp4: RelationField = RelationField(
 		name='objProp4',
 		rule='some (Class1 and Class2) and Class3)',
 		semantic_manager=semantic_manager)
+
 	objProp5: RelationField = RelationField(
 		name='objProp5',
 		rule='some (Class1 and (Class2 or Class3)), value Individual1',
@@ -153,32 +184,37 @@ class Class1aa(Class1a):
 			self.objProp5._instance_identifier = self.get_identifier()
 			self.dataProp2._instance_identifier = self.get_identifier()
 
-
 	# Data fields
+
 	dataProp2: DataField = DataField(
 		name='dataProp2',
 		rule='value 2',
 		semantic_manager=semantic_manager)
 
 	# Relation fields
+
 	oProp1: RelationField = RelationField(
 		name='oProp1',
 		rule='some (Class2 or Class4)',
 		inverse_of=['objProp3'],
 		semantic_manager=semantic_manager)
+
 	objProp2: RelationField = RelationField(
 		name='objProp2',
 		rule='some (Class1 and Class2)',
 		semantic_manager=semantic_manager)
+
 	objProp3: RelationField = RelationField(
 		name='objProp3',
 		rule='some Class3',
 		inverse_of=['oProp1'],
 		semantic_manager=semantic_manager)
+
 	objProp4: RelationField = RelationField(
 		name='objProp4',
 		rule='some (Class1 and Class2) and Class3)',
 		semantic_manager=semantic_manager)
+
 	objProp5: RelationField = RelationField(
 		name='objProp5',
 		rule='some (Class1 and (Class2 or Class3)), value Individual1',
@@ -206,32 +242,37 @@ class Class1b(Class1):
 			self.objProp5._instance_identifier = self.get_identifier()
 			self.dataProp2._instance_identifier = self.get_identifier()
 
-
 	# Data fields
+
 	dataProp2: DataField = DataField(
 		name='dataProp2',
 		rule='value 2',
 		semantic_manager=semantic_manager)
 
 	# Relation fields
+
 	oProp1: RelationField = RelationField(
 		name='oProp1',
 		rule='some Class2, some (Class2 or Class4)',
 		inverse_of=['objProp3'],
 		semantic_manager=semantic_manager)
+
 	objProp2: RelationField = RelationField(
 		name='objProp2',
 		rule='some (Class1 and Class2)',
 		semantic_manager=semantic_manager)
+
 	objProp3: RelationField = RelationField(
 		name='objProp3',
 		rule='some Class3',
 		inverse_of=['oProp1'],
 		semantic_manager=semantic_manager)
+
 	objProp4: RelationField = RelationField(
 		name='objProp4',
 		rule='some (Class1 and Class2) and Class3)',
 		semantic_manager=semantic_manager)
+
 	objProp5: RelationField = RelationField(
 		name='objProp5',
 		rule='some (Class1 and (Class2 or Class3)), value Individual1',
@@ -252,18 +293,20 @@ class Class2(SemanticDeviceClass, Thing):
 			self.objProp2._instance_identifier = self.get_identifier()
 			self.attributeProp._instance_identifier = self.get_identifier()
 
-
 	# Data fields
+
 	attributeProp: DeviceAttributeField = DeviceAttributeField(
 		name='attributeProp',
 		semantic_manager=semantic_manager)
 
 	# Relation fields
+
 	oProp1: RelationField = RelationField(
 		name='oProp1',
 		rule='min 1 Class1',
 		inverse_of=['objProp3'],
 		semantic_manager=semantic_manager)
+
 	objProp2: RelationField = RelationField(
 		name='objProp2',
 		rule='only Thing',
@@ -291,23 +334,28 @@ class Class3(SemanticDeviceClass, Thing):
 			self.objProp2.add(Individual1())
 
 	# Data fields
+
 	attributeProp: DeviceAttributeField = DeviceAttributeField(
 		name='attributeProp',
 		semantic_manager=semantic_manager)
+
 	commandProp: CommandField = CommandField(
 		name='commandProp',
 		semantic_manager=semantic_manager)
+
 	dataProp1: DataField = DataField(
 		name='dataProp1',
 		rule='only customDataType4',
 		semantic_manager=semantic_manager)
 
 	# Relation fields
+
 	oProp1: RelationField = RelationField(
 		name='oProp1',
 		rule='value Individual1',
 		inverse_of=['objProp3'],
 		semantic_manager=semantic_manager)
+
 	objProp2: RelationField = RelationField(
 		name='objProp2',
 		rule='some Class1, value Individual1',
@@ -339,42 +387,50 @@ class Class123(Class1, Class2, Class3):
 			self.dataProp1._instance_identifier = self.get_identifier()
 			self.dataProp2._instance_identifier = self.get_identifier()
 
-
 	# Data fields
+
 	attributeProp: DeviceAttributeField = DeviceAttributeField(
 		name='attributeProp',
 		semantic_manager=semantic_manager)
+
 	commandProp: CommandField = CommandField(
 		name='commandProp',
 		semantic_manager=semantic_manager)
+
 	dataProp1: DataField = DataField(
 		name='dataProp1',
 		rule='only customDataType4',
 		semantic_manager=semantic_manager)
+
 	dataProp2: DataField = DataField(
 		name='dataProp2',
 		rule='value 2',
 		semantic_manager=semantic_manager)
 
 	# Relation fields
+
 	oProp1: RelationField = RelationField(
 		name='oProp1',
 		rule='value Individual1, min 1 Class1, some (Class2 or Class4)',
 		inverse_of=['objProp3'],
 		semantic_manager=semantic_manager)
+
 	objProp2: RelationField = RelationField(
 		name='objProp2',
 		rule='some Class1, value Individual1, only Thing, some (Class1 and Class2)',
 		semantic_manager=semantic_manager)
+
 	objProp3: RelationField = RelationField(
 		name='objProp3',
 		rule='some Class3',
 		inverse_of=['oProp1'],
 		semantic_manager=semantic_manager)
+
 	objProp4: RelationField = RelationField(
 		name='objProp4',
 		rule='some (Class1 and Class2) and Class3)',
 		semantic_manager=semantic_manager)
+
 	objProp5: RelationField = RelationField(
 		name='objProp5',
 		rule='some (Class1 and (Class2 or Class3)), value Individual1',
@@ -406,42 +462,50 @@ class Class13(Class1, Class3):
 			self.dataProp1._instance_identifier = self.get_identifier()
 			self.dataProp2._instance_identifier = self.get_identifier()
 
-
 	# Data fields
+
 	attributeProp: DeviceAttributeField = DeviceAttributeField(
 		name='attributeProp',
 		semantic_manager=semantic_manager)
+
 	commandProp: CommandField = CommandField(
 		name='commandProp',
 		semantic_manager=semantic_manager)
+
 	dataProp1: DataField = DataField(
 		name='dataProp1',
 		rule='min 1 int, only customDataType4',
 		semantic_manager=semantic_manager)
+
 	dataProp2: DataField = DataField(
 		name='dataProp2',
 		rule='exactly 1 boolean, value 2',
 		semantic_manager=semantic_manager)
 
 	# Relation fields
+
 	oProp1: RelationField = RelationField(
 		name='oProp1',
 		rule='value Individual1, some (Class2 or Class4)',
 		inverse_of=['objProp3'],
 		semantic_manager=semantic_manager)
+
 	objProp2: RelationField = RelationField(
 		name='objProp2',
 		rule='some Class1, value Individual1, some (Class1 and Class2)',
 		semantic_manager=semantic_manager)
+
 	objProp3: RelationField = RelationField(
 		name='objProp3',
 		rule='some Class3',
 		inverse_of=['oProp1'],
 		semantic_manager=semantic_manager)
+
 	objProp4: RelationField = RelationField(
 		name='objProp4',
 		rule='some (Class1 and Class2) and Class3)',
 		semantic_manager=semantic_manager)
+
 	objProp5: RelationField = RelationField(
 		name='objProp5',
 		rule='some (Class1 and (Class2 or Class3)), value Individual1',
@@ -465,25 +529,29 @@ class Class3a(Class3):
 			self.commandProp._instance_identifier = self.get_identifier()
 			self.dataProp1._instance_identifier = self.get_identifier()
 
-
 	# Data fields
+
 	attributeProp: DeviceAttributeField = DeviceAttributeField(
 		name='attributeProp',
 		semantic_manager=semantic_manager)
+
 	commandProp: CommandField = CommandField(
 		name='commandProp',
 		semantic_manager=semantic_manager)
+
 	dataProp1: DataField = DataField(
 		name='dataProp1',
 		rule='only customDataType4',
 		semantic_manager=semantic_manager)
 
 	# Relation fields
+
 	oProp1: RelationField = RelationField(
 		name='oProp1',
 		rule='value Individual1',
 		inverse_of=['objProp3'],
 		semantic_manager=semantic_manager)
+
 	objProp2: RelationField = RelationField(
 		name='objProp2',
 		rule='some Class1, value Individual1',
@@ -507,25 +575,29 @@ class Class3aa(Class3a):
 			self.commandProp._instance_identifier = self.get_identifier()
 			self.dataProp1._instance_identifier = self.get_identifier()
 
-
 	# Data fields
+
 	attributeProp: DeviceAttributeField = DeviceAttributeField(
 		name='attributeProp',
 		semantic_manager=semantic_manager)
+
 	commandProp: CommandField = CommandField(
 		name='commandProp',
 		semantic_manager=semantic_manager)
+
 	dataProp1: DataField = DataField(
 		name='dataProp1',
 		rule='only customDataType4',
 		semantic_manager=semantic_manager)
 
 	# Relation fields
+
 	oProp1: RelationField = RelationField(
 		name='oProp1',
 		rule='value Individual1',
 		inverse_of=['objProp3'],
 		semantic_manager=semantic_manager)
+
 	objProp2: RelationField = RelationField(
 		name='objProp2',
 		rule='some Class1, value Individual1',
@@ -543,8 +615,8 @@ class Class4(Thing):
 
 			self.objProp4._instance_identifier = self.get_identifier()
 
-
 	# Relation fields
+
 	objProp4: RelationField = RelationField(
 		name='objProp4',
 		rule='min 1 Class1',
@@ -573,35 +645,41 @@ class Gertrude(Class1, Class2):
 			self.attributeProp._instance_identifier = self.get_identifier()
 			self.dataProp2._instance_identifier = self.get_identifier()
 
-
 	# Data fields
+
 	attributeProp: DeviceAttributeField = DeviceAttributeField(
 		name='attributeProp',
 		semantic_manager=semantic_manager)
+
 	dataProp2: DataField = DataField(
 		name='dataProp2',
 		rule='value 2',
 		semantic_manager=semantic_manager)
 
 	# Relation fields
+
 	oProp1: RelationField = RelationField(
 		name='oProp1',
 		rule='min 1 Class1, some (Class2 or Class4)',
 		inverse_of=['objProp3'],
 		semantic_manager=semantic_manager)
+
 	objProp2: RelationField = RelationField(
 		name='objProp2',
 		rule='only Thing, some (Class1 and Class2)',
 		semantic_manager=semantic_manager)
+
 	objProp3: RelationField = RelationField(
 		name='objProp3',
 		rule='some Class3',
 		inverse_of=['oProp1'],
 		semantic_manager=semantic_manager)
+
 	objProp4: RelationField = RelationField(
 		name='objProp4',
 		rule='some (Class1 and Class2) and Class3)',
 		semantic_manager=semantic_manager)
+
 	objProp5: RelationField = RelationField(
 		name='objProp5',
 		rule='some (Class1 and (Class2 or Class3)), value Individual1',

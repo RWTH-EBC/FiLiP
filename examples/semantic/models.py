@@ -1,8 +1,22 @@
 from enum import Enum
 from typing import Dict, Union, List
-from filip.semantics.semantic_models import \
-	SemanticClass, SemanticIndividual, RelationField, DataField, SemanticDeviceClass, DeviceAttributeField,CommandField
-from filip.semantics.semantic_manager import SemanticManager, InstanceRegistry
+from filip.semantics.semantic_models import\
+	SemanticClass,\
+	SemanticIndividual,\
+	RelationField,\
+	DataField,\
+	SemanticDeviceClass,\
+	DeviceAttributeField,\
+	CommandField
+from filip.semantics.semantic_manager import\
+	SemanticManager,\
+	InstanceRegistry
+
+
+"""
+Generated models file from vocabulary.
+Models can be used for semantical descriptions.
+"""
 
 
 semantic_manager: SemanticManager = SemanticManager(
@@ -13,6 +27,9 @@ semantic_manager: SemanticManager = SemanticManager(
 
 
 class Thing(SemanticClass):
+	"""
+	Predefined root_class
+	"""
 
 	def __new__(cls, *args, **kwargs):
 		kwargs['semantic_manager'] = semantic_manager
@@ -39,18 +56,20 @@ class Building(Thing):
 			self.goalTemperature._instance_identifier = self.get_identifier()
 			self.name._instance_identifier = self.get_identifier()
 
-
 	# Data fields
+
 	goalTemperature: DataField = DataField(
 		name='goalTemperature',
 		rule='exactly 1 integer',
 		semantic_manager=semantic_manager)
+
 	name: DataField = DataField(
 		name='name',
 		rule='exactly 1 string',
 		semantic_manager=semantic_manager)
 
 	# Relation fields
+
 	hasFloor: RelationField = RelationField(
 		name='hasFloor',
 		rule='min 1 Floor',
@@ -72,19 +91,21 @@ class Circuit(Thing):
 			self.hasProducer._instance_identifier = self.get_identifier()
 			self.name._instance_identifier = self.get_identifier()
 
-
 	# Data fields
+
 	name: DataField = DataField(
 		name='name',
 		rule='exactly 1 string',
 		semantic_manager=semantic_manager)
 
 	# Relation fields
+
 	hasOutlet: RelationField = RelationField(
 		name='hasOutlet',
 		rule='min 1 Outlet',
 		inverse_of=['connectedTo'],
 		semantic_manager=semantic_manager)
+
 	hasProducer: RelationField = RelationField(
 		name='hasProducer',
 		rule='min 1 Producer',
@@ -104,14 +125,15 @@ class Floor(Thing):
 			self.hasRoom._instance_identifier = self.get_identifier()
 			self.name._instance_identifier = self.get_identifier()
 
-
 	# Data fields
+
 	name: DataField = DataField(
 		name='name',
 		rule='exactly 1 string',
 		semantic_manager=semantic_manager)
 
 	# Relation fields
+
 	hasRoom: RelationField = RelationField(
 		name='hasRoom',
 		rule='only Room',
@@ -131,16 +153,18 @@ class Outlet(SemanticDeviceClass, Thing):
 			self.controlCommand._instance_identifier = self.get_identifier()
 			self.state._instance_identifier = self.get_identifier()
 
-
 	# Data fields
+
 	controlCommand: CommandField = CommandField(
 		name='controlCommand',
 		semantic_manager=semantic_manager)
+
 	state: DeviceAttributeField = DeviceAttributeField(
 		name='state',
 		semantic_manager=semantic_manager)
 
 	# Relation fields
+
 	connectedTo: RelationField = RelationField(
 		name='connectedTo',
 		rule='min 1 Circuit, exactly 1 Room',
@@ -161,13 +185,16 @@ class Producer(SemanticDeviceClass, Thing):
 			self.state._instance_identifier = self.get_identifier()
 
 	# Data fields
+
 	controlCommand: CommandField = CommandField(
 		name='controlCommand',
 		semantic_manager=semantic_manager)
+
 	name: DataField = DataField(
 		name='name',
 		rule='exactly 1 string',
 		semantic_manager=semantic_manager)
+
 	state: DeviceAttributeField = DeviceAttributeField(
 		name='state',
 		semantic_manager=semantic_manager)
@@ -186,13 +213,16 @@ class AirProducer(Producer):
 			self.state._instance_identifier = self.get_identifier()
 
 	# Data fields
+
 	controlCommand: CommandField = CommandField(
 		name='controlCommand',
 		semantic_manager=semantic_manager)
+
 	name: DataField = DataField(
 		name='name',
 		rule='exactly 1 string',
 		semantic_manager=semantic_manager)
+
 	state: DeviceAttributeField = DeviceAttributeField(
 		name='state',
 		semantic_manager=semantic_manager)
@@ -211,13 +241,16 @@ class ColdProducer(Producer):
 			self.state._instance_identifier = self.get_identifier()
 
 	# Data fields
+
 	controlCommand: CommandField = CommandField(
 		name='controlCommand',
 		semantic_manager=semantic_manager)
+
 	name: DataField = DataField(
 		name='name',
 		rule='exactly 1 string',
 		semantic_manager=semantic_manager)
+
 	state: DeviceAttributeField = DeviceAttributeField(
 		name='state',
 		semantic_manager=semantic_manager)
@@ -236,13 +269,16 @@ class HeatProducer(Producer):
 			self.state._instance_identifier = self.get_identifier()
 
 	# Data fields
+
 	controlCommand: CommandField = CommandField(
 		name='controlCommand',
 		semantic_manager=semantic_manager)
+
 	name: DataField = DataField(
 		name='name',
 		rule='exactly 1 string',
 		semantic_manager=semantic_manager)
+
 	state: DeviceAttributeField = DeviceAttributeField(
 		name='state',
 		semantic_manager=semantic_manager)
@@ -269,31 +305,36 @@ class Room(Thing):
 			self.name._instance_identifier = self.get_identifier()
 			self.volume._instance_identifier = self.get_identifier()
 
-
 	# Data fields
+
 	goalTemperature: DataField = DataField(
 		name='goalTemperature',
 		rule='exactly 1 integer',
 		semantic_manager=semantic_manager)
+
 	name: DataField = DataField(
 		name='name',
 		rule='exactly 1 string',
 		semantic_manager=semantic_manager)
+
 	volume: DataField = DataField(
 		name='volume',
 		rule='some rational',
 		semantic_manager=semantic_manager)
 
 	# Relation fields
+
 	hasOutlet: RelationField = RelationField(
 		name='hasOutlet',
 		rule='only Outlet',
 		inverse_of=['connectedTo'],
 		semantic_manager=semantic_manager)
+
 	hasSensor: RelationField = RelationField(
 		name='hasSensor',
 		rule='only Sensor',
 		semantic_manager=semantic_manager)
+
 	hasTenant: RelationField = RelationField(
 		name='hasTenant',
 		rule='only Tenant',
@@ -314,13 +355,16 @@ class Sensor(SemanticDeviceClass, Thing):
 			self.unit._instance_identifier = self.get_identifier()
 
 	# Data fields
+
 	measurement: DeviceAttributeField = DeviceAttributeField(
 		name='measurement',
 		semantic_manager=semantic_manager)
+
 	measures: DataField = DataField(
 		name='measures',
 		rule='exactly 1 MeasurementType',
 		semantic_manager=semantic_manager)
+
 	unit: DataField = DataField(
 		name='unit',
 		rule='exactly 1 Unit',
@@ -340,10 +384,12 @@ class Tenant(Thing):
 			self.name._instance_identifier = self.get_identifier()
 
 	# Data fields
+
 	goalTemperature: DataField = DataField(
 		name='goalTemperature',
 		rule='exactly 1 integer',
 		semantic_manager=semantic_manager)
+
 	name: DataField = DataField(
 		name='name',
 		rule='exactly 1 string',
