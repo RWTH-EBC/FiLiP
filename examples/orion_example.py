@@ -113,7 +113,7 @@ def update_entity(entity: ContextEntity):
     with ContextBrokerClient(
             fiware_header=FiwareHeader(service='filip',
                                        service_path='/testing')) as cb_client:
-        entity.add_properties({'Space': ContextAttribute(
+        entity.add_attributes({'Space': ContextAttribute(
             type='Number', value=111)})
 
         logger.info("------Updating value of an attribute of an entity------")

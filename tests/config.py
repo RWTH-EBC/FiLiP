@@ -82,6 +82,7 @@ class TestSettings(BaseSettings):
                                          'FIWARE_SERVICEPATH',
                                          'FIWARE_SERVICE_PATH'])
 
+
     @root_validator
     def generate_mutltitenancy_setup(cls, values):
         """
@@ -109,6 +110,7 @@ class TestSettings(BaseSettings):
         env_file_encoding = 'utf-8'
         case_sensitive = False
         use_enum_values = True
+        allow_reuse = True
 
 
 # create settings object
