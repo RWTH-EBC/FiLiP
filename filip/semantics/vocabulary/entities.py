@@ -46,7 +46,6 @@ class Entity(BaseModel):
         description="Stats if the entity is not extracted from a source, "
                     "but predefined in the program (Standard Datatypes)")
 
-    # if no specific label was given, extract the name out of the iri
     def get_label(self) -> str:
         """ Get the label for the entity.
         If the user has set a label it is returned, else the label extracted
@@ -254,7 +253,8 @@ class Class(Entity):
     def get_combined_object_relation_with_property_iri(
             self, obj_prop_iri: str, vocabulary: 'Vocabulary') \
             -> 'CombinedObjectRelation':
-        """Get the CombinedObjectRelation of this class that combines the
+        """
+        Get the CombinedObjectRelation of this class that combines the
         relations of the given ObjectProperty
 
         Args:
@@ -271,7 +271,8 @@ class Class(Entity):
 
     def get_combined_data_relation_with_property_iri(self, property_iri,
                                                      vocabulary):
-        """Get the CombinedDataRelation of this class that combines the
+        """
+        Get the CombinedDataRelation of this class that combines the
         relations of the given DataProperty
 
         Args:
@@ -288,7 +289,8 @@ class Class(Entity):
 
     def get_combined_relation_with_property_iri(self, property_iri, vocabulary)\
             -> Union['CombinedRelation', None]:
-        """Get the CombinedRelation of this class that combines the relations
+        """
+        Get the CombinedRelation of this class that combines the relations
         of the given Property
 
         If possible use the more specific access functions to save runtime.
@@ -344,7 +346,8 @@ class Class(Entity):
 
     def treat_dependency_statements(self, vocabulary: 'Vocabulary') -> \
             List[DependencyStatement]:
-        """ Purge and list all pointers/iris that are not contained in
+        """
+        Purge and list all pointers/iris that are not contained in
         the vocabulary
 
         Args:
@@ -486,52 +489,16 @@ class Class(Entity):
 
         return True
 
-    def get_all_commands_of_class(self, vocabulary: 'Vocabulary') -> \
-            List['CombinedDataRelation']:
-        """Get all CombinedDataRelations that are marked as CommandFields for
-        this class
-
-        Args:
-            vocabulary (Vocabulary): project vocabulary
-
-        Returns:
-            List[CombinedDataRelation]
-        """
-
-        from . import CDRType
-        res = []
-        for cdr_id in self.combined_data_relation_ids:
-            if vocabulary.get_combined_data_relation_by_id(cdr_id).type == \
-                    CDRType.Command:
-                res.append(vocabulary.get_combined_data_relation_by_id(cdr_id))
-
-        return res
-
-    def get_all_device_data_of_class(self, vocabulary: 'Vocabulary') -> \
-            List['CombinedDataRelation']:
-        """Get all CombinedDataRelations that are marked as DeviceDataFields
-        for this class
-
-        Args:
-            vocabulary (Vocabulary): project vocabulary
-
-        Returns:
-            List[CombinedDataRelation]
-        """
-
-        res = []
-        for cdr_id in self.combined_data_relation_ids:
-            cdr = vocabulary.get_combined_data_relation_by_id(cdr_id)
-            prop = vocabulary.get_data_property(cdr.property_iri)
-            if not prop.field_type == DataFieldType.simple:
-                res.append(cdr)
-
-        return res
-
     def is_iot_class(self, vocabulary: 'Vocabulary') -> bool:
         """
         A class is an iot/device class if it contains one CDR, where the
         relation is marked as a device relation: DeviceAttribute/Command
+
+        Args:
+            vocabulary (Vocabulary): Vocabulary of the project
+
+        Returns:
+            bool
         """
 
         for cdr_id in self.combined_data_relation_ids:
@@ -552,19 +519,9 @@ class DatatypeType(str, Enum):
     enum = 'enum'
 
 
-class Datatype(Entity):
-    """
-    Represents OWL:Datatype
-
-    A Datatype is the target of a DataRelation. The Datatype stats a set of
-    values that are valid.
-    This can be an ENUM, a number range, or a check for black/whitelisted chars
-
-    In the Parsing PostProcesseor predefined datatype_catalogue are added to the
-    vocabulary
-    """
-
-    type: DatatypeType = Field(default= DatatypeType.string,
+class DatatypeFields(BaseModel):
+    """Key Fields describing a Datatype"""
+    type: DatatypeType = Field(default=DatatypeType.string,
                                description="Type of the datatype")
     number_has_range = Field(
         default=False,
@@ -590,15 +547,37 @@ class Datatype(Entity):
         default=[],
         description="If Type==Enum: Enum values")
 
-    def export(self) -> Dict:
+
+class Datatype(Entity, DatatypeFields):
+    """
+    Represents OWL:Datatype
+
+    A Datatype is the target of a DataRelation. The Datatype stats a set of
+    values that are valid.
+    This can be an ENUM, a number range, or a check for black/whitelisted chars
+
+    In the Parsing PostProcesseor predefined datatype_catalogue are added to the
+    vocabulary
+    """
+
+    def export(self) -> Dict[str,str]:
+        """ Export datatype as dict
+
+        Returns:
+            Dict[str,str]
+        """
         res = self.dict(include={'type', 'number_has_range',
+                                 'number_range_min', 'number_range_max',
+                                 'number_decimal_allowed', 'forbidden_chars',
+                                 'allowed_chars', 'enum_values'},
+                        exclude_defaults={'type', 'number_has_range',
                                  'number_range_min', 'number_range_max',
                                  'number_decimal_allowed', 'forbidden_chars',
                                  'allowed_chars', 'enum_values'})
         res['type'] = self.type.value
         return res
 
-    def value_is_valid(self, value:str) -> bool:
+    def value_is_valid(self, value: str) -> bool:
         """Test if value is valid for this datatype.
         Numbers are also given as strings
 
@@ -695,8 +674,7 @@ class Individual(Entity):
     parent_class_iris: List[str] = Field(
         default=[],
         description="List of all parent class iris, "
-                    "an individual can have multiple parents"
-    )
+                    "an individual can have multiple parents")
 
     def to_string(self) -> str:
         """Get a string representation of the Individual
@@ -788,6 +766,7 @@ class Individual(Entity):
 
 
 class DataFieldType(str, Enum):
+    """Type of the field that represents the DataProperty"""
     command = "command"
     device_attribute = "device_attribute"
     simple = "simple"

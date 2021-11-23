@@ -100,8 +100,9 @@ class TestSemanticModels(unittest.TestCase):
 
         # check for correct rules
         self.assertEqual(class1.oProp1.rule, "some (Class2 or Class4)")
-        self.assertEqual(class13.objProp2.rule,
-                         "some Class1, value Individual1, some (Class1 and Class2)")
+        self.assertEqual(
+            class13.objProp2.rule,
+            "some Class1, value Individual1, some (Class1 and Class2)")
 
         # test simple rule
         self.assertFalse(class1.oProp1.is_valid())

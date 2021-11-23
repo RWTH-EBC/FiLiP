@@ -1,6 +1,8 @@
 import uuid
+
+import pydantic as pyd
 import requests
-from enum import Enum
+from aenum import Enum
 from typing import List, Tuple, Dict, Type, TYPE_CHECKING, Optional, Union, \
     Set, Iterator, Any
 
@@ -13,6 +15,7 @@ from filip.models.ngsi_v2.context import ContextEntity, NamedContextAttribute, \
 from filip.models import FiwareHeader
 from pydantic import BaseModel, Field, AnyHttpUrl
 from filip.config import settings
+from filip.semantics.vocabulary.entities import DatatypeFields
 from filip.semantics.vocabulary_configurator import label_blacklist, \
     label_char_whitelist
 
@@ -76,32 +79,15 @@ class InstanceIdentifier(BaseModel):
         frozen = True
 
 
-class Datatype(BaseModel):
+class Datatype(DatatypeFields):
     """
     Model of a vocabulary/ontology Datatype used to validate assignments in
     DataFields
     """
-    type: str
-    """Type of the datatype"""
-    number_has_range: bool
-    """If Type==Number: Does the datatype define a range"""
-    number_range_min: Union[int, str]
-    """If Type==Number: Min value of the datatype range, 
-        if a range is defined"""
-    number_range_max: Union[int, str]
-    """If Type==Number: Max value of the datatype range, 
-        if a range is defined"""
-    number_decimal_allowed: bool
-    """If Type==Number: Are decimal numbers allowed?"""
-    forbidden_chars: List[str]
-    """If Type==String: Blacklisted chars; if empty none are forbidden"""
-    allowed_chars: List[str]
-    """If Type==String: Whitelisted chars; if empty all chars are allowed"""
-    enum_values: List[str]
-    """If Type==Enum: Enum values"""
 
     def value_is_valid(self, value: str) -> bool:
-        """Test if value is valid for this datatype.
+        """
+        Test if value is valid for this datatype.
         Numbers are also given as strings
 
         Args:
@@ -164,12 +150,16 @@ class DevicePropertyInstanceLink(BaseModel):
     Modeled as a standalone model, to bypass the read-only logic of
     DeviceProperty
     """
-    instance_identifier: Optional[InstanceIdentifier] = None
-    """Identifier of the instance holding this Property"""
-    semantic_manager: Optional['SemanticManager'] = None
-    """Link to the governing semantic_manager"""
-    field_name: Optional[str] = None
-    """Name of the field to which this property was added in the instance"""
+    instance_identifier: Optional[InstanceIdentifier] = Field(
+        default=None,
+        description="Identifier of the instance holding this Property")
+    semantic_manager: Optional['SemanticManager'] = Field(
+        default=None,
+        description="Link to the governing semantic_manager")
+    field_name: Optional[str] = Field(
+        default=None,
+        description="Name of the field to which this property was added "
+                    "in the instance")
 
 
 class DeviceProperty(BaseModel):
@@ -181,11 +171,11 @@ class DeviceProperty(BaseModel):
     multiple fields will result in an error.
     """
 
-    name: str
-    """Internally used name in the IoT Device"""
+    name: str = Field("Internally used name in the IoT Device")
     _instance_link: DevicePropertyInstanceLink = DevicePropertyInstanceLink()
-    """Additional properties describing the instance and field where this 
+    """Additional properties describing the instance and field where this \
     property was added"""
+
 
     def _get_instance(self) -> 'SemanticClass':
         """Get the instance object to which this property was added"""
@@ -313,10 +303,10 @@ class DeviceAttributeType(str, Enum):
     """
     Retrieval type of the DeviceAttribute value from the IoT Device into Fiware
     """
-    lazy = "lazy"
-    """The value is only read out if it is requested"""
-    active = "active"
-    """The value is kept up-to-date"""
+    _init_ = 'value __doc__'
+
+    lazy = "lazy", "The value is only read out if it is requested"
+    active = "active", "The value is kept up-to-date"
 
 
 class DeviceAttribute(DeviceProperty):
@@ -330,9 +320,10 @@ class DeviceAttribute(DeviceProperty):
     A DeviceAttribute can only belong to one field of one instance. Assigning
     it to multiple fields will result in an error.
     """
-    attribute_type: DeviceAttributeType
-    """States if the attribute is read actively or lazy from the IoT Device 
-    into Fiware"""
+    attribute_type: DeviceAttributeType = Field(
+        description="States if the attribute is read actively or lazy from "
+                    "the IoT Device into Fiware"
+    )
 
     def get_value(self):
         """
@@ -371,18 +362,20 @@ class Field(BaseModel):
     on init
     """
 
-    name: str = ""
-    """Name of the Field, corresponds to the property name that it has in the 
-    SemanticClass"""
+    name: str = Field(
+        default="",
+        description="Name of the Field, corresponds to the property name that "
+                    "it has in the SemanticClass")
 
     _semantic_manager: 'SemanticManager'
-    """Reference to the global SemanticManager"""
+    "Reference to the global SemanticManager"
 
     _instance_identifier: InstanceIdentifier
-    """Identifier of instance, that has this field as property"""
+    "Identifier of instance, that has this field as property"
 
-    _set: Set = set()
-    """Internal set of the field, to which values are saved"""
+    _set: Set = Field(
+        default=set(),
+        description="Internal set of the field, to which values are saved")
 
     def __init__(self,  name, semantic_manager):
         self._semantic_manager = semantic_manager
@@ -439,8 +432,12 @@ class Field(BaseModel):
 
         return x
 
-    def __len__(self):
-        """Get the number of values"""
+    def __len__(self) -> int:
+        """Get the number of values
+
+        Returns:
+            int
+        """
         return len(self._set)
 
     def size(self) -> int:
@@ -601,6 +598,10 @@ class Field(BaseModel):
 
 
 class DeviceField(Field):
+    """
+    A Field that represents a logical part of a device.
+    Abstract Superclass
+    """
 
     _internal_type: type = DeviceProperty
     """
@@ -680,6 +681,15 @@ class DeviceField(Field):
         
     def add(self, v):
         """List function: If checks pass , add value
+
+        Args:
+            v, value to add
+
+        Raises:
+            ValueError, if v is of wrong type
+
+        Returns:
+            None
         """
         self._name_check(v)
         self._pre_set(v)
@@ -699,7 +709,13 @@ class DeviceField(Field):
         return names
 
     def build_context_attribute(self) -> NamedContextAttribute:
-        """only needed when saving local state as json"""
+        """Export Field as NamedContextAttribute
+
+        only needed when saving local state as json
+
+        Returns:
+            NamedContextAttribute
+        """
         values = []
         for v in self.get_all_raw():
             if isinstance(v, BaseModel):
@@ -710,6 +726,9 @@ class DeviceField(Field):
 
 
 class CommandField(DeviceField):
+    """
+     A Field that holds commands that can be send to the device
+    """
 
     _internal_type = Command
 
@@ -737,6 +756,10 @@ class CommandField(DeviceField):
 
 
 class DeviceAttributeField(DeviceField):
+    """
+     A Field that holds attributes of the device that can be referenced for
+     live reading of the device
+    """
     _internal_type = DeviceAttribute
 
     def get_all_raw(self) -> Set[DeviceAttribute]:
@@ -793,8 +816,9 @@ class RuleField(Field):
 
     _rules: List[Tuple[str, List[List[str]]]]
     """rule formatted for machine readability """
-    rule: str = ""
-    """rule formatted for human readability """
+    rule: str = pyd.Field(
+        default="",
+        description="rule formatted for human readability")
 
     def __init__(self, rule, name, semantic_manager):
         self._semantic_manager = semantic_manager
@@ -1047,14 +1071,6 @@ class RelationField(RuleField):
                     if self._instance_identifier not in field.get_all_raw():
                         field.add(self._get_instance())
 
-    # def _uniqueness_check(self, v):
-    #     if isinstance(v, SemanticClass):
-    #         if v.get_identifier() in self.get_all_raw():
-    #             raise ValueError("Value already added")
-    #     else:
-    #         if v.get_name() in self.get_all_raw():
-    #             raise ValueError("Value already added")
-
     def __str__(self):
         """ see class description"""
         return 'Relation'+super().__str__()
@@ -1092,21 +1108,28 @@ class SemanticClass(BaseModel):
     returned
     """
 
-    header: InstanceHeader
-    """Header of instance. Holds the information where the instance is saved 
-    in Fiware"""
-    id: str
-    """Id of the instance, equal to Fiware ContextEntity Id"""
-    old_state: InstanceState = InstanceState()
-    """State in Fiware the moment the instance was loaded in the local 
-    registry. Used when saving. Only the made changes are reflected"""
+    header: InstanceHeader = pyd.Field(
+        description="Header of instance. Holds the information where the "
+                    "instance is saved in Fiware")
+    id: str = pyd.Field(
+        description="Id of the instance, equal to Fiware ContextEntity Id" )
 
-    references: Dict[InstanceIdentifier, List[str]] = {}
-    """references made to this instance in other instances RelationFields"""
+    old_state: InstanceState = pyd.Field(
+        default=InstanceState(),
+        description="State in Fiware the moment the instance was loaded "
+                    "in the local registry. Used when saving. "
+                    "Only the made changes are reflected")
 
-    semantic_manager: BaseModel = None
-    """Pointer to the governing semantic_manager, vague type to prevent 
-    forward ref problems. But it will be of type 'SemanticManager' in runtime"""
+    references: Dict[InstanceIdentifier, List[str]] = pyd.Field(
+        default={},
+        description="references made to this instance in other instances "
+                    "RelationFields")
+
+    semantic_manager: BaseModel = pyd.Field(
+        default=None,
+        description="Pointer to the governing semantic_manager, "
+                    "vague type to prevent forward ref problems. "
+                    "But it will be of type 'SemanticManager' in runtime")
 
     def add_reference(self, identifier: InstanceIdentifier, relation_name: str):
         """
@@ -1476,9 +1499,11 @@ class SemanticDeviceClass(SemanticClass):
     returned
     """
 
-    device_settings: DeviceSettings = DeviceSettings()
-    """Settings configuring the communication with an IoT Device 
-    Wrapped in a model to bypass SemanticDeviceClass immutability"""
+    device_settings: DeviceSettings = pyd.Field(
+        default=DeviceSettings(),
+        description="Settings configuring the communication with an IoT Device "
+                    "Wrapped in a model to bypass SemanticDeviceClass "
+                    "immutability")
 
     def is_valid(self):
         """
@@ -1637,8 +1662,10 @@ class SemanticIndividual(BaseModel):
     Each instance of an SemanticIndividual Class is equal
     """
 
-    _parent_classes: List[type]
-    """List of ontology parent classes needed to validate RelationFields"""
+    _parent_classes: List[type] = pyd.Field(
+        description="List of ontology parent classes needed to validate "
+                    "RelationFields"
+    )
 
     def __eq__(self, other):
         """Each instance of an SemanticIndividual Class is equal"""

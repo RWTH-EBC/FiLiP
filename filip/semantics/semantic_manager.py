@@ -1,20 +1,17 @@
 import copy
 import json
 import logging
-from typing import Optional, Dict, Type, List, Any, Union, Set
-
 import requests
 
-from filip.models.base import NgsiVersion
-
-from filip.semantics.vocabulary import Individual
-
-from filip.models.ngsi_v2.context import ContextEntity
-
-from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient
-
-from filip.models import FiwareHeader
+from typing import Optional, Dict, Type, List, Any, Union, Set
 from pydantic import BaseModel, Field
+
+
+from filip.models.base import NgsiVersion
+from filip.semantics.vocabulary import Individual
+from filip.models.ngsi_v2.context import ContextEntity
+from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient
+from filip.models import FiwareHeader
 from filip.semantics.semantic_models import \
     InstanceIdentifier, SemanticClass, InstanceHeader, Datatype, DataField, \
     RelationField, SemanticIndividual, SemanticDeviceClass, CommandField, \
@@ -37,10 +34,16 @@ class InstanceRegistry(BaseModel):
     """List of all identifiers that were deleted"""
 
     def delete(self, instance: 'SemanticClass'):
-        """
+        """Delete an instance from the registry
+
+        Args:
+            instance(SemanticClass): Instance to remove
 
         Raises:
            KeyError, if identifier unknown
+
+        Returns:
+            None
         """
         identifier = instance.get_identifier()
         if not self.contains(identifier):

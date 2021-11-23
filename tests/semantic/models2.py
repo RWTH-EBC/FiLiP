@@ -29,6 +29,9 @@ semantic_manager: SemanticManager = SemanticManager(
 class Thing(SemanticClass):
 	"""
 	Predefined root_class
+
+	Source: 
+		None (Predefined)
 	"""
 
 	def __new__(cls, *args, **kwargs):
@@ -44,6 +47,9 @@ class Thing(SemanticClass):
 class Class1(Thing):
 	"""
 	Comment On Class 1
+
+	Source: 
+		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -106,6 +112,12 @@ class Class1(Thing):
 
 
 class Class1a(Class1):
+	"""
+	Generated SemanticClass without description
+
+	Source: 
+		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
+	"""
 
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
@@ -164,6 +176,12 @@ class Class1a(Class1):
 
 
 class Class1aa(Class1a):
+	"""
+	Generated SemanticClass without description
+
+	Source: 
+		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
+	"""
 
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
@@ -222,6 +240,12 @@ class Class1aa(Class1a):
 
 
 class Class1b(Class1):
+	"""
+	Generated SemanticClass without description
+
+	Source: 
+		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
+	"""
 
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
@@ -280,6 +304,12 @@ class Class1b(Class1):
 
 
 class Class2(SemanticDeviceClass, Thing):
+	"""
+	Generated SemanticClass without description
+
+	Source: 
+		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
+	"""
 
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
@@ -314,6 +344,12 @@ class Class2(SemanticDeviceClass, Thing):
 
 
 class Class3(SemanticDeviceClass, Thing):
+	"""
+	Generated SemanticClass without description
+
+	Source: 
+		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
+	"""
 
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
@@ -363,6 +399,12 @@ class Class3(SemanticDeviceClass, Thing):
 
 
 class Class123(Class1, Class2, Class3):
+	"""
+	Generated SemanticClass without description
+
+	Source: 
+		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
+	"""
 
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
@@ -438,6 +480,12 @@ class Class123(Class1, Class2, Class3):
 
 
 class Class13(Class1, Class3):
+	"""
+	Generated SemanticClass without description
+
+	Source: 
+		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
+	"""
 
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
@@ -513,6 +561,12 @@ class Class13(Class1, Class3):
 
 
 class Class3a(Class3):
+	"""
+	Generated SemanticClass without description
+
+	Source: 
+		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
+	"""
 
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
@@ -559,6 +613,12 @@ class Class3a(Class3):
 
 
 class Class3aa(Class3a):
+	"""
+	Generated SemanticClass without description
+
+	Source: 
+		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
+	"""
 
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
@@ -605,6 +665,12 @@ class Class3aa(Class3a):
 
 
 class Class4(Thing):
+	"""
+	Generated SemanticClass without description
+
+	Source: 
+		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
+	"""
 
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
@@ -624,6 +690,12 @@ class Class4(Thing):
 
 
 class Gertrude(Class1, Class2):
+	"""
+	Generated SemanticClass without description
+
+	Source: 
+		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
+	"""
 
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
@@ -707,44 +779,161 @@ class Individual4(SemanticIndividual):
 
 # ---------Datatypes--------- #
 semantic_manager.datatype_catalogue = {
-	'customDataType1': 	 {'type': 'enum', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': ['0', '15', '30'], 'number_has_range': False},
-	'customDataType2': 	 {'type': 'string', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'customDataType3': 	 {'type': 'string', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'customDataType4': 	 {'type': 'enum', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': ['1', '2', '3', '4'], 'number_has_range': False},
-	'rational': 	 {'type': 'number', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': True, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'real': 	 {'type': 'number', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'PlainLiteral': 	 {'type': 'string', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'XMLLiteral': 	 {'type': 'string', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'Literal': 	 {'type': 'string', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'anyURI': 	 {'type': 'string', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'base64Binary': 	 {'type': 'string', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'boolean': 	 {'type': 'enum', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': ['True', 'False'], 'number_has_range': False},
-	'byte': 	 {'type': 'number', 'number_range_min': -128, 'number_range_max': 127, 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': True},
-	'dateTime': 	 {'type': 'date', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'dateTimeStamp': 	 {'type': 'date', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'decimal': 	 {'type': 'number', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': True, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'double': 	 {'type': 'number', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': True, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'float': 	 {'type': 'number', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': True, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'hexBinary': 	 {'type': 'string', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'], 'enum_values': [], 'number_has_range': False},
-	'int': 	 {'type': 'number', 'number_range_min': -2147483648, 'number_range_max': 2147483647, 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': True},
-	'integer': 	 {'type': 'number', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'language': 	 {'type': 'string', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'long': 	 {'type': 'number', 'number_range_min': -9223372036854775808, 'number_range_max': 9223372036854775807, 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': True},
-	'Name': 	 {'type': 'string', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'NCName': 	 {'type': 'string', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [':'], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'negativeInteger': 	 {'type': 'number', 'number_range_min': '/', 'number_range_max': -1, 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': True},
-	'NMTOKEN': 	 {'type': 'string', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'nonNegativeInteger': 	 {'type': 'number', 'number_range_min': 0, 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': True},
-	'nonPositiveInteger': 	 {'type': 'number', 'number_range_min': '/', 'number_range_max': -1, 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': True},
-	'normalizedString': 	 {'type': 'string', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'positiveInteger': 	 {'type': 'number', 'number_range_min': 0, 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': True},
-	'short': 	 {'type': 'number', 'number_range_min': -32768, 'number_range_max': 32767, 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': True},
-	'string': 	 {'type': 'string', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'token': 	 {'type': 'string', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'unsignedByte': 	 {'type': 'number', 'number_range_min': 0, 'number_range_max': 255, 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': True},
-	'unsignedInt': 	 {'type': 'number', 'number_range_min': 0, 'number_range_max': 4294967295, 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': True},
-	'unsignedLong': 	 {'type': 'number', 'number_range_min': 0, 'number_range_max': 18446744073709551615, 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': True},
-	'unsignedShort': 	 {'type': 'number', 'number_range_min': 0, 'number_range_max': 65535, 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': True},
+	'customDataType1': {
+		'type': 'enum',
+		'enum_values': ['0', '15', '30'],
+	},
+	'customDataType2': {
+		'type': 'string',
+	},
+	'customDataType3': {
+		'type': 'string',
+	},
+	'customDataType4': {
+		'type': 'enum',
+		'enum_values': ['1', '2', '3', '4'],
+	},
+	'rational': {
+		'type': 'number',
+		'number_decimal_allowed': True,
+	},
+	'real': {
+		'type': 'number',
+	},
+	'PlainLiteral': {
+		'type': 'string',
+	},
+	'XMLLiteral': {
+		'type': 'string',
+	},
+	'Literal': {
+		'type': 'string',
+	},
+	'anyURI': {
+		'type': 'string',
+	},
+	'base64Binary': {
+		'type': 'string',
+	},
+	'boolean': {
+		'type': 'enum',
+		'enum_values': ['True', 'False'],
+	},
+	'byte': {
+		'type': 'number',
+		'number_range_min': -128,
+		'number_range_max': 127,
+		'number_has_range': True,
+	},
+	'dateTime': {
+		'type': 'date',
+	},
+	'dateTimeStamp': {
+		'type': 'date',
+	},
+	'decimal': {
+		'type': 'number',
+		'number_decimal_allowed': True,
+	},
+	'double': {
+		'type': 'number',
+		'number_decimal_allowed': True,
+	},
+	'float': {
+		'type': 'number',
+		'number_decimal_allowed': True,
+	},
+	'hexBinary': {
+		'allowed_chars': ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'],
+		'type': 'string',
+	},
+	'int': {
+		'type': 'number',
+		'number_range_min': -2147483648,
+		'number_range_max': 2147483647,
+		'number_has_range': True,
+	},
+	'integer': {
+		'type': 'number',
+	},
+	'language': {
+		'type': 'string',
+	},
+	'long': {
+		'type': 'number',
+		'number_range_min': -9223372036854775808,
+		'number_range_max': 9223372036854775807,
+		'number_has_range': True,
+	},
+	'Name': {
+		'type': 'string',
+	},
+	'NCName': {
+		'forbidden_chars': [':'],
+		'type': 'string',
+	},
+	'negativeInteger': {
+		'type': 'number',
+		'number_range_max': -1,
+		'number_has_range': True,
+	},
+	'NMTOKEN': {
+		'type': 'string',
+	},
+	'nonNegativeInteger': {
+		'type': 'number',
+		'number_range_min': 0,
+		'number_has_range': True,
+	},
+	'nonPositiveInteger': {
+		'type': 'number',
+		'number_range_max': -1,
+		'number_has_range': True,
+	},
+	'normalizedString': {
+		'type': 'string',
+	},
+	'positiveInteger': {
+		'type': 'number',
+		'number_range_min': 0,
+		'number_has_range': True,
+	},
+	'short': {
+		'type': 'number',
+		'number_range_min': -32768,
+		'number_range_max': 32767,
+		'number_has_range': True,
+	},
+	'string': {
+		'type': 'string',
+	},
+	'token': {
+		'type': 'string',
+	},
+	'unsignedByte': {
+		'type': 'number',
+		'number_range_min': 0,
+		'number_range_max': 255,
+		'number_has_range': True,
+	},
+	'unsignedInt': {
+		'type': 'number',
+		'number_range_min': 0,
+		'number_range_max': 4294967295,
+		'number_has_range': True,
+	},
+	'unsignedLong': {
+		'type': 'number',
+		'number_range_min': 0,
+		'number_range_max': 18446744073709551615,
+		'number_has_range': True,
+	},
+	'unsignedShort': {
+		'type': 'number',
+		'number_range_min': 0,
+		'number_range_max': 65535,
+		'number_has_range': True,
+	},
 }
 
 

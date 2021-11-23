@@ -1,8 +1,9 @@
-
+"""Wrapper module to provide manipulation functions for vocabulary that
+    should later be hidden from the user"""
 import uuid
 from enum import Enum
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Dict
 from filip.semantics.vocabulary import *
 
@@ -19,11 +20,17 @@ class IdType(str, Enum):
 
 
 class VocabularyBuilder(BaseModel):
+    """Wrapper class to provide manipulation functions for vocabulary that
+    should later be hidden from the user"""
 
-    vocabulary: Vocabulary
+    vocabulary: Vocabulary = Field(
+        description="Vocabulary to manipulate"
+    )
 
-    current_source: Source = None
-    """Current source to which entities are added, needed while parsing"""
+    current_source: Source = Field(
+        default=None,
+        description="Current source to which entities are added,"
+                    "needed while parsing")
 
     def clear(self):
         """Clear all objects form the vocabulary
@@ -53,9 +60,9 @@ class VocabularyBuilder(BaseModel):
             None
         """
 
-        self.add_log_entry_for_overwriting_entity(class_,
-                                                  self.vocabulary.classes,
-                                                  IdType.class_)
+        self._add_log_entry_for_overwriting_entity(class_,
+                                                   self.vocabulary.classes,
+                                                   IdType.class_)
 
         self.vocabulary.classes[class_.iri] = class_
         self.vocabulary.id_types[class_.iri] = IdType.class_
@@ -71,7 +78,7 @@ class VocabularyBuilder(BaseModel):
             None
         """
 
-        self.add_log_entry_for_overwriting_entity(
+        self._add_log_entry_for_overwriting_entity(
             obj_prop, self.vocabulary.object_properties, IdType.object_property)
 
         self.vocabulary.object_properties[obj_prop.iri] = obj_prop
@@ -88,7 +95,7 @@ class VocabularyBuilder(BaseModel):
             None
         """
 
-        self.add_log_entry_for_overwriting_entity(
+        self._add_log_entry_for_overwriting_entity(
             data_prop, self.vocabulary.data_properties, IdType.data_property)
 
         self.vocabulary.data_properties[data_prop.iri] = data_prop
@@ -105,7 +112,7 @@ class VocabularyBuilder(BaseModel):
             None
         """
 
-        self.add_log_entry_for_overwriting_entity(
+        self._add_log_entry_for_overwriting_entity(
             datatype, self.vocabulary.datatypes, IdType.datatype)
 
         self.vocabulary.id_types[datatype.iri] = IdType.datatype
@@ -137,21 +144,39 @@ class VocabularyBuilder(BaseModel):
             None
         """
 
-        self.add_log_entry_for_overwriting_entity(individual,
-                                                  self.vocabulary.individuals,
-                                                  IdType.individual)
+        self._add_log_entry_for_overwriting_entity(individual,
+                                                   self.vocabulary.individuals,
+                                                   IdType.individual)
 
         self.vocabulary.individuals[individual.iri] = individual
         self.vocabulary.id_types[individual.iri] = IdType.individual
         individual.source_id = self.current_source.id
 
     def add_relation_for_class(self, class_iri: str, rel: Relation):
+        """Add a relation object to a class
+
+        Args:
+            class_iri: Iri of the class to which the relation should be added
+            rel: Relation to add
+
+        Returns:
+            None
+        """
         self.vocabulary.relations[rel.id] = rel
         self.vocabulary.get_class_by_iri(class_iri).relation_ids.append(rel.id)
         self.vocabulary.id_types[rel.id] = IdType.relation
 
     def add_combined_object_relation_for_class(self, class_iri: str,
                                                crel: CombinedObjectRelation):
+        """Add a combined object relation object to a class
+
+        Args:
+            class_iri: Iri of the class to which the co-relation should be added
+            crel: CombinedObjectRelation to add
+
+        Returns:
+            None
+        """
         self.vocabulary.combined_object_relations[crel.id] = crel
         self.vocabulary.get_class_by_iri(class_iri).\
             combined_object_relation_ids.append(crel.id)
@@ -159,12 +184,30 @@ class VocabularyBuilder(BaseModel):
 
     def add_combined_data_relation_for_class(self, class_iri: str,
                                              cdata: CombinedDataRelation):
+        """Add a combined data relation object to a class
+
+        Args:
+            class_iri: Iri of the class to which the cd-relation should be added
+            cdata: CombinedDataRelation to add
+
+        Returns:
+            None
+        """
         self.vocabulary.combined_data_relations[cdata.id] = cdata
         self.vocabulary.get_class_by_iri(class_iri).\
             combined_data_relation_ids.append(cdata.id)
         self.vocabulary.id_types[cdata.id] = IdType.combined_relation
 
     def add_source(self, source: Source, id: str = None):
+        """Add a source to the vocabulary
+
+        Args:
+            source: source to add
+            id: id of source, if none is given a random id is generated
+
+        Returns:
+            None
+        """
         if id is None:
             source.id = uuid.uuid4().hex
         else:
@@ -174,12 +217,31 @@ class VocabularyBuilder(BaseModel):
         self.current_source = source
 
     def set_current_source(self, source_id: str):
+        """Set the source of the vocabulary to which new added objects belong
+
+        Args:
+            source_id: id of source to activate
+
+        Returns:
+            None
+        """
         assert source_id in self.vocabulary.sources
         self.current_source = self.vocabulary.sources[source_id]
 
-    def add_log_entry_for_overwriting_entity(self, entity: Entity,
-                                             entity_dict: Dict[str, Entity],
-                                             id_type: IdType):
+    def _add_log_entry_for_overwriting_entity(self, entity: Entity,
+                                              entity_dict: Dict[str, Entity],
+                                              id_type: IdType):
+        """Test if an entity exists, if yes add a parsing statement to the
+        current source, that it will be overwritten
+
+        Args:
+            entity: Entity to check
+            entity_dict: Existing entities
+            id_type: Type of entity
+
+        Returns:
+            None
+        """
         if entity.iri in entity_dict:
             old_entity = entity_dict[entity.iri]
             self.current_source.add_parsing_log_entry(

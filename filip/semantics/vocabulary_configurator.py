@@ -1,3 +1,6 @@
+"""Module providing an interface to manipulate the sources of a vocabulary,
+and to ability to export it to models"""
+
 import copy
 import io
 import keyword
@@ -8,10 +11,9 @@ from typing import List, Optional, Dict, Tuple, Set
 
 import requests
 import wget
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
-from filip.semantics.ontology_parser.post_processer import \
-    post_process_vocabulary, transfer_settings
+from filip.semantics.ontology_parser.post_processer import PostProcessor
 from filip.semantics.ontology_parser.rdfparser import RdfParser
 from filip.semantics.vocabulary import \
     Vocabulary, \
@@ -25,7 +27,7 @@ from filip.semantics.vocabulary import \
     DependencyStatement, \
     VocabularySettings
 
-
+# Blacklist containing all labels that are forbidden for entities to have
 label_blacklist = list(keyword.kwlist)
 label_blacklist.extend(["referencedBy", "deviceSettings"])
 label_blacklist.extend(["references", "device_settings", "header",
@@ -35,6 +37,7 @@ label_blacklist.extend(["str", "int", "float", "complex", "list", "tuple",
                         "range", "dict", "list", "set", "frozenset", "bool",
                         "bytes", "bytearray", "memoryview"])
 
+# Whitelist containing all chars that an entity label can consist of
 label_char_whitelist = ascii_letters + digits + "_"
 
 
@@ -42,22 +45,30 @@ class LabelSummary(BaseModel):
     """
     Model holding all information for label conflicts in a vocabulary
     """
-    class_label_duplicates: Dict[str, List[Entity]]
-    """All Labels that are used more than once for class_names on export. 
-    Key: Label, Values: List of entities with key label"""
-    field_label_duplicates: Dict[str, List[Entity]]
-    """All Labels that are used more than once for property_names on export 
-        Key: Label, Values: List of entities with key label"""
-    datatype_label_duplicates: Dict[str, List[Entity]]
-    """All Labels that are used more than once for datatype on export 
-        Key: Label, Values: List of entities with key label"""
+    class_label_duplicates: Dict[str, List[Entity]] = Field(
+        description="All Labels that are used more than once for class_names "
+                    "on export."
+                    "Key: Label, Values: List of entities with key label"
+    )
+    field_label_duplicates: Dict[str, List[Entity]] = Field(
+        description="All Labels that are used more than once for property_names"
+                    "on export."
+                    "Key: Label, Values: List of entities with key label"
+    )
+    datatype_label_duplicates: Dict[str, List[Entity]] = Field(
+        description="All Labels that are used more than once for datatype "
+                    "on export." 
+                    "Key: Label, Values: List of entities with key label"
+    )
 
-    blacklisted_labels: List[Tuple[str, Entity]]
-    """All Labels that are blacklisted, 
-    Tuple(Label, Entity with label)"""
-    labels_with_illegal_chars: List[Tuple[str, Entity]]
-    """All Labels that contain illegal characters, 
-    Tuple(Label, Entity with label)"""
+    blacklisted_labels: List[Tuple[str, Entity]] = Field(
+        description="All Labels that are blacklisted, "
+                    "Tuple(Label, Entity with label)"
+    )
+    labels_with_illegal_chars: List[Tuple[str, Entity]] = Field(
+        description="All Labels that contain illegal characters, "
+                    "Tuple(Label, Entity with label)"
+    )
 
     def is_valid(self) -> bool:
         """Test if Labels are valid
@@ -157,15 +168,15 @@ class VocabularyConfigurator:
             else:
                 found = True
 
-        post_process_vocabulary(vocabulary=new_vocabulary,
-                                old_vocabulary=vocabulary)
+        PostProcessor.post_process_vocabulary(
+            vocabulary=new_vocabulary, old_vocabulary=vocabulary)
 
         if not found:
             raise ValueError(
                 f"Source with source_id {source_id} not in vocabulary")
 
-        transfer_settings(new_vocabulary=new_vocabulary,
-                          old_vocabulary=vocabulary)
+        PostProcessor.transfer_settings(
+            new_vocabulary=new_vocabulary, old_vocabulary=vocabulary)
 
         return new_vocabulary
 
@@ -302,8 +313,8 @@ class VocabularyConfigurator:
             for source in sources:
                 parser.parse_source_into_vocabulary(source=source,
                                                     vocabulary=new_vocabulary)
-            post_process_vocabulary(vocabulary=new_vocabulary,
-                                    old_vocabulary=vocabulary)
+            PostProcessor.post_process_vocabulary(
+                vocabulary=new_vocabulary, old_vocabulary=vocabulary)
         except Exception as e:
             raise ParsingException(e.args)
 
@@ -591,11 +602,17 @@ class VocabularyConfigurator:
 
             content += f"class {class_.get_label()}({parent_class_string}):"
 
-            if class_.comment is not "":
-                content += f'\n\t"""'
-                for line in split_string_into_lines(class_.comment, 75):
-                    content += f"\n\t{line}"
-                content += f'\n\t"""'
+            # add class docstring
+            content += f'\n\t"""'
+            for line in split_string_into_lines(class_.comment, 75):
+                content += f"\n\t{line}"
+            if class_.comment == "":
+                content += "\n\tGenerated SemanticClass without description"
+            content += f"\n\n\t"
+            content += f"Source: \n\t\t" \
+                       f"{vocabulary.sources[class_.source_id].ontology_iri} " \
+                       f"({vocabulary.sources[class_.source_id].source_name})"
+            content += f'\n\t"""'
 
             # ------Constructors------
             if class_.get_label() == "Thing":
@@ -793,7 +810,14 @@ class VocabularyConfigurator:
         for name, datatype in vocabulary.datatypes.items():
             definition = datatype.export()
             content += "\n\t"
-            content += f"'{datatype.get_label()}': \t {definition},"
+            # content += f"'{datatype.get_label()}': \t {definition},"
+            content += f"'{datatype.get_label()}': "
+            content += "{\n"
+            for key, value in definition.items():
+                string_value = f"'{value}'" if type(value) == str else value
+                content += f"\t\t'{key}': {string_value},\n"
+            content += "\t},"
+
         content += "\n"
         content += "}"
 
@@ -832,6 +856,7 @@ class VocabularyConfigurator:
 
 
 class ParsingException(Exception):
+    """Error Class that is raised if parsing of an ontology was unsuccessful"""
 
     # Constructor or Initializer
     def __init__(self, value):

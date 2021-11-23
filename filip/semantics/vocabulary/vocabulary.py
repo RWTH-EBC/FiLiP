@@ -3,7 +3,7 @@
 import operator
 from enum import Enum
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from . import *
 from typing import List, Dict, Union, Optional, TYPE_CHECKING
 
@@ -12,6 +12,7 @@ if TYPE_CHECKING:
 
 
 class IdType(str, Enum):
+    """Type of object that is referenced by an id/iri"""
     class_ = 'Class'
     object_property = 'Object Property'
     data_property = 'Data Property'
@@ -30,20 +31,26 @@ class LoggingLevel(str, Enum):
 
 
 class ParsingError(BaseModel):
-    level: LoggingLevel
-    """Severity of error"""
-    source_iri: str
-    """Iri of the source containing the error"""
-    source_name: Optional[str] = None
-    """Name of the source, only set in get_function"""
-    entity_type: 'IdType'
-    "Type of the problematic entity: Class, Individual,.."
-    entity_iri: str
-    """Iri of the problematic entity"""
-    entity_label: Optional[str] = None
-    """Name of the source, only set in get_function"""
-    message: str
-    """Message describing the error"""
+    """Object represents one issue that arose while parsing a source,
+       and holds all relevant details for that issue"""
+    level: LoggingLevel = Field(description="Severity of error")
+    source_iri: str = Field(description=
+                            "Iri of the source containing the error")
+    source_name: Optional[str] = Field(
+        default=None,
+        description="Name of the source, only set in get_function"
+    )
+    entity_type: 'IdType' = Field(
+        description="Type of the problematic entity: Class, Individual,.."
+    )
+    entity_iri: str = Field(description="Iri of the problematic entity")
+    entity_label: Optional[str] = Field(
+        default=None,
+        description="Name of the source, only set in get_function"
+    )
+    message: str = Field(
+        description="Message describing the error"
+    )
 
     class Config:
         use_enum_values = True
@@ -54,11 +61,31 @@ class VocabularySettings(BaseModel):
     Settings that state how labels of ontology entities should be
     automatically converted on parsing
     """
-    pascal_case_class_labels: bool = True
-    pascal_case_individual_labels: bool = True
-    camel_case_property_labels: bool = True
-    camel_case_datatype_labels: bool = True
-    pascal_case_datatype_enum_labels: bool = True
+    pascal_case_class_labels: bool = Field(
+        default=True,
+        description="If true, convert all class labels given in the ontologies "
+                    "to PascalCase"
+    )
+    pascal_case_individual_labels: bool = Field(
+        default=True,
+        description="If true, convert all labels of individuals given in the "
+                    "ontologies to PascalCase"
+    )
+    camel_case_property_labels: bool = Field(
+        default=True,
+        description="If true, convert all labels of properties given in the "
+                    "ontologies to camelCase"
+    )
+    camel_case_datatype_labels: bool = Field(
+        default=True,
+        description="If true, convert all labels of datatypes given in the "
+                    "ontologies to camelCase"
+    )
+    pascal_case_datatype_enum_labels: bool = Field(
+        default=True,
+        description="If true, convert all values of enum datatypes given in "
+                    "the to PascalCase"
+    )
 
 
 class Vocabulary(BaseModel):
@@ -76,37 +103,52 @@ class Vocabulary(BaseModel):
     be used as READ-ONLY
     """
 
-    classes: Dict[str, Class] = {}
-    """Classes of the vocabulary. Key: class_iri"""
-    object_properties: Dict[str, ObjectProperty] = {}
-    """ObjectProperties of the vocabulary. Key: object_property_iri"""
-    data_properties: Dict[str, DataProperty] = {}
-    """DataProperties of the vocabulary. Key: data_property_iri"""
-    datatypes: Dict[str, Datatype] = {}
-    """Datatypes of the vocabulary. Key: datatype_iri"""
-    individuals: Dict[str, Individual] = {}
-    """Individuals in the vocabulary. Key: individual_iri"""
+    classes: Dict[str, Class] = Field(
+        default={},
+        description="Classes of the vocabulary. Key: class_iri")
+    object_properties: Dict[str, ObjectProperty] = Field(
+        default={},
+        description="ObjectProperties of the vocabulary. "
+                    "Key: object_property_iri")
+    data_properties: Dict[str, DataProperty] = Field(
+        default={},
+        description="DataProperties of the vocabulary. Key: data_property_iri")
+    datatypes: Dict[str, Datatype] = Field(
+        default={},
+        description="Datatypes of the vocabulary. Key: datatype_iri")
+    individuals: Dict[str, Individual] = Field(
+        default={},
+        description="Individuals in the vocabulary. Key: individual_iri")
 
-    relations: Dict[str, Relation] = {}
-    """Relations of classes in the vocabulary. Key: relation_id"""
-    combined_object_relations: Dict[str, CombinedObjectRelation] = {}
-    """CombinedObjectRelations of classes in the vocabulary. 
-        Key: combined_relation_id"""
-    combined_data_relations: Dict[str, CombinedDataRelation] = {}
-    """CombinedDataRelations of classes in the vocabulary. 
-        Key: combined_data_id"""
+    relations: Dict[str, Relation] = Field(
+        default={},
+        description="Relations of classes in the vocabulary. Key: relation_id")
+    combined_object_relations: Dict[str, CombinedObjectRelation] = Field(
+        default={},
+        description="CombinedObjectRelations of classes in the vocabulary."
+                    " Key: combined_relation_id")
+    combined_data_relations: Dict[str, CombinedDataRelation] = Field(
+        default={},
+        description="CombinedDataRelations of classes in the vocabulary."
+                    "Key: combined_data_id")
 
-    sources: Dict[str, Source] = {}
-    """Sources of the vocabulary. Key: source_id"""
+    sources: Dict[str, Source] = Field(
+        default={},
+        description="Sources of the vocabulary. Key: source_id")
 
-    id_types: Dict[str, IdType] = {}
-    """Maps all entity iris and (combined)relations to their Entity/Object 
-        type, to speed up lookups"""
+    id_types: Dict[str, IdType] = Field(
+        default={},
+        description="Maps all entity iris and (combined)relations to their "
+                    "Entity/Object type, to speed up lookups")
 
-    original_label_summary: Optional['LabelSummary']
-    """Original label after parsing, before the user made changes"""
+    original_label_summary: Optional['LabelSummary'] = Field(
+        default=None,
+        description="Original label after parsing, before the user made "
+                    "changes")
 
-    settings: VocabularySettings = VocabularySettings()
+    settings: VocabularySettings = Field(
+        default=VocabularySettings(),
+        description="Settings how to auto transform the entity labels")
 
     def get_type_of_id(self, id: str) -> Union[IdType,None]:
         """Get the type (class, relation,...) of an iri/id
@@ -221,8 +263,9 @@ class Vocabulary(BaseModel):
         return result
 
     def is_id_from_individual(self, id: str) -> bool:
-        """Test if an id is from an Individual. Used to distinguish between
-            instances and individuals
+        """
+        Test if an id is from an Individual. Used to distinguish between
+        instances and individuals
 
         Args:
             id (str): id
@@ -236,7 +279,8 @@ class Vocabulary(BaseModel):
             return False
 
     def get_classes(self) -> List[Class]:
-        """Get all classes in this vocabulary
+        """
+        Get all classes in this vocabulary
 
         Returns:
             List[Class]
@@ -244,6 +288,11 @@ class Vocabulary(BaseModel):
         return list(self.classes.values())
 
     def get_classes_sorted_by_label(self) -> List[Class]:
+        """Get all classes sorted by their labels
+
+         Returns:
+            List[Class]: sorted classes, ascending
+        """
         return sorted(self.classes.values(),
                       key=operator.methodcaller("get_label"),
                       reverse=False)
@@ -261,18 +310,38 @@ class Vocabulary(BaseModel):
                       reverse=False)
 
     def get_object_properties_sorted_by_label(self) -> List[ObjectProperty]:
+        """Get all object properties of the vocabulary sorted by their labels
+
+        Returns:
+            List[ObjectProperty], sorted by ascending labels
+        """
         return sorted(self.object_properties.values(),
                       key=operator.methodcaller("get_label"), reverse=False)
 
     def get_data_properties_sorted_by_label(self) -> List[DataProperty]:
+        """Get all data properties of the vocabulary sorted by their labels
+
+        Returns:
+            List[DataProperty], sorted by ascending labels
+        """
         return sorted(self.data_properties.values(),
                       key=operator.methodcaller("get_label"), reverse=False)
 
     def get_individuals_sorted_by_label(self) -> List[Individual]:
+        """Get all individuals of the vocabulary sorted by their labels
+
+        Returns:
+            List[Individual], sorted by ascending labels
+        """
         return sorted(self.individuals.values(),
                       key=operator.methodcaller("get_label"), reverse=False)
 
     def get_datatypes_sorted_by_label(self) -> List[Datatype]:
+        """Get all datatypes of the vocabulary sorted by their labels
+
+        Returns:
+            List[Datatype], sorted by ascending labels
+        """
         return sorted(self.datatypes.values(),
                       key=operator.methodcaller("get_label"), reverse=False)
 
@@ -405,13 +474,22 @@ class Vocabulary(BaseModel):
         else:
             return ""
 
-    def get_base_out_of_iri(self, iri: str):
+    @staticmethod
+    def get_base_out_of_iri(iri: str):
+        """Extract out of a given iri the base aka ontology name
+
+        Args:
+            iri (str), iri to extract
+
+        Returns:
+            str, base of iri
+        """
 
         if "#" in iri:
             index = iri.find("#")
             return iri[:index]
         else:
-            #for example if uri looks like:
+            # for example if uri looks like:
             # http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH
             index = iri.rfind("/")
             return iri[:index]
@@ -493,7 +571,11 @@ class Vocabulary(BaseModel):
             res.extend(l)
         return res
 
-
     def get_enum_dataytypes(self) -> Dict[str, Datatype]:
+        """Get all datatypes of vocabularies that are of type ENUM
+
+        Returns:
+            Dict[str, Datatype], {datatype.iri: Datatype}
+        """
         return {datatype.iri: datatype for datatype in self.datatypes.values()
                 if len(datatype.enum_values) > 0 and not datatype.predefined}

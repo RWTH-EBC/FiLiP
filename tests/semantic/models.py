@@ -29,6 +29,9 @@ semantic_manager: SemanticManager = SemanticManager(
 class Currency(SemanticClass):
 	"""
 	The Unit Of Measure For Price
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -39,6 +42,9 @@ class Currency(SemanticClass):
 class Energy_Unit(SemanticClass):
 	"""
 	The Unit Of Measure For Energy
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -49,6 +55,9 @@ class Energy_Unit(SemanticClass):
 class Illuminance_Unit(SemanticClass):
 	"""
 	The Unit Of Measure For Light
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -59,6 +68,9 @@ class Illuminance_Unit(SemanticClass):
 class Power_Unit(SemanticClass):
 	"""
 	The Unit Of Measure For Power
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -69,6 +81,9 @@ class Power_Unit(SemanticClass):
 class Pressure_Unit(SemanticClass):
 	"""
 	The Unit Of Measure For Pressure
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -79,6 +94,9 @@ class Pressure_Unit(SemanticClass):
 class Temperature_Unit(SemanticClass):
 	"""
 	The Unit Of Measure For Temperature
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -89,6 +107,9 @@ class Temperature_Unit(SemanticClass):
 class Thing(SemanticClass):
 	"""
 	Predefined root_class
+
+	Source: 
+		None (Predefined)
 	"""
 
 	def __new__(cls, *args, **kwargs):
@@ -104,6 +125,9 @@ class Thing(SemanticClass):
 class Class1(Thing):
 	"""
 	Comment On Class 1
+
+	Source: 
+		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -166,6 +190,12 @@ class Class1(Thing):
 
 
 class Class1a(Class1):
+	"""
+	Generated SemanticClass without description
+
+	Source: 
+		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
+	"""
 
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
@@ -224,6 +254,12 @@ class Class1a(Class1):
 
 
 class Class1aa(Class1a):
+	"""
+	Generated SemanticClass without description
+
+	Source: 
+		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
+	"""
 
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
@@ -282,6 +318,12 @@ class Class1aa(Class1a):
 
 
 class Class1b(Class1):
+	"""
+	Generated SemanticClass without description
+
+	Source: 
+		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
+	"""
 
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
@@ -340,6 +382,12 @@ class Class1b(Class1):
 
 
 class Class2(Thing):
+	"""
+	Generated SemanticClass without description
+
+	Source: 
+		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
+	"""
 
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
@@ -376,6 +424,12 @@ class Class2(Thing):
 
 
 class Class3(Thing):
+	"""
+	Generated SemanticClass without description
+
+	Source: 
+		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
+	"""
 
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
@@ -429,6 +483,12 @@ class Class3(Thing):
 
 
 class Class123(Class1, Class2, Class3):
+	"""
+	Generated SemanticClass without description
+
+	Source: 
+		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
+	"""
 
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
@@ -508,6 +568,12 @@ class Class123(Class1, Class2, Class3):
 
 
 class Class13(Class1, Class3):
+	"""
+	Generated SemanticClass without description
+
+	Source: 
+		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
+	"""
 
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
@@ -587,6 +653,12 @@ class Class13(Class1, Class3):
 
 
 class Class3a(Class3):
+	"""
+	Generated SemanticClass without description
+
+	Source: 
+		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
+	"""
 
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
@@ -637,6 +709,12 @@ class Class3a(Class3):
 
 
 class Class3aa(Class3a):
+	"""
+	Generated SemanticClass without description
+
+	Source: 
+		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
+	"""
 
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
@@ -687,6 +765,12 @@ class Class3aa(Class3a):
 
 
 class Class4(Thing):
+	"""
+	Generated SemanticClass without description
+
+	Source: 
+		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
+	"""
 
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
@@ -713,6 +797,9 @@ class Command(Thing):
 	Not Act Upon Any State, It Simply Gives A Directive To Retrieve A Certain
 	Value. We Propose Here A List Of Commands That Are Relevant For The Purpose
 	Of Saref, But This List Can Be Extended.
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -761,6 +848,9 @@ class Command(Thing):
 class Close_Command(Command):
 	"""
 	A Type Of Command
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -811,6 +901,9 @@ class Commodity(Thing):
 	A Marketable Item For Which There Is Demand, But Which Is Supplied Without
 	Qualitative Differentiation Across A Market. Saref Refers To Energy
 	Commodities Such As Electricity, Gas, Coal And Oil. 
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -821,6 +914,9 @@ class Commodity(Thing):
 class Coal(Commodity):
 	"""
 	A Type Of Commodity
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -843,6 +939,9 @@ class Device(Thing):
 	User Vs. The Point Of View Of The Device'S Manufacturer. We Propose A List
 	Of Devices That Are Relevant For The Purpose Of Saref, But This List Can Be
 	Extended.
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -1012,6 +1111,9 @@ class Building_Related(Device):
 	"""
 	A Category That Includes Devices As Described By Building Related Data
 	Models, Such As Ifc And Fiemser 
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -1180,6 +1282,9 @@ class Building_Related(Device):
 class Electricity(Commodity):
 	"""
 	A Type Of Commodity
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -1191,6 +1296,9 @@ class Energy_Related(Device):
 	"""
 	A Category That Considers Devices Based On Energy Consumption Information
 	And Profiles To Optimize Energy Efficiency.
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -1365,6 +1473,9 @@ class Function(Thing):
 	Area For Which A Function Can Be Used (E.G., Light, Temperature, Motion,
 	Heat, Power, Etc.), Or The Capability That A Function Can Support (E.G.,
 	Receive, Reply, Notify, Etc.), And So Forth. 
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -1392,6 +1503,9 @@ class Actuating_Function(Function):
 	"""
 	A Function That Allows To Transmit Data To Actuators, Such As Level Settings
 	(E.G., Temperature) Or Binary Switching (E.G., Open/Close, On/Off)
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -1419,6 +1533,9 @@ class Event_Function(Function):
 	"""
 	A Function That Allows To Notify Another Device That A Certain Threshold
 	Value Has Been Exceeded.
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -1457,6 +1574,9 @@ class Function_Related(Device):
 	"""
 	A Category That Considers Devices, Sensors And Their Specification In Terms
 	Of Functions, States And Services
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -1626,6 +1746,9 @@ class Actuator(Function_Related):
 	"""
 	A Device Responsible For Moving Or Controlling A Mechanism Or System By
 	Performing An Actuating Function
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -1795,6 +1918,9 @@ class Appliance(Function_Related):
 	"""
 	An Electrical/Mechanical Machine That Accomplish Some Household Functions,
 	Such As Cleaning Or Cooking
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -1963,6 +2089,9 @@ class Appliance(Function_Related):
 class Gas(Commodity):
 	"""
 	A Type Of Commodity
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -1973,6 +2102,9 @@ class Gas(Commodity):
 class Generator(Energy_Related):
 	"""
 	A Type Of Energy-Related Device That Generates Energy
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -2139,6 +2271,12 @@ class Generator(Energy_Related):
 
 
 class Gertrude(Class1, Class2):
+	"""
+	Generated SemanticClass without description
+
+	Source: 
+		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
+	"""
 
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
@@ -2206,6 +2344,9 @@ class Gertrude(Class1, Class2):
 class Get_Command(Command):
 	"""
 	A Type Of Command
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -2254,6 +2395,9 @@ class Get_Command(Command):
 class Get_Current_Meter_Value_Command(Get_Command):
 	"""
 	A Type Of Get Command
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -2302,6 +2446,9 @@ class Get_Current_Meter_Value_Command(Get_Command):
 class Get_Meter_Data_Command(Get_Command):
 	"""
 	A Type Of Get Command
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -2350,6 +2497,9 @@ class Get_Meter_Data_Command(Get_Command):
 class Get_Meter_History_Command(Get_Command):
 	"""
 	A Type Of Get Command
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -2398,6 +2548,9 @@ class Get_Meter_History_Command(Get_Command):
 class Get_Sensing_Data_Command(Get_Command):
 	"""
 	A Type Of Get Command
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -2447,6 +2600,9 @@ class Hvac(Function_Related):
 	"""
 	Heating, Ventilation And Air Conditioning (Hvac) Device That Provides Indoor
 	Environmental Comfort
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -2619,6 +2775,9 @@ class Level_Control_Function(Actuating_Function):
 	An Actuating Function That Allows To Do Level Adjustments Of An Actuator In
 	A Certain Range (E.G., 0%-100%), Such As Dimming A Light Or Set The Speed Of
 	An Electric Motor. 
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -2645,6 +2804,9 @@ class Level_Control_Function(Actuating_Function):
 class Lighting_Device(Function_Related):
 	"""
 	A Device Used For Illumination, Irradiation, Signaling, Or Projection
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -2815,6 +2977,9 @@ class Lighting_Device(Function_Related):
 class Load(Energy_Related):
 	"""
 	A Type Of Energy-Related Device That Consumes Energy
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -2985,6 +3150,9 @@ class Measurement(Thing):
 	Represents The Measured Value Made Over A Property. It Is Also Linked To The
 	Unit Of Measure In Which The Value Is Expressed And The Timestamp Of The
 	Measurement.
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -3035,6 +3203,9 @@ class Meter(Function_Related):
 	A Device Built To Accurately Detect And Display A Quantity In A Form
 	Readable By A Human Being. Further, A Device Of Category Saref:Meter That
 	Performs A Saref:Meteringfunction.
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -3206,6 +3377,9 @@ class Energy_Meter(Meter):
 	Meter, Accomplishes The Tasks Saref:Meterreading And Saref:Energyefficiency,
 	Performs The Saref:Meteringfunction And Is Used For The Purpose Of Measuring
 	The Saref:Energy Property
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -3378,6 +3552,9 @@ class Metering_Function(Function):
 	"""
 	A Function That Allows To Get Data From A Meter, Such As Current Meter
 	Reading Or Instantaneous Demand
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -3427,6 +3604,9 @@ class Micro_Renewable(Function_Related):
 	"""
 	A Device That Generates Renewable Energy From Natural Resources Such As Teh
 	Sun, Wind And Water
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -3598,6 +3778,9 @@ class Multimedia(Function_Related):
 	"""
 	A Device Designed To Display, Store, Record Or Play Multimedia Content Such
 	As Audio, Images, Animation, Video 
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -3769,6 +3952,9 @@ class Network(Function_Related):
 	"""
 	A Device Used To Connect Other Devices In A Network, Such As Hub, Switch Or
 	Router In A Local Area Network (Lan). 
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -3937,6 +4123,9 @@ class Network(Function_Related):
 class Notify_Command(Command):
 	"""
 	A Type Of Command
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -3985,6 +4174,9 @@ class Notify_Command(Command):
 class Off_Command(Command):
 	"""
 	A Type Of Command
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -4033,6 +4225,9 @@ class Off_Command(Command):
 class On_Command(Command):
 	"""
 	A Type Of Command
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -4081,6 +4276,9 @@ class On_Command(Command):
 class On_Off_Function(Actuating_Function):
 	"""
 	An Actuating Function That Allows To Switch On And Off An Actuator
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -4107,6 +4305,9 @@ class On_Off_Function(Actuating_Function):
 class Open_Close_Function(Actuating_Function):
 	"""
 	An Actuating Function That Allows To Open And Close A Device
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -4133,6 +4334,9 @@ class Open_Close_Function(Actuating_Function):
 class Open_Command(Command):
 	"""
 	A Type Of Command
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -4181,6 +4385,9 @@ class Open_Command(Command):
 class Pause_Command(Command):
 	"""
 	A Type Of Command
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -4237,6 +4444,9 @@ class Profile(Thing):
 	Saref4Ener Extension That Can Be Associated To A Device For Optimizing The
 	Energy Efficiency In The Home, Office Or Building In Which The Device Is
 	Located.
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -4296,6 +4506,9 @@ class Property(Thing):
 	Anything That Can Be Sensed, Measured Or Controlled In Households, Common
 	Public Buildings Or Offices. We Propose Here A List Of Properties That Are
 	Relevant For The Purpose Of Saref, But This List Can Be Extended.
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -4345,6 +4558,9 @@ class Energy(Property):
 	Watt_Hour). Furter Specializations Of The Saref:Energy Class Can Be Found In
 	The Saref4Ener Extension, Where Classes Such As Energymax, Energymin And
 	Energyexpected Are Defined. 
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -4391,6 +4607,9 @@ class Humidity(Property):
 	"""
 	A Saref:Property Related To Some Measurements That Are Characterized By A
 	Certain Value That Is Measured In A Humidity Unit
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -4437,6 +4656,9 @@ class Light(Property):
 	"""
 	A Saref:Property Related To Some Measurements That Are Characterized By A
 	Certain Value That Is Measured In A Illuminance Unit (Lux)
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -4483,6 +4705,9 @@ class Motion(Property):
 	"""
 	A Saref:Property Related To Some Measurements That Are Characterized By A
 	Certain Value That Is Measured In A Unit Of Measure For Motion
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -4530,6 +4755,9 @@ class Occupancy(Property):
 	A Saref:Property Related To Some Measurements That Are Characterized By A
 	Certain Value (Saref:Hasvalue Property) That Is Measured In A Unit Of
 	Measure For Occupancy
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -4579,6 +4807,9 @@ class Power(Property):
 	Further Specializations Of The Saref:Power Class Can Be Found In The
 	Saref4Ener Extension, Where Classes Such As Powermax, Powermin And
 	Powerexpected Are Defined.
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -4625,6 +4856,9 @@ class Pressure(Property):
 	"""
 	A Saref:Property Related To Some Measurements That Are Characterized By A
 	Certain Value That Is Measured In A Pressure Unit (Bar Or Pascal)
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -4671,6 +4905,9 @@ class Price(Property):
 	"""
 	A Saref:Property Crelated To Some Measurements That Are Characterized By A
 	Certain Value That Is Measured Using Saref:Currency
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -4717,6 +4954,9 @@ class Sensing_Function(Function):
 	"""
 	A Function That Allows To Transmit Data From Sensors, Such As Measurement
 	Values (E.G., Temperature) Or Sensing Data (E.G., Occupancy)
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -4767,6 +5007,9 @@ class Sensor(Function_Related):
 	A Device That Detects And Responds To Events Or Changes In The Physical
 	Environment Such As Light, Motion, Or Temperature Changes. Further, A Device
 	Of Category Saref:Sensor That Performs A Saref:Sensingfunction.
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -4941,6 +5184,9 @@ class Service(Thing):
 	Discoverable, Registerable, Remotely Controllable By Other Devices In The
 	Network. A Service Must Specify The Device That Is Offering The Service And
 	The Function(S) To Be Represented.
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -4977,6 +5223,9 @@ class Service(Thing):
 class Set_Level_Command(Command):
 	"""
 	A Type Of Command
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -5025,6 +5274,9 @@ class Set_Level_Command(Command):
 class Set_Absolute_Level_Command(Set_Level_Command):
 	"""
 	A Type Of Set Level Command
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -5073,6 +5325,9 @@ class Set_Absolute_Level_Command(Set_Level_Command):
 class Set_Relative_Level_Command(Set_Level_Command):
 	"""
 	A Type Of Set Level Command
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -5122,6 +5377,9 @@ class Smoke(Property):
 	"""
 	A Saref:Property Related To Some Measurements That Are Characterized By A
 	Certain Value That Is Measured In A Unit Of Measure For Smoke
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -5170,6 +5428,9 @@ class Smoke_Sensor(Sensor):
 	Saref:Sensingfunction And Saref:Eventfunction (Which Notifies That A Certain
 	Threshold Has Been Exceeded), And Is Used For The Purpose Of Sensing A
 	Property Of Type Saref:Smoke.
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -5340,6 +5601,9 @@ class Smoke_Sensor(Sensor):
 class Start_Command(Command):
 	"""
 	A Type Of Command
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -5388,6 +5652,9 @@ class Start_Command(Command):
 class Start_Stop_Function(Actuating_Function):
 	"""
 	An Actuating Function That Allows To Start And Stop A Device
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -5416,6 +5683,9 @@ class State(Thing):
 	The State In Which A Device Can Be Found, E.G, On/Off/Standby, Or
 	Online/Offline. We Propose Here A List Of States That Are Relevant For The
 	Purpose Of Saref, But This List Can Be Extended.
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -5426,6 +5696,9 @@ class State(Thing):
 class Multi_Level_State(State):
 	"""
 	A Type Of State
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -5436,6 +5709,9 @@ class Multi_Level_State(State):
 class On_Off_State(State):
 	"""
 	A Type Of State
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -5446,6 +5722,9 @@ class On_Off_State(State):
 class Off_State(On_Off_State):
 	"""
 	The State Of A Device That Is On
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -5456,6 +5735,9 @@ class Off_State(On_Off_State):
 class On_State(On_Off_State):
 	"""
 	The State Of A Device That Is Off 
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -5466,6 +5748,9 @@ class On_State(On_Off_State):
 class Open_Close_State(State):
 	"""
 	A Type Of State
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -5476,6 +5761,9 @@ class Open_Close_State(State):
 class Close_State(Open_Close_State):
 	"""
 	The State Of A Device That Is Close
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -5486,6 +5774,9 @@ class Close_State(Open_Close_State):
 class Open_State(Open_Close_State):
 	"""
 	The State Of A Device That Is Open 
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -5496,6 +5787,9 @@ class Open_State(Open_Close_State):
 class Start_Stop_State(State):
 	"""
 	A Type Of State
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -5506,6 +5800,9 @@ class Start_Stop_State(State):
 class Start_State(Start_Stop_State):
 	"""
 	The State Of A Device That Is Started
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -5516,6 +5813,9 @@ class Start_State(Start_Stop_State):
 class Step_Down_Command(Command):
 	"""
 	A Type Of Command
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -5564,6 +5864,9 @@ class Step_Down_Command(Command):
 class Step_Up_Command(Command):
 	"""
 	A Type Of Command
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -5612,6 +5915,9 @@ class Step_Up_Command(Command):
 class Stop_Command(Command):
 	"""
 	A Type Of Command
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -5660,6 +5966,9 @@ class Stop_Command(Command):
 class Stop_State(Start_Stop_State):
 	"""
 	The State Of A Device That Is Stopped
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -5670,6 +5979,9 @@ class Stop_State(Start_Stop_State):
 class Storage(Energy_Related):
 	"""
 	A Type Of Energy-Related Device That Stores Energy
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -5839,6 +6151,9 @@ class Switch(Actuator):
 	"""
 	A Device Of Category Saref:Actuator That Performs An Actuating Function Of
 	Type Saref:Onofffunction Or Saref:Openclosefunction
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -6009,6 +6324,9 @@ class Door_Switch(Switch):
 	A Device Of Category Saref:Actuator That Consists Of A Switch, Accomplishes
 	The Task Saref:Safety, Performs The Saref:Openclosefunction, Is Used For
 	Controlling A Door, And Can Be Found In The State Saref:Openclosestate.
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -6182,6 +6500,9 @@ class Light_Switch(Switch):
 	The Task Saref:Lighting, Performs The Saref:Onofffunction, Measures The
 	Property Saref:Light, And Can Be Found In The State Saref:Onoffstate. It Can
 	Offer A Switch On Service.
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -6352,6 +6673,9 @@ class Light_Switch(Switch):
 class Switch_On_Service(Service):
 	"""
 	A Type Of Service That Represents An On/Off Function To The Network
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -6391,6 +6715,9 @@ class Task(Thing):
 	Example, A Washing Machine Is Designed For The Task Of Washing. We Propose
 	Here A List Of Tasks That Are Relevant For The Purpose Of Saref, But This
 	List Can Be Extended.
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -6420,6 +6747,9 @@ class Temperature(Property):
 	A Saref:Property Related To Some Measurements That Are Characterized By A
 	Certain Value That Is Measured In A Temperature Unit (Degree_Celsius,
 	Degree_Fahrenheit, Or Degree_Kelvin)
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -6467,6 +6797,9 @@ class Temperature_Sensor(Sensor):
 	A Device That Consists Of A Sensor, Has Category Saref:Sensor, Performs The
 	Saref:Sensingfunction And Is Used For The Purpose Of Sensing A Property Of
 	Type Saref:Temperature
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -6638,6 +6971,9 @@ class Time(Property):
 	"""
 	A Saref:Property That Allows To Specify The Time Concept In Terms Of
 	Instants Or Intervals According To The Imported W3C Time Ontology.
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -6683,6 +7019,9 @@ class Time(Property):
 class Toggle_Command(Command):
 	"""
 	A Type Of Command
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -6734,6 +7073,9 @@ class Washing_Machine(Appliance, Load):
 	Task Saref:Washing, Performs An Actuating Function Of Type
 	Saref:Startstopfunction, Can Be Found In The State Saref:Startstopstate, And
 	Can Have A Saref:Profile That Characterizes Its Energy Consumption. 
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -6904,6 +7246,9 @@ class Washing_Machine(Appliance, Load):
 class Water(Commodity):
 	"""
 	A Type Of Commodity
+
+	Source: 
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -7092,44 +7437,161 @@ class Watt_Hour(SemanticIndividual):
 
 # ---------Datatypes--------- #
 semantic_manager.datatype_catalogue = {
-	'customDataType1': 	 {'type': 'enum', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': ['0', '15', '30'], 'number_has_range': False},
-	'customDataType2': 	 {'type': 'string', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'customDataType3': 	 {'type': 'string', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'customDataType4': 	 {'type': 'enum', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': ['1', '2', '3', '4'], 'number_has_range': False},
-	'rational': 	 {'type': 'number', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': True, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'real': 	 {'type': 'number', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'PlainLiteral': 	 {'type': 'string', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'XMLLiteral': 	 {'type': 'string', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'Literal': 	 {'type': 'string', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'anyURI': 	 {'type': 'string', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'base64Binary': 	 {'type': 'string', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'boolean': 	 {'type': 'enum', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': ['True', 'False'], 'number_has_range': False},
-	'byte': 	 {'type': 'number', 'number_range_min': -128, 'number_range_max': 127, 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': True},
-	'dateTime': 	 {'type': 'date', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'dateTimeStamp': 	 {'type': 'date', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'decimal': 	 {'type': 'number', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': True, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'double': 	 {'type': 'number', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': True, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'float': 	 {'type': 'number', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': True, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'hexBinary': 	 {'type': 'string', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'], 'enum_values': [], 'number_has_range': False},
-	'int': 	 {'type': 'number', 'number_range_min': -2147483648, 'number_range_max': 2147483647, 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': True},
-	'integer': 	 {'type': 'number', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'language': 	 {'type': 'string', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'long': 	 {'type': 'number', 'number_range_min': -9223372036854775808, 'number_range_max': 9223372036854775807, 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': True},
-	'Name': 	 {'type': 'string', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'NCName': 	 {'type': 'string', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [':'], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'negativeInteger': 	 {'type': 'number', 'number_range_min': '/', 'number_range_max': -1, 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': True},
-	'NMTOKEN': 	 {'type': 'string', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'nonNegativeInteger': 	 {'type': 'number', 'number_range_min': 0, 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': True},
-	'nonPositiveInteger': 	 {'type': 'number', 'number_range_min': '/', 'number_range_max': -1, 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': True},
-	'normalizedString': 	 {'type': 'string', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'positiveInteger': 	 {'type': 'number', 'number_range_min': 0, 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': True},
-	'short': 	 {'type': 'number', 'number_range_min': -32768, 'number_range_max': 32767, 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': True},
-	'string': 	 {'type': 'string', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'token': 	 {'type': 'string', 'number_range_min': '/', 'number_range_max': '/', 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': False},
-	'unsignedByte': 	 {'type': 'number', 'number_range_min': 0, 'number_range_max': 255, 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': True},
-	'unsignedInt': 	 {'type': 'number', 'number_range_min': 0, 'number_range_max': 4294967295, 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': True},
-	'unsignedLong': 	 {'type': 'number', 'number_range_min': 0, 'number_range_max': 18446744073709551615, 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': True},
-	'unsignedShort': 	 {'type': 'number', 'number_range_min': 0, 'number_range_max': 65535, 'number_decimal_allowed': False, 'forbidden_chars': [], 'allowed_chars': [], 'enum_values': [], 'number_has_range': True},
+	'customDataType1': {
+		'type': 'enum',
+		'enum_values': ['0', '15', '30'],
+	},
+	'customDataType2': {
+		'type': 'string',
+	},
+	'customDataType3': {
+		'type': 'string',
+	},
+	'customDataType4': {
+		'type': 'enum',
+		'enum_values': ['1', '2', '3', '4'],
+	},
+	'rational': {
+		'type': 'number',
+		'number_decimal_allowed': True,
+	},
+	'real': {
+		'type': 'number',
+	},
+	'PlainLiteral': {
+		'type': 'string',
+	},
+	'XMLLiteral': {
+		'type': 'string',
+	},
+	'Literal': {
+		'type': 'string',
+	},
+	'anyURI': {
+		'type': 'string',
+	},
+	'base64Binary': {
+		'type': 'string',
+	},
+	'boolean': {
+		'type': 'enum',
+		'enum_values': ['True', 'False'],
+	},
+	'byte': {
+		'type': 'number',
+		'number_range_min': -128,
+		'number_range_max': 127,
+		'number_has_range': True,
+	},
+	'dateTime': {
+		'type': 'date',
+	},
+	'dateTimeStamp': {
+		'type': 'date',
+	},
+	'decimal': {
+		'type': 'number',
+		'number_decimal_allowed': True,
+	},
+	'double': {
+		'type': 'number',
+		'number_decimal_allowed': True,
+	},
+	'float': {
+		'type': 'number',
+		'number_decimal_allowed': True,
+	},
+	'hexBinary': {
+		'allowed_chars': ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'],
+		'type': 'string',
+	},
+	'int': {
+		'type': 'number',
+		'number_range_min': -2147483648,
+		'number_range_max': 2147483647,
+		'number_has_range': True,
+	},
+	'integer': {
+		'type': 'number',
+	},
+	'language': {
+		'type': 'string',
+	},
+	'long': {
+		'type': 'number',
+		'number_range_min': -9223372036854775808,
+		'number_range_max': 9223372036854775807,
+		'number_has_range': True,
+	},
+	'Name': {
+		'type': 'string',
+	},
+	'NCName': {
+		'forbidden_chars': [':'],
+		'type': 'string',
+	},
+	'negativeInteger': {
+		'type': 'number',
+		'number_range_max': -1,
+		'number_has_range': True,
+	},
+	'NMTOKEN': {
+		'type': 'string',
+	},
+	'nonNegativeInteger': {
+		'type': 'number',
+		'number_range_min': 0,
+		'number_has_range': True,
+	},
+	'nonPositiveInteger': {
+		'type': 'number',
+		'number_range_max': -1,
+		'number_has_range': True,
+	},
+	'normalizedString': {
+		'type': 'string',
+	},
+	'positiveInteger': {
+		'type': 'number',
+		'number_range_min': 0,
+		'number_has_range': True,
+	},
+	'short': {
+		'type': 'number',
+		'number_range_min': -32768,
+		'number_range_max': 32767,
+		'number_has_range': True,
+	},
+	'string': {
+		'type': 'string',
+	},
+	'token': {
+		'type': 'string',
+	},
+	'unsignedByte': {
+		'type': 'number',
+		'number_range_min': 0,
+		'number_range_max': 255,
+		'number_has_range': True,
+	},
+	'unsignedInt': {
+		'type': 'number',
+		'number_range_min': 0,
+		'number_range_max': 4294967295,
+		'number_has_range': True,
+	},
+	'unsignedLong': {
+		'type': 'number',
+		'number_range_min': 0,
+		'number_range_max': 18446744073709551615,
+		'number_has_range': True,
+	},
+	'unsignedShort': {
+		'type': 'number',
+		'number_range_min': 0,
+		'number_range_max': 65535,
+		'number_has_range': True,
+	},
 }
 
 

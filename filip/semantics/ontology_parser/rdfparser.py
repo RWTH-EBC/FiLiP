@@ -23,8 +23,8 @@ description language not the ontology itself
 
 class Tags(str, Enum):
     """
-    Collection of tags used as structures in ontologies, that were used more than
-    once in the rdfparser code
+    Collection of tags used as structures in ontologies, that were used more
+    than once in the rdfparser code
     """
     rdf_type = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
     owl_intersection = 'http://www.w3.org/2002/07/owl#intersectionOf',
@@ -35,17 +35,32 @@ class Tags(str, Enum):
     owl_on_data_range = 'http://www.w3.org/2002/07/owl#onDataRange'
 
 
-def get_iri_from_uriref(uriref: rdflib.URIRef):
+def get_iri_from_uriref(uriref: rdflib.URIRef) -> str:
+    """Give an Uriref object, returns an iri
+
+    Args:
+        uriref: Object describing the iri
+
+    Returns:
+        str
+    """
     return str(uriref)
 
 
-def get_base_out_of_iri(iri: str):
+def get_base_out_of_iri(iri: str) -> str:
+    """Give an iri, returns an the ontology base name
 
+       Args:
+           iri
+
+       Returns:
+           str
+       """
     if "#" in iri:
         index = iri.find("#")
         return iri[:index]
     else:
-        #for example if uri looks like:
+        # for example if uri looks like:
         # http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH
         index = iri.rfind("/")
         return iri[:index]
@@ -107,7 +122,6 @@ class RdfParser:
         ontology_nodes = list(g.subjects(
             object=rdflib.term.URIRef("http://www.w3.org/2002/07/owl#Ontology"),
             predicate=rdflib.term.URIRef(Tags.rdf_type.value)))
-
 
         # a source may have no ontology iri defined
         # if wanted on this place more info about the ontology can be extracted
@@ -485,12 +499,12 @@ class RdfParser:
                     relation = Relation(property_iri=owl_on_property, id=id)
                     voc_builder.add_relation_for_class(class_iri, relation)
 
-                    # go through the aditional statment to figure out the
-                    # targetIRI and the restricitonType/cardinailty
+                    # go through the additional statement to figure out the
+                    # targetIRI and the restrictionType/cardinality
                     self._parse_relation_type(graph, relation,
                                               additional_statements)
 
-        # parentclass statement or empty list element
+        # parent-class statement or empty list element
         else:
             # owlThing is the root object, but it is not declared as a class
             # in the file to prevent None pointer when looking up parents,
@@ -506,7 +520,18 @@ class RdfParser:
 
     def _parse_relation_type(self, graph: rdflib.Graph,
                              relation: Relation, statements: {}):
-
+        """
+        Parse the relation type and depending on the result the
+        cardinality or value of relation
+        
+        Args:
+            graph: underlying ontology graph
+            relation: Relation object into which the information are saved
+            statements: Ontology statements concerning the relation
+        
+        Returns:
+            None
+        """
         treated_statements = []
         for statement in statements:
             if statement == "http://www.w3.org/2002/07/owl#someValuesFrom":
@@ -562,6 +587,18 @@ class RdfParser:
     def _parse_cardinality(self, graph: rdflib.Graph,
                            relation: Relation, statement, statements,
                            treated_statements):
+        """Parse the cardinality of a relation
+
+        Args:
+            graph: underlying ontology graph
+            relation: Relation object into which the information are saved
+            statement: The statement that is actively treated
+            statements: Ontology statements concerning the relation
+            treated_statements: Statements that were already treated
+
+        Returns:
+            None
+        """
         if Tags.owl_on_class.value in statements:
             relation.restriction_cardinality = str(statements[statement])
             target = statements[Tags.owl_on_class.value]
@@ -591,17 +628,40 @@ class RdfParser:
 
     def _parse_has_value(self, graph: rdflib.Graph, relation: Relation,
                          node: rdflib.term):
+        """Parse the value of a relation
+
+        Args:
+           graph: underlying ontology graph
+           relation: Relation object into which the information are saved
+           node: (complex) Graph node containing the value
+        
+        Returns:
+           None
+        """
         self._parse_relation_values(graph, relation, node)
-        # for hasValue only a targetstatement that is a leaf is allowed
+        # for hasValue only a target-statement that is a leaf is allowed
         if not relation.target_statement.type == StatementType.LEAF:
-            self._add_logging_information(LoggingLevel.severe, IdType.class_,
-                                          self.current_class_iri,
-                                         f"In hasValue relation with property "
-                                         "{relation.property_iri} target is a "
-                                         "complex expression")
+            self._add_logging_information(
+                LoggingLevel.severe,
+                IdType.class_,
+                self.current_class_iri,
+                f"In hasValue relation with property {relation.property_iri} "
+                f"target is a complex expression")
 
     def _parse_relation_values(self, graph: rdflib.Graph,
                                relation: Relation, node: rdflib.term):
+        """
+        Parse the value of a relation out of a node that can be complex;
+        consisting out of a combination of multiple other nodes
+
+        Args:
+           graph: underlying ontology graph
+           relation: Relation object into which the information are saved
+           node: (complex) Graph node containing the value
+
+        Returns:
+           None
+        """
         target_statement = TargetStatement()
         relation.target_statement = target_statement
 
@@ -622,8 +682,6 @@ class RdfParser:
 
                     current_statement.type = StatementType.OR
                 else:
-
-                    # target_iri = get_iri_from_uriref(current_term)
                     current_statement.set_target(
                         target_iri="Target statement has no iri",
                         target_data_value=str(current_term))
@@ -637,9 +695,9 @@ class RdfParser:
                     current_statement.target_statements.append(new_statement)
                     queue.append((child_node, new_statement))
 
-    # an intersection/union is a basic list, it consits out of a chain of bnode,
-    # where each bnode has the "first"and "rest" predicate, first contains our
-    # object, rest is a pointer to the next part of the chain.
+    # an intersection/union is a basic list, it consists out of a chain of
+    # bnode, where each bnode has the "first"and "rest" predicate, first
+    # contains our object, rest is a pointer to the next part of the chain.
     # the list is over if rest points to "NIL"
     # this methode extracts all objects of a single layered intersection,
     # if the intersection contains further intersections these are contained in
@@ -649,6 +707,28 @@ class RdfParser:
                                                    accept_and: bool,
                                                    accept_or: bool,
                                                    accept_one_of: bool = False):
+        """
+        An intersection/union is a basic list, it consits out of a chain of
+        bnode,where each bnode has the "first"and "rest" predicate,
+        first contains our object, rest is a pointer to the next part of the
+        chain. The list is over if rest points to "NIL"
+        This methode extracts all objects of a single layered intersection,
+        if the intersection contains further intersections these are contained
+        in the result list as BNode
+
+        Args:
+            graph: underlying ontology graph
+            node: (complex) Graph node containing the value
+            accept_or (bool): true, if combinations with "or" are allowed to be
+                parsed
+            accept_and (bool): true, if combinations with "and" are allowed
+                to be parsed
+            accept_one_of (bool): true, if ne_of statements are allowed
+                to be parsed
+
+        Returns:
+           None
+        """
         predicates = list(graph.predicates(subject=node))
 
         # the passed startnode needs to contain an intersection or a union
@@ -698,6 +778,19 @@ class RdfParser:
     def _extract_objects_out_of_layered_combination(
             self, graph: rdflib.Graph, node: rdflib.term.BNode,
             accept_and: bool, accept_or: bool) -> List[rdflib.term.URIRef]:
+        """Extract all nodes out of a complex combination
+
+        Args:
+            graph: underlying ontology graph
+            node: (complex) Graph node containing the complex combination
+            accept_or (bool): true, if combinations with "or" are allowed to be
+                parsed
+            accept_and (bool): true, if combinations with "and" are allowed
+                to be parsed
+
+        Returns:
+           List[rdflib.term.URIRef], list of terms out of combination
+        """
         result = []
         queue = [node]
 

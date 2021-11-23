@@ -64,7 +64,7 @@ class Source(BaseModel):
 
     def get_number_of_id_type(self, vocabulary: 'Vocabulary',
                               id_type: 'IdType') -> int:
-        """Ge the number how many entities of a given type are from this source
+        """Get the number how many entities of a given type are from this source
 
         Args:
             vocabulary (Vocabulary): Vocabulary of this project
@@ -113,8 +113,9 @@ class Source(BaseModel):
         return self.source_name
 
     def treat_dependency_statements(self, vocabulary: 'Vocabulary'):
-        """ Log and purge all pointers/iris in entities that are not contained
-         in the vocabulary
+        """
+        Log and purge all pointers/iris in entities that are not contained
+        in the vocabulary
 
         Args:
             vocabulary (Vocabulary): Vocabulary of this project
@@ -143,7 +144,8 @@ class Source(BaseModel):
 
     def add_parsing_log_entry(self, level: 'LoggingLevel', entity_type: 'IdType',
                               entity_iri: str,  msg: str):
-        """Add a parsing log entry for an entity, if an issue in parsing
+        """
+        Add a parsing log entry for an entity, if an issue in parsing
         was discovered
 
         Args:
@@ -166,7 +168,7 @@ class Source(BaseModel):
         ))
 
     def get_parsing_log(self, vocabulary: 'Vocabulary') -> List['ParsingError']:
-        """get the Parsinglog, where the labels of the entities are filled in
+        """Get the Parsinglog, where the labels of the entities are filled in
 
         Args:
             vocabulary (Vocabulary): Vocabulary of this project

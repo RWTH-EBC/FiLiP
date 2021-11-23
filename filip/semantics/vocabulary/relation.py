@@ -161,8 +161,9 @@ class TargetStatement(BaseModel):
 
     def is_fulfilled_by_iri_value(self, value: str, ancestor_values: List[str]) \
             -> bool:
-        """Test if a set of values fulfills the targetstatement;
-            Only for objectRelations
+        """
+        Test if a set of values fulfills the targetstatement;
+        Only for objectRelations
 
         Args:
             value (str): value to check: Class_iri of instance/individual
@@ -191,8 +192,9 @@ class TargetStatement(BaseModel):
 
     def is_fulfilled_by_data_value(self, value: str, vocabulary: 'Vocabulary') \
             -> bool:
-        """Test if a set of values fulfills the targetstatement;
-            Only for dataRelations
+        """
+        Test if a set of values fulfills the targetstatement;
+        Only for dataRelations
 
         Args:
             value (List[str]):  value to check
@@ -233,9 +235,9 @@ class TargetStatement(BaseModel):
             vocabulary: 'Vocabulary',
             ontology_iri: str,
             class_iri: str) -> List[DependencyStatement]:
-        """ Get a list of all pointers/iris that are not contained in the
-            vocabulary
-            Purging is done in class
+        """
+        Get a list of all pointers/iris that are not contained in the
+        vocabulary. Purging is done in class
 
         Args:
             vocabulary (Vocabulary): Vocabulary of this project
@@ -510,7 +512,12 @@ class Relation(BaseModel):
 
         return res
 
-    def get_all_target_iris(self):
+    def get_all_target_iris(self) -> Set[str]:
+        """Get all iris of targets
+
+        Returns:
+            Set(str)
+        """
         iris = set()
 
         statements = [self.target_statement]
@@ -526,7 +533,14 @@ class Relation(BaseModel):
         return iris
 
     def export_rule(self, vocabulary: 'Vocabulary') -> (str, str):
-        # replace the iris in the target string with class labels
+        """Get the rule as string
+
+        Args:
+           vocabulary (Vocabulary): Vocabulary of the project
+
+        Returns:
+           str
+        """
         targets = []
         for inner_list in self.get_targets():
             new_list = []

@@ -15,8 +15,7 @@ from .relation import \
 from .combined_relations import \
     CombinedRelation, \
     CombinedObjectRelation, \
-    CombinedDataRelation, \
-    CDRType
+    CombinedDataRelation
 from .source import Source, DependencyStatement
 
 from .vocabulary import \

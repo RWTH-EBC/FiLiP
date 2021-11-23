@@ -1,5 +1,5 @@
 """Vocabulary Models for CombinedRelations"""
-from enum import Enum
+from aenum import Enum
 
 from filip.semantics.vocabulary import DataFieldType
 from pydantic import BaseModel, Field
@@ -49,7 +49,8 @@ class CombinedRelation(BaseModel):
 
     def get_all_targetstatements_as_string(self, vocabulary: 'Vocabulary') \
             -> str:
-        """Get a string stating all conditions(target statement) that need to
+        """
+        Get a string stating all conditions(target statement) that need to
         be fulfilled, so that this CR is fulfilled
 
         Args:
@@ -65,6 +66,14 @@ class CombinedRelation(BaseModel):
         return res[:-2]
 
     def get_all_target_iris(self, vocabulary: 'Vocabulary') -> Set[str]:
+        """Get all iris of referenced targets
+
+        Args:
+            vocabulary (Vocabulary): Vocabulary of the project
+
+        Returns:
+            set(str)
+        """
         iris = set()
 
         for relation_id in self.relation_ids:
@@ -73,32 +82,36 @@ class CombinedRelation(BaseModel):
         return iris
 
     def get_all_target_labels(self, vocabulary: 'Vocabulary') -> Set[str]:
+        """ Get all labels of referenced targets
+
+        Args:
+            vocabulary (Vocabulary): Vocabulary of the project
+
+        Returns:
+            set(str)
+        """
         return {vocabulary.get_label_for_entity_iri(iri)
                 for iri in self.get_all_target_iris(vocabulary)}
 
     def export_rule(self, vocabulary: 'Vocabulary',
                     stringify_fields: bool) -> str:
+        """Get the rule as string
 
-        rules= [vocabulary.get_relation_by_id(id).export_rule(vocabulary)
-                for id in self.relation_ids]
+        Args:
+           vocabulary (Vocabulary): Vocabulary of the project
+           stringify_fields (bool): If true, all string delimieters will be
+                removed
+
+        Returns:
+           str
+        """
+
+        rules = [vocabulary.get_relation_by_id(id).export_rule(vocabulary)
+                 for id in self.relation_ids]
         if stringify_fields:
             return str(rules).replace('"', "")
         else:
             return str(rules).replace("'","").replace('"', "'")
-
-
-class CDRType(Enum):
-    """Type of this CombinedDataRelations, it is either:
-           -   UserSetData (Default): The user defines values (ex: RoomNumber)
-           -   DeviceData (Device Only): The field hods values that are read
-                    from the device (ex: TemperaturMeasrument)
-           -   Command (Device Only): The field holds the name of the command
-                    that needs to be send to the device
-
-    """
-    DeviceData = "DeviceData"
-    UserSetData = "UserSetData"
-    Command = "Command"
 
 
 class CombinedDataRelation(CombinedRelation):
@@ -138,11 +151,28 @@ class CombinedDataRelation(CombinedRelation):
         return sorted(list(enum_values))
 
     def get_field_type(self, vocabulary: 'Vocabulary') -> DataFieldType:
+        """Get type of CDR (command, devicedata , simple)
+
+         Args:
+            vocabulary (Vocabulary): Vocabulary of the project
+
+        Returns:
+            DataFieldType
+        """
         property = vocabulary.get_data_property(self.property_iri)
         return property.field_type
 
     def is_device_relation(self, vocabulary: 'Vocabulary') -> bool:
+        """Test if the CDR is a device property(command, or readings)
+
+        Args:
+            vocabulary (Vocabulary): Vocabulary of the project
+
+        Returns:
+            bool
+        """
         return not self.get_field_type(vocabulary) == DataFieldType.simple
+
 
 class CombinedObjectRelation(CombinedRelation):
     """
@@ -151,6 +181,14 @@ class CombinedObjectRelation(CombinedRelation):
     """
 
     def get_all_possible_target_class_iris(self, vocabulary) -> List[str]:
+        """Get all iris that are valid values for this cor
+
+        Args:
+            vocabulary (Vocabulary): Vocabulary of the project
+
+        Returns:
+            List[str]
+        """
         from . import Vocabulary
         assert isinstance(vocabulary, Vocabulary)
 
