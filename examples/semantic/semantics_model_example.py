@@ -20,15 +20,10 @@ if __name__ == '__main__':
     #
     # For this example to work the fiware state needs to be clean:
     from filip.models.base import FiwareHeader
-    from filip.clients.ngsi_v2 import IoTAClient, ContextBrokerClient
     from filip.utils.cleanup import clear_all
 
     fiware_header = FiwareHeader(service="example", service_path="/")
-    clear_all(fiware_header=FiwareHeader(
-        service="example",
-        service_path="/"),
-        cb_url=cb_url,
-        iota_url=iota_url)
+    clear_all(fiware_header=fiware_header, cb_url=cb_url, iota_url=iota_url)
 
     # # 1. Import Models
     #

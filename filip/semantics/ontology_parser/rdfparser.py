@@ -1,3 +1,6 @@
+"""Module contains the RDFParser that can create a Vocabulary object out of a
+given ontology"""
+
 import uuid
 from enum import Enum
 from typing import List, Tuple

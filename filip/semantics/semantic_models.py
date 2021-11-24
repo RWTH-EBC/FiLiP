@@ -1,3 +1,5 @@
+"""Module containing the models describing a semantic state"""
+
 import uuid
 
 import pydantic as pyd

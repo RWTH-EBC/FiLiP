@@ -1,3 +1,5 @@
+"""Manages the local state of the semantic instances"""
+
 import copy
 import json
 import logging
