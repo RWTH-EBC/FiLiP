@@ -321,6 +321,33 @@ class VocabularyConfigurator:
         return new_vocabulary
 
     @classmethod
+    def is_label_blacklisted(cls, label: str) -> bool:
+        """Checks if the given label is forbidden for an entity to possess
+
+        Args:
+            label (str): label to check
+
+        Returns:
+            bool
+        """
+        return label in label_blacklist
+
+    @classmethod
+    def is_label_illegal(cls, label: str) -> bool:
+        """Checks if the given label contains a forbidden char
+
+        Args:
+            label (str): label to check
+
+        Returns:
+            bool, True if label forbidden
+        """
+        for c in label:
+            if c not in label_char_whitelist:
+                return True
+        return False
+
+    @classmethod
     def get_label_conflicts_in_vocabulary(cls, vocabulary: Vocabulary) -> \
             LabelSummary:
         """
@@ -361,29 +388,22 @@ class VocabularyConfigurator:
             return result
 
         def get_blacklisted_labels(entities_to_check: List[Dict]):
-
-            blacklist = label_blacklist
-
             result: List[Tuple[str, Entity]] = []
             for entity_list in entities_to_check:
                 for entity in entity_list.values():
                     label = entity.get_label()
-                    if label in blacklist:
+                    if cls.is_label_blacklisted(label):
                         result.append((label, entity))
 
             return result
 
         def get_illegal_labels(entities_to_check: List[Dict]):
-
-            whitelist = label_char_whitelist
-
             result: List[Tuple[str, Entity]] = []
             for entity_list in entities_to_check:
                 for entity in entity_list.values():
                     label = entity.get_label()
-                    for c in label:
-                        if c not in whitelist:
-                            result.append((label, entity))
+                    if cls.is_label_illegal(label):
+                        result.append((label, entity))
 
             return result
 
