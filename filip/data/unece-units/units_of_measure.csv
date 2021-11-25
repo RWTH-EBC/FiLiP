@@ -1,0 +1,2118 @@
+,Status,CommonCode,Name,Description,LevelAndCategory,Symbol,ConversionFactor
+0,X,05,lift,nan,3.9,nan,nan
+1,X,06,small spray,nan,3.9,nan,nan
+2,X,08,heat lot,nan,3.9,nan,nan
+3,nan,10,group,A unit of count defining the number of groups (group: set of items classified together).,3.9,nan,nan
+4,nan,11,outfit,A unit of count defining the number of outfits (outfit: a complete set of equipment / materials / objects used for a specific purpose).,3.9,nan,nan
+5,nan,13,ration,A unit of count defining the number of rations (ration: a single portion of provisions).,3.9,nan,nan
+6,nan,14,shot,"A unit of liquid measure, especially related to spirits.",3.9,nan,nan
+7,nan,15,"stick, military",A unit of count defining the number of military sticks (military stick: bombs or paratroops released in rapid succession from an aircraft).,3.9,nan,nan
+8,X,16,hundred fifteen kg drum,nan,3.3,nan,nan
+9,X,17,hundred lb drum,nan,3.3,nan,nan
+10,X,18,fiftyfive gallon (US) drum,nan,3.3,nan,nan
+11,X,19,tank truck,nan,3.4,nan,nan
+12,nan,20,twenty foot container,A unit of count defining the number of shipping containers that measure 20 foot in length.,3.4,nan,nan
+13,nan,21,forty foot container,A unit of count defining the number of shipping containers that measure 40 foot in length.,3.4,nan,nan
+14,nan,22,decilitre per gram,nan,1M,dl/g,10⁻¹ x m³/kg
+15,nan,23,gram per cubic centimetre,nan,1S,g/cm³,10³ kg/m³
+16,nan,24,theoretical pound,A unit of mass defining the expected mass of material expressed as the number of pounds.,3.1,nan,nan
+17,nan,25,gram per square centimetre,nan,1M,g/cm²,10 kg/m²
+18,X,26,actual ton,nan,3.1,nan,nan
+19,nan,27,theoretical ton,"A unit of mass defining the expected mass of material, expressed as the number of tons.",3.1,nan,nan
+20,nan,28,kilogram per square metre,nan,1,kg/m²,kg/m²
+21,X,29,pound per thousand square foot,nan,3.8,lb/kft²,nan
+22,X,30,horse power day per air dry metric ton,nan,3.5,nan,nan
+23,X,31,catch weight,nan,3.9,nan,nan
+24,X,32,kilogram per air dry metric ton,nan,3.5,nan,nan
+25,nan,33,kilopascal square metre per gram,nan,1M,kPa·m²/g,10⁶ m/s²
+26,nan,34,kilopascal per millimetre,nan,1M,kPa/mm,10⁶ kg/(m² x s²)
+27,nan,35,millilitre per square centimetre second,nan,1M,ml/(cm²·s),10⁻² m/s
+28,X,36,cubic foot per minute per square foot,Conversion factor required,1M,ft³/(min/ft²),nan
+29,nan,37,ounce per square foot,nan,2,oz/ft²,"0,305 151 7 kg/m²"
+30,nan,38,"ounce per square foot per 0,01inch",nan,3.9,oz/(ft²/cin),nan
+31,nan,40,millilitre per second,nan,1M,ml/s,10⁻⁶ m³/s
+32,nan,41,millilitre per minute,nan,1M,ml/min,"1,666 67 x 10⁻⁸ m³/s"
+33,X,43,super bulk bag,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+34,X,44,fivehundred kg bulk bag,nan,3.3,nan,nan
+35,X,45,threehundred kg bulk bag,nan,3.3,nan,nan
+36,X,46,fifty lb bulk bag,nan,3.3,nan,nan
+37,X,47,fifty lb bag,nan,3.3,nan,nan
+38,X,48,bulk car load,nan,3.4,nan,nan
+39,X,53,theoretical kilogram,nan,3.1,nan,nan
+40,X,54,theoretical tonne,nan,3.1,nan,nan
+41,nan,56,sitas,A unit of area for tin plate equal to a surface area of 100 square metres.,3.9,nan,nan
+42,nan,57,mesh,A unit of count defining the number of strands per inch as a measure of the fineness of a woven product.,3.9,nan,nan
+43,nan,58,net kilogram,A unit of mass defining the total number of kilograms after deductions.,3.1,nan,nan
+44,nan,59,part per million,A unit of proportion equal to 10⁻⁶.,3.7,ppm,1 x 10⁻⁶
+45,nan,60,percent weight,A unit of proportion equal to 10⁻².,3.7,nan,1 x 10⁻²
+46,nan,61,part per billion (US),A unit of proportion equal to 10⁻⁹.,3.7,ppb,1 x 10⁻⁹
+47,X,62,percent per 1000 hour,nan,3.7,nan,nan
+48,X,63,failure rate in time,nan,3.9,nan,nan
+49,D,64,"pound per square inch, gauge",nan,3.1,nan,"7,030 696 x 10² kg/m²"
+50,D,66,oersted,nan,3.5,Oe,"7,957 747 x 10 A/m"
+51,X,69,test specific scale,nan,3.9,nan,nan
+52,X,71,volt ampere per pound,nan,3.9,nan,nan
+53,X,72,watt per pound,nan,3.9,nan,nan
+54,X,73,ampere tum per centimetre,nan,3.9,nan,nan
+55,nan,74,millipascal,nan,1S,mPa,10⁻³ Pa
+56,D,76,gauss,nan,3.5,Gs,10⁻⁴ T
+57,nan,77,milli-inch,nan,2,mil,"25,4 x 10⁻⁶ m"
+58,D,78,kilogauss,nan,3.5,kGs,10⁻¹ T
+59,nan,80,pound per square inch absolute,nan,2,lb/in²,"7,030 696 x 10² kg/m²"
+60,nan,81,henry,nan,1,H,H
+61,D,84,kilopound-force per square inch,"A unit of pressure defining the number of kilopounds force per square inch.,Use kip per square inch (common code N20).",2,klbf/in²,"6,894 757 x 10⁶ Pa"
+62,nan,85,foot pound-force,nan,2,ft·lbf,"1,355 818 J"
+63,nan,87,pound per cubic foot,nan,2,lb/ft³,"1,601 846 x 10¹ kg/m³"
+64,nan,89,poise,nan,2,P,"0,1 Pa x s"
+65,X,90,Saybold universal second,nan,3.9,nan,nan
+66,nan,91,stokes,nan,2,St,10⁻⁴ m²/s
+67,X,92,calorie per cubic centimetre,nan,3.9,nan,nan
+68,X,93,calorie per gram,Use International Table (IT) calorie per gram (common code D75).,3.5,cal/g,"4,186 8 x 10³ J/kg"
+69,X,94,curl unit,nan,3.9,nan,nan
+70,X,95,twenty thousand gallon (US) tankcar,nan,3.4,nan,nan
+71,X,96,ten thousand gallon (US) tankcar,nan,3.4,nan,nan
+72,X,97,ten kg drum,nan,3.3,nan,nan
+73,X,98,fifteen kg drum,nan,3.3,nan,nan
+74,X,1A,car mile,nan,3.5,nan,nan
+75,X,1B,car count,nan,3.5,nan,nan
+76,X,1C,locomotive count,nan,3.5,nan,nan
+77,X,1D,caboose count,nan,3.5,nan,nan
+78,X,1E,empty car,nan,3.5,nan,nan
+79,X,1F,train mile,nan,3.5,nan,nan
+80,X,1G,fuel usage gallon (US),nan,3.5,nan,nan
+81,X,1H,caboose mile,nan,3.5,nan,nan
+82,nan,1I,fixed rate,A unit of quantity expressed as a predetermined or set rate for usage of a facility or service.,3.9,nan,nan
+83,X,1J,ton mile,nan,3.5,nan,nan
+84,X,1K,locomotive mile,nan,3.5,nan,nan
+85,X,1L,total car count,nan,3.5,nan,nan
+86,X,1M,total car mile,nan,3.5,nan,nan
+87,X,1X,quarter mile,nan,3.8,nan,nan
+88,nan,2A,radian per second,Refer ISO/TC12 SI Guide,1,rad/s,rad/s
+89,nan,2B,radian per second squared,Refer ISO/TC12 SI Guide,1,rad/s²,rad/s²
+90,nan,2C,roentgen,nan,2,R,"2,58 x 10⁻⁴ C/kg"
+91,nan,2G,volt AC,A unit of electric potential in relation to alternating current (AC).,3.1,V,V
+92,nan,2H,volt DC,A unit of electric potential in relation to direct current (DC).,3.1,V,V
+93,nan,2I,British thermal unit (international table) per hour,nan,2,BtuIT/h,"2,930 711x 10⁻¹ W"
+94,nan,2J,cubic centimetre per second,nan,1S,cm³/s,10⁻⁶ m³/s
+95,nan,2K,cubic foot per hour,nan,2,ft³/h,"7,865 79 x 10⁻⁶ m³/s"
+96,nan,2L,cubic foot per minute,nan,2,ft³/min,"4,719 474 x 10⁻⁴ m³/s"
+97,nan,2M,centimetre per second,nan,1S,cm/s,10⁻² m/s
+98,nan,2N,decibel,nan,1,dB,"0,115 129 3 Np"
+99,nan,2P,kilobyte,A unit of information equal to 10³ (1000) bytes.,3.6,kbyte,nan
+100,nan,2Q,kilobecquerel,nan,1S,kBq,10³ Bq
+101,nan,2R,kilocurie,nan,2S,kCi,"3,7 x 10¹³ Bq"
+102,nan,2U,megagram,nan,1S,Mg,10³ kg
+103,X,2V,megagram per hour,nan,3.8,Mg/h,nan
+104,X,2W,bin,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+105,nan,2X,metre per minute,nan,1M,m/min,"0,016 666 m/s"
+106,nan,2Y,milliroentgen,nan,2,mR,"2,58 x 10⁻⁷ C/kg"
+107,nan,2Z,millivolt,nan,1S,mV,10⁻³ V
+108,nan,3B,megajoule,nan,1S,MJ,10⁶ J
+109,nan,3C,manmonth,A unit of count defining the number of months for a person or persons to perform an undertaking.,3.9,nan,nan
+110,X,3E,pound per pound of product,nan,3.9,nan,nan
+111,X,3G,pound per piece of product,nan,3.9,nan,nan
+112,X,3H,kilogram per kilogram of product,nan,3.9,nan,nan
+113,X,3I,kilogram per piece of product,nan,3.9,nan,nan
+114,X,4A,bobbin,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+115,X,4B,cap,nan,3.9,nan,nan
+116,nan,4C,centistokes,nan,2,cSt,10⁻⁶ m²/s
+117,X,4E,twenty pack,nan,3.2,nan,nan
+118,nan,4G,microlitre,nan,1M,µl,10⁻⁹ m³
+119,nan,4H,micrometre (micron),nan,1S,µm,10⁻⁶ m
+120,nan,4K,milliampere,nan,1S,mA,10⁻³ A
+121,nan,4L,megabyte,A unit of information equal to 10⁶ (1000000) bytes.,3.6,Mbyte,nan
+122,nan,4M,milligram per hour,nan,1M,mg/h,"2,777 78 x 10⁻¹⁰ kg/s"
+123,nan,4N,megabecquerel,nan,1S,MBq,10⁶ Bq
+124,nan,4O,microfarad,nan,1S,µF,10⁻⁶ F
+125,nan,4P,newton per metre,nan,1,N/m,N/m
+126,nan,4Q,ounce inch,nan,2,oz·in,"7,200 778 x 10⁻⁴ kg x m"
+127,nan,4R,ounce foot,nan,2,oz·ft,"8,640 934 x 10⁻³ kg x m"
+128,nan,4T,picofarad,nan,1S,pF,10⁻¹² F
+129,nan,4U,pound per hour,nan,2,lb/h,"1,259 979 x 10⁻⁴ kg/s"
+130,nan,4W,ton (US) per hour,nan,2,ton (US) /h,"2,519 958 x 10⁻¹ kg/s"
+131,nan,4X,kilolitre per hour,nan,1M,kl/h,"2,777 78 x 10⁻⁴ m³/s"
+132,nan,5A,barrel (US) per minute,nan,2,barrel (US)/min,"2,649 79 x 10⁻³ m³/s"
+133,nan,5B,batch,A unit of count defining the number of batches (batch: quantity of material produced in one operation or number of animals or persons coming at once).,3.9,nan,nan
+134,X,5C,gallon(US) per thousand,nan,3.9,nan,nan
+135,nan,5E,MMSCF/day,A unit of volume equal to one million (1000000) cubic feet of gas per day.,3.9,nan,nan
+136,X,5F,pound per thousand,nan,3.9,nan,nan
+137,X,5G,pump,nan,3.9,nan,nan
+138,X,5H,stage,nan,3.9,nan,nan
+139,X,5I,standard cubic foot,Use standard (common code WSD),2,std,"4,672 m³"
+140,nan,5J,hydraulic horse power,A unit of power defining the hydraulic horse power delivered by a fluid pump depending on the viscosity of the fluid.,3.5,nan,nan
+141,X,5K,count per minute,nan,3.9,nan,nan
+142,X,5P,seismic level,nan,3.9,nan,nan
+143,X,5Q,seismic line,nan,3.9,nan,nan
+144,D,A1,15 °C calorie,nan,2,cal₁₅,"4,188 46  J"
+145,nan,A10,ampere square metre per joule second,nan,1,A·m²/(J·s),(A x s)/kg
+146,nan,A11,angstrom,nan,1,Å,10⁻¹⁰ m
+147,nan,A12,astronomical unit,nan,1,ua,"1,495 978 70 x 10¹¹ m"
+148,nan,A13,attojoule,nan,1S,aJ,10⁻¹⁸ J
+149,nan,A14,barn,nan,1,b,10⁻²⁸ m²
+150,nan,A15,barn per electronvolt,nan,1,b/eV,"6,241 51 x 10⁻¹⁰ m²/J"
+151,nan,A16,barn per steradian electronvolt,nan,1,b/(sr·eV),"6,241 51 x 10⁻¹⁰ m²/(sr xJ)"
+152,nan,A17,barn per steradian,nan,1,b/sr,1 x 10⁻²⁸ m²/sr
+153,nan,A18,becquerel per kilogram,nan,1,Bq/kg,"27,027 x 10⁻¹² Ci/kg"
+154,nan,A19,becquerel per cubic metre,nan,1,Bq/m³,Bq/m³
+155,nan,A2,ampere per centimetre,nan,1S,A/cm,10² A/m
+156,nan,A20,British thermal unit (international table) per second square foot degree Rankine,nan,2,BtuIT/(s·ft²·°R),"20 441,7 W/(m² x K)"
+157,nan,A21,British thermal unit (international table) per pound degree Rankine,nan,2,BtuIT/(lb·°R),"4 186,8 J/(kg x K)"
+158,nan,A22,British thermal unit (international table) per second foot degree Rankine,nan,2,BtuIT/(s·ft·°R),"6 230,64 W/(m x K)"
+159,nan,A23,British thermal unit (international table) per hour square foot degree Rankine,nan,2,BtuIT/(h·ft²·°R),"5,678 26 W/ (m² x K)"
+160,nan,A24,candela per square metre,nan,1,cd/m²,cd/m²
+161,D,A25,cheval vapeur,Synonym: metric horse power,2,CV,"7,354 988 x 10² W"
+162,nan,A26,coulomb metre,nan,1,C·m,A x s x m
+163,nan,A27,coulomb metre squared per volt,nan,1,C·m²/V,A² x  s⁴/kg
+164,nan,A28,coulomb per cubic centimetre,nan,1S,C/cm³,10⁶ C/m³
+165,nan,A29,coulomb per cubic metre,nan,1,C/m³,C/m³
+166,nan,A3,ampere per millimetre,nan,1S,A/mm,10³ A/m
+167,nan,A30,coulomb per cubic millimetre,nan,1S,C/mm³,10⁹ C/m³
+168,nan,A31,coulomb per kilogram second,nan,1,C/(kg·s),A/kg
+169,nan,A32,coulomb per mole,nan,1,C/mol,A x s/mol
+170,nan,A33,coulomb per square centimetre,nan,1S,C/cm²,10⁴ C/m²
+171,nan,A34,coulomb per square metre,nan,1,C/m²,C/m²
+172,nan,A35,coulomb per square millimetre,nan,1S,C/mm²,10⁶ C/m²
+173,nan,A36,cubic centimetre per mole,nan,1S,cm³/mol,10⁻⁶ m³/mol
+174,nan,A37,cubic decimetre per mole,nan,1S,dm³/mol,10⁻³ m³/mol
+175,nan,A38,cubic metre per coulomb,nan,1,m³/C,m³/A x s
+176,nan,A39,cubic metre per kilogram,nan,1,m³/kg,m³/kg
+177,nan,A4,ampere per square centimetre,nan,1S,A/cm²,10⁴ A/m²
+178,nan,A40,cubic metre per mole,nan,1,m³/mol,m³/mol
+179,nan,A41,ampere per square metre,nan,1,A/m²,A/m²
+180,nan,A42,curie per kilogram,nan,2,Ci/kg,"3,7 x 10¹⁰ Bq/kg"
+181,nan,A43,deadweight tonnage,"A unit of mass defining the difference between the weight of a ship when completely empty and its weight when completely loaded, expressed as the number of tons.",3.4,dwt,nan
+182,nan,A44,decalitre,nan,1M,dal,10⁻² m³
+183,nan,A45,decametre,nan,1M,dam,10 m
+184,nan,A47,decitex,A unit of yarn density. One decitex equals a mass of 1 gram per 10 kilometres of length.,3.5,dtex (g/10km),nan
+185,nan,A48,degree Rankine,Refer ISO 80000-5 (Quantities and units — Part 5: Thermodynamics),2,°R,5/9 x K
+186,nan,A49,denier,A unit of yarn density. One denier equals a mass of 1 gram per 9 kilometres of length.,3.5,den (g/9 km),nan
+187,nan,A5,ampere square metre,nan,1,A·m²,A x m²
+188,D,A50,dyne second per cubic centimetre,nan,2,dyn·s/cm³,10 Pa x s/m
+189,D,A51,dyne second per centimetre,nan,2,dyn·s/cm,10⁻³ N x s/m
+190,D,A52,dyne second per centimetre to the fifth power,nan,2,dyn·s/cm⁵,10⁵ Pa x s/m³
+191,nan,A53,electronvolt,nan,1,eV,"1,602 176 487 x 10⁻¹⁹ J"
+192,nan,A54,electronvolt per metre,nan,1,eV/m,"1,602 176 487 x 10⁻¹⁹ J/m"
+193,nan,A55,electronvolt square metre,nan,1,eV·m²,"1,602 176 487 x 10⁻¹⁹ J x m²"
+194,nan,A56,electronvolt square metre per kilogram,nan,1,eV·m²/kg,"1,602 176 487 x 10⁻¹⁹ J x m²/kg"
+195,D,A57,erg,nan,2,erg,10⁻⁷J
+196,D,A58,erg per centimetre,nan,2,erg/cm,10⁻⁵ J/m
+197,nan,A59,8-part cloud cover,"A unit of count defining the number of eighth-parts as a measure of the celestial dome cloud coverage.,Synonym: OKTA , OCTA",3.9,nan,nan
+198,nan,A6,ampere per square metre kelvin squared,nan,1,A/(m²·K²),A/(m² x K²)
+199,D,A60,erg per cubic centimetre,nan,2,erg/cm³,10⁻¹ J/m³
+200,D,A61,erg per gram,nan,2,erg/g,10⁻⁴ J/kg
+201,D,A62,erg per gram second,nan,2,erg/g·s,10⁻⁴ W/kg
+202,D,A63,erg per second,nan,2,erg/s,10⁻⁷ W
+203,D,A64,erg per second square centimetre,nan,2,erg/(s·cm²),10⁻³ W/m²
+204,D,A65,erg per square centimetre second,nan,2,erg/(cm²·s),10⁻³ W/m²
+205,D,A66,erg square centimetre,nan,2,erg·cm²,10⁻¹¹ J x m²
+206,D,A67,erg square centimetre per gram,nan,2,erg·cm²/g,10⁻⁸ J x m²/kg
+207,nan,A68,exajoule,nan,1S,EJ,10¹⁸ J
+208,nan,A69,farad per metre,nan,1,F/m,kg⁻¹ x m⁻³ x s⁴ x A²
+209,nan,A7,ampere per square millimetre,nan,1S,A/mm²,10⁶ A/m²
+210,nan,A70,femtojoule,nan,1S,fJ,10⁻¹⁵ J
+211,nan,A71,femtometre,nan,1S,fm,10⁻¹⁵ m
+212,nan,A73,foot per second squared,nan,2,ft/s²,"0,304 8 m/s²"
+213,nan,A74,foot pound-force per second,nan,2,ft·lbf/s,"1,355 818 W"
+214,nan,A75,freight ton,"A unit of information typically used for billing purposes, defined as either the number of metric tons or the number of cubic metres, whichever is the larger.",3.4,nan,nan
+215,nan,A76,gal,nan,1S,Gal,10⁻² m/s²
+216,D,A77,Gaussian CGS (Centimetre-Gram-Second system) unit of displacement,nan,3.5,nan,nan
+217,D,A78,Gaussian CGS (Centimetre-Gram-Second system) unit of electric current,nan,3.5,nan,nan
+218,D,A79,Gaussian CGS (Centimetre-Gram-Second system) unit of electric charge,nan,3.5,nan,nan
+219,nan,A8,ampere second,nan,1,A·s,C
+220,D,A80,Gaussian CGS (Centimetre-Gram-Second system) unit of electric field strength,nan,3.5,nan,nan
+221,D,A81,Gaussian CGS (Centimetre-Gram-Second system) unit of electric polarization,nan,3.5,nan,nan
+222,D,A82,Gaussian CGS (Centimetre-Gram-Second system) unit of electric potential,nan,3.5,nan,nan
+223,D,A83,Gaussian CGS (Centimetre-Gram-Second system) unit of magnetization,nan,3.5,nan,nan
+224,nan,A84,gigacoulomb per cubic metre,nan,1S,GC/m³,10⁹ C/m³
+225,nan,A85,gigaelectronvolt,nan,1S,GeV,10⁹ eV
+226,nan,A86,gigahertz,nan,1S,GHz,10⁹ Hz
+227,nan,A87,gigaohm,nan,1S,GΩ,10⁹ Ω
+228,nan,A88,gigaohm metre,nan,1S,GΩ·m,10⁹ Ω x m
+229,nan,A89,gigapascal,nan,1S,GPa,10⁹ Pa
+230,nan,A9,rate,A unit of quantity expressed as a rate for usage of a facility or service.,3.9,nan,nan
+231,nan,A90,gigawatt,nan,1S,GW,10⁹ W
+232,nan,A91,gon,Synonym: grade,2,gon,"1,570 796 x 10⁻² rad"
+233,nan,A93,gram per cubic metre,nan,1M,g/m³,10⁻³ kg/m³
+234,nan,A94,gram per mole,nan,1S,g/mol,10⁻³ kg/mol
+235,nan,A95,gray,nan,1,Gy,m²/s²
+236,nan,A96,gray per second,nan,1,Gy/s,m²/s³
+237,nan,A97,hectopascal,nan,1S,hPa,10² Pa
+238,nan,A98,henry per metre,nan,1,H/m,H/m
+239,nan,A99,bit,A unit of information equal to one binary digit.,3.6,bit,nan
+240,nan,AA,ball,A unit of count defining the number of balls (ball: object formed in the shape of sphere).,3.9,nan,nan
+241,nan,AB,bulk pack,A unit of count defining the number of items per bulk pack.,3.9,pk,nan
+242,nan,ACR,acre,nan,2,acre,"4 046,873 m²"
+243,nan,ACT,activity,A unit of count defining the number of activities (activity: a unit of work or action).,3.2,nan,nan
+244,nan,AD,byte,A unit of information equal to 8 bits.,3.6,byte,nan
+245,nan,AE,ampere per metre,nan,1,A/m,A/m
+246,nan,AH,additional minute,A unit of time defining the number of minutes in addition to the referenced minutes.,3.5,nan,nan
+247,nan,AI,average minute per call,A unit of count defining the number of minutes for the average interval of a call.,3.5,nan,nan
+248,X,AJ,cop,nan,3.9,nan,nan
+249,nan,AK,fathom,nan,2,fth,"1,828 8 m"
+250,nan,AL,access line,A unit of count defining the number of telephone access lines.,3.5,nan,nan
+251,X,AM,ampoule,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+252,nan,AMH,ampere hour,A unit of electric charge defining the amount of charge accumulated by a steady flow of one ampere for one hour.,1M,A·h,"3,6 x 10³ C"
+253,nan,AMP,ampere,nan,1,A,A
+254,nan,ANN,year,"Unit of time equal to 365,25 days.,Synonym: Julian year",2,y,"3,155 76 x 10⁷ s"
+255,X,AP,aluminium pound only,nan,3.1,nan,nan
+256,nan,APZ,troy ounce or apothecary ounce,nan,2,tr oz,"3,110 348 x 10⁻³ kg"
+257,nan,AQ,anti-hemophilic factor (AHF) unit,A unit of measure for blood potency (US).,3.9,nan,nan
+258,X,AR,suppository,nan,3.3,nan,nan
+259,D,ARE,are,Synonym: square decametre,2.0,a,10² m²
+260,nan,AS,assortment,A unit of count defining the number of assortments (assortment: set of items grouped in a mixed collection).,3.9,nan,nan
+261,nan,ASM,alcoholic strength by mass,A unit of mass defining the alcoholic strength of a liquid.,3.5,nan,nan
+262,nan,ASU,alcoholic strength by volume,"A unit of volume defining the alcoholic strength of a liquid (e.g. spirit, wine, beer, etc), often at a specific temperature.",3.5,nan,nan
+263,nan,ATM,standard atmosphere,nan,1,atm,1 013 25 Pa
+264,D,ATT,technical atmosphere,nan,2,at,"98 066,5 Pa"
+265,X,AV,capsule,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+266,X,AW,powder filled vial,nan,3.3,nan,nan
+267,nan,AWG,american wire gauge,A unit of distance used for measuring the diameter of small tubes or wires such as the outer diameter of hypotermic or suture needles.,2,AWG,nan
+268,nan,AY,assembly,A unit of count defining the number of assemblies (assembly: items that consist of component parts).,3.9,nan,nan
+269,nan,AZ,British thermal unit (international table) per pound,nan,2,BtuIT/lb,2 326 J/kg
+270,X,B0,Btu per cubic foot,nan,3.9,BTU/ft³,nan
+271,nan,B1,barrel (US) per day,nan,3.5,barrel (US)/d,"1,840 13 x 10⁻⁶ m³/s"
+272,nan,B10,bit per second,A unit of information equal to one binary digit per second.,3.6,bit/s,nan
+273,nan,B11,joule per kilogram kelvin,nan,1,J/(kg·K),J/(kg x K)
+274,nan,B12,joule per metre,nan,1,J/m,J/m
+275,nan,B13,joule per square metre,Synonym: joule per metre squared,1,J/m²,J/m²
+276,nan,B14,joule per metre to the fourth power,nan,1,J/m⁴,J/m⁴
+277,nan,B15,joule per mole,nan,1,J/mol,J/mol
+278,nan,B16,joule per mole kelvin,nan,1,J/(mol·K),J/(mol x K)
+279,nan,B17,credit,A unit of count defining the number of entries made to the credit side of an account.,3.9,nan,nan
+280,nan,B18,joule second,nan,1,J·s,J x s
+281,nan,B19,digit,A unit of information defining the quantity of numerals used to form a number.,3.7,nan,nan
+282,X,B2,bunk,nan,3.9,nan,nan
+283,nan,B20,joule square metre per kilogram,nan,1,J·m²/kg,J x m²/kg
+284,nan,B21,kelvin per watt,nan,1,K/W,K/W
+285,nan,B22,kiloampere,nan,1S,kA,10³ A
+286,nan,B23,kiloampere per square metre,nan,1S,kA/m²,10³ A/m²
+287,nan,B24,kiloampere per metre,nan,1S,kA/m,10³ A/m
+288,nan,B25,kilobecquerel per kilogram,nan,1S,kBq/kg,10³ Bq/kg
+289,nan,B26,kilocoulomb,nan,1S,kC,10³ C
+290,nan,B27,kilocoulomb per cubic metre,nan,1S,kC/m³,10³ C/m³
+291,nan,B28,kilocoulomb per square metre,nan,1S,kC/m²,10³ C/m²
+292,nan,B29,kiloelectronvolt,nan,1S,keV,10³ eV
+293,nan,B3,batting pound,A unit of mass defining the number of pounds of wadded fibre.,3.1,nan,nan
+294,nan,B30,gibibit,A unit of information equal to 2³⁰ bits (binary digits).,3.6,Gibit,nan
+295,nan,B31,kilogram metre per second,nan,1,kg·m/s,kg x m/s
+296,nan,B32,kilogram metre squared,nan,1,kg·m²,kg x m²
+297,nan,B33,kilogram metre squared per second,nan,1,kg·m²/s,kg x m²/s
+298,nan,B34,kilogram per cubic decimetre,nan,1S,kg/dm³,10³ kg/m³
+299,nan,B35,kilogram per litre,nan,1S,kg/l or kg/L,10³ kg/m³
+300,D,B36,calorie (thermochemical) per gram,nan,2,calth/g,4 184 J/kg
+301,D,B37,kilogram-force,nan,2,kgf,"9,806 65 N"
+302,D,B38,kilogram-force metre,nan,2,kgf·m,"9,806 65 N x m"
+303,D,B39,kilogram-force metre per second,nan,2,kgf·m/s,"9,806 65 W"
+304,nan,B4,"barrel, imperial",A unit of volume used to measure beer.  One beer barrel equals 36 imperial gallons.,3.5,nan,nan
+305,D,B40,kilogram-force per square metre,nan,2,kgf/m²,"9,806 65 Pa"
+306,nan,B41,kilojoule per kelvin,nan,1S,kJ/K,10³ J/K
+307,nan,B42,kilojoule per kilogram,nan,1S,kJ/kg,10³ J/kg
+308,nan,B43,kilojoule per kilogram kelvin,nan,1S,kJ/(kg·K),10³ J/(kg x K)
+309,nan,B44,kilojoule per mole,nan,1S,kJ/mol,10³ J/mol
+310,nan,B45,kilomole,nan,1S,kmol,10³ mol
+311,nan,B46,kilomole per cubic metre,nan,1S,kmol/m³,10³ mol/m³
+312,nan,B47,kilonewton,nan,1S,kN,10³ N
+313,nan,B48,kilonewton metre,nan,1S,kN·m,10³ N x m
+314,nan,B49,kiloohm,nan,1S,kΩ,10³ Ω
+315,X,B5,billet,nan,3.9,nan,nan
+316,nan,B50,kiloohm metre,nan,1S,kΩ·m,10³ Ω x m
+317,D,B51,kilopond,Synonym: kilogram-force,2,kp,"9,806 65 N"
+318,nan,B52,kilosecond,nan,1S,ks,10³ s
+319,nan,B53,kilosiemens,nan,1S,kS,10³ S
+320,nan,B54,kilosiemens per metre,nan,1S,kS/m,10³ S/m
+321,nan,B55,kilovolt per metre,nan,1S,kV/m,10³ V/m
+322,nan,B56,kiloweber per metre,nan,1S,kWb/m,10³ Wb/m
+323,nan,B57,light year,A unit of length defining the distance that light travels in a vacuum in one year.,2,ly,"9,460 73 x 10¹⁵ m"
+324,nan,B58,litre per mole,nan,1M,l/mol,10⁻³ m³/mol
+325,nan,B59,lumen hour,nan,1S,lm·h,"3,6 x 10³ s x cd x sr"
+326,X,B6,bun,nan,3.9,nan,nan
+327,nan,B60,lumen per square metre,nan,1,lm/m²,cd x sr/m²
+328,nan,B61,lumen per watt,nan,1,lm/W,cd x sr/W
+329,nan,B62,lumen second,nan,1,lm·s,s x cd x sr
+330,nan,B63,lux hour,nan,1S,lx·h,"3,6 x 10³ s x cd x sr / m²"
+331,nan,B64,lux second,nan,1,lx·s,s x cd x sr / m²
+332,D,B65,maxwell,nan,3.5,Mx,10⁻⁸ Wb
+333,nan,B66,megaampere per square metre,nan,1S,MA/m²,10⁶ A/m²
+334,nan,B67,megabecquerel per kilogram,nan,1S,MBq/kg,10⁶ Bq/kg
+335,nan,B68,gigabit,A unit of information equal to 10⁹ bits (binary digits).,3.6,Gbit,nan
+336,nan,B69,megacoulomb per cubic metre,nan,1S,MC/m³,10⁶ C/m³
+337,nan,B7,cycle,A unit of count defining the number of cycles (cycle: a recurrent period of definite duration).,3.9,nan,nan
+338,nan,B70,megacoulomb per square metre,nan,1S,MC/m²,10⁶ C/m²
+339,nan,B71,megaelectronvolt,nan,1S,MeV,10⁶ eV
+340,nan,B72,megagram per cubic metre,nan,1S,Mg/m³,10³ kg/m³
+341,nan,B73,meganewton,nan,1S,MN,10⁶ N
+342,nan,B74,meganewton metre,nan,1S,MN·m,10⁶ N x m
+343,nan,B75,megaohm,nan,1S,MΩ,10⁶ Ω
+344,nan,B76,megaohm metre,nan,1S,MΩ·m,10⁶ Ω x m
+345,nan,B77,megasiemens per metre,nan,1S,MS/m,10⁶ S/m
+346,nan,B78,megavolt,nan,1S,MV,10⁶ V
+347,nan,B79,megavolt per metre,nan,1S,MV/m,10⁶ V/m
+348,nan,B8,joule per cubic metre,nan,1,J/m³,J/m³
+349,nan,B80,gigabit per second,A unit of information equal to 10⁹ bits (binary digits) per second.,3.6,Gbit/s,nan
+350,nan,B81,reciprocal metre squared reciprocal second,nan,1,m⁻²/s,m⁻²/s
+351,nan,B82,inch per linear foot,A unit of length defining the number of inches per linear foot.,3.1,nan,nan
+352,nan,B83,metre to the fourth power,nan,1,m⁴,m⁴
+353,nan,B84,microampere,nan,1S,µA,10⁻⁶ A
+354,nan,B85,microbar,nan,1S,µbar,10⁻¹ Pa
+355,nan,B86,microcoulomb,nan,1S,µC,10⁻⁶ C
+356,nan,B87,microcoulomb per cubic metre,nan,1S,µC/m³,10⁻⁶ C/m³
+357,nan,B88,microcoulomb per square metre,nan,1S,µC/m²,10⁻⁶ C/m²
+358,nan,B89,microfarad per metre,nan,1S,µF/m,10⁻⁶ F/m
+359,X,B9,batt,nan,3.9,nan,nan
+360,nan,B90,microhenry,nan,1S,µH,10⁻⁶ H
+361,nan,B91,microhenry per metre,nan,1S,µH/m,10⁻⁶ H/m
+362,nan,B92,micronewton,nan,1S,µN,10⁻⁶ N
+363,nan,B93,micronewton metre,nan,1S,µN·m,10⁻⁶ N x m
+364,nan,B94,microohm,nan,1S,µΩ,10⁻⁶ Ω
+365,nan,B95,microohm metre,nan,1S,µΩ·m,10⁻⁶ Ω x m
+366,nan,B96,micropascal,nan,1S,µPa,10⁻⁶ Pa
+367,nan,B97,microradian,nan,1S,µrad,10⁻⁶ rad
+368,nan,B98,microsecond,nan,1S,µs,10⁻⁶ s
+369,nan,B99,microsiemens,nan,1S,µS,10⁻⁶ S
+370,nan,BAR,bar [unit of pressure],nan,1,bar,10⁵ Pa
+371,nan,BB,base box,"A unit of area of 112 sheets of tin mil products (tin plate, tin free steel or black plate) 14 by 20 inches, or 31,360 square inches.",3.5,nan,nan
+372,X,BD,board,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+373,X,BE,bundle,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+374,nan,BFT,board foot,A unit of volume defining the number of cords (cord: a stack of firewood of 128 cubic feet).,3.5,fbm,nan
+375,X,BG,bag,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+376,X,BH,brush,nan,3.9,nan,nan
+377,nan,BHP,brake horse power,nan,2,BHP,"7,457 x 10² W"
+378,nan,BIL,billion (EUR),Synonym: trillion (US),3.7,nan,10¹²
+379,X,BJ,bucket,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+380,X,BK,basket,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+381,X,BL,bale,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+382,nan,BLD,dry barrel (US),nan,2,bbl (US),"1,156 27 x 10⁻¹ m³"
+383,nan,BLL,barrel (US),nan,2,barrel (US),"158,987 3 x 10⁻³ m³"
+384,X,BO,bottle,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+385,nan,BP,hundred board foot,A unit of volume equal to one hundred board foot.,3.5,nan,nan
+386,nan,BPM,beats per minute,The number of beats per minute.,3.1,BPM,1.667 x 10-2 /s
+387,nan,BQL,becquerel,nan,1,Bq,"27,027 x 10⁻¹² Ci"
+388,X,BR,bar [unit of packaging],"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+389,X,BT,bolt,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+390,nan,BTU,British thermal unit (international table),nan,2,BtuIT,"1,055 056 x 10³ J"
+391,nan,BUA,bushel (US),nan,2,bu (US),"3,523 907 x 10⁻² m³"
+392,nan,BUI,bushel (UK),nan,2,bushel (UK),"3,636 872 x 10⁻² m³"
+393,X,BW,base weight,nan,3.9,nan,nan
+394,X,BX,box,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+395,X,BZ,million BTUs,nan,3.8,nan,nan
+396,nan,C0,call,A unit of count defining the number of calls (call: communication session or visitation).,3.5,nan,nan
+397,X,C1,composite product pound (total weight),nan,3.9,nan,nan
+398,nan,C10,millifarad,nan,1S,mF,10⁻³ F
+399,nan,C11,milligal,nan,1M,mGal,10⁻⁵ m/s²
+400,nan,C12,milligram per metre,nan,1S,mg/m,10⁻⁶ kg/m
+401,nan,C13,milligray,nan,1S,mGy,10⁻³ Gy
+402,nan,C14,millihenry,nan,1S,mH,10⁻³ H
+403,nan,C15,millijoule,nan,1S,mJ,10⁻³ J
+404,nan,C16,millimetre per second,nan,1S,mm/s,10⁻³ m/s
+405,nan,C17,millimetre squared per second,nan,1S,mm²/s,10⁻⁶ m²/s
+406,nan,C18,millimole,nan,1S,mmol,10⁻³ mol
+407,nan,C19,mole per kilogram,nan,1,mol/kg,mol/kg
+408,X,C2,carset,nan,3.5,nan,nan
+409,nan,C20,millinewton,nan,1S,mN,10⁻³ N
+410,nan,C21,kibibit,A unit of information equal to 2¹⁰ (1024) bits (binary digits).,3.6,Kibit,nan
+411,nan,C22,millinewton per metre,nan,1S,mN/m,10⁻³ N/m
+412,nan,C23,milliohm metre,nan,1S,mΩ·m,10⁻³ Ω x m
+413,nan,C24,millipascal second,nan,1S,mPa·s,10⁻³ Pa x s
+414,nan,C25,milliradian,nan,1S,mrad,10⁻³ rad
+415,nan,C26,millisecond,nan,1S,ms,10⁻³ s
+416,nan,C27,millisiemens,nan,1S,mS,10⁻³ S
+417,nan,C28,millisievert,nan,1S,mSv,10⁻³ Sv
+418,nan,C29,millitesla,nan,1S,mT,10⁻³ T
+419,nan,C3,microvolt per metre,nan,1S,µV/m,10⁻⁶ V/m
+420,nan,C30,millivolt per metre,nan,1S,mV/m,10⁻³ V/m
+421,nan,C31,milliwatt,nan,1S,mW,10⁻³ W
+422,nan,C32,milliwatt per square metre,nan,1S,mW/m²,10⁻³ W/m²
+423,nan,C33,milliweber,nan,1S,mWb,10⁻³ Wb
+424,nan,C34,mole,nan,1,mol,mol
+425,nan,C35,mole per cubic decimetre,nan,1S,mol/dm³,10³ mol/m³
+426,nan,C36,mole per cubic metre,nan,1,mol/m³,mol/m³
+427,nan,C37,kilobit,A unit of information equal to 10³ (1000) bits (binary digits).,3.6,kbit,nan
+428,nan,C38,mole per litre,nan,1,mol/l,10³ mol/m³
+429,nan,C39,nanoampere,nan,1S,nA,10⁻⁹ A
+430,X,C4,carload,nan,3.5,nan,nan
+431,nan,C40,nanocoulomb,nan,1S,nC,10⁻⁹ C
+432,nan,C41,nanofarad,nan,1S,nF,10⁻⁹ F
+433,nan,C42,nanofarad per metre,nan,1S,nF/m,10⁻⁹ F/m
+434,nan,C43,nanohenry,nan,1S,nH,10⁻⁹ H
+435,nan,C44,nanohenry per metre,nan,1S,nH/m,10⁻⁹ H/m
+436,nan,C45,nanometre,nan,1S,nm,10⁻⁹ m
+437,nan,C46,nanoohm metre,nan,1S,nΩ·m,10⁻⁹ Ω·x m
+438,nan,C47,nanosecond,nan,1S,ns,10⁻⁹ s
+439,nan,C48,nanotesla,nan,1S,nT,10⁻⁹ T
+440,nan,C49,nanowatt,nan,1S,nW,10⁻⁹ W
+441,X,C5,cost,nan,3.9,nan,nan
+442,nan,C50,neper,nan,1,Np,Np
+443,nan,C51,neper per second,nan,1,Np/s,Np/s
+444,nan,C52,picometre,nan,1S,pm,10⁻¹² m
+445,nan,C53,newton metre second,nan,1,N·m·s,N x m x s
+446,nan,C54,newton metre squared per kilogram squared,nan,1,N·m²/kg²,N x m²/kg²
+447,nan,C55,newton per square metre,nan,1S,N/m²,Pa
+448,nan,C56,newton per square millimetre,nan,1S,N/mm²,10⁶ Pa
+449,nan,C57,newton second,nan,1,N·s,N x s
+450,nan,C58,newton second per metre,nan,1,N·s/m,N x s/m
+451,nan,C59,octave,A unit used in music to describe the ratio in frequency between notes.,1,nan,nan
+452,X,C6,cell,nan,3.9,nan,nan
+453,nan,C60,ohm centimetre,nan,1S,Ω·cm,10⁻² Ω x m 
+454,nan,C61,ohm metre,nan,1,Ω·m,Ω x m
+455,nan,C62,one,Synonym: unit,1,1,1
+456,nan,C63,parsec,nan,1,pc,"3,085 678 x 10¹⁶ m"
+457,nan,C64,pascal per kelvin,nan,1,Pa/K,Pa/K
+458,nan,C65,pascal second,nan,1,Pa·s,Pa x s
+459,nan,C66,pascal second per cubic metre,nan,1,Pa·s/m³,Pa x s/m³
+460,nan,C67,pascal second per metre,nan,1,Pa· s/m,Pa x s/m
+461,nan,C68,petajoule,nan,1S,PJ,10¹⁵ J
+462,nan,C69,phon,A unit of subjective sound loudness. A sound has loudness p phons if it seems to the listener to be equal in loudness to the sound of a pure tone of frequency 1 kilohertz and strength p decibels.,1,nan,nan
+463,nan,C7,centipoise,nan,2,cP,10⁻³ Pa x s
+464,nan,C70,picoampere,nan,1S,pA,10⁻¹² A
+465,nan,C71,picocoulomb,nan,1S,pC,10⁻¹² C
+466,nan,C72,picofarad per metre,nan,1S,pF/m,10⁻¹² F/m
+467,nan,C73,picohenry,nan,1S,pH,10⁻¹² H
+468,nan,C74,kilobit per second,A unit of information equal to 10³ (1000) bits (binary digits) per second.,3.6,kbit/s,10³ bit/s
+469,nan,C75,picowatt,nan,1S,pW,10⁻¹² W
+470,nan,C76,picowatt per square metre,nan,1S,pW/m²,10⁻¹² W/m²
+471,X,C77,pound gage,nan,3.1,nan,nan
+472,nan,C78,pound-force,nan,2,lbf,"4,448 222 N"
+473,nan,C79,kilovolt ampere hour,A unit of accumulated energy of 1000 volt amperes over a period of one hour.,3.1,kVAh,nan
+474,nan,C8,millicoulomb per kilogram,nan,1S,mC/kg,10⁻³ C/kg
+475,nan,C80,rad,nan,2,rad,10⁻² Gy
+476,nan,C81,radian,nan,1,rad,rad
+477,nan,C82,radian square metre per mole,nan,1,rad·m²/mol,rad x m²/mol
+478,nan,C83,radian square metre per kilogram,nan,1,rad·m²/kg,rad x m²/kg
+479,nan,C84,radian per metre,nan,1,rad/m,rad/m
+480,nan,C85,reciprocal angstrom,nan,1,Å⁻¹,10¹⁰ m⁻¹
+481,nan,C86,reciprocal cubic metre,nan,1,m⁻³,m⁻³
+482,nan,C87,reciprocal cubic metre per second,Synonym: reciprocal second per cubic metre,1,m⁻³/s,m⁻³/s
+483,nan,C88,reciprocal electron volt per cubic metre,nan,1,eV⁻¹/m³,"6,241 46 x 10¹⁸ J⁻¹/m³"
+484,nan,C89,reciprocal henry,nan,1,H⁻¹,H⁻¹
+485,nan,C9,coil group,A unit of count defining the number of coil groups (coil group: groups of items arranged by lengths of those items placed in a joined sequence of concentric circles).,3.9,nan,nan
+486,nan,C90,reciprocal joule per cubic metre,nan,1,J⁻¹/m³,J⁻¹/m³
+487,nan,C91,reciprocal kelvin or kelvin to the power minus one,nan,1,K⁻¹,K⁻¹
+488,nan,C92,reciprocal metre,nan,1,m⁻¹,m⁻¹
+489,nan,C93,reciprocal square metre,Synonym: reciprocal metre squared,1,m⁻²,m⁻²
+490,nan,C94,reciprocal minute,nan,1S,min⁻¹,"1,666 667 x 10⁻² s"
+491,nan,C95,reciprocal mole,nan,1,mol⁻¹,mol⁻¹
+492,nan,C96,reciprocal pascal or pascal to the power minus one,nan,1,Pa⁻¹,Pa⁻¹
+493,nan,C97,reciprocal second,nan,1,s⁻¹,s⁻¹
+494,X,C98,reciprocal second per cubic metre,nan,1,s⁻¹/m³,s⁻¹/m³
+495,nan,C99,reciprocal second per metre squared,nan,1,s⁻¹/m²,s⁻¹/m²
+496,X,CA,can,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+497,nan,CCT,carrying capacity in metric ton,"A unit of mass defining the carrying capacity, expressed as the number of metric tons.",3.4,nan,nan
+498,nan,CDL,candela,nan,1,cd,cd
+499,nan,CEL,degree Celsius,Refer ISO 80000-5 (Quantities and units — Part 5: Thermodynamics),1,°C,1 x K
+500,nan,CEN,hundred,A unit of count defining the number of units in multiples of 100.,3.7,nan,100
+501,nan,CG,card,A unit of count defining the number of units of card (card: thick stiff paper or cardboard).,3.9,nan,nan
+502,nan,CGM,centigram,nan,1M,cg,10⁻⁵ kg
+503,X,CH,container,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.4,nan,nan
+504,X,CJ,cone,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.9,nan,nan
+505,X,CK,connector,nan,3.9,nan,nan
+506,nan,CKG,coulomb per kilogram,nan,1,C/kg,A x s/kg
+507,X,CL,coil,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+508,nan,CLF,hundred leave,"A unit of count defining the number of leaves, expressed in units of one hundred leaves.",3.8,nan,nan
+509,nan,CLT,centilitre,nan,1S,cl,10⁻⁵ m³
+510,nan,CMK,square centimetre,nan,1S,cm²,10⁻⁴ m²
+511,nan,CMQ,cubic centimetre,nan,1S,cm³,10⁻⁶ m³
+512,nan,CMT,centimetre,nan,"1S,3.5",cm,10⁻² m
+513,nan,CNP,hundred pack,A unit of count defining the number of hundred-packs (hundred-pack: set of one hundred items packaged together).,"3.2,3.8",nan,nan
+514,nan,CNT,cental (UK),A unit of mass equal to one hundred weight (US).,3.5,nan,"45,359 237 kg"
+515,X,CO,carboy,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+516,nan,COU,coulomb,nan,1,C,A x s
+517,X,CQ,cartridge,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.9,nan,nan
+518,X,CR,crate,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+519,X,CS,case,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+520,X,CT,carton,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+521,nan,CTG,content gram,A unit of mass defining the number of grams of a named item in a product.,3.1,nan,nan
+522,nan,CTM,metric carat,nan,3.5,nan,200 mg
+523,nan,CTN,content ton (metric),A unit of mass defining the number of metric tons of a named item in a product.,3.1,nan,nan
+524,X,CU,cup,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+525,nan,CUR,curie,nan,2,Ci,"3,7 x 10¹⁰ Bq"
+526,X,CV,cover,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+527,nan,CWA,hundred pound (cwt) / hundred weight (US),nan,2,cwt (US),"45,359 2 kg"
+528,nan,CWI,hundred weight (UK),nan,2,cwt (UK),"50,802 35 kg"
+529,X,CY,cylinder,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+530,X,CZ,combo,nan,3.9,nan,nan
+531,nan,D03,kilowatt hour per hour,A unit of accumulated energy of a thousand watts over a period of one hour.,3.1,kW·h/h,nan
+532,nan,D04,lot [unit of weight],A unit of weight equal to about 1/2 ounce or 15 grams.,3.2,nan,nan
+533,nan,D1,reciprocal second per steradian,nan,1,s⁻¹/sr,s⁻¹/sr
+534,nan,D10,siemens per metre,nan,1,S/m,S/m
+535,nan,D11,mebibit,A unit of information equal to 2²⁰ (1048576) bits (binary digits).,3.6,Mibit,nan
+536,nan,D12,siemens square metre per mole,nan,1,S·m²/mol,S x m²/mol
+537,nan,D13,sievert,nan,1,Sv,m²/s²
+538,X,D14,thousand linear yard,nan,3.8,nan,nan
+539,nan,D15,sone,A unit of subjective sound loudness. One sone is the loudness of a pure tone of frequency one kilohertz and strength 40 decibels.,1,nan,nan
+540,nan,D16,square centimetre per erg,nan,2,cm²/erg,10³ m²/J
+541,nan,D17,square centimetre per steradian erg,nan,2,cm²/(sr·erg),10³ m²/(sr x J)
+542,nan,D18,metre kelvin,nan,1,m·K,m x K
+543,nan,D19,square metre kelvin per watt,nan,1,m²·K/W,m² x K/W
+544,nan,D2,reciprocal second per steradian metre squared,nan,1,s⁻¹/(sr·m²),s⁻¹/(sr x m²)
+545,nan,D20,square metre per joule,nan,1,m²/J,m²/J
+546,nan,D21,square metre per kilogram,nan,1,m²/kg,m²/kg
+547,nan,D22,square metre per mole,nan,1,m²/mol,m²/mol
+548,nan,D23,pen gram (protein),A unit of count defining the number of grams of amino acid prescribed for parenteral/enteral therapy.,3.9,nan,nan
+549,nan,D24,square metre per steradian,nan,1,m²/sr,m²/sr
+550,nan,D25,square metre per steradian joule,nan,1,m²/(sr·J),m²/(sr x J)
+551,nan,D26,square metre per volt second,nan,1,m²/(V·s),m²/(V x s)
+552,nan,D27,steradian,nan,1,sr,sr
+553,X,D28,syphon,nan,3.9,nan,nan
+554,nan,D29,terahertz,nan,1S,THz,10¹² Hz
+555,nan,D30,terajoule,nan,1S,TJ,10¹² J
+556,nan,D31,terawatt,nan,1S,TW,10¹² W
+557,nan,D32,terawatt hour,nan,1S,TW·h,"3,6 x 10¹⁵ J"
+558,nan,D33,tesla,nan,1,T,T
+559,nan,D34,tex,A unit of yarn density. One decitex equals a mass of 1 gram per 1 kilometre of length.,3.5,tex (g/km),10⁻⁶ kg/m
+560,D,D35,calorie (thermochemical),nan,2,calth,"4,184 J"
+561,nan,D36,megabit,A unit of information equal to 10⁶ (1000000) bits (binary digits).,3.6,Mbit,nan
+562,D,D37,calorie (thermochemical) per gram kelvin,nan,2,calth/(g·K),"4,184 x 10³ J/(kg x K)"
+563,D,D38,calorie (thermochemical) per second centimetre kelvin,nan,2,calth/(s·cm·K),"418,4 W/(m x K)"
+564,D,D39,calorie (thermochemical) per second square centimetre kelvin,nan,2,calth/(s·cm²·K),"4,184 x10⁴ W/(m² x K)"
+565,X,D40,thousand litre,nan,3.8,nan,m³
+566,nan,D41,tonne per cubic metre,nan,1S,t/m³,10³ kg/m³
+567,nan,D42,tropical year,nan,2,y (tropical),"3,155 692 5 x 10⁷ s"
+568,nan,D43,unified atomic mass unit,nan,1,u,"1,660 538 782 x 10⁻²⁷ kg"
+569,nan,D44,var,The name of the unit is an acronym for volt-ampere-reactive.,1,var,V x A
+570,nan,D45,volt squared per kelvin squared,nan,1,V²/K²,V²/K²
+571,nan,D46,volt - ampere,nan,1,V·A,W
+572,nan,D47,volt per centimetre,nan,1S,V/cm,V/m x 10²
+573,nan,D48,volt per kelvin,nan,1,V/K,V/K
+574,nan,D49,millivolt per kelvin,nan,1S,mV/K,10⁻³ V/K
+575,nan,D5,kilogram per square centimetre,nan,2,kg/cm²,10⁴ kg/m²
+576,nan,D50,volt per metre,nan,1,V/m,V/m
+577,nan,D51,volt per millimetre,nan,1S,V/mm,10³ V/m
+578,nan,D52,watt per kelvin,nan,1,W/K,W/K
+579,nan,D53,watt per metre kelvin,nan,1,W/(m·K),W/(m x K)
+580,nan,D54,watt per square metre,nan,1,W/m²,W/m²
+581,nan,D55,watt per square metre kelvin,nan,1,W/(m²·K),W/(m² x K)
+582,nan,D56,watt per square metre kelvin to the fourth power,nan,1,W/(m²·K⁴),W/(m² x K⁴)
+583,nan,D57,watt per steradian,nan,1,W/sr,W/sr
+584,nan,D58,watt per steradian square metre,nan,1,W/(sr·m²),W/(sr x m²)
+585,nan,D59,weber per metre,nan,1,Wb/m,Wb/m
+586,nan,D6,roentgen per second,nan,2,R/s,"2,58 x 10⁻⁴ C/(kg x s)"
+587,nan,D60,weber per millimetre,nan,1S,Wb/mm,10³ Wb/m
+588,nan,D61,minute [unit of angle],nan,1,',"2,908 882 x 10⁻⁴ rad"
+589,nan,D62,second [unit of angle],nan,1,"""","4,848 137 x 10⁻⁶ rad"
+590,nan,D63,book,A unit of count defining the number of books (book: set of items bound together or written document of a material whole).,3.9,nan,nan
+591,X,D64,block,nan,3.9,nan,nan
+592,nan,D65,round,A unit of count defining the number of rounds (round: A circular or cylindrical object).,3.9,nan,nan
+593,X,D66,cassette,nan,3.9,nan,nan
+594,X,D67,dollar per hour,nan,3.9,nan,nan
+595,nan,D68,number of words,A unit of count defining the number of words.,3.7,nan,nan
+596,nan,D69,inch to the fourth power,nan,2,in⁴,"41,623 14 x 10⁻⁸ m⁴"
+597,X,D7,sandwich,nan,3.9,nan,nan
+598,D,D70,calorie (international table),nan,2,calIT,"4,186 8 J"
+599,D,D71,calorie (international table) per second centimetre kelvin,nan,2,calIT/(s·cm·K),"418,68 W/(m x K)"
+600,D,D72,calorie (international table) per second square centimetre kelvin,nan,2,calIT/(s·cm²·K),"4,186 8 x 10⁴ W/(m² x K)"
+601,nan,D73,joule square metre,nan,1,J·m²,J x m²
+602,nan,D74,kilogram per mole,nan,1,kg/mol,kg/mol
+603,D,D75,calorie (international table) per gram,nan,2,calIT/g,"4 186,8 J/kg"
+604,D,D76,calorie (international table) per gram kelvin,nan,2,calIT/(g·K),"4 186,8 J/(kg x K)"
+605,nan,D77,megacoulomb,nan,1S,MC,10⁶ C
+606,nan,D78,megajoule per second,A unit of accumulated energy equal to one million joules per second.,3.1,MJ/s,nan
+607,X,D79,beam,nan,3.3,nan,nan
+608,X,D8,draize score,nan,3.7,nan,nan
+609,nan,D80,microwatt,nan,1S,µW,10⁻⁶ W
+610,nan,D81,microtesla,nan,1S,µT,10⁻⁶ T
+611,nan,D82,microvolt,nan,1S,µV,10⁻⁶ V
+612,nan,D83,millinewton metre,nan,1S,mN·m,10⁻³ N x m
+613,nan,D85,microwatt per square metre,nan,1S,µW/m²,10⁻⁶ W/m²
+614,nan,D86,millicoulomb,nan,1S,mC,10⁻³ C
+615,nan,D87,millimole per kilogram,nan,1S,mmol/kg,10⁻³ mol/kg
+616,nan,D88,millicoulomb per cubic metre,nan,1S,mC/m³,10⁻³ C/m³
+617,nan,D89,millicoulomb per square metre,nan,1S,mC/m²,10⁻³ C/m²
+618,D,D9,dyne per square centimetre,nan,"2,3.9",dyn/cm²,10⁻¹ Pa
+619,X,D90,cubic metre (net),nan,3.1,nan,nan
+620,nan,D91,rem,nan,2,rem,10⁻² Sv
+621,X,D92,band,nan,3.9,nan,nan
+622,nan,D93,second per cubic metre,nan,1,s/m³,s/m³
+623,nan,D94,second per cubic metre radian,nan,1,s/(rad·m³),s/(rad x m³)
+624,nan,D95,joule per gram,nan,1S,J/g,J/(10⁻³ x kg)
+625,X,D96,pound gross,nan,3.1,nan,nan
+626,X,D97,pallet/unit load,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.4,nan,nan
+627,X,D98,mass pound,nan,3.1,nan,nan
+628,X,D99,sleeve,nan,3.3,nan,nan
+629,nan,DAA,decare,nan,1M,daa,10³ m²
+630,nan,DAD,ten day,A unit of time defining the number of days in multiples of 10.,3.2,nan,nan
+631,nan,DAY,day,nan,1,d,86 400 s
+632,nan,DB,dry pound,"A unit of mass defining the number of pounds of a product, disregarding the water content of the product.",3.1,nan,nan
+633,X,DC,disk (disc),nan,3.9,nan,nan
+634,nan,DD,degree [unit of angle],nan,1,°,"1,745 329 x 10⁻² rad"
+635,X,DE,deal,nan,3.9,nan,nan
+636,nan,DEC,decade,A unit of count defining the number of decades (decade: quantity equal to 10 or time equal to 10 years).,3.8,nan,nan
+637,nan,DG,decigram,nan,1M,dg,10⁻⁴ kg
+638,X,DI,dispenser,nan,3.3,nan,nan
+639,nan,DJ,decagram,nan,1M,dag,10⁻² kg
+640,nan,DLT,decilitre,nan,1M,dl,10⁻⁴ m³
+641,nan,DMA,cubic decametre,nan,1S,dam³,10³ m³
+642,nan,DMK,square decimetre,nan,1S,dm²,10⁻² m²
+643,nan,DMO,standard kilolitre,"A unit of volume defining the number of kilolitres of a product at a temperature of 15 degrees Celsius, especially in relation to hydrocarbon oils.",3.1,nan,nan
+644,nan,DMQ,cubic decimetre,nan,1S,dm³,10⁻³ m³
+645,nan,DMT,decimetre,nan,1M,dm,10⁻¹ m
+646,nan,DN,decinewton metre,nan,1S,dN·m,10⁻¹ N x m
+647,nan,DPC,dozen piece,"A unit of count defining the number of pieces in multiples of 12 (piece: a single item, article or exemplar).",3.2,nan,nan
+648,nan,DPR,dozen pair,A unit of count defining the number of pairs in multiples of 12 (pair: item described by two's).,3.2,nan,nan
+649,nan,DPT,displacement tonnage,"A unit of mass defining the volume of sea water a ship displaces, expressed as the number of tons.",3.4,nan,nan
+650,X,DQ,data record,nan,3.6,nan,nan
+651,X,DR,drum,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+652,nan,DRA,dram (US),"Synonym: drachm (UK), troy dram",3.5,nan,"3,887 935 g"
+653,nan,DRI,dram (UK),Synonym: avoirdupois dram,3.5,nan,"1,771 745 g"
+654,nan,DRL,dozen roll,"A unit of count defining the number of rolls, expressed in twelve roll units.",3.2,nan,nan
+655,X,DRM,drachm (UK),nan,3.5,nan,"3,887 935 g"
+656,X,DS,display,nan,3.9,nan,nan
+657,nan,DT,dry ton,"A unit of mass defining the number of tons of a product, disregarding the water content of the product.",3.1,nan,nan
+658,nan,DTN,decitonne,"Synonym: centner, metric 100 kg; quintal, metric 100 kg","1M,3.5",dt or dtn,10² kg
+659,D,DU,dyne,nan,2,dyn,10⁻⁵ N
+660,nan,DWT,pennyweight,nan,3.5,nan,"1,555 174 g"
+661,D,DX,dyne per centimetre,nan,2,dyn/cm,10⁻³ N/m
+662,X,DY,directory book,nan,3.9,nan,nan
+663,nan,DZN,dozen,A unit of count defining the number of units in multiples of 12.,3.7,DOZ,12
+664,nan,DZP,dozen pack,A unit of count defining the number of packs in multiples of 12 (pack: standard packaging unit).,3.2,nan,nan
+665,nan,E01,newton per square centimetre,A measure of pressure expressed in newtons per square centimetre.,1M,N/cm²,10⁴ Pa
+666,nan,E07,megawatt hour per hour,A unit of accumulated energy of a million watts over a period of one hour.,3.1,MW·h/h,nan
+667,nan,E08,megawatt per hertz,A unit of energy expressed as the load change in million watts that will cause a frequency shift of one hertz.,3.1,MW/Hz,nan
+668,nan,E09,milliampere hour,A unit of power load delivered at the rate of one thousandth of an ampere over a period of one hour.,1M,mA·h,"3,6 C"
+669,nan,E10,degree day,A unit of measure used in meteorology and engineering to measure the demand for heating or cooling over a given period of days.,3.5,deg da,nan
+670,D,E11,gigacalorie,A unit of heat energy equal to one thousand million calories.,3.5,nan,10⁹ cal
+671,nan,E12,mille,A unit of count defining the number of cigarettes in units of 1000.,3.9,nan,nan
+672,nan,E14,kilocalorie (international table),A unit of heat energy equal to one thousand calories.,2,kcalIT,"4,186 8 x 10³ J"
+673,nan,E15,kilocalorie (thermochemical) per hour,A unit of energy equal to one thousand calories per hour.,2,kcalth/h,"1,162 22 W"
+674,nan,E16,million Btu(IT) per hour,A unit of power equal to one million British thermal units per hour.,3.1,BtuIT/h,"293 071,1 W"
+675,nan,E17,cubic foot per second,A unit of volume equal to one cubic foot passing a given point in a period of one second.,3.1,ft³/s,"2,831 685 x 10⁻² m³/s"
+676,nan,E18,tonne per hour,A unit of weight or mass equal to one tonne per hour.,2,t/h,"2,777 78 x 10⁻¹ kg/s"
+677,nan,E19,ping,A unit of area equal to 3.3 square metres.,3.1,nan,"3,305 m²"
+678,X,E2,belt,nan,3.9,nan,nan
+679,nan,E20,megabit per second,A unit of information equal to 10⁶ (1000000) bits (binary digits) per second.,3.6,Mbit/s,nan
+680,nan,E21,shares,A unit of count defining the number of shares (share: a total or portion of the parts into which a business entity’s capital is divided).,3.7,nan,nan
+681,nan,E22,TEU,A unit of count defining the number of twenty-foot equivalent units (TEUs) as a measure of containerized cargo capacity.,3.4,nan,nan
+682,nan,E23,tyre,"A unit of count defining the number of tyres (a solid or air-filled covering placed around a wheel rim to form a soft contact with the road, absorb shock and provide traction).",3.7,nan,nan
+683,nan,E25,active unit,A unit of count defining the number of active units within a substance.,3.9,nan,nan
+684,nan,E27,dose,A unit of count defining the number of doses (dose: a definite quantity of a medicine or drug).,3.9,nan,nan
+685,nan,E28,air dry ton,"A unit of mass defining the number of tons of a product, disregarding the water content of the product.",3.1,nan,nan
+686,X,E3,trailer,nan,3.4,nan,nan
+687,nan,E30,strand,"A unit of count defining the number of strands (strand: long, thin, flexible, single thread, strip of fibre, constituent filament or multiples of the same, twisted together).",3.7,nan,nan
+688,nan,E31,square metre per litre,A unit of count defining the number of square metres per litre.,3.1,m²/l,nan
+689,nan,E32,litre per hour,A unit of count defining the number of litres per hour.,3.1,l/h,"2,777 78 x 10⁻⁷ m³/s"
+690,nan,E33,foot per thousand,A unit of count defining the number of feet per thousand units.,3.1,nan,"3,048 x 10⁻⁴ m"
+691,nan,E34,gigabyte,A unit of information equal to 10⁹ bytes.,3.6,Gbyte,nan
+692,nan,E35,terabyte,A unit of information equal to 10¹² bytes.,3.6,Tbyte,nan
+693,nan,E36,petabyte,A unit of information equal to 10¹⁵ bytes.,3.6,Pbyte,nan
+694,nan,E37,pixel,A unit of count defining the number of pixels (pixel: picture element).,3.6,nan,nan
+695,nan,E38,megapixel,A unit of count equal to 10⁶ (1000000) pixels (picture elements).,3.6,nan,nan
+696,nan,E39,dots per inch,A unit of information defining the number of dots per linear inch as a measure of the resolution or sharpness of a graphic image.,3.6,dpi,nan
+697,nan,E4,gross kilogram,A unit of mass defining the total number of kilograms before deductions.,3.1,nan,nan
+698,nan,E40,part per hundred thousand,A unit of proportion equal to 10⁻⁵.,3.7,ppht,1 x 10⁻⁵
+699,nan,E41,kilogram-force per square millimetre,A unit of pressure defining the number of kilograms force per square millimetre.,2,kgf/mm²,"9,806 65 x 10⁶ Pa"
+700,nan,E42,kilogram-force per square centimetre,A unit of pressure defining the number of kilograms force per square centimetre.,2,kgf/cm²,"9,806 65 x 10⁴ Pa"
+701,nan,E43,joule per square centimetre,A unit of energy defining the number of joules per square centimetre.,1M,J/cm²,10⁴ J/m²
+702,nan,E44,kilogram-force metre per square centimetre,A unit of torsion defining the torque kilogram-force metre per square centimetre.,3.5,kgf·m/cm²,nan
+703,nan,E45,milliohm,nan,1S,mΩ,10⁻³ Ω
+704,nan,E46,kilowatt hour per cubic metre,A unit of energy consumption expressed as kilowatt hour per cubic metre.,3.1,kW·h/m³,"3,6 x 10⁶ J/m³"
+705,nan,E47,kilowatt hour per kelvin,A unit of energy consumption expressed as kilowatt hour per kelvin.,3.1,kW·h/K,"3,6 x 10⁶ J/K"
+706,nan,E48,service unit,A unit of count defining the number of service units (service unit: defined period / property / facility / utility of supply).,3.5,nan,nan
+707,nan,E49,working day,A unit of count defining the number of working days (working day: a day on which work is ordinarily performed).,3.5,nan,nan
+708,X,E5,metric long ton,Use ton (UK) or long ton (US) (common code LTN),3.1,nan,nan
+709,nan,E50,accounting unit,A unit of count defining the number of accounting units.,3.5,nan,nan
+710,nan,E51,job,A unit of count defining the number of jobs.,3.5,nan,nan
+711,nan,E52,run foot,A unit of count defining the number feet per run.,3.5,nan,nan
+712,nan,E53,test,A unit of count defining the number of tests.,3.5,nan,nan
+713,nan,E54,trip,A unit of count defining the number of trips.,3.5,nan,nan
+714,nan,E55,use,A unit of count defining the number of times an object is used.,3.5,nan,nan
+715,nan,E56,well,A unit of count defining the number of wells.,3.5,nan,nan
+716,nan,E57,zone,A unit of count defining the number of zones.,3.5,nan,nan
+717,nan,E58,exabit per second,A unit of information equal to 10¹⁸ bits (binary digits) per second.,3.6,Ebit/s,nan
+718,nan,E59,exbibyte,A unit of information equal to 2⁶⁰ bytes.,3.6,Eibyte,nan
+719,nan,E60,pebibyte,A unit of information equal to 2⁵⁰ bytes.,3.6,Pibyte,nan
+720,nan,E61,tebibyte,A unit of information equal to 2⁴⁰ bytes.,3.6,Tibyte,nan
+721,nan,E62,gibibyte,A unit of information equal to 2³⁰ bytes.,3.6,Gibyte,nan
+722,nan,E63,mebibyte,A unit of information equal to 2²⁰ bytes.,3.6,Mibyte,nan
+723,nan,E64,kibibyte,A unit of information equal to 2¹⁰ bytes.,3.6,Kibyte,nan
+724,nan,E65,exbibit per metre,A unit of information equal to 2⁶⁰ bits (binary digits) per metre.,3.6,Eibit/m,nan
+725,nan,E66,exbibit per square metre,A unit of information equal to 2⁶⁰ bits (binary digits) per square metre.,3.6,Eibit/m²,nan
+726,nan,E67,exbibit per cubic metre,A unit of information equal to 2⁶⁰ bits (binary digits) per cubic metre.,3.6,Eibit/m³,nan
+727,nan,E68,gigabyte per second,A unit of information equal to 10⁹ bytes per second.,3.6,Gbyte/s,nan
+728,nan,E69,gibibit per metre,A unit of information equal to 2³⁰ bits (binary digits) per metre.,3.6,Gibit/m,nan
+729,nan,E70,gibibit per square metre,A unit of information equal to 2³⁰ bits (binary digits) per square metre.,3.6,Gibit/m²,nan
+730,nan,E71,gibibit per cubic metre,A unit of information equal to 2³⁰ bits (binary digits) per cubic metre.,3.6,Gibit/m³,nan
+731,nan,E72,kibibit per metre,A unit of information equal to 2¹⁰ bits (binary digits) per metre.,3.6,Kibit/m,nan
+732,nan,E73,kibibit per square metre,A unit of information equal to 2¹⁰ bits (binary digits) per square metre.,3.6,Kibit/m²,nan
+733,nan,E74,kibibit per cubic metre,A unit of information equal to 2¹⁰ bits (binary digits) per cubic metre.,3.6,Kibit/m³,nan
+734,nan,E75,mebibit per metre,A unit of information equal to 2²⁰ bits (binary digits) per metre.,3.6,Mibit/m,nan
+735,nan,E76,mebibit per square metre,A unit of information equal to 2²⁰ bits (binary digits) per square metre.,3.6,Mibit/m²,nan
+736,nan,E77,mebibit per cubic metre,A unit of information equal to 2²⁰ bits (binary digits) per cubic metre.,3.6,Mibit/m³,nan
+737,nan,E78,petabit,A unit of information equal to 10¹⁵ bits (binary digits).,3.6,Pbit,nan
+738,nan,E79,petabit per second,A unit of information equal to 10¹⁵ bits (binary digits) per second.,3.6,Pbit/s,nan
+739,nan,E80,pebibit per metre,A unit of information equal to 2⁵⁰ bits (binary digits) per metre.,3.6,Pibit/m,nan
+740,nan,E81,pebibit per square metre,A unit of information equal to 2⁵⁰ bits (binary digits) per square metre.,3.6,Pibit/m²,nan
+741,nan,E82,pebibit per cubic metre,A unit of information equal to 2⁵⁰ bits (binary digits) per cubic metre.,3.6,Pibit/m³,nan
+742,nan,E83,terabit,A unit of information equal to 10¹² bits (binary digits).,3.6,Tbit,nan
+743,nan,E84,terabit per second,A unit of information equal to 10¹² bits (binary digits) per second.,3.6,Tbit/s,nan
+744,nan,E85,tebibit per metre,A unit of information equal to 2⁴⁰ bits (binary digits) per metre.,3.6,Tibit/m,nan
+745,nan,E86,tebibit per cubic metre,A unit of information equal to 2⁴⁰ bits (binary digits) per cubic metre.,3.6,Tibit/m³,nan
+746,nan,E87,tebibit per square metre,A unit of information equal to 2⁴⁰ bits (binary digits) per square metre.,3.6,Tibit/m²,nan
+747,nan,E88,bit per metre,A unit of information equal to 1 bit (binary digit) per metre.,3.6,bit/m,nan
+748,nan,E89,bit per square metre,A unit of information equal to 1 bit (binary digit) per square metre.,3.6,bit/m²,nan
+749,nan,E90,reciprocal centimetre,nan,3.1,cm⁻¹,10² m⁻¹
+750,nan,E91,reciprocal day,nan,3.1,d⁻¹,"1,157 41 × 10⁻⁵ s⁻¹"
+751,nan,E92,cubic decimetre per hour,nan,1S,dm³/h,"2,777 78 × 10⁻⁷ m³ x s⁻¹"
+752,nan,E93,kilogram per hour,nan,1S,kg/h,"2,777 78 × 10⁻⁴ kg x s⁻¹"
+753,nan,E94,kilomole per second,nan,1S,kmol/s,10³ s⁻¹ x mol
+754,nan,E95,mole per second,nan,1S,mol/s,s⁻¹ x mol
+755,nan,E96,degree per second,nan,1M,°/s,"1,745 329 x 10⁻² rad x s⁻¹"
+756,nan,E97,millimetre per degree Celcius metre,nan,1M,mm/(°C·m),10⁻³ K⁻¹
+757,nan,E98,degree Celsius per kelvin,nan,1M,°C/K,1.0
+758,nan,E99,hectopascal per bar,nan,1M,hPa/bar,10⁻³
+759,nan,EA,each,A unit of count defining the number of items regarded as separate units.,3.2,nan,nan
+760,nan,EB,electronic mail box,A unit of count defining the number of electronic mail boxes.,3.9,nan,nan
+761,X,EC,each per month,nan,3.9,nan,nan
+762,X,EP,eleven pack,nan,3.2,nan,nan
+763,nan,EQ,equivalent gallon,A unit of volume defining the number of gallons of product produced from concentrate.,3.1,nan,nan
+764,X,EV,envelope,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.9,nan,nan
+765,nan,F01,bit per cubic metre,A unit of information equal to 1 bit (binary digit) per cubic metre.,3.6,bit/m³,nan
+766,nan,F02,kelvin per kelvin,nan,1M,K/K,1.0
+767,nan,F03,kilopascal per bar,nan,1M,kPa/bar,10⁻²
+768,nan,F04,millibar per bar,nan,1M,mbar/bar,10⁻³
+769,nan,F05,megapascal per bar,nan,1M,MPa/bar,10¹
+770,nan,F06,poise per bar,nan,2,P/bar,10⁻⁶ s
+771,nan,F07,pascal per bar,nan,1M,Pa/bar,10⁻⁵
+772,nan,F08,milliampere per inch,nan,2,mA/in,"3,937 007 874 015 75 x 10⁻² A x m⁻¹"
+773,X,F1,thousand cubic foot per day,nan,3.8,nan,nan
+774,nan,F10,kelvin per hour,nan,1M,K/h,"2,777 78 × 10⁻⁴ s⁻¹ x K"
+775,nan,F11,kelvin per minute,nan,1M,K/min,"1,666 67 × 10⁻² s⁻¹ x K"
+776,nan,F12,kelvin per second,nan,1M,K/s,s⁻¹ x K
+777,nan,F13,slug,A unit of mass. One slug is the mass accelerated at 1 foot per second per second by a force of 1 pound.,2,slug,"1,459 390 x 10¹ kg"
+778,nan,F14,gram per kelvin,nan,1M,g/K,10⁻³ kg x K⁻¹
+779,nan,F15,kilogram per kelvin,nan,1M,kg/K,kg x K⁻¹
+780,nan,F16,milligram per kelvin,nan,1M,mg/K,10⁻⁶ kg x K⁻¹
+781,nan,F17,pound-force per foot,nan,2,lbf/ft,"1,459 39 × 10¹ kg x s⁻²"
+782,nan,F18,kilogram square centimetre,nan,1M,kg·cm²,10⁻⁴ kg m²
+783,nan,F19,kilogram square millimetre,nan,1M,kg·mm²,10⁻⁶ kg m²
+784,nan,F20,pound inch squared,nan,2,lb·in²,"2,926 397 x 10⁻⁴ kg x m²"
+785,nan,F21,pound-force inch,nan,2,lbf·in,"1,129 85 × 10⁻¹ kg x m² x s⁻²"
+786,nan,F22,pound-force foot per ampere,nan,2,lbf·ft/A,"1,355 82 kg x m² x s⁻² x A⁻¹"
+787,nan,F23,gram per cubic decimetre,nan,1M,g/dm³,kg x m⁻³
+788,nan,F24,kilogram per kilomol,nan,1M,kg/kmol,10⁻³ kg x mol⁻¹
+789,nan,F25,gram per hertz,nan,1M,g/Hz,10⁻³ kg x s
+790,nan,F26,gram per day,nan,1M,g/d,"1,157 41 × 10⁻⁸ kg x s⁻¹"
+791,nan,F27,gram per hour,nan,1M,g/h,"2,777 78 × 10⁻⁷ kg x s⁻¹"
+792,nan,F28,gram per minute,nan,1M,g/min,"1,666 67 × 10⁻⁵ kg x s⁻¹"
+793,nan,F29,gram per second,nan,1M,g/s,10⁻³ kg x s⁻¹
+794,nan,F30,kilogram per day,nan,1M,kg/d,"1,157 41 × 10⁻⁵ kg x s⁻¹"
+795,nan,F31,kilogram per minute,nan,1M,kg/min,"1,666 67 × 10⁻² kg x s⁻¹"
+796,nan,F32,milligram per day,nan,1M,mg/d,"1,157 41 × 10⁻¹¹ kg x s⁻¹"
+797,nan,F33,milligram per minute,nan,1M,mg/min,"1,666 67 × 10⁻⁸ kg x s⁻¹"
+798,nan,F34,milligram per second,nan,1M,mg/s,10⁻⁶ kg x s⁻¹
+799,nan,F35,gram per day kelvin,nan,1M,g/(d·K),"1,157 41 × 10⁻⁸ kg x s⁻¹ x K⁻¹"
+800,nan,F36,gram per hour kelvin,nan,1M,g/(h·K),"2,777 78 × 10⁻⁷ kg x s⁻¹ x K⁻¹"
+801,nan,F37,gram per minute kelvin,nan,1M,g/(min·K),"1,666 67 × 10⁻⁵ kg x s⁻¹ x K⁻¹"
+802,nan,F38,gram per second kelvin,nan,1M,g/(s·K),10⁻³ kg x s⁻¹ x K⁻¹
+803,nan,F39,kilogram per day kelvin,nan,1M,kg/(d·K),"1,157 41 × 10⁻⁵ kg x s⁻¹ x K⁻¹"
+804,nan,F40,kilogram per hour kelvin,nan,1M,kg/(h·K),"2,777 78 × 10⁻⁴ kg x s⁻¹ x K⁻¹"
+805,nan,F41,kilogram per minute kelvin,nan,1M,kg/(min·K),"1,666 67 × 10⁻²kg x s⁻¹ x K⁻¹"
+806,nan,F42,kilogram per second kelvin,nan,1M,kg/(s·K),kg x s⁻¹ x K⁻¹
+807,nan,F43,milligram per day kelvin,nan,1M,mg/(d·K),"1,157 41 × 10⁻¹¹ kg x s⁻¹ x K⁻¹"
+808,nan,F44,milligram per hour kelvin,nan,1M,mg/(h·K),"2,777 78 × 10⁻¹⁰ kg x s⁻¹ x K⁻¹"
+809,nan,F45,milligram per minute kelvin,nan,1M,mg/(min·K),"1,666 67 × 10⁻⁸ kg x s⁻¹ x K⁻¹"
+810,nan,F46,milligram per second kelvin,nan,1M,mg/(s·K),10⁻⁶ kg x s⁻¹ x K⁻¹
+811,nan,F47,newton per millimetre,nan,1M,N/mm,10³ kg x s⁻²
+812,nan,F48,pound-force per inch,nan,2,lbf/in,"1,751 27 × 10² kg x s⁻²"
+813,nan,F49,rod [unit of distance],A unit of distance equal to 5.5 yards (16 feet 6 inches).,2,rd (US),"5,029 210 m"
+814,nan,F50,micrometre per kelvin,nan,1M,µm/K,10⁻⁶ m x K⁻¹
+815,nan,F51,centimetre per kelvin,nan,1M,cm/K,10⁻² m x K⁻¹
+816,nan,F52,metre per kelvin,nan,1M,m/K,m x K⁻¹
+817,nan,F53,millimetre per kelvin,nan,1M,mm/K,10⁻³ m x K⁻¹
+818,nan,F54,milliohm per metre,nan,1M,mΩ/m,10⁻³ Ω/m
+819,nan,F55,ohm per mile (statute mile),nan,2,Ω/mi,"6,213 71 × 10⁻⁴  Ω/m"
+820,nan,F56,ohm per kilometre,nan,1M,Ω/km,10⁻³ Ω/m
+821,nan,F57,milliampere per pound-force per square inch,nan,2,mA/(lbf/in²),"1,450 38 × 10⁻⁷ kg⁻¹ x m x s² x A"
+822,nan,F58,reciprocal bar,nan,1M,1/bar,bar⁻¹
+823,nan,F59,milliampere per bar,nan,1M,mA/bar,10⁻⁸ kg⁻¹ x m x s² x A
+824,nan,F60,degree Celsius per bar,nan,1M,°C/bar,10⁻⁵ kg⁻¹ x m x s² x K
+825,nan,F61,kelvin per bar,nan,1M,K/bar,10⁻⁵ kg⁻¹ x m x s² x K
+826,nan,F62,gram per day bar,nan,1M,g/(d·bar),"1,157 41 × 10⁻¹³ m x s"
+827,nan,F63,gram per hour bar,nan,1M,g/(h·bar),"2,777 78 × 10⁻¹² m x s"
+828,nan,F64,gram per minute bar,nan,1M,g/(min·bar),"1,666 67 × 10⁻¹⁰ m x s"
+829,nan,F65,gram per second bar,nan,1M,g/(s·bar),10⁻⁸ m x s
+830,nan,F66,kilogram per day bar,nan,1M,kg/(d·bar),"1,157 41 × 10⁻¹⁰ m x s"
+831,nan,F67,kilogram per hour bar,nan,1M,kg/(h·bar),"2,777 78 × 10⁻⁹ m x s"
+832,nan,F68,kilogram per minute bar,nan,1M,kg/(min·bar),"1,666 67 × 10⁻⁷ m x s"
+833,nan,F69,kilogram per second bar,nan,1M,kg/(s·bar),10⁻⁵ m x s
+834,nan,F70,milligram per day bar,nan,1M,mg/(d·bar),"1,157 41 × 10⁻¹⁶ m x s"
+835,nan,F71,milligram per hour bar,nan,1M,mg/(h·bar),"2,777 78 × 10⁻¹⁵ m x s"
+836,nan,F72,milligram per minute bar,nan,1M,mg/(min·bar),"1,666 67 × 10⁻¹³ m x s"
+837,nan,F73,milligram per second bar,nan,1M,mg/(s·bar),10⁻¹¹ m x s
+838,nan,F74,gram per bar,nan,1M,g/bar,10⁻⁸ m x s²
+839,nan,F75,milligram per bar,nan,1M,mg/bar,10⁻¹¹ m x s²
+840,nan,F76,milliampere per millimetre,nan,1M,mA/mm,m⁻¹ x A
+841,nan,F77,pascal second per kelvin,nan,1M,Pa.s/K,kg x m⁻¹ x s⁻¹ x K⁻¹
+842,nan,F78,inch of water,nan,2,inH₂O,"2,490 89 × 10² kg x m⁻¹ x s⁻²"
+843,nan,F79,inch of mercury,nan,2,inHg,"3,386 39 × 10³ kg x m⁻¹ x s⁻²"
+844,nan,F80,water horse power,A unit of power defining the amount of power required to move a given volume of water against acceleration of gravity to a specified elevation (pressure head).,2,nan,"7,460 43 x 10² W"
+845,nan,F81,bar per kelvin,nan,1M,bar/K,10⁵ kg x m⁻¹ x s⁻² x K⁻¹
+846,nan,F82,hectopascal per kelvin,nan,1M,hPa/K,10² kg x m⁻¹ x s⁻² x K⁻¹
+847,nan,F83,kilopascal per kelvin,nan,1M,kPa/K,10³ kg x m⁻¹ x s⁻² x K⁻¹
+848,nan,F84,millibar per kelvin,nan,1M,mbar/K,10² kg x m⁻¹ x s⁻² x K⁻¹
+849,nan,F85,megapascal per kelvin,nan,1M,MPa/K,10⁶ kg x m⁻¹ x s⁻² x K⁻¹
+850,nan,F86,poise per kelvin,nan,2,P/K,10⁻¹ kg x m⁻¹ x s⁻¹ x K⁻¹
+851,nan,F87,volt per litre minute,nan,1M,V/(l·min),"1,666 67 × 10¹ kg x m⁻¹ x s⁻⁴ x A⁻¹"
+852,nan,F88,newton centimetre,nan,1M,N·cm,10⁻² kg x m² x s⁻²
+853,nan,F89,newton metre per degree,nan,1M,Nm/°,"57,295 788 kg x m² x s⁻² x rad⁻¹"
+854,X,F9,fibre per cubic centimetre of air,nan,3.9,nan,nan
+855,nan,F90,newton metre per ampere,nan,1M,N·m/A,kg x m² x s⁻² x A⁻¹
+856,nan,F91,bar litre per second,nan,1M,bar·l/s,10² kg x m² x s⁻³
+857,nan,F92,bar cubic metre per second,nan,1M,bar·m³/s,10⁵ kg x m² x s⁻³
+858,nan,F93,hectopascal litre per second,nan,1M,hPa·l/s,10⁻¹ kg x m² x s⁻³
+859,nan,F94,hectopascal cubic metre per second,nan,1M,hPa·m³/s,10² kg x m² x s⁻³
+860,nan,F95,millibar litre per second,nan,1M,mbar·l/s,10⁻¹ kg x m² x s⁻³
+861,nan,F96,millibar cubic metre per second,nan,1M,mbar·m³/s,10² kg x m² x s⁻³
+862,nan,F97,megapascal litre per second,nan,1M,MPa·l/s,10³ kg x m² x s⁻³
+863,nan,F98,megapascal cubic metre per second,nan,1M,MPa·m³/s,10⁶ kg x m² x s⁻³
+864,nan,F99,pascal litre per second,nan,1M,Pa·l/s,10⁻³ kg x m² x s⁻³
+865,nan,FAH,degree Fahrenheit,Refer ISO 80000-5 (Quantities and units — Part 5: Thermodynamics),2,°F,5/9 x K
+866,nan,FAR,farad,nan,1,F,F
+867,X,FB,field,nan,3.9,nan,nan
+868,nan,FBM,fibre metre,A unit of length defining the number of metres of individual fibre.,3.1,nan,nan
+869,nan,FC,thousand cubic foot,A unit of volume equal to one thousand cubic foot.,3.8,kft³,nan
+870,X,FD,million particle per cubic foot,nan,3.9,nan,nan
+871,X,FE,track foot,nan,3.5,nan,nan
+872,nan,FF,hundred cubic metre,A unit of volume equal to one hundred cubic metres.,3.8,nan,nan
+873,X,FG,transdermal patch,nan,3.9,nan,nan
+874,nan,FH,micromole,nan,1S,µmol,10⁻⁶ mol
+875,nan,FIT,failures in time,A unit of count defining the number of failures that can be expected over a specified time interval. Failure rates of semiconductor components are often specified as FIT (failures in time unit) where 1 FIT = 10⁻⁹ /h.,3.8,FIT,"2,777 78 × 10⁻¹³ s⁻¹"
+876,nan,FL,flake ton,A unit of mass defining the number of tons of a flaked substance (flake: a small flattish fragment).,3.1,nan,nan
+877,X,FM,million cubic foot,nan,3.8,Mft³,nan
+878,nan,FOT,foot,nan,2,ft,"0,304 8 m"
+879,nan,FP,pound per square foot,nan,2,lb/ft²,"4,882 428 kg/m²"
+880,nan,FR,foot per minute,nan,2,ft/min,"5,08 x 10⁻³ m/s"
+881,nan,FS,foot per second,nan,2,ft/s,"0,304 8 m/s"
+882,nan,FTK,square foot,nan,2,ft²,"9,290 304 x 10⁻² m²"
+883,nan,FTQ,cubic foot,nan,2,ft³,"2,831 685 x 10⁻² m³"
+884,nan,G01,pascal cubic metre per second,nan,1M,Pa·m³/s,kg x m² x s⁻³
+885,nan,G04,centimetre per bar,nan,1M,cm/bar,10⁻⁷ kg⁻¹ x m² x s²
+886,nan,G05,metre per bar,nan,1M,m/bar,10⁻⁵ kg⁻¹ x m² x s²
+887,nan,G06,millimetre per bar,nan,1M,mm/bar,10⁻⁸ kg⁻¹ x m² x s²
+888,nan,G08,square inch per second,nan,2,in²/s,"6,451 6 × 10⁻⁴ m² x s⁻¹"
+889,nan,G09,square metre per second kelvin,nan,1M,m²/(s·K),m² x s⁻¹ x K⁻¹
+890,nan,G10,stokes per kelvin,nan,2,St/K,10⁻⁴ m² x s⁻¹ x K⁻¹
+891,nan,G11,gram per cubic centimetre bar,nan,1M,g/(cm³·bar),10⁻² m⁻² x s²
+892,nan,G12,gram per cubic decimetre bar,nan,1M,g/(dm³·bar),10⁻⁵ m⁻² x s²
+893,nan,G13,gram per litre bar,nan,1M,g/(l·bar),10⁻⁵ m⁻² x s²
+894,nan,G14,gram per cubic metre bar,nan,1M,g/(m³·bar),10⁻⁸ m⁻² x s²
+895,nan,G15,gram per millilitre bar,nan,1M,g/(ml·bar),10⁻² m⁻² x s²
+896,nan,G16,kilogram per cubic centimetre bar,nan,1M,kg/(cm³·bar),10¹ m⁻² x s²
+897,nan,G17,kilogram per litre bar,nan,1M,kg/(l·bar),10⁻² m⁻² x s²
+898,nan,G18,kilogram per cubic metre bar,nan,1M,kg/(m³·bar),10⁻⁵ m⁻² x s²
+899,nan,G19,newton metre per kilogram,nan,1M,N·m/kg,m² x s⁻²
+900,nan,G2,US gallon per minute,nan,2,gal (US) /min,"6,309 020 x 10⁻⁵ m³/s"
+901,nan,G20,pound-force foot per pound,nan,2,lbf·ft/lb,"2,989 07 m² x s⁻²"
+902,nan,G21,cup [unit of volume],nan,2,cup (US),"2,365 882 x 10⁻⁴ m³"
+903,nan,G23,peck,nan,2,pk (US),"8,809 768 x 10⁻³ m³"
+904,nan,G24,tablespoon (US),nan,2,tablespoon (US),"1,478 676 x 10⁻⁵ m³"
+905,nan,G25,teaspoon (US),nan,2,teaspoon (US),"4,928 922 x 10⁻⁶ m³"
+906,nan,G26,stere,nan,1M,st,m³
+907,nan,G27,cubic centimetre per kelvin,nan,1M,cm³/K,10⁻⁶ m³ x K⁻¹
+908,nan,G28,litre per kelvin,nan,1M,l/K,10⁻³ m³ x K⁻¹
+909,nan,G29,cubic metre per kelvin,nan,1M,m³/K,m³ x K⁻¹
+910,nan,G3,Imperial gallon per minute,nan,2,gal (UK) /min,"7,576 82 x 10⁻⁵ m³/s"
+911,nan,G30,millilitre per kelvin,nan,1M,ml/K,10⁻⁶ m³ x K⁻¹
+912,nan,G31,kilogram per cubic centimetre,nan,1M,kg/cm³,10⁶ kg x m⁻³
+913,nan,G32,ounce (avoirdupois) per cubic yard,nan,2,oz/yd³,"3,707 98 × 10⁻² kg x m⁻³"
+914,nan,G33,gram per cubic centimetre kelvin,nan,1M,g/(cm³·K),10³ kg x m⁻³ x K⁻¹
+915,nan,G34,gram per cubic decimetre kelvin,nan,1M,g/(dm³·K),kg x m⁻³ x K⁻¹
+916,nan,G35,gram per litre kelvin,nan,1M,g/(l·K),kg x m⁻³ x K⁻¹
+917,nan,G36,gram per cubic metre kelvin,nan,1M,g/(m³·K),10⁻³ kg x m⁻³ x K⁻¹
+918,nan,G37,gram per millilitre kelvin,nan,1M,g/(ml·K),10³ kg x m⁻³ x K⁻¹
+919,nan,G38,kilogram per cubic centimetre kelvin,nan,1M,kg/(cm³·K),10⁶ kg x m⁻³ x K⁻¹
+920,nan,G39,kilogram per litre kelvin,nan,1M,kg/(l·K),10³ kg x m⁻³ x K⁻¹
+921,nan,G40,kilogram per cubic metre kelvin,nan,1M,kg/(m³·K),kg x m⁻³ x K⁻¹
+922,nan,G41,square metre per second bar,nan,1M,m²/(s·bar),10⁻⁵ kg⁻¹ x m³ x s
+923,nan,G42,microsiemens per centimetre,nan,1M,µS/cm,10⁻⁴ S/m
+924,nan,G43,microsiemens per metre,nan,1M,µS/m,10⁻⁶ S/m
+925,nan,G44,nanosiemens per centimetre,nan,1M,nS/cm,10⁻⁷ S/m
+926,nan,G45,nanosiemens per metre,nan,1M,nS/m,10⁻⁹ S/m
+927,nan,G46,stokes per bar,nan,2,St/bar,10⁻⁹ kg⁻¹ x m³ x s
+928,nan,G47,cubic centimetre per day,nan,1M,cm³/d,"1,157 41 × 10⁻¹¹ m³ x s⁻¹"
+929,nan,G48,cubic centimetre per hour,nan,1M,cm³/h,"2,777 78 × 10⁻¹⁰ m³ x s⁻¹"
+930,nan,G49,cubic centimetre per minute,nan,1M,cm³/min,"1,666 67 × 10⁻⁸ m³ x s⁻¹"
+931,nan,G50,gallon (US) per hour,nan,2,gal/h,"1,051 5 × 10⁻⁶ m³ x s⁻¹"
+932,nan,G51,litre per second,nan,1M,l/s,10⁻³ m³ x s⁻¹
+933,nan,G52,cubic metre per day,nan,1M,m³/d,"1,157 41 × 10⁻⁵ m³ x s⁻¹"
+934,nan,G53,cubic metre per minute,nan,1M,m³/min,"1,666 67 × 10⁻² m³ x s⁻¹"
+935,nan,G54,millilitre per day,nan,1M,ml/d,"1,157 41 × 10⁻¹¹ m³ x s⁻¹"
+936,nan,G55,millilitre per hour,nan,1M,ml/h,"2,777 78 × 10⁻¹⁰ m³ x s⁻¹"
+937,nan,G56,cubic inch per hour,nan,2,in³/h,"4,551 96 × 10⁻⁹ m³ x s⁻¹"
+938,nan,G57,cubic inch per minute,nan,2,in³/min,"2,731 18 × 10⁻⁷ m³ x s⁻¹"
+939,nan,G58,cubic inch per second,nan,2,in³/s,"1,638 71 × 10⁻⁵ m³ x s⁻¹"
+940,nan,G59,milliampere per litre minute,nan,1M,mA/(l·min),"1,666 67 × 10⁻² m⁻³ x s⁻¹ x A"
+941,nan,G60,volt per bar,nan,1M,V/bar,10⁻⁵ m³ x s⁻¹ x A⁻¹
+942,nan,G61,cubic centimetre per day kelvin,nan,1M,cm³/(d·K),"1,157 41 × 10⁻¹¹ m³ x s⁻¹ x K⁻¹"
+943,nan,G62,cubic centimetre per hour kelvin,nan,1M,cm³/(h·K),"2,777 78 × 10⁻¹⁰ m³ x s⁻¹ x K⁻¹"
+944,nan,G63,cubic centimetre per minute kelvin,nan,1M,cm³/(min·K),"1,666 67 × 10⁻⁸ m³ x s⁻¹ x K⁻¹"
+945,nan,G64,cubic centimetre per second kelvin,nan,1M,cm³/(s·K),10⁻⁶ m³ x s⁻¹ x K⁻¹
+946,nan,G65,litre per day kelvin,nan,1M,l/(d·K),"1,157 41 × 10⁻⁸ m³ x s⁻¹ x K⁻¹"
+947,nan,G66,litre per hour kelvin,nan,1M,l/(h·K),"2,777 78 × 10⁻⁷ m³ x s⁻¹ x K⁻¹"
+948,nan,G67,litre per minute kelvin,nan,1M,l/(min·K),"1,666 67 × 10⁻⁵ m³ x s⁻¹ x K⁻¹"
+949,nan,G68,litre per second kelvin,nan,1M,l/(s·K),10⁻³ m³ x s⁻¹ x K⁻¹
+950,nan,G69,cubic metre per day kelvin,nan,1M,m³/(d·K),"1,157 41 × 10⁻⁵ m³ x s⁻¹ x K⁻¹"
+951,X,G7,microfiche sheet,nan,3.9,nan,nan
+952,nan,G70,cubic metre per hour kelvin,nan,1M,m³/(h·K),"2,777 78 × 10⁻⁴ m³ x s⁻¹ x K⁻¹"
+953,nan,G71,cubic metre per minute kelvin,nan,1M,m³/(min·K),"1,666 67 × 10⁻² m³ x s⁻¹ x K⁻¹"
+954,nan,G72,cubic metre per second kelvin,nan,1M,m³/(s·K),m³ x s⁻¹ x K⁻¹
+955,nan,G73,millilitre per day kelvin,nan,1M,ml/(d·K),"1,157 41 × 10⁻¹¹ m³ x s⁻¹ x K⁻¹"
+956,nan,G74,millilitre per hour kelvin,nan,1M,ml/(h·K),"2,777 78 × 10⁻¹⁰ m³ x s⁻¹ x K⁻¹"
+957,nan,G75,millilitre per minute kelvin,nan,1M,ml/(min·K),"1,666 67 × 10⁻⁸ m³ x s⁻¹ x K⁻¹"
+958,nan,G76,millilitre per second kelvin,nan,1M,ml/(s·K),10⁻⁶ m³ x s⁻¹ x K⁻¹
+959,nan,G77,millimetre to the fourth power,nan,1M,mm⁴,10⁻¹² m⁴
+960,nan,G78,cubic centimetre per day bar,nan,1M,cm³/(d·bar),"1,157 41 × 10⁻¹⁶ kg⁻¹ x m⁴ x s"
+961,nan,G79,cubic centimetre per hour bar,nan,1M,cm³/(h·bar),"2,777 78 × 10⁻¹⁵ kg⁻¹ x m⁴ x s"
+962,nan,G80,cubic centimetre per minute bar,nan,1M,cm³/(min·bar),"1,666 67 × 10⁻¹³ kg⁻¹ x m⁴ x s"
+963,nan,G81,cubic centimetre per second bar,nan,1M,cm³/(s·bar),10⁻¹¹ kg⁻¹ x m⁴ x s
+964,nan,G82,litre per day bar,nan,1M,l/(d·bar),"1,157 41 × 10⁻¹³ kg⁻¹ x m⁴ x s"
+965,nan,G83,litre per hour bar,nan,1M,l/(h·bar),"2,777 78 × 10⁻¹² kg⁻¹ x m⁴ x s"
+966,nan,G84,litre per minute bar,nan,1M,l/(min·bar),"1,666 67 × 10⁻¹⁰ kg⁻¹ x m⁴ x s"
+967,nan,G85,litre per second bar,nan,1M,l/(s·bar),10⁻⁸ kg⁻¹ x m⁴ x s
+968,nan,G86,cubic metre per day bar,nan,1M,m³/(d·bar),"1,157 41 × 10⁻¹⁰ kg⁻¹ x m⁴ x s"
+969,nan,G87,cubic metre per hour bar,nan,1M,m³/(h·bar),"2,777 78 × 10⁻⁹ kg⁻¹ x m⁴ x s"
+970,nan,G88,cubic metre per minute bar,nan,1M,m³/(min·bar),"1,666 67 × 10⁻⁷ kg⁻¹ x m⁴ x s"
+971,nan,G89,cubic metre per second bar,nan,1M,m³/(s·bar),10⁻⁵ kg⁻¹ x m⁴ x s
+972,nan,G90,millilitre per day bar,nan,1M,ml/(d·bar),"1,157 41 x 10⁻¹⁶ x kg⁻¹ x m⁴ x s"
+973,nan,G91,millilitre per hour bar,nan,1M,ml/(h·bar),"2,777 78 x 10⁻¹⁵ x kg⁻¹ x m⁴ x s"
+974,nan,G92,millilitre per minute bar,nan,1M,ml/(min·bar),"1,666 67 × 10⁻¹³ x kg⁻¹ x m⁴ x s"
+975,nan,G93,millilitre per second bar,nan,1M,ml/(s·bar),10⁻¹¹ kg⁻¹ x m⁴ x s
+976,nan,G94,cubic centimetre per bar,nan,1M,cm³/bar,10⁻¹¹ kg⁻¹ x m⁴ x s²
+977,nan,G95,litre per bar,nan,1M,l/bar,10⁻⁸ kg⁻¹ x m⁴ x s²
+978,nan,G96,cubic metre per bar,nan,1M,m³/bar,10⁻⁵ kg⁻¹ x m⁴ x s²
+979,nan,G97,millilitre per bar,nan,1M,ml/bar,10⁻¹¹ kg⁻¹ x m⁴ x s²
+980,nan,G98,microhenry per kiloohm,nan,1M,µH/kΩ,10⁻⁹ s
+981,nan,G99,microhenry per ohm,nan,1M,µH/Ω,10⁻⁶ s
+982,nan,GB,gallon (US) per day,nan,3.5,gal (US)/d,"4,381 264 x 10⁻⁸ m³/s"
+983,nan,GBQ,gigabecquerel,nan,1M,GBq,10⁹ Bq
+984,X,GC,gram per 100 gram,nan,3.7,nan,nan
+985,X,GD,gross barrel,nan,3.1,nan,nan
+986,nan,GDW,"gram, dry weight","A unit of mass defining the number of grams of a product, disregarding the water content of the product.",3.1,nan,nan
+987,nan,GE,pound per gallon (US),nan,2,lb/gal (US),"1,198 264 x 10² kg/m³"
+988,nan,GF,gram per metre (gram per 100 centimetres),nan,1M,g/m,10⁻³ kg/m
+989,nan,GFI,gram of fissile isotope,A unit of mass defining the number of grams of a fissile isotope (fissile isotope: an isotope whose nucleus is able to be split when irradiated with low energy neutrons).,3.1,gi F/S,nan
+990,nan,GGR,great gross,A unit of count defining the number of units in multiples of 1728 (12 x 12 x 12).,3.7,nan,1728
+991,X,GH,half gallon (US),nan,3.8,nan,nan
+992,nan,GIA,gill (US),nan,3.5,gi (US),"1,182 941 x 10⁻⁴ m³"
+993,nan,GIC,"gram, including container","A unit of mass defining the number of grams of a product, including its container.",3.1,nan,nan
+994,nan,GII,gill (UK),nan,3.5,gi (UK),"1,420 653 x 10⁻⁴ m³"
+995,nan,GIP,"gram, including inner packaging","A unit of mass defining the number of grams of a product, including its inner packaging materials.",3.1,nan,nan
+996,nan,GJ,gram per millilitre,nan,1S,g/ml,10³ kg/m³
+997,X,GK,gram per kilogram,nan,3.7,nan,nan
+998,nan,GL,gram per litre,nan,1S,g/l,kg/m³
+999,nan,GLD,dry gallon (US),nan,2,dry gal (US),"4,404 884 x 10⁻³ m³"
+1000,nan,GLI,gallon (UK),nan,2,gal (UK),"4,546 092 x 10⁻³ m³"
+1001,nan,GLL,gallon (US),nan,2,gal (US),"3,785 412 x 10⁻³ m³"
+1002,nan,GM,gram per square metre,nan,1M,g/m²,10⁻³ kg/m²
+1003,X,GN,gross gallon,nan,3.1,nan,nan
+1004,nan,GO,milligram per square metre,nan,1,mg/m²,10⁻⁶ kg/m²
+1005,nan,GP,milligram per cubic metre,nan,1M,mg/m³,10⁻⁶ kg/m³
+1006,nan,GQ,microgram per cubic metre,nan,1M,µg/m³,10⁻⁹ kg/m³
+1007,nan,GRM,gram,nan,1S,g,10⁻³ kg
+1008,nan,GRN,grain,nan,2,gr,"64,798 91 x 10⁻⁶ kg"
+1009,nan,GRO,gross,A unit of count defining the number of units in multiples of 144 (12 x 12).,3.7,gr,144
+1010,D,GRT,gross register ton,"A unit of mass equal to the total cubic footage before deductions, where 1 register ton is equal to 100 cubic feet. Refer International Convention on tonnage measurement of ships.",3.4,nan,nan
+1011,D,GT,gross ton,"A unit of mass equal to 2240 pounds. Refer International Convention on Tonnage measurement of Ships.,Synonym: ton (UK) or long ton (US) (common code LTN)","3.1,3.4",nan,nan
+1012,nan,GV,gigajoule,nan,1S,GJ,10⁹ J
+1013,X,GW,gallon per thousand cubic foot,nan,3.5,nan,nan
+1014,nan,GWH,gigawatt hour,nan,1S,GW·h,"3,6 x 10¹² J"
+1015,X,GY,gross yard,nan,3.1,nan,nan
+1016,X,GZ,gage system,nan,3.9,nan,nan
+1017,nan,H03,henry per kiloohm,nan,1M,H/kΩ,10⁻³ s
+1018,nan,H04,henry per ohm,nan,1M,H/Ω,s
+1019,nan,H05,millihenry per kiloohm,nan,1M,mH/kΩ,10⁻⁶ s
+1020,nan,H06,millihenry per ohm,nan,1M,mH/Ω,10⁻³ s
+1021,nan,H07,pascal second per bar,nan,1M,Pa·s/bar,10⁻⁵ s
+1022,nan,H08,microbecquerel,nan,1M,µBq,10⁻⁶ Bq
+1023,nan,H09,reciprocal year,nan,1M,1/y,"3,168 81 x 10⁻⁸ s⁻¹"
+1024,X,H1,half page – electronic,nan,3.9,nan,nan
+1025,nan,H10,reciprocal hour,nan,1M,1/h,"2,777 78 × 10⁻⁴ s⁻¹"
+1026,nan,H11,reciprocal month,nan,1M,1/mo,"3,802 57 × 10⁻⁷ s⁻¹"
+1027,nan,H12,degree Celsius per hour,nan,1M,°C/h,"2,777 78 x 10⁻⁴ s⁻¹ K"
+1028,nan,H13,degree Celsius per minute,nan,1M,°C/min,"1,666 67 x 10⁻² s⁻¹ K"
+1029,nan,H14,degree Celsius per second,nan,1M,°C/s,s⁻¹ K
+1030,nan,H15,square centimetre per gram,nan,1M,cm²/g,10⁻¹ kg⁻¹ x m²
+1031,nan,H16,square decametre,Synonym: are,1S,dam²,10² m²
+1032,nan,H18,square hectometre,Synonym: hectare,1S,hm²,10⁴ m²
+1033,nan,H19,cubic hectometre,nan,1S,hm³,10⁶ m³
+1034,X,H2,half litre,nan,3.8,nan,nan
+1035,nan,H20,cubic kilometre,nan,1S,km³,10⁹ m³
+1036,nan,H21,blank,A unit of count defining the number of blanks.,3.2,nan,nan
+1037,nan,H22,volt square inch per pound-force,nan,2.0,V/(lbf/in²),"1,450 377 439 8 × 10⁻⁴ m³ x s⁻¹ x A⁻¹"
+1038,nan,H23,volt per inch,nan,2.0,V/in,"3,937 007 874 × 10¹ m x kg x s⁻³ x A⁻¹"
+1039,nan,H24,volt per microsecond,nan,1S,V/µs,10⁶ V/s
+1040,nan,H25,percent per kelvin,"A unit of proportion, equal to 0.01, in relation to the SI base unit Kelvin.",3.7,%/K,10⁻² K⁻¹
+1041,nan,H26,ohm per metre,nan,1M,Ω/m,Ω/m
+1042,nan,H27,degree per metre,nan,2,°/m,"1,745 329 x 10⁻² rad/m"
+1043,nan,H28,microfarad per kilometre,nan,1S,µF/km,10⁻⁹ F/m
+1044,nan,H29,microgram per litre,nan,1M,µg/l,10⁻⁶ m⁻³ x kg
+1045,nan,H30,square micrometre (square micron),nan,1S,µm²,10⁻¹² m²
+1046,nan,H31,ampere per kilogram,nan,1.0,A/kg,A x kg⁻¹
+1047,nan,H32,ampere squared second,nan,1.0,A²·s,A² x s
+1048,nan,H33,farad per kilometre,nan,1S,F/km,10⁻³ F/m
+1049,nan,H34,hertz metre,nan,2,Hz·m,Hz x m
+1050,nan,H35,kelvin metre per watt,nan,1.0,K·m/W,K x m⁻¹ x kg⁻¹ x s³
+1051,nan,H36,megaohm per kilometre,nan,1M,MΩ/km,10³ Ω/m
+1052,nan,H37,megaohm per metre,nan,1M,MΩ/m,10⁶ Ω/m
+1053,nan,H38,megaampere,nan,1S,MA,10⁶ A
+1054,nan,H39,megahertz kilometre,nan,2,MHz·km,10⁹ Hz x m
+1055,nan,H40,newton per ampere,nan,1.0,N/A,kg x m x s⁻² x A⁻¹
+1056,nan,H41,"newton metre watt to the power minus 0,5",nan,2.0,N·m·W⁻⁰‧⁵,kg x m² x s⁻² x W⁻⁰‧⁵
+1057,nan,H42,pascal per metre,nan,1M,Pa/m,m⁻² kg x s⁻²
+1058,nan,H43,siemens per centimetre,nan,1S,S/cm,10² S/m
+1059,nan,H44,teraohm,nan,1S,TΩ,10¹² Ω
+1060,nan,H45,volt second per metre,nan,1.0,V·s/m,m x kg x s⁻² x A⁻¹
+1061,nan,H46,volt per second,nan,1S,V/s,m² x kg x s⁻⁴ x A⁻¹
+1062,nan,H47,watt per cubic metre,nan,1.0,W/m³,m⁻¹ x kg x s⁻³
+1063,nan,H48,attofarad,nan,1S,aF,10⁻¹⁸ m⁻² x kg⁻¹ x s⁴ x A²
+1064,nan,H49,centimetre per hour,nan,1M,cm/h,"0,277 777 778 × 10⁻⁶ m x s⁻¹"
+1065,nan,H50,reciprocal cubic centimetre,nan,1M,cm⁻³,10⁶ m⁻³
+1066,nan,H51,decibel per kilometre,nan,1.0,dB/km,10⁻⁴ B/m
+1067,nan,H52,decibel per metre,nan,1.0,dB/m,10⁻¹ B/m
+1068,nan,H53,kilogram per bar,nan,1M,kg/bar,10⁻⁵ m x s²
+1069,nan,H54,kilogram per cubic decimetre kelvin,nan,1M,(kg/dm³)/K,10³ m⁻³ x kg x K⁻¹
+1070,nan,H55,kilogram per cubic decimetre bar,nan,1M,(kg/dm³)/bar,10⁻² m⁻² x s²
+1071,nan,H56,kilogram per square metre second,nan,1.0,kg/(m²·s),kg m⁻² x s⁻¹
+1072,nan,H57,inch per two pi radiant,nan,2.0,in/revolution,"2,54 x 10⁻² m/(2 x π x rad)"
+1073,nan,H58,metre per volt second,nan,1.0,m/(V·s),m⁻¹ x kg⁻¹ x s² x A
+1074,nan,H59,square metre per newton,nan,1.0,m²/N,m x kg⁻¹ x s²
+1075,nan,H60,cubic metre per cubic metre,nan,1M,m³/m³,1.0
+1076,nan,H61,millisiemens per centimetre,nan,1S,mS/cm,10⁻¹ S/m
+1077,nan,H62,millivolt per minute,nan,1M,mV/min,"1,666 666 667 × 10⁻⁵ m² x kg x s⁻⁴ x A⁻¹"
+1078,nan,H63,milligram per square centimetre,nan,1S,mg/cm²,10⁻² m⁻² x kg
+1079,nan,H64,milligram per gram,nan,1S,mg/g,10⁻³ 1
+1080,nan,H65,millilitre per cubic metre,nan,1M,ml/m³,10⁻⁶ 1
+1081,nan,H66,millimetre per year,nan,2.0,mm/y,"3,15576 × 10⁴ m x s⁻¹"
+1082,nan,H67,millimetre per hour,nan,2.0,mm/h,"0,277 777 778 × 10⁻⁷ m x s⁻¹"
+1083,nan,H68,millimole per gram,nan,1M,mmol/g,mol x kg⁻¹
+1084,nan,H69,picopascal per kilometre,nan,1M,pPa/km,10⁻¹⁵ m⁻² x kg x s⁻²
+1085,nan,H70,picosecond,nan,1.0,ps,10⁻¹² s
+1086,nan,H71,percent per month,"A unit of proportion, equal to 0.01, in relation to a month.",3.7,%/mo,nan
+1087,nan,H72,percent per hectobar,"A unit of proportion, equal to 0.01, in relation to 100-fold of the unit bar.",3.7,%/hbar,nan
+1088,nan,H73,percent per decakelvin,"A unit of proportion, equal to 0.01, in relation to 10-fold of the SI base unit Kelvin.",3.7,%/daK,10⁻³ K⁻¹
+1089,nan,H74,watt per metre,nan,1M,W/m,W m⁻¹
+1090,nan,H75,decapascal,nan,1M,daPa,10¹ Pa
+1091,nan,H76,gram per millimetre,nan,1M,g/mm,10¹ kg x m⁻¹
+1092,nan,H77,module width,A unit of measure used to describe the breadth of electronic assemblies as an installation standard or mounting dimension.,3,MW,nan
+1093,D,H78,conventional centimetre of water,nan,2,cm H₂O,"9,806 65 × 10¹ Pa"
+1094,nan,H79,French gauge,"A unit of distance used for measuring the diameter of small tubes such as urological instruments and catheters.,Synonym: French, Charrière, Charrière gauge",2,Fg,"0,333 333 333 × 10⁻³ m"
+1095,nan,H80,rack unit,A unit of measure used to describe the height in rack units of equipment intended for mounting in a 19-inch rack or a 23-inch rack. One rack unit is 1.75 inches (44.45 mm) high.,3,U or RU,"4,445 × 10⁻² m"
+1096,nan,H81,millimetre per minute,nan,1M,mm/min,"1,666 666 667 × 10⁻⁵ m x s⁻¹"
+1097,nan,H82,big point,A unit of length defining the number of big points (big point: Adobe software(US) defines the big point to be exactly 1/72 inch (0.013 888 9 inch or 0.352 777 8 millimeters)),3.5,bp,"0,352 777 8 × 10⁻³ m"
+1098,nan,H83,litre per kilogram,nan,1M,l/kg,10⁻³ m³ x kg⁻¹
+1099,nan,H84,gram millimetre,nan,1M,g·mm,10⁻⁶ kg x m
+1100,nan,H85,reciprocal week,nan,1M,1/wk,"1,647 989 452 868 × 10⁻⁶ s⁻¹"
+1101,nan,H87,piece,"A unit of count defining the number of pieces (piece: a single item, article or exemplar).",3.8,nan,nan
+1102,nan,H88,megaohm kilometre,nan,1S,MΩ·km,10⁹ Ω x m
+1103,nan,H89,percent per ohm,"A unit of proportion, equal to 0.01, in relation to the SI derived unit ohm.",3.7,%/Ω,10⁻² Ω⁻¹
+1104,nan,H90,percent per degree,"A unit of proportion, equal to 0.01, in relation to an angle of one degree.",3.7,%/°,"0,572 957 8 rad⁻¹"
+1105,nan,H91,percent per ten thousand,"A unit of proportion, equal to 0.01, in relation to multiples of ten thousand.",3.7,%/10000,10⁻⁶
+1106,nan,H92,percent per one hundred thousand,"A unit of proportion, equal to 0.01, in relation to multiples of one hundred thousand.",3.7,%/100000,10⁻⁷
+1107,nan,H93,percent per hundred,"A unit of proportion, equal to 0.01, in relation to multiples of one hundred.",3.7,%/100,10⁻⁴
+1108,nan,H94,percent per thousand,"A unit of proportion, equal to 0.01, in relation to multiples of one thousand.",3.7,%/1000,10⁻⁵
+1109,nan,H95,percent per volt,"A unit of proportion, equal to 0.01, in relation to the SI derived unit volt.",3.7,%/V,10⁻² V⁻¹
+1110,nan,H96,percent per bar,"A unit of proportion, equal to 0.01, in relation to an atmospheric pressure of one bar.",3.7,%/bar,10⁻⁷ Pa⁻¹
+1111,nan,H98,percent per inch,"A unit of proportion, equal to 0.01, in relation to an inch.",3.7,%/in,"0,393 700 8 m⁻¹"
+1112,nan,H99,percent per metre,"A unit of proportion, equal to 0.01, in relation to a metre.",3.7,%/m,10⁻² m⁻¹
+1113,nan,HA,hank,"A unit of length, typically for yarn.",3.9,nan,nan
+1114,D,HAR,hectare,Synonym: square hectometre,2.0,ha,10⁴ m²
+1115,nan,HBA,hectobar,nan,1M,hbar,10⁷ Pa
+1116,nan,HBX,hundred boxes,A unit of count defining the number of boxes in multiples of one hundred box units.,3.2,nan,nan
+1117,nan,HC,hundred count,A unit of count defining the number of units counted in multiples of 100.,3.7,nan,nan
+1118,X,HD,half dozen,nan,3.7,nan,6
+1119,nan,HDW,"hundred kilogram, dry weight","A unit of mass defining the number of hundred kilograms of a product, disregarding the water content of the product.",3.1,nan,nan
+1120,X,HE,hundredth of a carat,nan,3.5,nan,nan
+1121,nan,HEA,head,A unit of count defining the number of heads (head: a person or animal considered as one of a number).,3.5,nan,nan
+1122,X,HF,hundred foot,nan,3.8,nan,nan
+1123,nan,HGM,hectogram,nan,1M,hg,10⁻¹ kg
+1124,nan,HH,hundred cubic foot,A unit of volume equal to one hundred cubic foot.,3.8,nan,nan
+1125,X,HI,hundred sheet,nan,3.8,nan,nan
+1126,nan,HIU,hundred international unit,A unit of count defining the number of international units in multiples of 100.,3.7,nan,nan
+1127,D,HJ,metric horse power,nan,2,metric hp,"735,498 75 W"
+1128,X,HK,hundred kilogram,nan,3.8,nan,nan
+1129,nan,HKM,"hundred kilogram, net mass","A unit of mass defining the number of hundred kilograms of a product, after deductions.",3.1,nan,nan
+1130,X,HL,hundred foot (linear),nan,3.8,nan,nan
+1131,nan,HLT,hectolitre,nan,1S,hl,10⁻¹ m³
+1132,nan,HM,mile per hour (statute mile),nan,2,mile/h,"0,447 04 m/s"
+1133,nan,HMQ,million cubic metre,A unit of volume equal to one million cubic metres.,3.8,Mm³,nan
+1134,nan,HMT,hectometre,nan,1M,hm,10² m
+1135,D,HN,conventional millimetre of mercury,nan,2,mm Hg,"133,322 4 Pa"
+1136,X,HO,hundred troy ounce,nan,3.8,nan,nan
+1137,D,HP,conventional millimetre of water,nan,2,mm H₂O,"9,806 65 Pa"
+1138,nan,HPA,hectolitre of pure alcohol,A unit of volume equal to one hundred litres of pure alcohol.,3.1,nan,nan
+1139,X,HS,hundred square foot,nan,3.8,nan,nan
+1140,X,HT,half hour,nan,3.8,nan,nan
+1141,nan,HTZ,hertz,nan,1,Hz,Hz
+1142,nan,HUR,hour,nan,1,h,3 600 s
+1143,X,HY,hundred yard,nan,3.8,nan,nan
+1144,nan,IA,inch pound (pound inch),nan,2,in·lb,"1,152 12 x 10⁻² kg x m"
+1145,X,IC,count per inch,nan,3.9,nan,nan
+1146,nan,IE,person,A unit of count defining the number of persons.,3.9,nan,nan
+1147,X,IF,inches of water,Use inch of water (common code F78),3.1,nan,nan
+1148,X,II,column inch,nan,3.9,nan,nan
+1149,X,IL,inch per minute,nan,3.5,nan,nan
+1150,X,IM,impression,nan,3.9,nan,nan
+1151,nan,INH,inch,nan,2,in,"25,4 x 10⁻³ m"
+1152,nan,INK,square inch,nan,2,in²,"6,451 6 x 10⁻⁴ m²"
+1153,nan,INQ,cubic inch,Synonym: inch cubed,2,in³,"16,387 064 x 10⁻⁶ m³"
+1154,X,IP,insurance policy,nan,3.9,nan,nan
+1155,nan,ISD,international sugar degree,"A unit of measure defining the sugar content of a solution, expressed in degrees.",3.5,nan,nan
+1156,X,IT,count per centimetre,nan,3.9,nan,nan
+1157,nan,IU,inch per second,nan,2,in/s,"0,025 4 m/s"
+1158,nan,IUG,international unit per gram,A unit of count defining the number of international units per gram.,3.7,nan,nan
+1159,nan,IV,inch per second squared,nan,2,in/s²,"0,025 4 m/s²"
+1160,nan,J10,percent per millimetre,"A unit of proportion, equal to 0.01, in relation to a millimetre.",3.7,%/mm,10 m⁻¹
+1161,nan,J12,per mille per psi,A unit of pressure equal to one thousandth of a psi (pound-force per square inch).,3.7,‰/psi,"1,450 377 x 10⁻⁷ Pa⁻¹"
+1162,nan,J13,degree API,A unit of relative density as a measure of how heavy or light a petroleum liquid is compared to water (API: American Petroleum Institute).,3.5,°API,nan
+1163,nan,J14,degree Baume (origin scale),A traditional unit of relative density for liquids. Named after Antoine Baumé.,3.5,°Bé,nan
+1164,nan,J15,degree Baume (US heavy),A unit of relative density for liquids heavier than water.,3.5,°Bé (US heavy),nan
+1165,nan,J16,degree Baume (US light),A unit of relative density for liquids lighter than water.,3.5,°Bé (US light),nan
+1166,nan,J17,degree Balling,"A unit of density as a measure of sugar content, especially of beer wort. Named after Karl Balling.",3.5,°Balling,nan
+1167,nan,J18,degree Brix,A unit of proportion used in measuring the dissolved sugar-to-water mass ratio of a liquid. Named after Adolf Brix.,3.5,°Bx,nan
+1168,nan,J19,degree Fahrenheit hour square foot per British thermal unit (thermochemical),nan,2,°F·h·ft²/Btuth,"0,176 228 m² x K/W"
+1169,nan,J2,joule per kilogram,nan,1,J/kg,J/kg
+1170,nan,J20,degree Fahrenheit per kelvin,nan,2,°F/K,"0,555 555 6"
+1171,nan,J21,degree Fahrenheit per bar,nan,2,°F/bar,"0,555 555 6 x 10⁻⁵ K/Pa"
+1172,nan,J22,degree Fahrenheit hour square foot per British thermal unit (international table),nan,2,°F·h·ft²/BtuIT,"0,176 110 2 m² x K/W"
+1173,nan,J23,degree Fahrenheit per hour,nan,2,°F/h,"1,543 210 x 10⁻⁴ K/s"
+1174,nan,J24,degree Fahrenheit per minute,nan,2,°F/min,"9,259 259 x 10⁻³  K/s"
+1175,nan,J25,degree Fahrenheit per second,nan,2,°F/s,"0,555 555 6 K/s"
+1176,nan,J26,reciprocal degree Fahrenheit,nan,2,1/°F,"1,8 1/K"
+1177,nan,J27,degree Oechsle,"A unit of density as a measure of sugar content of must, the unfermented liqueur from which wine is made. Named after Ferdinand Oechsle.",3.5,°Oechsle,nan
+1178,nan,J28,degree Rankine per hour,nan,2,°R/h,"1,543 210 x 10⁻⁴ K/s"
+1179,nan,J29,degree Rankine per minute,nan,2,°R/min,"9,259 259 x 10⁻³  K/s"
+1180,nan,J30,degree Rankine per second,nan,2,°R/s,"0,555 555 6 K/s"
+1181,nan,J31,degree Twaddell,A unit of density for liquids that are heavier than water.  1 degree Twaddle represents a difference in specific gravity of 0.005.,3.5,°Tw,nan
+1182,nan,J32,micropoise,nan,2,µP,10⁻⁶ Pa x s
+1183,nan,J33,microgram per kilogram,nan,1S,µg/kg,10⁻⁹
+1184,nan,J34,microgram per cubic metre kelvin,nan,2,(µg/m³)/K,10⁻⁹ (kg/m³)/K
+1185,nan,J35,microgram per cubic metre bar,nan,2,(µg/m³)/bar,10⁻¹⁴ (kg/m³)/Pa
+1186,nan,J36,microlitre per litre,nan,1S,µl/l,10⁻⁶
+1187,nan,J38,baud,A unit of signal transmission speed equal to one signalling event per second.,3.6,Bd,nan
+1188,nan,J39,British thermal unit (mean),nan,2,Btu,"1,055 87 x 10³ J"
+1189,nan,J40,British thermal unit (international table) foot per hour square foot degree Fahrenheit,nan,2,BtuIT·ft/(h·ft²·°F),"1,730 735 W/(m x K)"
+1190,nan,J41,British thermal unit (international table) inch per hour square foot degree Fahrenheit,nan,2,BtuIT·in/(h·ft²·°F),"0,144 227 9 W/(m x K)"
+1191,nan,J42,British thermal unit (international table) inch per second square foot degree Fahrenheit,nan,2,BtuIT·in/(s·ft²·°F),"5,192 204 x 10² W/(m x K)"
+1192,nan,J43,British thermal unit (international table) per pound degree Fahrenheit,nan,2,BtuIT/(lb·°F),"4,186 8 x 10³ J/(kg x K)"
+1193,nan,J44,British thermal unit (international table) per minute,nan,2,BtuIT/min,"17,584 266 W"
+1194,nan,J45,British thermal unit (international table) per second,nan,2,BtuIT/s,"1,055 056 x 10³ W"
+1195,nan,J46,British thermal unit (thermochemical) foot per hour square foot degree Fahrenheit,nan,2,Btuth·ft/(h·ft²·°F),"1,729 577 W/(m x K)"
+1196,nan,J47,British thermal unit (thermochemical) per hour,nan,2,Btuth/h,"0,292 875 1 W"
+1197,nan,J48,British thermal unit (thermochemical) inch per hour square foot degree Fahrenheit,nan,2,Btuth·in/(h·ft²·°F),"0,144 131 4 W/(m x K)"
+1198,nan,J49,British thermal unit (thermochemical) inch per second square foot degree Fahrenheit,nan,2,Btuth·in/(s·ft²·°F),"5,188 732 x 10² W/(m x K)"
+1199,nan,J50,British thermal unit (thermochemical) per pound degree Fahrenheit,nan,2,Btuth/(lb·°F),"4,184 x 10³ J/(kg x K)"
+1200,nan,J51,British thermal unit (thermochemical) per minute,nan,2,Btuth/min,"17,572 50 W"
+1201,nan,J52,British thermal unit (thermochemical) per second,nan,2,Btuth/s,"1,054 350 x 10³ W"
+1202,nan,J53,coulomb square metre per kilogram,nan,2,C·m²/kg,C x m²/kg
+1203,nan,J54,megabaud,A unit of signal transmission speed equal to 10⁶ (1000000) signaling events per second.,3.6,MBd,10⁶ Bd
+1204,nan,J55,watt second,nan,1S,W·s,W x s
+1205,nan,J56,bar per bar,nan,2,bar/bar,1
+1206,nan,J57,barrel (UK petroleum),nan,2,bbl (UK liq.),"0,159 113 15 m³"
+1207,nan,J58,barrel (UK petroleum) per minute,nan,2,bbl (UK liq.)/min,"2,651 886 m³/s"
+1208,nan,J59,barrel (UK petroleum) per day,nan,2,bbl (UK liq.)/d,"1,841 587 4 x 10⁻⁶ m³/s"
+1209,nan,J60,barrel (UK petroleum) per hour,nan,2,bbl (UK liq.)/h,"4,419 810 x 10⁻⁵ m³/s"
+1210,nan,J61,barrel (UK petroleum) per second,nan,2,bbl (UK liq.)/s,"0,159 113 15 m³/s"
+1211,nan,J62,barrel (US petroleum) per hour,nan,2,bbl (US)/h,"4,416 314 x 10⁻⁵ m³/s"
+1212,nan,J63,barrel (US petroleum) per second,nan,2,bbl (US)/s,"0,158 987 3 m³/s"
+1213,nan,J64,bushel (UK) per day,nan,2,bu (UK)/d,"4,209 343 x 10⁻⁷ m³/s"
+1214,nan,J65,bushel (UK) per hour,nan,2,bu (UK)/h,"1,010 242 x 10⁻⁵ m³/s"
+1215,nan,J66,bushel (UK) per minute,nan,2,bu (UK)/min,"6,061 453 x 10⁻⁴ m³/s"
+1216,nan,J67,bushel (UK) per second,nan,2,bu (UK)/s,"3,636 872 x 10⁻² m³/s"
+1217,nan,J68,bushel (US dry) per day,nan,2,bu (US dry)/d,"4,078 596 x 10⁻⁷ m³/s"
+1218,nan,J69,bushel (US dry) per hour,nan,2,bu (US dry)/h,"9,788 631 x 10⁻⁶ m³/s"
+1219,nan,J70,bushel (US dry) per minute,nan,2,bu (US dry)/min,"5,873 178 x 10⁻⁴ m³/s"
+1220,nan,J71,bushel (US dry) per second,nan,2,bu (US dry)/s,"3,523 907 x 10⁻² m³/s"
+1221,nan,J72,centinewton metre,nan,1S,cN·m,10⁻² N x m
+1222,nan,J73,centipoise per kelvin,nan,2,cP/K,10⁻³  Pa x s/K
+1223,nan,J74,centipoise per bar,nan,2,cP/bar,10⁻⁸ s
+1224,nan,J75,calorie (mean),nan,2,cal,"4,190 02 J"
+1225,nan,J76,calorie (international table) per gram degree Celsius,nan,2,calIT/(g·°C),"4,186 8 x 10³ J/(kg x K)"
+1226,nan,J78,calorie (thermochemical) per centimetre second degree Celsius,nan,2,calth/(cm·s·°C),"4,184 x 10² W/(m x K)"
+1227,nan,J79,calorie (thermochemical) per gram degree Celsius,nan,2,calth/(g·°C),"4,184 x 10³ J/(kg x K)"
+1228,nan,J81,calorie (thermochemical) per minute,nan,2,calth/min,"6,973 333 x 10⁻² W"
+1229,nan,J82,calorie (thermochemical) per second,nan,2,calth/s,"4,184 W"
+1230,nan,J83,clo,nan,2,clo,"0,155 m² x K/W"
+1231,nan,J84,centimetre per second kelvin,nan,2,(cm/s)/K,10⁻² (m/s)/K
+1232,nan,J85,centimetre per second bar,nan,2,(cm/s)/bar,10⁻⁷ (m/s)/Pa
+1233,nan,J87,cubic centimetre per cubic metre,nan,1S,cm³/m³,10⁻⁶
+1234,D,J89,centimetre of mercury,nan,2,cm Hg,"1,333 224 x 10³ Pa"
+1235,nan,J90,cubic decimetre per day,nan,1S,dm³/d,"1,157 41 x 10⁻⁸ m³/s"
+1236,nan,J91,cubic decimetre per cubic metre,nan,1S,dm³/m³,10⁻³
+1237,nan,J92,cubic decimetre per minute,nan,1S,dm³/min,"1,666 67 x 10⁻⁵ m³/s"
+1238,nan,J93,cubic decimetre per second,nan,1S,dm³/s,10⁻³ m³/s
+1239,D,J94,dyne centimetre,nan,2,dyn·cm,10⁻⁷ N x m
+1240,nan,J95,ounce (UK fluid) per day,nan,2,fl oz (UK)/d,"3,288 549 x 10⁻¹⁰ m³/s"
+1241,nan,J96,ounce (UK fluid) per hour,nan,2,fl oz (UK)/h,"7,892 517 x 10⁻⁹ m³/s"
+1242,nan,J97,ounce (UK fluid) per minute,nan,2,fl oz (UK)/min,"4,735 51 x 10⁻⁷ m³/s"
+1243,nan,J98,ounce (UK fluid) per second,nan,2,fl oz (UK)/s,"2,841 306 x 10⁻⁵ m³/s"
+1244,nan,J99,ounce (US fluid) per day,nan,2,fl oz (US)/d,"3,422 862 x 10⁻¹⁰ m³/s"
+1245,X,JB,jumbo,nan,3.4,nan,nan
+1246,nan,JE,joule per kelvin,nan,1,J/K,J/K
+1247,X,JG,jug,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+1248,nan,JK,megajoule per kilogram,nan,1S,MJ/kg,10⁶ J/kg
+1249,nan,JM,megajoule per cubic metre,nan,1M,MJ/m³,10⁶ J/m³
+1250,nan,JNT,pipeline joint,A count of the number of pipeline joints.,3.5,nan,nan
+1251,X,JO,joint,nan,3.9,nan,nan
+1252,nan,JOU,joule,nan,1,J,J
+1253,nan,JPS,hundred metre,A unit of count defining the number of 100 metre lengths.,3.1,nan,nan
+1254,X,JR,jar,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+1255,nan,JWL,number of jewels,A unit of count defining the number of jewels (jewel: precious stone).,3.7,nan,nan
+1256,nan,K1,kilowatt demand,A unit of measure defining the power load measured at predetermined intervals.,3.5,nan,nan
+1257,nan,K10,ounce (US fluid) per hour,nan,2,fl oz (US)/h,"8,214 869 x 10⁻⁹ m³/s"
+1258,nan,K11,ounce (US fluid) per minute,nan,2,fl oz (US)/min,"4,928 922 x 10⁻⁷ m³/s"
+1259,nan,K12,ounce (US fluid) per second,nan,2,fl oz (US)/s,"2,957 353 x 10⁻⁵ m³/s"
+1260,nan,K13,foot per degree Fahrenheit,nan,2,ft/°F,"0,548 64 m/K"
+1261,nan,K14,foot per hour,nan,2,ft/h,"8,466 667 x 10⁻⁵m/s"
+1262,nan,K15,foot pound-force per hour,nan,2,ft·lbf/h,"3,766 161 x 10⁻⁴ W"
+1263,nan,K16,foot pound-force per minute,nan,2,ft·lbf/min,"2,259 697 x 10⁻² W"
+1264,nan,K17,foot per psi,nan,2,ft/psi,"4,420 750 x 10⁻⁵ m/Pa"
+1265,nan,K18,foot per second degree Fahrenheit,nan,2,(ft/s)/°F,"0,548 64  (m/s)/K"
+1266,nan,K19,foot per second psi,nan,2,(ft/s)/psi,"4,420 750 x 10⁻⁵ (m/s)/Pa"
+1267,nan,K2,kilovolt ampere reactive demand,A unit of measure defining the reactive power demand equal to one kilovolt ampere of reactive power.,3.5,nan,nan
+1268,nan,K20,reciprocal cubic foot,nan,2,1/ft³,"35,314 66 m⁻³"
+1269,nan,K21,cubic foot per degree Fahrenheit,nan,2,ft³/°F,"5,097 033 x 10⁻² m³/K"
+1270,nan,K22,cubic foot per day,nan,2,ft³/d,"3,277 413 x 10⁻⁷ m³/s"
+1271,nan,K23,cubic foot per psi,nan,2,ft³/psi,"4,107 012 x 10⁻⁶ m³/Pa"
+1272,D,K24,foot of water,nan,2,ft H₂O,"2,989 067 x 10³  Pa"
+1273,D,K25,foot of mercury,nan,2,ft Hg,"4,063 666 x 10⁴ Pa"
+1274,nan,K26,gallon (UK) per day,nan,2,gal (UK)/d,"5,261 678 x 10⁻⁸ m³/s"
+1275,nan,K27,gallon (UK) per hour,nan,2,gal (UK)/h,"1,262 803 x 10⁻⁶ m³/s"
+1276,nan,K28,gallon (UK) per second,nan,2,gal (UK)/s,"4,546 09 x 10⁻³ m³/s"
+1277,nan,K3,kilovolt ampere reactive hour,A unit of measure defining the accumulated reactive energy equal to one kilovolt ampere of reactive power per hour.,3.5,kvar·h,nan
+1278,nan,K30,gallon (US liquid) per second,nan,2,gal (US liq.)/s,"3,785 412 x 10⁻³ m³/s"
+1279,nan,K31,gram-force per square centimetre,nan,2,gf/cm²,"98,066 5 Pa"
+1280,nan,K32,gill (UK) per day,nan,2,gi (UK)/d,"1,644 274 x 10⁻⁵ m³/s"
+1281,nan,K33,gill (UK) per hour,nan,2,gi (UK)/h,"3,946 258 x 10⁻⁸ m³/s"
+1282,nan,K34,gill (UK) per minute,nan,2,gi (UK)/min,"0,023 677 55 m³/s"
+1283,nan,K35,gill (UK) per second,nan,2,gi (UK)/s,"1,420 653 x 10⁻⁴ m³/s"
+1284,nan,K36,gill (US) per day,nan,2,gi (US)/d,"1,369 145 x 10⁻⁹ m³/s"
+1285,nan,K37,gill (US) per hour,nan,2,gi (US)/h,"3,285 947 x 10⁻⁸ m³/s"
+1286,nan,K38,gill (US) per minute,nan,2,gi (US)/min,"1,971 568 x 10⁻⁶ m³/s"
+1287,nan,K39,gill (US) per second,nan,2,gi (US)/s,"1,182 941 x 10⁻⁴ m³/s"
+1288,nan,K40,standard acceleration of free fall,nan,2,gn,"9,806 65 m/s²"
+1289,nan,K41,grain per gallon (US),nan,2,gr/gal (US),"1,711 806 x 10⁻² kg/m³"
+1290,nan,K42,horsepower (boiler),nan,2,boiler hp,"9,809 50 x 10³ W"
+1291,nan,K43,horsepower (electric),nan,2,electric hp,746 W
+1292,nan,K45,inch per degree Fahrenheit,nan,2,in/°F,"4,572 x 10⁻² m/K"
+1293,nan,K46,inch per psi,nan,2,in/psi,"3,683 959 x 10⁻⁶ m/Pa"
+1294,nan,K47,inch per second degree Fahrenheit,nan,2,(in/s)/°F,"4,572 x 10⁻² (m/s)/K"
+1295,nan,K48,inch per second psi,nan,2,(in/s)/psi,"3,683 959 x 10⁻⁶ (m/s)/Pa"
+1296,nan,K49,reciprocal cubic inch,nan,2,1/in³,"6,102 375 9 x 10⁴ m⁻³"
+1297,D,K5,kilovolt ampere (reactive),Use kilovar (common code KVR),1S,kvar,10³ V x A
+1298,nan,K50,kilobaud,A unit of signal transmission speed equal to 10³ (1000) signaling events per second.,3.6,kBd,10³ Bd
+1299,nan,K51,kilocalorie (mean),nan,2,kcal,"4,190 02 x 10³ J"
+1300,nan,K52,kilocalorie (international table) per hour metre degree Celsius,nan,2,kcal/(m·h·°C),"1,163 J/(m x s x K)"
+1301,nan,K53,kilocalorie (thermochemical),nan,2,kcalth,"4,184 x 10³ J"
+1302,nan,K54,kilocalorie (thermochemical) per minute,nan,2,kcalth/min,"69,733 33 W"
+1303,nan,K55,kilocalorie (thermochemical) per second,nan,2,kcalth/s,"4,184 x 10³ W"
+1304,nan,K58,kilomole per hour,nan,1S,kmol/h,"2,777 78 x 10⁻¹ mol/s"
+1305,nan,K59,kilomole per cubic metre kelvin,nan,2,(kmol/m³)/K,10³ (mol/m³)/K
+1306,nan,K6,kilolitre,nan,1M,kl,m³
+1307,nan,K60,kilomole per cubic metre bar,nan,2,(kmol/m³)/bar,10⁻² (mol/m³)/Pa
+1308,nan,K61,kilomole per minute,nan,1S,kmol/min,"16,666 7 mol/s"
+1309,nan,K62,litre per litre,nan,1S,l/l,1
+1310,nan,K63,reciprocal litre,nan,2,1/l,10³ m⁻³
+1311,nan,K64,pound (avoirdupois) per degree Fahrenheit,nan,2,lb/°F,"0,816 466 3 kg/K"
+1312,nan,K65,pound (avoirdupois) square foot,nan,2,lb·ft²,"4,214 011 x 10⁻² kg x m²"
+1313,nan,K66,pound (avoirdupois) per day,nan,2,lb/d,"5,249 912 x 10⁻⁶ kg/s"
+1314,nan,K67,pound per foot hour,nan,2,lb/(ft·h),"4,133 789 x 10⁻⁴ Pa x s"
+1315,nan,K68,pound per foot second,nan,2,lb/(ft·s),"1,488 164 Pa x s"
+1316,nan,K69,pound (avoirdupois) per cubic foot degree Fahrenheit,nan,2,(lb/ft³)/°F,"28,833 23 (kg/m³)/K"
+1317,nan,K70,pound (avoirdupois) per cubic foot psi,nan,2,(lb/ft³)/psi,"2,323 282 x 10⁻³"
+1318,nan,K71,pound (avoirdupois) per gallon (UK),nan,2,lb/gal (UK),"99,776 37 kg/m³"
+1319,nan,K73,pound (avoirdupois) per hour degree Fahrenheit,nan,2,(lb/h)/°F,"2,267 962 x 10⁻⁴ (kg/s)/K"
+1320,nan,K74,pound (avoirdupois) per hour psi,nan,2,(lb/h)/psi,"1,827 445 x 10⁻⁸ (kg/s)/Pa"
+1321,nan,K75,pound (avoirdupois) per cubic inch degree Fahrenheit,nan,2,(lb/in³)/°F,"4,982 384 x 10⁴ (kg/m³)/K"
+1322,nan,K76,pound (avoirdupois) per cubic inch psi,nan,2,(lb/in³)/psi,"4,014 632 (kg/m³)/Pa"
+1323,nan,K77,pound (avoirdupois) per psi,nan,2,lb/psi,"6,578 802 x 10⁻⁵ kg/Pa"
+1324,nan,K78,pound (avoirdupois) per minute,nan,2,lb/min,"7,559 873 x 10⁻³ kg/s"
+1325,nan,K79,pound (avoirdupois) per minute degree Fahrenheit,nan,2,lb/(min·°F),"1,360 777  x 10⁻² (kg/s)/K"
+1326,nan,K80,pound (avoirdupois) per minute psi,nan,2,(lb/min)/psi,"1,096 467 x 10⁻⁶ (kg/s)/Pa"
+1327,nan,K81,pound (avoirdupois) per second,nan,2,lb/s,"0,453 592 4 kg/s"
+1328,nan,K82,pound (avoirdupois) per second degree Fahrenheit,nan,2,(lb/s)/°F,"0,816 466 3 (kg/s)/K"
+1329,nan,K83,pound (avoirdupois) per second psi,nan,2,(lb/s)/psi,"6,578 802 x 10⁻⁵ (kg/s)/Pa"
+1330,nan,K84,pound per cubic yard,nan,2,lb/yd³,"0,593 276 4 kg/m³"
+1331,nan,K85,pound-force per square foot,nan,2,lbf/ft²,"47,880 26 Pa"
+1332,nan,K86,pound-force per square inch degree Fahrenheit,nan,2,psi/°F,"1,241 056 x 10⁴ Pa/K"
+1333,nan,K87,psi cubic inch per second,nan,2,psi·in³/s,"0,112 985 Pa x m³/s"
+1334,nan,K88,psi litre per second,nan,2,psi·l/s,"6,894 757 Pa x m³/s"
+1335,nan,K89,psi cubic metre per second,nan,2,psi·m³/s,"6,894 757  x 10³ Pa x m³/s"
+1336,nan,K90,psi cubic yard per second,nan,2,psi·yd³/s,"5,271 420 x 10³ Pa x m³/s"
+1337,nan,K91,pound-force second per square foot,nan,2,lbf·s/ft²,"47,880 26 Pa x s"
+1338,nan,K92,pound-force second per square inch,nan,2,lbf·s/in²,"6,894 757  x 10³ Pa x s"
+1339,nan,K93,reciprocal psi,nan,2,1/psi,"1,450 377 x 10⁻⁴ Pa⁻¹"
+1340,nan,K94,quart (UK liquid) per day,nan,2,qt (UK liq.)/d,"1,315 420 x 10⁻⁸ m³/s"
+1341,nan,K95,quart (UK liquid) per hour,nan,2,qt (UK liq.)/h,"3,157 008 x 10⁻⁷ m³/s"
+1342,nan,K96,quart (UK liquid) per minute,nan,2,qt (UK liq.)/min,"1,894 205 x 10⁻⁵ m³/s"
+1343,nan,K97,quart (UK liquid) per second,nan,2,qt (UK liq.)/s,"1,136 523 x 10⁻³ m³/s"
+1344,nan,K98,quart (US liquid) per day,nan,2,qt (US liq.)/d,"1,095 316 x 10⁻⁸ m³/s"
+1345,nan,K99,quart (US liquid) per hour,nan,2,qt (US liq.)/h,"2,628 758 x 10⁻⁷ m³/s"
+1346,nan,KA,cake,"A unit of count defining the number of cakes (cake: object shaped into a flat, compact mass).",3.9,nan,nan
+1347,nan,KAT,katal,A unit of catalytic activity defining the catalytic activity of enzymes and other catalysts.,1M,kat,s⁻¹ x mol
+1348,nan,KB,kilocharacter,A unit of information equal to 10³ (1000) characters.,3.9,nan,nan
+1349,nan,KBA,kilobar,nan,1M,kbar,10⁸ Pa
+1350,nan,KCC,kilogram of choline chloride,A unit of mass equal to one thousand grams of choline chloride.,3.1,kg C₅ H₁₄ClNO,nan
+1351,X,KD,kilogram decimal,nan,3.9,nan,nan
+1352,nan,KDW,kilogram drained net weight,"A unit of mass defining the net number of kilograms of a product, disregarding the liquid content of the product.",3.1,kg/net eda,nan
+1353,nan,KEL,kelvin,Refer ISO 80000-5 (Quantities and units — Part 5: Thermodynamics),1,K,K
+1354,X,KF,kilopacket,nan,3.9,nan,nan
+1355,X,KG,keg,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+1356,nan,KGM,kilogram,A unit of mass equal to one thousand grams.,1,kg,kg
+1357,nan,KGS,kilogram per second,nan,1,kg/s,kg/s
+1358,nan,KHY,kilogram of hydrogen peroxide,A unit of mass equal to one thousand grams of hydrogen peroxide.,3.1,kg H₂O₂,nan
+1359,nan,KHZ,kilohertz,nan,1S,kHz,10³ Hz
+1360,nan,KI,kilogram per millimetre width,nan,3.1,nan,10³ kg/m
+1361,nan,KIC,"kilogram, including container","A unit of mass defining the number of kilograms of a product, including its container.",3.1,nan,nan
+1362,nan,KIP,"kilogram, including inner packaging","A unit of mass defining the number of kilograms of a product, including its inner packaging materials.",3.1,nan,nan
+1363,nan,KJ,kilosegment,A unit of information equal to 10³ (1000) segments.,3.6,nan,nan
+1364,nan,KJO,kilojoule,nan,1S,kJ,10³ J
+1365,nan,KL,kilogram per metre,nan,1,kg/m,kg/m
+1366,nan,KLK,lactic dry material percentage,A unit of proportion defining the percentage of dry lactic material in a product.,3.5,nan,nan
+1367,nan,KLX,kilolux,A unit of illuminance equal to one thousand lux.,1M,klx,10³ cd x sr / m²
+1368,nan,KMA,kilogram of methylamine,A unit of mass equal to one thousand grams of methylamine.,3.1,kg met.am.,nan
+1369,nan,KMH,kilometre per hour,nan,1S,km/h,"0,277 778 m/s"
+1370,nan,KMK,square kilometre,nan,1S,km²,10⁶ m²
+1371,nan,KMQ,kilogram per cubic metre,A unit of weight expressed in kilograms of a substance that fills a volume of one cubic metre.,1,kg/m³,kg/m³
+1372,nan,KMT,kilometre,nan,1S,km,10³ m
+1373,nan,KNI,kilogram of nitrogen,A unit of mass equal to one thousand grams of nitrogen.,3.1,kg N,nan
+1374,nan,KNM,kilonewton per square metre,Pressure expressed in kN/m2.,1S,kN/m2,103pascal
+1375,nan,KNS,kilogram named substance,A unit of mass equal to one kilogram of a named substance.,3.1,nan,nan
+1376,nan,KNT,knot,nan,1,kn,"0,514 444 m/s"
+1377,nan,KO,milliequivalence caustic potash per gram of product,A unit of count defining the number of milligrams of potassium hydroxide per gram of product as a measure of the concentration of potassium hydroxide in the product.,3.9,nan,nan
+1378,nan,KPA,kilopascal,nan,1S,kPa,10³ Pa
+1379,nan,KPH,kilogram of potassium hydroxide (caustic potash),A unit of mass equal to one thousand grams of potassium hydroxide (caustic potash).,3.1,kg KOH,nan
+1380,nan,KPO,kilogram of potassium oxide,A unit of mass equal to one thousand grams of potassium oxide.,3.1,kg K₂O,nan
+1381,nan,KPP,kilogram of phosphorus pentoxide (phosphoric anhydride),A unit of mass equal to one thousand grams of phosphorus pentoxide phosphoric anhydride.,3.1,nan,nan
+1382,nan,KR,kiloroentgen,nan,2,kR,"2,58 x 10⁻¹ C/kg"
+1383,X,KS,thousand pound per square inch,nan,3.8,nan,nan
+1384,nan,KSD,kilogram of substance 90 % dry,A unit of mass equal to one thousand grams of a named substance that is 90% dry.,3.1,kg 90 % sdt,nan
+1385,nan,KSH,kilogram of sodium hydroxide (caustic soda),A unit of mass equal to one thousand grams of sodium hydroxide (caustic soda).,3.1,kg NaOH,nan
+1386,nan,KT,kit,"A unit of count defining the number of kits (kit: tub, barrel or pail).",3.2,nan,nan
+1387,X,KTM,kilometre,nan,1S,km,10³ m
+1388,nan,KTN,kilotonne,nan,1M,kt,10⁶ kg
+1389,nan,KUR,kilogram of uranium,A unit of mass equal to one thousand grams of uranium.,3.1,kg U,nan
+1390,nan,KVA,kilovolt - ampere,nan,1S,kV·A,10³ V x A
+1391,nan,KVR,kilovar,nan,1S,kvar,10³ V x A
+1392,nan,KVT,kilovolt,nan,1S,kV,10³ V
+1393,nan,KW,kilogram per millimetre,nan,1M,kg/mm,10³ kg/m
+1394,nan,KWH,kilowatt hour,nan,1S,kW·h,"3,6 x 10⁶ J"
+1395,+,KWY,kilowatt year,killowatt year,2,kW/year,nan
+1396,¦,KWN,Kilowatt hour per normalized cubic metre,Kilowatt hour per normalized cubic metre (temperature 0°C and pressure 1013.25 millibars ).,2,nan,nan
+1397,nan,KWO,kilogram of tungsten trioxide,A unit of mass equal to one thousand grams of tungsten trioxide.,3.1,kg WO₃,nan
+1398,¦,KWS,Kilowatt hour per standard cubic metre,Kilowatt hour per standard cubic metre (temperature 15°C and pressure 1013.25 millibars).,2,nan,nan
+1399,nan,KWT,kilowatt,nan,1S,kW,10³ W
+1400,nan,KX,millilitre per kilogram,nan,1M,ml/kg,10⁻⁶ m³/kg
+1401,nan,L10,quart (US liquid) per minute,nan,2,qt (US liq.)/min,"1,577 255 x 10⁻⁵ m³/s"
+1402,nan,L11,quart (US liquid) per second,nan,2,qt (US liq.)/s,"9,463 529 x 10⁻⁴ m³/s"
+1403,nan,L12,metre per second kelvin,nan,2,(m/s)/K,(m/s)/K
+1404,nan,L13,metre per second bar,nan,2,(m/s)/bar,10⁻⁵ (m/s)/Pa
+1405,nan,L14,square metre hour degree Celsius per kilocalorie (international table),nan,2,m²·h·°C/kcal,"0,859 845 2 m² x s x K/J"
+1406,nan,L15,millipascal second per kelvin,nan,2,mPa·s/K,10⁻³ Pa x s/K
+1407,nan,L16,millipascal second per bar,nan,2,mPa·s/bar,10⁻⁸ s
+1408,nan,L17,milligram per cubic metre kelvin,nan,2,(mg/m³)/K,10⁻⁶ (kg/m³)/K
+1409,nan,L18,milligram per cubic metre bar,nan,2,(mg/m³)/bar,10⁻¹¹ (kg/m³)/Pa
+1410,nan,L19,millilitre per litre,nan,1S,ml/l,10⁻³
+1411,nan,L2,litre per minute,nan,1M,l/min,"1,666 67 x 10⁻⁵ m³/s"
+1412,nan,L20,reciprocal cubic millimetre,nan,1S,1/mm³,10⁹ m⁻³
+1413,nan,L21,cubic millimetre per cubic metre,nan,1S,mm³/m³,10⁹
+1414,nan,L23,mole per hour,nan,1S,mol/h,"2,777 78 x 10⁻⁴ mol/s"
+1415,nan,L24,mole per kilogram kelvin,nan,2,(mol/kg)/K,(mol/kg)/K
+1416,nan,L25,mole per kilogram bar,nan,2,(mol/kg)/bar,10⁻⁵ (mol/kg)/Pa
+1417,nan,L26,mole per litre kelvin,nan,2,(mol/l)/K,10³ (mol/m³)/K
+1418,nan,L27,mole per litre bar,nan,2,(mol/l)/bar,10⁻² (mol/m³)/Pa
+1419,nan,L28,mole per cubic metre kelvin,nan,2,(mol/m³)/K,(mol/m³)/K
+1420,nan,L29,mole per cubic metre bar,nan,2,(mol/m³)/bar,10⁻⁵ (mol/m³)/Pa
+1421,nan,L30,mole per minute,nan,1S,mol/min,"1,666 67 x 10⁻² mol/s"
+1422,nan,L31,milliroentgen aequivalent men,nan,2,mrem,10⁻⁵ Sv
+1423,nan,L32,nanogram per kilogram,nan,1S,ng/kg,10⁻¹²
+1424,nan,L33,ounce (avoirdupois) per day,nan,2,oz/d,"3,281 194 x 10⁻⁷kg/s"
+1425,nan,L34,ounce (avoirdupois) per hour,nan,2,oz/h,"7,874 867 x 10⁻⁶ kg/s"
+1426,nan,L35,ounce (avoirdupois) per minute,nan,2,oz/min,"4,724 92 x 10⁻⁴ kg/s"
+1427,nan,L36,ounce (avoirdupois) per second,nan,2,oz/s,"2,834 952 x 10⁻² kg/s"
+1428,nan,L37,ounce (avoirdupois) per gallon (UK),nan,2,oz/gal (UK),"6,236 023 kg/m³"
+1429,nan,L38,ounce (avoirdupois) per gallon (US),nan,2,oz/gal (US),"7,489 152 kg/m³"
+1430,nan,L39,ounce (avoirdupois) per cubic inch,nan,2,oz/in³,"1,729 994 x 10³ kg/m³"
+1431,nan,L40,ounce (avoirdupois)-force,nan,2,ozf,"0,278 013 9 N"
+1432,nan,L41,ounce (avoirdupois)-force inch,nan,2,ozf·in,"7,061 552 x 10⁻³ N x m"
+1433,nan,L42,picosiemens per metre,nan,2,pS/m,10⁻¹² S/m
+1434,nan,L43,peck (UK),nan,2,pk (UK),"9,092 181 x 10⁻³ m³"
+1435,nan,L44,peck (UK) per day,nan,2,pk (UK)/d,"1,052 336 x 10⁻⁷ m³/s"
+1436,nan,L45,peck (UK) per hour,nan,2,pk (UK)/h,"2,525 606 x 10⁻⁶ m³/s"
+1437,nan,L46,peck (UK) per minute,nan,2,pk (UK)/min,"1,515 363 5 x 10⁻⁴ m³/s"
+1438,nan,L47,peck (UK) per second,nan,2,pk (UK)/s,"9,092 181 x 10⁻³ m³/s"
+1439,nan,L48,peck (US dry) per day,nan,2,pk (US dry)/d,"1,019 649 x 10⁻⁷ m³/s"
+1440,nan,L49,peck (US dry) per hour,nan,2,pk (US dry)/h,"2,447 158 x 10⁻⁶ m³/s"
+1441,nan,L50,peck (US dry) per minute,nan,2,pk (US dry)/min,"1,468 295 x 10⁻⁴ m³/s"
+1442,nan,L51,peck (US dry) per second,nan,2,pk (US dry)/s,"8,809 768 x 10⁻³ m³/s"
+1443,nan,L52,psi per psi,nan,2,psi/psi,1.0
+1444,nan,L53,pint (UK) per day,nan,2,pt (UK)/d,"6,577 098 x 10⁻⁹ m³/s"
+1445,nan,L54,pint (UK) per hour,nan,2,pt (UK)/h,"1,578 504 x 10⁻⁷ m³/s"
+1446,nan,L55,pint (UK) per minute,nan,2,pt (UK)/min,"9,471 022 x 10⁻⁶ m³/s"
+1447,nan,L56,pint (UK) per second,nan,2,pt (UK)/s,"5,682 613 x 10⁻⁴ m³/s"
+1448,nan,L57,pint (US liquid) per day,nan,2,pt (US liq.)/d,"5,476 580 x 10⁻⁹ m³/s"
+1449,nan,L58,pint (US liquid) per hour,nan,2,pt (US liq.)/h,"1,314 379 x 10⁻⁷ m³/s"
+1450,nan,L59,pint (US liquid) per minute,nan,2,pt (US liq.)/min,"7,886 275 x 10⁻⁶ m³/s"
+1451,nan,L60,pint (US liquid) per second,nan,2,pt (US liq.)/s,"4,731 765 x 10⁻⁴ m³/s"
+1452,X,L61,pint (US dry),Use dry pint (common code PTD),2,pt (US dry),"5,506 105 x 10⁻⁴ m³"
+1453,X,L62,quart (US dry),Use dry quart (US) (common code QTD),2,qt (US dry),"1,101 221 x 10⁻³ m³"
+1454,nan,L63,slug per day,nan,2,slug/d,"1,689 109 x 10⁻⁴ kg/s"
+1455,nan,L64,slug per foot second,nan,2,slug/(ft·s),"47,880 26 Pa x s"
+1456,nan,L65,slug per cubic foot,nan,2,slug/ft³,"5,153 788 x 10² kg/m³"
+1457,nan,L66,slug per hour,nan,2,slug/h,"4,053 861 x 10⁻³ kg/s"
+1458,nan,L67,slug per minute,nan,2,slug/min,"0,243 231 7 kg/s"
+1459,nan,L68,slug per second,nan,2,slug/s,"14,593 90 kg/s"
+1460,nan,L69,tonne per kelvin,nan,2,t/K,10³ kg/K
+1461,nan,L70,tonne per bar,nan,2,t/bar,10⁻² kg/Pa
+1462,nan,L71,tonne per day,nan,2,t/d,"1,157 41 x 10⁻² kg/s"
+1463,nan,L72,tonne per day kelvin,nan,2,(t/d)/K,"1,157 41 x 10⁻² (kg/s)/K"
+1464,nan,L73,tonne per day bar,nan,2,(t/d)/bar,"1,157 41 x 10⁻⁷ (kg/s)/Pa"
+1465,nan,L74,tonne per hour kelvin,nan,2,(t/h)/K,"2,777 78 x 10⁻¹ (kg/s)/K"
+1466,nan,L75,tonne per hour bar,nan,2,(t/h)/bar,"2,777 78 x 10⁻⁶ (kg/s)/Pa"
+1467,nan,L76,tonne per cubic metre kelvin,nan,2,(t/m³)/K,10³ (kg/m³)/K
+1468,nan,L77,tonne per cubic metre bar,nan,2,(t/m³)/bar,10⁻² (kg/m³)/Pa
+1469,nan,L78,tonne per minute,nan,2,t/min,"16,666 7 kg/s"
+1470,nan,L79,tonne per minute kelvin,nan,2,(t/min)/K,"16,666 7 (kg/s)/K"
+1471,nan,L80,tonne per minute bar,nan,2,(t/min)/bar,"1,666 67 x 10⁻⁴ (kg/s)/Pa"
+1472,nan,L81,tonne per second,nan,2,t/s,10³ kg/s
+1473,nan,L82,tonne per second kelvin,nan,2,(t/s)/K,10³ (kg/s)/K
+1474,nan,L83,tonne per second bar,nan,2,(t/s)/bar,10⁻² (kg/s)/Pa
+1475,nan,L84,ton (UK shipping),nan,2,British shipping ton,"1,189 3 m³"
+1476,nan,L85,ton long per day,nan,2,ton (UK)/d,"1,175 980 x 10⁻² kg/s"
+1477,nan,L86,ton (US shipping),nan,2,(US) shipping ton,"1,132 6 m³"
+1478,nan,L87,ton short per degree Fahrenheit,nan,2,ton (US)/°F,"1,632 932 x 10³ kg/K"
+1479,nan,L88,ton short per day,nan,2,ton (US)/d,"1,049 982 x 10⁻² kg/s"
+1480,nan,L89,ton short per hour degree Fahrenheit,nan,2,ton (US)/(h·°F),"0,453 592 2 kg/s x K"
+1481,nan,L90,ton short per hour psi,nan,2,(ton (US)/h)/psi,"3,654 889 x 10⁻⁵ (kg/s)/Pa"
+1482,nan,L91,ton short per psi,nan,2,ton (US)/psi,"0,131 576"
+1483,nan,L92,ton (UK long) per cubic yard,nan,2,ton.l/yd³ (UK),"1,328 939 x 10³ kg/m³"
+1484,nan,L93,ton (US short) per cubic yard,nan,2,ton.s/yd³ (US),"1,186 553 x 10³ kg/m³"
+1485,nan,L94,ton-force (US short),nan,2,ton.sh-force,"8,896 443 x 10³ N"
+1486,nan,L95,common year,nan,2,y (365 days),"3,153 6 x 10⁷ s"
+1487,nan,L96,sidereal year,nan,2,y (sidereal),"3,155 815 x 10⁷ s"
+1488,nan,L98,yard per degree Fahrenheit,nan,2,yd/°F,"1,645 92 m/K"
+1489,nan,L99,yard per psi,nan,2,yd/psi,"1,326 225 x 10⁻⁴ m/Pa"
+1490,nan,LA,pound per cubic inch,nan,2,lb/in³,"2,767 990 x 10⁴ kg/m³"
+1491,nan,LAC,lactose excess percentage,A unit of proportion defining the percentage of lactose in a product that exceeds a defined percentage level.,3.5,nan,nan
+1492,nan,LBR,pound,nan,2,lb,"0,453 592 37 kg"
+1493,nan,LBT,troy pound (US),nan,3.5,nan,"373,241 7 g"
+1494,X,LC,linear centimetre,nan,3.1,nan,nan
+1495,nan,LD,litre per day,nan,1M,l/d,"1,157 41 x 10⁻⁸ m³/s"
+1496,X,LE,lite,nan,3.9,nan,nan
+1497,nan,LEF,leaf,A unit of count defining the number of leaves.,3.5,nan,nan
+1498,nan,LF,linear foot,A unit of count defining the number of feet (12-inch) in length of a uniform width object.,3.1,nan,nan
+1499,nan,LH,labour hour,A unit of time defining the number of labour hours.,3.1,nan,nan
+1500,X,LI,linear inch,nan,3.1,nan,nan
+1501,X,LJ,large spray,nan,3.9,nan,nan
+1502,nan,LK,link,A unit of distance equal to 0.01 chain.,3.9,nan,nan
+1503,nan,LM,linear metre,A unit of count defining the number of metres in length of a uniform width object.,3.1,nan,nan
+1504,nan,LN,length,A unit of distance defining the linear extent of an item measured from end to end.,3.9,nan,nan
+1505,nan,LO,lot [unit of procurement],A unit of count defining the number of lots (lot: a collection of associated items).,3.9,nan,nan
+1506,nan,LP,liquid pound,A unit of mass defining the number of pounds of a liquid substance.,3.1,nan,nan
+1507,nan,LPA,litre of pure alcohol,A unit of volume equal to one litre of pure alcohol.,3.1,nan,nan
+1508,nan,LR,layer,A unit of count defining the number of layers.,3.9,nan,nan
+1509,nan,LS,lump sum,A unit of count defining the number of whole or a complete monetary amounts.,3.9,nan,nan
+1510,nan,LTN,ton (UK) or long ton (US),Synonym: gross ton (2240 lb),2,ton (UK),"1,016 047 x 10³ kg"
+1511,nan,LTR,litre,nan,1,l,10⁻³ m³
+1512,nan,LUB,"metric ton, lubricating oil",A unit of mass defining the number of metric tons of lubricating oil.,3.1,nan,nan
+1513,nan,LUM,lumen,nan,1,lm,cd x sr
+1514,nan,LUX,lux,nan,1,lx,cd x sr / m²
+1515,X,LX,linear yard per pound,nan,3.1,nan,nan
+1516,nan,LY,linear yard,A unit of count defining the number of 36-inch units in length of a uniform width object.,3.1,nan,nan
+1517,X,M0,magnetic tape,nan,3.6,nan,nan
+1518,nan,M1,milligram per litre,nan,1M,mg/l,10⁻³ kg/m³
+1519,nan,M10,reciprocal cubic yard,nan,2,1/yd³,"1,307 951 m⁻³"
+1520,nan,M11,cubic yard per degree Fahrenheit,nan,2,yd³/°F,"1,376 199 m³/K"
+1521,nan,M12,cubic yard per day,nan,2,yd³/d,"8,849 015 x 10⁻⁶ m³/s"
+1522,nan,M13,cubic yard per hour,nan,2,yd³/h,"2,123 764 x 10⁻⁴ m³/s"
+1523,nan,M14,cubic yard per psi,nan,2,yd³/psi,"1,108 893 x 10⁻⁴ m³/Pa"
+1524,nan,M15,cubic yard per minute,nan,2,yd³/min,"1,274 258 x 10⁻² m³/s"
+1525,nan,M16,cubic yard per second,nan,2,yd³/s,"0,764 554 9 m³/s"
+1526,nan,M17,kilohertz metre,nan,2,kHz·m,10³ Hz x m
+1527,nan,M18,gigahertz metre,nan,2,GHz·m,10⁹ Hz x m
+1528,nan,M19,Beaufort,"An empirical measure for describing wind speed based mainly on observed sea conditions. The Beaufort scale indicates the wind speed by numbers that typically range from 0 for calm, to 12 for hurricane.",3,Bft,nan
+1529,nan,M20,reciprocal megakelvin or megakelvin to the power minus one,nan,2,1/MK,10⁻⁶ K⁻¹
+1530,nan,M21,reciprocal kilovolt - ampere reciprocal hour,nan,2,1/kVAh,"2,777 778 x 10⁻⁷ (V x A x s)⁻¹"
+1531,nan,M22,millilitre per square centimetre minute,nan,2,(ml/min)/cm²,"2,777 778 x 10⁻⁶  (m³/s)/m²"
+1532,nan,M23,newton per centimetre,nan,1M,N/cm,10² N/m
+1533,nan,M24,ohm kilometre,nan,1M,Ω·km,10³ Ω x m
+1534,nan,M25,percent per degree Celsius,"A unit of proportion, equal to 0.01, in relation to a temperature of one degree.",3.7,%/°C,10⁻² °C⁻¹
+1535,nan,M26,gigaohm per metre,nan,2,GΩ/m,10⁹ Ω/m
+1536,nan,M27,megahertz metre,nan,2,MHz·m,10⁶ Hz x m
+1537,nan,M29,kilogram per kilogram,nan,1S,kg/kg,1
+1538,nan,M30,reciprocal volt - ampere reciprocal second,nan,1S,1/(V·A·s),(V x A x s)⁻¹
+1539,nan,M31,kilogram per kilometre,nan,1S,kg/km,10⁻³ kg/m
+1540,nan,M32,pascal second per litre,nan,2,Pa·s/l,10³ Pa x s/m³
+1541,nan,M33,millimole per litre,nan,1S,mmol/l,mol/m³
+1542,nan,M34,newton metre per square metre,nan,1S,N·m/m²,N x m/m²
+1543,nan,M35,millivolt - ampere,nan,1S,mV·A,10⁻³ V x A
+1544,nan,M36,30-day month,"A unit of count defining the number of months expressed in multiples of 30 days, one day equals 24 hours.",3.7,mo (30 days),"2,592 000 x 10⁶ s"
+1545,nan,M37,actual/360,"A unit of count defining the number of years expressed in multiples of 360 days, one day equals 24 hours.",3.7,y (360 days),"3,110 400 0 x 10⁷ s"
+1546,nan,M38,kilometre per second squared,1000-fold of the SI base unit metre divided by the power of the SI base unit second by exponent 2.,1M,km/s²,10³ m/s²
+1547,nan,M39,centimetre per second squared,"0,01-fold of the SI base unit metre divided by the power of the SI base unit second by exponent 2.",1M,cm/s²,10⁻² m/s²
+1548,nan,M4,monetary value,A unit of measure expressed as a monetary amount.,3.9,nan,nan
+1549,nan,M40,yard per second squared,Unit of the length according to the Anglo-American and Imperial system of units divided by the power of the SI base unit second by exponent 2.,2,yd/s²,"9,144 x 10⁻¹ m/s²"
+1550,nan,M41,millimetre per second squared,"0,001-fold of the SI base unit metre divided by the power of the SI base unit second by exponent 2.",1M,mm/s²,10⁻³ m/s²
+1551,nan,M42,mile (statute mile) per second squared,Unit of the length according to the Imperial system of units divided by the power of the SI base unit second by exponent 2.,2,mi/s²,"1,609 344 x 10³ m/s²"
+1552,nan,M43,mil,"Unit to indicate an angle at military zone, equal to the 6400th part of the full circle of the 360° or 2·p·rad.",2,mil,"9,817 477  x 10⁻⁴ rad"
+1553,nan,M44,revolution,Unit to identify an angle of the full circle of 360° or 2·p·rad (Refer ISO/TC12 SI Guide).,2,rev,"6,283 185 rad"
+1554,nan,M45,degree [unit of angle] per second squared,360 part of a full circle divided by the power of the SI base unit second and the exponent 2.,1M,°/s²,"1,745 329 x 10⁻² rad / s"
+1555,nan,M46,revolution per minute,Unit of the angular velocity.,2.0,r/min,"0,104 719 8 rad/s"
+1556,nan,M47,circular mil,"Unit of an area, of which the size is given by a diameter of length of 1 mm (0,001 in) based on the formula: area = p·(diameter/2)².",2,cmil,"5,067 075 x 10⁻¹⁰ m²"
+1557,nan,M48,square mile (based on U.S. survey foot),"Unit of the area, which is mainly common in the agriculture and forestry.",2,mi² (US survey),"2,589 998 x 10⁶ m²"
+1558,nan,M49,chain (based on U.S. survey foot),Unit of the length according the Anglo-American system of units.,2,ch (US survey) ,"2,011684 x 10 m"
+1559,nan,M5,microcurie,nan,2S,µCi,"3,7 x 10⁴ Bq"
+1560,nan,M50,furlong,Unit commonly used in Great Britain at rural distances: 1 furlong = 40 rods = 10 chains (UK) = 1/8 mile = 1/10 furlong = 220 yards = 660 foot.,2,fur,"2,011 68 x 10² m"
+1561,nan,M51,foot (U.S. survey),"Unit commonly used in the United States for ordnance survey.,",2,ft (US survey) ,"3,048 006 x 10⁻¹ m"
+1562,nan,M52,mile (based on U.S. survey foot),Unit commonly used in the United States for ordnance survey.,2,mi (US survey) ,"1,609347 x 10³ m"
+1563,nan,M53,metre per pascal,SI base unit metre divided by the derived SI unit pascal.,1M,m/Pa,kg⁻¹ x m² x s²
+1564,nan,M55,metre per radiant,Unit of the translation factor for implementation from rotation to linear movement.,1S,m/rad,m/rad
+1565,nan,M56,shake,Unit for a very short period.,2,shake,10⁻⁸ s
+1566,nan,M57,mile per minute,Unit of velocity from the Imperial system of units.,2,mi/min,"26,822 4 m/s"
+1567,nan,M58,mile per second,Unit of the velocity from the Imperial system of units.,2,mi/s,"1,609 344 x 10³ m/s"
+1568,nan,M59,metre per second pascal,SI base unit meter divided by the product of SI base unit second and the derived SI unit pascal.,1S,(m/s)/Pa,m² x kg⁻¹ x s
+1569,nan,M60,metre per hour,SI base unit metre divided by the unit hour.,2,m/h,"2,777 78 x 10⁻⁴ m/s"
+1570,nan,M61,inch per year,Unit of the length according to the Anglo-American and Imperial system of units divided by the unit common year with 365 days.,2,in/y,"8,048 774 x 10⁻¹⁰ m/s"
+1571,nan,M62,kilometre per second,1000-fold of the SI base unit metre divided by the SI base unit second.,2,km/s,10³ m/s
+1572,nan,M63,inch per minute,Unit inch according to the Anglo-American and Imperial system of units divided by the unit minute.,2,in/min,"4,233 333 x 10⁻⁴ m/s"
+1573,nan,M64,yard per second,Unit yard according to the Anglo-American and Imperial system of units divided by the SI base unit second.,2,yd/s,"9,144 x 10⁻¹ m/s"
+1574,nan,M65,yard per minute,Unit yard according to the Anglo-American and Imperial system of units divided by the unit minute.,2,yd/min,"1,524 x 10⁻² m/s"
+1575,nan,M66,yard per hour,Unit yard according to the Anglo-American and Imperial system of units divided by the unit hour.,2,yd/h,"2,54 x 10⁻⁴ m/s"
+1576,nan,M67,acre-foot (based on U.S. survey foot),"Unit of the volume, which is used in the United States to measure/gauge the capacity of reservoirs.",2,acre-ft (US survey),"1,233 489 x 10³ m³"
+1577,nan,M68,cord (128 ft3),Traditional unit of the volume of stacked firewood which has been measured with a cord.,2,cord,"3,624 556 m³"
+1578,nan,M69,cubic mile (UK statute),Unit of volume according to the Imperial system of units.,2,mi³,"4,168 182 x 10⁹ m³"
+1579,nan,M7,micro-inch,nan,2,µin,"25,4 x 10⁻⁹ m"
+1580,nan,M70,"ton, register",Traditional unit of the cargo capacity.,2,RT,"2,831 685 m³"
+1581,nan,M71,cubic metre per pascal,Power of the SI base unit meter by exponent 3 divided by the derived SI base unit pascal.,1S,m³/Pa,kg⁻¹ x m⁴ x s²
+1582,nan,M72,bel,Logarithmic relationship to base 10.,1M,B,B
+1583,nan,M73,kilogram per cubic metre pascal,SI base unit kilogram divided by the product of the power of the SI base unit metre with exponent 3 and the derived SI unit pascal.,1M,(kg/m³)/Pa,m⁻² x s²
+1584,nan,M74,kilogram per pascal,SI base unit kilogram divided by the derived SI unit pascal.,2.0,kg/Pa,m x s²
+1585,nan,M75,kilopound-force,1000-fold of the unit of the force pound-force (lbf) according to the Anglo-American system of units with the relationship.,2,kip,"4,448 222 x 10³ N"
+1586,nan,M76,poundal,"Non SI-conforming unit of the power, which corresponds to a mass of a pound multiplied with the acceleration of a foot per square second.",2,pdl,"1,382 550 x 10⁻¹ N"
+1587,nan,M77,kilogram metre per second squared,Product of the SI base unit kilogram and the SI base unit metre divided by the power of the SI base unit second by exponent 2.,2,kg·m/s²,(kg x m)/s²
+1588,nan,M78,pond,"0,001-fold of the unit of the weight, defined as a mass of 1 kg which finds out about a weight strength from 1 kp by the gravitational force at sea level which corresponds to a strength of 9,806 65 newton.",2,p,"9,806 65 x 10⁻³ N"
+1589,nan,M79,square foot per hour,Power of the unit foot according to the Anglo-American and Imperial system of units by exponent 2 divided by the unit of time hour.,2,ft²/h,"2,580 64 x 10⁻⁵ m²/s"
+1590,nan,M80,stokes per pascal,CGS (Centimetre-Gram-Second system) unit stokes divided by the derived SI unit pascal.,2,St/Pa,10⁻⁴ kg⁻¹ x m³ x s
+1591,nan,M81,square centimetre per second,"0,000 1-fold of the power of the SI base unit metre by exponent 2 divided by the SI base unit second.",2,cm²/s,10⁻⁴ m²/s
+1592,nan,M82,square metre per second pascal,Power of the SI base unit metre with the exponent 2 divided by the SI base unit second and the derived SI unit pascal.,1.0,(m²/s)/Pa,kg⁻¹ x m³ x s
+1593,nan,M83,denier,Traditional unit for the indication of the linear mass of textile fibers and yarns.,2.0,den,"1,111 111 x 10⁻⁷ kg/m"
+1594,nan,M84,pound per yard,Unit for linear mass according to avoirdupois system of units.,2,lb/yd,"4,960 546 x 10⁻¹ kg/m"
+1595,nan,M85,"ton, assay",Non SI-conforming unit of the mass used in the mineralogy to determine the concentration of precious metals in ore according to the mass of the precious metal in milligrams in a sample of the mass of an assay sound (number of troy ounces in a short ton (1 000 lb)).,2,nan,"2,916 667 x 10⁻² kg"
+1596,nan,M86,pfund,Outdated unit of the mass used in Germany.,2,pfd,"0,5 kg"
+1597,nan,M87,kilogram per second pascal,SI base unit kilogram divided by the product of the SI base unit second and the derived SI unit pascal.,1S,(kg/s)/Pa,m x s
+1598,nan,M88,tonne per month,Unit tonne divided by the unit month.,2,t/mo,"3,802 570 537 68 x 10⁻⁴ kg/s"
+1599,nan,M89,tonne per year,Unit tonne divided by the unit year with 365 days.,2,t/y,"3,168 808 781 x 10⁻⁵ kg/s"
+1600,nan,M9,million Btu per 1000 cubic foot,nan,3.9,MBTU/kft³,nan
+1601,nan,M90,kilopound per hour,1000-fold of the unit of the mass avoirdupois pound according to the avoirdupois unit system divided by the unit hour.,2,klb/h,"0,125 997 889 kg/s"
+1602,nan,M91,pound per pound,Proportion of the mass consisting of the avoirdupois pound according to the avoirdupois unit system divided by the avoirdupois pound according to the avoirdupois unit system.,2.0,lb/lb,1.0
+1603,nan,M92,pound-force foot,Product of the unit pound-force according to the Anglo-American system of units and the unit foot according to the Anglo-American and the Imperial system of units.,2,lbf·ft,"1,355 818 N x m"
+1604,nan,M93,newton metre per radian,Product of the derived SI unit newton and the SI base unit metre divided by the unit radian.,1M,N·m/rad,m² x kg x s⁻² x rad⁻¹
+1605,nan,M94,kilogram metre,Unit of imbalance as a product of the SI base unit kilogram and the SI base unit metre.,1S,kg·m,kg x m
+1606,nan,M95,poundal foot,Product of the non SI-conforming unit of the force poundal and the unit foot according to the Anglo-American and Imperial system of units .,2,pdl·ft,"4,214 011 x 10⁻² N x m"
+1607,nan,M96,poundal inch,Product of the non SI-conforming unit of the force poundal and the unit inch according to the Anglo-American and Imperial system of units .,2,pdl·in,"3,511 677 10⁻³ N x m"
+1608,nan,M97,dyne metre,CGS (Centimetre-Gram-Second system) unit of the rotational moment.,2,dyn·m,10⁻⁵ N x m
+1609,nan,M98,kilogram centimetre per second,"Product of the SI base unit kilogram and the 0,01-fold of the SI base unit metre divided by the SI base unit second.",1M,kg·(cm/s),10⁻² kg x m/s
+1610,nan,M99,gram centimetre per second,"Product of the 0,001-fold of the SI base unit kilogram and the 0,01-fold of the SI base unit metre divided by the SI base unit second.",1M,g·(cm/s),10⁻⁵ kg x m/s
+1611,X,MA,machine per unit,nan,3.9,nan,nan
+1612,nan,MAH,megavolt ampere reactive hour,A unit of electrical reactive power defining the total amount of reactive power across a power system.,3.1,Mvar·h,nan
+1613,nan,MAL,megalitre,nan,1M,Ml,10³ m³
+1614,nan,MAM,megametre,nan,2,Mm,10⁶ m
+1615,nan,MAR,megavar,A unit of electrical reactive power represented by a current of one thousand amperes flowing due a potential difference of one thousand volts where the sine of the phase angle between them is 1.,1M,Mvar,nan
+1616,nan,MAW,megawatt,A unit of power defining the rate of energy transferred or consumed when a current of 1000 amperes flows due to a potential of 1000 volts at unity power factor.,1S,MW,10⁶ W
+1617,nan,MBE,thousand standard brick equivalent,A unit of count defining the number of one thousand brick equivalent units.,3.5,nan,nan
+1618,nan,MBF,thousand board foot,A unit of volume equal to one thousand board foot.,3.5,nan,nan
+1619,nan,MBR,millibar,nan,1S,mbar,10² Pa
+1620,nan,MC,microgram,nan,1S,µg,10⁻⁹ kg
+1621,nan,MCU,millicurie,nan,2S,mCi,"3,7 x 10⁷ Bq"
+1622,nan,MD,air dry metric ton,"A unit of count defining the number of metric tons of a product, disregarding the water content of the product.",3.1,nan,nan
+1623,X,MF,milligram per square foot per side,nan,3.1,nan,nan
+1624,nan,MGM,milligram,nan,1S,mg,10⁻⁶ kg
+1625,nan,MHZ,megahertz,nan,1S,MHz,10⁶ Hz
+1626,nan,MIK,square mile (statute mile),nan,2,mi²,"2,589 988 km²"
+1627,nan,MIL,thousand,nan,3.7,nan,10³
+1628,nan,MIN,minute [unit of time],nan,1,min,60 s
+1629,nan,MIO,million,nan,3.7,nan,10⁶
+1630,nan,MIU,million international unit,A unit of count defining the number of international units in multiples of 10⁶.,3.7,nan,nan
+1631,X,MK,milligram per square inch,nan,3.5,mg/in²,nan
+1632,nan,MLD,milliard,Synonym: billion (US),3.7,nan,10⁹
+1633,nan,MLT,millilitre,nan,1S,ml,10⁻⁶ m³
+1634,nan,MMK,square millimetre,nan,1S,mm²,10⁻⁶ m²
+1635,nan,MMQ,cubic millimetre,nan,1S,mm³,10⁻⁹ m³
+1636,nan,MMT,millimetre,nan,1S,mm,10⁻³ m
+1637,nan,MND,"kilogram, dry weight","A unit of mass defining the number of kilograms of a product, disregarding the water content of the product.",3.1,nan,nan
+1638,nan,MON,month,"Unit of time equal to 1/12 of a year of 365,25 days.",2,mo,"2,629 800 x 10⁶ s"
+1639,nan,MPA,megapascal,nan,1S,MPa,10⁶ Pa
+1640,X,MQ,thousand metre,nan,3.8,nan,10³m
+1641,nan,MQH,cubic metre per hour,nan,1M,m³/h,"2,777 78 x 10⁻⁴ m³/s"
+1642,nan,MQS,cubic metre per second,nan,1,m³/s,m³/s
+1643,nan,MSK,metre per second squared,nan,1,m/s²,m/s²
+1644,X,MT,mat,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+1645,nan,MTK,square metre,nan,1,m²,m²
+1646,nan,MTQ,cubic metre,Synonym: metre cubed,1,m³,m³
+1647,nan,MTR,metre,nan,1,m,m
+1648,nan,MTS,metre per second,nan,1,m/s,m/s
+1649,X,MV,number of mults,nan,3.7,nan,nan
+1650,nan,MVA,megavolt - ampere,nan,1S,MV·A,10⁶ V x A
+1651,nan,MWH,megawatt hour (1000 kW.h),A unit of power defining the total amount of bulk energy transferred or consumed.,1S,MW·h,"3,6 x 10⁹ J"
+1652,nan,N1,pen calorie,A unit of count defining the number of calories prescribed daily for parenteral/enteral therapy.,3.9,nan,nan
+1653,nan,N10,pound foot per second,Product of the avoirdupois pound according to the avoirdupois unit system and the unit foot according to the Anglo-American and Imperial system of units divided by the SI base unit second.,2.0,lb·(ft/s),"1,382 550 x 10⁻¹ kg x m/s"
+1654,nan,N11,pound inch per second,Product of the avoirdupois pound according to the avoirdupois unit system and the unit inch according to the Anglo-American and Imperial system of units divided by the SI base unit second.,2.0,lb·(in/s),"1,152 125 x 10⁻² kg x m/s"
+1655,nan,N12,Pferdestaerke,"Obsolete unit of the power relating to DIN 1301-3:1979: 1 PS = 735,498 75 W.",2,PS,"7,354 988 x 10² W"
+1656,nan,N13,centimetre of mercury (0 ºC),"Non SI-conforming unit of pressure, at which a value of 1 cmHg meets the static pressure, which is generated by a mercury at a temperature of 0 °C with a height of 1 centimetre .",2,cmHg (0 ºC),"1,333 22 x 10³ Pa"
+1657,nan,N14,centimetre of water (4 ºC),"Non SI-conforming unit of pressure, at which a value of 1 cmH2O meets the static pressure, which is generated by a head of water at a temperature of 4 °C with a height of 1 centimetre .",2,cmH₂O (4 °C),"9,806 38 x 10 Pa"
+1658,nan,N15,foot of water (39.2 ºF),"Non SI-conforming unit of pressure according to the Anglo-American and Imperial system for units, whereas the value of 1 ftH2O is equivalent to the static pressure, which is generated by a head of water at a temperature 39,2°F with a height of 1 foot .",2,"ftH₂O (39,2 ºF)","2,988 98 x 10³  Pa"
+1659,nan,N16,inch of mercury (32 ºF),"Non SI-conforming unit of pressure according to the Anglo-American and Imperial system for units, whereas the value of 1 inHg meets the static pressure, which is generated by a mercury at a temperature of 32°F with a height of 1 inch.",2,inHG (32 ºF),"3,386 38 x 10³  Pa"
+1660,nan,N17,inch of mercury (60 ºF),"Non SI-conforming unit of pressure according to the Anglo-American and Imperial system for units, whereas the value of 1 inHg meets the static pressure, which is generated by a mercury at a temperature of 60°F with a height of 1 inch.",2,inHg (60 ºF),"3,376 85 x 10³  Pa"
+1661,nan,N18,inch of water (39.2 ºF),"Non SI-conforming unit of pressure according to the Anglo-American and Imperial system for units, whereas the value of 1 inH2O meets the static pressure, which is generated by a head of water at a temperature of 39,2°F with a height of 1 inch .",2,"inH₂O (39,2 ºF)","2,490 82 × 10² Pa"
+1662,nan,N19,inch of water (60 ºF),"Non SI-conforming unit of pressure according to the Anglo-American and Imperial system for units, whereas the value of 1 inH2O meets the static pressure, which is generated by a head of water at a temperature of 60°F with a height of 1 inch .",2,inH₂O (60 ºF),"2,488 4 × 10² Pa"
+1663,X,N2,number of lines,nan,3.9,nan,nan
+1664,nan,N20,kip per square inch,Non SI-conforming unit of the pressure according to the Anglo-American system of units as the 1000-fold of the unit of the force pound-force divided by the power of the unit inch by exponent 2.,2,ksi,"6,894 757 x 10⁶ Pa"
+1665,nan,N21,poundal per square foot,"Non SI-conforming unit of pressure by the Imperial system of units according to NIST: 1 pdl/ft² = 1,488 164 Pa.",2,pdl/ft²,"1,488 164 Pa"
+1666,nan,N22,ounce (avoirdupois) per square inch,Unit of the surface specific mass (avoirdupois ounce according to the avoirdupois system of units according to the surface square inch according to the Anglo-American and Imperial system of units).,2,oz/in²,"4,394 185 x 10 kg/m²"
+1667,nan,N23,conventional metre of water,"Not SI-conforming unit of pressure, whereas a value of 1 mH2O is equivalent to the static pressure, which is produced by one metre high water column .",2,mH₂O,"9,806 65 x 10³ Pa"
+1668,nan,N24,gram per square millimetre,"0,001-fold of the SI base unit kilogram divided by the 0.000 001-fold of the power of the SI base unit meter by exponent 2.",2,g/mm²,10³ kg/m²
+1669,nan,N25,pound per square yard,Unit for areal-related mass as a unit pound according to the avoirdupois unit system divided by the power of the unit yard according to the Anglo-American and Imperial system of units with exponent 2.,2,lb/yd²,"5,424 919 x 10⁻¹ kg/m²"
+1670,nan,N26,poundal per square inch,Non SI-conforming unit of the pressure according to the Imperial system of units (poundal by square inch).,2,pdl/in²,"2,142 957 × 10² Pa"
+1671,nan,N27,foot to the fourth power,"Power of the unit foot according to the Anglo-American and Imperial system of units by exponent 4 according to NIST: 1 ft4 = 8,630 975 m4.",2,ft⁴,"8,630 975 x 10⁻³ m⁴"
+1672,nan,N28,cubic decimetre per kilogram,"0,001 fold of the power of the SI base unit meter by exponent 3 divided by the SI based unit kilogram.",1M,dm³/kg,10⁻³ m³ x kg⁻¹
+1673,nan,N29,cubic foot per pound,Power of the unit foot according to the Anglo-American and Imperial system of units by exponent 3 divided by the unit avoirdupois pound according to the avoirdupois unit system.,2.0,ft³/lb,"6,242 796 x 10⁻² m³/kg"
+1674,nan,N3,print point,nan,3.5,nan,"0,013 8 in (approx)"
+1675,nan,N30,cubic inch per pound,Power of the unit inch according to the Anglo-American and Imperial system of units by exponent 3 divided by the avoirdupois pound according to the avoirdupois unit system .,2.0,in³/lb,"3,612 728 x 10⁻⁵ m³/kg"
+1676,nan,N31,kilonewton per metre,1000-fold of the derived SI unit newton divided by the SI base unit metre.,1M,kN/m,10³ N/m
+1677,nan,N32,poundal per inch,Non SI-conforming unit of the surface tension according to the Imperial unit system as quotient poundal by inch.,2.0,pdl/in,"5,443 110 N/m"
+1678,nan,N33,pound-force per yard,Unit of force per unit length based on the Anglo-American system of units.,2.0,lbf/yd,"4,864 635 N/m"
+1679,nan,N34,poundal second per square foot,Non SI-conforming unit of viscosity.,2.0,(pdl/ft²)·s,"1,488 164 Pa x s"
+1680,nan,N35,poise per pascal,CGS (Centimetre-Gram-Second system) unit poise divided by the derived SI unit pascal.,2,P/Pa,"0,1 s"
+1681,nan,N36,newton second per square metre,Unit of the dynamic viscosity as a product of unit of the pressure (newton by square metre) multiplied with the SI base unit second.,1S,(N/m²)·s,Pa x s
+1682,nan,N37,kilogram per metre second,Unit of the dynamic viscosity as a quotient SI base unit kilogram divided by the SI base unit metre and by the SI base unit second.,1.0,kg/(m·s),Pa x s
+1683,nan,N38,kilogram per metre minute,Unit of the dynamic viscosity as a quotient SI base unit kilogram divided by the SI base unit metre and by the unit minute.,1.0,kg/(m·min),"1,666 67 × 10⁻² Pa x s"
+1684,nan,N39,kilogram per metre day,Unit of the dynamic viscosity as a quotient SI base unit kilogram divided by the SI base unit metre and by the unit day.,1M,kg/(m·d),"1,157 41 × 10⁻⁵ Pa x s"
+1685,nan,N40,kilogram per metre hour,Unit of the dynamic viscosity as a quotient SI base unit kilogram divided by the SI base unit metre and by the unit hour.,1M,kg/(m·h),"2,777 78 × 10⁻⁴ Pa x s"
+1686,nan,N41,gram per centimetre second,"Unit of the dynamic viscosity as a quotient of the 0,001-fold of the SI base unit kilogram divided by the 0,01-fold of the SI base unit metre and SI base unit second.",1M,g/(cm·s),"0,1 Pa x s"
+1687,nan,N42,poundal second per square inch,Non SI-conforming unit of dynamic viscosity according to the Imperial system of units as product unit of the pressure (poundal by square inch) multiplied by the SI base unit second.,2.0,(pdl/in²)·s,"2,142 957 x 10² Pa x s"
+1688,nan,N43,pound per foot minute,Unit of the dynamic viscosity according to the Anglo-American unit system.,2.0,lb/(ft·min),"2,480 273 x 10⁻²  Pa x s"
+1689,nan,N44,pound per foot day,Unit of the dynamic viscosity according to the Anglo-American unit system.,2.0,lb/(ft·d),"1,722 412 x 10⁻⁵ Pa x s"
+1690,nan,N45,cubic metre per second pascal,Power of the SI base unit meter by exponent 3 divided by the product of the SI base unit second and the derived SI base unit pascal.,1S,(m³/s)/Pa,kg⁻¹ x m⁴ x s
+1691,nan,N46,foot poundal,Unit of the work (force-path).,2,ft·pdl,"4,214 011 x 10⁻² J"
+1692,nan,N47,inch poundal,Unit of work (force multiplied by path) according to the Imperial system of units as a product unit inch multiplied by poundal.,2.0,in·pdl,"3,511 677 x 10⁻³ J"
+1693,nan,N48,watt per square centimetre,"Derived SI unit watt divided by the power of the 0,01-fold the SI base unit metre by exponent 2.",2.0,W/cm²,10⁴ W/m²
+1694,nan,N49,watt per square inch,Derived SI unit watt divided by the power of the unit inch according to the Anglo-American and Imperial system of units by exponent 2.,2.0,W/in²,"1,550 003 x 10³ W/m²"
+1695,nan,N50,British thermal unit (international table) per square foot hour,Unit of the surface heat flux according to the Imperial system of units.,2.0,BtuIT/(ft²·h),"3,154 591 W/m²"
+1696,nan,N51,British thermal unit (thermochemical) per square foot hour,Unit of the surface heat flux according to the Imperial system of units.,2.0,Btuth/(ft²·h),"3,152 481 W/m²"
+1697,nan,N52,British thermal unit (thermochemical) per square foot minute,Unit of the surface heat flux according to the Imperial system of units.,2.0,Btuth/(ft²·min) ,"1,891 489 x 10² W/m²"
+1698,nan,N53,British thermal unit (international table) per square foot second,Unit of the surface heat flux according to the Imperial system of units.,2.0,BtuIT/(ft²·s),"1,135 653 x 10⁴ W/m²"
+1699,nan,N54,British thermal unit (thermochemical) per square foot second,Unit of the surface heat flux according to the Imperial system of units.,2.0,Btuth/(ft²·s),"1,134 893 x 10⁴ W/m²"
+1700,nan,N55,British thermal unit (international table) per square inch second,Unit of the surface heat flux according to the Imperial system of units.,2.0,BtuIT/(in²·s),"1,634 246 x 10⁶ W/m²"
+1701,nan,N56,calorie (thermochemical) per square centimetre minute,Unit of the surface heat flux according to the Imperial system of units.,2.0,calth/(cm²·min),"6,973 333 x 10² W/m²"
+1702,nan,N57,calorie (thermochemical) per square centimetre second,Unit of the surface heat flux according to the Imperial system of units.,2.0,calth/(cm²·s),"4,184 x 10⁴ W/m²"
+1703,nan,N58,British thermal unit (international table) per cubic foot,Unit of the energy density according to the Imperial system of units.,2.0,BtuIT/ft³,"3,725 895 x10⁴ J/m³"
+1704,nan,N59,British thermal unit (thermochemical) per cubic foot,Unit of the energy density according to the Imperial system of units.,2.0,Btuth/ft³,"3,723 403 x10⁴ J/m³"
+1705,nan,N60,British thermal unit (international table) per degree Fahrenheit,Unit of the heat capacity according to the Imperial system of units.,2.0,BtuIT/ºF,"1,899 101 x 10³ J/K"
+1706,nan,N61,British thermal unit (thermochemical) per degree Fahrenheit,Unit of the heat capacity according to the Imperial system of units.,2.0,Btuth/ºF,"1,897 830 x 10³ J/K"
+1707,nan,N62,British thermal unit (international table) per degree Rankine,Unit of the heat capacity according to the Imperial system of units.,2.0,BtuIT/ºR,"1,899 101 x 10³ J/K"
+1708,nan,N63,British thermal unit (thermochemical) per degree Rankine,Unit of the heat capacity according to the Imperial system of units.,2.0,Btuth/ºR,"1,897 830 x 10³ J/K"
+1709,nan,N64,British thermal unit (thermochemical) per pound degree Rankine,Unit of the heat capacity (British thermal unit according to the international table according to the Rankine degree) according to the Imperial system of units divided by the unit avoirdupois pound according to the avoirdupois system of units.,2,(Btuth/°R)/lb,"4,184 x 10³ J/(kg x K)"
+1710,nan,N65,kilocalorie (international table) per gram kelvin,"Unit of the mass-related heat capacity as quotient 1000-fold of the calorie (international table) divided by the product of the 0,001-fold of the SI base units kilogram and kelvin.",2,(kcalIT/K)/g,"4,186 8 x 10⁶ J/(kg x K)"
+1711,nan,N66,British thermal unit (39 ºF),Unit of heat energy according to the Imperial system of units in a reference temperature of 39 °F.,2,Btu (39 ºF) ,"1,059 67  x 10³ J"
+1712,nan,N67,British thermal unit (59 ºF),Unit of heat energy according to the Imperial system of units in a reference temperature of 59 °F.,2,Btu (59 ºF),"1,054 80  x 10³ J"
+1713,nan,N68,British thermal unit (60 ºF),Unit of head energy according to the Imperial system of units at a reference temperature of 60 °F.,2,Btu (60 ºF) ,"1,054 68  x 10³ J"
+1714,nan,N69,calorie (20 ºC),"Unit for quantity of heat, which is to be required for 1 g air free water at a constant pressure from 101,325 kPa, to warm up the pressure of standard atmosphere at sea level, from 19,5 °C on 20,5 °C.",2,cal₂₀,"4,181 90"
+1715,nan,N70,quad (1015 BtuIT),Unit of heat energy according to the imperial system of units.,2,quad,"1,055 056 × 10¹⁸ J"
+1716,nan,N71,therm (EC),"Unit of heat energy in commercial use, within the EU defined: 1 thm (EC) = 100 000 BtuIT.",2,thm (EC),"1,055 06 × 10⁸ J"
+1717,nan,N72,therm (U.S.),Unit of heat energy in commercial use.,2,thm (US),"1,054 804 × 10⁸ J"
+1718,nan,N73,British thermal unit (thermochemical) per pound,Unit of the heat energy according to the Imperial system of units divided the unit avoirdupois pound according to the avoirdupois system of units.,2,Btuth/lb,"2,324 444 x 10³ J/kg"
+1719,nan,N74,British thermal unit (international table) per hour square foot degree Fahrenheit,Unit of the heat transition coefficient according to the Imperial system of units.,2,BtuIT/(h·ft²·ºF),"5,678 263 W/(m² x K)"
+1720,nan,N75,British thermal unit (thermochemical) per hour square foot degree Fahrenheit,Unit of the heat transition coefficient according to the imperial system of units.,2,Btuth/(h·ft²·ºF),"5,674 466 W/(m² x K)"
+1721,nan,N76,British thermal unit (international table) per second square foot degree Fahrenheit,Unit of the heat transition coefficient according to the imperial system of units.,2,BtuIT/(s·ft²·ºF),"2,044 175 x 10⁴ W/(m² x K)"
+1722,nan,N77,British thermal unit (thermochemical) per second square foot degree Fahrenheit,Unit of the heat transition coefficient according to the imperial system of units.,2,Btuth/(s·ft²·ºF) ,"2,042 808 x 10⁴ W/(m² x K)"
+1723,nan,N78,kilowatt per square metre kelvin,1000-fold of the derived SI unit watt divided by the product of the power of the SI base unit metre by exponent 2 and the SI base unit kelvin.,1M,kW/(m²·K),10³ W/(m² x K)
+1724,nan,N79,kelvin per pascal,SI base unit kelvin divided by the derived SI unit pascal.,1S,K/Pa,kg⁻¹ x m x s² x K
+1725,nan,N80,watt per metre degree Celsius,Derived SI unit watt divided by the product of the SI base unit metre and the unit for temperature degree Celsius.,1M,W/(m·°C),W/(m x K)
+1726,nan,N81,kilowatt per metre kelvin,1000-fold of the derived SI unit watt divided by the product of the SI base unit metre and the SI base unit kelvin.,1M,kW/(m·K),10³ W/(m x K)
+1727,nan,N82,kilowatt per metre degree Celsius,1000-fold of the derived SI unit watt divided by the product of the SI base unit metre and the unit for temperature degree Celsius.,1M,kW/(m·°C),10³ W/(m x K)
+1728,nan,N83,metre per degree Celcius metre,SI base unit metre divided by the product of the unit degree Celsius and the SI base unit metre.,2.0,m/(°C·m),K⁻¹
+1729,nan,N84,degree Fahrenheit hour per British thermal unit (international table),Non SI-conforming unit of the thermal resistance according to the Imperial system of units.,2.0,ºF/(BtuIT/h),"1,895 634 K/W"
+1730,nan,N85,degree Fahrenheit hour per British thermal unit (thermochemical),Non SI-conforming unit of the thermal resistance according to the Imperial system of units.,2.0,ºF/(Btuth/h),"1,896 903 K/W"
+1731,nan,N86,degree Fahrenheit second per British thermal unit (international table),Non SI-conforming unit of the thermal resistance according to the Imperial system of units.,2.0,ºF/(BtuIT/s),"5,265 651 x 10⁻⁴ K/W"
+1732,nan,N87,degree Fahrenheit second per British thermal unit (thermochemical),Non SI-conforming unit of the thermal resistance according to the Imperial system of units.,2.0,ºF/(Btuth/s),"5,269 175 x 10⁻⁴ K/W"
+1733,nan,N88,degree Fahrenheit hour square foot per British thermal unit (international table) inch,Unit of specific thermal resistance according to the Imperial system of units.,2.0,ºF·h·ft²/(BtuIT·in),"6,933 472 K x m/W"
+1734,nan,N89,degree Fahrenheit hour square foot per British thermal unit (thermochemical) inch,Unit of specific thermal resistance according to the Imperial system of units.,2.0,ºF·h·ft²/(Btuth·in),"6,938 112 K x m/W"
+1735,nan,N90,kilofarad,1000-fold of the derived SI unit farad.,1M,kF,10³ F
+1736,nan,N91,reciprocal joule,Reciprocal of the derived SI unit joule.,1.0,1/J,1/J
+1737,nan,N92,picosiemens,"0,000 000 000 001-fold of the derived SI unit siemens.",1M,pS,10⁻¹² S
+1738,nan,N93,ampere per pascal,SI base unit ampere divided by the derived SI unit pascal.,1M,A/Pa,kg⁻¹ x m x s² x A
+1739,nan,N94,franklin,"CGS (Centimetre-Gram-Second system) unit of the electrical charge, where the charge amounts to exactly 1 Fr where the force of 1 dyn on an equal load is performed at a distance of 1 cm.",2.0,Fr,"3,335 641 x 10⁻¹⁰ C"
+1740,nan,N95,ampere minute,A unit of electric charge defining the amount of charge accumulated by a steady flow of one ampere for one minute..,1M,A·min,60 C
+1741,nan,N96,biot,CGS (Centimetre-Gram-Second system) unit of the electric power which is defined by a force of 2 dyn per cm between two parallel conductors of infinite length with negligible cross-section in the distance of 1 cm.,2.0,Bi,10¹ A
+1742,nan,N97,gilbert,"CGS (Centimetre-Gram-Second system) unit of the magnetomotive force, which is defined by the work to increase the magnetic potential of a positive common pol with 1 erg.",2.0,Gi,"7,957 747 x 10⁻¹ A"
+1743,nan,N98,volt per pascal,Derived SI unit volt divided by the derived SI unit pascal.,1M,V/Pa,m³ x s⁻¹ x A⁻¹
+1744,nan,N99,picovolt,"0,000 000 000 001-fold of the derived SI unit volt.",1M,pV,10⁻¹² V
+1745,nan,NA,milligram per kilogram,nan,1S,mg/kg,10⁻⁶  1
+1746,nan,NAR,number of articles,A unit of count defining the number of articles (article: item).,3.7,nan,nan
+1747,X,NB,barge,nan,3.4,nan,nan
+1748,X,NBB,number of bobbins,nan,3.7,nan,nan
+1749,X,NC,car,nan,3.5,nan,nan
+1750,nan,NCL,number of cells,"A unit of count defining the number of cells (cell: an enclosed or circumscribed space, cavity, or volume).",3.7,nan,nan
+1751,X,ND,net barrel,nan,3.1,nan,nan
+1752,X,NE,net litre,nan,3.1,nan,nan
+1753,nan,NEW,newton,nan,1,N,(kg x m)/s²
+1754,nan,NF,message,A unit of count defining the number of messages.,3.9,nan,nan
+1755,X,NG,net gallon (us),nan,3.1,nan,nan
+1756,X,NH,message hour,nan,3.5,nan,nan
+1757,X,NI,net imperial gallon,nan,3.1,nan,nan
+1758,nan,NIL,nil,A unit of count defining the number of instances of nothing.,3.8,(),nan
+1759,nan,NIU,number of international units,A unit of count defining the number of international units.,3.7,nan,nan
+1760,X,NJ,number of screens,nan,3.7,nan,nan
+1761,nan,NL,load,A unit of volume defining the number of loads (load: a quantity of items carried or processed at one time).,3.4,nan,nan
+1762,¦,NM3,Normalised cubic metre,Normalised cubic metre (temperature 0°C and pressure 1013.25 millibars ),2,nan,m3
+1763,nan,NMI,nautical mile,nan,1,n mile,1 852 m
+1764,nan,NMP,number of packs,A unit of count defining the number of packs (pack: a collection of objects packaged together).,3.7,nan,nan
+1765,X,NN,train,nan,3.5,nan,nan
+1766,X,NPL,number of parcels,nan,3.7,nan,nan
+1767,D,NPR,number of pairs,A unit of count defining the number of pairs (pair: item described by two's).,3.7,nan,use pair
+1768,nan,NPT,number of parts,A unit of count defining the number of parts (part: component of a larger entity).,3.7,nan,nan
+1769,D,NQ,mho,nan,2,nan,S
+1770,D,NR,micromho,nan,2,nan,10⁻⁶ S
+1771,X,NRL,number of rolls,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.7,nan,nan
+1772,nan,NT,net ton,"A unit of mass equal to 2000 pounds, see ton (US).  Refer International Convention on tonnage measurement of Ships.",3.4,nan,nan
+1773,D,NTT,net register ton,"A unit of mass equal to the total cubic footage after deductions, where 1 register ton is equal to 100 cubic feet. Refer International Convention on tonnage measurement of Ships.",3.4,nan,nan
+1774,nan,NU,newton metre,nan,1,N·m,N x m
+1775,X,NV,vehicle,nan,3.4,nan,nan
+1776,nan,NX,part per thousand,"A unit of proportion equal to 10⁻³. ,Synonym: per mille",3.7,‰,1 x 10⁻³
+1777,X,NY,pound per air dry metric ton,nan,3.5,nan,nan
+1778,nan,OA,panel,"A unit of count defining the number of panels (panel: a distinct, usually rectangular, section of a surface).",3.9,nan,nan
+1779,nan,ODE,ozone depletion equivalent,"A unit of mass defining the ozone depletion potential in kilograms of a product relative to the calculated depletion for the reference substance, Trichlorofluoromethane (CFC-11).",3.1,nan,nan
+1780,nan,ODG,ODS Grams,"A unit of measure calculated by multiplying the mass of the substance in grams and the ozone-depleting potential for the substance.,",3.1,nan,nan
+1781,nan,ODK,ODS Kilograms,A unit of measure calculated by multiplying the mass of the substance in kilograms and the ozone-depleting potential for the substance.,3.1,nan,nan
+1782,nan,ODM,ODS Milligrams,A unit of measure calculated by multiplying the mass of the substance in milligrams and the ozone-depleting potential for the substance.,3.1,nan,nan
+1783,nan,OHM,ohm,nan,1,Ω,Ω
+1784,nan,ON,ounce per square yard,nan,2,oz/yd²,"3,390 575 x 10⁻² kg/m²"
+1785,nan,ONZ,ounce (avoirdupois),nan,2,oz,"2,834 952 x 10⁻² kg"
+1786,X,OP,two pack,nan,3.2,nan,nan
+1787,nan,OPM,oscillations per minute,The number of oscillations per minute.,2,o/min,1.667 x 10-2 /s
+1788,nan,OT,overtime hour,A unit of time defining the number of overtime hours.,3.1,nan,nan
+1789,D,OZ,ounce av,A unit of measure equal to 1/16 of a pound or about 28.3495 grams (av = avoirdupois). Use ounce (common code ONZ).,3.1,nan,nan
+1790,nan,OZA,fluid ounce (US),nan,2,fl oz (US),"2,957 353 x 10⁻⁵ m³"
+1791,nan,OZI,fluid ounce (UK),nan,2,fl oz (UK),"2,841 306 x 10⁻⁵ m³"
+1792,X,P0,page - electronic,nan,3.9,nan,nan
+1793,nan,P1,percent,A unit of proportion equal to 0.01.,3.7,% or pct,1 x 10⁻²
+1794,nan,P10,coulomb per metre,Derived SI unit coulomb divided by the SI base unit metre.,1.0,C/m,m⁻¹ x s x A
+1795,nan,P11,kiloweber,1000 fold of the derived SI unit weber.,1M,kWb,10³ Wb
+1796,nan,P12,gamma,Unit of magnetic flow density.,2.0,γ,10⁻⁹ T
+1797,nan,P13,kilotesla,1000-fold of the derived SI unit tesla.,1M,kT,10³ T
+1798,nan,P14,joule per second,Quotient of the derived SI unit joule divided by the SI base unit second.,1.0,J/s,W
+1799,nan,P15,joule per minute,Quotient from the derived SI unit joule divided by the unit minute.,1M,J/min,"1,666 67 × 10⁻² W"
+1800,nan,P16,joule per hour,Quotient from the derived SI unit joule divided by the unit hour.,1M,J/h,"2,777 78 × 10⁻⁴ W"
+1801,nan,P17,joule per day,Quotient from the derived SI unit joule divided by the unit day.,1M,J/d,"1,157 41 × 10⁻⁵ W"
+1802,nan,P18,kilojoule per second,Quotient from the 1000-fold of the derived SI unit joule divided by the SI base unit second.,1M,kJ/s,10³ W
+1803,nan,P19,kilojoule per minute,Quotient from the 1000-fold of the derived SI unit joule divided by the unit minute.,1M,kJ/min,"1,666 67 × 10 W"
+1804,nan,P2,pound per foot,nan,2,lb/ft,"1,488 164 kg/m"
+1805,nan,P20,kilojoule per hour,Quotient from the 1000-fold of the derived SI unit joule divided by the unit hour.,1M,kJ/h,"2,777 78 x 10⁻¹ W"
+1806,nan,P21,kilojoule per day,Quotient from the 1000-fold of the derived SI unit joule divided by the unit day.,1M,kJ/d,"1,157 41 x 10⁻² W"
+1807,nan,P22,nanoohm,"0,000 000 001-fold of the derived SI unit ohm.",1M,nΩ,10⁻⁹ Ω
+1808,nan,P23,ohm circular-mil per foot,Unit of resistivity.,2.0,Ω·cmil/ft ,"1,662 426 x 10⁻⁹ Ω x m"
+1809,nan,P24,kilohenry,1000-fold of the derived SI unit henry.,1M,kH,10³ H
+1810,nan,P25,lumen per square foot,Derived SI unit lumen divided by the power of the unit foot according to the Anglo-American and Imperial system of units by exponent 2.,2.0,lm/ft²,"1,076 391 x 10¹ cd x sr / m²"
+1811,nan,P26,phot,"CGS (Centimetre-Gram-Second system) unit of luminance, defined as lumen by square centimetre.",2.0,ph,10⁴ cd x sr / m²
+1812,nan,P27,footcandle,"Non SI conform traditional unit, defined as density of light which impinges on a surface which has a distance of one foot from a light source, which shines with an intensity of an international candle.",2.0,ftc,"1,076 391 x 10¹ cd x sr / m²"
+1813,nan,P28,candela per square inch,SI base unit candela divided by the power of unit inch according to the Anglo-American and Imperial system of units by exponent 2.,2.0,cd/in²,"1,550 003 x 10³ cd/m²"
+1814,nan,P29,footlambert,"Unit of the luminance according to the Anglo-American system of units, defined as emitted or reflected luminance of a lm/ft².",2.0,ftL,"3,426 259 cd/m²"
+1815,X,P3,three pack,nan,3.2,nan,nan
+1816,nan,P30,lambert,"CGS (Centimetre-Gram-Second system) unit of luminance, defined as the emitted or reflected luminance by one lumen per square centimetre.",2.0,Lb,"3,183 099 x 10³ cd/m²"
+1817,nan,P31,stilb,"CGS (Centimetre-Gram-Second system) unit of luminance, defined as emitted or reflected luminance by one lumen per square centimetre.",2.0,sb,10⁴ cd/m²
+1818,nan,P32,candela per square foot,Base unit SI candela divided by the power of the unit foot according to the Anglo-American and Imperial system of units by exponent 2.,2.0,cd/ft²,"1,076 391 x 10 cd/m²"
+1819,nan,P33,kilocandela,1000-fold of the SI base unit candela.,1M,kcd,10³ cd
+1820,nan,P34,millicandela,"0,001-fold of the SI base unit candela.",1M,mcd,10⁻³ cd
+1821,nan,P35,Hefner-Kerze,"Obsolete, non-legal unit of the power in Germany relating to DIN 1301-3:1979: 1 HK = 0,903 cd.",2.0,HK,"0,903 cd"
+1822,nan,P36,international candle,"Obsolete, non-legal unit of the power in Germany relating to DIN 1301-3:1979: 1 HK = 1,019 cd.",2.0,IK,"1,019 cd"
+1823,nan,P37,British thermal unit (international table) per square foot,Unit of the areal-related energy transmission according to the Imperial system of units.,2.0,BtuIT/ft²,"1,135 653 x 10⁴ J/m²"
+1824,nan,P38,British thermal unit (thermochemical) per square foot,Unit of the areal-related energy transmission according to the Imperial system of units.,2.0,Btuth/ft²,"1,134 893 x 10⁴ J/m²"
+1825,nan,P39,calorie (thermochemical) per square centimetre,Unit of the areal-related energy transmission according to the Imperial system of units.,2.0,calth/cm²,"4,184 x 10⁴ J/m²"
+1826,X,P4,four pack,nan,3.2,nan,nan
+1827,nan,P40,langley,CGS (Centimetre-Gram-Second system) unit of the areal-related energy transmission (as a measure of the incident quantity of heat of solar radiation on the earth's surface).,2.0,Ly,"4,184 x 10⁴ J/m²"
+1828,nan,P41,decade (logarithmic),"1 Dec := log2 10 ˜ 3,32 according to the logarithm for frequency range between f1 and f2, when f2/f1 = 10.",2,dec,dec
+1829,nan,P42,pascal squared second,Unit of the set as a product of the power of derived SI unit pascal with exponent 2 and the SI base unit second.,1.0,Pa²·s,m⁻² x kg² x s⁻³
+1830,nan,P43,bel per metre,Unit bel divided by the SI base unit metre.,1M,B/m,B/m
+1831,nan,P44,pound mole,Non SI-conforming unit of quantity of a substance relating that one pound mole of a chemical composition corresponds to the same number of pounds as the molecular weight of one molecule of this composition in atomic mass units.,2.0,lbmol,"453,592 4 mol"
+1832,nan,P45,pound mole per second,Non SI-conforming unit of the power of the amount of substance non-SI compliant unit of the molar flux relating that a pound mole of a chemical composition the same number of pound corresponds like the molecular weight of a molecule of this composition in atomic mass units.,2.0,lbmol/s,"4,535 924 x 10² mol/s"
+1833,nan,P46,pound mole per minute,Non SI-conforming unit of the power of the amount of substance non-SI compliant unit of the molar flux relating that a pound mole of a chemical composition the same number of pound corresponds like the molecular weight of a molecule of this composition in atomic mass units.,2.0,lbmol/h,"7,559 873 mol/s"
+1834,nan,P47,kilomole per kilogram,1000-fold of the SI base unit mol divided by the SI base unit kilogram.,1M,kmol/kg,10³ mol/kg
+1835,nan,P48,pound mole per pound,Non SI-conforming unit of the material molar flux divided by the avoirdupois pound for mass according to the avoirdupois unit system.,2.0,lbmol/lb,10³ mol/kg
+1836,nan,P49,newton square metre per ampere,Product of the derived SI unit newton and the power of SI base unit metre with exponent 2 divided by the SI base unit ampere.,1S,N·m²/A,m³ x kg x s⁻²  x A⁻¹
+1837,nan,P5,five pack,A unit of count defining the number of five-packs (five-pack: set of five items packaged together).,3.2,nan,nan
+1838,nan,P50,weber metre,Product of the derived SI unit weber and SI base unit metre.,1S,Wb·m,m³ x kg x s⁻²  x A⁻¹
+1839,nan,P51,mol per kilogram pascal,SI base unit mol divided by the product of the SI base unit kilogram and the derived SI unit pascal.,1S,(mol/kg)/Pa,m x kg⁻² x s² x mol
+1840,nan,P52,mol per cubic metre pascal,SI base unit mol divided by the product of the power from the SI base unit metre with exponent 3 and the derived SI unit pascal.,1S,(mol/m³)/Pa,m⁻² x kg⁻¹ x s² x mol
+1841,nan,P53,unit pole,CGS (Centimetre-Gram-Second system) unit for magnetic flux of a magnetic pole (according to the interaction of identical poles of 1 dyn at a distance of a cm).,2.0,unit pole ,"1,256 637 x 10⁻⁷ Wb"
+1842,nan,P54,milligray per second,"0,001-fold of the derived SI unit gray divided by the SI base unit second.",1M,mGy/s,10⁻³ Gy/s
+1843,nan,P55,microgray per second,"0,000 001-fold of the derived SI unit gray divided by the SI base unit second.",1M,µGy/s,10⁻⁶ Gy/s
+1844,nan,P56,nanogray per second,"0,000 000 001-fold of the derived SI unit gray divided by the SI base unit second.",1M,nGy/s,10⁻⁹ Gy/s
+1845,nan,P57,gray per minute,SI derived unit gray divided by the unit minute.,1M,Gy/min,"1,666 67 × 10⁻² Gy/s"
+1846,nan,P58,milligray per minute,"0,001-fold of the derived SI unit gray divided by the unit minute.",1M,mGy/min,"1,666 67 × 10⁻⁵ Gy/s"
+1847,nan,P59,microgray per minute,"0,000 001-fold of the derived SI unit gray divided by the unit minute.",1M,µGy/min,"1,666 67 × 10⁻⁸ Gy/s"
+1848,X,P6,six pack,nan,3.2,nan,nan
+1849,nan,P60,nanogray per minute,"0,000 000 001-fold of the derived SI unit gray divided by the unit minute.",1M,nGy/min,"1,666 67 × 10⁻¹¹ Gy/s"
+1850,nan,P61,gray per hour,SI derived unit gray divided by the unit hour.,1M,Gy/h,"2,777 78 × 10⁻⁴ Gy/s"
+1851,nan,P62,milligray per hour,"0,001-fold of the derived SI unit gray divided by the unit hour.",1M,mGy/h,"2,777 78 × 10⁻⁷ Gy/s"
+1852,nan,P63,microgray per hour,"0,000 001-fold of the derived SI unit gray divided by the unit hour.",1M,µGy/h,"2,777 78 × 10⁻¹⁰ Gy/s"
+1853,nan,P64,nanogray per hour,"0,000 000 001-fold of the derived SI unit gray divided by the unit hour.",1M,nGy/h,"2,777 78 × 10⁻¹³ Gy/s"
+1854,nan,P65,sievert per second,Derived SI unit sievert divided by the SI base unit second.,2.0,Sv/s,Sv/s
+1855,nan,P66,millisievert per second,"0,001-fold of the derived SI unit sievert divided by the SI base unit second.",2.0,mSv/s,10⁻³ Sv/s
+1856,nan,P67,microsievert per second,"0,000 001-fold of the derived SI unit sievert divided by the SI base unit second.",2.0,µSv/s,10⁻⁶ Sv/s
+1857,nan,P68,nanosievert per second,"0,000 000 001-fold of the derived SI unit sievert divided by the SI base unit second.",2.0,nSv/s,10⁻⁹ Sv/s
+1858,nan,P69,rem per second,"Unit for the equivalent tin rate relating to DIN 1301-3:1979: 1 rem/s = 0,01 J/(kg·s) = 1 Sv/s.",2.0,rem/s,10⁻² Sv/s
+1859,X,P7,seven pack,nan,3.2,nan,nan
+1860,nan,P70,sievert per hour,Derived SI unit sievert divided by the unit hour.,2.0,Sv/h,"2,777 78 × 10⁻⁴ Sv/s"
+1861,nan,P71,millisievert per hour,"0,001-fold of the derived SI unit sievert divided by the unit hour.",2.0,mSv/h,"0,277 777 778 × 10⁻⁷ Sv/s"
+1862,nan,P72,microsievert per hour,"0,000 001-fold of the derived SI unit sievert divided by the unit hour.",2.0,µSv/h,"0,277 777 778 × 10⁻¹⁰ Sv/s"
+1863,nan,P73,nanosievert per hour,"0,000 000 001-fold of the derived SI unit sievert divided by the unit hour.",2.0,nSv/h,"0,277 777 778 × 10⁻¹³ Sv/s"
+1864,nan,P74,sievert per minute,Derived SI unit sievert divided by the unit minute.,2.0,Sv/min,"0,016 666 Sv/s"
+1865,nan,P75,millisievert per minute,"0,001-fold of the derived SI unit sievert divided by the unit minute.",2.0,mSv/min,"1,666 666 667 × 10⁻⁵ Sv/s"
+1866,nan,P76,microsievert per minute,"0,000 001-fold of the derived SI unit sievert divided by the unit minute.",2.0,µSv/min,"1,666 666 667 × 10⁻⁸ Sv/s"
+1867,nan,P77,nanosievert per minute,"0,000 000 001-fold of the derived SI unit sievert divided by the unit minute.",2.0,nSv/min,"1,666 666 667 × 10⁻¹¹ Sv/s"
+1868,nan,P78,reciprocal square inch,Complement of the power of the unit inch according to the Anglo-American and Imperial system of units by exponent 2.,2.0,1/in²,"1,550 003 x 10³ m⁻²"
+1869,nan,P79,pascal square metre per kilogram,"Unit of the burst index as derived unit for pressure pascal related to the substance, represented as a quotient from the SI base unit kilogram divided by the power of the SI base unit metre by exponent 2.",1.0,Pa/(kg/m²),m/s²
+1870,X,P8,eight pack,nan,3.2,nan,nan
+1871,nan,P80,millipascal per metre,"0,001-fold of the derived SI unit pascal divided by the SI base unit metre.",1M,mPa/m,10⁻³ kg/(m² x s²)
+1872,nan,P81,kilopascal per metre,1000-fold of the derived SI unit pascal divided by the SI base unit metre.,1M,kPa/m,10³ kg/(m² x s²)
+1873,nan,P82,hectopascal per metre,100-fold of the derived SI unit pascal divided by the SI base unit metre.,1M,hPa/m,10² kg/(m² x s²)
+1874,nan,P83,standard atmosphere per metre,Outdated unit of the pressure divided by the SI base unit metre.,2.0,Atm/m,"1,013 25 x 10⁵ kg/(m² x s²)"
+1875,nan,P84,technical atmosphere per metre,Obsolete and non-legal unit of the pressure which is generated by a 10 metre water column divided by the SI base unit metre.,2.0,at/m,"9,806 65 x 10⁴  kg/(m² x s²)"
+1876,nan,P85,torr per metre,CGS (Centimetre-Gram-Second system) unit of the pressure divided by the SI base unit metre.,2.0,Torr/m,"1,333 224 x 10² kg/(m² x s²)"
+1877,nan,P86,psi per inch,Compound unit for pressure (pound-force according to the Anglo-American unit system divided by the power of the unit inch according to the Anglo-American and Imperial system of units with the exponent 2) divided by the unit inch according to the Anglo-American and Imperial system of units .,2.0,psi/in,"2,714 471 x 10⁵ kg/(m² x s²)"
+1878,nan,P87,cubic metre per second square metre,Unit of volume flow cubic meters by second related to the transmission surface in square metres.,1M,(m³/s)/m²,m/s
+1879,nan,P88,rhe,Non SI-conforming unit of fluidity of dynamic viscosity.,3.5,rhe,10 m x kg⁻¹ x s
+1880,nan,P89,pound-force foot per inch,Unit for length-related rotational moment according to the Anglo-American and Imperial system of units.,3.5,lbf·ft/in,"53,378 66 m x kg / s²"
+1881,X,P9,nine pack,nan,3.2,nan,nan
+1882,nan,P90,pound-force inch per inch,Unit for length-related rotational moment according to the Anglo-American and Imperial system of units.,3.5,lbf·in/in,"4,448 222 m x kg / s²"
+1883,nan,P91,perm (0 ºC),"Traditional unit for the ability of a material to allow the transition of the steam, defined at a temperature of 0 °C as steam transmittance, where the mass of one grain steam penetrates an area of one foot squared at a pressure from one inch mercury per hour.",3.5,perm (0 ºC) ,"5,721 35 x 10⁻¹¹ kg/(m² x Pa x s)"
+1884,nan,P92,perm (23 ºC),"Traditional unit for the ability of a material to allow the transition of the steam, defined at a temperature of 23 °C as steam transmittance at which the mass of one grain of steam penetrates an area of one square foot at a pressure of one inch mercury per hour.",3.5,perm (23 ºC) ,"5,745 25 x 10⁻¹¹ kg/(m² x Pa x s)"
+1885,nan,P93,byte per second,Unit byte divided by the SI base unit second.,3.6,byte/s,byte/s
+1886,nan,P94,kilobyte per second,1000-fold of the unit byte divided by the SI base unit second.,3.6,kbyte/s,10³ byte/s
+1887,nan,P95,megabyte per second,1 000 000-fold of the unit byte divided by the SI base unit second.,3.6,Mbyte/s,10⁶ byte/s
+1888,nan,P96,reciprocal volt,Reciprocal of the derived SI unit volt.,3.5,1/V,m⁻² x kg⁻¹ x s³ x A
+1889,nan,P97,reciprocal radian,Reciprocal of the unit radian.,3.5,1/rad,1/rad
+1890,nan,P98,pascal to the power sum of stoichiometric numbers,"Unit of the equilibrium constant on the basis of the pressure(ISO 80000-9:2009, 9-35.a).",3.5,PaΣνB,nan
+1891,nan,P99,mole per cubiv metre to the power sum of stoichiometric numbers,"Unit of the equilibrium constant on the basis of the concentration (ISO 80000-9:2009, 9-36.a).",3.5,(mol/m³)∑νB,nan
+1892,X,PA,packet,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+1893,nan,PAL,pascal,nan,1,Pa,Pa
+1894,X,PB,pair inch,nan,3.8,nan,nan
+1895,nan,PD,pad,A unit of count defining the number of pads (pad: block of paper sheets fastened together at one end).,3.9,nan,nan
+1896,X,PE,pound equivalent,nan,3.1,nan,nan
+1897,X,PF,pallet (lift),"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+1898,nan,PFL,proof litre,"A unit of volume equal to one litre of proof spirits, or the alcohol equivalent thereof. Used for measuring the strength of distilled alcoholic liquors, expressed as a percentage of the alcohol content of a standard mixture at a specific temperature.",3.1,nan,nan
+1899,X,PG,plate,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+1900,nan,PGL,proof gallon,"A unit of volume equal to one gallon of proof spirits, or the alcohol equivalent thereof. Used for measuring the strength of distilled alcoholic liquors, expressed as a percentage of the alcohol content of a standard mixture at a specific temperature.",3.1,nan,nan
+1901,nan,PI,pitch,A unit of count defining the number of characters that fit in a horizontal inch.,3.5,nan,nan
+1902,X,PK,pack,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).,Synonym: package",3.3,nan,nan
+1903,X,PL,pail,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+1904,nan,PLA,degree Plato,"A unit of proportion defining the sugar content of a product, especially in relation to beer.",3.5,°P,nan
+1905,X,PM,pound percentage,nan,3.1,nan,nan
+1906,X,PN,pound net,nan,3.1,nan,nan
+1907,nan,PO,pound per inch of length,nan,2,lb/in,"1,785 797 x 10¹ kg/m"
+1908,nan,PQ,page per inch,"A unit of quantity defining the degree of thickness of a bound publication, expressed as the number of pages per inch of thickness.",3.5,ppi,nan
+1909,nan,PR,pair,A unit of count defining the number of pairs (pair: item described by two's).,3.7,nan,2
+1910,nan,PS,pound-force per square inch,nan,2,lbf/in²,"6,894 757 x 10³ Pa"
+1911,D,PT,pint (US),Use liquid pint (common code PTL),2,pt (US),"4, 731 76 x 10⁻⁴ m³"
+1912,nan,PTD,dry pint (US),nan,2,dry pt (US),"5,506 105 x 10⁻⁴ m³"
+1913,nan,PTI,pint (UK),nan,2,pt (UK),"5, 682 61 x 10⁻⁴ m³"
+1914,nan,PTL,liquid pint (US),nan,2,liq pt (US),"4, 731 765 x 10⁻⁴ m³"
+1915,nan,PTN,portion,"A quantity of allowance of food allotted to, or enough for, one person.",3.5,PTN,nan
+1916,X,PU,tray / tray pack,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+1917,X,PV,half pint (US),nan,3.8,nan,nan
+1918,X,PW,pound per inch of width,nan,3.1,nan,nan
+1919,X,PY,peck dry (US),nan,3.5,nan,nan
+1920,X,PZ,peck dry (UK),nan,3.5,nan,nan
+1921,nan,Q10,joule per tesla,Unit of the magnetic dipole moment of the molecule as derived SI unit joule divided by the derived SI unit tesla.,3.5,J/T,m² x A
+1922,nan,Q11,erlang,Unit of the market value according to the feature of a single feature as a statistical measurement of the existing utilization.,3.6,E,1 E
+1923,nan,Q12,octet,Synonym for byte: 1 octet = 8 bit = 1 byte.,3.6,o,8 bit
+1924,nan,Q13,octet per second,Unit octet divided by the SI base unit second.,3.6,o/s,8 bit/s
+1925,nan,Q14,shannon,"Logarithmic unit for information equal to the content of decision of a sentence of two mutually exclusive events, expressed as a logarithm to base 2.",3.6,Sh,nan
+1926,nan,Q15,hartley,"Logarithmic unit for information equal to the content of decision of a sentence of ten mutually exclusive events, expressed as a logarithm to base 10.",3.6,Hart,nan
+1927,nan,Q16,natural unit of information,"Logarithmic unit for information equal to the content of decision of a sentence of ,718 281 828 459 mutually exclusive events, expressed as a logarithm to base Euler value e.",3.6,nat,nat
+1928,nan,Q17,shannon per second,"Time related logarithmic unit for information equal to the content of decision of a sentence of two mutually exclusive events, expressed as a logarithm to base 2.",3.6,Sh/s,Sh/s
+1929,nan,Q18,hartley per second,"Time related logarithmic unit for information equal to the content of decision of a sentence of ten mutually exclusive events, expressed as a logarithm to base 10.",3.6,Hart/s,Hart/s
+1930,nan,Q19,natural unit of information per second,"Time related logarithmic unit for information equal to the content of decision of a sentence of 2,718 281 828 459 mutually exclusive events, expressed as a logarithm to base of the Euler value e.",3.6,nat/s,nat/s
+1931,nan,Q20,second per kilogramm,"Unit of the Einstein transition probability for spontaneous or inducing emissions and absorption according to ISO 80000-7:2008, expressed as SI base unit second divided by the SI base unit kilogram.",3.5,s/kg,kg⁻¹ x s
+1932,nan,Q21,watt square metre,"Unit of the first radiation constants c1 = 2·p·h·c0², the value of which is 3,741 771 18·10?¹6-fold   that of the comparative value of the product of the derived SI unit watt multiplied with the power of the SI base unit metre with the exponent 2.",3.5,W·m²,m⁴ x kg x s⁻³
+1933,nan,Q22,second per radian cubic metre,Unit of the density of states as an expression of angular frequency as complement of the product of hertz and radiant and the power of SI base unit metre by exponent 3 .,3.5,1/(Hz·rad·m³),m⁻³ x s x rad⁻¹
+1934,nan,Q23,weber to the power minus one,"Complement of the derived SI unit weber as unit of the Josephson constant, which value is equal to the 384 597,891-fold of the reference value gigahertz divided by volt.",3.5,1/Wb,m⁻² x kg⁻¹ x s² x A
+1935,nan,Q24,reciprocal inch,Complement of the unit inch according to the Anglo-American and Imperial system of units.,3.5,1/in,"39,370 08 m⁻¹"
+1936,nan,Q25,dioptre,Unit used at the statement of relative refractive indexes of optical systems as complement of the focal length with correspondence to: 1 dpt = 1/m.,3.5,dpt,m⁻¹
+1937,nan,Q26,one per one,Value of the quotient from two physical units of the same kind as a numerator and denominator whereas the units are shortened mutually.,3.5,1/1,1/1
+1938,nan,Q27,newton metre per metre,Unit for length-related rotational moment as product of the derived SI unit newton and the SI base unit metre divided by the SI base unit metre.,3.5,N·m/m²,m x kg x s⁻²
+1939,nan,Q28,kilogram per square metre pascal second,Unit for the ability of a material to allow the transition of steam.,3.5,kg/(m²·Pa·s),kg/(m² x Pa x s)
+1940,nan,Q29,microgram per hectogram,Microgram per hectogram.,1S,µg/hg,10⁻8
+1941,nan,Q30,pH (potential of Hydrogen),The activity of the (solvated) hydrogen ion (a logarithmic measure used to state the acidity or alkalinity of a chemical solution).,2,pH,-log10(mol/l)
+1942,nan,Q31,kilojoule per gram,nan,1S,kJ/g,10⁶ J/kg
+1943,nan,Q32,femtolitre,nan,1S,fl,10-18 m3
+1944,nan,Q33,picolitre,nan,1S,pl,10-15 m3
+1945,nan,Q34,nanolitre,nan,1S,nl,10-12 m3
+1946,nan,Q35,megawatts per minute,A unit of power defining the total amount of bulk energy transferred or consumer per minute.,1M,MW/min,1.667 × 104 W/s
+1947,nan,Q36,square metre per cubic metre,A unit of the amount of surface area per unit volume of an object or collection of objects.,3.1,m2/m3,1 m2/m3
+1948,¦,Q37,Standard cubic metre per day,Standard cubic metre (temperature 15°C and pressure 1013.25 millibars ) per day,2.0,nan,1.15741 × 10-5 m3/s
+1949,¦,Q38,Standard cubic metre per hour,Standard cubic metre (temperature 15°C and pressure 1013.25 millibars ) per hour,2.0,nan,2.77778 × 10-4 m3/s
+1950,¦,Q39,Normalized cubic metre per day,Normalized cubic metre (temperature 0°C and pressure 1013.25 millibars ) per day,2.0,nan,1.15741 × 10-5 m3/s
+1951,¦,Q40,Normalized cubic metre per hour,Normalized cubic metre (temperature 0°C and pressure 1013.25 millibars ) per hour,2.0,nan,2.77778 × 10-4 m3/s
+1952,¦,Q41,Joule per normalised cubic metre,Joule per normalised cubic metre (temperature 0°C and pressure 1013.25 millibars).,2.0,nan,nan
+1953,¦,Q42,Joule per standard cubic metre,Joule per standard cubic metre (temperature 15°C and pressure 1013.25 millibars).,2.0,nan,nan
+1954,nan,Q3,meal,A unit of count defining the number of meals (meal: an amount of food to be eaten on a single occasion).,3.9,nan,nan
+1955,nan,QA,page - facsimile,A unit of count defining the number of facsimile pages.,3.5,nan,nan
+1956,nan,QAN,quarter (of a year),A unit of time defining the number of quarters (3 months).,3.8,nan,nan
+1957,nan,QB,page - hardcopy,"A unit of count defining the number of hardcopy pages (hardcopy page: a page rendered as printed or written output on paper, film, or other permanent medium).",3.5,nan,nan
+1958,X,QD,quarter dozen,nan,3.7,nan,3
+1959,X,QH,quarter hour,nan,3.8,nan,900 s
+1960,X,QK,quarter kilogram,nan,3.8,nan,nan
+1961,nan,QR,quire,"A unit of count for paper, expressed as the number of quires (quire: a number of paper sheets, typically 25).",3.5,qr,nan
+1962,D,QT,quart (US),Use liquid quart (common code QTL),2,qt (US),"0,946 352 9 x 10⁻³ m³"
+1963,nan,QTD,dry quart (US),nan,2,dry qt (US),"1,101 221 x 10⁻³ m³"
+1964,nan,QTI,quart (UK),nan,2,qt (UK),"1,136 522 5 x 10⁻³ m³"
+1965,nan,QTL,liquid quart (US),nan,2,liq qt (US),"9,463 529 x 10⁻⁴ m³"
+1966,nan,QTR,quarter (UK),"A traditional unit of weight equal to 1/4 hundredweight. In the United Kingdom, one quarter equals 28 pounds.",3.5,Qr (UK),"12,700 59 kg"
+1967,nan,R1,pica,A unit of count defining the number of picas. (pica: typographical length equal to 12 points or 4.22 mm (approx.)).,3.5,nan,"4,217 518 x 10⁻³ m"
+1968,X,R4,calorie,Use International Table (IT) calorie (common code D70),3.5,cal,"4,186 8 J"
+1969,nan,R9,thousand cubic metre,A unit of volume equal to one thousand cubic metres.,3.8,nan,10³m³
+1970,X,RA,rack,nan,3.3,nan,nan
+1971,X,RD,rod,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+1972,X,RG,ring,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+1973,nan,RH,running or operating hour,A unit of time defining the number of hours of operation.,3.1,nan,nan
+1974,X,RK,roll metric measure,nan,3.3,nan,nan
+1975,X,RL,reel,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+1976,nan,RM,ream,"A unit of count for paper, expressed as the number of reams (ream: a large quantity of paper sheets, typically 500).",3.5,nan,nan
+1977,X,RN,ream metric measure,nan,3.5,nan,nan
+1978,X,RO,roll,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+1979,nan,ROM,room,A unit of count defining the number of rooms.,3.9,nan,nan
+1980,nan,RP,pound per ream,"A unit of mass for paper, expressed as pounds per ream. (ream: a large quantity of paper, typically 500 sheets).",3.5,nan,nan
+1981,nan,RPM,revolutions per minute,Refer ISO/TC12 SI Guide,1,r/min,"1,67 x 10⁻²/s"
+1982,nan,RPS,revolutions per second,Refer ISO/TC12 SI Guide,1,r/s,1/s
+1983,X,RS,reset,nan,3.9,nan,nan
+1984,nan,RT,revenue ton mile,"A unit of information typically used for billing purposes, expressed as the number of revenue tons (revenue ton: either a metric ton or a cubic metres, whichever is the larger), moved over a distance of one mile.",3.4,nan,nan
+1985,X,RU,run,nan,3.9,nan,nan
+1986,nan,S3,square foot per second,Synonym: foot squared per second,2,ft²/s,"0,092 903 04 m²/s"
+1987,nan,S4,square metre per second,Synonym: metre squared per second (square metres/second US),1,m²/s,m²/s
+1988,X,S5,sixty fourths of an inch,nan,3.8,nan,nan
+1989,X,S6,session,nan,3.9,nan,nan
+1990,X,S7,storage unit,nan,3.9,nan,nan
+1991,X,S8,standard advertising unit,nan,3.9,nan,nan
+1992,X,SA,sack,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+1993,nan,SAN,half year (6 months),A unit of time defining the number of half years (6 months).,3.8,nan,nan
+1994,nan,SCO,score,A unit of count defining the number of units in multiples of 20.,3.7,nan,20
+1995,nan,SCR,scruple,nan,3.5,nan,"1,295 982 g"
+1996,X,SD,solid pound,nan,3.1,nan,nan
+1997,X,SE,section,nan,3.9,nan,nan
+1998,nan,SEC,second [unit of time],nan,1,s,s
+1999,nan,SET,set,A unit of count defining the number of sets (set: a number of objects grouped together).,3.2,nan,nan
+2000,nan,SG,segment,A unit of information equal to 64000 bytes.,3.9,nan,nan
+2001,D,SHT,shipping ton,A unit of mass defining the number of tons for shipping.,3.4,nan,nan
+2002,nan,SIE,siemens,nan,1,S,A/V
+2003,X,SK,split tank truck,nan,3.4,nan,nan
+2004,X,SL,slipsheet,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+2005,¦,SM3,Standard cubic metre,Standard cubic metre (temperature 15°C and pressure 1013.25 millibars ),2,nan,m3
+2006,nan,SMI,mile (statute mile),nan,2,mile,"1 609,344 m"
+2007,X,SN,square rod,nan,3.8,rd²,"25,292 9 m²"
+2008,X,SO,spool,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+2009,X,SP,shelf package,nan,3.9,nan,nan
+2010,nan,SQ,square,A unit of count defining the number of squares (square: rectangular shape).,3.9,nan,nan
+2011,nan,SQR,"square, roofing","A unit of count defining the number of squares of roofing materials, measured in multiples of 100 square feet.",3.1,nan,nan
+2012,nan,SR,strip,A unit of count defining the number of strips (strip: long narrow piece of an object).,3.9,nan,nan
+2013,X,SS,sheet metric measure,nan,3.3,nan,nan
+2014,X,SST,short standard (7200 matches),nan,3.5,nan,nan
+2015,X,ST,sheet,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+2016,nan,STC,stick,A unit of count defining the number of sticks (stick: slender and often cylindrical piece of a substance).,3.9,nan,nan
+2017,nan,STI,stone (UK),nan,2,st,"6,350 293 kg"
+2018,nan,STK,"stick, cigarette",A unit of count defining the number of cigarettes in the smallest unit for stock-taking and/or duty computation.,3.9,nan,nan
+2019,nan,STL,standard litre,"A unit of volume defining the number of litres of a product at a temperature of 15 degrees Celsius, especially in relation to hydrocarbon oils.",3.1,nan,nan
+2020,nan,STN,ton (US) or short ton (UK/US),Synonym: net ton (2000 lb),2,ton (US),"0,907184 7 x 10³ kg"
+2021,nan,STW,straw,A unit of count defining the number of straws (straw: a slender tube used for sucking up liquids).,3.9,nan,nan
+2022,X,SV,skid,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.9,nan,nan
+2023,nan,SW,skein,A unit of count defining the number of skeins (skein: a loosely-coiled bundle of yarn or thread).,3.9,nan,nan
+2024,nan,SX,shipment,A unit of count defining the number of shipments (shipment: an amount of goods shipped or transported).,3.4,nan,nan
+2025,nan,SYR,syringe,"A unit of count defining the number of syringes (syringe: a small device for pumping, spraying and/or injecting liquids through a small aperture).",3.9,nan,nan
+2026,nan,T0,telecommunication line in service,A unit of count defining the number of lines in service.,3.5,nan,nan
+2027,X,T1,thousand pound gross,nan,3.8,nan,nan
+2028,nan,T3,thousand piece,"A unit of count defining the number of pieces in multiples of 1000 (piece: a single item, article or exemplar).",3.8,nan,nan
+2029,X,T4,thousand bag,nan,3.8,nan,nan
+2030,X,T5,thousand casing,nan,3.8,nan,nan
+2031,X,T6,thousand gallon (US),nan,3.8,nan,"3,785 412 m³"
+2032,X,T7,thousand impression,nan,3.8,nan,nan
+2033,X,T8,thousand linear inch,nan,3.8,nan,nan
+2034,X,TA,tenth cubic foot,nan,3.8,nan,nan
+2035,nan,TAH,kiloampere hour (thousand ampere hour),nan,1M,kA·h,"3,6 x 10⁶ C"
+2036,nan,TAN,total acid number,A unit of chemistry defining the amount of potassium hydroxide (KOH) in milligrams that is needed to neutralize the acids in one gram of oil. It is an important quality measurement of crude oil.,3.5,TAN,mg KOH/g 
+2037,X,TC,truckload,nan,3.4,nan,nan
+2038,X,TD,therm,nan,3.8,nan,"10⁵ x  1 055,056 J"
+2039,X,TE,tote,nan,3.3,nan,nan
+2040,X,TF,ten square yard,nan,3.8,nan,nan
+2041,nan,TI,thousand square inch,nan,3.8,nan,nan
+2042,nan,TIC,"metric ton, including container","A unit of mass defining the number of metric tons of a product, including its container.",3.1,nan,nan
+2043,nan,TIP,"metric ton, including inner packaging","A unit of mass defining the number of metric tons of a product, including its inner packaging materials.",3.1,nan,nan
+2044,X,TJ,thousand square centimetre,nan,3.8,nan,nan
+2045,X,TK,"tank, rectangular","Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.4,nan,nan
+2046,nan,TKM,tonne kilometre,"A unit of information typically used for billing purposes, expressed as the number of tonnes (metric tons) moved over a distance of one kilometre. ",3.4,t·km,10⁶ kg x m
+2047,X,TL,thousand foot (linear),nan,3.8,nan,nan
+2048,nan,TMS,"kilogram of imported meat, less offal","A unit of mass equal to one thousand grams of imported meat, disregarding less valuable by-products such as the entrails.",3.5,nan,nan
+2049,X,TN,tin,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+2050,nan,TNE,tonne (metric ton),Synonym: metric ton,1S,t,10³ kg
+2051,nan,TP,ten pack,A unit of count defining the number of items in multiples of 10.,3.2,nan,nan
+2052,nan,TPI,teeth per inch,The number of teeth per inch.,3.1,TPI,0.0254 /m
+2053,nan,TPR,ten pair,A unit of count defining the number of pairs in multiples of 10 (pair: item described by two's).,3.8,nan,nan
+2054,X,TQ,thousand foot,nan,3.8,nan,nan
+2055,nan,TQD,thousand cubic metre per day,A unit of volume equal to one thousand cubic metres per day.,3.8,km³/d,"1,157 41 x 10⁻² m³/s"
+2056,X,TR,ten square foot,nan,3.8,nan,nan
+2057,nan,TRL,trillion (EUR),nan,3.7,nan,10¹⁸
+2058,X,TS,thousand square foot,nan,3.8,nan,nan
+2059,X,TSD,tonne of substance 90 % dry,nan,3.1,nan,nan
+2060,X,TSH,ton of steam per hour,nan,3.1,nan,nan
+2061,nan,TST,ten set,A unit of count defining the number of sets in multiples of 10 (set: a number of objects grouped together).,3.9,nan,nan
+2062,X,TT,thousand linear metre,nan,3.8,nan,nan
+2063,nan,TTS,ten thousand sticks,A unit of count defining the number of sticks in multiples of 10000 (stick: slender and often cylindrical piece of a substance).,3.9,nan,nan
+2064,X,TU,tube,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+2065,X,TV,thousand kilogram,nan,3.8,nan,10³kg
+2066,X,TW,thousand sheet,nan,3.8,nan,nan
+2067,X,TY,"tank, cylindrical","Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.4,nan,nan
+2068,nan,U1,treatment,"A unit of count defining the number of treatments (treatment: subjection to the action of a chemical, physical or biological agent).",3.9,nan,nan
+2069,nan,U2,tablet,A unit of count defining the number of tablets (tablet: a small flat or compressed solid object).,3.9,nan,nan
+2070,D,UA,torr,nan,2,Torr,"133,322 4 Pa"
+2071,nan,UB,telecommunication line in service average,A unit of count defining the average number of lines in service.,3.5,nan,nan
+2072,nan,UC,telecommunication port,A unit of count defining the number of network access ports.,3.5,nan,nan
+2073,X,UD,tenth minute,nan,3.8,nan,6 s
+2074,X,UE,tenth hour,nan,3.8,nan,360 s
+2075,X,UF,usage per telecommunication line average,nan,3.5,nan,nan
+2076,X,UH,ten thousand yard,nan,3.8,nan,nan
+2077,X,UM,million unit,nan,3.8,nan,nan
+2078,nan,VA,volt - ampere per kilogram,nan,3.9,V·A / kg,V x A / kg
+2079,X,VI,vial,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+2080,nan,VLT,volt,nan,1,V,V
+2081,nan,VP,percent volume,"A measure of concentration, typically expressed as the percentage volume of a solute in a solution.",3.7,nan,nan
+2082,X,VQ,bulk,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+2083,X,VS,visit,nan,3.9,nan,nan
+2084,nan,W2,wet kilo,"A unit of mass defining the number of kilograms of a product, including the water content of the product.",3.1,nan,nan
+2085,X,W4,two week,nan,3.8,nan,nan
+2086,nan,WA,watt per kilogram,nan,3.9,W/kg,1 W/kg
+2087,nan,WB,wet pound,"A unit of mass defining the number of pounds of a material, including the water content of the material.",3.1,nan,nan
+2088,nan,WCD,cord,A unit of volume used for measuring lumber. One board foot equals 1/12 of a cubic foot.,3.5,nan,"3,63 m³"
+2089,nan,WE,wet ton,"A unit of mass defining the number of tons of a material, including the water content of the material.",3.1,nan,nan
+2090,nan,WEB,weber,nan,1,Wb,Wb
+2091,nan,WEE,week,nan,2,wk,"6,048 x 10⁵ s"
+2092,nan,WG,wine gallon,A unit of volume equal to 231 cubic inches.,3.1,nan,nan
+2093,X,WH,wheel,nan,3.9,nan,nan
+2094,nan,WHR,watt hour,nan,1,W·h,"3,6 x 10³ J"
+2095,X,WI,weight per square inch,nan,3.9,nan,nan
+2096,nan,WM,working month,A unit of time defining the number of working months.,3.1,nan,nan
+2097,X,WR,wrap,nan,3.3,nan,nan
+2098,nan,WSD,standard,"A unit of volume of finished lumber equal to 165 cubic feet.,Synonym: standard cubic foot",3.5,std,"4,672 m³"
+2099,nan,WTT,watt,nan,1,W,W
+2100,D,WW,millilitre of water,A unit of volume equal to the number of millilitres of water.,3.1,nan,nan
+2101,nan,X1,Gunter's chain,A unit of distance used or formerly used by British surveyors.,2,ch (UK),"20,116 8 m"
+2102,nan,YDK,square yard,nan,2,yd²,"8,361 274 x 10⁻¹ m²"
+2103,nan,YDQ,cubic yard,nan,2,yd³,"0,764 555 m³"
+2104,X,YL,hundred linear yard,nan,3.8,nan,nan
+2105,nan,YRD,yard,nan,2,yd,"0,914 4 m"
+2106,X,YT,ten yard,nan,3.8,nan,nan
+2107,X,Z1,lift van,nan,3.4,nan,nan
+2108,nan,Z11,hanging container,A unit of count defining the number of hanging containers.,3.9,nan,nan
+2109,X,Z2,chest,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+2110,X,Z3,cask,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+2111,X,Z4,hogshead,"Use UN/ECE Recommendation 21 (refer to Note 2 in the spreadsheet introduction, 1st sheet).",3.3,nan,nan
+2112,X,Z5,lug,nan,3.9,nan,nan
+2113,X,Z6,conference point,nan,3.5,nan,nan
+2114,X,Z8,newspage agate line,nan,3.9,nan,nan
+2115,nan,ZP,page,A unit of count defining the number of pages.,3.5,nan,nan
+2116,nan,ZZ,mutually defined,A unit of measure as agreed in common between two or more parties.,3.9,nan,nan
