@@ -118,6 +118,8 @@ def clear_quantumleap(url: str, fiware_header: FiwareHeader):
             handle_emtpy_db_exception(err)
 
     try:
+        if not len(client.get_entities()) == 0:
+            time.sleep(0.5)
         assert len(client.get_entities()) == 0
     except RequestException as err:
         handle_emtpy_db_exception(err)
