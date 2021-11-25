@@ -21,7 +21,5 @@ from .source import Source, DependencyStatement
 from .vocabulary import \
     Vocabulary, \
     IdType, \
-    LoggingLevel, \
     ParsingError, \
     VocabularySettings
-

@@ -7,6 +7,8 @@ from pydantic import BaseModel, Field
 from . import *
 from typing import List, Dict, Union, Optional, TYPE_CHECKING
 
+from ...models.base import LogLevel
+
 if TYPE_CHECKING:
     from filip.semantics.vocabulary_configurator import LabelSummary
 
@@ -23,17 +25,11 @@ class IdType(str, Enum):
     source = 'Source'
 
 
-class LoggingLevel(str, Enum):
-    """LoggingLevel for parsing statements"""
-    severe = "severe"
-    warning = "warning"
-    info = "info"
-
 
 class ParsingError(BaseModel):
     """Object represents one issue that arose while parsing a source,
        and holds all relevant details for that issue"""
-    level: LoggingLevel = Field(description="Severity of error")
+    level: LogLevel = Field(description="Severity of error")
     source_iri: str = Field(description=
                             "Iri of the source containing the error")
     source_name: Optional[str] = Field(

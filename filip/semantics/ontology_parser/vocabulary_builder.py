@@ -261,8 +261,3 @@ class VocabularyBuilder(BaseModel):
             bool
         """
         return iri in self.vocabulary.id_types
-
-
-
-
-

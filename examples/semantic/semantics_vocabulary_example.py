@@ -7,7 +7,7 @@
 import logging
 import requests
 
-from filip.semantics.vocabulary.data_property import DataFieldType
+from filip.semantics.vocabulary import DataFieldType
 from filip.semantics.vocabulary.vocabulary import VocabularySettings
 from filip.semantics.vocabulary_configurator import VocabularyConfigurator
 

@@ -3,7 +3,8 @@ from enum import Enum
 from uuid import uuid4
 from dotenv import find_dotenv
 from pydantic import AnyUrl, AnyHttpUrl, BaseSettings, Field, root_validator
-from filip.models.base import FiwareHeader
+from filip.models.base import FiwareHeader, LogLevel
+
 
 def generate_servicepath():
     """
@@ -15,28 +16,7 @@ def generate_servicepath():
     return f'/{str(uuid4()).replace("-", "")}'
 
 
-class LogLevel(str, Enum):
-    CRITICAL = 'CRITICAL'
-    ERROR = 'ERROR'
-    WARNING = 'WARNING'
-    INFO = 'INFO'
-    DEBUG = 'DEBUG'
-    NOTSET = 'NOTSET'
 
-    @classmethod
-    def _missing_(cls, name):
-        """
-        Class method to realize case insensitive args
-
-        Args:
-            name: missing argument
-
-        Returns:
-            valid member of enum
-        """
-        for member in cls:
-            if member.value.casefold() == name.casefold():
-                return member
 
 
 class TestSettings(BaseSettings):

@@ -106,3 +106,26 @@ class FiwareRegex(str, Enum):
                      "the symbols: ? & # / ' \" or a whitespace." \
                      "AND the strings: id, type, geo:location"
 
+
+class LogLevel(str, Enum):
+    CRITICAL = 'CRITICAL'
+    ERROR = 'ERROR'
+    WARNING = 'WARNING'
+    INFO = 'INFO'
+    DEBUG = 'DEBUG'
+    NOTSET = 'NOTSET'
+
+    @classmethod
+    def _missing_(cls, name):
+        """
+        Class method to realize case insensitive args
+
+        Args:
+            name: missing argument
+
+        Returns:
+            valid member of enum
+        """
+        for member in cls:
+            if member.value.casefold() == name.casefold():
+                return member

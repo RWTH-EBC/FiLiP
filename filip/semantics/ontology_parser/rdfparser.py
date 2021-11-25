@@ -7,8 +7,9 @@ from typing import List, Tuple
 
 import rdflib
 
+from filip.models.base import LogLevel
 from filip.semantics.ontology_parser.vocabulary_builder import VocabularyBuilder
-from filip.semantics.vocabulary import Source, LoggingLevel, IdType, \
+from filip.semantics.vocabulary import Source, IdType, \
     Vocabulary,RestrictionType, ObjectProperty, DataProperty, Relation, \
     TargetStatement, StatementType, DatatypeType, Datatype, Class, Individual
 
@@ -79,13 +80,13 @@ class RdfParser:
         self.current_class_iri = None
         """Iri of class which is currently parsed, used for Log entries"""
 
-    def _add_logging_information(self, level: LoggingLevel,
+    def _add_logging_information(self, level: LogLevel,
                                  entity_type: IdType, entity_iri: str,
                                  msg: str):
         """Add an entry to the parsing log
 
         Args:
-            level (LoggingLevel): severe, warning or info
+            level (LogLevel): severe, warning or info
             entity_type (IdType)
             entity_iri (str)
             msg (str): Message to inform the user about the occurred issue
@@ -208,7 +209,7 @@ class RdfParser:
                 predicate=rdflib.term.URIRef(Tags.rdf_type.value)):
 
             if isinstance(a, rdflib.term.BNode):
-                self._add_logging_information(LoggingLevel.warning,
+                self._add_logging_information(LogLevel.WARNING,
                                               IdType.object_property,
                                              "unknown",
                                              "Found unparseable statement")
@@ -229,7 +230,7 @@ class RdfParser:
                         'http://www.w3.org/2002/07/owl#inverseOf')):
                     if isinstance(inverse_iri_node, rdflib.term.BNode):
                         self._add_logging_information(
-                            LoggingLevel.severe, IdType.object_property, iri,
+                            LogLevel.CRITICAL, IdType.object_property, iri,
                             "Complex inverseProperty statements aren't allowed")
                     else:
                         inverse_iri = get_iri_from_uriref(inverse_iri_node)
@@ -242,7 +243,7 @@ class RdfParser:
                 predicate=rdflib.term.URIRef(Tags.rdf_type.value)):
 
             if isinstance(a, rdflib.term.BNode):
-                self._add_logging_information(LoggingLevel.warning,
+                self._add_logging_information(LogLevel.WARNING,
                                               IdType.data_property, "unknown",
                                              "Found unparseable statement")
 
@@ -266,7 +267,7 @@ class RdfParser:
                 predicate=rdflib.term.URIRef(Tags.rdf_type.value)):
 
             if isinstance(a, rdflib.term.BNode):
-                # self._add_logging_information(LoggingLevel.warning,
+                # self._add_logging_information(LogLevel.WARNING,
                 #                              IdType.datatype, "unknown",
                 #                              "Found unparseable statement")
                 pass
@@ -325,7 +326,7 @@ class RdfParser:
                 predicate=rdflib.term.URIRef(Tags.rdf_type.value)):
 
             if isinstance(a, rdflib.term.BNode):
-                self._add_logging_information(LoggingLevel.warning,
+                self._add_logging_information(LogLevel.WARNING,
                                               IdType.individual, "unknown",
                                              "Found unparseable statement")
 
@@ -453,12 +454,12 @@ class RdfParser:
 
             elif rdflib.term.URIRef(Tags.owl_union.value) in predicates:
                 self._add_logging_information(
-                    LoggingLevel.severe, IdType.class_, class_iri,
+                    LogLevel.CRITICAL, IdType.class_, class_iri,
                     "Relation statements combined with or")
 
             elif rdflib.term.URIRef(Tags.owl_one_of.value) in predicates:
                 self._add_logging_information(
-                    LoggingLevel.severe, IdType.class_, class_iri,
+                    LogLevel.CRITICAL, IdType.class_, class_iri,
                     "Relation statements combined with oneOf")
 
             # Relation statement
@@ -481,13 +482,13 @@ class RdfParser:
                 relation_is_ok = True
                 if not rdf_type == "http://www.w3.org/2002/07/owl#Restriction":
                     self._add_logging_information(
-                        LoggingLevel.severe, IdType.class_, class_iri,
+                        LogLevel.CRITICAL, IdType.class_, class_iri,
                         "Class has an unknown subClass statement")
                     relation_is_ok = False
 
                 if owl_on_property == "":
                     self._add_logging_information(
-                        LoggingLevel.severe, IdType.class_, class_iri,
+                        LogLevel.CRITICAL, IdType.class_, class_iri,
                         "Class has a relation without a property")
                     relation_is_ok = False
 
@@ -583,7 +584,7 @@ class RdfParser:
         for statement in statements:
             if statement not in treated_statements:
                 self._add_logging_information(
-                  LoggingLevel.severe, IdType.class_, self.current_class_iri,
+                  LogLevel.CRITICAL, IdType.class_, self.current_class_iri,
                   "Relation with property {} has an untreated restriction "
                   "{}".format(relation.property_iri, statement))
 
@@ -645,7 +646,7 @@ class RdfParser:
         # for hasValue only a target-statement that is a leaf is allowed
         if not relation.target_statement.type == StatementType.LEAF:
             self._add_logging_information(
-                LoggingLevel.severe,
+                LogLevel.CRITICAL,
                 IdType.class_,
                 self.current_class_iri,
                 f"In hasValue relation with property {relation.property_iri} "
@@ -757,7 +758,7 @@ class RdfParser:
                     predicate=rdflib.term.URIRef(Tags.owl_one_of.value)))
         else:
             self._add_logging_information(
-                LoggingLevel.severe, IdType.class_, self.current_class_iri,
+                LogLevel.CRITICAL, IdType.class_, self.current_class_iri,
                 f"Intern Error - invalid {node} passed to list extraction")
 
         result = []
