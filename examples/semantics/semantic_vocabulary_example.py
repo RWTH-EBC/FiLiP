@@ -94,7 +94,7 @@ if __name__ == '__main__':
     for source in vocabulary.get_source_list():
         print(f'Name: {source.source_name}; Added: {source.timestamp}; '
               f'Id: {source.id}')
-    print()
+    print("")
 
     # ## 2.2 Predefined source
     #
