@@ -63,7 +63,7 @@ class TestSemanticModels(unittest.TestCase):
         """
         Test if a new class without header gets teh default header
         """
-        from tests.semantic.models import Class1, semantic_manager
+        from tests.semantics.models import Class1, semantic_manager
 
         test_header = InstanceHeader(
             cb_url=settings.CB_URL,
@@ -81,7 +81,7 @@ class TestSemanticModels(unittest.TestCase):
         """
         Test the instantiation of Individuals and their uniqueness
         """
-        from tests.semantic.models import Individual1, Individual2
+        from tests.semantics.models import Individual1, Individual2
 
         individual1 = Individual1()
         self.assertTrue(Individual1() == individual1)
@@ -91,7 +91,7 @@ class TestSemanticModels(unittest.TestCase):
         """
         Test if relation field rules are correctly validated
         """
-        from tests.semantic.models import Class1, Class13, Class2, Class4, \
+        from tests.semantics.models import Class1, Class13, Class2, Class4, \
             Class123, Individual1, Close_Command, State, Open_Close_State, \
             Measurement
 
@@ -177,7 +177,7 @@ class TestSemanticModels(unittest.TestCase):
         """
         Test if data fields are correctly validated
         """
-        from tests.semantic.models import Class1, Class3
+        from tests.semantics.models import Class1, Class3
         class3 = Class3()
 
         self.assertTrue(class3.dataProp1.is_valid())
@@ -195,7 +195,7 @@ class TestSemanticModels(unittest.TestCase):
         """
         Test if referencing of relations correctly works
         """
-        from tests.semantic.models import Class1, Class3, Class2, Class4
+        from tests.semantics.models import Class1, Class3, Class2, Class4
 
         c1 = Class1()
         c2 = Class2()
@@ -221,7 +221,7 @@ class TestSemanticModels(unittest.TestCase):
         """
         Test if instances with the same id point to the same object
         """
-        from tests.semantic.models import Class1, Class13, Class123, \
+        from tests.semantics.models import Class1, Class13, Class123, \
             Individual1, Gertrude, semantic_manager
 
         # clear local state to ensure standard test condition
@@ -244,7 +244,7 @@ class TestSemanticModels(unittest.TestCase):
         """
         Test if instances can be saved to Fiware and correctly loaded again
         """
-        from tests.semantic.models import Class1, Class13, Class123, \
+        from tests.semantics.models import Class1, Class13, Class123, \
             Individual1, Gertrude, semantic_manager
 
         # clear local state to ensure standard test condition
@@ -290,7 +290,7 @@ class TestSemanticModels(unittest.TestCase):
         deleted from other instances fields if deleted,
         and not be pulled again from Fiware once deleted locally
         """
-        from tests.semantic.models import Class1, Class13, Class123, \
+        from tests.semantics.models import Class1, Class13, Class123, \
             Individual1, Gertrude, semantic_manager
 
         # clear local state to ensure standard test condition
@@ -359,7 +359,7 @@ class TestSemanticModels(unittest.TestCase):
         """
         Test if the values of fields are correctly set with the list methods
         """
-        from tests.semantic.models import Class1, Class13, Class3, Class123
+        from tests.semantics.models import Class1, Class13, Class3, Class123
 
         # clear local state to ensure standard test condition
         self.clear_registry()
@@ -384,7 +384,7 @@ class TestSemanticModels(unittest.TestCase):
         Clear the local state. Needed to test the interaction with Fiware if
         the local state of an instance is missing
         """
-        from tests.semantic.models import semantic_manager
+        from tests.semantics.models import semantic_manager
         semantic_manager.instance_registry._registry.clear()
         semantic_manager.instance_registry._deleted_identifiers.clear()
         self.assertTrue(len(semantic_manager.instance_registry._registry) == 0)
@@ -425,7 +425,7 @@ class TestSemanticModels(unittest.TestCase):
         Test if a device is correctly instantiated
         And the settings can be set
         """
-        from tests.semantic.models2 import Class3, semantic_manager
+        from tests.semantics.models2 import Class3, semantic_manager
         test_header = InstanceHeader(
             cb_url=settings.CB_URL,
             iota_url=settings.IOTA_JSON_URL,
@@ -444,7 +444,7 @@ class TestSemanticModels(unittest.TestCase):
         Test if a Device can be correctly saved and loaded.
         And the live methods of Commands and DeviceAttributes
         """
-        from tests.semantic.models2 import Class1, Class3, semantic_manager
+        from tests.semantics.models2 import Class1, Class3, semantic_manager
 
         class3_ = Class3(id="c3")
         class3_.device_settings.endpoint = "http://test.com"
@@ -551,7 +551,7 @@ class TestSemanticModels(unittest.TestCase):
         context entry from Fiware.
         All other interactions are covered in the "deleting test"
         """
-        from tests.semantic.models2 import Class1, Class3, semantic_manager
+        from tests.semantics.models2 import Class1, Class3, semantic_manager
 
         # clear local state to ensure standard test condition
         self.clear_registry()
@@ -590,7 +590,7 @@ class TestSemanticModels(unittest.TestCase):
         Test if Commands and Attributes are prevented from having blacklised
         names
         """
-        from tests.semantic.models2 import Class3
+        from tests.semantics.models2 import Class3
 
         class3 = Class3(id="13")
 
@@ -627,7 +627,7 @@ class TestSemanticModels(unittest.TestCase):
         """
         Test if the local state can be correctly saved as json and loaded again
         """
-        from tests.semantic.models2 import Class3, Class1, semantic_manager
+        from tests.semantics.models2 import Class3, Class1, semantic_manager
 
         class3 = Class3(id="15")
         class3.commandProp.add(Command(name="c1"))
@@ -667,7 +667,7 @@ class TestSemanticModels(unittest.TestCase):
         Test if a instance is added to the added instance, if an inverse
         logic exists
         """
-        from tests.semantic.models2 import Class1
+        from tests.semantics.models2 import Class1
 
         inst_1 = Class1(id="100")
         inst_2 = Class1(id="101")
@@ -689,7 +689,7 @@ class TestSemanticModels(unittest.TestCase):
         Tests if a local state is correctly merged with changes on the live
         state
         """
-        from tests.semantic.models2 import Class1, semantic_manager
+        from tests.semantics.models2 import Class1, semantic_manager
 
         # used instances
         c1 = Class1(id="1")
@@ -762,7 +762,7 @@ class TestSemanticModels(unittest.TestCase):
         state. This test focuses on the special details of a
         SemanticDeviceClass the general things are covered by test 120
         """
-        from tests.semantic.models2 import Class3, semantic_manager, \
+        from tests.semantics.models2 import Class3, semantic_manager, \
             customDataType4
 
 
