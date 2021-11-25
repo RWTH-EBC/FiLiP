@@ -40,7 +40,12 @@ def load_datapackage(url: str, package_name: str) -> Dict[str, pd.DataFrame]:
         data = {}
         for file in os.listdir(package_path):
             file_name = file[:-4]
-            frame = pd.read_csv(package_path.joinpath(file))
+            # read in each file as one dataframe, prevents the deletion of NaN
+            # values with na_filter=False
+            frame = pd.read_csv(package_path.joinpath(file),
+                                index_col=0,
+                                header=0,
+                                na_filter=False)
             data[file_name] = frame
 
     else:
@@ -51,15 +56,16 @@ def load_datapackage(url: str, package_name: str) -> Dict[str, pd.DataFrame]:
             data = read_datapackage(url)
             # rename keys
             data = {k.replace('-', '_'): v for k, v in data.items()}
-
             os.mkdir(package_path)
 
             # store data in filip.data
             for k, v in data.items():
                 v: DataFrame = v
                 v.loc[:, :] = v[:].applymap(str)
-                table_filepath = str(package_path) + f"\\{k}.csv"
+                table_filepath = \
+                    str(package_path) + f"\\{k.replace('-', '_')}.csv"
                 v.to_csv(table_filepath)
+
         except:
             logger.error("Failed to load data package!")
             raise
