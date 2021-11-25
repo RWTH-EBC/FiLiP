@@ -1,0 +1,16 @@
+,LevelAndCategory,Description
+0,1,Normative
+1,1S,Standard Multiples
+2,1M,Commonly Used Multiples
+3,2,Normative Equivalent
+4,2S,Normative Equivalent Multiples
+5,3,Informative
+6,3.1,Qualified base units from levels 1 and 2
+7,3.2,Sales units
+8,3.3,Packing units
+9,3.4,Shipping and transportation units
+10,3.5,Industry specific units (various)
+11,3.6,Information technology units
+12,3.7,Integers/Numbers/Ratios
+13,3.8,Multiples/Fractions/Decimals
+14,3.9,Miscellaneous

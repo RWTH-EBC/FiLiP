@@ -33,7 +33,7 @@ def load_units() -> pd.DataFrame:
     """
     units = load_datapackage(
             url="https://github.com/datasets/unece-units-of-measure",
-            filename="unece-units.hdf")["units_of_measure"]
+            package_name="unece-units")["units_of_measure"]
     # remove deprecated entries
     units = units.loc[
             ((units.Status.str.casefold() != 'x') &
