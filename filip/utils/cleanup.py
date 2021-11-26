@@ -142,7 +142,8 @@ def clear_quantumleap(url: str, fiware_header: FiwareHeader):
 
 
     try:
-        assert len(client.get_entities()) == 0
+        if len(client.get_entities()) >0:
+            assert False, "Not correctly deleted"
     except RequestException as err:
         handle_emtpy_db_exception(err)
 
