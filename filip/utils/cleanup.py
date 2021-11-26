@@ -128,15 +128,8 @@ def clear_quantumleap(url: str, fiware_header: FiwareHeader):
         while len(entities) > 0 and counter < 10:
             print(f"-----{counter}----------{len(client.get_entities())}")
             print(len(client.get_entities()))
-            for entity in entities:
-                try:
-                    client.delete_entity(entity_id=entity.entityId,
-                                         entity_type=entity.entityType)
-                except RequestException as err:
-                    handle_emtpy_db_exception(err)
-            entities = client.get_entities()
             counter += 1
-            time.sleep(counter)
+            time.sleep(counter/10)
     except RequestException as err:
         handle_emtpy_db_exception(err)
 
