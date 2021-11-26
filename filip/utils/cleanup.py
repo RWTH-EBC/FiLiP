@@ -103,19 +103,19 @@ def clear_quantumleap(url: str, fiware_header: FiwareHeader):
     client = QuantumLeapClient(url=url, fiware_header=fiware_header)
 
     # clear data
-    entities = []
-    try:
-        entities = client.get_entities()
-    except RequestException as err:
-        handle_emtpy_db_exception(err)
-
-    # will be executed for all found entities
-    for entity in entities:
-        try:
-            client.delete_entity(entity_id=entity.entityId,
-                                 entity_type=entity.entityType)
-        except RequestException as err:
-            handle_emtpy_db_exception(err)
+    # entities = []
+    # try:
+    #     entities = client.get_entities()
+    # except RequestException as err:
+    #     handle_emtpy_db_exception(err)
+    #
+    # # will be executed for all found entities
+    # for entity in entities:
+    #     try:
+    #         client.delete_entity(entity_id=entity.entityId,
+    #                              entity_type=entity.entityType)
+    #     except RequestException as err:
+    #         handle_emtpy_db_exception(err)
 
     # test if all entities are deleted. If the client is not empty the assert
     # will fail. Else the request will throw an error, the error handler
@@ -124,12 +124,23 @@ def clear_quantumleap(url: str, fiware_header: FiwareHeader):
 
     counter = 0
     try:
-        print(f"ENTITIES: {client.get_entities()}")
-        print(len(client.get_entities()))
-        time.sleep(2)
-        assert len(client.get_entities()) == 0
+        entities = client.get_entities()
+        while len(entities) > 0 and counter < 10:
+            print("---------------------------------")
+            print(len(client.get_entities()))
+            for entity in entities:
+                try:
+                    client.delete_entity(entity_id=entity.entityId,
+                                         entity_type=entity.entityType)
+                except RequestException as err:
+                    handle_emtpy_db_exception(err)
+            entities = client.get_entities()
+            counter += 1
+            time.sleep(counter/10)
     except RequestException as err:
         handle_emtpy_db_exception(err)
+
+    assert len(client.get_entities()) == 0
 
 
 def clear_all(*,
