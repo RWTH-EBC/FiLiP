@@ -230,6 +230,10 @@ class QuantumLeapClient(BaseHttpClient):
             entity_type (Optional[String]): Entity type if entity_id alone
                 can not uniquely define the entity.
 
+        Raises:
+            RequestException, if entity was not found
+            Exception, if deleting was not successful
+
         Returns:
             The entity_id of entity that is deleted.
         """
@@ -239,43 +243,36 @@ class QuantumLeapClient(BaseHttpClient):
             params = {'type': entity_type}
         else:
             params = {}
-        # try:
-        #     res = self.delete(url=url, headers=headers, params=params)
-        #     if res.ok:
-        #         self.logger.info("Entity id '%s' successfully deleted!",
-        #                          entity_id)
-        #         return entity_id
-        #     res.raise_for_status()
-        # except requests.exceptions.RequestException as err:
-        #     msg = f"Could not delete entity of id {entity_id}"
-        #     self.log_error(err=err, msg=msg)
-        #     raise
 
+        # Test if entity with given parameters exists, if not throw an error
         try:
-            entity = self.get_entity_by_id(entity_id=entity_id,
-                                           entity_type=entity_type)
+            self.get_entity_by_id(entity_id=entity_id,
+                                  entity_type=entity_type)
         except requests.exceptions.RequestException as err:
             msg = f"Could not delete entity of id {entity_id}, it does not " \
                   f"exist"
             self.log_error(err=err, msg=msg)
-            print("GETTING Entity error")
             raise
 
+        # The deletion does not always resolves in a success even if an ok is
+        # returned.
+        # Try to delete multiple times with incrementing waits.
+        # If the entity is no longer found the methode returns with a success
         counter = 0
         while counter < 10:
-            res = self.delete(url=url, headers=headers, params=params)
+            self.delete(url=url, headers=headers, params=params)
             try:
-                entity = self.get_entity_by_id(entity_id=entity_id,
-                                               entity_type=entity_type)
+                self.get_entity_by_id(entity_id=entity_id,
+                                      entity_type=entity_type)
             except requests.exceptions.RequestException as err:
                 self.logger.info("Entity id '%s' successfully deleted!",
                                  entity_id)
                 return entity_id
-            time.sleep(counter/10)
+            time.sleep(counter/5)
             counter += 1
-            print(f"COUNTER {counter}")
 
-        msg = f"Could not delete entity of id {entity_id}"
+        msg = f"Could not delete QL entity of id {entity_id}"
+        logger.error(msg=msg)
         raise Exception(msg)
 
     def delete_entity_type(self, entity_type: str) -> str:
