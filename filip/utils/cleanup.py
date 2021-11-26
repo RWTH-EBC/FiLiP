@@ -121,9 +121,12 @@ def clear_quantumleap(url: str, fiware_header: FiwareHeader):
     # will fail. Else the request will throw an error, the error handler
     # checks if the error, is due to an empty list else it will raise an
     # error itself
+
+    counter = 0
     try:
         print(f"ENTITIES: {client.get_entities()}")
         print(len(client.get_entities()))
+        time.sleep(2)
         assert len(client.get_entities()) == 0
     except RequestException as err:
         handle_emtpy_db_exception(err)
