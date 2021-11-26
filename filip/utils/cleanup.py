@@ -111,27 +111,35 @@ def clear_quantumleap(url: str, fiware_header: FiwareHeader):
 
     # will be executed for all found entities
     for entity in entities:
-        try:
-            client.delete_entity(entity_id=entity.entityId,
-                                 entity_type=entity.entityType)
-        except RequestException as err:
-            handle_emtpy_db_exception(err)
+        # try:
+        client.delete_entity(entity_id=entity.entityId,
+                             entity_type=entity.entityType)
+        # except RequestException as err:
+        #     handle_emtpy_db_exception(err)
+
 
     # test if all entities are deleted. If the client is not empty the assert
     # will fail. Else the request will throw an error, the error handler
     # checks if the error, is due to an empty list else it will raise an
     # error itself
-
-    counter = 0
-    try:
-        entities = client.get_entities()
-        while len(entities) > 0 and counter < 10:
-            print(f"-----{counter}----------{len(client.get_entities())}")
-            print(len(client.get_entities()))
-            counter += 1
-            time.sleep(counter/10)
-    except RequestException as err:
-        handle_emtpy_db_exception(err)
+    #
+    # counter = 0
+    # try:
+    #     entities = client.get_entities()
+    #     while len(entities) > 0 and counter < 10:
+    #         print(f"-----{counter}----------{len(client.get_entities())}")
+    #         print(len(client.get_entities()))
+    #         for entity in entities:
+    #             try:
+    #                 client.delete_entity(entity_id=entity.entityId,
+    #                                      entity_type=entity.entityType)
+    #             except RequestException as err:
+    #                 handle_emtpy_db_exception(err)
+    #         entities = client.get_entities()
+    #         counter += 1
+    #         time.sleep(counter)
+    # except RequestException as err:
+    #     handle_emtpy_db_exception(err)
 
     try:
         if len(client.get_entities()) > 0:
