@@ -244,16 +244,6 @@ class QuantumLeapClient(BaseHttpClient):
         else:
             params = {}
 
-        # Test if entity with given parameters exists, if not throw an error
-        try:
-            self.get_entity_by_id(entity_id=entity_id,
-                                  entity_type=entity_type)
-        except requests.exceptions.RequestException as err:
-            msg = f"Could not delete entity of id {entity_id}, it does not " \
-                  f"exist"
-            self.log_error(err=err, msg=msg)
-            raise
-
         # The deletion does not always resolves in a success even if an ok is
         # returned.
         # Try to delete multiple times with incrementing waits.
