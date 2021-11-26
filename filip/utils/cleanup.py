@@ -117,12 +117,16 @@ def clear_quantumleap(url: str, fiware_header: FiwareHeader):
         except RequestException as err:
             handle_emtpy_db_exception(err)
 
+    # test if all entities are deleted. If the client is not empty the assert
+    # will fail. Else the request will throw an error, the error handler
+    # checks if the error, is due to an empty list else it will raise an
+    # error itself
     try:
-        if not len(client.get_entities()) == 0:
-            time.sleep(0.5)
+        print(client.get_entities())
         assert len(client.get_entities()) == 0
     except RequestException as err:
         handle_emtpy_db_exception(err)
+
 
 def clear_all(*,
               fiware_header: FiwareHeader,
