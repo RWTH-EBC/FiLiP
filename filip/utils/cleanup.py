@@ -126,6 +126,8 @@ def clear_quantumleap(url: str, fiware_header: FiwareHeader):
     try:
         entities = client.get_entities()
         while len(entities) > 0 and counter < 10:
+            print(f"-----{counter}----------{len(client.get_entities())}")
+            print(len(client.get_entities()))
             for entity in entities:
                 try:
                     client.delete_entity(entity_id=entity.entityId,
