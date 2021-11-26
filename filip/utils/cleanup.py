@@ -103,19 +103,19 @@ def clear_quantumleap(url: str, fiware_header: FiwareHeader):
     client = QuantumLeapClient(url=url, fiware_header=fiware_header)
 
     # clear data
-    # entities = []
-    # try:
-    #     entities = client.get_entities()
-    # except RequestException as err:
-    #     handle_emtpy_db_exception(err)
-    #
-    # # will be executed for all found entities
-    # for entity in entities:
-    #     try:
-    #         client.delete_entity(entity_id=entity.entityId,
-    #                              entity_type=entity.entityType)
-    #     except RequestException as err:
-    #         handle_emtpy_db_exception(err)
+    entities = []
+    try:
+        entities = client.get_entities()
+    except RequestException as err:
+        handle_emtpy_db_exception(err)
+
+    # will be executed for all found entities
+    for entity in entities:
+        try:
+            client.delete_entity(entity_id=entity.entityId,
+                                 entity_type=entity.entityType)
+        except RequestException as err:
+            handle_emtpy_db_exception(err)
 
     # test if all entities are deleted. If the client is not empty the assert
     # will fail. Else the request will throw an error, the error handler
