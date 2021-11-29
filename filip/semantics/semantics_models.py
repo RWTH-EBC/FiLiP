@@ -155,7 +155,7 @@ class DevicePropertyInstanceLink(BaseModel):
     instance_identifier: Optional[InstanceIdentifier] = Field(
         default=None,
         description="Identifier of the instance holding this Property")
-    semantic_manager: Optional['SemanticManager'] = Field(
+    semantic_manager: Optional['SemanticsManager'] = Field(
         default=None,
         description="Link to the governing semantic_manager")
     field_name: Optional[str] = Field(
@@ -369,8 +369,8 @@ class Field(BaseModel):
         description="Name of the Field, corresponds to the property name that "
                     "it has in the SemanticClass")
 
-    _semantic_manager: 'SemanticManager'
-    "Reference to the global SemanticManager"
+    _semantic_manager: 'SemanticsManager'
+    "Reference to the global SemanticsManager"
 
     _instance_identifier: InstanceIdentifier
     "Identifier of instance, that has this field as property"
@@ -1131,7 +1131,7 @@ class SemanticClass(BaseModel):
         default=None,
         description="Pointer to the governing semantic_manager, "
                     "vague type to prevent forward ref problems. "
-                    "But it will be of type 'SemanticManager' in runtime")
+                    "But it will be of type 'SemanticsManager' in runtime")
 
     def add_reference(self, identifier: InstanceIdentifier, relation_name: str):
         """

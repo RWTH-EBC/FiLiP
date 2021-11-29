@@ -15,8 +15,9 @@ import wget
 from filip.semantics.ontology_parser.post_processer import PostProcessor
 from filip.semantics.ontology_parser.rdfparser import RdfParser
 from filip.semantics.vocabulary import \
+    LabelSummary, \
     Vocabulary, \
-    Source,\
+    Source, \
     Entity, \
     RestrictionType, \
     Class, \
@@ -24,9 +25,7 @@ from filip.semantics.vocabulary import \
     CombinedRelation, \
     DataFieldType, \
     DependencyStatement, \
-    VocabularySettings, \
-    LabelSummary
-
+    VocabularySettings
 
 # Blacklist containing all labels that are forbidden for entities to have
 label_blacklist = list(keyword.kwlist)
@@ -483,7 +482,7 @@ class VocabularyConfigurator:
         # imports
         content += "from enum import Enum\n"
         content += "from typing import Dict, Union, List\n"
-        content += "from filip.semantics.semantic_models import\\" \
+        content += "from filip.semantics.semantics_models import\\" \
                    "\n\tSemanticClass,\\" \
                    "\n\tSemanticIndividual,\\" \
                    "\n\tRelationField,\\" \
@@ -492,12 +491,12 @@ class VocabularyConfigurator:
                    "\n\tDeviceAttributeField,\\" \
                    "\n\tCommandField"
         content += "\n"
-        content += "from filip.semantics.semantic_manager import\\" \
-                   "\n\tSemanticManager,\\" \
+        content += "from filip.semantics.semantics_manager import\\" \
+                   "\n\tSemanticsManager,\\" \
                    "\n\tInstanceRegistry"
 
         content += "\n\n\n"
-        content += "semantic_manager: SemanticManager = SemanticManager("
+        content += "semantic_manager: SemanticsManager = SemanticsManager("
         content += "\n\t"
         content += "instance_registry=InstanceRegistry(),"
         content += "\n"

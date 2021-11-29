@@ -4,18 +4,10 @@
 # the vocabulary configured
 # and exported as a python model file
 """
-import logging
-import requests
-
 from filip.semantics.vocabulary import DataFieldType
 from filip.semantics.vocabulary.vocabulary import VocabularySettings
 from filip.semantics.vocabulary_configurator import VocabularyConfigurator
 
-from filip.clients.ngsi_v2 import \
-    ContextBrokerClient, \
-    IoTAClient, \
-    QuantumLeapClient
-from filip.models.base import FiwareHeader
 
 if __name__ == '__main__':
 

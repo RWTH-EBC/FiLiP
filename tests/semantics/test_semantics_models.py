@@ -8,14 +8,14 @@ from filip.models.ngsi_v2.iot import TransportProtocol
 
 from tests.config import settings
 from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient
-from filip.semantics.semantic_models import SemanticClass, InstanceHeader, \
+from filip.semantics.semantics_models import SemanticClass, InstanceHeader, \
     Command, DeviceAttribute, DeviceAttributeType
 from filip.semantics.vocabulary import DataFieldType, VocabularySettings
 from filip.semantics.vocabulary_configurator import VocabularyConfigurator
 from filip.utils.cleanup import clear_all
 
 
-class TestSemanticModels(unittest.TestCase):
+class TestSemanticsModels(unittest.TestCase):
     """
     Tests to confirm the correctness of the semantic model mechanism.
     Do not execute single tests, always the full test suite else the header

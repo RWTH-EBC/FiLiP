@@ -69,7 +69,7 @@ if __name__ == '__main__':
     #
     # We can create an instance of a class by simply instantiating and
     # passing the id and header as parameters.
-    from filip.semantics.semantic_models import InstanceHeader
+    from filip.semantics.semantics_models import InstanceHeader
     from filip.models.base import NgsiVersion
 
     header = InstanceHeader(cb_url=cb_url,
@@ -304,7 +304,7 @@ if __name__ == '__main__':
     # Our sensor has one measurement property that he names internally m
     # We add this attribute to our measurement_field.
 
-    from filip.semantics.semantic_models import \
+    from filip.semantics.semantics_models import \
         DeviceAttribute, DeviceAttributeType
     my_sensor.measurement.add(
         DeviceAttribute(name="m", attribute_type=DeviceAttributeType.active))
@@ -322,7 +322,7 @@ if __name__ == '__main__':
     # To do this we need to add Commands to the CommandField.
     # A command has 1 property:
     # - name: The internal name that the specific device uses for this purpose
-    from filip.semantics.semantic_models import Command
+    from filip.semantics.semantics_models import Command
     c1 = Command(name="open")
     my_outlet.controlCommand.add(c1)
 

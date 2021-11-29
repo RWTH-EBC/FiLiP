@@ -42,8 +42,9 @@ class ParsingError(BaseModel):
         default=None,
         description="Name of the source, only set in get_function"
     )
-    entity_type: 'IdType' = Field(
+    entity_type: str = Field(
         description="Type of the problematic entity: Class, Individual,.."
+                    "ID_type in string form"
     )
     entity_iri: str = Field(description="Iri of the problematic entity")
     entity_label: Optional[str] = Field(
@@ -189,7 +190,7 @@ class Source(BaseModel):
         from . import ParsingError
         self.parsing_log.append(ParsingError(
             level=level,
-            entity_type=entity_type,
+            entity_type=str(entity_type),
             entity_iri=entity_iri,
             message=msg,
             source_iri=self.ontology_iri

@@ -14,7 +14,7 @@ from filip.semantics.vocabulary import Individual
 from filip.models.ngsi_v2.context import ContextEntity
 from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient
 from filip.models import FiwareHeader
-from filip.semantics.semantic_models import \
+from filip.semantics.semantics_models import \
     InstanceIdentifier, SemanticClass, InstanceHeader, Datatype, DataField, \
     RelationField, SemanticIndividual, SemanticDeviceClass, CommandField, \
     Command, DeviceAttributeField, DeviceAttribute, DeviceSettings
@@ -26,7 +26,7 @@ class InstanceRegistry(BaseModel):
     """
     Holds all the references to the local SemanticClass instances.
     The instance registry is a global object, that is directly inject in the
-    SemanticClass constructor over the SemanticManager
+    SemanticClass constructor over the SemanticsManager
     """
     _registry: Dict[InstanceIdentifier, 'SemanticClass'] = {}
     """ Dict of the references to the local SemanticClass instances. 
@@ -156,14 +156,14 @@ class InstanceRegistry(BaseModel):
         self._registry.clear()
         self._deleted_identifiers.clear()
 
-    def load(self, json_string: str, semantic_manager: 'SemanticManager'):
+    def load(self, json_string: str, semantic_manager: 'SemanticsManager'):
         """
         Load the state of the registry out of a json string. The current
         state will be discarded
 
         Args:
             json_string (str): State expressed as json string
-            semantic_manager (SemanticManager): manager to which registry
+            semantic_manager (SemanticsManager): manager to which registry
                 belongs
         Returns:
              None
@@ -188,7 +188,7 @@ class InstanceRegistry(BaseModel):
             self._deleted_identifiers.append(identifier)
 
 
-class SemanticManager(BaseModel):
+class SemanticsManager(BaseModel):
     """
     The Semantic Manager is a static object that is delivered with
     each vocabulary model export.
