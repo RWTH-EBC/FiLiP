@@ -765,7 +765,6 @@ class TestSemanticsModels(unittest.TestCase):
         from tests.semantics.models2 import Class3, semantic_manager, \
             customDataType4
 
-
         # setup state
         inst_1 = Class3(id="3")
 
@@ -849,6 +848,35 @@ class TestSemanticsModels(unittest.TestCase):
             for attr in device_entity.static_attributes:
                 if attr.name == "dataProp1":
                     self.assertEqual(attr.value, ['1'])
+
+    def test__20_metadata(self):
+        from models2 import Class3, semantic_manager
+
+        test_header = InstanceHeader(
+            cb_url=settings.CB_URL,
+            iota_url=settings.IOTA_JSON_URL,
+            service=settings.FIWARE_SERVICE,
+            service_path=settings.FIWARE_SERVICEPATH
+        )
+        semantic_manager.set_default_header(test_header)
+
+        # create and save
+        inst = Class3(id="1")
+
+        inst.metadata.name = "TestName"
+        inst.metadata.comment = "TestComment"
+        inst.device_settings.endpoint = "http://Idontcare"
+        inst.device_settings.transport = TransportProtocol.HTTP
+        semantic_manager.save_state()
+
+        # clear local info
+        self.clear_registry()
+
+        # load and check
+        inst = Class3(id="1", header=test_header)
+        print(inst)
+        self.assertEqual(inst.metadata.name, "TestName")
+        self.assertEqual(inst.metadata.comment, "TestComment")
 
     def tearDown(self) -> None:
         """
