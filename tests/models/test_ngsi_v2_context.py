@@ -23,6 +23,7 @@ class TestContextModels(unittest.TestCase):
     """
     Test class for context broker models
     """
+
     def setUp(self) -> None:
         """
         Setup test data
@@ -187,6 +188,30 @@ class TestContextModels(unittest.TestCase):
             Metadata(type=string)
             NamedMetadata(name=string)
             ContextEntityKeyValues(id=string, type=string)
+
+    def test_entity_delete_attributes(self):
+        """
+        Test the delete_attributes methode
+        also tests the get_attribute_name method
+        """
+        attr = ContextAttribute(**{'value': 20, 'type': 'Text'})
+        named_attr = NamedContextAttribute(**{'name': 'test2', 'value': 20,
+                                              'type': 'Text'})
+        attr3 = ContextAttribute(**{'value': 20, 'type': 'Text'})
+
+        entity = ContextEntity(id="12", type="Test")
+
+        entity.add_attributes({"test1": attr, "test3": attr3})
+        entity.add_attributes([named_attr])
+
+        entity.delete_attributes({"test1": attr})
+        self.assertEqual(entity.get_attribute_names(), {"test2", "test3"})
+
+        entity.delete_attributes([named_attr])
+        self.assertEqual(entity.get_attribute_names(), {"test3"})
+
+        entity.delete_attributes(["test3"])
+        self.assertEqual(entity.get_attribute_names(), set())
 
     def tearDown(self) -> None:
         """

@@ -10,11 +10,13 @@ import logging
 import itertools
 from enum import Enum
 from typing import Any, Dict, Optional, List, Union
-import json
 import pytz
 from pydantic import BaseModel, Field, validator, AnyHttpUrl
 from filip.models.base import NgsiVersion, DataType, FiwareRegex
-from filip.models.ngsi_v2.base import BaseAttribute, BaseValueAttribute, BaseNameAttribute
+from filip.models.ngsi_v2.base import \
+    BaseAttribute, \
+    BaseValueAttribute, \
+    BaseNameAttribute
 
 logger = logging.getLogger()
 
@@ -111,7 +113,6 @@ class DeviceAttribute(IoTABaseAttribute):
         default=None,
         description="name of the attribute as coming from the device."
     )
-
 
 class LazyDeviceAttribute(DeviceAttribute):
     """

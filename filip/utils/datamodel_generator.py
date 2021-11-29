@@ -82,7 +82,7 @@ def create_datamodel(*,
             class_name=class_name)
 
         # move temporary file to output directory
-        filepath = path.joinpath(filename)
+        filepath = output_path.joinpath(filename)
         shutil.move(str(output), str(filepath))
 
 if __name__ == '__main__':

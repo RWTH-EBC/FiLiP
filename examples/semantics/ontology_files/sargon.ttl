@@ -1,0 +1,3118 @@
+@prefix : <https://w3id.org/saref#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@base <https://w3id.org/saref> .
+
+<https://w3id.org/saref> rdf:type owl:Ontology ;
+                          owl:imports <http://www.w3.org/2006/time> ;
+                          <http://purl.org/dc/terms/contributor> <http://purl.org/net/mpoveda> ,
+                                                                 <http://www.garcia-castro.com/foaf.rdf#me> ;
+                          <http://purl.org/dc/terms/created> "2015-02-10"^^xsd:date ;
+                          <http://purl.org/dc/terms/creator> <https://www.linkedin.com/in/lauradaniele> ;
+                          <http://purl.org/dc/terms/description> "The Smart Appliances REFerence (SAREF) ontology is a shared model of consensus that facilitates the matching of existing assets (standards/protocols/datamodels/etc.) in the smart appliances domain. The SAREF ontology provides building blocks that allow separation and recombination of different parts of the ontology depending on specific needs. The starting point of SAREF is the concept of device (e.g., a switch). Devices are tangible objects designed to accomplish a particular task in households, common public buildings or offices. In order to accomplish this task, the device performs one or more functions. For example, a washing machine is designed to wash (task) and to accomplish this task it performs the start and stop function. The SAREF ontology offers a lists of basic functions that can be eventually combined in order to have more complex functions in a single device. For example, a switch offers an actuating function of type 'switching on/off'. Each function has some associated commands, which can also be picked up as building blocks from a list. For example, the 'switching on/off' is associated with the commands 'switch on', 'switch off' and 'toggle'. Depending on the function(s) it accomplishes, a device can be found in some corresponding states that are also listed as building blocks. When connected to a network, a device offers a service, which  is a representation of a function to a network that makes the function discoverable, registerable and remotely controllable by other devices in the network. A service can represent one or more functions. A service is offered by a device that wants (a certain set of) its function(s) to be discoverable, registerable, remotely controllable by other devices in the network. A service must specify the device that is offering the service and the function(s) to be represented. A device in the SAREF ontology is also characterized by a profile that can be used to optimize some property, such as Energy, in a home or office that are part of a building."^^xsd:string ;
+                          <http://purl.org/dc/terms/issued> "2015-04-01"^^xsd:date ;
+                          <http://purl.org/dc/terms/license> <http://purl.org/NET/rdflicense/cc-by4.0> ;
+                          <http://purl.org/dc/terms/modified> "2018-05-02"^^xsd:date ;
+                          <http://purl.org/dc/terms/publisher> <https://www.tno.nl> ;
+                          <http://purl.org/dc/terms/source> <http://www.etsi.org/deliver/etsi_ts/103200_103299/103264/02.01.01_60/ts_103264v020101p.pdf> ;
+                          <http://purl.org/dc/terms/title> "SAREF: the Smart Appliances REFerence ontology"^^xsd:string ;
+                          rdfs:comment "Information about changes compared to version 1.1.1: (1)The classes and properties related to how to represent devices in building spaces (such as the saref:BuildingSpace class,  saref:BuildingObject class and saref:isLocatedIn property) have been removed from SAREF and incorporated  into the SAREF4BLDG extension related to buildings (https://w3id.org/def/saref4bldg), including the reuse of the W3C® WGS84 geo positioning vocabulary; (2)The saref:DeviceCategory and saref:FunctionCategory classes have been removed. Instead, the hierarchy of device categories has been implemented directly as subclasses of the saref:Device class; (3)The information specific for energy efficiency has been moved to the SAREF4ENER extension (https://w3id.org/saref4ener). For example, the saref:Profile class has been redefined to accommodate only the properties that are general enough for any type of profile, not only for energy and power. Details on how to specifically model a power profile can be found in the SAREF4ENER extension (https://w3id.org/saref4ener); (4) The subclasses of the saref:Energy class  have been removed (i.e., Average Energy, Maximum Energy, Minimum Energy, Total Energy, HVAC Energy, Hot Water Energy and Lighting Energy); (5)The saref:Property class has been split into two classes (saref:Property and saref:Measurement), as it is done in the SAREF4ENVI extension (https://w3id.org/def/saref4envi), in order to properly accommodate the distinction between the concept of property (an observable quality of something) and the concept of measurement (a concrete value observed for a property); (6)Too restrictive cardinality restrictions have been revised, sometimes making them optional rather than mandatory (better to make properties mandatory in the extensions that specialize SAREF for a specific purpose, rather than restricting SAREF, whose purpose is more general). For example, definitions of units of measurement using an enumeration (owl:oneOf) were too restrictive because they did not allow using other units than those enumerated. Therefore, the individuals of each class are still there, but the owl:oneOf enumeration has been removed; (7)The saref:UnitOfMeasure subclassesre use individuals from the OM ontology for unit of measures (http://www.wurvoc.org/vocabularies/om-1.6/), but this is not the only solution. It has been clarified in the comments that the OM ontology is an example, but other ontologies can be used; (8)The global restrictions (rdfs:domain and rdfs:range) in object properties have been completely removed not to hinder interoperability. Object properties are now only restricted locally in the classes; (9)The subclasses of saref:Task have been transormed in individuals; (10)The saref:hasTask property has been removed from the saref:Profile class to resolve an ambiguity with the saref:Task class." ,
+                                       "Information about changes compared to version 2.1.1: Small version bump to ensure that the turtle-version and the owl-version are up to date." ;
+                          owl:versionInfo "2.1.2"^^xsd:string .
+
+#################################################################
+#    Annotation properties
+#################################################################
+
+###  http://purl.org/dc/terms/description
+<http://purl.org/dc/terms/description> rdf:type owl:AnnotationProperty .
+
+
+###  http://purl.org/dc/terms/issued
+<http://purl.org/dc/terms/issued> rdf:type owl:AnnotationProperty .
+
+
+###  http://purl.org/dc/terms/publisher
+<http://purl.org/dc/terms/publisher> rdf:type owl:AnnotationProperty .
+
+
+###  http://purl.org/dc/terms/source
+<http://purl.org/dc/terms/source> rdf:type owl:AnnotationProperty .
+
+
+###  http://purl.org/dc/terms/title
+<http://purl.org/dc/terms/title> rdf:type owl:AnnotationProperty .
+
+
+###  http://webprotege.stanford.edu/R9KdTRIHz9usCNpX2dg4K1f
+<http://webprotege.stanford.edu/R9KdTRIHz9usCNpX2dg4K1f> rdf:type owl:AnnotationProperty ;
+                                                         rdfs:label "Owner" .
+
+
+###  http://www.w3.org/2000/01/rdf-schema#flow
+rdfs:flow rdf:type owl:AnnotationProperty ;
+          rdfs:label "rdfs:flow" .
+
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://webprotege.stanford.edu/R7GBdHqGSQEE39NloEbSS3
+<http://webprotege.stanford.edu/R7GBdHqGSQEE39NloEbSS3> rdf:type owl:ObjectProperty ;
+                                                        rdfs:label "is located at" .
+
+
+###  http://webprotege.stanford.edu/R7Zkc8DFoAj6xmADvZjNgLJ
+<http://webprotege.stanford.edu/R7Zkc8DFoAj6xmADvZjNgLJ> rdf:type owl:ObjectProperty ;
+                                                         rdfs:subPropertyOf owl:topObjectProperty ;
+                                                         rdfs:label "name" .
+
+
+###  http://webprotege.stanford.edu/R8SdRi8vlSOqECQEgmWWArJ
+<http://webprotege.stanford.edu/R8SdRi8vlSOqECQEgmWWArJ> rdf:type owl:ObjectProperty ;
+                                                         rdfs:label "refBuilding" .
+
+
+###  http://webprotege.stanford.edu/R93J05jzdbFKVUXShR6X4OK
+<http://webprotege.stanford.edu/R93J05jzdbFKVUXShR6X4OK> rdf:type owl:ObjectProperty ;
+                                                         rdfs:label "inFloor" .
+
+
+###  http://webprotege.stanford.edu/R9AH9D25gHc2oWMtzaudnSm
+<http://webprotege.stanford.edu/R9AH9D25gHc2oWMtzaudnSm> rdf:type owl:ObjectProperty ;
+                                                         rdfs:label "hasBuilding" .
+
+
+###  http://webprotege.stanford.edu/R9HiKOJW77kxzZgsSV8U4OM
+<http://webprotege.stanford.edu/R9HiKOJW77kxzZgsSV8U4OM> rdf:type owl:ObjectProperty ;
+                                                         rdfs:label "connectedSensor" .
+
+
+###  http://webprotege.stanford.edu/R9WFufxotu4KAAzKLx4qc2U
+<http://webprotege.stanford.edu/R9WFufxotu4KAAzKLx4qc2U> rdf:type owl:ObjectProperty ;
+                                                         rdfs:subPropertyOf owl:topObjectProperty ;
+                                                         rdfs:label "has channel" .
+
+
+###  http://webprotege.stanford.edu/R9WkTMS4WuSoGsUmGQnBfGb
+<http://webprotege.stanford.edu/R9WkTMS4WuSoGsUmGQnBfGb> rdf:type owl:ObjectProperty ;
+                                                         rdfs:label "hasFloor" .
+
+
+###  http://webprotege.stanford.edu/R9rEQBWjDTUepJnDTWw06AC
+<http://webprotege.stanford.edu/R9rEQBWjDTUepJnDTWw06AC> rdf:type owl:ObjectProperty ;
+                                                         rdfs:label "inRoom" .
+
+
+###  http://webprotege.stanford.edu/RB2WxLZUIhKm9XTavt00cVm
+<http://webprotege.stanford.edu/RB2WxLZUIhKm9XTavt00cVm> rdf:type owl:ObjectProperty ;
+                                                         rdfs:label "containOf" .
+
+
+###  http://webprotege.stanford.edu/RB8kVin94KMOdCqBXQfzoBq
+<http://webprotege.stanford.edu/RB8kVin94KMOdCqBXQfzoBq> rdf:type owl:ObjectProperty ;
+                                                         rdfs:comment "Things that have rooms..."^^xsd:string ;
+                                                         rdfs:label "hasRoom"^^xsd:string .
+
+
+###  http://webprotege.stanford.edu/RBMny9KQYAtx7wC9trPLa8G
+<http://webprotege.stanford.edu/RBMny9KQYAtx7wC9trPLa8G> rdf:type owl:ObjectProperty ;
+                                                         rdfs:label "hasZone" .
+
+
+###  http://webprotege.stanford.edu/RBjUbnUXcVIn1RpQ8DS8m5Y
+<http://webprotege.stanford.edu/RBjUbnUXcVIn1RpQ8DS8m5Y> rdf:type owl:ObjectProperty ;
+                                                         rdfs:label "hasTenant"^^xsd:string .
+
+
+###  http://webprotege.stanford.edu/RCNjAo2i3RVhdHFLmNIdg7e
+<http://webprotege.stanford.edu/RCNjAo2i3RVhdHFLmNIdg7e> rdf:type owl:ObjectProperty ;
+                                                         rdfs:subPropertyOf owl:topObjectProperty ;
+                                                         rdfs:label "locatedAt" .
+
+
+###  http://webprotege.stanford.edu/RCeh3vKI5NGDzw3o39LD4Mi
+<http://webprotege.stanford.edu/RCeh3vKI5NGDzw3o39LD4Mi> rdf:type owl:ObjectProperty ;
+                                                         rdfs:label "relatedSensor" .
+
+
+###  http://webprotege.stanford.edu/RCuqX9cGbHnQtoxGGixBISH
+<http://webprotege.stanford.edu/RCuqX9cGbHnQtoxGGixBISH> rdf:type owl:ObjectProperty ;
+                                                         rdfs:label "hasSensor" .
+
+
+###  http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH
+<http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH> rdf:type owl:ObjectProperty ;
+                                                         rdfs:label "subCategory" .
+
+
+###  http://webprotege.stanford.edu/RLObgBrWUGbtlQvTc4OsHG
+<http://webprotege.stanford.edu/RLObgBrWUGbtlQvTc4OsHG> rdf:type owl:ObjectProperty ;
+                                                        rdfs:label "locatedIn" .
+
+
+###  http://webprotege.stanford.edu/RMfoweHoovrkAPFvvrfY9e
+<http://webprotege.stanford.edu/RMfoweHoovrkAPFvvrfY9e> rdf:type owl:ObjectProperty ;
+                                                        rdfs:label "InBuilding" .
+
+
+###  http://webprotege.stanford.edu/RddfRR1iAEUWOtY3vXRnmh
+<http://webprotege.stanford.edu/RddfRR1iAEUWOtY3vXRnmh> rdf:type owl:ObjectProperty ;
+                                                        rdfs:label "connectedActuator" .
+
+
+###  http://webprotege.stanford.edu/RgoNuDfsILOyExh2h5B67V
+<http://webprotege.stanford.edu/RgoNuDfsILOyExh2h5B67V> rdf:type owl:ObjectProperty ;
+                                                        rdfs:label "liveIn" .
+
+
+###  http://webprotege.stanford.edu/Rl7mrdaiCChcbesJOkxsUC
+<http://webprotege.stanford.edu/Rl7mrdaiCChcbesJOkxsUC> rdf:type owl:ObjectProperty ;
+                                                        rdfs:label "hasChannel" .
+
+
+###  http://webprotege.stanford.edu/RrZ0OTtxDkWXNW8z83BPFw
+<http://webprotege.stanford.edu/RrZ0OTtxDkWXNW8z83BPFw> rdf:type owl:ObjectProperty ;
+                                                        rdfs:label "hasSubZone" .
+
+
+###  http://webprotege.stanford.edu/RwSG06MFL0R2RaP1G3jDWK
+<http://webprotege.stanford.edu/RwSG06MFL0R2RaP1G3jDWK> rdf:type owl:ObjectProperty ;
+                                                        rdfs:label "controlledProperty" .
+
+
+###  https://w3id.org/saref#accomplishes
+:accomplishes rdf:type owl:ObjectProperty ;
+              owl:inverseOf :isAccomplishedBy ;
+              rdfs:comment "A relationship between a certain entity (e.g., a device) and the task it accomplishes"^^xsd:string ;
+              rdfs:label "accomplishes"^^xsd:string .
+
+
+###  https://w3id.org/saref#actsUpon
+:actsUpon rdf:type owl:ObjectProperty ;
+          rdfs:comment "A relationship between a command and a state"^^xsd:string ;
+          rdfs:label "acts upon"^^xsd:string .
+
+
+###  https://w3id.org/saref#consistsOf
+:consistsOf rdf:type owl:ObjectProperty ;
+            rdfs:comment "A relationship indicating a composite entity that consists of other entities (e.g., a temperature/humidity sensor that consists of a temperature sensor and a humidity sensor)"^^xsd:string ;
+            rdfs:label "consists of"^^xsd:string .
+
+
+###  https://w3id.org/saref#controlsProperty
+:controlsProperty rdf:type owl:ObjectProperty ;
+                  rdfs:comment "A relationship specifying the Property that can be controlled by a certain Device"@en ;
+                  rdfs:label "controls property"@en .
+
+
+###  https://w3id.org/saref#hasCommand
+:hasCommand rdf:type owl:ObjectProperty ;
+            owl:inverseOf :isCommandOf ;
+            rdfs:comment "A relationship between an entity (such as a function) and a command"^^xsd:string ;
+            rdfs:label "has command"^^xsd:string .
+
+
+###  https://w3id.org/saref#hasFunction
+:hasFunction rdf:type owl:ObjectProperty ;
+             rdfs:comment "A relationship identifying the type of function of a device"^^xsd:string ;
+             rdfs:label "has function"^^xsd:string .
+
+
+###  https://w3id.org/saref#hasMeterReading
+:hasMeterReading rdf:type owl:ObjectProperty ;
+                 rdfs:comment "A relationship between a metering function and the measurement of the reading"^^xsd:string ;
+                 rdfs:label "has meter reading"^^xsd:string .
+
+
+###  https://w3id.org/saref#hasMeterReadingType
+:hasMeterReadingType rdf:type owl:ObjectProperty ;
+                     rdfs:comment "A relationship identifying the reading type of a measurement (e.g., Water, Gas, Pressure , Energy , Power, etc.)"^^xsd:string ;
+                     rdfs:label "has meter reading type"^^xsd:string .
+
+
+###  https://w3id.org/saref#hasPrice
+:hasPrice rdf:type owl:ObjectProperty ;
+          rdfs:comment "A relationships indentifying the price associated to an entity"^^xsd:string ;
+          rdfs:label "has price"^^xsd:string .
+
+
+###  https://w3id.org/saref#hasProfile
+:hasProfile rdf:type owl:ObjectProperty ;
+            rdfs:comment "A relationship associating a profile to a certain entity (e.g., a device)"^^xsd:string ;
+            rdfs:label "has profile"^^xsd:string .
+
+
+###  https://w3id.org/saref#hasSensingRange
+:hasSensingRange rdf:type owl:ObjectProperty ;
+                 rdfs:comment "A relationship between a sensing function and a measurement identifying the range of a sensor detection"^^xsd:string ;
+                 rdfs:label "has sensing range "^^xsd:string .
+
+
+###  https://w3id.org/saref#hasSensorType
+:hasSensorType rdf:type owl:ObjectProperty ;
+               rdfs:comment "A relationship identifying the sensing type of a sensor detection (i.e., Temperature, Occupancy, Humidity, Motion , Smoke, Pressure, etc.) "^^xsd:string ;
+               rdfs:label "has sensor type"^^xsd:string .
+
+
+###  https://w3id.org/saref#hasState
+:hasState rdf:type owl:ObjectProperty ;
+          rdfs:comment "A relationship identifying the type of state of a device"^^xsd:string ;
+          rdfs:label "has state"^^xsd:string .
+
+
+###  https://w3id.org/saref#hasThresholdMeasurement
+:hasThresholdMeasurement rdf:type owl:ObjectProperty ;
+                         rdfs:comment "A relationship associated with an event function to notify that a certain threshold measurement has been exceeded"^^xsd:string ;
+                         rdfs:label "has threshold measurement"^^xsd:string .
+
+
+###  https://w3id.org/saref#hasTime
+:hasTime rdf:type owl:ObjectProperty ;
+         rdfs:comment "A relationship to associate time information to an entity"^^xsd:string ;
+         rdfs:label "has time"^^xsd:string .
+
+
+###  https://w3id.org/saref#hasTypicalConsumption
+:hasTypicalConsumption rdf:type owl:ObjectProperty ;
+                       rdfs:comment "A relationship identifying the typical (energy or power) consumption of a device"^^xsd:string ;
+                       rdfs:label "has typical consumption"^^xsd:string .
+
+
+###  https://w3id.org/saref#isAbout
+:isAbout rdf:type owl:ObjectProperty ;
+         rdfs:comment "A relationship identifying what an entity, such as a Profile, is about"@en ;
+         rdfs:label "isAbout"@en .
+
+
+###  https://w3id.org/saref#isAccomplishedBy
+:isAccomplishedBy rdf:type owl:ObjectProperty ;
+                  rdfs:comment "A relationship indentifying the task accomplished by a certain entity (e.g., a device)"^^xsd:string ;
+                  rdfs:label "is accomplished by"^^xsd:string .
+
+
+###  https://w3id.org/saref#isCommandOf
+:isCommandOf rdf:type owl:ObjectProperty ;
+             rdfs:comment "A relationship between a command and a function."^^xsd:string ;
+             rdfs:label "is command of"^^xsd:string .
+
+
+###  https://w3id.org/saref#isControlledByDevice
+:isControlledByDevice rdf:type owl:ObjectProperty ;
+                      rdfs:comment "A relationship specifying the devices that can control a certain property"@en ;
+                      rdfs:label "is controlled by device"^^xsd:string .
+
+
+###  https://w3id.org/saref#isMeasuredByDevice
+:isMeasuredByDevice rdf:type owl:ObjectProperty ;
+                    rdfs:comment "A relationship specifying the devices that can measure a certain property"@en ;
+                    rdfs:label "is measured by device"^^xsd:string .
+
+
+###  https://w3id.org/saref#isMeasuredIn
+:isMeasuredIn rdf:type owl:ObjectProperty ;
+              rdfs:comment "A relationship identifying the unit of measure used for a certain entity."^^xsd:string ;
+              rdfs:label "is measured in"^^xsd:string .
+
+
+###  https://w3id.org/saref#isOfferedBy
+:isOfferedBy rdf:type owl:ObjectProperty ;
+             owl:inverseOf :offers ;
+             rdfs:comment "A relationship between a service and a device that offers the service"^^xsd:string ;
+             rdfs:label "is offered by"^^xsd:string .
+
+
+###  https://w3id.org/saref#isUsedFor
+:isUsedFor rdf:type owl:ObjectProperty ;
+           rdfs:comment "A relationship specifying the purpose for which a device is used for (e.g., controlling a Commodity)"^^xsd:string ;
+           rdfs:label "is used for"^^xsd:string .
+
+
+###  https://w3id.org/saref#makesMeasurement
+:makesMeasurement rdf:type owl:ObjectProperty ;
+                  rdfs:comment "A relation between a device and the measurements it makes. Such measurement will link together the value of the measurement, its unit of measure and the property to which it relates."@en ;
+                  rdfs:label "makes measurement"@en .
+
+
+###  https://w3id.org/saref#measuresProperty
+:measuresProperty rdf:type owl:ObjectProperty ;
+                  rdfs:comment "A relationship specifying the Property that can be measured by a certain Device"@en ;
+                  rdfs:label "measures property"@en .
+
+
+###  https://w3id.org/saref#offers
+:offers rdf:type owl:ObjectProperty ;
+        rdfs:comment "A relationship between a device and a service"^^xsd:string ;
+        rdfs:label "offers"^^xsd:string .
+
+
+###  https://w3id.org/saref#relatesToMeasurement
+:relatesToMeasurement rdf:type owl:ObjectProperty ;
+                      rdfs:comment "A relationship between a property and the measurements it relates to"^^xsd:string ;
+                      rdfs:label "relates to measurement"@en .
+
+
+###  https://w3id.org/saref#relatesToProperty
+:relatesToProperty rdf:type owl:ObjectProperty ;
+                   rdfs:comment "A relationship between a measurement and the property it relates to"^^xsd:string ;
+                   rdfs:label "relates to property"@en .
+
+
+###  https://w3id.org/saref#represents
+:represents rdf:type owl:ObjectProperty ;
+            rdfs:comment "A relationship between a service and a function."^^xsd:string ;
+            rdfs:label "represents"^^xsd:string .
+
+
+#################################################################
+#    Data properties
+#################################################################
+
+###  http://webprotege.stanford.edu/R4T4qE1pipLEVhQIalc1yF
+<http://webprotege.stanford.edu/R4T4qE1pipLEVhQIalc1yF> rdf:type owl:DatatypeProperty ;
+                                                        rdfs:label "ipAddress" .
+
+
+###  http://webprotege.stanford.edu/R4phjIleyel2eytwDoMN4B
+<http://webprotege.stanford.edu/R4phjIleyel2eytwDoMN4B> rdf:type owl:DatatypeProperty ;
+                                                        rdfs:label "controllAsset" .
+
+
+###  http://webprotege.stanford.edu/R7IeRCKGT1lSxkJIx0tDxW4
+<http://webprotege.stanford.edu/R7IeRCKGT1lSxkJIx0tDxW4> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:label "source" .
+
+
+###  http://webprotege.stanford.edu/R7MbwqU5avXFhqTXWUDHMr2
+<http://webprotege.stanford.edu/R7MbwqU5avXFhqTXWUDHMr2> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:label "Supported Network" .
+
+
+###  http://webprotege.stanford.edu/R7ONCLvdLIVcybZHCk9rqnF
+<http://webprotege.stanford.edu/R7ONCLvdLIVcybZHCk9rqnF> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:label "td" .
+
+
+###  http://webprotege.stanford.edu/R7ciyTz28kO4YSqZrPOEetN
+<http://webprotege.stanford.edu/R7ciyTz28kO4YSqZrPOEetN> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:label "serialNumber " .
+
+
+###  http://webprotege.stanford.edu/R7gL1iXzViEvM39mhH7N5lG
+<http://webprotege.stanford.edu/R7gL1iXzViEvM39mhH7N5lG> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:label "Primary Voltage" .
+
+
+###  http://webprotege.stanford.edu/R7m39AAN0fs35za2Ybur9SI
+<http://webprotege.stanford.edu/R7m39AAN0fs35za2Ybur9SI> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:label "dataProvider" .
+
+
+###  http://webprotege.stanford.edu/R7u37iRF1XNSqOBsn8Zhsjs
+<http://webprotege.stanford.edu/R7u37iRF1XNSqOBsn8Zhsjs> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:subPropertyOf owl:topDataProperty ;
+                                                         rdfs:label "Owner" .
+
+
+###  http://webprotege.stanford.edu/R8Q6atByV0G6D1JLt5Jupcw
+<http://webprotege.stanford.edu/R8Q6atByV0G6D1JLt5Jupcw> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:label "data Provider" .
+
+
+###  http://webprotege.stanford.edu/R8QPBXHMQKgoyvwW0Wgo27p
+<http://webprotege.stanford.edu/R8QPBXHMQKgoyvwW0Wgo27p> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:label "floorsBelowGround" .
+
+
+###  http://webprotege.stanford.edu/R8qtCSGVndTZGw8d7CaBUUr
+<http://webprotege.stanford.edu/R8qtCSGVndTZGw8d7CaBUUr> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:label "modifiedAt" .
+
+
+###  http://webprotege.stanford.edu/R8yGcsaqMooXtA1CAD21Jpg
+<http://webprotege.stanford.edu/R8yGcsaqMooXtA1CAD21Jpg> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:label "location" .
+
+
+###  http://webprotege.stanford.edu/R92Py4iSAQmIMho8kmSSjGu
+<http://webprotege.stanford.edu/R92Py4iSAQmIMho8kmSSjGu> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:label "Primary Current" .
+
+
+###  http://webprotege.stanford.edu/R977TDBEN15A0aIS34zi0Cr
+<http://webprotege.stanford.edu/R977TDBEN15A0aIS34zi0Cr> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:label "writable" .
+
+
+###  http://webprotege.stanford.edu/R9Glqq0qFcr3BxOkjyvHIyB
+<http://webprotege.stanford.edu/R9Glqq0qFcr3BxOkjyvHIyB> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:label "higher-limit" .
+
+
+###  http://webprotege.stanford.edu/R9KxteO3QWmrBE3BzLCW4he
+<http://webprotege.stanford.edu/R9KxteO3QWmrBE3BzLCW4he> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:label "supplierName" .
+
+
+###  http://webprotege.stanford.edu/R9LH9My3n4DxDE3jIPObwWV
+<http://webprotege.stanford.edu/R9LH9My3n4DxDE3jIPObwWV> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:label "createdAt" .
+
+
+###  http://webprotege.stanford.edu/R9PDn4Aa84f1Umys0v1riwj
+<http://webprotege.stanford.edu/R9PDn4Aa84f1Umys0v1riwj> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:label "openingHours" .
+
+
+###  http://webprotege.stanford.edu/R9SlLxx5Y3V1brMYIAMP0Ds
+<http://webprotege.stanford.edu/R9SlLxx5Y3V1brMYIAMP0Ds> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:label "description" .
+
+
+###  http://webprotege.stanford.edu/R9TtTs8Kbux9eMtSGBoCHpn
+<http://webprotege.stanford.edu/R9TtTs8Kbux9eMtSGBoCHpn> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:label "Current level" .
+
+
+###  http://webprotege.stanford.edu/R9bxyqfBfStiSZ33jrghrZ7
+<http://webprotege.stanford.edu/R9bxyqfBfStiSZ33jrghrZ7> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:label "higherLimit" .
+
+
+###  http://webprotege.stanford.edu/R9cCDlfuefKP15nQEyJpDcP
+<http://webprotege.stanford.edu/R9cCDlfuefKP15nQEyJpDcP> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:label "has mobile number" .
+
+
+###  http://webprotege.stanford.edu/R9enayLUqq3Zdey1f0bX9y8
+<http://webprotege.stanford.edu/R9enayLUqq3Zdey1f0bX9y8> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:label "controlledAsset" .
+
+
+###  http://webprotege.stanford.edu/R9frPiixJGYcVAtPvlA9RU8
+<http://webprotege.stanford.edu/R9frPiixJGYcVAtPvlA9RU8> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:label "readableName" .
+
+
+###  http://webprotege.stanford.edu/R9ifOw6ljRaDlXiQrPMARW7
+<http://webprotege.stanford.edu/R9ifOw6ljRaDlXiQrPMARW7> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:label "ti" .
+
+
+###  http://webprotege.stanford.edu/R9sGXnWRopKt3SnizLWNcHb
+<http://webprotege.stanford.edu/R9sGXnWRopKt3SnizLWNcHb> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:label "Primery Voltage" .
+
+
+###  http://webprotege.stanford.edu/R9uDJxmZz4gajOLqdvo9Bu4
+<http://webprotege.stanford.edu/R9uDJxmZz4gajOLqdvo9Bu4> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:subPropertyOf owl:topDataProperty ;
+                                                         rdfs:label "Sample Rate" .
+
+
+###  http://webprotege.stanford.edu/RB03ZKnWypB1bdhZKSud2oc
+<http://webprotege.stanford.edu/RB03ZKnWypB1bdhZKSud2oc> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:subPropertyOf owl:topDataProperty ;
+                                                         rdfs:label "Max Active Power" .
+
+
+###  http://webprotege.stanford.edu/RBHJOmp3CjeLc4EQmK5yxWX
+<http://webprotege.stanford.edu/RBHJOmp3CjeLc4EQmK5yxWX> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:label "supportedProtocol" .
+
+
+###  http://webprotege.stanford.edu/RBQYwalLa8y1fuwJmAeuKrK
+<http://webprotege.stanford.edu/RBQYwalLa8y1fuwJmAeuKrK> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:label "loggingInterval" .
+
+
+###  http://webprotege.stanford.edu/RBpiVVTtwCMmjyKVqwFn32E
+<http://webprotege.stanford.edu/RBpiVVTtwCMmjyKVqwFn32E> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:label "has floor" .
+
+
+###  http://webprotege.stanford.edu/RC1uju7MusVWB3TEBgr8qmA
+<http://webprotege.stanford.edu/RC1uju7MusVWB3TEBgr8qmA> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:label "Secondary Voltage" .
+
+
+###  http://webprotege.stanford.edu/RC7ySF27aPGkWjmwYvfLMQi
+<http://webprotege.stanford.edu/RC7ySF27aPGkWjmwYvfLMQi> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:label "has email" .
+
+
+###  http://webprotege.stanford.edu/RCTMpBzwfC3ibffls4vUt06
+<http://webprotege.stanford.edu/RCTMpBzwfC3ibffls4vUt06> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:subPropertyOf owl:topDataProperty ;
+                                                         rdfs:label "Accuracy" .
+
+
+###  http://webprotege.stanford.edu/RCTumu9TEZjcTzF7uvxEB6X
+<http://webprotege.stanford.edu/RCTumu9TEZjcTzF7uvxEB6X> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:label "lowerLimit" .
+
+
+###  http://webprotege.stanford.edu/RCWsQXkOcAHxLLB1JRibpTd
+<http://webprotege.stanford.edu/RCWsQXkOcAHxLLB1JRibpTd> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:label "operationSequence" .
+
+
+###  http://webprotege.stanford.edu/RCnxMGA7ioZShgqxi8IYdez
+<http://webprotege.stanford.edu/RCnxMGA7ioZShgqxi8IYdez> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:label "Logical Node" .
+
+
+###  http://webprotege.stanford.edu/RCsyTeO4VQGVl11ERL7hQrH
+<http://webprotege.stanford.edu/RCsyTeO4VQGVl11ERL7hQrH> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:label "Secondary Current" .
+
+
+###  http://webprotege.stanford.edu/RD1hFIaNTKmpa3to9qqP1JM
+<http://webprotege.stanford.edu/RD1hFIaNTKmpa3to9qqP1JM> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:label "controlAsset" .
+
+
+###  http://webprotege.stanford.edu/RD1ktocZXbRdizsc95Zb6hb
+<http://webprotege.stanford.edu/RD1ktocZXbRdizsc95Zb6hb> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:label "reverseAction" .
+
+
+###  http://webprotege.stanford.edu/RDADzS2qAC3GkCb4cbY0wjV
+<http://webprotege.stanford.edu/RDADzS2qAC3GkCb4cbY0wjV> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:label "sampleInterval" .
+
+
+###  http://webprotege.stanford.edu/RDAjHtUVAjpRS1IKarpqaN
+<http://webprotege.stanford.edu/RDAjHtUVAjpRS1IKarpqaN> rdf:type owl:DatatypeProperty ;
+                                                        rdfs:label "sampleRate" .
+
+
+###  http://webprotege.stanford.edu/RDUGtzcnZPknLxhfiRbh1Zx
+<http://webprotege.stanford.edu/RDUGtzcnZPknLxhfiRbh1Zx> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:label "listening" .
+
+
+###  http://webprotege.stanford.edu/RDafdYghsCmPrJjKIXG0nuP
+<http://webprotege.stanford.edu/RDafdYghsCmPrJjKIXG0nuP> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:label "setValue" .
+
+
+###  http://webprotege.stanford.edu/RDwvpbGDvjUTopZ1lKVZwK4
+<http://webprotege.stanford.edu/RDwvpbGDvjUTopZ1lKVZwK4> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:subPropertyOf owl:topDataProperty ;
+                                                         rdfs:label "Active Power" .
+
+
+###  http://webprotege.stanford.edu/RDzHte7rXVSgkFwpYMfCOT5
+<http://webprotege.stanford.edu/RDzHte7rXVSgkFwpYMfCOT5> rdf:type owl:DatatypeProperty ;
+                                                         rdfs:label "floorsAboveGround" .
+
+
+###  http://webprotege.stanford.edu/RKCxla7pj2Mt4Dtv4RzY5q
+<http://webprotege.stanford.edu/RKCxla7pj2Mt4Dtv4RzY5q> rdf:type owl:DatatypeProperty ;
+                                                        rdfs:subPropertyOf owl:topDataProperty ;
+                                                        rdfs:label "Max Reactive Power" .
+
+
+###  http://webprotege.stanford.edu/RLB9CYDaWlf0rsfcjiV1UY
+<http://webprotege.stanford.edu/RLB9CYDaWlf0rsfcjiV1UY> rdf:type owl:DatatypeProperty ;
+                                                        rdfs:label "Voltage level" .
+
+
+###  http://webprotege.stanford.edu/RPO0n2wheCmJQrgF71ubQy
+<http://webprotege.stanford.edu/RPO0n2wheCmJQrgF71ubQy> rdf:type owl:DatatypeProperty ;
+                                                        rdfs:label "address" .
+
+
+###  http://webprotege.stanford.edu/RZ6zoGFOkcTQApOrEUU375
+<http://webprotege.stanford.edu/RZ6zoGFOkcTQApOrEUU375> rdf:type owl:DatatypeProperty ;
+                                                        rdfs:subPropertyOf owl:topDataProperty ;
+                                                        rdfs:label "TimeStamp" .
+
+
+###  http://webprotege.stanford.edu/Reh2hHaLwD7kB47FpyBIIC
+<http://webprotege.stanford.edu/Reh2hHaLwD7kB47FpyBIIC> rdf:type owl:DatatypeProperty ;
+                                                        rdfs:subPropertyOf owl:topDataProperty ;
+                                                        rdfs:label "Reactive Power" .
+
+
+###  http://webprotege.stanford.edu/RkTWR83G6eN9UoxmHGseqK
+<http://webprotege.stanford.edu/RkTWR83G6eN9UoxmHGseqK> rdf:type owl:DatatypeProperty ;
+                                                        rdfs:subPropertyOf owl:topDataProperty ;
+                                                        rdfs:label "tap Position" .
+
+
+###  http://webprotege.stanford.edu/RnDZCWKi1PmBcQlAUaQnxX
+<http://webprotege.stanford.edu/RnDZCWKi1PmBcQlAUaQnxX> rdf:type owl:DatatypeProperty ;
+                                                        rdfs:label "kp" .
+
+
+###  https://w3id.org/saref#hasDescription
+:hasDescription rdf:type owl:DatatypeProperty ;
+                rdfs:range xsd:string ;
+                rdfs:comment "A relationship providing a description of an entity (e.g., device)"^^xsd:string ;
+                rdfs:label "has description"^^xsd:string .
+
+
+###  https://w3id.org/saref#hasManufacturer
+:hasManufacturer rdf:type owl:DatatypeProperty ;
+                 rdfs:range xsd:string ;
+                 rdfs:comment "A relationship identifying the manufacturer of an entity (e.g., device)"^^xsd:string ;
+                 rdfs:label "has manufacturer"^^xsd:string .
+
+
+###  https://w3id.org/saref#hasModel
+:hasModel rdf:type owl:DatatypeProperty ;
+          rdfs:range xsd:string ;
+          rdfs:comment "A relationship identifying the model of an entity (e.g., device)"^^xsd:string ;
+          rdfs:label "has model"^^xsd:string .
+
+
+###  https://w3id.org/saref#hasName
+:hasName rdf:type owl:DatatypeProperty ;
+         rdfs:range xsd:string ;
+         rdfs:comment "A relationship providing the name of an entity (e.g., device)"^^xsd:string ;
+         rdfs:label "has name"^^xsd:string .
+
+
+###  https://w3id.org/saref#hasTimestamp
+:hasTimestamp rdf:type owl:DatatypeProperty ;
+              rdfs:comment "A relationship stating the timestamp of an entity (e.g. a measurement)."@en ;
+              rdfs:label "has timestamp"@en .
+
+
+###  https://w3id.org/saref#hasValue
+:hasValue rdf:type owl:DatatypeProperty ;
+          rdfs:comment "A relationship defining the value of a certain property, e.g., energy or power"^^xsd:string ;
+          rdfs:label "has value"^^xsd:string .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://webprotege.stanford.edu/R4TThu5olmO7P4xlm5s5zt
+<http://webprotege.stanford.edu/R4TThu5olmO7P4xlm5s5zt> rdf:type owl:Class ;
+                                                        rdfs:subClassOf :Sensor ,
+                                                                        [ rdf:type owl:Restriction ;
+                                                                          owl:onProperty :consistsOf ;
+                                                                          owl:someValuesFrom :Sensor
+                                                                        ] ,
+                                                                        [ rdf:type owl:Restriction ;
+                                                                          owl:onProperty :hasFunction ;
+                                                                          owl:someValuesFrom :SensingFunction
+                                                                        ] ,
+                                                                        [ rdf:type owl:Restriction ;
+                                                                          owl:onProperty :measuresProperty ;
+                                                                          owl:someValuesFrom <http://webprotege.stanford.edu/R8EFOfQ6VvfWs0fb7ETTCoC>
+                                                                        ] ,
+                                                                        [ rdf:type owl:Restriction ;
+                                                                          owl:onProperty :accomplishes ;
+                                                                          owl:hasValue :Comfort
+                                                                        ] ;
+                                                        rdfs:label "Air flow sensor" .
+
+
+###  http://webprotege.stanford.edu/R7AzP49RsBgChL2gjfuR87J
+<http://webprotege.stanford.edu/R7AzP49RsBgChL2gjfuR87J> rdf:type owl:Class ;
+                                                         rdfs:subClassOf <http://webprotege.stanford.edu/RCUXiAiW1f8PVPPnDTQ1hFg> ;
+                                                         rdfs:label "TimeStamp" .
+
+
+###  http://webprotege.stanford.edu/R7RmVt0SGl9lECEozmKGzFR
+<http://webprotege.stanford.edu/R7RmVt0SGl9lECEozmKGzFR> rdf:type owl:Class ;
+                                                         rdfs:subClassOf <http://webprotege.stanford.edu/RDE6cVxTumawuTFWQH5VCIt> ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH> ;
+                                                                           owl:someValuesFrom :Device
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty :isMeasuredIn ;
+                                                                           owl:someValuesFrom :Measurement
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/R7ONCLvdLIVcybZHCk9rqnF> ;
+                                                                           owl:someValuesFrom xsd:string
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/R9bxyqfBfStiSZ33jrghrZ7> ;
+                                                                           owl:someValuesFrom xsd:string
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/R9ifOw6ljRaDlXiQrPMARW7> ;
+                                                                           owl:someValuesFrom xsd:string
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RCTumu9TEZjcTzF7uvxEB6X> ;
+                                                                           owl:someValuesFrom xsd:string
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RD1ktocZXbRdizsc95Zb6hb> ;
+                                                                           owl:someValuesFrom xsd:int
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RnDZCWKi1PmBcQlAUaQnxX> ;
+                                                                           owl:someValuesFrom xsd:string
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RPO0n2wheCmJQrgF71ubQy> ;
+                                                                           owl:hasValue "Geo:json"^^xsd:string
+                                                                         ] ;
+                                                         rdfs:label "PID" .
+
+
+###  http://webprotege.stanford.edu/R7ZX8WQXUGxp9vhiILPtj97
+<http://webprotege.stanford.edu/R7ZX8WQXUGxp9vhiILPtj97> rdf:type owl:Class ;
+                                                         rdfs:subClassOf <http://webprotege.stanford.edu/RBwFHsGyJHwz5MnZx9gY3sC> ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH> ;
+                                                                           owl:someValuesFrom :Device
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty :hasFunction ;
+                                                                           owl:someValuesFrom :LevelControlFunction
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty :hasState ;
+                                                                           owl:someValuesFrom :OnOffFunction
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty :hasDescription ;
+                                                                           owl:someValuesFrom xsd:string
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/R7MbwqU5avXFhqTXWUDHMr2> ;
+                                                                           owl:hasValue "String"^^xsd:string
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/R7gL1iXzViEvM39mhH7N5lG> ;
+                                                                           owl:hasValue "String"^^xsd:string
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/R92Py4iSAQmIMho8kmSSjGu> ;
+                                                                           owl:hasValue "String"^^xsd:string
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RC1uju7MusVWB3TEBgr8qmA> ;
+                                                                           owl:hasValue "String"^^xsd:string
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RCnxMGA7ioZShgqxi8IYdez> ;
+                                                                           owl:hasValue "String"^^xsd:string
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RCsyTeO4VQGVl11ERL7hQrH> ;
+                                                                           owl:hasValue "String"^^xsd:string
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RPO0n2wheCmJQrgF71ubQy> ;
+                                                                           owl:hasValue "Geo:json"^^xsd:string
+                                                                         ] ;
+                                                         rdfs:label "AC-DC" .
+
+
+###  http://webprotege.stanford.edu/R7dFhOXbtQS060HG10LYKMg
+<http://webprotege.stanford.edu/R7dFhOXbtQS060HG10LYKMg> rdf:type owl:Class ;
+                                                         rdfs:subClassOf <http://webprotege.stanford.edu/R9zZnEzh8zvn7is0mE0LthT> ;
+                                                         rdfs:label "ElectronicTimeControl" .
+
+
+###  http://webprotege.stanford.edu/R7wV2NrvqVp9Yo8dgX5OHYP
+<http://webprotege.stanford.edu/R7wV2NrvqVp9Yo8dgX5OHYP> rdf:type owl:Class ;
+                                                         rdfs:subClassOf <http://webprotege.stanford.edu/RCyTFptM6Ffpb2hWxkqHKwI> ;
+                                                         rdfs:label "Compressor" .
+
+
+###  http://webprotege.stanford.edu/R8C4U2kKYLWac4OTSJQAuV2
+<http://webprotege.stanford.edu/R8C4U2kKYLWac4OTSJQAuV2> rdf:type owl:Class ;
+                                                         rdfs:subClassOf <http://webprotege.stanford.edu/R9zZnEzh8zvn7is0mE0LthT> ;
+                                                         rdfs:label "FlowMeter" .
+
+
+###  http://webprotege.stanford.edu/R8EFOfQ6VvfWs0fb7ETTCoC
+<http://webprotege.stanford.edu/R8EFOfQ6VvfWs0fb7ETTCoC> rdf:type owl:Class ;
+                                                         rdfs:subClassOf :Property ;
+                                                         rdfs:comment "A property related to measurements of rates of flow, measured in m³/s. This may for instance be used to measure air flow in ventilation or water flow in district heating systems."^^xsd:string ;
+                                                         rdfs:label "Flow" .
+
+
+###  http://webprotege.stanford.edu/R8S6TBfioEZADWNH5HvZcxL
+<http://webprotege.stanford.edu/R8S6TBfioEZADWNH5HvZcxL> rdf:type owl:Class ;
+                                                         rdfs:subClassOf <http://webprotege.stanford.edu/RemnWOvTuSTwanC91L6ogd> ;
+                                                         rdfs:label "Flow Terminal" .
+
+
+###  http://webprotege.stanford.edu/R8Yxqfpz1aR7JplouuPITGh
+<http://webprotege.stanford.edu/R8Yxqfpz1aR7JplouuPITGh> rdf:type owl:Class ;
+                                                         rdfs:subClassOf <http://webprotege.stanford.edu/RCWr6DhyJe5vHwsW6w65ef3> ;
+                                                         rdfs:label "Tank" .
+
+
+###  http://webprotege.stanford.edu/R8fXDcAVFtOLwmLiVrAx3yp
+<http://webprotege.stanford.edu/R8fXDcAVFtOLwmLiVrAx3yp> rdf:type owl:Class ;
+                                                         rdfs:subClassOf <http://webprotege.stanford.edu/RCTgXsR6c8kfZvUjUW5UTNt> ;
+                                                         rdfs:label "Filter" .
+
+
+###  http://webprotege.stanford.edu/R8jXutEVA4lcQc3DenWTjN0
+<http://webprotege.stanford.edu/R8jXutEVA4lcQc3DenWTjN0> rdf:type owl:Class ;
+                                                         rdfs:subClassOf :Storage ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty :controlsProperty ;
+                                                                           owl:someValuesFrom <http://webprotege.stanford.edu/RChvSMcuYUWfGDDdDlN1X78>
+                                                                         ] ;
+                                                         rdfs:label "Battery Storage" .
+
+
+###  http://webprotege.stanford.edu/R8kHaci0mWrV4uPbW4ZgXRs
+<http://webprotege.stanford.edu/R8kHaci0mWrV4uPbW4ZgXRs> rdf:type owl:Class ;
+                                                         rdfs:subClassOf <http://webprotege.stanford.edu/RSdvWyNbgQrUKaZeqC27QZ> ;
+                                                         rdfs:label "Humidifier" .
+
+
+###  http://webprotege.stanford.edu/R8l7HHrAJpJjYL2LbLP2I1a
+<http://webprotege.stanford.edu/R8l7HHrAJpJjYL2LbLP2I1a> rdf:type owl:Class ;
+                                                         rdfs:subClassOf :BuildingRelated ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/R93J05jzdbFKVUXShR6X4OK> ;
+                                                                           owl:someValuesFrom <http://webprotege.stanford.edu/RCMblur6XtHTxskTRQ56906>
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/R9rEQBWjDTUepJnDTWw06AC> ;
+                                                                           owl:someValuesFrom <http://webprotege.stanford.edu/RBCub6j3arGRcILfvAUxXOk>
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RB2WxLZUIhKm9XTavt00cVm> ;
+                                                                           owl:someValuesFrom <http://webprotege.stanford.edu/R8l7HHrAJpJjYL2LbLP2I1a>
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RMfoweHoovrkAPFvvrfY9e> ;
+                                                                           owl:someValuesFrom :BuildingRelated
+                                                                         ] ;
+                                                         rdfs:label "Zone" .
+
+
+###  http://webprotege.stanford.edu/R8vqbzoFPiPIiHWci7TKUGO
+<http://webprotege.stanford.edu/R8vqbzoFPiPIiHWci7TKUGO> rdf:type owl:Class ;
+                                                         rdfs:subClassOf :Meter ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/R9WFufxotu4KAAzKLx4qc2U> ;
+                                                                           owl:someValuesFrom <http://webprotege.stanford.edu/RCUXiAiW1f8PVPPnDTQ1hFg>
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH> ;
+                                                                           owl:someValuesFrom :Device
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty :hasFunction ;
+                                                                           owl:someValuesFrom :MeteringFunction
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty :hasState ;
+                                                                           owl:someValuesFrom :OnOffState
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty :isMeasuredIn ;
+                                                                           owl:someValuesFrom :Measurement
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/R9frPiixJGYcVAtPvlA9RU8> ;
+                                                                           owl:someValuesFrom xsd:string
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/R9uDJxmZz4gajOLqdvo9Bu4> ;
+                                                                           owl:someValuesFrom xsd:int
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RBQYwalLa8y1fuwJmAeuKrK> ;
+                                                                           owl:someValuesFrom xsd:int
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RCTMpBzwfC3ibffls4vUt06> ;
+                                                                           owl:someValuesFrom xsd:string
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RDADzS2qAC3GkCb4cbY0wjV> ;
+                                                                           owl:someValuesFrom xsd:int
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RDAjHtUVAjpRS1IKarpqaN> ;
+                                                                           owl:someValuesFrom xsd:int
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RPO0n2wheCmJQrgF71ubQy> ;
+                                                                           owl:hasValue "xsd:geolocation"^^xsd:string
+                                                                         ] ;
+                                                         rdfs:label "PMU" .
+
+
+###  http://webprotege.stanford.edu/R93tPRZXPIU10Mv9bNwCJVF
+<http://webprotege.stanford.edu/R93tPRZXPIU10Mv9bNwCJVF> rdf:type owl:Class ;
+                                                         rdfs:subClassOf <http://webprotege.stanford.edu/R8S6TBfioEZADWNH5HvZcxL> ;
+                                                         rdfs:label "CommunictionAppliance" .
+
+
+###  http://webprotege.stanford.edu/R9681INrrpTEwaZTt2Zlyp6
+<http://webprotege.stanford.edu/R9681INrrpTEwaZTt2Zlyp6> rdf:type owl:Class ;
+                                                         rdfs:subClassOf :Property ;
+                                                         rdfs:comment "A property related to measurements measured in volume. Volume is measured in m³."^^xsd:string ;
+                                                         rdfs:label "Volume" .
+
+
+###  http://webprotege.stanford.edu/R9IgoverIUzHenFY28JLVQG
+<http://webprotege.stanford.edu/R9IgoverIUzHenFY28JLVQG> rdf:type owl:Class ;
+                                                         rdfs:subClassOf :Sensor ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty :consistsOf ;
+                                                                           owl:someValuesFrom :Sensor
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty :hasFunction ;
+                                                                           owl:someValuesFrom :SensingFunction
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty :measuresProperty ;
+                                                                           owl:someValuesFrom <http://webprotege.stanford.edu/RBEGuaA52cHppTouAyrwvxg>
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty :measuresProperty ;
+                                                                           owl:someValuesFrom <http://webprotege.stanford.edu/RDgAH2IrVVCYgpHHQV6f0Zb>
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty :measuresProperty ;
+                                                                           owl:someValuesFrom :Power
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty :accomplishes ;
+                                                                           owl:hasValue :Comfort
+                                                                         ] ;
+                                                         rdfs:label "Electricity sensor" .
+
+
+###  http://webprotege.stanford.edu/R9Lha7bBAbXWpAXs3LEXiBM
+<http://webprotege.stanford.edu/R9Lha7bBAbXWpAXs3LEXiBM> rdf:type owl:Class ;
+                                                         rdfs:subClassOf <http://webprotege.stanford.edu/R9zZnEzh8zvn7is0mE0LthT> ;
+                                                         rdfs:label "Damper" .
+
+
+###  http://webprotege.stanford.edu/R9Ss0nlABbeWn3nuA9NaaUI
+<http://webprotege.stanford.edu/R9Ss0nlABbeWn3nuA9NaaUI> rdf:type owl:Class ;
+                                                         rdfs:subClassOf <http://webprotege.stanford.edu/RCdkl1t8AbjY4mSCQeIN2kq> ;
+                                                         rdfs:label "Control Device" .
+
+
+###  http://webprotege.stanford.edu/R9Zy43nV4NbIka1mpm2Pf9N
+<http://webprotege.stanford.edu/R9Zy43nV4NbIka1mpm2Pf9N> rdf:type owl:Class ;
+                                                         rdfs:subClassOf :EnergyRelated ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty :controlsProperty ;
+                                                                           owl:someValuesFrom <http://webprotege.stanford.edu/RBrF1fTldAyrjWYssavQ5VQ>
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty :hasFunction ;
+                                                                           owl:someValuesFrom :ActuatingFunction
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty :measuresProperty ;
+                                                                           owl:someValuesFrom :Measurement
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RLB9CYDaWlf0rsfcjiV1UY> ;
+                                                                           owl:someValuesFrom xsd:string
+                                                                         ] ;
+                                                         rdfs:label "Transformer" .
+
+
+###  http://webprotege.stanford.edu/R9wJqHrUV5pUhVzAcYtT0VV
+<http://webprotege.stanford.edu/R9wJqHrUV5pUhVzAcYtT0VV> rdf:type owl:Class ;
+                                                         rdfs:subClassOf :BuildingRelated ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RgoNuDfsILOyExh2h5B67V> ;
+                                                                           owl:someValuesFrom :BuildingRelated
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/R9cCDlfuefKP15nQEyJpDcP> ;
+                                                                           owl:someValuesFrom xsd:string
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RC7ySF27aPGkWjmwYvfLMQi> ;
+                                                                           owl:someValuesFrom xsd:string
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty :hasName ;
+                                                                           owl:someValuesFrom xsd:string
+                                                                         ] ;
+                                                         rdfs:comment "A class that describes information about a tenant in a building."^^xsd:string ;
+                                                         rdfs:label "Tenant"^^xsd:string .
+
+
+###  http://webprotege.stanford.edu/R9x3pouY4L0SPgdOqzHoS5Q
+<http://webprotege.stanford.edu/R9x3pouY4L0SPgdOqzHoS5Q> rdf:type owl:Class ;
+                                                         rdfs:subClassOf <http://webprotege.stanford.edu/RCTgXsR6c8kfZvUjUW5UTNt> ;
+                                                         rdfs:label "Interceptor" .
+
+
+###  http://webprotege.stanford.edu/R9ynrxCyB4neGbcBS0RsAxp
+<http://webprotege.stanford.edu/R9ynrxCyB4neGbcBS0RsAxp> rdf:type owl:Class ;
+                                                         rdfs:subClassOf :Sensor ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty :consistsOf ;
+                                                                           owl:someValuesFrom :Sensor
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty :hasFunction ;
+                                                                           owl:someValuesFrom :SensingFunction
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty :measuresProperty ;
+                                                                           owl:someValuesFrom <http://webprotege.stanford.edu/R8EFOfQ6VvfWs0fb7ETTCoC>
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty :accomplishes ;
+                                                                           owl:hasValue :Comfort
+                                                                         ] ;
+                                                         rdfs:label "Water flow sensor" .
+
+
+###  http://webprotege.stanford.edu/R9zZnEzh8zvn7is0mE0LthT
+<http://webprotege.stanford.edu/R9zZnEzh8zvn7is0mE0LthT> rdf:type owl:Class ;
+                                                         rdfs:subClassOf <http://webprotege.stanford.edu/RemnWOvTuSTwanC91L6ogd> ;
+                                                         rdfs:label "Flow Controller" .
+
+
+###  http://webprotege.stanford.edu/RB2YUUSy6fvmFIpoLSZRUAj
+<http://webprotege.stanford.edu/RB2YUUSy6fvmFIpoLSZRUAj> rdf:type owl:Class ;
+                                                         rdfs:subClassOf <http://webprotege.stanford.edu/RBwFHsGyJHwz5MnZx9gY3sC> ;
+                                                         rdfs:label "HV-DC" .
+
+
+###  http://webprotege.stanford.edu/RB6s1uCXcK2VqWn0IGDvQxJ
+<http://webprotege.stanford.edu/RB6s1uCXcK2VqWn0IGDvQxJ> rdf:type owl:Class ;
+                                                         rdfs:subClassOf :Meter ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH> ;
+                                                                           owl:someValuesFrom :Device
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RwSG06MFL0R2RaP1G3jDWK> ;
+                                                                           owl:someValuesFrom :Power
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty :hasFunction ;
+                                                                           owl:someValuesFrom :MeteringFunction
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty :hasState ;
+                                                                           owl:someValuesFrom :OnOffState
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/R9SlLxx5Y3V1brMYIAMP0Ds> ;
+                                                                           owl:someValuesFrom xsd:string
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RCTMpBzwfC3ibffls4vUt06> ;
+                                                                           owl:someValuesFrom xsd:string
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RDwvpbGDvjUTopZ1lKVZwK4> ;
+                                                                           owl:someValuesFrom xsd:string
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RZ6zoGFOkcTQApOrEUU375> ;
+                                                                           owl:someValuesFrom xsd:dateTime
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/Reh2hHaLwD7kB47FpyBIIC> ;
+                                                                           owl:someValuesFrom xsd:string
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RPO0n2wheCmJQrgF71ubQy> ;
+                                                                           owl:hasValue "xsd:geolocation"^^xsd:string
+                                                                         ] ;
+                                                         rdfs:label "Power Meter" .
+
+
+###  http://webprotege.stanford.edu/RBCub6j3arGRcILfvAUxXOk
+<http://webprotege.stanford.edu/RBCub6j3arGRcILfvAUxXOk> rdf:type owl:Class ;
+                                                         rdfs:subClassOf :BuildingRelated ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/R93J05jzdbFKVUXShR6X4OK> ;
+                                                                           owl:someValuesFrom <http://webprotege.stanford.edu/RCMblur6XtHTxskTRQ56906>
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RBMny9KQYAtx7wC9trPLa8G> ;
+                                                                           owl:someValuesFrom <http://webprotege.stanford.edu/R8l7HHrAJpJjYL2LbLP2I1a>
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RBjUbnUXcVIn1RpQ8DS8m5Y> ;
+                                                                           owl:someValuesFrom <http://webprotege.stanford.edu/R9wJqHrUV5pUhVzAcYtT0VV>
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RCuqX9cGbHnQtoxGGixBISH> ;
+                                                                           owl:someValuesFrom :Sensor
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RMfoweHoovrkAPFvvrfY9e> ;
+                                                                           owl:someValuesFrom :BuildingRelated
+                                                                         ] ;
+                                                         rdfs:comment "A room in a building. This class may be used to group devices."^^xsd:string ;
+                                                         rdfs:label "Room"^^xsd:string .
+
+
+###  http://webprotege.stanford.edu/RBEGuaA52cHppTouAyrwvxg
+<http://webprotege.stanford.edu/RBEGuaA52cHppTouAyrwvxg> rdf:type owl:Class ;
+                                                         rdfs:subClassOf :Property ;
+                                                         rdfs:comment "Voltage in Volts"^^xsd:string ;
+                                                         rdfs:label "Voltage" .
+
+
+###  http://webprotege.stanford.edu/RBFqIdeyoI0Ru908k9aVlOE
+<http://webprotege.stanford.edu/RBFqIdeyoI0Ru908k9aVlOE> rdf:type owl:Class ;
+                                                         rdfs:subClassOf <http://webprotege.stanford.edu/RCUXiAiW1f8PVPPnDTQ1hFg> ;
+                                                         rdfs:label "Rocf" .
+
+
+###  http://webprotege.stanford.edu/RBPMEV5PUKsxchn187zbKdj
+<http://webprotege.stanford.edu/RBPMEV5PUKsxchn187zbKdj> rdf:type owl:Class ;
+                                                         rdfs:subClassOf <http://webprotege.stanford.edu/RSdvWyNbgQrUKaZeqC27QZ> ;
+                                                         rdfs:label "HP" .
+
+
+###  http://webprotege.stanford.edu/RBQxJveApvTRBFosMsPMEwV
+<http://webprotege.stanford.edu/RBQxJveApvTRBFosMsPMEwV> rdf:type owl:Class ;
+                                                         rdfs:subClassOf :ActuatingFunction ;
+                                                         rdfs:label "Tap Postion" .
+
+
+###  http://webprotege.stanford.edu/RBi2DSZTXz0RX6hBJpaymFa
+<http://webprotege.stanford.edu/RBi2DSZTXz0RX6hBJpaymFa> rdf:type owl:Class ;
+                                                         rdfs:subClassOf <http://webprotege.stanford.edu/RCyTFptM6Ffpb2hWxkqHKwI> ;
+                                                         rdfs:label "Fan" .
+
+
+###  http://webprotege.stanford.edu/RBrF1fTldAyrjWYssavQ5VQ
+<http://webprotege.stanford.edu/RBrF1fTldAyrjWYssavQ5VQ> rdf:type owl:Class ;
+                                                         rdfs:subClassOf :Property ;
+                                                         rdfs:label "Tap Position" .
+
+
+###  http://webprotege.stanford.edu/RBwFHsGyJHwz5MnZx9gY3sC
+<http://webprotege.stanford.edu/RBwFHsGyJHwz5MnZx9gY3sC> rdf:type owl:Class ;
+                                                         rdfs:subClassOf :EnergyRelated ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty :hasFunction ;
+                                                                           owl:someValuesFrom :ActuatingFunction
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RB03ZKnWypB1bdhZKSud2oc> ;
+                                                                           owl:someValuesFrom xsd:string
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RKCxla7pj2Mt4Dtv4RzY5q> ;
+                                                                           owl:someValuesFrom xsd:string
+                                                                         ] ;
+                                                         rdfs:label "Convertor" .
+
+
+###  http://webprotege.stanford.edu/RC0mNOzlSTIhtOnF7jQPPUb
+<http://webprotege.stanford.edu/RC0mNOzlSTIhtOnF7jQPPUb> rdf:type owl:Class ;
+                                                         rdfs:subClassOf <http://webprotege.stanford.edu/RSdvWyNbgQrUKaZeqC27QZ> ;
+                                                         rdfs:label "Chiller" .
+
+
+###  http://webprotege.stanford.edu/RC86IYupDxnQStzTutZS6Wa
+<http://webprotege.stanford.edu/RC86IYupDxnQStzTutZS6Wa> rdf:type owl:Class ;
+                                                         rdfs:subClassOf :Property ;
+                                                         rdfs:comment "A property related to measurements of CO2 level in the air. Measured in ppm."^^xsd:string ;
+                                                         rdfs:label "CO2 level" .
+
+
+###  http://webprotege.stanford.edu/RCAbfsvxj9bVB6MiKHXZnHy
+<http://webprotege.stanford.edu/RCAbfsvxj9bVB6MiKHXZnHy> rdf:type owl:Class ;
+                                                         rdfs:subClassOf <http://webprotege.stanford.edu/RSdvWyNbgQrUKaZeqC27QZ> ;
+                                                         rdfs:label "TubeBundle" .
+
+
+###  http://webprotege.stanford.edu/RCB8WT4RJgvKPmInfrvoHoG
+<http://webprotege.stanford.edu/RCB8WT4RJgvKPmInfrvoHoG> rdf:type owl:Class ;
+                                                         rdfs:subClassOf <http://webprotege.stanford.edu/RCUXiAiW1f8PVPPnDTQ1hFg> ;
+                                                         rdfs:label "Frequency" .
+
+
+###  http://webprotege.stanford.edu/RCElJW45EOo4u4EiUWV0oLs
+<http://webprotege.stanford.edu/RCElJW45EOo4u4EiUWV0oLs> rdf:type owl:Class ;
+                                                         rdfs:subClassOf <http://webprotege.stanford.edu/RCUXiAiW1f8PVPPnDTQ1hFg> ;
+                                                         rdfs:label "Maqnititute" .
+
+
+###  http://webprotege.stanford.edu/RCMblur6XtHTxskTRQ56906
+<http://webprotege.stanford.edu/RCMblur6XtHTxskTRQ56906> rdf:type owl:Class ;
+                                                         rdfs:subClassOf :BuildingRelated ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RB8kVin94KMOdCqBXQfzoBq> ;
+                                                                           owl:someValuesFrom [ rdf:type owl:Class ;
+                                                                                                owl:unionOf ( <http://webprotege.stanford.edu/RBCub6j3arGRcILfvAUxXOk>
+                                                                                                              :Service
+                                                                                                            )
+                                                                                              ]
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RBMny9KQYAtx7wC9trPLa8G> ;
+                                                                           owl:someValuesFrom [ owl:intersectionOf ( <http://webprotege.stanford.edu/R8l7HHrAJpJjYL2LbLP2I1a>
+                                                                                                                     :State
+                                                                                                                   ) ;
+                                                                                                rdf:type owl:Class
+                                                                                              ]
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RMfoweHoovrkAPFvvrfY9e> ;
+                                                                           owl:someValuesFrom [ rdf:type owl:Class ;
+                                                                                                owl:unionOf ( :BuildingRelated
+                                                                                                              [ owl:intersectionOf ( :Service
+                                                                                                                                     :State
+                                                                                                                                   ) ;
+                                                                                                                rdf:type owl:Class
+                                                                                                              ]
+                                                                                                            )
+                                                                                              ]
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/R9SlLxx5Y3V1brMYIAMP0Ds> ;
+                                                                           owl:someValuesFrom xsd:string
+                                                                         ] ;
+                                                         rdfs:label "Floor"^^xsd:string .
+
+
+###  http://webprotege.stanford.edu/RCTgXsR6c8kfZvUjUW5UTNt
+<http://webprotege.stanford.edu/RCTgXsR6c8kfZvUjUW5UTNt> rdf:type owl:Class ;
+                                                         rdfs:subClassOf <http://webprotege.stanford.edu/RemnWOvTuSTwanC91L6ogd> ;
+                                                         rdfs:label "Flow Terminal Device" .
+
+
+###  http://webprotege.stanford.edu/RCUXiAiW1f8PVPPnDTQ1hFg
+<http://webprotege.stanford.edu/RCUXiAiW1f8PVPPnDTQ1hFg> rdf:type owl:Class ;
+                                                         rdfs:subClassOf [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty :hasState ;
+                                                                           owl:someValuesFrom :OnOffState
+                                                                         ] ;
+                                                         rdfs:label "Channel" .
+
+
+###  http://webprotege.stanford.edu/RCWr6DhyJe5vHwsW6w65ef3
+<http://webprotege.stanford.edu/RCWr6DhyJe5vHwsW6w65ef3> rdf:type owl:Class ;
+                                                         rdfs:subClassOf <http://webprotege.stanford.edu/RemnWOvTuSTwanC91L6ogd> ;
+                                                         rdfs:label "Flow Storage Device" .
+
+
+###  http://webprotege.stanford.edu/RCdkl1t8AbjY4mSCQeIN2kq
+<http://webprotege.stanford.edu/RCdkl1t8AbjY4mSCQeIN2kq> rdf:type owl:Class ;
+                                                         rdfs:subClassOf :Device ;
+                                                         rdfs:comment "A building represents a structure that provides shelter for its occupants or contents and stands in one place. The building is also used to provide a basic element within the spatial structure hierarchy for the components of a building project (together with site, storey, and space)."^^xsd:string ;
+                                                         rdfs:label "Building related" .
+
+
+###  http://webprotege.stanford.edu/RCgYSBb2kwST5PilfSPdF2b
+<http://webprotege.stanford.edu/RCgYSBb2kwST5PilfSPdF2b> rdf:type owl:Class ;
+                                                         rdfs:subClassOf <http://webprotege.stanford.edu/RBwFHsGyJHwz5MnZx9gY3sC> ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty :hasFunction ;
+                                                                           owl:someValuesFrom :MeteringFunction
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty :hasState ;
+                                                                           owl:someValuesFrom :OnOffState
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/R8yGcsaqMooXtA1CAD21Jpg> ;
+                                                                           owl:hasValue "geolocation"^^xsd:string
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/R9TtTs8Kbux9eMtSGBoCHpn> ;
+                                                                           owl:hasValue "String"^^xsd:string
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RLB9CYDaWlf0rsfcjiV1UY> ;
+                                                                           owl:hasValue "String"^^xsd:string
+                                                                         ] ;
+                                                         rdfs:label "CT-VT" .
+
+
+###  http://webprotege.stanford.edu/RChvSMcuYUWfGDDdDlN1X78
+<http://webprotege.stanford.edu/RChvSMcuYUWfGDDdDlN1X78> rdf:type owl:Class ;
+                                                         rdfs:subClassOf :Property ;
+                                                         rdfs:comment "A property related to measurements of the battery status of a device. Measured in %. 100 % means fully charged. 0 % no charge."^^xsd:string ;
+                                                         rdfs:label "State of Charge" .
+
+
+###  http://webprotege.stanford.edu/RCslnYTuhLdCeR3f2NsUZfh
+<http://webprotege.stanford.edu/RCslnYTuhLdCeR3f2NsUZfh> rdf:type owl:Class ;
+                                                         rdfs:subClassOf <http://webprotege.stanford.edu/RSdvWyNbgQrUKaZeqC27QZ> ;
+                                                         rdfs:label "AirToAirHeat Recovery" .
+
+
+###  http://webprotege.stanford.edu/RCyTFptM6Ffpb2hWxkqHKwI
+<http://webprotege.stanford.edu/RCyTFptM6Ffpb2hWxkqHKwI> rdf:type owl:Class ;
+                                                         rdfs:subClassOf <http://webprotege.stanford.edu/RemnWOvTuSTwanC91L6ogd> ;
+                                                         rdfs:label "Flow Moving Device" .
+
+
+###  http://webprotege.stanford.edu/RDE6cVxTumawuTFWQH5VCIt
+<http://webprotege.stanford.edu/RDE6cVxTumawuTFWQH5VCIt> rdf:type owl:Class ;
+                                                         rdfs:subClassOf <http://webprotege.stanford.edu/R9Ss0nlABbeWn3nuA9NaaUI> ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/R9HiKOJW77kxzZgsSV8U4OM> ;
+                                                                           owl:someValuesFrom :Sensor
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RCeh3vKI5NGDzw3o39LD4Mi> ;
+                                                                           owl:someValuesFrom :Sensor
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH> ;
+                                                                           owl:someValuesFrom :Device
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RLObgBrWUGbtlQvTc4OsHG> ;
+                                                                           owl:someValuesFrom :BuildingRelated
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RddfRR1iAEUWOtY3vXRnmh> ;
+                                                                           owl:someValuesFrom :Actuator
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/Rl7mrdaiCChcbesJOkxsUC> ;
+                                                                           owl:someValuesFrom <http://webprotege.stanford.edu/RCUXiAiW1f8PVPPnDTQ1hFg>
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty :isMeasuredIn ;
+                                                                           owl:someValuesFrom :Measurement
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/R4T4qE1pipLEVhQIalc1yF> ;
+                                                                           owl:someValuesFrom xsd:string
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/R7IeRCKGT1lSxkJIx0tDxW4> ;
+                                                                           owl:someValuesFrom xsd:string
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/R977TDBEN15A0aIS34zi0Cr> ;
+                                                                           owl:someValuesFrom xsd:boolean
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RD1hFIaNTKmpa3to9qqP1JM> ;
+                                                                           owl:someValuesFrom xsd:string
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RDADzS2qAC3GkCb4cbY0wjV> ;
+                                                                           owl:someValuesFrom xsd:int
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RDAjHtUVAjpRS1IKarpqaN> ;
+                                                                           owl:someValuesFrom xsd:int
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RDUGtzcnZPknLxhfiRbh1Zx> ;
+                                                                           owl:someValuesFrom xsd:boolean
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RDafdYghsCmPrJjKIXG0nuP> ;
+                                                                           owl:someValuesFrom xsd:int
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/R9KxteO3QWmrBE3BzLCW4he> ;
+                                                                           owl:hasValue "https://schema.org/person"^^xsd:string
+                                                                         ] ,
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty <http://webprotege.stanford.edu/RPO0n2wheCmJQrgF71ubQy> ;
+                                                                           owl:hasValue "Geo:json"^^xsd:string
+                                                                         ] ;
+                                                         rdfs:label "Controller" .
+
+
+###  http://webprotege.stanford.edu/RDNfhlsTSL1pkSnCkjr6B3s
+<http://webprotege.stanford.edu/RDNfhlsTSL1pkSnCkjr6B3s> rdf:type owl:Class ;
+                                                         rdfs:subClassOf <http://webprotege.stanford.edu/RSdvWyNbgQrUKaZeqC27QZ> ;
+                                                         rdfs:label "Burner" .
+
+
+###  http://webprotege.stanford.edu/RDYpanpTHLQLnjXDwLHcpCQ
+<http://webprotege.stanford.edu/RDYpanpTHLQLnjXDwLHcpCQ> rdf:type owl:Class ;
+                                                         rdfs:subClassOf <http://webprotege.stanford.edu/RCWr6DhyJe5vHwsW6w65ef3> ;
+                                                         rdfs:label "ElectronicFlowStorageDevice" .
+
+
+###  http://webprotege.stanford.edu/RDgAH2IrVVCYgpHHQV6f0Zb
+<http://webprotege.stanford.edu/RDgAH2IrVVCYgpHHQV6f0Zb> rdf:type owl:Class ;
+                                                         rdfs:subClassOf :Property ;
+                                                         rdfs:comment "A property related to measurements measured in Ampere (A)."^^xsd:string ;
+                                                         rdfs:label "Current" .
+
+
+###  http://webprotege.stanford.edu/RDr4QPwW1aAnf2H9jnQY9bB
+<http://webprotege.stanford.edu/RDr4QPwW1aAnf2H9jnQY9bB> rdf:type owl:Class ;
+                                                         rdfs:subClassOf <http://webprotege.stanford.edu/RCyTFptM6Ffpb2hWxkqHKwI> ;
+                                                         rdfs:label "Pump" .
+
+
+###  http://webprotege.stanford.edu/RDrT9t6VmjmMXFINQ1yJMNJ
+<http://webprotege.stanford.edu/RDrT9t6VmjmMXFINQ1yJMNJ> rdf:type owl:Class ;
+                                                         rdfs:subClassOf <http://webprotege.stanford.edu/R8S6TBfioEZADWNH5HvZcxL> ;
+                                                         rdfs:label "AudioVisualAppliance" .
+
+
+###  http://webprotege.stanford.edu/RDz6CRhHqQLvwebz9G2W8eT
+<http://webprotege.stanford.edu/RDz6CRhHqQLvwebz9G2W8eT> rdf:type owl:Class ;
+                                                         rdfs:subClassOf :MicroRenewable ;
+                                                         rdfs:label "WPP" .
+
+
+###  http://webprotege.stanford.edu/RJi25GAQCidJlRgLlIEqK6
+<http://webprotege.stanford.edu/RJi25GAQCidJlRgLlIEqK6> rdf:type owl:Class ;
+                                                        rdfs:subClassOf :MicroRenewable ;
+                                                        rdfs:label "PV"^^xsd:string .
+
+
+###  http://webprotege.stanford.edu/RKLytvXl3vvLXT6E5CxJ0a
+<http://webprotege.stanford.edu/RKLytvXl3vvLXT6E5CxJ0a> rdf:type owl:Class ;
+                                                        rdfs:subClassOf <http://webprotege.stanford.edu/RCUXiAiW1f8PVPPnDTQ1hFg> ;
+                                                        rdfs:label "Angle" .
+
+
+###  http://webprotege.stanford.edu/RLCNYMTcGC2itclf7a2gUm
+<http://webprotege.stanford.edu/RLCNYMTcGC2itclf7a2gUm> rdf:type owl:Class ;
+                                                        rdfs:subClassOf <http://webprotege.stanford.edu/R8S6TBfioEZADWNH5HvZcxL> ;
+                                                        rdfs:label "Lamp" .
+
+
+###  http://webprotege.stanford.edu/RLWTEPVr8UF9rpTDIbYCvI
+<http://webprotege.stanford.edu/RLWTEPVr8UF9rpTDIbYCvI> rdf:type owl:Class ;
+                                                        rdfs:subClassOf <http://webprotege.stanford.edu/RSdvWyNbgQrUKaZeqC27QZ> ;
+                                                        rdfs:label "Coil" .
+
+
+###  http://webprotege.stanford.edu/RRbQ4pSzZcIq9icXuZpJeq
+<http://webprotege.stanford.edu/RRbQ4pSzZcIq9icXuZpJeq> rdf:type owl:Class ;
+                                                        rdfs:subClassOf :Actuator ;
+                                                        rdfs:label "RVK" .
+
+
+###  http://webprotege.stanford.edu/RSdvWyNbgQrUKaZeqC27QZ
+<http://webprotege.stanford.edu/RSdvWyNbgQrUKaZeqC27QZ> rdf:type owl:Class ;
+                                                        rdfs:subClassOf <http://webprotege.stanford.edu/RemnWOvTuSTwanC91L6ogd> ;
+                                                        rdfs:label "Energy Conversion Device" .
+
+
+###  http://webprotege.stanford.edu/RW4ILUq0GOY2cDjFWJzN5v
+<http://webprotege.stanford.edu/RW4ILUq0GOY2cDjFWJzN5v> rdf:type owl:Class ;
+                                                        rdfs:subClassOf <http://webprotege.stanford.edu/RSdvWyNbgQrUKaZeqC27QZ> ,
+                                                                        [ rdf:type owl:Restriction ;
+                                                                          owl:onProperty :hasFunction ;
+                                                                          owl:someValuesFrom :LevelControlFunction
+                                                                        ] ,
+                                                                        [ rdf:type owl:Restriction ;
+                                                                          owl:onProperty :hasState ;
+                                                                          owl:someValuesFrom :State
+                                                                        ] ;
+                                                        rdfs:label "Boiler"^^xsd:string .
+
+
+###  http://webprotege.stanford.edu/RYiN7LIy9SL6vbdRr4iTEq
+<http://webprotege.stanford.edu/RYiN7LIy9SL6vbdRr4iTEq> rdf:type owl:Class ;
+                                                        rdfs:subClassOf <http://webprotege.stanford.edu/R8S6TBfioEZADWNH5HvZcxL> ;
+                                                        rdfs:label "SpaceHeater" .
+
+
+###  http://webprotege.stanford.edu/Rbdab3Spwb8PlGkBwutw0i
+<http://webprotege.stanford.edu/Rbdab3Spwb8PlGkBwutw0i> rdf:type owl:Class ;
+                                                        rdfs:subClassOf <http://webprotege.stanford.edu/RBwFHsGyJHwz5MnZx9gY3sC> ,
+                                                                        [ rdf:type owl:Restriction ;
+                                                                          owl:onProperty :hasFunction ;
+                                                                          owl:someValuesFrom :LevelControlFunction
+                                                                        ] ,
+                                                                        [ rdf:type owl:Restriction ;
+                                                                          owl:onProperty :hasState ;
+                                                                          owl:someValuesFrom :OnOffState
+                                                                        ] ,
+                                                                        [ rdf:type owl:Restriction ;
+                                                                          owl:onProperty <http://webprotege.stanford.edu/R7gL1iXzViEvM39mhH7N5lG> ;
+                                                                          owl:hasValue "String"^^xsd:string
+                                                                        ] ,
+                                                                        [ rdf:type owl:Restriction ;
+                                                                          owl:onProperty <http://webprotege.stanford.edu/R92Py4iSAQmIMho8kmSSjGu> ;
+                                                                          owl:hasValue "String"^^xsd:string
+                                                                        ] ,
+                                                                        [ rdf:type owl:Restriction ;
+                                                                          owl:onProperty <http://webprotege.stanford.edu/RC1uju7MusVWB3TEBgr8qmA> ;
+                                                                          owl:hasValue "String"^^xsd:string
+                                                                        ] ,
+                                                                        [ rdf:type owl:Restriction ;
+                                                                          owl:onProperty <http://webprotege.stanford.edu/RCnxMGA7ioZShgqxi8IYdez> ;
+                                                                          owl:hasValue "String"^^xsd:string
+                                                                        ] ,
+                                                                        [ rdf:type owl:Restriction ;
+                                                                          owl:onProperty <http://webprotege.stanford.edu/RCsyTeO4VQGVl11ERL7hQrH> ;
+                                                                          owl:hasValue "String"^^xsd:string
+                                                                        ] ,
+                                                                        [ rdf:type owl:Restriction ;
+                                                                          owl:onProperty :hasDescription ;
+                                                                          owl:hasValue "String"^^xsd:string
+                                                                        ] ;
+                                                        rdfs:label "DC-DC" .
+
+
+###  http://webprotege.stanford.edu/RemnWOvTuSTwanC91L6ogd
+<http://webprotege.stanford.edu/RemnWOvTuSTwanC91L6ogd> rdf:type owl:Class ;
+                                                        rdfs:subClassOf <http://webprotege.stanford.edu/RCdkl1t8AbjY4mSCQeIN2kq> ;
+                                                        rdfs:label "Flow Device" .
+
+
+###  http://webprotege.stanford.edu/RipK16q5JKeGXpfyolLehV
+<http://webprotege.stanford.edu/RipK16q5JKeGXpfyolLehV> rdf:type owl:Class ;
+                                                        rdfs:subClassOf <http://webprotege.stanford.edu/R9zZnEzh8zvn7is0mE0LthT> ;
+                                                        rdfs:label "SwitchingDevice" .
+
+
+###  https://w3id.org/saref#ActuatingFunction
+:ActuatingFunction rdf:type owl:Class ;
+                   rdfs:subClassOf :Function ;
+                   rdfs:comment "A function that allows to transmit data to actuators, such as level settings (e.g., temperature) or binary switching (e.g., open/close, on/off)"^^xsd:string ;
+                   rdfs:label "Actuating function"^^xsd:string .
+
+
+###  https://w3id.org/saref#Actuator
+:Actuator rdf:type owl:Class ;
+          rdfs:subClassOf <http://webprotege.stanford.edu/R9Ss0nlABbeWn3nuA9NaaUI> ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty <http://webprotege.stanford.edu/RCuqX9cGbHnQtoxGGixBISH> ;
+                            owl:someValuesFrom :Sensor
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty <http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH> ;
+                            owl:someValuesFrom :Device
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty <http://webprotege.stanford.edu/RLObgBrWUGbtlQvTc4OsHG> ;
+                            owl:someValuesFrom :BuildingRelated
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty <http://webprotege.stanford.edu/Rl7mrdaiCChcbesJOkxsUC> ;
+                            owl:someValuesFrom <http://webprotege.stanford.edu/RCUXiAiW1f8PVPPnDTQ1hFg>
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :hasFunction ;
+                            owl:someValuesFrom :ActuatingFunction
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :isMeasuredIn ;
+                            owl:someValuesFrom :Measurement
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty <http://webprotege.stanford.edu/R977TDBEN15A0aIS34zi0Cr> ;
+                            owl:someValuesFrom xsd:boolean
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty <http://webprotege.stanford.edu/R9frPiixJGYcVAtPvlA9RU8> ;
+                            owl:someValuesFrom xsd:string
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty <http://webprotege.stanford.edu/RDADzS2qAC3GkCb4cbY0wjV> ;
+                            owl:someValuesFrom xsd:int
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty <http://webprotege.stanford.edu/RDAjHtUVAjpRS1IKarpqaN> ;
+                            owl:someValuesFrom xsd:int
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty <http://webprotege.stanford.edu/RDUGtzcnZPknLxhfiRbh1Zx> ;
+                            owl:someValuesFrom xsd:boolean
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty <http://webprotege.stanford.edu/RPO0n2wheCmJQrgF71ubQy> ;
+                            owl:hasValue "Geo:json"^^xsd:string
+                          ] ;
+          rdfs:comment "A device responsible for moving or controlling a mechanism or system by performing an actuating function"^^xsd:string ;
+          rdfs:label "Actuator"^^xsd:string .
+
+
+###  https://w3id.org/saref#BuildingRelated
+:BuildingRelated rdf:type owl:Class ;
+                 rdfs:subClassOf owl:Thing ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty <http://webprotege.stanford.edu/R9WkTMS4WuSoGsUmGQnBfGb> ;
+                                   owl:someValuesFrom <http://webprotege.stanford.edu/RCMblur6XtHTxskTRQ56906>
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty <http://webprotege.stanford.edu/RB8kVin94KMOdCqBXQfzoBq> ;
+                                   owl:someValuesFrom <http://webprotege.stanford.edu/RBCub6j3arGRcILfvAUxXOk>
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty <http://webprotege.stanford.edu/RBMny9KQYAtx7wC9trPLa8G> ;
+                                   owl:someValuesFrom <http://webprotege.stanford.edu/R8l7HHrAJpJjYL2LbLP2I1a>
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty <http://webprotege.stanford.edu/RCuqX9cGbHnQtoxGGixBISH> ;
+                                   owl:someValuesFrom :Sensor
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty <http://webprotege.stanford.edu/R7u37iRF1XNSqOBsn8Zhsjs> ;
+                                   owl:someValuesFrom xsd:string
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty <http://webprotege.stanford.edu/R8Q6atByV0G6D1JLt5Jupcw> ;
+                                   owl:someValuesFrom xsd:string
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty <http://webprotege.stanford.edu/R8QPBXHMQKgoyvwW0Wgo27p> ;
+                                   owl:someValuesFrom xsd:string
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty <http://webprotege.stanford.edu/R9SlLxx5Y3V1brMYIAMP0Ds> ;
+                                   owl:someValuesFrom xsd:string
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty <http://webprotege.stanford.edu/RCWsQXkOcAHxLLB1JRibpTd> ;
+                                   owl:someValuesFrom xsd:string
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty <http://webprotege.stanford.edu/RDzHte7rXVSgkFwpYMfCOT5> ;
+                                   owl:someValuesFrom xsd:string
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty <http://webprotege.stanford.edu/RPO0n2wheCmJQrgF71ubQy> ;
+                                   owl:hasValue "Geo:json"^^xsd:string
+                                 ] ;
+                 rdfs:comment "A category that includes devices as described by building related data models, such as IFC and FIEMSER "^^xsd:string ;
+                 rdfs:label "Building"^^xsd:string .
+
+
+###  https://w3id.org/saref#CloseCommand
+:CloseCommand rdf:type owl:Class ;
+              rdfs:subClassOf :Command ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty :actsUpon ;
+                                owl:allValuesFrom :OpenCloseState
+                              ] ;
+              owl:disjointWith :OpenCommand ;
+              rdfs:comment "A type of command"^^xsd:string ;
+              rdfs:label "Close command"^^xsd:string .
+
+
+###  https://w3id.org/saref#CloseState
+:CloseState rdf:type owl:Class ;
+            rdfs:subClassOf :OpenCloseState ;
+            rdfs:comment "The state of a device that is CLOSE"^^xsd:string ;
+            rdfs:label "Close state"^^xsd:string .
+
+
+###  https://w3id.org/saref#Coal
+:Coal rdf:type owl:Class ;
+      rdfs:subClassOf :Commodity ;
+      rdfs:comment "A type of commodity"^^xsd:string ;
+      rdfs:label "Coal"^^xsd:string .
+
+
+###  https://w3id.org/saref#Command
+:Command rdf:type owl:Class ;
+         rdfs:subClassOf [ rdf:type owl:Restriction ;
+                           owl:onProperty :hasCommand ;
+                           owl:someValuesFrom :OffCommand
+                         ] ,
+                         [ rdf:type owl:Restriction ;
+                           owl:onProperty :hasCommand ;
+                           owl:someValuesFrom :OnCommand
+                         ] ,
+                         [ rdf:type owl:Restriction ;
+                           owl:onProperty :actsUpon ;
+                           owl:allValuesFrom :State
+                         ] ,
+                         [ rdf:type owl:Restriction ;
+                           owl:onProperty :hasDescription ;
+                           owl:maxCardinality "1"^^xsd:nonNegativeInteger
+                         ] ;
+         rdfs:comment "A directive that a device must support to perform a certain function. A command may act upon a state, but does not necessarily act upon a state. For example, the ON command acts upon the ON/OFF state, but the GET command does not act upon any state, it simply gives a directive to retrieve a certain value. We propose here a list of commands that are relevant for the purpose of SAREF, but this list can be extended."^^xsd:string ;
+         rdfs:label "Command"^^xsd:string .
+
+
+###  https://w3id.org/saref#Commodity
+:Commodity rdf:type owl:Class ;
+           rdfs:comment "A marketable item for which there is demand, but which is supplied without qualitative differentiation across a market. SAREF refers to energy commodities such as electricity, gas, coal and oil. "^^xsd:string ;
+           rdfs:label "Commodity"^^xsd:string .
+
+
+###  https://w3id.org/saref#Currency
+:Currency rdf:type owl:Class ;
+          rdfs:subClassOf :Measurement ;
+          rdfs:comment "The unit of measure for price"^^xsd:string ;
+          rdfs:label "Currency unit"^^xsd:string .
+
+
+###  https://w3id.org/saref#Device
+:Device rdf:type owl:Class ;
+        rdfs:subClassOf [ rdf:type owl:Restriction ;
+                          owl:onProperty <http://webprotege.stanford.edu/R9rEQBWjDTUepJnDTWw06AC> ;
+                          owl:someValuesFrom <http://webprotege.stanford.edu/RBCub6j3arGRcILfvAUxXOk>
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty <http://webprotege.stanford.edu/RCNjAo2i3RVhdHFLmNIdg7e> ;
+                          owl:someValuesFrom :BuildingRelated
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty <http://webprotege.stanford.edu/RwSG06MFL0R2RaP1G3jDWK> ;
+                          owl:someValuesFrom :Property
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :accomplishes ;
+                          owl:someValuesFrom :Task
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :consistsOf ;
+                          owl:someValuesFrom :Device
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :hasCommand ;
+                          owl:someValuesFrom :Command
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :hasFunction ;
+                          owl:someValuesFrom :Function
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :hasState ;
+                          owl:someValuesFrom :State
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :isMeasuredIn ;
+                          owl:someValuesFrom :Measurement
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :isUsedFor ;
+                          owl:someValuesFrom :Commodity
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :offers ;
+                          owl:someValuesFrom :Service
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :consistsOf ;
+                          owl:allValuesFrom :Device
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :controlsProperty ;
+                          owl:allValuesFrom :Property
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :hasProfile ;
+                          owl:allValuesFrom :Profile
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :hasState ;
+                          owl:allValuesFrom :State
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :isUsedFor ;
+                          owl:allValuesFrom :Commodity
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :makesMeasurement ;
+                          owl:allValuesFrom :Measurement
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :measuresProperty ;
+                          owl:allValuesFrom :Property
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :offers ;
+                          owl:allValuesFrom :Service
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty <http://webprotege.stanford.edu/R4T4qE1pipLEVhQIalc1yF> ;
+                          owl:someValuesFrom xsd:string
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty <http://webprotege.stanford.edu/R7IeRCKGT1lSxkJIx0tDxW4> ;
+                          owl:someValuesFrom xsd:string
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty <http://webprotege.stanford.edu/R7ciyTz28kO4YSqZrPOEetN> ;
+                          owl:someValuesFrom xsd:string
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty <http://webprotege.stanford.edu/R8qtCSGVndTZGw8d7CaBUUr> ;
+                          owl:someValuesFrom xsd:dateTime
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty <http://webprotege.stanford.edu/R9LH9My3n4DxDE3jIPObwWV> ;
+                          owl:someValuesFrom xsd:dateTime
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty <http://webprotege.stanford.edu/R9SlLxx5Y3V1brMYIAMP0Ds> ;
+                          owl:someValuesFrom xsd:string
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty <http://webprotege.stanford.edu/R9enayLUqq3Zdey1f0bX9y8> ;
+                          owl:someValuesFrom xsd:anyURI
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty <http://webprotege.stanford.edu/RBHJOmp3CjeLc4EQmK5yxWX> ;
+                          owl:someValuesFrom xsd:string
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty <http://webprotege.stanford.edu/R7m39AAN0fs35za2Ybur9SI> ;
+                          owl:hasValue "https://schema.org/provider"^^xsd:string
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty <http://webprotege.stanford.edu/R7u37iRF1XNSqOBsn8Zhsjs> ;
+                          owl:hasValue "https://schema.org/person"^^xsd:string
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty <http://webprotege.stanford.edu/R8yGcsaqMooXtA1CAD21Jpg> ;
+                          owl:hasValue "xsd:geo"^^xsd:string
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :hasDescription ;
+                          owl:maxCardinality "1"^^xsd:nonNegativeInteger
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :hasManufacturer ;
+                          owl:maxCardinality "1"^^xsd:nonNegativeInteger
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :hasModel ;
+                          owl:maxCardinality "1"^^xsd:nonNegativeInteger
+                        ] ;
+        rdfs:comment "A tangible object designed to accomplish a particular task in households, common public buildings or offices. In order to accomplish this task, the device performs one or more functions. For example, a washing machine is designed to wash (task) and to accomplish this task it performs a start and stop function. Devices can be structured in categories (subclasses) that reflect the different domain in which a device is used, e.g., smart appliances domain (subclass FunctionRelated) vs. building domain (subclass BuildingRelated) vs. smart grid domain (subclass EnergyRelated). New categories can be defined,if needed, to reflect other differences, for example different points of view, such as the point of view of the device's user vs. the point of view of the device's manufacturer. We propose a list of devices that are relevant for the purpose of SAREF, but this list can be extended."^^xsd:string ;
+        rdfs:label "Device"^^xsd:string .
+
+
+###  https://w3id.org/saref#DoorSwitch
+:DoorSwitch rdf:type owl:Class ;
+            rdfs:subClassOf :Switch ,
+                            [ rdf:type owl:Restriction ;
+                              owl:onProperty :hasFunction ;
+                              owl:someValuesFrom :OpenCloseFunction
+                            ] ,
+                            [ rdf:type owl:Restriction ;
+                              owl:onProperty :hasState ;
+                              owl:someValuesFrom :OpenCloseState
+                            ] ,
+                            [ rdf:type owl:Restriction ;
+                              owl:onProperty :accomplishes ;
+                              owl:hasValue :Safety
+                            ] ;
+            rdfs:comment "A device of category saref:Actuator that consists of a switch, accomplishes the task saref:Safety, performs the saref:OpenCloseFunction, is used for controlling a door, and can be found in the state saref:OpenCloseState."^^xsd:string ;
+            rdfs:label "Door switch"^^xsd:string .
+
+
+###  https://w3id.org/saref#Electricity
+:Electricity rdf:type owl:Class ;
+             rdfs:subClassOf :Commodity ;
+             rdfs:comment "A type of commodity"^^xsd:string ;
+             rdfs:label "Electricity"^^xsd:string .
+
+
+###  https://w3id.org/saref#EnergyMeter
+:EnergyMeter rdf:type owl:Class ;
+             rdfs:subClassOf :Meter ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty <http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH> ;
+                               owl:someValuesFrom :Device
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty :consistsOf ;
+                               owl:someValuesFrom :Meter
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty :accomplishes ;
+                               owl:hasValue :EnergyEfficiency
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty :accomplishes ;
+                               owl:hasValue :MeterReading
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty <http://webprotege.stanford.edu/RPO0n2wheCmJQrgF71ubQy> ;
+                               owl:hasValue "Geo:json"^^xsd:string
+                             ] ;
+             rdfs:comment "An energy meter is a device of category saref:Meter that consists of a meter, accomplishes the tasks saref:MeterReading and saref:EnergyEfficiency, performs the saref:MeteringFunction and is used for the purpose of measuring the saref:Energy property"^^xsd:string ;
+             rdfs:label "Energy meter"^^xsd:string .
+
+
+###  https://w3id.org/saref#EnergyRelated
+:EnergyRelated rdf:type owl:Class ;
+               rdfs:subClassOf :Device ;
+               rdfs:comment "A category that considers devices based on energy consumption information and profiles to optimize energy efficiency."^^xsd:string ;
+               rdfs:label "Grid related"^^xsd:string .
+
+
+###  https://w3id.org/saref#EnergyUnit
+:EnergyUnit rdf:type owl:Class ;
+            rdfs:subClassOf :Measurement ;
+            rdfs:comment "The unit of measure for energy"^^xsd:string ;
+            rdfs:label "Energy unit"^^xsd:string .
+
+
+###  https://w3id.org/saref#EventFunction
+:EventFunction rdf:type owl:Class ;
+               rdfs:subClassOf :Function ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty :hasCommand ;
+                                 owl:allValuesFrom :NotifyCommand
+                               ] ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty :hasThresholdMeasurement ;
+                                 owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                 owl:onClass :Measurement
+                               ] ;
+               rdfs:comment "A function that allows to notify another device that a certain threshold value has been exceeded."^^xsd:string ;
+               rdfs:label "Event function"^^xsd:string .
+
+
+###  https://w3id.org/saref#Function
+:Function rdf:type owl:Class ;
+          rdfs:subClassOf [ rdf:type owl:Restriction ;
+                            owl:onProperty :hasCommand ;
+                            owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                            owl:onClass :Command
+                          ] ;
+          rdfs:comment "The functionality necessary to accomplish the task for which a Device is designed. A device can be designed to perform more than one function. Functions can be structured in categories (subclasses) that reflect different points of view, for example, considering the specific application area for which a function can be used (e.g., light, temperature, motion, heat, power, etc.), or the capability that a function can support (e.g., receive, reply, notify, etc.), and so forth. "^^xsd:string ;
+          rdfs:label "Function"^^xsd:string .
+
+
+###  https://w3id.org/saref#Gas
+:Gas rdf:type owl:Class ;
+     rdfs:subClassOf :Commodity ;
+     rdfs:comment "A type of commodity"^^xsd:string ;
+     rdfs:label "Gas"^^xsd:string .
+
+
+###  https://w3id.org/saref#Generator
+:Generator rdf:type owl:Class ;
+           rdfs:subClassOf :EnergyRelated ;
+           rdfs:comment "A type of energy-related device that generates energy"^^xsd:string ;
+           rdfs:label "Generator"^^xsd:string .
+
+
+###  https://w3id.org/saref#GetCommand
+:GetCommand rdf:type owl:Class ;
+            rdfs:subClassOf :Command ;
+            rdfs:comment "A type of command"^^xsd:string ;
+            rdfs:label "Get command"^^xsd:string .
+
+
+###  https://w3id.org/saref#GetCurrentMeterValueCommand
+:GetCurrentMeterValueCommand rdf:type owl:Class ;
+                             rdfs:subClassOf :GetCommand ;
+                             rdfs:comment "A type of get command"^^xsd:string ;
+                             rdfs:label "Get current meter value command"^^xsd:string .
+
+
+###  https://w3id.org/saref#GetMeterDataCommand
+:GetMeterDataCommand rdf:type owl:Class ;
+                     rdfs:subClassOf :GetCommand ;
+                     rdfs:comment "A type of get command"^^xsd:string ;
+                     rdfs:label "Get meter data command"^^xsd:string .
+
+
+###  https://w3id.org/saref#GetMeterHistoryCommand
+:GetMeterHistoryCommand rdf:type owl:Class ;
+                        rdfs:subClassOf :GetCommand ;
+                        rdfs:comment "A type of get command"^^xsd:string ;
+                        rdfs:label "Get meter history command"^^xsd:string .
+
+
+###  https://w3id.org/saref#GetSensingDataCommand
+:GetSensingDataCommand rdf:type owl:Class ;
+                       rdfs:subClassOf :GetCommand ;
+                       rdfs:comment "A type of get command"^^xsd:string ;
+                       rdfs:label "Get sensing data command"^^xsd:string .
+
+
+###  https://w3id.org/saref#Humidity
+:Humidity rdf:type owl:Class ;
+          rdfs:subClassOf :Property ;
+          rdfs:comment "A saref:Property related to some measurements that are characterized by a certain value that is measured in a humidity unit"^^xsd:string ;
+          rdfs:label "Humidity"^^xsd:string .
+
+
+###  https://w3id.org/saref#LevelControlFunction
+:LevelControlFunction rdf:type owl:Class ;
+                      rdfs:subClassOf :ActuatingFunction ,
+                                      [ rdf:type owl:Restriction ;
+                                        owl:onProperty :hasCommand ;
+                                        owl:allValuesFrom [ rdf:type owl:Class ;
+                                                            owl:unionOf ( :SetAbsoluteLevelCommand
+                                                                          :SetRelativeLevelCommand
+                                                                          :StepDownCommand
+                                                                          :StepUpCommand
+                                                                        )
+                                                          ]
+                                      ] ;
+                      rdfs:comment "An actuating function that allows to do level adjustments of an actuator in a certain range (e.g., 0%-100%), such as dimming a light or set the speed of an electric motor. "^^xsd:string ;
+                      rdfs:label "Level control function"^^xsd:string .
+
+
+###  https://w3id.org/saref#Light
+:Light rdf:type owl:Class ;
+       rdfs:subClassOf :Property ;
+       rdfs:comment "A saref:Property related to some measurements that are characterized by a certain value that is measured in a illuminance unit (lux)"^^xsd:string ;
+       rdfs:label "Light"^^xsd:string .
+
+
+###  https://w3id.org/saref#LightSwitch
+:LightSwitch rdf:type owl:Class ;
+             rdfs:subClassOf :Switch ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty :consistsOf ;
+                               owl:someValuesFrom :Switch
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty :hasFunction ;
+                               owl:someValuesFrom :OnOffFunction
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty :hasState ;
+                               owl:someValuesFrom :OnOffState
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty :measuresProperty ;
+                               owl:someValuesFrom :Light
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty :offers ;
+                               owl:someValuesFrom :SwitchOnService
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty :accomplishes ;
+                               owl:hasValue :Lighting
+                             ] ;
+             rdfs:comment "A device of category saref:Actuator that consists of a switch, accomplishes the task saref:Lighting, performs the saref:OnOffFunction, measures the property saref:Light, and can be found in the state saref:OnOffState. It can offer a switch on service."^^xsd:string ;
+             rdfs:label "Light switch"^^xsd:string .
+
+
+###  https://w3id.org/saref#LightingDevice
+:LightingDevice rdf:type owl:Class ;
+                rdfs:subClassOf :Load ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty :accomplishes ;
+                                  owl:hasValue :Comfort
+                                ] ;
+                rdfs:comment "A device used for illumination, irradiation, signaling, or projection"^^xsd:string ;
+                rdfs:label "Lighting device"^^xsd:string .
+
+
+###  https://w3id.org/saref#Load
+:Load rdf:type owl:Class ;
+      rdfs:subClassOf :EnergyRelated ;
+      rdfs:comment "A type of energy-related device that consumes energy"^^xsd:string ;
+      rdfs:label "Load"^^xsd:string .
+
+
+###  https://w3id.org/saref#Measurement
+:Measurement rdf:type owl:Class ;
+             rdfs:subClassOf [ rdf:type owl:Restriction ;
+                               owl:onProperty :relatesToProperty ;
+                               owl:allValuesFrom :Property
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty :relatesToProperty ;
+                               owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                               owl:onClass :Property
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty :hasTimestamp ;
+                               owl:allValuesFrom xsd:dateTime
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty :hasValue ;
+                               owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                               owl:onDataRange xsd:float
+                             ] ;
+             rdfs:comment "Represents the measured value made over a property. It is also linked to the unit of measure in which the value is expressed and the timestamp of the measurement."@en ;
+             rdfs:label "Measurement"@en .
+
+
+###  https://w3id.org/saref#Meter
+:Meter rdf:type owl:Class ;
+       rdfs:subClassOf :EnergyRelated ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty <http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH> ;
+                         owl:someValuesFrom :Device
+                       ] ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty <http://webprotege.stanford.edu/Rl7mrdaiCChcbesJOkxsUC> ;
+                         owl:someValuesFrom <http://webprotege.stanford.edu/RCUXiAiW1f8PVPPnDTQ1hFg>
+                       ] ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :hasFunction ;
+                         owl:someValuesFrom :MeteringFunction
+                       ] ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :isMeasuredIn ;
+                         owl:someValuesFrom :Measurement
+                       ] ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty <http://webprotege.stanford.edu/R977TDBEN15A0aIS34zi0Cr> ;
+                         owl:someValuesFrom xsd:boolean
+                       ] ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty <http://webprotege.stanford.edu/RBQYwalLa8y1fuwJmAeuKrK> ;
+                         owl:someValuesFrom xsd:int
+                       ] ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty <http://webprotege.stanford.edu/RDADzS2qAC3GkCb4cbY0wjV> ;
+                         owl:someValuesFrom xsd:int
+                       ] ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty <http://webprotege.stanford.edu/RDAjHtUVAjpRS1IKarpqaN> ;
+                         owl:someValuesFrom xsd:int
+                       ] ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty <http://webprotege.stanford.edu/RDUGtzcnZPknLxhfiRbh1Zx> ;
+                         owl:someValuesFrom xsd:boolean
+                       ] ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty <http://webprotege.stanford.edu/RPO0n2wheCmJQrgF71ubQy> ;
+                         owl:hasValue "Geo:json"^^xsd:string
+                       ] ;
+       rdfs:comment "A device built to accurately detect and display a quantity in a form readable by a human being. Further, a device of category saref:Meter that performs a saref:MeteringFunction."^^xsd:string ;
+       rdfs:label "Meter"^^xsd:string .
+
+
+###  https://w3id.org/saref#MeteringFunction
+:MeteringFunction rdf:type owl:Class ;
+                  rdfs:subClassOf :Function ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty :hasCommand ;
+                                    owl:allValuesFrom [ rdf:type owl:Class ;
+                                                        owl:unionOf ( :GetCurrentMeterValueCommand
+                                                                      :GetMeterDataCommand
+                                                                      :GetMeterHistoryCommand
+                                                                    )
+                                                      ]
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty :hasMeterReading ;
+                                    owl:allValuesFrom :Measurement
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty :hasMeterReadingType ;
+                                    owl:allValuesFrom [ rdf:type owl:Class ;
+                                                        owl:unionOf ( :Commodity
+                                                                      :Property
+                                                                    )
+                                                      ]
+                                  ] ;
+                  rdfs:comment "A function that allows to get data from a meter, such as current meter reading or instantaneous demand"^^xsd:string ;
+                  rdfs:label "Metering function"^^xsd:string .
+
+
+###  https://w3id.org/saref#MicroRenewable
+:MicroRenewable rdf:type owl:Class ;
+                rdfs:subClassOf :EnergyRelated ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty :accomplishes ;
+                                  owl:hasValue :EnergyEfficiency
+                                ] ;
+                rdfs:comment "A device that generates renewable energy from natural resources such as teh sun, wind and water"^^xsd:string ;
+                rdfs:label "Micro renewable"^^xsd:string .
+
+
+###  https://w3id.org/saref#Motion
+:Motion rdf:type owl:Class ;
+        rdfs:subClassOf :Property ;
+        rdfs:comment "A saref:Property related to some measurements that are characterized by a certain value that is measured in a unit of measure for motion"^^xsd:string ;
+        rdfs:label "Motion"^^xsd:string .
+
+
+###  https://w3id.org/saref#MultiLevelState
+:MultiLevelState rdf:type owl:Class ;
+                 rdfs:subClassOf :State ;
+                 rdfs:comment "A type of state"^^xsd:string ;
+                 rdfs:label "Multi level state"^^xsd:string .
+
+
+###  https://w3id.org/saref#NotifyCommand
+:NotifyCommand rdf:type owl:Class ;
+               rdfs:subClassOf :Command ;
+               rdfs:comment "A type of command"^^xsd:string ;
+               rdfs:label "Notify command"^^xsd:string .
+
+
+###  https://w3id.org/saref#Occupancy
+:Occupancy rdf:type owl:Class ;
+           rdfs:subClassOf :Property ;
+           rdfs:comment "A saref:Property related to some measurements that are characterized by a certain value (saref:hasValue property) that is measured in a unit of measure for occupancy"^^xsd:string ;
+           rdfs:label "Occupancy"^^xsd:string .
+
+
+###  https://w3id.org/saref#OffCommand
+:OffCommand rdf:type owl:Class ;
+            rdfs:subClassOf :Command ,
+                            [ rdf:type owl:Restriction ;
+                              owl:onProperty :actsUpon ;
+                              owl:allValuesFrom :OnOffState
+                            ] ;
+            owl:disjointWith :OnCommand ;
+            rdfs:comment "A type of command"^^xsd:string ;
+            rdfs:label "Off command"^^xsd:string .
+
+
+###  https://w3id.org/saref#OffState
+:OffState rdf:type owl:Class ;
+          rdfs:subClassOf :OnOffState ;
+          rdfs:comment "The state of a device that is ON"^^xsd:string ;
+          rdfs:label "Off state"^^xsd:string .
+
+
+###  https://w3id.org/saref#OnCommand
+:OnCommand rdf:type owl:Class ;
+           rdfs:subClassOf :Command ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty :actsUpon ;
+                             owl:allValuesFrom :OnOffState
+                           ] ;
+           rdfs:comment "A type of command"^^xsd:string ;
+           rdfs:label "On command"^^xsd:string .
+
+
+###  https://w3id.org/saref#OnOffFunction
+:OnOffFunction rdf:type owl:Class ;
+               rdfs:subClassOf :ActuatingFunction ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty :hasCommand ;
+                                 owl:allValuesFrom [ rdf:type owl:Class ;
+                                                     owl:unionOf ( :OffCommand
+                                                                   :OnCommand
+                                                                   :ToggleCommand
+                                                                 )
+                                                   ]
+                               ] ;
+               rdfs:comment "An actuating function that allows to switch on and off an actuator"^^xsd:string ;
+               rdfs:label "On off function"^^xsd:string .
+
+
+###  https://w3id.org/saref#OnOffState
+:OnOffState rdf:type owl:Class ;
+            rdfs:subClassOf :State ;
+            rdfs:comment "A type of state"^^xsd:string ;
+            rdfs:label "On off state"^^xsd:string .
+
+
+###  https://w3id.org/saref#OnState
+:OnState rdf:type owl:Class ;
+         rdfs:subClassOf :OnOffState ;
+         rdfs:comment "The state of a device that is OFF "^^xsd:string ;
+         rdfs:label "On state"^^xsd:string .
+
+
+###  https://w3id.org/saref#OpenCloseFunction
+:OpenCloseFunction rdf:type owl:Class ;
+                   rdfs:subClassOf :ActuatingFunction ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty :hasCommand ;
+                                     owl:allValuesFrom [ rdf:type owl:Class ;
+                                                         owl:unionOf ( :CloseCommand
+                                                                       :OpenCommand
+                                                                     )
+                                                       ]
+                                   ] ;
+                   rdfs:comment "An actuating function that allows to open and close a device"^^xsd:string ;
+                   rdfs:label "Open close function"^^xsd:string .
+
+
+###  https://w3id.org/saref#OpenCloseState
+:OpenCloseState rdf:type owl:Class ;
+                rdfs:subClassOf :State ;
+                rdfs:comment "A type of state"^^xsd:string ;
+                rdfs:label "Open close state"^^xsd:string .
+
+
+###  https://w3id.org/saref#OpenCommand
+:OpenCommand rdf:type owl:Class ;
+             rdfs:subClassOf :Command ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty :actsUpon ;
+                               owl:allValuesFrom :OpenCloseState
+                             ] ;
+             rdfs:comment "A type of command"^^xsd:string ;
+             rdfs:label "Open command"^^xsd:string .
+
+
+###  https://w3id.org/saref#OpenState
+:OpenState rdf:type owl:Class ;
+           rdfs:subClassOf :OpenCloseState ;
+           rdfs:comment "The state of a device that is OPEN "^^xsd:string ;
+           rdfs:label "Open state"^^xsd:string .
+
+
+###  https://w3id.org/saref#PauseCommand
+:PauseCommand rdf:type owl:Class ;
+              rdfs:subClassOf :Command ;
+              rdfs:comment "A type of command"^^xsd:string ;
+              rdfs:label "Pause command"^^xsd:string .
+
+
+###  https://w3id.org/saref#Power
+:Power rdf:type owl:Class ;
+       rdfs:subClassOf :Property ;
+       rdfs:comment "A saref:Property related to some measurements that are characterized by a certain value that is measured in a power unit (such as watt or kilowatt).  Further specializations of the saref:Power class can be found in the SAREF4ENER extension, where classes such as PowerMax, PowerMin and PowerExpected are defined."^^xsd:string ;
+       rdfs:label "Power"^^xsd:string .
+
+
+###  https://w3id.org/saref#PowerUnit
+:PowerUnit rdf:type owl:Class ;
+           rdfs:subClassOf :Measurement ;
+           rdfs:comment "The unit of measure for power"^^xsd:string ;
+           rdfs:label "Power unit"^^xsd:string .
+
+
+###  https://w3id.org/saref#Pressure
+:Pressure rdf:type owl:Class ;
+          rdfs:subClassOf :Property ;
+          rdfs:comment "A saref:Property related to some measurements that are characterized by a certain value that is measured in a pressure unit (bar or pascal)"^^xsd:string ;
+          rdfs:label "Pressure"^^xsd:string .
+
+
+###  https://w3id.org/saref#PressureUnit
+:PressureUnit rdf:type owl:Class ;
+              rdfs:subClassOf :Measurement ;
+              rdfs:comment "The unit of measure for pressure"^^xsd:string ;
+              rdfs:label "Pressure unit"^^xsd:string .
+
+
+###  https://w3id.org/saref#Price
+:Price rdf:type owl:Class ;
+       rdfs:subClassOf :Property ;
+       rdfs:comment "A saref:Property crelated to some measurements that are characterized by a certain value that is measured using saref:Currency"^^xsd:string ;
+       rdfs:label "Price"^^xsd:string .
+
+
+###  https://w3id.org/saref#Profile
+:Profile rdf:type owl:Class ;
+         rdfs:subClassOf [ rdf:type owl:Restriction ;
+                           owl:onProperty :consistsOf ;
+                           owl:allValuesFrom :Profile
+                         ] ,
+                         [ rdf:type owl:Restriction ;
+                           owl:onProperty :hasPrice ;
+                           owl:allValuesFrom :Price
+                         ] ,
+                         [ rdf:type owl:Restriction ;
+                           owl:onProperty :hasTime ;
+                           owl:allValuesFrom :Time
+                         ] ,
+                         [ rdf:type owl:Restriction ;
+                           owl:onProperty :isAbout ;
+                           owl:allValuesFrom [ rdf:type owl:Class ;
+                                               owl:unionOf ( :Commodity
+                                                             :Property
+                                                           )
+                                             ]
+                         ] ;
+         rdfs:comment "A specification associated to a device to collect information about a certain Property (e.g., Energy) or Commodity (e.g.Water) for optimizing its usage in the home, office or building in which the device is located. This specification is about a certain Property or Commodity (saref:isAbout), can be calculated over a time span (saref:hasTime ) and can be associated to some costs (saref:hasPrice). An example is the Power Profile defined in the SAREF4ENER extension that can be associated to a device for optimizing the Energy efficiency in the home, office or building in which the device is located."@en ;
+         rdfs:label "Profile"@en .
+
+
+###  https://w3id.org/saref#Property
+:Property rdf:type owl:Class ;
+          rdfs:subClassOf [ rdf:type owl:Restriction ;
+                            owl:onProperty :isControlledByDevice ;
+                            owl:allValuesFrom :Device
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :isMeasuredByDevice ;
+                            owl:allValuesFrom :Device
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :relatesToMeasurement ;
+                            owl:allValuesFrom :Measurement
+                          ] ;
+          rdfs:comment "Anything that can be sensed, measured or controlled in households, common public buildings or offices. We propose here a list of properties that are relevant for the purpose of SAREF, but this list can be extended."^^xsd:string ;
+          rdfs:label "Property"^^xsd:string .
+
+
+###  https://w3id.org/saref#SensingFunction
+:SensingFunction rdf:type owl:Class ;
+                 rdfs:subClassOf :Function ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty :hasSensingRange ;
+                                   owl:someValuesFrom :Measurement
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty :hasCommand ;
+                                   owl:allValuesFrom :GetSensingDataCommand
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty :hasSensorType ;
+                                   owl:allValuesFrom :Property
+                                 ] ;
+                 rdfs:comment "A function that allows to transmit data from sensors, such as measurement values (e.g., temperature) or sensing data (e.g., occupancy)"^^xsd:string ;
+                 rdfs:label "Sensing function"^^xsd:string .
+
+
+###  https://w3id.org/saref#Sensor
+:Sensor rdf:type owl:Class ;
+        rdfs:subClassOf <http://webprotege.stanford.edu/R9Ss0nlABbeWn3nuA9NaaUI> ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty <http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH> ;
+                          owl:someValuesFrom :Device
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty <http://webprotege.stanford.edu/RLObgBrWUGbtlQvTc4OsHG> ;
+                          owl:someValuesFrom :BuildingRelated
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty <http://webprotege.stanford.edu/Rl7mrdaiCChcbesJOkxsUC> ;
+                          owl:someValuesFrom <http://webprotege.stanford.edu/RCUXiAiW1f8PVPPnDTQ1hFg>
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :hasFunction ;
+                          owl:someValuesFrom :SensingFunction
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :isMeasuredIn ;
+                          owl:someValuesFrom :Measurement
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty <http://webprotege.stanford.edu/R977TDBEN15A0aIS34zi0Cr> ;
+                          owl:someValuesFrom xsd:boolean
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty <http://webprotege.stanford.edu/R9frPiixJGYcVAtPvlA9RU8> ;
+                          owl:someValuesFrom xsd:string
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty <http://webprotege.stanford.edu/RBQYwalLa8y1fuwJmAeuKrK> ;
+                          owl:someValuesFrom xsd:string
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty <http://webprotege.stanford.edu/RDADzS2qAC3GkCb4cbY0wjV> ;
+                          owl:someValuesFrom xsd:int
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty <http://webprotege.stanford.edu/RDAjHtUVAjpRS1IKarpqaN> ;
+                          owl:someValuesFrom xsd:int
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty <http://webprotege.stanford.edu/RDUGtzcnZPknLxhfiRbh1Zx> ;
+                          owl:someValuesFrom xsd:boolean
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty <http://webprotege.stanford.edu/RPO0n2wheCmJQrgF71ubQy> ;
+                          owl:hasValue "Geo:json"^^xsd:string
+                        ] ;
+        rdfs:comment "A device that detects and responds to events or changes in the physical environment such as light, motion, or temperature changes. Further, a device of category saref:Sensor that performs a saref:SensingFunction."^^xsd:string ;
+        rdfs:label "Sensor"^^xsd:string .
+
+
+###  https://w3id.org/saref#Service
+:Service rdf:type owl:Class ;
+         rdfs:subClassOf [ rdf:type owl:Restriction ;
+                           owl:onProperty :isOfferedBy ;
+                           owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                           owl:onClass :Device
+                         ] ,
+                         [ rdf:type owl:Restriction ;
+                           owl:onProperty :represents ;
+                           owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                           owl:onClass :Function
+                         ] ;
+         rdfs:comment "A service is a representation of a function to a network that makes the function discoverable, registerable, remotely controllable by other devices in the network. A service can represent one or more functions. A Service is offered by a device that wants (a certain set of) its function(s) to be discoverable, registerable, remotely controllable by other devices in the network. A Service must specify the device that is offering the service and the function(s) to be represented."^^xsd:string ;
+         rdfs:label "Service"^^xsd:string .
+
+
+###  https://w3id.org/saref#SetAbsoluteLevelCommand
+:SetAbsoluteLevelCommand rdf:type owl:Class ;
+                         rdfs:subClassOf :SetLevelCommand ;
+                         rdfs:comment "A type of set level command"^^xsd:string ;
+                         rdfs:label "Set absolute level command"^^xsd:string .
+
+
+###  https://w3id.org/saref#SetLevelCommand
+:SetLevelCommand rdf:type owl:Class ;
+                 rdfs:subClassOf :Command ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty :actsUpon ;
+                                   owl:allValuesFrom :MultiLevelState
+                                 ] ;
+                 rdfs:comment "A type of command"^^xsd:string ;
+                 rdfs:label "Set level command"^^xsd:string .
+
+
+###  https://w3id.org/saref#SetRelativeLevelCommand
+:SetRelativeLevelCommand rdf:type owl:Class ;
+                         rdfs:subClassOf :SetLevelCommand ;
+                         rdfs:comment "A type of set level command"^^xsd:string ;
+                         rdfs:label "Set relative level command"^^xsd:string .
+
+
+###  https://w3id.org/saref#Smoke
+:Smoke rdf:type owl:Class ;
+       rdfs:subClassOf :Property ;
+       rdfs:comment "A saref:Property related to some measurements that are characterized by a certain value that is measured in a unit of measure for smoke"^^xsd:string ;
+       rdfs:label "Smoke"^^xsd:string .
+
+
+###  https://w3id.org/saref#SmokeSensor
+:SmokeSensor rdf:type owl:Class ;
+             rdfs:subClassOf :Sensor ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty :consistsOf ;
+                               owl:someValuesFrom :Sensor
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty :hasFunction ;
+                               owl:someValuesFrom :EventFunction
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty :hasFunction ;
+                               owl:someValuesFrom :SensingFunction
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty :measuresProperty ;
+                               owl:someValuesFrom :Smoke
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty :accomplishes ;
+                               owl:hasValue :Safety
+                             ] ;
+             rdfs:comment "A device that consists of a sensor, has category saref:Sensor, performs the saref:SensingFunction and saref:EventFunction (which notifies that a certain threshold has been exceeded), and is used for the purpose of sensing a property of type saref:Smoke."^^xsd:string ;
+             rdfs:label "Smoke sensor"^^xsd:string .
+
+
+###  https://w3id.org/saref#StartCommand
+:StartCommand rdf:type owl:Class ;
+              rdfs:subClassOf :Command ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty :actsUpon ;
+                                owl:allValuesFrom :StartStopState
+                              ] ;
+              owl:disjointWith :StopCommand ;
+              rdfs:comment "A type of command"^^xsd:string ;
+              rdfs:label "Start command"^^xsd:string .
+
+
+###  https://w3id.org/saref#StartState
+:StartState rdf:type owl:Class ;
+            rdfs:subClassOf :StartStopState ;
+            rdfs:comment "The state of a device that is STARTED"^^xsd:string ;
+            rdfs:label "Start state"^^xsd:string .
+
+
+###  https://w3id.org/saref#StartStopFunction
+:StartStopFunction rdf:type owl:Class ;
+                   rdfs:subClassOf :ActuatingFunction ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty :hasCommand ;
+                                     owl:allValuesFrom [ rdf:type owl:Class ;
+                                                         owl:unionOf ( :StartCommand
+                                                                       :StopCommand
+                                                                     )
+                                                       ]
+                                   ] ;
+                   rdfs:comment "An actuating function that allows to start and stop a device"^^xsd:string ;
+                   rdfs:label "Start stop function"^^xsd:string .
+
+
+###  https://w3id.org/saref#StartStopState
+:StartStopState rdf:type owl:Class ;
+                rdfs:subClassOf :State ;
+                rdfs:comment "A type of state"^^xsd:string ;
+                rdfs:label "Start stop state"^^xsd:string .
+
+
+###  https://w3id.org/saref#State
+:State rdf:type owl:Class ;
+       rdfs:comment "The state in which a device can be found, e.g, ON/OFF/STANDBY, or ONLINE/OFFLINE. We propose here a list of states that are relevant for the purpose of SAREF, but this list can be extended."^^xsd:string ;
+       rdfs:label "State"^^xsd:string .
+
+
+###  https://w3id.org/saref#StepDownCommand
+:StepDownCommand rdf:type owl:Class ;
+                 rdfs:subClassOf :Command ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty :actsUpon ;
+                                   owl:allValuesFrom :MultiLevelState
+                                 ] ;
+                 owl:disjointWith :StepUpCommand ;
+                 rdfs:comment "A type of command"^^xsd:string ;
+                 rdfs:label "Step down command"^^xsd:string .
+
+
+###  https://w3id.org/saref#StepUpCommand
+:StepUpCommand rdf:type owl:Class ;
+               rdfs:subClassOf :Command ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty :actsUpon ;
+                                 owl:allValuesFrom :MultiLevelState
+                               ] ;
+               rdfs:comment "A type of command"^^xsd:string ;
+               rdfs:label "Step up command"^^xsd:string .
+
+
+###  https://w3id.org/saref#StopCommand
+:StopCommand rdf:type owl:Class ;
+             rdfs:subClassOf :Command ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty :actsUpon ;
+                               owl:allValuesFrom :StartStopState
+                             ] ;
+             rdfs:comment "A type of command"^^xsd:string ;
+             rdfs:label "Stop command"^^xsd:string .
+
+
+###  https://w3id.org/saref#StopState
+:StopState rdf:type owl:Class ;
+           rdfs:subClassOf :StartStopState ;
+           rdfs:comment "The state of a device that is STOPPED"^^xsd:string ;
+           rdfs:label "Stop state"^^xsd:string .
+
+
+###  https://w3id.org/saref#Storage
+:Storage rdf:type owl:Class ;
+         rdfs:subClassOf :EnergyRelated ;
+         rdfs:comment "A type of energy-related device that stores energy"^^xsd:string ;
+         rdfs:label "Storage"^^xsd:string .
+
+
+###  https://w3id.org/saref#Switch
+:Switch rdf:type owl:Class ;
+        rdfs:subClassOf :Actuator ;
+        rdfs:comment "A device of category saref:Actuator that performs an actuating function of type saref:OnOffFunction or saref:OpenCloseFunction"^^xsd:string ;
+        rdfs:label "Switch"^^xsd:string .
+
+
+###  https://w3id.org/saref#SwitchOnService
+:SwitchOnService rdf:type owl:Class ;
+                 rdfs:subClassOf :Service ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty :isOfferedBy ;
+                                   owl:someValuesFrom :LightSwitch
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty :represents ;
+                                   owl:someValuesFrom :OnOffFunction
+                                 ] ;
+                 rdfs:comment "A type of service that represents an on/off function to the network"^^xsd:string ;
+                 rdfs:label "Switch on service"^^xsd:string .
+
+
+###  https://w3id.org/saref#Task
+:Task rdf:type owl:Class ;
+      rdfs:subClassOf [ rdf:type owl:Restriction ;
+                        owl:onProperty :isAccomplishedBy ;
+                        owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                        owl:onClass :Device
+                      ] ;
+      rdfs:comment "The goal for which a device is designed (from a user perspective). For example, a washing machine is designed for the task of washing. We propose here a list of tasks that are relevant for the purpose of SAREF, but this list can be extended."^^xsd:string ;
+      rdfs:label "Task"^^xsd:string .
+
+
+###  https://w3id.org/saref#Temperature
+:Temperature rdf:type owl:Class ;
+             rdfs:subClassOf :Property ;
+             rdfs:comment "A saref:Property related to some measurements that are characterized by a certain value that is measured in a temperature unit (degree_Celsius, degree_Fahrenheit, or degree_kelvin)"^^xsd:string ;
+             rdfs:label "Temperature"^^xsd:string .
+
+
+###  https://w3id.org/saref#TemperatureSensor
+:TemperatureSensor rdf:type owl:Class ;
+                   rdfs:subClassOf :Sensor ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty :accomplishes ;
+                                     owl:someValuesFrom [ owl:intersectionOf ( :Temperature
+                                                                               [ rdf:type owl:Class ;
+                                                                                 owl:unionOf ( :Device
+                                                                                               :Sensor
+                                                                                             )
+                                                                               ]
+                                                                             ) ;
+                                                          rdf:type owl:Class
+                                                        ]
+                                   ] ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty :consistsOf ;
+                                     owl:someValuesFrom [ rdf:type owl:Class ;
+                                                          owl:unionOf ( :Device
+                                                                        :Sensor
+                                                                        :Service
+                                                                      )
+                                                        ]
+                                   ] ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty :hasFunction ;
+                                     owl:someValuesFrom [ owl:intersectionOf ( :Device
+                                                                               :SensingFunction
+                                                                             ) ;
+                                                          rdf:type owl:Class
+                                                        ]
+                                   ] ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty :measuresProperty ;
+                                     owl:someValuesFrom [ rdf:type owl:Class ;
+                                                          owl:unionOf ( :Temperature
+                                                                        [ owl:intersectionOf ( :Device
+                                                                                               :Sensor
+                                                                                             ) ;
+                                                                          rdf:type owl:Class
+                                                                        ]
+                                                                      )
+                                                        ]
+                                   ] ;
+                   rdfs:comment "A device that consists of a sensor, has category saref:Sensor, performs the saref:SensingFunction and is used for the purpose of sensing a property of type saref:Temperature"^^xsd:string ;
+                   rdfs:label "Temperature sensor"^^xsd:string .
+
+
+###  https://w3id.org/saref#TemperatureUnit
+:TemperatureUnit rdf:type owl:Class ;
+                 rdfs:subClassOf :Measurement ;
+                 rdfs:comment "The unit of measure for temperature"^^xsd:string ;
+                 rdfs:label "Temperature unit"^^xsd:string .
+
+
+###  https://w3id.org/saref#Time
+:Time rdf:type owl:Class ;
+      rdfs:subClassOf :Property ,
+                      [ rdf:type owl:Restriction ;
+                        owl:onProperty :consistsOf ;
+                        owl:someValuesFrom <http://www.w3.org/2006/time#TemporalEntity>
+                      ] ;
+      rdfs:comment "A saref:Property that allows to specify the time concept in terms of instants or intervals according to the imported W3C Time ontology."^^xsd:string ;
+      rdfs:label "Time"^^xsd:string .
+
+
+###  https://w3id.org/saref#ToggleCommand
+:ToggleCommand rdf:type owl:Class ;
+               rdfs:subClassOf :Command ;
+               rdfs:comment "A type of command"^^xsd:string ;
+               rdfs:label "Toggle command"^^xsd:string .
+
+
+###  https://w3id.org/saref#WashingMachine
+:WashingMachine rdf:type owl:Class ;
+                rdfs:subClassOf :Load ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty :hasFunction ;
+                                  owl:someValuesFrom :StartStopFunction
+                                ] ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty :hasProfile ;
+                                  owl:someValuesFrom :Profile
+                                ] ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty :hasState ;
+                                  owl:someValuesFrom :StartStopState
+                                ] ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty :accomplishes ;
+                                  owl:hasValue :Washing
+                                ] ;
+                rdfs:comment "A device of category saref:Appliance and saref:Load that accomplishes the task saref:Washing, performs an actuating function of type saref:StartStopFunction, can be found in the state saref:StartStopState, and can have a saref:Profile that characterizes its energy consumption. "^^xsd:string ;
+                rdfs:label "Washing machine"^^xsd:string .
+
+
+###  https://w3id.org/saref#Water
+:Water rdf:type owl:Class ;
+       rdfs:subClassOf :Commodity ;
+       rdfs:comment "A type of commodity"^^xsd:string ;
+       rdfs:label "Water"^^xsd:string .
+
+
+#################################################################
+#    Individuals
+#################################################################
+
+###  http://www.wurvoc.org/vocabularies/om-1.8/United_States_dollar
+<http://www.wurvoc.org/vocabularies/om-1.8/United_States_dollar> rdf:type owl:NamedIndividual ,
+                                                                          :Currency ;
+                                                                 rdfs:label "United States dollar"@en .
+
+
+###  http://www.wurvoc.org/vocabularies/om-1.8/bar
+<http://www.wurvoc.org/vocabularies/om-1.8/bar> rdf:type owl:NamedIndividual ,
+                                                         :PressureUnit ;
+                                                rdfs:comment "The bar is a unit of pressure defined as 100 000 pascal."@en ;
+                                                rdfs:label "bar"^^xsd:string .
+
+
+###  http://www.wurvoc.org/vocabularies/om-1.8/degree_Celsius
+<http://www.wurvoc.org/vocabularies/om-1.8/degree_Celsius> rdf:type owl:NamedIndividual ,
+                                                                    :TemperatureUnit ;
+                                                           rdfs:comment "The degree Celsius is a unit of temperature defined as 1 kelvin."@en ;
+                                                           rdfs:label "degree Celsius"^^xsd:string .
+
+
+###  http://www.wurvoc.org/vocabularies/om-1.8/degree_Fahrenheit
+<http://www.wurvoc.org/vocabularies/om-1.8/degree_Fahrenheit> rdf:type owl:NamedIndividual ,
+                                                                       :TemperatureUnit ;
+                                                              rdfs:comment "The degree Fahrenheit is a unit of temperature defined as 5.555556e-1 kelvin."@en ;
+                                                              rdfs:label "degree Fahrenheit"^^xsd:string .
+
+
+###  http://www.wurvoc.org/vocabularies/om-1.8/euro
+<http://www.wurvoc.org/vocabularies/om-1.8/euro> rdf:type owl:NamedIndividual ,
+                                                          :Currency ;
+                                                 rdfs:label "euro"@en .
+
+
+###  http://www.wurvoc.org/vocabularies/om-1.8/kelvin
+<http://www.wurvoc.org/vocabularies/om-1.8/kelvin> rdf:type owl:NamedIndividual ,
+                                                            :TemperatureUnit ;
+                                                   rdfs:comment "The kelvin is a unit of temperature defined as 1/273.16 of the thermodynamic temperature of the triple point of water."@en ;
+                                                   rdfs:label "kelvin"^^xsd:string .
+
+
+###  http://www.wurvoc.org/vocabularies/om-1.8/kilowatt
+<http://www.wurvoc.org/vocabularies/om-1.8/kilowatt> rdf:type owl:NamedIndividual ,
+                                                              :PowerUnit ;
+                                                     rdfs:label "kilowatt"^^xsd:string .
+
+
+###  http://www.wurvoc.org/vocabularies/om-1.8/kilowatt_hour
+<http://www.wurvoc.org/vocabularies/om-1.8/kilowatt_hour> rdf:type owl:NamedIndividual ,
+                                                                   :EnergyUnit ;
+                                                          rdfs:comment "The kilowatt hour is a unit of energy equal to 1,000 watt-hours, or 3.6 megajoules."^^xsd:string ;
+                                                          rdfs:label "kilowatt hour"^^xsd:string .
+
+
+###  http://www.wurvoc.org/vocabularies/om-1.8/lux
+<http://www.wurvoc.org/vocabularies/om-1.8/lux> rdf:type owl:NamedIndividual ;
+                                                rdfs:comment "The lux is a unit of illuminance defined as lumen divided by square metre = candela times steradian divided by square metre."@en ;
+                                                rdfs:label "lux"^^xsd:string .
+
+
+###  http://www.wurvoc.org/vocabularies/om-1.8/pascal
+<http://www.wurvoc.org/vocabularies/om-1.8/pascal> rdf:type owl:NamedIndividual ,
+                                                            :PressureUnit ;
+                                                   rdfs:comment "The pascal is a unit of pressure and stress defined as newton divided by square metre = joule divided by cubic metre = kilogram divided by metre second squared."@en ;
+                                                   rdfs:label "pascal"^^xsd:string .
+
+
+###  http://www.wurvoc.org/vocabularies/om-1.8/pound_sterling
+<http://www.wurvoc.org/vocabularies/om-1.8/pound_sterling> rdf:type owl:NamedIndividual ,
+                                                                    :Currency ;
+                                                           rdfs:label "Great Britain pound sterling"^^xsd:string .
+
+
+###  http://www.wurvoc.org/vocabularies/om-1.8/watt
+<http://www.wurvoc.org/vocabularies/om-1.8/watt> rdf:type owl:NamedIndividual ,
+                                                          :PowerUnit ;
+                                                 rdfs:comment "The watt is a unit of power defined as joule divided by second = newton times metre divided by second = volt times ampere = kilogram times square metre divided by second to the power 3."@en ;
+                                                 rdfs:label "watt"^^xsd:string .
+
+
+###  https://w3id.org/saref#Cleaning
+:Cleaning rdf:type owl:NamedIndividual ,
+                   :Task ;
+          rdfs:comment "A type of task for which a device is designed"^^xsd:string ;
+          rdfs:label "Cleaning"^^xsd:string .
+
+
+###  https://w3id.org/saref#Close
+:Close rdf:type owl:NamedIndividual ,
+                :CloseCommand ,
+                :CloseState ;
+       rdfs:comment "The value CLOSE. It is used to instantiate different classes such as the CloseCommand class and CloseState class, for example. "^^xsd:string ;
+       rdfs:label "Close"^^xsd:string .
+
+
+###  https://w3id.org/saref#Comfort
+:Comfort rdf:type owl:NamedIndividual ,
+                  :Task ;
+         rdfs:comment "A type of task for which a device is designed"^^xsd:string ;
+         rdfs:label "Comfort"^^xsd:string .
+
+
+###  https://w3id.org/saref#Drying
+:Drying rdf:type owl:NamedIndividual ,
+                 :Task ;
+        rdfs:comment "A type of task for which a device is designed"^^xsd:string ;
+        rdfs:label "Drying"^^xsd:string .
+
+
+###  https://w3id.org/saref#EnergyEfficiency
+:EnergyEfficiency rdf:type owl:NamedIndividual ,
+                           :Task ;
+                  rdfs:comment "A type of task for which a device is designed"^^xsd:string ;
+                  rdfs:label "EnergyEfficiency"^^xsd:string .
+
+
+###  https://w3id.org/saref#Entertainment
+:Entertainment rdf:type owl:NamedIndividual ,
+                        :Task ;
+               rdfs:comment "A type of task for which a device is designed"^^xsd:string ;
+               rdfs:label "Entertainment"^^xsd:string .
+
+
+###  https://w3id.org/saref#GetCurrentMeterValue
+:GetCurrentMeterValue rdf:type owl:NamedIndividual ,
+                               :GetCurrentMeterValueCommand ;
+                      rdfs:comment "The command GET CURRENT METER VALUE. It is used to instantiate the GetCurrentMeterValueCommand class. "^^xsd:string ;
+                      rdfs:label "Get current meter value"^^xsd:string .
+
+
+###  https://w3id.org/saref#GetMeterData
+:GetMeterData rdf:type owl:NamedIndividual ,
+                       :GetMeterDataCommand ;
+              rdfs:comment "The command GET METER DATA. It is used to instantiate the GetMeterDataCommand class. "^^xsd:string ;
+              rdfs:label "Get meter data"^^xsd:string .
+
+
+###  https://w3id.org/saref#GetMeterHistory
+:GetMeterHistory rdf:type owl:NamedIndividual ,
+                          :GetMeterHistoryCommand ;
+                 rdfs:comment "The command GET METER HISTORY. It is used to instantiate the GetMeterHistoryCommand class. "^^xsd:string ;
+                 rdfs:label "Get meter history"^^xsd:string .
+
+
+###  https://w3id.org/saref#GetSensingData
+:GetSensingData rdf:type owl:NamedIndividual ,
+                         :GetSensingDataCommand ;
+                rdfs:comment "The command GET SENSING DATA. It is used to instantiate the GetSensingDataCommand class. "^^xsd:string ;
+                rdfs:label "Get sensing data"^^xsd:string .
+
+
+###  https://w3id.org/saref#Lighting
+:Lighting rdf:type owl:NamedIndividual ,
+                   :Task ;
+          rdfs:comment "A type of task for which a device is designed"^^xsd:string ;
+          rdfs:label "Lighting"^^xsd:string .
+
+
+###  https://w3id.org/saref#MeterReading
+:MeterReading rdf:type owl:NamedIndividual ,
+                       :Task ;
+              rdfs:comment "A type of task for which a device is designed"^^xsd:string ;
+              rdfs:label "Meter reading"^^xsd:string .
+
+
+###  https://w3id.org/saref#Notify
+:Notify rdf:type owl:NamedIndividual ,
+                 :NotifyCommand ;
+        rdfs:comment "The value NOTIFY. It is used to instantiate the NotifyCommand."^^xsd:string ;
+        rdfs:label "Notify"^^xsd:string .
+
+
+###  https://w3id.org/saref#Off
+:Off rdf:type owl:NamedIndividual ,
+              :OffCommand ,
+              :OffState ;
+     rdfs:comment "The value OFF. It is used to instantiate different classes such as the OffCommand class and OffState class. "^^xsd:string ;
+     rdfs:label "Off "^^xsd:string .
+
+
+###  https://w3id.org/saref#On
+:On rdf:type owl:NamedIndividual ,
+             :OnCommand ,
+             :OnState ;
+    rdfs:comment "The value ON. It is used to instantiate different classes such as the OnCommand class and OnState class. "^^xsd:string ;
+    rdfs:label "On"^^xsd:string .
+
+
+###  https://w3id.org/saref#Open
+:Open rdf:type owl:NamedIndividual ,
+               :OpenCommand ,
+               :OpenState ;
+      rdfs:comment "The value OPEN. It is used to instantiate different classes such as the OpenCommand class and OpenState class. "^^xsd:string ;
+      rdfs:label "Open"^^xsd:string .
+
+
+###  https://w3id.org/saref#Pause
+:Pause rdf:type owl:NamedIndividual ,
+                :PauseCommand ;
+       rdfs:comment "The value PAUSE. It is used to instantiate classes such as the PauseCommand class."^^xsd:string ;
+       rdfs:label "Pause"^^xsd:string .
+
+
+###  https://w3id.org/saref#Safety
+:Safety rdf:type owl:NamedIndividual ,
+                 :Task ;
+        rdfs:comment "A type of task for which a device is designed"^^xsd:string ;
+        rdfs:label "Safety"^^xsd:string .
+
+
+###  https://w3id.org/saref#SetAbsoluteLevel
+:SetAbsoluteLevel rdf:type owl:NamedIndividual ,
+                           :SetAbsoluteLevelCommand ;
+                  rdfs:comment "The value SET ABSOLUTE LEVEL. It is used to instantiate classes such as the SetAbsoluteLevelCommand class. "^^xsd:string ;
+                  rdfs:label "Set absolute level"^^xsd:string .
+
+
+###  https://w3id.org/saref#SetRelativeLevel
+:SetRelativeLevel rdf:type owl:NamedIndividual ,
+                           :SetRelativeLevelCommand ;
+                  rdfs:comment "The value SET RELATIVE LEVEL. It is used to instantiate classes such as the SetRelativeLevelCommand class. "^^xsd:string ;
+                  rdfs:label "Set relative level"^^xsd:string .
+
+
+###  https://w3id.org/saref#Start
+:Start rdf:type owl:NamedIndividual ,
+                :StartCommand ,
+                :StartState ;
+       rdfs:comment "The value START. It is used to instantiate different classes such as the StartCommand class and StartState class. "^^xsd:string ;
+       rdfs:label "Start"^^xsd:string .
+
+
+###  https://w3id.org/saref#StepDown
+:StepDown rdf:type owl:NamedIndividual ,
+                   :StepDownCommand ;
+          rdfs:comment "The value STEP DOWN. It is used to instantiate the StepDownCommand class. "^^xsd:string ;
+          rdfs:label "Step down"^^xsd:string .
+
+
+###  https://w3id.org/saref#StepUp
+:StepUp rdf:type owl:NamedIndividual ,
+                 :StepUpCommand ;
+        rdfs:comment "The value STEP UP. It is used to instantiate the StepUpCommand class. "^^xsd:string ;
+        rdfs:label "Step up"^^xsd:string .
+
+
+###  https://w3id.org/saref#Stop
+:Stop rdf:type owl:NamedIndividual ,
+               :StopCommand ,
+               :StopState ;
+      rdfs:comment "The value STOP. It is used to instantiate different classes such as the StopCommand class and StopState class. "^^xsd:string ;
+      rdfs:label "Stop"^^xsd:string .
+
+
+###  https://w3id.org/saref#Toggle
+:Toggle rdf:type owl:NamedIndividual ,
+                 :ToggleCommand ;
+        rdfs:comment "The value TOGGLE. It is used to instantiate the the ToggleCommand class"^^xsd:string ;
+        rdfs:label "Toggle"^^xsd:string .
+
+
+###  https://w3id.org/saref#Washing
+:Washing rdf:type owl:NamedIndividual ,
+                  :Task ;
+         rdfs:comment "A type of task for which a device is designed"^^xsd:string ;
+         rdfs:label "Washing"^^xsd:string .
+
+
+###  https://w3id.org/saref#WellBeing
+:WellBeing rdf:type owl:NamedIndividual ,
+                    :Task ;
+           rdfs:comment "A type of task for which a device is designed"^^xsd:string ;
+           rdfs:label "WellBeing"^^xsd:string .
+
+
+###  https://w3id.org/saref#watt_hour
+:watt_hour rdf:type owl:NamedIndividual ,
+                    :EnergyUnit ;
+           rdfs:comment "The Watt Hor is a unit of energy equivalent to one watt (1 W) of power expended for one hour (1 h) of time. An energy expenditure of 1 Wh represents 3600 joules "^^xsd:string ;
+           rdfs:label "watt hour"^^xsd:string .
+
+
+#################################################################
+#    Annotations
+#################################################################
+
+<http://www.w3.org/2006/time#TemporalUnit> rdfs:comment "The unit of measure for time"^^xsd:string .
+
+
+###  Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi

@@ -5,12 +5,11 @@ created Sep 21 2021
 
 Shared models that are used by multiple submodules
 """
-import copy
 import json
 
 from aenum import Enum
 from pydantic import AnyHttpUrl, BaseModel, Field, validator, root_validator
-from typing import Union, Optional, Pattern, List, Dict, Any, TYPE_CHECKING
+from typing import Union, Optional, Pattern, List, Dict, Any
 
 from filip.models.base import DataType, FiwareRegex
 from filip.models.ngsi_v2.units import validate_unit_data
