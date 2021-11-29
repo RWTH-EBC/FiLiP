@@ -1,12 +1,14 @@
 """Vocabulary Models for Ontology Sources"""
 
 import datetime
-from typing import TYPE_CHECKING,  List
+from typing import TYPE_CHECKING, List, Optional
 
 from pydantic import BaseModel, Field
 
+from ...models.base import LogLevel
+
 if TYPE_CHECKING:
-    from . import Vocabulary, IdType, ParsingError, LoggingLevel
+    from . import Vocabulary, IdType, LoggingLevel
 
 
 class DependencyStatement(BaseModel):
@@ -28,6 +30,32 @@ class DependencyStatement(BaseModel):
     fulfilled: bool = Field(
         description="True if the dependency_iri is registered in the "
                     "vocabulary")
+
+
+class ParsingError(BaseModel):
+    """Object represents one issue that arose while parsing a source,
+       and holds all relevant details for that issue"""
+    level: LogLevel = Field(description="Severity of error")
+    source_iri: str = Field(description=
+                            "Iri of the source containing the error")
+    source_name: Optional[str] = Field(
+        default=None,
+        description="Name of the source, only set in get_function"
+    )
+    entity_type: 'IdType' = Field(
+        description="Type of the problematic entity: Class, Individual,.."
+    )
+    entity_iri: str = Field(description="Iri of the problematic entity")
+    entity_label: Optional[str] = Field(
+        default=None,
+        description="Name of the source, only set in get_function"
+    )
+    message: str = Field(
+        description="Message describing the error"
+    )
+
+    class Config:
+        use_enum_values = True
 
 
 class Source(BaseModel):

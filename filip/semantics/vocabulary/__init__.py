@@ -16,10 +16,12 @@ from .combined_relations import \
     CombinedRelation, \
     CombinedObjectRelation, \
     CombinedDataRelation
-from .source import Source, DependencyStatement
-
-from .vocabulary import \
-    Vocabulary, \
-    IdType, \
+from .source import \
+    DependencyStatement, \
     ParsingError, \
-    VocabularySettings
+    Source
+from .vocabulary import \
+    IdType, \
+    LabelSummary, \
+    VocabularySettings, \
+    Vocabulary

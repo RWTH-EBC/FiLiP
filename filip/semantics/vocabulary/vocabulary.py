@@ -1,16 +1,91 @@
-"""Main Vocabulary Model"""
+"""Main Vocabulary Model, and Submodels"""
 
 import operator
 from enum import Enum
 
 from pydantic import BaseModel, Field
 from . import *
-from typing import List, Dict, Union, Optional, TYPE_CHECKING
+from typing import List, Dict, Union, Optional, Tuple
 
 from ...models.base import LogLevel
 
-if TYPE_CHECKING:
-    from filip.semantics.vocabulary_configurator import LabelSummary
+
+class LabelSummary(BaseModel):
+    """
+    Model holding all information for label conflicts in a vocabulary
+    """
+    class_label_duplicates: Dict[str, List[Entity]] = Field(
+        description="All Labels that are used more than once for class_names "
+                    "on export."
+                    "Key: Label, Values: List of entities with key label"
+    )
+    field_label_duplicates: Dict[str, List[Entity]] = Field(
+        description="All Labels that are used more than once for property_names"
+                    "on export."
+                    "Key: Label, Values: List of entities with key label"
+    )
+    datatype_label_duplicates: Dict[str, List[Entity]] = Field(
+        description="All Labels that are used more than once for datatype "
+                    "on export." 
+                    "Key: Label, Values: List of entities with key label"
+    )
+
+    blacklisted_labels: List[Tuple[str, Entity]] = Field(
+        description="All Labels that are blacklisted, "
+                    "Tuple(Label, Entity with label)"
+    )
+    labels_with_illegal_chars: List[Tuple[str, Entity]] = Field(
+        description="All Labels that contain illegal characters, "
+                    "Tuple(Label, Entity with label)"
+    )
+
+    def is_valid(self) -> bool:
+        """Test if Labels are valid
+
+        Returns:
+            bool, True if no entries exist
+        """
+        return len(self.class_label_duplicates) == 0 and \
+               len(self.field_label_duplicates) == 0 and \
+               len(self.datatype_label_duplicates) == 0 and \
+               len(self.blacklisted_labels) == 0 and \
+               len(self.labels_with_illegal_chars) == 0
+
+    def __str__(self):
+        res = ""
+
+        def print_collection(collection):
+            sub_res = ""
+            for key, values in collection.items():
+                sub_res += f"\t{key}: "
+                for v in values:
+                    sub_res += f" \n\t\t{v.iri}"
+                sub_res += "\n"
+
+            if len(collection) == 0:
+                sub_res += "\t/\n"
+            return sub_res
+
+        def print_list(collection):
+            sub_res = ""
+            for key, value in collection:
+                sub_res += f"\t{key}: \t {value.iri}"
+                sub_res += "\n"
+            if len(collection) == 0:
+                sub_res += "\t/\n"
+            return sub_res
+
+        res += "class_label_duplicates:\n"
+        res += print_collection(self.class_label_duplicates)
+        res += "field_label_duplicates:\n"
+        res += print_collection(self.field_label_duplicates)
+        res += "datatype_label_duplicates:\n"
+        res += print_collection(self.datatype_label_duplicates)
+        res += "blacklisted_labels:\n"
+        res += print_list(self.blacklisted_labels)
+        res += "labels_with_illegal_chars:\n"
+        res += print_list(self.labels_with_illegal_chars)
+        return res
 
 
 class IdType(str, Enum):
@@ -23,33 +98,6 @@ class IdType(str, Enum):
     combined_relation = 'Combined Relation'
     individual = 'Individual'
     source = 'Source'
-
-
-
-class ParsingError(BaseModel):
-    """Object represents one issue that arose while parsing a source,
-       and holds all relevant details for that issue"""
-    level: LogLevel = Field(description="Severity of error")
-    source_iri: str = Field(description=
-                            "Iri of the source containing the error")
-    source_name: Optional[str] = Field(
-        default=None,
-        description="Name of the source, only set in get_function"
-    )
-    entity_type: 'IdType' = Field(
-        description="Type of the problematic entity: Class, Individual,.."
-    )
-    entity_iri: str = Field(description="Iri of the problematic entity")
-    entity_label: Optional[str] = Field(
-        default=None,
-        description="Name of the source, only set in get_function"
-    )
-    message: str = Field(
-        description="Message describing the error"
-    )
-
-    class Config:
-        use_enum_values = True
 
 
 class VocabularySettings(BaseModel):
@@ -137,7 +185,7 @@ class Vocabulary(BaseModel):
         description="Maps all entity iris and (combined)relations to their "
                     "Entity/Object type, to speed up lookups")
 
-    original_label_summary: Optional['LabelSummary'] = Field(
+    original_label_summary: Optional[LabelSummary] = Field(
         default=None,
         description="Original label after parsing, before the user made "
                     "changes")
