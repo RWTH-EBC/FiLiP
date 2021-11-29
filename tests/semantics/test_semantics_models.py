@@ -850,15 +850,7 @@ class TestSemanticsModels(unittest.TestCase):
                     self.assertEqual(attr.value, ['1'])
 
     def test__20_metadata(self):
-        from models2 import Class3, semantic_manager
-
-        test_header = InstanceHeader(
-            cb_url=settings.CB_URL,
-            iota_url=settings.IOTA_JSON_URL,
-            service=settings.FIWARE_SERVICE,
-            service_path=settings.FIWARE_SERVICEPATH
-        )
-        semantic_manager.set_default_header(test_header)
+        from tests.semantics.models2 import Class3, semantic_manager
 
         # create and save
         inst = Class3(id="1")
@@ -873,7 +865,7 @@ class TestSemanticsModels(unittest.TestCase):
         self.clear_registry()
 
         # load and check
-        inst = Class3(id="1", header=test_header)
+        inst = Class3(id="1")
         print(inst)
         self.assertEqual(inst.metadata.name, "TestName")
         self.assertEqual(inst.metadata.comment, "TestComment")
