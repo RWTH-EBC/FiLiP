@@ -3,6 +3,8 @@
 import copy
 import json
 import logging
+from math import inf
+
 import requests
 
 from typing import Optional, Dict, Type, List, Any, Union, Set
@@ -18,6 +20,7 @@ from filip.semantics.semantics_models import \
     InstanceIdentifier, SemanticClass, InstanceHeader, Datatype, DataField, \
     RelationField, SemanticIndividual, SemanticDeviceClass, CommandField, \
     Command, DeviceAttributeField, DeviceAttribute, DeviceSettings
+from filip.utils.simple_ql import QueryString
 
 logger = logging.getLogger('semantics')
 
@@ -611,8 +614,12 @@ class SemanticsManager(BaseModel):
             fiware_version: NgsiVersion,
             cb_url: str,
             iota_url: str,
+            entity_ids: Optional[List[str]] = None,
             entity_types: Optional[List[str]] = None,
-            entity_ids: Optional[List[str]] = None
+            id_pattern: str = None,
+            type_pattern: str = None,
+            q: Union[str, QueryString] = None,
+            limit: int = inf,
     ) -> List[SemanticClass]:
         """
         Loads the instances of given types or ids from Fiware into the local
@@ -623,10 +630,21 @@ class SemanticsManager(BaseModel):
             fiware_version (NgsiVersion): Used fiware version
             cb_url (str): URL of the ContextBroker
             iota_url (str): URL of the IotaBroker
-            entity_types (Optional[str]): List of the entities types that
-                should be loaded
             entity_ids (Optional[str]): List of the entities ids that
                 should be loaded
+            entity_types (Optional[str]): List of the entities types that
+                should be loaded
+            id_pattern: A correctly formatted regular expression. Retrieve
+                entities whose ID matches the regular expression. Incompatible
+                with id, e.g. ngsi-ld.* or sensor.*
+            type_pattern: A correctly formatted regular expression. Retrieve
+                entities whose type matches the regular expression.
+                Incompatible with type, e.g. room.*
+            q (SimpleQuery): A query expression, composed of a list of
+                statements separated by ;, i.e.,
+                q=statement1;statement2;statement3. See Simple Query
+                Language specification. Example: temperature>40.
+            limit: Limits the number of entities to be retrieved Example: 20
 
         Raises:
            ValueError: if both entity_types and entity_ids are given
@@ -634,9 +652,6 @@ class SemanticsManager(BaseModel):
         Returns:
              List[SemanticClass]
         """
-
-        if len([p for p in [entity_types, entity_ids] if p is not None]) > 1:
-            raise ValueError("Only one search parameter is allowed")
 
         header: InstanceHeader = InstanceHeader(
             service=fiware_header.service,
@@ -649,7 +664,11 @@ class SemanticsManager(BaseModel):
         client = self.get_client(header)
 
         entities = client.get_entity_list(entity_ids=entity_ids,
-                                          entity_types=entity_types)
+                                          entity_types=entity_types,
+                                          id_pattern=id_pattern,
+                                          type_pattern=type_pattern,
+                                          q=q,
+                                          limit=limit)
         client.close()
 
         return [self._context_entity_to_semantic_class(e, header)
