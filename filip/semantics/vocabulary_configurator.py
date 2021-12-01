@@ -9,6 +9,7 @@ from datetime import datetime
 from string import ascii_letters, digits
 from typing import List, Optional, Dict, Tuple, Set
 
+import pathlib
 import requests
 import wget
 
@@ -798,9 +799,9 @@ class VocabularyConfigurator:
         if path is None or filename is None:
             return content
         else:
-            if not path[:-1] == "/":
-                path += "/"
-            with open(f"{path}{filename}.py", "w") as text_file:
+            path = pathlib.Path(path).joinpath(filename).with_suffix(".py")
+
+            with open(path, "w", encoding ="utf-8") as text_file:
                 text_file.write(content)
 
 
