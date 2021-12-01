@@ -1,6 +1,4 @@
 """
-@author Thomas Storek
-
 Tests for time series model
 """
 import logging

@@ -1,5 +1,4 @@
 import logging
-from enum import Enum
 from uuid import uuid4
 from dotenv import find_dotenv
 from pydantic import AnyUrl, AnyHttpUrl, BaseSettings, Field, root_validator
@@ -14,9 +13,6 @@ def generate_servicepath():
         String: unique service path
     """
     return f'/{str(uuid4()).replace("-", "")}'
-
-
-
 
 
 class TestSettings(BaseSettings):

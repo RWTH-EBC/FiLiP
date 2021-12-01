@@ -1,10 +1,6 @@
 """
 Implementation of an extended MQTT client that automatically handles the
 topic subscription for FIWARE's IoT communication pattern.
-
-Created 21st Oct, 2021
-
-@author: Thomas Storek
 """
 import itertools
 import logging

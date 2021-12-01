@@ -1,9 +1,5 @@
 """
 Json encoder class for all IoTA-JSON MQTT message encoders
-
-created 5th November, 2021
-
-@author Thomas Storek
 """
 import json
 from typing import Any, Dict, Tuple

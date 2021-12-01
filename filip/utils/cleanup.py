@@ -1,9 +1,5 @@
 """
 Functions to clean up a tenant within a fiware based platform.
-
-created Oct 08, 2021
-
-@author Thomas Storek
 """
 import time
 

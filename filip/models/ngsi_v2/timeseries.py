@@ -1,8 +1,4 @@
 """
-Created April 1, 2021
-
-@author Thomas Storek
-
 Data models for interacting with FIWARE's time series-api (aka QuantumLeap)
 """
 from __future__ import annotations
