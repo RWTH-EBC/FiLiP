@@ -258,7 +258,7 @@ class QuantumLeapClient(BaseHttpClient):
                 self.logger.info("Entity id '%s' successfully deleted!",
                                  entity_id)
                 return entity_id
-            time.sleep(counter/5)
+            time.sleep(counter*5)
             counter += 1
 
         msg = f"Could not delete QL entity of id {entity_id}"
