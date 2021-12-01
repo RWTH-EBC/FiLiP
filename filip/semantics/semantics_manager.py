@@ -19,8 +19,10 @@ from filip.models import FiwareHeader
 from filip.semantics.semantics_models import \
     InstanceIdentifier, SemanticClass, InstanceHeader, Datatype, DataField, \
     RelationField, SemanticIndividual, SemanticDeviceClass, CommandField, \
-    Command, DeviceAttributeField, DeviceAttribute, DeviceSettings
+    Command, DeviceAttributeField, DeviceAttribute, DeviceSettings, \
+    SemanticMetadata
 from filip.utils.simple_ql import QueryString
+
 
 logger = logging.getLogger('semantics')
 
@@ -327,6 +329,11 @@ class SemanticsManager(BaseModel):
                 loaded_class.add_reference(
                     InstanceIdentifier.parse_raw(identifier_str.replace(
                         "---", ".")), prop)
+
+        # load metadata
+        metadata_dict = entity.get_attribute("metadata").value
+        loaded_class.metadata.name = metadata_dict['name']
+        loaded_class.metadata.comment = metadata_dict['comment']
 
         # load device_settings into instance, if instance is a device
         if isinstance(loaded_class, SemanticDeviceClass):

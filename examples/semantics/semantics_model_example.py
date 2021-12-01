@@ -344,6 +344,16 @@ if __name__ == '__main__':
     # If a required field of the new property is already existing an error is
     # raised
 
+    # ## 3.3 Metadata
+    #
+    # Each instance has the special attribute "metadata".
+    # Here the user can save information that can help him identify the
+    # instance. He can give the instance a name, and leave a comment
+
+    my_floor.metadata.name = "First Basement"
+    my_floor.metadata.comment = "The first basement is directly below the " \
+                                "ground"
+
     # # 4 State Management
     #
     # We now have seen how the models can be instantiated, filled with
