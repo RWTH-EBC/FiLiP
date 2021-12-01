@@ -31,7 +31,8 @@ from filip.semantics.vocabulary import \
 label_blacklist = list(keyword.kwlist)
 label_blacklist.extend(["referencedBy", "deviceSettings"])
 label_blacklist.extend(["references", "device_settings", "header",
-                        "old_state", "", "semantic_manager", "delete"])
+                        "old_state", "", "semantic_manager", "delete",
+                        "metadata"])
 label_blacklist.extend(["id", "type", "class"])
 label_blacklist.extend(["str", "int", "float", "complex", "list", "tuple",
                         "range", "dict", "list", "set", "frozenset", "bool",

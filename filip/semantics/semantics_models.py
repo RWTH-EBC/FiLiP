@@ -1095,6 +1095,23 @@ class InstanceState(BaseModel):
     state: Optional[ContextEntity]
 
 
+class SemanticMetadata(BaseModel):
+    """
+    Meta information about an semantic instance.
+    A name and comment that can be used by the user to better identify the
+    instance
+    """
+    name: str = pyd.Field(default="",
+                          description="Optional user-given name for the "
+                                      "instance")
+    comment: str = pyd.Field(default="",
+                             description="Optional user-given comment for "
+                                         "the instance")
+
+    class Config:
+        validate_assignment = True
+
+
 class SemanticClass(BaseModel):
     """
     A class representing a vocabulary/ontology class.
@@ -1132,6 +1149,12 @@ class SemanticClass(BaseModel):
         description="Pointer to the governing semantic_manager, "
                     "vague type to prevent forward ref problems. "
                     "But it will be of type 'SemanticsManager' in runtime")
+
+    metadata: SemanticMetadata = pyd.Field(
+        default=SemanticMetadata(),
+        description="Meta information about the instance. A name and comment "
+                    "that can be used by the user to better identify the "
+                    "instance")
 
     def add_reference(self, identifier: InstanceIdentifier, relation_name: str):
         """
@@ -1433,6 +1456,13 @@ class SemanticClass(BaseModel):
                 value=reference_str_dict
             )
         ])
+        entity.add_attributes([
+            NamedContextAttribute(
+                name="metadata",
+                type=DataType.STRUCTUREDVALUE,
+                value=self.metadata.dict()
+            )
+        ])
 
         return entity
 
@@ -1635,20 +1665,23 @@ class SemanticDeviceClass(SemanticClass):
                 name="referencedBy",
                 type=DataType.STRUCTUREDVALUE,
                 value=reference_str_dict,
-                entity_name=None,
-                entity_type=None,
             )
         )
-
+        device.add_attribute(
+            iot.StaticDeviceAttribute(
+                name="metadata",
+                type=DataType.STRUCTUREDVALUE,
+                value=self.metadata.dict()
+            )
+        )
         device.add_attribute(
             iot.StaticDeviceAttribute(
                 name="deviceSettings",
                 type=DataType.STRUCTUREDVALUE,
                 value=self.device_settings.dict(),
-                entity_name=None,
-                entity_type=None,
             )
         )
+
 
         return device
 
