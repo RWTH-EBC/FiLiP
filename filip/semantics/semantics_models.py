@@ -22,7 +22,7 @@ from filip.semantics.vocabulary_configurator import label_blacklist, \
     label_char_whitelist
 
 if TYPE_CHECKING:
-    from filip.semantics.semantic_manager import SemanticManager
+    from filip.semantics.semantics_manager import SemanticsManager
 
 
 class InstanceHeader(FiwareHeader):
