@@ -422,24 +422,28 @@ class VocabularyConfigurator:
         return res
 
     @classmethod
-    def generate_vocabulary_models(cls, vocabulary: Vocabulary, path: str,
-                                   filename: str):
+    def generate_vocabulary_models(cls,
+                                   vocabulary: Vocabulary,
+                                   path: Optional[str],
+                                   filename: str) -> Optional[str]:
         """
         Export the given vocabulary as python model file.
         All vocabulary classes will be converted to python classes,
         with their CRs as property fields.
+        If path and filename are given, the generated file will be saved,
+        else the file content is returned as string.
 
         Args:
             vocabulary (Vocabulary): Vocabulary to export
-            path (str): Path where the file should be saved
-            filename (str): Name of the file
+            path (Optional[str]): Path where the file should be saved
+            filename (Optional[str]): Name of the file
 
         Raises:
             Exception: if file can not be saved as specified with path and
                        filename
 
         Returns:
-            None
+            Optional[str], generated content if path or filename not given
         """
 
         def split_string_into_lines(string: str, limit: int) -> [str]:
@@ -791,10 +795,13 @@ class VocabularyConfigurator:
         content += "\n\t}"
         content += "\n"
 
-        if not path[:-1] == "/":
-            path += "/"
-        with open(f"{path}{filename}.py", "w") as text_file:
-            text_file.write(content)
+        if path is None or filename is None:
+            return content
+        else:
+            if not path[:-1] == "/":
+                path += "/"
+            with open(f"{path}{filename}.py", "w") as text_file:
+                text_file.write(content)
 
 
 class ParsingException(Exception):
