@@ -347,7 +347,6 @@ class ContextEntity(ContextEntityKeyValues):
             KeyError, if no attribute with given name exists
         Returns:
             NamedContextAttribute
-
         """
         for attr in self.get_attributes():
             if attr.name == attribute_name:
@@ -368,7 +367,11 @@ class ContextEntity(ContextEntityKeyValues):
             [NamedContextAttribute] or {name: ContextAttribute}
         """
         return self.get_attributes(blacklisted_attribute_types=[
-            DataType.RELATIONSHIP], response_format=response_format)
+            DataType.RELATIONSHIP,
+            DataType.COMMAND, 
+            DataType.COMMAND_RESULT,
+            DataType.COMMAND_STATUS],
+            response_format=response_format)
 
     def get_relationships(
             self,

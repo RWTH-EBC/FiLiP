@@ -1466,11 +1466,8 @@ class ContextBrokerClient(BaseHttpClient):
         # Check the differences between the attributes of old and new entity
         # Delete the removed attributes, create the news,
         # and update the existing if necessary
-        old_attributes = old_entity.get_properties()
-        old_attributes.extend(old_entity.get_relationships())
-
-        new_attributes = new_entity.get_properties()
-        new_attributes.extend(new_entity.get_relationships())
+        old_attributes = old_entity.get_attributes()
+        new_attributes = new_entity.get_attributes()
 
         # Manage attributes that existed before
         for old_attr in old_attributes:
