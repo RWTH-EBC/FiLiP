@@ -1,6 +1,6 @@
 """
-This example shows how to provision a virtual iot device in a FIWARE-based
-IoT Platform using FiLiP and PahoMQTT
+# This example shows how to provision a virtual iot device in a FIWARE-based
+# IoT Platform using FiLiP and PahoMQTT
 """
 import json
 import logging
@@ -20,13 +20,6 @@ from filip.models.ngsi_v2.iot import \
 from filip.models.ngsi_v2.context import NamedCommand
 from filip.clients.ngsi_v2 import HttpClient, HttpClientConfig
 
-
-# Setting up logging
-logging.basicConfig(
-    level='INFO',
-    format='%(asctime)s %(name)s %(levelname)s: %(message)s')
-logger = logging.getLogger('filip-iot-example')
-
 # Before running the example you should set some global variables
 # Please, enter your URLs here!
 CB_URL = "http://yourHost:yourPort"
@@ -37,13 +30,25 @@ SERVICE_GROUP_APIKEY= 'filip-iot-example-service-group'
 FIWARE_SERVICE = 'filip'
 FIWARE_SERVICE_PATH = '/iot_examples'
 
+# Setting up logging
+logging.basicConfig(
+    level='INFO',
+    format='%(asctime)s %(name)s %(levelname)s: %(message)s')
+
+logger = logging.getLogger(__name__)
 
 if __name__ == '__main__':
+
+    # # 1. FiwareHeader
     # Since we want to use the multi-tenancy concept of fiware we always start
     # with create a fiware header
     fiware_header = FiwareHeader(service=FIWARE_SERVICE,
                                  service_path=FIWARE_SERVICE_PATH)
 
+    # # 2. Setup
+    #
+    # ## 2.1 Device creation
+    #
     # First we create our device configuration using the models provided for
     # filip.models.ngsi_v2.iot
 
@@ -97,8 +102,10 @@ if __name__ == '__main__':
     device.add_attribute(attribute=device_attr2)
 
     # This will print our configuration that we will send
-    logger.info("This is our device configuration: \n" + device.json(indent=2))
+    logging.info("This is our device configuration: \n" + device.json(indent=2))
 
+    # ## 2.2. Device Submission
+    #
     # Send device configuration to FIWARE via the IoT-Agent. We use the general
     # ngsiv2 httpClient for this.
     # This will automatically create an data entity in the context broker and
@@ -121,31 +128,26 @@ if __name__ == '__main__':
     client.iota.post_group(service_group=service_group, update=True)
     client.iota.post_device(device=device, update=True)
 
-    time.sleep(1)
-
+    # ## 2.3. Check for correctness
     # check if the device is correctly configured. You will notice that
     # unfortunately the iot API does not return all the metadata. However,
     # it will still appear in the context-entity
     device = client.iota.get_device(device_id=device.device_id)
-    logger.info(f"{device.json(indent=2)}")
+    logging.info(f"{device.json(indent=2)}")
 
     # check if the data entity is created in the context broker
     entity = client.cb.get_entity(entity_id=device.device_id,
                                   entity_type=device.entity_type)
-    logger.info("This is our data entity belonging to our device: \n" +
-                entity.json(indent=2))
+    logging.info("This is our data entity belonging to our device: \n" +
+          entity.json(indent=2))
 
+    # 3. MQTT Client
+    #
     # create a mqtt client that we use as representation of an IoT device
     # following the official documentation of Paho-MQTT.
     # https://www.eclipse.org/paho/index.php?page=clients/python/docs/index.php
 
-    # NOTE: Since Paho-MQTT is no requirement to the library at current stage
-    # you probably need need to install it first.
-    #
-    #   pip install paho-mqtt
-    #
-
-    # WE USE THE IMPLEMENTATION OF MQTTv5 which slightly different from former
+    # We use the implementation of MQTTv5 which slightly different from former
     # versions. Especially, the arguments of the well-known function have
     # change a little. It's now more verbose than it used to be. Furthermore,
     # you have to handle the properties argument.
@@ -170,8 +172,8 @@ if __name__ == '__main__':
     def on_subscribe(client, userdata, mid, granted_qos, properties=None):
         logger.info("Successfully subscribed to with QoS: %s", granted_qos)
 
-    # The callback for when the device receives a PUBLISH  message like a command
-    # from the server. Here, the received command will be printed and an
+    # The callback for when the device receives a PUBLISH  message like a
+    # command from the server. Here, the received command will be printed and an
     # command-acknowledge will be sent to the platform.
 
     # NOTE: We need to use the apikey of the service-group to send the message to
@@ -248,7 +250,8 @@ if __name__ == '__main__':
     # disconnect the mqtt device
     mqtt_client.disconnect()
 
-    # cleanup the server and delete everything
+    # # 4.Cleanup the server and delete everything
+    #
     client.iota.delete_device(device_id=device.device_id)
     client.iota.delete_group(resource=service_group.resource,
                              apikey=service_group.apikey)
