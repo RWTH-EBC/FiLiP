@@ -29,7 +29,7 @@ def create_datamodel(*,
 
     Args:
         output_path: path where the generated code should saved
-        filename: filename for the generated code
+        filename: package_name for the generated code
         url: url to download the definition from
         schema_type (str): auto, openapi, 'jsonschema', 'json', 'yaml',
             'dict', 'csv'
@@ -82,7 +82,7 @@ def create_datamodel(*,
             class_name=class_name)
 
         # move temporary file to output directory
-        filepath = path.joinpath(filename)
+        filepath = output_path.joinpath(filename)
         shutil.move(str(output), str(filepath))
 
 if __name__ == '__main__':

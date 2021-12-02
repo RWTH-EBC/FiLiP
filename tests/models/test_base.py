@@ -18,6 +18,7 @@ class TestModels(unittest.TestCase):
     """
     Test class for core.models
     """
+
     def setUp(self) -> None:
         # create variables for test
         self.service_paths = [generate_servicepath(), generate_servicepath()]

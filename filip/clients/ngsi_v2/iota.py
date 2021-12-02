@@ -563,20 +563,20 @@ class IoTAClient(BaseHttpClient):
                     )
                 ])
             for attribute in device.attributes:
-                # todo metadata
                 entity.add_attributes([
                     NamedContextAttribute(
-                        name=f"{attribute.name}",
-                        type=DataType.STRUCTUREDVALUE
+                        name=attribute.name,
+                        type=DataType.STRUCTUREDVALUE,
+                        metadata=attribute.metadata
                     )
                 ])
             for static_attribute in device.static_attributes:
-                # todo metadata
                 entity.add_attributes([
                     NamedContextAttribute(
-                        name=f"{static_attribute.name}",
+                        name=static_attribute.name,
                         type=static_attribute.type,
-                        value=static_attribute.value
+                        value=static_attribute.value,
+                        metadata=static_attribute.metadata
                     )
                 ])
             return entity

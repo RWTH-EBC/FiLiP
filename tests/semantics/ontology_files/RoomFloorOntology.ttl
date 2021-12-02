@@ -1,0 +1,132 @@
+@prefix : <http://www.semanticweb.org/redin/ontologies/2021/1/untitled-ontology-55#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@base <http://www.semanticweb.org/redin/ontologies/2021/1/untitled-ontology-55> .
+
+<http://www.semanticweb.org/redin/ontologies/2021/1/untitled-ontology-55> rdf:type owl:Ontology .
+
+#################################################################
+#    Datatypes
+#################################################################
+
+###  http://www.semanticweb.org/redin/ontologies/2021/1/untitled-ontology-55#MeasurmentType
+:MeasurmentType rdf:type rdfs:Datatype ;
+                owl:equivalentClass [ rdf:type rdfs:Datatype ;
+                                      owl:oneOf [ rdf:type rdf:List ;
+                                                  rdf:first "Humidity" ;
+                                                  rdf:rest [ rdf:type rdf:List ;
+                                                             rdf:first "Temp" ;
+                                                             rdf:rest rdf:nil
+                                                           ]
+                                                ]
+                                    ] .
+
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://www.semanticweb.org/redin/ontologies/2021/1/untitled-ontology-55#hasFloor
+:hasFloor rdf:type owl:ObjectProperty ;
+          rdfs:subPropertyOf owl:topObjectProperty .
+
+
+###  http://www.semanticweb.org/redin/ontologies/2021/1/untitled-ontology-55#hasRoom
+:hasRoom rdf:type owl:ObjectProperty ;
+         rdfs:subPropertyOf owl:topObjectProperty ;
+         owl:inverseOf :isOnFloor .
+
+
+###  http://www.semanticweb.org/redin/ontologies/2021/1/untitled-ontology-55#hasSensor
+:hasSensor rdf:type owl:ObjectProperty .
+
+
+###  http://www.semanticweb.org/redin/ontologies/2021/1/untitled-ontology-55#isOnFloor
+:isOnFloor rdf:type owl:ObjectProperty .
+
+
+###  http://www.semanticweb.org/redin/ontologies/2021/1/untitled-ontology-55#makesMeasurment
+:makesMeasurment rdf:type owl:ObjectProperty ;
+                 rdfs:subPropertyOf owl:topObjectProperty .
+
+
+#################################################################
+#    Data properties
+#################################################################
+
+###  http://www.semanticweb.org/redin/ontologies/2021/1/untitled-ontology-55#hasValue
+:hasValue rdf:type owl:DatatypeProperty .
+
+
+###  http://www.semanticweb.org/redin/ontologies/2021/1/untitled-ontology-55#measures
+:measures rdf:type owl:DatatypeProperty ;
+          rdfs:subPropertyOf owl:topDataProperty ;
+          rdfs:range [ rdf:type rdfs:Datatype ;
+                       owl:oneOf [ rdf:type rdf:List ;
+                                   rdf:first "Humidity" ;
+                                   rdf:rest [ rdf:type rdf:List ;
+                                              rdf:first "Temperatur" ;
+                                              rdf:rest rdf:nil
+                                            ]
+                                 ]
+                     ] .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://www.semanticweb.org/redin/ontologies/2021/1/untitled-ontology-55#Building
+:Building rdf:type owl:Class ;
+          rdfs:subClassOf [ rdf:type owl:Restriction ;
+                            owl:onProperty :hasFloor ;
+                            owl:allValuesFrom :Floor
+                          ] .
+
+
+###  http://www.semanticweb.org/redin/ontologies/2021/1/untitled-ontology-55#Floor
+:Floor rdf:type owl:Class ;
+       rdfs:subClassOf [ rdf:type owl:Restriction ;
+                         owl:onProperty :hasRoom ;
+                         owl:allValuesFrom :Room
+                       ] .
+
+
+###  http://www.semanticweb.org/redin/ontologies/2021/1/untitled-ontology-55#Measurment
+:Measurment rdf:type owl:Class ;
+            rdfs:subClassOf [ rdf:type owl:Restriction ;
+                              owl:onProperty :hasValue ;
+                              owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                              owl:onDataRange xsd:integer
+                            ] ,
+                            [ rdf:type owl:Restriction ;
+                              owl:onProperty :measures ;
+                              owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                              owl:onDataRange :MeasurmentType
+                            ] .
+
+
+###  http://www.semanticweb.org/redin/ontologies/2021/1/untitled-ontology-55#Room
+:Room rdf:type owl:Class ;
+      rdfs:subClassOf [ rdf:type owl:Restriction ;
+                        owl:onProperty :isOnFloor ;
+                        owl:someValuesFrom :Floor
+                      ] ,
+                      [ rdf:type owl:Restriction ;
+                        owl:onProperty :hasSensor ;
+                        owl:allValuesFrom :Sensor
+                      ] .
+
+
+###  http://www.semanticweb.org/redin/ontologies/2021/1/untitled-ontology-55#Sensor
+:Sensor rdf:type owl:Class ;
+        rdfs:subClassOf [ rdf:type owl:Restriction ;
+                          owl:onProperty :makesMeasurment ;
+                          owl:someValuesFrom :Measurment
+                        ] .
+
+
+###  Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi

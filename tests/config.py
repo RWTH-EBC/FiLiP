@@ -3,7 +3,8 @@ from enum import Enum
 from uuid import uuid4
 from dotenv import find_dotenv
 from pydantic import AnyUrl, AnyHttpUrl, BaseSettings, Field, root_validator
-from filip.models.base import FiwareHeader
+from filip.models.base import FiwareHeader, LogLevel
+
 
 def generate_servicepath():
     """
@@ -15,28 +16,7 @@ def generate_servicepath():
     return f'/{str(uuid4()).replace("-", "")}'
 
 
-class LogLevel(str, Enum):
-    CRITICAL = 'CRITICAL'
-    ERROR = 'ERROR'
-    WARNING = 'WARNING'
-    INFO = 'INFO'
-    DEBUG = 'DEBUG'
-    NOTSET = 'NOTSET'
 
-    @classmethod
-    def _missing_(cls, name):
-        """
-        Class method to realize case insensitive args
-
-        Args:
-            name: missing argument
-
-        Returns:
-            valid member of enum
-        """
-        for member in cls:
-            if member.value.casefold() == name.casefold():
-                return member
 
 
 class TestSettings(BaseSettings):
@@ -47,14 +27,14 @@ class TestSettings(BaseSettings):
     LOG_LEVEL: LogLevel = Field(default=LogLevel.ERROR,
                                 env=['LOG_LEVEL', 'LOGLEVEL'])
 
-    CB_URL: AnyHttpUrl = Field(default="http://127.0.0.1:1026",
+    CB_URL: AnyHttpUrl = Field(default="http://localhost:1026",
                                env=['ORION_URL',
                                     'CB_URL',
                                     'CB_HOST',
                                     'CONTEXTBROKER_URL',
                                     'OCB_URL'])
 
-    IOTA_JSON_URL: AnyHttpUrl = Field(default="http://127.0.0.1:4041",
+    IOTA_JSON_URL: AnyHttpUrl = Field(default="http://localhost:4041",
                                       env='IOTA_JSON_URL')
 
     IOTA_UL_URL: AnyHttpUrl = Field(default="http://127.0.0.1:4061",

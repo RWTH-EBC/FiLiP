@@ -12,7 +12,6 @@ import logging
 import time
 import random
 import json
-import uuid
 
 import paho.mqtt.client as mqtt
 from datetime import datetime, timedelta
@@ -51,6 +50,7 @@ class TestContextBroker(unittest.TestCase):
     """
     Test class for ContextBrokerClient
     """
+
     def setUp(self) -> None:
         """
         Setup test data
@@ -692,7 +692,6 @@ class TestContextBroker(unittest.TestCase):
         Returns:
            None
         """
-
 
         # setup test-entity
         entity = ContextEntity(id="test_id1", type="test_type1")

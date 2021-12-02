@@ -12,12 +12,15 @@ from pydantic import \
     BaseModel, \
     create_model, \
     Field, \
-    root_validator, \
     validator
 
-from filip.models.ngsi_v2.base import EntityPattern, Expression, BaseAttribute, BaseValueAttribute, BaseNameAttribute
+from filip.models.ngsi_v2.base import \
+    EntityPattern, \
+    Expression, \
+    BaseAttribute, \
+    BaseValueAttribute, \
+    BaseNameAttribute
 from filip.models.base import DataType, FiwareRegex
-from filip.models.ngsi_v2.units import validate_unit_data
 
 
 class GetEntitiesOptions(str, Enum):
@@ -186,7 +189,7 @@ class ContextEntity(ContextEntityKeyValues):
     def __init__(self, id: str, type: str, **data):
 
         # There is currently no validation for extra fields
-        data.update(self._validate_properties(data))
+        data.update(self._validate_attributes(data))
         super().__init__(id=id, type=type, **data)
 
     class Config:
@@ -198,7 +201,7 @@ class ContextEntity(ContextEntityKeyValues):
         validate_assignment = True
 
     @classmethod
-    def _validate_properties(cls, data: Dict):
+    def _validate_attributes(cls, data: Dict):
         attrs = {key: ContextAttribute.parse_obj(attr) for key, attr in
                  data.items() if key not in ContextEntity.__fields__}
         return attrs
@@ -369,7 +372,6 @@ class ContextEntity(ContextEntityKeyValues):
             self,
             response_format: Union[str, PropertyFormat] = PropertyFormat.LIST)\
             -> Union[List[NamedContextAttribute], Dict[str, ContextAttribute]]:
-
         """
         Get all relationships of the context entity
 
@@ -379,15 +381,8 @@ class ContextEntity(ContextEntityKeyValues):
         Returns:
 
         """
-        response_format = PropertyFormat(response_format)
-        if response_format == PropertyFormat.DICT:
-            return {key: ContextAttribute(**value) for key, value in
-                    self.dict().items() if key not in ContextEntity.__fields__
-                    and value.get('type') == DataType.RELATIONSHIP}
-        return [NamedContextAttribute(name=key, **value) for key, value in
-                self.dict().items() if key not in
-                ContextEntity.__fields__ and
-                value.get('type') == DataType.RELATIONSHIP]
+        return self.get_attributes(whitelisted_attribute_types=[
+            DataType.RELATIONSHIP], response_format=response_format)
 
 
 def create_context_entity_model(name: str = None,

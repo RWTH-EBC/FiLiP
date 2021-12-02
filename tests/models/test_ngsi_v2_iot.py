@@ -13,6 +13,7 @@ class TestContextv2IoTModels(unittest.TestCase):
     """
     Test class for context broker models
     """
+
     def setUp(self) -> None:
         """
         Setup test data

@@ -23,6 +23,7 @@ class TestMQTTClient(unittest.TestCase):
     """
     Test case for IoTAMQTTClient
     """
+
     def setUp(self) -> None:
         self.fiware_header = FiwareHeader(
             service=settings.FIWARE_SERVICE,

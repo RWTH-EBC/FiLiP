@@ -1,11 +1,8 @@
 """
 Context Broker Module for API Client
 """
+
 from math import inf
-from typing import Any, Dict, List, Union, Optional
-from urllib.parse import urljoin
-import requests
-from filip.models.ngsi_v2.iot import Device
 from pkg_resources import parse_version
 from pydantic import \
     parse_obj_as, \
@@ -31,7 +28,6 @@ from filip.models.ngsi_v2.context import \
     NamedContextAttribute, \
     Query, \
     Update
-from filip.models.base import DataType
 from filip.models.ngsi_v2.base import AttrsFormat
 from filip.models.ngsi_v2.subscriptions import Subscription
 from filip.models.ngsi_v2.registrations import Registration
@@ -1532,7 +1528,6 @@ class ContextBrokerClient(BaseHttpClient):
             self.update_entity(update_entity, append=True)
 
 
-
 #    def get_subjects(self, object_entity_name: str, object_entity_type: str, subject_type=None):
 #        """
 #        Function gets the JSON for child / subject entities for a parent /
@@ -1587,7 +1582,7 @@ class ContextBrokerClient(BaseHttpClient):
 #        :param associated_type: if only associated data of one type should
 #        be returned, this parameter has to be the type
 #        :return: A dictionary, containing the data of the entity,
-#        a key "subjects" and "objects" that contain each a list
+#        a key "subjects" and "objects" that contain each a _list
 #                with the reflective data
 #        """
 #        data_dict = {}
@@ -1602,7 +1597,7 @@ class ContextBrokerClient(BaseHttpClient):
 #        if associated_objects is not None:
 #            object_json = json.loads(associated_objects)
 #            data_dict["objects"] = []
-#            if isinstance(object_json, list):
+#            if isinstance(object_json, _list):
 #                for associated_object in object_json:
 #                    entity_name = associated_object["id"]
 #                    object_data = json.loads(self.get_entity(
@@ -1706,7 +1701,7 @@ class ContextBrokerClient(BaseHttpClient):
 #                            # Get the attrs first, to avoid code duplication
 #                            # last thing to compare is the attributes
 #                            # Assumption -> position is the same as the
-#                            entities list
+#                            entities _list
 #                            # i == j
 #                            i = subscription_subject["entities"].index(entity)
 #                            j = existing_subscription["subject"][
