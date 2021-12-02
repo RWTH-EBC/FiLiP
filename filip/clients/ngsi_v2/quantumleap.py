@@ -248,6 +248,8 @@ class QuantumLeapClient(BaseHttpClient):
         # returned.
         # Try to delete multiple times with incrementing waits.
         # If the entity is no longer found the methode returns with a success
+        # If the deletion attempt fails after the 10th try, raise an
+        # Exception: it could not be deleted
         counter = 0
         while counter < 10:
             self.delete(url=url, headers=headers, params=params)
