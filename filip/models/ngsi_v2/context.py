@@ -424,7 +424,7 @@ class ContextEntity(ContextEntityKeyValues):
         for status_attribute in self.get_attributes(
                 whitelisted_attribute_types=[DataType.COMMAND_STATUS]):
 
-            if not status_attribute.name[-7:] == "_status":
+            if not status_attribute.name.split('_')[-1] == "status":
                 continue
             base_name = status_attribute.name[:-7]
 
