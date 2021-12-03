@@ -22,7 +22,8 @@ from filip.models.ngsi_v2.context import \
     Update, \
     NamedContextAttribute, \
     ContextEntityKeyValues, \
-    NamedCommand
+    NamedCommand, \
+    PropertyFormat
 
 
 class TestContextModels(unittest.TestCase):
@@ -230,8 +231,8 @@ class TestContextModels(unittest.TestCase):
 
         entity.add_attributes([NamedCommand(name="myCommand", value=".")])
 
-        self.assertEqual(entity.get_commands()[0].name, "myCommand")
-        with self.assertRaises(AttributeError):
+        self.assertEqual(len(entity.get_commands()), 0)
+        with self.assertRaises(KeyError):
             entity.get_command_triple("myCommand")
         with self.assertRaises(KeyError):
             entity.get_command_triple("--")
@@ -246,6 +247,7 @@ class TestContextModels(unittest.TestCase):
                         endpoint="http://localhost:1234")
 
         device.add_command(DeviceCommand(name="myCommand"))
+        device.add_command(DeviceCommand(name="myCommand2", type=DataType.TEXT))
 
         with IoTAClient(
                 url=settings.IOTA_JSON_URL,
@@ -261,13 +263,21 @@ class TestContextModels(unittest.TestCase):
                     service_path=settings.FIWARE_SERVICEPATH)) as client:
 
             entity = client.get_entity(entity_id="name", entity_type="type")
-            self.assertEqual(entity.get_commands()[0].name, "myCommand")
 
             (command, c_status, c_info) = entity.get_command_triple("myCommand")
-
             self.assertEqual(command.type, DataType.COMMAND)
             self.assertEqual(c_status.type, DataType.COMMAND_STATUS)
             self.assertEqual(c_info.type, DataType.COMMAND_RESULT)
+
+            (command, c_status, c_info) = entity.get_command_triple(
+                "myCommand2")
+            self.assertEqual(command.type, DataType.TEXT)
+            self.assertEqual(c_status.type, DataType.COMMAND_STATUS)
+            self.assertEqual(c_info.type, DataType.COMMAND_RESULT)
+
+            self.assertEqual(
+                entity.get_commands(response_format=PropertyFormat.DICT).keys(),
+                {"myCommand", "myCommand2"})
 
     def tearDown(self) -> None:
         """

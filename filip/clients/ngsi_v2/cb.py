@@ -27,7 +27,8 @@ from filip.models.ngsi_v2.context import \
     NamedCommand, \
     NamedContextAttribute, \
     Query, \
-    Update
+    Update, \
+    PropertyFormat
 from filip.models.ngsi_v2.base import AttrsFormat
 from filip.models.ngsi_v2.subscriptions import Subscription
 from filip.models.ngsi_v2.registrations import Registration
@@ -506,9 +507,15 @@ class ContextBrokerClient(BaseHttpClient):
         if options:
             params.update({'options': options})
         try:
+            # exclude commands from the send data,
+            # as they live in the IoTA-agent
+            excluded_keys = {'id', 'type'}
+            excluded_keys.update(
+                entity.get_commands(response_format=PropertyFormat.DICT).keys())
+
             res = self.post(url=url,
                             headers=headers,
-                            json=entity.dict(exclude={'id', 'type'},
+                            json=entity.dict(exclude=excluded_keys,
                                              exclude_unset=True,
                                              exclude_none=True))
             if res.ok:
@@ -1464,7 +1471,7 @@ class ContextBrokerClient(BaseHttpClient):
         # At this point we know that we need to patch only the attributes of
         # the entity
         # Check the differences between the attributes of old and new entity
-        # Delete the removed attributes, create the news,
+        # Delete the removed attributes, create the new ones,
         # and update the existing if necessary
         old_attributes = old_entity.get_attributes()
         new_attributes = new_entity.get_attributes()
