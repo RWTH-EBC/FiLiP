@@ -20,8 +20,8 @@ iota_url = "http://localhost:4041"
 """
 You can here also change the used Fiware service
 """
-service='filip'
-service_path='/example_iot'
+service = 'filip'
+service_path = '/example_iot'
 
 
 if __name__ == "__main__":

@@ -1,3 +1,7 @@
+"""
+# Examples for relationships in FIWARE ContextBroker
+"""
+
 import logging
 
 from filip.clients.ngsi_v2 import ContextBrokerClient
@@ -12,9 +16,29 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-def create_store_entities(fiware_header: FiwareHeader):
+"""
+To run this example you need a working Fiware v2 setup with a context-broker 
+and an iota-broker. You can here set the addresses:
+"""
+cb_url = "http://localhost:1026"
 
-    with ContextBrokerClient(fiware_header=fiware_header) as cb_client:
+"""
+You can here also change the used Fiware service
+"""
+service = 'filip'
+service_path = '/example_relationships'
+
+
+if __name__ == "__main__":
+
+    # # 1. Setup models
+    #
+    fiware_header = FiwareHeader(service=service, service_path=service_path)
+
+    # ## 1.1. Store entities
+    #
+    with ContextBrokerClient(fiware_header=fiware_header,
+                             url=cb_url) as cb_client:
         store_dict = [{"type": "Store",
                        "id": "urn:ngsi-ld:Store:001",
                        "address": {
@@ -45,14 +69,12 @@ def create_store_entities(fiware_header: FiwareHeader):
                               "value": "Checkpoint Markt"
                           }
                       }]
-        store_entities = []
-        for store in store_dict:
-            cb_client.post_entity(ContextEntity(**store))
-            store_entities.append(ContextEntity(**store))
-        return store_entities
+        store_entities = [ContextEntity(**store) for store in store_dict]
+        for entity in store_entities:
+            cb_client.post_entity(entity)
 
-
-def create_product_entities(fiware_header: FiwareHeader):
+    # ## 1.2. Product entities
+    #
     with ContextBrokerClient(fiware_header=fiware_header) as cb_client:
         product_dict = [
             {
@@ -108,11 +130,9 @@ def create_product_entities(fiware_header: FiwareHeader):
         for product_entity in product_dict:
             cb_client.post_entity(ContextEntity(**product_entity))
             product_entities.append(ContextEntity(**product_entity))
-        return product_entities
 
-
-def create_inventory(fiware_header: FiwareHeader):
-
+    # ## 1.3. Inventory Entities
+    #
     with ContextBrokerClient(fiware_header=fiware_header) as cb_client:
         inventory_dict = {
             "id": "urn:ngsi-ld:InventoryItem:001", "type": "InventoryItem",
@@ -129,50 +149,29 @@ def create_inventory(fiware_header: FiwareHeader):
             }}
         inventory_entity = ContextEntity(**inventory_dict)
         cb_client.post_entity(inventory_entity)
-        return inventory_entity
 
+    # # 2. Read data from FIWARE
+    #
+    # ## 2.1 Inventory relationship with Store and Product
+    logger.info(inventory_entity.get_relationships())
 
-def delete_entities(fiware_header: FiwareHeader, entities_to_delete):
+    # ## 2.2 Get entities
+    #
+
     with ContextBrokerClient(fiware_header=fiware_header) as cb_client:
-        for entity in entities_to_delete:
-            cb_client.delete_entity(entity_id=entity.id)
-        return
+        # It should return the inventory item according to the relationship
+        logger.info(
+            cb_client.get_entity_list(q="refProduct==urn:ngsi-ld:Product:001"))
+        logger.info(
+            cb_client.get_entity_list(q="refStore==urn:ngsi-ld:Store:001"))
 
+        # It should not return the inventory item according to the relationship
+        logger.info(
+            cb_client.get_entity_list(q="refStore==urn:ngsi-ld:Store:002"))
 
-def get_entities(fiware_header: FiwareHeader, query: str):
+    # # 3. Delete test entities
+    #
     with ContextBrokerClient(fiware_header=fiware_header) as cb_client:
-        logger.info(cb_client.get_entity_list(q=query))
-
-
-if __name__ == "__main__":
-    fiware_header = FiwareHeader(service='filip', service_path='/testing')
-
-    example_store_entities = create_store_entities(
-        fiware_header=fiware_header)
-    example_product_entities = create_product_entities(
-        fiware_header=fiware_header)
-    example_inventory_entity = create_inventory(
-        fiware_header=fiware_header)
-
-    logger.info("------Inventory relationship with Store and Product------")
-    logger.info(example_inventory_entity.get_relationships())
-
-    logger.info("------It should return the inventory item according to the "
-                "relationship------")
-    get_entities(fiware_header=fiware_header,
-                 query="refProduct==urn:ngsi-ld:Product:001")
-    get_entities(fiware_header=fiware_header,
-                 query="refStore==urn:ngsi-ld:Store:001")
-
-    logger.info("------It should not return the inventory item according to the "
-                "relationship------")
-    get_entities(fiware_header=fiware_header,
-                 query="refStore==urn:ngsi-ld:Store:002")
-
-    logger.info("------Deleting all test entities------")
-    delete_entities(fiware_header=fiware_header,
-                    entities_to_delete=example_store_entities)
-    delete_entities(fiware_header=fiware_header,
-                    entities_to_delete=example_product_entities)
-    delete_entities(fiware_header=fiware_header,
-                    entities_to_delete=[example_inventory_entity])
+        cb_client.delete_entities(store_entities)
+        cb_client.delete_entities(product_entities)
+        cb_client.delete_entities(inventory_entity)

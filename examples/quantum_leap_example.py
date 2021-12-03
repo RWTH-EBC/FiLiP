@@ -35,7 +35,6 @@ logger = logging.getLogger(__name__)
 
 if __name__ == "__main__":
 
-    
     # # 1. Setup
     #
     # A QuantumLeapClient and a ContextBrokerClient are created to access 
@@ -52,11 +51,11 @@ if __name__ == "__main__":
         print("Context broker version" + value["version"] + "at url " +
               cb_client.base_url)
         
-    # # 2. 
+    # # 2. Interact with QL
     #
-    
-    # Create a ContextEntity to work with, for more details see:
-    # orion_example.py
+    # ## 2.1. Create a ContextEntity to work with
+    #
+    # for more details see: orion_example.py
     hall = {"id": "Hall_1",
             "type": "Room",
             "temperature": {"value": 11,
@@ -66,7 +65,9 @@ if __name__ == "__main__":
     hall_entity = ContextEntity(**hall)
     cb_client.post_entity(hall_entity)
     
-    # Create a subscription
+    # ## 2.2 Manage subscriptions
+    #
+    # create a subscription
     ql_client.post_subscription(entity_id=hall_entity.id, cb_url=cb_url)
     
     # Get all subscriptions
@@ -101,15 +102,19 @@ if __name__ == "__main__":
     except:
         logger.info("There might be no historical data for some calls.")
 
-    # delete entity
+    # ## 2.3 Delete
+    #
+    # delete entity in QL
     try:
         ql_client.delete_entity(entity_id=hall_entity.id,
                                 entity_type=hall_entity.type)
     except:
         logger.error("Can not delete data from QL")
 
+    # delete entity in  CV
     try:
-        cb_client.delete_entity(entity_id=hall_entity.id)
+        cb_client.delete_entity(entity_id=hall_entity.id,
+                                entity_type=hall_entity.type)
     except:
         logger.error("Can not delete entity from context broker")
 
@@ -119,7 +124,7 @@ if __name__ == "__main__":
     except:
         logger.error("Can not delete subscription from context broker.")
     
-    # # 5. Clean up (Optional)
+    # # 3. Clean up (Optional)
     #
     # Close clients
     ql_client.close()
