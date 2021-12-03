@@ -356,6 +356,9 @@ class ContextEntity(ContextEntityKeyValues):
             response_format: Union[str, PropertyFormat] = PropertyFormat.LIST)\
             -> Union[List[NamedContextAttribute], Dict[str, ContextAttribute]]:
         """
+        Returns all attributes of the entity that are not of type Relationship,
+        and are not auto generated command attributes
+
         Args:
             response_format: Wanted result format,
                                 List -> list of NamedContextAttributes
@@ -364,12 +367,26 @@ class ContextEntity(ContextEntityKeyValues):
         Returns:
             [NamedContextAttribute] or {name: ContextAttribute}
         """
-        return self.get_attributes(blacklisted_attribute_types=[
-            DataType.RELATIONSHIP,
-            DataType.COMMAND, 
-            DataType.COMMAND_RESULT,
-            DataType.COMMAND_STATUS],
-            response_format=response_format)
+        pre_filtered_attrs = self.get_attributes(blacklisted_attribute_types=[
+            DataType.RELATIONSHIP], response_format=PropertyFormat.LIST)
+
+        all_command_attributes_names = set()
+        for command in self.get_commands():
+            (c, c_status, c_info) = self.get_command_triple(command.name)
+            all_command_attributes_names.update([c.name,
+                                                 c_status.name,
+                                                 c_info.name])
+
+        property_attributes = []
+        for attr in pre_filtered_attrs:
+            if attr.name not in all_command_attributes_names:
+                property_attributes.append(attr)
+
+        if response_format == PropertyFormat.LIST:
+            return property_attributes
+        else:
+            return {p.name: ContextAttribute(**p.dict(exclude={'name'}))
+                    for p in property_attributes}
 
     def get_relationships(
             self,
@@ -440,9 +457,9 @@ class ContextEntity(ContextEntityKeyValues):
             return {c.name: ContextAttribute(**c.dict(exclude={'name'}))
                     for c in commands}
 
-    def get_command_triple(self, command_attribute_name: str) -> \
-            (NamedContextAttribute, NamedContextAttribute,
-             NamedContextAttribute):
+    def get_command_triple(self, command_attribute_name: str)\
+            -> (NamedContextAttribute, NamedContextAttribute,
+                NamedContextAttribute):
         """
         Returns for a given command attribute name all three corresponding
         attributes as triple
@@ -462,7 +479,7 @@ class ContextEntity(ContextEntityKeyValues):
         if command_attribute_name not in commands:
             raise KeyError
 
-        command = commands[command_attribute_name]
+        command = self.get_attribute(command_attribute_name)
 
         # as the given name was found as a valid command, we know that the
         # status and info attributes exist correctly
