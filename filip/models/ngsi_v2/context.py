@@ -2,7 +2,7 @@
 NGSIv2 models for context broker interaction
 """
 import json
-from typing import Any, Type, List, Dict, Union, Optional, Set
+from typing import Any, Type, List, Dict, Union, Optional, Set, Tuple
 from aenum import Enum
 from pydantic import \
     BaseModel, \
@@ -458,8 +458,8 @@ class ContextEntity(ContextEntityKeyValues):
                     for c in commands}
 
     def get_command_triple(self, command_attribute_name: str)\
-            -> (NamedContextAttribute, NamedContextAttribute,
-                NamedContextAttribute):
+            -> Tuple[NamedContextAttribute, NamedContextAttribute,
+                     NamedContextAttribute]:
         """
         Returns for a given command attribute name all three corresponding
         attributes as triple
