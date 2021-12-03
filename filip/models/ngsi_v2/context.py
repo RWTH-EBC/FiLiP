@@ -1,8 +1,4 @@
 """
-created Sep 21, 2021
-
-@author Thomas Storek
-
 NGSIv2 models for context broker interaction
 """
 import json

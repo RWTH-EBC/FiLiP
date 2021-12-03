@@ -1,8 +1,4 @@
 """
-created November 4th, 2021
-
-@author Thomas Storek
-
 Module contains models for MQTT communication with FIWARE's IoT-Agents.
 """
 from aenum import Enum

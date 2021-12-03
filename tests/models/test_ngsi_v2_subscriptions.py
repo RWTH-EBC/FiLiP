@@ -1,8 +1,4 @@
 """
-Created on Sep 15, 2021
-
-@author Thomas Storek
-
 Test module for context subscriptions and notifications
 """
 import unittest

@@ -1,10 +1,4 @@
-#!/usr/bin/env python
-
 """
-Created on Sep 15, 2021
-
-@author Thomas Storek
-
 This module contains NGSIv2 models for context registrations in the context
 broker.
 """

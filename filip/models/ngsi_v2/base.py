@@ -1,8 +1,4 @@
 """
-created Sep 21 2021
-
-@author Thomas Storek
-
 Shared models that are used by multiple submodules
 """
 import json
