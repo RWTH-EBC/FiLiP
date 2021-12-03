@@ -412,6 +412,7 @@ class TestMQTTClient(unittest.TestCase):
                                          entity_type=self.device_ul.entity_type)
             if entity.heater_status.value == "OK":
                 success = True
+            counter += 1
 
         # close the mqtt listening thread
         self.mqttc.loop_stop()
