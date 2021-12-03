@@ -159,4 +159,9 @@ if __name__ == "__main__":
     my_group = iota_client.get_group(resource='/iot/json',apikey=service_group1)
 
     # 4.3 Delete a service group
-    iota_client.delete_group(resource='/iot/json',apikey=service_group1)
+    iota_client.delete_group(resource='/iot/json', apikey=service_group1)
+
+    # # 5. Clean up (Optional)
+    #
+    # Close client
+    iota_client.close()

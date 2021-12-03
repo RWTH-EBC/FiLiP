@@ -103,3 +103,10 @@ if __name__ == '__main__':
     from filip.clients.ngsi_v2 import HttpClient
     client = HttpClient(config=config)
     """
+
+    # # 6. Clean up (Optional)
+    #
+    # Close client
+    iota_client.close()
+    cb_client.close()
+    ql_client.close()
