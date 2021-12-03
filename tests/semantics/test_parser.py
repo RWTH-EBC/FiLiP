@@ -89,7 +89,7 @@ class TestModels(unittest.TestCase):
         assertList(get_targets_for_combine_object_relation(vocabulary, cor1),
                    [iri("Class123")])
         cor1 = get_cor_with_prop(vocabulary, iri("Class1"), iri("oProp1"))
-        print(get_targets_for_combine_object_relation(vocabulary, cor1))
+
         assertList(get_targets_for_combine_object_relation(vocabulary, cor1),
                    [iri("Class4"), iri("Class2"), iri("Class12"),
                     iri("Class123")])

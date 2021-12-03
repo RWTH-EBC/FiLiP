@@ -1,9 +1,5 @@
 """
 Test module for configuration functions
-
-created: 1st April, 2021
-
-@author Thomas Storek
 """
 import os
 import unittest

@@ -1,9 +1,5 @@
 """
 Functions to clean up a tenant within a fiware based platform.
-
-created Oct 08, 2021
-
-@author Thomas Storek
 """
 import time
 
@@ -40,12 +36,13 @@ def clear_context_broker(url: str, fiware_header: FiwareHeader):
     # clear subscriptions
     for sub in client.get_subscription_list():
         client.delete_subscription(subscription_id=sub.id)
+    assert len(client.get_subscription_list()) == 0
 
     # clear registrations
     for reg in client.get_registration_list():
         client.delete_registration(registration_id=reg.id)
+    assert len(client.get_registration_list()) == 0
 
-    time.sleep(0.5)
 
 def clear_iot_agent(url: str, fiware_header: FiwareHeader):
     """
@@ -65,13 +62,13 @@ def clear_iot_agent(url: str, fiware_header: FiwareHeader):
     # clear registrations
     for device in client.get_device_list():
         client.delete_device(device_id=device.device_id)
+    assert len(client.get_device_list()) == 0
 
     # clear groups
     for group in client.get_group_list():
         client.delete_group(resource=group.resource,
                             apikey=group.apikey)
-
-    time.sleep(0.5)
+    assert len(client.get_group_list()) == 0
 
 
 def clear_quantumleap(url: str, fiware_header: FiwareHeader):
@@ -110,13 +107,9 @@ def clear_quantumleap(url: str, fiware_header: FiwareHeader):
 
     # will be executed for all found entities
     for entity in entities:
-        try:
-            client.delete_entity(entity_id=entity.entityId,
-                                 entity_type=entity.entityType)
-        except RequestException as err:
-            handle_emtpy_db_exception(err)
+        client.delete_entity(entity_id=entity.entityId,
+                             entity_type=entity.entityType)
 
-    time.sleep(0.5)
 
 def clear_all(*,
               fiware_header: FiwareHeader,
