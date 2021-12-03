@@ -32,7 +32,6 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-
 if __name__ == "__main__":
 
     # # 1. Setup
@@ -102,7 +101,7 @@ if __name__ == "__main__":
     except:
         logger.info("There might be no historical data for some calls.")
 
-    # ## 2.3 Delete
+    # ## 2.3. Delete
     #
     # delete entity in QL
     try:

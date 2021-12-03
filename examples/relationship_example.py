@@ -152,10 +152,10 @@ if __name__ == "__main__":
 
     # # 2. Read data from FIWARE
     #
-    # ## 2.1 Inventory relationship with Store and Product
+    # ## 2.1. Inventory relationship with Store and Product
     logger.info(inventory_entity.get_relationships())
 
-    # ## 2.2 Get entities
+    # ## 2.2. Get entities
     #
 
     with ContextBrokerClient(fiware_header=fiware_header) as cb_client:

@@ -40,7 +40,7 @@ if __name__ == "__main__":
 
     # # 2. Device Model
     #
-    # ## 2.1 Create a device
+    # ## 2.1. Create a device
     #
     # A device can be created in two ways
     # For all information about the needed device attributes, please
@@ -140,7 +140,7 @@ if __name__ == "__main__":
 
     # 4. Service Groups
     #
-    #For some services, there will be no need to provision individual devices,
+    # For some services, there will be no need to provision individual devices,
     # but it will make more sense to provision different service groups,
     # each of one mapped to a different type of entity in the context broker
     # https://iotagent-node-lib.readthedocs.io/en/latest/api/index.html#service-group-api

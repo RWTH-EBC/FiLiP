@@ -1,8 +1,9 @@
-import logging
-from typing import List
+"""
+# Example how to use Entity-models and interact with teh orion ContextBroker
+"""
 
-from filip.models.ngsi_v2.base import Metadata
-from requests import RequestException
+import logging
+
 from filip.clients.ngsi_v2 import ContextBrokerClient
 from filip.models.base import FiwareHeader, DataType
 from filip.models.ngsi_v2.context import ContextEntity, ContextAttribute, \
@@ -32,7 +33,7 @@ if __name__ == "__main__":
 
     # # 2. Create Entities
     #
-    # ## 2.1 Build Models
+    # ## 2.1. Build Models
     #
     # Entities can be created by:
     #
@@ -56,7 +57,7 @@ if __name__ == "__main__":
                                           type="Integer")
     room2_entity.add_attributes([temp_attr, pressure_attr])
 
-    # ## 2.2 Post Entities
+    # ## 2.2. Post Entities
     #
     cb_client.post_entity(entity=room1_entity)
     cb_client.post_entity(entity=room2_entity)

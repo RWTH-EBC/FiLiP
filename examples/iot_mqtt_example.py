@@ -47,7 +47,7 @@ if __name__ == '__main__':
 
     # # 2. Setup
     #
-    # ## 2.1 Device creation
+    # ## 2.1. Device creation
     #
     # First we create our device configuration using the models provided for
     # filip.models.ngsi_v2.iot
@@ -176,8 +176,8 @@ if __name__ == '__main__':
     # command from the server. Here, the received command will be printed and an
     # command-acknowledge will be sent to the platform.
 
-    # NOTE: We need to use the apikey of the service-group to send the message to
-    # the platform
+    # NOTE: We need to use the apikey of the service-group to send the message
+    # to the platform
     def on_message(client, userdata, msg):
         logger.info(msg.topic+" "+str(msg.payload))
         data = json.loads(msg.payload)
