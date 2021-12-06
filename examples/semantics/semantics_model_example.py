@@ -65,7 +65,7 @@ if __name__ == '__main__':
     #
     # More details about the uniqueness later
 
-    # ## 2.1 Instantiating a class
+    # ## 2.1. Instantiating a class
     #
     # We can create an instance of a class by simply instantiating and
     # passing the id and header as parameters.
@@ -87,7 +87,7 @@ if __name__ == '__main__':
     semantic_manager.set_default_header(header)
     my_building = Building(id="building1")
 
-    # ## 2.2 Immutability
+    # ## 2.2. Immutability
     #
     # These defining information of an instance are immutable and can not
     # be changed after the creation.
@@ -100,7 +100,7 @@ if __name__ == '__main__':
     print(my_building.get_identifier())
     print("")
 
-    # ## 2.3 Device Classes
+    # ## 2.3. Device Classes
     #
     # Device-classes are a subtype of normal classes, they work as normal
     # classes, but posses additional field types and information about the
@@ -121,6 +121,22 @@ if __name__ == '__main__':
 
     my_sensor.device_settings.endpoint = "http://localhost:1001"
     my_sensor.device_settings.transport = TransportProtocol.HTTP
+
+    # # 2.4. Finding a fitting class
+    #
+    # If you are unsure which semantic class could be the right one to model
+    # your current need, you can search for a fitting possibility:
+
+    fitting_names = semantic_manager.find_fitting_model("SmokeSensor")
+
+    print("\u0332".join("Found models for 'SmokeSensor':"))
+    print(fitting_names)
+    print("")
+
+    # The search returns up to 5 model names as string. If a fitting name was
+    # selected the corresponding class can be retrieved and instantiated:
+    class_ = semantic_manager.get_class_by_name(fitting_names[0])
+    sensor_instance = class_(id="temp_sensor")
 
     # # 3. Class Fields
     #
@@ -147,7 +163,7 @@ if __name__ == '__main__':
     my_building.goalTemperature.remove(23)
     my_building.goalTemperature.clear()
 
-    # ## 3.1 RuleFields
+    # ## 3.1. RuleFields
     #
     # A RuleField contains 1 or multiple rules that need to be fulfilled
     # for the field to be valid. RuleFields are separated into Relation- and
@@ -180,7 +196,7 @@ if __name__ == '__main__':
     # To make the instance valid we need to add values to our rule fields. We
     # look herefore at the subtypes of RuleFields.
 
-    # ### 3.1.1 DataFields:
+    # ### 3.1.1. DataFields:
     #
     # Each ComplexDataProperty in our vocabulary with the
     # type "simple" was converted to this field type. (All for normal classes)
@@ -208,8 +224,7 @@ if __name__ == '__main__':
     print(f"Values: {sensor.measures.get_all()}")
     print("")
 
-
-    # ### 3.1.1 RelationFields
+    # ### 3.1.1. RelationFields
     #
     # Each ComplexRelationProperty in our vocabulary
     # was converted to this field type.
@@ -284,13 +299,13 @@ if __name__ == '__main__':
     # RelationField
     # One field can have multiple inverse_ofs
 
-    # ## 3.2 DeviceFields.
+    # ## 3.2. DeviceFields.
     #
     # Each ComplexDataProperty in our vocabulary with a
     # type other than "simple" was converted to this field type. Only device
     # classes posses fields of this type.
 
-    # ### 3.2.1 DeviceAttributeField (type="device_attribute").
+    # ### 3.2.1. DeviceAttributeField (type="device_attribute").
     #
     # This field allows us to link directly to properties of the iot device
     # and read them in.
@@ -335,7 +350,7 @@ if __name__ == '__main__':
     # - c1.get_info(): View the result of the executed command
     # - c1.get_status(): See the current status of the sent command
 
-    # ### 3.2.3 Uniqueness
+    # ### 3.2.3. Uniqueness
     #
     # A property (Command, DeviceAttribute) can only be added to one instance
     # A property will add fields to the Fiware instance, as field names need
@@ -344,7 +359,7 @@ if __name__ == '__main__':
     # If a required field of the new property is already existing an error is
     # raised
 
-    # ## 3.3 Metadata
+    # ## 3.3. Metadata
     #
     # Each instance has the special attribute "metadata".
     # Here the user can save information that can help him identify the
@@ -354,7 +369,7 @@ if __name__ == '__main__':
     my_floor.metadata.comment = "The first basement is directly below the " \
                                 "ground"
 
-    # # 4 State Management
+    # # 4. State Management
     #
     # We now have seen how the models can be instantiated, filled with
     # values and used to interact with iot-devices.
@@ -365,7 +380,7 @@ if __name__ == '__main__':
     # change is governed in the LocalState. Only if we save the state and the
     # state is valid all made changes will be transferred to the FiwareState.
 
-    # ## 4.1 Creating/Loading
+    # ## 4.1. Creating/Loading
     #
     # As explained in (1) all instances are uniquely defined by their
     # InstanceIdentifier.
@@ -410,7 +425,7 @@ if __name__ == '__main__':
         # or entity_types=[...],  # list of types to load
     )
 
-    # ## 4.2 Saving the Local State
+    # ## 4.2. Saving the Local State
     #
     # If we have finished editing in the local state we can publish our
     # changes to the Fiware State.
@@ -464,6 +479,8 @@ if __name__ == '__main__':
     p1.device_settings.endpoint = "http://test2.com"
     p1.device_settings.transport = TransportProtocol.AMQP
 
+    sensor_instance.delete()
+
     # Now our state is completely valid and we can save:
     semantic_manager.save_state(assert_validity=True)
     # We could also force an invalid state to be saved, in that case the
@@ -480,7 +497,7 @@ if __name__ == '__main__':
     # .save_state() the values hold inside the local individuals can be
     # changed, as they now hold the same values as the live state on Fiware
 
-    # ## 4.3 Deleting instances
+    # ## 4.3. Deleting instances
     #
     # to delete an instance, we can simply call:
     my_sensor.delete(assert_no_references=False)
