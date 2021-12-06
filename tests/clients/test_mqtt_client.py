@@ -290,7 +290,7 @@ class TestMQTTClient(unittest.TestCase):
                            properties=None)
         self.mqttc.loop_start()
 
-        payload = payload = randrange(0, 100, 1)/1000
+        payload = randrange(0, 100, 1)/1000
         self.mqttc.publish(device_id=self.device_json.device_id,
                            payload={self.device_json.attributes[0].object_id:
                                         payload})
@@ -299,7 +299,7 @@ class TestMQTTClient(unittest.TestCase):
                                      entity_type=self.device_json.entity_type)
         self.assertEqual(payload, entity.temperature.value)
 
-        payload = payload = randrange(0, 100, 1) / 1000
+        payload = randrange(0, 100, 1) / 1000
         self.mqttc.publish(device_id=self.device_json.device_id,
                            attribute_name="temperature",
                            payload=payload)

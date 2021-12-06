@@ -118,47 +118,47 @@ if __name__ == "__main__":
     #   -   Status (name_status): used to inform about execution status
     #   -   Info/Result (name_info): used to inform about the final result
 
-    # 3. Interact with Fiware
+    # # 3. Interact with Fiware
     #
-    # 3.1. Upload a new Device
+    # ## 3.1. Upload a new Device
     iota_client.post_device(device=device2)
     #
-    # 3.2. Load a specific device as model
+    # ## 3.2. Load a specific device as model
     my_device = iota_client.get_device(device_id="sensor009")
     #
-    # 3.3. Load multiple devices
+    # ## 3.3. Load multiple devices
     my_devices = iota_client.get_device_list()
     #
-    # 3.4. Update a device
+    # ## 3.4. Update a device
     #
     # After changes were made to the device, the simplest way to transfer
     # them to Fiware is:
     iota_client.patch_device(my_device)
     #
-    # 3.5. Delete a device
+    # ## 3.5. Delete a device
     iota_client.delete_device(device_id="sensor009")
 
-    # 4. Service Groups
+    # # 4. Service Groups
     #
     # For some services, there will be no need to provision individual devices,
     # but it will make more sense to provision different service groups,
     # each of one mapped to a different type of entity in the context broker
     # https://iotagent-node-lib.readthedocs.io/en/latest/api/index.html#service-group-api
 
-    # 4.1. Create a service group
+    # ## 4.1. Create a service group
     service_group1 = ServiceGroup(entity_type='Thing',
                                       resource='/iot/json',
                                       apikey=str(uuid4()))
     iota_client.post_groups(service_groups=[service_group1])
 
-    # 4.2. Access a service group
+    # ## 4.2. Access a service group
     #
     # All groups:
     retrieved_groups = iota_client.get_group_list()
     # a specific group
     my_group = iota_client.get_group(resource='/iot/json',apikey=service_group1)
 
-    # 4.3 Delete a service group
+    # ## 4.3 Delete a service group
     iota_client.delete_group(resource='/iot/json', apikey=service_group1)
 
     # # 5. Clean up (Optional)

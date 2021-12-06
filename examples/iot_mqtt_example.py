@@ -72,10 +72,10 @@ if __name__ == '__main__':
     # creating a static attribute that holds additional information
     static_device_attr = StaticDeviceAttribute(name='info',
                                                type="Text",
-                                               value="Filip example for virtual "
-                                                     "IoT device")
+                                               value="Filip example for "
+                                                     "virtual IoT device")
     # creating a command that the IoT device will liston to
-    device_command = DeviceCommand(name='heater', type="Boolean")
+    device_command = DeviceCommand(name='heater')
 
     # NOTE: You need to know that if you define an apikey for a single device it
     # will be only used for outgoing traffic. This is does not become very clear
@@ -96,8 +96,8 @@ if __name__ == '__main__':
                                    object_id='h',
                                    type="Number",
                                    metadata={"unitText":
-                                                 {"value": "percent",
-                                                  "type": "Text"}})
+                                                {"value": "percent",
+                                                 "type": "Text"}})
 
     device.add_attribute(attribute=device_attr2)
 
@@ -115,14 +115,14 @@ if __name__ == '__main__':
 
     # in order to change the apikey of out devices for incoming data we need to
     # create a service group that our device weill be we attached to
-    # NOTE: This is important in order to adjust the apikey for incoming traffic.
+    # NOTE: This is important in order to adjust the apikey for incoming traffic
     service_group = ServiceGroup(service=fiware_header.service,
                                  subservice=fiware_header.service_path,
                                  apikey=SERVICE_GROUP_APIKEY,
                                  resource='/iot/json')
 
-    # create the Http client node that once sent the device cannot be posted again
-    # and you need to use the update command
+    # create the Http client node that once sent the device cannot be posted
+    # again and you need to use the update command
     config=HttpClientConfig(cb_url=CB_URL, iota_url=IOTA_URL)
     client = HttpClient(fiware_header=fiware_header, config=config)
     client.iota.post_group(service_group=service_group, update=True)
@@ -141,7 +141,7 @@ if __name__ == '__main__':
     logging.info("This is our data entity belonging to our device: \n" +
           entity.json(indent=2))
 
-    # 3. MQTT Client
+    # # 3. MQTT Client
     #
     # create a mqtt client that we use as representation of an IoT device
     # following the official documentation of Paho-MQTT.
