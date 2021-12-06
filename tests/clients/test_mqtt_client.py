@@ -388,8 +388,6 @@ class TestMQTTClient(unittest.TestCase):
         httpc.iota.post_group(service_group=self.service_group_ul)
         httpc.iota.post_device(device=self.device_ul, update=True)
 
-        print(self.service_group_json)
-
         mqtt_broker_url = urlparse(settings.MQTT_BROKER_URL)
 
         self.mqttc.connect(host=mqtt_broker_url.hostname,
