@@ -1,9 +1,5 @@
 """
 Abstract class for all IoTA MQTT message encoders
-
-created 5th November, 2021
-
-@author Thomas Storek
 """
 import logging
 from abc import ABC

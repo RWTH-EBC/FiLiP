@@ -1,9 +1,7 @@
 import unittest
 
 from pathlib import Path
-
 from filip.models import FiwareHeader
-
 from filip.models.ngsi_v2.iot import TransportProtocol
 
 from tests.config import settings

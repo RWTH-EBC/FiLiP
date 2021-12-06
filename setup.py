@@ -45,4 +45,5 @@ setuptools.setup(
     setup_requires=SETUP_REQUIRES,
     install_requires=INSTALL_REQUIRES,
     python_requires=">=3.7",
+    download_url =""
 )

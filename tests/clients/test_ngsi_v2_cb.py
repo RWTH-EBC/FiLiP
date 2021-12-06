@@ -1,10 +1,5 @@
 """
 Tests for filip.cb.client
-
-edited Sep 15, 2021
-
-@author Jeff Reding
-
 """
 import copy
 import unittest

@@ -2,10 +2,11 @@
 TimeSeries Module for QuantumLeap API Client
 """
 import logging
+import time
 from math import inf
 from collections import deque
 from itertools import count
-from typing import Dict, List, Union, Deque
+from typing import Dict, List, Union, Deque, Optional
 from urllib.parse import urljoin
 import requests
 from pydantic import parse_obj_as, AnyHttpUrl
@@ -219,35 +220,52 @@ class QuantumLeapClient(BaseHttpClient):
             self.log_error(err=err, msg=msg)
             raise
 
-    def delete_entity(self, entity_id: str, entity_type: str) -> str:
+    def delete_entity(self, entity_id: str,
+                      entity_type: Optional[str] = None) -> str:
         """
         Given an entity (with type and id), delete all its historical records.
 
         Args:
             entity_id (String): Entity id is required.
-            entity_type (String): Entity type if entity_id alone can not
-                uniquely define the entity.
+            entity_type (Optional[String]): Entity type if entity_id alone
+                can not uniquely define the entity.
+
+        Raises:
+            RequestException, if entity was not found
+            Exception, if deleting was not successful
 
         Returns:
             The entity_id of entity that is deleted.
         """
         url = urljoin(self.base_url, f'/v2/entities/{entity_id}')
         headers = self.headers.copy()
-        if entity_type:
+        if entity_type is not None:
             params = {'type': entity_type}
         else:
             params = {}
-        try:
-            res = self.delete(url=url, headers=headers, params=params)
-            if res.ok:
+
+        # The deletion does not always resolves in a success even if an ok is
+        # returned.
+        # Try to delete multiple times with incrementing waits.
+        # If the entity is no longer found the methode returns with a success
+        # If the deletion attempt fails after the 10th try, raise an
+        # Exception: it could not be deleted
+        counter = 0
+        while counter < 10:
+            self.delete(url=url, headers=headers, params=params)
+            try:
+                self.get_entity_by_id(entity_id=entity_id,
+                                      entity_type=entity_type)
+            except requests.exceptions.RequestException as err:
                 self.logger.info("Entity id '%s' successfully deleted!",
                                  entity_id)
                 return entity_id
-            res.raise_for_status()
-        except requests.exceptions.RequestException as err:
-            msg = f"Could not delete entity of id {entity_id}"
-            self.log_error(err=err, msg=msg)
-            raise
+            time.sleep(counter*5)
+            counter += 1
+
+        msg = f"Could not delete QL entity of id {entity_id}"
+        logger.error(msg=msg)
+        raise Exception(msg)
 
     def delete_entity_type(self, entity_type: str) -> str:
         """

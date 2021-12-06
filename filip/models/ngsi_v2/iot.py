@@ -1,8 +1,4 @@
 """
-created April 1st, 2021
-
-@author Thomas Storek
-
 Module contains models for accessing and interaction with FIWARE's IoT-Agents.
 """
 from __future__ import annotations

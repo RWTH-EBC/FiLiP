@@ -1,9 +1,5 @@
 """
-Test module for logging fucntionality
-
-created 1st April, 2021
-
-@author Thomas Storek
+Test module for logging functionality
 """
 import logging
 from unittest import TestCase

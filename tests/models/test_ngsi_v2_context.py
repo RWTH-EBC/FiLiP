@@ -3,8 +3,14 @@ Test module for context broker models
 """
 import unittest
 from typing import List
-
 from pydantic import ValidationError
+
+from filip.models.base import DataType
+from filip.clients.ngsi_v2 import IoTAClient, ContextBrokerClient
+from filip.models.ngsi_v2.iot import Device, TransportProtocol, DeviceCommand
+from filip.models import FiwareHeader
+from filip.utils.cleanup import clear_all
+from tests.config import settings
 
 from filip.models.ngsi_v2.base import Metadata, NamedMetadata
 from filip.models.ngsi_v2.context import \
@@ -16,7 +22,8 @@ from filip.models.ngsi_v2.context import \
     Update, \
     NamedContextAttribute, \
     ContextEntityKeyValues, \
-    NamedCommand
+    NamedCommand, \
+    PropertyFormat
 
 
 class TestContextModels(unittest.TestCase):
@@ -174,7 +181,7 @@ class TestContextModels(unittest.TestCase):
             ContextAttribute(type=string)
             NamedContextAttribute(name=string)
             ContextEntityKeyValues(id=string, type=string)
-            NamedCommand(id=string, name=string)
+            NamedCommand(name=string, value=string)
 
         # Test for the special-string protected field if all strings are blocked
         for string in special_strings:
@@ -213,9 +220,71 @@ class TestContextModels(unittest.TestCase):
         entity.delete_attributes(["test3"])
         self.assertEqual(entity.get_attribute_names(), set())
 
+    def test_entity_get_command_methods(self):
+        """
+        Tests the two methods:
+            get_commands and get_command_triple
+        """
+
+        # test the manual creation of an entity with Command
+        entity = ContextEntity(id="test", type="Tester")
+
+        entity.add_attributes([NamedCommand(name="myCommand", value=".")])
+
+        self.assertEqual(len(entity.get_commands()), 0)
+        with self.assertRaises(KeyError):
+            entity.get_command_triple("myCommand")
+        with self.assertRaises(KeyError):
+            entity.get_command_triple("--")
+
+        # test the automated command creation via Fiware and DeviceModel
+        device = Device(device_id="id",
+                        service=settings.FIWARE_SERVICE,
+                        service_path=settings.FIWARE_SERVICEPATH,
+                        entity_name="name",
+                        entity_type="type",
+                        transport=TransportProtocol.HTTP,
+                        endpoint="http://localhost:1234")
+
+        device.add_command(DeviceCommand(name="myCommand"))
+        device.add_command(DeviceCommand(name="myCommand2", type=DataType.TEXT))
+
+        with IoTAClient(
+                url=settings.IOTA_JSON_URL,
+                fiware_header=FiwareHeader(
+                    service=settings.FIWARE_SERVICE,
+                    service_path=settings.FIWARE_SERVICEPATH)) as client:
+            client.post_device(device=device)
+
+        with ContextBrokerClient(
+                url=settings.CB_URL,
+                fiware_header=FiwareHeader(
+                    service=settings.FIWARE_SERVICE,
+                    service_path=settings.FIWARE_SERVICEPATH)) as client:
+
+            entity = client.get_entity(entity_id="name", entity_type="type")
+
+            (command, c_status, c_info) = entity.get_command_triple("myCommand")
+            self.assertEqual(command.type, DataType.COMMAND)
+            self.assertEqual(c_status.type, DataType.COMMAND_STATUS)
+            self.assertEqual(c_info.type, DataType.COMMAND_RESULT)
+
+            (command, c_status, c_info) = entity.get_command_triple(
+                "myCommand2")
+            self.assertEqual(command.type, DataType.TEXT)
+            self.assertEqual(c_status.type, DataType.COMMAND_STATUS)
+            self.assertEqual(c_info.type, DataType.COMMAND_RESULT)
+
+            self.assertEqual(
+                entity.get_commands(response_format=PropertyFormat.DICT).keys(),
+                {"myCommand", "myCommand2"})
+
     def tearDown(self) -> None:
         """
         Cleanup test server
         """
-        # There is no interaction with the server in this test case
-        pass
+        clear_all(fiware_header=FiwareHeader(
+            service=settings.FIWARE_SERVICE,
+            service_path=settings.FIWARE_SERVICEPATH),
+            cb_url=settings.CB_URL,
+            iota_url=settings.IOTA_JSON_URL)
