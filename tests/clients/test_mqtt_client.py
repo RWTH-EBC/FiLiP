@@ -243,7 +243,7 @@ class TestMQTTClient(unittest.TestCase):
         # the status update can take a bit of time, wait and try multiple times
         counter = 0
         success = False
-        while counter < 10 and not success:
+        while counter < 20 and not success:
             time.sleep(counter)
             # the test for which the whole setup was made
             entity = httpc.cb.get_entity(
@@ -412,7 +412,7 @@ class TestMQTTClient(unittest.TestCase):
         # the status update can take a bit of time, wait and try multiple times
         counter = 0
         success = False
-        while counter < 10 and not success:
+        while counter < 20 and not success:
             time.sleep(counter)
             # the test for which the whole setup was made
             entity = httpc.cb.get_entity(entity_id=self.device_ul.device_id,
