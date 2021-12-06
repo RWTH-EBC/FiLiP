@@ -240,17 +240,26 @@ class TestMQTTClient(unittest.TestCase):
                               entity_type=entity.type,
                               command=context_command)
 
-        time.sleep(2)
+        # the status update can take a bit of time, wait and try multiple times
+        counter = 0
+        success = False
+        while counter < 5 and not success:
+            time.sleep(5)
+            # the test for which the whole setup was made
+            entity = httpc.cb.get_entity(
+                entity_id=self.device_json.device_id,
+                entity_type=self.device_json.entity_type)
+            if entity.heater_status.value == "OK":
+                success = True
+            counter += 1
+
         # close the mqtt listening thread
         self.mqttc.loop_stop()
         # disconnect the mqtt device
         self.mqttc.disconnect()
 
-        entity = httpc.cb.get_entity(entity_id=self.device_json.device_id,
-                                     entity_type=self.device_json.entity_type)
-
-        # The main part of this test, for all this setup was done
-        self.assertEqual("OK", entity.heater_status.value)
+        # assure correctness
+        self.assertTrue(success)
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
@@ -419,6 +428,7 @@ class TestMQTTClient(unittest.TestCase):
         # disconnect the mqtt device
         self.mqttc.disconnect()
 
+        # assure correctness
         self.assertTrue(success)
 
 
