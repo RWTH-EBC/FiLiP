@@ -13,7 +13,7 @@ from filip.models.base import FiwareHeader
 
 if __name__ == '__main__':
 
-    # # 1. FiwareHeader
+    # # 1 FiwareHeader
     #
     # First a create a fiware header that you want to work with
     # For more details on the headers check the official documentation:
@@ -25,16 +25,16 @@ if __name__ == '__main__':
     fiware_header = FiwareHeader(service='filip',
                                  service_path='/testing')
 
-    # # 2. Client modes
+    # # 2 Client modes
     # You can run the clients in different modes:
     #
-    # ## 2.1. Run it as pure python object.
+    # ## 2.1 Run it as pure python object.
     #
     # This will open and close a connection each time you use a function.
     cb_client = ContextBrokerClient(fiware_header=fiware_header)
     print(f"OCB Version: {cb_client.get_version()}")
 
-    # ## 2.2. Run the client via the python's context protocol.
+    # ## 2.2 Run the client via the python's context protocol.
     #
     # This will initialize requests.session that the client will reuse for
     # each function.
@@ -45,7 +45,7 @@ if __name__ == '__main__':
     with ContextBrokerClient(fiware_header=fiware_header) as cb_client:
         print(f"OCB Version: {cb_client.get_version()}")
 
-    # ## 2.3. Run the client with an externally provided requests.Session object
+    # ## 2.3 Run the client with an externally provided requests.Session object
     #
     # This mode is recommend when you want to reuse requests.Session and mix
     # different clients. It is also useful in combination with OAuth2Session
@@ -57,7 +57,7 @@ if __name__ == '__main__':
         cb_client = ContextBrokerClient(session=s, fiware_header=fiware_header)
         print(f"OCB Version: {cb_client.get_version()}")
 
-    # # 3. Version information
+    # # 3 Version information
     #
     # Independent of the selected mode, the version of the client can always be
     # accessed as follows:
@@ -66,17 +66,17 @@ if __name__ == '__main__':
     ql_client = QuantumLeapClient(fiware_header=fiware_header)
     print(f"QuantumLeap Version: {ql_client.get_version()}")
 
-    # # 4. URL
+    # # 4 URL
     #
     # Additional to the FiwareHeader each client needs an URL, that points
     # to the Fiware-server.
     #
-    # ## 4.1. Environment variables
+    # ## 4.1 Environment variables
     #
     # As shown above the client does not need to be given explicitly. If no URL
     # is given to the client, it is extracted from the environment variables
     #
-    # ## 4.2. Direct Provision
+    # ## 4.2 Direct Provision
     #
     # Instead of using an .env.filip or environment variables you can also
     # provide the url directly to the specific clients. It also takes any
@@ -87,7 +87,7 @@ if __name__ == '__main__':
                                       fiware_header=fiware_header)
     """
 
-    # # 5. Combined Client
+    # # 5 Combined Client
     #
     # The library also contains a client (HttpClient) that contains all the
     # particular clients as bundle.
@@ -104,7 +104,7 @@ if __name__ == '__main__':
     client = HttpClient(config=config)
     """
 
-    # # 6. Clean up (Optional)
+    # # 6 Clean up (Optional)
     #
     # Close client
     iota_client.close()

@@ -39,15 +39,15 @@ logger = logging.getLogger(__name__)
 
 if __name__ == '__main__':
 
-    # # 1. FiwareHeader
+    # # 1 FiwareHeader
     # Since we want to use the multi-tenancy concept of fiware we always start
     # with create a fiware header
     fiware_header = FiwareHeader(service=FIWARE_SERVICE,
                                  service_path=FIWARE_SERVICE_PATH)
 
-    # # 2. Setup
+    # # 2 Setup
     #
-    # ## 2.1. Device creation
+    # ## 2.1 Device creation
     #
     # First we create our device configuration using the models provided for
     # filip.models.ngsi_v2.iot
@@ -104,7 +104,7 @@ if __name__ == '__main__':
     # This will print our configuration that we will send
     logging.info("This is our device configuration: \n" + device.json(indent=2))
 
-    # ## 2.2. Device Submission
+    # ## 2.2 Device Submission
     #
     # Send device configuration to FIWARE via the IoT-Agent. We use the general
     # ngsiv2 httpClient for this.
@@ -128,7 +128,7 @@ if __name__ == '__main__':
     client.iota.post_group(service_group=service_group, update=True)
     client.iota.post_device(device=device, update=True)
 
-    # ## 2.3. Check for correctness
+    # ## 2.3 Check for correctness
     # check if the device is correctly configured. You will notice that
     # unfortunately the iot API does not return all the metadata. However,
     # it will still appear in the context-entity
@@ -141,7 +141,7 @@ if __name__ == '__main__':
     logging.info("This is our data entity belonging to our device: \n" +
           entity.json(indent=2))
 
-    # # 3. MQTT Client
+    # # 3 MQTT Client
     #
     # create a mqtt client that we use as representation of an IoT device
     # following the official documentation of Paho-MQTT.
@@ -250,7 +250,7 @@ if __name__ == '__main__':
     # disconnect the mqtt device
     mqtt_client.disconnect()
 
-    # # 4.Cleanup the server and delete everything
+    # # 4 Cleanup the server and delete everything
     #
     client.iota.delete_device(device_id=device.device_id)
     client.iota.delete_group(resource=service_group.resource,

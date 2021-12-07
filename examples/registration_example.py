@@ -27,7 +27,7 @@ You can here also change the used Fiware service
 service = 'filip'
 service_path = '/example'
 
-# # 1. Creating models
+# # 1 Creating models
 #
 # Create a building with a weather station as context provider
 # We start from the meta data here. The other way round is also possible but
@@ -76,7 +76,7 @@ print("Building without own properties")
 print("+"*80)
 print(building_1.json(indent=2))
 
-# # 2. Creating registration
+# # 2 Creating registration
 #
 # create registration for the weather station as context provider
 http = Http(url=f"http://localhost:1026/v2")
@@ -102,7 +102,7 @@ print("+"*80)
 print(registration.json(indent=2))
 
 
-# # 3. Post created objects to Fiware
+# # 3 Post created objects to Fiware
 #
 fiware_header = FiwareHeader(service=service,
                              service_path=service_path)
@@ -115,7 +115,7 @@ registration_id = client.post_registration(registration=registration)
 print(registration_id)
 
 
-# # 4. Read in objects from Fiware
+# # 4 Read in objects from Fiware
 #
 registration = client.get_registration(registration_id=registration_id)
 print(registration.json(indent=2))
@@ -130,7 +130,7 @@ print(building_1.json(indent=2))
 registration =client.get_registration(registration_id=registration_id)
 print(80*"+" + "\n" + registration.json(indent=2))
 
-# # 5. Query Fiware
+# # 5 Query Fiware
 #
 from filip.models.ngsi_v2.context import EntityPattern, Query
 entity = EntityPattern(idPattern=".*", type="Building")
@@ -142,7 +142,7 @@ res = client.query(query=query)
 for entity in res:
     print(entity.json(indent=2))
 
-# # 6. Delete objects
+# # 6 Delete objects
 #
 client.delete_entity(entity_id=weather_station.id,
                      entity_type=weather_station.type)

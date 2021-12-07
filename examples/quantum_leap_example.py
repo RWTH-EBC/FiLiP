@@ -34,7 +34,7 @@ logger = logging.getLogger(__name__)
 
 if __name__ == "__main__":
 
-    # # 1. Setup
+    # # 1 Setup
     #
     # A QuantumLeapClient and a ContextBrokerClient are created to access 
     # FIWARE in the space given by the FiwareHeader. For more information see:
@@ -50,9 +50,9 @@ if __name__ == "__main__":
         print("Context broker version" + value["version"] + "at url " +
               cb_client.base_url)
         
-    # # 2. Interact with QL
+    # # 2 Interact with QL
     #
-    # ## 2.1. Create a ContextEntity to work with
+    # ## 2.1 Create a ContextEntity to work with
     #
     # for more details see: orion_example.py
     hall = {"id": "Hall_1",
@@ -101,7 +101,7 @@ if __name__ == "__main__":
     except:
         logger.info("There might be no historical data for some calls.")
 
-    # ## 2.3. Delete
+    # ## 2.3 Delete
     #
     # delete entity in QL
     try:
@@ -123,7 +123,7 @@ if __name__ == "__main__":
     except:
         logger.error("Can not delete subscription from context broker.")
     
-    # # 3. Clean up (Optional)
+    # # 3 Clean up (Optional)
     #
     # Close clients
     ql_client.close()

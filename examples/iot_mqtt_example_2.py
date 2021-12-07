@@ -37,16 +37,16 @@ logger = logging.getLogger(__name__)
 
 if __name__ == '__main__':
 
-    # # 1. Setup
+    # # 1 Setup
     #
-    # ## 1.1. FiwareHeader
+    # ## 1.1 FiwareHeader
     #
     # Since we want to use the multi-tenancy concept of fiware we always start
     # with create a fiware header
     fiware_header = FiwareHeader(service=FIWARE_SERVICE,
                                  service_path=FIWARE_SERVICE_PATH)
 
-    # ## 1.2. Device configuration
+    # ## 1.2 Device configuration
     #
     service_group_json = ServiceGroup(
         apikey=FIWARE_SERVICE_PATH.strip('/'),
@@ -78,7 +78,7 @@ if __name__ == '__main__':
                        attributes=[device_attr],
                        commands=[device_command])
 
-    # ## 1.3. IoTAMQTTClient
+    # ## 1.3 IoTAMQTTClient
     #
     mqttc = IoTAMQTTClient()
 
@@ -105,7 +105,7 @@ if __name__ == '__main__':
     mqttc.on_subscribe = on_subscribe
     mqttc.on_log = on_log
 
-    # # 2. Normal client behaviour
+    # # 2 Normal client behaviour
     #
     # this section demonstrates normal client behavior
     # For additional examples on how to use the client please check:
@@ -159,11 +159,11 @@ if __name__ == '__main__':
     mqttc.loop_stop()
     mqttc.disconnect()
 
-    # # 3. Devices provisioning
+    # # 3 Devices provisioning
     #
-    # ## 3.1. Service groups
+    # ## 3.1 Service groups
     #
-    # ### 3.1.1. create service Groups
+    # ### 3.1.1 create service Groups
     #
     mqttc.add_service_group(service_group=service_group_json)
 
@@ -172,32 +172,32 @@ if __name__ == '__main__':
     mqttc.get_service_group(service_group_json.apikey)
     mqttc.update_service_group(service_group=service_group_json)
 
-    # ### 3.1.2. Delete service groups
+    # ### 3.1.2 Delete service groups
     #
     mqttc.delete_service_group(apikey=service_group_json.apikey)
 
-    # ## 3.2. Devices
+    # ## 3.2 Devices
     #
-    # ### 3.2.1. Create Device
+    # ### 3.2.1 Create Device
     #
     mqttc.add_device(device=device_json)
 
-    # ### 3.2.2. Interact with device
+    # ### 3.2.2 Interact with device
     #
     mqttc.get_device(device_json.device_id)
     mqttc.update_device(device=device_json)
 
-    # ### 3.2.3. Delete device
+    # ### 3.2.3 Delete device
     #
     mqttc.delete_device(device_id=device_json.device_id)
 
-    # # 4. Commands
+    # # 4 Commands
     #
     # This example is written for the JSON MQTT client, but it can be easily
     # adapted for Ultralight, by changing all JSON/json variable name parts
     # with the corresponding UL/ul parts
     #
-    # ## 4.1. Setup MQTT client
+    # ## 4.1 Setup MQTT client
     #
     # small clean up
     for group in mqttc.service_groups:
@@ -245,7 +245,7 @@ if __name__ == '__main__':
     mqttc.subscribe()
     mqttc.loop_start()
 
-    # ## 4.2. Command
+    # ## 4.2 Command
     #
     entity = httpc.cb.get_entity(entity_id=device_json.device_id,
                                  entity_type=device_json.entity_type)
@@ -268,7 +268,7 @@ if __name__ == '__main__':
     # The entity.heater_status.value should now have the status ok
     print(entity.heater_status.value)
 
-    # ## 4.3. Publish
+    # ## 4.3 Publish
     #
     payload = random.randrange(0, 100, 1) / 1000
     mqttc.publish(device_id=device_json.device_id,
@@ -290,7 +290,7 @@ if __name__ == '__main__':
     # Changed Temperature Value
     print(entity.temperature.value)
 
-    # ## 4.4. Close Client
+    # ## 4.4 Close Client
 
     # close the mqtt listening thread
     mqttc.loop_stop()

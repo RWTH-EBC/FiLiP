@@ -31,11 +31,11 @@ service_path = '/example_relationships'
 
 if __name__ == "__main__":
 
-    # # 1. Setup models
+    # # 1 Setup models
     #
     fiware_header = FiwareHeader(service=service, service_path=service_path)
 
-    # ## 1.1. Store entities
+    # ## 1.1 Store entities
     #
     with ContextBrokerClient(fiware_header=fiware_header,
                              url=cb_url) as cb_client:
@@ -73,7 +73,7 @@ if __name__ == "__main__":
         for entity in store_entities:
             cb_client.post_entity(entity)
 
-    # ## 1.2. Product entities
+    # ## 1.2 Product entities
     #
     with ContextBrokerClient(fiware_header=fiware_header) as cb_client:
         product_dict = [
@@ -131,7 +131,7 @@ if __name__ == "__main__":
             cb_client.post_entity(ContextEntity(**product_entity))
             product_entities.append(ContextEntity(**product_entity))
 
-    # ## 1.3. Inventory Entities
+    # ## 1.3 Inventory Entities
     #
     with ContextBrokerClient(fiware_header=fiware_header) as cb_client:
         inventory_dict = {
@@ -150,12 +150,12 @@ if __name__ == "__main__":
         inventory_entity = ContextEntity(**inventory_dict)
         cb_client.post_entity(inventory_entity)
 
-    # # 2. Read data from FIWARE
+    # # 2 Read data from FIWARE
     #
-    # ## 2.1. Inventory relationship with Store and Product
+    # ## 2.1 Inventory relationship with Store and Product
     logger.info(inventory_entity.get_relationships())
 
-    # ## 2.2. Get entities
+    # ## 2.2 Get entities
     #
 
     with ContextBrokerClient(fiware_header=fiware_header) as cb_client:
@@ -169,7 +169,7 @@ if __name__ == "__main__":
         logger.info(
             cb_client.get_entity_list(q="refStore==urn:ngsi-ld:Store:002"))
 
-    # # 3. Delete test entities
+    # # 3 Delete test entities
     #
     with ContextBrokerClient(fiware_header=fiware_header) as cb_client:
         cb_client.delete_entities(store_entities)

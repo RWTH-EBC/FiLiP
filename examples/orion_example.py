@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 if __name__ == "__main__":
    
-    # # 1. Setup Client
+    # # 1 Setup Client
     #
     # create the client, for more details view the example: client_example.py
     cb_client = ContextBrokerClient(fiware_header=
@@ -31,13 +31,13 @@ if __name__ == "__main__":
         logger.info("Context broker version" + value["version"] + " at url " +
                     cb_client.base_url)
 
-    # # 2. Create Entities
+    # # 2 Create Entities
     #
-    # ## 2.1. Build Models
+    # ## 2.1 Build Models
     #
     # Entities can be created by:
     #
-    # ### 2.1.1. Passing a dict:
+    # ### 2.1.1 Passing a dict:
     #
     room1 = {"id": "Room1",
              "type": "Room",
@@ -48,7 +48,7 @@ if __name__ == "__main__":
              }
     room1_entity = ContextEntity(**room1)
 
-    # ### 2.1.2. Using the constructor and interfaces
+    # ### 2.1.2 Using the constructor and interfaces
     #
     room2_entity = ContextEntity(id="Room2",type="Room")
     temp_attr = NamedContextAttribute(name="temperature", value=22,
@@ -57,12 +57,12 @@ if __name__ == "__main__":
                                           type="Integer")
     room2_entity.add_attributes([temp_attr, pressure_attr])
 
-    # ## 2.2. Post Entities
+    # ## 2.2 Post Entities
     #
     cb_client.post_entity(entity=room1_entity)
     cb_client.post_entity(entity=room2_entity)
 
-    # # 3. Access entities in Fiware
+    # # 3 Access entities in Fiware
     #
     # Get all entities from context broker
     logger.info(cb_client.get_entity_list())
@@ -86,14 +86,14 @@ if __name__ == "__main__":
     # Accessing non existing ids or attributes will always throw an request
     # error
 
-    # # 4. Changing Entities
+    # # 4 Changing Entities
     #
-    # ## 4.1. Updating
+    # ## 4.1 Updating
 
     entity = room2_entity
     entity.add_attributes({'Space': ContextAttribute(type='Number',
                                                      value=111)})
-    # ### 4.1.1. Updating directly
+    # ### 4.1.1 Updating directly
     #
     # Using the Filip interface, we can update different properties of our
     # entity directly in the live version in FIWARE, here are listed a few
@@ -106,7 +106,7 @@ if __name__ == "__main__":
     # Deleting attributes
     logger.info(cb_client.delete_entity_attribute(entity_id=room1_entity.id,
                                                   attr_name="temperature"))
-    # ### 4.1.2. Updating the model
+    # ### 4.1.2 Updating the model
     #
     # Most of the time it is more convenient to update our local model,
     # and let the library handle all the needed updates to synchronise the
@@ -125,7 +125,7 @@ if __name__ == "__main__":
     # all changes are transmitted with one methode call
     cb_client.patch_entity(room2_entity)
 
-    # ## 4.2. Deleting
+    # ## 4.2 Deleting
     #
     # To delete an entry in Fiware, we can call:
     cb_client.delete_entity(entity_id=room2_entity.id,
