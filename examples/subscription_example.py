@@ -38,13 +38,13 @@ logger = logging.getLogger(__name__)
 
 if __name__ == "__main__":
 
-    # # 1. Setting up a client
+    # # 1 Setting up a client
     #
     cb_client = ContextBrokerClient(
         url=cb_url,
         fiware_header=FiwareHeader(service=service, service_path=service_path))
 
-    # # 2. Setup a subscription
+    # # 2 Setup a subscription
     #
     sub_example = {
         "description": "A subscription to get info about Room1",
@@ -76,13 +76,13 @@ if __name__ == "__main__":
     # Posting an example subscription for Room1
     sub_id = cb_client.post_subscription(subscription=sub)
 
-    # # 3. Filter subscriptions
+    # # 3 Filter subscriptions
     retrieve_sub = cb_client.get_subscription(sub_id)
     logger.info(retrieve_sub)
 
     time.sleep(1)
 
-    # # 4. Update subscription
+    # # 4 Update subscription
     #
     sub_to_update = cb_client.get_subscription(sub_id)
     # Update expiration time of the example subscription
@@ -91,11 +91,11 @@ if __name__ == "__main__":
     updated_subscription = cb_client.get_subscription(sub_id)
     logger.info(updated_subscription)
 
-    # # 5. Deleting the example subscription
+    # # 5 Deleting the example subscription
     #
     cb_client.delete_subscription(sub_id)
 
-    # # 6. Clean up (Optional)
+    # # 6 Clean up (Optional)
     #
     # Close client
     cb_client.close()

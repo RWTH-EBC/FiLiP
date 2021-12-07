@@ -15,7 +15,7 @@ import os
 
 if __name__ == '__main__':
 
-    # # 1. Example using environment variables
+    # # 1 Example using environment variables
 
     os.environ["ORION_URL"] = "http://localhost:1026"
     os.environ["QUANTUMLEAP_URL"] = "http://localhost:8668"
