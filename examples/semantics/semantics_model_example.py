@@ -16,7 +16,7 @@ iota_url = "http://localhost:4041"
 
 if __name__ == '__main__':
 
-    # # 0. Clean up Fiware state:
+    # # 0 Clean up Fiware state:
     #
     # For this example to work the fiware state needs to be clean:
     from filip.models.base import FiwareHeader
@@ -25,7 +25,7 @@ if __name__ == '__main__':
     fiware_header = FiwareHeader(service="example", service_path="/")
     clear_all(fiware_header=fiware_header, cb_url=cb_url, iota_url=iota_url)
 
-    # # 1. Import Models
+    # # 1 Import Models
     #
     # First we need to import the models that we have created in the
     # "semantics_vocabulary_example" and exported into the file "models.py".
@@ -42,7 +42,7 @@ if __name__ == '__main__':
     from models import Floor, Building
     from models import *
 
-    # # 2. Semantic Classes
+    # # 2 Semantic Classes
     #
     # The classes (with exception of semantic_manager) are either
     # SemanticClasses that can be used to model or SemanticDeviceClasses
@@ -122,7 +122,23 @@ if __name__ == '__main__':
     my_sensor.device_settings.endpoint = "http://localhost:1001"
     my_sensor.device_settings.transport = TransportProtocol.HTTP
 
-    # # 3. Class Fields
+    # # 2.4 Finding a fitting class
+    #
+    # If you are unsure which semantic class could be the right one to model
+    # your current need, you can search for a fitting possibility:
+
+    fitting_names = semantic_manager.find_fitting_model("SmokeSensor")
+
+    print("\u0332".join("Found models for 'SmokeSensor':"))
+    print(fitting_names)
+    print("")
+
+    # The search returns up to 5 model names as string. If a fitting name was
+    # selected the corresponding class can be retrieved and instantiated:
+    class_ = semantic_manager.get_class_by_name(fitting_names[0])
+    sensor_instance = class_(id="temp_sensor")
+
+    # # 3 Class Fields
     #
     # Our classes possess fields that we use to model the state. There are
     # multiple types of fields a normal-class or device-class can have.
@@ -207,7 +223,6 @@ if __name__ == '__main__':
     print(f"Raw Values: {sensor.measures.get_all_raw()}")
     print(f"Values: {sensor.measures.get_all()}")
     print("")
-
 
     # ### 3.1.1 RelationFields
     #
@@ -462,7 +477,9 @@ if __name__ == '__main__':
 
     p1.name.add("CHU")
     p1.device_settings.endpoint = "http://test2.com"
-    p1.device_settings.transport = TransportProtocol.AMQP
+    p1.device_settings.transport = TransportProtocol.MQTT
+
+    sensor_instance.delete()
 
     # Now our state is completely valid and we can save:
     semantic_manager.save_state(assert_validity=True)
