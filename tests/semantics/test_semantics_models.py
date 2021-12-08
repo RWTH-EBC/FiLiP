@@ -868,6 +868,18 @@ class TestSemanticsModels(unittest.TestCase):
         self.assertEqual(inst.metadata.name, "TestName")
         self.assertEqual(inst.metadata.comment, "TestComment")
 
+    def test__21_name_matching(self):
+        """
+        Test if find_fitting_model function works
+        """
+        from tests.semantics.models import semantic_manager
+
+        self.assertEqual(
+            semantic_manager.find_fitting_model("sensors"),
+            ['Sensor', 'Smoke_Sensor', 'Temperature_Sensor', 'Sensing_Function',
+             'Get_Sensing_Data_Command']
+        )
+
     def tearDown(self) -> None:
         """
         Cleanup test server

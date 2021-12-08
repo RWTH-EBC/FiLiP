@@ -9,7 +9,7 @@ import requests
 
 from typing import Optional, Dict, Type, List, Any, Union, Set
 from pydantic import BaseModel, Field
-
+from rapidfuzz import process
 
 from filip.models.base import NgsiVersion
 from filip.semantics.vocabulary import Individual
@@ -397,7 +397,7 @@ class SemanticsManager(BaseModel):
                     "attribute_type"]
             )
 
-    def get_class_by_name(self, class_name: str) -> Type:
+    def get_class_by_name(self, class_name: str) -> Type[SemanticClass]:
         """
         Get the class object by its type in string form
 
@@ -992,3 +992,27 @@ class SemanticsManager(BaseModel):
                 if old_settings[key] is not current_settings[key]:
                     new_settings[key] = current_settings[key]
                 instance.device_settings.__setattr__(key, new_settings[key])
+
+    def find_fitting_model(self, search_term: str, limit: int = 5) -> List[str]:
+        """
+        Find a fitting model by entering a search_term (e.g.: Sensor).
+        The methode returns a selection from up-to [limit] possibly fitting
+        model names. If a model name was selected from the proposition the
+        model can be retrieved with the methode:
+        "get_class_by_name(selectedName)"
+
+        Args:
+            search_term (str): search term to find a model by name
+            limit (int): Max Number of suggested results (default: 5)
+
+        Returns:
+            List[str], containing 0 to [limit] ordered propositions (best first)
+        """
+        class_names = list(self.class_catalogue.keys())
+        suggestions = [item[0] for item in process.extract(
+            query=search_term.casefold(),
+            choices=class_names,
+            score_cutoff=50,
+            limit=limit)]
+
+        return suggestions
