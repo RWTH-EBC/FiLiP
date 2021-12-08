@@ -1,3 +1,4 @@
+import copy
 import unittest
 
 from pathlib import Path
@@ -476,7 +477,9 @@ class TestSemanticsModels(unittest.TestCase):
 
         # Test if device could be processed correctly -> corresponding entity
         # in Fiware
+
         with ContextBrokerClient(
+                url=class3_.header.cb_url,
                 fiware_header=class3_.header.get_fiware_header()) as client:
             assert client.get_entity(entity_id="c3", entity_type="Class3")
 
@@ -579,6 +582,7 @@ class TestSemanticsModels(unittest.TestCase):
             self.assertEqual(len(client.get_device_list()), 0)
 
         with ContextBrokerClient(
+                url=semantic_manager.default_header.cb_url,
                 fiware_header=semantic_manager.
                         default_header.get_fiware_header()) as client:
             self.assertEqual(len(client.get_entity_list()), 0)
@@ -627,7 +631,14 @@ class TestSemanticsModels(unittest.TestCase):
         """
         from tests.semantics.models2 import Class3, Class1, semantic_manager
 
-        class3 = Class3(id="15")
+        new_header = InstanceHeader(
+            cb_url=settings.CB_URL,
+            iota_url=settings.IOTA_JSON_URL,
+            service="testService",
+            service_path=settings.FIWARE_SERVICEPATH
+        )
+
+        class3 = Class3(id="15", header=new_header)
         class3.commandProp.add(Command(name="c1"))
         class3.attributeProp.add(
             DeviceAttribute(name="_type",
@@ -643,15 +654,19 @@ class TestSemanticsModels(unittest.TestCase):
 
         semantic_manager.load_local_state_from_json(json=save)
 
-        class3_ = Class3(id="15")
+        class3_ = Class3(id="15", header=new_header)
         class1_ = Class1(id="11")
+        print(class3_)
         self.assertTrue("test" in class3_.dataProp1.get_all_raw())
         self.assertEqual(class3_.device_settings.dict(),
                          class3.device_settings.dict())
-        self.assertTrue(class3_.commandProp.get_all()[0].name == "c1")
-        self.assertTrue(class3_.attributeProp.get_all()[0].name == "_type")
-        self.assertTrue(class3_.attributeProp.get_all()[0].attribute_type ==
+        self.assertEqual(class3_.commandProp.get_all()[0].name, "c1")
+        self.assertEqual(class3_.attributeProp.get_all()[0].name , "_type")
+        self.assertEqual(class3_.attributeProp.get_all()[0].attribute_type,
                         DeviceAttributeType.active)
+
+        print(class3_.header)
+        self.assertEqual(class3_.header.service, "testService")
 
         added_class = [c for c in class3_.objProp2.get_all() if
                        isinstance(c, SemanticClass)][0]
@@ -867,18 +882,6 @@ class TestSemanticsModels(unittest.TestCase):
         print(inst)
         self.assertEqual(inst.metadata.name, "TestName")
         self.assertEqual(inst.metadata.comment, "TestComment")
-
-    def test__21_name_matching(self):
-        """
-        Test if find_fitting_model function works
-        """
-        from tests.semantics.models import semantic_manager
-
-        self.assertEqual(
-            semantic_manager.find_fitting_model("sensors"),
-            ['Sensor', 'Smoke_Sensor', 'Temperature_Sensor', 'Sensing_Function',
-             'Get_Sensing_Data_Command']
-        )
 
     def tearDown(self) -> None:
         """

@@ -1200,8 +1200,7 @@ class SemanticClass(BaseModel):
             assert cls.__name__ == kwargs['identifier'].type
         else:
             instance_id = kwargs['id'] if 'id' in kwargs else ""
-            header_ = kwargs['header'] \
-                if 'header' in kwargs else \
+            header_ = kwargs['header'] if 'header' in kwargs else \
                 semantic_manager_.get_default_header()
 
         if not instance_id == "" and not enforce_new:

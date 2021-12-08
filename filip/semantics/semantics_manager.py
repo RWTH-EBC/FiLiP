@@ -281,11 +281,11 @@ class SemanticsManager(BaseModel):
         if not self.is_class_name_an_device_class(class_name):
 
             loaded_class: SemanticClass = class_(id=entity.id,
-                                                 fiware_header=header,
+                                                 header=header,
                                                  enforce_new=True)
         else:
             loaded_class: SemanticDeviceClass = class_(id=entity.id,
-                                                       fiware_header=header,
+                                                       header=header,
                                                        enforce_new=True)
         loaded_class.old_state.state = entity
 
