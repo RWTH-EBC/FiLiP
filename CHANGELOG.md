@@ -1,3 +1,7 @@
+# Changelog
+
+<!--next-version-placeholder-->
+
 #### v0.1.8
 - QuantumLeap request pagination ([#47](https://github.com/RWTH-EBC/FiLiP/issues/47))
 - introduce mqtt client ([#45](https://github.com/RWTH-EBC/FiLiP/issues/45))
