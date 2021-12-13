@@ -15,7 +15,8 @@ INSTALL_REQUIRES = ['aenum',
                     'datamodel-code-generator>=0.10.2',
                     'pandas-datapackage-reader>=0.18.0',
                     'pydantic[dotenv]>=1.7.2',
-                    'tables']
+                    'tables',
+                    'regex']
 
 SETUP_REQUIRES = INSTALL_REQUIRES.copy()
 
