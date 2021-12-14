@@ -424,10 +424,13 @@ class VocabularyConfigurator:
         return res
 
     @classmethod
-    def generate_vocabulary_models(cls,
-                                   vocabulary: Vocabulary,
-                                   path: Optional[str],
-                                   filename: str) -> Optional[str]:
+    def generate_vocabulary_models(
+            cls,
+            vocabulary: Vocabulary,
+            path: Optional[str] = None,
+            filename: Optional[str] = None,
+            alternative_manager_name: Optional[str] = None) ->  \
+            Optional[str]:
         """
         Export the given vocabulary as python model file.
         All vocabulary classes will be converted to python classes,
@@ -439,6 +442,9 @@ class VocabularyConfigurator:
             vocabulary (Vocabulary): Vocabulary to export
             path (Optional[str]): Path where the file should be saved
             filename (Optional[str]): Name of the file
+            alternative_manager_name (Optional[str]): alternative name for
+                the semantic_manager. The manager of the model can than also
+                be referenced over the object with this name
 
         Raises:
             Exception: if file can not be saved as specified with path and
@@ -502,12 +508,15 @@ class VocabularyConfigurator:
                    "\n\tInstanceRegistry"
 
         content += "\n\n\n"
-        content += "semantic_manager: SemanticsManager = SemanticsManager("
+        content += f"semantic_manager: SemanticsManager = SemanticsManager("
         content += "\n\t"
         content += "instance_registry=InstanceRegistry(),"
         content += "\n"
         content += ")"
-
+        content += "\n\n"
+        if alternative_manager_name is not None:
+            content += f"{alternative_manager_name}: SemanticsManager"
+            content += f"= semantic_manager"
         content += "\n\n"
         content += "# ---------CLASSES--------- #"
 
@@ -567,14 +576,14 @@ class VocabularyConfigurator:
                 content += "\n\n\t"
                 content += "def __new__(cls, *args, **kwargs):"
                 content += "\n\t\t"
-                content += "kwargs['semantic_manager'] = semantic_manager"
+                content += f"kwargs['semantic_manager'] = semantic_manager"
                 content += "\n\t\t"
                 content += "return super().__new__(cls, *args, **kwargs)"
 
                 content += "\n\n\t"
                 content += "def __init__(self, *args, **kwargs):"
                 content += "\n\t\t"
-                content += "kwargs['semantic_manager'] = semantic_manager"
+                content += f"kwargs['semantic_manager'] = semantic_manager"
                 content += "\n\t\t"
                 content += "is_initialised = 'id' in self.__dict__"
                 content += "\n\t\t"
@@ -687,7 +696,7 @@ class VocabularyConfigurator:
                         f"rule='" \
                         f"{cdr.get_all_targetstatements_as_string(vocabulary)}',"
                     content += "\n\t\t"
-                    content += "semantic_manager=semantic_manager)"
+                    content += f"semantic_manager=semantic_manager)"
                     content += build_field_comment(cdr)
 
                 elif cdr_type == DataFieldType.command:
@@ -697,7 +706,7 @@ class VocabularyConfigurator:
                     content += "\n\t\t"
                     content += f"name='{label}',"
                     content += "\n\t\t"
-                    content += "semantic_manager=semantic_manager)"
+                    content += f"semantic_manager=semantic_manager)"
                     content += build_field_comment(cdr)
 
                 elif cdr_type == DataFieldType.device_attribute:
@@ -708,7 +717,7 @@ class VocabularyConfigurator:
                     content += "\n\t\t"
                     content += f"name='{label}',"
                     content += "\n\t\t"
-                    content += "semantic_manager=semantic_manager)"
+                    content += f"semantic_manager=semantic_manager)"
                     content += build_field_comment(cdr)
 
             # ------Add Relation Fields------
@@ -730,7 +739,7 @@ class VocabularyConfigurator:
                     content += str(cor.get_inverse_of_labels(vocabulary))
                     content += ",\n\t\t"
 
-                content += "semantic_manager=semantic_manager)"
+                content += f"semantic_manager=semantic_manager)"
                 content += build_field_comment(cor)
 
         content += "\n\n\n"
@@ -754,7 +763,8 @@ class VocabularyConfigurator:
         content += "\n"
 
         # Datatypes catalogue
-        content += "semantic_manager.datatype_catalogue = {"
+        content += f"semantic_manager.datatype_catalogue = "
+        content += "{"
         for name, datatype in vocabulary.datatypes.items():
             definition = datatype.export()
             content += "\n\t"
@@ -781,7 +791,8 @@ class VocabularyConfigurator:
 
         # build class dict
         content += "\n\n"
-        content += "semantic_manager.class_catalogue = {"
+        content += f"semantic_manager.class_catalogue = "
+        content += "{"
         for class_ in vocabulary.get_classes_sorted_by_label():
             content += "\n\t"
             content += f"'{class_.get_label()}': {class_.get_label()},"
@@ -790,7 +801,8 @@ class VocabularyConfigurator:
 
         # build individual dict
         content += "\n\n"
-        content += "semantic_manager.individual_catalogue = {"
+        content += f"semantic_manager.individual_catalogue = "
+        content += "{"
         for individual in vocabulary.individuals.values():
             content += "\n\t"
             content += f"'{individual.get_label()}': {individual.get_label()},"

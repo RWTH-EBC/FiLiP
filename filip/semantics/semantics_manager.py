@@ -185,12 +185,15 @@ class InstanceRegistry(BaseModel):
             instance = semantic_manager._context_entity_to_semantic_class(
                 context_entity, header)
 
-            instance.old_state.state = instance_dict['old_state']
+            if instance_dict['old_state'] is not None:
+                instance.old_state.state = \
+                    ContextEntity.parse_raw(instance_dict['old_state'])
 
             self._registry[instance.get_identifier()] = instance
 
         for identifier in save['deleted_identifiers']:
-            self._deleted_identifiers.append(identifier)
+            self._deleted_identifiers.append(
+                InstanceIdentifier.parse_raw(identifier))
 
 
 class SemanticsManager(BaseModel):
@@ -287,6 +290,7 @@ class SemanticsManager(BaseModel):
             loaded_class: SemanticDeviceClass = class_(id=entity.id,
                                                        header=header,
                                                        enforce_new=True)
+
         loaded_class.old_state.state = entity
 
         # load values of class from the context_entity into the instance
