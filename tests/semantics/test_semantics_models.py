@@ -120,9 +120,18 @@ class TestSemanticsModels(unittest.TestCase):
         self.assertFalse(class13.objProp2.is_valid())
         class13.objProp2.add(Class123(id="311"))
         self.assertFalse(class13.objProp2.is_valid())
+        self.assertEqual(
+            class13.objProp2.are_rules_fulfilled(),
+            [['some Class1', True], ['value Individual1', False],
+             ['some (Class1 and Class2)', True]])
+
         class13.objProp2.remove(Class123(id="311"))
         class13.objProp2.add(Individual1())
         self.assertTrue(class13.objProp2.is_valid())
+        self.assertEqual(
+            class13.objProp2.are_rules_fulfilled(),
+            [['some Class1', True], ['value Individual1', True],
+             ['some (Class1 and Class2)', True]])
 
         # Test statement cases:
 
@@ -882,6 +891,70 @@ class TestSemanticsModels(unittest.TestCase):
         print(inst)
         self.assertEqual(inst.metadata.name, "TestName")
         self.assertEqual(inst.metadata.comment, "TestComment")
+
+    def test__21_possible_field_values(self):
+        """
+        Test for Rule-fields if they give back the value types that they allow
+        """
+        from tests.semantics.models import Class1, Class13, Class123, \
+            Individual1, Gertrude, semantic_manager, Class3a, Class3
+
+        obj = Gertrude()
+        class1 = Class1()
+        class123 = Class123()
+
+        # Enum values
+        self.assertEqual(set(obj.attributeProp.get_possible_enum_values()),
+                         {'0', '15', '30'})
+        self.assertEqual(class1.dataProp2.get_possible_enum_values(), [])
+
+        # possible Datatypes
+        self.assertEqual(obj.attributeProp.get_all_possible_datatypes(),
+                         [semantic_manager.get_datatype("customDataType1")])
+        self.assertEqual(class1.dataProp2.get_possible_enum_values(),
+                         [])
+        self.assertEqual(class123.commandProp.get_all_possible_datatypes(),
+                         [semantic_manager.get_datatype("string")])
+
+        # possible classes in relations
+        self.assertEqual(
+            set(obj.objProp3.get_all_possible_classes(include_subclasses=True)),
+            {Class3, Class123, Class13, Class3a})
+        self.assertEqual(
+            set(obj.objProp3.get_all_possible_classes()),
+            {Class3})
+
+        # possible Individuals in relations
+        self.assertEqual(obj.objProp5.get_all_possible_individuals(),
+                         [Individual1()])
+
+    def test__22_get_instances(self):
+        from tests.semantics.models import Class1, Class13, Class123, \
+            Individual1, Gertrude, semantic_manager, Class3a, Class3
+
+        obj = Gertrude()
+        class1 = Class1()
+        class123 = Class123()
+
+        self.assertEqual(
+            set(semantic_manager.get_all_local_instances_of_class(
+                class_name="Class1")),
+            {class1, class123, obj})
+
+        self.assertEqual(
+            set(semantic_manager.get_all_local_instances_of_class(
+                class_name="Class1", get_subclasses=False)),
+            {class1})
+
+        self.assertEqual(
+            set(semantic_manager.get_all_local_instances_of_class(
+                class_=Gertrude)),
+            {obj})
+
+        self.assertEqual(
+            set(semantic_manager.get_all_local_instances_of_class(
+                class_=Class123, get_subclasses=False)),
+            {class123})
 
     def tearDown(self) -> None:
         """

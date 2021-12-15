@@ -195,6 +195,12 @@ class InstanceRegistry(BaseModel):
             self._deleted_identifiers.append(
                 InstanceIdentifier.parse_raw(identifier))
 
+    def __hash__(self):
+        values = (hash(value) for value in self._registry.values())
+
+        return hash((frozenset(values),
+                     frozenset(self._deleted_identifiers)))
+
 
 class SemanticsManager(BaseModel):
     """
@@ -589,17 +595,22 @@ class SemanticsManager(BaseModel):
         """
         return self.instance_registry.get_all()
 
-    def get_all_local_instances_of_class(self, class_: type, class_name: str) \
+    def get_all_local_instances_of_class(self,
+                                         class_: Optional[type] = None,
+                                         class_name: Optional[str] = None,
+                                         get_subclasses: bool = True) \
             -> List[SemanticClass]:
         """
         Retrieve all instances of a SemanitcClass from Local Storage
 
         Args:
             class_ (type): Type of classes to retrieve
-            class_name (Str): Type of classes to retrieve as string
+            class_name (str): Name of type of classes to retrieve as string
+            get_subclasses (bool): If true also all instances of subclasses
+                of given class are returned
 
         Raises:
-            AssertionError: If both parameters are non None
+            AssertionError: If class_ and class_name are both None or non None
 
         Returns:
             List[SemanticClass]
@@ -612,11 +623,17 @@ class SemanticsManager(BaseModel):
 
         if class_ is not None:
             class_name = class_.__name__
+        else:
+            class_ = self.get_class_by_name(class_name)
 
         res = []
         for instance in self.instance_registry.get_all():
-            if instance.get_type() == class_name:
-                res.append(instance)
+            if not get_subclasses:
+                if instance.get_type() == class_name:
+                    res.append(instance)
+            else:
+                if isinstance(instance, class_):
+                    res.append(instance)
         return res
 
     def load_instances_from_fiware(
