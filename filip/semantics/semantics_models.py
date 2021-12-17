@@ -642,7 +642,7 @@ class DeviceField(Field):
         v._instance_link.semantic_manager = self._semantic_manager
         v._instance_link.field_name = self.name
 
-    def _name_check(self, v: _internal_type):
+    def name_check(self, v: _internal_type):
         """
         Executes name checks before value v is assigned to field values
         Each field name that v will add to the Fiware instance needs to be
@@ -693,7 +693,7 @@ class DeviceField(Field):
         Returns:
             None
         """
-        self._name_check(v)
+        self.name_check(v)
         self._pre_set(v)
         super(DeviceField, self).add(v)
 
