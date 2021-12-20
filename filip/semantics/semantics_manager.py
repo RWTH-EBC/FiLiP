@@ -3,6 +3,7 @@
 import copy
 import json
 import logging
+import uuid
 from math import inf
 
 import requests
@@ -848,6 +849,162 @@ class SemanticsManager(BaseModel):
                         "bbox": (len(g.vs) * 100, len(g.vs) * 100)}
 
         igraph.plot(g, **visual_style)
+
+    def generate_cytoscape_for_local_state(
+            self,
+            display_only_used_individuals: bool = True
+            ):
+        """
+        Generate a graph definition that can be loaded into a cytoscape
+        visualisation tool, that describes the complete current local state.
+
+        For the graph layout COLA is recommended with an edge length of 150
+
+        Args:
+            display_only_used_individuals (bool):
+                If true(default): Show only Individuals that are connected to
+                    at least one instance
+                else: Show all individuals
+
+        Returns:
+            [elements, stylesheet]:
+
+                elements is a dict: {"nodes": NODE_DEFINITIONS,
+                                     "edges": EDGE_DEFINITIONS}
+                stylesheet is a list containing all the graph styles
+        """
+
+        # graph design
+        stylesheet = [
+            {
+                'selector': 'node',
+                'style': {
+                    'label': 'data(label)',
+                    'z-index': 9999
+                }
+            },
+            {
+                'selector': 'edge',
+                'style': {
+                    'curve-style': 'bezier',
+                    'target-arrow-color': 'black',
+                    'target-arrow-shape': 'triangle',
+                    'line-color': 'black',
+                    "opacity": 0.45,
+                    'z-index': 5000,
+                }
+            },
+            {
+                'selector': '.center',
+                'style': {
+                    'shape': 'rectangle',
+                    'background-color': 'black'
+                }
+            },
+            {
+                'selector': '.individual',
+                'style': {
+                    'shape': 'circle',
+                    'background-color': 'orange'
+                }
+            },
+            {
+                'selector': '.instance',
+                'style': {
+                    'shape': 'circle',
+                    'background-color': 'green'
+                }
+            },
+            {
+                'selector': '.collection',
+                'style': {
+                    'shape': 'triangle',
+                    'background-color': 'gray'
+                }
+            }
+        ]
+
+        nodes = []
+        edges = []
+
+        used_individual_names = set()
+        if not display_only_used_individuals:
+            used_individual_names.update(self.individual_catalogue.keys())
+
+        def get_node_id(item: Union[SemanticClass, SemanticIndividual]) -> str:
+            """
+            Get the id to be used in the graph for an item
+
+            Args:
+                item (Union[SemanticClass, SemanticIndividual]): Item to get
+                                                                    ID for
+
+            Returns:
+                str - ID
+            """
+            if isinstance(item, SemanticIndividual):
+                return item.get_name()
+            else:
+                return item.get_identifier().json()
+
+        for instance in self.get_all_local_instances():
+            label = f'({instance.get_type()}){instance.metadata.name}'
+            nodes.append({'data': {'id': get_node_id(instance),
+                                   'label': label,
+                                   'parent_id': '',
+                                   'classes': "instance item"},
+                          'classes': "instance item"})
+
+        for instance in self.get_all_local_instances():
+
+            for rel_field in instance.get_relation_fields():
+
+                values = rel_field.get_all()
+                for v in values:
+                    if isinstance(v, SemanticIndividual):
+                        used_individual_names.add(v.get_name())
+
+                if len(values) == 0:
+                    pass
+                elif len(values) == 1:
+                    edge_id = uuid.uuid4().hex
+                    edges.append({'data': {'id': edge_id,
+                                           'source': get_node_id(instance),
+                                           'target': get_node_id(values[0])}})
+                    edge_name = rel_field.name
+                    stylesheet.append({'selector': '#' + edge_id,
+                                       'style': {'label': edge_name}})
+                else:
+                    edge_id = uuid.uuid4().hex
+                    node_id = uuid.uuid4().hex
+                    nodes.append({'data': {'id': node_id,
+                                           'label': '',
+                                           'parent_id': '',
+                                           'classes': "collection"},
+                                  'classes': "collection"})
+
+                    edges.append({'data': {'id': edge_id,
+                                           'source': get_node_id(instance),
+                                           'target': node_id}})
+                    edge_name = rel_field.name
+                    stylesheet.append({'selector': '#' + edge_id,
+                                       'style': {'label': edge_name}})
+
+                    for value in values:
+                        edge_id = uuid.uuid4().hex
+                        edges.append({'data': {'id': edge_id,
+                                               'source': node_id,
+                                               'target': get_node_id(value)}})
+
+        for individual_name in used_individual_names:
+            nodes.append({'data': {'id': individual_name,
+                                   'label': individual_name, 'parent_id': '',
+                                   'classes': "individual item"},
+                          'classes': "individual item"})
+
+        elements = {'nodes': nodes, 'edges': edges}
+
+        return elements, stylesheet
 
     def merge_local_and_live_instance_state(self, instance: SemanticClass) ->\
             None:
