@@ -227,10 +227,16 @@ class DeviceProperty(BaseModel):
                             "an uncaught naming conflict happened")
         return attr
 
-    def get_all_field_names(self) -> List[str]:
+    def get_all_field_names(self, field_name: Optional[str] = None) \
+            -> List[str]:
         """
         Get all field names which this property creates in the fiware
         instance
+
+        Args:
+            field_name (Optional[str]): Name of the field to which the attribute
+                is/will be added. If none is provided, the linked field name
+                is used
         """
         pass
 
@@ -288,9 +294,13 @@ class Command(DeviceProperty):
         return self._get_field_from_fiware(field_name=f'{self.name}_status',
                                            required_type="commandStatus").value
 
-    def get_all_field_names(self) -> List[str]:
+    def get_all_field_names(self, field_name: Optional[str] = None) \
+            -> List[str]:
         """
         Get all the field names that this command will add to Fiware
+
+        Args:
+            field_name (Optional[str]): Not used, but needed in the signature
         """
         return [self.name, f"{self.name}_info", f"{self.name}_result"]
 
@@ -338,11 +348,20 @@ class DeviceAttribute(DeviceProperty):
             field_name=f'{self._instance_link.field_name}_{self.name}',
             required_type="StructuredValue").value
 
-    def get_all_field_names(self) -> List[str]:
+    def get_all_field_names(self, field_name: Optional[str] = None) \
+            -> List[str]:
         """
-        Get all the field names that this command will add to Fiware
+        Get all field names which this property creates in the fiware
+        instance
+
+        Args:
+            field_name (str): Name of the field to which the attribute
+                is/will be added. If none is provided, the linked field name
+                is used
         """
-        return [f'{self._instance_link.field_name}_{self.name}']
+        if field_name is None:
+            field_name = self._instance_link.field_name
+        return [f'{field_name}_{self.name}']
 
     class Config:
         """if the name or type is changed the attribute needs to be removed
@@ -623,25 +642,6 @@ class DeviceField(Field):
                 return False
         return True
 
-    def _pre_set(self, v):
-        """
-        Executes checks before value v is assigned to field values
-        And sets internal values of v to link it to this field
-
-        Args:
-             v (Any): Value to be added to the field
-        Raises:
-            AssertionError: if v not of type: internal_type
-                            if v does already belong to a field
-        """
-        assert isinstance(v, self._internal_type)
-        assert isinstance(v, DeviceProperty)
-        assert v._instance_link.instance_identifier is None,\
-            "DeviceProperty can only belong to one device instance"
-        v._instance_link.instance_identifier = self._instance_identifier
-        v._instance_link.semantic_manager = self._semantic_manager
-        v._instance_link.field_name = self.name
-
     def name_check(self, v: _internal_type):
         """
         Executes name checks before value v is assigned to field values
@@ -656,7 +656,7 @@ class DeviceField(Field):
                        if the name of v contains a forbidden character
         """
         taken_fields = self._get_instance().get_all_field_names()
-        for name in v.get_all_field_names():
+        for name in v.get_all_field_names(field_name=self.name):
             if name in taken_fields:
                 raise NameError(f"The property can not be added to the field "
                                 f"{self.name}, because the instance already"
@@ -688,13 +688,28 @@ class DeviceField(Field):
             v, value to add
 
         Raises:
-            ValueError, if v is of wrong type
+            AssertionError, if v is of wrong type
+            AssertionError, if v already belongs to a field
+            NameError, if v has an invalid name
 
         Returns:
             None
         """
+
+        # assert that the given value fulfills certain conditions
+        assert isinstance(v, self._internal_type)
+        assert isinstance(v, DeviceProperty)
+        assert v._instance_link.instance_identifier is None, \
+            "DeviceProperty can only belong to one device instance"
+
+        # test if name of v is valid, if not an error is raised
         self.name_check(v)
-        self._pre_set(v)
+
+        # link attribute to field and instance
+        v._instance_link.instance_identifier = self._instance_identifier
+        v._instance_link.semantic_manager = self._semantic_manager
+        v._instance_link.field_name = self.name
+
         super(DeviceField, self).add(v)
 
     def get_field_names(self) -> List[str]:

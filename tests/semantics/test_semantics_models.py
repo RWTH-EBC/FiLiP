@@ -626,6 +626,12 @@ class TestSemanticsModels(unittest.TestCase):
         self.assertRaises(
             NameError,
             class3.attributeProp.add,
+            DeviceAttribute(name="_type",
+                            attribute_type=DeviceAttributeType.active))
+
+        self.assertRaises(
+            NameError,
+            class3.attributeProp.add,
             DeviceAttribute(name="!type",
                             attribute_type=DeviceAttributeType.active))
 
