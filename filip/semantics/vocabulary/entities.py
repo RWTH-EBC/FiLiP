@@ -374,14 +374,14 @@ class Class(Entity):
             self.parent_class_iris.remove(iri)
 
         # relations
-        relation_ids_to_purge = []
+        relation_ids_to_purge = set()
         for relation in self.get_relations(vocabulary):
 
             relation_statements = relation.get_dependency_statements(
                 vocabulary, self.get_ontology_iri(), self.iri)
             for statement in relation_statements:
                 if statement.fulfilled == False:
-                    relation_ids_to_purge.append(relation.id)
+                    relation_ids_to_purge.add(relation.id)
             statements.extend(relation_statements)
 
         for id in relation_ids_to_purge:

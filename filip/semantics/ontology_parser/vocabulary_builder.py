@@ -5,6 +5,8 @@ from enum import Enum
 
 from pydantic import BaseModel, Field
 from typing import Dict
+
+from filip.models.base import LogLevel
 from filip.semantics.vocabulary import *
 
 
@@ -245,7 +247,7 @@ class VocabularyBuilder(BaseModel):
         if entity.iri in entity_dict:
             old_entity = entity_dict[entity.iri]
             self.current_source.add_parsing_log_entry(
-                LoggingLevel.warning, id_type, entity.iri,
+                LogLevel.WARNING, id_type, entity.iri,
                 "{} {} from source {} was overwritten"
                 .format(id_type, old_entity.get_label(),
                         old_entity.get_source_name(self.vocabulary)))
