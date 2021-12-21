@@ -31,7 +31,7 @@ class Thing(SemanticClass):
 	"""
 	Predefined root_class
 
-	Source: 
+	Source(s): 
 		None (Predefined)
 	"""
 
@@ -49,7 +49,7 @@ class Class1(Thing):
 	"""
 	Comment On Class 1
 
-	Source: 
+	Source(s): 
 		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
 	"""
 
@@ -116,7 +116,7 @@ class Class1a(Class1):
 	"""
 	Generated SemanticClass without description
 
-	Source: 
+	Source(s): 
 		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
 	"""
 
@@ -180,7 +180,7 @@ class Class1aa(Class1a):
 	"""
 	Generated SemanticClass without description
 
-	Source: 
+	Source(s): 
 		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
 	"""
 
@@ -244,7 +244,7 @@ class Class1b(Class1):
 	"""
 	Generated SemanticClass without description
 
-	Source: 
+	Source(s): 
 		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
 	"""
 
@@ -308,7 +308,7 @@ class Class2(SemanticDeviceClass, Thing):
 	"""
 	Generated SemanticClass without description
 
-	Source: 
+	Source(s): 
 		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
 	"""
 
@@ -348,7 +348,7 @@ class Class3(SemanticDeviceClass, Thing):
 	"""
 	Generated SemanticClass without description
 
-	Source: 
+	Source(s): 
 		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
 	"""
 
@@ -403,7 +403,7 @@ class Class123(Class1, Class2, Class3):
 	"""
 	Generated SemanticClass without description
 
-	Source: 
+	Source(s): 
 		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
 	"""
 
@@ -484,7 +484,7 @@ class Class13(Class1, Class3):
 	"""
 	Generated SemanticClass without description
 
-	Source: 
+	Source(s): 
 		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
 	"""
 
@@ -565,7 +565,7 @@ class Class3a(Class3):
 	"""
 	Generated SemanticClass without description
 
-	Source: 
+	Source(s): 
 		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
 	"""
 
@@ -617,7 +617,7 @@ class Class3aa(Class3a):
 	"""
 	Generated SemanticClass without description
 
-	Source: 
+	Source(s): 
 		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
 	"""
 
@@ -669,7 +669,7 @@ class Class4(Thing):
 	"""
 	Generated SemanticClass without description
 
-	Source: 
+	Source(s): 
 		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
 	"""
 
@@ -694,7 +694,7 @@ class Gertrude(Class1, Class2):
 	"""
 	Generated SemanticClass without description
 
-	Source: 
+	Source(s): 
 		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
 	"""
 

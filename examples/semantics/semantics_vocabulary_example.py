@@ -190,7 +190,6 @@ if __name__ == '__main__':
     entity = vocabulary.get_entity_by_iri('https://w3id.org/saref#Sensor')
     entity.set_label("SarefSensor")
 
-
     # # 6 IoT Devices
     #
     # Currently all our classes in the vocabulary are ContextEntities.

@@ -71,7 +71,7 @@ class Source(BaseModel):
     source_name: str = Field(default="",
                              description="Name of the source ")
     content: str = Field(
-        default="",
+        default=set(),
         description="File content of the provided ontology file")
     parsing_log: List['ParsingError'] = Field(
         default=[],
@@ -93,7 +93,8 @@ class Source(BaseModel):
 
     def get_number_of_id_type(self, vocabulary: 'Vocabulary',
                               id_type: 'IdType') -> int:
-        """Get the number how many entities of a given type are from this source
+        """Get the number how many entities of a given type are created by or
+        influenced by this source
 
         Args:
             vocabulary (Vocabulary): Vocabulary of this project
@@ -129,7 +130,7 @@ class Source(BaseModel):
         counter = 0
         for iri in iri_list:
             entity = id_func(iri)
-            if entity.get_source_id() == self.id:
+            if self.id in entity.source_ids:
                 counter += 1
         return counter
 
@@ -155,13 +156,13 @@ class Source(BaseModel):
         dependency_statements = []
 
         for class_ in vocabulary.get_classes():
-            if class_.get_source_id() == self.id:
+            if self.id in class_.source_ids:
                 dependency_statements.extend(
                     class_.treat_dependency_statements(vocabulary))
 
         for individual_iri in vocabulary.individuals:
             individual = vocabulary.get_individual(individual_iri)
-            if individual.get_source_id() == self.id:
+            if self.id in individual.source_ids:
                 dependency_statements.extend(
                     individual.treat_dependency_statements(vocabulary))
 

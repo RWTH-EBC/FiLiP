@@ -344,7 +344,7 @@ class PostProcessor:
 
         if root_class.iri not in voc_builder.vocabulary.classes:
             voc_builder.add_class(root_class)
-            root_class.source_id = "PREDEFINED"
+            root_class.source_ids.add("PREDEFINED")
 
     @classmethod
     def _remove_duplicate_parents(cls, voc_builder: VocabularyBuilder):

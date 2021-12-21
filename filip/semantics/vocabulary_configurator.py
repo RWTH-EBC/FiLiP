@@ -566,9 +566,11 @@ class VocabularyConfigurator:
             if class_.comment == "":
                 content += "\n\tGenerated SemanticClass without description"
             content += f"\n\n\t"
-            content += f"Source: \n\t\t" \
-                       f"{vocabulary.sources[class_.source_id].ontology_iri} " \
-                       f"({vocabulary.sources[class_.source_id].source_name})"
+            content += f"Source(s): \n\t\t"
+
+            for source_id in class_.source_ids:
+                content += f"{vocabulary.sources[source_id].ontology_iri} " \
+                           f"({vocabulary.sources[source_id].source_name})"
             content += f'\n\t"""'
 
             # ------Constructors------

@@ -12,7 +12,8 @@ if TYPE_CHECKING:
         CombinedDataRelation, \
         CombinedRelation, \
         Relation, \
-        Vocabulary
+        Vocabulary, \
+        Source
 
 
 class Entity(BaseModel):
@@ -38,9 +39,9 @@ class Entity(BaseModel):
     comment: str = Field(
         default="",
         description="Comment extracted from the ontology/source")
-    source_id: str = Field(
-        default="",
-        description="ID of the source")
+    source_ids: Set[str] = Field(
+        default=set(),
+        description="IDs of the sources that influenced this class")
     predefined: bool = Field(
         default=False,
         description="Stats if the entity is not extracted from a source, "
@@ -77,16 +78,8 @@ class Entity(BaseModel):
         index = self.iri.find("#")
         return self.iri[:index]
 
-    def get_source_id(self) -> str:
-        """ Get ID of the source
-
-        Returns:
-            str
-        """
-        return self.source_id
-
-    def get_source_name(self, vocabulary: 'Vocabulary') -> str:
-        """ Get name of the source
+    def get_source_names(self, vocabulary: 'Vocabulary') -> List[str]:
+        """ Get the names of all the sources
 
         Args:
             vocabulary (Vocabulary): Vocabulary of the project
@@ -94,7 +87,26 @@ class Entity(BaseModel):
         Returns:
             str
         """
-        return vocabulary.get_source(self.source_id).get_name()
+        names = [vocabulary.get_source(id).get_name() for
+                 id in self.source_ids]
+
+        return names
+
+    def get_sources(self, vocabulary: 'Vocabulary') -> List['Source']:
+        """ Get all the source objects that influenced this entity.
+        The sources are sorted according to their names
+
+        Args:
+           vocabulary (Vocabulary): Vocabulary of the project
+
+        Returns:
+           str
+        """
+
+        sources = [vocabulary.get_source(id) for id in self.source_ids]
+
+        sources.sort(key=lambda x: x.source_name, reverse=False)
+        return sources
 
     def _lists_are_identical(self, a: List, b: List) -> bool:
         """ Methode to test if to lists contain the same entries

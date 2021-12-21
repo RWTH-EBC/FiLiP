@@ -3,6 +3,7 @@
 import uuid
 from enum import Enum
 
+
 from pydantic import BaseModel, Field
 from typing import Dict
 
@@ -61,14 +62,9 @@ class VocabularyBuilder(BaseModel):
         Returns:
             None
         """
-
-        self._add_log_entry_for_overwriting_entity(class_,
-                                                   self.vocabulary.classes,
-                                                   IdType.class_)
-
-        self.vocabulary.classes[class_.iri] = class_
-        self.vocabulary.id_types[class_.iri] = IdType.class_
-        class_.source_id = self.current_source.id
+        self._add_and_merge_entity(class_,
+                                   self.vocabulary.classes,
+                                   IdType.class_)
 
     def add_object_property(self, obj_prop: ObjectProperty):
         """Add an ObjectProperty to the vocabulary
@@ -79,13 +75,8 @@ class VocabularyBuilder(BaseModel):
         Returns:
             None
         """
-
-        self._add_log_entry_for_overwriting_entity(
+        self._add_and_merge_entity(
             obj_prop, self.vocabulary.object_properties, IdType.object_property)
-
-        self.vocabulary.object_properties[obj_prop.iri] = obj_prop
-        self.vocabulary.id_types[obj_prop.iri] = IdType.object_property
-        obj_prop.source_id = self.current_source.id
 
     def add_data_property(self, data_prop: DataProperty):
         """Add an DataProperty to the vocabulary
@@ -96,13 +87,8 @@ class VocabularyBuilder(BaseModel):
         Returns:
             None
         """
-
-        self._add_log_entry_for_overwriting_entity(
+        self._add_and_merge_entity(
             data_prop, self.vocabulary.data_properties, IdType.data_property)
-
-        self.vocabulary.data_properties[data_prop.iri] = data_prop
-        self.vocabulary.id_types[data_prop.iri] = IdType.data_property
-        data_prop.source_id = self.current_source.id
 
     def add_datatype(self, datatype: Datatype):
         """Add a DataType to the vocabulary
@@ -113,13 +99,8 @@ class VocabularyBuilder(BaseModel):
         Returns:
             None
         """
-
-        self._add_log_entry_for_overwriting_entity(
+        self._add_and_merge_entity(
             datatype, self.vocabulary.datatypes, IdType.datatype)
-
-        self.vocabulary.id_types[datatype.iri] = IdType.datatype
-        self.vocabulary.datatypes[datatype.iri] = datatype
-        datatype.source_id = self.current_source.id
 
     def add_predefined_datatype(self, datatype: Datatype):
         """Add a DataType to the vocabulary, that belongs to the source:
@@ -134,7 +115,7 @@ class VocabularyBuilder(BaseModel):
         self.vocabulary.id_types[datatype.iri] = IdType.datatype
         self.vocabulary.datatypes[datatype.iri] = datatype
         datatype.predefined = True
-        datatype.source_id = "PREDEFINED"
+        datatype.source_ids.add("PREDEFINED")
 
     def add_individual(self, individual: Individual):
         """Add an Individual to the vocabulary
@@ -145,14 +126,9 @@ class VocabularyBuilder(BaseModel):
         Returns:
             None
         """
-
-        self._add_log_entry_for_overwriting_entity(individual,
-                                                   self.vocabulary.individuals,
-                                                   IdType.individual)
-
-        self.vocabulary.individuals[individual.iri] = individual
-        self.vocabulary.id_types[individual.iri] = IdType.individual
-        individual.source_id = self.current_source.id
+        self._add_and_merge_entity(individual,
+                                   self.vocabulary.individuals,
+                                   IdType.individual)
 
     def add_relation_for_class(self, class_iri: str, rel: Relation):
         """Add a relation object to a class
@@ -230,27 +206,59 @@ class VocabularyBuilder(BaseModel):
         assert source_id in self.vocabulary.sources
         self.current_source = self.vocabulary.sources[source_id]
 
-    def _add_log_entry_for_overwriting_entity(self, entity: Entity,
-                                              entity_dict: Dict[str, Entity],
-                                              id_type: IdType):
-        """Test if an entity exists, if yes add a parsing statement to the
-        current source, that it will be overwritten
+    def _add_and_merge_entity(self,
+                              entity: Entity,
+                              entity_dict: Dict[str, Entity],
+                              id_type: IdType):
+        """Adds an entity to the vocabulary. If an entity with teh same iri
+        already exists the label and comment are "merged" and both sources
+        are noted
 
         Args:
             entity: Entity to check
             entity_dict: Existing entities
             id_type: Type of entity
 
+        Raises:
+            ParsingError: if Entity of iri exists but has a different IdType
+
         Returns:
             None
         """
-        if entity.iri in entity_dict:
+
+        if entity.iri in self.vocabulary.id_types:
+            if not id_type == self.vocabulary.id_types[entity.iri]:
+                from filip.semantics.vocabulary_configurator import \
+                    ParsingException
+                raise ParsingException("Entity exists multiple times in "
+                                       "different categories")
+
             old_entity = entity_dict[entity.iri]
-            self.current_source.add_parsing_log_entry(
-                LogLevel.WARNING, id_type, entity.iri,
-                "{} {} from source {} was overwritten"
-                .format(id_type, old_entity.get_label(),
-                        old_entity.get_source_name(self.vocabulary)))
+
+            def select_from(old: str, new: str, property: str) -> str:
+                """
+                Given two strings, one from the old_entity , one form the new
+                one. It is selected which one to use.
+                """
+                if old == "":
+                    return new
+                elif new == "":
+                    return ""
+                else:
+                    self.current_source.add_parsing_log_entry(
+                        LogLevel.WARNING, id_type, entity.iri,
+                        f"{property} from source "
+                        f"{old_entity.get_source_names(self.vocabulary)} "
+                        f"was overwritten")
+                    return new
+
+            entity.label = select_from(old_entity.label, entity.label, "label")
+            entity.comment = select_from(old_entity.comment, entity.comment,
+                                         "comment")
+
+        self.vocabulary.id_types[entity.iri] = id_type
+        entity.source_ids.add(self.current_source.id)
+        entity_dict[entity.iri] = entity
 
     def entity_is_known(self, iri: str) -> bool:
         """Test if the given iri is in vocabulary, if not it belongs to a

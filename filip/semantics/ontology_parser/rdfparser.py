@@ -211,8 +211,8 @@ class RdfParser:
             if isinstance(a, rdflib.term.BNode):
                 self._add_logging_information(LogLevel.WARNING,
                                               IdType.object_property,
-                                             "unknown",
-                                             "Found unparseable statement")
+                                              "unknown",
+                                              "Found unparseable statement")
 
             else:
                 # defined in other source -> ignore

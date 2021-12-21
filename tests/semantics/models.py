@@ -32,7 +32,7 @@ class Currency(SemanticClass):
 	"""
 	The Unit Of Measure For Price
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -45,7 +45,7 @@ class Energy_Unit(SemanticClass):
 	"""
 	The Unit Of Measure For Energy
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -58,7 +58,7 @@ class Illuminance_Unit(SemanticClass):
 	"""
 	The Unit Of Measure For Light
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -71,7 +71,7 @@ class Power_Unit(SemanticClass):
 	"""
 	The Unit Of Measure For Power
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -84,7 +84,7 @@ class Pressure_Unit(SemanticClass):
 	"""
 	The Unit Of Measure For Pressure
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -97,7 +97,7 @@ class Temperature_Unit(SemanticClass):
 	"""
 	The Unit Of Measure For Temperature
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -110,7 +110,7 @@ class Thing(SemanticClass):
 	"""
 	Predefined root_class
 
-	Source: 
+	Source(s): 
 		None (Predefined)
 	"""
 
@@ -128,7 +128,7 @@ class Class1(Thing):
 	"""
 	Comment On Class 1
 
-	Source: 
+	Source(s): 
 		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
 	"""
 
@@ -195,7 +195,7 @@ class Class1a(Class1):
 	"""
 	Generated SemanticClass without description
 
-	Source: 
+	Source(s): 
 		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
 	"""
 
@@ -259,7 +259,7 @@ class Class1aa(Class1a):
 	"""
 	Generated SemanticClass without description
 
-	Source: 
+	Source(s): 
 		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
 	"""
 
@@ -323,7 +323,7 @@ class Class1b(Class1):
 	"""
 	Generated SemanticClass without description
 
-	Source: 
+	Source(s): 
 		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
 	"""
 
@@ -387,7 +387,7 @@ class Class2(Thing):
 	"""
 	Generated SemanticClass without description
 
-	Source: 
+	Source(s): 
 		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
 	"""
 
@@ -429,7 +429,7 @@ class Class3(Thing):
 	"""
 	Generated SemanticClass without description
 
-	Source: 
+	Source(s): 
 		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
 	"""
 
@@ -488,7 +488,7 @@ class Class123(Class1, Class2, Class3):
 	"""
 	Generated SemanticClass without description
 
-	Source: 
+	Source(s): 
 		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
 	"""
 
@@ -573,7 +573,7 @@ class Class13(Class1, Class3):
 	"""
 	Generated SemanticClass without description
 
-	Source: 
+	Source(s): 
 		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
 	"""
 
@@ -658,7 +658,7 @@ class Class3a(Class3):
 	"""
 	Generated SemanticClass without description
 
-	Source: 
+	Source(s): 
 		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
 	"""
 
@@ -714,7 +714,7 @@ class Class3aa(Class3a):
 	"""
 	Generated SemanticClass without description
 
-	Source: 
+	Source(s): 
 		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
 	"""
 
@@ -770,7 +770,7 @@ class Class4(Thing):
 	"""
 	Generated SemanticClass without description
 
-	Source: 
+	Source(s): 
 		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
 	"""
 
@@ -800,7 +800,7 @@ class Command(Thing):
 	Value. We Propose Here A List Of Commands That Are Relevant For The Purpose
 	Of Saref, But This List Can Be Extended.
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -851,7 +851,7 @@ class Close_Command(Command):
 	"""
 	A Type Of Command
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -904,7 +904,7 @@ class Commodity(Thing):
 	Qualitative Differentiation Across A Market. Saref Refers To Energy
 	Commodities Such As Electricity, Gas, Coal And Oil. 
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -917,7 +917,7 @@ class Coal(Commodity):
 	"""
 	A Type Of Commodity
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -942,7 +942,7 @@ class Device(Thing):
 	Of Devices That Are Relevant For The Purpose Of Saref, But This List Can Be
 	Extended.
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -1114,7 +1114,7 @@ class Building_Related(Device):
 	A Category That Includes Devices As Described By Building Related Data
 	Models, Such As Ifc And Fiemser 
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -1285,7 +1285,7 @@ class Electricity(Commodity):
 	"""
 	A Type Of Commodity
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -1299,7 +1299,7 @@ class Energy_Related(Device):
 	A Category That Considers Devices Based On Energy Consumption Information
 	And Profiles To Optimize Energy Efficiency.
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -1476,7 +1476,7 @@ class Function(Thing):
 	Heat, Power, Etc.), Or The Capability That A Function Can Support (E.G.,
 	Receive, Reply, Notify, Etc.), And So Forth. 
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -1506,7 +1506,7 @@ class Actuating_Function(Function):
 	A Function That Allows To Transmit Data To Actuators, Such As Level Settings
 	(E.G., Temperature) Or Binary Switching (E.G., Open/Close, On/Off)
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -1536,7 +1536,7 @@ class Event_Function(Function):
 	A Function That Allows To Notify Another Device That A Certain Threshold
 	Value Has Been Exceeded.
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -1577,7 +1577,7 @@ class Function_Related(Device):
 	A Category That Considers Devices, Sensors And Their Specification In Terms
 	Of Functions, States And Services
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -1749,7 +1749,7 @@ class Actuator(Function_Related):
 	A Device Responsible For Moving Or Controlling A Mechanism Or System By
 	Performing An Actuating Function
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -1921,7 +1921,7 @@ class Appliance(Function_Related):
 	An Electrical/Mechanical Machine That Accomplish Some Household Functions,
 	Such As Cleaning Or Cooking
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -2092,7 +2092,7 @@ class Gas(Commodity):
 	"""
 	A Type Of Commodity
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -2105,7 +2105,7 @@ class Generator(Energy_Related):
 	"""
 	A Type Of Energy-Related Device That Generates Energy
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -2276,7 +2276,7 @@ class Gertrude(Class1, Class2):
 	"""
 	Generated SemanticClass without description
 
-	Source: 
+	Source(s): 
 		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
 	"""
 
@@ -2347,7 +2347,7 @@ class Get_Command(Command):
 	"""
 	A Type Of Command
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -2398,7 +2398,7 @@ class Get_Current_Meter_Value_Command(Get_Command):
 	"""
 	A Type Of Get Command
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -2449,7 +2449,7 @@ class Get_Meter_Data_Command(Get_Command):
 	"""
 	A Type Of Get Command
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -2500,7 +2500,7 @@ class Get_Meter_History_Command(Get_Command):
 	"""
 	A Type Of Get Command
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -2551,7 +2551,7 @@ class Get_Sensing_Data_Command(Get_Command):
 	"""
 	A Type Of Get Command
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -2603,7 +2603,7 @@ class Hvac(Function_Related):
 	Heating, Ventilation And Air Conditioning (Hvac) Device That Provides Indoor
 	Environmental Comfort
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -2778,7 +2778,7 @@ class Level_Control_Function(Actuating_Function):
 	A Certain Range (E.G., 0%-100%), Such As Dimming A Light Or Set The Speed Of
 	An Electric Motor. 
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -2807,7 +2807,7 @@ class Lighting_Device(Function_Related):
 	"""
 	A Device Used For Illumination, Irradiation, Signaling, Or Projection
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -2980,7 +2980,7 @@ class Load(Energy_Related):
 	"""
 	A Type Of Energy-Related Device That Consumes Energy
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -3153,7 +3153,7 @@ class Measurement(Thing):
 	Unit Of Measure In Which The Value Is Expressed And The Timestamp Of The
 	Measurement.
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -3206,7 +3206,7 @@ class Meter(Function_Related):
 	Readable By A Human Being. Further, A Device Of Category Saref:Meter That
 	Performs A Saref:Meteringfunction.
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -3380,7 +3380,7 @@ class Energy_Meter(Meter):
 	Performs The Saref:Meteringfunction And Is Used For The Purpose Of Measuring
 	The Saref:Energy Property
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -3555,7 +3555,7 @@ class Metering_Function(Function):
 	A Function That Allows To Get Data From A Meter, Such As Current Meter
 	Reading Or Instantaneous Demand
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -3607,7 +3607,7 @@ class Micro_Renewable(Function_Related):
 	A Device That Generates Renewable Energy From Natural Resources Such As Teh
 	Sun, Wind And Water
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -3781,7 +3781,7 @@ class Multimedia(Function_Related):
 	A Device Designed To Display, Store, Record Or Play Multimedia Content Such
 	As Audio, Images, Animation, Video 
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -3955,7 +3955,7 @@ class Network(Function_Related):
 	A Device Used To Connect Other Devices In A Network, Such As Hub, Switch Or
 	Router In A Local Area Network (Lan). 
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -4126,7 +4126,7 @@ class Notify_Command(Command):
 	"""
 	A Type Of Command
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -4177,7 +4177,7 @@ class Off_Command(Command):
 	"""
 	A Type Of Command
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -4228,7 +4228,7 @@ class On_Command(Command):
 	"""
 	A Type Of Command
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -4279,7 +4279,7 @@ class On_Off_Function(Actuating_Function):
 	"""
 	An Actuating Function That Allows To Switch On And Off An Actuator
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -4308,7 +4308,7 @@ class Open_Close_Function(Actuating_Function):
 	"""
 	An Actuating Function That Allows To Open And Close A Device
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -4337,7 +4337,7 @@ class Open_Command(Command):
 	"""
 	A Type Of Command
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -4388,7 +4388,7 @@ class Pause_Command(Command):
 	"""
 	A Type Of Command
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -4447,7 +4447,7 @@ class Profile(Thing):
 	Energy Efficiency In The Home, Office Or Building In Which The Device Is
 	Located.
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -4509,7 +4509,7 @@ class Property(Thing):
 	Public Buildings Or Offices. We Propose Here A List Of Properties That Are
 	Relevant For The Purpose Of Saref, But This List Can Be Extended.
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -4561,7 +4561,7 @@ class Energy(Property):
 	The Saref4Ener Extension, Where Classes Such As Energymax, Energymin And
 	Energyexpected Are Defined. 
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -4610,7 +4610,7 @@ class Humidity(Property):
 	A Saref:Property Related To Some Measurements That Are Characterized By A
 	Certain Value That Is Measured In A Humidity Unit
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -4659,7 +4659,7 @@ class Light(Property):
 	A Saref:Property Related To Some Measurements That Are Characterized By A
 	Certain Value That Is Measured In A Illuminance Unit (Lux)
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -4708,7 +4708,7 @@ class Motion(Property):
 	A Saref:Property Related To Some Measurements That Are Characterized By A
 	Certain Value That Is Measured In A Unit Of Measure For Motion
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -4758,7 +4758,7 @@ class Occupancy(Property):
 	Certain Value (Saref:Hasvalue Property) That Is Measured In A Unit Of
 	Measure For Occupancy
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -4810,7 +4810,7 @@ class Power(Property):
 	Saref4Ener Extension, Where Classes Such As Powermax, Powermin And
 	Powerexpected Are Defined.
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -4859,7 +4859,7 @@ class Pressure(Property):
 	A Saref:Property Related To Some Measurements That Are Characterized By A
 	Certain Value That Is Measured In A Pressure Unit (Bar Or Pascal)
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -4908,7 +4908,7 @@ class Price(Property):
 	A Saref:Property Crelated To Some Measurements That Are Characterized By A
 	Certain Value That Is Measured Using Saref:Currency
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -4957,7 +4957,7 @@ class Sensing_Function(Function):
 	A Function That Allows To Transmit Data From Sensors, Such As Measurement
 	Values (E.G., Temperature) Or Sensing Data (E.G., Occupancy)
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -5010,7 +5010,7 @@ class Sensor(Function_Related):
 	Environment Such As Light, Motion, Or Temperature Changes. Further, A Device
 	Of Category Saref:Sensor That Performs A Saref:Sensingfunction.
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -5187,7 +5187,7 @@ class Service(Thing):
 	Network. A Service Must Specify The Device That Is Offering The Service And
 	The Function(S) To Be Represented.
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -5226,7 +5226,7 @@ class Set_Level_Command(Command):
 	"""
 	A Type Of Command
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -5277,7 +5277,7 @@ class Set_Absolute_Level_Command(Set_Level_Command):
 	"""
 	A Type Of Set Level Command
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -5328,7 +5328,7 @@ class Set_Relative_Level_Command(Set_Level_Command):
 	"""
 	A Type Of Set Level Command
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -5380,7 +5380,7 @@ class Smoke(Property):
 	A Saref:Property Related To Some Measurements That Are Characterized By A
 	Certain Value That Is Measured In A Unit Of Measure For Smoke
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -5431,7 +5431,7 @@ class Smoke_Sensor(Sensor):
 	Threshold Has Been Exceeded), And Is Used For The Purpose Of Sensing A
 	Property Of Type Saref:Smoke.
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -5604,7 +5604,7 @@ class Start_Command(Command):
 	"""
 	A Type Of Command
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -5655,7 +5655,7 @@ class Start_Stop_Function(Actuating_Function):
 	"""
 	An Actuating Function That Allows To Start And Stop A Device
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -5686,7 +5686,7 @@ class State(Thing):
 	Online/Offline. We Propose Here A List Of States That Are Relevant For The
 	Purpose Of Saref, But This List Can Be Extended.
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -5699,7 +5699,7 @@ class Multi_Level_State(State):
 	"""
 	A Type Of State
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -5712,7 +5712,7 @@ class On_Off_State(State):
 	"""
 	A Type Of State
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -5725,7 +5725,7 @@ class Off_State(On_Off_State):
 	"""
 	The State Of A Device That Is On
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -5738,7 +5738,7 @@ class On_State(On_Off_State):
 	"""
 	The State Of A Device That Is Off 
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -5751,7 +5751,7 @@ class Open_Close_State(State):
 	"""
 	A Type Of State
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -5764,7 +5764,7 @@ class Close_State(Open_Close_State):
 	"""
 	The State Of A Device That Is Close
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -5777,7 +5777,7 @@ class Open_State(Open_Close_State):
 	"""
 	The State Of A Device That Is Open 
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -5790,7 +5790,7 @@ class Start_Stop_State(State):
 	"""
 	A Type Of State
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -5803,7 +5803,7 @@ class Start_State(Start_Stop_State):
 	"""
 	The State Of A Device That Is Started
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -5816,7 +5816,7 @@ class Step_Down_Command(Command):
 	"""
 	A Type Of Command
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -5867,7 +5867,7 @@ class Step_Up_Command(Command):
 	"""
 	A Type Of Command
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -5918,7 +5918,7 @@ class Stop_Command(Command):
 	"""
 	A Type Of Command
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -5969,7 +5969,7 @@ class Stop_State(Start_Stop_State):
 	"""
 	The State Of A Device That Is Stopped
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -5982,7 +5982,7 @@ class Storage(Energy_Related):
 	"""
 	A Type Of Energy-Related Device That Stores Energy
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -6154,7 +6154,7 @@ class Switch(Actuator):
 	A Device Of Category Saref:Actuator That Performs An Actuating Function Of
 	Type Saref:Onofffunction Or Saref:Openclosefunction
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -6327,7 +6327,7 @@ class Door_Switch(Switch):
 	The Task Saref:Safety, Performs The Saref:Openclosefunction, Is Used For
 	Controlling A Door, And Can Be Found In The State Saref:Openclosestate.
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -6503,7 +6503,7 @@ class Light_Switch(Switch):
 	Property Saref:Light, And Can Be Found In The State Saref:Onoffstate. It Can
 	Offer A Switch On Service.
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -6676,7 +6676,7 @@ class Switch_On_Service(Service):
 	"""
 	A Type Of Service That Represents An On/Off Function To The Network
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -6718,7 +6718,7 @@ class Task(Thing):
 	Here A List Of Tasks That Are Relevant For The Purpose Of Saref, But This
 	List Can Be Extended.
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -6750,7 +6750,7 @@ class Temperature(Property):
 	Certain Value That Is Measured In A Temperature Unit (Degree_Celsius,
 	Degree_Fahrenheit, Or Degree_Kelvin)
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -6800,7 +6800,7 @@ class Temperature_Sensor(Sensor):
 	Saref:Sensingfunction And Is Used For The Purpose Of Sensing A Property Of
 	Type Saref:Temperature
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -6974,7 +6974,7 @@ class Time(Property):
 	A Saref:Property That Allows To Specify The Time Concept In Terms Of
 	Instants Or Intervals According To The Imported W3C Time Ontology.
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -7022,7 +7022,7 @@ class Toggle_Command(Command):
 	"""
 	A Type Of Command
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -7076,7 +7076,7 @@ class Washing_Machine(Appliance, Load):
 	Saref:Startstopfunction, Can Be Found In The State Saref:Startstopstate, And
 	Can Have A Saref:Profile That Characterizes Its Energy Consumption. 
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
@@ -7249,7 +7249,7 @@ class Water(Commodity):
 	"""
 	A Type Of Commodity
 
-	Source: 
+	Source(s): 
 		https://w3id.org/saref (saref.ttl)
 	"""
 
