@@ -228,10 +228,14 @@ class VocabularyBuilder(BaseModel):
 
         if entity.iri in self.vocabulary.id_types:
             if not id_type == self.vocabulary.id_types[entity.iri]:
-                from filip.semantics.vocabulary_configurator import \
-                    ParsingException
-                raise ParsingException("Entity exists multiple times in "
-                                       "different categories")
+                self.current_source.add_parsing_log_entry(
+                    LogLevel.CRITICAL, id_type, entity.iri,
+                    f"{entity.iri} from source "
+                    f"{self.current_source.get_name()} "
+                    f"exists multiple times in different catagories. It was "
+                    f"only added for the category "
+                    f"{self.vocabulary.id_types[entity.iri].value}")
+                return
 
             old_entity = entity_dict[entity.iri]
 

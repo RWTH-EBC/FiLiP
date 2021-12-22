@@ -449,10 +449,19 @@ class VocabularyConfigurator:
         Raises:
             Exception: if file can not be saved as specified with path and
                        filename
+            Exception: if vocabulary has label conflicts and is thus not valid
 
         Returns:
             Optional[str], generated content if path or filename not given
         """
+
+        if not cls.is_vocabulary_valid(vocabulary):
+            raise Exception(
+                "Vocabulary was not valid. Label conflicts "
+                "prevented the generation of models. Check for conflicts with: "
+                "VocabularyConfigurator."
+                "get_label_conflicts_in_vocabulary(vocabulary)"
+                )
 
         def split_string_into_lines(string: str, limit: int) -> [str]:
             """Helper methode, takes a long string and splits it into
@@ -520,20 +529,53 @@ class VocabularyConfigurator:
         content += "\n\n"
         content += "# ---------CLASSES--------- #"
 
+        # the classes need to be added in order, so that the parents are
+        # defined, the moment the children are added
         classes: List[Class] = vocabulary.get_classes_sorted_by_label()
         class_order: List[Class] = []
-        index: int = 0
-        while len(classes) > 0:
-            class_ = classes[index]
-            parents = class_.get_parent_classes(vocabulary)
-            if len([p for p in parents if p in class_order]) == len(
-                    parents):
-                class_order.append(class_)
-                del classes[index]
-                index = 0
+        children: Dict[str, Set] = {}
+        added_class_iris = set()
 
-            else:
-                index += 1
+        # set up data for computation of order
+        iri_queue = ["http://www.w3.org/2002/07/owl#Thing"]
+        for class_ in classes:
+            if class_.iri not in children:
+                children[class_.iri] = set()
+
+                if class_.label == "Currency":
+                    print(class_.get_parent_classes(vocabulary))
+
+            for parent in class_.get_parent_classes(vocabulary):
+                if parent.iri not in children:
+                    children[parent.iri] = set()
+                children[parent.iri].add(class_.iri)
+
+        # compute class order, in the queue are always the classes, that have
+        # all parents already defined (starting with Thing).
+        # It is added from the queue and all children who are now fully
+        # defined are added to the queue
+        while len(iri_queue) > 0:
+            # remove from queue
+            parent_iri = iri_queue[0]
+            del iri_queue[0]
+
+            # add to class_order
+            parent = vocabulary.classes[parent_iri]
+            class_order.append(parent)
+            added_class_iris.add(parent_iri)
+
+            # check children
+            child_iris = children[parent_iri]
+            for child_iri in child_iris:
+                child = vocabulary.classes[child_iri]
+
+                # all parents added, add child to queue
+                if len([p for p in child.parent_class_iris
+                        if p in added_class_iris]) == len(
+                        child.parent_class_iris):
+
+                    if not child_iri in added_class_iris:
+                        iri_queue.append(child_iri)
 
         for class_ in class_order:
 

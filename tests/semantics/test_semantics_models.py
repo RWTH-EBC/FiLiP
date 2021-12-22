@@ -56,7 +56,7 @@ class TestSemanticsModels(unittest.TestCase):
                         in vocabulary.classes)
 
         VocabularyConfigurator.generate_vocabulary_models(
-            vocabulary, f"{self.get_file_path('')}/","models")
+            vocabulary, f"{self.get_file_path('')}/", "models")
 
     def test_2_default_header(self):
         """
