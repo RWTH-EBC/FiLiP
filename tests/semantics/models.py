@@ -46,435 +46,6 @@ class Thing(SemanticClass):
 		super().__init__(*args, **kwargs)
 
 
-class Class1(Thing):
-	"""
-	Comment On Class 1
-
-	Source(s): 
-		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-			self.dataProp2._rules = [('value', [[]])]
-
-			self.oProp1._rules = [('some', [[Class2], [Class4]])]
-			self.objProp2._rules = [('some', [[Class1, Class2]])]
-			self.objProp3._rules = [('some', [[Class3]])]
-			self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
-			self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]]), ('value', [[Individual1]])]
-
-			self.oProp1._instance_identifier = self.get_identifier()
-			self.objProp2._instance_identifier = self.get_identifier()
-			self.objProp3._instance_identifier = self.get_identifier()
-			self.objProp4._instance_identifier = self.get_identifier()
-			self.objProp5._instance_identifier = self.get_identifier()
-			self.dataProp2._instance_identifier = self.get_identifier()
-			self.dataProp2.add(2)
-
-			self.objProp5.add(Individual1())
-
-	# Data fields
-
-	dataProp2: DataField = DataField(
-		name='dataProp2',
-		rule='value 2',
-		semantic_manager=semantic_manager)
-
-	# Relation fields
-
-	oProp1: RelationField = RelationField(
-		name='oProp1',
-		rule='some (Class2 or Class4)',
-		inverse_of=['objProp3'],
-		semantic_manager=semantic_manager)
-
-	objProp2: RelationField = RelationField(
-		name='objProp2',
-		rule='some (Class1 and Class2)',
-		semantic_manager=semantic_manager)
-
-	objProp3: RelationField = RelationField(
-		name='objProp3',
-		rule='some Class3',
-		inverse_of=['oProp1'],
-		semantic_manager=semantic_manager)
-
-	objProp4: RelationField = RelationField(
-		name='objProp4',
-		rule='some (Class1 and Class2) and Class3)',
-		semantic_manager=semantic_manager)
-
-	objProp5: RelationField = RelationField(
-		name='objProp5',
-		rule='some (Class1 and (Class2 or Class3)), value Individual1',
-		semantic_manager=semantic_manager)
-
-
-class Illuminance_Unit(Thing):
-	"""
-	The Unit Of Measure For Light
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-
-
-class Function(Thing):
-	"""
-	The Functionality Necessary To Accomplish The Task For Which A Device Is
-	Designed. A Device Can Be Designed To Perform More Than One Function.
-	Functions Can Be Structured In Categories (Subclasses) That Reflect
-	Different Points Of View, For Example, Considering The Specific Application
-	Area For Which A Function Can Be Used (E.G., Light, Temperature, Motion,
-	Heat, Power, Etc.), Or The Capability That A Function Can Support (E.G.,
-	Receive, Reply, Notify, Etc.), And So Forth. 
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-
-			self.Has_Command._rules = [('min|1', [[Command]])]
-
-			self.Has_Command._instance_identifier = self.get_identifier()
-
-	# Relation fields
-
-	Has_Command: RelationField = RelationField(
-		name='Has_Command',
-		rule='min 1 Command',
-		inverse_of=['Is_Command_Of'],
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between An Entity (Such As A Function) And A Command
-	"""
-
-
-class Class2(Thing):
-	"""
-	Generated SemanticClass without description
-
-	Source(s): 
-		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-			self.attributeProp._rules = [('some', [['customDataType1']])]
-
-			self.oProp1._rules = [('min|1', [[Class1]])]
-			self.objProp2._rules = [('only', [[Thing]])]
-
-			self.oProp1._instance_identifier = self.get_identifier()
-			self.objProp2._instance_identifier = self.get_identifier()
-			self.attributeProp._instance_identifier = self.get_identifier()
-
-	# Data fields
-
-	attributeProp: DataField = DataField(
-		name='attributeProp',
-		rule='some customDataType1',
-		semantic_manager=semantic_manager)
-
-	# Relation fields
-
-	oProp1: RelationField = RelationField(
-		name='oProp1',
-		rule='min 1 Class1',
-		inverse_of=['objProp3'],
-		semantic_manager=semantic_manager)
-
-	objProp2: RelationField = RelationField(
-		name='objProp2',
-		rule='only Thing',
-		semantic_manager=semantic_manager)
-
-
-class Commodity(Thing):
-	"""
-	A Marketable Item For Which There Is Demand, But Which Is Supplied Without
-	Qualitative Differentiation Across A Market. Saref Refers To Energy
-	Commodities Such As Electricity, Gas, Coal And Oil. 
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-
-
-class Property(Thing):
-	"""
-	Anything That Can Be Sensed, Measured Or Controlled In Households, Common
-	Public Buildings Or Offices. We Propose Here A List Of Properties That Are
-	Relevant For The Purpose Of Saref, But This List Can Be Extended.
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-
-			self.Is_Controlled_By_Device._rules = [('only', [[Device]])]
-			self.Is_Measured_By_Device._rules = [('only', [[Device]])]
-			self.Relates_To_Measurement._rules = [('only', [[Measurement]])]
-
-			self.Is_Controlled_By_Device._instance_identifier = self.get_identifier()
-			self.Is_Measured_By_Device._instance_identifier = self.get_identifier()
-			self.Relates_To_Measurement._instance_identifier = self.get_identifier()
-
-	# Relation fields
-
-	Is_Controlled_By_Device: RelationField = RelationField(
-		name='Is_Controlled_By_Device',
-		rule='only Device',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Devices That Can Control A Certain Property
-	"""
-
-	Is_Measured_By_Device: RelationField = RelationField(
-		name='Is_Measured_By_Device',
-		rule='only Device',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Devices That Can Measure A Certain Property
-	"""
-
-	Relates_To_Measurement: RelationField = RelationField(
-		name='Relates_To_Measurement',
-		rule='only Measurement',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Property And The Measurements It Relates To
-	"""
-
-
-class Temperature_Unit(Thing):
-	"""
-	The Unit Of Measure For Temperature
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-
-
-class Pressure_Unit(Thing):
-	"""
-	The Unit Of Measure For Pressure
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-
-
-class Class3(Thing):
-	"""
-	Generated SemanticClass without description
-
-	Source(s): 
-		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-			self.attributeProp._rules = [('some', [['string']])]
-			self.commandProp._rules = [('some', [['string']])]
-			self.dataProp1._rules = [('only', [['customDataType4']])]
-
-			self.oProp1._rules = [('value', [[Individual1]])]
-			self.objProp2._rules = [('some', [[Class1]]), ('value', [[Individual1]])]
-
-			self.oProp1._instance_identifier = self.get_identifier()
-			self.objProp2._instance_identifier = self.get_identifier()
-			self.attributeProp._instance_identifier = self.get_identifier()
-			self.commandProp._instance_identifier = self.get_identifier()
-			self.dataProp1._instance_identifier = self.get_identifier()
-
-			self.oProp1.add(Individual1())
-			self.objProp2.add(Individual1())
-
-	# Data fields
-
-	attributeProp: DataField = DataField(
-		name='attributeProp',
-		rule='some string',
-		semantic_manager=semantic_manager)
-
-	commandProp: DataField = DataField(
-		name='commandProp',
-		rule='some string',
-		semantic_manager=semantic_manager)
-
-	dataProp1: DataField = DataField(
-		name='dataProp1',
-		rule='only customDataType4',
-		semantic_manager=semantic_manager)
-
-	# Relation fields
-
-	oProp1: RelationField = RelationField(
-		name='oProp1',
-		rule='value Individual1',
-		inverse_of=['objProp3'],
-		semantic_manager=semantic_manager)
-
-	objProp2: RelationField = RelationField(
-		name='objProp2',
-		rule='some Class1, value Individual1',
-		semantic_manager=semantic_manager)
-
-
-class Currency(Thing):
-	"""
-	The Unit Of Measure For Price
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-
-
-class Profile(Thing):
-	"""
-	A Specification Associated To A Device To Collect Information About A
-	Certain Property (E.G., Energy) Or Commodity (E.G.Water) For Optimizing Its
-	Usage In The Home, Office Or Building In Which The Device Is Located. This
-	Specification Is About A Certain Property Or Commodity (Saref:Isabout), Can
-	Be Calculated Over A Time Span (Saref:Hastime ) And Can Be Associated To
-	Some Costs (Saref:Hasprice). An Example Is The Power Profile Defined In The
-	Saref4Ener Extension That Can Be Associated To A Device For Optimizing The
-	Energy Efficiency In The Home, Office Or Building In Which The Device Is
-	Located.
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-
-			self.Consists_Of._rules = [('only', [[Profile]])]
-			self.Has_Price._rules = [('only', [[Price]])]
-			self.Has_Time._rules = [('only', [[Time]])]
-			self.Isabout._rules = [('only', [[Commodity], [Property]])]
-
-			self.Consists_Of._instance_identifier = self.get_identifier()
-			self.Has_Price._instance_identifier = self.get_identifier()
-			self.Has_Time._instance_identifier = self.get_identifier()
-			self.Isabout._instance_identifier = self.get_identifier()
-
-	# Relation fields
-
-	Consists_Of: RelationField = RelationField(
-		name='Consists_Of',
-		rule='only Profile',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Indicating A Composite Entity That Consists Of Other Entities
-	(E.G., A Temperature/Humidity Sensor That Consists Of A Temperature Sensor
-	And A Humidity Sensor)
-	"""
-
-	Has_Price: RelationField = RelationField(
-		name='Has_Price',
-		rule='only Price',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationships Indentifying The Price Associated To An Entity
-	"""
-
-	Has_Time: RelationField = RelationField(
-		name='Has_Time',
-		rule='only Time',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship To Associate Time Information To An Entity
-	"""
-
-	Isabout: RelationField = RelationField(
-		name='Isabout',
-		rule='only (Commodity or Property)',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying What An Entity, Such As A Profile, Is About
-	"""
-
-
-class Energy_Unit(Thing):
-	"""
-	The Unit Of Measure For Energy
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-
-
-class State(Thing):
-	"""
-	The State In Which A Device Can Be Found, E.G, On/Off/Standby, Or
-	Online/Offline. We Propose Here A List Of States That Are Relevant For The
-	Purpose Of Saref, But This List Can Be Extended.
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-
-
-class Power_Unit(Thing):
-	"""
-	The Unit Of Measure For Power
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-
-
 class Measurement(Thing):
 	"""
 	Represents The Measured Value Made Over A Property. It Is Also Linked To The
@@ -528,14 +99,11 @@ class Measurement(Thing):
 	"""
 
 
-class Command(Thing):
+class Property(Thing):
 	"""
-	A Directive That A Device Must Support To Perform A Certain Function. A
-	Command May Act Upon A State, But Does Not Necessarily Act Upon A State. For
-	Example, The On Command Acts Upon The On/Off State, But The Get Command Does
-	Not Act Upon Any State, It Simply Gives A Directive To Retrieve A Certain
-	Value. We Propose Here A List Of Commands That Are Relevant For The Purpose
-	Of Saref, But This List Can Be Extended.
+	Anything That Can Be Sensed, Measured Or Controlled In Households, Common
+	Public Buildings Or Offices. We Propose Here A List Of Properties That Are
+	Relevant For The Purpose Of Saref, But This List Can Be Extended.
 
 	Source(s): 
 		https://w3id.org/saref (saref.ttl)
@@ -545,43 +113,167 @@ class Command(Thing):
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
 		if not is_initialised:
-			self.Has_Description._rules = [('max|1', [['string']])]
 
-			self.Acts_Upon._rules = [('only', [[State]])]
-			self.Is_Command_Of._rules = [('min|1', [[Function]])]
+			self.Is_Controlled_By_Device._rules = [('only', [[Device]])]
+			self.Is_Measured_By_Device._rules = [('only', [[Device]])]
+			self.Relates_To_Measurement._rules = [('only', [[Measurement]])]
 
-			self.Acts_Upon._instance_identifier = self.get_identifier()
-			self.Is_Command_Of._instance_identifier = self.get_identifier()
-			self.Has_Description._instance_identifier = self.get_identifier()
-
-	# Data fields
-
-	Has_Description: DataField = DataField(
-		name='Has_Description',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Providing A Description Of An Entity (E.G., Device)
-	"""
+			self.Is_Controlled_By_Device._instance_identifier = self.get_identifier()
+			self.Is_Measured_By_Device._instance_identifier = self.get_identifier()
+			self.Relates_To_Measurement._instance_identifier = self.get_identifier()
 
 	# Relation fields
 
-	Acts_Upon: RelationField = RelationField(
-		name='Acts_Upon',
-		rule='only State',
+	Is_Controlled_By_Device: RelationField = RelationField(
+		name='Is_Controlled_By_Device',
+		rule='only Device',
 		semantic_manager=semantic_manager)
 	"""
-	A Relationship Between A Command And A State
+	A Relationship Specifying The Devices That Can Control A Certain Property
 	"""
 
-	Is_Command_Of: RelationField = RelationField(
-		name='Is_Command_Of',
-		rule='min 1 Function',
-		inverse_of=['Has_Command'],
+	Is_Measured_By_Device: RelationField = RelationField(
+		name='Is_Measured_By_Device',
+		rule='only Device',
 		semantic_manager=semantic_manager)
 	"""
-	A Relationship Between A Command And A Function.
+	A Relationship Specifying The Devices That Can Measure A Certain Property
 	"""
+
+	Relates_To_Measurement: RelationField = RelationField(
+		name='Relates_To_Measurement',
+		rule='only Measurement',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Property And The Measurements It Relates To
+	"""
+
+
+class Class4(Thing):
+	"""
+	Generated SemanticClass without description
+
+	Source(s): 
+		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+
+			self.objProp4._rules = [('min|1', [[Class1]])]
+
+			self.objProp4._instance_identifier = self.get_identifier()
+
+	# Relation fields
+
+	objProp4: RelationField = RelationField(
+		name='objProp4',
+		rule='min 1 Class1',
+		semantic_manager=semantic_manager)
+
+
+class Function(Thing):
+	"""
+	The Functionality Necessary To Accomplish The Task For Which A Device Is
+	Designed. A Device Can Be Designed To Perform More Than One Function.
+	Functions Can Be Structured In Categories (Subclasses) That Reflect
+	Different Points Of View, For Example, Considering The Specific Application
+	Area For Which A Function Can Be Used (E.G., Light, Temperature, Motion,
+	Heat, Power, Etc.), Or The Capability That A Function Can Support (E.G.,
+	Receive, Reply, Notify, Etc.), And So Forth. 
+
+	Source(s): 
+		https://w3id.org/saref (saref.ttl)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+
+			self.Has_Command._rules = [('min|1', [[Command]])]
+
+			self.Has_Command._instance_identifier = self.get_identifier()
+
+	# Relation fields
+
+	Has_Command: RelationField = RelationField(
+		name='Has_Command',
+		rule='min 1 Command',
+		inverse_of=['Is_Command_Of'],
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between An Entity (Such As A Function) And A Command
+	"""
+
+
+class Illuminance_Unit(Thing):
+	"""
+	The Unit Of Measure For Light
+
+	Source(s): 
+		https://w3id.org/saref (saref.ttl)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+
+
+class State(Thing):
+	"""
+	The State In Which A Device Can Be Found, E.G, On/Off/Standby, Or
+	Online/Offline. We Propose Here A List Of States That Are Relevant For The
+	Purpose Of Saref, But This List Can Be Extended.
+
+	Source(s): 
+		https://w3id.org/saref (saref.ttl)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+
+
+class Power_Unit(Thing):
+	"""
+	The Unit Of Measure For Power
+
+	Source(s): 
+		https://w3id.org/saref (saref.ttl)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+
+
+class Currency(Thing):
+	"""
+	The Unit Of Measure For Price
+
+	Source(s): 
+		https://w3id.org/saref (saref.ttl)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+
+
+class Energy_Unit(Thing):
+	"""
+	The Unit Of Measure For Energy
+
+	Source(s): 
+		https://w3id.org/saref (saref.ttl)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
 
 
 class Device(Thing):
@@ -767,7 +459,20 @@ class Device(Thing):
 	"""
 
 
-class Class4(Thing):
+class Temperature_Unit(Thing):
+	"""
+	The Unit Of Measure For Temperature
+
+	Source(s): 
+		https://w3id.org/saref (saref.ttl)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+
+
+class Class2(Thing):
 	"""
 	Generated SemanticClass without description
 
@@ -779,17 +484,197 @@ class Class4(Thing):
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
 		if not is_initialised:
+			self.attributeProp._rules = [('some', [['customDataType1']])]
 
-			self.objProp4._rules = [('min|1', [[Class1]])]
+			self.oProp1._rules = [('min|1', [[Class1]])]
+			self.objProp2._rules = [('only', [[Thing]])]
 
-			self.objProp4._instance_identifier = self.get_identifier()
+			self.oProp1._instance_identifier = self.get_identifier()
+			self.objProp2._instance_identifier = self.get_identifier()
+			self.attributeProp._instance_identifier = self.get_identifier()
+
+	# Data fields
+
+	attributeProp: DataField = DataField(
+		name='attributeProp',
+		rule='some customDataType1',
+		semantic_manager=semantic_manager)
 
 	# Relation fields
 
+	oProp1: RelationField = RelationField(
+		name='oProp1',
+		rule='min 1 Class1',
+		inverse_of=['objProp3'],
+		semantic_manager=semantic_manager)
+
+	objProp2: RelationField = RelationField(
+		name='objProp2',
+		rule='only Thing',
+		semantic_manager=semantic_manager)
+
+
+class Pressure_Unit(Thing):
+	"""
+	The Unit Of Measure For Pressure
+
+	Source(s): 
+		https://w3id.org/saref (saref.ttl)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+
+
+class Commodity(Thing):
+	"""
+	A Marketable Item For Which There Is Demand, But Which Is Supplied Without
+	Qualitative Differentiation Across A Market. Saref Refers To Energy
+	Commodities Such As Electricity, Gas, Coal And Oil. 
+
+	Source(s): 
+		https://w3id.org/saref (saref.ttl)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+
+
+class Class1(Thing):
+	"""
+	Comment On Class 1
+
+	Source(s): 
+		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.dataProp2._rules = [('value', [[]])]
+
+			self.oProp1._rules = [('some', [[Class2], [Class4]])]
+			self.objProp2._rules = [('some', [[Class1, Class2]])]
+			self.objProp3._rules = [('some', [[Class3]])]
+			self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
+			self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]]), ('value', [[Individual1]])]
+
+			self.oProp1._instance_identifier = self.get_identifier()
+			self.objProp2._instance_identifier = self.get_identifier()
+			self.objProp3._instance_identifier = self.get_identifier()
+			self.objProp4._instance_identifier = self.get_identifier()
+			self.objProp5._instance_identifier = self.get_identifier()
+			self.dataProp2._instance_identifier = self.get_identifier()
+			self.dataProp2.add(2)
+
+			self.objProp5.add(Individual1())
+
+	# Data fields
+
+	dataProp2: DataField = DataField(
+		name='dataProp2',
+		rule='value 2',
+		semantic_manager=semantic_manager)
+
+	# Relation fields
+
+	oProp1: RelationField = RelationField(
+		name='oProp1',
+		rule='some (Class2 or Class4)',
+		inverse_of=['objProp3'],
+		semantic_manager=semantic_manager)
+
+	objProp2: RelationField = RelationField(
+		name='objProp2',
+		rule='some (Class1 and Class2)',
+		semantic_manager=semantic_manager)
+
+	objProp3: RelationField = RelationField(
+		name='objProp3',
+		rule='some Class3',
+		inverse_of=['oProp1'],
+		semantic_manager=semantic_manager)
+
 	objProp4: RelationField = RelationField(
 		name='objProp4',
-		rule='min 1 Class1',
+		rule='some (Class1 and Class2) and Class3)',
 		semantic_manager=semantic_manager)
+
+	objProp5: RelationField = RelationField(
+		name='objProp5',
+		rule='some (Class1 and (Class2 or Class3)), value Individual1',
+		semantic_manager=semantic_manager)
+
+
+class Profile(Thing):
+	"""
+	A Specification Associated To A Device To Collect Information About A
+	Certain Property (E.G., Energy) Or Commodity (E.G.Water) For Optimizing Its
+	Usage In The Home, Office Or Building In Which The Device Is Located. This
+	Specification Is About A Certain Property Or Commodity (Saref:Isabout), Can
+	Be Calculated Over A Time Span (Saref:Hastime ) And Can Be Associated To
+	Some Costs (Saref:Hasprice). An Example Is The Power Profile Defined In The
+	Saref4Ener Extension That Can Be Associated To A Device For Optimizing The
+	Energy Efficiency In The Home, Office Or Building In Which The Device Is
+	Located.
+
+	Source(s): 
+		https://w3id.org/saref (saref.ttl)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+
+			self.Consists_Of._rules = [('only', [[Profile]])]
+			self.Has_Price._rules = [('only', [[Price]])]
+			self.Has_Time._rules = [('only', [[Time]])]
+			self.Isabout._rules = [('only', [[Commodity], [Property]])]
+
+			self.Consists_Of._instance_identifier = self.get_identifier()
+			self.Has_Price._instance_identifier = self.get_identifier()
+			self.Has_Time._instance_identifier = self.get_identifier()
+			self.Isabout._instance_identifier = self.get_identifier()
+
+	# Relation fields
+
+	Consists_Of: RelationField = RelationField(
+		name='Consists_Of',
+		rule='only Profile',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Indicating A Composite Entity That Consists Of Other Entities
+	(E.G., A Temperature/Humidity Sensor That Consists Of A Temperature Sensor
+	And A Humidity Sensor)
+	"""
+
+	Has_Price: RelationField = RelationField(
+		name='Has_Price',
+		rule='only Price',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationships Indentifying The Price Associated To An Entity
+	"""
+
+	Has_Time: RelationField = RelationField(
+		name='Has_Time',
+		rule='only Time',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship To Associate Time Information To An Entity
+	"""
+
+	Isabout: RelationField = RelationField(
+		name='Isabout',
+		rule='only (Commodity or Property)',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying What An Entity, Such As A Profile, Is About
+	"""
 
 
 class Service(Thing):
@@ -837,6 +722,65 @@ class Service(Thing):
 	"""
 
 
+class Class3(Thing):
+	"""
+	Generated SemanticClass without description
+
+	Source(s): 
+		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.attributeProp._rules = [('some', [['string']])]
+			self.commandProp._rules = [('some', [['string']])]
+			self.dataProp1._rules = [('only', [['customDataType4']])]
+
+			self.oProp1._rules = [('value', [[Individual1]])]
+			self.objProp2._rules = [('some', [[Class1]]), ('value', [[Individual1]])]
+
+			self.oProp1._instance_identifier = self.get_identifier()
+			self.objProp2._instance_identifier = self.get_identifier()
+			self.attributeProp._instance_identifier = self.get_identifier()
+			self.commandProp._instance_identifier = self.get_identifier()
+			self.dataProp1._instance_identifier = self.get_identifier()
+
+			self.oProp1.add(Individual1())
+			self.objProp2.add(Individual1())
+
+	# Data fields
+
+	attributeProp: DataField = DataField(
+		name='attributeProp',
+		rule='some string',
+		semantic_manager=semantic_manager)
+
+	commandProp: DataField = DataField(
+		name='commandProp',
+		rule='some string',
+		semantic_manager=semantic_manager)
+
+	dataProp1: DataField = DataField(
+		name='dataProp1',
+		rule='only customDataType4',
+		semantic_manager=semantic_manager)
+
+	# Relation fields
+
+	oProp1: RelationField = RelationField(
+		name='oProp1',
+		rule='value Individual1',
+		inverse_of=['objProp3'],
+		semantic_manager=semantic_manager)
+
+	objProp2: RelationField = RelationField(
+		name='objProp2',
+		rule='some Class1, value Individual1',
+		semantic_manager=semantic_manager)
+
+
 class Task(Thing):
 	"""
 	The Goal For Which A Device Is Designed (From A User Perspective). For
@@ -870,478 +814,59 @@ class Task(Thing):
 	"""
 
 
-class Class1b(Class1):
+class Command(Thing):
 	"""
-	Generated SemanticClass without description
+	A Directive That A Device Must Support To Perform A Certain Function. A
+	Command May Act Upon A State, But Does Not Necessarily Act Upon A State. For
+	Example, The On Command Acts Upon The On/Off State, But The Get Command Does
+	Not Act Upon Any State, It Simply Gives A Directive To Retrieve A Certain
+	Value. We Propose Here A List Of Commands That Are Relevant For The Purpose
+	Of Saref, But This List Can Be Extended.
 
 	Source(s): 
-		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
 		if not is_initialised:
-			self.dataProp2._rules = [('value', [[]])]
+			self.Has_Description._rules = [('max|1', [['string']])]
 
-			self.oProp1._rules = [('some', [[Class2]]), ('some', [[Class2], [Class4]])]
-			self.objProp2._rules = [('some', [[Class1, Class2]])]
-			self.objProp3._rules = [('some', [[Class3]])]
-			self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
-			self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]]), ('value', [[Individual1]])]
+			self.Acts_Upon._rules = [('only', [[State]])]
+			self.Is_Command_Of._rules = [('min|1', [[Function]])]
 
-			self.oProp1._instance_identifier = self.get_identifier()
-			self.objProp2._instance_identifier = self.get_identifier()
-			self.objProp3._instance_identifier = self.get_identifier()
-			self.objProp4._instance_identifier = self.get_identifier()
-			self.objProp5._instance_identifier = self.get_identifier()
-			self.dataProp2._instance_identifier = self.get_identifier()
+			self.Acts_Upon._instance_identifier = self.get_identifier()
+			self.Is_Command_Of._instance_identifier = self.get_identifier()
+			self.Has_Description._instance_identifier = self.get_identifier()
 
 	# Data fields
 
-	dataProp2: DataField = DataField(
-		name='dataProp2',
-		rule='value 2',
+	Has_Description: DataField = DataField(
+		name='Has_Description',
+		rule='max 1 string',
 		semantic_manager=semantic_manager)
+	"""
+	A Relationship Providing A Description Of An Entity (E.G., Device)
+	"""
 
 	# Relation fields
 
-	oProp1: RelationField = RelationField(
-		name='oProp1',
-		rule='some Class2, some (Class2 or Class4)',
-		inverse_of=['objProp3'],
-		semantic_manager=semantic_manager)
-
-	objProp2: RelationField = RelationField(
-		name='objProp2',
-		rule='some (Class1 and Class2)',
-		semantic_manager=semantic_manager)
-
-	objProp3: RelationField = RelationField(
-		name='objProp3',
-		rule='some Class3',
-		inverse_of=['oProp1'],
-		semantic_manager=semantic_manager)
-
-	objProp4: RelationField = RelationField(
-		name='objProp4',
-		rule='some (Class1 and Class2) and Class3)',
-		semantic_manager=semantic_manager)
-
-	objProp5: RelationField = RelationField(
-		name='objProp5',
-		rule='some (Class1 and (Class2 or Class3)), value Individual1',
-		semantic_manager=semantic_manager)
-
-
-class Class1a(Class1):
-	"""
-	Generated SemanticClass without description
-
-	Source(s): 
-		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-			self.dataProp2._rules = [('value', [[]])]
-
-			self.oProp1._rules = [('some', [[Class2], [Class4]])]
-			self.objProp2._rules = [('some', [[Class1, Class2]])]
-			self.objProp3._rules = [('some', [[Class3]])]
-			self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
-			self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]]), ('value', [[Individual1]])]
-
-			self.oProp1._instance_identifier = self.get_identifier()
-			self.objProp2._instance_identifier = self.get_identifier()
-			self.objProp3._instance_identifier = self.get_identifier()
-			self.objProp4._instance_identifier = self.get_identifier()
-			self.objProp5._instance_identifier = self.get_identifier()
-			self.dataProp2._instance_identifier = self.get_identifier()
-
-	# Data fields
-
-	dataProp2: DataField = DataField(
-		name='dataProp2',
-		rule='value 2',
-		semantic_manager=semantic_manager)
-
-	# Relation fields
-
-	oProp1: RelationField = RelationField(
-		name='oProp1',
-		rule='some (Class2 or Class4)',
-		inverse_of=['objProp3'],
-		semantic_manager=semantic_manager)
-
-	objProp2: RelationField = RelationField(
-		name='objProp2',
-		rule='some (Class1 and Class2)',
-		semantic_manager=semantic_manager)
-
-	objProp3: RelationField = RelationField(
-		name='objProp3',
-		rule='some Class3',
-		inverse_of=['oProp1'],
-		semantic_manager=semantic_manager)
-
-	objProp4: RelationField = RelationField(
-		name='objProp4',
-		rule='some (Class1 and Class2) and Class3)',
-		semantic_manager=semantic_manager)
-
-	objProp5: RelationField = RelationField(
-		name='objProp5',
-		rule='some (Class1 and (Class2 or Class3)), value Individual1',
-		semantic_manager=semantic_manager)
-
-
-class Metering_Function(Function):
-	"""
-	A Function That Allows To Get Data From A Meter, Such As Current Meter
-	Reading Or Instantaneous Demand
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-
-			self.Has_Command._rules = [('only', [[Get_Current_Meter_Value_Command], [Get_Meter_Data_Command], [Get_Meter_History_Command]]), ('min|1', [[Command]])]
-			self.Has_Meter_Reading_Type._rules = [('only', [[Commodity], [Property]])]
-			self.Has_Meter_Reading._rules = [('only', [[Measurement]])]
-
-			self.Has_Command._instance_identifier = self.get_identifier()
-			self.Has_Meter_Reading_Type._instance_identifier = self.get_identifier()
-			self.Has_Meter_Reading._instance_identifier = self.get_identifier()
-
-	# Relation fields
-
-	Has_Command: RelationField = RelationField(
-		name='Has_Command',
-		rule='only (Get_Current_Meter_Value_Command or Get_Meter_Data_Command) or Get_Meter_History_Command), min 1 Command',
-		inverse_of=['Is_Command_Of'],
+	Acts_Upon: RelationField = RelationField(
+		name='Acts_Upon',
+		rule='only State',
 		semantic_manager=semantic_manager)
 	"""
-	A Relationship Between An Entity (Such As A Function) And A Command
+	A Relationship Between A Command And A State
 	"""
 
-	Has_Meter_Reading_Type: RelationField = RelationField(
-		name='Has_Meter_Reading_Type',
-		rule='only (Commodity or Property)',
+	Is_Command_Of: RelationField = RelationField(
+		name='Is_Command_Of',
+		rule='min 1 Function',
+		inverse_of=['Has_Command'],
 		semantic_manager=semantic_manager)
 	"""
-	A Relationship Identifying The Reading Type Of A Measurement (E.G., Water,
-	Gas, Pressure , Energy , Power, Etc.)
-	"""
-
-	Has_Meter_Reading: RelationField = RelationField(
-		name='Has_Meter_Reading',
-		rule='only Measurement',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Metering Function And The Measurement Of The
-	Reading
-	"""
-
-
-class Event_Function(Function):
-	"""
-	A Function That Allows To Notify Another Device That A Certain Threshold
-	Value Has Been Exceeded.
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-
-			self.Has_Command._rules = [('only', [[Notify_Command]]), ('min|1', [[Command]])]
-			self.Has_Threshold_Measurement._rules = [('min|1', [[Measurement]])]
-
-			self.Has_Command._instance_identifier = self.get_identifier()
-			self.Has_Threshold_Measurement._instance_identifier = self.get_identifier()
-
-	# Relation fields
-
-	Has_Command: RelationField = RelationField(
-		name='Has_Command',
-		rule='only Notify_Command, min 1 Command',
-		inverse_of=['Is_Command_Of'],
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between An Entity (Such As A Function) And A Command
-	"""
-
-	Has_Threshold_Measurement: RelationField = RelationField(
-		name='Has_Threshold_Measurement',
-		rule='min 1 Measurement',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Associated With An Event Function To Notify That A Certain
-	Threshold Measurement Has Been Exceeded
-	"""
-
-
-class Actuating_Function(Function):
-	"""
-	A Function That Allows To Transmit Data To Actuators, Such As Level Settings
-	(E.G., Temperature) Or Binary Switching (E.G., Open/Close, On/Off)
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-
-			self.Has_Command._rules = [('min|1', [[Command]])]
-
-			self.Has_Command._instance_identifier = self.get_identifier()
-
-	# Relation fields
-
-	Has_Command: RelationField = RelationField(
-		name='Has_Command',
-		rule='min 1 Command',
-		inverse_of=['Is_Command_Of'],
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between An Entity (Such As A Function) And A Command
-	"""
-
-
-class Sensing_Function(Function):
-	"""
-	A Function That Allows To Transmit Data From Sensors, Such As Measurement
-	Values (E.G., Temperature) Or Sensing Data (E.G., Occupancy)
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-
-			self.Has_Command._rules = [('only', [[Get_Sensing_Data_Command]]), ('min|1', [[Command]])]
-			self.Has_Sensing_Range_._rules = [('some', [[Measurement]])]
-			self.Has_Sensor_Type._rules = [('only', [[Property]])]
-
-			self.Has_Command._instance_identifier = self.get_identifier()
-			self.Has_Sensing_Range_._instance_identifier = self.get_identifier()
-			self.Has_Sensor_Type._instance_identifier = self.get_identifier()
-
-	# Relation fields
-
-	Has_Command: RelationField = RelationField(
-		name='Has_Command',
-		rule='only Get_Sensing_Data_Command, min 1 Command',
-		inverse_of=['Is_Command_Of'],
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between An Entity (Such As A Function) And A Command
-	"""
-
-	Has_Sensing_Range_: RelationField = RelationField(
-		name='Has_Sensing_Range_',
-		rule='some Measurement',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Sensing Function And A Measurement Identifying The
-	Range Of A Sensor Detection
-	"""
-
-	Has_Sensor_Type: RelationField = RelationField(
-		name='Has_Sensor_Type',
-		rule='only Property',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Sensing Type Of A Sensor Detection (I.E.,
-	Temperature, Occupancy, Humidity, Motion , Smoke, Pressure, Etc.) 
-	"""
-
-
-class Gertrude(Class1, Class2):
-	"""
-	Generated SemanticClass without description
-
-	Source(s): 
-		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-			self.attributeProp._rules = [('some', [['customDataType1']])]
-			self.dataProp2._rules = [('value', [[]])]
-
-			self.oProp1._rules = [('min|1', [[Class1]]), ('some', [[Class2], [Class4]])]
-			self.objProp2._rules = [('only', [[Thing]]), ('some', [[Class1, Class2]])]
-			self.objProp3._rules = [('some', [[Class3]])]
-			self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
-			self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]]), ('value', [[Individual1]])]
-
-			self.oProp1._instance_identifier = self.get_identifier()
-			self.objProp2._instance_identifier = self.get_identifier()
-			self.objProp3._instance_identifier = self.get_identifier()
-			self.objProp4._instance_identifier = self.get_identifier()
-			self.objProp5._instance_identifier = self.get_identifier()
-			self.attributeProp._instance_identifier = self.get_identifier()
-			self.dataProp2._instance_identifier = self.get_identifier()
-
-	# Data fields
-
-	attributeProp: DataField = DataField(
-		name='attributeProp',
-		rule='some customDataType1',
-		semantic_manager=semantic_manager)
-
-	dataProp2: DataField = DataField(
-		name='dataProp2',
-		rule='value 2',
-		semantic_manager=semantic_manager)
-
-	# Relation fields
-
-	oProp1: RelationField = RelationField(
-		name='oProp1',
-		rule='min 1 Class1, some (Class2 or Class4)',
-		inverse_of=['objProp3'],
-		semantic_manager=semantic_manager)
-
-	objProp2: RelationField = RelationField(
-		name='objProp2',
-		rule='only Thing, some (Class1 and Class2)',
-		semantic_manager=semantic_manager)
-
-	objProp3: RelationField = RelationField(
-		name='objProp3',
-		rule='some Class3',
-		inverse_of=['oProp1'],
-		semantic_manager=semantic_manager)
-
-	objProp4: RelationField = RelationField(
-		name='objProp4',
-		rule='some (Class1 and Class2) and Class3)',
-		semantic_manager=semantic_manager)
-
-	objProp5: RelationField = RelationField(
-		name='objProp5',
-		rule='some (Class1 and (Class2 or Class3)), value Individual1',
-		semantic_manager=semantic_manager)
-
-
-class Coal(Commodity):
-	"""
-	A Type Of Commodity
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-
-
-class Water(Commodity):
-	"""
-	A Type Of Commodity
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-
-
-class Gas(Commodity):
-	"""
-	A Type Of Commodity
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-
-
-class Electricity(Commodity):
-	"""
-	A Type Of Commodity
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-
-
-class Price(Property):
-	"""
-	A Saref:Property Crelated To Some Measurements That Are Characterized By A
-	Certain Value That Is Measured Using Saref:Currency
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-
-			self.Is_Controlled_By_Device._rules = [('only', [[Device]])]
-			self.Is_Measured_By_Device._rules = [('only', [[Device]])]
-			self.Relates_To_Measurement._rules = [('only', [[Measurement]])]
-
-			self.Is_Controlled_By_Device._instance_identifier = self.get_identifier()
-			self.Is_Measured_By_Device._instance_identifier = self.get_identifier()
-			self.Relates_To_Measurement._instance_identifier = self.get_identifier()
-
-	# Relation fields
-
-	Is_Controlled_By_Device: RelationField = RelationField(
-		name='Is_Controlled_By_Device',
-		rule='only Device',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Devices That Can Control A Certain Property
-	"""
-
-	Is_Measured_By_Device: RelationField = RelationField(
-		name='Is_Measured_By_Device',
-		rule='only Device',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Devices That Can Measure A Certain Property
-	"""
-
-	Relates_To_Measurement: RelationField = RelationField(
-		name='Relates_To_Measurement',
-		rule='only Measurement',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Property And The Measurements It Relates To
+	A Relationship Between A Command And A Function.
 	"""
 
 
@@ -1397,10 +922,60 @@ class Power(Property):
 	"""
 
 
-class Humidity(Property):
+class Occupancy(Property):
 	"""
 	A Saref:Property Related To Some Measurements That Are Characterized By A
-	Certain Value That Is Measured In A Humidity Unit
+	Certain Value (Saref:Hasvalue Property) That Is Measured In A Unit Of
+	Measure For Occupancy
+
+	Source(s): 
+		https://w3id.org/saref (saref.ttl)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+
+			self.Is_Controlled_By_Device._rules = [('only', [[Device]])]
+			self.Is_Measured_By_Device._rules = [('only', [[Device]])]
+			self.Relates_To_Measurement._rules = [('only', [[Measurement]])]
+
+			self.Is_Controlled_By_Device._instance_identifier = self.get_identifier()
+			self.Is_Measured_By_Device._instance_identifier = self.get_identifier()
+			self.Relates_To_Measurement._instance_identifier = self.get_identifier()
+
+	# Relation fields
+
+	Is_Controlled_By_Device: RelationField = RelationField(
+		name='Is_Controlled_By_Device',
+		rule='only Device',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Devices That Can Control A Certain Property
+	"""
+
+	Is_Measured_By_Device: RelationField = RelationField(
+		name='Is_Measured_By_Device',
+		rule='only Device',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Devices That Can Measure A Certain Property
+	"""
+
+	Relates_To_Measurement: RelationField = RelationField(
+		name='Relates_To_Measurement',
+		rule='only Measurement',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Property And The Measurements It Relates To
+	"""
+
+
+class Light(Property):
+	"""
+	A Saref:Property Related To Some Measurements That Are Characterized By A
+	Certain Value That Is Measured In A Illuminance Unit (Lux)
 
 	Source(s): 
 		https://w3id.org/saref (saref.ttl)
@@ -1495,11 +1070,112 @@ class Pressure(Property):
 	"""
 
 
+class Price(Property):
+	"""
+	A Saref:Property Crelated To Some Measurements That Are Characterized By A
+	Certain Value That Is Measured Using Saref:Currency
+
+	Source(s): 
+		https://w3id.org/saref (saref.ttl)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+
+			self.Is_Controlled_By_Device._rules = [('only', [[Device]])]
+			self.Is_Measured_By_Device._rules = [('only', [[Device]])]
+			self.Relates_To_Measurement._rules = [('only', [[Measurement]])]
+
+			self.Is_Controlled_By_Device._instance_identifier = self.get_identifier()
+			self.Is_Measured_By_Device._instance_identifier = self.get_identifier()
+			self.Relates_To_Measurement._instance_identifier = self.get_identifier()
+
+	# Relation fields
+
+	Is_Controlled_By_Device: RelationField = RelationField(
+		name='Is_Controlled_By_Device',
+		rule='only Device',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Devices That Can Control A Certain Property
+	"""
+
+	Is_Measured_By_Device: RelationField = RelationField(
+		name='Is_Measured_By_Device',
+		rule='only Device',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Devices That Can Measure A Certain Property
+	"""
+
+	Relates_To_Measurement: RelationField = RelationField(
+		name='Relates_To_Measurement',
+		rule='only Measurement',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Property And The Measurements It Relates To
+	"""
+
+
 class Temperature(Property):
 	"""
 	A Saref:Property Related To Some Measurements That Are Characterized By A
 	Certain Value That Is Measured In A Temperature Unit (Degree_Celsius,
 	Degree_Fahrenheit, Or Degree_Kelvin)
+
+	Source(s): 
+		https://w3id.org/saref (saref.ttl)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+
+			self.Is_Controlled_By_Device._rules = [('only', [[Device]])]
+			self.Is_Measured_By_Device._rules = [('only', [[Device]])]
+			self.Relates_To_Measurement._rules = [('only', [[Measurement]])]
+
+			self.Is_Controlled_By_Device._instance_identifier = self.get_identifier()
+			self.Is_Measured_By_Device._instance_identifier = self.get_identifier()
+			self.Relates_To_Measurement._instance_identifier = self.get_identifier()
+
+	# Relation fields
+
+	Is_Controlled_By_Device: RelationField = RelationField(
+		name='Is_Controlled_By_Device',
+		rule='only Device',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Devices That Can Control A Certain Property
+	"""
+
+	Is_Measured_By_Device: RelationField = RelationField(
+		name='Is_Measured_By_Device',
+		rule='only Device',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Devices That Can Measure A Certain Property
+	"""
+
+	Relates_To_Measurement: RelationField = RelationField(
+		name='Relates_To_Measurement',
+		rule='only Measurement',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Property And The Measurements It Relates To
+	"""
+
+
+class Energy(Property):
+	"""
+	A Saref:Property Related To Some Measurements That Are Characterized By A
+	Certain Value Measured In An Energy Unit (Such As Kilowatt_Hour Or
+	Watt_Hour). Furter Specializations Of The Saref:Energy Class Can Be Found In
+	The Saref4Ener Extension, Where Classes Such As Energymax, Energymin And
+	Energyexpected Are Defined. 
 
 	Source(s): 
 		https://w3id.org/saref (saref.ttl)
@@ -1643,112 +1319,10 @@ class Time(Property):
 	"""
 
 
-class Energy(Property):
+class Humidity(Property):
 	"""
 	A Saref:Property Related To Some Measurements That Are Characterized By A
-	Certain Value Measured In An Energy Unit (Such As Kilowatt_Hour Or
-	Watt_Hour). Furter Specializations Of The Saref:Energy Class Can Be Found In
-	The Saref4Ener Extension, Where Classes Such As Energymax, Energymin And
-	Energyexpected Are Defined. 
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-
-			self.Is_Controlled_By_Device._rules = [('only', [[Device]])]
-			self.Is_Measured_By_Device._rules = [('only', [[Device]])]
-			self.Relates_To_Measurement._rules = [('only', [[Measurement]])]
-
-			self.Is_Controlled_By_Device._instance_identifier = self.get_identifier()
-			self.Is_Measured_By_Device._instance_identifier = self.get_identifier()
-			self.Relates_To_Measurement._instance_identifier = self.get_identifier()
-
-	# Relation fields
-
-	Is_Controlled_By_Device: RelationField = RelationField(
-		name='Is_Controlled_By_Device',
-		rule='only Device',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Devices That Can Control A Certain Property
-	"""
-
-	Is_Measured_By_Device: RelationField = RelationField(
-		name='Is_Measured_By_Device',
-		rule='only Device',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Devices That Can Measure A Certain Property
-	"""
-
-	Relates_To_Measurement: RelationField = RelationField(
-		name='Relates_To_Measurement',
-		rule='only Measurement',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Property And The Measurements It Relates To
-	"""
-
-
-class Light(Property):
-	"""
-	A Saref:Property Related To Some Measurements That Are Characterized By A
-	Certain Value That Is Measured In A Illuminance Unit (Lux)
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-
-			self.Is_Controlled_By_Device._rules = [('only', [[Device]])]
-			self.Is_Measured_By_Device._rules = [('only', [[Device]])]
-			self.Relates_To_Measurement._rules = [('only', [[Measurement]])]
-
-			self.Is_Controlled_By_Device._instance_identifier = self.get_identifier()
-			self.Is_Measured_By_Device._instance_identifier = self.get_identifier()
-			self.Relates_To_Measurement._instance_identifier = self.get_identifier()
-
-	# Relation fields
-
-	Is_Controlled_By_Device: RelationField = RelationField(
-		name='Is_Controlled_By_Device',
-		rule='only Device',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Devices That Can Control A Certain Property
-	"""
-
-	Is_Measured_By_Device: RelationField = RelationField(
-		name='Is_Measured_By_Device',
-		rule='only Device',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Devices That Can Measure A Certain Property
-	"""
-
-	Relates_To_Measurement: RelationField = RelationField(
-		name='Relates_To_Measurement',
-		rule='only Measurement',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Property And The Measurements It Relates To
-	"""
-
-
-class Occupancy(Property):
-	"""
-	A Saref:Property Related To Some Measurements That Are Characterized By A
-	Certain Value (Saref:Hasvalue Property) That Is Measured In A Unit Of
-	Measure For Occupancy
+	Certain Value That Is Measured In A Humidity Unit
 
 	Source(s): 
 		https://w3id.org/saref (saref.ttl)
@@ -1843,233 +1417,182 @@ class Motion(Property):
 	"""
 
 
-class Class3a(Class3):
+class Actuating_Function(Function):
 	"""
-	Generated SemanticClass without description
+	A Function That Allows To Transmit Data To Actuators, Such As Level Settings
+	(E.G., Temperature) Or Binary Switching (E.G., Open/Close, On/Off)
 
 	Source(s): 
-		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
 		if not is_initialised:
-			self.attributeProp._rules = [('some', [['string']])]
-			self.commandProp._rules = [('some', [['string']])]
-			self.dataProp1._rules = [('only', [['customDataType4']])]
 
-			self.oProp1._rules = [('value', [[Individual1]])]
-			self.objProp2._rules = [('some', [[Class1]]), ('value', [[Individual1]])]
+			self.Has_Command._rules = [('min|1', [[Command]])]
 
-			self.oProp1._instance_identifier = self.get_identifier()
-			self.objProp2._instance_identifier = self.get_identifier()
-			self.attributeProp._instance_identifier = self.get_identifier()
-			self.commandProp._instance_identifier = self.get_identifier()
-			self.dataProp1._instance_identifier = self.get_identifier()
-
-	# Data fields
-
-	attributeProp: DataField = DataField(
-		name='attributeProp',
-		rule='some string',
-		semantic_manager=semantic_manager)
-
-	commandProp: DataField = DataField(
-		name='commandProp',
-		rule='some string',
-		semantic_manager=semantic_manager)
-
-	dataProp1: DataField = DataField(
-		name='dataProp1',
-		rule='only customDataType4',
-		semantic_manager=semantic_manager)
+			self.Has_Command._instance_identifier = self.get_identifier()
 
 	# Relation fields
 
-	oProp1: RelationField = RelationField(
-		name='oProp1',
-		rule='value Individual1',
-		inverse_of=['objProp3'],
+	Has_Command: RelationField = RelationField(
+		name='Has_Command',
+		rule='min 1 Command',
+		inverse_of=['Is_Command_Of'],
 		semantic_manager=semantic_manager)
-
-	objProp2: RelationField = RelationField(
-		name='objProp2',
-		rule='some Class1, value Individual1',
-		semantic_manager=semantic_manager)
-
-
-class Class123(Class1, Class2, Class3):
 	"""
-	Generated SemanticClass without description
+	A Relationship Between An Entity (Such As A Function) And A Command
+	"""
+
+
+class Metering_Function(Function):
+	"""
+	A Function That Allows To Get Data From A Meter, Such As Current Meter
+	Reading Or Instantaneous Demand
 
 	Source(s): 
-		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
 		if not is_initialised:
-			self.attributeProp._rules = [('some', [['string']]), ('some', [['customDataType1']])]
-			self.commandProp._rules = [('some', [['string']])]
-			self.dataProp1._rules = [('only', [['customDataType4']])]
-			self.dataProp2._rules = [('value', [[]])]
 
-			self.oProp1._rules = [('value', [[Individual1]]), ('min|1', [[Class1]]), ('some', [[Class2], [Class4]])]
-			self.objProp2._rules = [('some', [[Class1]]), ('value', [[Individual1]]), ('only', [[Thing]]), ('some', [[Class1, Class2]])]
-			self.objProp3._rules = [('some', [[Class3]])]
-			self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
-			self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]]), ('value', [[Individual1]])]
+			self.Has_Command._rules = [('only', [[Get_Current_Meter_Value_Command], [Get_Meter_Data_Command], [Get_Meter_History_Command]]), ('min|1', [[Command]])]
+			self.Has_Meter_Reading_Type._rules = [('only', [[Commodity], [Property]])]
+			self.Has_Meter_Reading._rules = [('only', [[Measurement]])]
 
-			self.oProp1._instance_identifier = self.get_identifier()
-			self.objProp2._instance_identifier = self.get_identifier()
-			self.objProp3._instance_identifier = self.get_identifier()
-			self.objProp4._instance_identifier = self.get_identifier()
-			self.objProp5._instance_identifier = self.get_identifier()
-			self.attributeProp._instance_identifier = self.get_identifier()
-			self.commandProp._instance_identifier = self.get_identifier()
-			self.dataProp1._instance_identifier = self.get_identifier()
-			self.dataProp2._instance_identifier = self.get_identifier()
-
-	# Data fields
-
-	attributeProp: DataField = DataField(
-		name='attributeProp',
-		rule='some string, some customDataType1',
-		semantic_manager=semantic_manager)
-
-	commandProp: DataField = DataField(
-		name='commandProp',
-		rule='some string',
-		semantic_manager=semantic_manager)
-
-	dataProp1: DataField = DataField(
-		name='dataProp1',
-		rule='only customDataType4',
-		semantic_manager=semantic_manager)
-
-	dataProp2: DataField = DataField(
-		name='dataProp2',
-		rule='value 2',
-		semantic_manager=semantic_manager)
+			self.Has_Command._instance_identifier = self.get_identifier()
+			self.Has_Meter_Reading_Type._instance_identifier = self.get_identifier()
+			self.Has_Meter_Reading._instance_identifier = self.get_identifier()
 
 	# Relation fields
 
-	oProp1: RelationField = RelationField(
-		name='oProp1',
-		rule='value Individual1, min 1 Class1, some (Class2 or Class4)',
-		inverse_of=['objProp3'],
+	Has_Command: RelationField = RelationField(
+		name='Has_Command',
+		rule='only (Get_Current_Meter_Value_Command or Get_Meter_Data_Command) or Get_Meter_History_Command), min 1 Command',
+		inverse_of=['Is_Command_Of'],
 		semantic_manager=semantic_manager)
-
-	objProp2: RelationField = RelationField(
-		name='objProp2',
-		rule='some Class1, value Individual1, only Thing, some (Class1 and Class2)',
-		semantic_manager=semantic_manager)
-
-	objProp3: RelationField = RelationField(
-		name='objProp3',
-		rule='some Class3',
-		inverse_of=['oProp1'],
-		semantic_manager=semantic_manager)
-
-	objProp4: RelationField = RelationField(
-		name='objProp4',
-		rule='some (Class1 and Class2) and Class3)',
-		semantic_manager=semantic_manager)
-
-	objProp5: RelationField = RelationField(
-		name='objProp5',
-		rule='some (Class1 and (Class2 or Class3)), value Individual1',
-		semantic_manager=semantic_manager)
-
-
-class Class13(Class1, Class3):
 	"""
-	Generated SemanticClass without description
+	A Relationship Between An Entity (Such As A Function) And A Command
+	"""
+
+	Has_Meter_Reading_Type: RelationField = RelationField(
+		name='Has_Meter_Reading_Type',
+		rule='only (Commodity or Property)',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Reading Type Of A Measurement (E.G., Water,
+	Gas, Pressure , Energy , Power, Etc.)
+	"""
+
+	Has_Meter_Reading: RelationField = RelationField(
+		name='Has_Meter_Reading',
+		rule='only Measurement',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Metering Function And The Measurement Of The
+	Reading
+	"""
+
+
+class Sensing_Function(Function):
+	"""
+	A Function That Allows To Transmit Data From Sensors, Such As Measurement
+	Values (E.G., Temperature) Or Sensing Data (E.G., Occupancy)
 
 	Source(s): 
-		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
 		if not is_initialised:
-			self.attributeProp._rules = [('some', [['string']])]
-			self.commandProp._rules = [('some', [['string']])]
-			self.dataProp1._rules = [('min|1', [['int']]), ('only', [['customDataType4']])]
-			self.dataProp2._rules = [('exactly|1', [['boolean']]), ('value', [[]])]
 
-			self.oProp1._rules = [('value', [[Individual1]]), ('some', [[Class2], [Class4]])]
-			self.objProp2._rules = [('some', [[Class1]]), ('value', [[Individual1]]), ('some', [[Class1, Class2]])]
-			self.objProp3._rules = [('some', [[Class3]])]
-			self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
-			self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]]), ('value', [[Individual1]])]
+			self.Has_Command._rules = [('only', [[Get_Sensing_Data_Command]]), ('min|1', [[Command]])]
+			self.Has_Sensing_Range_._rules = [('some', [[Measurement]])]
+			self.Has_Sensor_Type._rules = [('only', [[Property]])]
 
-			self.oProp1._instance_identifier = self.get_identifier()
-			self.objProp2._instance_identifier = self.get_identifier()
-			self.objProp3._instance_identifier = self.get_identifier()
-			self.objProp4._instance_identifier = self.get_identifier()
-			self.objProp5._instance_identifier = self.get_identifier()
-			self.attributeProp._instance_identifier = self.get_identifier()
-			self.commandProp._instance_identifier = self.get_identifier()
-			self.dataProp1._instance_identifier = self.get_identifier()
-			self.dataProp2._instance_identifier = self.get_identifier()
-
-	# Data fields
-
-	attributeProp: DataField = DataField(
-		name='attributeProp',
-		rule='some string',
-		semantic_manager=semantic_manager)
-
-	commandProp: DataField = DataField(
-		name='commandProp',
-		rule='some string',
-		semantic_manager=semantic_manager)
-
-	dataProp1: DataField = DataField(
-		name='dataProp1',
-		rule='min 1 int, only customDataType4',
-		semantic_manager=semantic_manager)
-
-	dataProp2: DataField = DataField(
-		name='dataProp2',
-		rule='exactly 1 boolean, value 2',
-		semantic_manager=semantic_manager)
+			self.Has_Command._instance_identifier = self.get_identifier()
+			self.Has_Sensing_Range_._instance_identifier = self.get_identifier()
+			self.Has_Sensor_Type._instance_identifier = self.get_identifier()
 
 	# Relation fields
 
-	oProp1: RelationField = RelationField(
-		name='oProp1',
-		rule='value Individual1, some (Class2 or Class4)',
-		inverse_of=['objProp3'],
+	Has_Command: RelationField = RelationField(
+		name='Has_Command',
+		rule='only Get_Sensing_Data_Command, min 1 Command',
+		inverse_of=['Is_Command_Of'],
 		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between An Entity (Such As A Function) And A Command
+	"""
 
-	objProp2: RelationField = RelationField(
-		name='objProp2',
-		rule='some Class1, value Individual1, some (Class1 and Class2)',
+	Has_Sensing_Range_: RelationField = RelationField(
+		name='Has_Sensing_Range_',
+		rule='some Measurement',
 		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Sensing Function And A Measurement Identifying The
+	Range Of A Sensor Detection
+	"""
 
-	objProp3: RelationField = RelationField(
-		name='objProp3',
-		rule='some Class3',
-		inverse_of=['oProp1'],
+	Has_Sensor_Type: RelationField = RelationField(
+		name='Has_Sensor_Type',
+		rule='only Property',
 		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Sensing Type Of A Sensor Detection (I.E.,
+	Temperature, Occupancy, Humidity, Motion , Smoke, Pressure, Etc.) 
+	"""
 
-	objProp4: RelationField = RelationField(
-		name='objProp4',
-		rule='some (Class1 and Class2) and Class3)',
+
+class Event_Function(Function):
+	"""
+	A Function That Allows To Notify Another Device That A Certain Threshold
+	Value Has Been Exceeded.
+
+	Source(s): 
+		https://w3id.org/saref (saref.ttl)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+
+			self.Has_Command._rules = [('only', [[Notify_Command]]), ('min|1', [[Command]])]
+			self.Has_Threshold_Measurement._rules = [('min|1', [[Measurement]])]
+
+			self.Has_Command._instance_identifier = self.get_identifier()
+			self.Has_Threshold_Measurement._instance_identifier = self.get_identifier()
+
+	# Relation fields
+
+	Has_Command: RelationField = RelationField(
+		name='Has_Command',
+		rule='only Notify_Command, min 1 Command',
+		inverse_of=['Is_Command_Of'],
 		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between An Entity (Such As A Function) And A Command
+	"""
 
-	objProp5: RelationField = RelationField(
-		name='objProp5',
-		rule='some (Class1 and (Class2 or Class3)), value Individual1',
+	Has_Threshold_Measurement: RelationField = RelationField(
+		name='Has_Threshold_Measurement',
+		rule='min 1 Measurement',
 		semantic_manager=semantic_manager)
+	"""
+	A Relationship Associated With An Event Function To Notify That A Certain
+	Threshold Measurement Has Been Exceeded
+	"""
 
 
-class Multi_Level_State(State):
+class Open_Close_State(State):
 	"""
 	A Type Of State
 
@@ -2082,7 +1605,7 @@ class Multi_Level_State(State):
 		super().__init__(*args, **kwargs)
 
 
-class Start_Stop_State(State):
+class Multi_Level_State(State):
 	"""
 	A Type Of State
 
@@ -2108,7 +1631,7 @@ class On_Off_State(State):
 		super().__init__(*args, **kwargs)
 
 
-class Open_Close_State(State):
+class Start_Stop_State(State):
 	"""
 	A Type Of State
 
@@ -2121,845 +1644,10 @@ class Open_Close_State(State):
 		super().__init__(*args, **kwargs)
 
 
-class Pause_Command(Command):
-	"""
-	A Type Of Command
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-			self.Has_Description._rules = [('max|1', [['string']])]
-
-			self.Acts_Upon._rules = [('only', [[State]])]
-			self.Is_Command_Of._rules = [('min|1', [[Function]])]
-
-			self.Acts_Upon._instance_identifier = self.get_identifier()
-			self.Is_Command_Of._instance_identifier = self.get_identifier()
-			self.Has_Description._instance_identifier = self.get_identifier()
-
-	# Data fields
-
-	Has_Description: DataField = DataField(
-		name='Has_Description',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Providing A Description Of An Entity (E.G., Device)
-	"""
-
-	# Relation fields
-
-	Acts_Upon: RelationField = RelationField(
-		name='Acts_Upon',
-		rule='only State',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Command And A State
-	"""
-
-	Is_Command_Of: RelationField = RelationField(
-		name='Is_Command_Of',
-		rule='min 1 Function',
-		inverse_of=['Has_Command'],
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Command And A Function.
-	"""
-
-
-class Stop_Command(Command):
-	"""
-	A Type Of Command
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-			self.Has_Description._rules = [('max|1', [['string']])]
-
-			self.Acts_Upon._rules = [('only', [[Start_Stop_State]]), ('only', [[State]])]
-			self.Is_Command_Of._rules = [('min|1', [[Function]])]
-
-			self.Acts_Upon._instance_identifier = self.get_identifier()
-			self.Is_Command_Of._instance_identifier = self.get_identifier()
-			self.Has_Description._instance_identifier = self.get_identifier()
-
-	# Data fields
-
-	Has_Description: DataField = DataField(
-		name='Has_Description',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Providing A Description Of An Entity (E.G., Device)
-	"""
-
-	# Relation fields
-
-	Acts_Upon: RelationField = RelationField(
-		name='Acts_Upon',
-		rule='only Start_Stop_State, only State',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Command And A State
-	"""
-
-	Is_Command_Of: RelationField = RelationField(
-		name='Is_Command_Of',
-		rule='min 1 Function',
-		inverse_of=['Has_Command'],
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Command And A Function.
-	"""
-
-
-class Set_Level_Command(Command):
-	"""
-	A Type Of Command
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-			self.Has_Description._rules = [('max|1', [['string']])]
-
-			self.Acts_Upon._rules = [('only', [[Multi_Level_State]]), ('only', [[State]])]
-			self.Is_Command_Of._rules = [('min|1', [[Function]])]
-
-			self.Acts_Upon._instance_identifier = self.get_identifier()
-			self.Is_Command_Of._instance_identifier = self.get_identifier()
-			self.Has_Description._instance_identifier = self.get_identifier()
-
-	# Data fields
-
-	Has_Description: DataField = DataField(
-		name='Has_Description',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Providing A Description Of An Entity (E.G., Device)
-	"""
-
-	# Relation fields
-
-	Acts_Upon: RelationField = RelationField(
-		name='Acts_Upon',
-		rule='only Multi_Level_State, only State',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Command And A State
-	"""
-
-	Is_Command_Of: RelationField = RelationField(
-		name='Is_Command_Of',
-		rule='min 1 Function',
-		inverse_of=['Has_Command'],
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Command And A Function.
-	"""
-
-
-class Step_Down_Command(Command):
-	"""
-	A Type Of Command
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-			self.Has_Description._rules = [('max|1', [['string']])]
-
-			self.Acts_Upon._rules = [('only', [[Multi_Level_State]]), ('only', [[State]])]
-			self.Is_Command_Of._rules = [('min|1', [[Function]])]
-
-			self.Acts_Upon._instance_identifier = self.get_identifier()
-			self.Is_Command_Of._instance_identifier = self.get_identifier()
-			self.Has_Description._instance_identifier = self.get_identifier()
-
-	# Data fields
-
-	Has_Description: DataField = DataField(
-		name='Has_Description',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Providing A Description Of An Entity (E.G., Device)
-	"""
-
-	# Relation fields
-
-	Acts_Upon: RelationField = RelationField(
-		name='Acts_Upon',
-		rule='only Multi_Level_State, only State',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Command And A State
-	"""
-
-	Is_Command_Of: RelationField = RelationField(
-		name='Is_Command_Of',
-		rule='min 1 Function',
-		inverse_of=['Has_Command'],
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Command And A Function.
-	"""
-
-
-class Open_Command(Command):
-	"""
-	A Type Of Command
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-			self.Has_Description._rules = [('max|1', [['string']])]
-
-			self.Acts_Upon._rules = [('only', [[Open_Close_State]]), ('only', [[State]])]
-			self.Is_Command_Of._rules = [('min|1', [[Function]])]
-
-			self.Acts_Upon._instance_identifier = self.get_identifier()
-			self.Is_Command_Of._instance_identifier = self.get_identifier()
-			self.Has_Description._instance_identifier = self.get_identifier()
-
-	# Data fields
-
-	Has_Description: DataField = DataField(
-		name='Has_Description',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Providing A Description Of An Entity (E.G., Device)
-	"""
-
-	# Relation fields
-
-	Acts_Upon: RelationField = RelationField(
-		name='Acts_Upon',
-		rule='only Open_Close_State, only State',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Command And A State
-	"""
-
-	Is_Command_Of: RelationField = RelationField(
-		name='Is_Command_Of',
-		rule='min 1 Function',
-		inverse_of=['Has_Command'],
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Command And A Function.
-	"""
-
-
-class Step_Up_Command(Command):
-	"""
-	A Type Of Command
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-			self.Has_Description._rules = [('max|1', [['string']])]
-
-			self.Acts_Upon._rules = [('only', [[Multi_Level_State]]), ('only', [[State]])]
-			self.Is_Command_Of._rules = [('min|1', [[Function]])]
-
-			self.Acts_Upon._instance_identifier = self.get_identifier()
-			self.Is_Command_Of._instance_identifier = self.get_identifier()
-			self.Has_Description._instance_identifier = self.get_identifier()
-
-	# Data fields
-
-	Has_Description: DataField = DataField(
-		name='Has_Description',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Providing A Description Of An Entity (E.G., Device)
-	"""
-
-	# Relation fields
-
-	Acts_Upon: RelationField = RelationField(
-		name='Acts_Upon',
-		rule='only Multi_Level_State, only State',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Command And A State
-	"""
-
-	Is_Command_Of: RelationField = RelationField(
-		name='Is_Command_Of',
-		rule='min 1 Function',
-		inverse_of=['Has_Command'],
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Command And A Function.
-	"""
-
-
-class Off_Command(Command):
-	"""
-	A Type Of Command
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-			self.Has_Description._rules = [('max|1', [['string']])]
-
-			self.Acts_Upon._rules = [('only', [[On_Off_State]]), ('only', [[State]])]
-			self.Is_Command_Of._rules = [('min|1', [[Function]])]
-
-			self.Acts_Upon._instance_identifier = self.get_identifier()
-			self.Is_Command_Of._instance_identifier = self.get_identifier()
-			self.Has_Description._instance_identifier = self.get_identifier()
-
-	# Data fields
-
-	Has_Description: DataField = DataField(
-		name='Has_Description',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Providing A Description Of An Entity (E.G., Device)
-	"""
-
-	# Relation fields
-
-	Acts_Upon: RelationField = RelationField(
-		name='Acts_Upon',
-		rule='only On_Off_State, only State',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Command And A State
-	"""
-
-	Is_Command_Of: RelationField = RelationField(
-		name='Is_Command_Of',
-		rule='min 1 Function',
-		inverse_of=['Has_Command'],
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Command And A Function.
-	"""
-
-
-class Close_Command(Command):
-	"""
-	A Type Of Command
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-			self.Has_Description._rules = [('max|1', [['string']])]
-
-			self.Acts_Upon._rules = [('only', [[Open_Close_State]]), ('only', [[State]])]
-			self.Is_Command_Of._rules = [('min|1', [[Function]])]
-
-			self.Acts_Upon._instance_identifier = self.get_identifier()
-			self.Is_Command_Of._instance_identifier = self.get_identifier()
-			self.Has_Description._instance_identifier = self.get_identifier()
-
-	# Data fields
-
-	Has_Description: DataField = DataField(
-		name='Has_Description',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Providing A Description Of An Entity (E.G., Device)
-	"""
-
-	# Relation fields
-
-	Acts_Upon: RelationField = RelationField(
-		name='Acts_Upon',
-		rule='only Open_Close_State, only State',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Command And A State
-	"""
-
-	Is_Command_Of: RelationField = RelationField(
-		name='Is_Command_Of',
-		rule='min 1 Function',
-		inverse_of=['Has_Command'],
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Command And A Function.
-	"""
-
-
-class On_Command(Command):
-	"""
-	A Type Of Command
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-			self.Has_Description._rules = [('max|1', [['string']])]
-
-			self.Acts_Upon._rules = [('only', [[On_Off_State]]), ('only', [[State]])]
-			self.Is_Command_Of._rules = [('min|1', [[Function]])]
-
-			self.Acts_Upon._instance_identifier = self.get_identifier()
-			self.Is_Command_Of._instance_identifier = self.get_identifier()
-			self.Has_Description._instance_identifier = self.get_identifier()
-
-	# Data fields
-
-	Has_Description: DataField = DataField(
-		name='Has_Description',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Providing A Description Of An Entity (E.G., Device)
-	"""
-
-	# Relation fields
-
-	Acts_Upon: RelationField = RelationField(
-		name='Acts_Upon',
-		rule='only On_Off_State, only State',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Command And A State
-	"""
-
-	Is_Command_Of: RelationField = RelationField(
-		name='Is_Command_Of',
-		rule='min 1 Function',
-		inverse_of=['Has_Command'],
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Command And A Function.
-	"""
-
-
-class Notify_Command(Command):
-	"""
-	A Type Of Command
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-			self.Has_Description._rules = [('max|1', [['string']])]
-
-			self.Acts_Upon._rules = [('only', [[State]])]
-			self.Is_Command_Of._rules = [('min|1', [[Function]])]
-
-			self.Acts_Upon._instance_identifier = self.get_identifier()
-			self.Is_Command_Of._instance_identifier = self.get_identifier()
-			self.Has_Description._instance_identifier = self.get_identifier()
-
-	# Data fields
-
-	Has_Description: DataField = DataField(
-		name='Has_Description',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Providing A Description Of An Entity (E.G., Device)
-	"""
-
-	# Relation fields
-
-	Acts_Upon: RelationField = RelationField(
-		name='Acts_Upon',
-		rule='only State',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Command And A State
-	"""
-
-	Is_Command_Of: RelationField = RelationField(
-		name='Is_Command_Of',
-		rule='min 1 Function',
-		inverse_of=['Has_Command'],
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Command And A Function.
-	"""
-
-
-class Toggle_Command(Command):
-	"""
-	A Type Of Command
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-			self.Has_Description._rules = [('max|1', [['string']])]
-
-			self.Acts_Upon._rules = [('only', [[State]])]
-			self.Is_Command_Of._rules = [('min|1', [[Function]])]
-
-			self.Acts_Upon._instance_identifier = self.get_identifier()
-			self.Is_Command_Of._instance_identifier = self.get_identifier()
-			self.Has_Description._instance_identifier = self.get_identifier()
-
-	# Data fields
-
-	Has_Description: DataField = DataField(
-		name='Has_Description',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Providing A Description Of An Entity (E.G., Device)
-	"""
-
-	# Relation fields
-
-	Acts_Upon: RelationField = RelationField(
-		name='Acts_Upon',
-		rule='only State',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Command And A State
-	"""
-
-	Is_Command_Of: RelationField = RelationField(
-		name='Is_Command_Of',
-		rule='min 1 Function',
-		inverse_of=['Has_Command'],
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Command And A Function.
-	"""
-
-
-class Start_Command(Command):
-	"""
-	A Type Of Command
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-			self.Has_Description._rules = [('max|1', [['string']])]
-
-			self.Acts_Upon._rules = [('only', [[Start_Stop_State]]), ('only', [[State]])]
-			self.Is_Command_Of._rules = [('min|1', [[Function]])]
-
-			self.Acts_Upon._instance_identifier = self.get_identifier()
-			self.Is_Command_Of._instance_identifier = self.get_identifier()
-			self.Has_Description._instance_identifier = self.get_identifier()
-
-	# Data fields
-
-	Has_Description: DataField = DataField(
-		name='Has_Description',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Providing A Description Of An Entity (E.G., Device)
-	"""
-
-	# Relation fields
-
-	Acts_Upon: RelationField = RelationField(
-		name='Acts_Upon',
-		rule='only Start_Stop_State, only State',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Command And A State
-	"""
-
-	Is_Command_Of: RelationField = RelationField(
-		name='Is_Command_Of',
-		rule='min 1 Function',
-		inverse_of=['Has_Command'],
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Command And A Function.
-	"""
-
-
-class Get_Command(Command):
-	"""
-	A Type Of Command
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-			self.Has_Description._rules = [('max|1', [['string']])]
-
-			self.Acts_Upon._rules = [('only', [[State]])]
-			self.Is_Command_Of._rules = [('min|1', [[Function]])]
-
-			self.Acts_Upon._instance_identifier = self.get_identifier()
-			self.Is_Command_Of._instance_identifier = self.get_identifier()
-			self.Has_Description._instance_identifier = self.get_identifier()
-
-	# Data fields
-
-	Has_Description: DataField = DataField(
-		name='Has_Description',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Providing A Description Of An Entity (E.G., Device)
-	"""
-
-	# Relation fields
-
-	Acts_Upon: RelationField = RelationField(
-		name='Acts_Upon',
-		rule='only State',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Command And A State
-	"""
-
-	Is_Command_Of: RelationField = RelationField(
-		name='Is_Command_Of',
-		rule='min 1 Function',
-		inverse_of=['Has_Command'],
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Command And A Function.
-	"""
-
-
 class Building_Related(Device):
 	"""
 	A Category That Includes Devices As Described By Building Related Data
 	Models, Such As Ifc And Fiemser 
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-			self.Has_Description._rules = [('max|1', [['string']])]
-			self.Has_Manufacturer._rules = [('max|1', [['string']])]
-			self.Has_Model._rules = [('max|1', [['string']])]
-
-			self.Accomplishes._rules = [('min|1', [[Task]])]
-			self.Consists_Of._rules = [('only', [[Device]])]
-			self.Controls_Property._rules = [('only', [[Property]])]
-			self.Has_Function._rules = [('min|1', [[Function]])]
-			self.Has_Profile._rules = [('only', [[Profile]])]
-			self.Has_State._rules = [('only', [[State]])]
-			self.Has_Typical_Consumption._rules = [('only', [[Energy], [Power]])]
-			self.Is_Used_For._rules = [('only', [[Commodity]])]
-			self.Makes_Measurement._rules = [('only', [[Measurement]])]
-			self.Measures_Property._rules = [('only', [[Property]])]
-			self.Offers._rules = [('only', [[Service]])]
-
-			self.Accomplishes._instance_identifier = self.get_identifier()
-			self.Consists_Of._instance_identifier = self.get_identifier()
-			self.Controls_Property._instance_identifier = self.get_identifier()
-			self.Has_Function._instance_identifier = self.get_identifier()
-			self.Has_Profile._instance_identifier = self.get_identifier()
-			self.Has_State._instance_identifier = self.get_identifier()
-			self.Has_Typical_Consumption._instance_identifier = self.get_identifier()
-			self.Is_Used_For._instance_identifier = self.get_identifier()
-			self.Makes_Measurement._instance_identifier = self.get_identifier()
-			self.Measures_Property._instance_identifier = self.get_identifier()
-			self.Offers._instance_identifier = self.get_identifier()
-			self.Has_Description._instance_identifier = self.get_identifier()
-			self.Has_Manufacturer._instance_identifier = self.get_identifier()
-			self.Has_Model._instance_identifier = self.get_identifier()
-
-	# Data fields
-
-	Has_Description: DataField = DataField(
-		name='Has_Description',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Providing A Description Of An Entity (E.G., Device)
-	"""
-
-	Has_Manufacturer: DataField = DataField(
-		name='Has_Manufacturer',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Manufacturer Of An Entity (E.G., Device)
-	"""
-
-	Has_Model: DataField = DataField(
-		name='Has_Model',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Model Of An Entity (E.G., Device)
-	"""
-
-	# Relation fields
-
-	Accomplishes: RelationField = RelationField(
-		name='Accomplishes',
-		rule='min 1 Task',
-		inverse_of=['Is_Accomplished_By'],
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Certain Entity (E.G., A Device) And The Task It
-	Accomplishes
-	"""
-
-	Consists_Of: RelationField = RelationField(
-		name='Consists_Of',
-		rule='only Device',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Indicating A Composite Entity That Consists Of Other Entities
-	(E.G., A Temperature/Humidity Sensor That Consists Of A Temperature Sensor
-	And A Humidity Sensor)
-	"""
-
-	Controls_Property: RelationField = RelationField(
-		name='Controls_Property',
-		rule='only Property',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Property That Can Be Controlled By A Certain
-	Device
-	"""
-
-	Has_Function: RelationField = RelationField(
-		name='Has_Function',
-		rule='min 1 Function',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Type Of Function Of A Device
-	"""
-
-	Has_Profile: RelationField = RelationField(
-		name='Has_Profile',
-		rule='only Profile',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Associating A Profile To A Certain Entity (E.G., A Device)
-	"""
-
-	Has_State: RelationField = RelationField(
-		name='Has_State',
-		rule='only State',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Type Of State Of A Device
-	"""
-
-	Has_Typical_Consumption: RelationField = RelationField(
-		name='Has_Typical_Consumption',
-		rule='only (Energy or Power)',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Typical (Energy Or Power) Consumption Of A
-	Device
-	"""
-
-	Is_Used_For: RelationField = RelationField(
-		name='Is_Used_For',
-		rule='only Commodity',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Purpose For Which A Device Is Used For (E.G.,
-	Controlling A Commodity)
-	"""
-
-	Makes_Measurement: RelationField = RelationField(
-		name='Makes_Measurement',
-		rule='only Measurement',
-		semantic_manager=semantic_manager)
-	"""
-	A Relation Between A Device And The Measurements It Makes. Such Measurement
-	Will Link Together The Value Of The Measurement, Its Unit Of Measure And The
-	Property To Which It Relates.
-	"""
-
-	Measures_Property: RelationField = RelationField(
-		name='Measures_Property',
-		rule='only Property',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Property That Can Be Measured By A Certain
-	Device
-	"""
-
-	Offers: RelationField = RelationField(
-		name='Offers',
-		rule='only Service',
-		inverse_of=['Is_Offered_By'],
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Device And A Service
-	"""
-
-
-class Energy_Related(Device):
-	"""
-	A Category That Considers Devices Based On Energy Consumption Information
-	And Profiles To Optimize Energy Efficiency.
 
 	Source(s): 
 		https://w3id.org/saref (saref.ttl)
@@ -3300,9 +1988,10 @@ class Function_Related(Device):
 	"""
 
 
-class Switch_On_Service(Service):
+class Energy_Related(Device):
 	"""
-	A Type Of Service That Represents An On/Off Function To The Network
+	A Category That Considers Devices Based On Energy Consumption Information
+	And Profiles To Optimize Energy Efficiency.
 
 	Source(s): 
 		https://w3id.org/saref (saref.ttl)
@@ -3312,34 +2001,218 @@ class Switch_On_Service(Service):
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
 		if not is_initialised:
+			self.Has_Description._rules = [('max|1', [['string']])]
+			self.Has_Manufacturer._rules = [('max|1', [['string']])]
+			self.Has_Model._rules = [('max|1', [['string']])]
 
-			self.Is_Offered_By._rules = [('some', [[Light_Switch]]), ('min|1', [[Device]])]
-			self.Represents._rules = [('some', [[On_Off_Function]]), ('min|1', [[Function]])]
+			self.Accomplishes._rules = [('min|1', [[Task]])]
+			self.Consists_Of._rules = [('only', [[Device]])]
+			self.Controls_Property._rules = [('only', [[Property]])]
+			self.Has_Function._rules = [('min|1', [[Function]])]
+			self.Has_Profile._rules = [('only', [[Profile]])]
+			self.Has_State._rules = [('only', [[State]])]
+			self.Has_Typical_Consumption._rules = [('only', [[Energy], [Power]])]
+			self.Is_Used_For._rules = [('only', [[Commodity]])]
+			self.Makes_Measurement._rules = [('only', [[Measurement]])]
+			self.Measures_Property._rules = [('only', [[Property]])]
+			self.Offers._rules = [('only', [[Service]])]
 
-			self.Is_Offered_By._instance_identifier = self.get_identifier()
-			self.Represents._instance_identifier = self.get_identifier()
+			self.Accomplishes._instance_identifier = self.get_identifier()
+			self.Consists_Of._instance_identifier = self.get_identifier()
+			self.Controls_Property._instance_identifier = self.get_identifier()
+			self.Has_Function._instance_identifier = self.get_identifier()
+			self.Has_Profile._instance_identifier = self.get_identifier()
+			self.Has_State._instance_identifier = self.get_identifier()
+			self.Has_Typical_Consumption._instance_identifier = self.get_identifier()
+			self.Is_Used_For._instance_identifier = self.get_identifier()
+			self.Makes_Measurement._instance_identifier = self.get_identifier()
+			self.Measures_Property._instance_identifier = self.get_identifier()
+			self.Offers._instance_identifier = self.get_identifier()
+			self.Has_Description._instance_identifier = self.get_identifier()
+			self.Has_Manufacturer._instance_identifier = self.get_identifier()
+			self.Has_Model._instance_identifier = self.get_identifier()
+
+	# Data fields
+
+	Has_Description: DataField = DataField(
+		name='Has_Description',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Providing A Description Of An Entity (E.G., Device)
+	"""
+
+	Has_Manufacturer: DataField = DataField(
+		name='Has_Manufacturer',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Manufacturer Of An Entity (E.G., Device)
+	"""
+
+	Has_Model: DataField = DataField(
+		name='Has_Model',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Model Of An Entity (E.G., Device)
+	"""
 
 	# Relation fields
 
-	Is_Offered_By: RelationField = RelationField(
-		name='Is_Offered_By',
-		rule='some Light_Switch, min 1 Device',
-		inverse_of=['Offers'],
+	Accomplishes: RelationField = RelationField(
+		name='Accomplishes',
+		rule='min 1 Task',
+		inverse_of=['Is_Accomplished_By'],
 		semantic_manager=semantic_manager)
 	"""
-	A Relationship Between A Service And A Device That Offers The Service
+	A Relationship Between A Certain Entity (E.G., A Device) And The Task It
+	Accomplishes
 	"""
 
-	Represents: RelationField = RelationField(
-		name='Represents',
-		rule='some On_Off_Function, min 1 Function',
+	Consists_Of: RelationField = RelationField(
+		name='Consists_Of',
+		rule='only Device',
 		semantic_manager=semantic_manager)
 	"""
-	A Relationship Between A Service And A Function.
+	A Relationship Indicating A Composite Entity That Consists Of Other Entities
+	(E.G., A Temperature/Humidity Sensor That Consists Of A Temperature Sensor
+	And A Humidity Sensor)
+	"""
+
+	Controls_Property: RelationField = RelationField(
+		name='Controls_Property',
+		rule='only Property',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Property That Can Be Controlled By A Certain
+	Device
+	"""
+
+	Has_Function: RelationField = RelationField(
+		name='Has_Function',
+		rule='min 1 Function',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Type Of Function Of A Device
+	"""
+
+	Has_Profile: RelationField = RelationField(
+		name='Has_Profile',
+		rule='only Profile',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Associating A Profile To A Certain Entity (E.G., A Device)
+	"""
+
+	Has_State: RelationField = RelationField(
+		name='Has_State',
+		rule='only State',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Type Of State Of A Device
+	"""
+
+	Has_Typical_Consumption: RelationField = RelationField(
+		name='Has_Typical_Consumption',
+		rule='only (Energy or Power)',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Typical (Energy Or Power) Consumption Of A
+	Device
+	"""
+
+	Is_Used_For: RelationField = RelationField(
+		name='Is_Used_For',
+		rule='only Commodity',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Purpose For Which A Device Is Used For (E.G.,
+	Controlling A Commodity)
+	"""
+
+	Makes_Measurement: RelationField = RelationField(
+		name='Makes_Measurement',
+		rule='only Measurement',
+		semantic_manager=semantic_manager)
+	"""
+	A Relation Between A Device And The Measurements It Makes. Such Measurement
+	Will Link Together The Value Of The Measurement, Its Unit Of Measure And The
+	Property To Which It Relates.
+	"""
+
+	Measures_Property: RelationField = RelationField(
+		name='Measures_Property',
+		rule='only Property',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Property That Can Be Measured By A Certain
+	Device
+	"""
+
+	Offers: RelationField = RelationField(
+		name='Offers',
+		rule='only Service',
+		inverse_of=['Is_Offered_By'],
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Device And A Service
 	"""
 
 
-class Class1aa(Class1a):
+class Electricity(Commodity):
+	"""
+	A Type Of Commodity
+
+	Source(s): 
+		https://w3id.org/saref (saref.ttl)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+
+
+class Coal(Commodity):
+	"""
+	A Type Of Commodity
+
+	Source(s): 
+		https://w3id.org/saref (saref.ttl)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+
+
+class Gas(Commodity):
+	"""
+	A Type Of Commodity
+
+	Source(s): 
+		https://w3id.org/saref (saref.ttl)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+
+
+class Water(Commodity):
+	"""
+	A Type Of Commodity
+
+	Source(s): 
+		https://w3id.org/saref (saref.ttl)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+
+
+class Class1a(Class1):
 	"""
 	Generated SemanticClass without description
 
@@ -3403,9 +2276,144 @@ class Class1aa(Class1a):
 		semantic_manager=semantic_manager)
 
 
-class On_Off_Function(Actuating_Function):
+class Gertrude(Class1, Class2):
 	"""
-	An Actuating Function That Allows To Switch On And Off An Actuator
+	Generated SemanticClass without description
+
+	Source(s): 
+		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.attributeProp._rules = [('some', [['customDataType1']])]
+			self.dataProp2._rules = [('value', [[]])]
+
+			self.oProp1._rules = [('min|1', [[Class1]]), ('some', [[Class2], [Class4]])]
+			self.objProp2._rules = [('only', [[Thing]]), ('some', [[Class1, Class2]])]
+			self.objProp3._rules = [('some', [[Class3]])]
+			self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
+			self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]]), ('value', [[Individual1]])]
+
+			self.oProp1._instance_identifier = self.get_identifier()
+			self.objProp2._instance_identifier = self.get_identifier()
+			self.objProp3._instance_identifier = self.get_identifier()
+			self.objProp4._instance_identifier = self.get_identifier()
+			self.objProp5._instance_identifier = self.get_identifier()
+			self.attributeProp._instance_identifier = self.get_identifier()
+			self.dataProp2._instance_identifier = self.get_identifier()
+
+	# Data fields
+
+	attributeProp: DataField = DataField(
+		name='attributeProp',
+		rule='some customDataType1',
+		semantic_manager=semantic_manager)
+
+	dataProp2: DataField = DataField(
+		name='dataProp2',
+		rule='value 2',
+		semantic_manager=semantic_manager)
+
+	# Relation fields
+
+	oProp1: RelationField = RelationField(
+		name='oProp1',
+		rule='min 1 Class1, some (Class2 or Class4)',
+		inverse_of=['objProp3'],
+		semantic_manager=semantic_manager)
+
+	objProp2: RelationField = RelationField(
+		name='objProp2',
+		rule='only Thing, some (Class1 and Class2)',
+		semantic_manager=semantic_manager)
+
+	objProp3: RelationField = RelationField(
+		name='objProp3',
+		rule='some Class3',
+		inverse_of=['oProp1'],
+		semantic_manager=semantic_manager)
+
+	objProp4: RelationField = RelationField(
+		name='objProp4',
+		rule='some (Class1 and Class2) and Class3)',
+		semantic_manager=semantic_manager)
+
+	objProp5: RelationField = RelationField(
+		name='objProp5',
+		rule='some (Class1 and (Class2 or Class3)), value Individual1',
+		semantic_manager=semantic_manager)
+
+
+class Class1b(Class1):
+	"""
+	Generated SemanticClass without description
+
+	Source(s): 
+		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.dataProp2._rules = [('value', [[]])]
+
+			self.oProp1._rules = [('some', [[Class2]]), ('some', [[Class2], [Class4]])]
+			self.objProp2._rules = [('some', [[Class1, Class2]])]
+			self.objProp3._rules = [('some', [[Class3]])]
+			self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
+			self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]]), ('value', [[Individual1]])]
+
+			self.oProp1._instance_identifier = self.get_identifier()
+			self.objProp2._instance_identifier = self.get_identifier()
+			self.objProp3._instance_identifier = self.get_identifier()
+			self.objProp4._instance_identifier = self.get_identifier()
+			self.objProp5._instance_identifier = self.get_identifier()
+			self.dataProp2._instance_identifier = self.get_identifier()
+
+	# Data fields
+
+	dataProp2: DataField = DataField(
+		name='dataProp2',
+		rule='value 2',
+		semantic_manager=semantic_manager)
+
+	# Relation fields
+
+	oProp1: RelationField = RelationField(
+		name='oProp1',
+		rule='some Class2, some (Class2 or Class4)',
+		inverse_of=['objProp3'],
+		semantic_manager=semantic_manager)
+
+	objProp2: RelationField = RelationField(
+		name='objProp2',
+		rule='some (Class1 and Class2)',
+		semantic_manager=semantic_manager)
+
+	objProp3: RelationField = RelationField(
+		name='objProp3',
+		rule='some Class3',
+		inverse_of=['oProp1'],
+		semantic_manager=semantic_manager)
+
+	objProp4: RelationField = RelationField(
+		name='objProp4',
+		rule='some (Class1 and Class2) and Class3)',
+		semantic_manager=semantic_manager)
+
+	objProp5: RelationField = RelationField(
+		name='objProp5',
+		rule='some (Class1 and (Class2 or Class3)), value Individual1',
+		semantic_manager=semantic_manager)
+
+
+class Switch_On_Service(Service):
+	"""
+	A Type Of Service That Represents An On/Off Function To The Network
 
 	Source(s): 
 		https://w3id.org/saref (saref.ttl)
@@ -3416,27 +2424,261 @@ class On_Off_Function(Actuating_Function):
 		super().__init__(*args, **kwargs)
 		if not is_initialised:
 
-			self.Has_Command._rules = [('only', [[Off_Command], [On_Command], [Toggle_Command]]), ('min|1', [[Command]])]
+			self.Is_Offered_By._rules = [('some', [[Light_Switch]]), ('min|1', [[Device]])]
+			self.Represents._rules = [('some', [[On_Off_Function]]), ('min|1', [[Function]])]
 
-			self.Has_Command._instance_identifier = self.get_identifier()
+			self.Is_Offered_By._instance_identifier = self.get_identifier()
+			self.Represents._instance_identifier = self.get_identifier()
 
 	# Relation fields
 
-	Has_Command: RelationField = RelationField(
-		name='Has_Command',
-		rule='only (Off_Command or On_Command) or Toggle_Command), min 1 Command',
-		inverse_of=['Is_Command_Of'],
+	Is_Offered_By: RelationField = RelationField(
+		name='Is_Offered_By',
+		rule='some Light_Switch, min 1 Device',
+		inverse_of=['Offers'],
 		semantic_manager=semantic_manager)
 	"""
-	A Relationship Between An Entity (Such As A Function) And A Command
+	A Relationship Between A Service And A Device That Offers The Service
+	"""
+
+	Represents: RelationField = RelationField(
+		name='Represents',
+		rule='some On_Off_Function, min 1 Function',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Service And A Function.
 	"""
 
 
-class Level_Control_Function(Actuating_Function):
+class Class123(Class1, Class2, Class3):
 	"""
-	An Actuating Function That Allows To Do Level Adjustments Of An Actuator In
-	A Certain Range (E.G., 0%-100%), Such As Dimming A Light Or Set The Speed Of
-	An Electric Motor. 
+	Generated SemanticClass without description
+
+	Source(s): 
+		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.attributeProp._rules = [('some', [['string']]), ('some', [['customDataType1']])]
+			self.commandProp._rules = [('some', [['string']])]
+			self.dataProp1._rules = [('only', [['customDataType4']])]
+			self.dataProp2._rules = [('value', [[]])]
+
+			self.oProp1._rules = [('value', [[Individual1]]), ('min|1', [[Class1]]), ('some', [[Class2], [Class4]])]
+			self.objProp2._rules = [('some', [[Class1]]), ('value', [[Individual1]]), ('only', [[Thing]]), ('some', [[Class1, Class2]])]
+			self.objProp3._rules = [('some', [[Class3]])]
+			self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
+			self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]]), ('value', [[Individual1]])]
+
+			self.oProp1._instance_identifier = self.get_identifier()
+			self.objProp2._instance_identifier = self.get_identifier()
+			self.objProp3._instance_identifier = self.get_identifier()
+			self.objProp4._instance_identifier = self.get_identifier()
+			self.objProp5._instance_identifier = self.get_identifier()
+			self.attributeProp._instance_identifier = self.get_identifier()
+			self.commandProp._instance_identifier = self.get_identifier()
+			self.dataProp1._instance_identifier = self.get_identifier()
+			self.dataProp2._instance_identifier = self.get_identifier()
+
+	# Data fields
+
+	attributeProp: DataField = DataField(
+		name='attributeProp',
+		rule='some string, some customDataType1',
+		semantic_manager=semantic_manager)
+
+	commandProp: DataField = DataField(
+		name='commandProp',
+		rule='some string',
+		semantic_manager=semantic_manager)
+
+	dataProp1: DataField = DataField(
+		name='dataProp1',
+		rule='only customDataType4',
+		semantic_manager=semantic_manager)
+
+	dataProp2: DataField = DataField(
+		name='dataProp2',
+		rule='value 2',
+		semantic_manager=semantic_manager)
+
+	# Relation fields
+
+	oProp1: RelationField = RelationField(
+		name='oProp1',
+		rule='value Individual1, min 1 Class1, some (Class2 or Class4)',
+		inverse_of=['objProp3'],
+		semantic_manager=semantic_manager)
+
+	objProp2: RelationField = RelationField(
+		name='objProp2',
+		rule='some Class1, value Individual1, only Thing, some (Class1 and Class2)',
+		semantic_manager=semantic_manager)
+
+	objProp3: RelationField = RelationField(
+		name='objProp3',
+		rule='some Class3',
+		inverse_of=['oProp1'],
+		semantic_manager=semantic_manager)
+
+	objProp4: RelationField = RelationField(
+		name='objProp4',
+		rule='some (Class1 and Class2) and Class3)',
+		semantic_manager=semantic_manager)
+
+	objProp5: RelationField = RelationField(
+		name='objProp5',
+		rule='some (Class1 and (Class2 or Class3)), value Individual1',
+		semantic_manager=semantic_manager)
+
+
+class Class3a(Class3):
+	"""
+	Generated SemanticClass without description
+
+	Source(s): 
+		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.attributeProp._rules = [('some', [['string']])]
+			self.commandProp._rules = [('some', [['string']])]
+			self.dataProp1._rules = [('only', [['customDataType4']])]
+
+			self.oProp1._rules = [('value', [[Individual1]])]
+			self.objProp2._rules = [('some', [[Class1]]), ('value', [[Individual1]])]
+
+			self.oProp1._instance_identifier = self.get_identifier()
+			self.objProp2._instance_identifier = self.get_identifier()
+			self.attributeProp._instance_identifier = self.get_identifier()
+			self.commandProp._instance_identifier = self.get_identifier()
+			self.dataProp1._instance_identifier = self.get_identifier()
+
+	# Data fields
+
+	attributeProp: DataField = DataField(
+		name='attributeProp',
+		rule='some string',
+		semantic_manager=semantic_manager)
+
+	commandProp: DataField = DataField(
+		name='commandProp',
+		rule='some string',
+		semantic_manager=semantic_manager)
+
+	dataProp1: DataField = DataField(
+		name='dataProp1',
+		rule='only customDataType4',
+		semantic_manager=semantic_manager)
+
+	# Relation fields
+
+	oProp1: RelationField = RelationField(
+		name='oProp1',
+		rule='value Individual1',
+		inverse_of=['objProp3'],
+		semantic_manager=semantic_manager)
+
+	objProp2: RelationField = RelationField(
+		name='objProp2',
+		rule='some Class1, value Individual1',
+		semantic_manager=semantic_manager)
+
+
+class Class13(Class1, Class3):
+	"""
+	Generated SemanticClass without description
+
+	Source(s): 
+		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.attributeProp._rules = [('some', [['string']])]
+			self.commandProp._rules = [('some', [['string']])]
+			self.dataProp1._rules = [('min|1', [['int']]), ('only', [['customDataType4']])]
+			self.dataProp2._rules = [('exactly|1', [['boolean']]), ('value', [[]])]
+
+			self.oProp1._rules = [('value', [[Individual1]]), ('some', [[Class2], [Class4]])]
+			self.objProp2._rules = [('some', [[Class1]]), ('value', [[Individual1]]), ('some', [[Class1, Class2]])]
+			self.objProp3._rules = [('some', [[Class3]])]
+			self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
+			self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]]), ('value', [[Individual1]])]
+
+			self.oProp1._instance_identifier = self.get_identifier()
+			self.objProp2._instance_identifier = self.get_identifier()
+			self.objProp3._instance_identifier = self.get_identifier()
+			self.objProp4._instance_identifier = self.get_identifier()
+			self.objProp5._instance_identifier = self.get_identifier()
+			self.attributeProp._instance_identifier = self.get_identifier()
+			self.commandProp._instance_identifier = self.get_identifier()
+			self.dataProp1._instance_identifier = self.get_identifier()
+			self.dataProp2._instance_identifier = self.get_identifier()
+
+	# Data fields
+
+	attributeProp: DataField = DataField(
+		name='attributeProp',
+		rule='some string',
+		semantic_manager=semantic_manager)
+
+	commandProp: DataField = DataField(
+		name='commandProp',
+		rule='some string',
+		semantic_manager=semantic_manager)
+
+	dataProp1: DataField = DataField(
+		name='dataProp1',
+		rule='min 1 int, only customDataType4',
+		semantic_manager=semantic_manager)
+
+	dataProp2: DataField = DataField(
+		name='dataProp2',
+		rule='exactly 1 boolean, value 2',
+		semantic_manager=semantic_manager)
+
+	# Relation fields
+
+	oProp1: RelationField = RelationField(
+		name='oProp1',
+		rule='value Individual1, some (Class2 or Class4)',
+		inverse_of=['objProp3'],
+		semantic_manager=semantic_manager)
+
+	objProp2: RelationField = RelationField(
+		name='objProp2',
+		rule='some Class1, value Individual1, some (Class1 and Class2)',
+		semantic_manager=semantic_manager)
+
+	objProp3: RelationField = RelationField(
+		name='objProp3',
+		rule='some Class3',
+		inverse_of=['oProp1'],
+		semantic_manager=semantic_manager)
+
+	objProp4: RelationField = RelationField(
+		name='objProp4',
+		rule='some (Class1 and Class2) and Class3)',
+		semantic_manager=semantic_manager)
+
+	objProp5: RelationField = RelationField(
+		name='objProp5',
+		rule='some (Class1 and (Class2 or Class3)), value Individual1',
+		semantic_manager=semantic_manager)
+
+
+class Start_Command(Command):
+	"""
+	A Type Of Command
 
 	Source(s): 
 		https://w3id.org/saref (saref.ttl)
@@ -3446,20 +2688,654 @@ class Level_Control_Function(Actuating_Function):
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
 		if not is_initialised:
+			self.Has_Description._rules = [('max|1', [['string']])]
 
-			self.Has_Command._rules = [('only', [[Set_Absolute_Level_Command], [Set_Relative_Level_Command], [Step_Down_Command], [Step_Up_Command]]), ('min|1', [[Command]])]
+			self.Acts_Upon._rules = [('only', [[Start_Stop_State]]), ('only', [[State]])]
+			self.Is_Command_Of._rules = [('min|1', [[Function]])]
 
-			self.Has_Command._instance_identifier = self.get_identifier()
+			self.Acts_Upon._instance_identifier = self.get_identifier()
+			self.Is_Command_Of._instance_identifier = self.get_identifier()
+			self.Has_Description._instance_identifier = self.get_identifier()
+
+	# Data fields
+
+	Has_Description: DataField = DataField(
+		name='Has_Description',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Providing A Description Of An Entity (E.G., Device)
+	"""
 
 	# Relation fields
 
-	Has_Command: RelationField = RelationField(
-		name='Has_Command',
-		rule='only (Set_Absolute_Level_Command or Set_Relative_Level_Command) or Step_Down_Command) or Step_Up_Command), min 1 Command',
-		inverse_of=['Is_Command_Of'],
+	Acts_Upon: RelationField = RelationField(
+		name='Acts_Upon',
+		rule='only Start_Stop_State, only State',
 		semantic_manager=semantic_manager)
 	"""
-	A Relationship Between An Entity (Such As A Function) And A Command
+	A Relationship Between A Command And A State
+	"""
+
+	Is_Command_Of: RelationField = RelationField(
+		name='Is_Command_Of',
+		rule='min 1 Function',
+		inverse_of=['Has_Command'],
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Command And A Function.
+	"""
+
+
+class Off_Command(Command):
+	"""
+	A Type Of Command
+
+	Source(s): 
+		https://w3id.org/saref (saref.ttl)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.Has_Description._rules = [('max|1', [['string']])]
+
+			self.Acts_Upon._rules = [('only', [[On_Off_State]]), ('only', [[State]])]
+			self.Is_Command_Of._rules = [('min|1', [[Function]])]
+
+			self.Acts_Upon._instance_identifier = self.get_identifier()
+			self.Is_Command_Of._instance_identifier = self.get_identifier()
+			self.Has_Description._instance_identifier = self.get_identifier()
+
+	# Data fields
+
+	Has_Description: DataField = DataField(
+		name='Has_Description',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Providing A Description Of An Entity (E.G., Device)
+	"""
+
+	# Relation fields
+
+	Acts_Upon: RelationField = RelationField(
+		name='Acts_Upon',
+		rule='only On_Off_State, only State',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Command And A State
+	"""
+
+	Is_Command_Of: RelationField = RelationField(
+		name='Is_Command_Of',
+		rule='min 1 Function',
+		inverse_of=['Has_Command'],
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Command And A Function.
+	"""
+
+
+class Open_Command(Command):
+	"""
+	A Type Of Command
+
+	Source(s): 
+		https://w3id.org/saref (saref.ttl)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.Has_Description._rules = [('max|1', [['string']])]
+
+			self.Acts_Upon._rules = [('only', [[Open_Close_State]]), ('only', [[State]])]
+			self.Is_Command_Of._rules = [('min|1', [[Function]])]
+
+			self.Acts_Upon._instance_identifier = self.get_identifier()
+			self.Is_Command_Of._instance_identifier = self.get_identifier()
+			self.Has_Description._instance_identifier = self.get_identifier()
+
+	# Data fields
+
+	Has_Description: DataField = DataField(
+		name='Has_Description',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Providing A Description Of An Entity (E.G., Device)
+	"""
+
+	# Relation fields
+
+	Acts_Upon: RelationField = RelationField(
+		name='Acts_Upon',
+		rule='only Open_Close_State, only State',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Command And A State
+	"""
+
+	Is_Command_Of: RelationField = RelationField(
+		name='Is_Command_Of',
+		rule='min 1 Function',
+		inverse_of=['Has_Command'],
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Command And A Function.
+	"""
+
+
+class Toggle_Command(Command):
+	"""
+	A Type Of Command
+
+	Source(s): 
+		https://w3id.org/saref (saref.ttl)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.Has_Description._rules = [('max|1', [['string']])]
+
+			self.Acts_Upon._rules = [('only', [[State]])]
+			self.Is_Command_Of._rules = [('min|1', [[Function]])]
+
+			self.Acts_Upon._instance_identifier = self.get_identifier()
+			self.Is_Command_Of._instance_identifier = self.get_identifier()
+			self.Has_Description._instance_identifier = self.get_identifier()
+
+	# Data fields
+
+	Has_Description: DataField = DataField(
+		name='Has_Description',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Providing A Description Of An Entity (E.G., Device)
+	"""
+
+	# Relation fields
+
+	Acts_Upon: RelationField = RelationField(
+		name='Acts_Upon',
+		rule='only State',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Command And A State
+	"""
+
+	Is_Command_Of: RelationField = RelationField(
+		name='Is_Command_Of',
+		rule='min 1 Function',
+		inverse_of=['Has_Command'],
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Command And A Function.
+	"""
+
+
+class Stop_Command(Command):
+	"""
+	A Type Of Command
+
+	Source(s): 
+		https://w3id.org/saref (saref.ttl)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.Has_Description._rules = [('max|1', [['string']])]
+
+			self.Acts_Upon._rules = [('only', [[Start_Stop_State]]), ('only', [[State]])]
+			self.Is_Command_Of._rules = [('min|1', [[Function]])]
+
+			self.Acts_Upon._instance_identifier = self.get_identifier()
+			self.Is_Command_Of._instance_identifier = self.get_identifier()
+			self.Has_Description._instance_identifier = self.get_identifier()
+
+	# Data fields
+
+	Has_Description: DataField = DataField(
+		name='Has_Description',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Providing A Description Of An Entity (E.G., Device)
+	"""
+
+	# Relation fields
+
+	Acts_Upon: RelationField = RelationField(
+		name='Acts_Upon',
+		rule='only Start_Stop_State, only State',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Command And A State
+	"""
+
+	Is_Command_Of: RelationField = RelationField(
+		name='Is_Command_Of',
+		rule='min 1 Function',
+		inverse_of=['Has_Command'],
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Command And A Function.
+	"""
+
+
+class Get_Command(Command):
+	"""
+	A Type Of Command
+
+	Source(s): 
+		https://w3id.org/saref (saref.ttl)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.Has_Description._rules = [('max|1', [['string']])]
+
+			self.Acts_Upon._rules = [('only', [[State]])]
+			self.Is_Command_Of._rules = [('min|1', [[Function]])]
+
+			self.Acts_Upon._instance_identifier = self.get_identifier()
+			self.Is_Command_Of._instance_identifier = self.get_identifier()
+			self.Has_Description._instance_identifier = self.get_identifier()
+
+	# Data fields
+
+	Has_Description: DataField = DataField(
+		name='Has_Description',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Providing A Description Of An Entity (E.G., Device)
+	"""
+
+	# Relation fields
+
+	Acts_Upon: RelationField = RelationField(
+		name='Acts_Upon',
+		rule='only State',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Command And A State
+	"""
+
+	Is_Command_Of: RelationField = RelationField(
+		name='Is_Command_Of',
+		rule='min 1 Function',
+		inverse_of=['Has_Command'],
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Command And A Function.
+	"""
+
+
+class Notify_Command(Command):
+	"""
+	A Type Of Command
+
+	Source(s): 
+		https://w3id.org/saref (saref.ttl)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.Has_Description._rules = [('max|1', [['string']])]
+
+			self.Acts_Upon._rules = [('only', [[State]])]
+			self.Is_Command_Of._rules = [('min|1', [[Function]])]
+
+			self.Acts_Upon._instance_identifier = self.get_identifier()
+			self.Is_Command_Of._instance_identifier = self.get_identifier()
+			self.Has_Description._instance_identifier = self.get_identifier()
+
+	# Data fields
+
+	Has_Description: DataField = DataField(
+		name='Has_Description',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Providing A Description Of An Entity (E.G., Device)
+	"""
+
+	# Relation fields
+
+	Acts_Upon: RelationField = RelationField(
+		name='Acts_Upon',
+		rule='only State',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Command And A State
+	"""
+
+	Is_Command_Of: RelationField = RelationField(
+		name='Is_Command_Of',
+		rule='min 1 Function',
+		inverse_of=['Has_Command'],
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Command And A Function.
+	"""
+
+
+class Close_Command(Command):
+	"""
+	A Type Of Command
+
+	Source(s): 
+		https://w3id.org/saref (saref.ttl)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.Has_Description._rules = [('max|1', [['string']])]
+
+			self.Acts_Upon._rules = [('only', [[Open_Close_State]]), ('only', [[State]])]
+			self.Is_Command_Of._rules = [('min|1', [[Function]])]
+
+			self.Acts_Upon._instance_identifier = self.get_identifier()
+			self.Is_Command_Of._instance_identifier = self.get_identifier()
+			self.Has_Description._instance_identifier = self.get_identifier()
+
+	# Data fields
+
+	Has_Description: DataField = DataField(
+		name='Has_Description',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Providing A Description Of An Entity (E.G., Device)
+	"""
+
+	# Relation fields
+
+	Acts_Upon: RelationField = RelationField(
+		name='Acts_Upon',
+		rule='only Open_Close_State, only State',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Command And A State
+	"""
+
+	Is_Command_Of: RelationField = RelationField(
+		name='Is_Command_Of',
+		rule='min 1 Function',
+		inverse_of=['Has_Command'],
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Command And A Function.
+	"""
+
+
+class On_Command(Command):
+	"""
+	A Type Of Command
+
+	Source(s): 
+		https://w3id.org/saref (saref.ttl)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.Has_Description._rules = [('max|1', [['string']])]
+
+			self.Acts_Upon._rules = [('only', [[On_Off_State]]), ('only', [[State]])]
+			self.Is_Command_Of._rules = [('min|1', [[Function]])]
+
+			self.Acts_Upon._instance_identifier = self.get_identifier()
+			self.Is_Command_Of._instance_identifier = self.get_identifier()
+			self.Has_Description._instance_identifier = self.get_identifier()
+
+	# Data fields
+
+	Has_Description: DataField = DataField(
+		name='Has_Description',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Providing A Description Of An Entity (E.G., Device)
+	"""
+
+	# Relation fields
+
+	Acts_Upon: RelationField = RelationField(
+		name='Acts_Upon',
+		rule='only On_Off_State, only State',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Command And A State
+	"""
+
+	Is_Command_Of: RelationField = RelationField(
+		name='Is_Command_Of',
+		rule='min 1 Function',
+		inverse_of=['Has_Command'],
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Command And A Function.
+	"""
+
+
+class Step_Up_Command(Command):
+	"""
+	A Type Of Command
+
+	Source(s): 
+		https://w3id.org/saref (saref.ttl)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.Has_Description._rules = [('max|1', [['string']])]
+
+			self.Acts_Upon._rules = [('only', [[Multi_Level_State]]), ('only', [[State]])]
+			self.Is_Command_Of._rules = [('min|1', [[Function]])]
+
+			self.Acts_Upon._instance_identifier = self.get_identifier()
+			self.Is_Command_Of._instance_identifier = self.get_identifier()
+			self.Has_Description._instance_identifier = self.get_identifier()
+
+	# Data fields
+
+	Has_Description: DataField = DataField(
+		name='Has_Description',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Providing A Description Of An Entity (E.G., Device)
+	"""
+
+	# Relation fields
+
+	Acts_Upon: RelationField = RelationField(
+		name='Acts_Upon',
+		rule='only Multi_Level_State, only State',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Command And A State
+	"""
+
+	Is_Command_Of: RelationField = RelationField(
+		name='Is_Command_Of',
+		rule='min 1 Function',
+		inverse_of=['Has_Command'],
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Command And A Function.
+	"""
+
+
+class Pause_Command(Command):
+	"""
+	A Type Of Command
+
+	Source(s): 
+		https://w3id.org/saref (saref.ttl)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.Has_Description._rules = [('max|1', [['string']])]
+
+			self.Acts_Upon._rules = [('only', [[State]])]
+			self.Is_Command_Of._rules = [('min|1', [[Function]])]
+
+			self.Acts_Upon._instance_identifier = self.get_identifier()
+			self.Is_Command_Of._instance_identifier = self.get_identifier()
+			self.Has_Description._instance_identifier = self.get_identifier()
+
+	# Data fields
+
+	Has_Description: DataField = DataField(
+		name='Has_Description',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Providing A Description Of An Entity (E.G., Device)
+	"""
+
+	# Relation fields
+
+	Acts_Upon: RelationField = RelationField(
+		name='Acts_Upon',
+		rule='only State',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Command And A State
+	"""
+
+	Is_Command_Of: RelationField = RelationField(
+		name='Is_Command_Of',
+		rule='min 1 Function',
+		inverse_of=['Has_Command'],
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Command And A Function.
+	"""
+
+
+class Set_Level_Command(Command):
+	"""
+	A Type Of Command
+
+	Source(s): 
+		https://w3id.org/saref (saref.ttl)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.Has_Description._rules = [('max|1', [['string']])]
+
+			self.Acts_Upon._rules = [('only', [[Multi_Level_State]]), ('only', [[State]])]
+			self.Is_Command_Of._rules = [('min|1', [[Function]])]
+
+			self.Acts_Upon._instance_identifier = self.get_identifier()
+			self.Is_Command_Of._instance_identifier = self.get_identifier()
+			self.Has_Description._instance_identifier = self.get_identifier()
+
+	# Data fields
+
+	Has_Description: DataField = DataField(
+		name='Has_Description',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Providing A Description Of An Entity (E.G., Device)
+	"""
+
+	# Relation fields
+
+	Acts_Upon: RelationField = RelationField(
+		name='Acts_Upon',
+		rule='only Multi_Level_State, only State',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Command And A State
+	"""
+
+	Is_Command_Of: RelationField = RelationField(
+		name='Is_Command_Of',
+		rule='min 1 Function',
+		inverse_of=['Has_Command'],
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Command And A Function.
+	"""
+
+
+class Step_Down_Command(Command):
+	"""
+	A Type Of Command
+
+	Source(s): 
+		https://w3id.org/saref (saref.ttl)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.Has_Description._rules = [('max|1', [['string']])]
+
+			self.Acts_Upon._rules = [('only', [[Multi_Level_State]]), ('only', [[State]])]
+			self.Is_Command_Of._rules = [('min|1', [[Function]])]
+
+			self.Acts_Upon._instance_identifier = self.get_identifier()
+			self.Is_Command_Of._instance_identifier = self.get_identifier()
+			self.Has_Description._instance_identifier = self.get_identifier()
+
+	# Data fields
+
+	Has_Description: DataField = DataField(
+		name='Has_Description',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Providing A Description Of An Entity (E.G., Device)
+	"""
+
+	# Relation fields
+
+	Acts_Upon: RelationField = RelationField(
+		name='Acts_Upon',
+		rule='only Multi_Level_State, only State',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Command And A State
+	"""
+
+	Is_Command_Of: RelationField = RelationField(
+		name='Is_Command_Of',
+		rule='min 1 Function',
+		inverse_of=['Has_Command'],
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Command And A Function.
 	"""
 
 
@@ -3521,65 +3397,69 @@ class Open_Close_Function(Actuating_Function):
 	"""
 
 
-class Class3aa(Class3a):
+class Level_Control_Function(Actuating_Function):
 	"""
-	Generated SemanticClass without description
+	An Actuating Function That Allows To Do Level Adjustments Of An Actuator In
+	A Certain Range (E.G., 0%-100%), Such As Dimming A Light Or Set The Speed Of
+	An Electric Motor. 
 
 	Source(s): 
-		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
+		https://w3id.org/saref (saref.ttl)
 	"""
 
 	def __init__(self, *args, **kwargs):
 		is_initialised = 'id' in self.__dict__
 		super().__init__(*args, **kwargs)
 		if not is_initialised:
-			self.attributeProp._rules = [('some', [['string']])]
-			self.commandProp._rules = [('some', [['string']])]
-			self.dataProp1._rules = [('only', [['customDataType4']])]
 
-			self.oProp1._rules = [('value', [[Individual1]])]
-			self.objProp2._rules = [('some', [[Class1]]), ('value', [[Individual1]])]
+			self.Has_Command._rules = [('only', [[Set_Absolute_Level_Command], [Set_Relative_Level_Command], [Step_Down_Command], [Step_Up_Command]]), ('min|1', [[Command]])]
 
-			self.oProp1._instance_identifier = self.get_identifier()
-			self.objProp2._instance_identifier = self.get_identifier()
-			self.attributeProp._instance_identifier = self.get_identifier()
-			self.commandProp._instance_identifier = self.get_identifier()
-			self.dataProp1._instance_identifier = self.get_identifier()
-
-	# Data fields
-
-	attributeProp: DataField = DataField(
-		name='attributeProp',
-		rule='some string',
-		semantic_manager=semantic_manager)
-
-	commandProp: DataField = DataField(
-		name='commandProp',
-		rule='some string',
-		semantic_manager=semantic_manager)
-
-	dataProp1: DataField = DataField(
-		name='dataProp1',
-		rule='only customDataType4',
-		semantic_manager=semantic_manager)
+			self.Has_Command._instance_identifier = self.get_identifier()
 
 	# Relation fields
 
-	oProp1: RelationField = RelationField(
-		name='oProp1',
-		rule='value Individual1',
-		inverse_of=['objProp3'],
+	Has_Command: RelationField = RelationField(
+		name='Has_Command',
+		rule='only (Set_Absolute_Level_Command or Set_Relative_Level_Command) or Step_Down_Command) or Step_Up_Command), min 1 Command',
+		inverse_of=['Is_Command_Of'],
 		semantic_manager=semantic_manager)
-
-	objProp2: RelationField = RelationField(
-		name='objProp2',
-		rule='some Class1, value Individual1',
-		semantic_manager=semantic_manager)
-
-
-class Stop_State(Start_Stop_State):
 	"""
-	The State Of A Device That Is Stopped
+	A Relationship Between An Entity (Such As A Function) And A Command
+	"""
+
+
+class On_Off_Function(Actuating_Function):
+	"""
+	An Actuating Function That Allows To Switch On And Off An Actuator
+
+	Source(s): 
+		https://w3id.org/saref (saref.ttl)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+
+			self.Has_Command._rules = [('only', [[Off_Command], [On_Command], [Toggle_Command]]), ('min|1', [[Command]])]
+
+			self.Has_Command._instance_identifier = self.get_identifier()
+
+	# Relation fields
+
+	Has_Command: RelationField = RelationField(
+		name='Has_Command',
+		rule='only (Off_Command or On_Command) or Toggle_Command), min 1 Command',
+		inverse_of=['Is_Command_Of'],
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between An Entity (Such As A Function) And A Command
+	"""
+
+
+class Open_State(Open_Close_State):
+	"""
+	The State Of A Device That Is Open 
 
 	Source(s): 
 		https://w3id.org/saref (saref.ttl)
@@ -3590,9 +3470,9 @@ class Stop_State(Start_Stop_State):
 		super().__init__(*args, **kwargs)
 
 
-class Start_State(Start_Stop_State):
+class Close_State(Open_Close_State):
 	"""
-	The State Of A Device That Is Started
+	The State Of A Device That Is Close
 
 	Source(s): 
 		https://w3id.org/saref (saref.ttl)
@@ -3629,9 +3509,9 @@ class On_State(On_Off_State):
 		super().__init__(*args, **kwargs)
 
 
-class Close_State(Open_Close_State):
+class Start_State(Start_Stop_State):
 	"""
-	The State Of A Device That Is Close
+	The State Of A Device That Is Started
 
 	Source(s): 
 		https://w3id.org/saref (saref.ttl)
@@ -3642,9 +3522,9 @@ class Close_State(Open_Close_State):
 		super().__init__(*args, **kwargs)
 
 
-class Open_State(Open_Close_State):
+class Stop_State(Start_Stop_State):
 	"""
-	The State Of A Device That Is Open 
+	The State Of A Device That Is Stopped
 
 	Source(s): 
 		https://w3id.org/saref (saref.ttl)
@@ -3655,9 +3535,10 @@ class Open_State(Open_Close_State):
 		super().__init__(*args, **kwargs)
 
 
-class Set_Absolute_Level_Command(Set_Level_Command):
+class Micro_Renewable(Function_Related):
 	"""
-	A Type Of Set Level Command
+	A Device That Generates Renewable Energy From Natural Resources Such As Teh
+	Sun, Wind And Water
 
 	Source(s): 
 		https://w3id.org/saref (saref.ttl)
@@ -3668,13 +3549,37 @@ class Set_Absolute_Level_Command(Set_Level_Command):
 		super().__init__(*args, **kwargs)
 		if not is_initialised:
 			self.Has_Description._rules = [('max|1', [['string']])]
+			self.Has_Manufacturer._rules = [('max|1', [['string']])]
+			self.Has_Model._rules = [('max|1', [['string']])]
 
-			self.Acts_Upon._rules = [('only', [[Multi_Level_State]]), ('only', [[State]])]
-			self.Is_Command_Of._rules = [('min|1', [[Function]])]
+			self.Accomplishes._rules = [('value', [[Energyefficiency]]), ('min|1', [[Task]])]
+			self.Consists_Of._rules = [('only', [[Device]])]
+			self.Controls_Property._rules = [('only', [[Property]])]
+			self.Has_Function._rules = [('min|1', [[Function]])]
+			self.Has_Profile._rules = [('only', [[Profile]])]
+			self.Has_State._rules = [('only', [[State]])]
+			self.Has_Typical_Consumption._rules = [('only', [[Energy], [Power]])]
+			self.Is_Used_For._rules = [('only', [[Commodity]])]
+			self.Makes_Measurement._rules = [('only', [[Measurement]])]
+			self.Measures_Property._rules = [('only', [[Property]])]
+			self.Offers._rules = [('only', [[Service]])]
 
-			self.Acts_Upon._instance_identifier = self.get_identifier()
-			self.Is_Command_Of._instance_identifier = self.get_identifier()
+			self.Accomplishes._instance_identifier = self.get_identifier()
+			self.Consists_Of._instance_identifier = self.get_identifier()
+			self.Controls_Property._instance_identifier = self.get_identifier()
+			self.Has_Function._instance_identifier = self.get_identifier()
+			self.Has_Profile._instance_identifier = self.get_identifier()
+			self.Has_State._instance_identifier = self.get_identifier()
+			self.Has_Typical_Consumption._instance_identifier = self.get_identifier()
+			self.Is_Used_For._instance_identifier = self.get_identifier()
+			self.Makes_Measurement._instance_identifier = self.get_identifier()
+			self.Measures_Property._instance_identifier = self.get_identifier()
+			self.Offers._instance_identifier = self.get_identifier()
 			self.Has_Description._instance_identifier = self.get_identifier()
+			self.Has_Manufacturer._instance_identifier = self.get_identifier()
+			self.Has_Model._instance_identifier = self.get_identifier()
+
+			self.Accomplishes.add(Energyefficiency())
 
 	# Data fields
 
@@ -3686,131 +3591,127 @@ class Set_Absolute_Level_Command(Set_Level_Command):
 	A Relationship Providing A Description Of An Entity (E.G., Device)
 	"""
 
-	# Relation fields
-
-	Acts_Upon: RelationField = RelationField(
-		name='Acts_Upon',
-		rule='only Multi_Level_State, only State',
+	Has_Manufacturer: DataField = DataField(
+		name='Has_Manufacturer',
+		rule='max 1 string',
 		semantic_manager=semantic_manager)
 	"""
-	A Relationship Between A Command And A State
+	A Relationship Identifying The Manufacturer Of An Entity (E.G., Device)
 	"""
 
-	Is_Command_Of: RelationField = RelationField(
-		name='Is_Command_Of',
+	Has_Model: DataField = DataField(
+		name='Has_Model',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Model Of An Entity (E.G., Device)
+	"""
+
+	# Relation fields
+
+	Accomplishes: RelationField = RelationField(
+		name='Accomplishes',
+		rule='value Energyefficiency, min 1 Task',
+		inverse_of=['Is_Accomplished_By'],
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Certain Entity (E.G., A Device) And The Task It
+	Accomplishes
+	"""
+
+	Consists_Of: RelationField = RelationField(
+		name='Consists_Of',
+		rule='only Device',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Indicating A Composite Entity That Consists Of Other Entities
+	(E.G., A Temperature/Humidity Sensor That Consists Of A Temperature Sensor
+	And A Humidity Sensor)
+	"""
+
+	Controls_Property: RelationField = RelationField(
+		name='Controls_Property',
+		rule='only Property',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Property That Can Be Controlled By A Certain
+	Device
+	"""
+
+	Has_Function: RelationField = RelationField(
+		name='Has_Function',
 		rule='min 1 Function',
-		inverse_of=['Has_Command'],
 		semantic_manager=semantic_manager)
 	"""
-	A Relationship Between A Command And A Function.
+	A Relationship Identifying The Type Of Function Of A Device
 	"""
 
-
-class Set_Relative_Level_Command(Set_Level_Command):
-	"""
-	A Type Of Set Level Command
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-			self.Has_Description._rules = [('max|1', [['string']])]
-
-			self.Acts_Upon._rules = [('only', [[Multi_Level_State]]), ('only', [[State]])]
-			self.Is_Command_Of._rules = [('min|1', [[Function]])]
-
-			self.Acts_Upon._instance_identifier = self.get_identifier()
-			self.Is_Command_Of._instance_identifier = self.get_identifier()
-			self.Has_Description._instance_identifier = self.get_identifier()
-
-	# Data fields
-
-	Has_Description: DataField = DataField(
-		name='Has_Description',
-		rule='max 1 string',
+	Has_Profile: RelationField = RelationField(
+		name='Has_Profile',
+		rule='only Profile',
 		semantic_manager=semantic_manager)
 	"""
-	A Relationship Providing A Description Of An Entity (E.G., Device)
+	A Relationship Associating A Profile To A Certain Entity (E.G., A Device)
 	"""
 
-	# Relation fields
-
-	Acts_Upon: RelationField = RelationField(
-		name='Acts_Upon',
-		rule='only Multi_Level_State, only State',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Command And A State
-	"""
-
-	Is_Command_Of: RelationField = RelationField(
-		name='Is_Command_Of',
-		rule='min 1 Function',
-		inverse_of=['Has_Command'],
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Command And A Function.
-	"""
-
-
-class Get_Current_Meter_Value_Command(Get_Command):
-	"""
-	A Type Of Get Command
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-			self.Has_Description._rules = [('max|1', [['string']])]
-
-			self.Acts_Upon._rules = [('only', [[State]])]
-			self.Is_Command_Of._rules = [('min|1', [[Function]])]
-
-			self.Acts_Upon._instance_identifier = self.get_identifier()
-			self.Is_Command_Of._instance_identifier = self.get_identifier()
-			self.Has_Description._instance_identifier = self.get_identifier()
-
-	# Data fields
-
-	Has_Description: DataField = DataField(
-		name='Has_Description',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Providing A Description Of An Entity (E.G., Device)
-	"""
-
-	# Relation fields
-
-	Acts_Upon: RelationField = RelationField(
-		name='Acts_Upon',
+	Has_State: RelationField = RelationField(
+		name='Has_State',
 		rule='only State',
 		semantic_manager=semantic_manager)
 	"""
-	A Relationship Between A Command And A State
+	A Relationship Identifying The Type Of State Of A Device
 	"""
 
-	Is_Command_Of: RelationField = RelationField(
-		name='Is_Command_Of',
-		rule='min 1 Function',
-		inverse_of=['Has_Command'],
+	Has_Typical_Consumption: RelationField = RelationField(
+		name='Has_Typical_Consumption',
+		rule='only (Energy or Power)',
 		semantic_manager=semantic_manager)
 	"""
-	A Relationship Between A Command And A Function.
+	A Relationship Identifying The Typical (Energy Or Power) Consumption Of A
+	Device
+	"""
+
+	Is_Used_For: RelationField = RelationField(
+		name='Is_Used_For',
+		rule='only Commodity',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Purpose For Which A Device Is Used For (E.G.,
+	Controlling A Commodity)
+	"""
+
+	Makes_Measurement: RelationField = RelationField(
+		name='Makes_Measurement',
+		rule='only Measurement',
+		semantic_manager=semantic_manager)
+	"""
+	A Relation Between A Device And The Measurements It Makes. Such Measurement
+	Will Link Together The Value Of The Measurement, Its Unit Of Measure And The
+	Property To Which It Relates.
+	"""
+
+	Measures_Property: RelationField = RelationField(
+		name='Measures_Property',
+		rule='only Property',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Property That Can Be Measured By A Certain
+	Device
+	"""
+
+	Offers: RelationField = RelationField(
+		name='Offers',
+		rule='only Service',
+		inverse_of=['Is_Offered_By'],
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Device And A Service
 	"""
 
 
-class Get_Sensing_Data_Command(Get_Command):
+class Lighting_Device(Function_Related):
 	"""
-	A Type Of Get Command
+	A Device Used For Illumination, Irradiation, Signaling, Or Projection
 
 	Source(s): 
 		https://w3id.org/saref (saref.ttl)
@@ -3821,13 +3722,37 @@ class Get_Sensing_Data_Command(Get_Command):
 		super().__init__(*args, **kwargs)
 		if not is_initialised:
 			self.Has_Description._rules = [('max|1', [['string']])]
+			self.Has_Manufacturer._rules = [('max|1', [['string']])]
+			self.Has_Model._rules = [('max|1', [['string']])]
 
-			self.Acts_Upon._rules = [('only', [[State]])]
-			self.Is_Command_Of._rules = [('min|1', [[Function]])]
+			self.Accomplishes._rules = [('value', [[Comfort]]), ('min|1', [[Task]])]
+			self.Consists_Of._rules = [('only', [[Device]])]
+			self.Controls_Property._rules = [('only', [[Property]])]
+			self.Has_Function._rules = [('min|1', [[Function]])]
+			self.Has_Profile._rules = [('only', [[Profile]])]
+			self.Has_State._rules = [('only', [[State]])]
+			self.Has_Typical_Consumption._rules = [('only', [[Energy], [Power]])]
+			self.Is_Used_For._rules = [('only', [[Commodity]])]
+			self.Makes_Measurement._rules = [('only', [[Measurement]])]
+			self.Measures_Property._rules = [('only', [[Property]])]
+			self.Offers._rules = [('only', [[Service]])]
 
-			self.Acts_Upon._instance_identifier = self.get_identifier()
-			self.Is_Command_Of._instance_identifier = self.get_identifier()
+			self.Accomplishes._instance_identifier = self.get_identifier()
+			self.Consists_Of._instance_identifier = self.get_identifier()
+			self.Controls_Property._instance_identifier = self.get_identifier()
+			self.Has_Function._instance_identifier = self.get_identifier()
+			self.Has_Profile._instance_identifier = self.get_identifier()
+			self.Has_State._instance_identifier = self.get_identifier()
+			self.Has_Typical_Consumption._instance_identifier = self.get_identifier()
+			self.Is_Used_For._instance_identifier = self.get_identifier()
+			self.Makes_Measurement._instance_identifier = self.get_identifier()
+			self.Measures_Property._instance_identifier = self.get_identifier()
+			self.Offers._instance_identifier = self.get_identifier()
 			self.Has_Description._instance_identifier = self.get_identifier()
+			self.Has_Manufacturer._instance_identifier = self.get_identifier()
+			self.Has_Model._instance_identifier = self.get_identifier()
+
+			self.Accomplishes.add(Comfort())
 
 	# Data fields
 
@@ -3839,29 +3764,128 @@ class Get_Sensing_Data_Command(Get_Command):
 	A Relationship Providing A Description Of An Entity (E.G., Device)
 	"""
 
+	Has_Manufacturer: DataField = DataField(
+		name='Has_Manufacturer',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Manufacturer Of An Entity (E.G., Device)
+	"""
+
+	Has_Model: DataField = DataField(
+		name='Has_Model',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Model Of An Entity (E.G., Device)
+	"""
+
 	# Relation fields
 
-	Acts_Upon: RelationField = RelationField(
-		name='Acts_Upon',
+	Accomplishes: RelationField = RelationField(
+		name='Accomplishes',
+		rule='value Comfort, min 1 Task',
+		inverse_of=['Is_Accomplished_By'],
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Certain Entity (E.G., A Device) And The Task It
+	Accomplishes
+	"""
+
+	Consists_Of: RelationField = RelationField(
+		name='Consists_Of',
+		rule='only Device',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Indicating A Composite Entity That Consists Of Other Entities
+	(E.G., A Temperature/Humidity Sensor That Consists Of A Temperature Sensor
+	And A Humidity Sensor)
+	"""
+
+	Controls_Property: RelationField = RelationField(
+		name='Controls_Property',
+		rule='only Property',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Property That Can Be Controlled By A Certain
+	Device
+	"""
+
+	Has_Function: RelationField = RelationField(
+		name='Has_Function',
+		rule='min 1 Function',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Type Of Function Of A Device
+	"""
+
+	Has_Profile: RelationField = RelationField(
+		name='Has_Profile',
+		rule='only Profile',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Associating A Profile To A Certain Entity (E.G., A Device)
+	"""
+
+	Has_State: RelationField = RelationField(
+		name='Has_State',
 		rule='only State',
 		semantic_manager=semantic_manager)
 	"""
-	A Relationship Between A Command And A State
+	A Relationship Identifying The Type Of State Of A Device
 	"""
 
-	Is_Command_Of: RelationField = RelationField(
-		name='Is_Command_Of',
-		rule='min 1 Function',
-		inverse_of=['Has_Command'],
+	Has_Typical_Consumption: RelationField = RelationField(
+		name='Has_Typical_Consumption',
+		rule='only (Energy or Power)',
 		semantic_manager=semantic_manager)
 	"""
-	A Relationship Between A Command And A Function.
+	A Relationship Identifying The Typical (Energy Or Power) Consumption Of A
+	Device
+	"""
+
+	Is_Used_For: RelationField = RelationField(
+		name='Is_Used_For',
+		rule='only Commodity',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Purpose For Which A Device Is Used For (E.G.,
+	Controlling A Commodity)
+	"""
+
+	Makes_Measurement: RelationField = RelationField(
+		name='Makes_Measurement',
+		rule='only Measurement',
+		semantic_manager=semantic_manager)
+	"""
+	A Relation Between A Device And The Measurements It Makes. Such Measurement
+	Will Link Together The Value Of The Measurement, Its Unit Of Measure And The
+	Property To Which It Relates.
+	"""
+
+	Measures_Property: RelationField = RelationField(
+		name='Measures_Property',
+		rule='only Property',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Property That Can Be Measured By A Certain
+	Device
+	"""
+
+	Offers: RelationField = RelationField(
+		name='Offers',
+		rule='only Service',
+		inverse_of=['Is_Offered_By'],
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Device And A Service
 	"""
 
 
-class Get_Meter_History_Command(Get_Command):
+class Multimedia(Function_Related):
 	"""
-	A Type Of Get Command
+	A Device Designed To Display, Store, Record Or Play Multimedia Content Such
+	As Audio, Images, Animation, Video 
 
 	Source(s): 
 		https://w3id.org/saref (saref.ttl)
@@ -3872,13 +3896,37 @@ class Get_Meter_History_Command(Get_Command):
 		super().__init__(*args, **kwargs)
 		if not is_initialised:
 			self.Has_Description._rules = [('max|1', [['string']])]
+			self.Has_Manufacturer._rules = [('max|1', [['string']])]
+			self.Has_Model._rules = [('max|1', [['string']])]
 
-			self.Acts_Upon._rules = [('only', [[State]])]
-			self.Is_Command_Of._rules = [('min|1', [[Function]])]
+			self.Accomplishes._rules = [('value', [[Entertainment]]), ('min|1', [[Task]])]
+			self.Consists_Of._rules = [('only', [[Device]])]
+			self.Controls_Property._rules = [('only', [[Property]])]
+			self.Has_Function._rules = [('min|1', [[Function]])]
+			self.Has_Profile._rules = [('only', [[Profile]])]
+			self.Has_State._rules = [('only', [[State]])]
+			self.Has_Typical_Consumption._rules = [('only', [[Energy], [Power]])]
+			self.Is_Used_For._rules = [('only', [[Commodity]])]
+			self.Makes_Measurement._rules = [('only', [[Measurement]])]
+			self.Measures_Property._rules = [('only', [[Property]])]
+			self.Offers._rules = [('only', [[Service]])]
 
-			self.Acts_Upon._instance_identifier = self.get_identifier()
-			self.Is_Command_Of._instance_identifier = self.get_identifier()
+			self.Accomplishes._instance_identifier = self.get_identifier()
+			self.Consists_Of._instance_identifier = self.get_identifier()
+			self.Controls_Property._instance_identifier = self.get_identifier()
+			self.Has_Function._instance_identifier = self.get_identifier()
+			self.Has_Profile._instance_identifier = self.get_identifier()
+			self.Has_State._instance_identifier = self.get_identifier()
+			self.Has_Typical_Consumption._instance_identifier = self.get_identifier()
+			self.Is_Used_For._instance_identifier = self.get_identifier()
+			self.Makes_Measurement._instance_identifier = self.get_identifier()
+			self.Measures_Property._instance_identifier = self.get_identifier()
+			self.Offers._instance_identifier = self.get_identifier()
 			self.Has_Description._instance_identifier = self.get_identifier()
+			self.Has_Manufacturer._instance_identifier = self.get_identifier()
+			self.Has_Model._instance_identifier = self.get_identifier()
+
+			self.Accomplishes.add(Entertainment())
 
 	# Data fields
 
@@ -3890,29 +3938,129 @@ class Get_Meter_History_Command(Get_Command):
 	A Relationship Providing A Description Of An Entity (E.G., Device)
 	"""
 
+	Has_Manufacturer: DataField = DataField(
+		name='Has_Manufacturer',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Manufacturer Of An Entity (E.G., Device)
+	"""
+
+	Has_Model: DataField = DataField(
+		name='Has_Model',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Model Of An Entity (E.G., Device)
+	"""
+
 	# Relation fields
 
-	Acts_Upon: RelationField = RelationField(
-		name='Acts_Upon',
+	Accomplishes: RelationField = RelationField(
+		name='Accomplishes',
+		rule='value Entertainment, min 1 Task',
+		inverse_of=['Is_Accomplished_By'],
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Certain Entity (E.G., A Device) And The Task It
+	Accomplishes
+	"""
+
+	Consists_Of: RelationField = RelationField(
+		name='Consists_Of',
+		rule='only Device',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Indicating A Composite Entity That Consists Of Other Entities
+	(E.G., A Temperature/Humidity Sensor That Consists Of A Temperature Sensor
+	And A Humidity Sensor)
+	"""
+
+	Controls_Property: RelationField = RelationField(
+		name='Controls_Property',
+		rule='only Property',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Property That Can Be Controlled By A Certain
+	Device
+	"""
+
+	Has_Function: RelationField = RelationField(
+		name='Has_Function',
+		rule='min 1 Function',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Type Of Function Of A Device
+	"""
+
+	Has_Profile: RelationField = RelationField(
+		name='Has_Profile',
+		rule='only Profile',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Associating A Profile To A Certain Entity (E.G., A Device)
+	"""
+
+	Has_State: RelationField = RelationField(
+		name='Has_State',
 		rule='only State',
 		semantic_manager=semantic_manager)
 	"""
-	A Relationship Between A Command And A State
+	A Relationship Identifying The Type Of State Of A Device
 	"""
 
-	Is_Command_Of: RelationField = RelationField(
-		name='Is_Command_Of',
-		rule='min 1 Function',
-		inverse_of=['Has_Command'],
+	Has_Typical_Consumption: RelationField = RelationField(
+		name='Has_Typical_Consumption',
+		rule='only (Energy or Power)',
 		semantic_manager=semantic_manager)
 	"""
-	A Relationship Between A Command And A Function.
+	A Relationship Identifying The Typical (Energy Or Power) Consumption Of A
+	Device
+	"""
+
+	Is_Used_For: RelationField = RelationField(
+		name='Is_Used_For',
+		rule='only Commodity',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Purpose For Which A Device Is Used For (E.G.,
+	Controlling A Commodity)
+	"""
+
+	Makes_Measurement: RelationField = RelationField(
+		name='Makes_Measurement',
+		rule='only Measurement',
+		semantic_manager=semantic_manager)
+	"""
+	A Relation Between A Device And The Measurements It Makes. Such Measurement
+	Will Link Together The Value Of The Measurement, Its Unit Of Measure And The
+	Property To Which It Relates.
+	"""
+
+	Measures_Property: RelationField = RelationField(
+		name='Measures_Property',
+		rule='only Property',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Property That Can Be Measured By A Certain
+	Device
+	"""
+
+	Offers: RelationField = RelationField(
+		name='Offers',
+		rule='only Service',
+		inverse_of=['Is_Offered_By'],
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Device And A Service
 	"""
 
 
-class Get_Meter_Data_Command(Get_Command):
+class Meter(Function_Related):
 	"""
-	A Type Of Get Command
+	A Device Built To Accurately Detect And Display A Quantity In A Form
+	Readable By A Human Being. Further, A Device Of Category Saref:Meter That
+	Performs A Saref:Meteringfunction.
 
 	Source(s): 
 		https://w3id.org/saref (saref.ttl)
@@ -3923,13 +4071,35 @@ class Get_Meter_Data_Command(Get_Command):
 		super().__init__(*args, **kwargs)
 		if not is_initialised:
 			self.Has_Description._rules = [('max|1', [['string']])]
+			self.Has_Manufacturer._rules = [('max|1', [['string']])]
+			self.Has_Model._rules = [('max|1', [['string']])]
 
-			self.Acts_Upon._rules = [('only', [[State]])]
-			self.Is_Command_Of._rules = [('min|1', [[Function]])]
+			self.Accomplishes._rules = [('min|1', [[Task]])]
+			self.Consists_Of._rules = [('only', [[Device]])]
+			self.Controls_Property._rules = [('only', [[Property]])]
+			self.Has_Function._rules = [('some', [[Metering_Function]]), ('min|1', [[Function]])]
+			self.Has_Profile._rules = [('only', [[Profile]])]
+			self.Has_State._rules = [('only', [[State]])]
+			self.Has_Typical_Consumption._rules = [('only', [[Energy], [Power]])]
+			self.Is_Used_For._rules = [('only', [[Commodity]])]
+			self.Makes_Measurement._rules = [('only', [[Measurement]])]
+			self.Measures_Property._rules = [('only', [[Property]])]
+			self.Offers._rules = [('only', [[Service]])]
 
-			self.Acts_Upon._instance_identifier = self.get_identifier()
-			self.Is_Command_Of._instance_identifier = self.get_identifier()
+			self.Accomplishes._instance_identifier = self.get_identifier()
+			self.Consists_Of._instance_identifier = self.get_identifier()
+			self.Controls_Property._instance_identifier = self.get_identifier()
+			self.Has_Function._instance_identifier = self.get_identifier()
+			self.Has_Profile._instance_identifier = self.get_identifier()
+			self.Has_State._instance_identifier = self.get_identifier()
+			self.Has_Typical_Consumption._instance_identifier = self.get_identifier()
+			self.Is_Used_For._instance_identifier = self.get_identifier()
+			self.Makes_Measurement._instance_identifier = self.get_identifier()
+			self.Measures_Property._instance_identifier = self.get_identifier()
+			self.Offers._instance_identifier = self.get_identifier()
 			self.Has_Description._instance_identifier = self.get_identifier()
+			self.Has_Manufacturer._instance_identifier = self.get_identifier()
+			self.Has_Model._instance_identifier = self.get_identifier()
 
 	# Data fields
 
@@ -3941,23 +4111,984 @@ class Get_Meter_Data_Command(Get_Command):
 	A Relationship Providing A Description Of An Entity (E.G., Device)
 	"""
 
+	Has_Manufacturer: DataField = DataField(
+		name='Has_Manufacturer',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Manufacturer Of An Entity (E.G., Device)
+	"""
+
+	Has_Model: DataField = DataField(
+		name='Has_Model',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Model Of An Entity (E.G., Device)
+	"""
+
 	# Relation fields
 
-	Acts_Upon: RelationField = RelationField(
-		name='Acts_Upon',
+	Accomplishes: RelationField = RelationField(
+		name='Accomplishes',
+		rule='min 1 Task',
+		inverse_of=['Is_Accomplished_By'],
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Certain Entity (E.G., A Device) And The Task It
+	Accomplishes
+	"""
+
+	Consists_Of: RelationField = RelationField(
+		name='Consists_Of',
+		rule='only Device',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Indicating A Composite Entity That Consists Of Other Entities
+	(E.G., A Temperature/Humidity Sensor That Consists Of A Temperature Sensor
+	And A Humidity Sensor)
+	"""
+
+	Controls_Property: RelationField = RelationField(
+		name='Controls_Property',
+		rule='only Property',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Property That Can Be Controlled By A Certain
+	Device
+	"""
+
+	Has_Function: RelationField = RelationField(
+		name='Has_Function',
+		rule='some Metering_Function, min 1 Function',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Type Of Function Of A Device
+	"""
+
+	Has_Profile: RelationField = RelationField(
+		name='Has_Profile',
+		rule='only Profile',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Associating A Profile To A Certain Entity (E.G., A Device)
+	"""
+
+	Has_State: RelationField = RelationField(
+		name='Has_State',
 		rule='only State',
 		semantic_manager=semantic_manager)
 	"""
-	A Relationship Between A Command And A State
+	A Relationship Identifying The Type Of State Of A Device
 	"""
 
-	Is_Command_Of: RelationField = RelationField(
-		name='Is_Command_Of',
-		rule='min 1 Function',
-		inverse_of=['Has_Command'],
+	Has_Typical_Consumption: RelationField = RelationField(
+		name='Has_Typical_Consumption',
+		rule='only (Energy or Power)',
 		semantic_manager=semantic_manager)
 	"""
-	A Relationship Between A Command And A Function.
+	A Relationship Identifying The Typical (Energy Or Power) Consumption Of A
+	Device
+	"""
+
+	Is_Used_For: RelationField = RelationField(
+		name='Is_Used_For',
+		rule='only Commodity',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Purpose For Which A Device Is Used For (E.G.,
+	Controlling A Commodity)
+	"""
+
+	Makes_Measurement: RelationField = RelationField(
+		name='Makes_Measurement',
+		rule='only Measurement',
+		semantic_manager=semantic_manager)
+	"""
+	A Relation Between A Device And The Measurements It Makes. Such Measurement
+	Will Link Together The Value Of The Measurement, Its Unit Of Measure And The
+	Property To Which It Relates.
+	"""
+
+	Measures_Property: RelationField = RelationField(
+		name='Measures_Property',
+		rule='only Property',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Property That Can Be Measured By A Certain
+	Device
+	"""
+
+	Offers: RelationField = RelationField(
+		name='Offers',
+		rule='only Service',
+		inverse_of=['Is_Offered_By'],
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Device And A Service
+	"""
+
+
+class Network(Function_Related):
+	"""
+	A Device Used To Connect Other Devices In A Network, Such As Hub, Switch Or
+	Router In A Local Area Network (Lan). 
+
+	Source(s): 
+		https://w3id.org/saref (saref.ttl)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.Has_Description._rules = [('max|1', [['string']])]
+			self.Has_Manufacturer._rules = [('max|1', [['string']])]
+			self.Has_Model._rules = [('max|1', [['string']])]
+
+			self.Accomplishes._rules = [('min|1', [[Task]])]
+			self.Consists_Of._rules = [('only', [[Device]])]
+			self.Controls_Property._rules = [('only', [[Property]])]
+			self.Has_Function._rules = [('min|1', [[Function]])]
+			self.Has_Profile._rules = [('only', [[Profile]])]
+			self.Has_State._rules = [('only', [[State]])]
+			self.Has_Typical_Consumption._rules = [('only', [[Energy], [Power]])]
+			self.Is_Used_For._rules = [('only', [[Commodity]])]
+			self.Makes_Measurement._rules = [('only', [[Measurement]])]
+			self.Measures_Property._rules = [('only', [[Property]])]
+			self.Offers._rules = [('only', [[Service]])]
+
+			self.Accomplishes._instance_identifier = self.get_identifier()
+			self.Consists_Of._instance_identifier = self.get_identifier()
+			self.Controls_Property._instance_identifier = self.get_identifier()
+			self.Has_Function._instance_identifier = self.get_identifier()
+			self.Has_Profile._instance_identifier = self.get_identifier()
+			self.Has_State._instance_identifier = self.get_identifier()
+			self.Has_Typical_Consumption._instance_identifier = self.get_identifier()
+			self.Is_Used_For._instance_identifier = self.get_identifier()
+			self.Makes_Measurement._instance_identifier = self.get_identifier()
+			self.Measures_Property._instance_identifier = self.get_identifier()
+			self.Offers._instance_identifier = self.get_identifier()
+			self.Has_Description._instance_identifier = self.get_identifier()
+			self.Has_Manufacturer._instance_identifier = self.get_identifier()
+			self.Has_Model._instance_identifier = self.get_identifier()
+
+	# Data fields
+
+	Has_Description: DataField = DataField(
+		name='Has_Description',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Providing A Description Of An Entity (E.G., Device)
+	"""
+
+	Has_Manufacturer: DataField = DataField(
+		name='Has_Manufacturer',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Manufacturer Of An Entity (E.G., Device)
+	"""
+
+	Has_Model: DataField = DataField(
+		name='Has_Model',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Model Of An Entity (E.G., Device)
+	"""
+
+	# Relation fields
+
+	Accomplishes: RelationField = RelationField(
+		name='Accomplishes',
+		rule='min 1 Task',
+		inverse_of=['Is_Accomplished_By'],
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Certain Entity (E.G., A Device) And The Task It
+	Accomplishes
+	"""
+
+	Consists_Of: RelationField = RelationField(
+		name='Consists_Of',
+		rule='only Device',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Indicating A Composite Entity That Consists Of Other Entities
+	(E.G., A Temperature/Humidity Sensor That Consists Of A Temperature Sensor
+	And A Humidity Sensor)
+	"""
+
+	Controls_Property: RelationField = RelationField(
+		name='Controls_Property',
+		rule='only Property',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Property That Can Be Controlled By A Certain
+	Device
+	"""
+
+	Has_Function: RelationField = RelationField(
+		name='Has_Function',
+		rule='min 1 Function',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Type Of Function Of A Device
+	"""
+
+	Has_Profile: RelationField = RelationField(
+		name='Has_Profile',
+		rule='only Profile',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Associating A Profile To A Certain Entity (E.G., A Device)
+	"""
+
+	Has_State: RelationField = RelationField(
+		name='Has_State',
+		rule='only State',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Type Of State Of A Device
+	"""
+
+	Has_Typical_Consumption: RelationField = RelationField(
+		name='Has_Typical_Consumption',
+		rule='only (Energy or Power)',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Typical (Energy Or Power) Consumption Of A
+	Device
+	"""
+
+	Is_Used_For: RelationField = RelationField(
+		name='Is_Used_For',
+		rule='only Commodity',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Purpose For Which A Device Is Used For (E.G.,
+	Controlling A Commodity)
+	"""
+
+	Makes_Measurement: RelationField = RelationField(
+		name='Makes_Measurement',
+		rule='only Measurement',
+		semantic_manager=semantic_manager)
+	"""
+	A Relation Between A Device And The Measurements It Makes. Such Measurement
+	Will Link Together The Value Of The Measurement, Its Unit Of Measure And The
+	Property To Which It Relates.
+	"""
+
+	Measures_Property: RelationField = RelationField(
+		name='Measures_Property',
+		rule='only Property',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Property That Can Be Measured By A Certain
+	Device
+	"""
+
+	Offers: RelationField = RelationField(
+		name='Offers',
+		rule='only Service',
+		inverse_of=['Is_Offered_By'],
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Device And A Service
+	"""
+
+
+class Sensor(Function_Related):
+	"""
+	A Device That Detects And Responds To Events Or Changes In The Physical
+	Environment Such As Light, Motion, Or Temperature Changes. Further, A Device
+	Of Category Saref:Sensor That Performs A Saref:Sensingfunction.
+
+	Source(s): 
+		https://w3id.org/saref (saref.ttl)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.Has_Description._rules = [('max|1', [['string']])]
+			self.Has_Manufacturer._rules = [('max|1', [['string']])]
+			self.Has_Model._rules = [('max|1', [['string']])]
+
+			self.Accomplishes._rules = [('min|1', [[Task]])]
+			self.Consists_Of._rules = [('only', [[Device]])]
+			self.Controls_Property._rules = [('only', [[Property]])]
+			self.Has_Function._rules = [('some', [[Sensing_Function]]), ('min|1', [[Function]])]
+			self.Has_Profile._rules = [('only', [[Profile]])]
+			self.Has_State._rules = [('only', [[State]])]
+			self.Has_Typical_Consumption._rules = [('only', [[Energy], [Power]])]
+			self.Is_Used_For._rules = [('only', [[Commodity]])]
+			self.Makes_Measurement._rules = [('only', [[Measurement]])]
+			self.Measures_Property._rules = [('only', [[Property]])]
+			self.Offers._rules = [('only', [[Service]])]
+
+			self.Accomplishes._instance_identifier = self.get_identifier()
+			self.Consists_Of._instance_identifier = self.get_identifier()
+			self.Controls_Property._instance_identifier = self.get_identifier()
+			self.Has_Function._instance_identifier = self.get_identifier()
+			self.Has_Profile._instance_identifier = self.get_identifier()
+			self.Has_State._instance_identifier = self.get_identifier()
+			self.Has_Typical_Consumption._instance_identifier = self.get_identifier()
+			self.Is_Used_For._instance_identifier = self.get_identifier()
+			self.Makes_Measurement._instance_identifier = self.get_identifier()
+			self.Measures_Property._instance_identifier = self.get_identifier()
+			self.Offers._instance_identifier = self.get_identifier()
+			self.Has_Description._instance_identifier = self.get_identifier()
+			self.Has_Manufacturer._instance_identifier = self.get_identifier()
+			self.Has_Model._instance_identifier = self.get_identifier()
+
+	# Data fields
+
+	Has_Description: DataField = DataField(
+		name='Has_Description',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Providing A Description Of An Entity (E.G., Device)
+	"""
+
+	Has_Manufacturer: DataField = DataField(
+		name='Has_Manufacturer',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Manufacturer Of An Entity (E.G., Device)
+	"""
+
+	Has_Model: DataField = DataField(
+		name='Has_Model',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Model Of An Entity (E.G., Device)
+	"""
+
+	# Relation fields
+
+	Accomplishes: RelationField = RelationField(
+		name='Accomplishes',
+		rule='min 1 Task',
+		inverse_of=['Is_Accomplished_By'],
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Certain Entity (E.G., A Device) And The Task It
+	Accomplishes
+	"""
+
+	Consists_Of: RelationField = RelationField(
+		name='Consists_Of',
+		rule='only Device',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Indicating A Composite Entity That Consists Of Other Entities
+	(E.G., A Temperature/Humidity Sensor That Consists Of A Temperature Sensor
+	And A Humidity Sensor)
+	"""
+
+	Controls_Property: RelationField = RelationField(
+		name='Controls_Property',
+		rule='only Property',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Property That Can Be Controlled By A Certain
+	Device
+	"""
+
+	Has_Function: RelationField = RelationField(
+		name='Has_Function',
+		rule='some Sensing_Function, min 1 Function',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Type Of Function Of A Device
+	"""
+
+	Has_Profile: RelationField = RelationField(
+		name='Has_Profile',
+		rule='only Profile',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Associating A Profile To A Certain Entity (E.G., A Device)
+	"""
+
+	Has_State: RelationField = RelationField(
+		name='Has_State',
+		rule='only State',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Type Of State Of A Device
+	"""
+
+	Has_Typical_Consumption: RelationField = RelationField(
+		name='Has_Typical_Consumption',
+		rule='only (Energy or Power)',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Typical (Energy Or Power) Consumption Of A
+	Device
+	"""
+
+	Is_Used_For: RelationField = RelationField(
+		name='Is_Used_For',
+		rule='only Commodity',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Purpose For Which A Device Is Used For (E.G.,
+	Controlling A Commodity)
+	"""
+
+	Makes_Measurement: RelationField = RelationField(
+		name='Makes_Measurement',
+		rule='only Measurement',
+		semantic_manager=semantic_manager)
+	"""
+	A Relation Between A Device And The Measurements It Makes. Such Measurement
+	Will Link Together The Value Of The Measurement, Its Unit Of Measure And The
+	Property To Which It Relates.
+	"""
+
+	Measures_Property: RelationField = RelationField(
+		name='Measures_Property',
+		rule='only Property',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Property That Can Be Measured By A Certain
+	Device
+	"""
+
+	Offers: RelationField = RelationField(
+		name='Offers',
+		rule='only Service',
+		inverse_of=['Is_Offered_By'],
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Device And A Service
+	"""
+
+
+class Hvac(Function_Related):
+	"""
+	Heating, Ventilation And Air Conditioning (Hvac) Device That Provides Indoor
+	Environmental Comfort
+
+	Source(s): 
+		https://w3id.org/saref (saref.ttl)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.Has_Description._rules = [('max|1', [['string']])]
+			self.Has_Manufacturer._rules = [('max|1', [['string']])]
+			self.Has_Model._rules = [('max|1', [['string']])]
+
+			self.Accomplishes._rules = [('value', [[Comfort]]), ('min|1', [[Task]])]
+			self.Consists_Of._rules = [('only', [[Device]])]
+			self.Controls_Property._rules = [('only', [[Property]])]
+			self.Has_Function._rules = [('min|1', [[Function]])]
+			self.Has_Profile._rules = [('only', [[Profile]])]
+			self.Has_State._rules = [('only', [[State]])]
+			self.Has_Typical_Consumption._rules = [('only', [[Energy], [Power]])]
+			self.Is_Used_For._rules = [('only', [[Commodity]])]
+			self.Makes_Measurement._rules = [('only', [[Measurement]])]
+			self.Measures_Property._rules = [('only', [[Property]])]
+			self.Offers._rules = [('only', [[Service]])]
+
+			self.Accomplishes._instance_identifier = self.get_identifier()
+			self.Consists_Of._instance_identifier = self.get_identifier()
+			self.Controls_Property._instance_identifier = self.get_identifier()
+			self.Has_Function._instance_identifier = self.get_identifier()
+			self.Has_Profile._instance_identifier = self.get_identifier()
+			self.Has_State._instance_identifier = self.get_identifier()
+			self.Has_Typical_Consumption._instance_identifier = self.get_identifier()
+			self.Is_Used_For._instance_identifier = self.get_identifier()
+			self.Makes_Measurement._instance_identifier = self.get_identifier()
+			self.Measures_Property._instance_identifier = self.get_identifier()
+			self.Offers._instance_identifier = self.get_identifier()
+			self.Has_Description._instance_identifier = self.get_identifier()
+			self.Has_Manufacturer._instance_identifier = self.get_identifier()
+			self.Has_Model._instance_identifier = self.get_identifier()
+
+			self.Accomplishes.add(Comfort())
+
+	# Data fields
+
+	Has_Description: DataField = DataField(
+		name='Has_Description',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Providing A Description Of An Entity (E.G., Device)
+	"""
+
+	Has_Manufacturer: DataField = DataField(
+		name='Has_Manufacturer',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Manufacturer Of An Entity (E.G., Device)
+	"""
+
+	Has_Model: DataField = DataField(
+		name='Has_Model',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Model Of An Entity (E.G., Device)
+	"""
+
+	# Relation fields
+
+	Accomplishes: RelationField = RelationField(
+		name='Accomplishes',
+		rule='value Comfort, min 1 Task',
+		inverse_of=['Is_Accomplished_By'],
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Certain Entity (E.G., A Device) And The Task It
+	Accomplishes
+	"""
+
+	Consists_Of: RelationField = RelationField(
+		name='Consists_Of',
+		rule='only Device',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Indicating A Composite Entity That Consists Of Other Entities
+	(E.G., A Temperature/Humidity Sensor That Consists Of A Temperature Sensor
+	And A Humidity Sensor)
+	"""
+
+	Controls_Property: RelationField = RelationField(
+		name='Controls_Property',
+		rule='only Property',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Property That Can Be Controlled By A Certain
+	Device
+	"""
+
+	Has_Function: RelationField = RelationField(
+		name='Has_Function',
+		rule='min 1 Function',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Type Of Function Of A Device
+	"""
+
+	Has_Profile: RelationField = RelationField(
+		name='Has_Profile',
+		rule='only Profile',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Associating A Profile To A Certain Entity (E.G., A Device)
+	"""
+
+	Has_State: RelationField = RelationField(
+		name='Has_State',
+		rule='only State',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Type Of State Of A Device
+	"""
+
+	Has_Typical_Consumption: RelationField = RelationField(
+		name='Has_Typical_Consumption',
+		rule='only (Energy or Power)',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Typical (Energy Or Power) Consumption Of A
+	Device
+	"""
+
+	Is_Used_For: RelationField = RelationField(
+		name='Is_Used_For',
+		rule='only Commodity',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Purpose For Which A Device Is Used For (E.G.,
+	Controlling A Commodity)
+	"""
+
+	Makes_Measurement: RelationField = RelationField(
+		name='Makes_Measurement',
+		rule='only Measurement',
+		semantic_manager=semantic_manager)
+	"""
+	A Relation Between A Device And The Measurements It Makes. Such Measurement
+	Will Link Together The Value Of The Measurement, Its Unit Of Measure And The
+	Property To Which It Relates.
+	"""
+
+	Measures_Property: RelationField = RelationField(
+		name='Measures_Property',
+		rule='only Property',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Property That Can Be Measured By A Certain
+	Device
+	"""
+
+	Offers: RelationField = RelationField(
+		name='Offers',
+		rule='only Service',
+		inverse_of=['Is_Offered_By'],
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Device And A Service
+	"""
+
+
+class Actuator(Function_Related):
+	"""
+	A Device Responsible For Moving Or Controlling A Mechanism Or System By
+	Performing An Actuating Function
+
+	Source(s): 
+		https://w3id.org/saref (saref.ttl)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.Has_Description._rules = [('max|1', [['string']])]
+			self.Has_Manufacturer._rules = [('max|1', [['string']])]
+			self.Has_Model._rules = [('max|1', [['string']])]
+
+			self.Accomplishes._rules = [('min|1', [[Task]])]
+			self.Consists_Of._rules = [('only', [[Device]])]
+			self.Controls_Property._rules = [('only', [[Property]])]
+			self.Has_Function._rules = [('some', [[Actuating_Function]]), ('min|1', [[Function]])]
+			self.Has_Profile._rules = [('only', [[Profile]])]
+			self.Has_State._rules = [('only', [[State]])]
+			self.Has_Typical_Consumption._rules = [('only', [[Energy], [Power]])]
+			self.Is_Used_For._rules = [('only', [[Commodity]])]
+			self.Makes_Measurement._rules = [('only', [[Measurement]])]
+			self.Measures_Property._rules = [('only', [[Property]])]
+			self.Offers._rules = [('only', [[Service]])]
+
+			self.Accomplishes._instance_identifier = self.get_identifier()
+			self.Consists_Of._instance_identifier = self.get_identifier()
+			self.Controls_Property._instance_identifier = self.get_identifier()
+			self.Has_Function._instance_identifier = self.get_identifier()
+			self.Has_Profile._instance_identifier = self.get_identifier()
+			self.Has_State._instance_identifier = self.get_identifier()
+			self.Has_Typical_Consumption._instance_identifier = self.get_identifier()
+			self.Is_Used_For._instance_identifier = self.get_identifier()
+			self.Makes_Measurement._instance_identifier = self.get_identifier()
+			self.Measures_Property._instance_identifier = self.get_identifier()
+			self.Offers._instance_identifier = self.get_identifier()
+			self.Has_Description._instance_identifier = self.get_identifier()
+			self.Has_Manufacturer._instance_identifier = self.get_identifier()
+			self.Has_Model._instance_identifier = self.get_identifier()
+
+	# Data fields
+
+	Has_Description: DataField = DataField(
+		name='Has_Description',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Providing A Description Of An Entity (E.G., Device)
+	"""
+
+	Has_Manufacturer: DataField = DataField(
+		name='Has_Manufacturer',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Manufacturer Of An Entity (E.G., Device)
+	"""
+
+	Has_Model: DataField = DataField(
+		name='Has_Model',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Model Of An Entity (E.G., Device)
+	"""
+
+	# Relation fields
+
+	Accomplishes: RelationField = RelationField(
+		name='Accomplishes',
+		rule='min 1 Task',
+		inverse_of=['Is_Accomplished_By'],
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Certain Entity (E.G., A Device) And The Task It
+	Accomplishes
+	"""
+
+	Consists_Of: RelationField = RelationField(
+		name='Consists_Of',
+		rule='only Device',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Indicating A Composite Entity That Consists Of Other Entities
+	(E.G., A Temperature/Humidity Sensor That Consists Of A Temperature Sensor
+	And A Humidity Sensor)
+	"""
+
+	Controls_Property: RelationField = RelationField(
+		name='Controls_Property',
+		rule='only Property',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Property That Can Be Controlled By A Certain
+	Device
+	"""
+
+	Has_Function: RelationField = RelationField(
+		name='Has_Function',
+		rule='some Actuating_Function, min 1 Function',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Type Of Function Of A Device
+	"""
+
+	Has_Profile: RelationField = RelationField(
+		name='Has_Profile',
+		rule='only Profile',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Associating A Profile To A Certain Entity (E.G., A Device)
+	"""
+
+	Has_State: RelationField = RelationField(
+		name='Has_State',
+		rule='only State',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Type Of State Of A Device
+	"""
+
+	Has_Typical_Consumption: RelationField = RelationField(
+		name='Has_Typical_Consumption',
+		rule='only (Energy or Power)',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Typical (Energy Or Power) Consumption Of A
+	Device
+	"""
+
+	Is_Used_For: RelationField = RelationField(
+		name='Is_Used_For',
+		rule='only Commodity',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Purpose For Which A Device Is Used For (E.G.,
+	Controlling A Commodity)
+	"""
+
+	Makes_Measurement: RelationField = RelationField(
+		name='Makes_Measurement',
+		rule='only Measurement',
+		semantic_manager=semantic_manager)
+	"""
+	A Relation Between A Device And The Measurements It Makes. Such Measurement
+	Will Link Together The Value Of The Measurement, Its Unit Of Measure And The
+	Property To Which It Relates.
+	"""
+
+	Measures_Property: RelationField = RelationField(
+		name='Measures_Property',
+		rule='only Property',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Property That Can Be Measured By A Certain
+	Device
+	"""
+
+	Offers: RelationField = RelationField(
+		name='Offers',
+		rule='only Service',
+		inverse_of=['Is_Offered_By'],
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Device And A Service
+	"""
+
+
+class Appliance(Function_Related):
+	"""
+	An Electrical/Mechanical Machine That Accomplish Some Household Functions,
+	Such As Cleaning Or Cooking
+
+	Source(s): 
+		https://w3id.org/saref (saref.ttl)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.Has_Description._rules = [('max|1', [['string']])]
+			self.Has_Manufacturer._rules = [('max|1', [['string']])]
+			self.Has_Model._rules = [('max|1', [['string']])]
+
+			self.Accomplishes._rules = [('min|1', [[Task]])]
+			self.Consists_Of._rules = [('only', [[Device]])]
+			self.Controls_Property._rules = [('only', [[Property]])]
+			self.Has_Function._rules = [('min|1', [[Function]])]
+			self.Has_Profile._rules = [('only', [[Profile]])]
+			self.Has_State._rules = [('only', [[State]])]
+			self.Has_Typical_Consumption._rules = [('only', [[Energy], [Power]])]
+			self.Is_Used_For._rules = [('only', [[Commodity]])]
+			self.Makes_Measurement._rules = [('only', [[Measurement]])]
+			self.Measures_Property._rules = [('only', [[Property]])]
+			self.Offers._rules = [('only', [[Service]])]
+
+			self.Accomplishes._instance_identifier = self.get_identifier()
+			self.Consists_Of._instance_identifier = self.get_identifier()
+			self.Controls_Property._instance_identifier = self.get_identifier()
+			self.Has_Function._instance_identifier = self.get_identifier()
+			self.Has_Profile._instance_identifier = self.get_identifier()
+			self.Has_State._instance_identifier = self.get_identifier()
+			self.Has_Typical_Consumption._instance_identifier = self.get_identifier()
+			self.Is_Used_For._instance_identifier = self.get_identifier()
+			self.Makes_Measurement._instance_identifier = self.get_identifier()
+			self.Measures_Property._instance_identifier = self.get_identifier()
+			self.Offers._instance_identifier = self.get_identifier()
+			self.Has_Description._instance_identifier = self.get_identifier()
+			self.Has_Manufacturer._instance_identifier = self.get_identifier()
+			self.Has_Model._instance_identifier = self.get_identifier()
+
+	# Data fields
+
+	Has_Description: DataField = DataField(
+		name='Has_Description',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Providing A Description Of An Entity (E.G., Device)
+	"""
+
+	Has_Manufacturer: DataField = DataField(
+		name='Has_Manufacturer',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Manufacturer Of An Entity (E.G., Device)
+	"""
+
+	Has_Model: DataField = DataField(
+		name='Has_Model',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Model Of An Entity (E.G., Device)
+	"""
+
+	# Relation fields
+
+	Accomplishes: RelationField = RelationField(
+		name='Accomplishes',
+		rule='min 1 Task',
+		inverse_of=['Is_Accomplished_By'],
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Certain Entity (E.G., A Device) And The Task It
+	Accomplishes
+	"""
+
+	Consists_Of: RelationField = RelationField(
+		name='Consists_Of',
+		rule='only Device',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Indicating A Composite Entity That Consists Of Other Entities
+	(E.G., A Temperature/Humidity Sensor That Consists Of A Temperature Sensor
+	And A Humidity Sensor)
+	"""
+
+	Controls_Property: RelationField = RelationField(
+		name='Controls_Property',
+		rule='only Property',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Property That Can Be Controlled By A Certain
+	Device
+	"""
+
+	Has_Function: RelationField = RelationField(
+		name='Has_Function',
+		rule='min 1 Function',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Type Of Function Of A Device
+	"""
+
+	Has_Profile: RelationField = RelationField(
+		name='Has_Profile',
+		rule='only Profile',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Associating A Profile To A Certain Entity (E.G., A Device)
+	"""
+
+	Has_State: RelationField = RelationField(
+		name='Has_State',
+		rule='only State',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Type Of State Of A Device
+	"""
+
+	Has_Typical_Consumption: RelationField = RelationField(
+		name='Has_Typical_Consumption',
+		rule='only (Energy or Power)',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Typical (Energy Or Power) Consumption Of A
+	Device
+	"""
+
+	Is_Used_For: RelationField = RelationField(
+		name='Is_Used_For',
+		rule='only Commodity',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Purpose For Which A Device Is Used For (E.G.,
+	Controlling A Commodity)
+	"""
+
+	Makes_Measurement: RelationField = RelationField(
+		name='Makes_Measurement',
+		rule='only Measurement',
+		semantic_manager=semantic_manager)
+	"""
+	A Relation Between A Device And The Measurements It Makes. Such Measurement
+	Will Link Together The Value Of The Measurement, Its Unit Of Measure And The
+	Property To Which It Relates.
+	"""
+
+	Measures_Property: RelationField = RelationField(
+		name='Measures_Property',
+		rule='only Property',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Property That Can Be Measured By A Certain
+	Device
+	"""
+
+	Offers: RelationField = RelationField(
+		name='Offers',
+		rule='only Service',
+		inverse_of=['Is_Offered_By'],
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Device And A Service
 	"""
 
 
@@ -4474,10 +5605,129 @@ class Load(Energy_Related):
 	"""
 
 
-class Multimedia(Function_Related):
+class Class1aa(Class1a):
 	"""
-	A Device Designed To Display, Store, Record Or Play Multimedia Content Such
-	As Audio, Images, Animation, Video 
+	Generated SemanticClass without description
+
+	Source(s): 
+		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.dataProp2._rules = [('value', [[]])]
+
+			self.oProp1._rules = [('some', [[Class2], [Class4]])]
+			self.objProp2._rules = [('some', [[Class1, Class2]])]
+			self.objProp3._rules = [('some', [[Class3]])]
+			self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
+			self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]]), ('value', [[Individual1]])]
+
+			self.oProp1._instance_identifier = self.get_identifier()
+			self.objProp2._instance_identifier = self.get_identifier()
+			self.objProp3._instance_identifier = self.get_identifier()
+			self.objProp4._instance_identifier = self.get_identifier()
+			self.objProp5._instance_identifier = self.get_identifier()
+			self.dataProp2._instance_identifier = self.get_identifier()
+
+	# Data fields
+
+	dataProp2: DataField = DataField(
+		name='dataProp2',
+		rule='value 2',
+		semantic_manager=semantic_manager)
+
+	# Relation fields
+
+	oProp1: RelationField = RelationField(
+		name='oProp1',
+		rule='some (Class2 or Class4)',
+		inverse_of=['objProp3'],
+		semantic_manager=semantic_manager)
+
+	objProp2: RelationField = RelationField(
+		name='objProp2',
+		rule='some (Class1 and Class2)',
+		semantic_manager=semantic_manager)
+
+	objProp3: RelationField = RelationField(
+		name='objProp3',
+		rule='some Class3',
+		inverse_of=['oProp1'],
+		semantic_manager=semantic_manager)
+
+	objProp4: RelationField = RelationField(
+		name='objProp4',
+		rule='some (Class1 and Class2) and Class3)',
+		semantic_manager=semantic_manager)
+
+	objProp5: RelationField = RelationField(
+		name='objProp5',
+		rule='some (Class1 and (Class2 or Class3)), value Individual1',
+		semantic_manager=semantic_manager)
+
+
+class Class3aa(Class3a):
+	"""
+	Generated SemanticClass without description
+
+	Source(s): 
+		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.attributeProp._rules = [('some', [['string']])]
+			self.commandProp._rules = [('some', [['string']])]
+			self.dataProp1._rules = [('only', [['customDataType4']])]
+
+			self.oProp1._rules = [('value', [[Individual1]])]
+			self.objProp2._rules = [('some', [[Class1]]), ('value', [[Individual1]])]
+
+			self.oProp1._instance_identifier = self.get_identifier()
+			self.objProp2._instance_identifier = self.get_identifier()
+			self.attributeProp._instance_identifier = self.get_identifier()
+			self.commandProp._instance_identifier = self.get_identifier()
+			self.dataProp1._instance_identifier = self.get_identifier()
+
+	# Data fields
+
+	attributeProp: DataField = DataField(
+		name='attributeProp',
+		rule='some string',
+		semantic_manager=semantic_manager)
+
+	commandProp: DataField = DataField(
+		name='commandProp',
+		rule='some string',
+		semantic_manager=semantic_manager)
+
+	dataProp1: DataField = DataField(
+		name='dataProp1',
+		rule='only customDataType4',
+		semantic_manager=semantic_manager)
+
+	# Relation fields
+
+	oProp1: RelationField = RelationField(
+		name='oProp1',
+		rule='value Individual1',
+		inverse_of=['objProp3'],
+		semantic_manager=semantic_manager)
+
+	objProp2: RelationField = RelationField(
+		name='objProp2',
+		rule='some Class1, value Individual1',
+		semantic_manager=semantic_manager)
+
+
+class Get_Meter_History_Command(Get_Command):
+	"""
+	A Type Of Get Command
 
 	Source(s): 
 		https://w3id.org/saref (saref.ttl)
@@ -4488,37 +5738,13 @@ class Multimedia(Function_Related):
 		super().__init__(*args, **kwargs)
 		if not is_initialised:
 			self.Has_Description._rules = [('max|1', [['string']])]
-			self.Has_Manufacturer._rules = [('max|1', [['string']])]
-			self.Has_Model._rules = [('max|1', [['string']])]
 
-			self.Accomplishes._rules = [('value', [[Entertainment]]), ('min|1', [[Task]])]
-			self.Consists_Of._rules = [('only', [[Device]])]
-			self.Controls_Property._rules = [('only', [[Property]])]
-			self.Has_Function._rules = [('min|1', [[Function]])]
-			self.Has_Profile._rules = [('only', [[Profile]])]
-			self.Has_State._rules = [('only', [[State]])]
-			self.Has_Typical_Consumption._rules = [('only', [[Energy], [Power]])]
-			self.Is_Used_For._rules = [('only', [[Commodity]])]
-			self.Makes_Measurement._rules = [('only', [[Measurement]])]
-			self.Measures_Property._rules = [('only', [[Property]])]
-			self.Offers._rules = [('only', [[Service]])]
+			self.Acts_Upon._rules = [('only', [[State]])]
+			self.Is_Command_Of._rules = [('min|1', [[Function]])]
 
-			self.Accomplishes._instance_identifier = self.get_identifier()
-			self.Consists_Of._instance_identifier = self.get_identifier()
-			self.Controls_Property._instance_identifier = self.get_identifier()
-			self.Has_Function._instance_identifier = self.get_identifier()
-			self.Has_Profile._instance_identifier = self.get_identifier()
-			self.Has_State._instance_identifier = self.get_identifier()
-			self.Has_Typical_Consumption._instance_identifier = self.get_identifier()
-			self.Is_Used_For._instance_identifier = self.get_identifier()
-			self.Makes_Measurement._instance_identifier = self.get_identifier()
-			self.Measures_Property._instance_identifier = self.get_identifier()
-			self.Offers._instance_identifier = self.get_identifier()
+			self.Acts_Upon._instance_identifier = self.get_identifier()
+			self.Is_Command_Of._instance_identifier = self.get_identifier()
 			self.Has_Description._instance_identifier = self.get_identifier()
-			self.Has_Manufacturer._instance_identifier = self.get_identifier()
-			self.Has_Model._instance_identifier = self.get_identifier()
-
-			self.Accomplishes.add(Entertainment())
 
 	# Data fields
 
@@ -4530,128 +5756,29 @@ class Multimedia(Function_Related):
 	A Relationship Providing A Description Of An Entity (E.G., Device)
 	"""
 
-	Has_Manufacturer: DataField = DataField(
-		name='Has_Manufacturer',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Manufacturer Of An Entity (E.G., Device)
-	"""
-
-	Has_Model: DataField = DataField(
-		name='Has_Model',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Model Of An Entity (E.G., Device)
-	"""
-
 	# Relation fields
 
-	Accomplishes: RelationField = RelationField(
-		name='Accomplishes',
-		rule='value Entertainment, min 1 Task',
-		inverse_of=['Is_Accomplished_By'],
+	Acts_Upon: RelationField = RelationField(
+		name='Acts_Upon',
+		rule='only State',
 		semantic_manager=semantic_manager)
 	"""
-	A Relationship Between A Certain Entity (E.G., A Device) And The Task It
-	Accomplishes
+	A Relationship Between A Command And A State
 	"""
 
-	Consists_Of: RelationField = RelationField(
-		name='Consists_Of',
-		rule='only Device',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Indicating A Composite Entity That Consists Of Other Entities
-	(E.G., A Temperature/Humidity Sensor That Consists Of A Temperature Sensor
-	And A Humidity Sensor)
-	"""
-
-	Controls_Property: RelationField = RelationField(
-		name='Controls_Property',
-		rule='only Property',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Property That Can Be Controlled By A Certain
-	Device
-	"""
-
-	Has_Function: RelationField = RelationField(
-		name='Has_Function',
+	Is_Command_Of: RelationField = RelationField(
+		name='Is_Command_Of',
 		rule='min 1 Function',
+		inverse_of=['Has_Command'],
 		semantic_manager=semantic_manager)
 	"""
-	A Relationship Identifying The Type Of Function Of A Device
-	"""
-
-	Has_Profile: RelationField = RelationField(
-		name='Has_Profile',
-		rule='only Profile',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Associating A Profile To A Certain Entity (E.G., A Device)
-	"""
-
-	Has_State: RelationField = RelationField(
-		name='Has_State',
-		rule='only State',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Type Of State Of A Device
-	"""
-
-	Has_Typical_Consumption: RelationField = RelationField(
-		name='Has_Typical_Consumption',
-		rule='only (Energy or Power)',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Typical (Energy Or Power) Consumption Of A
-	Device
-	"""
-
-	Is_Used_For: RelationField = RelationField(
-		name='Is_Used_For',
-		rule='only Commodity',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Purpose For Which A Device Is Used For (E.G.,
-	Controlling A Commodity)
-	"""
-
-	Makes_Measurement: RelationField = RelationField(
-		name='Makes_Measurement',
-		rule='only Measurement',
-		semantic_manager=semantic_manager)
-	"""
-	A Relation Between A Device And The Measurements It Makes. Such Measurement
-	Will Link Together The Value Of The Measurement, Its Unit Of Measure And The
-	Property To Which It Relates.
-	"""
-
-	Measures_Property: RelationField = RelationField(
-		name='Measures_Property',
-		rule='only Property',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Property That Can Be Measured By A Certain
-	Device
-	"""
-
-	Offers: RelationField = RelationField(
-		name='Offers',
-		rule='only Service',
-		inverse_of=['Is_Offered_By'],
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Device And A Service
+	A Relationship Between A Command And A Function.
 	"""
 
 
-class Actuator(Function_Related):
+class Get_Current_Meter_Value_Command(Get_Command):
 	"""
-	A Device Responsible For Moving Or Controlling A Mechanism Or System By
-	Performing An Actuating Function
+	A Type Of Get Command
 
 	Source(s): 
 		https://w3id.org/saref (saref.ttl)
@@ -4662,35 +5789,13 @@ class Actuator(Function_Related):
 		super().__init__(*args, **kwargs)
 		if not is_initialised:
 			self.Has_Description._rules = [('max|1', [['string']])]
-			self.Has_Manufacturer._rules = [('max|1', [['string']])]
-			self.Has_Model._rules = [('max|1', [['string']])]
 
-			self.Accomplishes._rules = [('min|1', [[Task]])]
-			self.Consists_Of._rules = [('only', [[Device]])]
-			self.Controls_Property._rules = [('only', [[Property]])]
-			self.Has_Function._rules = [('some', [[Actuating_Function]]), ('min|1', [[Function]])]
-			self.Has_Profile._rules = [('only', [[Profile]])]
-			self.Has_State._rules = [('only', [[State]])]
-			self.Has_Typical_Consumption._rules = [('only', [[Energy], [Power]])]
-			self.Is_Used_For._rules = [('only', [[Commodity]])]
-			self.Makes_Measurement._rules = [('only', [[Measurement]])]
-			self.Measures_Property._rules = [('only', [[Property]])]
-			self.Offers._rules = [('only', [[Service]])]
+			self.Acts_Upon._rules = [('only', [[State]])]
+			self.Is_Command_Of._rules = [('min|1', [[Function]])]
 
-			self.Accomplishes._instance_identifier = self.get_identifier()
-			self.Consists_Of._instance_identifier = self.get_identifier()
-			self.Controls_Property._instance_identifier = self.get_identifier()
-			self.Has_Function._instance_identifier = self.get_identifier()
-			self.Has_Profile._instance_identifier = self.get_identifier()
-			self.Has_State._instance_identifier = self.get_identifier()
-			self.Has_Typical_Consumption._instance_identifier = self.get_identifier()
-			self.Is_Used_For._instance_identifier = self.get_identifier()
-			self.Makes_Measurement._instance_identifier = self.get_identifier()
-			self.Measures_Property._instance_identifier = self.get_identifier()
-			self.Offers._instance_identifier = self.get_identifier()
+			self.Acts_Upon._instance_identifier = self.get_identifier()
+			self.Is_Command_Of._instance_identifier = self.get_identifier()
 			self.Has_Description._instance_identifier = self.get_identifier()
-			self.Has_Manufacturer._instance_identifier = self.get_identifier()
-			self.Has_Model._instance_identifier = self.get_identifier()
 
 	# Data fields
 
@@ -4702,303 +5807,29 @@ class Actuator(Function_Related):
 	A Relationship Providing A Description Of An Entity (E.G., Device)
 	"""
 
-	Has_Manufacturer: DataField = DataField(
-		name='Has_Manufacturer',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Manufacturer Of An Entity (E.G., Device)
-	"""
-
-	Has_Model: DataField = DataField(
-		name='Has_Model',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Model Of An Entity (E.G., Device)
-	"""
-
 	# Relation fields
 
-	Accomplishes: RelationField = RelationField(
-		name='Accomplishes',
-		rule='min 1 Task',
-		inverse_of=['Is_Accomplished_By'],
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Certain Entity (E.G., A Device) And The Task It
-	Accomplishes
-	"""
-
-	Consists_Of: RelationField = RelationField(
-		name='Consists_Of',
-		rule='only Device',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Indicating A Composite Entity That Consists Of Other Entities
-	(E.G., A Temperature/Humidity Sensor That Consists Of A Temperature Sensor
-	And A Humidity Sensor)
-	"""
-
-	Controls_Property: RelationField = RelationField(
-		name='Controls_Property',
-		rule='only Property',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Property That Can Be Controlled By A Certain
-	Device
-	"""
-
-	Has_Function: RelationField = RelationField(
-		name='Has_Function',
-		rule='some Actuating_Function, min 1 Function',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Type Of Function Of A Device
-	"""
-
-	Has_Profile: RelationField = RelationField(
-		name='Has_Profile',
-		rule='only Profile',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Associating A Profile To A Certain Entity (E.G., A Device)
-	"""
-
-	Has_State: RelationField = RelationField(
-		name='Has_State',
+	Acts_Upon: RelationField = RelationField(
+		name='Acts_Upon',
 		rule='only State',
 		semantic_manager=semantic_manager)
 	"""
-	A Relationship Identifying The Type Of State Of A Device
+	A Relationship Between A Command And A State
 	"""
 
-	Has_Typical_Consumption: RelationField = RelationField(
-		name='Has_Typical_Consumption',
-		rule='only (Energy or Power)',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Typical (Energy Or Power) Consumption Of A
-	Device
-	"""
-
-	Is_Used_For: RelationField = RelationField(
-		name='Is_Used_For',
-		rule='only Commodity',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Purpose For Which A Device Is Used For (E.G.,
-	Controlling A Commodity)
-	"""
-
-	Makes_Measurement: RelationField = RelationField(
-		name='Makes_Measurement',
-		rule='only Measurement',
-		semantic_manager=semantic_manager)
-	"""
-	A Relation Between A Device And The Measurements It Makes. Such Measurement
-	Will Link Together The Value Of The Measurement, Its Unit Of Measure And The
-	Property To Which It Relates.
-	"""
-
-	Measures_Property: RelationField = RelationField(
-		name='Measures_Property',
-		rule='only Property',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Property That Can Be Measured By A Certain
-	Device
-	"""
-
-	Offers: RelationField = RelationField(
-		name='Offers',
-		rule='only Service',
-		inverse_of=['Is_Offered_By'],
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Device And A Service
-	"""
-
-
-class Hvac(Function_Related):
-	"""
-	Heating, Ventilation And Air Conditioning (Hvac) Device That Provides Indoor
-	Environmental Comfort
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-			self.Has_Description._rules = [('max|1', [['string']])]
-			self.Has_Manufacturer._rules = [('max|1', [['string']])]
-			self.Has_Model._rules = [('max|1', [['string']])]
-
-			self.Accomplishes._rules = [('value', [[Comfort]]), ('min|1', [[Task]])]
-			self.Consists_Of._rules = [('only', [[Device]])]
-			self.Controls_Property._rules = [('only', [[Property]])]
-			self.Has_Function._rules = [('min|1', [[Function]])]
-			self.Has_Profile._rules = [('only', [[Profile]])]
-			self.Has_State._rules = [('only', [[State]])]
-			self.Has_Typical_Consumption._rules = [('only', [[Energy], [Power]])]
-			self.Is_Used_For._rules = [('only', [[Commodity]])]
-			self.Makes_Measurement._rules = [('only', [[Measurement]])]
-			self.Measures_Property._rules = [('only', [[Property]])]
-			self.Offers._rules = [('only', [[Service]])]
-
-			self.Accomplishes._instance_identifier = self.get_identifier()
-			self.Consists_Of._instance_identifier = self.get_identifier()
-			self.Controls_Property._instance_identifier = self.get_identifier()
-			self.Has_Function._instance_identifier = self.get_identifier()
-			self.Has_Profile._instance_identifier = self.get_identifier()
-			self.Has_State._instance_identifier = self.get_identifier()
-			self.Has_Typical_Consumption._instance_identifier = self.get_identifier()
-			self.Is_Used_For._instance_identifier = self.get_identifier()
-			self.Makes_Measurement._instance_identifier = self.get_identifier()
-			self.Measures_Property._instance_identifier = self.get_identifier()
-			self.Offers._instance_identifier = self.get_identifier()
-			self.Has_Description._instance_identifier = self.get_identifier()
-			self.Has_Manufacturer._instance_identifier = self.get_identifier()
-			self.Has_Model._instance_identifier = self.get_identifier()
-
-			self.Accomplishes.add(Comfort())
-
-	# Data fields
-
-	Has_Description: DataField = DataField(
-		name='Has_Description',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Providing A Description Of An Entity (E.G., Device)
-	"""
-
-	Has_Manufacturer: DataField = DataField(
-		name='Has_Manufacturer',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Manufacturer Of An Entity (E.G., Device)
-	"""
-
-	Has_Model: DataField = DataField(
-		name='Has_Model',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Model Of An Entity (E.G., Device)
-	"""
-
-	# Relation fields
-
-	Accomplishes: RelationField = RelationField(
-		name='Accomplishes',
-		rule='value Comfort, min 1 Task',
-		inverse_of=['Is_Accomplished_By'],
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Certain Entity (E.G., A Device) And The Task It
-	Accomplishes
-	"""
-
-	Consists_Of: RelationField = RelationField(
-		name='Consists_Of',
-		rule='only Device',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Indicating A Composite Entity That Consists Of Other Entities
-	(E.G., A Temperature/Humidity Sensor That Consists Of A Temperature Sensor
-	And A Humidity Sensor)
-	"""
-
-	Controls_Property: RelationField = RelationField(
-		name='Controls_Property',
-		rule='only Property',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Property That Can Be Controlled By A Certain
-	Device
-	"""
-
-	Has_Function: RelationField = RelationField(
-		name='Has_Function',
+	Is_Command_Of: RelationField = RelationField(
+		name='Is_Command_Of',
 		rule='min 1 Function',
+		inverse_of=['Has_Command'],
 		semantic_manager=semantic_manager)
 	"""
-	A Relationship Identifying The Type Of Function Of A Device
-	"""
-
-	Has_Profile: RelationField = RelationField(
-		name='Has_Profile',
-		rule='only Profile',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Associating A Profile To A Certain Entity (E.G., A Device)
-	"""
-
-	Has_State: RelationField = RelationField(
-		name='Has_State',
-		rule='only State',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Type Of State Of A Device
-	"""
-
-	Has_Typical_Consumption: RelationField = RelationField(
-		name='Has_Typical_Consumption',
-		rule='only (Energy or Power)',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Typical (Energy Or Power) Consumption Of A
-	Device
-	"""
-
-	Is_Used_For: RelationField = RelationField(
-		name='Is_Used_For',
-		rule='only Commodity',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Purpose For Which A Device Is Used For (E.G.,
-	Controlling A Commodity)
-	"""
-
-	Makes_Measurement: RelationField = RelationField(
-		name='Makes_Measurement',
-		rule='only Measurement',
-		semantic_manager=semantic_manager)
-	"""
-	A Relation Between A Device And The Measurements It Makes. Such Measurement
-	Will Link Together The Value Of The Measurement, Its Unit Of Measure And The
-	Property To Which It Relates.
-	"""
-
-	Measures_Property: RelationField = RelationField(
-		name='Measures_Property',
-		rule='only Property',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Property That Can Be Measured By A Certain
-	Device
-	"""
-
-	Offers: RelationField = RelationField(
-		name='Offers',
-		rule='only Service',
-		inverse_of=['Is_Offered_By'],
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Device And A Service
+	A Relationship Between A Command And A Function.
 	"""
 
 
-class Meter(Function_Related):
+class Get_Sensing_Data_Command(Get_Command):
 	"""
-	A Device Built To Accurately Detect And Display A Quantity In A Form
-	Readable By A Human Being. Further, A Device Of Category Saref:Meter That
-	Performs A Saref:Meteringfunction.
+	A Type Of Get Command
 
 	Source(s): 
 		https://w3id.org/saref (saref.ttl)
@@ -5009,35 +5840,13 @@ class Meter(Function_Related):
 		super().__init__(*args, **kwargs)
 		if not is_initialised:
 			self.Has_Description._rules = [('max|1', [['string']])]
-			self.Has_Manufacturer._rules = [('max|1', [['string']])]
-			self.Has_Model._rules = [('max|1', [['string']])]
 
-			self.Accomplishes._rules = [('min|1', [[Task]])]
-			self.Consists_Of._rules = [('only', [[Device]])]
-			self.Controls_Property._rules = [('only', [[Property]])]
-			self.Has_Function._rules = [('some', [[Metering_Function]]), ('min|1', [[Function]])]
-			self.Has_Profile._rules = [('only', [[Profile]])]
-			self.Has_State._rules = [('only', [[State]])]
-			self.Has_Typical_Consumption._rules = [('only', [[Energy], [Power]])]
-			self.Is_Used_For._rules = [('only', [[Commodity]])]
-			self.Makes_Measurement._rules = [('only', [[Measurement]])]
-			self.Measures_Property._rules = [('only', [[Property]])]
-			self.Offers._rules = [('only', [[Service]])]
+			self.Acts_Upon._rules = [('only', [[State]])]
+			self.Is_Command_Of._rules = [('min|1', [[Function]])]
 
-			self.Accomplishes._instance_identifier = self.get_identifier()
-			self.Consists_Of._instance_identifier = self.get_identifier()
-			self.Controls_Property._instance_identifier = self.get_identifier()
-			self.Has_Function._instance_identifier = self.get_identifier()
-			self.Has_Profile._instance_identifier = self.get_identifier()
-			self.Has_State._instance_identifier = self.get_identifier()
-			self.Has_Typical_Consumption._instance_identifier = self.get_identifier()
-			self.Is_Used_For._instance_identifier = self.get_identifier()
-			self.Makes_Measurement._instance_identifier = self.get_identifier()
-			self.Measures_Property._instance_identifier = self.get_identifier()
-			self.Offers._instance_identifier = self.get_identifier()
+			self.Acts_Upon._instance_identifier = self.get_identifier()
+			self.Is_Command_Of._instance_identifier = self.get_identifier()
 			self.Has_Description._instance_identifier = self.get_identifier()
-			self.Has_Manufacturer._instance_identifier = self.get_identifier()
-			self.Has_Model._instance_identifier = self.get_identifier()
 
 	# Data fields
 
@@ -5049,300 +5858,29 @@ class Meter(Function_Related):
 	A Relationship Providing A Description Of An Entity (E.G., Device)
 	"""
 
-	Has_Manufacturer: DataField = DataField(
-		name='Has_Manufacturer',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Manufacturer Of An Entity (E.G., Device)
-	"""
-
-	Has_Model: DataField = DataField(
-		name='Has_Model',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Model Of An Entity (E.G., Device)
-	"""
-
 	# Relation fields
 
-	Accomplishes: RelationField = RelationField(
-		name='Accomplishes',
-		rule='min 1 Task',
-		inverse_of=['Is_Accomplished_By'],
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Certain Entity (E.G., A Device) And The Task It
-	Accomplishes
-	"""
-
-	Consists_Of: RelationField = RelationField(
-		name='Consists_Of',
-		rule='only Device',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Indicating A Composite Entity That Consists Of Other Entities
-	(E.G., A Temperature/Humidity Sensor That Consists Of A Temperature Sensor
-	And A Humidity Sensor)
-	"""
-
-	Controls_Property: RelationField = RelationField(
-		name='Controls_Property',
-		rule='only Property',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Property That Can Be Controlled By A Certain
-	Device
-	"""
-
-	Has_Function: RelationField = RelationField(
-		name='Has_Function',
-		rule='some Metering_Function, min 1 Function',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Type Of Function Of A Device
-	"""
-
-	Has_Profile: RelationField = RelationField(
-		name='Has_Profile',
-		rule='only Profile',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Associating A Profile To A Certain Entity (E.G., A Device)
-	"""
-
-	Has_State: RelationField = RelationField(
-		name='Has_State',
+	Acts_Upon: RelationField = RelationField(
+		name='Acts_Upon',
 		rule='only State',
 		semantic_manager=semantic_manager)
 	"""
-	A Relationship Identifying The Type Of State Of A Device
+	A Relationship Between A Command And A State
 	"""
 
-	Has_Typical_Consumption: RelationField = RelationField(
-		name='Has_Typical_Consumption',
-		rule='only (Energy or Power)',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Typical (Energy Or Power) Consumption Of A
-	Device
-	"""
-
-	Is_Used_For: RelationField = RelationField(
-		name='Is_Used_For',
-		rule='only Commodity',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Purpose For Which A Device Is Used For (E.G.,
-	Controlling A Commodity)
-	"""
-
-	Makes_Measurement: RelationField = RelationField(
-		name='Makes_Measurement',
-		rule='only Measurement',
-		semantic_manager=semantic_manager)
-	"""
-	A Relation Between A Device And The Measurements It Makes. Such Measurement
-	Will Link Together The Value Of The Measurement, Its Unit Of Measure And The
-	Property To Which It Relates.
-	"""
-
-	Measures_Property: RelationField = RelationField(
-		name='Measures_Property',
-		rule='only Property',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Property That Can Be Measured By A Certain
-	Device
-	"""
-
-	Offers: RelationField = RelationField(
-		name='Offers',
-		rule='only Service',
-		inverse_of=['Is_Offered_By'],
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Device And A Service
-	"""
-
-
-class Network(Function_Related):
-	"""
-	A Device Used To Connect Other Devices In A Network, Such As Hub, Switch Or
-	Router In A Local Area Network (Lan). 
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-			self.Has_Description._rules = [('max|1', [['string']])]
-			self.Has_Manufacturer._rules = [('max|1', [['string']])]
-			self.Has_Model._rules = [('max|1', [['string']])]
-
-			self.Accomplishes._rules = [('min|1', [[Task]])]
-			self.Consists_Of._rules = [('only', [[Device]])]
-			self.Controls_Property._rules = [('only', [[Property]])]
-			self.Has_Function._rules = [('min|1', [[Function]])]
-			self.Has_Profile._rules = [('only', [[Profile]])]
-			self.Has_State._rules = [('only', [[State]])]
-			self.Has_Typical_Consumption._rules = [('only', [[Energy], [Power]])]
-			self.Is_Used_For._rules = [('only', [[Commodity]])]
-			self.Makes_Measurement._rules = [('only', [[Measurement]])]
-			self.Measures_Property._rules = [('only', [[Property]])]
-			self.Offers._rules = [('only', [[Service]])]
-
-			self.Accomplishes._instance_identifier = self.get_identifier()
-			self.Consists_Of._instance_identifier = self.get_identifier()
-			self.Controls_Property._instance_identifier = self.get_identifier()
-			self.Has_Function._instance_identifier = self.get_identifier()
-			self.Has_Profile._instance_identifier = self.get_identifier()
-			self.Has_State._instance_identifier = self.get_identifier()
-			self.Has_Typical_Consumption._instance_identifier = self.get_identifier()
-			self.Is_Used_For._instance_identifier = self.get_identifier()
-			self.Makes_Measurement._instance_identifier = self.get_identifier()
-			self.Measures_Property._instance_identifier = self.get_identifier()
-			self.Offers._instance_identifier = self.get_identifier()
-			self.Has_Description._instance_identifier = self.get_identifier()
-			self.Has_Manufacturer._instance_identifier = self.get_identifier()
-			self.Has_Model._instance_identifier = self.get_identifier()
-
-	# Data fields
-
-	Has_Description: DataField = DataField(
-		name='Has_Description',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Providing A Description Of An Entity (E.G., Device)
-	"""
-
-	Has_Manufacturer: DataField = DataField(
-		name='Has_Manufacturer',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Manufacturer Of An Entity (E.G., Device)
-	"""
-
-	Has_Model: DataField = DataField(
-		name='Has_Model',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Model Of An Entity (E.G., Device)
-	"""
-
-	# Relation fields
-
-	Accomplishes: RelationField = RelationField(
-		name='Accomplishes',
-		rule='min 1 Task',
-		inverse_of=['Is_Accomplished_By'],
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Certain Entity (E.G., A Device) And The Task It
-	Accomplishes
-	"""
-
-	Consists_Of: RelationField = RelationField(
-		name='Consists_Of',
-		rule='only Device',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Indicating A Composite Entity That Consists Of Other Entities
-	(E.G., A Temperature/Humidity Sensor That Consists Of A Temperature Sensor
-	And A Humidity Sensor)
-	"""
-
-	Controls_Property: RelationField = RelationField(
-		name='Controls_Property',
-		rule='only Property',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Property That Can Be Controlled By A Certain
-	Device
-	"""
-
-	Has_Function: RelationField = RelationField(
-		name='Has_Function',
+	Is_Command_Of: RelationField = RelationField(
+		name='Is_Command_Of',
 		rule='min 1 Function',
+		inverse_of=['Has_Command'],
 		semantic_manager=semantic_manager)
 	"""
-	A Relationship Identifying The Type Of Function Of A Device
-	"""
-
-	Has_Profile: RelationField = RelationField(
-		name='Has_Profile',
-		rule='only Profile',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Associating A Profile To A Certain Entity (E.G., A Device)
-	"""
-
-	Has_State: RelationField = RelationField(
-		name='Has_State',
-		rule='only State',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Type Of State Of A Device
-	"""
-
-	Has_Typical_Consumption: RelationField = RelationField(
-		name='Has_Typical_Consumption',
-		rule='only (Energy or Power)',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Typical (Energy Or Power) Consumption Of A
-	Device
-	"""
-
-	Is_Used_For: RelationField = RelationField(
-		name='Is_Used_For',
-		rule='only Commodity',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Purpose For Which A Device Is Used For (E.G.,
-	Controlling A Commodity)
-	"""
-
-	Makes_Measurement: RelationField = RelationField(
-		name='Makes_Measurement',
-		rule='only Measurement',
-		semantic_manager=semantic_manager)
-	"""
-	A Relation Between A Device And The Measurements It Makes. Such Measurement
-	Will Link Together The Value Of The Measurement, Its Unit Of Measure And The
-	Property To Which It Relates.
-	"""
-
-	Measures_Property: RelationField = RelationField(
-		name='Measures_Property',
-		rule='only Property',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Property That Can Be Measured By A Certain
-	Device
-	"""
-
-	Offers: RelationField = RelationField(
-		name='Offers',
-		rule='only Service',
-		inverse_of=['Is_Offered_By'],
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Device And A Service
+	A Relationship Between A Command And A Function.
 	"""
 
 
-class Appliance(Function_Related):
+class Get_Meter_Data_Command(Get_Command):
 	"""
-	An Electrical/Mechanical Machine That Accomplish Some Household Functions,
-	Such As Cleaning Or Cooking
+	A Type Of Get Command
 
 	Source(s): 
 		https://w3id.org/saref (saref.ttl)
@@ -5353,35 +5891,13 @@ class Appliance(Function_Related):
 		super().__init__(*args, **kwargs)
 		if not is_initialised:
 			self.Has_Description._rules = [('max|1', [['string']])]
-			self.Has_Manufacturer._rules = [('max|1', [['string']])]
-			self.Has_Model._rules = [('max|1', [['string']])]
 
-			self.Accomplishes._rules = [('min|1', [[Task]])]
-			self.Consists_Of._rules = [('only', [[Device]])]
-			self.Controls_Property._rules = [('only', [[Property]])]
-			self.Has_Function._rules = [('min|1', [[Function]])]
-			self.Has_Profile._rules = [('only', [[Profile]])]
-			self.Has_State._rules = [('only', [[State]])]
-			self.Has_Typical_Consumption._rules = [('only', [[Energy], [Power]])]
-			self.Is_Used_For._rules = [('only', [[Commodity]])]
-			self.Makes_Measurement._rules = [('only', [[Measurement]])]
-			self.Measures_Property._rules = [('only', [[Property]])]
-			self.Offers._rules = [('only', [[Service]])]
+			self.Acts_Upon._rules = [('only', [[State]])]
+			self.Is_Command_Of._rules = [('min|1', [[Function]])]
 
-			self.Accomplishes._instance_identifier = self.get_identifier()
-			self.Consists_Of._instance_identifier = self.get_identifier()
-			self.Controls_Property._instance_identifier = self.get_identifier()
-			self.Has_Function._instance_identifier = self.get_identifier()
-			self.Has_Profile._instance_identifier = self.get_identifier()
-			self.Has_State._instance_identifier = self.get_identifier()
-			self.Has_Typical_Consumption._instance_identifier = self.get_identifier()
-			self.Is_Used_For._instance_identifier = self.get_identifier()
-			self.Makes_Measurement._instance_identifier = self.get_identifier()
-			self.Measures_Property._instance_identifier = self.get_identifier()
-			self.Offers._instance_identifier = self.get_identifier()
+			self.Acts_Upon._instance_identifier = self.get_identifier()
+			self.Is_Command_Of._instance_identifier = self.get_identifier()
 			self.Has_Description._instance_identifier = self.get_identifier()
-			self.Has_Manufacturer._instance_identifier = self.get_identifier()
-			self.Has_Model._instance_identifier = self.get_identifier()
 
 	# Data fields
 
@@ -5393,127 +5909,29 @@ class Appliance(Function_Related):
 	A Relationship Providing A Description Of An Entity (E.G., Device)
 	"""
 
-	Has_Manufacturer: DataField = DataField(
-		name='Has_Manufacturer',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Manufacturer Of An Entity (E.G., Device)
-	"""
-
-	Has_Model: DataField = DataField(
-		name='Has_Model',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Model Of An Entity (E.G., Device)
-	"""
-
 	# Relation fields
 
-	Accomplishes: RelationField = RelationField(
-		name='Accomplishes',
-		rule='min 1 Task',
-		inverse_of=['Is_Accomplished_By'],
+	Acts_Upon: RelationField = RelationField(
+		name='Acts_Upon',
+		rule='only State',
 		semantic_manager=semantic_manager)
 	"""
-	A Relationship Between A Certain Entity (E.G., A Device) And The Task It
-	Accomplishes
+	A Relationship Between A Command And A State
 	"""
 
-	Consists_Of: RelationField = RelationField(
-		name='Consists_Of',
-		rule='only Device',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Indicating A Composite Entity That Consists Of Other Entities
-	(E.G., A Temperature/Humidity Sensor That Consists Of A Temperature Sensor
-	And A Humidity Sensor)
-	"""
-
-	Controls_Property: RelationField = RelationField(
-		name='Controls_Property',
-		rule='only Property',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Property That Can Be Controlled By A Certain
-	Device
-	"""
-
-	Has_Function: RelationField = RelationField(
-		name='Has_Function',
+	Is_Command_Of: RelationField = RelationField(
+		name='Is_Command_Of',
 		rule='min 1 Function',
+		inverse_of=['Has_Command'],
 		semantic_manager=semantic_manager)
 	"""
-	A Relationship Identifying The Type Of Function Of A Device
-	"""
-
-	Has_Profile: RelationField = RelationField(
-		name='Has_Profile',
-		rule='only Profile',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Associating A Profile To A Certain Entity (E.G., A Device)
-	"""
-
-	Has_State: RelationField = RelationField(
-		name='Has_State',
-		rule='only State',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Type Of State Of A Device
-	"""
-
-	Has_Typical_Consumption: RelationField = RelationField(
-		name='Has_Typical_Consumption',
-		rule='only (Energy or Power)',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Typical (Energy Or Power) Consumption Of A
-	Device
-	"""
-
-	Is_Used_For: RelationField = RelationField(
-		name='Is_Used_For',
-		rule='only Commodity',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Purpose For Which A Device Is Used For (E.G.,
-	Controlling A Commodity)
-	"""
-
-	Makes_Measurement: RelationField = RelationField(
-		name='Makes_Measurement',
-		rule='only Measurement',
-		semantic_manager=semantic_manager)
-	"""
-	A Relation Between A Device And The Measurements It Makes. Such Measurement
-	Will Link Together The Value Of The Measurement, Its Unit Of Measure And The
-	Property To Which It Relates.
-	"""
-
-	Measures_Property: RelationField = RelationField(
-		name='Measures_Property',
-		rule='only Property',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Property That Can Be Measured By A Certain
-	Device
-	"""
-
-	Offers: RelationField = RelationField(
-		name='Offers',
-		rule='only Service',
-		inverse_of=['Is_Offered_By'],
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Device And A Service
+	A Relationship Between A Command And A Function.
 	"""
 
 
-class Lighting_Device(Function_Related):
+class Set_Relative_Level_Command(Set_Level_Command):
 	"""
-	A Device Used For Illumination, Irradiation, Signaling, Or Projection
+	A Type Of Set Level Command
 
 	Source(s): 
 		https://w3id.org/saref (saref.ttl)
@@ -5524,37 +5942,13 @@ class Lighting_Device(Function_Related):
 		super().__init__(*args, **kwargs)
 		if not is_initialised:
 			self.Has_Description._rules = [('max|1', [['string']])]
-			self.Has_Manufacturer._rules = [('max|1', [['string']])]
-			self.Has_Model._rules = [('max|1', [['string']])]
 
-			self.Accomplishes._rules = [('value', [[Comfort]]), ('min|1', [[Task]])]
-			self.Consists_Of._rules = [('only', [[Device]])]
-			self.Controls_Property._rules = [('only', [[Property]])]
-			self.Has_Function._rules = [('min|1', [[Function]])]
-			self.Has_Profile._rules = [('only', [[Profile]])]
-			self.Has_State._rules = [('only', [[State]])]
-			self.Has_Typical_Consumption._rules = [('only', [[Energy], [Power]])]
-			self.Is_Used_For._rules = [('only', [[Commodity]])]
-			self.Makes_Measurement._rules = [('only', [[Measurement]])]
-			self.Measures_Property._rules = [('only', [[Property]])]
-			self.Offers._rules = [('only', [[Service]])]
+			self.Acts_Upon._rules = [('only', [[Multi_Level_State]]), ('only', [[State]])]
+			self.Is_Command_Of._rules = [('min|1', [[Function]])]
 
-			self.Accomplishes._instance_identifier = self.get_identifier()
-			self.Consists_Of._instance_identifier = self.get_identifier()
-			self.Controls_Property._instance_identifier = self.get_identifier()
-			self.Has_Function._instance_identifier = self.get_identifier()
-			self.Has_Profile._instance_identifier = self.get_identifier()
-			self.Has_State._instance_identifier = self.get_identifier()
-			self.Has_Typical_Consumption._instance_identifier = self.get_identifier()
-			self.Is_Used_For._instance_identifier = self.get_identifier()
-			self.Makes_Measurement._instance_identifier = self.get_identifier()
-			self.Measures_Property._instance_identifier = self.get_identifier()
-			self.Offers._instance_identifier = self.get_identifier()
+			self.Acts_Upon._instance_identifier = self.get_identifier()
+			self.Is_Command_Of._instance_identifier = self.get_identifier()
 			self.Has_Description._instance_identifier = self.get_identifier()
-			self.Has_Manufacturer._instance_identifier = self.get_identifier()
-			self.Has_Model._instance_identifier = self.get_identifier()
-
-			self.Accomplishes.add(Comfort())
 
 	# Data fields
 
@@ -5566,128 +5960,29 @@ class Lighting_Device(Function_Related):
 	A Relationship Providing A Description Of An Entity (E.G., Device)
 	"""
 
-	Has_Manufacturer: DataField = DataField(
-		name='Has_Manufacturer',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Manufacturer Of An Entity (E.G., Device)
-	"""
-
-	Has_Model: DataField = DataField(
-		name='Has_Model',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Model Of An Entity (E.G., Device)
-	"""
-
 	# Relation fields
 
-	Accomplishes: RelationField = RelationField(
-		name='Accomplishes',
-		rule='value Comfort, min 1 Task',
-		inverse_of=['Is_Accomplished_By'],
+	Acts_Upon: RelationField = RelationField(
+		name='Acts_Upon',
+		rule='only Multi_Level_State, only State',
 		semantic_manager=semantic_manager)
 	"""
-	A Relationship Between A Certain Entity (E.G., A Device) And The Task It
-	Accomplishes
+	A Relationship Between A Command And A State
 	"""
 
-	Consists_Of: RelationField = RelationField(
-		name='Consists_Of',
-		rule='only Device',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Indicating A Composite Entity That Consists Of Other Entities
-	(E.G., A Temperature/Humidity Sensor That Consists Of A Temperature Sensor
-	And A Humidity Sensor)
-	"""
-
-	Controls_Property: RelationField = RelationField(
-		name='Controls_Property',
-		rule='only Property',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Property That Can Be Controlled By A Certain
-	Device
-	"""
-
-	Has_Function: RelationField = RelationField(
-		name='Has_Function',
+	Is_Command_Of: RelationField = RelationField(
+		name='Is_Command_Of',
 		rule='min 1 Function',
+		inverse_of=['Has_Command'],
 		semantic_manager=semantic_manager)
 	"""
-	A Relationship Identifying The Type Of Function Of A Device
-	"""
-
-	Has_Profile: RelationField = RelationField(
-		name='Has_Profile',
-		rule='only Profile',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Associating A Profile To A Certain Entity (E.G., A Device)
-	"""
-
-	Has_State: RelationField = RelationField(
-		name='Has_State',
-		rule='only State',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Type Of State Of A Device
-	"""
-
-	Has_Typical_Consumption: RelationField = RelationField(
-		name='Has_Typical_Consumption',
-		rule='only (Energy or Power)',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Typical (Energy Or Power) Consumption Of A
-	Device
-	"""
-
-	Is_Used_For: RelationField = RelationField(
-		name='Is_Used_For',
-		rule='only Commodity',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Purpose For Which A Device Is Used For (E.G.,
-	Controlling A Commodity)
-	"""
-
-	Makes_Measurement: RelationField = RelationField(
-		name='Makes_Measurement',
-		rule='only Measurement',
-		semantic_manager=semantic_manager)
-	"""
-	A Relation Between A Device And The Measurements It Makes. Such Measurement
-	Will Link Together The Value Of The Measurement, Its Unit Of Measure And The
-	Property To Which It Relates.
-	"""
-
-	Measures_Property: RelationField = RelationField(
-		name='Measures_Property',
-		rule='only Property',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Property That Can Be Measured By A Certain
-	Device
-	"""
-
-	Offers: RelationField = RelationField(
-		name='Offers',
-		rule='only Service',
-		inverse_of=['Is_Offered_By'],
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Device And A Service
+	A Relationship Between A Command And A Function.
 	"""
 
 
-class Micro_Renewable(Function_Related):
+class Set_Absolute_Level_Command(Set_Level_Command):
 	"""
-	A Device That Generates Renewable Energy From Natural Resources Such As Teh
-	Sun, Wind And Water
+	A Type Of Set Level Command
 
 	Source(s): 
 		https://w3id.org/saref (saref.ttl)
@@ -5698,37 +5993,13 @@ class Micro_Renewable(Function_Related):
 		super().__init__(*args, **kwargs)
 		if not is_initialised:
 			self.Has_Description._rules = [('max|1', [['string']])]
-			self.Has_Manufacturer._rules = [('max|1', [['string']])]
-			self.Has_Model._rules = [('max|1', [['string']])]
 
-			self.Accomplishes._rules = [('value', [[Energyefficiency]]), ('min|1', [[Task]])]
-			self.Consists_Of._rules = [('only', [[Device]])]
-			self.Controls_Property._rules = [('only', [[Property]])]
-			self.Has_Function._rules = [('min|1', [[Function]])]
-			self.Has_Profile._rules = [('only', [[Profile]])]
-			self.Has_State._rules = [('only', [[State]])]
-			self.Has_Typical_Consumption._rules = [('only', [[Energy], [Power]])]
-			self.Is_Used_For._rules = [('only', [[Commodity]])]
-			self.Makes_Measurement._rules = [('only', [[Measurement]])]
-			self.Measures_Property._rules = [('only', [[Property]])]
-			self.Offers._rules = [('only', [[Service]])]
+			self.Acts_Upon._rules = [('only', [[Multi_Level_State]]), ('only', [[State]])]
+			self.Is_Command_Of._rules = [('min|1', [[Function]])]
 
-			self.Accomplishes._instance_identifier = self.get_identifier()
-			self.Consists_Of._instance_identifier = self.get_identifier()
-			self.Controls_Property._instance_identifier = self.get_identifier()
-			self.Has_Function._instance_identifier = self.get_identifier()
-			self.Has_Profile._instance_identifier = self.get_identifier()
-			self.Has_State._instance_identifier = self.get_identifier()
-			self.Has_Typical_Consumption._instance_identifier = self.get_identifier()
-			self.Is_Used_For._instance_identifier = self.get_identifier()
-			self.Makes_Measurement._instance_identifier = self.get_identifier()
-			self.Measures_Property._instance_identifier = self.get_identifier()
-			self.Offers._instance_identifier = self.get_identifier()
+			self.Acts_Upon._instance_identifier = self.get_identifier()
+			self.Is_Command_Of._instance_identifier = self.get_identifier()
 			self.Has_Description._instance_identifier = self.get_identifier()
-			self.Has_Manufacturer._instance_identifier = self.get_identifier()
-			self.Has_Model._instance_identifier = self.get_identifier()
-
-			self.Accomplishes.add(Energyefficiency())
 
 	# Data fields
 
@@ -5740,466 +6011,23 @@ class Micro_Renewable(Function_Related):
 	A Relationship Providing A Description Of An Entity (E.G., Device)
 	"""
 
-	Has_Manufacturer: DataField = DataField(
-		name='Has_Manufacturer',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Manufacturer Of An Entity (E.G., Device)
-	"""
-
-	Has_Model: DataField = DataField(
-		name='Has_Model',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Model Of An Entity (E.G., Device)
-	"""
-
 	# Relation fields
 
-	Accomplishes: RelationField = RelationField(
-		name='Accomplishes',
-		rule='value Energyefficiency, min 1 Task',
-		inverse_of=['Is_Accomplished_By'],
+	Acts_Upon: RelationField = RelationField(
+		name='Acts_Upon',
+		rule='only Multi_Level_State, only State',
 		semantic_manager=semantic_manager)
 	"""
-	A Relationship Between A Certain Entity (E.G., A Device) And The Task It
-	Accomplishes
+	A Relationship Between A Command And A State
 	"""
 
-	Consists_Of: RelationField = RelationField(
-		name='Consists_Of',
-		rule='only Device',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Indicating A Composite Entity That Consists Of Other Entities
-	(E.G., A Temperature/Humidity Sensor That Consists Of A Temperature Sensor
-	And A Humidity Sensor)
-	"""
-
-	Controls_Property: RelationField = RelationField(
-		name='Controls_Property',
-		rule='only Property',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Property That Can Be Controlled By A Certain
-	Device
-	"""
-
-	Has_Function: RelationField = RelationField(
-		name='Has_Function',
+	Is_Command_Of: RelationField = RelationField(
+		name='Is_Command_Of',
 		rule='min 1 Function',
+		inverse_of=['Has_Command'],
 		semantic_manager=semantic_manager)
 	"""
-	A Relationship Identifying The Type Of Function Of A Device
-	"""
-
-	Has_Profile: RelationField = RelationField(
-		name='Has_Profile',
-		rule='only Profile',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Associating A Profile To A Certain Entity (E.G., A Device)
-	"""
-
-	Has_State: RelationField = RelationField(
-		name='Has_State',
-		rule='only State',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Type Of State Of A Device
-	"""
-
-	Has_Typical_Consumption: RelationField = RelationField(
-		name='Has_Typical_Consumption',
-		rule='only (Energy or Power)',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Typical (Energy Or Power) Consumption Of A
-	Device
-	"""
-
-	Is_Used_For: RelationField = RelationField(
-		name='Is_Used_For',
-		rule='only Commodity',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Purpose For Which A Device Is Used For (E.G.,
-	Controlling A Commodity)
-	"""
-
-	Makes_Measurement: RelationField = RelationField(
-		name='Makes_Measurement',
-		rule='only Measurement',
-		semantic_manager=semantic_manager)
-	"""
-	A Relation Between A Device And The Measurements It Makes. Such Measurement
-	Will Link Together The Value Of The Measurement, Its Unit Of Measure And The
-	Property To Which It Relates.
-	"""
-
-	Measures_Property: RelationField = RelationField(
-		name='Measures_Property',
-		rule='only Property',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Property That Can Be Measured By A Certain
-	Device
-	"""
-
-	Offers: RelationField = RelationField(
-		name='Offers',
-		rule='only Service',
-		inverse_of=['Is_Offered_By'],
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Device And A Service
-	"""
-
-
-class Sensor(Function_Related):
-	"""
-	A Device That Detects And Responds To Events Or Changes In The Physical
-	Environment Such As Light, Motion, Or Temperature Changes. Further, A Device
-	Of Category Saref:Sensor That Performs A Saref:Sensingfunction.
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-			self.Has_Description._rules = [('max|1', [['string']])]
-			self.Has_Manufacturer._rules = [('max|1', [['string']])]
-			self.Has_Model._rules = [('max|1', [['string']])]
-
-			self.Accomplishes._rules = [('min|1', [[Task]])]
-			self.Consists_Of._rules = [('only', [[Device]])]
-			self.Controls_Property._rules = [('only', [[Property]])]
-			self.Has_Function._rules = [('some', [[Sensing_Function]]), ('min|1', [[Function]])]
-			self.Has_Profile._rules = [('only', [[Profile]])]
-			self.Has_State._rules = [('only', [[State]])]
-			self.Has_Typical_Consumption._rules = [('only', [[Energy], [Power]])]
-			self.Is_Used_For._rules = [('only', [[Commodity]])]
-			self.Makes_Measurement._rules = [('only', [[Measurement]])]
-			self.Measures_Property._rules = [('only', [[Property]])]
-			self.Offers._rules = [('only', [[Service]])]
-
-			self.Accomplishes._instance_identifier = self.get_identifier()
-			self.Consists_Of._instance_identifier = self.get_identifier()
-			self.Controls_Property._instance_identifier = self.get_identifier()
-			self.Has_Function._instance_identifier = self.get_identifier()
-			self.Has_Profile._instance_identifier = self.get_identifier()
-			self.Has_State._instance_identifier = self.get_identifier()
-			self.Has_Typical_Consumption._instance_identifier = self.get_identifier()
-			self.Is_Used_For._instance_identifier = self.get_identifier()
-			self.Makes_Measurement._instance_identifier = self.get_identifier()
-			self.Measures_Property._instance_identifier = self.get_identifier()
-			self.Offers._instance_identifier = self.get_identifier()
-			self.Has_Description._instance_identifier = self.get_identifier()
-			self.Has_Manufacturer._instance_identifier = self.get_identifier()
-			self.Has_Model._instance_identifier = self.get_identifier()
-
-	# Data fields
-
-	Has_Description: DataField = DataField(
-		name='Has_Description',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Providing A Description Of An Entity (E.G., Device)
-	"""
-
-	Has_Manufacturer: DataField = DataField(
-		name='Has_Manufacturer',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Manufacturer Of An Entity (E.G., Device)
-	"""
-
-	Has_Model: DataField = DataField(
-		name='Has_Model',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Model Of An Entity (E.G., Device)
-	"""
-
-	# Relation fields
-
-	Accomplishes: RelationField = RelationField(
-		name='Accomplishes',
-		rule='min 1 Task',
-		inverse_of=['Is_Accomplished_By'],
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Certain Entity (E.G., A Device) And The Task It
-	Accomplishes
-	"""
-
-	Consists_Of: RelationField = RelationField(
-		name='Consists_Of',
-		rule='only Device',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Indicating A Composite Entity That Consists Of Other Entities
-	(E.G., A Temperature/Humidity Sensor That Consists Of A Temperature Sensor
-	And A Humidity Sensor)
-	"""
-
-	Controls_Property: RelationField = RelationField(
-		name='Controls_Property',
-		rule='only Property',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Property That Can Be Controlled By A Certain
-	Device
-	"""
-
-	Has_Function: RelationField = RelationField(
-		name='Has_Function',
-		rule='some Sensing_Function, min 1 Function',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Type Of Function Of A Device
-	"""
-
-	Has_Profile: RelationField = RelationField(
-		name='Has_Profile',
-		rule='only Profile',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Associating A Profile To A Certain Entity (E.G., A Device)
-	"""
-
-	Has_State: RelationField = RelationField(
-		name='Has_State',
-		rule='only State',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Type Of State Of A Device
-	"""
-
-	Has_Typical_Consumption: RelationField = RelationField(
-		name='Has_Typical_Consumption',
-		rule='only (Energy or Power)',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Typical (Energy Or Power) Consumption Of A
-	Device
-	"""
-
-	Is_Used_For: RelationField = RelationField(
-		name='Is_Used_For',
-		rule='only Commodity',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Purpose For Which A Device Is Used For (E.G.,
-	Controlling A Commodity)
-	"""
-
-	Makes_Measurement: RelationField = RelationField(
-		name='Makes_Measurement',
-		rule='only Measurement',
-		semantic_manager=semantic_manager)
-	"""
-	A Relation Between A Device And The Measurements It Makes. Such Measurement
-	Will Link Together The Value Of The Measurement, Its Unit Of Measure And The
-	Property To Which It Relates.
-	"""
-
-	Measures_Property: RelationField = RelationField(
-		name='Measures_Property',
-		rule='only Property',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Property That Can Be Measured By A Certain
-	Device
-	"""
-
-	Offers: RelationField = RelationField(
-		name='Offers',
-		rule='only Service',
-		inverse_of=['Is_Offered_By'],
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Device And A Service
-	"""
-
-
-class Switch(Actuator):
-	"""
-	A Device Of Category Saref:Actuator That Performs An Actuating Function Of
-	Type Saref:Onofffunction Or Saref:Openclosefunction
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-			self.Has_Description._rules = [('max|1', [['string']])]
-			self.Has_Manufacturer._rules = [('max|1', [['string']])]
-			self.Has_Model._rules = [('max|1', [['string']])]
-
-			self.Accomplishes._rules = [('min|1', [[Task]])]
-			self.Consists_Of._rules = [('only', [[Device]])]
-			self.Controls_Property._rules = [('only', [[Property]])]
-			self.Has_Function._rules = [('some', [[Actuating_Function]]), ('min|1', [[Function]])]
-			self.Has_Profile._rules = [('only', [[Profile]])]
-			self.Has_State._rules = [('only', [[State]])]
-			self.Has_Typical_Consumption._rules = [('only', [[Energy], [Power]])]
-			self.Is_Used_For._rules = [('only', [[Commodity]])]
-			self.Makes_Measurement._rules = [('only', [[Measurement]])]
-			self.Measures_Property._rules = [('only', [[Property]])]
-			self.Offers._rules = [('only', [[Service]])]
-
-			self.Accomplishes._instance_identifier = self.get_identifier()
-			self.Consists_Of._instance_identifier = self.get_identifier()
-			self.Controls_Property._instance_identifier = self.get_identifier()
-			self.Has_Function._instance_identifier = self.get_identifier()
-			self.Has_Profile._instance_identifier = self.get_identifier()
-			self.Has_State._instance_identifier = self.get_identifier()
-			self.Has_Typical_Consumption._instance_identifier = self.get_identifier()
-			self.Is_Used_For._instance_identifier = self.get_identifier()
-			self.Makes_Measurement._instance_identifier = self.get_identifier()
-			self.Measures_Property._instance_identifier = self.get_identifier()
-			self.Offers._instance_identifier = self.get_identifier()
-			self.Has_Description._instance_identifier = self.get_identifier()
-			self.Has_Manufacturer._instance_identifier = self.get_identifier()
-			self.Has_Model._instance_identifier = self.get_identifier()
-
-	# Data fields
-
-	Has_Description: DataField = DataField(
-		name='Has_Description',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Providing A Description Of An Entity (E.G., Device)
-	"""
-
-	Has_Manufacturer: DataField = DataField(
-		name='Has_Manufacturer',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Manufacturer Of An Entity (E.G., Device)
-	"""
-
-	Has_Model: DataField = DataField(
-		name='Has_Model',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Model Of An Entity (E.G., Device)
-	"""
-
-	# Relation fields
-
-	Accomplishes: RelationField = RelationField(
-		name='Accomplishes',
-		rule='min 1 Task',
-		inverse_of=['Is_Accomplished_By'],
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Certain Entity (E.G., A Device) And The Task It
-	Accomplishes
-	"""
-
-	Consists_Of: RelationField = RelationField(
-		name='Consists_Of',
-		rule='only Device',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Indicating A Composite Entity That Consists Of Other Entities
-	(E.G., A Temperature/Humidity Sensor That Consists Of A Temperature Sensor
-	And A Humidity Sensor)
-	"""
-
-	Controls_Property: RelationField = RelationField(
-		name='Controls_Property',
-		rule='only Property',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Property That Can Be Controlled By A Certain
-	Device
-	"""
-
-	Has_Function: RelationField = RelationField(
-		name='Has_Function',
-		rule='some Actuating_Function, min 1 Function',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Type Of Function Of A Device
-	"""
-
-	Has_Profile: RelationField = RelationField(
-		name='Has_Profile',
-		rule='only Profile',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Associating A Profile To A Certain Entity (E.G., A Device)
-	"""
-
-	Has_State: RelationField = RelationField(
-		name='Has_State',
-		rule='only State',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Type Of State Of A Device
-	"""
-
-	Has_Typical_Consumption: RelationField = RelationField(
-		name='Has_Typical_Consumption',
-		rule='only (Energy or Power)',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Typical (Energy Or Power) Consumption Of A
-	Device
-	"""
-
-	Is_Used_For: RelationField = RelationField(
-		name='Is_Used_For',
-		rule='only Commodity',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Purpose For Which A Device Is Used For (E.G.,
-	Controlling A Commodity)
-	"""
-
-	Makes_Measurement: RelationField = RelationField(
-		name='Makes_Measurement',
-		rule='only Measurement',
-		semantic_manager=semantic_manager)
-	"""
-	A Relation Between A Device And The Measurements It Makes. Such Measurement
-	Will Link Together The Value Of The Measurement, Its Unit Of Measure And The
-	Property To Which It Relates.
-	"""
-
-	Measures_Property: RelationField = RelationField(
-		name='Measures_Property',
-		rule='only Property',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Property That Can Be Measured By A Certain
-	Device
-	"""
-
-	Offers: RelationField = RelationField(
-		name='Offers',
-		rule='only Service',
-		inverse_of=['Is_Offered_By'],
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Device And A Service
+	A Relationship Between A Command And A Function.
 	"""
 
 
@@ -6364,357 +6192,6 @@ class Energy_Meter(Meter):
 	Measures_Property: RelationField = RelationField(
 		name='Measures_Property',
 		rule='some Energy, only Property',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Property That Can Be Measured By A Certain
-	Device
-	"""
-
-	Offers: RelationField = RelationField(
-		name='Offers',
-		rule='only Service',
-		inverse_of=['Is_Offered_By'],
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Device And A Service
-	"""
-
-
-class Washing_Machine(Appliance, Load):
-	"""
-	A Device Of Category Saref:Appliance And Saref:Load That Accomplishes The
-	Task Saref:Washing, Performs An Actuating Function Of Type
-	Saref:Startstopfunction, Can Be Found In The State Saref:Startstopstate, And
-	Can Have A Saref:Profile That Characterizes Its Energy Consumption. 
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-			self.Has_Description._rules = [('max|1', [['string']])]
-			self.Has_Manufacturer._rules = [('max|1', [['string']])]
-			self.Has_Model._rules = [('max|1', [['string']])]
-
-			self.Accomplishes._rules = [('value', [[Washing]]), ('min|1', [[Task]])]
-			self.Consists_Of._rules = [('only', [[Device]])]
-			self.Controls_Property._rules = [('only', [[Property]])]
-			self.Has_Function._rules = [('some', [[Start_Stop_Function]]), ('min|1', [[Function]])]
-			self.Has_Profile._rules = [('some', [[Profile]]), ('only', [[Profile]])]
-			self.Has_State._rules = [('some', [[Start_Stop_State]]), ('only', [[State]])]
-			self.Has_Typical_Consumption._rules = [('only', [[Energy], [Power]])]
-			self.Is_Used_For._rules = [('only', [[Commodity]])]
-			self.Makes_Measurement._rules = [('only', [[Measurement]])]
-			self.Measures_Property._rules = [('only', [[Property]])]
-			self.Offers._rules = [('only', [[Service]])]
-
-			self.Accomplishes._instance_identifier = self.get_identifier()
-			self.Consists_Of._instance_identifier = self.get_identifier()
-			self.Controls_Property._instance_identifier = self.get_identifier()
-			self.Has_Function._instance_identifier = self.get_identifier()
-			self.Has_Profile._instance_identifier = self.get_identifier()
-			self.Has_State._instance_identifier = self.get_identifier()
-			self.Has_Typical_Consumption._instance_identifier = self.get_identifier()
-			self.Is_Used_For._instance_identifier = self.get_identifier()
-			self.Makes_Measurement._instance_identifier = self.get_identifier()
-			self.Measures_Property._instance_identifier = self.get_identifier()
-			self.Offers._instance_identifier = self.get_identifier()
-			self.Has_Description._instance_identifier = self.get_identifier()
-			self.Has_Manufacturer._instance_identifier = self.get_identifier()
-			self.Has_Model._instance_identifier = self.get_identifier()
-
-			self.Accomplishes.add(Washing())
-
-	# Data fields
-
-	Has_Description: DataField = DataField(
-		name='Has_Description',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Providing A Description Of An Entity (E.G., Device)
-	"""
-
-	Has_Manufacturer: DataField = DataField(
-		name='Has_Manufacturer',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Manufacturer Of An Entity (E.G., Device)
-	"""
-
-	Has_Model: DataField = DataField(
-		name='Has_Model',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Model Of An Entity (E.G., Device)
-	"""
-
-	# Relation fields
-
-	Accomplishes: RelationField = RelationField(
-		name='Accomplishes',
-		rule='value Washing, min 1 Task',
-		inverse_of=['Is_Accomplished_By'],
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Certain Entity (E.G., A Device) And The Task It
-	Accomplishes
-	"""
-
-	Consists_Of: RelationField = RelationField(
-		name='Consists_Of',
-		rule='only Device',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Indicating A Composite Entity That Consists Of Other Entities
-	(E.G., A Temperature/Humidity Sensor That Consists Of A Temperature Sensor
-	And A Humidity Sensor)
-	"""
-
-	Controls_Property: RelationField = RelationField(
-		name='Controls_Property',
-		rule='only Property',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Property That Can Be Controlled By A Certain
-	Device
-	"""
-
-	Has_Function: RelationField = RelationField(
-		name='Has_Function',
-		rule='some Start_Stop_Function, min 1 Function',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Type Of Function Of A Device
-	"""
-
-	Has_Profile: RelationField = RelationField(
-		name='Has_Profile',
-		rule='some Profile, only Profile',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Associating A Profile To A Certain Entity (E.G., A Device)
-	"""
-
-	Has_State: RelationField = RelationField(
-		name='Has_State',
-		rule='some Start_Stop_State, only State',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Type Of State Of A Device
-	"""
-
-	Has_Typical_Consumption: RelationField = RelationField(
-		name='Has_Typical_Consumption',
-		rule='only (Energy or Power)',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Typical (Energy Or Power) Consumption Of A
-	Device
-	"""
-
-	Is_Used_For: RelationField = RelationField(
-		name='Is_Used_For',
-		rule='only Commodity',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Purpose For Which A Device Is Used For (E.G.,
-	Controlling A Commodity)
-	"""
-
-	Makes_Measurement: RelationField = RelationField(
-		name='Makes_Measurement',
-		rule='only Measurement',
-		semantic_manager=semantic_manager)
-	"""
-	A Relation Between A Device And The Measurements It Makes. Such Measurement
-	Will Link Together The Value Of The Measurement, Its Unit Of Measure And The
-	Property To Which It Relates.
-	"""
-
-	Measures_Property: RelationField = RelationField(
-		name='Measures_Property',
-		rule='only Property',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Property That Can Be Measured By A Certain
-	Device
-	"""
-
-	Offers: RelationField = RelationField(
-		name='Offers',
-		rule='only Service',
-		inverse_of=['Is_Offered_By'],
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Device And A Service
-	"""
-
-
-class Temperature_Sensor(Sensor):
-	"""
-	A Device That Consists Of A Sensor, Has Category Saref:Sensor, Performs The
-	Saref:Sensingfunction And Is Used For The Purpose Of Sensing A Property Of
-	Type Saref:Temperature
-
-	Source(s): 
-		https://w3id.org/saref (saref.ttl)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-			self.Has_Description._rules = [('max|1', [['string']])]
-			self.Has_Manufacturer._rules = [('max|1', [['string']])]
-			self.Has_Model._rules = [('max|1', [['string']])]
-
-			self.Accomplishes._rules = [('value', [[Comfort]]), ('min|1', [[Task]])]
-			self.Consists_Of._rules = [('some', [[Sensor]]), ('only', [[Device]])]
-			self.Controls_Property._rules = [('only', [[Property]])]
-			self.Has_Function._rules = [('some', [[Sensing_Function]]), ('some', [[Sensing_Function]]), ('min|1', [[Function]])]
-			self.Has_Profile._rules = [('only', [[Profile]])]
-			self.Has_State._rules = [('only', [[State]])]
-			self.Has_Typical_Consumption._rules = [('only', [[Energy], [Power]])]
-			self.Is_Used_For._rules = [('only', [[Commodity]])]
-			self.Makes_Measurement._rules = [('only', [[Measurement]])]
-			self.Measures_Property._rules = [('some', [[Temperature]]), ('only', [[Property]])]
-			self.Offers._rules = [('only', [[Service]])]
-
-			self.Accomplishes._instance_identifier = self.get_identifier()
-			self.Consists_Of._instance_identifier = self.get_identifier()
-			self.Controls_Property._instance_identifier = self.get_identifier()
-			self.Has_Function._instance_identifier = self.get_identifier()
-			self.Has_Profile._instance_identifier = self.get_identifier()
-			self.Has_State._instance_identifier = self.get_identifier()
-			self.Has_Typical_Consumption._instance_identifier = self.get_identifier()
-			self.Is_Used_For._instance_identifier = self.get_identifier()
-			self.Makes_Measurement._instance_identifier = self.get_identifier()
-			self.Measures_Property._instance_identifier = self.get_identifier()
-			self.Offers._instance_identifier = self.get_identifier()
-			self.Has_Description._instance_identifier = self.get_identifier()
-			self.Has_Manufacturer._instance_identifier = self.get_identifier()
-			self.Has_Model._instance_identifier = self.get_identifier()
-
-			self.Accomplishes.add(Comfort())
-
-	# Data fields
-
-	Has_Description: DataField = DataField(
-		name='Has_Description',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Providing A Description Of An Entity (E.G., Device)
-	"""
-
-	Has_Manufacturer: DataField = DataField(
-		name='Has_Manufacturer',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Manufacturer Of An Entity (E.G., Device)
-	"""
-
-	Has_Model: DataField = DataField(
-		name='Has_Model',
-		rule='max 1 string',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Model Of An Entity (E.G., Device)
-	"""
-
-	# Relation fields
-
-	Accomplishes: RelationField = RelationField(
-		name='Accomplishes',
-		rule='value Comfort, min 1 Task',
-		inverse_of=['Is_Accomplished_By'],
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Between A Certain Entity (E.G., A Device) And The Task It
-	Accomplishes
-	"""
-
-	Consists_Of: RelationField = RelationField(
-		name='Consists_Of',
-		rule='some Sensor, only Device',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Indicating A Composite Entity That Consists Of Other Entities
-	(E.G., A Temperature/Humidity Sensor That Consists Of A Temperature Sensor
-	And A Humidity Sensor)
-	"""
-
-	Controls_Property: RelationField = RelationField(
-		name='Controls_Property',
-		rule='only Property',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Property That Can Be Controlled By A Certain
-	Device
-	"""
-
-	Has_Function: RelationField = RelationField(
-		name='Has_Function',
-		rule='some Sensing_Function, some Sensing_Function, min 1 Function',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Type Of Function Of A Device
-	"""
-
-	Has_Profile: RelationField = RelationField(
-		name='Has_Profile',
-		rule='only Profile',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Associating A Profile To A Certain Entity (E.G., A Device)
-	"""
-
-	Has_State: RelationField = RelationField(
-		name='Has_State',
-		rule='only State',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Type Of State Of A Device
-	"""
-
-	Has_Typical_Consumption: RelationField = RelationField(
-		name='Has_Typical_Consumption',
-		rule='only (Energy or Power)',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Identifying The Typical (Energy Or Power) Consumption Of A
-	Device
-	"""
-
-	Is_Used_For: RelationField = RelationField(
-		name='Is_Used_For',
-		rule='only Commodity',
-		semantic_manager=semantic_manager)
-	"""
-	A Relationship Specifying The Purpose For Which A Device Is Used For (E.G.,
-	Controlling A Commodity)
-	"""
-
-	Makes_Measurement: RelationField = RelationField(
-		name='Makes_Measurement',
-		rule='only Measurement',
-		semantic_manager=semantic_manager)
-	"""
-	A Relation Between A Device And The Measurements It Makes. Such Measurement
-	Will Link Together The Value Of The Measurement, Its Unit Of Measure And The
-	Property To Which It Relates.
-	"""
-
-	Measures_Property: RelationField = RelationField(
-		name='Measures_Property',
-		rule='some Temperature, only Property',
 		semantic_manager=semantic_manager)
 	"""
 	A Relationship Specifying The Property That Can Be Measured By A Certain
@@ -6907,12 +6384,11 @@ class Smoke_Sensor(Sensor):
 	"""
 
 
-class Light_Switch(Switch):
+class Temperature_Sensor(Sensor):
 	"""
-	A Device Of Category Saref:Actuator That Consists Of A Switch, Accomplishes
-	The Task Saref:Lighting, Performs The Saref:Onofffunction, Measures The
-	Property Saref:Light, And Can Be Found In The State Saref:Onoffstate. It Can
-	Offer A Switch On Service.
+	A Device That Consists Of A Sensor, Has Category Saref:Sensor, Performs The
+	Saref:Sensingfunction And Is Used For The Purpose Of Sensing A Property Of
+	Type Saref:Temperature
 
 	Source(s): 
 		https://w3id.org/saref (saref.ttl)
@@ -6926,17 +6402,17 @@ class Light_Switch(Switch):
 			self.Has_Manufacturer._rules = [('max|1', [['string']])]
 			self.Has_Model._rules = [('max|1', [['string']])]
 
-			self.Accomplishes._rules = [('value', [[Lighting]]), ('min|1', [[Task]])]
-			self.Consists_Of._rules = [('some', [[Switch]]), ('only', [[Device]])]
+			self.Accomplishes._rules = [('value', [[Comfort]]), ('min|1', [[Task]])]
+			self.Consists_Of._rules = [('some', [[Sensor]]), ('only', [[Device]])]
 			self.Controls_Property._rules = [('only', [[Property]])]
-			self.Has_Function._rules = [('some', [[On_Off_Function]]), ('some', [[Actuating_Function]]), ('min|1', [[Function]])]
+			self.Has_Function._rules = [('some', [[Sensing_Function]]), ('some', [[Sensing_Function]]), ('min|1', [[Function]])]
 			self.Has_Profile._rules = [('only', [[Profile]])]
-			self.Has_State._rules = [('some', [[On_Off_State]]), ('only', [[State]])]
+			self.Has_State._rules = [('only', [[State]])]
 			self.Has_Typical_Consumption._rules = [('only', [[Energy], [Power]])]
 			self.Is_Used_For._rules = [('only', [[Commodity]])]
 			self.Makes_Measurement._rules = [('only', [[Measurement]])]
-			self.Measures_Property._rules = [('some', [[Light]]), ('only', [[Property]])]
-			self.Offers._rules = [('some', [[Switch_On_Service]]), ('only', [[Service]])]
+			self.Measures_Property._rules = [('some', [[Temperature]]), ('only', [[Property]])]
+			self.Offers._rules = [('only', [[Service]])]
 
 			self.Accomplishes._instance_identifier = self.get_identifier()
 			self.Consists_Of._instance_identifier = self.get_identifier()
@@ -6953,7 +6429,7 @@ class Light_Switch(Switch):
 			self.Has_Manufacturer._instance_identifier = self.get_identifier()
 			self.Has_Model._instance_identifier = self.get_identifier()
 
-			self.Accomplishes.add(Lighting())
+			self.Accomplishes.add(Comfort())
 
 	# Data fields
 
@@ -6985,7 +6461,7 @@ class Light_Switch(Switch):
 
 	Accomplishes: RelationField = RelationField(
 		name='Accomplishes',
-		rule='value Lighting, min 1 Task',
+		rule='value Comfort, min 1 Task',
 		inverse_of=['Is_Accomplished_By'],
 		semantic_manager=semantic_manager)
 	"""
@@ -6995,7 +6471,7 @@ class Light_Switch(Switch):
 
 	Consists_Of: RelationField = RelationField(
 		name='Consists_Of',
-		rule='some Switch, only Device',
+		rule='some Sensor, only Device',
 		semantic_manager=semantic_manager)
 	"""
 	A Relationship Indicating A Composite Entity That Consists Of Other Entities
@@ -7014,7 +6490,7 @@ class Light_Switch(Switch):
 
 	Has_Function: RelationField = RelationField(
 		name='Has_Function',
-		rule='some On_Off_Function, some Actuating_Function, min 1 Function',
+		rule='some Sensing_Function, some Sensing_Function, min 1 Function',
 		semantic_manager=semantic_manager)
 	"""
 	A Relationship Identifying The Type Of Function Of A Device
@@ -7030,7 +6506,7 @@ class Light_Switch(Switch):
 
 	Has_State: RelationField = RelationField(
 		name='Has_State',
-		rule='some On_Off_State, only State',
+		rule='only State',
 		semantic_manager=semantic_manager)
 	"""
 	A Relationship Identifying The Type Of State Of A Device
@@ -7066,7 +6542,7 @@ class Light_Switch(Switch):
 
 	Measures_Property: RelationField = RelationField(
 		name='Measures_Property',
-		rule='some Light, only Property',
+		rule='some Temperature, only Property',
 		semantic_manager=semantic_manager)
 	"""
 	A Relationship Specifying The Property That Can Be Measured By A Certain
@@ -7075,7 +6551,355 @@ class Light_Switch(Switch):
 
 	Offers: RelationField = RelationField(
 		name='Offers',
-		rule='some Switch_On_Service, only Service',
+		rule='only Service',
+		inverse_of=['Is_Offered_By'],
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Device And A Service
+	"""
+
+
+class Switch(Actuator):
+	"""
+	A Device Of Category Saref:Actuator That Performs An Actuating Function Of
+	Type Saref:Onofffunction Or Saref:Openclosefunction
+
+	Source(s): 
+		https://w3id.org/saref (saref.ttl)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.Has_Description._rules = [('max|1', [['string']])]
+			self.Has_Manufacturer._rules = [('max|1', [['string']])]
+			self.Has_Model._rules = [('max|1', [['string']])]
+
+			self.Accomplishes._rules = [('min|1', [[Task]])]
+			self.Consists_Of._rules = [('only', [[Device]])]
+			self.Controls_Property._rules = [('only', [[Property]])]
+			self.Has_Function._rules = [('some', [[Actuating_Function]]), ('min|1', [[Function]])]
+			self.Has_Profile._rules = [('only', [[Profile]])]
+			self.Has_State._rules = [('only', [[State]])]
+			self.Has_Typical_Consumption._rules = [('only', [[Energy], [Power]])]
+			self.Is_Used_For._rules = [('only', [[Commodity]])]
+			self.Makes_Measurement._rules = [('only', [[Measurement]])]
+			self.Measures_Property._rules = [('only', [[Property]])]
+			self.Offers._rules = [('only', [[Service]])]
+
+			self.Accomplishes._instance_identifier = self.get_identifier()
+			self.Consists_Of._instance_identifier = self.get_identifier()
+			self.Controls_Property._instance_identifier = self.get_identifier()
+			self.Has_Function._instance_identifier = self.get_identifier()
+			self.Has_Profile._instance_identifier = self.get_identifier()
+			self.Has_State._instance_identifier = self.get_identifier()
+			self.Has_Typical_Consumption._instance_identifier = self.get_identifier()
+			self.Is_Used_For._instance_identifier = self.get_identifier()
+			self.Makes_Measurement._instance_identifier = self.get_identifier()
+			self.Measures_Property._instance_identifier = self.get_identifier()
+			self.Offers._instance_identifier = self.get_identifier()
+			self.Has_Description._instance_identifier = self.get_identifier()
+			self.Has_Manufacturer._instance_identifier = self.get_identifier()
+			self.Has_Model._instance_identifier = self.get_identifier()
+
+	# Data fields
+
+	Has_Description: DataField = DataField(
+		name='Has_Description',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Providing A Description Of An Entity (E.G., Device)
+	"""
+
+	Has_Manufacturer: DataField = DataField(
+		name='Has_Manufacturer',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Manufacturer Of An Entity (E.G., Device)
+	"""
+
+	Has_Model: DataField = DataField(
+		name='Has_Model',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Model Of An Entity (E.G., Device)
+	"""
+
+	# Relation fields
+
+	Accomplishes: RelationField = RelationField(
+		name='Accomplishes',
+		rule='min 1 Task',
+		inverse_of=['Is_Accomplished_By'],
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Certain Entity (E.G., A Device) And The Task It
+	Accomplishes
+	"""
+
+	Consists_Of: RelationField = RelationField(
+		name='Consists_Of',
+		rule='only Device',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Indicating A Composite Entity That Consists Of Other Entities
+	(E.G., A Temperature/Humidity Sensor That Consists Of A Temperature Sensor
+	And A Humidity Sensor)
+	"""
+
+	Controls_Property: RelationField = RelationField(
+		name='Controls_Property',
+		rule='only Property',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Property That Can Be Controlled By A Certain
+	Device
+	"""
+
+	Has_Function: RelationField = RelationField(
+		name='Has_Function',
+		rule='some Actuating_Function, min 1 Function',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Type Of Function Of A Device
+	"""
+
+	Has_Profile: RelationField = RelationField(
+		name='Has_Profile',
+		rule='only Profile',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Associating A Profile To A Certain Entity (E.G., A Device)
+	"""
+
+	Has_State: RelationField = RelationField(
+		name='Has_State',
+		rule='only State',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Type Of State Of A Device
+	"""
+
+	Has_Typical_Consumption: RelationField = RelationField(
+		name='Has_Typical_Consumption',
+		rule='only (Energy or Power)',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Typical (Energy Or Power) Consumption Of A
+	Device
+	"""
+
+	Is_Used_For: RelationField = RelationField(
+		name='Is_Used_For',
+		rule='only Commodity',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Purpose For Which A Device Is Used For (E.G.,
+	Controlling A Commodity)
+	"""
+
+	Makes_Measurement: RelationField = RelationField(
+		name='Makes_Measurement',
+		rule='only Measurement',
+		semantic_manager=semantic_manager)
+	"""
+	A Relation Between A Device And The Measurements It Makes. Such Measurement
+	Will Link Together The Value Of The Measurement, Its Unit Of Measure And The
+	Property To Which It Relates.
+	"""
+
+	Measures_Property: RelationField = RelationField(
+		name='Measures_Property',
+		rule='only Property',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Property That Can Be Measured By A Certain
+	Device
+	"""
+
+	Offers: RelationField = RelationField(
+		name='Offers',
+		rule='only Service',
+		inverse_of=['Is_Offered_By'],
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Device And A Service
+	"""
+
+
+class Washing_Machine(Appliance, Load):
+	"""
+	A Device Of Category Saref:Appliance And Saref:Load That Accomplishes The
+	Task Saref:Washing, Performs An Actuating Function Of Type
+	Saref:Startstopfunction, Can Be Found In The State Saref:Startstopstate, And
+	Can Have A Saref:Profile That Characterizes Its Energy Consumption. 
+
+	Source(s): 
+		https://w3id.org/saref (saref.ttl)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.Has_Description._rules = [('max|1', [['string']])]
+			self.Has_Manufacturer._rules = [('max|1', [['string']])]
+			self.Has_Model._rules = [('max|1', [['string']])]
+
+			self.Accomplishes._rules = [('value', [[Washing]]), ('min|1', [[Task]])]
+			self.Consists_Of._rules = [('only', [[Device]])]
+			self.Controls_Property._rules = [('only', [[Property]])]
+			self.Has_Function._rules = [('some', [[Start_Stop_Function]]), ('min|1', [[Function]])]
+			self.Has_Profile._rules = [('some', [[Profile]]), ('only', [[Profile]])]
+			self.Has_State._rules = [('some', [[Start_Stop_State]]), ('only', [[State]])]
+			self.Has_Typical_Consumption._rules = [('only', [[Energy], [Power]])]
+			self.Is_Used_For._rules = [('only', [[Commodity]])]
+			self.Makes_Measurement._rules = [('only', [[Measurement]])]
+			self.Measures_Property._rules = [('only', [[Property]])]
+			self.Offers._rules = [('only', [[Service]])]
+
+			self.Accomplishes._instance_identifier = self.get_identifier()
+			self.Consists_Of._instance_identifier = self.get_identifier()
+			self.Controls_Property._instance_identifier = self.get_identifier()
+			self.Has_Function._instance_identifier = self.get_identifier()
+			self.Has_Profile._instance_identifier = self.get_identifier()
+			self.Has_State._instance_identifier = self.get_identifier()
+			self.Has_Typical_Consumption._instance_identifier = self.get_identifier()
+			self.Is_Used_For._instance_identifier = self.get_identifier()
+			self.Makes_Measurement._instance_identifier = self.get_identifier()
+			self.Measures_Property._instance_identifier = self.get_identifier()
+			self.Offers._instance_identifier = self.get_identifier()
+			self.Has_Description._instance_identifier = self.get_identifier()
+			self.Has_Manufacturer._instance_identifier = self.get_identifier()
+			self.Has_Model._instance_identifier = self.get_identifier()
+
+			self.Accomplishes.add(Washing())
+
+	# Data fields
+
+	Has_Description: DataField = DataField(
+		name='Has_Description',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Providing A Description Of An Entity (E.G., Device)
+	"""
+
+	Has_Manufacturer: DataField = DataField(
+		name='Has_Manufacturer',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Manufacturer Of An Entity (E.G., Device)
+	"""
+
+	Has_Model: DataField = DataField(
+		name='Has_Model',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Model Of An Entity (E.G., Device)
+	"""
+
+	# Relation fields
+
+	Accomplishes: RelationField = RelationField(
+		name='Accomplishes',
+		rule='value Washing, min 1 Task',
+		inverse_of=['Is_Accomplished_By'],
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Certain Entity (E.G., A Device) And The Task It
+	Accomplishes
+	"""
+
+	Consists_Of: RelationField = RelationField(
+		name='Consists_Of',
+		rule='only Device',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Indicating A Composite Entity That Consists Of Other Entities
+	(E.G., A Temperature/Humidity Sensor That Consists Of A Temperature Sensor
+	And A Humidity Sensor)
+	"""
+
+	Controls_Property: RelationField = RelationField(
+		name='Controls_Property',
+		rule='only Property',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Property That Can Be Controlled By A Certain
+	Device
+	"""
+
+	Has_Function: RelationField = RelationField(
+		name='Has_Function',
+		rule='some Start_Stop_Function, min 1 Function',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Type Of Function Of A Device
+	"""
+
+	Has_Profile: RelationField = RelationField(
+		name='Has_Profile',
+		rule='some Profile, only Profile',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Associating A Profile To A Certain Entity (E.G., A Device)
+	"""
+
+	Has_State: RelationField = RelationField(
+		name='Has_State',
+		rule='some Start_Stop_State, only State',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Type Of State Of A Device
+	"""
+
+	Has_Typical_Consumption: RelationField = RelationField(
+		name='Has_Typical_Consumption',
+		rule='only (Energy or Power)',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Typical (Energy Or Power) Consumption Of A
+	Device
+	"""
+
+	Is_Used_For: RelationField = RelationField(
+		name='Is_Used_For',
+		rule='only Commodity',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Purpose For Which A Device Is Used For (E.G.,
+	Controlling A Commodity)
+	"""
+
+	Makes_Measurement: RelationField = RelationField(
+		name='Makes_Measurement',
+		rule='only Measurement',
+		semantic_manager=semantic_manager)
+	"""
+	A Relation Between A Device And The Measurements It Makes. Such Measurement
+	Will Link Together The Value Of The Measurement, Its Unit Of Measure And The
+	Property To Which It Relates.
+	"""
+
+	Measures_Property: RelationField = RelationField(
+		name='Measures_Property',
+		rule='only Property',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Property That Can Be Measured By A Certain
+	Device
+	"""
+
+	Offers: RelationField = RelationField(
+		name='Offers',
+		rule='only Service',
 		inverse_of=['Is_Offered_By'],
 		semantic_manager=semantic_manager)
 	"""
@@ -7251,6 +7075,182 @@ class Door_Switch(Switch):
 	Offers: RelationField = RelationField(
 		name='Offers',
 		rule='only Service',
+		inverse_of=['Is_Offered_By'],
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Device And A Service
+	"""
+
+
+class Light_Switch(Switch):
+	"""
+	A Device Of Category Saref:Actuator That Consists Of A Switch, Accomplishes
+	The Task Saref:Lighting, Performs The Saref:Onofffunction, Measures The
+	Property Saref:Light, And Can Be Found In The State Saref:Onoffstate. It Can
+	Offer A Switch On Service.
+
+	Source(s): 
+		https://w3id.org/saref (saref.ttl)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.Has_Description._rules = [('max|1', [['string']])]
+			self.Has_Manufacturer._rules = [('max|1', [['string']])]
+			self.Has_Model._rules = [('max|1', [['string']])]
+
+			self.Accomplishes._rules = [('value', [[Lighting]]), ('min|1', [[Task]])]
+			self.Consists_Of._rules = [('some', [[Switch]]), ('only', [[Device]])]
+			self.Controls_Property._rules = [('only', [[Property]])]
+			self.Has_Function._rules = [('some', [[On_Off_Function]]), ('some', [[Actuating_Function]]), ('min|1', [[Function]])]
+			self.Has_Profile._rules = [('only', [[Profile]])]
+			self.Has_State._rules = [('some', [[On_Off_State]]), ('only', [[State]])]
+			self.Has_Typical_Consumption._rules = [('only', [[Energy], [Power]])]
+			self.Is_Used_For._rules = [('only', [[Commodity]])]
+			self.Makes_Measurement._rules = [('only', [[Measurement]])]
+			self.Measures_Property._rules = [('some', [[Light]]), ('only', [[Property]])]
+			self.Offers._rules = [('some', [[Switch_On_Service]]), ('only', [[Service]])]
+
+			self.Accomplishes._instance_identifier = self.get_identifier()
+			self.Consists_Of._instance_identifier = self.get_identifier()
+			self.Controls_Property._instance_identifier = self.get_identifier()
+			self.Has_Function._instance_identifier = self.get_identifier()
+			self.Has_Profile._instance_identifier = self.get_identifier()
+			self.Has_State._instance_identifier = self.get_identifier()
+			self.Has_Typical_Consumption._instance_identifier = self.get_identifier()
+			self.Is_Used_For._instance_identifier = self.get_identifier()
+			self.Makes_Measurement._instance_identifier = self.get_identifier()
+			self.Measures_Property._instance_identifier = self.get_identifier()
+			self.Offers._instance_identifier = self.get_identifier()
+			self.Has_Description._instance_identifier = self.get_identifier()
+			self.Has_Manufacturer._instance_identifier = self.get_identifier()
+			self.Has_Model._instance_identifier = self.get_identifier()
+
+			self.Accomplishes.add(Lighting())
+
+	# Data fields
+
+	Has_Description: DataField = DataField(
+		name='Has_Description',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Providing A Description Of An Entity (E.G., Device)
+	"""
+
+	Has_Manufacturer: DataField = DataField(
+		name='Has_Manufacturer',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Manufacturer Of An Entity (E.G., Device)
+	"""
+
+	Has_Model: DataField = DataField(
+		name='Has_Model',
+		rule='max 1 string',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Model Of An Entity (E.G., Device)
+	"""
+
+	# Relation fields
+
+	Accomplishes: RelationField = RelationField(
+		name='Accomplishes',
+		rule='value Lighting, min 1 Task',
+		inverse_of=['Is_Accomplished_By'],
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Between A Certain Entity (E.G., A Device) And The Task It
+	Accomplishes
+	"""
+
+	Consists_Of: RelationField = RelationField(
+		name='Consists_Of',
+		rule='some Switch, only Device',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Indicating A Composite Entity That Consists Of Other Entities
+	(E.G., A Temperature/Humidity Sensor That Consists Of A Temperature Sensor
+	And A Humidity Sensor)
+	"""
+
+	Controls_Property: RelationField = RelationField(
+		name='Controls_Property',
+		rule='only Property',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Property That Can Be Controlled By A Certain
+	Device
+	"""
+
+	Has_Function: RelationField = RelationField(
+		name='Has_Function',
+		rule='some On_Off_Function, some Actuating_Function, min 1 Function',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Type Of Function Of A Device
+	"""
+
+	Has_Profile: RelationField = RelationField(
+		name='Has_Profile',
+		rule='only Profile',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Associating A Profile To A Certain Entity (E.G., A Device)
+	"""
+
+	Has_State: RelationField = RelationField(
+		name='Has_State',
+		rule='some On_Off_State, only State',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Type Of State Of A Device
+	"""
+
+	Has_Typical_Consumption: RelationField = RelationField(
+		name='Has_Typical_Consumption',
+		rule='only (Energy or Power)',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Identifying The Typical (Energy Or Power) Consumption Of A
+	Device
+	"""
+
+	Is_Used_For: RelationField = RelationField(
+		name='Is_Used_For',
+		rule='only Commodity',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Purpose For Which A Device Is Used For (E.G.,
+	Controlling A Commodity)
+	"""
+
+	Makes_Measurement: RelationField = RelationField(
+		name='Makes_Measurement',
+		rule='only Measurement',
+		semantic_manager=semantic_manager)
+	"""
+	A Relation Between A Device And The Measurements It Makes. Such Measurement
+	Will Link Together The Value Of The Measurement, Its Unit Of Measure And The
+	Property To Which It Relates.
+	"""
+
+	Measures_Property: RelationField = RelationField(
+		name='Measures_Property',
+		rule='some Light, only Property',
+		semantic_manager=semantic_manager)
+	"""
+	A Relationship Specifying The Property That Can Be Measured By A Certain
+	Device
+	"""
+
+	Offers: RelationField = RelationField(
+		name='Offers',
+		rule='some Switch_On_Service, only Service',
 		inverse_of=['Is_Offered_By'],
 		semantic_manager=semantic_manager)
 	"""

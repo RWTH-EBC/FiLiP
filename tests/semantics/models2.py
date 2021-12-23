@@ -45,86 +45,6 @@ class Thing(SemanticClass):
 		super().__init__(*args, **kwargs)
 
 
-class Class4(Thing):
-	"""
-	Generated SemanticClass without description
-
-	Source(s): 
-		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-
-			self.objProp4._rules = [('min|1', [[Class1]])]
-
-			self.objProp4._instance_identifier = self.get_identifier()
-
-	# Relation fields
-
-	objProp4: RelationField = RelationField(
-		name='objProp4',
-		rule='min 1 Class1',
-		semantic_manager=semantic_manager)
-
-
-class Class3(SemanticDeviceClass, Thing):
-	"""
-	Generated SemanticClass without description
-
-	Source(s): 
-		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-			self.dataProp1._rules = [('only', [['customDataType4']])]
-
-			self.oProp1._rules = [('value', [[Individual1]])]
-			self.objProp2._rules = [('some', [[Class1]]), ('value', [[Individual1]])]
-
-			self.oProp1._instance_identifier = self.get_identifier()
-			self.objProp2._instance_identifier = self.get_identifier()
-			self.attributeProp._instance_identifier = self.get_identifier()
-			self.commandProp._instance_identifier = self.get_identifier()
-			self.dataProp1._instance_identifier = self.get_identifier()
-
-			self.oProp1.add(Individual1())
-			self.objProp2.add(Individual1())
-
-	# Data fields
-
-	attributeProp: DeviceAttributeField = DeviceAttributeField(
-		name='attributeProp',
-		semantic_manager=semantic_manager)
-
-	commandProp: CommandField = CommandField(
-		name='commandProp',
-		semantic_manager=semantic_manager)
-
-	dataProp1: DataField = DataField(
-		name='dataProp1',
-		rule='only customDataType4',
-		semantic_manager=semantic_manager)
-
-	# Relation fields
-
-	oProp1: RelationField = RelationField(
-		name='oProp1',
-		rule='value Individual1',
-		inverse_of=['objProp3'],
-		semantic_manager=semantic_manager)
-
-	objProp2: RelationField = RelationField(
-		name='objProp2',
-		rule='some Class1, value Individual1',
-		semantic_manager=semantic_manager)
-
-
 class Class2(SemanticDeviceClass, Thing):
 	"""
 	Generated SemanticClass without description
@@ -162,6 +82,31 @@ class Class2(SemanticDeviceClass, Thing):
 	objProp2: RelationField = RelationField(
 		name='objProp2',
 		rule='only Thing',
+		semantic_manager=semantic_manager)
+
+
+class Class4(Thing):
+	"""
+	Generated SemanticClass without description
+
+	Source(s): 
+		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+
+			self.objProp4._rules = [('min|1', [[Class1]])]
+
+			self.objProp4._instance_identifier = self.get_identifier()
+
+	# Relation fields
+
+	objProp4: RelationField = RelationField(
+		name='objProp4',
+		rule='min 1 Class1',
 		semantic_manager=semantic_manager)
 
 
@@ -232,7 +177,7 @@ class Class1(Thing):
 		semantic_manager=semantic_manager)
 
 
-class Class3a(Class3):
+class Class3(SemanticDeviceClass, Thing):
 	"""
 	Generated SemanticClass without description
 
@@ -254,6 +199,9 @@ class Class3a(Class3):
 			self.attributeProp._instance_identifier = self.get_identifier()
 			self.commandProp._instance_identifier = self.get_identifier()
 			self.dataProp1._instance_identifier = self.get_identifier()
+
+			self.oProp1.add(Individual1())
+			self.objProp2.add(Individual1())
 
 	# Data fields
 
@@ -281,6 +229,70 @@ class Class3a(Class3):
 	objProp2: RelationField = RelationField(
 		name='objProp2',
 		rule='some Class1, value Individual1',
+		semantic_manager=semantic_manager)
+
+
+class Class1a(Class1):
+	"""
+	Generated SemanticClass without description
+
+	Source(s): 
+		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.dataProp2._rules = [('value', [[]])]
+
+			self.oProp1._rules = [('some', [[Class2], [Class4]])]
+			self.objProp2._rules = [('some', [[Class1, Class2]])]
+			self.objProp3._rules = [('some', [[Class3]])]
+			self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
+			self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]]), ('value', [[Individual1]])]
+
+			self.oProp1._instance_identifier = self.get_identifier()
+			self.objProp2._instance_identifier = self.get_identifier()
+			self.objProp3._instance_identifier = self.get_identifier()
+			self.objProp4._instance_identifier = self.get_identifier()
+			self.objProp5._instance_identifier = self.get_identifier()
+			self.dataProp2._instance_identifier = self.get_identifier()
+
+	# Data fields
+
+	dataProp2: DataField = DataField(
+		name='dataProp2',
+		rule='value 2',
+		semantic_manager=semantic_manager)
+
+	# Relation fields
+
+	oProp1: RelationField = RelationField(
+		name='oProp1',
+		rule='some (Class2 or Class4)',
+		inverse_of=['objProp3'],
+		semantic_manager=semantic_manager)
+
+	objProp2: RelationField = RelationField(
+		name='objProp2',
+		rule='some (Class1 and Class2)',
+		semantic_manager=semantic_manager)
+
+	objProp3: RelationField = RelationField(
+		name='objProp3',
+		rule='some Class3',
+		inverse_of=['oProp1'],
+		semantic_manager=semantic_manager)
+
+	objProp4: RelationField = RelationField(
+		name='objProp4',
+		rule='some (Class1 and Class2) and Class3)',
+		semantic_manager=semantic_manager)
+
+	objProp5: RelationField = RelationField(
+		name='objProp5',
+		rule='some (Class1 and (Class2 or Class3)), value Individual1',
 		semantic_manager=semantic_manager)
 
 
@@ -417,70 +429,6 @@ class Class1b(Class1):
 		semantic_manager=semantic_manager)
 
 
-class Class1a(Class1):
-	"""
-	Generated SemanticClass without description
-
-	Source(s): 
-		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-			self.dataProp2._rules = [('value', [[]])]
-
-			self.oProp1._rules = [('some', [[Class2], [Class4]])]
-			self.objProp2._rules = [('some', [[Class1, Class2]])]
-			self.objProp3._rules = [('some', [[Class3]])]
-			self.objProp4._rules = [('some', [[Class1, Class2, Class3]])]
-			self.objProp5._rules = [('some', [[Class1, Class2], [Class1, Class3]]), ('value', [[Individual1]])]
-
-			self.oProp1._instance_identifier = self.get_identifier()
-			self.objProp2._instance_identifier = self.get_identifier()
-			self.objProp3._instance_identifier = self.get_identifier()
-			self.objProp4._instance_identifier = self.get_identifier()
-			self.objProp5._instance_identifier = self.get_identifier()
-			self.dataProp2._instance_identifier = self.get_identifier()
-
-	# Data fields
-
-	dataProp2: DataField = DataField(
-		name='dataProp2',
-		rule='value 2',
-		semantic_manager=semantic_manager)
-
-	# Relation fields
-
-	oProp1: RelationField = RelationField(
-		name='oProp1',
-		rule='some (Class2 or Class4)',
-		inverse_of=['objProp3'],
-		semantic_manager=semantic_manager)
-
-	objProp2: RelationField = RelationField(
-		name='objProp2',
-		rule='some (Class1 and Class2)',
-		semantic_manager=semantic_manager)
-
-	objProp3: RelationField = RelationField(
-		name='objProp3',
-		rule='some Class3',
-		inverse_of=['oProp1'],
-		semantic_manager=semantic_manager)
-
-	objProp4: RelationField = RelationField(
-		name='objProp4',
-		rule='some (Class1 and Class2) and Class3)',
-		semantic_manager=semantic_manager)
-
-	objProp5: RelationField = RelationField(
-		name='objProp5',
-		rule='some (Class1 and (Class2 or Class3)), value Individual1',
-		semantic_manager=semantic_manager)
-
-
 class Class123(Class1, Class2, Class3):
 	"""
 	Generated SemanticClass without description
@@ -559,6 +507,58 @@ class Class123(Class1, Class2, Class3):
 	objProp5: RelationField = RelationField(
 		name='objProp5',
 		rule='some (Class1 and (Class2 or Class3)), value Individual1',
+		semantic_manager=semantic_manager)
+
+
+class Class3a(Class3):
+	"""
+	Generated SemanticClass without description
+
+	Source(s): 
+		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.dataProp1._rules = [('only', [['customDataType4']])]
+
+			self.oProp1._rules = [('value', [[Individual1]])]
+			self.objProp2._rules = [('some', [[Class1]]), ('value', [[Individual1]])]
+
+			self.oProp1._instance_identifier = self.get_identifier()
+			self.objProp2._instance_identifier = self.get_identifier()
+			self.attributeProp._instance_identifier = self.get_identifier()
+			self.commandProp._instance_identifier = self.get_identifier()
+			self.dataProp1._instance_identifier = self.get_identifier()
+
+	# Data fields
+
+	attributeProp: DeviceAttributeField = DeviceAttributeField(
+		name='attributeProp',
+		semantic_manager=semantic_manager)
+
+	commandProp: CommandField = CommandField(
+		name='commandProp',
+		semantic_manager=semantic_manager)
+
+	dataProp1: DataField = DataField(
+		name='dataProp1',
+		rule='only customDataType4',
+		semantic_manager=semantic_manager)
+
+	# Relation fields
+
+	oProp1: RelationField = RelationField(
+		name='oProp1',
+		rule='value Individual1',
+		inverse_of=['objProp3'],
+		semantic_manager=semantic_manager)
+
+	objProp2: RelationField = RelationField(
+		name='objProp2',
+		rule='some Class1, value Individual1',
 		semantic_manager=semantic_manager)
 
 
@@ -643,58 +643,6 @@ class Class13(Class1, Class3):
 		semantic_manager=semantic_manager)
 
 
-class Class3aa(Class3a):
-	"""
-	Generated SemanticClass without description
-
-	Source(s): 
-		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-			self.dataProp1._rules = [('only', [['customDataType4']])]
-
-			self.oProp1._rules = [('value', [[Individual1]])]
-			self.objProp2._rules = [('some', [[Class1]]), ('value', [[Individual1]])]
-
-			self.oProp1._instance_identifier = self.get_identifier()
-			self.objProp2._instance_identifier = self.get_identifier()
-			self.attributeProp._instance_identifier = self.get_identifier()
-			self.commandProp._instance_identifier = self.get_identifier()
-			self.dataProp1._instance_identifier = self.get_identifier()
-
-	# Data fields
-
-	attributeProp: DeviceAttributeField = DeviceAttributeField(
-		name='attributeProp',
-		semantic_manager=semantic_manager)
-
-	commandProp: CommandField = CommandField(
-		name='commandProp',
-		semantic_manager=semantic_manager)
-
-	dataProp1: DataField = DataField(
-		name='dataProp1',
-		rule='only customDataType4',
-		semantic_manager=semantic_manager)
-
-	# Relation fields
-
-	oProp1: RelationField = RelationField(
-		name='oProp1',
-		rule='value Individual1',
-		inverse_of=['objProp3'],
-		semantic_manager=semantic_manager)
-
-	objProp2: RelationField = RelationField(
-		name='objProp2',
-		rule='some Class1, value Individual1',
-		semantic_manager=semantic_manager)
-
-
 class Class1aa(Class1a):
 	"""
 	Generated SemanticClass without description
@@ -756,6 +704,58 @@ class Class1aa(Class1a):
 	objProp5: RelationField = RelationField(
 		name='objProp5',
 		rule='some (Class1 and (Class2 or Class3)), value Individual1',
+		semantic_manager=semantic_manager)
+
+
+class Class3aa(Class3a):
+	"""
+	Generated SemanticClass without description
+
+	Source(s): 
+		http://www.semanticweb.org/redin/ontologies/2020/11/untitled-ontology-25 (ParsingTesterOntology)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.dataProp1._rules = [('only', [['customDataType4']])]
+
+			self.oProp1._rules = [('value', [[Individual1]])]
+			self.objProp2._rules = [('some', [[Class1]]), ('value', [[Individual1]])]
+
+			self.oProp1._instance_identifier = self.get_identifier()
+			self.objProp2._instance_identifier = self.get_identifier()
+			self.attributeProp._instance_identifier = self.get_identifier()
+			self.commandProp._instance_identifier = self.get_identifier()
+			self.dataProp1._instance_identifier = self.get_identifier()
+
+	# Data fields
+
+	attributeProp: DeviceAttributeField = DeviceAttributeField(
+		name='attributeProp',
+		semantic_manager=semantic_manager)
+
+	commandProp: CommandField = CommandField(
+		name='commandProp',
+		semantic_manager=semantic_manager)
+
+	dataProp1: DataField = DataField(
+		name='dataProp1',
+		rule='only customDataType4',
+		semantic_manager=semantic_manager)
+
+	# Relation fields
+
+	oProp1: RelationField = RelationField(
+		name='oProp1',
+		rule='value Individual1',
+		inverse_of=['objProp3'],
+		semantic_manager=semantic_manager)
+
+	objProp2: RelationField = RelationField(
+		name='objProp2',
+		rule='some Class1, value Individual1',
 		semantic_manager=semantic_manager)
 
 

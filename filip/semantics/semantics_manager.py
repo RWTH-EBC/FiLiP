@@ -436,6 +436,45 @@ class SemanticsManager(BaseModel):
         class_type = self.get_class_by_name(class_name)
         return isinstance(class_type, SemanticDeviceClass)
 
+    def is_local_state_valid(self, validate_rules: bool = True) -> (bool, str):
+        """
+        Check if the local state is valid and can be saved.
+
+        Args:
+            validate_rules (bool): If true Rulefields are validated
+
+        Returns:
+            (bool, str): (Is valid?, Message)
+        """
+
+        if validate_rules:
+            for instance in self.instance_registry.get_all():
+                if isinstance(instance, Individual):
+                    continue
+                if not instance.are_rule_fields_valid():
+                    return (
+                        False,
+                        f"SemanticEntity {instance.id} of type"
+                        f"{instance.get_type()} has unfulfilled fields " 
+                        f"{[f.name for f in instance.get_invalid_rule_fields()]}."
+                    )
+
+        for instance in self.instance_registry.get_all():
+            if isinstance(instance, SemanticDeviceClass):
+                if instance.device_settings.endpoint is None:
+                    return (
+                        False,
+                        f"Device {instance.id} of type {instance.get_type()}" 
+                        f"needs to be given an endpoint. "
+                    )
+                if instance.device_settings.transport is None:
+                    return (
+                        False,
+                        f"Device {instance.id} of type {instance.get_type()}" 
+                        f"needs to be given an transport setting."
+                    )
+        return True, "State is valid"
+
     def save_state(self, assert_validity: bool = True):
         """
         Save the local state completely to Fiware.
@@ -450,24 +489,10 @@ class SemanticsManager(BaseModel):
         Returns:
             None
         """
-        if assert_validity:
-            for instance in self.instance_registry.get_all():
-                if isinstance(instance, Individual):
-                    continue
-                assert instance.are_rule_fields_valid(), \
-                    f"Attempted to save the SemanticEntity {instance.id} of " \
-                    f"type {instance._get_class_name()} with invalid fields " \
-                    f"{[f.name for f in instance.get_invalid_rule_fields()]}. " \
-                    f"Local state was not saved"
+        (valid, msg) = self.is_local_state_valid(validate_rules=assert_validity)
 
-        for instance in self.instance_registry.get_all():
-            if isinstance(instance, SemanticDeviceClass):
-                assert instance.device_settings.endpoint is not None, \
-                    "Device needs to be given an endpoint. " \
-                    "Local state was not saved"
-                assert instance.device_settings.transport is not None, \
-                    "Device needs to be given a transport setting. " \
-                    "Local state was not saved"
+        if not valid:
+            raise AssertionError(f"{msg}. Local state was not saved")
 
         # delete all instance that were loaded from Fiware and then deleted
         # wrap in try, as the entity could have been deleted by a third party
