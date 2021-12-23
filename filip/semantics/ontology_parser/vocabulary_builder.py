@@ -140,8 +140,16 @@ class VocabularyBuilder(BaseModel):
         Returns:
             None
         """
+
+        class_ = self.vocabulary.get_class_by_iri(class_iri)
+
+        # for rel_id in class_.relation_ids:
+        #     ex_rel = self.vocabulary.get_relation_by_id(rel_id)
+        #     if rel.target_statement== rel.target_statement:
+        #         return
+
         self.vocabulary.relations[rel.id] = rel
-        self.vocabulary.get_class_by_iri(class_iri).relation_ids.append(rel.id)
+        class_.relation_ids.append(rel.id)
         self.vocabulary.id_types[rel.id] = IdType.relation
 
     def add_combined_object_relation_for_class(self, class_iri: str,

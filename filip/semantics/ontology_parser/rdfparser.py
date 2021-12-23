@@ -191,13 +191,16 @@ class RdfParser:
                 voc_builder.add_class(class_=c)
 
         # Class properties
+        found_class_iris = set()
         for class_node in graph.subjects(
                 predicate=rdflib.term.URIRef(
                     "http://www.w3.org/2000/01/rdf-schema#subClassOf")):
 
-            class_iri = str(class_node)
+            class_iri = get_iri_from_uriref(class_node)
+            found_class_iris.add(class_iri)
 
-            # parentclass / relation parsing
+        for class_iri in found_class_iris:
+            # parent class / relation parsing
             for sub in graph.objects(
                     subject=rdflib.term.URIRef(class_iri),
                     predicate=rdflib.term.URIRef
