@@ -336,11 +336,15 @@ class Class(Entity):
             ancestors.append(vocabulary.get_class_by_iri(ancestor_iri))
         return ancestors
 
-    def get_parent_classes(self, vocabulary: 'Vocabulary') -> List['Class']:
+    def get_parent_classes(self,
+                           vocabulary: 'Vocabulary',
+                           remove_redundancy: bool = False) -> List['Class']:
         """Get all parent classes of this class
 
         Args:
             vocabulary (Vocabulary): Vocabulary of this project
+            remove_redundancy (bool): if true the parents that are child of
+                other parents are not included
 
         Returns:
             List[Class]
@@ -350,9 +354,13 @@ class Class(Entity):
         for parent_iri in self.parent_class_iris:
             parents.append(vocabulary.get_class_by_iri(parent_iri))
 
-            if vocabulary.get_class_by_iri(parent_iri) is None:
-                print("Parent in class {} with iri {} was none".format(
-                    self.iri, parent_iri))
+        if remove_redundancy:
+            child_iris = set()
+            for parent in parents:
+                child_iris.update(parent.child_class_iris)
+            for parent in parents:
+                if parent.iri in child_iris:
+                    parents.remove(parent)
 
         return parents
 

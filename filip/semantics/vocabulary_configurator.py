@@ -526,7 +526,7 @@ class VocabularyConfigurator:
         if alternative_manager_name is not None:
             content += f"{alternative_manager_name}: SemanticsManager"
             content += f"= semantic_manager"
-        content += "\n\n"
+            content += "\n\n"
         content += "# ---------CLASSES--------- #"
 
         # the classes need to be added in order, so that the parents are
@@ -582,7 +582,8 @@ class VocabularyConfigurator:
             content += "\n\n\n"
             # Parent Classes
             parent_class_string = ""
-            parents = class_.get_parent_classes(vocabulary)
+            parents = class_.get_parent_classes(vocabulary,
+                                                remove_redundancy=True)
 
             # Device Class, only add if this is a device class and it was not
             # added for a parent

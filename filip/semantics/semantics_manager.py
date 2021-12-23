@@ -832,7 +832,10 @@ class SemanticsManager(BaseModel):
         """
         self.instance_registry.load(json, self)
 
-    def visualize_local_state(self):
+    def visualize_local_state(
+            self,
+            display_individuals_rule: str = "ALL"
+            ):
         """
         Visualise all instances in the local state in a network graph that
         shows which instances reference each other over which fields
@@ -840,7 +843,26 @@ class SemanticsManager(BaseModel):
         On execution of the methode a temporary image file is created and
         automatically displayed in the standard image viewing software of the
         system
+
+         Args:
+            display_individuals_rule (rule), If:
+                "USED": Show only Individuals
+                "ALL": Display all known Individuals
+                "NONE": Display no Individuals
+            that are connected to
+                    at least one instance
+                else: Show all individuals
+
+        Raises:
+            ValueError: if display_individuals_rule is invalid
         """
+
+        if not display_individuals_rule == "ALL" and \
+            not display_individuals_rule == "NONE" and \
+            not display_individuals_rule == "USED":
+
+            raise ValueError(f"Invalid parameter {display_individuals_rule}")
+
         import igraph
         g = igraph.Graph(directed=True)
 
@@ -849,12 +871,7 @@ class SemanticsManager(BaseModel):
                          label=f"\n\n\n {instance.get_type()} \n {instance.id}",
                          color="green")
 
-        for individual in [self.get_individual(name) for name in
-                           self.individual_catalogue]:
-            g.add_vertex(label=f"\n\n\n{individual.get_name()}",
-                         name=individual.get_name(),
-                         color="blue")
-
+        used_individuals_names: Set[str] = set()
         for instance in self.get_all_local_instances():
             for field in instance.get_relation_fields():
                 for linked in field.get_all():
@@ -863,7 +880,17 @@ class SemanticsManager(BaseModel):
                         # g.es[-1]["name"] = field.name
 
                     elif isinstance(linked, SemanticIndividual):
-                        g.add_edge(instance.id, linked.get_name())
+                        if not display_individuals_rule == "NONE":
+                            g.add_edge(instance.id, linked.get_name())
+                            used_individuals_names.add(linked.get_name())
+
+        if display_individuals_rule == "ALL":
+            used_individuals_names.update(self.individual_catalogue.keys())
+        for individual in [self.get_individual(name) for name in
+                           used_individuals_names]:
+            g.add_vertex(label=f"\n\n\n{individual.get_name()}",
+                         name=individual.get_name(),
+                         color="blue")
 
         layout = g.layout("fr")
         visual_style = {"vertex_size": 20,
@@ -871,7 +898,7 @@ class SemanticsManager(BaseModel):
                         "vertex_label": g.vs["label"],
                         "edge_label": g.es["name"],
                         "layout": layout,
-                        "bbox": (len(g.vs) * 100, len(g.vs) * 100)}
+                        "bbox": (len(g.vs) * 50, len(g.vs) * 50)}
 
         igraph.plot(g, **visual_style)
 
