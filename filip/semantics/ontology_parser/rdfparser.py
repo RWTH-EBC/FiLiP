@@ -169,6 +169,7 @@ class RdfParser:
         Returns:
             None
         """
+
         # OWLClasses
         for a in graph.subjects(
                 object=rdflib.term.URIRef(
@@ -189,18 +190,23 @@ class RdfParser:
                 c = Class(iri=iri, label=label, comment=comment)
                 voc_builder.add_class(class_=c)
 
+        # Class properties
+        for class_node in graph.subjects(
+                predicate=rdflib.term.URIRef(
+                    "http://www.w3.org/2000/01/rdf-schema#subClassOf")):
 
-                # parentclass / relation parsing
-                for sub in graph.objects(
-                        subject=rdflib.term.URIRef(iri),
-                        predicate=rdflib.term.URIRef
-                           ('http://www.w3.org/2000/01/rdf-schema#subClassOf')):
+            class_iri = str(class_node)
 
-                    self.current_class_iri = iri  # used only for logging
-                    self._parse_subclass_term(graph=graph,
-                                              voc_builder=voc_builder,
-                                              node=sub,
-                                              class_iri=iri)
+            # parentclass / relation parsing
+            for sub in graph.objects(
+                    subject=rdflib.term.URIRef(class_iri),
+                    predicate=rdflib.term.URIRef
+                        ('http://www.w3.org/2000/01/rdf-schema#subClassOf')):
+                self.current_class_iri = class_iri  # used only for logging
+                self._parse_subclass_term(graph=graph,
+                                          voc_builder=voc_builder,
+                                          node=sub,
+                                          class_iri=class_iri)
 
         # OWlObjectProperties
         for a in graph.subjects(
@@ -415,6 +421,12 @@ class RdfParser:
         Returns:
             None
         """
+
+        # class could have been only defined in other source, than no class
+        # is defined, but as we have found a relation for a class, the class
+        # needs to exist
+        if class_iri not in voc_builder.vocabulary.classes:
+            voc_builder.add_class(class_=Class(iri=class_iri))
 
         # node can be 1 of 3 things:
         #   - a parentclass statment -> UriRef
