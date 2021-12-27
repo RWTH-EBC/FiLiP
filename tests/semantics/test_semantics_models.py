@@ -197,7 +197,7 @@ class TestSemanticsModels(unittest.TestCase):
         class3.dataProp1.add("1")
         class3.dataProp1.remove("12")
         self.assertTrue(class3.dataProp1.is_valid())
-        self.assertTrue(2 in Class1().dataProp2.get_all())
+        self.assertTrue("2" in Class1().dataProp2.get_all())
 
     def test_6_back_referencing(self):
         """
@@ -281,7 +281,7 @@ class TestSemanticsModels(unittest.TestCase):
                          semantic_manager.instance_registry._registry)
 
         class13_ = Class13(id="13")
-        self.assertTrue(2 in class13_.dataProp2)
+        self.assertTrue("2" in class13_.dataProp2)
 
         self.assertEqual(class13.get_identifier(), class13_.get_identifier())
         self.assertEqual(class13.id, class13_.id)
@@ -727,7 +727,7 @@ class TestSemanticsModels(unittest.TestCase):
 
         # create state
         inst_1 = Class1(id="100")
-        inst_1.dataProp2.remove(2)  # default value
+        inst_1.dataProp2.remove("2")  # default value
         inst_1.dataProp2.add("Test")
         inst_1.dataProp2.add("Test2")
 
