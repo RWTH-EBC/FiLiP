@@ -553,3 +553,4 @@ class Relation(BaseModel):
                    f'{self.restriction_cardinality}"', targets
         else:
             return f'"{self.restriction_type.value}"', targets
+

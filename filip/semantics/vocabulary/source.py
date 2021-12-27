@@ -71,7 +71,7 @@ class Source(BaseModel):
     source_name: str = Field(default="",
                              description="Name of the source ")
     content: str = Field(
-        default=set(),
+        default="",
         description="File content of the provided ontology file")
     parsing_log: List['ParsingError'] = Field(
         default=[],

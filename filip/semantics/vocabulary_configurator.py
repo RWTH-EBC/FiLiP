@@ -686,7 +686,7 @@ class VocabularyConfigurator:
                                     f"self." \
                                     f"{cdr.get_property_label(vocabulary)}" \
                                     f".add(" \
-                                    f"{rel.target_statement.target_data_value})"
+                                    f"'{rel.target_statement.target_data_value}')"
 
             if len(class_.get_combined_object_relations(vocabulary)) > 0:
                 content += "\n"
