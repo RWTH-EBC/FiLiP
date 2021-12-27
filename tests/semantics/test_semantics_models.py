@@ -380,7 +380,7 @@ class TestSemanticsModels(unittest.TestCase):
         class13.dataProp1.add(2)
 
         class13.dataProp1.set([9, 8, 7, 6])
-        c123 = Class123(id=2)
+        c123 = Class123(id="2")
         c3 = Class3()
         class13.objProp3.set([c3, c123])
         self.assertTrue(class13.dataProp1._set == {9, 8, 7, 6})
@@ -961,6 +961,19 @@ class TestSemanticsModels(unittest.TestCase):
             set(semantic_manager.get_all_local_instances_of_class(
                 class_=Class123, get_subclasses=False)),
             {class123})
+
+    def test__23_valid_instance_ids(self):
+        """Test if inavlid instance ids are prevented and valid ids are accepted"""
+        from tests.semantics.models import Class1, Class13, Class123, \
+            Individual1, Gertrude, semantic_manager, Class3a, Class3
+
+        Class1(id="test")
+        Class1(id="!-+~")
+
+        with self.assertRaises(AssertionError) as context:
+            Class1(id="#'")
+        with self.assertRaises(AssertionError) as context:
+            Class1(id="Kühler")
 
     def tearDown(self) -> None:
         """

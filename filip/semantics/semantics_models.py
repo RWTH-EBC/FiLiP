@@ -10,7 +10,7 @@ from typing import List, Tuple, Dict, Type, TYPE_CHECKING, Optional, Union, \
 
 import filip.models.ngsi_v2.iot as iot
 from filip.models.ngsi_v2.iot import ExpressionLanguage, TransportProtocol
-from filip.models.base import DataType, NgsiVersion
+from filip.models.base import DataType, NgsiVersion, FiwareRegex
 from filip.models.ngsi_v2.context import ContextEntity, NamedContextAttribute, \
     NamedCommand
 
@@ -1244,7 +1244,9 @@ class SemanticClass(BaseModel):
         description="Header of instance. Holds the information where the "
                     "instance is saved in Fiware")
     id: str = pyd.Field(
-        description="Id of the instance, equal to Fiware ContextEntity Id" )
+        description="Id of the instance, equal to Fiware ContextEntity Id",
+        regex=FiwareRegex.standard.value,
+    )
 
     old_state: InstanceState = pyd.Field(
         default=InstanceState(),
@@ -1313,6 +1315,10 @@ class SemanticClass(BaseModel):
             assert cls.__name__ == kwargs['identifier'].type
         else:
             instance_id = kwargs['id'] if 'id' in kwargs else ""
+
+            import re
+            assert re.match(FiwareRegex.standard.value, instance_id), "Invalid character in ID"
+
             header_ = kwargs['header'] if 'header' in kwargs else \
                 semantic_manager_.get_default_header()
 
