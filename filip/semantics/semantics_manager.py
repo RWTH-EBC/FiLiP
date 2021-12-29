@@ -13,6 +13,7 @@ from pydantic import BaseModel, Field
 from rapidfuzz import process
 
 from filip.models.base import NgsiVersion
+from filip.models.ngsi_v2.iot import DeviceSettings
 from filip.semantics.vocabulary import Individual
 from filip.models.ngsi_v2.context import ContextEntity
 from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient
@@ -20,8 +21,7 @@ from filip.models import FiwareHeader
 from filip.semantics.semantics_models import \
     InstanceIdentifier, SemanticClass, InstanceHeader, Datatype, DataField, \
     RelationField, SemanticIndividual, SemanticDeviceClass, CommandField, \
-    Command, DeviceAttributeField, DeviceAttribute, DeviceSettings, \
-    SemanticMetadata
+    Command, DeviceAttributeField, DeviceAttribute, SemanticMetadata
 from filip.utils.simple_ql import QueryString
 
 
@@ -214,7 +214,7 @@ class SemanticsManager(BaseModel):
     instance_registry: InstanceRegistry = Field(
         description="Registry managing the local state"
     )
-    class_catalogue: Dict[str, type] = Field(
+    class_catalogue: Dict[str, Type [SemanticClass]] = Field(
         default={},
         description="Register of class names to classes"
     )
@@ -461,16 +461,10 @@ class SemanticsManager(BaseModel):
 
         for instance in self.instance_registry.get_all():
             if isinstance(instance, SemanticDeviceClass):
-                if instance.device_settings.endpoint is None:
-                    return (
-                        False,
-                        f"Device {instance.id} of type {instance.get_type()}" 
-                        f"needs to be given an endpoint. "
-                    )
                 if instance.device_settings.transport is None:
                     return (
                         False,
-                        f"Device {instance.id} of type {instance.get_type()}" 
+                        f"Device {instance.id} of type {instance.get_type()} " 
                         f"needs to be given an transport setting."
                     )
         return True, "State is valid"

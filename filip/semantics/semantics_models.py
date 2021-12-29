@@ -1633,21 +1633,21 @@ class SemanticClass(BaseModel):
                      ))
 
 
-class DeviceSettings(BaseModel):
-    """Settings configuring the communication with an IoT Device
-    Wrapped in a model to bypass SemanticDeviceClass immutability
-    """
-    transport: Optional[TransportProtocol]
-    endpoint: Optional[AnyHttpUrl]
-    apikey: Optional[str]
-    protocol: Optional[str]
-    timezone: Optional[str]
-    timestamp: Optional[bool]
-    expressionLanguage: Optional[ExpressionLanguage]
-    explicitAttrs: Optional[bool]
-
-    class Config:
-        validate_assignment = True
+# class DeviceSettings(BaseModel):
+#     """Settings configuring the communication with an IoT Device
+#     Wrapped in a model to bypass SemanticDeviceClass immutability
+#     """
+#     transport: Optional[TransportProtocol]
+#     endpoint: Optional[AnyHttpUrl]
+#     apikey: Optional[str]
+#     protocol: Optional[str]
+#     timezone: Optional[str]
+#     timestamp: Optional[bool]
+#     expressionLanguage: Optional[ExpressionLanguage]
+#     explicitAttrs: Optional[bool]
+#
+#     class Config:
+#         validate_assignment = True
 
 
 class SemanticDeviceClass(SemanticClass):
@@ -1665,8 +1665,8 @@ class SemanticDeviceClass(SemanticClass):
     returned
     """
 
-    device_settings: DeviceSettings = pyd.Field(
-        default=DeviceSettings(),
+    device_settings: iot.DeviceSettings = pyd.Field(
+        default= iot.DeviceSettings(),
         description="Settings configuring the communication with an IoT Device "
                     "Wrapped in a model to bypass SemanticDeviceClass "
                     "immutability")
@@ -1688,8 +1688,7 @@ class SemanticDeviceClass(SemanticClass):
         Returns:
              bool, True if endpoint and transport are not None
         """
-        return self.device_settings.endpoint is not None and \
-            self.device_settings.transport is not None
+        return self.device_settings.transport is not None
 
     def get_fields(self) -> List[Field]:
         """
