@@ -110,6 +110,7 @@ class DeviceAttribute(IoTABaseAttribute):
         description="name of the attribute as coming from the device."
     )
 
+
 class LazyDeviceAttribute(DeviceAttribute):
     """
     Model for lazy device attributes
