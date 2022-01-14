@@ -12,7 +12,8 @@ if TYPE_CHECKING:
         CombinedDataRelation, \
         CombinedRelation, \
         Relation, \
-        Vocabulary
+        Vocabulary, \
+        Source
 
 
 class Entity(BaseModel):
@@ -38,9 +39,9 @@ class Entity(BaseModel):
     comment: str = Field(
         default="",
         description="Comment extracted from the ontology/source")
-    source_id: str = Field(
-        default="",
-        description="ID of the source")
+    source_ids: Set[str] = Field(
+        default=set(),
+        description="IDs of the sources that influenced this class")
     predefined: bool = Field(
         default=False,
         description="Stats if the entity is not extracted from a source, "
@@ -77,16 +78,8 @@ class Entity(BaseModel):
         index = self.iri.find("#")
         return self.iri[:index]
 
-    def get_source_id(self) -> str:
-        """ Get ID of the source
-
-        Returns:
-            str
-        """
-        return self.source_id
-
-    def get_source_name(self, vocabulary: 'Vocabulary') -> str:
-        """ Get name of the source
+    def get_source_names(self, vocabulary: 'Vocabulary') -> List[str]:
+        """ Get the names of all the sources
 
         Args:
             vocabulary (Vocabulary): Vocabulary of the project
@@ -94,7 +87,26 @@ class Entity(BaseModel):
         Returns:
             str
         """
-        return vocabulary.get_source(self.source_id).get_name()
+        names = [vocabulary.get_source(id).get_name() for
+                 id in self.source_ids]
+
+        return names
+
+    def get_sources(self, vocabulary: 'Vocabulary') -> List['Source']:
+        """ Get all the source objects that influenced this entity.
+        The sources are sorted according to their names
+
+        Args:
+           vocabulary (Vocabulary): Vocabulary of the project
+
+        Returns:
+           str
+        """
+
+        sources = [vocabulary.get_source(id) for id in self.source_ids]
+
+        sources.sort(key=lambda x: x.source_name, reverse=False)
+        return sources
 
     def _lists_are_identical(self, a: List, b: List) -> bool:
         """ Methode to test if to lists contain the same entries
@@ -324,11 +336,15 @@ class Class(Entity):
             ancestors.append(vocabulary.get_class_by_iri(ancestor_iri))
         return ancestors
 
-    def get_parent_classes(self, vocabulary: 'Vocabulary') -> List['Class']:
+    def get_parent_classes(self,
+                           vocabulary: 'Vocabulary',
+                           remove_redundancy: bool = False) -> List['Class']:
         """Get all parent classes of this class
 
         Args:
             vocabulary (Vocabulary): Vocabulary of this project
+            remove_redundancy (bool): if true the parents that are child of
+                other parents are not included
 
         Returns:
             List[Class]
@@ -338,9 +354,13 @@ class Class(Entity):
         for parent_iri in self.parent_class_iris:
             parents.append(vocabulary.get_class_by_iri(parent_iri))
 
-            if vocabulary.get_class_by_iri(parent_iri) is None:
-                print("Parent in class {} with iri {} was none".format(
-                    self.iri, parent_iri))
+        if remove_redundancy:
+            child_iris = set()
+            for parent in parents:
+                child_iris.update(parent.child_class_iris)
+            for parent in parents:
+                if parent.iri in child_iris:
+                    parents.remove(parent)
 
         return parents
 
@@ -374,14 +394,14 @@ class Class(Entity):
             self.parent_class_iris.remove(iri)
 
         # relations
-        relation_ids_to_purge = []
+        relation_ids_to_purge = set()
         for relation in self.get_relations(vocabulary):
 
             relation_statements = relation.get_dependency_statements(
                 vocabulary, self.get_ontology_iri(), self.iri)
             for statement in relation_statements:
                 if statement.fulfilled == False:
-                    relation_ids_to_purge.append(relation.id)
+                    relation_ids_to_purge.add(relation.id)
             statements.extend(relation_statements)
 
         for id in relation_ids_to_purge:

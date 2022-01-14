@@ -1,3 +1,4 @@
+import copy
 import unittest
 
 from pathlib import Path
@@ -55,7 +56,7 @@ class TestSemanticsModels(unittest.TestCase):
                         in vocabulary.classes)
 
         VocabularyConfigurator.generate_vocabulary_models(
-            vocabulary, f"{self.get_file_path('')}/","models")
+            vocabulary, f"{self.get_file_path('')}/", "models")
 
     def test_2_default_header(self):
         """
@@ -119,9 +120,18 @@ class TestSemanticsModels(unittest.TestCase):
         self.assertFalse(class13.objProp2.is_valid())
         class13.objProp2.add(Class123(id="311"))
         self.assertFalse(class13.objProp2.is_valid())
+        self.assertEqual(
+            class13.objProp2.are_rules_fulfilled(),
+            [['some Class1', True], ['value Individual1', False],
+             ['some (Class1 and Class2)', True]])
+
         class13.objProp2.remove(Class123(id="311"))
         class13.objProp2.add(Individual1())
         self.assertTrue(class13.objProp2.is_valid())
+        self.assertEqual(
+            class13.objProp2.are_rules_fulfilled(),
+            [['some Class1', True], ['value Individual1', True],
+             ['some (Class1 and Class2)', True]])
 
         # Test statement cases:
 
@@ -187,7 +197,7 @@ class TestSemanticsModels(unittest.TestCase):
         class3.dataProp1.add("1")
         class3.dataProp1.remove("12")
         self.assertTrue(class3.dataProp1.is_valid())
-        self.assertTrue(2 in Class1().dataProp2.get_all())
+        self.assertTrue("2" in Class1().dataProp2.get_all())
 
     def test_6_back_referencing(self):
         """
@@ -271,7 +281,7 @@ class TestSemanticsModels(unittest.TestCase):
                          semantic_manager.instance_registry._registry)
 
         class13_ = Class13(id="13")
-        self.assertTrue(2 in class13_.dataProp2)
+        self.assertTrue("2" in class13_.dataProp2)
 
         self.assertEqual(class13.get_identifier(), class13_.get_identifier())
         self.assertEqual(class13.id, class13_.id)
@@ -370,7 +380,7 @@ class TestSemanticsModels(unittest.TestCase):
         class13.dataProp1.add(2)
 
         class13.dataProp1.set([9, 8, 7, 6])
-        c123 = Class123(id=2)
+        c123 = Class123(id="2")
         c3 = Class3()
         class13.objProp3.set([c3, c123])
         self.assertTrue(class13.dataProp1._set == {9, 8, 7, 6})
@@ -476,7 +486,9 @@ class TestSemanticsModels(unittest.TestCase):
 
         # Test if device could be processed correctly -> corresponding entity
         # in Fiware
+
         with ContextBrokerClient(
+                url=class3_.header.cb_url,
                 fiware_header=class3_.header.get_fiware_header()) as client:
             assert client.get_entity(entity_id="c3", entity_type="Class3")
 
@@ -579,6 +591,7 @@ class TestSemanticsModels(unittest.TestCase):
             self.assertEqual(len(client.get_device_list()), 0)
 
         with ContextBrokerClient(
+                url=semantic_manager.default_header.cb_url,
                 fiware_header=semantic_manager.
                         default_header.get_fiware_header()) as client:
             self.assertEqual(len(client.get_entity_list()), 0)
@@ -613,6 +626,12 @@ class TestSemanticsModels(unittest.TestCase):
         self.assertRaises(
             NameError,
             class3.attributeProp.add,
+            DeviceAttribute(name="_type",
+                            attribute_type=DeviceAttributeType.active))
+
+        self.assertRaises(
+            NameError,
+            class3.attributeProp.add,
             DeviceAttribute(name="!type",
                             attribute_type=DeviceAttributeType.active))
 
@@ -627,7 +646,14 @@ class TestSemanticsModels(unittest.TestCase):
         """
         from tests.semantics.models2 import Class3, Class1, semantic_manager
 
-        class3 = Class3(id="15")
+        new_header = InstanceHeader(
+            cb_url=settings.CB_URL,
+            iota_url=settings.IOTA_JSON_URL,
+            service="testService",
+            service_path=settings.FIWARE_SERVICEPATH
+        )
+
+        class3 = Class3(id="15", header=new_header)
         class3.commandProp.add(Command(name="c1"))
         class3.attributeProp.add(
             DeviceAttribute(name="_type",
@@ -643,15 +669,19 @@ class TestSemanticsModels(unittest.TestCase):
 
         semantic_manager.load_local_state_from_json(json=save)
 
-        class3_ = Class3(id="15")
+        class3_ = Class3(id="15", header=new_header)
         class1_ = Class1(id="11")
+        print(class3_)
         self.assertTrue("test" in class3_.dataProp1.get_all_raw())
         self.assertEqual(class3_.device_settings.dict(),
                          class3.device_settings.dict())
-        self.assertTrue(class3_.commandProp.get_all()[0].name == "c1")
-        self.assertTrue(class3_.attributeProp.get_all()[0].name == "_type")
-        self.assertTrue(class3_.attributeProp.get_all()[0].attribute_type ==
+        self.assertEqual(class3_.commandProp.get_all()[0].name, "c1")
+        self.assertEqual(class3_.attributeProp.get_all()[0].name , "_type")
+        self.assertEqual(class3_.attributeProp.get_all()[0].attribute_type,
                         DeviceAttributeType.active)
+
+        print(class3_.header)
+        self.assertEqual(class3_.header.service, "testService")
 
         added_class = [c for c in class3_.objProp2.get_all() if
                        isinstance(c, SemanticClass)][0]
@@ -697,7 +727,7 @@ class TestSemanticsModels(unittest.TestCase):
 
         # create state
         inst_1 = Class1(id="100")
-        inst_1.dataProp2.remove(2)  # default value
+        inst_1.dataProp2.remove("2")  # default value
         inst_1.dataProp2.add("Test")
         inst_1.dataProp2.add("Test2")
 
@@ -868,17 +898,82 @@ class TestSemanticsModels(unittest.TestCase):
         self.assertEqual(inst.metadata.name, "TestName")
         self.assertEqual(inst.metadata.comment, "TestComment")
 
-    def test__21_name_matching(self):
+    def test__21_possible_field_values(self):
         """
-        Test if find_fitting_model function works
+        Test for Rule-fields if they give back the value types that they allow
         """
-        from tests.semantics.models import semantic_manager
+        from tests.semantics.models import Class1, Class13, Class123, \
+            Individual1, Gertrude, semantic_manager, Class3a, Class3
+
+        obj = Gertrude()
+        class1 = Class1()
+        class123 = Class123()
+
+        # Enum values
+        self.assertEqual(set(obj.attributeProp.get_possible_enum_values()),
+                         {'0', '15', '30'})
+        self.assertEqual(class1.dataProp2.get_possible_enum_values(), [])
+
+        # possible Datatypes
+        self.assertEqual(obj.attributeProp.get_all_possible_datatypes(),
+                         [semantic_manager.get_datatype("customDataType1")])
+        self.assertEqual(class1.dataProp2.get_possible_enum_values(),
+                         [])
+        self.assertEqual(class123.commandProp.get_all_possible_datatypes(),
+                         [semantic_manager.get_datatype("string")])
+
+        # possible classes in relations
+        self.assertEqual(
+            set(obj.objProp3.get_all_possible_classes(include_subclasses=True)),
+            {Class3, Class123, Class13, Class3a})
+        self.assertEqual(
+            set(obj.objProp3.get_all_possible_classes()),
+            {Class3})
+
+        # possible Individuals in relations
+        self.assertEqual(obj.objProp5.get_all_possible_individuals(),
+                         [Individual1()])
+
+    def test__22_get_instances(self):
+        from tests.semantics.models import Class1, Class13, Class123, \
+            Individual1, Gertrude, semantic_manager, Class3a, Class3
+
+        obj = Gertrude()
+        class1 = Class1()
+        class123 = Class123()
 
         self.assertEqual(
-            semantic_manager.find_fitting_model("sensors"),
-            ['Sensor', 'Smoke_Sensor', 'Temperature_Sensor', 'Sensing_Function',
-             'Get_Sensing_Data_Command']
-        )
+            set(semantic_manager.get_all_local_instances_of_class(
+                class_name="Class1")),
+            {class1, class123, obj})
+
+        self.assertEqual(
+            set(semantic_manager.get_all_local_instances_of_class(
+                class_name="Class1", get_subclasses=False)),
+            {class1})
+
+        self.assertEqual(
+            set(semantic_manager.get_all_local_instances_of_class(
+                class_=Gertrude)),
+            {obj})
+
+        self.assertEqual(
+            set(semantic_manager.get_all_local_instances_of_class(
+                class_=Class123, get_subclasses=False)),
+            {class123})
+
+    def test__23_valid_instance_ids(self):
+        """Test if inavlid instance ids are prevented and valid ids are accepted"""
+        from tests.semantics.models import Class1, Class13, Class123, \
+            Individual1, Gertrude, semantic_manager, Class3a, Class3
+
+        Class1(id="test")
+        Class1(id="!-+~")
+
+        with self.assertRaises(AssertionError) as context:
+            Class1(id="#'")
+        with self.assertRaises(AssertionError) as context:
+            Class1(id="Kühler")
 
     def tearDown(self) -> None:
         """
