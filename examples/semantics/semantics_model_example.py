@@ -16,7 +16,7 @@ iota_url = "http://localhost:4041"
 
 if __name__ == '__main__':
 
-    # # 0. Clean up Fiware state:
+    # # 0 Clean up Fiware state:
     #
     # For this example to work the fiware state needs to be clean:
     from filip.models.base import FiwareHeader
@@ -25,7 +25,7 @@ if __name__ == '__main__':
     fiware_header = FiwareHeader(service="example", service_path="/")
     clear_all(fiware_header=fiware_header, cb_url=cb_url, iota_url=iota_url)
 
-    # # 1. Import Models
+    # # 1 Import Models
     #
     # First we need to import the models that we have created in the
     # "semantics_vocabulary_example" and exported into the file "models.py".
@@ -42,7 +42,7 @@ if __name__ == '__main__':
     from models import Floor, Building
     from models import *
 
-    # # 2. Semantic Classes
+    # # 2 Semantic Classes
     #
     # The classes (with exception of semantic_manager) are either
     # SemanticClasses that can be used to model or SemanticDeviceClasses
@@ -122,7 +122,23 @@ if __name__ == '__main__':
     my_sensor.device_settings.endpoint = "http://localhost:1001"
     my_sensor.device_settings.transport = TransportProtocol.HTTP
 
-    # # 3. Class Fields
+    # # 2.4 Finding a fitting class
+    #
+    # If you are unsure which semantic class could be the right one to model
+    # your current need, you can search for a fitting possibility:
+
+    fitting_names = semantic_manager.find_fitting_model("SmokeSensor")
+
+    print("\u0332".join("Found models for 'SmokeSensor':"))
+    print(fitting_names)
+    print("")
+
+    # The search returns up to 5 model names as string. If a fitting name was
+    # selected the corresponding class can be retrieved and instantiated:
+    class_ = semantic_manager.get_class_by_name(fitting_names[0])
+    sensor_instance = class_(id="temp_sensor")
+
+    # # 3 Class Fields
     #
     # Our classes possess fields that we use to model the state. There are
     # multiple types of fields a normal-class or device-class can have.
@@ -207,7 +223,6 @@ if __name__ == '__main__':
     print(f"Raw Values: {sensor.measures.get_all_raw()}")
     print(f"Values: {sensor.measures.get_all()}")
     print("")
-
 
     # ### 3.1.1 RelationFields
     #
@@ -462,7 +477,9 @@ if __name__ == '__main__':
 
     p1.name.add("CHU")
     p1.device_settings.endpoint = "http://test2.com"
-    p1.device_settings.transport = TransportProtocol.AMQP
+    p1.device_settings.transport = TransportProtocol.MQTT
+
+    sensor_instance.delete()
 
     # Now our state is completely valid and we can save:
     semantic_manager.save_state(assert_validity=True)
@@ -499,6 +516,80 @@ if __name__ == '__main__':
 
     # # 5. Visualisation
     #
-    # Concluding we can always have a look inside the local loaded state by
-    # calling:
+    # ## 5.1 Simple Debug Visualisation
+    #
+    # To have a fast look at your current local state when working with it,
+    # you can call the following methode, and an image will be automatically
+    # displayed in your OS default picture viewer.
     semantic_manager.visualize_local_state()
+    #
+    # ## 5.2 Cytoscape
+    #
+    # To have an interactive, visually appealing representation of your
+    # semantic state, you can use the Library: CYTOSCAPE.
+    # Filip can generate you the data needed for a cytoscape visualisation.
+    # The visualisation tool itself is not included, but supported for
+    # multiple platforms as Jupyter Notebooks or Plotly Dash.
+    #
+    # ### 5.2.1 Generate Data
+    #
+    # To generate a representation of the current local state simply call:
+    [elements, stylesheet] = \
+        semantic_manager.generate_cytoscape_for_local_state(
+        display_only_used_individuals=True)
+
+    # As a result you receive a Tuple containing the graph elements (nodes,
+    # edges) and a stylesheet. (For more details refer to the methode
+    # descriptions)
+    #
+    # ### 5.2.2 Visualise in Jupyter
+    #
+    # Create the cytoscape graph widget
+    """
+        import ipycytoscape
+        
+        cyto = ipycytoscape.CytoscapeWidget()
+        cyto.graph.add_graph_from_json(elements)
+        cyto.set_style(stylesheet)   
+    """
+    #
+    # Display the graph.
+    """
+        cyto
+    """
+    #
+    # ### 5.2.3 Visualise in Plotly Dash
+    #
+    # #### 5.2.3.1 Layout
+    """
+        import dash_cytoscape as cyto
+        ...
+        cyto.Cytoscape(
+            id='app-cytoscape',
+            elements=[],
+            layout={'name': 'cola',
+                    'edgeLength': 150,
+                    },
+            style={'width': '100%', 'height': '700px'},
+        )
+        ...
+    """
+    # #### 5.2.3.2 Callbacks
+    """
+    @app.callback(
+    Output('app-semantics-bigGraph-cytoscape', 'elements'),
+    Output('app-semantics-bigGraph-cytoscape', 'stylesheet'),
+    Input(...)
+    State(...),
+    )
+    def my_callback_to_visualise_state(....):
+        
+        ...
+        
+        [element_dict, stylesheet] = 
+            semantics_manager.generate_cytoscape_for_local_state()
+    
+        elements = element_dict['nodes'] + element_dict['edges']
+    
+        return elements, stylesheet
+    """

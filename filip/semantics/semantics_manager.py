@@ -3,15 +3,17 @@
 import copy
 import json
 import logging
+import uuid
 from math import inf
 
 import requests
 
 from typing import Optional, Dict, Type, List, Any, Union, Set
 from pydantic import BaseModel, Field
-
+from rapidfuzz import process
 
 from filip.models.base import NgsiVersion
+from filip.models.ngsi_v2.iot import DeviceSettings
 from filip.semantics.vocabulary import Individual
 from filip.models.ngsi_v2.context import ContextEntity
 from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient
@@ -19,8 +21,7 @@ from filip.models import FiwareHeader
 from filip.semantics.semantics_models import \
     InstanceIdentifier, SemanticClass, InstanceHeader, Datatype, DataField, \
     RelationField, SemanticIndividual, SemanticDeviceClass, CommandField, \
-    Command, DeviceAttributeField, DeviceAttribute, DeviceSettings, \
-    SemanticMetadata
+    Command, DeviceAttributeField, DeviceAttribute, SemanticMetadata
 from filip.utils.simple_ql import QueryString
 
 
@@ -185,12 +186,21 @@ class InstanceRegistry(BaseModel):
             instance = semantic_manager._context_entity_to_semantic_class(
                 context_entity, header)
 
-            instance.old_state.state = instance_dict['old_state']
+            if instance_dict['old_state'] is not None:
+                instance.old_state.state = \
+                    ContextEntity.parse_raw(instance_dict['old_state'])
 
             self._registry[instance.get_identifier()] = instance
 
         for identifier in save['deleted_identifiers']:
-            self._deleted_identifiers.append(identifier)
+            self._deleted_identifiers.append(
+                InstanceIdentifier.parse_raw(identifier))
+
+    def __hash__(self):
+        values = (hash(value) for value in self._registry.values())
+
+        return hash((frozenset(values),
+                     frozenset(self._deleted_identifiers)))
 
 
 class SemanticsManager(BaseModel):
@@ -204,7 +214,7 @@ class SemanticsManager(BaseModel):
     instance_registry: InstanceRegistry = Field(
         description="Registry managing the local state"
     )
-    class_catalogue: Dict[str, type] = Field(
+    class_catalogue: Dict[str, Type [SemanticClass]] = Field(
         default={},
         description="Register of class names to classes"
     )
@@ -281,12 +291,13 @@ class SemanticsManager(BaseModel):
         if not self.is_class_name_an_device_class(class_name):
 
             loaded_class: SemanticClass = class_(id=entity.id,
-                                                 fiware_header=header,
+                                                 header=header,
                                                  enforce_new=True)
         else:
             loaded_class: SemanticDeviceClass = class_(id=entity.id,
-                                                       fiware_header=header,
+                                                       header=header,
                                                        enforce_new=True)
+
         loaded_class.old_state.state = entity
 
         # load values of class from the context_entity into the instance
@@ -397,7 +408,7 @@ class SemanticsManager(BaseModel):
                     "attribute_type"]
             )
 
-    def get_class_by_name(self, class_name: str) -> Type:
+    def get_class_by_name(self, class_name: str) -> Type[SemanticClass]:
         """
         Get the class object by its type in string form
 
@@ -425,6 +436,39 @@ class SemanticsManager(BaseModel):
         class_type = self.get_class_by_name(class_name)
         return isinstance(class_type, SemanticDeviceClass)
 
+    def is_local_state_valid(self, validate_rules: bool = True) -> (bool, str):
+        """
+        Check if the local state is valid and can be saved.
+
+        Args:
+            validate_rules (bool): If true Rulefields are validated
+
+        Returns:
+            (bool, str): (Is valid?, Message)
+        """
+
+        if validate_rules:
+            for instance in self.instance_registry.get_all():
+                if isinstance(instance, Individual):
+                    continue
+                if not instance.are_rule_fields_valid():
+                    return (
+                        False,
+                        f"SemanticEntity {instance.id} of type"
+                        f"{instance.get_type()} has unfulfilled fields " 
+                        f"{[f.name for f in instance.get_invalid_rule_fields()]}."
+                    )
+
+        for instance in self.instance_registry.get_all():
+            if isinstance(instance, SemanticDeviceClass):
+                if instance.device_settings.transport is None:
+                    return (
+                        False,
+                        f"Device {instance.id} of type {instance.get_type()} " 
+                        f"needs to be given an transport setting."
+                    )
+        return True, "State is valid"
+
     def save_state(self, assert_validity: bool = True):
         """
         Save the local state completely to Fiware.
@@ -439,24 +483,10 @@ class SemanticsManager(BaseModel):
         Returns:
             None
         """
-        if assert_validity:
-            for instance in self.instance_registry.get_all():
-                if isinstance(instance, Individual):
-                    continue
-                assert instance.are_rule_fields_valid(), \
-                    f"Attempted to save the SemanticEntity {instance.id} of " \
-                    f"type {instance._get_class_name()} with invalid fields " \
-                    f"{[f.name for f in instance.get_invalid_rule_fields()]}. " \
-                    f"Local state was not saved"
+        (valid, msg) = self.is_local_state_valid(validate_rules=assert_validity)
 
-        for instance in self.instance_registry.get_all():
-            if isinstance(instance, SemanticDeviceClass):
-                assert instance.device_settings.endpoint is not None, \
-                    "Device needs to be given an endpoint. " \
-                    "Local state was not saved"
-                assert instance.device_settings.transport is not None, \
-                    "Device needs to be given a transport setting. " \
-                    "Local state was not saved"
+        if not valid:
+            raise AssertionError(f"{msg}. Local state was not saved")
 
         # delete all instance that were loaded from Fiware and then deleted
         # wrap in try, as the entity could have been deleted by a third party
@@ -585,17 +615,22 @@ class SemanticsManager(BaseModel):
         """
         return self.instance_registry.get_all()
 
-    def get_all_local_instances_of_class(self, class_: type, class_name: str) \
+    def get_all_local_instances_of_class(self,
+                                         class_: Optional[type] = None,
+                                         class_name: Optional[str] = None,
+                                         get_subclasses: bool = True) \
             -> List[SemanticClass]:
         """
         Retrieve all instances of a SemanitcClass from Local Storage
 
         Args:
             class_ (type): Type of classes to retrieve
-            class_name (Str): Type of classes to retrieve as string
+            class_name (str): Name of type of classes to retrieve as string
+            get_subclasses (bool): If true also all instances of subclasses
+                of given class are returned
 
         Raises:
-            AssertionError: If both parameters are non None
+            AssertionError: If class_ and class_name are both None or non None
 
         Returns:
             List[SemanticClass]
@@ -608,11 +643,17 @@ class SemanticsManager(BaseModel):
 
         if class_ is not None:
             class_name = class_.__name__
+        else:
+            class_ = self.get_class_by_name(class_name)
 
         res = []
         for instance in self.instance_registry.get_all():
-            if instance.get_type() == class_name:
-                res.append(instance)
+            if not get_subclasses:
+                if instance.get_type() == class_name:
+                    res.append(instance)
+            else:
+                if isinstance(instance, class_):
+                    res.append(instance)
         return res
 
     def load_instances_from_fiware(
@@ -785,7 +826,10 @@ class SemanticsManager(BaseModel):
         """
         self.instance_registry.load(json, self)
 
-    def visualize_local_state(self):
+    def visualize_local_state(
+            self,
+            display_individuals_rule: str = "ALL"
+            ):
         """
         Visualise all instances in the local state in a network graph that
         shows which instances reference each other over which fields
@@ -793,7 +837,26 @@ class SemanticsManager(BaseModel):
         On execution of the methode a temporary image file is created and
         automatically displayed in the standard image viewing software of the
         system
+
+         Args:
+            display_individuals_rule (rule), If:
+                "USED": Show only Individuals
+                "ALL": Display all known Individuals
+                "NONE": Display no Individuals
+            that are connected to
+                    at least one instance
+                else: Show all individuals
+
+        Raises:
+            ValueError: if display_individuals_rule is invalid
         """
+
+        if not display_individuals_rule == "ALL" and \
+            not display_individuals_rule == "NONE" and \
+            not display_individuals_rule == "USED":
+
+            raise ValueError(f"Invalid parameter {display_individuals_rule}")
+
         import igraph
         g = igraph.Graph(directed=True)
 
@@ -802,12 +865,7 @@ class SemanticsManager(BaseModel):
                          label=f"\n\n\n {instance.get_type()} \n {instance.id}",
                          color="green")
 
-        for individual in [self.get_individual(name) for name in
-                           self.individual_catalogue]:
-            g.add_vertex(label=f"\n\n\n{individual.get_name()}",
-                         name=individual.get_name(),
-                         color="blue")
-
+        used_individuals_names: Set[str] = set()
         for instance in self.get_all_local_instances():
             for field in instance.get_relation_fields():
                 for linked in field.get_all():
@@ -816,7 +874,17 @@ class SemanticsManager(BaseModel):
                         # g.es[-1]["name"] = field.name
 
                     elif isinstance(linked, SemanticIndividual):
-                        g.add_edge(instance.id, linked.get_name())
+                        if not display_individuals_rule == "NONE":
+                            g.add_edge(instance.id, linked.get_name())
+                            used_individuals_names.add(linked.get_name())
+
+        if display_individuals_rule == "ALL":
+            used_individuals_names.update(self.individual_catalogue.keys())
+        for individual in [self.get_individual(name) for name in
+                           used_individuals_names]:
+            g.add_vertex(label=f"\n\n\n{individual.get_name()}",
+                         name=individual.get_name(),
+                         color="blue")
 
         layout = g.layout("fr")
         visual_style = {"vertex_size": 20,
@@ -824,9 +892,165 @@ class SemanticsManager(BaseModel):
                         "vertex_label": g.vs["label"],
                         "edge_label": g.es["name"],
                         "layout": layout,
-                        "bbox": (len(g.vs) * 100, len(g.vs) * 100)}
+                        "bbox": (len(g.vs) * 50, len(g.vs) * 50)}
 
         igraph.plot(g, **visual_style)
+
+    def generate_cytoscape_for_local_state(
+            self,
+            display_only_used_individuals: bool = True
+            ):
+        """
+        Generate a graph definition that can be loaded into a cytoscape
+        visualisation tool, that describes the complete current local state.
+
+        For the graph layout COLA is recommended with an edge length of 150
+
+        Args:
+            display_only_used_individuals (bool):
+                If true(default): Show only Individuals that are connected to
+                    at least one instance
+                else: Show all individuals
+
+        Returns:
+            [elements, stylesheet]:
+
+                elements is a dict: {"nodes": NODE_DEFINITIONS,
+                                     "edges": EDGE_DEFINITIONS}
+                stylesheet is a list containing all the graph styles
+        """
+
+        # graph design
+        stylesheet = [
+            {
+                'selector': 'node',
+                'style': {
+                    'label': 'data(label)',
+                    'z-index': 9999
+                }
+            },
+            {
+                'selector': 'edge',
+                'style': {
+                    'curve-style': 'bezier',
+                    'target-arrow-color': 'black',
+                    'target-arrow-shape': 'triangle',
+                    'line-color': 'black',
+                    "opacity": 0.45,
+                    'z-index': 5000,
+                }
+            },
+            {
+                'selector': '.center',
+                'style': {
+                    'shape': 'rectangle',
+                    'background-color': 'black'
+                }
+            },
+            {
+                'selector': '.individual',
+                'style': {
+                    'shape': 'circle',
+                    'background-color': 'orange'
+                }
+            },
+            {
+                'selector': '.instance',
+                'style': {
+                    'shape': 'circle',
+                    'background-color': 'green'
+                }
+            },
+            {
+                'selector': '.collection',
+                'style': {
+                    'shape': 'triangle',
+                    'background-color': 'gray'
+                }
+            }
+        ]
+
+        nodes = []
+        edges = []
+
+        used_individual_names = set()
+        if not display_only_used_individuals:
+            used_individual_names.update(self.individual_catalogue.keys())
+
+        def get_node_id(item: Union[SemanticClass, SemanticIndividual]) -> str:
+            """
+            Get the id to be used in the graph for an item
+
+            Args:
+                item (Union[SemanticClass, SemanticIndividual]): Item to get
+                                                                    ID for
+
+            Returns:
+                str - ID
+            """
+            if isinstance(item, SemanticIndividual):
+                return item.get_name()
+            else:
+                return item.get_identifier().json()
+
+        for instance in self.get_all_local_instances():
+            label = f'({instance.get_type()}){instance.metadata.name}'
+            nodes.append({'data': {'id': get_node_id(instance),
+                                   'label': label,
+                                   'parent_id': '',
+                                   'classes': "instance item"},
+                          'classes': "instance item"})
+
+        for instance in self.get_all_local_instances():
+
+            for rel_field in instance.get_relation_fields():
+
+                values = rel_field.get_all()
+                for v in values:
+                    if isinstance(v, SemanticIndividual):
+                        used_individual_names.add(v.get_name())
+
+                if len(values) == 0:
+                    pass
+                elif len(values) == 1:
+                    edge_id = uuid.uuid4().hex
+                    edges.append({'data': {'id': edge_id,
+                                           'source': get_node_id(instance),
+                                           'target': get_node_id(values[0])}})
+                    edge_name = rel_field.name
+                    stylesheet.append({'selector': '#' + edge_id,
+                                       'style': {'label': edge_name}})
+                else:
+                    edge_id = uuid.uuid4().hex
+                    node_id = uuid.uuid4().hex
+                    nodes.append({'data': {'id': node_id,
+                                           'label': '',
+                                           'parent_id': '',
+                                           'classes': "collection"},
+                                  'classes': "collection"})
+
+                    edges.append({'data': {'id': edge_id,
+                                           'source': get_node_id(instance),
+                                           'target': node_id}})
+                    edge_name = rel_field.name
+                    stylesheet.append({'selector': '#' + edge_id,
+                                       'style': {'label': edge_name}})
+
+                    for value in values:
+                        edge_id = uuid.uuid4().hex
+                        edges.append({'data': {'id': edge_id,
+                                               'source': node_id,
+                                               'target': get_node_id(value)}})
+
+        for individual_name in used_individual_names:
+            nodes.append({'data': {'id': individual_name,
+                                   'label': individual_name, 'parent_id': '',
+                                   'classes': "individual item"},
+                          'classes': "individual item"})
+
+        elements = {'nodes': nodes, 'edges': edges}
+
+        return elements, stylesheet
 
     def merge_local_and_live_instance_state(self, instance: SemanticClass) ->\
             None:
@@ -992,3 +1216,27 @@ class SemanticsManager(BaseModel):
                 if old_settings[key] is not current_settings[key]:
                     new_settings[key] = current_settings[key]
                 instance.device_settings.__setattr__(key, new_settings[key])
+
+    def find_fitting_model(self, search_term: str, limit: int = 5) -> List[str]:
+        """
+        Find a fitting model by entering a search_term (e.g.: Sensor).
+        The methode returns a selection from up-to [limit] possibly fitting
+        model names. If a model name was selected from the proposition the
+        model can be retrieved with the methode:
+        "get_class_by_name(selectedName)"
+
+        Args:
+            search_term (str): search term to find a model by name
+            limit (int): Max Number of suggested results (default: 5)
+
+        Returns:
+            List[str], containing 0 to [limit] ordered propositions (best first)
+        """
+        class_names = list(self.class_catalogue.keys())
+        suggestions = [item[0] for item in process.extract(
+            query=search_term.casefold(),
+            choices=class_names,
+            score_cutoff=50,
+            limit=limit)]
+
+        return suggestions

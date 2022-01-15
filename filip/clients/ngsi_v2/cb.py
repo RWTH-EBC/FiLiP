@@ -1412,7 +1412,7 @@ class ContextBrokerClient(BaseHttpClient):
         try:
             self.get_entity(entity_id=entity_id, entity_type=entity_type)
         except requests.RequestException as err:
-            if not err.response.status_code == 404:
+            if err.response is None or not err.response.status_code == 404:
                 raise
             return False
         

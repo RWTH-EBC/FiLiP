@@ -53,8 +53,10 @@ class PostProcessor:
 
         if old_vocabulary is not None:
             cls.transfer_settings(new_vocabulary=vocabulary,
-                              old_vocabulary=old_vocabulary)
+                                  old_vocabulary=old_vocabulary)
         cls._apply_vocabulary_settings(voc_builder)
+
+        cls._ensure_parent_class(voc_builder)
 
         cls._sort_relations(voc_builder)
         cls._mirror_object_property_inverses(voc_builder)
@@ -344,7 +346,7 @@ class PostProcessor:
 
         if root_class.iri not in voc_builder.vocabulary.classes:
             voc_builder.add_class(root_class)
-            root_class.source_id = "PREDEFINED"
+            root_class.source_ids.add("PREDEFINED")
 
     @classmethod
     def _remove_duplicate_parents(cls, voc_builder: VocabularyBuilder):
@@ -357,6 +359,24 @@ class PostProcessor:
         """
         for class_ in voc_builder.vocabulary.classes.values():
             class_.parent_class_iris = list(dict.fromkeys(class_.parent_class_iris))
+
+    @classmethod
+    def _ensure_parent_class(cls, voc_builder: VocabularyBuilder):
+        """If a class has a parent class, which was provided by an other
+        ontology. And that ontology is not given, it will have no parents.
+        In that case give him Thing as direct parent
+
+        Args:
+            voc_builder: Builder object for Vocabulary
+        Returns:
+            None
+        """
+        for class_ in voc_builder.vocabulary.classes.values():
+            # Thing is the root of all
+            if not class_.iri == "http://www.w3.org/2002/07/owl#Thing":
+                if len(class_.parent_class_iris) == 0:
+                    class_.parent_class_iris.append(
+                        "http://www.w3.org/2002/07/owl#Thing")
 
     @classmethod
     def _apply_vocabulary_settings(cls, voc_builder: VocabularyBuilder):

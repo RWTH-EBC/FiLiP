@@ -1,8 +1,7 @@
 """
 Functions to clean up a tenant within a fiware based platform.
 """
-import time
-
+from functools import wraps
 from requests import RequestException
 from typing import Callable, List, Union
 from filip.models import FiwareHeader
@@ -172,6 +171,7 @@ def clean_test(*,
     # Inner decorator function
     def decorator(func):
         #  Wrapper function for the decorated function
+        @wraps(func)
         def wrapper(*args, **kwargs):
             return func(*args, **kwargs)
         return wrapper
