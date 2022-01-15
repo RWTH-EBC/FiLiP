@@ -1,13 +1,26 @@
 """
 # Examples for relationships in FIWARE ContextBroker
 """
-
+# ## Import packages
 import logging
 
 from filip.clients.ngsi_v2 import ContextBrokerClient
 from filip.models.ngsi_v2.context import ContextEntity
 from filip.models.base import FiwareHeader
 
+# ## Parameters
+#
+# To run this example you need a working Fiware v2 setup with a context-broker
+# You can here set the address:
+#
+# Host address of Context Broker
+CB_URL = "http://localhost:1026"
+
+# You can here also change the used Fiware service
+# FIWARE-Service
+SERVICE = 'filip'
+# FIWARE-Servicepath
+SERVICE_PATH = '/example'
 
 # Setting up logging
 logging.basicConfig(
@@ -15,30 +28,19 @@ logging.basicConfig(
     format='%(asctime)s %(name)s %(levelname)s: %(message)s')
 logger = logging.getLogger(__name__)
 
-
-"""
-To run this example you need a working Fiware v2 setup with a context-broker 
-and an iota-broker. You can here set the addresses:
-"""
-cb_url = "http://localhost:1026"
-
-"""
-You can here also change the used Fiware service
-"""
-service = 'filip'
-service_path = '/example_relationships'
-
-
 if __name__ == "__main__":
 
-    # # 1 Setup models
+    # # 1 Setup client and models
     #
-    fiware_header = FiwareHeader(service=service, service_path=service_path)
+    fiware_header = FiwareHeader(service=SERVICE,
+                                 service_path=SERVICE_PATH)
 
     # ## 1.1 Store entities
     #
     with ContextBrokerClient(fiware_header=fiware_header,
-                             url=cb_url) as cb_client:
+                             url=CB_URL) as cb_client:
+        # make sure that the server is clean
+        cb_client.delete_entities(cb_client.get_entity_list())
         store_dict = [{"type": "Store",
                        "id": "urn:ngsi-ld:Store:001",
                        "address": {
@@ -157,7 +159,6 @@ if __name__ == "__main__":
 
     # ## 2.2 Get entities
     #
-
     with ContextBrokerClient(fiware_header=fiware_header) as cb_client:
         # It should return the inventory item according to the relationship
         logger.info(
@@ -174,4 +175,5 @@ if __name__ == "__main__":
     with ContextBrokerClient(fiware_header=fiware_header) as cb_client:
         cb_client.delete_entities(store_entities)
         cb_client.delete_entities(product_entities)
-        cb_client.delete_entities(inventory_entity)
+        cb_client.delete_entity(entity_id=inventory_entity.id,
+                                entity_type=inventory_entity.type)

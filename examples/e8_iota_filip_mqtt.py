@@ -1,6 +1,9 @@
 """
 # This example shows in more detail how to interact with a device over MQTT
+# using FiLiP's IoTA-MQTT Client. This client comes along with a convenient
+# API for handling MQTT communication with FIWARE's IoT-Agent
 """
+# ## Import packages
 import logging
 import random
 import time
@@ -17,16 +20,29 @@ from filip.models.ngsi_v2.iot import \
     PayloadProtocol
 from filip.models.ngsi_v2.context import NamedCommand
 
-# Before running the example you should set some global variables
-# Please, enter your URLs here!
-CB_URL = "http://yourHost:yourPort"
-IOTA_JSON_URL = "http://yourHost:yourPort"
-IOTA_UL_URL = "http://yourHost:yourPort"
-MQTT_BROKER_URL = "//yourHost:yourPort"
-DEVICE_APIKEY = 'filip-iot-example-device'
-SERVICE_GROUP_APIKEY= 'filip-iot-example-service-group'
-FIWARE_SERVICE = 'filip'
-FIWARE_SERVICE_PATH = '/iot_examples'
+# ## Parameters
+#
+# To run this example you need a working Fiware v2 setup with a
+# context-broker, an IoT-Agent and mqtt-broker. You can here set the
+# addresses:
+#
+# Host address of Context Broker
+CB_URL = "http://localhost:1026"
+# Host address of IoT-Agent
+IOTA_URL = "http://localhost:4041"
+# Host address of the MQTT-Broker
+MQTT_BROKER_URL = "mqtt://localhost:1883"
+
+# You can here also change the used Fiware service
+# FIWARE-Service
+SERVICE = 'filip'
+# FIWARE-Servicepath
+SERVICE_PATH = '/example'
+
+# You may also change the ApiKey Information
+# ApiKey of the ServiceGroup
+SERVICE_GROUP_APIKEY = 'filip-example-service-group'
+
 
 # Setting up logging
 logging.basicConfig(
@@ -43,16 +59,16 @@ if __name__ == '__main__':
     #
     # Since we want to use the multi-tenancy concept of fiware we always start
     # with create a fiware header
-    fiware_header = FiwareHeader(service=FIWARE_SERVICE,
-                                 service_path=FIWARE_SERVICE_PATH)
+    fiware_header = FiwareHeader(service=SERVICE,
+                                 service_path=SERVICE_PATH)
 
     # ## 1.2 Device configuration
     #
     service_group_json = ServiceGroup(
-        apikey=FIWARE_SERVICE_PATH.strip('/'),
+        apikey=SERVICE_PATH.strip('/'),
         resource="/iot/json")
     service_group_ul = ServiceGroup(
-        apikey=FIWARE_SERVICE_PATH.strip('/'),
+        apikey=SERVICE_PATH.strip('/'),
         resource="/iot/d")
 
     device_attr = DeviceAttribute(name='temperature',
@@ -111,8 +127,8 @@ if __name__ == '__main__':
     # For additional examples on how to use the client please check:
     # https://github.com/eclipse/paho.mqtt.python/tree/master/examples
     #
-    first_topic = f"/filip/{FIWARE_SERVICE_PATH.strip('/')}/first"
-    second_topic = f"/filip/{FIWARE_SERVICE_PATH.strip('/')}/second"
+    first_topic = f"/filip/{SERVICE_PATH.strip('/')}/first"
+    second_topic = f"/filip/{SERVICE_PATH.strip('/')}/second"
     first_payload = "filip_test_1"
     second_payload = "filip_test_2"
 
@@ -156,7 +172,9 @@ if __name__ == '__main__':
     mqttc.unsubscribe(second_topic)
 
     # stop network loop and disconnect cleanly
+    # close the mqtt listening thread
     mqttc.loop_stop()
+    # disconnect the mqtt device
     mqttc.disconnect()
 
     # # 3 Devices provisioning
@@ -227,7 +245,7 @@ if __name__ == '__main__':
     from filip.clients.ngsi_v2 import HttpClient, HttpClientConfig
 
     httpc_config = HttpClientConfig(cb_url=CB_URL,
-                                    iota_url=IOTA_JSON_URL)
+                                    iota_url=IOTA_URL)
     httpc = HttpClient(fiware_header=fiware_header,
                        config=httpc_config)
     httpc.iota.post_group(service_group=service_group_json, update=True)
@@ -257,10 +275,6 @@ if __name__ == '__main__':
                           command=context_command)
 
     time.sleep(2)
-    # close the mqtt listening thread
-    mqttc.loop_stop()
-    # disconnect the mqtt device
-    mqttc.disconnect()
 
     entity = httpc.cb.get_entity(entity_id=device_json.device_id,
                                  entity_type=device_json.entity_type)
@@ -292,6 +306,7 @@ if __name__ == '__main__':
 
     # ## 4.4 Close Client
 
+    # stop network loop and disconnect cleanly
     # close the mqtt listening thread
     mqttc.loop_stop()
     # disconnect the mqtt device
