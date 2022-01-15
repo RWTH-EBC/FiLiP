@@ -109,7 +109,8 @@ if __name__ == "__main__":
                                          value=i)
 
     time.sleep(1)
-    # Get historical data
+    # Get historical data as object you may directly convert them to pandas
+    # dataframes
     try:
         print(ql_client.get_entity_by_id(hall_entity.id).to_pandas())
         print(ql_client.get_entity_values_by_id(hall_entity.id))
