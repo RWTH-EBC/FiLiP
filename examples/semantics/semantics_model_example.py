@@ -516,6 +516,80 @@ if __name__ == '__main__':
 
     # # 5. Visualisation
     #
-    # Concluding we can always have a look inside the local loaded state by
-    # calling:
+    # ## 5.1 Simple Debug Visualisation
+    #
+    # To have a fast look at your current local state when working with it,
+    # you can call the following methode, and an image will be automatically
+    # displayed in your OS default picture viewer.
     semantic_manager.visualize_local_state()
+    #
+    # ## 5.2 Cytoscape
+    #
+    # To have an interactive, visually appealing representation of your
+    # semantic state, you can use the Library: CYTOSCAPE.
+    # Filip can generate you the data needed for a cytoscape visualisation.
+    # The visualisation tool itself is not included, but supported for
+    # multiple platforms as Jupyter Notebooks or Plotly Dash.
+    #
+    # ### 5.2.1 Generate Data
+    #
+    # To generate a representation of the current local state simply call:
+    [elements, stylesheet] = \
+        semantic_manager.generate_cytoscape_for_local_state(
+        display_only_used_individuals=True)
+
+    # As a result you receive a Tuple containing the graph elements (nodes,
+    # edges) and a stylesheet. (For more details refer to the methode
+    # descriptions)
+    #
+    # ### 5.2.2 Visualise in Jupyter
+    #
+    # Create the cytoscape graph widget
+    """
+        import ipycytoscape
+        
+        cyto = ipycytoscape.CytoscapeWidget()
+        cyto.graph.add_graph_from_json(elements)
+        cyto.set_style(stylesheet)   
+    """
+    #
+    # Display the graph.
+    """
+        cyto
+    """
+    #
+    # ### 5.2.3 Visualise in Plotly Dash
+    #
+    # #### 5.2.3.1 Layout
+    """
+        import dash_cytoscape as cyto
+        ...
+        cyto.Cytoscape(
+            id='app-cytoscape',
+            elements=[],
+            layout={'name': 'cola',
+                    'edgeLength': 150,
+                    },
+            style={'width': '100%', 'height': '700px'},
+        )
+        ...
+    """
+    # #### 5.2.3.2 Callbacks
+    """
+    @app.callback(
+    Output('app-semantics-bigGraph-cytoscape', 'elements'),
+    Output('app-semantics-bigGraph-cytoscape', 'stylesheet'),
+    Input(...)
+    State(...),
+    )
+    def my_callback_to_visualise_state(....):
+        
+        ...
+        
+        [element_dict, stylesheet] = 
+            semantics_manager.generate_cytoscape_for_local_state()
+    
+        elements = element_dict['nodes'] + element_dict['edges']
+    
+        return elements, stylesheet
+    """

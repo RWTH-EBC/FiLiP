@@ -1,9 +1,9 @@
 """
-Example to show we can make use of python's logging when using filip.
-The configuration is totally up to the user because FiLiP should not
-interfere with the user's final application and preferences.
-Each module has its own logger but does not configure any streams and
-therefore reuses the streams of the root logger.
+# Example to show we can make use of python's logging when using filip.
+# The configuration is totally up to the user because FiLiP should not
+# interfere with the user's final application and preferences.
+# Each module has its own logger but does not configure any streams and
+# therefore reuses the streams of the root logger.
 """
 
 # import python's build in logging implementation

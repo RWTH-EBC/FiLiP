@@ -110,6 +110,7 @@ class DeviceAttribute(IoTABaseAttribute):
         description="name of the attribute as coming from the device."
     )
 
+
 class LazyDeviceAttribute(DeviceAttribute):
     """
     Model for lazy device attributes
@@ -260,7 +261,60 @@ class ServiceGroup(BaseModel):
     )
 
 
-class Device(BaseModel):
+class DeviceSettings(BaseModel):
+    """
+    Model for iot device settings
+    """
+    timezone: Optional[str] = Field(
+        default='Europe/London',
+        description="Time zone of the sensor if it has any"
+    )
+    timestamp: Optional[bool] = Field(
+        default=None,
+        description="Optional flag about whether or not to add the TimeInstant "
+                    "attribute to the device entity created, as well as a "
+                    "TimeInstant metadata to each attribute, with the current "
+                    "timestamp. With NGSI-LD, the Standard observedAt "
+                    "property-of-a-property is created instead."
+    )
+    apikey: Optional[str] = Field(
+        default=None,
+        description="Optional Apikey key string to use instead of group apikey"
+    )
+    endpoint: Optional[AnyHttpUrl] = Field(
+        default=None,
+        description="Endpoint where the device is going to receive commands, "
+                    "if any."
+    )
+    protocol: Optional[str] = Field(
+        default=None,
+        description="Name of the device protocol, for its use with an "
+                    "IoT Manager."
+    )
+    transport: TransportProtocol = Field(
+        default=None,
+        description="Name of the device transport protocol, for the IoT Agents "
+                    "with multiple transport protocols."
+    )
+    expressionLanguage: Optional[ExpressionLanguage] = Field(
+        default=None,
+        description="optional boolean value, to set expression language used "
+                    "to compute expressions, possible values are: "
+                    "legacy or jexl. When not set or wrongly set, legacy "
+                    "is used as default value."
+    )
+    explicitAttrs: Optional[bool] = Field(
+        default=False,
+        description="optional boolean value, to support selective ignore "
+                    "of measures so that IOTA does not progress. If not "
+                    "specified default is false."
+    )
+
+    class Config:
+        validate_assignment = True
+
+
+class Device(DeviceSettings):
     """
     Model for iot devices.
     https://iotagent-node-lib.readthedocs.io/en/latest/api/index.html#device-api
@@ -299,37 +353,6 @@ class Device(BaseModel):
         min_length=1,
         regex=FiwareRegex.standard.value  # Make it FIWARE-Safe"
     )
-    timezone: Optional[str] = Field(
-        default='Europe/London',
-        description="Time zone of the sensor if it has any"
-    )
-    timestamp: Optional[bool] = Field(
-        default=None,
-        description="Optional flag about whether or not to add the TimeInstant "
-                    "attribute to the device entity created, as well as a "
-                    "TimeInstant metadata to each attribute, with the current "
-                    "timestamp. With NGSI-LD, the Standard observedAt "
-                    "property-of-a-property is created instead."
-    )
-    apikey: Optional[str] = Field(
-        default=None,
-        description="Optional Apikey key string to use instead of group apikey"
-    )
-    endpoint: Optional[AnyHttpUrl] = Field(
-        default=None,
-        description="Endpoint where the device is going to receive commands, "
-                    "if any."
-    )
-    protocol: Optional[str] = Field(
-        default=None,
-        description="Name of the device protocol, for its use with an "
-                    "IoT Manager."
-    )
-    transport: TransportProtocol = Field(
-        default=None,
-        description="Name of the device transport protocol, for the IoT Agents "
-                    "with multiple transport protocols."
-    )
     lazy: List[DeviceAttribute] = Field(
         default=[],
         description="List of lazy attributes of the device"
@@ -352,19 +375,6 @@ class Device(BaseModel):
         default=[],
         description="List of internal attributes with free format for specific "
                     "IoT Agent configuration"
-    )
-    expressionLanguage: Optional[ExpressionLanguage] = Field(
-        default=None,
-        description="optional boolean value, to set expression language used "
-                    "to compute expressions, possible values are: "
-                    "legacy or jexl. When not set or wrongly set, legacy "
-                    "is used as default value."
-    )
-    explicitAttrs: Optional[bool] = Field(
-        default=False,
-        description="optional boolean value, to support selective ignore "
-                    "of measures so that IOTA does not progress. If not "
-                    "specified default is false."
     )
     ngsiVersion: NgsiVersion = Field(
         default=NgsiVersion.v2,

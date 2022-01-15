@@ -11,7 +11,7 @@ from filip.semantics.vocabulary_configurator import VocabularyConfigurator
 
 if __name__ == '__main__':
 
-    # # 1. Creating a new vocabulary
+    # # 1 Creating a new vocabulary
     #
     # First we create a new blank vocabulary
     # A vocabulary consists out of a class hierarchy
@@ -41,7 +41,7 @@ if __name__ == '__main__':
     # We create our new blank vocabulary:
     vocabulary = VocabularyConfigurator.create_vocabulary(settings=settings)
 
-    # # 2. Adding ontologies
+    # # 2 Adding ontologies
     #
     # We now add the wanted ontologies to our vocabulary.
     # The ontologies can be inserted via a file, a weblink or as content string.
@@ -189,7 +189,6 @@ if __name__ == '__main__':
     # The easiest way to access an entity is the get_entity_by_iri function
     entity = vocabulary.get_entity_by_iri('https://w3id.org/saref#Sensor')
     entity.set_label("SarefSensor")
-
 
     # # 6 IoT Devices
     #

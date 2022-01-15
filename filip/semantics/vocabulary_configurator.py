@@ -424,10 +424,13 @@ class VocabularyConfigurator:
         return res
 
     @classmethod
-    def generate_vocabulary_models(cls,
-                                   vocabulary: Vocabulary,
-                                   path: Optional[str],
-                                   filename: str) -> Optional[str]:
+    def generate_vocabulary_models(
+            cls,
+            vocabulary: Vocabulary,
+            path: Optional[str] = None,
+            filename: Optional[str] = None,
+            alternative_manager_name: Optional[str] = None) ->  \
+            Optional[str]:
         """
         Export the given vocabulary as python model file.
         All vocabulary classes will be converted to python classes,
@@ -439,14 +442,26 @@ class VocabularyConfigurator:
             vocabulary (Vocabulary): Vocabulary to export
             path (Optional[str]): Path where the file should be saved
             filename (Optional[str]): Name of the file
+            alternative_manager_name (Optional[str]): alternative name for
+                the semantic_manager. The manager of the model can than also
+                be referenced over the object with this name
 
         Raises:
             Exception: if file can not be saved as specified with path and
                        filename
+            Exception: if vocabulary has label conflicts and is thus not valid
 
         Returns:
             Optional[str], generated content if path or filename not given
         """
+
+        if not cls.is_vocabulary_valid(vocabulary):
+            raise Exception(
+                "Vocabulary was not valid. Label conflicts "
+                "prevented the generation of models. Check for conflicts with: "
+                "VocabularyConfigurator."
+                "get_label_conflicts_in_vocabulary(vocabulary)"
+                )
 
         def split_string_into_lines(string: str, limit: int) -> [str]:
             """Helper methode, takes a long string and splits it into
@@ -502,36 +517,73 @@ class VocabularyConfigurator:
                    "\n\tInstanceRegistry"
 
         content += "\n\n\n"
-        content += "semantic_manager: SemanticsManager = SemanticsManager("
+        content += f"semantic_manager: SemanticsManager = SemanticsManager("
         content += "\n\t"
         content += "instance_registry=InstanceRegistry(),"
         content += "\n"
         content += ")"
-
         content += "\n\n"
+        if alternative_manager_name is not None:
+            content += f"{alternative_manager_name}: SemanticsManager"
+            content += f"= semantic_manager"
+            content += "\n\n"
         content += "# ---------CLASSES--------- #"
 
+        # the classes need to be added in order, so that the parents are
+        # defined, the moment the children are added
         classes: List[Class] = vocabulary.get_classes_sorted_by_label()
         class_order: List[Class] = []
-        index: int = 0
-        while len(classes) > 0:
-            class_ = classes[index]
-            parents = class_.get_parent_classes(vocabulary)
-            if len([p for p in parents if p in class_order]) == len(
-                    parents):
-                class_order.append(class_)
-                del classes[index]
-                index = 0
+        children: Dict[str, Set] = {}
+        added_class_iris = set()
 
-            else:
-                index += 1
+        # set up data for computation of order
+        iri_queue = ["http://www.w3.org/2002/07/owl#Thing"]
+        for class_ in classes:
+            if class_.iri not in children:
+                children[class_.iri] = set()
+
+                if class_.label == "Currency":
+                    print(class_.get_parent_classes(vocabulary))
+
+            for parent in class_.get_parent_classes(vocabulary):
+                if parent.iri not in children:
+                    children[parent.iri] = set()
+                children[parent.iri].add(class_.iri)
+
+        # compute class order, in the queue are always the classes, that have
+        # all parents already defined (starting with Thing).
+        # It is added from the queue and all children who are now fully
+        # defined are added to the queue
+        while len(iri_queue) > 0:
+            # remove from queue
+            parent_iri = iri_queue[0]
+            del iri_queue[0]
+
+            # add to class_order
+            parent = vocabulary.classes[parent_iri]
+            class_order.append(parent)
+            added_class_iris.add(parent_iri)
+
+            # check children
+            child_iris = children[parent_iri]
+            for child_iri in child_iris:
+                child = vocabulary.classes[child_iri]
+
+                # all parents added, add child to queue
+                if len([p for p in child.parent_class_iris
+                        if p in added_class_iris]) == len(
+                        child.parent_class_iris):
+
+                    if not child_iri in added_class_iris:
+                        iri_queue.append(child_iri)
 
         for class_ in class_order:
 
             content += "\n\n\n"
             # Parent Classes
             parent_class_string = ""
-            parents = class_.get_parent_classes(vocabulary)
+            parents = class_.get_parent_classes(vocabulary,
+                                                remove_redundancy=True)
 
             # Device Class, only add if this is a device class and it was not
             # added for a parent
@@ -557,9 +609,11 @@ class VocabularyConfigurator:
             if class_.comment == "":
                 content += "\n\tGenerated SemanticClass without description"
             content += f"\n\n\t"
-            content += f"Source: \n\t\t" \
-                       f"{vocabulary.sources[class_.source_id].ontology_iri} " \
-                       f"({vocabulary.sources[class_.source_id].source_name})"
+            content += f"Source(s): \n\t\t"
+
+            for source_id in class_.source_ids:
+                content += f"{vocabulary.sources[source_id].ontology_iri} " \
+                           f"({vocabulary.sources[source_id].source_name})"
             content += f'\n\t"""'
 
             # ------Constructors------
@@ -567,14 +621,14 @@ class VocabularyConfigurator:
                 content += "\n\n\t"
                 content += "def __new__(cls, *args, **kwargs):"
                 content += "\n\t\t"
-                content += "kwargs['semantic_manager'] = semantic_manager"
+                content += f"kwargs['semantic_manager'] = semantic_manager"
                 content += "\n\t\t"
                 content += "return super().__new__(cls, *args, **kwargs)"
 
                 content += "\n\n\t"
                 content += "def __init__(self, *args, **kwargs):"
                 content += "\n\t\t"
-                content += "kwargs['semantic_manager'] = semantic_manager"
+                content += f"kwargs['semantic_manager'] = semantic_manager"
                 content += "\n\t\t"
                 content += "is_initialised = 'id' in self.__dict__"
                 content += "\n\t\t"
@@ -632,7 +686,7 @@ class VocabularyConfigurator:
                                     f"self." \
                                     f"{cdr.get_property_label(vocabulary)}" \
                                     f".add(" \
-                                    f"{rel.target_statement.target_data_value})"
+                                    f"'{rel.target_statement.target_data_value}')"
 
             if len(class_.get_combined_object_relations(vocabulary)) > 0:
                 content += "\n"
@@ -687,7 +741,7 @@ class VocabularyConfigurator:
                         f"rule='" \
                         f"{cdr.get_all_targetstatements_as_string(vocabulary)}',"
                     content += "\n\t\t"
-                    content += "semantic_manager=semantic_manager)"
+                    content += f"semantic_manager=semantic_manager)"
                     content += build_field_comment(cdr)
 
                 elif cdr_type == DataFieldType.command:
@@ -697,7 +751,7 @@ class VocabularyConfigurator:
                     content += "\n\t\t"
                     content += f"name='{label}',"
                     content += "\n\t\t"
-                    content += "semantic_manager=semantic_manager)"
+                    content += f"semantic_manager=semantic_manager)"
                     content += build_field_comment(cdr)
 
                 elif cdr_type == DataFieldType.device_attribute:
@@ -708,7 +762,7 @@ class VocabularyConfigurator:
                     content += "\n\t\t"
                     content += f"name='{label}',"
                     content += "\n\t\t"
-                    content += "semantic_manager=semantic_manager)"
+                    content += f"semantic_manager=semantic_manager)"
                     content += build_field_comment(cdr)
 
             # ------Add Relation Fields------
@@ -730,7 +784,7 @@ class VocabularyConfigurator:
                     content += str(cor.get_inverse_of_labels(vocabulary))
                     content += ",\n\t\t"
 
-                content += "semantic_manager=semantic_manager)"
+                content += f"semantic_manager=semantic_manager)"
                 content += build_field_comment(cor)
 
         content += "\n\n\n"
@@ -754,7 +808,8 @@ class VocabularyConfigurator:
         content += "\n"
 
         # Datatypes catalogue
-        content += "semantic_manager.datatype_catalogue = {"
+        content += f"semantic_manager.datatype_catalogue = "
+        content += "{"
         for name, datatype in vocabulary.datatypes.items():
             definition = datatype.export()
             content += "\n\t"
@@ -781,7 +836,8 @@ class VocabularyConfigurator:
 
         # build class dict
         content += "\n\n"
-        content += "semantic_manager.class_catalogue = {"
+        content += f"semantic_manager.class_catalogue = "
+        content += "{"
         for class_ in vocabulary.get_classes_sorted_by_label():
             content += "\n\t"
             content += f"'{class_.get_label()}': {class_.get_label()},"
@@ -790,7 +846,8 @@ class VocabularyConfigurator:
 
         # build individual dict
         content += "\n\n"
-        content += "semantic_manager.individual_catalogue = {"
+        content += f"semantic_manager.individual_catalogue = "
+        content += "{"
         for individual in vocabulary.individuals.values():
             content += "\n\t"
             content += f"'{individual.get_label()}': {individual.get_label()},"

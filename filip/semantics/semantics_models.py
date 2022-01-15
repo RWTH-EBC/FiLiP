@@ -10,14 +10,14 @@ from typing import List, Tuple, Dict, Type, TYPE_CHECKING, Optional, Union, \
 
 import filip.models.ngsi_v2.iot as iot
 from filip.models.ngsi_v2.iot import ExpressionLanguage, TransportProtocol
-from filip.models.base import DataType, NgsiVersion
+from filip.models.base import DataType, NgsiVersion, FiwareRegex
 from filip.models.ngsi_v2.context import ContextEntity, NamedContextAttribute, \
     NamedCommand
 
 from filip.models import FiwareHeader
 from pydantic import BaseModel, Field, AnyHttpUrl
 from filip.config import settings
-from filip.semantics.vocabulary.entities import DatatypeFields
+from filip.semantics.vocabulary.entities import DatatypeFields, DatatypeType
 from filip.semantics.vocabulary_configurator import label_blacklist, \
     label_char_whitelist
 
@@ -227,10 +227,16 @@ class DeviceProperty(BaseModel):
                             "an uncaught naming conflict happened")
         return attr
 
-    def get_all_field_names(self) -> List[str]:
+    def get_all_field_names(self, field_name: Optional[str] = None) \
+            -> List[str]:
         """
         Get all field names which this property creates in the fiware
         instance
+
+        Args:
+            field_name (Optional[str]): Name of the field to which the attribute
+                is/will be added. If none is provided, the linked field name
+                is used
         """
         pass
 
@@ -288,9 +294,13 @@ class Command(DeviceProperty):
         return self._get_field_from_fiware(field_name=f'{self.name}_status',
                                            required_type="commandStatus").value
 
-    def get_all_field_names(self) -> List[str]:
+    def get_all_field_names(self, field_name: Optional[str] = None) \
+            -> List[str]:
         """
         Get all the field names that this command will add to Fiware
+
+        Args:
+            field_name (Optional[str]): Not used, but needed in the signature
         """
         return [self.name, f"{self.name}_info", f"{self.name}_result"]
 
@@ -338,11 +348,20 @@ class DeviceAttribute(DeviceProperty):
             field_name=f'{self._instance_link.field_name}_{self.name}',
             required_type="StructuredValue").value
 
-    def get_all_field_names(self) -> List[str]:
+    def get_all_field_names(self, field_name: Optional[str] = None) \
+            -> List[str]:
         """
-        Get all the field names that this command will add to Fiware
+        Get all field names which this property creates in the fiware
+        instance
+
+        Args:
+            field_name (str): Name of the field to which the attribute
+                is/will be added. If none is provided, the linked field name
+                is used
         """
-        return [f'{self._instance_link.field_name}_{self.name}']
+        if field_name is None:
+            field_name = self._instance_link.field_name
+        return [f'{field_name}_{self.name}']
 
     class Config:
         """if the name or type is changed the attribute needs to be removed
@@ -623,26 +642,7 @@ class DeviceField(Field):
                 return False
         return True
 
-    def _pre_set(self, v):
-        """
-        Executes checks before value v is assigned to field values
-        And sets internal values of v to link it to this field
-
-        Args:
-             v (Any): Value to be added to the field
-        Raises:
-            AssertionError: if v not of type: internal_type
-                            if v does already belong to a field
-        """
-        assert isinstance(v, self._internal_type)
-        assert isinstance(v, DeviceProperty)
-        assert v._instance_link.instance_identifier is None,\
-            "DeviceProperty can only belong to one device instance"
-        v._instance_link.instance_identifier = self._instance_identifier
-        v._instance_link.semantic_manager = self._semantic_manager
-        v._instance_link.field_name = self.name
-
-    def _name_check(self, v: _internal_type):
+    def name_check(self, v: _internal_type):
         """
         Executes name checks before value v is assigned to field values
         Each field name that v will add to the Fiware instance needs to be
@@ -656,7 +656,7 @@ class DeviceField(Field):
                        if the name of v contains a forbidden character
         """
         taken_fields = self._get_instance().get_all_field_names()
-        for name in v.get_all_field_names():
+        for name in v.get_all_field_names(field_name=self.name):
             if name in taken_fields:
                 raise NameError(f"The property can not be added to the field "
                                 f"{self.name}, because the instance already"
@@ -688,13 +688,28 @@ class DeviceField(Field):
             v, value to add
 
         Raises:
-            ValueError, if v is of wrong type
+            AssertionError, if v is of wrong type
+            AssertionError, if v already belongs to a field
+            NameError, if v has an invalid name
 
         Returns:
             None
         """
-        self._name_check(v)
-        self._pre_set(v)
+
+        # assert that the given value fulfills certain conditions
+        assert isinstance(v, self._internal_type)
+        assert isinstance(v, DeviceProperty)
+        assert v._instance_link.instance_identifier is None, \
+            "DeviceProperty can only belong to one device instance"
+
+        # test if name of v is valid, if not an error is raised
+        self.name_check(v)
+
+        # link attribute to field and instance
+        v._instance_link.instance_identifier = self._instance_identifier
+        v._instance_link.semantic_manager = self._semantic_manager
+        v._instance_link.field_name = self.name
+
         super(DeviceField, self).add(v)
 
     def get_field_names(self) -> List[str]:
@@ -836,6 +851,21 @@ class RuleField(Field):
             bool
         """
 
+        # true if all rules are fulfilled
+        for [rule, fulfilled] in self.are_rules_fulfilled():
+            if not fulfilled:
+                return False
+        return True
+
+    def are_rules_fulfilled(self) -> List[Tuple[str, bool]]:
+        """
+        Check if the values present in this relationship fulfill the
+        individual semantic rules.
+
+        Returns:
+            List[Tuple[str, bool]], [[readable_rule, fulfilled]]
+        """
+
         # rule has form: (STATEMENT, [[a,b],[c],[a,..],..])
         # A value fulfills the rule if it is an instance of all the classes,
         #       datatype_catalogue listed in at least one innerlist
@@ -849,15 +879,20 @@ class RuleField(Field):
         #       - max n | 0 | n
         #       - range n,m | n | m
 
-        # the relationship itself is a list
+        res = []
 
         values = self.get_all()
+        readable_rules = self.rule.split(",")
+        rule_counter = 0
 
         # loop over all rules, if a rule is not fulfilled return False
         for rule in self._rules:
             # rule has form: (STATEMENT, [[a,b],[c],[a,..],..])
             statement: str = rule[0]
             outer_list: List[List] = rule[1]
+
+            readable_rule = readable_rules[rule_counter].strip()
+            rule_counter = rule_counter + 1
 
             # count how  many values fulfill this rule
             fulfilling_values = 0
@@ -882,27 +917,28 @@ class RuleField(Field):
             if "min" in statement:
                 number = int(statement.split("|")[1])
                 if not fulfilling_values >= number:
-                    return False
+                    res.append([readable_rule, False])
             elif "max" in statement:
                 number = int(statement.split("|")[1])
                 if not fulfilling_values <= number:
-                    return False
+                    res.append([readable_rule, False])
             elif "exactly" in statement:
                 number = int(statement.split("|")[1])
                 if not fulfilling_values == number:
-                    return False
+                    res.append([readable_rule, False])
             elif "some" in statement:
                 if not fulfilling_values >= 1:
-                    return False
+                    res.append([readable_rule, False])
             elif "only" in statement:
                 if not fulfilling_values == len(values):
-                    return False
+                    res.append([readable_rule, False])
             elif "value" in statement:
                 if not fulfilling_values >= 1:
-                    return False
+                    res.append([readable_rule, False])
 
-        # no rule failed -> relationship fulfilled
-        return True
+            if len(res) == 0 or not (res[-1][0] == readable_rule):
+                res.append([readable_rule, True])
+        return res
 
     def _value_is_valid(self, value, rule_value) -> bool:
         """
@@ -928,6 +964,22 @@ class RuleField(Field):
         result += f'],\n\trule: ({self.rule})'
         return result
 
+    def _get_all_rule_type_names(self) -> Set[str]:
+        """
+        Returns the names all types mentioned in the field rule
+
+        Returns:
+            Set[str]
+        """
+        res = set()
+
+        for rule in self._rules:
+            statement: str = rule[0]
+            outer_list: List[List] = rule[1]
+            for inner_list in outer_list:
+                for type_name in inner_list:
+                    res.add(type_name)
+        return res
 
 class DataField(RuleField):
     """
@@ -955,6 +1007,30 @@ class DataField(RuleField):
     def __str__(self):
         return 'Data'+super().__str__()
 
+    def get_possible_enum_values(self) -> List[str]:
+        """
+        Get all enum values that are excepted for this field
+
+        Returns:
+            List[str]
+        """
+        enum_values = set()
+        for type_name in self._get_all_rule_type_names():
+            datatype = self._semantic_manager.get_datatype(type_name)
+            if datatype.type == DatatypeType.enum:
+                enum_values.update(datatype.enum_values)
+
+        return sorted(enum_values)
+
+    def get_all_possible_datatypes(self) -> List[Datatype]:
+        """
+        Get all Datatypes that are stated as allowed for this field.
+
+        Returns:
+            List[Datatype]
+        """
+        return [self._semantic_manager.get_datatype(type_name)
+                       for type_name in self._get_all_rule_type_names()]
 
 class RelationField(RuleField):
     """
@@ -1087,6 +1163,43 @@ class RelationField(RuleField):
     def get_all_raw(self) -> Set[Union[InstanceIdentifier, str]]:
         return super().get_all_raw()
 
+    def get_all_possible_classes(self, include_subclasses: bool = False) -> \
+            List[ Type['SemanticClass']]:
+        """
+        Get all SemanticClass types that are stated as allowed for this field.
+
+        Args:
+            include_subclasses (bool): If true all subclasses of target
+                classes are also returned
+
+        Returns:
+            List[Type[SemanticClass]]
+        """
+        res = set()
+        for class_name in self._get_all_rule_type_names():
+            if class_name.__name__ in self._semantic_manager.class_catalogue:
+                class_ = self._semantic_manager.\
+                    get_class_by_name(class_name.__name__)
+                res.add(class_)
+                if include_subclasses:
+                    res.update(class_.__subclasses__())
+
+        return list(res)
+
+    def get_all_possible_individuals(self) -> List['SemanticIndividual']:
+        """
+        Get all SemanticIndividuals that are stated as allowed for this field.
+
+        Returns:
+            List['SemanticIndividual']
+        """
+        res = set()
+        for name in self._get_all_rule_type_names():
+
+            if name.__name__ not in self._semantic_manager.class_catalogue:
+                res.add(self._semantic_manager.get_individual(name.__name__))
+        return list(res)
+
 
 class InstanceState(BaseModel):
     """State of instance that it had in Fiware on the moment of the last load
@@ -1131,7 +1244,9 @@ class SemanticClass(BaseModel):
         description="Header of instance. Holds the information where the "
                     "instance is saved in Fiware")
     id: str = pyd.Field(
-        description="Id of the instance, equal to Fiware ContextEntity Id" )
+        description="Id of the instance, equal to Fiware ContextEntity Id",
+        regex=FiwareRegex.standard.value,
+    )
 
     old_state: InstanceState = pyd.Field(
         default=InstanceState(),
@@ -1200,8 +1315,11 @@ class SemanticClass(BaseModel):
             assert cls.__name__ == kwargs['identifier'].type
         else:
             instance_id = kwargs['id'] if 'id' in kwargs else ""
-            header_ = kwargs['header'] \
-                if 'header' in kwargs else \
+
+            import re
+            assert re.match(FiwareRegex.standard.value, instance_id), "Invalid character in ID"
+
+            header_ = kwargs['header'] if 'header' in kwargs else \
                 semantic_manager_.get_default_header()
 
         if not instance_id == "" and not enforce_new:
@@ -1498,22 +1616,38 @@ class SemanticClass(BaseModel):
     def __str__(self):
         return str(self.dict(exclude={'semantic_manager', 'old_state'}))
 
+    def __hash__(self):
+        values = []
+        for field in self.get_fields():
+            values.extend((field.name, frozenset(field.get_all_raw())))
 
-class DeviceSettings(BaseModel):
-    """Settings configuring the communication with an IoT Device
-    Wrapped in a model to bypass SemanticDeviceClass immutability
-    """
-    transport: Optional[TransportProtocol]
-    endpoint: Optional[AnyHttpUrl]
-    apikey: Optional[str]
-    protocol: Optional[str]
-    timezone: Optional[str]
-    timestamp: Optional[bool]
-    expressionLanguage: Optional[ExpressionLanguage]
-    explicitAttrs: Optional[bool]
+        ref_string = ""
+        for ref in self.references.values():
+            ref_string += f', {ref}'
 
-    class Config:
-        validate_assignment = True
+        return hash((self.id, self.header,
+                     self.metadata.name, self.metadata.comment,
+                     frozenset(self.references.keys()),
+                     ref_string,
+                     frozenset(values)
+                     ))
+
+
+# class DeviceSettings(BaseModel):
+#     """Settings configuring the communication with an IoT Device
+#     Wrapped in a model to bypass SemanticDeviceClass immutability
+#     """
+#     transport: Optional[TransportProtocol]
+#     endpoint: Optional[AnyHttpUrl]
+#     apikey: Optional[str]
+#     protocol: Optional[str]
+#     timezone: Optional[str]
+#     timestamp: Optional[bool]
+#     expressionLanguage: Optional[ExpressionLanguage]
+#     explicitAttrs: Optional[bool]
+#
+#     class Config:
+#         validate_assignment = True
 
 
 class SemanticDeviceClass(SemanticClass):
@@ -1531,8 +1665,8 @@ class SemanticDeviceClass(SemanticClass):
     returned
     """
 
-    device_settings: DeviceSettings = pyd.Field(
-        default=DeviceSettings(),
+    device_settings: iot.DeviceSettings = pyd.Field(
+        default= iot.DeviceSettings(),
         description="Settings configuring the communication with an IoT Device "
                     "Wrapped in a model to bypass SemanticDeviceClass "
                     "immutability")
@@ -1554,8 +1688,7 @@ class SemanticDeviceClass(SemanticClass):
         Returns:
              bool, True if endpoint and transport are not None
         """
-        return self.device_settings.endpoint is not None and \
-            self.device_settings.transport is not None
+        return self.device_settings.transport is not None
 
     def get_fields(self) -> List[Field]:
         """
