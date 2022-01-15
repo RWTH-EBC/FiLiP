@@ -1,8 +1,4 @@
 """
-Created April 1, 2021
-
-@author Thomas Storek
-
 Data models for interacting with FIWARE's time series-api (aka QuantumLeap)
 """
 from __future__ import annotations
@@ -89,6 +85,30 @@ class TimeSeries(TimeSeriesHeader):
     Model for time series data
     """
     attributes: List[AttributeValues] = None
+
+    def extend(self, other: TimeSeries) -> None:
+        """
+        Extends the current `TimeSeries` object with an other
+        `TimeSeries` object. With the same format.
+
+        Args:
+            other: TimeSeries Object that will be added to the original object
+
+        Returns:
+            None
+
+        Raises:
+            Assertion Error: if header fields do not fit or if index is not
+                rising
+        """
+        assert self.entityId == other.entityId
+        assert self.entityType == other.entityType
+        assert self.index[-1] < other.index[0]
+
+        for attr, other_attr in zip(self.attributes, other.attributes):
+            assert attr.attrName == other_attr.attrName
+            attr.values.extend(other_attr.values)
+        self.index.extend(other.index)
 
     def to_pandas(self) -> pd.DataFrame:
         """

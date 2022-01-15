@@ -74,7 +74,7 @@ class FiwareHeader(BaseModel):
         alias="fiware-service",
         default="",
         max_length=50,
-        description="Fiware service used for multitancy",
+        description="Fiware service used for multi-tenancy",
         regex=r"\w*$"
     )
     service_path: str = Field(
@@ -97,12 +97,35 @@ class FiwareRegex(str, Enum):
     """
     _init_ = 'value __doc__'
 
-    standard = r"(^((?![?&#/ ])[\x00-\x7F])*$)", \
+    standard = r"(^((?![?&#/\"' ])[\x00-\x7F])*$)", \
                "Prevents any string that contains at least one of the " \
-               "symbols: ? & # / or a whitespace"
+               "symbols: ? & # / ' \" or a whitespace"
     string_protect = r"(?!^id$)(?!^type$)(?!^geo:location$)" \
-                     r"(^((?![?&#/ ])[\x00-\x7F])*$)",\
+                     r"(^((?![?&#/\"' ])[\x00-\x7F])*$)",\
                      "Prevents any string that contains at least one of " \
-                     "the symbols: ? & # / or a whitespace." \
+                     "the symbols: ? & # / ' \" or a whitespace." \
                      "AND the strings: id, type, geo:location"
 
+
+class LogLevel(str, Enum):
+    CRITICAL = 'CRITICAL'
+    ERROR = 'ERROR'
+    WARNING = 'WARNING'
+    INFO = 'INFO'
+    DEBUG = 'DEBUG'
+    NOTSET = 'NOTSET'
+
+    @classmethod
+    def _missing_(cls, name):
+        """
+        Class method to realize case insensitive args
+
+        Args:
+            name: missing argument
+
+        Returns:
+            valid member of enum
+        """
+        for member in cls:
+            if member.value.casefold() == name.casefold():
+                return member

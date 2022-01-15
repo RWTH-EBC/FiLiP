@@ -33,7 +33,7 @@ def load_units() -> pd.DataFrame:
     """
     units = load_datapackage(
             url="https://github.com/datasets/unece-units-of-measure",
-            filename="unece-units.hdf")["units_of_measure"]
+            package_name="unece-units")["units_of_measure"]
     # remove deprecated entries
     units = units.loc[
             ((units.Status.str.casefold() != 'x') &
@@ -117,17 +117,17 @@ class Unit(BaseModel):
         default=None,
         description="The unit of measurement given using the UN/CEFACT "
                     "Common Code (3 characters)")
-    description: Dict[str, str] = Field(
+    description: Optional[Dict[str, str]] = Field(
         default=None,
         alias="unitDescription",
         description="Verbose description of unit",
         max_length=350)
-    symbol: Dict[str, str] = Field(
+    symbol: Optional[Dict[str, str]] = Field(
         default=None,
         alias="unitSymbol",
         description="The symbol used to represent the unit of measure as "
                     "in ISO 31 / 80000.")
-    conversion_factor: Dict[str, str] = Field(
+    conversion_factor: Optional[Dict[str, str]] = Field(
         default=None,
         alias="unitConversionFactor",
         description="The value used to convert units to the equivalent SI "

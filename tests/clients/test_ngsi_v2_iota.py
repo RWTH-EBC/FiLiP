@@ -1,13 +1,14 @@
 """
 Test for iota http client
 """
+import copy
 import unittest
 import logging
 import requests
 
 from uuid import uuid4
 
-from filip.models.base import FiwareHeader
+from filip.models.base import FiwareHeader, DataType
 from filip.clients.ngsi_v2 import \
     ContextBrokerClient, \
     IoTAClient
@@ -26,13 +27,14 @@ logger = logging.getLogger(__name__)
 
 
 class TestAgent(unittest.TestCase):
+
     def setUp(self) -> None:
         self.fiware_header = FiwareHeader(
             service=settings.FIWARE_SERVICE,
             service_path=settings.FIWARE_SERVICEPATH)
         clear_all(fiware_header=self.fiware_header,
                   cb_url=settings.CB_URL,
-                  iota_url=settings.IOTA_URL)
+                  iota_url=settings.IOTA_JSON_URL)
         self.service_group1 = ServiceGroup(entity_type='Thing',
                                            resource='/iot/json',
                                            apikey=str(uuid4()))
@@ -53,12 +55,12 @@ class TestAgent(unittest.TestCase):
             "expressionLanguage": None
         }
         self.client = IoTAClient(
-            url=settings.IOTA_URL,
+            url=settings.IOTA_JSON_URL,
             fiware_header=self.fiware_header)
 
     def test_get_version(self):
         with IoTAClient(
-                url=settings.IOTA_URL,
+                url=settings.IOTA_JSON_URL,
                 fiware_header=self.fiware_header) as client:
             self.assertIsNotNone(client.get_version())
 
@@ -67,7 +69,7 @@ class TestAgent(unittest.TestCase):
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
-                iota_url=settings.IOTA_URL)
+                iota_url=settings.IOTA_JSON_URL)
     def test_service_group_endpoints(self):
         self.client.post_groups(service_groups=[self.service_group1,
                                                 self.service_group2])
@@ -78,9 +80,6 @@ class TestAgent(unittest.TestCase):
         self.client.get_group(resource=self.service_group1.resource,
                               apikey=self.service_group1.apikey)
 
-        clear_all(fiware_header=self.fiware_header,
-                  iota_url=settings.IOTA_URL)
-
     def test_device_model(self):
         device = Device(**self.device)
         self.assertEqual(self.device,
@@ -89,19 +88,13 @@ class TestAgent(unittest.TestCase):
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
                 cb_url=settings.CB_URL,
-                iota_url=settings.IOTA_URL)
+                iota_url=settings.IOTA_JSON_URL)
     def test_device_endpoints(self):
         """
         Test device creation
         """
-        # Clean up Fiware test state, this test can fail if the device was not
-        # correctly removed before
-        clear_all(fiware_header=self.fiware_header,
-                  cb_url=settings.CB_URL,
-                  iota_url=settings.IOTA_URL)
-
         with IoTAClient(
-                url=settings.IOTA_URL,
+                url=settings.IOTA_JSON_URL,
                 fiware_header=self.fiware_header) as client:
             client.get_device_list()
             device = Device(**self.device)
@@ -135,15 +128,11 @@ class TestAgent(unittest.TestCase):
             self.assertEqual(self.fiware_header.service_path,
                              device_res.service_path)
 
-            #cleanup
-            clear_all(fiware_header=self.fiware_header,
-                      cb_url=settings.CB_URL,
-                      iota_url=settings.IOTA_URL)
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
                 cb_url=settings.CB_URL,
-                iota_url=settings.IOTA_URL)
+                iota_url=settings.IOTA_JSON_URL)
     def test_metadata(self):
         """
         Test for metadata works but the api of iot agent-json seems not
@@ -163,7 +152,7 @@ class TestAgent(unittest.TestCase):
         logger.info(device.json(indent=2))
 
         with IoTAClient(
-                url=settings.IOTA_URL,
+                url=settings.IOTA_JSON_URL,
                 fiware_header=self.fiware_header) as client:
             client.post_device(device=device)
             logger.info(client.get_device(device_id=device.device_id).json(
@@ -175,10 +164,211 @@ class TestAgent(unittest.TestCase):
             logger.info(client.get_entity(entity_id=device.entity_name).json(
                 indent=2))
 
-        #clean up
-        clear_all(fiware_header=self.fiware_header,
-                  cb_url=settings.CB_URL,
-                  iota_url=settings.IOTA_URL)
+    def test_deletions(self):
+        """
+        Test the deletion of a context entity/device if the state is always
+        correctly cleared
+        """
+        self.tearDown()
+
+        device_id = 'device_id'
+        entity_id = 'entity_id'
+
+        device = Device(device_id=device_id,
+                        entity_name=entity_id,
+                        entity_type='Thing2',
+                        protocol='IoTA-JSON',
+                        transport='HTTP',
+                        apikey='filip-iot-test-device')
+
+        cb_client = ContextBrokerClient(url=settings.CB_URL,
+                                        fiware_header=self.fiware_header)
+
+        # Test 1: Only delete device
+        # delete without optional parameter -> entity needs to continue existing
+        self.client.post_device(device=device)
+        self.client.delete_device(device_id=device_id, cb_url=settings.CB_URL)
+        self.assertTrue(
+            len(cb_client.get_entity_list(entity_ids=[entity_id])) == 1)
+        cb_client.delete_entity(entity_id=entity_id, entity_type='Thing2')
+
+        # Test 2:Delete device and corresponding entity
+        # delete with optional parameter -> entity needs to be deleted
+        self.client.post_device(device=device)
+        self.client.delete_device(device_id=device_id,
+                                  cb_url=settings.CB_URL,
+                                  delete_entity=True)
+        self.assertTrue(
+            len(cb_client.get_entity_list(entity_ids=[entity_id])) == 0)
+
+        # Test 3:Delete device and corresponding entity,
+        #        that is linked to multiple devices
+        # delete with optional parameter -> entity needs to be deleted
+        self.client.post_device(device=device)
+        device2 = copy.deepcopy(device)
+        device2.device_id = "device_id2"
+        self.client.post_device(device=device2)
+        self.assertRaises(Exception, self.client.delete_device,
+                          device_id=device_id, delete_entity=True)
+        self.assertTrue(
+            len(cb_client.get_entity_list(entity_ids=[entity_id])) == 1)
+        self.client.delete_device(device_id=device2.device_id)
+
+        # Test 4: Only delete entity
+        # delete without optional parameter -> device needs to continue existing
+        self.client.post_device(device=device)
+        cb_client.delete_entity(entity_id=entity_id, entity_type='Thing2')
+        self.client.get_device(device_id=device_id)
+        self.client.delete_device(device_id=device_id)
+
+        # Test 5: Delete entity, and all devices
+        # # delete with optional parameter -> all devices need to be deleted
+        self.client.post_device(device=device)
+        device2 = copy.deepcopy(device)
+        device2.device_id = "device_id2"
+        self.client.post_device(device=device2)
+        cb_client.delete_entity(entity_id=entity_id, delete_devices=True,
+                                entity_type='Thing2',
+                                iota_url=settings.IOTA_JSON_URL)
+        self.assertEqual(len(self.client.get_device_list()), 0)
+
+    def test_update_device(self):
+        """
+        Test the methode: update_device of the iota client
+        """
+
+        device = Device(**self.device)
+        device.endpoint = "http://test.com"
+        device.transport = "MQTT"
+
+        device.add_attribute(DeviceAttribute(
+            name="Att1", object_id="o1", type=DataType.STRUCTUREDVALUE))
+        device.add_attribute(StaticDeviceAttribute(
+            name="Stat1", value="test", type=DataType.STRUCTUREDVALUE))
+        device.add_attribute(StaticDeviceAttribute(
+            name="Stat2", value="test", type=DataType.STRUCTUREDVALUE))
+        device.add_command(DeviceCommand(name="Com1"))
+
+        # use update_device to post
+        self.client.update_device(device=device, add=True)
+
+        cb_client = ContextBrokerClient(url=settings.CB_URL,
+                                        fiware_header=self.fiware_header)
+
+        # test if attributes exists correctly
+        live_entity = cb_client.get_entity(entity_id=device.entity_name)
+        live_entity.get_attribute("Att1")
+        live_entity.get_attribute("Com1")
+        live_entity.get_attribute("Com1_info")
+        live_entity.get_attribute("Com1_status")
+        self.assertEqual(live_entity.get_attribute("Stat1").value, "test")
+
+        # change device attributes and update
+        device.get_attribute("Stat1").value = "new_test"
+        device.delete_attribute(device.get_attribute("Stat2"))
+        device.delete_attribute(device.get_attribute("Att1"))
+        device.delete_attribute(device.get_attribute("Com1"))
+        device.add_attribute(DeviceAttribute(
+            name="Att2", object_id="o1", type=DataType.STRUCTUREDVALUE))
+        device.add_attribute(StaticDeviceAttribute(
+            name="Stat3", value="test3", type=DataType.STRUCTUREDVALUE))
+        device.add_command(DeviceCommand(name="Com2"))
+
+        # device.endpoint = "http://localhost:8080"
+        self.client.update_device(device=device)
+
+        # test if update does what it should, for the device. It does not
+        # change the entity completely:
+
+        live_device = self.client.get_device(device_id=device.device_id)
+
+        with self.assertRaises(KeyError):
+            live_device.get_attribute("Att1")
+        with self.assertRaises(KeyError):
+            live_device.get_attribute("Com1_info")
+        with self.assertRaises(KeyError):
+            live_device.get_attribute("Stat2")
+        self.assertEqual(live_device.get_attribute("Stat1").value, "new_test")
+        live_device.get_attribute("Stat3")
+        live_device.get_command("Com2")
+        live_device.get_attribute("Att2")
+
+        cb_client.close()
+
+    def test_patch_device(self):
+        """
+            Test the methode: patch_device of the iota client
+        """
+
+        device = Device(**self.device)
+        device.endpoint = "http://test.com"
+        device.transport = "MQTT"
+
+        device.add_attribute(DeviceAttribute(
+            name="Att1", object_id="o1", type=DataType.STRUCTUREDVALUE))
+        device.add_attribute(StaticDeviceAttribute(
+            name="Stat1", value="test", type=DataType.STRUCTUREDVALUE))
+        device.add_attribute(StaticDeviceAttribute(
+            name="Stat2", value="test", type=DataType.STRUCTUREDVALUE))
+        device.add_command(DeviceCommand(name="Com1"))
+
+        # use patch_device to post
+        self.client.patch_device(device=device)
+
+        cb_client = ContextBrokerClient(url=settings.CB_URL,
+                                        fiware_header=self.fiware_header)
+
+        # test if attributes exists correctly
+        live_entity = cb_client.get_entity(entity_id=device.entity_name)
+        live_entity.get_attribute("Att1")
+        live_entity.get_attribute("Com1")
+        live_entity.get_attribute("Com1_info")
+        live_entity.get_attribute("Com1_status")
+        self.assertEqual(live_entity.get_attribute("Stat1").value, "test")
+
+        # change device attributes and update
+        device.get_attribute("Stat1").value = "new_test"
+        device.delete_attribute(device.get_attribute("Stat2"))
+        device.delete_attribute(device.get_attribute("Att1"))
+        device.delete_attribute(device.get_attribute("Com1"))
+        device.add_attribute(DeviceAttribute(
+            name="Att2", object_id="o1", type=DataType.STRUCTUREDVALUE))
+        device.add_attribute(StaticDeviceAttribute(
+            name="Stat3", value="test3", type=DataType.STRUCTUREDVALUE))
+        device.add_command(DeviceCommand(name="Com2"))
+
+        self.client.patch_device(device=device, cb_url=settings.CB_URL)
+
+        # test if update does what it should, for the device. It does not
+        # change the entity completely:
+        live_entity = cb_client.get_entity(entity_id=device.entity_name)
+        with self.assertRaises(KeyError):
+            live_entity.get_attribute("Att1")
+        with self.assertRaises(KeyError):
+            live_entity.get_attribute("Com1_info")
+        with self.assertRaises(KeyError):
+            live_entity.get_attribute("Stat2")
+        self.assertEqual(live_entity.get_attribute("Stat1").value, "new_test")
+        live_entity.get_attribute("Stat3")
+        live_entity.get_attribute("Com2_info")
+        live_entity.get_attribute("Att2")
+
+        # test update where device information were changed
+        device_settings = {"endpoint": "http://localhost:7071",
+                           "device_id": "new_id",
+                           "entity_name": "new_name",
+                           "entity_type": "new_type",
+                           "timestamp": False,
+                           "apikey": "zuiop",
+                           "protocol": "HTTP",
+                           "transport": "HTTP"}
+
+        for key, value in device_settings.items():
+            device.__setattr__(key, value)
+            self.client.patch_device(device=device)
+            live_device = self.client.get_device(device_id=device.device_id)
+            self.assertEqual(live_device.__getattribute__(key), value)
+            cb_client.close()
 
     def tearDown(self) -> None:
         """
@@ -187,4 +377,4 @@ class TestAgent(unittest.TestCase):
         self.client.close()
         clear_all(fiware_header=self.fiware_header,
                   cb_url=settings.CB_URL,
-                  iota_url=settings.IOTA_URL)
+                  iota_url=settings.IOTA_JSON_URL)

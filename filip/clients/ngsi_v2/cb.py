@@ -1,12 +1,14 @@
 """
 Context Broker Module for API Client
 """
+
 from math import inf
 from pkg_resources import parse_version
 from pydantic import \
     parse_obj_as, \
     PositiveInt, \
-    PositiveFloat
+    PositiveFloat, \
+    AnyHttpUrl
 from typing import Any, Dict, List, Union, Optional
 import re
 import requests
@@ -25,7 +27,8 @@ from filip.models.ngsi_v2.context import \
     NamedCommand, \
     NamedContextAttribute, \
     Query, \
-    Update
+    Update, \
+    PropertyFormat
 from filip.models.ngsi_v2.base import AttrsFormat
 from filip.models.ngsi_v2.subscriptions import Subscription
 from filip.models.ngsi_v2.registrations import Registration
@@ -504,9 +507,15 @@ class ContextBrokerClient(BaseHttpClient):
         if options:
             params.update({'options': options})
         try:
+            # exclude commands from the send data,
+            # as they live in the IoTA-agent
+            excluded_keys = {'id', 'type'}
+            excluded_keys.update(
+                entity.get_commands(response_format=PropertyFormat.DICT).keys())
+
             res = self.post(url=url,
                             headers=headers,
-                            json=entity.dict(exclude={'id', 'type'},
+                            json=entity.dict(exclude=excluded_keys,
                                              exclude_unset=True,
                                              exclude_none=True))
             if res.ok:
@@ -518,7 +527,9 @@ class ContextBrokerClient(BaseHttpClient):
             self.log_error(err=err, msg=msg)
             raise
 
-    def delete_entity(self, entity_id: str, entity_type: str = None) -> None:
+    def delete_entity(self, entity_id: str, entity_type: str,
+                      delete_devices: bool = False,
+                      iota_url: AnyHttpUrl = settings.IOTA_URL) -> None:
 
         """
         Remove a entity from the context broker. No payload is required
@@ -527,15 +538,16 @@ class ContextBrokerClient(BaseHttpClient):
         Args:
             entity_id: Id of the entity to be deleted
             entity_type: several entities with the same entity id.
+            delete_devices: If True, also delete all devices that reference this
+                            entity (entity_id as entity_name)
+            iota_url: URL of the corresponding IotaClient
         Returns:
             None
         """
         url = urljoin(self.base_url, f'v2/entities/{entity_id}')
         headers = self.headers.copy()
-        if entity_type:
-            params = {'type': entity_type}
-        else:
-            params = {}
+        params = {'type': entity_type}
+
         try:
             res = self.delete(url=url, params=params, headers=headers)
             if res.ok:
@@ -546,6 +558,48 @@ class ContextBrokerClient(BaseHttpClient):
             msg = f"Could not delete entity {entity_id} !"
             self.log_error(err=err, msg=msg)
             raise
+
+        if delete_devices:
+            from filip.clients.ngsi_v2 import IoTAClient
+            iota_client = IoTAClient(url=iota_url,
+                                     fiware_header=self.fiware_headers)
+
+            for device in iota_client.get_device_list(entity=entity_id):
+                if device.entity_type == entity_type:
+                    iota_client.delete_device(device_id=device.device_id)
+
+    def delete_entities(self, entities: List[ContextEntity]) -> None:
+        """
+        Remove a list of entities from the context broker. This methode is
+        more efficient than to call delete_entity() for each entity
+
+        Args:
+            entities: List[ContextEntity]: List of entities to be deleted
+        Raises:
+            Exception, if one of the entities is not in the ContextBroker
+        Returns:
+            None
+        """
+
+        # update() delete, deletes all entities without attributes completely,
+        # and removes the attributes for the other
+        # The entities are sorted based on the fact if they have
+        # attributes.
+        entities_with_attributes: List[ContextEntity] = []
+        for entity in entities:
+            attribute_names = [key for key in entity.dict() if key not in
+                               ContextEntity.__fields__]
+            if len(attribute_names) > 0:
+                entities_with_attributes.append(
+                    ContextEntity(id=entity.id, type=entity.type))
+
+        # Post update_delete for those without attribute only once,
+        # for the other post update_delete again but for the changed entity
+        # in the ContextBroker (only id and type left)
+        if len(entities) > 0:
+            self.update(entities=entities, action_type="delete")
+        if len(entities_with_attributes) > 0:
+            self.update(entities=entities_with_attributes, action_type="delete")
 
     def replace_entity_attributes(self,
                                   entity: ContextEntity,
@@ -1340,6 +1394,144 @@ class ContextBrokerClient(BaseHttpClient):
             self.log_error(err=err, msg=msg)
             raise
 
+    def does_entity_exists(self,
+                           entity_id: str,
+                           entity_type: str) -> bool:
+        """
+        Test if an entity with given id and type is present in the CB
+        Args:
+            entity_id: Entity id
+            entity_type: Entity type
+        Returns:
+            bool; True if entity exists
+
+        Raises:
+            RequestException, if any error occurres (e.g: No Connection),
+            except that the entity is not found
+        """
+        try:
+            self.get_entity(entity_id=entity_id, entity_type=entity_type)
+        except requests.RequestException as err:
+            if not err.response.status_code == 404:
+                raise
+            return False
+        
+        return True
+
+    def patch_entity(self,
+                     entity: ContextEntity,
+                     old_entity: Optional[ContextEntity] = None) -> None:
+        """
+        Takes a given entity and updates the state in the CB to match it.
+        Args:
+           entity: Entity to update
+           old_entity: OPTIONAL, if given only the differences between the
+                       old_entity and entity are updated in the CB.
+                       Other changes made to the entity in CB, can be kept.
+        Returns:
+           None
+        """
+
+        new_entity = entity
+
+        if old_entity is None:
+            # If no old entity_was provided we use the current state to compare
+            # the entity to
+            if self.does_entity_exists(entity_id=new_entity.id,
+                                       entity_type=new_entity.type):
+                old_entity = self.get_entity(entity_id=new_entity.id,
+                                             entity_type=new_entity.type)
+            else:
+                # the entity is new, post and finish
+                self.post_entity(new_entity, update=False)
+                return
+
+        else:
+            # An old_entity was provided
+            # check if the old_entity (still) exists else recall methode
+            # and discard old_entity
+            if not self.does_entity_exists(entity_id=old_entity.id,
+                                           entity_type=old_entity.type):
+                self.patch_entity(new_entity)
+                return
+
+            # if type or id was changed, the old_entity needs to be deleted
+            # and the new_entity created
+            # In this case we will loose the current state of the entity
+            if old_entity.id != new_entity.id or \
+                    old_entity.type != new_entity.type:
+                self.delete_entity(entity_id=old_entity.id,
+                                   entity_type=old_entity.type)
+
+                if not self.does_entity_exists(entity_id=new_entity.id,
+                                               entity_type=new_entity.type):
+                    self.post_entity(entity=new_entity, update=False)
+                    return
+
+        # At this point we know that we need to patch only the attributes of
+        # the entity
+        # Check the differences between the attributes of old and new entity
+        # Delete the removed attributes, create the new ones,
+        # and update the existing if necessary
+        old_attributes = old_entity.get_attributes()
+        new_attributes = new_entity.get_attributes()
+
+        # Manage attributes that existed before
+        for old_attr in old_attributes:
+            # commands do not exist in the ContextEntity and are only
+            # registrations to the corresponding device. Operations as
+            # delete will fail as it does not technically exists
+            corresponding_new_attr = None
+            for new_attr in new_attributes:
+                if new_attr.name == old_attr.name:
+                    corresponding_new_attr = new_attr
+
+            if corresponding_new_attr is None:
+                # Attribute no longer exists, delete it
+                try:
+                    self.delete_entity_attribute(entity_id=new_entity.id,
+                                                 entity_type=new_entity.type,
+                                                 attr_name=old_attr.name)
+                except requests.RequestException as err:
+                    # if the attribute is provided by a registration the
+                    # deletion will fail
+                    if not err.response.status_code == 404:
+                        raise
+            else:
+                # Check if attributed changed in any way, if yes update
+                # else do nothing and keep current state
+                if not old_attr.__eq__(corresponding_new_attr):
+                    try:
+                        self.update_entity_attribute(
+                            entity_id=new_entity.id,
+                            entity_type=new_entity.type,
+                            attr=corresponding_new_attr)
+                    except requests.RequestException as err:
+                        # if the attribute is provided by a registration the
+                        # update will fail
+                        if not err.response.status_code == 404:
+                            raise
+
+        # Create new attributes
+        update_entity = ContextEntity(id=entity.id, type=entity.type)
+        update_needed = False
+        for new_attr in new_attributes:
+            # commands do not exist in the ContextEntity and are only
+            # registrations to the corresponding device. Operations as
+            # delete will fail as it does not technically exists
+            attr_existed = False
+            for old_attr in old_attributes:
+                if new_attr.name == old_attr.name:
+                    attr_existed = True
+
+            if not attr_existed:
+                update_needed = True
+                update_entity.add_attributes([new_attr])
+
+        if update_needed:
+            self.update_entity(update_entity, append=True)
+
+
 #    def get_subjects(self, object_entity_name: str, object_entity_type: str, subject_type=None):
 #        """
 #        Function gets the JSON for child / subject entities for a parent /
@@ -1394,7 +1586,7 @@ class ContextBrokerClient(BaseHttpClient):
 #        :param associated_type: if only associated data of one type should
 #        be returned, this parameter has to be the type
 #        :return: A dictionary, containing the data of the entity,
-#        a key "subjects" and "objects" that contain each a list
+#        a key "subjects" and "objects" that contain each a _list
 #                with the reflective data
 #        """
 #        data_dict = {}
@@ -1409,7 +1601,7 @@ class ContextBrokerClient(BaseHttpClient):
 #        if associated_objects is not None:
 #            object_json = json.loads(associated_objects)
 #            data_dict["objects"] = []
-#            if isinstance(object_json, list):
+#            if isinstance(object_json, _list):
 #                for associated_object in object_json:
 #                    entity_name = associated_object["id"]
 #                    object_data = json.loads(self.get_entity(
@@ -1513,7 +1705,7 @@ class ContextBrokerClient(BaseHttpClient):
 #                            # Get the attrs first, to avoid code duplication
 #                            # last thing to compare is the attributes
 #                            # Assumption -> position is the same as the
-#                            entities list
+#                            entities _list
 #                            # i == j
 #                            i = subscription_subject["entities"].index(entity)
 #                            j = existing_subscription["subject"][

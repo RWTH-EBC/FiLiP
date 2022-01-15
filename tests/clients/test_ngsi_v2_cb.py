@@ -1,19 +1,17 @@
 """
 Tests for filip.cb.client
-
-edited Sep 15, 2021
-
-@author Jeff Reding
-
 """
+import copy
 import unittest
 import logging
 import time
 import random
 import json
+
 import paho.mqtt.client as mqtt
 from datetime import datetime, timedelta
 from urllib.parse import urlparse
+from requests import RequestException
 from filip.models.base import FiwareHeader
 from filip.utils.simple_ql import QueryString
 from filip.clients.ngsi_v2 import ContextBrokerClient
@@ -27,7 +25,8 @@ from filip.models.ngsi_v2.context import \
     Query, \
     ActionType
 
-from filip.models.ngsi_v2.base import AttrsFormat, EntityPattern, Status
+from filip.models.ngsi_v2.base import AttrsFormat, EntityPattern, Status, \
+    NamedMetadata
 from filip.models.ngsi_v2.subscriptions import Mqtt, Message, Subscription
 from filip.models.ngsi_v2.iot import \
     Device, \
@@ -46,6 +45,7 @@ class TestContextBroker(unittest.TestCase):
     """
     Test class for ContextBrokerClient
     """
+
     def setUp(self) -> None:
         """
         Setup test data
@@ -57,7 +57,7 @@ class TestContextBroker(unittest.TestCase):
             service_path=settings.FIWARE_SERVICEPATH)
         clear_all(fiware_header=self.fiware_header,
                   cb_url=settings.CB_URL,
-                  iota_url=settings.IOTA_URL)
+                  iota_url=settings.IOTA_JSON_URL)
         self.resources = {
             "entities_url": "/v2/entities",
             "types_url": "/v2/types",
@@ -125,7 +125,7 @@ class TestContextBroker(unittest.TestCase):
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
                 cb_url=settings.CB_URL,
-                iota_url=settings.IOTA_URL)
+                iota_url=settings.IOTA_JSON_URL)
     def test_pagination(self):
         """
         Test pagination of context broker client
@@ -221,7 +221,7 @@ class TestContextBroker(unittest.TestCase):
             client.update_entity(entity=res_entity)
             self.assertEqual(client.get_entity(entity_id=self.entity.id),
                              res_entity)
-            res_entity.add_properties({'pressure': ContextAttribute(
+            res_entity.add_attributes({'pressure': ContextAttribute(
                 type='Number', value=1050)})
             client.update_entity(entity=res_entity)
             self.assertEqual(client.get_entity(entity_id=self.entity.id),
@@ -253,7 +253,7 @@ class TestContextBroker(unittest.TestCase):
             attr_dict = NamedContextAttribute(name='attr_dict',
                                               type='StructuredValue',
                                               value={'key': 'value'})
-            entity.add_properties([attr_txt,
+            entity.add_attributes([attr_txt,
                                    attr_bool,
                                    attr_float,
                                    attr_list,
@@ -318,9 +318,10 @@ class TestContextBroker(unittest.TestCase):
             client.get_entity_types(options='count')
             client.get_entity_types(options='values')
             client.get_entity_type(entity_type='MyType')
-            client.delete_entity(entity_id=self.entity.id)
+            client.delete_entity(entity_id=self.entity.id,
+                                 entity_type=self.entity.type)
 
-    @unittest.skip('Does not currently not work in CI')
+    @unittest.skip('Does currently not work in CI')
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
                 cb_url=settings.CB_URL)
@@ -374,7 +375,7 @@ class TestContextBroker(unittest.TestCase):
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
                 cb_url=settings.CB_URL,
-                iota_url=settings.IOTA_URL)
+                iota_url=settings.IOTA_JSON_URL)
     def test_subscription_set_status(self):
         """
         Test subscription operations of context broker client
@@ -407,7 +408,7 @@ class TestContextBroker(unittest.TestCase):
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
                 cb_url=settings.CB_URL,
-                iota_url=settings.IOTA_URL)
+                iota_url=settings.IOTA_JSON_URL)
     def test_mqtt_subscriptions(self):
         mqtt_url = settings.MQTT_BROKER_URL
         mqtt_topic = ''.join([settings.FIWARE_SERVICE,
@@ -444,13 +445,12 @@ class TestContextBroker(unittest.TestCase):
             nonlocal sub_message
             sub_message = Message.parse_raw(msg.payload)
 
-        def on_disconnect(client, userdata, reasonCode):
+        def on_disconnect(client, userdata, reasonCode, properties=None):
             logger.info("MQTT client disconnected with reasonCode"
                         + str(reasonCode))
 
         import paho.mqtt.client as mqtt
-        mqtt_client = mqtt.Client(client_id="filip-test",
-                                  userdata=None,
+        mqtt_client = mqtt.Client(userdata=None,
                                   protocol=mqtt.MQTTv5,
                                   transport="tcp")
         # add our callbacks to the client
@@ -515,7 +515,7 @@ class TestContextBroker(unittest.TestCase):
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
                 cb_url=settings.CB_URL,
-                iota_url=settings.IOTA_URL)
+                iota_url=settings.IOTA_JSON_URL)
     def test_command_with_mqtt(self):
         """
         Test if a command can be send to a device in FIWARE
@@ -559,7 +559,7 @@ class TestContextBroker(unittest.TestCase):
                         entity_type='Thing2',
                         protocol='IoTA-JSON',
                         transport='MQTT',
-                        apikey='filip_test_device',
+                        apikey=settings.FIWARE_SERVICEPATH.strip('/'),
                         attributes=[device_attr1],
                         static_attributes=[static_device_attr],
                         commands=[device_command])
@@ -576,15 +576,16 @@ class TestContextBroker(unittest.TestCase):
 
         # Send device configuration to FIWARE via the IoT-Agent. We use the
         # general ngsiv2 httpClient for this.
-        service_group = ServiceGroup(service=self.fiware_header.service,
-                                     subservice=self.fiware_header.service_path,
-                                     apikey='filip_test_group',
-                                     resource='/iot/json')
+        service_group = ServiceGroup(
+            service=self.fiware_header.service,
+            subservice=self.fiware_header.service_path,
+            apikey=settings.FIWARE_SERVICEPATH.strip('/'),
+            resource='/iot/json')
 
         # create the Http client node that once sent the device cannot be posted
         # again and you need to use the update command
         config = HttpClientConfig(cb_url=settings.CB_URL,
-                                  iota_url=settings.IOTA_URL)
+                                  iota_url=settings.IOTA_JSON_URL)
         client = HttpClient(fiware_header=self.fiware_header, config=config)
         client.iota.post_group(service_group=service_group, update=True)
         client.iota.post_device(device=device, update=True)
@@ -624,7 +625,7 @@ class TestContextBroker(unittest.TestCase):
                                  f"/{device.device_id}/cmdexe",
                            payload=json.dumps(res))
 
-        def on_disconnect(client, userdata, reasonCode):
+        def on_disconnect(client, userdata, reasonCode, properties=None):
             pass
 
         mqtt_client = mqtt.Client(client_id="filip-test",
@@ -680,6 +681,98 @@ class TestContextBroker(unittest.TestCase):
         # disconnect the mqtt device
         mqtt_client.disconnect()
 
+    def test_patch_entity(self) -> None:
+        """
+        Test the methode: patch_entity
+        Returns:
+           None
+        """
+
+        # setup test-entity
+        entity = ContextEntity(id="test_id1", type="test_type1")
+        attr1 = NamedContextAttribute(name="attr1", value="1")
+        attr1.metadata["m1"] = \
+            NamedMetadata(name="meta1", type="metatype", value="2")
+        attr2 = NamedContextAttribute(name="attr2", value="2")
+        attr1.metadata["m2"] = \
+            NamedMetadata(name="meta2", type="metatype", value="3")
+        entity.add_attributes([attr1, attr2])
+
+        # sub-Test1: Post new
+        self.client.patch_entity(entity=entity)
+        self.assertEqual(entity,
+                         self.client.get_entity(entity_id=entity.id))
+        self.tearDown()
+
+        # sub-Test2: ID/type of old_entity changed
+        self.client.post_entity(entity=entity)
+        test_entity = ContextEntity(id="newID", type="newType")
+        test_entity.add_attributes([attr1, attr2])
+        self.client.patch_entity(test_entity, old_entity=entity)
+        self.assertEqual(test_entity,
+                         self.client.get_entity(entity_id=test_entity.id))
+        self.assertRaises(RequestException, self.client.get_entity,
+                          entity_id=entity.id)
+        self.tearDown()
+
+        # sub-Test3: a non valid old_entity is provided, entity exists
+        self.client.post_entity(entity=entity)
+        old_entity = ContextEntity(id="newID", type="newType")
+
+        self.client.patch_entity(entity, old_entity=old_entity)
+        self.assertEqual(entity, self.client.get_entity(entity_id=entity.id))
+        self.tearDown()
+
+        # sub-Test4: no old_entity provided, entity is new
+        old_entity = ContextEntity(id="newID", type="newType")
+        self.client.patch_entity(entity, old_entity=old_entity)
+        self.assertEqual(entity, self.client.get_entity(entity_id=entity.id))
+        self.tearDown()
+
+        # sub-Test5: no old_entity provided, entity is new
+        old_entity = ContextEntity(id="newID", type="newType")
+        self.client.patch_entity(entity, old_entity=old_entity)
+        self.assertEqual(entity, self.client.get_entity(entity_id=entity.id))
+        self.tearDown()
+
+        # sub-Test6: New attr, attr del, and attr changed. No Old_entity given
+        self.client.post_entity(entity=entity)
+        test_entity = ContextEntity(id="test_id1", type="test_type1")
+        attr1_changed = NamedContextAttribute(name="attr1", value="2")
+        attr1_changed.metadata["m4"] = \
+            NamedMetadata(name="meta3", type="metatype5", value="4")
+        attr3 = NamedContextAttribute(name="attr3", value="3")
+        test_entity.add_attributes([attr1_changed, attr3])
+        self.client.patch_entity(test_entity)
+
+        self.assertEqual(test_entity,
+                         self.client.get_entity(entity_id=entity.id))
+        self.tearDown()
+
+        # sub-Test7: Attr changes, concurrent changes in Fiware,
+        #            old_entity given
+
+        self.client.post_entity(entity=entity)
+
+        concurrent_entity = ContextEntity(id="test_id1", type="test_type1")
+        attr1_changed = copy.deepcopy(attr1)
+        attr1_changed.metadata["m1"].value = "3"
+        attr1_changed.value = "4"
+        concurrent_entity.add_attributes([attr1_changed, attr2])
+        self.client.patch_entity(concurrent_entity)
+
+        user_entity = copy.deepcopy(entity)
+        attr3 = NamedContextAttribute(name="attr3", value="3")
+        user_entity.add_attributes([attr3])
+        self.client.patch_entity(user_entity, old_entity=entity)
+
+        result_entity = concurrent_entity
+        result_entity.add_attributes([attr2, attr3])
+
+        self.assertEqual(result_entity,
+                         self.client.get_entity(entity_id=entity.id))
+        self.tearDown()
+
     def tearDown(self) -> None:
         """
         Cleanup test server
@@ -687,4 +780,4 @@ class TestContextBroker(unittest.TestCase):
         self.client.close()
         clear_all(fiware_header=self.fiware_header,
                   cb_url=settings.CB_URL,
-                  iota_url=settings.IOTA_URL)
+                  iota_url=settings.IOTA_JSON_URL)

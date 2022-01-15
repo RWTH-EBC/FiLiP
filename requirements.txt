@@ -1,4 +1,5 @@
 requests>=2.23.0
+python-dotenv>=0.19.1
 pydantic[dotenv]>=1.8.1
 aenum>=3.0.0
 pathlib>=1.0.1
@@ -7,9 +8,13 @@ pytz>=2019.1
 rapidfuzz>=1.7.1
 pandas>=1.2.0
 setuptools>=40.6.0
-paho-mqtt>=1.5.1
 pandas_datapackage_reader>=0.18.0
-tables>=3.6.1
 python-Levenshtein>=0.12.2
-paho-mqtt
+numpy~=1.19.5
+rdflib~=6.0.0
+python-dateutil>=2.8.2
+wget >=3.2
+stringcase>=1.2.0
+igraph==0.9.8
+paho-mqtt>=1.6.1
 datamodel_code_generator>=0.11.14

@@ -1,9 +1,13 @@
+"""
+# Example how to use Entity-models and interact with teh orion ContextBroker
+"""
+
 import logging
-from typing import List
-from requests import RequestException
+
 from filip.clients.ngsi_v2 import ContextBrokerClient
-from filip.models.base import FiwareHeader
-from filip.models.ngsi_v2.context import ContextEntity, ContextAttribute
+from filip.models.base import FiwareHeader, DataType
+from filip.models.ngsi_v2.context import ContextEntity, ContextAttribute, \
+    NamedContextAttribute
 from filip.utils.simple_ql import QueryString
 
 # Setting up logging
@@ -14,183 +18,117 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-def setup():
-    """
-    Get version of context broker
-    """
-    logger.info("------Setting up clients------")
-    with ContextBrokerClient(
-            fiware_header=FiwareHeader(service='filip',
-                                       service_path='/testing')) as cb_client:
-        for key, value in cb_client.get_version().items():
-            print("Context broker version" + value["version"] + "at url " +
-                  cb_client.base_url)
-
-
-def create_entities():
-    """
-    Create entities
-    """
-
-    with ContextBrokerClient(
-            fiware_header=FiwareHeader(service='filip',
-                                       service_path='/testing')) as cb_client:
-        room1 = {"id": "Room1",
-                 "type": "Room",
-                 "temperature": {"value": 11,
-                                 "type": "Float"},
-                 "pressure": {"value": 111,
-                              "type": "Integer"}
-                 }
-
-        room2 = {"id": "Room2",
-                 "type": "Room",
-                 "temperature": {"value": 22,
-                                 "type": "Float"},
-                 "pressure": {"value": 222,
-                              "type": "Integer"}
-                 }
-
-        room3 = {"id": "Room3",
-                 "type": "Room",
-                 "temperature": {"value": 33,
-                                 "type": "Float"},
-                 "pressure": {"value": 333,
-                              "type": "Integer"}
-                 }
-        logger.info("------Creating example entities------")
-
-        room1_entity = ContextEntity(**room1)
-        room2_entity = ContextEntity(**room2)
-        room3_entity = ContextEntity(**room3)
-
-        logger.info("------Posting example entities------")
-
-        cb_client.post_entity(entity=room1_entity)
-        cb_client.post_entity(entity=room2_entity)
-        cb_client.post_entity(entity=room3_entity)
-
-        return [room1_entity, room2_entity, room3_entity]
-
-
-def filter_entities():
-    """
-    Retrieve and filter entities
-    Returns:
-
-    """
-    with ContextBrokerClient(
-            fiware_header=FiwareHeader(service='filip',
-                                       service_path='/testing')) as cb_client:
-        logger.info("------Get all entities from context broker------")
-        logger.info(cb_client.get_entity_list())
-
-        logger.info("------Get entities by id------")
-        logger.info(cb_client.get_entity_list(entity_ids=["Room1"]))
-
-        logger.info("------Get entities by type------")
-        logger.info(cb_client.get_entity_list(entity_types=["Room"]))
-
-        logger.info("------Get entities by id pattern------")
-        logger.info(cb_client.get_entity_list(id_pattern="^Room[2-5]"))
-
-        logger.info("------Get entities by query expression------")
-        query = QueryString(qs=[('temperature', '>', 22)])
-        logger.info(cb_client.get_entity_list(q=query))
-
-        logger.info("------Get attributes of entities------")
-        logger.info(cb_client.get_entity_attributes(entity_id="Room1"))
-
-
-def update_entity(entity: ContextEntity):
-    """
-    Update entitites
-    Args:
-        entity:
-    Returns:
-
-    """
-    with ContextBrokerClient(
-            fiware_header=FiwareHeader(service='filip',
-                                       service_path='/testing')) as cb_client:
-        entity.add_properties({'Space': ContextAttribute(
-            type='Number', value=111)})
-
-        logger.info("------Updating value of an attribute of an entity------")
-
-        logger.info(cb_client.update_attribute_value(entity_id=entity.id,
-                                                     attr_name="temperature",
-                                                     value=12))
-
-        logger.info("------Adding a new attribute to an entity------")
-        logger.info(cb_client.update_entity(entity=entity))
-
-        logger.info("------Checking if new attribute is added------")
-        logger.info(cb_client.get_entity_attributes(entity_id=entity.id))
-
-
-def error_check(entity: ContextEntity):
-    """
-    Check error messages
-    Args:
-        entity:
-    Returns:
-
-    """
-
-    with ContextBrokerClient(
-            fiware_header=FiwareHeader(service='filip',
-                                       service_path='/testing')) as cb_client:
-        try:
-            logger.info("-----Should return an error "
-                        "for non existing id------")
-            logger.info(cb_client.get_entity(entity_id="Room5"))
-        except RequestException:
-            try:
-                logger.info("-----Should return an error "
-                            "for non existing type-----")
-                logger.info(cb_client.get_entity(entity_id=entity.id,
-                                                 entity_type="Surface"))
-            except RequestException:
-                try:
-                    logger.info("------Should return an error for non "
-                                "existing attribute name------")
-                    logger.info(
-                        cb_client.get_attribute_value(entity_id=entity.id,
-                                                      attr_name="area"))
-                except RequestException:
-                    pass
-
-
-def delete_entities(entities_to_delete: List[ContextEntity]):
-    """
-    Clean up
-    Args:
-        entities_to_delete:
-
-    Returns:
-
-    """
-    with ContextBrokerClient(
-            fiware_header=FiwareHeader(service='filip',
-                                       service_path='/testing')) as cb_client:
-        logger.info("Deleting all test entities")
-        for entity in entities_to_delete:
-            cb_client.delete_entity(entity_id=entity.id)
-        return
-
-
 if __name__ == "__main__":
-    logger.info("------EXAMPLE ORION------")
+   
+    # # 1 Setup Client
+    #
+    # create the client, for more details view the example: client_example.py
+    cb_client = ContextBrokerClient(fiware_header=
+                                    FiwareHeader(service='filip',
+                                                 service_path='/testing'))
+    # View version
+    for key, value in cb_client.get_version().items():
+        logger.info("Context broker version" + value["version"] + " at url " +
+                    cb_client.base_url)
 
-    setup()
+    # # 2 Create Entities
+    #
+    # ## 2.1 Build Models
+    #
+    # Entities can be created by:
+    #
+    # ### 2.1.1 Passing a dict:
+    #
+    room1 = {"id": "Room1",
+             "type": "Room",
+             "temperature": {"value": 11,
+                             "type": "Float"},
+             "pressure": {"value": 111,
+                          "type": "Integer"}
+             }
+    room1_entity = ContextEntity(**room1)
 
-    entities = create_entities()
+    # ### 2.1.2 Using the constructor and interfaces
+    #
+    room2_entity = ContextEntity(id="Room2",type="Room")
+    temp_attr = NamedContextAttribute(name="temperature", value=22,
+                                      type=DataType.FLOAT)
+    pressure_attr = NamedContextAttribute(name="pressure", value=222,
+                                          type="Integer")
+    room2_entity.add_attributes([temp_attr, pressure_attr])
 
-    filter_entities()
+    # ## 2.2 Post Entities
+    #
+    cb_client.post_entity(entity=room1_entity)
+    cb_client.post_entity(entity=room2_entity)
 
-    update_entity(entities[0])
+    # # 3 Access entities in Fiware
+    #
+    # Get all entities from context broker
+    logger.info(cb_client.get_entity_list())
 
-    error_check(entities[0])
+    # Get entities by id
+    logger.info(cb_client.get_entity_list(entity_ids=["Room1"]))
 
-    delete_entities(entities)
+    # Get entities by type
+    logger.info(cb_client.get_entity_list(entity_types=["Room"]))
+
+    # Get entities by id pattern
+    logger.info(cb_client.get_entity_list(id_pattern="^Room[2-5]"))
+
+    # Get entities by query expression
+    query = QueryString(qs=[('temperature', '>', 22)])
+    logger.info(cb_client.get_entity_list(q=query))
+
+    # Get attributes of entities
+    logger.info(cb_client.get_entity_attributes(entity_id="Room1"))
+
+    # Accessing non existing ids or attributes will always throw an request
+    # error
+
+    # # 4 Changing Entities
+    #
+    # ## 4.1 Updating
+
+    entity = room2_entity
+    entity.add_attributes({'Space': ContextAttribute(type='Number',
+                                                     value=111)})
+    # ### 4.1.1 Updating directly
+    #
+    # Using the Filip interface, we can update different properties of our
+    # entity directly in the live version in FIWARE, here are listed a few
+    # examples of what is possible:
+
+    # Updating value of an attribute of an entity
+    logger.info(cb_client.update_attribute_value(entity_id=room1_entity.id,
+                                                 attr_name="temperature",
+                                                 value=12))
+    # Deleting attributes
+    logger.info(cb_client.delete_entity_attribute(entity_id=room1_entity.id,
+                                                  attr_name="temperature"))
+    # ### 4.1.2 Updating the model
+    #
+    # Most of the time it is more convenient to update our local model,
+    # and let the library handle all the needed updates to synchronise the
+    # live state to the model state.
+    # Hereby it is tried to only make changes that were done locally,
+    # keeping as much of the current live state as possible
+
+    # when accessing an attribute a new object is created. We need to
+    # manually transmit the made changes.
+    temp_attr = room2_entity.get_attribute("temperature")
+    temp_attr.value = 15
+    room2_entity.update_attribute([temp_attr])
+
+    room2_entity.delete_attributes(["pressure"])
+
+    # all changes are transmitted with one methode call
+    cb_client.patch_entity(room2_entity)
+
+    # ## 4.2 Deleting
+    #
+    # To delete an entry in Fiware, we can call:
+    cb_client.delete_entity(entity_id=room2_entity.id,
+                            entity_type=room2_entity.type)
+    cb_client.delete_entity(entity_id=room1_entity.id,
+                            entity_type=room1_entity.type)

@@ -1,0 +1,324 @@
+@prefix : <http://www.semanticweb.org/building#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@base <http://www.semanticweb.org/building> .
+
+<http://www.semanticweb.org/building> rdf:type owl:Ontology ;
+                                       owl:imports <http://www.w3.org/2006/time#2016> .
+
+#################################################################
+#    Datatypes
+#################################################################
+
+###  http://www.semanticweb.org/building#MeasurementType
+:MeasurementType rdf:type rdfs:Datatype ;
+                 owl:equivalentClass [ rdf:type rdfs:Datatype ;
+                                       owl:oneOf [ rdf:type rdf:List ;
+                                                   rdf:first "Air Quality" ;
+                                                   rdf:rest [ rdf:type rdf:List ;
+                                                              rdf:first "Temperature" ;
+                                                              rdf:rest rdf:nil
+                                                            ]
+                                                 ]
+                                     ] .
+
+
+###  http://www.semanticweb.org/building#Unit
+:Unit rdf:type rdfs:Datatype ;
+      owl:equivalentClass [ rdf:type rdfs:Datatype ;
+                            owl:oneOf [ rdf:type rdf:List ;
+                                        rdf:first "Celsius" ;
+                                        rdf:rest [ rdf:type rdf:List ;
+                                                   rdf:first "Kelvin" ;
+                                                   rdf:rest [ rdf:type rdf:List ;
+                                                              rdf:first "Relative Humidity" ;
+                                                              rdf:rest rdf:nil
+                                                            ]
+                                                 ]
+                                      ]
+                          ] .
+
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://www.semanticweb.org/building#connectedTo
+:connectedTo rdf:type owl:ObjectProperty ;
+             rdfs:subPropertyOf owl:topObjectProperty ;
+             owl:inverseOf :hasOutlet .
+
+
+###  http://www.semanticweb.org/building#hasFloor
+:hasFloor rdf:type owl:ObjectProperty ;
+          rdfs:subPropertyOf owl:topObjectProperty .
+
+
+###  http://www.semanticweb.org/building#hasOutlet
+:hasOutlet rdf:type owl:ObjectProperty ;
+           rdfs:subPropertyOf owl:topObjectProperty .
+
+
+###  http://www.semanticweb.org/building#hasProducer
+:hasProducer rdf:type owl:ObjectProperty ;
+             rdfs:subPropertyOf owl:topObjectProperty .
+
+
+###  http://www.semanticweb.org/building#hasRoom
+:hasRoom rdf:type owl:ObjectProperty .
+
+
+###  http://www.semanticweb.org/building#hasSensor
+:hasSensor rdf:type owl:ObjectProperty ;
+           rdfs:subPropertyOf owl:topObjectProperty .
+
+
+###  http://www.semanticweb.org/building#hasTenant
+:hasTenant rdf:type owl:ObjectProperty ;
+           rdfs:subPropertyOf owl:topObjectProperty .
+
+
+###  http://www.semanticweb.org/building#inRoom
+:inRoom rdf:type owl:ObjectProperty ;
+        rdfs:subPropertyOf owl:topObjectProperty .
+
+
+###  http://www.semanticweb.org/building#inTimeZone
+:inTimeZone rdf:type owl:ObjectProperty .
+
+
+#################################################################
+#    Data properties
+#################################################################
+
+###  http://www.semanticweb.org/building#controlCommand
+:controlCommand rdf:type owl:DatatypeProperty .
+
+
+###  http://www.semanticweb.org/building#goalTemperature
+:goalTemperature rdf:type owl:DatatypeProperty ;
+                 rdfs:subPropertyOf owl:topDataProperty .
+
+
+###  http://www.semanticweb.org/building#measurement
+:measurement rdf:type owl:DatatypeProperty ;
+             rdfs:subPropertyOf owl:topDataProperty .
+
+
+###  http://www.semanticweb.org/building#measures
+:measures rdf:type owl:DatatypeProperty ;
+          rdfs:subPropertyOf owl:topDataProperty .
+
+
+###  http://www.semanticweb.org/building#name
+:name rdf:type owl:DatatypeProperty ;
+      rdfs:subPropertyOf owl:topDataProperty .
+
+
+###  http://www.semanticweb.org/building#state
+:state rdf:type owl:DatatypeProperty ;
+       rdfs:subPropertyOf owl:topDataProperty .
+
+
+###  http://www.semanticweb.org/building#unit
+:unit rdf:type owl:DatatypeProperty ;
+      rdfs:subPropertyOf owl:topDataProperty .
+
+
+###  http://www.semanticweb.org/building#volume
+:volume rdf:type owl:DatatypeProperty .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://www.semanticweb.org/building#AirProducer
+:AirProducer rdf:type owl:Class ;
+             rdfs:subClassOf :Producer .
+
+
+###  http://www.semanticweb.org/building#Building
+:Building rdf:type owl:Class ;
+          rdfs:subClassOf [ rdf:type owl:Restriction ;
+                            owl:onProperty :hasFloor ;
+                            owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                            owl:onClass :Floor
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :inTimeZone ;
+                            owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                            owl:onClass <http://www.w3.org/2006/time#TimeZone>
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :goalTemperature ;
+                            owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                            owl:onDataRange xsd:integer
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :name ;
+                            owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                            owl:onDataRange xsd:string
+                          ] .
+
+
+###  http://www.semanticweb.org/building#Circuit
+:Circuit rdf:type owl:Class ;
+         rdfs:subClassOf [ rdf:type owl:Restriction ;
+                           owl:onProperty :hasOutlet ;
+                           owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                           owl:onClass :Outlet
+                         ] ,
+                         [ rdf:type owl:Restriction ;
+                           owl:onProperty :hasProducer ;
+                           owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                           owl:onClass :Producer
+                         ] ,
+                         [ rdf:type owl:Restriction ;
+                           owl:onProperty :name ;
+                           owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                           owl:onDataRange xsd:string
+                         ] .
+
+
+###  http://www.semanticweb.org/building#ColdProducer
+:ColdProducer rdf:type owl:Class ;
+              rdfs:subClassOf :Producer .
+
+
+###  http://www.semanticweb.org/building#Floor
+:Floor rdf:type owl:Class ;
+       rdfs:subClassOf [ rdf:type owl:Restriction ;
+                         owl:onProperty :hasRoom ;
+                         owl:allValuesFrom :Room
+                       ] ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :name ;
+                         owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                         owl:onDataRange xsd:string
+                       ] .
+
+
+###  http://www.semanticweb.org/building#HeatProducer
+:HeatProducer rdf:type owl:Class ;
+              rdfs:subClassOf :Producer .
+
+
+###  http://www.semanticweb.org/building#Outlet
+:Outlet rdf:type owl:Class ;
+        rdfs:subClassOf [ owl:intersectionOf ( [ rdf:type owl:Restriction ;
+                                                 owl:onProperty :connectedTo ;
+                                                 owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                                 owl:onClass :Circuit
+                                               ]
+                                               [ rdf:type owl:Restriction ;
+                                                 owl:onProperty :connectedTo ;
+                                                 owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                                 owl:onClass :Room
+                                               ]
+                                             ) ;
+                          rdf:type owl:Class
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :controlCommand ;
+                          owl:someValuesFrom xsd:string
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :state ;
+                          owl:someValuesFrom xsd:string
+                        ] .
+
+
+###  http://www.semanticweb.org/building#Producer
+:Producer rdf:type owl:Class ;
+          rdfs:subClassOf [ rdf:type owl:Restriction ;
+                            owl:onProperty :state ;
+                            owl:someValuesFrom xsd:string
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :controlCommand ;
+                            owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                            owl:onDataRange xsd:string
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :name ;
+                            owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                            owl:onDataRange xsd:string
+                          ] .
+
+
+###  http://www.semanticweb.org/building#Room
+:Room rdf:type owl:Class ;
+      rdfs:subClassOf [ rdf:type owl:Restriction ;
+                        owl:onProperty :hasOutlet ;
+                        owl:allValuesFrom :Outlet
+                      ] ,
+                      [ rdf:type owl:Restriction ;
+                        owl:onProperty :hasSensor ;
+                        owl:allValuesFrom :Sensor
+                      ] ,
+                      [ rdf:type owl:Restriction ;
+                        owl:onProperty :hasTenant ;
+                        owl:allValuesFrom :Tenant
+                      ] ,
+                      [ rdf:type owl:Restriction ;
+                        owl:onProperty :volume ;
+                        owl:someValuesFrom owl:rational
+                      ] ,
+                      [ rdf:type owl:Restriction ;
+                        owl:onProperty :goalTemperature ;
+                        owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                        owl:onDataRange xsd:integer
+                      ] ,
+                      [ rdf:type owl:Restriction ;
+                        owl:onProperty :name ;
+                        owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                        owl:onDataRange xsd:string
+                      ] .
+
+
+###  http://www.semanticweb.org/building#Sensor
+:Sensor rdf:type owl:Class ;
+        rdfs:subClassOf [ rdf:type owl:Restriction ;
+                          owl:onProperty :measurement ;
+                          owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                          owl:onDataRange owl:real
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :measures ;
+                          owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                          owl:onDataRange :MeasurementType
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :unit ;
+                          owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                          owl:onDataRange :Unit
+                        ] .
+
+
+###  http://www.semanticweb.org/building#Tenant
+:Tenant rdf:type owl:Class ;
+        rdfs:subClassOf [ rdf:type owl:Restriction ;
+                          owl:onProperty :goalTemperature ;
+                          owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                          owl:onDataRange xsd:integer
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :name ;
+                          owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                          owl:onDataRange xsd:string
+                        ] .
+
+
+#################################################################
+#    Individuals
+#################################################################
+
+###  http://www.semanticweb.org/building#ExampleIndividual
+:ExampleIndividual rdf:type owl:NamedIndividual .
+
+
+###  Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi

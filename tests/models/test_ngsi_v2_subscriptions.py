@@ -1,8 +1,4 @@
 """
-Created on Sep 15, 2021
-
-@author Thomas Storek
-
 Test module for context subscriptions and notifications
 """
 import unittest
@@ -25,6 +21,7 @@ class TestSubscriptions(unittest.TestCase):
     """
     Test class for context broker models
     """
+
     def setUp(self) -> None:
         """
         Setup test data
@@ -119,18 +116,23 @@ class TestSubscriptions(unittest.TestCase):
         }
 
         sub = Subscription.parse_obj(sub_dict)
-        fiware_header = FiwareHeader(service='filip',
-                                     service_path='/testing')
+        fiware_header = FiwareHeader(service=settings.FIWARE_SERVICE,
+                                     service_path=settings.FIWARE_SERVICEPATH)
         with ContextBrokerClient(
                 url=settings.CB_URL,
                 fiware_header=fiware_header) as client:
             sub_id = client.post_subscription(subscription=sub)
             sub_res = client.get_subscription(subscription_id=sub_id)
-            self.assertEqual(
-                sub.json(exclude={'id', 'status', 'expires'},
-                         exclude_none=True),
-                sub_res.json(exclude={'id', 'status', 'expires'},
-                             exclude_none=True))
+
+            def compare_dicts(dict1: dict, dict2: dict):
+                for key, value in dict1.items():
+                    if isinstance(value, dict):
+                        compare_dicts(value, dict2[key])
+                    else:
+                        self.assertEqual(str(value), str(dict2[key]))
+
+            compare_dicts(sub.dict(exclude={'id'}),
+                          sub_res.dict(exclude={'id'}))
 
     def tearDown(self) -> None:
         """

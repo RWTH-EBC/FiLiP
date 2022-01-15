@@ -1,13 +1,26 @@
+"""
+Test module for logging functionality
+"""
 import logging
 from unittest import TestCase
 
 
 class TestLoggingConfig(TestCase):
+    """
+    Test case for logging functionality
+    """
     def setUp(self) -> None:
         self.logger = logging.getLogger(
             name=f"{__package__}.{self.__class__.__name__}")
 
     def test_overwrite_config(self):
+        """
+        Tests to overwrite the logger configurations
+
+        Returns:
+            None
+        """
+
         # Try to set logging level before calling logging.basisConfig()
         # Since no handler is configured this will fail
         self.logger = logging.getLogger(
@@ -41,7 +54,7 @@ class TestLoggingConfig(TestCase):
         # Try to set loglevel via basicConfig
         new_loglevel = logging.WARNING
         self.logger.info("Set LOG_LEVEL to '%s' via basicConfig", new_loglevel)
-        #logging.basicConfig(level=new_loglevel,
+        # logging.basicConfig(level=new_loglevel,
         #                    format='%(asctime)s : %(name)s : %(levelname)s : '
         #                           '%(message)s')
         logger = logging.getLogger()

@@ -9,7 +9,9 @@ from filip.models.ngsi_v2.units import \
     UnitText, \
     load_units
 
+
 class TestUnitCodes(TestCase):
+
     def setUp(self):
         self.units_data = load_units()
         self.units = Units()

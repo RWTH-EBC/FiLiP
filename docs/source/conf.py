@@ -7,10 +7,8 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-import datetime
 import os
 import sys
-
 # pylint: disable-all
 
 sys.path.insert(0, os.path.abspath('../..'))
@@ -25,7 +23,7 @@ copyright = f'2021-{datetime.datetime.now().year}, RWTH Aachen University, ' \
 author = 'E.ON ERC - EBC'
 
 # The full version, including alpha/beta/rc tags
-release = "0.1.8"
+release = '0.1.8'
 
 # The short X.Y version.
 version = '.'.join(release.split('.')[0:2])

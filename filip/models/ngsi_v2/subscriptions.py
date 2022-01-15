@@ -1,10 +1,4 @@
-#!/usr/bin/env python
-
 """
-Created on Sep 15, 2021
-
-@author Thomas Storek
-
 This module contains NGSIv2 models for context subscription in the context
 broker.
 """
@@ -29,6 +23,7 @@ class Message(BaseModel):
     Model for a notification message, when sent to other NGSIv2-APIs
     """
     subscriptionId: Optional[str] = Field(
+        default=None,
         description="Id of the subscription the notification comes from",
     )
     data: List[ContextEntity] = Field(
@@ -54,10 +49,12 @@ class HttpCustom(Http):
     Model for custom notification patterns sent via HTTP
     """
     headers: Optional[Dict[str, Union[str, Json]]] = Field(
+        default=None,
         description="a key-map of HTTP headers that are included in "
                     "notification messages."
     )
     qs: Optional[Dict[str, Union[str, Json]]] = Field(
+        default=None,
         description="a key-map of URL query parameters that are included in "
                     "notification messages."
     )
@@ -69,6 +66,7 @@ class HttpCustom(Http):
                     "error is returned."
     )
     payload: Optional[str] = Field(
+        default=None,
         description='the payload to be used in notifications. If omitted, the '
                     'default payload (see "Notification Messages" sections) '
                     'is used.'
@@ -113,11 +111,13 @@ class MqttCustom(Mqtt):
     https://fiware-orion.readthedocs.io/en/3.2.0/user/mqtt_notifications/index.html
     """
     payload: Optional[str] = Field(
+        default=None,
         description='the payload to be used in notifications. If omitted, the '
                     'default payload (see "Notification Messages" sections) '
                     'is used.'
     )
     topic: Optional[str] = Field(
+        default=None,
         description='to specify the MQTT topic to use'
     )
 
@@ -129,26 +129,31 @@ class Notification(BaseModel):
     be included.
     """
     http: Optional[Http] = Field(
+        default=None,
         description='It is used to convey parameters for notifications '
                     'delivered through the HTTP protocol. Cannot be used '
                     'together with "httpCustom, mqtt, mqttCustom"'
     )
     httpCustom: Optional[HttpCustom] = Field(
+        default=None,
         description='It is used to convey parameters for notifications '
                     'delivered through the HTTP protocol. Cannot be used '
                     'together with "http"'
     )
     mqtt: Optional[Mqtt] = Field(
+        default=None,
         description='It is used to convey parameters for notifications '
                     'delivered through the MQTT protocol. Cannot be used '
                     'together with "http, httpCustom, mqttCustom"'
     )
     mqttCustom: Optional[MqttCustom] = Field(
+        default=None,
         description='It is used to convey parameters for notifications '
                     'delivered through the MQTT protocol. Cannot be used '
                     'together with "http, httpCustom, mqtt"'
     )
     attrs: Optional[List[str]] = Field(
+        default=None,
         description='List of attributes to be included in notification '
                     'messages. It also defines the order in which attributes '
                     'must appear in notifications when attrsFormat value is '
@@ -158,6 +163,7 @@ class Notification(BaseModel):
                     'metadata" section for more detail.'
     )
     exceptAttrs: Optional[List[str]] = Field(
+        default=None,
         description='List of attributes to be excluded from the notification '
                     'message, i.e. a notification message includes all entity '
                     'attributes except the ones listed in this field.'
@@ -171,6 +177,7 @@ class Notification(BaseModel):
                     '"Notification Messages" section.'
     )
     metadata: Optional[Any] = Field(
+        default=None,
         description='List of metadata to be included in notification messages. '
                     'See "Filtering out attributes and metadata" section for '
                     'more detail.'
@@ -221,11 +228,13 @@ class Response(Notification):
                     'Last notification timestamp in ISO8601 format.'
     )
     lastFailure: Optional[datetime] = Field(
+        default = None,
         description='(not editable, only present in GET operations): '
                     'Last failure timestamp in ISO8601 format. Not present if '
                     'subscription has never had a problem with notifications.'
     )
     lastSuccess: Optional[datetime] = Field(
+        default=None,
         description='(not editable, only present in GET operations): '
                     'Timestamp in ISO8601 format for last successful '
                     'notification. Not present if subscription has never '
@@ -284,7 +293,9 @@ class Subject(BaseModel):
         description="A list of objects, each one composed of by an Entity "
                     "Object:"
     )
-    condition: Optional[Condition] = Field()
+    condition: Optional[Condition] = Field(
+        default=None,
+    )
 
     class Config:
         """
@@ -300,10 +311,12 @@ class Subscription(BaseModel):
     https://fiware-orion.readthedocs.io/en/master/user/ngsiv2_implementation_notes/index.html#subscription-payload-validations
     """
     id: Optional[str] = Field(
+        default=None,
         description="Subscription unique identifier. Automatically created at "
                     "creation time."
     )
     description: Optional[str] = Field(
+        default=None,
         description="A free text used by the client to describe the "
                     "subscription."
     )
@@ -339,11 +352,13 @@ class Subscription(BaseModel):
         },
     )
     expires: Optional[datetime] = Field(
+        default=None,
         description="Subscription expiration date in ISO8601 format. "
                     "Permanent subscriptions must omit this field."
     )
 
     throttling: Optional[int] = Field(
+        default=None,
         description="Minimal period of time in seconds which "
                     "must elapse between two consecutive notifications. "
                     "It is optional."
