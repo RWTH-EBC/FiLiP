@@ -2,6 +2,7 @@
 # This example shows how to provision a virtual iot device in a FIWARE-based
 # IoT Platform using FiLiP and PahoMQTT
 """
+# ## Import packages
 import json
 import logging
 import random
@@ -20,15 +21,30 @@ from filip.models.ngsi_v2.iot import \
 from filip.models.ngsi_v2.context import NamedCommand
 from filip.clients.ngsi_v2 import HttpClient, HttpClientConfig
 
-# Before running the example you should set some global variables
-# Please, enter your URLs here!
-CB_URL = "http://yourHost:yourPort"
-IOTA_URL = "http://yourHost:yourPort"
-MQTT_BROKER_URL = "//yourHost:yourPort"
-DEVICE_APIKEY = 'filip-iot-example-device'
-SERVICE_GROUP_APIKEY= 'filip-iot-example-service-group'
-FIWARE_SERVICE = 'filip'
-FIWARE_SERVICE_PATH = '/iot_examples'
+# ## Parameters
+#
+# To run this example you need a working Fiware v2 setup with a
+# context-broker, an IoT-Agent and mqtt-broker. You can here set the
+# addresses:
+#
+# Host address of Context Broker
+CB_URL = "http://localhost:1026"
+# Host address of IoT-Agent
+IOTA_URL = "http://localhost:4041"
+# Host address of the MQTT-Broker
+MQTT_BROKER_URL = "mqtt://localhost:1883"
+
+# You can here also change the used Fiware service
+# FIWARE-Service
+SERVICE = 'filip'
+# FIWARE-Servicepath
+SERVICE_PATH = '/example'
+
+# You may also change the ApiKey Information
+# ApiKey of the Device
+DEVICE_APIKEY = 'filip-example-device'
+# ApiKey of the ServiceGroup
+SERVICE_GROUP_APIKEY= 'filip-example-service-group'
 
 # Setting up logging
 logging.basicConfig(
@@ -42,8 +58,8 @@ if __name__ == '__main__':
     # # 1 FiwareHeader
     # Since we want to use the multi-tenancy concept of fiware we always start
     # with create a fiware header
-    fiware_header = FiwareHeader(service=FIWARE_SERVICE,
-                                 service_path=FIWARE_SERVICE_PATH)
+    fiware_header = FiwareHeader(service=SERVICE,
+                                 service_path=SERVICE_PATH)
 
     # # 2 Setup
     #
@@ -187,7 +203,7 @@ if __name__ == '__main__':
                              f"/{device.device_id}/cmdexe",
                        payload=json.dumps(res))
 
-    def on_disconnect(client, userdata, reasonCode):
+    def on_disconnect(client, userdata, reasonCode, properties):
         logger.info("MQTT client disconnected" + str(reasonCode))
 
     mqtt_client = mqtt.Client(client_id="filip-iot-example",

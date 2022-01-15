@@ -1,7 +1,8 @@
 """
-# Examples for working with IoT Devices
+# # Examples for working with IoT Devices
 """
-
+# ## Import packages
+import logging
 import json
 from filip.clients.ngsi_v2 import IoTAClient
 from filip.models.base import FiwareHeader, DataType
@@ -9,31 +10,39 @@ from filip.models.ngsi_v2.iot import Device, ServiceGroup, TransportProtocol, \
     StaticDeviceAttribute, DeviceAttribute, LazyDeviceAttribute, DeviceCommand
 from uuid import uuid4
 
+# ## Parameters
+#
+# To run this example you need a working Fiware v2 setup with a context-broker
+# and an iota-broker. You can here set the addresses:
+#
+# Host address of Context Broker
+CB_URL = "http://localhost:1026"
+# Host address of IoT-Agent
+IOTA_URL = "http://localhost:4041"
 
-"""
-To run this example you need a working Fiware v2 setup with a context-broker 
-and an iota-broker. You can here set the addresses:
-"""
-cb_url = "http://localhost:1026"
-iota_url = "http://localhost:4041"
+# You can here also change the used Fiware service
+# FIWARE-Service
+SERVICE = 'filip'
+# FIWARE-Servicepath
+SERVICE_PATH = '/example'
 
-"""
-You can here also change the used Fiware service
-"""
-service = 'filip'
-service_path = '/example_iot'
+# Setting up logging
+logging.basicConfig(
+    level='INFO',
+    format='%(asctime)s %(name)s %(levelname)s: %(message)s')
+logger = logging.getLogger(__name__)
 
 
 if __name__ == "__main__":
-
     # # 1 Setup IoTAClient
     #
     # First a client is initialised that provides as access to our
-    # Fiware-server space. For more details on this step see:
-    # Example: client_example.py
+    # Fiware-server space. For more details on this step see e1_http_clients.py
+    fiware_header = FiwareHeader(service=SERVICE,
+                                 service_path=SERVICE_PATH)
     iota_client =  IoTAClient(
-        url=iota_url,
-        fiware_header=FiwareHeader(service=service,service_path=service_path))
+        url=IOTA_URL,
+        fiware_header=fiware_header)
 
     print("IoTA " + json.dumps(iota_client.get_version(), indent=2)
           + " at url " + iota_client.base_url)
@@ -53,8 +62,8 @@ if __name__ == "__main__":
     #
     # Dictionary:
     example_device = {"device_id": "sensor008",
-                      "service": service,
-                      "service_path": service_path,
+                      "service": SERVICE,
+                      "service_path": SERVICE_PATH,
                       "entity_name": "sensor1",
                       "entity_type": "Sensor",
                       "timezone": 'Europe/Berlin',
@@ -73,8 +82,8 @@ if __name__ == "__main__":
 
     # Direct Parameters:
     device2 = Device(device_id="sensor009",
-                     service=service,
-                     service_path=service_path,
+                     service=SERVICE,
+                     service_path=SERVICE_PATH,
                      entity_name="sensor2",
                      entity_type="Sensor",
                      transport=TransportProtocol.HTTP,
@@ -106,8 +115,7 @@ if __name__ == "__main__":
                                           object_id="t"))
     # LazyDeviceAttributes, only update the value in the entity if it is
     # accessed (event based)
-    device2.add_attribute(LazyDeviceAttribute(name="temperature",
-                                              object_id="t"))
+    device2.add_attribute(LazyDeviceAttribute(name="temperature"))
 
     # ### 2.2.3 Commands
     #
@@ -121,10 +129,12 @@ if __name__ == "__main__":
     # # 3 Interact with Fiware
     #
     # ## 3.1 Upload a new Device
+    print(f"Payload that will be send to the IoT-Agent:\n "
+          f"{device2.json(indent=2)}")
     iota_client.post_device(device=device2)
     #
     # ## 3.2 Load a specific device as model
-    my_device = iota_client.get_device(device_id="sensor009")
+    my_device = iota_client.get_device(device_id=device2.device_id)
     #
     # ## 3.3 Load multiple devices
     my_devices = iota_client.get_device_list()
@@ -136,7 +146,7 @@ if __name__ == "__main__":
     iota_client.patch_device(my_device)
     #
     # ## 3.5 Delete a device
-    iota_client.delete_device(device_id="sensor009")
+    iota_client.delete_device(device_id=device2.device_id)
 
     # # 4 Service Groups
     #
@@ -156,10 +166,12 @@ if __name__ == "__main__":
     # All groups:
     retrieved_groups = iota_client.get_group_list()
     # a specific group
-    my_group = iota_client.get_group(resource='/iot/json',apikey=service_group1)
+    my_group = iota_client.get_group(resource='/iot/json',
+                                     apikey=service_group1.apikey)
 
     # ## 4.3 Delete a service group
-    iota_client.delete_group(resource='/iot/json', apikey=service_group1)
+    iota_client.delete_group(resource='/iot/json',
+                             apikey=service_group1.apikey)
 
     # # 5 Clean up (Optional)
     #

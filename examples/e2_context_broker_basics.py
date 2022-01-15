@@ -2,6 +2,7 @@
 # Example how to use Entity-models and interact with teh orion ContextBroker
 """
 
+# ## Import packages
 import logging
 
 from filip.clients.ngsi_v2 import ContextBrokerClient
@@ -10,11 +11,24 @@ from filip.models.ngsi_v2.context import ContextEntity, ContextAttribute, \
     NamedContextAttribute
 from filip.utils.simple_ql import QueryString
 
+# ## Parameters
+#
+# To run this example you need a working Fiware v2 setup with a context-broker
+# You can here set the address:
+#
+# Host address of Context Broker
+CB_URL = "http://localhost:1026"
+
+# You can here also change the used Fiware service
+# FIWARE-Service
+SERVICE = 'filip'
+# FIWARE-Servicepath
+SERVICE_PATH = '/example'
+
 # Setting up logging
 logging.basicConfig(
     level='INFO',
     format='%(asctime)s %(name)s %(levelname)s: %(message)s')
-
 logger = logging.getLogger(__name__)
 
 
@@ -22,10 +36,11 @@ if __name__ == "__main__":
    
     # # 1 Setup Client
     #
-    # create the client, for more details view the example: client_example.py
-    cb_client = ContextBrokerClient(fiware_header=
-                                    FiwareHeader(service='filip',
-                                                 service_path='/testing'))
+    # create the client, for more details view the example: e1_http_clients.py
+    fiware_header = FiwareHeader(service=SERVICE,
+                                 service_path=SERVICE_PATH)
+    cb_client = ContextBrokerClient(url=CB_URL,
+                                    fiware_header=fiware_header)
     # View version
     for key, value in cb_client.get_version().items():
         logger.info("Context broker version" + value["version"] + " at url " +
@@ -50,7 +65,7 @@ if __name__ == "__main__":
 
     # ### 2.1.2 Using the constructor and interfaces
     #
-    room2_entity = ContextEntity(id="Room2",type="Room")
+    room2_entity = ContextEntity(id="Room2", type="Room")
     temp_attr = NamedContextAttribute(name="temperature", value=22,
                                       type=DataType.FLOAT)
     pressure_attr = NamedContextAttribute(name="pressure", value=222,

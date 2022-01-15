@@ -4,30 +4,28 @@
 # create new subscription following the API Walkthrough example:
 # https://fiware-orion.readthedocs.io/en/master/user/walkthrough_apiv2/index.html
 """
-
+# ## Import packages
 import logging
-from datetime import datetime
+import datetime
 import time
 
 from filip.models.ngsi_v2.subscriptions import Subscription
 from filip.clients.ngsi_v2.cb import ContextBrokerClient
 from filip.models.base import FiwareHeader
 
-AUTH = ('user', 'pass')
+# ## Parameters
+#
+# To run this example you need a working Fiware v2 setup with a context-broker
+# You can here set the address:
+#
+# Host address of Context Broker
+CB_URL = "http://localhost:1026"
 
-"""
-To run this example you need a working Fiware v2 setup with a context-broker 
-and an iota-broker. You can here set the addresses:
-"""
-cb_url = "http://localhost:1026"
-iota_url = "http://localhost:4041"
-
-"""
-You can here also change the used Fiware service
-"""
-service = 'filip'
-service_path = '/example_iot'
-
+# You can here also change the used Fiware service
+# FIWARE-Service
+SERVICE = 'filip'
+# FIWARE-Servicepath
+SERVICE_PATH = '/example'
 
 # Setting up logging
 logging.basicConfig(
@@ -35,14 +33,14 @@ logging.basicConfig(
     format='%(asctime)s %(name)s %(levelname)s: %(message)s')
 logger = logging.getLogger(__name__)
 
-
 if __name__ == "__main__":
-
-    # # 1 Setting up a client
+    # # 1 Setup Client
     #
-    cb_client = ContextBrokerClient(
-        url=cb_url,
-        fiware_header=FiwareHeader(service=service, service_path=service_path))
+    # create the client, for more details view the example: e1_http_clients.py
+    fiware_header = FiwareHeader(service=SERVICE,
+                                 service_path=SERVICE_PATH)
+    cb_client = ContextBrokerClient(url=CB_URL,
+                                    fiware_header=fiware_header)
 
     # # 2 Setup a subscription
     #
@@ -69,7 +67,7 @@ if __name__ == "__main__":
                 "temperature"
             ]
         },
-        "expires": datetime.now(),
+        "expires": datetime.datetime.now() + datetime.timedelta(minutes=15),
         "throttling": 0
     }
     sub = Subscription(**sub_example)
@@ -86,7 +84,9 @@ if __name__ == "__main__":
     #
     sub_to_update = cb_client.get_subscription(sub_id)
     # Update expiration time of the example subscription
-    sub_to_update = sub_to_update.copy(update={'expires': datetime.now()})
+    sub_to_update = sub_to_update.copy(
+        update={'expires': datetime.datetime.now() +
+                           datetime.timedelta(minutes=15)})
     cb_client.update_subscription(sub_to_update)
     updated_subscription = cb_client.get_subscription(sub_id)
     logger.info(updated_subscription)

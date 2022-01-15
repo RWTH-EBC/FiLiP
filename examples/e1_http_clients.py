@@ -1,15 +1,34 @@
 """
 # Examples for initializing the different clients.
 # For each client we will retrieve the active service version.
-# Please, make sure to adjust the 'filip.env' for your server.
+# Please, make sure to adjust the '.env.filip' for your server.
 """
-import logging
+
+# ## Import packages
 import requests
 from filip.clients.ngsi_v2 import \
     ContextBrokerClient, \
     IoTAClient, \
     QuantumLeapClient
 from filip.models.base import FiwareHeader
+
+# ## Parameters
+#
+# Note: This example also reads parameters from the '.env.filip'-file
+#
+# Host address of Context Broker
+CB_URL = "http://localhost:1026"
+# Host address of IoT-Agent
+IOTA_URL = "http://localhost:4041"
+# Host address of QuantumLeap
+QL_URL = "http://localhost:8668"
+#
+# You can here also change the used Fiware service
+# FIWARE-Service
+service = 'filip'
+# FIWARE-Servicepath
+service_path = '/example'
+
 
 if __name__ == '__main__':
 
@@ -23,7 +42,7 @@ if __name__ == '__main__':
     # created entities will be saved and requests are executed.
     # It can be thought of as a separated subdirectory where you work in.
     fiware_header = FiwareHeader(service='filip',
-                                 service_path='/testing')
+                                 service_path='/example')
 
     # # 2 Client modes
     # You can run the clients in different modes:
@@ -83,10 +102,9 @@ if __name__ == '__main__':
     # provide the url directly to the specific clients. It also takes any
     # additional keyword arguments a requests.request would also take,
     # e.g. headers, params etc.
-    """
-    iota_client = ContextBrokerClient(url="http://<yourHost>:1026",
-                                      fiware_header=fiware_header)
-    """
+
+    cb_client = ContextBrokerClient(url=CB_URL,
+                                    fiware_header=fiware_header)
 
     # # 5 Combined Client
     #

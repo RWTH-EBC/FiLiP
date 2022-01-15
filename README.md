@@ -178,10 +178,10 @@ We suggest to start with the config-example in order to understand the
 configuration of clients (*Note: This may change in the future*).
 Also, we provide more advanced examples for the semantic 
 context data modeling within a context broker using 
-[relationships](/examples/relationship_example.py).
+[relationships](/examples/e3_context_broker_relationships.py).
 Furthermore, the context broker provides a mechanism for an event-based 
 http-notification.
-Using this mechanism is shown [here](/examples/subscription_example.py).
+Using this mechanism is shown [here](/examples/e4_context_broker_subscriptions.py).
 
 **NOTE**: Currently, we are refactoring the library in order to provide a 
 better validation mechanism. 
