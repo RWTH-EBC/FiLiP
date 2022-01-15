@@ -127,51 +127,6 @@ class LazyDeviceAttribute(BaseNameAttribute):
         min_length=1,
         regex=FiwareRegex.string_protect.value,  # Make it FIWARE-Safe
     )
-    expression: Optional[str] = Field(
-        default=None,
-        description="indicates that the value of the target attribute will "
-                    "not be the plain value or the measurement, but an "
-                    "expression based on a combination of the reported values. "
-                    "See the Expression Language definition for details "
-                    "(https://iotagent-node-lib.readthedocs.io/en/latest/"
-                    "expressionLanguage/index.html)"
-    )
-    entity_name: Optional[str] = Field(
-        default=None,
-        description="entity_name: the presence of this attribute indicates "
-                    "that the value will not be stored in the original device "
-                    "entity but in a new entity with an ID given by this "
-                    "attribute. The type of this additional entity can be "
-                    "configured with the entity_type attribute. If no type is "
-                    "configured, the device entity type is used instead. "
-                    "Entity names can be defined as expressions, using the "
-                    "Expression Language definition. "
-                    "(https://iotagent-node-lib.readthedocs.io/en/latest/"
-                    "expressionLanguage/index.html) Allowed characters "
-                    "are the ones in the plain ASCII set, except the following "
-                    "ones: control characters, whitespace, &, ?, / and #.",
-        max_length=256,
-        min_length=1,
-        regex=FiwareRegex.standard.value  # Make it FIWARE-Safe"
-    )
-    entity_type: Optional[str] = Field(
-        default=None,
-        description="configures the type of an alternative entity. "
-                    "Allowed characters "
-                    "are the ones in the plain ASCII set, except the following "
-                    "ones: control characters, whitespace, &, ?, / and #.",
-        max_length=256,
-        min_length=1,
-        regex=FiwareRegex.standard.value
-    )
-    reverse: Optional[str] = Field(
-        default=None,
-        description="add bidirectionality expressions to the attribute. See "
-                    "the bidirectionality transformation plugin in the "
-                    "Data Mapping Plugins section for details. "
-                    "(https://iotagent-node-lib.readthedocs.io/en/latest/api/"
-                    "index.html#data-mapping-plugins)"
-    )
 
 
 class DeviceCommand(BaseModel):
