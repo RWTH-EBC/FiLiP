@@ -139,6 +139,7 @@ class QuantumLeapClient(BaseHttpClient):
 
     def post_subscription(self,
                           cb_url: Union[AnyHttpUrl, str],
+                          ql_url: Union[AnyHttpUrl, str],
                           entity_type: str = None,
                           entity_id: str = None,
                           id_pattern: str = None,
@@ -158,6 +159,9 @@ class QuantumLeapClient(BaseHttpClient):
         Args:
             cb_url:
                 url of the context broker
+            ql_url:
+                The url where Orion can reach QuantumLeap. Do not include
+                specific paths.
             entity_type (String):
                 The type of entities for which to create a
                 subscription, so as to persist historical data of entities of
@@ -186,7 +190,10 @@ class QuantumLeapClient(BaseHttpClient):
         url = urljoin(self.base_url, '/v2/subscribe')
         validate_http_url(cb_url)
         orion_url = urljoin(cb_url, '/v2')
-        ql_url = urljoin(self.base_url, '/v2')
+        if ql_url:
+            ql_url = urljoin(ql_url, '/v2')
+        else:
+            ql_url = urljoin(self.base_url, '/v2')
         params.update({'orionUrl': orion_url.encode('utf-8')})
         params.update({'quantumleapUrl': ql_url.encode('utf-8')})
         if entity_type:
