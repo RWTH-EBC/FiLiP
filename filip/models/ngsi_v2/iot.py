@@ -111,11 +111,67 @@ class DeviceAttribute(IoTABaseAttribute):
     )
 
 
-class LazyDeviceAttribute(DeviceAttribute):
+class LazyDeviceAttribute(BaseNameAttribute):
     """
     Model for lazy device attributes
     """
-    pass
+    type: Union[DataType, str] = Field(
+        default=DataType.TEXT,
+        description="The attribute type represents the NGSI value type of the "
+                    "attribute value. Note that FIWARE NGSI has its own type "
+                    "system for attribute values, so NGSI value types are not "
+                    "the same as JSON types. Allowed characters "
+                    "are the ones in the plain ASCII set, except the following "
+                    "ones: control characters, whitespace, &, ?, / and #.",
+        max_length=256,
+        min_length=1,
+        regex=FiwareRegex.string_protect.value,  # Make it FIWARE-Safe
+    )
+    expression: Optional[str] = Field(
+        default=None,
+        description="indicates that the value of the target attribute will "
+                    "not be the plain value or the measurement, but an "
+                    "expression based on a combination of the reported values. "
+                    "See the Expression Language definition for details "
+                    "(https://iotagent-node-lib.readthedocs.io/en/latest/"
+                    "expressionLanguage/index.html)"
+    )
+    entity_name: Optional[str] = Field(
+        default=None,
+        description="entity_name: the presence of this attribute indicates "
+                    "that the value will not be stored in the original device "
+                    "entity but in a new entity with an ID given by this "
+                    "attribute. The type of this additional entity can be "
+                    "configured with the entity_type attribute. If no type is "
+                    "configured, the device entity type is used instead. "
+                    "Entity names can be defined as expressions, using the "
+                    "Expression Language definition. "
+                    "(https://iotagent-node-lib.readthedocs.io/en/latest/"
+                    "expressionLanguage/index.html) Allowed characters "
+                    "are the ones in the plain ASCII set, except the following "
+                    "ones: control characters, whitespace, &, ?, / and #.",
+        max_length=256,
+        min_length=1,
+        regex=FiwareRegex.standard.value  # Make it FIWARE-Safe"
+    )
+    entity_type: Optional[str] = Field(
+        default=None,
+        description="configures the type of an alternative entity. "
+                    "Allowed characters "
+                    "are the ones in the plain ASCII set, except the following "
+                    "ones: control characters, whitespace, &, ?, / and #.",
+        max_length=256,
+        min_length=1,
+        regex=FiwareRegex.standard.value
+    )
+    reverse: Optional[str] = Field(
+        default=None,
+        description="add bidirectionality expressions to the attribute. See "
+                    "the bidirectionality transformation plugin in the "
+                    "Data Mapping Plugins section for details. "
+                    "(https://iotagent-node-lib.readthedocs.io/en/latest/api/"
+                    "index.html#data-mapping-plugins)"
+    )
 
 
 class DeviceCommand(BaseModel):
@@ -353,7 +409,7 @@ class Device(DeviceSettings):
         min_length=1,
         regex=FiwareRegex.standard.value  # Make it FIWARE-Safe"
     )
-    lazy: List[DeviceAttribute] = Field(
+    lazy: List[LazyDeviceAttribute] = Field(
         default=[],
         description="List of lazy attributes of the device"
     )
@@ -436,28 +492,28 @@ class Device(DeviceSettings):
             None
         """
         try:
-            if isinstance(attribute, DeviceAttribute):
+            if type(attribute) == DeviceAttribute:
                 if attribute in self.attributes:
                     raise ValueError
 
                 self.attributes.append(attribute)
                 self.__setattr__(name='attributes',
                                  value=self.attributes)
-            elif isinstance(attribute, LazyDeviceAttribute):
+            elif type(attribute) == LazyDeviceAttribute:
                 if attribute in self.lazy:
                     raise ValueError
 
                 self.lazy.append(attribute)
                 self.__setattr__(name='lazy',
                                  value=self.lazy)
-            elif isinstance(attribute, StaticDeviceAttribute):
+            elif type(attribute) == StaticDeviceAttribute:
                 if attribute in self.static_attributes:
                     raise ValueError
 
                 self.static_attributes.append(attribute)
                 self.__setattr__(name='static_attributes',
                                  value=self.static_attributes)
-            elif isinstance(attribute, DeviceCommand):
+            elif type(attribute) == DeviceCommand:
                 if attribute in self.commands:
                     raise ValueError
 
@@ -494,16 +550,16 @@ class Device(DeviceSettings):
             None
         """
         try:
-            if isinstance(attribute, DeviceAttribute):
+            if type(attribute) == DeviceAttribute:
                 idx = self.attributes.index(attribute)
                 self.attributes[idx].dict().update(attribute.dict())
-            elif isinstance(attribute, LazyDeviceAttribute):
+            elif type(attribute) == LazyDeviceAttribute:
                 idx = self.lazy.index(attribute)
                 self.lazy[idx].dict().update(attribute.dict())
-            elif isinstance(attribute, StaticDeviceAttribute):
+            elif type(attribute) == StaticDeviceAttribute:
                 idx = self.static_attributes.index(attribute)
                 self.static_attributes[idx].dict().update(attribute.dict())
-            elif isinstance(attribute, DeviceCommand):
+            elif type(attribute) == DeviceCommand:
                 idx = self.commands.index(attribute)
                 self.commands[idx].dict().update(attribute.dict())
         except ValueError:
@@ -531,13 +587,13 @@ class Device(DeviceSettings):
 
         """
         try:
-            if isinstance(attribute, DeviceAttribute):
+            if type(attribute) == DeviceAttribute:
                 self.attributes.remove(attribute)
-            elif isinstance(attribute, LazyDeviceAttribute):
+            elif type(attribute) == LazyDeviceAttribute:
                 self.lazy.remove(attribute)
-            elif isinstance(attribute, StaticDeviceAttribute):
+            elif type(attribute) == StaticDeviceAttribute:
                 self.static_attributes.remove(attribute)
-            elif isinstance(attribute, DeviceCommand):
+            elif type(attribute) == DeviceCommand:
                 self.commands.remove(attribute)
             else:
                 raise ValueError
