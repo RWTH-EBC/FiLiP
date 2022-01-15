@@ -31,7 +31,8 @@ if __name__ == '__main__':
     # ## 2.1 Run it as pure python object.
     #
     # This will open and close a connection each time you use a function.
-    cb_client = ContextBrokerClient(fiware_header=fiware_header)
+    cb_client = ContextBrokerClient(url="http://134.130.166.184:1026",
+                                    fiware_header=fiware_header)
     print(f"OCB Version: {cb_client.get_version()}")
 
     # ## 2.2 Run the client via the python's context protocol.
