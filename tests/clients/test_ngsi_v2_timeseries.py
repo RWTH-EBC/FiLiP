@@ -111,6 +111,7 @@ class TestTimeSeries(unittest.TestCase):
             notification_message = Message(data=entities,
                                            subscriptionId="test")
             client.post_subscription(cb_url=settings.CB_URL,
+                                     ql_url=settings.QL_URL,
                                      entity_id=entities[0].id)
             client.post_notification(notification_message)
         time.sleep(1)
