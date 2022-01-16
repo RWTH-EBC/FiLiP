@@ -1,4 +1,5 @@
 import copy
+import time
 import unittest
 
 from pathlib import Path
@@ -584,17 +585,19 @@ class TestSemanticsModels(unittest.TestCase):
         self.clear_registry()
         self.assertTrue(len(semantic_manager.instance_registry.get_all()) == 0)
 
+        time.sleep(1)
         # class no longer exists in fiware iota or context broker
         with IoTAClient(
+                url=semantic_manager.default_header.iota_url,
                 fiware_header=semantic_manager.
                         default_header.get_fiware_header()) as client:
-            self.assertEqual(len(client.get_device_list()), 0)
+            self.assertEqual(0, len(client.get_device_list()))
 
         with ContextBrokerClient(
                 url=semantic_manager.default_header.cb_url,
                 fiware_header=semantic_manager.
                         default_header.get_fiware_header()) as client:
-            self.assertEqual(len(client.get_entity_list()), 0)
+            self.assertEqual(0, len(client.get_entity_list()))
 
     def test__15_field_name_checks(self):
         """
