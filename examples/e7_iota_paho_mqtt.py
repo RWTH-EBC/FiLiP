@@ -78,11 +78,9 @@ if __name__ == '__main__':
                                    metadata={"unit":
                                                  {"type": "Unit",
                                                   "value": {
-                                                      "name": {
-                                                          "type": "Text",
-                                                          "value": "degree "
-                                                                   "Celsius"}
-                                                  }}
+                                                      "name": "degree Celsius"
+                                                  }
+                                                  }
                                              })
 
     # creating a static attribute that holds additional information

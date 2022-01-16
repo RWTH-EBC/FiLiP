@@ -15,10 +15,8 @@ class TestUnitCodes(TestCase):
     def setUp(self):
         self.units_data = load_units()
         self.units = Units()
-        self.unit = {"code": {"type": "Text",
-                              "value": "C58"},
-                     "name": {"type": "Text",
-                              "value": "newton second per metre"}}
+        self.unit = {"code": "C58",
+                     "name": "newton second per metre"}
 
     def test_unit_code(self):
         """
@@ -63,7 +61,7 @@ class TestUnitCodes(TestCase):
 
         for unit in units.values():
             cmdout = unit.json(indent=2)
-            #print(cmdout)
+            # print(cmdout)
 
     def test_unit_validator(self):
         """
@@ -72,7 +70,7 @@ class TestUnitCodes(TestCase):
             None
         """
         unit_data = self.unit.copy()
-        unit_data['name']['value'] = "celcius"
+        unit_data['name'] = "celcius"
         with self.assertRaises(ValueError):
             Unit(**unit_data)
 

@@ -117,17 +117,17 @@ class Unit(BaseModel):
         default=None,
         description="The unit of measurement given using the UN/CEFACT "
                     "Common Code (3 characters)")
-    description: Optional[Dict[str, str]] = Field(
+    description: Optional[str] = Field(
         default=None,
         alias="unitDescription",
         description="Verbose description of unit",
         max_length=350)
-    symbol: Optional[Dict[str, str]] = Field(
+    symbol: Optional[str] = Field(
         default=None,
         alias="unitSymbol",
         description="The symbol used to represent the unit of measure as "
                     "in ISO 31 / 80000.")
-    conversion_factor: Optional[Dict[str, str]] = Field(
+    conversion_factor: Optional[str] = Field(
         default=None,
         alias="unitConversionFactor",
         description="The value used to convert units to the equivalent SI "
@@ -182,17 +182,12 @@ class Unit(BaseModel):
         else:
             raise AssertionError("'name' or 'code' must be  provided!")
 
-        values["code"] = UnitCode(value=units.CommonCode[idx[0]])
-        values["name"] = UnitText(value=units.Name[idx[0]])
-        values["symbol"] = {"type":     DataType.TEXT,
-                            "value":    units.Symbol[idx[0]]}
-        values["conversion_factor"] = \
-            {"type":    DataType.TEXT,
-             "value":   units.ConversionFactor[idx[0]]}
+        values["code"] = UnitCode(value=units.CommonCode[idx[0]]).value
+        values["name"] = UnitText(value=units.Name[idx[0]]).value
+        values["symbol"] = units.Symbol[idx[0]]
+        values["conversion_factor"] = units.ConversionFactor[idx[0]]
         if not values.get("description"):
-            values["description"] = \
-                {"type":    DataType.TEXT,
-                 "value":   units.Description[idx[0]]}
+            values["description"] = units.Description[idx[0]]
         return values
 
 
