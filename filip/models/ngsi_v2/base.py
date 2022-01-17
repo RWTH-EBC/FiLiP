@@ -8,7 +8,7 @@ from pydantic import AnyHttpUrl, BaseModel, Field, validator, root_validator
 from typing import Union, Optional, Pattern, List, Dict, Any
 
 from filip.models.base import DataType, FiwareRegex
-from filip.models.ngsi_v2.units import validate_unit_data
+from filip.models.ngsi_v2.units import validate_unit_data, Unit
 from filip.utils.simple_ql import QueryString, QueryStatement
 from filip.utils.validators import validate_http_url, \
     validate_escape_character_free
@@ -180,8 +180,11 @@ class Metadata(BaseModel):
     )
 
     @validator('value', allow_reuse=True)
-    def validate_value(cls, value):
+    def validate_value(cls, value, values):
         assert json.dumps(value), "metadata not serializable"
+
+        if values["type"].casefold() == "unit":
+            value = Unit(**value)
         return value
 
 
@@ -263,20 +266,24 @@ class BaseAttribute(BaseModel):
     @validator('metadata')
     def validate_metadata_type(cls, value):
         """validator for field 'metadata'"""
-        if isinstance(value, NamedMetadata):
+        if type(value) == NamedMetadata:
             value = [value]
         elif isinstance(value, dict):
-            if all(isinstance(item, Metadata)
-                   for item in value.values()):
-                return value
-            json.dumps(value)
-            return {key: Metadata(**item) for key, item in value.items()}
+            if all(isinstance(item, Metadata) for item in value.values()):
+                value = [NamedMetadata(name=key, **item.dict())
+                         for key, item in value.items()]
+            else:
+                json.dumps(value)
+                value = [NamedMetadata(name=key, **item)
+                         for key, item in value.items()]
+
         if isinstance(value, list):
+            if all(isinstance(item, dict) for item in value):
+                value = [NamedMetadata(**item) for item in value]
             if all(isinstance(item, NamedMetadata) for item in value):
-                return {item.name: Metadata(**item.dict(exclude={
-                    'name'})) for item in value}
-            if all(isinstance(item, Dict) for item in value):
-                return {key: Metadata(**item) for key, item in value}
+                return {item.name: Metadata(**item.dict(exclude={'name'}))
+                        for item in value}
+
         raise TypeError(f"Invalid type {type(value)}")
 
 
