@@ -1,3 +1,6 @@
+#### v0.1.9 
+ - Refactored units model ([#107](https://github.com/RWTH-EBC/FiLiP/issues/107))
+
 #### v0.1.8
 - QuantumLeap request pagination ([#47](https://github.com/RWTH-EBC/FiLiP/issues/47))
 - introduce mqtt client ([#45](https://github.com/RWTH-EBC/FiLiP/issues/45))
