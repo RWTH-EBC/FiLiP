@@ -9,9 +9,9 @@
 # 1. Set up the missing parameters in the parameter section
 # 2. Create an MQTT client using the paho-mqtt package with mqtt.Client()
 # 3. Define a callback function that will be executed when the client
-#    receives message on a subscribed topic_one. It should decode your message
+#    receives message on a subscribed topic_weather. It should decode your message
 #    and store the information for later in our history
-# 4. Subscribe to the topic_one that the device will publish to
+# 4. Subscribe to the topic_weather that the device will publish to
 # 5. Create a function that publishes the simulated temperature via MQTT as a JSON
 # 6. Run the simulation and plot
 
@@ -28,9 +28,9 @@ from urllib.parse import urlparse
 # ToDo: Enter your mqtt broker url and port, e.g mqtt://test.mosquitto.org:1883
 MQTT_BROKER_URL = "mqtt://test.mosquitto.org:1883"
 
-# ToDo: Create a topic_one that your weather station will publish to
-topic_one = "fiware_workshop/<name_surname>/weather_station"
-topic_two = "fiware_workshop/<name_surname>/room"
+# ToDo: Create a topic_weather that your weather station will publish to
+topic_weather = "fiware_workshop/<name_surname>/weather_station"
+topic_room = "fiware_workshop/<name_surname>/room"
 
 # set parameters for the temperature simulation
 temperature_max = 10  # maximal ambient temperature
@@ -93,7 +93,7 @@ if __name__ == '__main__':
 
 
     # ToDo: Define a callback function that will be executed when the client
-    #  receives message on a subscribed topic_one. It should decode your message
+    #  receives message on a subscribed topic_weather. It should decode your message
     #  and store the information for later in our history
     #  Note: do not change function's signature!
     def on_message(client, userdata, msg):
@@ -108,7 +108,7 @@ if __name__ == '__main__':
     # add your callback function to the client
     mqttc.on_message = on_message
 
-    # ToDO: connect to the mqtt broker and subscribe to your topic_one
+    # ToDO: connect to the mqtt broker and subscribe to your topic_weather
     mqtt_url = urlparse(MQTT_BROKER_URL)
     mqttc.connect(host=mqtt_url.hostname,
                   port=mqtt_url.port,
@@ -118,8 +118,8 @@ if __name__ == '__main__':
                   clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
                   properties=None)
 
-    mqttc.subscribe(topic=topic_one)
-    mqttc.subscribe(topic=topic_two)
+    mqttc.subscribe(topic=topic_weather)
+    mqttc.subscribe(topic=topic_room)
 
     # create a non-blocking thread for mqtt communication
     mqttc.loop_start()
@@ -128,11 +128,11 @@ if __name__ == '__main__':
     #  that holds the simulation time "t_sim" and the corresponding temperature
     #  "temperature" the loop should
     for t_simulation in range(sim_model.t_start, sim_model.t_end + com_step, com_step):
-        mqttc.publish(topic=topic_one,
+        mqttc.publish(topic=topic_weather,
                       payload=json.dumps(
                           {"ambient temperature": sim_model.do_step(t_simulation)[0],
                            "t_sim": t_simulation}))
-        mqttc.publish(topic=topic_two,
+        mqttc.publish(topic=topic_room,
                       payload=json.dumps(
                           {"room temperature": sim_model.do_step(t_simulation)[1],
                            "t_sim": t_simulation}))
