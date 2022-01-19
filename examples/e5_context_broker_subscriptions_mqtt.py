@@ -12,6 +12,7 @@ import time
 from filip.models.ngsi_v2.subscriptions import Subscription, Mqtt, Message
 from filip.clients.ngsi_v2.cb import ContextBrokerClient
 from filip.models.base import FiwareHeader
+from filip.models.ngsi_v2.context import ContextEntity
 from urllib.parse import urlparse
 
 # ## Parameters
@@ -30,17 +31,17 @@ SERVICE_PATH = '/example'
 
 # MQTT URL for eclipse mosquitto
 MQTT_BROKER_URL = "mqtt://mosquitto:1883"
-
 MQTT_BROKER_URL_LOCAL = "mqtt://localhost:1883"
+
 # MQTT topic
-mqtt_topic = ''.join([SERVICE,
-                          SERVICE_PATH])
+mqtt_topic = ''.join([SERVICE, SERVICE_PATH])
 
 # Setting up logging
 logging.basicConfig(
     level='INFO',
     format='%(asctime)s %(name)s %(levelname)s: %(message)s')
 logger = logging.getLogger(__name__)
+
 
 if __name__ == "__main__":
     # # 1 Setup Client
@@ -51,8 +52,28 @@ if __name__ == "__main__":
     cb_client = ContextBrokerClient(url=CB_URL,
                                     fiware_header=fiware_header)
 
+    room1 = {"id": "Room1",
+             "type": "Room",
+             "temperature": {"value": 11,
+                             "type": "Float"},
+             "pressure": {"value": 111,
+                          "type": "Integer"}
+             }
+    room_entity = ContextEntity(**room1)
+    cb_client.post_entity(entity=room_entity)
+
+
     # # 2 Setup a subscription and MQTT notifications
     #
+    # Create the data for the subscription. Have a look at the condition and
+    # the attribute section. Only a change of the temperature attribute will
+    # trigger the subscription and only temperature data will be included
+    # into the message.
+    # Additionally, you should be aware of the throttling and expiration of a
+    # subscription.
+    #
+    # For more details on subscription you might want to
+    # check the Subscription model or the official tutorials.
     sub_example = {
         "description": "A subscription to get info about Room1",
         "subject": {
@@ -69,9 +90,10 @@ if __name__ == "__main__":
             }
         },
         "notification": {
-            "mqtt":
-                Mqtt(url=MQTT_BROKER_URL, topic=mqtt_topic)
-            ,
+            "mqtt": {
+                "url": MQTT_BROKER_URL,
+                "topic": mqtt_topic
+            },
             "attrs": [
                 "temperature"
             ]
@@ -79,23 +101,17 @@ if __name__ == "__main__":
         "expires": datetime.datetime.now() + datetime.timedelta(minutes=15),
         "throttling": 0
     }
+    # Generate Subscription object for validation
     sub = Subscription(**sub_example)
 
-    # setup MQTT notifications
-    # notification = sub.notification.copy(
-    #     update={'http': None, 'mqtt': Mqtt(url=MQTT_BROKER_URL,
-    #                                        topic=mqtt_topic)})
-    # subscription = sub.copy(
-    #     update={'notification': notification,
-    #             'description': 'MQTT test subscription',
-    #             'expires': None})
-
-    # Posting an example subscription for Room1
+    # Posting an example subscription for Room1. Make sure that you store the
+    # returned id because you might need for later updates of the subscription.
     sub_id = cb_client.post_subscription(subscription=sub)
 
     # # 3 setup callbacks and the MQTT client
     #
-    # callbacks
+    # define callbacks for the mqtt client. They will be triggered by
+    # different events. Do not change there signature!
     def on_connect(client, userdata, flags, reasonCode, properties=None):
         if reasonCode != 0:
             logger.error(f"Connection failed with error code: "
@@ -112,8 +128,8 @@ if __name__ == "__main__":
 
 
     def on_message(client, userdata, msg):
-        sub_message = Message.parse_raw(msg.payload)
-        logger.info("Received this message: " + str(sub_message))
+        message = Message.parse_raw(msg.payload)
+        logger.info("Received this message:\n" + message.json(indent=2))
 
 
     def on_disconnect(client, userdata, reasonCode, properties=None):
@@ -162,10 +178,11 @@ if __name__ == "__main__":
     print(cb_client.get_entity_list())
     time.sleep(1)
 
-    # # 5 Deleting the example subscription
+    # # 5 Deleting the example entity and the subscription
     #
     cb_client.delete_subscription(sub_id)
-
+    cb_client.delete_entity(entity_id=room_entity.id,
+                            entity_type=room_entity.type)
     # # 6 Clean up (Optional)
     #
     # Close clients
