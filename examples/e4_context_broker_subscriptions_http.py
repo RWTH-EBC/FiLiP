@@ -41,6 +41,8 @@ if __name__ == "__main__":
                                  service_path=SERVICE_PATH)
     cb_client = ContextBrokerClient(url=CB_URL,
                                     fiware_header=fiware_header)
+    ents = cb_client.get_entity_list()
+    logger.info(ents)
 
     # # 2 Setup a subscription
     #

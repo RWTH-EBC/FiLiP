@@ -74,6 +74,7 @@ if __name__ == "__main__":
 
     # ## 2.2 Post Entities
     #
+    print(cb_client.get_entity_list())
     cb_client.post_entity(entity=room1_entity)
     cb_client.post_entity(entity=room2_entity)
 
@@ -119,8 +120,8 @@ if __name__ == "__main__":
                                                  attr_name="temperature",
                                                  value=12))
     # Deleting attributes
-    logger.info(cb_client.delete_entity_attribute(entity_id=room1_entity.id,
-                                                  attr_name="temperature"))
+    # logger.info(cb_client.delete_entity_attribute(entity_id=room1_entity.id,
+    #                                               attr_name="temperature"))
     # ### 4.1.2 Updating the model
     #
     # Most of the time it is more convenient to update our local model,
@@ -145,5 +146,5 @@ if __name__ == "__main__":
     # To delete an entry in Fiware, we can call:
     cb_client.delete_entity(entity_id=room2_entity.id,
                             entity_type=room2_entity.type)
-    cb_client.delete_entity(entity_id=room1_entity.id,
-                            entity_type=room1_entity.type)
+    # cb_client.delete_entity(entity_id=room1_entity.id,
+    #                         entity_type=room1_entity.type)
