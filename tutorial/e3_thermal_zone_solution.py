@@ -28,7 +28,7 @@ from urllib.parse import urlparse
 # ToDo: Enter your mqtt broker url and port, e.g mqtt://test.mosquitto.org:1883
 MQTT_BROKER_URL = "mqtt://test.mosquitto.org:1883"
 
-# ToDo: Create a topic that your weather station will publish to
+# ToDo: Create a topic that your room and weather station will publish to
 topic_weather = "fiware_workshop/<name_surname>/weather_station"
 topic_room = "fiware_workshop/<name_surname>/room"
 

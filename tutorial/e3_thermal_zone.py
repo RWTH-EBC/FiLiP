@@ -28,7 +28,7 @@ from urllib.parse import urlparse
 # ToDo: Enter your mqtt broker url and port, e.g mqtt://test.mosquitto.org:1883
 MQTT_BROKER_URL = "mqtt://test.mosquitto.org:1883"
 
-# ToDo: Create a topic that your weather station will publish to
+# ToDo: Create a topic that your room and weather station will publish to
 topic_weather = "fiware_workshop/<name_surname>/weather_station"
 topic_room = "fiware_workshop/<name_surname>/room"
 
@@ -56,6 +56,7 @@ class SimulationModel:
         self.temp_start = temp_start
         self.kA = 100
         self.C_p = 1000
+        self.Q_h = 0
         self.current_time = self.t_start
         self.current_output = [temp_min, temp_start]
 
@@ -69,7 +70,7 @@ class SimulationModel:
                                                                    (24 * 60 * 60)) + self.temp_min + \
                         (self.temp_max - self.temp_min) / 2
                 t_room = self.current_output + self.dt * (
-                            self.kA * (t_amb - self.current_output[1]) + Q_h) / \
+                            self.kA * (t_amb - self.current_output[1]) + self.Q_h) / \
                          self.C_p
             self.current_time = self.current_time + self.dt
         self.current_output = [t_amb, t_room]
