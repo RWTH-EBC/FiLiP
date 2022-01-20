@@ -30,7 +30,7 @@ from filip.models.ngsi_v2.context import \
     Update, \
     PropertyFormat
 from filip.models.ngsi_v2.base import AttrsFormat
-from filip.models.ngsi_v2.subscriptions import Subscription
+from filip.models.ngsi_v2.subscriptions import Subscription, Message
 from filip.models.ngsi_v2.registrations import Registration
 
 
@@ -1352,6 +1352,42 @@ class ContextBrokerClient(BaseHttpClient):
             self.log_error(err=err, msg=msg)
             raise
 
+    def notify(self, message: Message) -> None:
+        """
+        This operation is intended to consume a notification payload so that
+        all the entity data included by such notification is persisted,
+        overwriting if necessary. This operation is useful when one NGSIv2
+        endpoint is subscribed to another NGSIv2 endpoint (federation
+        scenarios). The request payload must be an NGSIv2 notification
+        payload. The behaviour must be exactly the same as 'update'
+        with 'action_type' equal to append.
+
+        Args:
+            message: Notification message
+
+        Returns:
+            None
+        """
+        url = urljoin(self.base_url, 'v2/op/notify')
+        headers = self.headers.copy()
+        headers.update({'Content-Type': 'application/json'})
+        params = {}
+        try:
+            res = self.post(
+                url=url,
+                headers=headers,
+                params=params,
+                data=message.json(by_alias=True))
+            if res.ok:
+                self.logger.info("Notification message sent!")
+            else:
+                res.raise_for_status()
+        except requests.RequestException as err:
+            msg = f"Sending notifcation message failed! \n " \
+                  f"{message.json(inent=2)}"
+            self.log_error(err=err, msg=msg)
+            raise
+
     def post_command(self,
                      *,
                      entity_id: str,
@@ -1360,11 +1396,13 @@ class ContextBrokerClient(BaseHttpClient):
                      command_name: str = None) -> None:
         """
         Post a command to a context entity
+
         Args:
             entity_id: Entity identifier
             command: Command
             entity_type: Entity type
             command_name: Name of the command in the entity
+
         Returns:
             None
         """
@@ -1399,9 +1437,11 @@ class ContextBrokerClient(BaseHttpClient):
                            entity_type: str) -> bool:
         """
         Test if an entity with given id and type is present in the CB
+
         Args:
             entity_id: Entity id
             entity_type: Entity type
+
         Returns:
             bool; True if entity exists
 
@@ -1423,11 +1463,13 @@ class ContextBrokerClient(BaseHttpClient):
                      old_entity: Optional[ContextEntity] = None) -> None:
         """
         Takes a given entity and updates the state in the CB to match it.
+
         Args:
            entity: Entity to update
            old_entity: OPTIONAL, if given only the differences between the
                        old_entity and entity are updated in the CB.
                        Other changes made to the entity in CB, can be kept.
+
         Returns:
            None
         """
