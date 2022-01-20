@@ -164,8 +164,6 @@ if __name__ == "__main__":
     mqtt_client.loop_start()
     new_value = 55
 
-    print(cb_client.get_entity_list())
-
     cb_client.update_attribute_value(entity_id='Room1',
                                      attr_name='temperature',
                                      value=new_value,
@@ -174,8 +172,6 @@ if __name__ == "__main__":
                                      attr_name='pressure',
                                      value=new_value,
                                      entity_type='Room')
-
-    print(cb_client.get_entity_list())
     time.sleep(1)
 
     # # 5 Deleting the example entity and the subscription
