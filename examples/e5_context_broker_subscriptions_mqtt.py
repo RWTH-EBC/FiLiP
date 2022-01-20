@@ -30,10 +30,10 @@ SERVICE = 'filip'
 SERVICE_PATH = '/example'
 
 # MQTT URL for eclipse mosquitto
-MQTT_BROKER_URL = "mqtt://mosquitto:1883"
-MQTT_BROKER_URL_LOCAL = "mqtt://localhost:1883"
+MQTT_BROKER_URL_INTERNAL = "mqtt://mosquitto:1883"
+MQTT_BROKER_URL_EXPOSED = "mqtt://localhost:1883"
 
-# MQTT topic
+# MQTT topic that the subscription will send to
 mqtt_topic = ''.join([SERVICE, SERVICE_PATH])
 
 # Setting up logging
@@ -52,14 +52,14 @@ if __name__ == "__main__":
     cb_client = ContextBrokerClient(url=CB_URL,
                                     fiware_header=fiware_header)
 
-    room1 = {"id": "Room1",
-             "type": "Room",
-             "temperature": {"value": 11,
-                             "type": "Float"},
-             "pressure": {"value": 111,
-                          "type": "Integer"}
-             }
-    room_entity = ContextEntity(**room1)
+    room_001 = {"id": "urn:ngsi-ld:Room:001",
+                "type": "Room",
+                "temperature": {"value": 11,
+                                "type": "Float"},
+                "pressure": {"value": 111,
+                             "type": "Integer"}
+                }
+    room_entity = ContextEntity(**room_001)
     cb_client.post_entity(entity=room_entity)
 
 
@@ -75,11 +75,12 @@ if __name__ == "__main__":
     # For more details on subscription you might want to
     # check the Subscription model or the official tutorials.
     sub_example = {
-        "description": "A subscription to get info about Room1",
+        "description": "Subscription to receive MQTT-Notifications about "
+                       "urn:ngsi-ld:Room:001",
         "subject": {
             "entities": [
                 {
-                    "id": "Room1",
+                    "id": "urn:ngsi-ld:Room:001",
                     "type": "Room"
                 }
             ],
@@ -91,7 +92,7 @@ if __name__ == "__main__":
         },
         "notification": {
             "mqtt": {
-                "url": MQTT_BROKER_URL,
+                "url": MQTT_BROKER_URL_INTERNAL,
                 "topic": mqtt_topic
             },
             "attrs": [
@@ -122,7 +123,6 @@ if __name__ == "__main__":
                 reasonCode))
         client.subscribe(mqtt_topic)
 
-
     def on_subscribe(client, userdata, mid, granted_qos, properties=None):
         logger.info("Successfully subscribed to with QoS: %s", granted_qos)
 
@@ -142,14 +142,14 @@ if __name__ == "__main__":
     mqtt_client = mqtt.Client(userdata=None,
                               protocol=mqtt.MQTTv5,
                               transport="tcp")
-    # add callbacks to the client
+    # add callbacks to the mqtt-client
     mqtt_client.on_connect = on_connect
     mqtt_client.on_subscribe = on_subscribe
     mqtt_client.on_message = on_message
     mqtt_client.on_disconnect = on_disconnect
 
-    # connect to the server
-    mqtt_url = urlparse(MQTT_BROKER_URL_LOCAL)
+    # connect to the mqtt-broker to receive the notifications message
+    mqtt_url = urlparse(MQTT_BROKER_URL_EXPOSED)
     mqtt_client.connect(host=mqtt_url.hostname,
                         port=mqtt_url.port,
                         keepalive=60,
@@ -164,11 +164,11 @@ if __name__ == "__main__":
     mqtt_client.loop_start()
     new_value = 55
 
-    cb_client.update_attribute_value(entity_id='Room1',
+    cb_client.update_attribute_value(entity_id='urn:ngsi-ld:Room:001',
                                      attr_name='temperature',
                                      value=new_value,
                                      entity_type='Room')
-    cb_client.update_attribute_value(entity_id='Room1',
+    cb_client.update_attribute_value(entity_id='urn:ngsi-ld:Room:001',
                                      attr_name='pressure',
                                      value=new_value,
                                      entity_type='Room')

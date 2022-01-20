@@ -47,11 +47,12 @@ if __name__ == "__main__":
     # # 2 Setup a subscription
     #
     sub_example = {
-        "description": "A subscription to get info about Room1",
+        "description": "Subscription to receive HTTP-Notifications about "
+                       "urn:ngsi-ld:Room:001",
         "subject": {
             "entities": [
                 {
-                    "id": "Room1",
+                    "id": "urn:ngsi-ld:Room:001",
                     "type": "Room"
                 }
             ],
@@ -63,7 +64,7 @@ if __name__ == "__main__":
         },
         "notification": {
             "http": {
-                "url": "http://localhost:1028/accumulate"
+                "url": "http://<my_url>/notify"
             },
             "attrs": [
                 "temperature"
