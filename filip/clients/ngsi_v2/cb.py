@@ -595,11 +595,13 @@ class ContextBrokerClient(BaseHttpClient):
             options: str = None):
         """
         The request payload is an object representing the attributes to
-        append or update.
+        append or update. This corresponds to a 'POST' request if append is
+        set to 'False'
 
         Note:
             Be careful not to update attributes that are
-            provided via context registration, e.g. commands
+            provided via context registration, e.g. commands. Commands are
+            removed before sending the request. To avoid breaking things.
 
         Args:
             entity_id: Entity id to be updated
@@ -613,7 +615,7 @@ class ContextBrokerClient(BaseHttpClient):
                 previously existing in the entity are appended. In addition
                 to that, in case some of the attributes in the payload
                 already exist in the entity, an error is returned.
-
+            options: Only option is 'keyValues'
         Returns:
             None
 
@@ -644,7 +646,8 @@ class ContextBrokerClient(BaseHttpClient):
                             headers=headers,
                             json=entity.dict(exclude=excluded_keys,
                                              exclude_unset=True,
-                                             exclude_none=True))
+                                             exclude_none=True),
+                            params=params)
             if res.ok:
                 self.logger.info("Entity '%s' successfully "
                                  "updated!", entity.id)
@@ -666,18 +669,15 @@ class ContextBrokerClient(BaseHttpClient):
         """
         The entity attributes are updated with the ones in the payload.
         In addition to that, if one or more attributes in the payload doesn't
-        exist in the entity, an error is returned.
-
-        Note:
-            Be careful not to update attributes that are
-            provided via context registration, e.g. commands
+        exist in the entity, an error is returned. This corresponds to a
+        'PATcH' request.
 
         Args:
             entity_id: Entity id to be updated
             entity_type: Entity type, to avoid ambiguity in case there are
                 several entities with the same entity id.
             attrs: List of attributes to update or to append
-
+            options: Only option is 'keyValues'
         Returns:
             None
 
@@ -697,7 +697,8 @@ class ContextBrokerClient(BaseHttpClient):
                              headers=headers,
                              json=entity.dict(exclude={'id', 'type'},
                                               exclude_unset=True,
-                                              exclude_none=True))
+                                              exclude_none=True),
+                             params=params)
             if res.ok:
                 self.logger.info("Entity '%s' successfully "
                                  "updated!", entity.id)
@@ -709,30 +710,46 @@ class ContextBrokerClient(BaseHttpClient):
             self.log_error(err=err, msg=msg)
             raise
 
-    def replace_entity_attributes(self,
-                                  entity: ContextEntity,
-                                  options: str = None):
+    def replace_entity_attributes(
+            self,
+            entity_id: str,
+            entity_type: str,
+            attrs: List[Union[NamedContextAttribute,
+                              Dict[str, ContextAttribute]]],
+            options: str = None):
         """
         The attributes previously existing in the entity are removed and
-        replaced by the ones in the request.
+        replaced by the ones in the request. This corresponds to a 'PUT'
+        request.
 
         Args:
-            entity (ContextEntity):
-            options:
+            entity_id: Entity id to be updated
+            entity_type: Entity type, to avoid ambiguity in case there are
+                several entities with the same entity id.
+            attrs: List of attributes to add to the entity
+            options: Only option is 'keyValues'
         Returns:
-
+            None
         """
-        url = urljoin(self.base_url, f'v2/entities/{entity.id}/attrs')
+        url = urljoin(self.base_url, f'v2/entities/{entity_id}/attrs')
         headers = self.headers.copy()
         params = {}
+        if entity_type:
+            params.update({'type': entity_type})
         if options:
-            params.update({'options': options})
+            params.update({'options': options})#
+
+        entity = ContextEntity(id=entity_id,
+                               type=entity_type)
+        entity.add_attributes(attrs)
+
         try:
             res = self.put(url=url,
                            headers=headers,
                            json=entity.dict(exclude={'id', 'type'},
                                             exclude_unset=True,
-                                            exclude_none=True))
+                                            exclude_none=True),
+                           params=params)
             if res.ok:
                 self.logger.info("Entity '%s' successfully "
                                  "updated!", entity.id)
@@ -1149,14 +1166,16 @@ class ContextBrokerClient(BaseHttpClient):
                             skip_initial_notification: bool = False):
         """
         Only the fields included in the request are updated in the subscription.
+
         Args:
             subscription: Subscription to update
             skip_initial_notification: True - Initial Notifications will be
                 send to recipient containing the whole data. This is
                 deprecated and removed from version 3.0 of the context broker.
                 False - skip the initial notification
-        Returns:
 
+        Returns:
+            None
         """
         params = {}
         if skip_initial_notification:
@@ -1280,8 +1299,10 @@ class ContextBrokerClient(BaseHttpClient):
     def get_registration(self, registration_id: str) -> Registration:
         """
         Retrieves a registration from context broker by id
+
         Args:
             registration_id: id of the registration
+
         Returns:
             Registration
         """
@@ -1301,6 +1322,7 @@ class ContextBrokerClient(BaseHttpClient):
     def update_registration(self, registration: Registration):
         """
         Only the fields included in the request are updated in the registration.
+
         Args:
             registration: Registration to update
         Returns:
@@ -1503,7 +1525,8 @@ class ContextBrokerClient(BaseHttpClient):
                      command: Union[Command, NamedCommand, Dict],
                      command_name: str = None) -> None:
         """
-        Post a command to a context entity
+        Post a command to a context entity this corresponds to 'PATCH' of the
+        specified command attribute.
 
         Args:
             entity_id: Entity identifier
