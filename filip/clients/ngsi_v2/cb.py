@@ -331,6 +331,8 @@ class ContextBrokerClient(BaseHttpClient):
         if metadata:
             params.update({'metadata': ','.join(metadata)})
         if q:
+            if isinstance(q, str):
+                q = QueryString.parse_str(q)
             params.update({'q': str(q)})
         if mq:
             params.update({'mq': str(mq)})
