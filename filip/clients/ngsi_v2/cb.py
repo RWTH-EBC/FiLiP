@@ -654,8 +654,8 @@ class ContextBrokerClient(BaseHttpClient):
             else:
                 params.update({'options': options})
 
-        entity = ContextEntity(entity_id=entity_id,
-                               entity_type=entity_type)
+        entity = ContextEntity(id=entity_id,
+                               type=entity_type)
         entity.add_attributes(attrs)
 
         try:
