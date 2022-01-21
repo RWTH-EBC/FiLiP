@@ -608,13 +608,14 @@ class ContextBrokerClient(BaseHttpClient):
         if len(entities_with_attributes) > 0:
             self.update(entities=entities_with_attributes, action_type="delete")
 
-    def update_or_append_entity_attributes(self,
-                                           entity_id: str,
-                                           entity_type: str,
-                                           attrs: List[Union[NamedContextAttribute,
-                                                             Dict[str, ContextAttribute]]],
-                                           append: bool = False,
-                                           options: str = None):
+    def update_or_append_entity_attributes(
+            self,
+            entity_id: str,
+            entity_type: str,
+            attrs: List[Union[NamedContextAttribute,
+                              Dict[str, ContextAttribute]]],
+            append: bool = False,
+            options: str = None):
         """
         The request payload is an object representing the attributes to
         append or update.
