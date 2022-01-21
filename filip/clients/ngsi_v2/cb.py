@@ -491,21 +491,28 @@ class ContextBrokerClient(BaseHttpClient):
 
     def update_entity(self,
                       entity: ContextEntity,
-                      options: str = None):
+                      append: bool = False):
         """
         The request payload is an object representing the attributes to
         append or update.
 
         Args:
             entity (ContextEntity):
-            options:
+            append: If `False` the entity attributes are updated (if they
+                previously exist) or appended (if they don't previously exist)
+                with the ones in the payload.
+                If `True` all the attributes in the payload not
+                previously existing in the entity are appended. In addition
+                to that, in case some of the attributes in the payload
+                already exist in the entity, an error is returned.
+                More precisely this means a strict append procedure.
         Returns:
 
         """
         self.update_or_append_entity_attributes(entity_id=entity.id,
                                                 entity_type=entity.type,
                                                 attrs=entity.get_properties(),
-                                                options=options)
+                                                append=append)
 
     def delete_entity(self,
                       entity_id: str,
