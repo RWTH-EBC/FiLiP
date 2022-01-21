@@ -496,6 +496,7 @@ class ContextBrokerClient(BaseHttpClient):
         """
         The request payload is an object representing the attributes to
         append or update.
+
         Args:
             entity (ContextEntity):
             append (bool):
@@ -529,7 +530,9 @@ class ContextBrokerClient(BaseHttpClient):
             self.log_error(err=err, msg=msg)
             raise
 
-    def delete_entity(self, entity_id: str, entity_type: str,
+    def delete_entity(self,
+                      entity_id: str,
+                      entity_type: str,
                       delete_devices: bool = False,
                       iota_url: AnyHttpUrl = settings.IOTA_URL) -> None:
 
@@ -577,8 +580,10 @@ class ContextBrokerClient(BaseHttpClient):
 
         Args:
             entities: List[ContextEntity]: List of entities to be deleted
+
         Raises:
             Exception, if one of the entities is not in the ContextBroker
+
         Returns:
             None
         """
@@ -603,17 +608,80 @@ class ContextBrokerClient(BaseHttpClient):
         if len(entities_with_attributes) > 0:
             self.update(entities=entities_with_attributes, action_type="delete")
 
+    def update_or_append_entity_attributes(self,
+                                           entity_id: str,
+                                           entity_type: str,
+                                           attrs: List[Union[NamedContextAttribute,
+                                                             Dict[str, ContextAttribute]]],
+                                           append: bool = False,
+                                           options: str = None):
+        """
+        The request payload is an object representing the attributes to
+        append or update.
+
+        Note:
+            Be careful not to update attributes that are
+            provided via context registration, e.g. commands
+
+        Args:
+            entity_id: Entity id to be updated
+            entity_type: Entity type, to avoid ambiguity in case there are
+                several entities with the same entity id.
+            attrs: List of attributes to update or to append
+            append: If `False` the entity attributes are updated (if they
+                previously exist) or appended (if they don't previously exist)
+                with the ones in the payload.
+                If `True` all the attributes in the payload not
+                previously existing in the entity are appended. In addition
+                to that, in case some of the attributes in the payload
+                already exist in the entity, an error is returned.
+
+        Returns:
+            None
+
+        """
+        url = urljoin(self.base_url, f'v2/entities/{entity_id}/attrs')
+        headers = self.headers.copy()
+        params = {}
+        if entity_type:
+            params.update({'type': entity_type})
+        if append:
+            params.update({'options': 'append'})
+        if options:
+            if params.get('options', None):
+                params['options'] = ','.join([params['options'], options])
+            else:
+                params.update({'options': options})
+
+        entity = ContextEntity(entity_id=entity_id,
+                               entity_type=entity_type)
+        entity.add_attributes(attrs)
+
+        try:
+            res = self.post(url=url,
+                            headers=headers,
+                            json=entity.dict(exclude={'id', 'type'},
+                                             exclude_unset=True,
+                                             exclude_none=True))
+            if res.ok:
+                self.logger.info("Entity '%s' successfully "
+                                 "updated!", entity.id)
+            else:
+                res.raise_for_status()
+        except requests.RequestException as err:
+            msg = f"Could not replace attribute of entity {entity.id} !"
+            self.log_error(err=err, msg=msg)
+            raise
+
     def replace_entity_attributes(self,
                                   entity: ContextEntity,
-                                  options: str = None,
-                                  append: bool = True):
+                                  options: str = None):
         """
         The attributes previously existing in the entity are removed and
         replaced by the ones in the request.
 
         Args:
             entity (ContextEntity):
-            append (bool):
             options:
         Returns:
 
@@ -693,6 +761,7 @@ class ContextBrokerClient(BaseHttpClient):
                                 attr_name: str = None):
         """
         Updates a specified attribute from an entity.
+
         Args:
             attr: context attribute to update
             entity_id: Id of the entity. Example: Bcn_Welt
@@ -738,6 +807,7 @@ class ContextBrokerClient(BaseHttpClient):
                                 entity_type: str = None) -> None:
         """
         Removes a specified attribute from an entity.
+
         Args:
             entity_id: Id of the entity.
             attr_name: Name of the attribute to be retrieved.
