@@ -1525,9 +1525,6 @@ class ContextBrokerClient(BaseHttpClient):
         Returns:
             None
         """
-        url = urljoin(self.base_url, f'v2/entities/{entity_id}/attrs')
-        headers = self.headers.copy()
-        params = {"type": entity_type}
         if command_name:
             assert isinstance(command, (Command, dict))
             if isinstance(command, dict):
@@ -1537,19 +1534,10 @@ class ContextBrokerClient(BaseHttpClient):
             assert isinstance(command, (NamedCommand, dict))
             if isinstance(command, dict):
                 command = NamedCommand(**command)
-            command = {command.name: command.dict(exclude={'name'})}
-        try:
-            res = self.patch(url=url,
-                             headers=headers,
-                             params=params,
-                             json=command)
-            if res.ok:
-                return
-            res.raise_for_status()
-        except requests.RequestException as err:
-            msg = "Query operation failed!"
-            self.log_error(err=err, msg=msg)
-            raise
+
+        self.update_existing_entity_attributes(entity_id=entity_id,
+                                               entity_type=entity_type,
+                                               attrs=[command])
 
     def does_entity_exists(self,
                            entity_id: str,
