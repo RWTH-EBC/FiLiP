@@ -591,8 +591,7 @@ class ContextBrokerClient(BaseHttpClient):
             entity_type: str,
             attrs: List[Union[NamedContextAttribute,
                               Dict[str, ContextAttribute]]],
-            append: bool = False,
-            options: str = None):
+            append: bool = False):
         """
         The request payload is an object representing the attributes to
         append or update. This corresponds to a 'POST' request if append is
@@ -615,7 +614,8 @@ class ContextBrokerClient(BaseHttpClient):
                 previously existing in the entity are appended. In addition
                 to that, in case some of the attributes in the payload
                 already exist in the entity, an error is returned.
-            options: Only option is 'keyValues'
+                More precisely this means a strict append procedure.
+
         Returns:
             None
 
@@ -627,11 +627,6 @@ class ContextBrokerClient(BaseHttpClient):
             params.update({'type': entity_type})
         if append:
             params.update({'options': 'append'})
-        if options:
-            if params.get('options', None):
-                params['options'] = ','.join([params['options'], options])
-            else:
-                params.update({'options': options})
 
         entity = ContextEntity(id=entity_id,
                                type=entity_type)
@@ -664,8 +659,7 @@ class ContextBrokerClient(BaseHttpClient):
             entity_id: str,
             entity_type: str,
             attrs: List[Union[NamedContextAttribute,
-                              Dict[str, ContextAttribute]]],
-            options: str = None):
+                              Dict[str, ContextAttribute]]]):
         """
         The entity attributes are updated with the ones in the payload.
         In addition to that, if one or more attributes in the payload doesn't
@@ -677,7 +671,7 @@ class ContextBrokerClient(BaseHttpClient):
             entity_type: Entity type, to avoid ambiguity in case there are
                 several entities with the same entity id.
             attrs: List of attributes to update or to append
-            options: Only option is 'keyValues'
+
         Returns:
             None
 
@@ -685,8 +679,6 @@ class ContextBrokerClient(BaseHttpClient):
         url = urljoin(self.base_url, f'v2/entities/{entity_id}/attrs')
         headers = self.headers.copy()
         params = {}
-        if options:
-            params.update({'options': options})
 
         entity = ContextEntity(id=entity_id,
                                type=entity_type)
@@ -715,8 +707,7 @@ class ContextBrokerClient(BaseHttpClient):
             entity_id: str,
             entity_type: str,
             attrs: List[Union[NamedContextAttribute,
-                              Dict[str, ContextAttribute]]],
-            options: str = None):
+                              Dict[str, ContextAttribute]]]):
         """
         The attributes previously existing in the entity are removed and
         replaced by the ones in the request. This corresponds to a 'PUT'
@@ -727,7 +718,6 @@ class ContextBrokerClient(BaseHttpClient):
             entity_type: Entity type, to avoid ambiguity in case there are
                 several entities with the same entity id.
             attrs: List of attributes to add to the entity
-            options: Only option is 'keyValues'
         Returns:
             None
         """
@@ -736,8 +726,6 @@ class ContextBrokerClient(BaseHttpClient):
         params = {}
         if entity_type:
             params.update({'type': entity_type})
-        if options:
-            params.update({'options': options})#
 
         entity = ContextEntity(id=entity_id,
                                type=entity_type)
