@@ -6,7 +6,6 @@ omit =
 	*/deprecated*
 source =
 	filip
-	examples
 [report]
 exclude_lines =
 	raise NotImplementedError
