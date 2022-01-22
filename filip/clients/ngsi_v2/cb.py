@@ -1687,95 +1687,6 @@ class ContextBrokerClient(BaseHttpClient):
         if update_needed:
             self.update_entity(update_entity)
 
-
-#    def get_subjects(self, object_entity_name: str, object_entity_type: str, subject_type=None):
-#        """
-#        Function gets the JSON for child / subject entities for a parent /
-#        object entity.
-#        :param object_entity_name: The parent / object entity name
-#        :param object_entity_type: The type of the parent / object entity
-#        :param subject_type: optional parameter, if added only those child /
-#        subject entities are returned that match the type
-#        :return: JSON containing the child / subject information
-#        """
-#        url = self.url + '/v2/entities/?q=ref' + object_entity_type + '==' + object_entity_name + '&options=count'
-#        if subject_type is not None:
-#            url = url + '&attrs=type&type=' + subject_type
-#        headers = self.get_header()
-#        response = self.session.get(url=url, headers=headers, )
-#        ok, retstr = requtils.response_ok(response)
-#        if not ok:
-#            level, retstr = requtils.logging_switch(response)
-#            self.log_switch(level, retstr)
-#        else:
-#            return response.text
-#
-#    def get_objects(self, subject_entity_name: str, subject_entity_type:
-#    str, object_type=None):
-#        """
-#        Function returns a List of all objects associated to a subject. If
-#        object type is not None,
-#        only those are returned, that match the object type.
-#        :param subject_entity_name: The child / subject entity name
-#        :param subject_entity_type: The type of the child / subject entity
-#        :param object_type:
-#        :return: List containing all associated objects
-#        """
-#        url = self.url + '/v2/entities/' + subject_entity_name + '/?type=' + subject_entity_type + '&options=keyValues'
-#        if object_type is not None:
-#            url = url + '&attrs=ref' + object_type
-#        headers = self.get_header()
-#        response = self.session.get(url=url, headers=headers)
-#        ok, retstr = requtils.response_ok(response)
-#        if not ok:
-#            level, retstr = requtils.logging_switch(response)
-#            self.log_switch(level, retstr)
-#        else:
-#            return response.text
-#
-#    def get_associated(self, name: str, entity_type: str,
-#    associated_type=None):
-#        """
-#        Function returns all associated data for a given entity name and type
-#        :param name: name of the entity
-#        :param entity_type: type of the entity
-#        :param associated_type: if only associated data of one type should
-#        be returned, this parameter has to be the type
-#        :return: A dictionary, containing the data of the entity,
-#        a key "subjects" and "objects" that contain each a _list
-#                with the reflective data
-#        """
-#        data_dict = {}
-#        associated_objects = self.get_objects(subject_entity_name=name,
-#        subject_entity_type=entity_type,
-#                                              object_type=associated_type)
-#        associated_subjects = self.get_subjects(object_entity_name=name,
-#        object_entity_type=entity_type,
-#                                                subject_type=associated_type)
-#        if associated_subjects is not None:
-#            data_dict["subjects"] = json.loads(associated_subjects)
-#        if associated_objects is not None:
-#            object_json = json.loads(associated_objects)
-#            data_dict["objects"] = []
-#            if isinstance(object_json, _list):
-#                for associated_object in object_json:
-#                    entity_name = associated_object["id"]
-#                    object_data = json.loads(self.get_entity(
-#                    entity_name=entity_name))
-#                    data_dict["objects"].append(object_data)
-#            else:
-#                entity_name = object_json["id"]
-#                object_data = json.loads(self.get_entity(
-#                entity_name=entity_name))
-#                data_dict["objects"].append(object_data)
-#
-#        entity_dict = json.loads(self.get_entity(entity_name=name))
-#
-#        whole_dict = {**entity_dict, **data_dict}
-#
-#        return whole_dict
-#
-
 #
 #
 #    def check_duplicate_subscription(self, subscription_body, limit: int = 20):
@@ -1911,13 +1822,3 @@ class ContextBrokerClient(BaseHttpClient):
 #                        continue
 #        return exists
 #
-
-# def post_cmd_v1(self, entity_id: str, entity_type: str, cmd_name: str,
-# cmd_value: str): url = self.url + '/v1/updateContext' payload = {
-# "updateAction": "UPDATE", "contextElements": [ {"id": entity_id, "type":
-# entity_type, "isPattern": "false", "attributes": [ {"name": cmd_name,
-# "type": "command", "value": cmd_value }] }] } headers = self.get_header(
-# requtils.HEADER_CONTENT_JSON) data = json.dumps(payload) response =
-# self.session.post(url, headers=headers, data=data) ok, retstr =
-# requtils.response_ok(response) if not ok: level, retstr =
-# requtils.logging_switch(response) self.log_switch(level, retstr)
