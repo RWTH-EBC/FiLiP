@@ -193,7 +193,7 @@ if __name__ == '__main__':
     # NOTE: We need to use the apikey of the service-group to send the message
     # to the platform
     def on_message(client, userdata, msg):
-        logger.info(msg.topic+" "+str(msg.payload))
+        logger.info(msg.topic + " " + str(msg.payload))
         data = json.loads(msg.payload)
         res = {k: v for k, v in data.items()}
         print(msg.payload)

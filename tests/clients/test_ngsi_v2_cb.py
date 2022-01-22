@@ -446,7 +446,7 @@ class TestContextBroker(unittest.TestCase):
             sub_message = Message.parse_raw(msg.payload)
 
         def on_disconnect(client, userdata, reasonCode, properties=None):
-            logger.info("MQTT client disconnected with reasonCode"
+            logger.info("MQTT client disconnected with reasonCode "
                         + str(reasonCode))
 
         import paho.mqtt.client as mqtt

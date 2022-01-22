@@ -42,15 +42,18 @@ if __name__ == "__main__":
                                  service_path=SERVICE_PATH)
     cb_client = ContextBrokerClient(url=CB_URL,
                                     fiware_header=fiware_header)
+    ents = cb_client.get_entity_list()
+    logger.info(ents)
 
     # # 2 Setup a subscription
     #
     sub_example = {
-        "description": "A subscription to get info about Room1",
+        "description": "Subscription to receive HTTP-Notifications about "
+                       "urn:ngsi-ld:Room:001",
         "subject": {
             "entities": [
                 {
-                    "id": "Room1",
+                    "id": "urn:ngsi-ld:Room:001",
                     "type": "Room"
                 }
             ],
@@ -62,7 +65,7 @@ if __name__ == "__main__":
         },
         "notification": {
             "http": {
-                "url": "http://localhost:1028/accumulate"
+                "url": "http://<my_url>/notify"
             },
             "attrs": [
                 "temperature"

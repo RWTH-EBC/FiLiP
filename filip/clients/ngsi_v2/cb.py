@@ -30,7 +30,7 @@ from filip.models.ngsi_v2.context import \
     Update, \
     PropertyFormat
 from filip.models.ngsi_v2.base import AttrsFormat
-from filip.models.ngsi_v2.subscriptions import Subscription
+from filip.models.ngsi_v2.subscriptions import Subscription, Message
 from filip.models.ngsi_v2.registrations import Registration
 
 
@@ -331,6 +331,8 @@ class ContextBrokerClient(BaseHttpClient):
         if metadata:
             params.update({'metadata': ','.join(metadata)})
         if q:
+            if isinstance(q, str):
+                q = QueryString.parse_str(q)
             params.update({'q': str(q)})
         if mq:
             params.update({'mq': str(mq)})
@@ -489,45 +491,32 @@ class ContextBrokerClient(BaseHttpClient):
 
     def update_entity(self,
                       entity: ContextEntity,
-                      options: str = None,
-                      append=False):
+                      append: bool = False):
         """
         The request payload is an object representing the attributes to
         append or update.
+
         Args:
             entity (ContextEntity):
-            append (bool):
-            options:
+            append: If `False` the entity attributes are updated (if they
+                previously exist) or appended (if they don't previously exist)
+                with the ones in the payload.
+                If `True` all the attributes in the payload not
+                previously existing in the entity are appended. In addition
+                to that, in case some of the attributes in the payload
+                already exist in the entity, an error is returned.
+                More precisely this means a strict append procedure.
         Returns:
 
         """
-        url = urljoin(self.base_url, f'v2/entities/{entity.id}/attrs')
-        headers = self.headers.copy()
-        params = {}
-        if options:
-            params.update({'options': options})
-        try:
-            # exclude commands from the send data,
-            # as they live in the IoTA-agent
-            excluded_keys = {'id', 'type'}
-            excluded_keys.update(
-                entity.get_commands(response_format=PropertyFormat.DICT).keys())
+        self.update_or_append_entity_attributes(entity_id=entity.id,
+                                                entity_type=entity.type,
+                                                attrs=entity.get_properties(),
+                                                append=append)
 
-            res = self.post(url=url,
-                            headers=headers,
-                            json=entity.dict(exclude=excluded_keys,
-                                             exclude_unset=True,
-                                             exclude_none=True))
-            if res.ok:
-                self.logger.info("Entity '%s' successfully updated!", entity.id)
-            else:
-                res.raise_for_status()
-        except requests.RequestException as err:
-            msg = f"Could not update entity {entity.id} !"
-            self.log_error(err=err, msg=msg)
-            raise
-
-    def delete_entity(self, entity_id: str, entity_type: str,
+    def delete_entity(self,
+                      entity_id: str,
+                      entity_type: str,
                       delete_devices: bool = False,
                       iota_url: AnyHttpUrl = settings.IOTA_URL) -> None:
 
@@ -575,8 +564,10 @@ class ContextBrokerClient(BaseHttpClient):
 
         Args:
             entities: List[ContextEntity]: List of entities to be deleted
+
         Raises:
             Exception, if one of the entities is not in the ContextBroker
+
         Returns:
             None
         """
@@ -601,32 +592,159 @@ class ContextBrokerClient(BaseHttpClient):
         if len(entities_with_attributes) > 0:
             self.update(entities=entities_with_attributes, action_type="delete")
 
-    def replace_entity_attributes(self,
-                                  entity: ContextEntity,
-                                  options: str = None,
-                                  append: bool = True):
+    def update_or_append_entity_attributes(
+            self,
+            entity_id: str,
+            entity_type: str,
+            attrs: List[Union[NamedContextAttribute,
+                              Dict[str, ContextAttribute]]],
+            append: bool = False):
         """
-        The attributes previously existing in the entity are removed and
-        replaced by the ones in the request.
+        The request payload is an object representing the attributes to
+        append or update. This corresponds to a 'POST' request if append is
+        set to 'False'
+
+        Note:
+            Be careful not to update attributes that are
+            provided via context registration, e.g. commands. Commands are
+            removed before sending the request. To avoid breaking things.
 
         Args:
-            entity (ContextEntity):
-            append (bool):
-            options:
+            entity_id: Entity id to be updated
+            entity_type: Entity type, to avoid ambiguity in case there are
+                several entities with the same entity id.
+            attrs: List of attributes to update or to append
+            append: If `False` the entity attributes are updated (if they
+                previously exist) or appended (if they don't previously exist)
+                with the ones in the payload.
+                If `True` all the attributes in the payload not
+                previously existing in the entity are appended. In addition
+                to that, in case some of the attributes in the payload
+                already exist in the entity, an error is returned.
+                More precisely this means a strict append procedure.
+
         Returns:
+            None
 
         """
-        url = urljoin(self.base_url, f'v2/entities/{entity.id}/attrs')
+        url = urljoin(self.base_url, f'v2/entities/{entity_id}/attrs')
         headers = self.headers.copy()
         params = {}
-        if options:
-            params.update({'options': options})
+        if entity_type:
+            params.update({'type': entity_type})
+        if append:
+            params.update({'options': 'append'})
+
+        entity = ContextEntity(id=entity_id,
+                               type=entity_type)
+        entity.add_attributes(attrs)
+        # exclude commands from the send data,
+        # as they live in the IoTA-agent
+        excluded_keys = {'id', 'type'}
+        excluded_keys.update(
+            entity.get_commands(response_format=PropertyFormat.DICT).keys())
+        try:
+            res = self.post(url=url,
+                            headers=headers,
+                            json=entity.dict(exclude=excluded_keys,
+                                             exclude_unset=True,
+                                             exclude_none=True),
+                            params=params)
+            if res.ok:
+                self.logger.info("Entity '%s' successfully "
+                                 "updated!", entity.id)
+            else:
+                res.raise_for_status()
+        except requests.RequestException as err:
+            msg = f"Could not update or append attributes of entity" \
+                  f" {entity.id} !"
+            self.log_error(err=err, msg=msg)
+            raise
+
+    def update_existing_entity_attributes(
+            self,
+            entity_id: str,
+            entity_type: str,
+            attrs: List[Union[NamedContextAttribute,
+                              Dict[str, ContextAttribute]]]):
+        """
+        The entity attributes are updated with the ones in the payload.
+        In addition to that, if one or more attributes in the payload doesn't
+        exist in the entity, an error is returned. This corresponds to a
+        'PATcH' request.
+
+        Args:
+            entity_id: Entity id to be updated
+            entity_type: Entity type, to avoid ambiguity in case there are
+                several entities with the same entity id.
+            attrs: List of attributes to update or to append
+
+        Returns:
+            None
+
+        """
+        url = urljoin(self.base_url, f'v2/entities/{entity_id}/attrs')
+        headers = self.headers.copy()
+        params = {}
+
+        entity = ContextEntity(id=entity_id,
+                               type=entity_type)
+        entity.add_attributes(attrs)
+
+        try:
+            res = self.patch(url=url,
+                             headers=headers,
+                             json=entity.dict(exclude={'id', 'type'},
+                                              exclude_unset=True,
+                                              exclude_none=True),
+                             params=params)
+            if res.ok:
+                self.logger.info("Entity '%s' successfully "
+                                 "updated!", entity.id)
+            else:
+                res.raise_for_status()
+        except requests.RequestException as err:
+            msg = f"Could not update attributes of entity" \
+                  f" {entity.id} !"
+            self.log_error(err=err, msg=msg)
+            raise
+
+    def replace_entity_attributes(
+            self,
+            entity_id: str,
+            entity_type: str,
+            attrs: List[Union[NamedContextAttribute,
+                              Dict[str, ContextAttribute]]]):
+        """
+        The attributes previously existing in the entity are removed and
+        replaced by the ones in the request. This corresponds to a 'PUT'
+        request.
+
+        Args:
+            entity_id: Entity id to be updated
+            entity_type: Entity type, to avoid ambiguity in case there are
+                several entities with the same entity id.
+            attrs: List of attributes to add to the entity
+        Returns:
+            None
+        """
+        url = urljoin(self.base_url, f'v2/entities/{entity_id}/attrs')
+        headers = self.headers.copy()
+        params = {}
+        if entity_type:
+            params.update({'type': entity_type})
+
+        entity = ContextEntity(id=entity_id,
+                               type=entity_type)
+        entity.add_attributes(attrs)
+
         try:
             res = self.put(url=url,
                            headers=headers,
                            json=entity.dict(exclude={'id', 'type'},
                                             exclude_unset=True,
-                                            exclude_none=True))
+                                            exclude_none=True),
+                           params=params)
             if res.ok:
                 self.logger.info("Entity '%s' successfully "
                                  "updated!", entity.id)
@@ -691,6 +809,7 @@ class ContextBrokerClient(BaseHttpClient):
                                 attr_name: str = None):
         """
         Updates a specified attribute from an entity.
+
         Args:
             attr: context attribute to update
             entity_id: Id of the entity. Example: Bcn_Welt
@@ -736,6 +855,7 @@ class ContextBrokerClient(BaseHttpClient):
                                 entity_type: str = None) -> None:
         """
         Removes a specified attribute from an entity.
+
         Args:
             entity_id: Id of the entity.
             attr_name: Name of the attribute to be retrieved.
@@ -1041,14 +1161,16 @@ class ContextBrokerClient(BaseHttpClient):
                             skip_initial_notification: bool = False):
         """
         Only the fields included in the request are updated in the subscription.
+
         Args:
             subscription: Subscription to update
             skip_initial_notification: True - Initial Notifications will be
                 send to recipient containing the whole data. This is
                 deprecated and removed from version 3.0 of the context broker.
                 False - skip the initial notification
-        Returns:
 
+        Returns:
+            None
         """
         params = {}
         if skip_initial_notification:
@@ -1172,8 +1294,10 @@ class ContextBrokerClient(BaseHttpClient):
     def get_registration(self, registration_id: str) -> Registration:
         """
         Retrieves a registration from context broker by id
+
         Args:
             registration_id: id of the registration
+
         Returns:
             Registration
         """
@@ -1193,6 +1317,7 @@ class ContextBrokerClient(BaseHttpClient):
     def update_registration(self, registration: Registration):
         """
         Only the fields included in the request are updated in the registration.
+
         Args:
             registration: Registration to update
         Returns:
@@ -1352,6 +1477,42 @@ class ContextBrokerClient(BaseHttpClient):
             self.log_error(err=err, msg=msg)
             raise
 
+    def notify(self, message: Message) -> None:
+        """
+        This operation is intended to consume a notification payload so that
+        all the entity data included by such notification is persisted,
+        overwriting if necessary. This operation is useful when one NGSIv2
+        endpoint is subscribed to another NGSIv2 endpoint (federation
+        scenarios). The request payload must be an NGSIv2 notification
+        payload. The behaviour must be exactly the same as 'update'
+        with 'action_type' equal to append.
+
+        Args:
+            message: Notification message
+
+        Returns:
+            None
+        """
+        url = urljoin(self.base_url, 'v2/op/notify')
+        headers = self.headers.copy()
+        headers.update({'Content-Type': 'application/json'})
+        params = {}
+        try:
+            res = self.post(
+                url=url,
+                headers=headers,
+                params=params,
+                data=message.json(by_alias=True))
+            if res.ok:
+                self.logger.info("Notification message sent!")
+            else:
+                res.raise_for_status()
+        except requests.RequestException as err:
+            msg = f"Sending notifcation message failed! \n " \
+                  f"{message.json(inent=2)}"
+            self.log_error(err=err, msg=msg)
+            raise
+
     def post_command(self,
                      *,
                      entity_id: str,
@@ -1359,18 +1520,18 @@ class ContextBrokerClient(BaseHttpClient):
                      command: Union[Command, NamedCommand, Dict],
                      command_name: str = None) -> None:
         """
-        Post a command to a context entity
+        Post a command to a context entity this corresponds to 'PATCH' of the
+        specified command attribute.
+
         Args:
             entity_id: Entity identifier
             command: Command
             entity_type: Entity type
             command_name: Name of the command in the entity
+
         Returns:
             None
         """
-        url = urljoin(self.base_url, f'v2/entities/{entity_id}/attrs')
-        headers = self.headers.copy()
-        params = {"type": entity_type}
         if command_name:
             assert isinstance(command, (Command, dict))
             if isinstance(command, dict):
@@ -1380,28 +1541,21 @@ class ContextBrokerClient(BaseHttpClient):
             assert isinstance(command, (NamedCommand, dict))
             if isinstance(command, dict):
                 command = NamedCommand(**command)
-            command = {command.name: command.dict(exclude={'name'})}
-        try:
-            res = self.patch(url=url,
-                             headers=headers,
-                             params=params,
-                             json=command)
-            if res.ok:
-                return
-            res.raise_for_status()
-        except requests.RequestException as err:
-            msg = "Query operation failed!"
-            self.log_error(err=err, msg=msg)
-            raise
+
+        self.update_existing_entity_attributes(entity_id=entity_id,
+                                               entity_type=entity_type,
+                                               attrs=[command])
 
     def does_entity_exists(self,
                            entity_id: str,
                            entity_type: str) -> bool:
         """
         Test if an entity with given id and type is present in the CB
+
         Args:
             entity_id: Entity id
             entity_type: Entity type
+
         Returns:
             bool; True if entity exists
 
@@ -1423,11 +1577,13 @@ class ContextBrokerClient(BaseHttpClient):
                      old_entity: Optional[ContextEntity] = None) -> None:
         """
         Takes a given entity and updates the state in the CB to match it.
+
         Args:
            entity: Entity to update
            old_entity: OPTIONAL, if given only the differences between the
                        old_entity and entity are updated in the CB.
                        Other changes made to the entity in CB, can be kept.
+
         Returns:
            None
         """
@@ -1529,7 +1685,7 @@ class ContextBrokerClient(BaseHttpClient):
                 update_entity.add_attributes([new_attr])
 
         if update_needed:
-            self.update_entity(update_entity, append=True)
+            self.update_entity(update_entity)
 
 
 #    def get_subjects(self, object_entity_name: str, object_entity_type: str, subject_type=None):
