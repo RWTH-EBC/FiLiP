@@ -42,5 +42,6 @@ venv
 /external_resources/
 
 /docs/diagrams/src/clients.wsd
+/examples/data_models/
 /tests/semantics/models.py
 /tests/semantics/models2.py
