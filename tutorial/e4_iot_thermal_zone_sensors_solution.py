@@ -81,26 +81,29 @@ class SimulationModel:
         self.temp_max = temp_max
         self.temp_min = temp_min
         self.temp_start = temp_start
-        self.kA = 100
-        self.C_p = 1000
-        self.Q_h = 0
-        self.current_time = self.t_start
-        self.current_output = [temp_min, temp_start]
+        self.kA = 120
+        self.C_p = 612.5 * 1000
+        self.Q_h = 1000
+        self.t_sim = self.t_start
+        self.t_amb = temp_min
+        self.t_zone = temp_start
+        self.heater_on: bool = False
 
     # define the function that returns a virtual ambient temperature depend from the
     # the simulation time using cosinus function
-    def do_step(self, t_sim: float):
-        t_amb, t_room = self.current_output
-        while self.current_time <= t_sim:
-            if self.current_time != 0:
-                t_amb = -(self.temp_max - self.temp_min) / 2 * \
-                        cos(2 * np.pi * self.current_time /(24 * 60 * 60)) + \
-                        self.temp_min + (self.temp_max - self.temp_min) / 2
-                t_room = t_room + self.dt * (self.kA * (t_amb - t_room) +
-                          self.Q_h) / self.C_p
-            self.current_time = self.current_time + self.dt
-        self.current_output = [t_amb, t_room]
-        return self.current_output
+    def do_step(self, t_sim: int):
+        for t in range(self.t_sim, t_sim, self.dt):
+            self.t_zone = self.t_zone + \
+                          self.dt * (self.kA * (self.t_amb - self.t_zone) +
+                          self.heater_on * self.Q_h) / self.C_p
+
+            self.t_amb = -(self.temp_max - self.temp_min) / 2 * \
+                    cos(2 * np.pi * t /(24 * 60 * 60)) + \
+                    self.temp_min + (self.temp_max - self.temp_min) / 2
+
+        self.t_sim = t_sim
+
+        return self.t_sim, self.t_amb, self, self.t_zone
 
 
 # ## Main script
@@ -123,13 +126,19 @@ if __name__ == '__main__':
 
 
     # instantiate simulation model
-    sim_model = SimulationModel(t_start=t_sim_start, t_end=t_sim_end, dt=sim_step,
-                                temp_max=temperature_max, temp_min=temperature_min,
+    sim_model = SimulationModel(t_start=t_sim_start,
+                                t_end=t_sim_end,
+                                dt=sim_step,
+                                temp_max=temperature_max,
+                                temp_min=temperature_min,
                                 temp_start=temperature_room_start)
 
     # define lists for storing historical data
-    history_ambient = []
-    history_room = []
+    history_weather_station = []
+    history_zone_temperature_sensor = []
+
+    topic_zone_temperature_sensor = "/json/apikey/zone_temperature_sensor/attrs"
+    topic_weather_station = "/json/apikey/weather_station/attrs"
 
     # ToDo: create a MQTTv5 client with paho-mqtt
     mqttc = IoTAMQTTClient(protocol=mqtt.MQTTv5)
@@ -139,17 +148,22 @@ if __name__ == '__main__':
     #  receives message on a subscribed topic. It should decode your message
     #  and store the information for later in our history
     #  Note: do not change function's signature!
-    def on_message(client, userdata, msg):
+    def on_message_weather_station(client, userdata, msg):
         payload = msg.payload.decode('utf-8')
         json_payload = json.loads(payload)
-        if 'ambient temperature' in json_payload:
-            history_ambient.append(json_payload)
-        if 'room temperature' in json_payload:
-            history_room.append(json_payload)
+        history_weather_station.append(json_payload)
+
+    def on_message_zone_temperature_sensor(client, userdata, msg):
+        payload = msg.payload.decode('utf-8')
+        json_payload = json.loads(payload)
+        history_zone_temperature_sensor.append(json_payload)
 
 
     # add your callback function to the client
-    mqttc.on_message = on_message
+    mqttc.message_callback_add(sub=topic_weather_station,
+                               callback=on_message_weather_station)
+    mqttc.message_callback_add(sub=topic_zone_temperature_sensor,
+                               callback=on_message_zone_temperature_sensor)
 
     # ToDO: connect to the mqtt broker and subscribe to your topic
     mqtt_url = urlparse(MQTT_BROKER_URL)
@@ -162,6 +176,9 @@ if __name__ == '__main__':
                   properties=None)
 
     mqttc.subscribe()
+    mqttc.subscribe(topic_weather_station)
+    mqttc.subscribe(topic_zone_temperature_sensor)
+
 
     # create a non-blocking thread for mqtt communication
     mqttc.loop_start()
@@ -169,16 +186,15 @@ if __name__ == '__main__':
     # ToDo: Create a loop that publishes every second a message to the broker
     #  that holds the simulation time "t_sim" and the corresponding temperature
     #  "temperature" the loop should
-    for t_simulation in range(sim_model.t_start, sim_model.t_end + com_step, com_step):
-        mqttc.publish(topic=topic_weather,
-                      payload=json.dumps(
-                          {"ambient temperature": sim_model.do_step(t_simulation)[0],
-                           "t_sim": t_simulation}))
-        mqttc.publish(topic=topic_room,
-                      payload=json.dumps(
-                          {"room temperature": sim_model.do_step(t_simulation)[1],
-                           "t_sim": t_simulation}))
+    for t_sim in range(sim_model.t_start, sim_model.t_end + com_step, com_step):
+        mqttc.publish(topic=topic_weather_station,
+                      payload=json.dumps({"t_amb": sim_model.t_amb,
+                                          "t_sim": sim_model.t_sim}))
+        mqttc.publish(topic=topic_zone_temperature_sensor,
+                      payload=json.dumps({"t_zone": sim_model.t_zone,
+                                          "t_sim": sim_model.t_sim}))
         time.sleep(1)
+        sim_model.do_step(t_sim+com_step)
 
     # close the mqtt listening thread
     mqttc.loop_stop()
@@ -187,17 +203,17 @@ if __name__ == '__main__':
 
     # plot results
     fig, ax = plt.subplots()
-    t_simulation = [item["t_sim"] for item in history_ambient]
-    temperature = [item["ambient temperature"] for item in history_ambient]
+    t_simulation = [item["t_sim"] for item in history_weather_station]
+    temperature = [item["t_amb"] for item in history_weather_station]
     ax.plot(t_simulation, temperature)
     ax.set_xlabel('time in s')
     ax.set_ylabel('ambient temperature in °C')
 
     fig2, ax2 = plt.subplots()
-    t_simulation = [item["t_sim"] for item in history_room]
-    temperature = [item["room temperature"] for item in history_room]
+    t_simulation = [item["t_sim"] for item in history_zone_temperature_sensor]
+    temperature = [item["t_zone"] for item in history_zone_temperature_sensor]
     ax2.plot(t_simulation, temperature)
     ax2.set_xlabel('time in s')
-    ax2.set_ylabel('room temperature in °C')
+    ax2.set_ylabel('zone temperature in °C')
 
     plt.show()
