@@ -62,7 +62,7 @@ if __name__ == "__main__":
     #
     # ### 2.1 Create a ContextEntity to work with
     #
-    # for more details see: e2_context_broker_basics.py
+    # for more details see: e2_context_basics.py
     hall = {"id": "Hall_1",
             "type": "Room",
             "temperature": {"value": random.randint(0, 100),

@@ -153,8 +153,7 @@ Therefore, FiLiP currently only covers the APIs of the following GEs:
   
     - [documentation](https://quantumleap.readthedocs.io/en/latest/)
     - [github](https://github.com/FIWARE-GEs/quantum-leap)
-    - [swagger](https://app.swaggerhub.com/apis/smartsdk/ngsi-tsdb/0.7) (*not 
-      up to date*, newest API version is 8.0)
+    - [swagger](https://app.swaggerhub.com/apis/smartsdk/ngsi-tsdb/0.8.3)
 
 ## Structure of FiLiP
 
@@ -174,20 +173,16 @@ to learn how to use the different components.
 
 Currently, we provide basic examples for the usage of FiLiP for the FIWARE 
 GEs mentioned above.
-We suggest to start with the config-example in order to understand the 
-configuration of clients (*Note: This may change in the future*).
-Also, we provide more advanced examples for the semantic 
-context data modeling within a context broker using 
-[relationships](/examples/e3_context_broker_relationships.py).
-Furthermore, the context broker provides a mechanism for an event-based 
-http-notification.
-Using this mechanism is shown [here](/examples/e4_context_broker_subscriptions.py).
+We suggest to start in the right order to first understand the 
+configuration of clients.
+Afterwards, you can start modelling context data and interact the context 
+broker and use its functionalities before you learn how to connect 
+IoT Devices and store historic data.
 
-**NOTE**: Currently, we are refactoring the library in order to provide a 
-better validation mechanism. 
-After this big step we will work on further examples, and on the integration of 
-further advanced functions supporting effective context data modeling 
-using validated data model structures. 
+As it is one of the main features of the library, we provide more advanced 
+examples for the **semantic** context data modeling within a context broker 
+based on **ontologies**.
+([semantics](./examples/semantics))
 
 ## Testing
 
@@ -199,6 +194,9 @@ execute all tests located in the `tests`-directory and prefixed with `test_` .
 
 Please see our [contribution guide](./CONTRIBUTING.md) for more details on 
 how you can contribute to this project.
+Changes are collected in the [changelog](./CHANGELOG.md).
+In future the later will fully rely on conventional commits.
+
 
 ## Authors
 
@@ -215,7 +213,7 @@ how you can contribute to this project.
 
 ## References
 
-We presented the library in the following publications:
+We presented or applied the library in the following publications:
 
 - Baranski, M., Storek, T. P. B., Kümpel, A., Blechmann, S., Streblow, R., 
 Müller, D. et al.,
@@ -244,10 +242,19 @@ Efficient Buildings and Indoor Climate
 [E.ON Energy Research Center (E.ON ERC)](http://www.eonerc.rwth-aachen.de)  
 [RWTH University Aachen, Germany](http://www.rwth-aachen.de)
 
+## Disclaimer
+
+
 ## Related projects
 
 <a href="https://n5geh.de/"> <img alt="National 5G Energy Hub" 
 src="https://avatars.githubusercontent.com/u/43948851?s=200&v=4" height="100"></a>
+
+<a href="http://fismep.de/"> <img alt="National 5G Energy Hub" 
+src="http://www.fismep.de/wp-content/uploads/2017/11/FISMEP_email_signature
+-1.png" height="100" ></a>
+
+
 
 ## Acknowledgments
 
@@ -256,4 +263,10 @@ for Economic Affairs and Energy (BMWi), promotional reference 03ET1561B.
 
 <a href="https://www.bmwi.de/Navigation/EN/Home/home.html"> <img alt="BMWE" src="https://www.bmwi.de/SiteGlobals/BMWI/StyleBundles/Bilder/bmwi_logo_en.svgz?__blob=normal&v=10" height="100"> </a>
 
-[CHANGELOG.md](./CHANGELOG.md)
+This project has received funding in the framework of the joint programming initiative ERA-Net Smart Grids Plus, with support from the European Union’s Horizon 2020 research and innovation programme.
+
+<a href="http://www.eranet-smartgridsplus.eu/"> <img alt="ERANET" 
+src="http://fismep.de/wp-content/uploads/2017/09/SmartGridsPlus_rgb-300x55.jpg" height="100"> </a>
+
+
+
