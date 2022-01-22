@@ -18,12 +18,12 @@ from filip.models.ngsi_v2.context import \
     Command, \
     ContextAttribute, \
     ContextEntity, \
+    create_context_entity_model, \
     Update, \
     NamedContextAttribute, \
     ContextEntityKeyValues, \
     NamedCommand, \
     PropertyFormat
-from filip.utils.model_generation import create_context_entity_model
 
 
 class TestContextModels(unittest.TestCase):

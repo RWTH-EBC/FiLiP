@@ -2,10 +2,11 @@
 NGSIv2 models for context broker interaction
 """
 import json
-from typing import Any, List, Dict, Union, Optional, Set, Tuple
+from typing import Any, Type, List, Dict, Union, Optional, Set, Tuple
 from aenum import Enum
 from pydantic import \
     BaseModel, \
+    create_model, \
     Field, \
     validator
 
@@ -486,6 +487,48 @@ class ContextEntity(ContextEntityKeyValues):
         command_info = self.get_attribute(f'{command_attribute_name}_info')
 
         return command, command_status, command_info
+
+
+def create_context_entity_model(name: str = None,
+                                data: Dict = None,
+                                validators: Dict[str, Any] = None) -> \
+        Type['ContextEntity']:
+    r"""
+    Creates a ContextEntity-Model from a dict:
+
+    Args:
+        name: name of the model
+        data: dictionary containing the data structure
+        validators (optional): validators for the new model
+
+    Example:
+
+        >>> def username_alphanumeric(cls, value):
+                assert v.value.isalnum(), 'must be numeric'
+                return value
+
+        >>> model = create_context_entity_model(
+                        name='MyModel',
+                        data={
+                            'id': 'MyId',
+                            'type':'MyType',
+                            'temp': 'MyProperty'}
+                        {'validate_test': validator('temperature')(
+                            username_alphanumeric)})
+
+    Returns:
+        ContextEntity
+
+    """
+    properties = {key: (ContextAttribute, ...) for key in data.keys() if
+                  key not in ContextEntity.__fields__}
+    model = create_model(
+        __model_name=name or 'GeneratedContextEntity',
+        __base__=ContextEntity,
+        __validators__=validators or {},
+        **properties
+    )
+    return model
 
 
 class Query(BaseModel):

@@ -38,10 +38,12 @@ venv
 /tests/.env
 
 #filip-development
+secrets-tst.json
+
 /filip/external_resources/unece-units-of-measure.hdf
 /external_resources/
+/playground.py
+/playground_2.py
+
 
 /docs/diagrams/src/clients.wsd
-/examples/data_models/
-/tests/semantics/models.py
-/tests/semantics/models2.py
