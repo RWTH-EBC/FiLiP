@@ -491,14 +491,14 @@ class ContextBrokerClient(BaseHttpClient):
 
     def update_entity(self,
                       entity: ContextEntity,
-                      append: bool = False):
+                      append_strict: bool = False):
         """
         The request payload is an object representing the attributes to
         append or update.
 
         Args:
             entity (ContextEntity):
-            append: If `False` the entity attributes are updated (if they
+            append_strict: If `False` the entity attributes are updated (if they
                 previously exist) or appended (if they don't previously exist)
                 with the ones in the payload.
                 If `True` all the attributes in the payload not
@@ -512,7 +512,7 @@ class ContextBrokerClient(BaseHttpClient):
         self.update_or_append_entity_attributes(entity_id=entity.id,
                                                 entity_type=entity.type,
                                                 attrs=entity.get_properties(),
-                                                strict_append=append)
+                                                append_strict=append_strict)
 
     def delete_entity(self,
                       entity_id: str,
@@ -598,7 +598,7 @@ class ContextBrokerClient(BaseHttpClient):
             entity_type: str,
             attrs: List[Union[NamedContextAttribute,
                               Dict[str, ContextAttribute]]],
-            strict_append: bool = False):
+            append_strict: bool = False):
         """
         The request payload is an object representing the attributes to
         append or update. This corresponds to a 'POST' request if append is
@@ -614,7 +614,7 @@ class ContextBrokerClient(BaseHttpClient):
             entity_type: Entity type, to avoid ambiguity in case there are
                 several entities with the same entity id.
             attrs: List of attributes to update or to append
-            strict_append: If `False` the entity attributes are updated (if they
+            append_strict: If `False` the entity attributes are updated (if they
                 previously exist) or appended (if they don't previously exist)
                 with the ones in the payload.
                 If `True` all the attributes in the payload not
@@ -632,7 +632,7 @@ class ContextBrokerClient(BaseHttpClient):
         params = {}
         if entity_type:
             params.update({'type': entity_type})
-        if strict_append:
+        if append_strict:
             params.update({'options': 'append'})
 
         entity = ContextEntity(id=entity_id,
