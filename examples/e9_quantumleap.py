@@ -5,9 +5,10 @@
 import logging
 import time
 import random
-
 from filip.models.ngsi_v2.subscriptions import Message
+
 from filip.models.ngsi_v2.context import ContextEntity
+from filip.models.ngsi_v2.subscriptions import Subscription
 from filip.models.base import FiwareHeader
 from filip.clients.ngsi_v2 import ContextBrokerClient, QuantumLeapClient
 from filip.utils.cleanup import clear_all
@@ -37,9 +38,10 @@ logger = logging.getLogger(__name__)
 
 
 if __name__ == "__main__":
-    # ## 1 Setup
+
+    # # 1 Setup
     #
-    # A QuantumLeapClient and a ContextBrokerClient are created to access
+    # A QuantumLeapClient and a ContextBrokerClient are created to access 
     # FIWARE in the space given by the FiwareHeader. For more information see:
     # e1_http_clients.py
     
@@ -58,9 +60,9 @@ if __name__ == "__main__":
           + cb_client.get_version()["orion"]["version"]
           + " at url " + cb_client.base_url)
 
-    # ## 2 Interact with QL
+    # # 2 Interact with QL
     #
-    # ### 2.1 Create a ContextEntity to work with
+    # ## 2.1 Create a ContextEntity to work with
     #
     # for more details see: e2_context_broker_basics.py
     hall = {"id": "Hall_1",
@@ -72,7 +74,7 @@ if __name__ == "__main__":
     hall_entity = ContextEntity(**hall)
     cb_client.post_entity(hall_entity)
     
-    # ### 2.2 Manage subscriptions
+    # ## 2.2 Manage subscriptions
     #
     # create a subscription
     # Note: that the IP must be the ones that orion and quantumleap can access,

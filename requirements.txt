@@ -17,4 +17,4 @@ wget >=3.2
 stringcase>=1.2.0
 igraph==0.9.8
 paho-mqtt>=1.6.1
-datamodel_code_generator[http]>=0.11.16
+datamodel_code_generator>=0.11.14
