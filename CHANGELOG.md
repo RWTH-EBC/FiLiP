@@ -1,10 +1,14 @@
-#### v0.1.9 
+#### v0.2.0
  - Refactored units model ([#107](https://github.com/RWTH-EBC/FiLiP/issues/107))
+ - Updated and moved data model generator ([#117](https://github.com/RWTH-EBC/FiLiP/issues/117))
+ - quantumleap subscription missing ql_url ([#108](https://github.com/RWTH-EBC/FiLiP/issues/108))
+ - Fixed lazy attributes in IoTA Device model ([#105](https://github.com/RWTH-EBC/FiLiP/issues/105))
+ - Added get_commands to ContextEntity model ([#87](https://github.com/RWTH-EBC/FiLiP/issues/87))
 
 #### v0.1.8
 - QuantumLeap request pagination ([#47](https://github.com/RWTH-EBC/FiLiP/issues/47))
 - introduce mqtt client ([#45](https://github.com/RWTH-EBC/FiLiP/issues/45))
-- introduce concurrent testing ([#41](https://github.com/RWTH-EBC/FiLiP/issues/41))
+- introduce concurrent testing and clean up utils([#41](https://github.com/RWTH-EBC/FiLiP/issues/41))
 - include default values in subscription update ([#39](https://github.com/RWTH-EBC/FiLiP/issues/39))
 - move back to more simple docs design ([#32](https://github.com/RWTH-EBC/FiLiP/issues/32))
 - added MQTT notifications ([#24](https://github.com/RWTH-EBC/FiLiP/issues/24))

@@ -1,0 +1,15 @@
+[run]
+omit =
+    # omit all test directories
+    */test*
+	# omit deprecated code
+	*/deprecated*
+source =
+	filip
+[report]
+exclude_lines =
+	raise NotImplementedError
+	if __name__ == "__main__":
+	if __name__ == '__main__':
+	raise ImportError
+	except
