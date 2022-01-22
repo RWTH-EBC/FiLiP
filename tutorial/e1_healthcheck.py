@@ -30,14 +30,20 @@ QL_URL = "http://localhost:8668"
 
 # ## Main script
 if __name__ == "__main__":
-    # ToDo: Create a single client for each service and check the service for
+    # Create a single client for each service and check the service for
     #  its version
-    ...
+    cbc = ContextBrokerClient(url=CB_URL)
+    print(cbc.get_version())
 
+    iotac = ...
+
+    qlc = ...
 
     # ToDo: Create a configuration object for a multi client
-    ...
-
+    config = HttpClientConfig(...)
 
     # ToDo: Create a multi client check again all services for their version
+    multic = HttpClient(config=config)
+
+    print(multic.cb.get_version())
     ...

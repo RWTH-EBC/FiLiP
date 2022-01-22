@@ -2,7 +2,7 @@
 
 # Create a virtual IoT device that simulates the ambient temperature and
 # publishes it via MQTT. The simulation function is already predefined.
-# The virtual device does not only
+# This exercise to give a simple introduction to the communication via MQTT.
 
 # The input sections are marked with 'ToDo'
 
@@ -45,8 +45,13 @@ com_step = 60 * 60  # communication step in seconds
 
 # ## Simulation model
 class SimulationModel:
+    def __init__(self,
+                 t_start: int,
+                 t_end: int,
+                 dt: int,
+                 temp_max: float,
+                 temp_min: float):
 
-    def __init__(self, t_start: int, t_end: int, dt: int, temp_max: float, temp_min: float):
         self.t_start = t_start
         self.t_end = t_end
         self.dt = dt
@@ -55,14 +60,15 @@ class SimulationModel:
         self.current_time = self.t_start
         self.current_output = temp_min
 
-    # define the function that returns a virtual ambient temperature depend from the
-    # the simulation time using cosinus function
+    # define the function that returns a virtual ambient temperature depending
+    # from the simulation time using a cosinus function
     def do_step(self, t_sim: float):
         t = self.current_output
         while self.current_time <= t_sim:
             if self.current_time != 0:
-                t = -(self.temp_max - self.temp_min) / 2 * cos(2 * np.pi * self.current_time /
-                                                               (24 * 60 * 60)) + self.temp_min + \
+                t = -(self.temp_max - self.temp_min) / 2 * \
+                    cos(2 * np.pi * self.current_time /
+                        (24 * 60 * 60)) + self.temp_min + \
                     (self.temp_max - self.temp_min) / 2
             self.current_time = self.current_time + self.dt
         self.current_output = t
@@ -72,8 +78,11 @@ class SimulationModel:
 # ## Main script
 if __name__ == '__main__':
     # instantiate simulation model
-    sim_model = SimulationModel(t_start=t_sim_start, t_end=t_sim_end, dt=sim_step,
-                                temp_max=temperature_max, temp_min=temperature_min)
+    sim_model = SimulationModel(t_start=t_sim_start,
+                                t_end=t_sim_end,
+                                dt=sim_step,
+                                temp_max=temperature_max,
+                                temp_min=temperature_min)
 
     # define a list for storing historical data
     history = []

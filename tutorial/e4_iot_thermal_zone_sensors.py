@@ -1,7 +1,8 @@
 # # Exercise 3: Virtual Thermal Zone
 
-# Create a virtual IoT device that simulates the air temperature of a thermal zone and
-# publishes it via MQTT. The simulation function is already predefined.
+# Create a virtual IoT device that simulates the air temperature of a
+# thermal zone and publishes it via MQTT. The simulation function is already
+# predefined.
 
 # The input sections are marked with 'ToDo'
 
@@ -17,20 +18,37 @@
 
 # ## Import packages
 import json
-import paho.mqtt.client as mqtt
+from pathlib import Path
+from pydantic import parse_file_as
 import matplotlib.pyplot as plt
 import numpy as np
 import time
 from math import cos
+from typing import List
 from urllib.parse import urlparse
+from filip.models.ngsi_v2.context import ContextEntity
+from filip.utils.cleanup import clear_context_broker, clear_iot_agent
 
 # ## Parameters
+# ## Parameters
+# ToDo: Enter your context broker host and port, e.g http://localhost:1026
+CB_URL = "http://localhost:1026"
 # ToDo: Enter your mqtt broker url and port, e.g mqtt://test.mosquitto.org:1883
-MQTT_BROKER_URL = "mqtt://test.mosquitto.org:1883"
+MQTT_BROKER_URL = "mqtt://localhost:1883"
+# FIWARE-Service
+SERVICE = 'filip_tutorial'
+# FIWARE-Servicepath
+# ToDo: Change the name of your service-path to something unique. If you run
+#  on a shared instance this very important in order to avoid user
+#  collisions. You will use this service path through the whole tutorial.
+#  If you forget to change it an error will be raised!
+SERVICE_PATH = '/<your_path>'
 
-# ToDo: Create a topic that your room and weather station will publish to
-topic_weather = "fiware_workshop/<name_surname>/weather_station"
-topic_room = "fiware_workshop/<name_surname>/room"
+# Path to json-files to store entity data for follow up exercises
+read_entities_filepath = Path("./e3_context_entities_solution_entities.json")
+write_entities_filepath = Path("./e4_iot_thermal_zone_sensors_entities.json")
+write_groups_filepath = Path("./e4_iot_thermal_zone_sensors_groups.json")
+write_devices_filepath = Path("./e4_iot_thermal_zone_sensors_devices.json")
 
 # set parameters for the temperature simulation
 temperature_max = 10  # maximal ambient temperature
@@ -46,7 +64,12 @@ com_step = 60 * 60  # communication step in seconds
 # ## Simulation model
 class SimulationModel:
 
-    def __init__(self, t_start: int, t_end: int, dt: int, temp_max: float, temp_min: float,
+    def __init__(self,
+                 t_start: int,
+                 t_end: int,
+                 dt: int,
+                 temp_max: float,
+                 temp_min: float,
                  temp_start: float):
         self.t_start = t_start
         self.t_end = t_end
@@ -66,12 +89,11 @@ class SimulationModel:
         t_amb, t_room = self.current_output
         while self.current_time <= t_sim:
             if self.current_time != 0:
-                t_amb = -(self.temp_max - self.temp_min) / 2 * cos(2 * np.pi * self.current_time /
-                                                                   (24 * 60 * 60)) + self.temp_min + \
-                        (self.temp_max - self.temp_min) / 2
-                t_room = self.current_output[1] + self.dt * (
-                            self.kA * (t_amb - self.current_output[1]) + self.Q_h) / \
-                         self.C_p
+                t_amb = -(self.temp_max - self.temp_min) / 2 * \
+                        cos(2 * np.pi * self.current_time /(24 * 60 * 60)) + \
+                        self.temp_min + (self.temp_max - self.temp_min) / 2
+                t_room = t_room + self.dt * (self.kA * (t_amb - t_room) +
+                          self.Q_h) / self.C_p
             self.current_time = self.current_time + self.dt
         self.current_output = [t_amb, t_room]
         return self.current_output
@@ -79,47 +101,54 @@ class SimulationModel:
 
 # ## Main script
 if __name__ == '__main__':
+    # create a fiware header object
+    fiware_header = FiwareHeader(service=SERVICE,
+                                 service_path=SERVICE_PATH)
+    # clear the state of your service and scope
+    clear_context_broker(url=CB_URL, fiware_header=fiware_header)
+    # restore data from json-file
+    entities = parse_file_as(List[ContextEntity],
+                             path=read_entities_filepath)
+    # ToDo: Create a context broker client and add the fiware_header
+    cb_client = ContextBrokerClient(url=CB_URL, fiware_header=fiware_header)
+
+
+
+
     # instantiate simulation model
     sim_model = SimulationModel(t_start=t_sim_start, t_end=t_sim_end, dt=sim_step,
                                 temp_max=temperature_max, temp_min=temperature_min,
                                 temp_start=temperature_room_start)
 
-    # define lists for storing historical data
+    # define a list for storing historical data
     history_ambient = []
     history_room = []
 
+
+
+
+
+
+
+
     # ToDo: create a MQTTv5 client with paho-mqtt
-    mqttc = mqtt.Client(protocol=mqtt.MQTTv5)
+    mqttc = ...
 
 
     # ToDo: Define a callback function that will be executed when the client
     #  receives message on a subscribed topic. It should decode your message
     #  and store the information for later in our history
-    #  Note: do not change function's signature!
+    #  Note: do not change function's signature
     def on_message(client, userdata, msg):
-        payload = msg.payload.decode('utf-8')
-        json_payload = json.loads(payload)
-        if 'ambient temperature' in json_payload:
-            history_ambient.append(json_payload)
-        if 'room temperature' in json_payload:
-            history_room.append(json_payload)
+        ...
+
+        return
 
 
     # add your callback function to the client
     mqttc.on_message = on_message
 
     # ToDO: connect to the mqtt broker and subscribe to your topic
-    mqtt_url = urlparse(MQTT_BROKER_URL)
-    mqttc.connect(host=mqtt_url.hostname,
-                  port=mqtt_url.port,
-                  keepalive=60,
-                  bind_address="",
-                  bind_port=0,
-                  clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
-                  properties=None)
-
-    mqttc.subscribe(topic=topic_weather)
-    mqttc.subscribe(topic=topic_room)
 
     # create a non-blocking thread for mqtt communication
     mqttc.loop_start()
@@ -128,14 +157,8 @@ if __name__ == '__main__':
     #  that holds the simulation time "t_sim" and the corresponding temperature
     #  "temperature" the loop should
     for t_simulation in range(sim_model.t_start, sim_model.t_end + com_step, com_step):
-        mqttc.publish(topic=topic_weather,
-                      payload=json.dumps(
-                          {"ambient temperature": sim_model.do_step(t_simulation)[0],
-                           "t_sim": t_simulation}))
-        mqttc.publish(topic=topic_room,
-                      payload=json.dumps(
-                          {"room temperature": sim_model.do_step(t_simulation)[1],
-                           "t_sim": t_simulation}))
+        ...
+
         time.sleep(1)
 
     # close the mqtt listening thread
