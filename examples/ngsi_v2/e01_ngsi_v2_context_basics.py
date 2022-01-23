@@ -36,7 +36,7 @@ if __name__ == "__main__":
    
     # # 1 Setup Client
     #
-    # create the client, for more details view the example: e1_http_clients.py
+    # create the client, for more details view the example: e01_http_clients.py
     fiware_header = FiwareHeader(service=SERVICE,
                                  service_path=SERVICE_PATH)
     cb_client = ContextBrokerClient(url=CB_URL,
