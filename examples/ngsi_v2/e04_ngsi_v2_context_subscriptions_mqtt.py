@@ -112,7 +112,7 @@ if __name__ == "__main__":
     # # 3 setup callbacks and the MQTT client
     #
     # define callbacks for the mqtt client. They will be triggered by
-    # different events. Do not change there signature!
+    # different events. Do not change their signature!
     def on_connect(client, userdata, flags, reasonCode, properties=None):
         if reasonCode != 0:
             logger.error(f"Connection failed with error code: "
