@@ -22,22 +22,25 @@ import paho.mqtt.client as mqtt
 from pathlib import Path
 from pydantic import parse_file_as
 import matplotlib.pyplot as plt
-import numpy as np
 import time
-from math import cos
 from typing import List
 from urllib.parse import urlparse
+# import from filip
 from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient
 from filip.clients.mqtt import IoTAMQTTClient
 from filip.models.base import FiwareHeader
 from filip.models.ngsi_v2.context import ContextEntity
-from filip.utils.cleanup import clear_context_broker, clear_iot_agent
+from filip.models.ngsi_v2.iot import Device, DeviceAttribute, ServiceGroup
+from filip.utils.cleanup import clear_context_broker
+# import simulation model
+from tutorial.simulation_model import SimulationModel
 
-# ## Parameters
 # ## Parameters
 # ToDo: Enter your context broker host and port, e.g http://localhost:1026
 CB_URL = "http://localhost:1026"
-# ToDo: Enter your mqtt broker url and port, e.g mqtt://test.mosquitto.org:1883
+# ToDo: Enter your IoT-Agent host and port, e.g mqtt://localhost:4041
+IOTA_URL = "http://localhost:4041"
+# ToDo: Enter your mqtt broker url, e.g mqtt://test.mosquitto.org:1883
 MQTT_BROKER_URL = "mqtt://localhost:1883"
 # FIWARE-Service
 SERVICE = 'filip_tutorial'
@@ -47,6 +50,7 @@ SERVICE = 'filip_tutorial'
 #  collisions. You will use this service path through the whole tutorial.
 #  If you forget to change it an error will be raised!
 SERVICE_PATH = '/your_path'
+APIKEY = SERVICE_PATH.strip('/')
 
 # Path to json-files to store entity data for follow up exercises
 read_entities_filepath = Path("./e3_context_entities_solution_entities.json")
@@ -57,54 +61,12 @@ write_devices_filepath = Path("./e4_iot_thermal_zone_sensors_devices.json")
 # set parameters for the temperature simulation
 temperature_max = 10  # maximal ambient temperature
 temperature_min = -5  # minimal ambient temperature
-temperature_room_start = 20  # start value of the room temperature
+temperature_zone_start = 20  # start value of the zone temperature
 
 t_sim_start = 0  # simulation start time in seconds
 t_sim_end = 24 * 60 * 60  # simulation end time in seconds
 sim_step = 1  # simulation step in seconds
 com_step = 60 * 60  # communication step in seconds
-
-
-# ## Simulation model
-class SimulationModel:
-
-    def __init__(self,
-                 t_start: int,
-                 t_end: int,
-                 dt: int,
-                 temp_max: float,
-                 temp_min: float,
-                 temp_start: float):
-        self.t_start = t_start
-        self.t_end = t_end
-        self.dt = dt
-        self.temp_max = temp_max
-        self.temp_min = temp_min
-        self.temp_start = temp_start
-        self.kA = 120
-        self.C_p = 612.5 * 1000
-        self.Q_h = 1000
-        self.t_sim = self.t_start
-        self.t_amb = temp_min
-        self.t_zone = temp_start
-        self.heater_on: bool = False
-
-    # define the function that returns a virtual ambient temperature depend from the
-    # the simulation time using cosinus function
-    def do_step(self, t_sim: int):
-        for t in range(self.t_sim, t_sim, self.dt):
-            self.t_zone = self.t_zone + \
-                          self.dt * (self.kA * (self.t_amb - self.t_zone) +
-                          self.heater_on * self.Q_h) / self.C_p
-
-            self.t_amb = -(self.temp_max - self.temp_min) / 2 * \
-                    cos(2 * np.pi * t /(24 * 60 * 60)) + \
-                    self.temp_min + (self.temp_max - self.temp_min) / 2
-
-        self.t_sim = t_sim
-
-        return self.t_sim, self.t_amb, self, self.t_zone
-
 
 # ## Main script
 if __name__ == '__main__':
@@ -123,26 +85,86 @@ if __name__ == '__main__':
     # check if successfully restored
     print(cb_client.get_entity_list())
 
-
-
     # instantiate simulation model
     sim_model = SimulationModel(t_start=t_sim_start,
                                 t_end=t_sim_end,
                                 dt=sim_step,
                                 temp_max=temperature_max,
                                 temp_min=temperature_min,
-                                temp_start=temperature_room_start)
+                                temp_start=temperature_zone_start)
 
-    # define lists for storing historical data
+    # define lists to store historical data
     history_weather_station = []
     history_zone_temperature_sensor = []
 
-    topic_zone_temperature_sensor = "/json/apikey/zone_temperature_sensor/attrs"
-    topic_weather_station = "/json/apikey/weather_station/attrs"
+    # ToDo: create two IoTA-MQTT devices for the weather station and the zone
+    #  temperature sensor. Also add the simulation time as `active attribute`
+    #  to each device!
+    #
+    # create the weather station device
+    # create the simtime attribute and add during device creation
+    t_sim = DeviceAttribute(name='simtime',
+                            object_id='t_sim',
+                            type="Number")
 
-    # ToDo: create a MQTTv5 client with paho-mqtt
+    weather_station = Device(device_id='device:001',
+                             entity_name='urn:ngsi-ld:WeatherStation:001',
+                             entity_type='WeatherStation',
+                             protocol='IoTA-JSON',
+                             transport='MQTT',
+                             apikey=APIKEY,
+                             attributes=[t_sim],
+                             commands=[])
+
+    # create a temperature attribute and add it via the api of the
+    # `device`-model. Use the 't_amb' as `object_id`. `object_id` specifies
+    # what key will be used in the MQTT Message payload
+    t_amb = DeviceAttribute(name='temperature',
+                            object_id='t_amb',
+                            type="Number")
+
+    weather_station.add_attribute(t_amb)
+
+    # ToDo: create the zone temperature device
+    #   Use the 't_zone' as `object_id`. `object_id` specifies
+    #   what key will be used in the MQTT Message payload
+    zone_temperature_sensor = Device(device_id='device:002',
+                                     entity_name='urn:ngsi-ld:TemperatureSensor:001',
+                                     entity_type='TemperatureSensor',
+                                     protocol='IoTA-JSON',
+                                     transport='MQTT',
+                                     apikey=APIKEY,
+                                     attributes=[t_sim],
+                                     commands=[])
+    t_zone = DeviceAttribute(name='temperature',
+                             object_id='t_zone',
+                             type="Number")
+    zone_temperature_sensor.add_attribute(t_zone)
+
+
+    # ToDo: Provision the devices at the IoTA-Agent
+    iotac = IoTAClient(url=IOTA_URL, fiware_header=fiware_header)
+    # provision the WeatherStation device
+    iotac.post_device(device=weather_station, update=True)
+    # ToDo: provision the zone temperature device
+    iotac.post_device(device=zone_temperature_sensor, update=True)
+
+
+    # ToDo: create an MQTTv5 client with paho-mqtt
     mqttc = IoTAMQTTClient(protocol=mqtt.MQTTv5)
+    # ToDo: Register devices with your MQTT-Client
+    # register the weather station
+    mqttc.add_device(weather_station)
+    # ToDo: register the zone temperature sensor
+    mqttc.add_device(zone_temperature_sensor)
 
+    # The IoTAMQTTClient automatically creates the outgoing topics from the
+    # device configuration during runtime. Hence, we need to construct them
+    # manually in order to subscribe to them. This is usually  not required as
+    # only the platform should listen to incoming traffic.
+    topic_weather_station = f"/json/{APIKEY}/{weather_station.device_id}/attrs"
+    topic_zone_temperature_sensor = f"/json/{APIKEY}/" \
+                                    f"{zone_temperature_sensor.device_id}/attrs"
 
     # ToDo: Define a callback function that will be executed when the client
     #  receives message on a subscribed topic. It should decode your message
@@ -157,7 +179,6 @@ if __name__ == '__main__':
         payload = msg.payload.decode('utf-8')
         json_payload = json.loads(payload)
         history_zone_temperature_sensor.append(json_payload)
-
 
     # add your callback function to the client
     mqttc.message_callback_add(sub=topic_weather_station,
@@ -174,27 +195,34 @@ if __name__ == '__main__':
                   bind_port=0,
                   clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
                   properties=None)
-
+    # subscribe to topics
+    # subscribe to all incoming command topics for the registered devices
     mqttc.subscribe()
+    # Additonally subscribe to outgoing attribute topics (Only required for
+    # this tutorial)
     mqttc.subscribe(topic_weather_station)
     mqttc.subscribe(topic_zone_temperature_sensor)
-
 
     # create a non-blocking thread for mqtt communication
     mqttc.loop_start()
 
     # ToDo: Create a loop that publishes every second a message to the broker
-    #  that holds the simulation time "t_sim" and the corresponding temperature
-    #  "temperature" the loop should
+    #  that holds the simulation time "simtime" and the corresponding
+    #  temperature "temperature" the loop should. You may use the `object_id`
+    #  or the attribute name as key in your payload.
     for t_sim in range(sim_model.t_start, sim_model.t_end + com_step, com_step):
-        mqttc.publish(topic=topic_weather_station,
-                      payload=json.dumps({"t_amb": sim_model.t_amb,
-                                          "t_sim": sim_model.t_sim}))
-        mqttc.publish(topic=topic_zone_temperature_sensor,
-                      payload=json.dumps({"t_zone": sim_model.t_zone,
-                                          "t_sim": sim_model.t_sim}))
+        # publish the simulated ambient temperature
+        mqttc.publish(device_id=weather_station.device_id,
+                      payload={"temperature": sim_model.t_amb,
+                               "simtime": sim_model.t_sim})
+
+        # ToDo: publish the simulated zone temperature
+        mqttc.publish(device_id=zone_temperature_sensor.device_id,
+                      payload={"temperature": sim_model.t_zone,
+                               "simtime": sim_model.t_sim})
+        # simulation step for next loop
+        sim_model.do_step(t_sim + com_step)
         time.sleep(1)
-        sim_model.do_step(t_sim+com_step)
 
     # close the mqtt listening thread
     mqttc.loop_stop()

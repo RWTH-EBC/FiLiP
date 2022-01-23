@@ -20,19 +20,18 @@
 import json
 import paho.mqtt.client as mqtt
 import matplotlib.pyplot as plt
-import numpy as np
 import time
-from math import cos
 from urllib.parse import urlparse
+# import simulation model
+from tutorial.simulation_model import SimulationModel
 
 # ## Parameters
 # ToDo: Enter your mqtt broker url and port, e.g mqtt://test.mosquitto.org:1883
 MQTT_BROKER_URL = "mqtt://test.mosquitto.org:1883"
 
 # ToDo: Create a topic that your weather station will publish to
-topic = "fiware_workshop/<name_surname>/weather_station"
+topic_weather_station = "fiware_workshop/<name_surname>/weather_station"
 
-# set parameters for the temperature simulation
 # set parameters for the temperature simulation
 temperature_max = 10  # maximal ambient temperature
 temperature_min = -5  # minimal ambient temperature
@@ -42,39 +41,6 @@ t_sim_end = 24 * 60 * 60  # simulation end time in seconds
 sim_step = 1  # simulation step in seconds
 com_step = 60 * 60  # communication step in seconds
 
-
-# ## Simulation model
-class SimulationModel:
-    def __init__(self,
-                 t_start: int,
-                 t_end: int,
-                 dt: int,
-                 temp_max: float,
-                 temp_min: float):
-
-        self.t_start = t_start
-        self.t_end = t_end
-        self.dt = dt
-        self.temp_max = temp_max
-        self.temp_min = temp_min
-        self.current_time = self.t_start
-        self.current_output = temp_min
-
-    # define the function that returns a virtual ambient temperature depending
-    # from the simulation time using a cosinus function
-    def do_step(self, t_sim: float):
-        t = self.current_output
-        while self.current_time <= t_sim:
-            if self.current_time != 0:
-                t = -(self.temp_max - self.temp_min) / 2 * \
-                    cos(2 * np.pi * self.current_time /
-                        (24 * 60 * 60)) + self.temp_min + \
-                    (self.temp_max - self.temp_min) / 2
-            self.current_time = self.current_time + self.dt
-        self.current_output = t
-        return self.current_output
-
-
 # ## Main script
 if __name__ == '__main__':
     # instantiate simulation model
@@ -82,14 +48,14 @@ if __name__ == '__main__':
                                 t_end=t_sim_end,
                                 dt=sim_step,
                                 temp_max=temperature_max,
-                                temp_min=temperature_min)
+                                temp_min=temperature_min,
+                                temp_start=20)
 
-    # define a list for storing historical data
-    history = []
+    # define lists to store historical data
+    history_weather_station = []
 
     # ToDo: create a MQTTv5 client with paho-mqtt
     mqttc = mqtt.Client(protocol=mqtt.MQTTv5)
-
 
     # ToDo: Define a callback function that will be executed when the client
     #  receives message on a subscribed topic. It should decode your message
@@ -97,7 +63,7 @@ if __name__ == '__main__':
     #  Note: do not change function's signature!
     def on_message(client, userdata, msg):
         payload = msg.payload.decode('utf-8')
-        history.append(json.loads(payload))
+        history_weather_station.append(json.loads(payload))
 
 
     # add your callback function to the client
@@ -113,7 +79,8 @@ if __name__ == '__main__':
                   clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
                   properties=None)
 
-    mqttc.subscribe(topic=topic)
+    # ToDo: subscribe to the weather station topic
+    mqttc.subscribe(topic=topic_weather_station)
 
     # create a non-blocking thread for mqtt communication
     mqttc.loop_start()
@@ -121,11 +88,14 @@ if __name__ == '__main__':
     # ToDo: Create a loop that publishes every second a message to the broker
     #  that holds the simulation time "t_sim" and the corresponding temperature
     #  "temperature" the loop should
-    for t_simulation in range(sim_model.t_start, sim_model.t_end + com_step, com_step):
-        mqttc.publish(topic=topic,
-                      payload=json.dumps(
-                          {"temperature": sim_model.do_step(t_simulation),
-                           "t_sim": t_simulation}))
+    for t_sim in range(sim_model.t_start, sim_model.t_end + com_step, com_step):
+        # ToDo: publish the simulated ambient temperature
+        mqttc.publish(topic=topic_weather_station,
+                      payload=json.dumps({"t_amb": sim_model.t_amb,
+                                          "t_sim": sim_model.t_sim}))
+
+        # simulation step for next loop
+        sim_model.do_step(t_sim+com_step)
         time.sleep(1)
 
     # close the mqtt listening thread
@@ -135,9 +105,9 @@ if __name__ == '__main__':
 
     # plot results
     fig, ax = plt.subplots()
-    t_simulation = [item["t_sim"] for item in history]
-    temperature = [item["temperature"] for item in history]
+    t_simulation = [item["t_sim"] for item in history_weather_station]
+    temperature = [item["t_amb"] for item in history_weather_station]
     ax.plot(t_simulation, temperature)
     ax.set_xlabel('time in s')
-    ax.set_ylabel('temperature in °C')
+    ax.set_ylabel('ambient temperature in °C')
     plt.show()
