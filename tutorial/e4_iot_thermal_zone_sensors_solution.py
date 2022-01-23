@@ -31,7 +31,7 @@ from filip.clients.mqtt import IoTAMQTTClient
 from filip.models.base import FiwareHeader
 from filip.models.ngsi_v2.context import ContextEntity
 from filip.models.ngsi_v2.iot import Device, DeviceAttribute, ServiceGroup
-from filip.utils.cleanup import clear_context_broker
+from filip.utils.cleanup import clear_context_broker, clear_iot_agent
 # import simulation model
 from tutorial.simulation_model import SimulationModel
 
@@ -75,6 +75,7 @@ if __name__ == '__main__':
                                  service_path=SERVICE_PATH)
     # clear the state of your service and scope
     clear_context_broker(url=CB_URL, fiware_header=fiware_header)
+    clear_iot_agent(url=IOTA_URL, fiware_header=fiware_header)
     # restore data from json-file
     entities = parse_file_as(List[ContextEntity],
                              path=read_entities_filepath)
@@ -96,6 +97,11 @@ if __name__ == '__main__':
     # define lists to store historical data
     history_weather_station = []
     history_zone_temperature_sensor = []
+
+
+    # ToDo: Create a service group and add it to your
+    service_group = ServiceGroup(apikey=APIKEY,
+                                 resource="/iot/json")
 
     # ToDo: create two IoTA-MQTT devices for the weather station and the zone
     #  temperature sensor. Also add the simulation time as `active attribute`
@@ -142,8 +148,10 @@ if __name__ == '__main__':
     zone_temperature_sensor.add_attribute(t_zone)
 
 
-    # ToDo: Provision the devices at the IoTA-Agent
     iotac = IoTAClient(url=IOTA_URL, fiware_header=fiware_header)
+    # ToDo: Provision service group and add it to your IoTAMQTTClient
+    iotac.post_group(service_group=service_group, update=True)
+    # ToDo: Provision the devices at the IoTA-Agent
     # provision the WeatherStation device
     iotac.post_device(device=weather_station, update=True)
     # ToDo: provision the zone temperature device
@@ -152,6 +160,7 @@ if __name__ == '__main__':
 
     # ToDo: create an MQTTv5 client with paho-mqtt
     mqttc = IoTAMQTTClient(protocol=mqtt.MQTTv5)
+    mqttc.add_service_group(service_group=service_group)
     # ToDo: Register devices with your MQTT-Client
     # register the weather station
     mqttc.add_device(weather_station)
@@ -173,18 +182,26 @@ if __name__ == '__main__':
     def on_message_weather_station(client, userdata, msg):
         payload = msg.payload.decode('utf-8')
         json_payload = json.loads(payload)
-        history_weather_station.append(json_payload)
+        #history_weather_station.append(json_payload)
 
     def on_message_zone_temperature_sensor(client, userdata, msg):
         payload = msg.payload.decode('utf-8')
         json_payload = json.loads(payload)
-        history_zone_temperature_sensor.append(json_payload)
+        #history_zone_temperature_sensor.append(json_payload)
 
     # add your callback function to the client
     mqttc.message_callback_add(sub=topic_weather_station,
                                callback=on_message_weather_station)
     mqttc.message_callback_add(sub=topic_zone_temperature_sensor,
                                callback=on_message_zone_temperature_sensor)
+
+    # ToDo: Check in the context broker if the entities corresponding to your
+    #  devices where correctly created
+    cbc = ContextBrokerClient(url=CB_URL, fiware_header=fiware_header)
+
+    # Get WeatherStation entity
+    print(cbc.get_entity(weather_station.entity_name).json(indent=2))
+    print(cbc.get_entity(zone_temperature_sensor.entity_name).json(indent=2))
 
     # ToDO: connect to the mqtt broker and subscribe to your topic
     mqtt_url = urlparse(MQTT_BROKER_URL)
@@ -222,7 +239,21 @@ if __name__ == '__main__':
                                "simtime": sim_model.t_sim})
         # simulation step for next loop
         sim_model.do_step(t_sim + com_step)
+        # wait for one second before publishing the next values
         time.sleep(1)
+
+        # ToDo: Get corresponding entities and write values to history
+        weather_station_entity = cbc.get_entity(weather_station.entity_name)
+        history_weather_station.append(
+            {"simtime": weather_station_entity.simtime.value,
+             "temperature": weather_station_entity.temperature.value})
+
+        # ToDo: Get ZoneTemperatureSensor and write values to history
+        zone_temperature_sensor_entity = cbc.get_entity(
+            zone_temperature_sensor.entity_name)
+        history_zone_temperature_sensor.append(
+            {"simtime": zone_temperature_sensor_entity.simtime.value,
+             "temperature": zone_temperature_sensor_entity.temperature.value})
 
     # close the mqtt listening thread
     mqttc.loop_stop()
@@ -231,15 +262,16 @@ if __name__ == '__main__':
 
     # plot results
     fig, ax = plt.subplots()
-    t_simulation = [item["t_sim"] for item in history_weather_station]
-    temperature = [item["t_amb"] for item in history_weather_station]
+    t_simulation = [item["simtime"] for item in history_weather_station]
+    temperature = [item["temperature"] for item in history_weather_station]
     ax.plot(t_simulation, temperature)
     ax.set_xlabel('time in s')
     ax.set_ylabel('ambient temperature in °C')
 
     fig2, ax2 = plt.subplots()
-    t_simulation = [item["t_sim"] for item in history_zone_temperature_sensor]
-    temperature = [item["t_zone"] for item in history_zone_temperature_sensor]
+    t_simulation = [item["simtime"] for item in history_zone_temperature_sensor]
+    temperature = [item["temperature"] for item in
+                   history_zone_temperature_sensor]
     ax2.plot(t_simulation, temperature)
     ax2.set_xlabel('time in s')
     ax2.set_ylabel('zone temperature in °C')
