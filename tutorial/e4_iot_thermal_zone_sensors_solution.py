@@ -1,20 +1,24 @@
-# # Exercise 3: Virtual Thermal Zone
+# # Exercise 4: Virtual Thermal Zone
 
-# Create a virtual IoT device that simulates the air temperature of a
-# thermal zone and publishes it via MQTT. The simulation function is already
-# predefined.
-
+# Create two virtual IoT device. One of them represents the temperature
+# sensor for the air temperature of a the thermal zone, whereas the second
+# represents a virtual weather station. Both devices publish there values to
+# the platform via MQTT. Use the simulation model of
+# e1_virtual_weatherstation.py
+#
 # The input sections are marked with 'ToDo'
-
+#
 # #### Steps to complete:
 # 1. Set up the missing parameters in the parameter section
-# 2. Create an MQTT client using the paho-mqtt package with mqtt.Client()
-# 3. Define a callback function that will be executed when the client
-#    receives message on a subscribed topic. It should decode your message
-#    and store the information for later in our history
-# 4. Subscribe to the topic that the device will publish to
-# 5. Create a function that publishes the simulated temperature via MQTT as a JSON
-# 6. Run the simulation and plot
+# 2. Create a service group and two devices
+# 3. Provision the service group and the devices
+# 4. Create an MQTT client using the filip.client.mqtt package and register
+#    your service group and your devices
+# 5. Check if the IoT-Agent correctly creates the corresponding entities
+# 5. Create a function that publishes the simulated temperature via MQTT,
+#    retrieves the entity data after each message and writes the values to a
+#    history
+# 6. Run the simulation and plot the results
 
 # ## Import packages
 import json
@@ -53,8 +57,6 @@ SERVICE_PATH = '/your_path'
 APIKEY = SERVICE_PATH.strip('/')
 
 # Path to json-files to store entity data for follow up exercises
-read_entities_filepath = Path("./e3_context_entities_solution_entities.json")
-write_entities_filepath = Path("./e4_iot_thermal_zone_sensors_entities.json")
 write_groups_filepath = Path("./e4_iot_thermal_zone_sensors_groups.json")
 write_devices_filepath = Path("./e4_iot_thermal_zone_sensors_devices.json")
 
@@ -65,8 +67,7 @@ temperature_zone_start = 20  # start value of the zone temperature
 
 t_sim_start = 0  # simulation start time in seconds
 t_sim_end = 24 * 60 * 60  # simulation end time in seconds
-sim_step = 1  # simulation step in seconds
-com_step = 60 * 60  # communication step in seconds
+com_step = 60 * 60 * 0.25  # 15 min communication step in seconds
 
 # ## Main script
 if __name__ == '__main__':
@@ -76,20 +77,10 @@ if __name__ == '__main__':
     # clear the state of your service and scope
     clear_context_broker(url=CB_URL, fiware_header=fiware_header)
     clear_iot_agent(url=IOTA_URL, fiware_header=fiware_header)
-    # restore data from json-file
-    entities = parse_file_as(List[ContextEntity],
-                             path=read_entities_filepath)
-    # create a context broker client and add the fiware_header
-    cb_client = ContextBrokerClient(url=CB_URL, fiware_header=fiware_header)
-    cb_client.update(entities=entities, action_type='append')
-
-    # check if successfully restored
-    print(cb_client.get_entity_list())
 
     # instantiate simulation model
     sim_model = SimulationModel(t_start=t_sim_start,
                                 t_end=t_sim_end,
-                                dt=sim_step,
                                 temp_max=temperature_max,
                                 temp_min=temperature_min,
                                 temp_start=temperature_zone_start)
@@ -98,8 +89,7 @@ if __name__ == '__main__':
     history_weather_station = []
     history_zone_temperature_sensor = []
 
-
-    # ToDo: Create a service group and add it to your
+    # Create a service group and add it to your
     service_group = ServiceGroup(apikey=APIKEY,
                                  resource="/iot/json")
 
@@ -131,9 +121,8 @@ if __name__ == '__main__':
 
     weather_station.add_attribute(t_amb)
 
-    # ToDo: create the zone temperature device
-    #   Use the 't_zone' as `object_id`. `object_id` specifies
-    #   what key will be used in the MQTT Message payload
+    # ToDo: create the zone temperature device add the t_sim attribute upon
+    #  creation
     zone_temperature_sensor = Device(device_id='device:002',
                                      entity_name='urn:ngsi-ld:TemperatureSensor:001',
                                      entity_type='TemperatureSensor',
@@ -142,12 +131,14 @@ if __name__ == '__main__':
                                      apikey=APIKEY,
                                      attributes=[t_sim],
                                      commands=[])
+    # ToDo: Create the temperature attribute. Use the 't_zone' as `object_id`.
+    #  `object_id` specifies what key will be used in the MQTT Message payload
     t_zone = DeviceAttribute(name='temperature',
                              object_id='t_zone',
                              type="Number")
     zone_temperature_sensor.add_attribute(t_zone)
 
-
+    # ToDo: Create an IoTAClient
     iotac = IoTAClient(url=IOTA_URL, fiware_header=fiware_header)
     # ToDo: Provision service group and add it to your IoTAMQTTClient
     iotac.post_group(service_group=service_group, update=True)
@@ -157,8 +148,16 @@ if __name__ == '__main__':
     # ToDo: provision the zone temperature device
     iotac.post_device(device=zone_temperature_sensor, update=True)
 
+    # ToDo: Check in the context broker if the entities corresponding to your
+    #  devices where correctly created
+    # ToDo: Create a context broker client
+    cbc = ContextBrokerClient(url=CB_URL, fiware_header=fiware_header)
+    # Get WeatherStation entity
+    print(cbc.get_entity(weather_station.entity_name).json(indent=2))
+    # Get ZoneTemperatureSensor entity
+    print(cbc.get_entity(zone_temperature_sensor.entity_name).json(indent=2))
 
-    # ToDo: create an MQTTv5 client with paho-mqtt
+    # ToDo: create an MQTTv5 client using filip.clients.mqtt.IoTAMQTTClient
     mqttc = IoTAMQTTClient(protocol=mqtt.MQTTv5)
     mqttc.add_service_group(service_group=service_group)
     # ToDo: Register devices with your MQTT-Client
@@ -171,37 +170,9 @@ if __name__ == '__main__':
     # device configuration during runtime. Hence, we need to construct them
     # manually in order to subscribe to them. This is usually  not required as
     # only the platform should listen to incoming traffic.
-    topic_weather_station = f"/json/{APIKEY}/{weather_station.device_id}/attrs"
-    topic_zone_temperature_sensor = f"/json/{APIKEY}/" \
-                                    f"{zone_temperature_sensor.device_id}/attrs"
-
-    # ToDo: Define a callback function that will be executed when the client
-    #  receives message on a subscribed topic. It should decode your message
-    #  and store the information for later in our history
-    #  Note: do not change function's signature!
-    def on_message_weather_station(client, userdata, msg):
-        payload = msg.payload.decode('utf-8')
-        json_payload = json.loads(payload)
-        #history_weather_station.append(json_payload)
-
-    def on_message_zone_temperature_sensor(client, userdata, msg):
-        payload = msg.payload.decode('utf-8')
-        json_payload = json.loads(payload)
-        #history_zone_temperature_sensor.append(json_payload)
-
-    # add your callback function to the client
-    mqttc.message_callback_add(sub=topic_weather_station,
-                               callback=on_message_weather_station)
-    mqttc.message_callback_add(sub=topic_zone_temperature_sensor,
-                               callback=on_message_zone_temperature_sensor)
-
-    # ToDo: Check in the context broker if the entities corresponding to your
-    #  devices where correctly created
-    cbc = ContextBrokerClient(url=CB_URL, fiware_header=fiware_header)
-
-    # Get WeatherStation entity
-    print(cbc.get_entity(weather_station.entity_name).json(indent=2))
-    print(cbc.get_entity(zone_temperature_sensor.entity_name).json(indent=2))
+    # if you want to listen subscribe to the following topics:
+    # "/json/<APIKEY>/<weather_station.device_id>/attrs"
+    # "/json/<APIKEY>/<zone_temperature_sensor.device_id>/attrs"
 
     # ToDO: connect to the mqtt broker and subscribe to your topic
     mqtt_url = urlparse(MQTT_BROKER_URL)
@@ -215,10 +186,6 @@ if __name__ == '__main__':
     # subscribe to topics
     # subscribe to all incoming command topics for the registered devices
     mqttc.subscribe()
-    # Additonally subscribe to outgoing attribute topics (Only required for
-    # this tutorial)
-    mqttc.subscribe(topic_weather_station)
-    mqttc.subscribe(topic_zone_temperature_sensor)
 
     # create a non-blocking thread for mqtt communication
     mqttc.loop_start()
@@ -227,7 +194,9 @@ if __name__ == '__main__':
     #  that holds the simulation time "simtime" and the corresponding
     #  temperature "temperature" the loop should. You may use the `object_id`
     #  or the attribute name as key in your payload.
-    for t_sim in range(sim_model.t_start, sim_model.t_end + com_step, com_step):
+    for t_sim in range(sim_model.t_start,
+                       sim_model.t_end + int(com_step),
+                       int(com_step)):
         # publish the simulated ambient temperature
         mqttc.publish(device_id=weather_station.device_id,
                       payload={"temperature": sim_model.t_amb,
@@ -238,11 +207,11 @@ if __name__ == '__main__':
                       payload={"temperature": sim_model.t_zone,
                                "simtime": sim_model.t_sim})
         # simulation step for next loop
-        sim_model.do_step(t_sim + com_step)
+        sim_model.do_step(int(t_sim + com_step))
         # wait for one second before publishing the next values
         time.sleep(1)
 
-        # ToDo: Get corresponding entities and write values to history
+        # Get corresponding entities and write values to history
         weather_station_entity = cbc.get_entity(weather_station.entity_name)
         history_weather_station.append(
             {"simtime": weather_station_entity.simtime.value,
