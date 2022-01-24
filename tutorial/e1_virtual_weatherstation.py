@@ -45,7 +45,6 @@ temperature_min = -5  # minimal ambient temperature
 
 t_sim_start = 0  # simulation start time in seconds
 t_sim_end = 24 * 60 * 60  # simulation end time in seconds
-sim_step = 1  # simulation step in seconds
 com_step = 60 * 60 * 0.25  # 15 min communication step in seconds
 
 
@@ -54,13 +53,11 @@ if __name__ == '__main__':
     # instantiate simulation model
     sim_model = SimulationModel(t_start=t_sim_start,
                                 t_end=t_sim_end,
-                                dt=sim_step,
                                 temp_max=temperature_max,
-                                temp_min=temperature_min,
-                                temp_start=20)
+                                temp_min=temperature_min)
 
     # define a list for storing historical data
-    history = []
+    history_weather_station = []
 
     # ToDo: create a MQTTv5 client with paho-mqtt
     mqttc = ...
@@ -75,8 +72,8 @@ if __name__ == '__main__':
         # ToDo: Parse the payload using the `json` package and write it to
         #  the history
         ...
-        return
 
+        return
 
     # add your callback function to the client. You can either use a global
     # or a topic specific callback with `mqttc.message_callback_add()`
@@ -85,6 +82,16 @@ if __name__ == '__main__':
     # ToDO: connect to the mqtt broker and subscribe to your topic
     mqtt_url = urlparse(MQTT_BROKER_URL)
     ...
+
+
+
+
+
+
+
+    # ToDo: print and subscribe to the weather station topic
+    print(f"WeatherStation topic:\n topic_weather_station")
+    mqttc.subscribe(topic=topic_weather_station)
 
     # create a non-blocking thread for mqtt communication
     mqttc.loop_start()
@@ -97,6 +104,9 @@ if __name__ == '__main__':
                        int(com_step)):
         # ToDo: publish the simulated ambient temperature
         ...
+
+
+
         # simulation step for next loop
         sim_model.do_step(int(t_sim + com_step))
         time.sleep(1)
@@ -108,9 +118,9 @@ if __name__ == '__main__':
 
     # plot results
     fig, ax = plt.subplots()
-    t_simulation = [item["t_sim"] for item in history]
-    temperature = [item["temperature"] for item in history]
+    t_simulation = [item["t_sim"] for item in history_weather_station]
+    temperature = [item["t_amb"] for item in history_weather_station]
     ax.plot(t_simulation, temperature)
     ax.set_xlabel('time in s')
-    ax.set_ylabel('temperature in °C')
+    ax.set_ylabel('ambient temperature in °C')
     plt.show()

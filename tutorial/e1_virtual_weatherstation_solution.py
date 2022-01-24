@@ -45,7 +45,6 @@ temperature_min = -5  # minimal ambient temperature
 
 t_sim_start = 0  # simulation start time in seconds
 t_sim_end = 24 * 60 * 60  # simulation end time in seconds
-sim_step = 1  # simulation step in seconds
 com_step = 60 * 60 * 0.25  # 15 min communication step in seconds
 
 
@@ -54,10 +53,8 @@ if __name__ == '__main__':
     # instantiate simulation model
     sim_model = SimulationModel(t_start=t_sim_start,
                                 t_end=t_sim_end,
-                                dt=sim_step,
                                 temp_max=temperature_max,
-                                temp_min=temperature_min,
-                                temp_start=20)
+                                temp_min=temperature_min)
 
     # define lists to store historical data
     history_weather_station = []
@@ -75,6 +72,8 @@ if __name__ == '__main__':
         # ToDo: Parse the payload using the `json` package and write it to
         #  the history
         history_weather_station.append(json.loads(payload))
+
+        return
 
     # add your callback function to the client. You can either use a global
     # or a topic specific callback with `mqttc.message_callback_add()`
