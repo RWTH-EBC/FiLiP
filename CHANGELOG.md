@@ -5,6 +5,7 @@
  - Fixed lazy attributes in IoTA Device model ([#105](https://github.com/RWTH-EBC/FiLiP/issues/105))
  - Added get_commands to ContextEntity model ([#87](https://github.com/RWTH-EBC/FiLiP/issues/87))
  - Added missing attribute requets for context broker ([#113](https://github.com/RWTH-EBC/FiLiP/issues/113))
+ - Fixed broken attribute mapping in IoTAMQTTClient ([#122](https://github.com/RWTH-EBC/FiLiP/issues/122))
 
 
 #### v0.1.8
