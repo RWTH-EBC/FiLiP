@@ -1,7 +1,7 @@
-# # Exercise 1: Service Health Check
+# # Exercise 2: Service Health Check
 
 # Create one or multiple filip clients and check if the corresponding services
-# are up and running!
+# are up and running by accessing their version information.
 
 # The input sections are marked with 'ToDo'
 
