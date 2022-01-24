@@ -21,20 +21,15 @@
 # 6. Run the simulation and plot the results
 
 # ## Import packages
-# ## Import packages
-import json
 import paho.mqtt.client as mqtt
 from pathlib import Path
-from pydantic import parse_file_as
 import matplotlib.pyplot as plt
 import time
-from typing import List
 from urllib.parse import urlparse
 # import from filip
 from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient
 from filip.clients.mqtt import IoTAMQTTClient
 from filip.models.base import FiwareHeader
-from filip.models.ngsi_v2.context import ContextEntity
 from filip.models.ngsi_v2.iot import Device, DeviceAttribute, ServiceGroup
 from filip.utils.cleanup import clear_context_broker, clear_iot_agent
 # import simulation model
@@ -69,8 +64,6 @@ temperature_zone_start = 20  # start value of the zone temperature
 t_sim_start = 0  # simulation start time in seconds
 t_sim_end = 24 * 60 * 60  # simulation end time in seconds
 com_step = 60 * 60 * 0.25  # 15 min communication step in seconds
-
-
 
 # ## Main script
 if __name__ == '__main__':
@@ -134,11 +127,9 @@ if __name__ == '__main__':
 
 
 
-
     # ToDo: Create the temperature attribute. Use the 't_zone' as `object_id`.
     #  `object_id` specifies what key will be used in the MQTT Message payload
     t_zone = DeviceAttribute(...)
-
 
 
     zone_temperature_sensor.add_attribute(t_zone)
@@ -159,8 +150,8 @@ if __name__ == '__main__':
     cbc = ContextBrokerClient(url=CB_URL, fiware_header=fiware_header)
     # Get WeatherStation entity
     print(cbc.get_entity(weather_station.entity_name).json(indent=2))
-    # Get ZoneTemperatureSensor entity
-    print(cbc.get_entity(zone_temperature_sensor.entity_name).json(indent=2))
+    # ToDo: Get ZoneTemperatureSensor entity
+    print(...)
 
     # ToDo: create an MQTTv5 client using filip.clients.mqtt.IoTAMQTTClient
     mqttc = IoTAMQTTClient(protocol=...)
@@ -182,6 +173,9 @@ if __name__ == '__main__':
 
     # ToDO: connect to the mqtt broker and subscribe to your topic
     ...
+
+
+
 
 
 
@@ -216,7 +210,7 @@ if __name__ == '__main__':
 
         # Get corresponding entities and write values to history
         weather_station_entity = cbc.get_entity(weather_station.entity_name)
-        # append the
+        # append the data to the local history
         history_weather_station.append(
             {"simtime": weather_station_entity.simtime.value,
              "temperature": weather_station_entity.temperature.value})

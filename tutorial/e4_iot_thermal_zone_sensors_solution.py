@@ -21,19 +21,15 @@
 # 6. Run the simulation and plot the results
 
 # ## Import packages
-import json
 import paho.mqtt.client as mqtt
 from pathlib import Path
-from pydantic import parse_file_as
 import matplotlib.pyplot as plt
 import time
-from typing import List
 from urllib.parse import urlparse
 # import from filip
 from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient
 from filip.clients.mqtt import IoTAMQTTClient
 from filip.models.base import FiwareHeader
-from filip.models.ngsi_v2.context import ContextEntity
 from filip.models.ngsi_v2.iot import Device, DeviceAttribute, ServiceGroup
 from filip.utils.cleanup import clear_context_broker, clear_iot_agent
 # import simulation model
@@ -159,6 +155,7 @@ if __name__ == '__main__':
 
     # ToDo: create an MQTTv5 client using filip.clients.mqtt.IoTAMQTTClient
     mqttc = IoTAMQTTClient(protocol=mqtt.MQTTv5)
+    # ToDo: Register the service group with your MQTT-Client
     mqttc.add_service_group(service_group=service_group)
     # ToDo: Register devices with your MQTT-Client
     # register the weather station
@@ -186,7 +183,6 @@ if __name__ == '__main__':
     # subscribe to topics
     # subscribe to all incoming command topics for the registered devices
     mqttc.subscribe()
-
     # create a non-blocking thread for mqtt communication
     mqttc.loop_start()
 
@@ -206,6 +202,7 @@ if __name__ == '__main__':
         mqttc.publish(device_id=zone_temperature_sensor.device_id,
                       payload={"temperature": sim_model.t_zone,
                                "simtime": sim_model.t_sim})
+
         # simulation step for next loop
         sim_model.do_step(int(t_sim + com_step))
         # wait for one second before publishing the next values
@@ -213,6 +210,7 @@ if __name__ == '__main__':
 
         # Get corresponding entities and write values to history
         weather_station_entity = cbc.get_entity(weather_station.entity_name)
+        # append the data to the local history
         history_weather_station.append(
             {"simtime": weather_station_entity.simtime.value,
              "temperature": weather_station_entity.temperature.value})
