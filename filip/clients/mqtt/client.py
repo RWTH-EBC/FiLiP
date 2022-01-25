@@ -751,7 +751,6 @@ class IoTAMQTTClient(mqtt.Client):
                 for key in payload.keys():
                     for attr in device.attributes:
                         if key in attr.object_id or key == 'timeInstant':
-                            pass
                             break
                         elif key == attr.name:
                             if attr.object_id:
