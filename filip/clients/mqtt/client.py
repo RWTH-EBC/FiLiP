@@ -24,19 +24,24 @@ class IoTAMQTTClient(mqtt.Client):
     This class is an extension to the MQTT client from the well established
     Eclipse Paho™ MQTT Python Client. The official documentation is located
     here: https://github.com/eclipse/paho.mqtt.python
+
     The class adds additional functions to facilitate the communication to
     FIWARE's IoT-Agent via MQTT. It magically generates and subscribes to all
     important topics that are necessary to establish a
     bi-directional communication with the IoT-Agent.
+
     Note:
         The client does not sync the device configuration with the IoT-Agent.
         This is up to the user!
+
     Note:
         The extension does not effect the normal workflow or any other
         functionality known from the original client.
+
         The client does not yet support the retrieval of command
         configurations via mqtt documented here:
         https://fiware-iotagent-json.readthedocs.io/en/latest/usermanual/index.html#api-overview
+
     Example:
         This example shows the basic usage of the client. It does not
         demonstrate its whole capabilities. Please check the single methods
@@ -44,9 +49,11 @@ class IoTAMQTTClient(mqtt.Client):
         provisioning of the device in the IoT-Agent and sending the commands
         via the context broker. For more details check the additional example
         section::
+
             from filip.models.ngsi_v2.iot import Device, DeviceAttribute, DeviceCommand, ServiceGroup
             from filip.clients.mqtt import MQTTClient
             from filip.clients.mqtt.encoder import IoTA_Json
+
             # create a device configuration
             device_attr = DeviceAttribute(name='temperature',
                                           object_id='t',
@@ -60,43 +67,58 @@ class IoTAMQTTClient(mqtt.Client):
                             apikey=YourApiKey,
                             attributes=[device_attr],
                             commands=[device_command])
+
             service_group = ServiceGroup(apikey="YourApiKey", resource="/iot")
+
             mqttc = MQTTClient(client_id="YourID",
                                userdata=None,
                                protocol=mqtt.MQTTv5,
                                transport="tcp",
                                _devices = [device],
                                service_groups = [service_group])
+
             # create a callback function that will be called for incoming
             # commands and add it for a single device
             def on_command(client, obj, msg):
                 apikey, device_id, payload = \
                     client.get_encoder().decode_message(msg=msg)
+
                 # do_something with the message.
                 # For instance write into a queue.
+
                 # acknowledge a command
                 client.publish(device_id=device_id,
                                command_name=next(iter(payload))
                                payload=payload)
+
             mqttc.add_command_callback(on_command)
+
             # create a non blocking loop
             mqttc.loop_start()
+
             # publish a multi-measurement for a device
             mqttc.publish(device_id='MyDevice', payload={'t': 50})
+
             # publish a single measurement for a device
             mqttc.publish(device_id='MyDevice',
                           attribute_name='temperature',
                           payload=50)
+
             # adding timestamps to measurements using the client
+
+
             # adding timestamps to measurements in payload
             from datetime import datetime
+
             mqttc.publish(device_id='MyDevice',
                           payload={'t': 50,
                                    'timeInstant': datetime.now().astimezone().isoformat()},
                           timestamp=true)
+
             # stop network loop and disconnect cleanly
             mqttc.loop_stop()
             mqttc.disconnect()
+
     """
 
     def __init__(self,
@@ -202,6 +224,7 @@ class IoTAMQTTClient(mqtt.Client):
         """
         Returns as list of all registered device configurations
         Returns:
+
         """
         return list(self._devices.values())
 
@@ -209,10 +232,13 @@ class IoTAMQTTClient(mqtt.Client):
     def devices(self, devices: List[Device]):
         """
         Sets list of device configurations
+
         Args:
             devices: List of device configurations
+
         Returns:
             None
+
         Raises:
             ValueError: if duplicate device id was found
         """
@@ -225,8 +251,10 @@ class IoTAMQTTClient(mqtt.Client):
     def get_encoder(self, encoder: Union[str, PayloadProtocol]):
         """
         Returns the encoder by key
+
         Args:
             encoder: encoder name
+
         Returns:
             Subclass of Baseencoder
         """
@@ -242,10 +270,13 @@ class IoTAMQTTClient(mqtt.Client):
     def __validate_device(self, device: Union[Device, Dict]) -> Device:
         """
         Validates configuration of an IoT Device
+
         Args:
             device: device model to check on
+
         Returns:
             Device: validated model
+
         Raises:
             AssertionError: for faulty configurations
         """
@@ -276,6 +307,7 @@ class IoTAMQTTClient(mqtt.Client):
         """
         Creates a topic for a device configuration based on the requested
         topic type.
+
         Args:
             device:
                 Configuration of an IoT device
@@ -291,6 +323,7 @@ class IoTAMQTTClient(mqtt.Client):
                 attribute needs to be set for single measurements
         Returns:
             string with topic
+
         Raises:
             KeyError:
                 If unknown message type is used
@@ -344,11 +377,13 @@ class IoTAMQTTClient(mqtt.Client):
         _devices.
         Additionally, it will also check if a matching service group is
         registered with the client. If nor a warning will be raised.
+
         Args:
             device: Configuration of an IoT device
             qos: Quality of service can be 0, 1 or 2
             options: MQTT v5.0 subscribe options
             properties: MQTT v5.0 properties
+
         Returns:
             None
         """
@@ -371,14 +406,20 @@ class IoTAMQTTClient(mqtt.Client):
     def get_service_group(self, apikey: str) -> ServiceGroup:
         """
         Returns registered service group configuration
+
         Args:
             apikey: Unique APIKey of the service group
+
         Returns:
             ServiceGroup
+
         Raises:
             KeyError: if service group not yet registered
+
         Example::
+
             from filip.clients.mqtt import MQTTClient
+
             mqttc = MQTTClient()
             group = mqttc.get_service_group(apikey="MyAPIKEY")
             print(group.json(indent=2))
@@ -392,10 +433,13 @@ class IoTAMQTTClient(mqtt.Client):
     def add_service_group(self, service_group: Union[ServiceGroup, Dict]):
         """
         Registers a device service group with the client
+
         Args:
             service_group: Service group configuration
+
         Returns:
             None
+
         Raises:
             ValueError: if service group already exists
         """
@@ -415,8 +459,10 @@ class IoTAMQTTClient(mqtt.Client):
     def delete_service_group(self, apikey):
         """
         Unregisters a service group and removes
+
         Args:
             apikey: Unique APIKey of the service group
+
         Returns:
             None
         """
@@ -434,10 +480,13 @@ class IoTAMQTTClient(mqtt.Client):
         Updates a registered service group configuration. There is no
         opportunity to only partially update the device. Hence, your service
         group model should be complete.
+
         Args:
             service_group: Service group configuration
+
         Returns:
             None
+
         Raises:
             KeyError: if service group not yet registered
         """
@@ -455,14 +504,20 @@ class IoTAMQTTClient(mqtt.Client):
     def get_device(self, device_id: str) -> Device:
         """
         Returns the configuration of a registered device.
+
         Args:
             device_id: Id of the requested device
+
         Returns:
            Device: Device model of the requested device
+
         Raises:
             KeyError: if requested device is not registered with the client
+
         Example::
+
             from filip.clients.mqtt import MQTTClient
+
             mqttc = MQTTClient()
             device = mqttc.get_device(device_id="MyDeviceId")
             print(device.json(indent=2))
@@ -480,17 +535,21 @@ class IoTAMQTTClient(mqtt.Client):
         the client will magically subscribe to the corresponding topics based
         on the device config and any matching registered service group config
         if exists.
+
         Note:
             To register the device config only with this client is not
             sufficient for data streaming the configuration also needs to be
             registered with IoTA-Agent.
+
         Args:
             device: Configuration of an IoT device
             qos: Quality of service can be 0, 1 or 2
             options: MQTT v5.0 subscribe options
             properties: MQTT v5.0 properties
+
         Returns:
             None
+
         Raises:
             ValueError: if device configuration already exists
         """
@@ -511,8 +570,10 @@ class IoTAMQTTClient(mqtt.Client):
     def delete_device(self, device_id: str):
         """
         Unregisters a device and removes its subscriptions and callbacks
+
         Args:
             device_id: id of and IoT device
+
         Returns:
             None
         """
@@ -536,13 +597,16 @@ class IoTAMQTTClient(mqtt.Client):
         Updates a registered device configuration. There is no opportunity
         to only partially update the device. Hence, your device model should
         be complete.
+
         Args:
             device: Configuration of an IoT device
             qos: Quality of service can be 0, 1 or 2
             options: MQTT v5.0 subscribe options
             properties: MQTT v5.0 properties
+
         Returns:
             None
+
         Raises:
             KeyError: if device not yet registered
         """
@@ -562,25 +626,32 @@ class IoTAMQTTClient(mqtt.Client):
     def add_command_callback(self, device_id: str, callback: Callable):
         """
         Adds callback function for a device configuration.
+
         Args:
             device_id:
                 id of and IoT device
             callback:
                 function that will be called for incoming commands.
                 This function should have the following format:
+
         Example::
+
             def on_command(client, obj, msg):
                 apikey, device_id, payload = \
                     client.encoder.decode_message(msg=msg)
+
                 # do_something with the message.
                 # For instance write into a queue.
+
                 # acknowledge a command. Here command are usually single
                 # messages. The first key is equal to the commands name.
                 client.publish(device_id=device_id,
                                command_name=next(iter(payload)),
                                payload=payload)
+
             mqttc.add_command_callback(device_id="MyDevice",
                                        callback=on_command)
+
         Returns:
             None
         """
@@ -610,9 +681,11 @@ class IoTAMQTTClient(mqtt.Client):
         against the registered device configuration if the payload keys are
         valid. If you want to publish a single measurement the attribute_name
         argument is required as well.
+
         Note:
             If the device_id argument is set, the topic argument will be
             ignored.
+
         Args:
             topic:
                 The topic that the message should be published on.
@@ -648,8 +721,10 @@ class IoTAMQTTClient(mqtt.Client):
                 utc and added to the multi measurement payload.
                 If a `timeInstant` is already contained in the
                 message payload it will not overwritten.
+
         Returns:
             None
+
         Raises:
             KeyError: if device configuration is not registered with client
             ValueError: if the passed arguments are inconsistent or a
@@ -736,6 +811,7 @@ class IoTAMQTTClient(mqtt.Client):
         Extends the normal subscribe function of the paho.mqtt.client.
         If the topic argument is omitted the client will subscribe to all
         registered device command topics.
+
         Args:
             topic:
                 A string specifying the subscription topic to subscribe to.
@@ -744,6 +820,7 @@ class IoTAMQTTClient(mqtt.Client):
                 Defaults to 0.
             options: Not used.
             properties: Not used.
+
         Returns:
             None
         """
