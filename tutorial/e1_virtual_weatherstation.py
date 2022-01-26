@@ -36,25 +36,25 @@ MQTT_BROKER_URL = "mqtt://test.mosquitto.org:1883"
 
 # ToDo: Create a unique topic that your weather station will publish on,
 #  e.g. by using a uuid
-unique_id = str(uuid4())
-topic_weather_station = f"fiware_workshop/{unique_id}/weather_station"
+UNIQUE_ID = str(uuid4())
+TOPIC_WEATHER_STATION = f"fiware_workshop/{UNIQUE_ID}/weather_station"
 
 # set parameters for the temperature simulation
-temperature_max = 10  # maximal ambient temperature
-temperature_min = -5  # minimal ambient temperature
+TEMPERATURE_MAX = 10  # maximal ambient temperature
+TEMPERATURE_MIN = -5  # minimal ambient temperature
 
-t_sim_start = 0  # simulation start time in seconds
-t_sim_end = 24 * 60 * 60  # simulation end time in seconds
-com_step = 60 * 60 * 0.25  # 15 min communication step in seconds
+T_SIM_START = 0  # simulation start time in seconds
+T_SIM_END = 24 * 60 * 60  # simulation end time in seconds
+COM_STEP = 60 * 60 * 0.25  # 15 min communication step in seconds
 
 
 # ## Main script
 if __name__ == '__main__':
     # instantiate simulation model
-    sim_model = SimulationModel(t_start=t_sim_start,
-                                t_end=t_sim_end,
-                                temp_max=temperature_max,
-                                temp_min=temperature_min)
+    sim_model = SimulationModel(t_start=T_SIM_START,
+                                t_end=T_SIM_END,
+                                temp_max=TEMPERATURE_MAX,
+                                temp_min=TEMPERATURE_MIN)
 
     # define a list for storing historical data
     history_weather_station = []
@@ -91,7 +91,7 @@ if __name__ == '__main__':
 
     # ToDo: print and subscribe to the weather station topic
     print(f"WeatherStation topic:\n topic_weather_station")
-    mqttc.subscribe(topic=topic_weather_station)
+    mqttc.subscribe(topic=TOPIC_WEATHER_STATION)
 
     # create a non-blocking thread for mqtt communication
     mqttc.loop_start()
@@ -100,15 +100,15 @@ if __name__ == '__main__':
     #  that holds the simulation time "t_sim" and the corresponding temperature
     #  "t_amb"
     for t_sim in range(sim_model.t_start,
-                       int(sim_model.t_end + com_step),
-                       int(com_step)):
+                       int(sim_model.t_end + COM_STEP),
+                       int(COM_STEP)):
         # ToDo: publish the simulated ambient temperature
         ...
 
 
 
         # simulation step for next loop
-        sim_model.do_step(int(t_sim + com_step))
+        sim_model.do_step(int(t_sim + COM_STEP))
         time.sleep(1)
 
     # close the mqtt listening thread

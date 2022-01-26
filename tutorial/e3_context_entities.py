@@ -56,7 +56,7 @@ SERVICE_PATH = '/<your_path>'
 
 # ToDo: Path to json-files to store entity data for follow up exercises,
 #  e.g. ./e3_my_entities.json
-write_entities_filepath = Path("")
+WRITE_ENTITIES_FILEPATH = Path("")
 
 # ## Main script
 if __name__ == '__main__':
@@ -215,10 +215,10 @@ if __name__ == '__main__':
               f"\n {entity.json(indent=2)} \n")
 
     # write entities to file and clear server state
-    assert write_entities_filepath.suffix == '.json', \
-        f"Wrong file extension! {write_entities_filepath.suffix}"
-    write_entities_filepath.touch(exist_ok=True)
-    with write_entities_filepath.open('w', encoding='utf-8') as f:
+    assert WRITE_ENTITIES_FILEPATH.suffix == '.json', \
+        f"Wrong file extension! {WRITE_ENTITIES_FILEPATH.suffix}"
+    WRITE_ENTITIES_FILEPATH.touch(exist_ok=True)
+    with WRITE_ENTITIES_FILEPATH.open('w', encoding='utf-8') as f:
         entities = [item.dict() for item in cbc.get_entity_list()]
         json.dump(entities, f, ensure_ascii=False, indent=2)
 

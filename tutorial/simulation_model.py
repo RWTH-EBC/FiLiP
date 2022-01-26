@@ -42,7 +42,7 @@ class SimulationModel:
         self.temp_start = temp_start
         self.UA = 120
         self.C_p = 612.5 * 1000
-        self.Q_h = 1000
+        self.Q_h = 3000
         self.t_sim = self.t_start
         self.t_amb = temp_min
         self.t_zone = temp_start
