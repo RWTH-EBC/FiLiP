@@ -685,7 +685,7 @@ class ContextBrokerClient(BaseHttpClient):
         """
         url = urljoin(self.base_url, f'v2/entities/{entity_id}/attrs')
         headers = self.headers.copy()
-        params = {}
+        params = {"type": entity_type}
 
         entity = ContextEntity(id=entity_id,
                                type=entity_type)
