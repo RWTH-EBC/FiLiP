@@ -751,7 +751,6 @@ class IoTAMQTTClient(mqtt.Client):
                 for key in payload.keys():
                     for attr in device.attributes:
                         if key in attr.object_id or key == 'timeInstant':
-                            pass
                             break
                         elif key == attr.name:
                             if attr.object_id:
@@ -769,7 +768,7 @@ class IoTAMQTTClient(mqtt.Client):
                     topic_type=IoTAMQTTMessageType.MULTI)
                 payload = self._encoders[device.protocol].encode_msg(
                     device_id=device_id,
-                    payload=msg_payload,
+                    payload=payload,
                     msg_type=IoTAMQTTMessageType.MULTI)
 
             # create message for command acknowledgement
