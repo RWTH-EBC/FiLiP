@@ -33,6 +33,9 @@ from tutorial.simulation_model import SimulationModel
 # ## Parameters
 # ToDo: Enter your mqtt broker url and port, e.g mqtt://test.mosquitto.org:1883
 MQTT_BROKER_URL = "mqtt://test.mosquitto.org:1883"
+# ToDo: If required enter your username and password
+MQTT_USER = ""
+MQTT_PW =  ""
 
 # ToDo: Create a unique topic that your weather station will publish on,
 #  e.g. by using a uuid
@@ -61,7 +64,8 @@ if __name__ == '__main__':
 
     # ToDo: create a MQTTv5 client with paho-mqtt
     mqttc = ...
-
+    # set user data if required
+    mqttc.username_pw_set(username=MQTT_USER, password=MQTT_PW)
     # ToDo: Define a callback function that will be executed when the client
     #  receives message on a subscribed topic. It should decode your message
     #  and store the information for later in our history

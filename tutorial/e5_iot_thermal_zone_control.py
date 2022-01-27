@@ -73,7 +73,7 @@ SERVICE = 'filip_tutorial'
 #  on a shared instance this very important in order to avoid user
 #  collisions. You will use this service path through the whole tutorial.
 #  If you forget to change it an error will be raised!
-SERVICE_PATH = '/your_path'
+SERVICE_PATH = '/<your_path>'
 APIKEY = SERVICE_PATH.strip('/')
 UNIQUE_ID = str(uuid4())
 TOPIC_CONTROLLER = f"fiware_workshop/{UNIQUE_ID}/controller"
@@ -131,10 +131,10 @@ if __name__ == '__main__':
 
     # ToDo: Get the device configurations from the server
     weather_station = iotac.get_device(device_id="device:001")
-    zone_temperature_sensor = iotac.get_device(device_id="device:002")
+    zone_temperature_sensor = ...
 
     # ToDo: Get the service group configurations from the server
-    group = iotac.get_group(resource="/iot/json", apikey=APIKEY)
+    group = iotac.get_group(resource="/iot/json", apikey=...)
 
     # ToDo: Create and additional device holding a command attribute and
     #  post it to the IoT-Agent. It should be mapped to the `type` heater
@@ -145,18 +145,18 @@ if __name__ == '__main__':
 
     # ToDo: create the command attribute of name `heater_on` (currently it is
     #  not possible to add metadata here)
-    cmd = DeviceCommand(name="heater_on",
-                        type=DataType.BOOLEAN)
+    cmd = DeviceCommand(name=...,
+                        type=...)
 
-    # ToDo: create the device configuration and send it to the server
-    heater = Device(device_id="device:003",
-                    entity_name="urn:ngsi-ld:Heater:001",
-                    entity_type="Heater",
-                    apikey=APIKEY,
-                    attributes=[t_sim],
-                    commands=[cmd],
-                    transport='MQTT',
-                    protocol='IoTA-JSON')
+    # ToDo: create the device configuration and send it to the server name it
+    heater = Device(...)
+
+
+
+
+
+
+
 
     iotac.post_device(device=heater)
 
@@ -189,13 +189,13 @@ if __name__ == '__main__':
         # ToDo: acknowledge the command. Here command are usually single
         #   messages. The first key is equal to the commands name.
         client.publish(device_id=device_id,
-                       command_name=next(iter(payload)),
-                       payload=payload)
+                       command_name=...,
+                       payload=...)
 
     # ToDo: Add the command callback to your MQTTClient. This will get
     #  triggered for the specified device_id
-    mqttc.add_command_callback(device_id=heater.device_id,
-                               callback=on_command)
+    mqttc.add_command_callback(device_id=...,
+                               callback=...)
 
     # ToDO: Create an MQTT subscription for asynchronous communication that
     #  gets triggered when the temperature attribute changes.
@@ -205,8 +205,8 @@ if __name__ == '__main__':
         "subject": {
             "entities": [
                 {
-                    "id": zone_temperature_sensor.entity_name,
-                    "type": zone_temperature_sensor.entity_type
+                    "id": ...,
+                    "type": ...
                 }
             ],
         },
@@ -232,7 +232,7 @@ if __name__ == '__main__':
         updated_zone_temperature_sensor = message.data[0]
 
         # ToDo: retrieve the value of temperature attribute
-        temperature = updated_zone_temperature_sensor.temperature.value
+        temperature = ...
 
         # ToDo: device if you want update your command
         #   Note that this could also be substitute by a conditional
@@ -247,9 +247,9 @@ if __name__ == '__main__':
         # ToDo: send the command to the heater entity
         if update:
             command = NamedCommand(name=cmd.name, value=state)
-            cbc.post_command(entity_id=heater.entity_name,
-                             entity_type=heater.entity_type,
-                             command=command)
+            cbc.post_command(...)
+
+
 
     mqttc.message_callback_add(sub=TOPIC_CONTROLLER,
                                callback=on_measurement)

@@ -32,7 +32,10 @@ from tutorial.simulation_model import SimulationModel
 
 # ## Parameters
 # ToDo: Enter your mqtt broker url and port, e.g mqtt://test.mosquitto.org:1883
-MQTT_BROKER_URL = "mqtt://test.mosquitto.org:1883"
+MQTT_BROKER_URL =  "mqtt://test.mosquitto.org:1883"
+# ToDo: If required enter your username and password
+MQTT_USER = ""
+MQTT_PW =  ""
 
 # ToDo: Create a unique topic that your weather station will publish on,
 #  e.g. by using a uuid
@@ -45,7 +48,7 @@ TEMPERATURE_MIN = -5  # minimal ambient temperature
 
 T_SIM_START = 0  # simulation start time in seconds
 T_SIM_END = 24 * 60 * 60  # simulation end time in seconds
-COM_STEP = 60 * 60 * 0.25  # 15 min communication step in seconds
+COM_STEP = 60 * 60 * 1  # 60 min communication step in seconds
 
 
 # ## Main script
@@ -61,7 +64,8 @@ if __name__ == '__main__':
 
     # ToDo: create a MQTTv5 client with paho-mqtt
     mqttc = mqtt.Client(protocol=mqtt.MQTTv5)
-
+    # set user data if required
+    mqttc.username_pw_set(username=MQTT_USER, password=MQTT_PW)
     # ToDo: Define a callback function that will be executed when the client
     #  receives message on a subscribed topic. It should decode your message
     #  and store the information for later in our history
@@ -90,7 +94,7 @@ if __name__ == '__main__':
                   properties=None)
 
     # ToDo: print and subscribe to the weather station topic
-    print(f"WeatherStation topic:\n topic_weather_station")
+    print(f"WeatherStation topic:\n {TOPIC_WEATHER_STATION}")
     mqttc.subscribe(topic=TOPIC_WEATHER_STATION)
 
     # create a non-blocking thread for mqtt communication

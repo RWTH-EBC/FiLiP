@@ -43,6 +43,9 @@ CB_URL = "http://localhost:1026"
 IOTA_URL = "http://localhost:4041"
 # ToDo: Enter your mqtt broker url, e.g mqtt://test.mosquitto.org:1883
 MQTT_BROKER_URL = "mqtt://localhost:1883"
+# ToDo: If required enter your username and password
+MQTT_USER = ""
+MQTT_PW =  ""
 # FIWARE-Service
 SERVICE = 'filip_tutorial'
 # FIWARE-Servicepath
@@ -210,7 +213,10 @@ if __name__ == '__main__':
         time.sleep(1)
 
         # Get corresponding entities and write values to history
-        weather_station_entity = cbc.get_entity(weather_station.entity_name)
+        weather_station_entity = cbc.get_entity(
+            entity_id=weather_station.entity_name,
+            entity_type=weather_station.entity_type
+        )
         # append the data to the local history
         history_weather_station.append(
             {"simtime": weather_station_entity.simtime.value,
@@ -218,6 +224,9 @@ if __name__ == '__main__':
 
         # ToDo: Get ZoneTemperatureSensor and write values to history
         zone_temperature_sensor_entity = ...
+
+
+
 
         history_zone_temperature_sensor.append(...)
 

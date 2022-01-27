@@ -43,6 +43,9 @@ CB_URL = "http://localhost:1026"
 IOTA_URL = "http://localhost:4041"
 # ToDo: Enter your mqtt broker url, e.g mqtt://test.mosquitto.org:1883
 MQTT_BROKER_URL = "mqtt://localhost:1883"
+# ToDo: If required enter your username and password
+MQTT_USER = ""
+MQTT_PW =  ""
 # FIWARE-Service
 SERVICE = 'filip_tutorial'
 # FIWARE-Servicepath
@@ -156,6 +159,8 @@ if __name__ == '__main__':
 
     # ToDo: create an MQTTv5 client using filip.clients.mqtt.IoTAMQTTClient
     mqttc = IoTAMQTTClient(protocol=mqtt.MQTTv5)
+    # set user data if required
+    mqttc.username_pw_set(username=MQTT_USER, password=MQTT_PW)
     # ToDo: Register the service group with your MQTT-Client
     mqttc.add_service_group(service_group=service_group)
     # ToDo: Register devices with your MQTT-Client
@@ -210,7 +215,10 @@ if __name__ == '__main__':
         time.sleep(1)
 
         # Get corresponding entities and write values to history
-        weather_station_entity = cbc.get_entity(weather_station.entity_name)
+        weather_station_entity = cbc.get_entity(
+            entity_id=weather_station.entity_name,
+            entity_type=weather_station.entity_type
+        )
         # append the data to the local history
         history_weather_station.append(
             {"simtime": weather_station_entity.simtime.value,
@@ -218,7 +226,9 @@ if __name__ == '__main__':
 
         # ToDo: Get ZoneTemperatureSensor and write values to history
         zone_temperature_sensor_entity = cbc.get_entity(
-            zone_temperature_sensor.entity_name)
+            entity_id=zone_temperature_sensor.entity_name,
+            entity_type=zone_temperature_sensor.entity_type
+        )
         history_zone_temperature_sensor.append(
             {"simtime": zone_temperature_sensor_entity.simtime.value,
              "temperature": zone_temperature_sensor_entity.temperature.value})
