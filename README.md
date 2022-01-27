@@ -12,6 +12,24 @@ FiLiP (Fiware Library for Python) is a python software development kit (SDK) for
 accelerating the development of web services that use Fiware's Generic 
 Enablers (GEs) as backend.
 
+Is it mainly based on the [Pydantic](https://pydantic-docs.helpmanual.io/) 
+package which is sophisticated library for data validation and settings 
+management using python type annotations.
+Pydantic enforces type hints at runtime, and provides user friendly errors 
+when data is invalid.
+We mainly use Pydantic model to build our own data model structure required 
+for efficient data model parsing and validation and interaction with FIWARE 
+services' RestAPIs.
+
+For API interaction FiLiP relies on the well-known 
+[requests](https://docs.python-requests.org/en/latest/) package. 
+It is important to understand that we do not in any way restrict any 
+features of requests.
+
+Furthermore, FiLiP is designed to help with fast development of FIWARE based 
+application and avoid hundreds of lines of boilerplate, but it cannot 
+substitute to learn the basic concepts behind the used FIWARE components.
+
 ## General Motivation
 
 Why implement a client library when clients can be auto-generated 
@@ -62,6 +80,9 @@ If you want to benefit from the latest changes, use the development branch:
 ```
 pip install -U git+git://github.com/RWTH-EBC/filip@development
 ```
+
+**Note**: We are currently working bringing the library to PyPi to enable 
+easy package installation without using git
 
 ### Introduction to FIWARE
 
@@ -157,7 +178,7 @@ Therefore, FiLiP currently only covers the APIs of the following GEs:
 
 ## Structure of FiLiP
 
-![Library Structure](https://raw.githubusercontent.com/N5GEH/n5geh.tools.FiLiP/development/docs/diagrams/out/architecture.png)
+![Library Structure](https://github.com/RWTH-EBC/FiLiP/blob/master/docs/diagrams/out/architecture.png)
 
 
 ## Documentation
@@ -179,12 +200,6 @@ Afterwards, you can start modelling context data and interact the context
 broker and use its functionalities before you learn how to connect 
 IoT Devices and store historic data.
 
-**NOTE**: Currently, we are refactoring the library in order to provide a 
-better validation mechanism. 
-After this big step we will work on further examples, and on the integration of 
-further advanced functions supporting effective context data modeling 
-using validated data model structures. 
-
 ## Testing
 
 We use unittests to write our test cases.
@@ -203,15 +218,20 @@ how you can contribute to this project.
 * [Daniel Nikolay](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Systemadministration/~qcqxq/Nikolay-Daniel/)
 * [Stephan Göbel](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Team3/~ccdhp/Goebel-Stephan/)
 * [Sebastian Borges](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Team3/~mvoee/Borges-Sebastian/)
-* Jeff Reding
+
 
 ## Alumni
 
+* Jeff Reding
 * Felix Rehmann
 
 ## References
 
 We presented or applied the library in the following publications:
+
+- Haghgoo, M., Dognini, A., Storek, T., Plamanescu, R, Rahe, U., 
+  Gheorghe, S, Albu, M., Monti, A., Müller, D. (2021) A cloud-based service-oriented architecture to unlock smart energy services
+  https://www.doi.org/10.1186/s42162-021-00143-x
 
 - Baranski, M., Storek, T. P. B., Kümpel, A., Blechmann, S., Streblow, R., 
 Müller, D. et al.,
@@ -245,7 +265,8 @@ Efficient Buildings and Indoor Climate
 This project is part of cooperation between the RWTH Aachen University and 
 the Research Centre Jülich.
 
-
+<a href="https://www.jara.org/de/forschung/jara-energy"> <img alt="JARA 
+ENERGY" src="https://github.com/RWTH-EBC/FiLiP/tree/master/docs/logos/LogoJARAEnergy.jpg" height="100"> </a>
 
 ## Related projects
 
