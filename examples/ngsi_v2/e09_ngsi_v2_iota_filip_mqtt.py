@@ -143,9 +143,9 @@ if __name__ == '__main__':
 
 
     mqttc.message_callback_add(sub=first_topic,
-                                    callback=on_message_first)
+                               callback=on_message_first)
     mqttc.message_callback_add(sub=second_topic,
-                                    callback=on_message_second)
+                               callback=on_message_second)
     mqtt_broker_url = urlparse(MQTT_BROKER_URL)
 
     mqttc.connect(host=mqtt_broker_url.hostname,

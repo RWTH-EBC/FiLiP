@@ -41,7 +41,7 @@ if __name__ == "__main__":
     #
     # A QuantumLeapClient and a ContextBrokerClient are created to access
     # FIWARE in the space given by the FiwareHeader. For more information see:
-    # e1_http_clients.py
+    # e01_http_clients.py
     
     fiware_header = FiwareHeader(service=SERVICE, service_path=SERVICE_PATH)
 
@@ -62,7 +62,7 @@ if __name__ == "__main__":
     #
     # ### 2.1 Create a ContextEntity to work with
     #
-    # for more details see: e2_context_broker_basics.py
+    # for more details see: e01_ngsi_v2_context_basics.py
     hall = {"id": "Hall_1",
             "type": "Room",
             "temperature": {"value": random.randint(0, 100),

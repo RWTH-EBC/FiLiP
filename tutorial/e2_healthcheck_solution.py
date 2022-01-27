@@ -1,7 +1,7 @@
-# # Exercise 1: Service Health Check
+# # Exercise 2: Service Health Check
 
 # Create one or multiple filip clients and check if the corresponding services
-# are up and running!
+# are up and running by accessing their version information.
 
 # The input sections are marked with 'ToDo'
 
@@ -32,12 +32,21 @@ QL_URL = "http://localhost:8668"
 if __name__ == "__main__":
     # ToDo: Create a single client for each service and check the service for
     #  its version
-    ...
+    cbc = ContextBrokerClient(url=CB_URL)
+    print(cbc.get_version())
 
+    iotac = IoTAClient(url=IOTA_URL)
+    print(iotac.get_version())
+
+    qlc = QuantumLeapClient(url=QL_URL)
+    print(qlc.get_version())
 
     # ToDo: Create a configuration object for a multi client
-    ...
-
+    config = HttpClientConfig(cb_url=CB_URL, iota_url=IOTA_URL, ql_url=QL_URL)
 
     # ToDo: Create a multi client check again all services for their version
-    ...
+    multic = HttpClient(config=config)
+
+    print(multic.cb.get_version())
+    print(multic.iota.get_version())
+    print(multic.timeseries.get_version())

@@ -37,7 +37,7 @@ if __name__ == "__main__":
     # # 1 Setup IoTAClient
     #
     # First a client is initialised that provides as access to our
-    # Fiware-server space. For more details on this step see e1_http_clients.py
+    # Fiware-server space. For more details on this step see e01_http_clients.py
     fiware_header = FiwareHeader(service=SERVICE,
                                  service_path=SERVICE_PATH)
     iota_client =  IoTAClient(

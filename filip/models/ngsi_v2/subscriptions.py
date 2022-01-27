@@ -84,7 +84,7 @@ class Mqtt(BaseModel):
                     'only includes host and port)')
     topic: str = Field(
         description='to specify the MQTT topic to use',
-        regex=r'^[A-Za-z0-9/]*$')
+        regex=r'^((?![\'\"#+,])[\x00-\x7F])*$')
     qos: Optional[int] = Field(
         default=0,
         description='to specify the MQTT QoS value to use in the '
@@ -92,6 +92,14 @@ class Mqtt(BaseModel):
                     'This is an optional field, if omitted then QoS 0 is used.',
         ge=0,
         le=2)
+    user: Optional[str] = Field(
+        default=None,
+        description="username if required"
+    )
+    passwd: Optional[str] = Field(
+        default=None,
+        description="password if required"
+    )
 
     @validator('url', allow_reuse=True)
     def check_url(cls, value):
@@ -115,10 +123,6 @@ class MqttCustom(Mqtt):
         description='the payload to be used in notifications. If omitted, the '
                     'default payload (see "Notification Messages" sections) '
                     'is used.'
-    )
-    topic: Optional[str] = Field(
-        default=None,
-        description='to specify the MQTT topic to use'
     )
 
 

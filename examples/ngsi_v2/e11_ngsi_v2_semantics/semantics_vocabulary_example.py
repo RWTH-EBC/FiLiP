@@ -52,10 +52,10 @@ if __name__ == '__main__':
     vocabulary = \
         VocabularyConfigurator.add_ontology_to_vocabulary_as_file(
             vocabulary=vocabulary,
-            path_to_file='./ontology_files/building circuits.owl')
+            path_to_file='ontology_files/building circuits.owl')
 
     # ### 2.0.2 as string
-    with open('./ontology_files/ParsingTesterOntology.ttl', 'r') as file:
+    with open('ontology_files/ParsingTesterOntology.ttl', 'r') as file:
         data = file.read()
     vocabulary = \
         VocabularyConfigurator.add_ontology_to_vocabulary_as_string(
@@ -272,6 +272,6 @@ if __name__ == '__main__':
     # The export function takes two arguments: path_to_file and file_name
     # it creates the file: path_to_file/file_name.py overriding any existing
     # file
-    VocabularyConfigurator.generate_vocabulary_models(vocabulary, ".",
+    VocabularyConfigurator.generate_vocabulary_models(vocabulary, "",
                                                       "models")
 

@@ -297,12 +297,12 @@ class DeviceSettings(BaseModel):
         description="Endpoint where the device is going to receive commands, "
                     "if any."
     )
-    protocol: Optional[str] = Field(
+    protocol: Optional[Union[PayloadProtocol, str]] = Field(
         default=None,
         description="Name of the device protocol, for its use with an "
                     "IoT Manager."
     )
-    transport: TransportProtocol = Field(
+    transport: Union[TransportProtocol, str] = Field(
         default=None,
         description="Name of the device transport protocol, for the IoT Agents "
                     "with multiple transport protocols."
