@@ -37,9 +37,9 @@ from filip.utils.cleanup import clear_context_broker, clear_iot_agent
 from tutorial.simulation_model import SimulationModel
 
 # ## Parameters
-# ToDo: Enter your context broker host and port, e.g http://localhost:1026
+# ToDo: Enter your context broker host and port, e.g. http://localhost:1026
 CB_URL = "http://localhost:1026"
-# ToDo: Enter your IoT-Agent host and port, e.g mqtt://localhost:4041
+# ToDo: Enter your IoT-Agent host and port, e.g. http://localhost:4041
 IOTA_URL = "http://localhost:4041"
 # ToDo: Enter your mqtt broker url, e.g mqtt://test.mosquitto.org:1883
 MQTT_BROKER_URL = "mqtt://localhost:1883"
