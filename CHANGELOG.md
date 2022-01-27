@@ -1,9 +1,13 @@
 #### v0.2.0
- - Refactored units model ([#107](https://github.com/RWTH-EBC/FiLiP/issues/107))
- - Updated and moved data model generator ([#117](https://github.com/RWTH-EBC/FiLiP/issues/117))
- - quantumleap subscription missing ql_url ([#108](https://github.com/RWTH-EBC/FiLiP/issues/108))
- - Fixed lazy attributes in IoTA Device model ([#105](https://github.com/RWTH-EBC/FiLiP/issues/105))
- - Added get_commands to ContextEntity model ([#87](https://github.com/RWTH-EBC/FiLiP/issues/87))
+- Refactored units model ([#107](https://github.com/RWTH-EBC/FiLiP/issues/107))
+- Updated and moved data model generator ([#117](https://github.com/RWTH-EBC/FiLiP/issues/117))
+- quantumleap subscription missing ql_url ([#108](https://github.com/RWTH-EBC/FiLiP/issues/108))
+- Fixed lazy attributes in IoTA Device model ([#105](https://github.com/RWTH-EBC/FiLiP/issues/105))
+- Added get_commands to ContextEntity model ([#87](https://github.com/RWTH-EBC/FiLiP/issues/87))
+- Added missing attribute requets for context broker ([#113](https://github.com/RWTH-EBC/FiLiP/issues/113))
+- Fixed broken attribute mapping in IoTAMQTTClient ([#122](https://github.com/RWTH-EBC/FiLiP/issues/122))
+- Added tutorials ([#111](https://github.com/RWTH-EBC/FiLiP/issues/111))
+- Updated documentation ([#151](https://github.com/RWTH-EBC/FiLiP/issues/51))
 
 #### v0.1.8
 - QuantumLeap request pagination ([#47](https://github.com/RWTH-EBC/FiLiP/issues/47))

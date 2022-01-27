@@ -46,7 +46,7 @@ logger = logging.getLogger(__name__)
 if __name__ == "__main__":
     # # 1 Setup Client
     #
-    # create the client, for more details view the example: e1_http_clients.py
+    # create the client, for more details view the example: e01_http_clients.py
     fiware_header = FiwareHeader(service=SERVICE,
                                  service_path=SERVICE_PATH)
     cb_client = ContextBrokerClient(url=CB_URL,
@@ -112,7 +112,7 @@ if __name__ == "__main__":
     # # 3 setup callbacks and the MQTT client
     #
     # define callbacks for the mqtt client. They will be triggered by
-    # different events. Do not change there signature!
+    # different events. Do not change their signature!
     def on_connect(client, userdata, flags, reasonCode, properties=None):
         if reasonCode != 0:
             logger.error(f"Connection failed with error code: "

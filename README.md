@@ -166,7 +166,7 @@ We are still working on the documentation.
 You can find our current documentation 
 [here](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/development/docs/index.html).
 
-## Running examples or tests
+## Running examples
 
 Once you have installed the library, you can check the [examples](/examples)
 to learn how to use the different components. 
@@ -179,10 +179,11 @@ Afterwards, you can start modelling context data and interact the context
 broker and use its functionalities before you learn how to connect 
 IoT Devices and store historic data.
 
-As it is one of the main features of the library, we provide more advanced 
-examples for the **semantic** context data modeling within a context broker 
-based on **ontologies**.
-([semantics](./examples/semantics))
+**NOTE**: Currently, we are refactoring the library in order to provide a 
+better validation mechanism. 
+After this big step we will work on further examples, and on the integration of 
+further advanced functions supporting effective context data modeling 
+using validated data model structures. 
 
 ## Testing
 
@@ -194,9 +195,6 @@ execute all tests located in the `tests`-directory and prefixed with `test_` .
 
 Please see our [contribution guide](./CONTRIBUTING.md) for more details on 
 how you can contribute to this project.
-Changes are collected in the [changelog](./CHANGELOG.md).
-In future the later will fully rely on conventional commits.
-
 
 ## Authors
 
@@ -243,6 +241,10 @@ Efficient Buildings and Indoor Climate
 [RWTH University Aachen, Germany](http://www.rwth-aachen.de)
 
 ## Disclaimer
+
+This project is part of cooperation between the RWTH Aachen University and 
+the Research Centre Jülich.
+
 
 
 ## Related projects

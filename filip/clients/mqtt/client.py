@@ -746,19 +746,23 @@ class IoTAMQTTClient(mqtt.Client):
                 if timestamp and 'timeInstant' not in payload.keys():
                     payload["timeInstant"] = datetime.utcnow()
                 # validate if dict keys match device configuration
-                for key, attr in itertools.product(payload.keys(),
-                                                   device.attributes):
 
-                    if key in attr.object_id or key == 'timeInstant':
-                        pass
-                    elif key == attr.name:
-                        if attr.object_id:
-                            payload[attr.object_id] = payload.pop(key)
+                msg_payload = payload.copy()
+                for key in payload.keys():
+                    for attr in device.attributes:
+                        if key in attr.object_id or key == 'timeInstant':
+                            break
+                        elif key == attr.name:
+                            if attr.object_id:
+                                msg_payload[attr.object_id] = \
+                                    msg_payload.pop(key)
+                            break
                     else:
-                        raise KeyError(f"Attribute key '{key}'is not allowed "
-                                       f"a message payload for this device "
-                                       f"configuration with device_id "
-                                       f"'{device_id}'")
+                        err_msg = f"Attribute key '{key}' is not allowed " \
+                                  f"in the message payload for this " \
+                                  f"device configuration with device_id " \
+                                  f"'{device_id}'"
+                        raise KeyError(err_msg)
                 topic = self.__create_topic(
                     device=device,
                     topic_type=IoTAMQTTMessageType.MULTI)
