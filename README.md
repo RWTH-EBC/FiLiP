@@ -3,7 +3,7 @@
 # FiLiP
 
 [![pylint](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/ebcpy/master/pylint/pylint.svg )](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/pylint/pylint.html)
-[![Documentation](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/development/docs/doc.svg)](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/docs/index.html)
+[![Documentation](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/docs/doc.svg)](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/docs/index.html)
 [![coverage](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/ebcpy/master/coverage/badge.svg)](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/coverage)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![build](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/ebcpy/master/build/build.svg)](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/build/build.svg)
@@ -185,7 +185,7 @@ Therefore, FiLiP currently only covers the APIs of the following GEs:
 
 We are still working on the documentation.
 You can find our current documentation 
-[here](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/development/docs/index.html).
+[here](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/docs/index.html).
 
 ## Running examples
 
