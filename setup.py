@@ -14,17 +14,20 @@ INSTALL_REQUIRES = ['aenum',
                     'pandas-datapackage-reader>=0.18.0',
                     'pydantic[dotenv]>=1.7.2',
                     'PyYAML',
+                    'stringcase>=1.2.0'
+                    'igraph==0.9.8',
                     'rdflib~=6.0.0',
                     'regex',
                     'requests',
-                    'rapidfuzz']
+                    'rapidfuzz',
+                    'wget']
 
 
 SETUP_REQUIRES = INSTALL_REQUIRES.copy()
 
 setuptools.setup(
     name='filip',
-    version='0.1.8',
+    version='0.2.0',
     author='RWTH Aachen University, E.ON Energy Research Center, Institute\
         of Energy Efficient Buildings and Indoor Climate',
     author_email='tstorek@eonerc.rwth-aachen.de',
