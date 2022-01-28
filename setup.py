@@ -14,7 +14,7 @@ INSTALL_REQUIRES = ['aenum',
                     'pandas-datapackage-reader>=0.18.0',
                     'pydantic[dotenv]>=1.7.2',
                     'PyYAML',
-                    'stringcase>=1.2.0'
+                    'stringcase>=1.2.0',
                     'igraph==0.9.8',
                     'rdflib~=6.0.0',
                     'regex',
