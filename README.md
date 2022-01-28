@@ -216,9 +216,6 @@ how you can contribute to this project.
 * [Thomas Storek](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Team2/~lhda/Thomas-Storek/?lidx=1) (corresponding)
 * [Saira Bano](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Systemadministration/~ohhca/Bano-Saira/)
 * [Daniel Nikolay](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Systemadministration/~qcqxq/Nikolay-Daniel/)
-* [Stephan Göbel](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Team3/~ccdhp/Goebel-Stephan/)
-* [Sebastian Borges](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Team3/~mvoee/Borges-Sebastian/)
-
 
 ## Alumni
 
@@ -273,7 +270,7 @@ ENERGY" src="https://github.com/RWTH-EBC/FiLiP/tree/master/docs/logos/LogoJARAEn
 <a href="https://n5geh.de/"> <img alt="National 5G Energy Hub" 
 src="https://avatars.githubusercontent.com/u/43948851?s=200&v=4" height="100"></a>
 
-<a href="http://fismep.de/"> <img alt="National 5G Energy Hub" 
+<a href="http://fismep.de/"> <img alt="FISMEP" 
 src="http://www.fismep.de/wp-content/uploads/2017/11/FISMEP_email_signature
 -1.png" height="100" ></a>
 
@@ -282,7 +279,9 @@ src="http://www.fismep.de/wp-content/uploads/2017/11/FISMEP_email_signature
 ## Acknowledgments
 
 We gratefully acknowledge the financial support of the Federal Ministry <br /> 
-for Economic Affairs and Energy (BMWi), promotional reference 03ET1561B.
+for Economic Affairs and Energy (BMWi), promotional references 03ET1495A, 
+03ET1551A, 0350018A, 03ET1561B.
+
 
 <a href="https://www.bmwi.de/Navigation/EN/Home/home.html"> <img alt="BMWE" src="https://www.bmwi.de/SiteGlobals/BMWI/StyleBundles/Bilder/bmwi_logo_en.svgz?__blob=normal&v=10" height="100"> </a>
 
