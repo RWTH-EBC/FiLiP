@@ -17,7 +17,8 @@ INSTALL_REQUIRES = ['aenum',
                     'rdflib~=6.0.0',
                     'regex',
                     'requests',
-                    'rapidfuzz']
+                    'rapidfuzz',
+                    'wget']
 
 
 SETUP_REQUIRES = INSTALL_REQUIRES.copy()
