@@ -1,0 +1,64 @@
+@startwbs
+!theme materia
+skinparam BackgroundColor white
+
+<style>
+  Linecolor black
+  arrow {
+    LineColor #E53027
+  }
+node {
+    Padding 2
+    Margin 3
+    HorizontalAlignment center
+    LineColor #9B231E
+    LineThickness 2.0
+    BackgroundColor #E53027
+    FontColor white
+    FontName Roboto
+    FontStyle bold
+    RoundCorner 3
+    MaximumWidth 150
+}
+</style>
+
+* FiLiP
+** config.py \n Settings
+** types.py
+** clients
+*** BaseClient
+*** mqtt
+**** MQTTClient
+**** encoders
+*** ngsi_v2
+**** Client
+**** ContextBrokerClient
+**** QuantumLeapClient
+**** IoTACLient
+*** ngsi_ld
+**** ...
+
+** models
+*** base.py \n e.g. FiwareHeader
+*** ngsi_v2
+**** iot.py \n e.g. Device, \n ServiceGroup \n etc.
+**** context.py \n ContextEntity, \n ContextAttribute \n etc.
+**** subscriptions.py \n e.g. Subscription etc.
+**** registrations.py \n e.g.Registration etc.
+**** units.py \n Unit, UnitCode, UnitText
+*** ngsi_ld
+**** ...
+** utils
+*** cleanup.py
+*** data.py
+*** datetime.py
+*** model_generator.py
+*** simple_ql.py
+*** validators.py
+
+** data (datapackage)
+*** unece-units
+**** levels.csv
+**** units_of_measure.csv
+
+@endwbs
