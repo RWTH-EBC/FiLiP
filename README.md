@@ -53,7 +53,7 @@ these documents:
 
 ## Getting started
 
-The following section shortly describes use of the library.
+The following section shortly describes how to use the library.
 
 ### Prerequisites
 
