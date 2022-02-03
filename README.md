@@ -45,7 +45,7 @@ these documents:
   depends on the provided input data.
 - Manipulating generated code can result in a big hassle for maintenance if 
   additional features need to be integrated.
-- The underlying NGSI (New Generation Service Interface) for FIWARE is a
+- The underlying NGSI (Next Generation Service Interface) for FIWARE is a
   rather generic specification.
   Hence, generated models may also be of generic types as lists
   and dicts in Python. So there is no real benefit.
