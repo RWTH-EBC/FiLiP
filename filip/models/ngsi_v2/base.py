@@ -286,6 +286,11 @@ class BaseAttribute(BaseModel):
 
         raise TypeError(f"Invalid type {type(value)}")
 
+    class Config:
+        """
+        Config class for attributes
+        """
+        validate_assignment = True
 
 class BaseNameAttribute(BaseModel):
     """
