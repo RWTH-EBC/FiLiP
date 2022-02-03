@@ -1,10 +1,10 @@
-filip.clients.ngsi\_v2
+filip.clients.ngsi\_v2 package
 ==============================
 
 Submodules
 ----------
 
-filip.clients.ngsi\_v2.cb
+filip.clients.ngsi\_v2.cb module
 --------------------------------
 
 .. automodule:: filip.clients.ngsi_v2.cb
@@ -12,7 +12,7 @@ filip.clients.ngsi\_v2.cb
    :undoc-members:
    :show-inheritance:
 
-filip.clients.ngsi\_v2.client
+filip.clients.ngsi\_v2.client module
 ------------------------------------
 
 .. automodule:: filip.clients.ngsi_v2.client
@@ -20,7 +20,7 @@ filip.clients.ngsi\_v2.client
    :undoc-members:
    :show-inheritance:
 
-filip.clients.ngsi\_v2.iota
+filip.clients.ngsi\_v2.iota module
 ----------------------------------
 
 .. automodule:: filip.clients.ngsi_v2.iota
@@ -28,7 +28,7 @@ filip.clients.ngsi\_v2.iota
    :undoc-members:
    :show-inheritance:
 
-filip.clients.ngsi\_v2.quantumleap
+filip.clients.ngsi\_v2.quantumleap module
 -----------------------------------------
 
 .. automodule:: filip.clients.ngsi_v2.quantumleap

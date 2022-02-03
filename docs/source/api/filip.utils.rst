@@ -1,7 +1,10 @@
-filip.utils
+filip.utils package
 ===================
 
-filip.utils.cleanup
+Submodules
+----------
+
+filip.utils.cleanup module
 --------------------------
 
 .. automodule:: filip.utils.cleanup
@@ -9,7 +12,7 @@ filip.utils.cleanup
    :undoc-members:
    :show-inheritance:
 
-filip.utils.data
+filip.utils.data module
 -----------------------
 
 .. automodule:: filip.utils.data
@@ -17,15 +20,15 @@ filip.utils.data
    :undoc-members:
    :show-inheritance:
 
-filip.utils.datamodel\_generator
----------------------------------------
+filip.utils.datetime module
+---------------------------
 
-.. automodule:: filip.utils.datamodel_generator
+.. automodule:: filip.utils.datetime
    :members:
    :undoc-members:
    :show-inheritance:
 
-filip.utils.geo\_ql
+filip.utils.geo\_ql module
 --------------------------
 
 .. automodule:: filip.utils.geo_ql
@@ -33,7 +36,15 @@ filip.utils.geo\_ql
    :undoc-members:
    :show-inheritance:
 
-filip.utils.simple\_ql
+filip.utils.model\_generation module
+------------------------------------
+
+.. automodule:: filip.utils.model_generation
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+filip.utils.simple\_ql module
 -----------------------------
 
 .. automodule:: filip.utils.simple_ql
@@ -41,15 +52,7 @@ filip.utils.simple\_ql
    :undoc-members:
    :show-inheritance:
 
-filip.utils.utils
-------------------------
-
-.. automodule:: filip.utils.utils
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-filip.utils.validators
+filip.utils.validators module
 -----------------------------
 
 .. automodule:: filip.utils.validators

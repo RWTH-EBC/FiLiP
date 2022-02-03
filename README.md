@@ -2,11 +2,11 @@
 
 # FiLiP
 
-[![pylint](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/ebcpy/master/pylint/pylint.svg )](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/pylint/pylint.html)
+[![pylint](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/pylint/pylint.svg )](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/pylint/pylint.html)
 [![Documentation](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/docs/doc.svg)](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/docs/index.html)
-[![coverage](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/ebcpy/master/coverage/badge.svg)](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/coverage)
+[![coverage](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/coverage/badge.svg)](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/coverage)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
-[![build](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/ebcpy/master/build/build.svg)](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/build/build.svg)
+[![build](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/build/build.svg)](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/build/build.svg)
 
 FiLiP (Fiware Library for Python) is a python software development kit (SDK) for 
 accelerating the development of web services that use Fiware's Generic 
@@ -73,12 +73,6 @@ The easiest way to install the library is via pip:
 
 ```
 pip install -U git+git://github.com/RWTH-EBC/filip
-```
-
-If you want to benefit from the latest changes, use the development branch:
-
-```
-pip install -U git+git://github.com/RWTH-EBC/filip@development
 ```
 
 **Note**: We are currently working bringing the library to PyPi to enable 
@@ -271,24 +265,20 @@ ENERGY" src="https://github.com/RWTH-EBC/FiLiP/tree/master/docs/logos/LogoJARAEn
 src="https://avatars.githubusercontent.com/u/43948851?s=200&v=4" height="100"></a>
 
 <a href="http://fismep.de/"> <img alt="FISMEP" 
-src="http://www.fismep.de/wp-content/uploads/2017/11/FISMEP_email_signature
--1.png" height="100" ></a>
-
+src="https://github.com/RWTH-EBC/FiLiP/blob/master/docs/logos/FISMEP.png" 
+height="100"></a>
 
 
 ## Acknowledgments
 
 We gratefully acknowledge the financial support of the Federal Ministry <br /> 
-for Economic Affairs and Energy (BMWi), promotional references 03ET1495A, 
-03ET1551A, 0350018A, 03ET1561B.
+for Economic Affairs and Climate Action (BMWK), promotional references 
+03ET1495A, 03ET1551A, 0350018A, 03ET1561B.
 
-
-<a href="https://www.bmwi.de/Navigation/EN/Home/home.html"> <img alt="BMWE" src="https://www.bmwi.de/SiteGlobals/BMWI/StyleBundles/Bilder/bmwi_logo_en.svgz?__blob=normal&v=10" height="100"> </a>
+<a href="https://www.bmwi.de/Navigation/EN/Home/home.html"> <img alt="BMWK" 
+src="https://github.com/RWTH-EBC/FiLiP/blob/master/docs/https://github.com/RWTH-EBC/FiLiP/blob/master/docs/logos/bmwi_logo_en.png" height="100"> </a>
 
 This project has received funding in the framework of the joint programming initiative ERA-Net Smart Grids Plus, with support from the European Union’s Horizon 2020 research and innovation programme.
 
 <a href="http://www.eranet-smartgridsplus.eu/"> <img alt="ERANET" 
 src="http://fismep.de/wp-content/uploads/2017/09/SmartGridsPlus_rgb-300x55.jpg" height="100"> </a>
-
-
-

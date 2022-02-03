@@ -1,4 +1,5 @@
 #### v0.2.1
+- Updated documentation ([#128](https://github.com/RWTH-EBC/FiLiP/issues/128))
 - Improve tutorials ([#127](https://github.com/RWTH-EBC/FiLiP/issues/127))
 
 #### v0.2.0

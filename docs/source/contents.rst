@@ -10,11 +10,12 @@ Documentation for FILiP
 
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 4
 
    index
    api/index
    examples
+   tutorials
    contributing
    about/index
 

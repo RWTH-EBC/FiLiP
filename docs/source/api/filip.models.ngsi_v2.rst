@@ -1,10 +1,10 @@
-filip.models.ngsi\_v2
+filip.models.ngsi\_v2 package
 =============================
 
 Submodules
 ----------
 
-filip.models.ngsi\_v2.base
+filip.models.ngsi\_v2.base module
 ---------------------------------
 
 .. automodule:: filip.models.ngsi_v2.base
@@ -12,7 +12,7 @@ filip.models.ngsi\_v2.base
    :undoc-members:
    :show-inheritance:
 
-filip.models.ngsi\_v2.context
+filip.models.ngsi\_v2.context module
 ------------------------------------
 
 .. automodule:: filip.models.ngsi_v2.context
@@ -20,7 +20,7 @@ filip.models.ngsi\_v2.context
    :undoc-members:
    :show-inheritance:
 
-filip.models.ngsi\_v2.iot
+filip.models.ngsi\_v2.iot module
 --------------------------------
 
 .. automodule:: filip.models.ngsi_v2.iot
@@ -28,7 +28,7 @@ filip.models.ngsi\_v2.iot
    :undoc-members:
    :show-inheritance:
 
-filip.models.ngsi\_v2.registrations
+filip.models.ngsi\_v2.registrations module
 ------------------------------------------
 
 .. automodule:: filip.models.ngsi_v2.registrations
@@ -36,7 +36,7 @@ filip.models.ngsi\_v2.registrations
    :undoc-members:
    :show-inheritance:
 
-filip.models.ngsi\_v2.subscriptions
+filip.models.ngsi\_v2.subscriptions module
 ------------------------------------------
 
 .. automodule:: filip.models.ngsi_v2.subscriptions
@@ -44,7 +44,7 @@ filip.models.ngsi\_v2.subscriptions
    :undoc-members:
    :show-inheritance:
 
-filip.models.ngsi\_v2.timeseries
+filip.models.ngsi\_v2.timeseries module
 ---------------------------------------
 
 .. automodule:: filip.models.ngsi_v2.timeseries
@@ -52,7 +52,7 @@ filip.models.ngsi\_v2.timeseries
    :undoc-members:
    :show-inheritance:
 
-filip.models.ngsi\_v2.units
+filip.models.ngsi\_v2.units module
 ----------------------------------
 
 .. automodule:: filip.models.ngsi_v2.units

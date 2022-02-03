@@ -312,17 +312,22 @@ class IoTAClient(BaseHttpClient):
         """
         Returns a list of all the devices in the device registry with all
         its data.
+
         Args:
-            limit: if present, limits the number of devices returned in the
-            list. Must be a number between 1 and 1000.
-            offset: if present, skip that number of devices from the original
-            query.
-            detailed: 'on' return all device information, 'off' (default)
+            limit:
+                if present, limits the number of devices returned in the
+                list. Must be a number between 1 and 1000.
+            offset:
+                if present, skip that number of devices from the original
+                query.
+            detailed:
+                'on' return all device information, 'off' (default)
                 return only name.
             entity:
             protocol:
-        Returns:
 
+        Returns:
+            List of devices
         """
         if limit:
             if not 1 < limit < 1000:

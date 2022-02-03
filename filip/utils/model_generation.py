@@ -27,25 +27,29 @@ def create_data_model_file(*,
     can either downloaded from a url or passed as str or dict. Allowed input
     types are defined but the underlying toolbox.
 
-    Many datamodels suited for FIWARE are located here:
+    Many data models suited for FIWARE are located here:
     https://github.com/smart-data-models/data-models
 
     Args:
-        path: path where the generated code should saved
-        url: url to download the definition from
-        schema_type (str): auto, openapi, 'jsonschema', 'json', 'yaml',
-            'dict', 'csv'
-        class_name: dummy
+        path:
+            path where the generated code should saved
+        url:
+            url to download the definition from
+        schema_type (str):
+            `auto`, `openapi`, `jsonschema`, `json`, `yaml`, `dict`, `csv`
+        class_name:
+            classname for the model class
 
     Returns:
         None
 
     Examples::
 
-        {"type": "object",
-         "properties": {
-            "number": {
-                "type": "number"
+        {
+            "type": "object",
+            "properties": {
+                "number": {
+                    "type": "number"
                     },
                 "street_name": {
                     "type": "string"

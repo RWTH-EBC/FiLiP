@@ -1,4 +1,4 @@
-filip.clients.ngsi\_ld
+filip.clients.ngsi\_ld package
 ==============================
 
 Module contents

@@ -205,10 +205,11 @@ class ContextEntity(ContextEntityKeyValues):
                                           List[NamedContextAttribute]]) -> None:
         """
         Add attributes (properties, relationships) to entity
+
         Args:
-            attrs: Dict[str, ContextAttribute]: {NAME for attr : Attribute}
-                    or
+            attrs: Dict[str, ContextAttribute]: {NAME for attr : Attribute} or
                    List[NamedContextAttribute]
+
         Returns:
             None
         """

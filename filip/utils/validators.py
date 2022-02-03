@@ -19,7 +19,7 @@ def validate_http_url(url: AnyHttpUrl) -> str:
     Args:
         url (AnyHttpUrl): the url for the host / port
 
-    #Returns:
+    Returns:
         validated url
     """
     return url
@@ -48,6 +48,7 @@ def validate_escape_character_free(value: Any) -> Any:
     Each value of a list is examined
     Of dictionaries each value is examined, keys are skipped, as they are ok
     for Fiware
+
     Args:
         value: the string to check
 

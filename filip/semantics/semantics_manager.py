@@ -624,9 +624,12 @@ class SemanticsManager(BaseModel):
         Retrieve all instances of a SemanitcClass from Local Storage
 
         Args:
-            class_ (type): Type of classes to retrieve
-            class_name (str): Name of type of classes to retrieve as string
-            get_subclasses (bool): If true also all instances of subclasses
+            class_ (type):
+                Type of classes to retrieve
+            class_name (str):
+                Name of type of classes to retrieve as string
+            get_subclasses (bool):
+                If true also all instances of subclasses
                 of given class are returned
 
         Raises:
@@ -838,13 +841,13 @@ class SemanticsManager(BaseModel):
         automatically displayed in the standard image viewing software of the
         system
 
-         Args:
-            display_individuals_rule (rule), If:
+        Args:
+            display_individuals_rule (rule):
+                If:
                 "USED": Show only Individuals
                 "ALL": Display all known Individuals
                 "NONE": Display no Individuals
-            that are connected to
-                    at least one instance
+                that are connected to at least one instance
                 else: Show all individuals
 
         Raises:
@@ -909,14 +912,13 @@ class SemanticsManager(BaseModel):
         Args:
             display_only_used_individuals (bool):
                 If true(default): Show only Individuals that are connected to
-                    at least one instance
+                at least one instance
                 else: Show all individuals
 
         Returns:
-            [elements, stylesheet]:
-
-                elements is a dict: {"nodes": NODE_DEFINITIONS,
-                                     "edges": EDGE_DEFINITIONS}
+            Tupel of elements and stylesheet:
+                elements is a dict:
+                {"nodes": NODE_DEFINITIONS, "edges": EDGE_DEFINITIONS}
                 stylesheet is a list containing all the graph styles
         """
 
@@ -1057,19 +1059,22 @@ class SemanticsManager(BaseModel):
         """
         The live state of the instance is fetched from Fiware (if it exists)
         and the two states are merged:
+
         For each Field:
-            - each added value (compared to old_state) is added to
-              the live state
-            - each deleted value (compared to old_state) is removed from
-              the live state
+        - each added value (compared to old_state) is added to
+        the live state
+        - each deleted value (compared to old_state) is removed from
+        the live state
+
         For each Device Settings (if instance is device):
-            - If the device setting changed (compared to old_state) the
-              live setting is overwritten
+        - If the device setting changed (compared to old_state) the live
+        setting is overwritten
+
         For each Reference:
-            - each added value (compared to old_state) is added to
-              the live state
-            - each deleted value (compared to old_state) is removed from
-              the live state
+        - each added value (compared to old_state) is added to
+        the live state
+        - each deleted value (compared to old_state) is removed from
+        the live state
 
         The new state is directly saved in the instance
 
