@@ -1,13 +1,18 @@
-filip.clients.mqtt
+filip.clients.mqtt package
 ==========================
+
+Subpackages
+-----------
 
 .. toctree::
    :maxdepth: 4
 
    filip.clients.mqtt.encoder
 
+Submodules
+----------
 
-filip.clients.mqtt.client
+filip.clients.mqtt.client module
 --------------------------------
 
 .. automodule:: filip.clients.mqtt.client

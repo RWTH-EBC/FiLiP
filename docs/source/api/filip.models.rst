@@ -1,5 +1,8 @@
-filip.models
+filip.models package
 ====================
+
+Subpackages
+-----------
 
 .. toctree::
    :maxdepth: 4
@@ -7,10 +10,21 @@ filip.models
    filip.models.ngsi_ld
    filip.models.ngsi_v2
 
-filip.models.base
+Submodules
+----------
+
+filip.models.base module
 ------------------------
 
 .. automodule:: filip.models.base
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+filip.models.mqtt module
+------------------------
+
+.. automodule:: filip.models.mqtt
    :members:
    :undoc-members:
    :show-inheritance:
