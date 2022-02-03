@@ -257,7 +257,7 @@ This project is part of cooperation between the RWTH Aachen University and
 the Research Centre Jülich.
 
 <a href="https://www.jara.org/de/forschung/jara-energy"> <img alt="JARA 
-ENERGY" src="https://github.com/RWTH-EBC/FiLiP/tree/master/docs/logos/LogoJARAEnergy.jpg" height="100"> </a>
+ENERGY" src="https://raw.githubusercontent.com/RWTH-EBC/FiLiP/master/docs/logos/LogoJARAEnergy.jpg" height="100"> </a>
 
 ## Related projects
 
@@ -265,7 +265,7 @@ ENERGY" src="https://github.com/RWTH-EBC/FiLiP/tree/master/docs/logos/LogoJARAEn
 src="https://avatars.githubusercontent.com/u/43948851?s=200&v=4" height="100"></a>
 
 <a href="http://fismep.de/"> <img alt="FISMEP" 
-src="https://github.com/RWTH-EBC/FiLiP/blob/master/docs/logos/FISMEP.png" 
+src="https://raw.githubusercontent.com/RWTH-EBC/FiLiP/master/docs/logos/FISMEP.png" 
 height="100"></a>
 
 
@@ -276,7 +276,7 @@ for Economic Affairs and Climate Action (BMWK), promotional references
 03ET1495A, 03ET1551A, 0350018A, 03ET1561B.
 
 <a href="https://www.bmwi.de/Navigation/EN/Home/home.html"> <img alt="BMWK" 
-src="https://github.com/RWTH-EBC/FiLiP/blob/master/docs/https://github.com/RWTH-EBC/FiLiP/blob/master/docs/logos/bmwi_logo_en.png" height="100"> </a>
+src="https://raw.githubusercontent.com/RWTH-EBC/FiLiP/master/docs/logos/bmwi_logo_en.png" height="100"> </a>
 
 This project has received funding in the framework of the joint programming initiative ERA-Net Smart Grids Plus, with support from the European Union’s Horizon 2020 research and innovation programme.
 
