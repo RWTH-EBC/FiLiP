@@ -1,3 +1,4 @@
+"""
 # # Exercise 4: Virtual Thermal Zone
 
 # Create two virtual IoT device. One of them represents the temperature
@@ -19,14 +20,16 @@
 #    retrieves the entity data after each message and writes the values to a
 #    history
 # 6. Run the simulation and plot the results
+"""
 
 # ## Import packages
 import json
-import paho.mqtt.client as mqtt
 from pathlib import Path
-import matplotlib.pyplot as plt
 import time
 from urllib.parse import urlparse
+import matplotlib.pyplot as plt
+import paho.mqtt.client as mqtt
+
 # import from filip
 from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient
 from filip.clients.mqtt import IoTAMQTTClient
@@ -34,7 +37,7 @@ from filip.models.base import FiwareHeader
 from filip.models.ngsi_v2.iot import Device, DeviceAttribute, ServiceGroup
 from filip.utils.cleanup import clear_context_broker, clear_iot_agent
 # import simulation model
-from tutorial.simulation_model import SimulationModel
+from tutorial.ngsi_v2.simulation_model import SimulationModel
 
 # ## Parameters
 # ToDo: Enter your context broker host and port, e.g. http://localhost:1026
@@ -57,8 +60,9 @@ SERVICE_PATH = '/your_path'
 APIKEY = SERVICE_PATH.strip('/')
 
 # Path to json-files to device configuration data for follow up exercises
-WRITE_GROUPS_FILEPATH = Path("./e4_iot_thermal_zone_sensors_solution_groups.json")
-WRITE_DEVICES_FILEPATH = Path("./e4_iot_thermal_zone_sensors_solution_devices.json")
+WRITE_GROUPS_FILEPATH = Path("e4_iot_thermal_zone_sensors_solution_groups.json")
+WRITE_DEVICES_FILEPATH = Path(
+    "e4_iot_thermal_zone_sensors_solution_devices.json")
 
 # set parameters for the temperature simulation
 TEMPERATURE_MAX = 10  # maximal ambient temperature

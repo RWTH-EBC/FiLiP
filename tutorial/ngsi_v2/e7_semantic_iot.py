@@ -1,3 +1,4 @@
+"""
 # # Exercise 7: Semantic IoT Systems
 #
 # We now want to add a semantic meaning to our measurements. Therefore we
@@ -15,16 +16,19 @@
 # 4. Retrieve all entities and print them
 # 5. Congratulations you are now ready to build your own semantic systems for
 #    advanced semantic functions check on our semantics examples
+"""
 
 # ## Import packages
 from pathlib import Path
-from pydantic import parse_file_as
 from typing import List
+from pydantic import parse_file_as
+
 # import from filip
 from filip.clients.ngsi_v2 import \
     ContextBrokerClient, \
     IoTAClient
 from filip.models.base import FiwareHeader
+from filip.models.ngsi_v2.base import NamedMetadata
 from filip.models.ngsi_v2.context import \
     ContextEntity, \
     NamedContextAttribute
@@ -32,6 +36,7 @@ from filip.models.ngsi_v2.iot import \
     Device, \
     ServiceGroup, \
     StaticDeviceAttribute
+from filip.models.ngsi_v2.units import Unit
 from filip.utils.cleanup import \
     clear_context_broker, \
     clear_iot_agent
@@ -165,6 +170,49 @@ if __name__ == '__main__':
 
     heater.add_attribute(ref_thermal_zone)
     iotac.update_device(device=heater)
+
+    # ToDo: Add unit metadata to the temperature and simtime attributes of
+    #  all devices. Here we use unitcode information. If you can not find
+    #  your unit code you can use our unit models for help
+    # get code from Unit model for seconds
+    code = Unit(name="second [unit of time]").code
+    # add metadata to simtime attribute of the all devices
+    metadata_simtime = NamedMetadata(name="unitCode",
+                                     type="Text",
+                                     value=code)
+    attr_simtime = weather_station.get_attribute(
+        attribute_name="simtime"
+    )
+    attr_simtime.metadata = metadata_simtime
+    weather_station.update_attribute(attribute=attr_simtime)
+    zone_temperature_sensor.update_attribute(attribute=attr_simtime)
+    heater.update_attribute(attribute=attr_simtime)
+
+    # ToDo: get code from Unit model for degree celsius
+    code = Unit(name="degree Celsius").code
+    # ToDo: add metadata to temperature attribute of the weather
+    #  station and the zone temperature sensor
+    metadata_t_amb = NamedMetadata(...)
+    attr_t_amb = weather_station.get_attribute(
+        attribute_name="temperature"
+    )
+    attr_t_amb.metadata = metadata_t_amb
+    weather_station.update_attribute(attribute=attr_t_amb)
+
+    metadata_t_zone = NamedMetadata(...)
+    attr_t_zone = zone_temperature_sensor.get_attribute(
+        attribute_name="...")
+    attr_t_zone.metadata = ...
+    zone_temperature_sensor.update_attribute(...)
+
+    # currently adding metadata via updating does not work perfectly.
+    # Therefore, we do a delete and update
+    iotac.delete_device(device_id=weather_station.device_id)
+    iotac.post_device(device=weather_station)
+    iotac.delete_device(device_id=zone_temperature_sensor.device_id)
+    iotac.post_device(device=zone_temperature_sensor)
+    iotac.delete_device(device_id=heater.device_id)
+    iotac.post_device(device=heater)
 
     # ToDo: Retrieve all ContextEntites and print them
     entities = ...

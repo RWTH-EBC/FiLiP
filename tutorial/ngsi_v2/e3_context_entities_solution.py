@@ -1,3 +1,4 @@
+"""
 # # Exercise 3: Context Entities and Relationships
 
 # Create building context entity of type 'Building' according to FIWARE's
@@ -30,6 +31,7 @@
 #    update the model in the context broker.
 # 11. Update the thermal zone and the building in the context broker
 # 12. Retrieve the data by using query statements for their relationships.
+"""
 
 # ## Import packages
 import json
@@ -56,7 +58,7 @@ SERVICE_PATH = '/your_path'
 
 # ToDo: Path to json-files to store entity data for follow up exercises,
 #  e.g. ./e3_my_entities.json
-WRITE_ENTITIES_FILEPATH = Path("./e3_context_entities_solution_entities.json")
+WRITE_ENTITIES_FILEPATH = Path("e3_context_entities_solution_entities.json")
 
 # ## Main script
 if __name__ == '__main__':

@@ -1,3 +1,4 @@
+"""
 # # Exercise 2: Service Health Check
 
 # Create one or multiple filip clients and check if the corresponding services
@@ -11,6 +12,7 @@
 #   their version
 # 3. Create a config object for the ngsi_v2 multi client (HttpClient),
 #   create the multi client and again check for services' versions
+"""
 
 # ## Import packages
 from filip.clients.ngsi_v2 import \

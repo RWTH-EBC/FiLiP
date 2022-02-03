@@ -1,3 +1,6 @@
+#### v0.2.1
+- Improve tutorials ([#127](https://github.com/RWTH-EBC/FiLiP/issues/127))
+
 #### v0.2.0
 - Refactored units model ([#107](https://github.com/RWTH-EBC/FiLiP/issues/107))
 - Updated and moved data model generator ([#117](https://github.com/RWTH-EBC/FiLiP/issues/117))
