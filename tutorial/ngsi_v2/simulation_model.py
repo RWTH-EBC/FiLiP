@@ -6,7 +6,26 @@ import numpy as np
 
 
 class SimulationModel:
+    """
+    Simulation model for a thermal zone and periodic ambient temperature
+    simulation.
 
+    The ambient temperature is simulated as daily periodic cosine ranging
+    between `temp_max` and `temp_min`.
+
+    The thermal zone is roughly parametrized as follows:
+    Zone volume: 10m x 10m x 5m
+    Outer wall area plus roof ares: 4 x 10m x 5m + 10m x 10m
+    Thermal insulation factor U: 0.4 W/(m^2 K)
+
+    Args:
+        t_start: simulation start time in seconds
+        t_end: simulation end time in seconds
+        dt: model integration step in seconds
+        temp_max: maximal ambient temperature in °C
+        temp_min: minimal ambient temperature in °C
+        temp_start: initial zone temperature in °C
+    """
     def __init__(self,
                  t_start: int = 0,
                  t_end: int = 24 * 60 * 60,
@@ -14,35 +33,16 @@ class SimulationModel:
                  temp_max: float = 10,
                  temp_min: float = -5,
                  temp_start: float = 20):
-        """
-        Simulation model for a thermal zone and periodic ambient temperature
-        simulation.
 
-        The ambient temperature is simulated as daily periodic cosine ranging
-        between `temp_max` and `temp_min`.
-
-        The thermal zone is roughly parametrized as follows:
-        Zone volume: 10m x 10m x 5m
-        Outer wall area plus roof ares: 4 x 10m x 5m + 10m x 10m
-        Thermal insulation factor U: 0.4 W/(m^2 K)
-
-        Args:
-            t_start: simulation start time in seconds
-            t_end: simulation end time in seconds
-            dt: model integration step in seconds
-            temp_max: maximal ambient temperature in °C
-            temp_min: minimal ambient temperature in °C
-            temp_start: initial zone temperature in °C
-        """
         self.t_start = t_start
         self.t_end = t_end
         self.dt = dt
         self.temp_max = temp_max
         self.temp_min = temp_min
         self.temp_start = temp_start
-        self.UA = 120
-        self.C_p = 612.5 * 1000
-        self.Q_h = 3000
+        self.ua = 120
+        self.c_p = 612.5 * 1000
+        self.q_h = 3000
         self.t_sim = self.t_start
         self.t_amb = temp_min
         self.t_zone = temp_start
@@ -64,8 +64,8 @@ class SimulationModel:
         """
         for t in range(self.t_sim, t_sim, self.dt):
             self.t_zone = self.t_zone + \
-                          self.dt * (self.UA * (self.t_amb - self.t_zone) +
-                                     self.on_off * self.Q_h) / self.C_p
+                          self.dt * (self.ua * (self.t_amb - self.t_zone) +
+                                     self.on_off * self.q_h) / self.c_p
 
             self.t_amb = -(self.temp_max - self.temp_min) / 2 * \
                     cos(2 * np.pi * t /(24 * 60 * 60)) + \

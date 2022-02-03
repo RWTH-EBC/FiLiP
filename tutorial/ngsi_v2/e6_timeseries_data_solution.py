@@ -1,3 +1,4 @@
+"""
 # # Exercise 6: Time Series Data
 
 # We now want store our data in the historic data storage and visualize it
@@ -10,18 +11,18 @@
 #    by the updates on your context entities
 # 3. Run the simulation
 # 4. Retrieve the data via QuantumLeap and visualize it
+"""
 
 # ## Import packages
-import paho.mqtt.client as mqtt
 from pathlib import Path
-
-import pandas as pd
-from pydantic import parse_file_as
-import matplotlib.pyplot as plt
 import time
 from typing import List
 from urllib.parse import urlparse
 from uuid import uuid4
+import pandas as pd
+import paho.mqtt.client as mqtt
+from pydantic import parse_file_as
+import matplotlib.pyplot as plt
 # import from filip
 from filip.clients.ngsi_v2 import \
     ContextBrokerClient, \
@@ -40,7 +41,7 @@ from filip.utils.cleanup import \
     clear_iot_agent, \
     clear_quantumleap
 # import simulation model
-from tutorial.simulation_model import SimulationModel
+from tutorial.ngsi_v2.simulation_model import SimulationModel
 
 # ## Parameters
 # ToDo: Enter your context broker host and port, e.g http://localhost:1026
@@ -72,11 +73,11 @@ print(TOPIC_CONTROLLER)
 
 # Path to read json-files from previous exercises
 READ_GROUPS_FILEPATH = \
-    Path("./e5_iot_thermal_zone_control_solution_groups.json")
+    Path("e5_iot_thermal_zone_control_solution_groups.json")
 READ_DEVICES_FILEPATH = \
-    Path("./e5_iot_thermal_zone_control_solution_devices.json")
+    Path("e5_iot_thermal_zone_control_solution_devices.json")
 READ_SUBSCRIPTIONS_FILEPATH = \
-    Path("./e5_iot_thermal_zone_control_solution_subscriptions.json")
+    Path("e5_iot_thermal_zone_control_solution_subscriptions.json")
 
 # set parameters for the temperature simulation
 TEMPERATURE_MAX = 10  # maximal ambient temperature
@@ -136,6 +137,9 @@ if __name__ == '__main__':
     #  command is sent to the device. The incoming command schould update the
     #  heater attribute of the simulation model
     def on_command(client, obj, msg):
+        """
+        Callback for incoming commands
+        """
         # Decode the message payload using the libraries builtin encoders
         apikey, device_id, payload = \
             client.get_encoder(PayloadProtocol.IOTA_JSON).decode_message(
@@ -158,6 +162,9 @@ if __name__ == '__main__':
     #  heater state with respect to the zone temperature. This will be
     #  implemented with asynchronous communication using MQTT-Subscriptions
     def on_measurement(client, obj, msg):
+        """
+        Callback for measurement notifications
+        """
         message = Message.parse_raw(msg.payload)
         updated_zone_temperature_sensor = message.data[0]
 

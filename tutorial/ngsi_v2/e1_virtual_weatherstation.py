@@ -1,3 +1,4 @@
+"""
 # # Exercise 1: Virtual Weather-Station
 
 # Create a virtual IoT device that simulates the ambient temperature and
@@ -17,17 +18,18 @@
 # 5. Create a function that publishes the simulated temperature `t_amb` and
 #    the corresponding simulation time `t_sim `via MQTT as a JSON
 # 6. Run the simulation and plot
+"""
 
 # ## Import packages
 import json
-import paho.mqtt.client as mqtt
-import matplotlib.pyplot as plt
 import time
 from urllib.parse import urlparse
 from uuid import uuid4
+import matplotlib.pyplot as plt
+import paho.mqtt.client as mqtt
 
 # import simulation model
-from tutorial.simulation_model import SimulationModel
+from tutorial.ngsi_v2.simulation_model import SimulationModel
 
 
 # ## Parameters
@@ -71,13 +73,16 @@ if __name__ == '__main__':
     #  and store the information for later in our history
     #  Note: do not change function's signature
     def on_message(client, userdata, msg):
+        """
+        Callback function for incoming messages
+        """
         # decode the payload
         payload = msg.payload.decode('utf-8')
         # ToDo: Parse the payload using the `json` package and write it to
         #  the history
         ...
 
-        return
+        pass
 
     # add your callback function to the client. You can either use a global
     # or a topic specific callback with `mqttc.message_callback_add()`
@@ -94,7 +99,7 @@ if __name__ == '__main__':
 
 
     # ToDo: print and subscribe to the weather station topic
-    print(f"WeatherStation topic:\n topic_weather_station")
+    print(f"WeatherStation topic:\n {TOPIC_WEATHER_STATION}")
     mqttc.subscribe(topic=TOPIC_WEATHER_STATION)
 
     # create a non-blocking thread for mqtt communication

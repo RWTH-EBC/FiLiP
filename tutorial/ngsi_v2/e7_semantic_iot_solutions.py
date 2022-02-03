@@ -1,3 +1,4 @@
+"""
 # # Exercise 7: Semantic IoT Systems
 #
 # We now want to add a semantic meaning to our measurements. Therefore we
@@ -15,11 +16,13 @@
 # 4. Retrieve all entities and print them
 # 5. Congratulations you are now ready to build your own semantic systems for
 #    advanced semantic functions check on our semantics examples
+"""
 
 # ## Import packages
 from pathlib import Path
-from pydantic import parse_file_as
 from typing import List
+from pydantic import parse_file_as
+
 # import from filip
 from filip.clients.ngsi_v2 import \
     ContextBrokerClient, \
@@ -49,16 +52,16 @@ SERVICE = 'filip_tutorial'
 #  on a shared instance this very important in order to avoid user
 #  collisions. You will use this service path through the whole tutorial.
 #  If you forget to change it an error will be raised!
-SERVICE_PATH = '/<your_path>'
+SERVICE_PATH = '/your_path'
 APIKEY = SERVICE_PATH.strip('/')
 
 # Path to read json-files from previous exercises
 READ_GROUPS_FILEPATH = \
-    Path("./e5_iot_thermal_zone_control_groups.json")
+    Path("e5_iot_thermal_zone_control_solution_groups.json")
 READ_DEVICES_FILEPATH = \
-    Path("./e5_iot_thermal_zone_control_devices.json")
+    Path("e5_iot_thermal_zone_control_solution_devices.json")
 READ_ENTITIES_FILEPATH = \
-    Path("./e3_context_entities_entities.json")
+    Path("e3_context_entities_solution_entities.json")
 
 # ## Main script
 if __name__ == '__main__':
@@ -126,19 +129,19 @@ if __name__ == '__main__':
 
     # ToDo: create the context attribute for the thermal zone and add it to the
     #   thermal zone entity
-    has_sensor = ...
-
-
-
-    thermal_zone.add_attributes(...)
+    has_sensor = NamedContextAttribute(
+        name="hasTemperatureSensor",
+        type="Relationship",
+        value=zone_temperature_sensor.entity_name)
+    thermal_zone.add_attributes(attrs=[has_sensor])
 
     # ToDo: create a static attribute that connects the zone temperature zone to
     #  the thermal zone
     cbc.update_entity(entity=thermal_zone)
 
-    ref_thermal_zone = StaticDeviceAttribute(...)
-
-
+    ref_thermal_zone = StaticDeviceAttribute(name="refThermalZone",
+                                             type="Relationship",
+                                             value=thermal_zone.id)
     zone_temperature_sensor.add_attribute(ref_thermal_zone)
     iotac.update_device(device=zone_temperature_sensor)
 
@@ -150,24 +153,24 @@ if __name__ == '__main__':
 
     # ToDo: create the context attribute for the thermal zone and add it to the
     #   thermal zone entity
-    has_heater = ...
-
-
-
-    thermal_zone.add_attributes(...)
+    has_heater = NamedContextAttribute(
+        name="hasHeater",
+        type="Relationship",
+        value=heater.entity_name)
+    thermal_zone.add_attributes(attrs=[has_heater])
 
     # ToDo: create a static attribute that connects the zone temperature zone to
     #  the thermal zone
     cbc.update_entity(entity=thermal_zone)
 
-    ref_thermal_zone = ...
-
-
+    ref_thermal_zone = StaticDeviceAttribute(name="refThermalZone",
+                                             type="Relationship",
+                                             value=thermal_zone.id)
     heater.add_attribute(ref_thermal_zone)
     iotac.update_device(device=heater)
 
     # ToDo: Retrieve all ContextEntites and print them
-    entities = ...
+    entities = cbc.get_entity_list()
     for entity in entities:
         print(entity.json(indent=2))
 
