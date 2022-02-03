@@ -48,6 +48,7 @@ setuptools.setup(
     packages=setuptools.find_packages(exclude=['tests',
                                                'tests.*',
                                                'img',
+                                               'tutorials.*',
                                                'tutorials']),
     package_data={'filip': ['data/unece-units/*.csv']},
     setup_requires=SETUP_REQUIRES,
