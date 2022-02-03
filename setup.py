@@ -22,7 +22,6 @@ INSTALL_REQUIRES = ['aenum',
                     'rapidfuzz',
                     'wget']
 
-
 SETUP_REQUIRES = INSTALL_REQUIRES.copy()
 
 setuptools.setup(
@@ -46,7 +45,10 @@ setuptools.setup(
                  'Programming Language :: Python :: 3.8',
                  "License :: OSI Approve :: BSD 3-Clause License"],
     keywords=['iot', 'fiware', 'semantic'],
-    packages=setuptools.find_packages(exclude=['tests','tests.*','img']),
+    packages=setuptools.find_packages(exclude=['tests',
+                                               'tests.*',
+                                               'img',
+                                               'tutorials']),
     package_data={'filip': ['data/unece-units/*.csv']},
     setup_requires=SETUP_REQUIRES,
     install_requires=INSTALL_REQUIRES,
