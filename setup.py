@@ -34,8 +34,9 @@ setuptools.setup(
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
     url="https://github.com/RWTH-EBC/filip",
-    project_urls={"Documentation": "https://ebc.pages.rwth-aachen.de/EBC_all/"
-                                   "fiware/filip/development/docs/index.html"},
+    project_urls={"Documentation":
+                      "https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/docs/index.html",
+                  "Source": "https://github.com/RWTH-EBC/filip"},
     # Specify the Python versions you support here. In particular, ensure
     # that you indicate whether you support Python 2, Python 3 or both.
     classifiers=['Development Status :: 3 - Beta',
