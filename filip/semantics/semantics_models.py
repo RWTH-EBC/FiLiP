@@ -326,8 +326,8 @@ class DeviceAttribute(DeviceProperty):
     Model describing an attribute property of an IoT device.
 
     The attribute will add one field to the fiware instance:
-        - {NameOfInstanceField}_{Name}, holds the value of the Iot device
-        attribute: get_value()
+    - {NameOfInstanceField}_{Name}, holds the value of the Iot device
+    attribute: get_value()
 
     A DeviceAttribute can only belong to one field of one instance. Assigning
     it to multiple fields will result in an error.

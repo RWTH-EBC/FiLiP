@@ -497,6 +497,7 @@ class Device(DeviceSettings):
                          append: bool = False) -> None:
         """
         Updates existing device attribute
+
         Args:
             attribute: Attribute to add to device configuration
             append (bool): Adds attribute if not exist

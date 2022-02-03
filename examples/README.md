@@ -36,5 +36,5 @@ The following topics are covered:
 
 #### How to use ontologies for semantic system modelling?
 
-- [semantics](https://github.com/RWTH-EBC/FiLiP/blob/master/examples/ngsi_v2/semantics)
+- [semantics](https://github.com/RWTH-EBC/FiLiP/tree/master/examples/ngsi_v2/e11_ngsi_v2_semantics)
 

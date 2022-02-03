@@ -1,7 +1,7 @@
 """
 Settings module to set url from .env.filip file. This can also seen as an
 example for other applications such as webapp that use the library. Using
-*.env belongs to best practices in containerized applications. Pydantic
+`*.env` belongs to best practices in containerized applications. Pydantic
 provides a convenient and clean way to manage environments.
 """
 from pydantic import BaseSettings, Field, AnyHttpUrl
