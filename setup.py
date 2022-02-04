@@ -49,6 +49,7 @@ setuptools.setup(
                  'Intended Audience :: Science/Research',
                  'Programming Language :: Python :: 3.7',
                  'Programming Language :: Python :: 3.8',
+                 'Programming Language :: Python :: 3.9',
                  "License :: OSI Approved :: BSD License"],
     keywords=['iot', 'fiware', 'semantic'],
     packages=setuptools.find_packages(exclude=['tests',
