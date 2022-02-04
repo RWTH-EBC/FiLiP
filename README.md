@@ -71,12 +71,16 @@ You can register for a testing account
 
 The easiest way to install the library is via pip:
 
+````
+pip install -U filip
+````
+
+If you want to benefit from the latest changes, use the following command 
+(This will install the current master branch from this repository):
+
 ```
 pip install -U git+git://github.com/RWTH-EBC/filip
 ```
-
-**Note**: We are currently working bringing the library to PyPi to enable 
-easy package installation without using git
 
 ### Introduction to FIWARE
 

@@ -24,7 +24,7 @@ copyright = f'2021-{datetime.datetime.now().year}, RWTH Aachen University, ' \
 author = 'E.ON ERC - EBC'
 
 # The full version, including alpha/beta/rc tags
-release = '0.2.0'
+release = '0.2.1'
 
 # The short X.Y version.
 version = '.'.join(release.split('.')[0:2])
