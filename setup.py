@@ -44,12 +44,12 @@ setuptools.setup(
             "https://github.com/RWTH-EBC/FiLiP/archive/refs/tags/v0.2.1.tar.gz"},
     # Specify the Python versions you support here. In particular, ensure
     # that you indicate whether you support Python 2, Python 3 or both.
-    classifiers=['Development Status :: 3 - Beta',
+    classifiers=['Development Status :: 3 - Alpha',
                  'Topic :: Scientific/Engineering',
                  'Intended Audience :: Science/Research',
                  'Programming Language :: Python :: 3.7',
                  'Programming Language :: Python :: 3.8',
-                 "License :: OSI Approve :: BSD 3-Clause License"],
+                 "License :: OSI Approved :: BSD License"],
     keywords=['iot', 'fiware', 'semantic'],
     packages=setuptools.find_packages(exclude=['tests',
                                                'tests.*',
