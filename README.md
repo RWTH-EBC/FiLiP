@@ -176,7 +176,7 @@ Therefore, FiLiP currently only covers the APIs of the following GEs:
 
 ## Structure of FiLiP
 
-![Library Structure](https://github.com/RWTH-EBC/FiLiP/blob/master/docs/diagrams/out/architecture.png)
+![Library Structure](https://raw.githubusercontent.com/RWTH-EBC/FiLiP/master/docs/diagrams/out/architecture.png)
 
 
 ## Documentation
