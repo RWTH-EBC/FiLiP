@@ -1,4 +1,4 @@
-![E.ON EBC RWTH Aachen University](https://raw.githubusercontent.com/N5GEH/n5geh.tools.FiLiP/development/docs/logos/EBC_Logo.png)
+![E.ON EBC RWTH Aachen University](https://raw.githubusercontent.com/RWTH-EBC/FiLiP/master/docs/logos/EBC_Logo.png)
 
 # FiLiP
 
