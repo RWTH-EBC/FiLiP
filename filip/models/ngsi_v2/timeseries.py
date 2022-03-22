@@ -3,7 +3,7 @@ Data models for interacting with FIWARE's time series-api (aka QuantumLeap)
 """
 from __future__ import annotations
 import logging
-from typing import Any, List
+from typing import Any, List, Union
 from datetime import datetime
 import numpy as np
 import pandas as pd
@@ -18,7 +18,7 @@ class TimeSeriesBase(BaseModel):
     """
     Base model for other time series api models
     """
-    index: List[datetime] = Field(
+    index: Union[List[datetime], datetime] = Field(
         default=None,
         description="Array of the timestamps which are indexes of the response "
                     "for the requested data. It's a parallel array to 'values'."
