@@ -3,7 +3,7 @@ Data models for interacting with FIWARE's time series-api (aka QuantumLeap)
 """
 from __future__ import annotations
 import logging
-from typing import Any, List
+from typing import Any, List, Union
 from datetime import datetime
 import numpy as np
 import pandas as pd
@@ -18,7 +18,7 @@ class TimeSeriesBase(BaseModel):
     """
     Base model for other time series api models
     """
-    index: List[datetime] = Field(
+    index: Union[List[datetime], datetime] = Field(
         default=None,
         description="Array of the timestamps which are indexes of the response "
                     "for the requested data. It's a parallel array to 'values'."
@@ -37,7 +37,7 @@ class TimeSeriesHeader(TimeSeriesBase):
     """
     Model to describe an available entity in the time series api
     """
-    # aliases are required due to inconsistencies in the api-specs
+    # aliases are required due to formally inconsistencies in the api-specs
     entityId: str = Field(default=None,
                           alias="id",
                           description="The entity id the time series api."
@@ -51,7 +51,7 @@ class TimeSeriesHeader(TimeSeriesBase):
                             description="The type of an entity")
 
     class Config:
-        allow_population_by_field_name = False
+        allow_population_by_field_name = True
 
 
 class IndexedValues(BaseModel):
