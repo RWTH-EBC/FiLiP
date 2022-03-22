@@ -3,7 +3,7 @@ Tests for time series model
 """
 import logging
 import unittest
-from filip.models.ngsi_v2.timeseries import TimeSeries
+from filip.models.ngsi_v2.timeseries import TimeSeries, TimeSeriesHeader
 
 
 logger = logging.getLogger(__name__)
@@ -72,6 +72,12 @@ class TestTimeSeriesModel(unittest.TestCase):
             ]
         }
 
+        self.timeseries_header = {"entityId": "test_id",
+                                  "entityType": "test_type"}
+
+        self.timeseries_header_alias = {"id": "test_id",
+                                        "type": "test_type"}
+
     def test_model_creation(self):
         """
         Test model creation
@@ -91,6 +97,13 @@ class TestTimeSeriesModel(unittest.TestCase):
 
         with self.assertRaises(AssertionError):
             ts1.extend(ts2)
+
+    def test_timeseries_header(self):
+        header = TimeSeriesHeader(**self.timeseries_header)
+        header_by_alias = TimeSeriesHeader(**self.timeseries_header_alias)
+        self.assertEqual(header.dict(), header_by_alias.dict())
+        self.assertEqual(header.dict(by_alias=True),
+                         header_by_alias.dict(by_alias=True))
 
 
 if __name__ == '__main__':

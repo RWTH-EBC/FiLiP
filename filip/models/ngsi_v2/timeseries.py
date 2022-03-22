@@ -37,7 +37,7 @@ class TimeSeriesHeader(TimeSeriesBase):
     """
     Model to describe an available entity in the time series api
     """
-    # aliases are required due to inconsistencies in the api-specs
+    # aliases are required due to formally inconsistencies in the api-specs
     entityId: str = Field(default=None,
                           alias="id",
                           description="The entity id the time series api."
@@ -51,7 +51,7 @@ class TimeSeriesHeader(TimeSeriesBase):
                             description="The type of an entity")
 
     class Config:
-        allow_population_by_field_name = False
+        allow_population_by_field_name = True
 
 
 class IndexedValues(BaseModel):
