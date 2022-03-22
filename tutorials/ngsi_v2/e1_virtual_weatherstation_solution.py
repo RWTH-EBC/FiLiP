@@ -29,7 +29,7 @@ import matplotlib.pyplot as plt
 import paho.mqtt.client as mqtt
 
 # import simulation model
-from tutorial.ngsi_v2.simulation_model import SimulationModel
+from tutorials.ngsi_v2.simulation_model import SimulationModel
 
 
 # ## Parameters
