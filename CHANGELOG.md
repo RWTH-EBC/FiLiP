@@ -1,3 +1,7 @@
+#### v0.2.2
+- Updated requirements for tutorials ([#132](https://github.com/RWTH-EBC/FiLiP/issues/132))
+- fixed broken imports for tutorials ([#134](https://github.com/RWTH-EBC/FiLiP/issues/134))
+
 #### v0.2.1
 - Updated documentation ([#128](https://github.com/RWTH-EBC/FiLiP/issues/128))
 - Improve tutorials ([#127](https://github.com/RWTH-EBC/FiLiP/issues/127))
