@@ -55,7 +55,7 @@ from filip.models.ngsi_v2.iot import \
     ServiceGroup
 from filip.utils.cleanup import clear_context_broker, clear_iot_agent
 # import simulation model
-from tutorial.ngsi_v2.simulation_model import SimulationModel
+from tutorials.ngsi_v2.simulation_model import SimulationModel
 
 # ## Parameters
 # ToDo: Enter your context broker host and port, e.g http://localhost:1026

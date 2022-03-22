@@ -42,7 +42,7 @@ from filip.utils.cleanup import \
     clear_iot_agent, \
     clear_quantumleap
 # import simulation model
-from tutorial.ngsi_v2.simulation_model import SimulationModel
+from tutorials.ngsi_v2.simulation_model import SimulationModel
 
 # ## Parameters
 # ToDo: Enter your context broker host and port, e.g http://localhost:1026
