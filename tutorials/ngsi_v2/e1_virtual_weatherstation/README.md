@@ -5,7 +5,9 @@ publishes it via MQTT. The simulation function is already predefined.
 This exercise to give a simple introduction to the communication via MQTT.
 
 <div style="text-align: center;">
-  <img src="https://raw.githubusercontent.com/RWTH-EBC/FiLiP/master/tutorials/ngsi_v2/e1_virtual_weatherstation/tutorials_ngsi_v2-Exercise1.drawio.png" alt="Virtual Weather Station"/>
+  <img src="https://raw.githubusercontent.
+com/RWTH-EBC/FiLiP/tree/139-Add-images-to-tutorials/tutorials/ngsi_v2/e1_virtual_weatherstation
+/tutorials_ngsi_v2-Exercise1.drawio.png" alt="Virtual Weather Station"/>
 </div>
 
 The input sections are marked with 'ToDo'
