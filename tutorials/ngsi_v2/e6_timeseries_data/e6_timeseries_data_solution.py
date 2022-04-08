@@ -23,7 +23,6 @@ import pandas as pd
 import paho.mqtt.client as mqtt
 from pydantic import parse_file_as
 import matplotlib.pyplot as plt
-
 # import from filip
 from filip.clients.ngsi_v2 import \
     ContextBrokerClient, \
@@ -66,7 +65,7 @@ SERVICE = 'filip_tutorial'
 #  on a shared instance this very important in order to avoid user
 #  collisions. You will use this service path through the whole tutorial.
 #  If you forget to change it an error will be raised!
-SERVICE_PATH = '/<your_path>'
+SERVICE_PATH = '/your_path'
 APIKEY = SERVICE_PATH.strip('/')
 UNIQUE_ID = str(uuid4())
 TOPIC_CONTROLLER = f"fiware_workshop/{UNIQUE_ID}/controller"
@@ -74,11 +73,11 @@ print(TOPIC_CONTROLLER)
 
 # Path to read json-files from previous exercises
 READ_GROUPS_FILEPATH = \
-    Path("e5_iot_thermal_zone_control_solution_groups.json")
+    Path("../e5_iot_thermal_zone_control_solution_groups.json")
 READ_DEVICES_FILEPATH = \
-    Path("e5_iot_thermal_zone_control_solution_devices.json")
+    Path("../e5_iot_thermal_zone_control_solution_devices.json")
 READ_SUBSCRIPTIONS_FILEPATH = \
-    Path("e5_iot_thermal_zone_control_solution_subscriptions.json")
+    Path("../e5_iot_thermal_zone_control_solution_subscriptions.json")
 
 # set parameters for the temperature simulation
 TEMPERATURE_MAX = 10  # maximal ambient temperature
@@ -193,7 +192,7 @@ if __name__ == '__main__':
                                callback=on_measurement)
 
     # ToDo: create a quantumleap client
-    qlc = QuantumLeapClient(...)
+    qlc = QuantumLeapClient(url=QL_URL, fiware_header=fiware_header)
 
     # ToDO: create a http subscriptions that get triggered by updates of your
     #  device attributes. Note that you can also post the same subscription
@@ -204,9 +203,17 @@ if __name__ == '__main__':
                           ql_url="http://quantumleap:8668",
                           throttling=0)
 
-    qlc.post_subscription(...)
+    qlc.post_subscription(entity_id=zone_temperature_sensor.entity_name,
+                          entity_type=zone_temperature_sensor.entity_type,
+                          cb_url="http://orion:1026",
+                          ql_url="http://quantumleap:8668",
+                          throttling=0)
 
-    qlc.post_subscription(...)
+    qlc.post_subscription(entity_id=heater.entity_name,
+                          entity_type=heater.entity_type,
+                          cb_url="http://orion:1026",
+                          ql_url="http://quantumleap:8668",
+                          throttling=0)
 
     # connect to the mqtt broker and subscribe to your topic
     mqtt_url = urlparse(MQTT_BROKER_URL_EXPOSED)
@@ -288,17 +295,24 @@ if __name__ == '__main__':
     plt.show()
 
     # ToDo: Retrieve the data for the zone temperature
-    history_zone_temperature_sensor = ...
+    history_zone_temperature_sensor = qlc.get_entity_by_id(
+        entity_id=zone_temperature_sensor.entity_name,
+        entity_type=zone_temperature_sensor.entity_type,
+        last_n=10000
+    )
 
     # ToDo: convert to pandas dataframe and print it
-    history_zone_temperature_sensor = ...
+    history_zone_temperature_sensor = \
+        history_zone_temperature_sensor.to_pandas()
+    print(history_zone_temperature_sensor)
     # ToDo: drop unnecessary index levels
-    history_zone_temperature_sensor = ...
+    history_zone_temperature_sensor = history_zone_temperature_sensor.droplevel(
+        level=("entityId", "entityType"), axis=1)
     history_zone_temperature_sensor['simtime'] = pd.to_numeric(
         history_zone_temperature_sensor['simtime'], downcast="float")
     history_zone_temperature_sensor['temperature'] = pd.to_numeric(
         history_zone_temperature_sensor['temperature'], downcast="float")
-    # plot the results
+    # ToDo: plot the results
     fig2, ax2 = plt.subplots()
     ax2.plot(history_zone_temperature_sensor['simtime'],
              history_zone_temperature_sensor['temperature'])
@@ -307,21 +321,25 @@ if __name__ == '__main__':
     plt.show()
 
     # ToDo: Retrieve the data for the heater
-    history_heater = ...
+    history_heater = qlc.get_entity_by_id(
+        entity_id=heater.entity_name,
+        entity_type=heater.entity_type,
+        last_n=10000
+    )
 
     # convert to pandas dataframe and print it
     history_heater = history_heater.to_pandas()
     history_heater = history_heater.replace(' ', 0)
     print(history_heater)
 
-    # drop unnecessary index levels
+    # ToDo: drop unnecessary index levels
     history_heater = history_heater.droplevel(
         level=("entityId", "entityType"), axis=1)
     history_heater['simtime'] = pd.to_numeric(
         history_heater['simtime'], downcast="float")
     history_heater['heater_on_info'] = pd.to_numeric(
         history_heater['heater_on_info'], downcast="float")
-    # plot the results
+    # ToDo: plot the results
     fig3, ax3 = plt.subplots()
     ax3.plot(history_heater['simtime'],
              history_heater['heater_on_info'])

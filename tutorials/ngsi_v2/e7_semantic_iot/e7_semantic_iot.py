@@ -54,16 +54,16 @@ SERVICE = 'filip_tutorial'
 #  on a shared instance this very important in order to avoid user
 #  collisions. You will use this service path through the whole tutorial.
 #  If you forget to change it an error will be raised!
-SERVICE_PATH = '/your_path'
+SERVICE_PATH = '/<your_path>'
 APIKEY = SERVICE_PATH.strip('/')
 
 # Path to read json-files from previous exercises
 READ_GROUPS_FILEPATH = \
-    Path("e5_iot_thermal_zone_control_solution_groups.json")
+    Path("../e5_iot_thermal_zone_control_groups.json")
 READ_DEVICES_FILEPATH = \
-    Path("e5_iot_thermal_zone_control_solution_devices.json")
+    Path("../e5_iot_thermal_zone_control_devices.json")
 READ_ENTITIES_FILEPATH = \
-    Path("e3_context_entities_solution_entities.json")
+    Path("../e3_context_entities_entities.json")
 
 # ## Main script
 if __name__ == '__main__':
@@ -103,7 +103,7 @@ if __name__ == '__main__':
     # ToDo: Semantically connect the weather station and the building. By
     #  adding a `hasWeatherStation` attribute of type `Relationship`. For the
     #  connection from the weather station to the building add a static
-    #  attribute to the weather station.
+    #  attribute to the weather station
 
     # create the context attribute for the building and add it to the
     # building entity
@@ -131,19 +131,19 @@ if __name__ == '__main__':
 
     # ToDo: create the context attribute for the thermal zone and add it to the
     #   thermal zone entity
-    has_sensor = NamedContextAttribute(
-        name="hasTemperatureSensor",
-        type="Relationship",
-        value=zone_temperature_sensor.entity_name)
-    thermal_zone.add_attributes(attrs=[has_sensor])
+    has_sensor = ...
+
+
+
+    thermal_zone.add_attributes(...)
 
     # ToDo: create a static attribute that connects the zone temperature zone to
     #  the thermal zone
     cbc.update_entity(entity=thermal_zone)
 
-    ref_thermal_zone = StaticDeviceAttribute(name="refThermalZone",
-                                             type="Relationship",
-                                             value=thermal_zone.id)
+    ref_thermal_zone = StaticDeviceAttribute(...)
+
+
     zone_temperature_sensor.add_attribute(ref_thermal_zone)
     iotac.update_device(device=zone_temperature_sensor)
 
@@ -155,19 +155,19 @@ if __name__ == '__main__':
 
     # ToDo: create the context attribute for the thermal zone and add it to the
     #   thermal zone entity
-    has_heater = NamedContextAttribute(
-        name="hasHeater",
-        type="Relationship",
-        value=heater.entity_name)
-    thermal_zone.add_attributes(attrs=[has_heater])
+    has_heater = ...
+
+
+
+    thermal_zone.add_attributes(...)
 
     # ToDo: create a static attribute that connects the zone temperature zone to
     #  the thermal zone
     cbc.update_entity(entity=thermal_zone)
 
-    ref_thermal_zone = StaticDeviceAttribute(name="refThermalZone",
-                                             type="Relationship",
-                                             value=thermal_zone.id)
+    ref_thermal_zone = ...
+
+
     heater.add_attribute(ref_thermal_zone)
     iotac.update_device(device=heater)
 
@@ -192,22 +192,18 @@ if __name__ == '__main__':
     code = Unit(name="degree Celsius").code
     # ToDo: add metadata to temperature attribute of the weather
     #  station and the zone temperature sensor
-    metadata_t_amb = NamedMetadata(name="unitCode",
-                                   type="Text",
-                                   value=code)
+    metadata_t_amb = NamedMetadata(...)
     attr_t_amb = weather_station.get_attribute(
         attribute_name="temperature"
     )
     attr_t_amb.metadata = metadata_t_amb
     weather_station.update_attribute(attribute=attr_t_amb)
 
-    metadata_t_zone = NamedMetadata(name="unitCode",
-                                   type="Text",
-                                   value=code)
+    metadata_t_zone = NamedMetadata(...)
     attr_t_zone = zone_temperature_sensor.get_attribute(
-        attribute_name="temperature")
-    attr_t_zone.metadata = metadata_t_zone
-    zone_temperature_sensor.update_attribute(attribute=attr_t_zone)
+        attribute_name="...")
+    attr_t_zone.metadata = ...
+    zone_temperature_sensor.update_attribute(...)
 
     # currently adding metadata via updating does not work perfectly.
     # Therefore, we do a delete and update
@@ -219,7 +215,7 @@ if __name__ == '__main__':
     iotac.post_device(device=heater)
 
     # ToDo: Retrieve all ContextEntites and print them
-    entities = cbc.get_entity_list()
+    entities = ...
     for entity in entities:
         print(entity.json(indent=2))
 
