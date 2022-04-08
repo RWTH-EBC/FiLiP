@@ -31,7 +31,7 @@ import matplotlib.pyplot as plt
 import paho.mqtt.client as mqtt
 
 # import from filip
-from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient
+from filip.clients.ngsi_v2 import ContextBrokerClient
 from filip.clients.mqtt import IoTAMQTTClient
 from filip.models.base import FiwareHeader
 from filip.models.ngsi_v2.iot import Device, DeviceAttribute, ServiceGroup
@@ -56,13 +56,12 @@ SERVICE = 'filip_tutorial'
 #  on a shared instance this very important in order to avoid user
 #  collisions. You will use this service path through the whole tutorial.
 #  If you forget to change it an error will be raised!
-SERVICE_PATH = '/your_path'
+SERVICE_PATH = '/<your_path>'
 APIKEY = SERVICE_PATH.strip('/')
 
 # Path to json-files to device configuration data for follow up exercises
-WRITE_GROUPS_FILEPATH = Path("e4_iot_thermal_zone_sensors_solution_groups.json")
-WRITE_DEVICES_FILEPATH = Path(
-    "e4_iot_thermal_zone_sensors_solution_devices.json")
+WRITE_GROUPS_FILEPATH = Path("../e4_iot_thermal_zone_sensors_groups.json")
+WRITE_DEVICES_FILEPATH = Path("../e4_iot_thermal_zone_sensors_devices.json")
 
 # set parameters for the temperature simulation
 TEMPERATURE_MAX = 10  # maximal ambient temperature
@@ -127,30 +126,30 @@ if __name__ == '__main__':
 
     # ToDo: create the zone temperature device add the t_sim attribute upon
     #  creation
-    zone_temperature_sensor = Device(device_id='device:002',
-                                     entity_name='urn:ngsi-ld:TemperatureSensor:001',
-                                     entity_type='TemperatureSensor',
-                                     protocol='IoTA-JSON',
-                                     transport='MQTT',
-                                     apikey=APIKEY,
-                                     attributes=[t_sim],
-                                     commands=[])
+    zone_temperature_sensor = Device(...)
+
+
+
+
+
+
+
     # ToDo: Create the temperature attribute. Use the 't_zone' as `object_id`.
     #  `object_id` specifies what key will be used in the MQTT Message payload
-    t_zone = DeviceAttribute(name='temperature',
-                             object_id='t_zone',
-                             type="Number")
+    t_zone = DeviceAttribute(...)
+
+
     zone_temperature_sensor.add_attribute(t_zone)
 
     # ToDo: Create an IoTAClient
-    iotac = IoTAClient(url=IOTA_URL, fiware_header=fiware_header)
+    iotac = ...
     # ToDo: Provision service group and add it to your IoTAMQTTClient
-    iotac.post_group(service_group=service_group, update=True)
+    ...
     # ToDo: Provision the devices at the IoTA-Agent
     # provision the WeatherStation device
     iotac.post_device(device=weather_station, update=True)
     # ToDo: provision the zone temperature device
-    iotac.post_device(device=zone_temperature_sensor, update=True)
+    ...
 
     # ToDo: Check in the context broker if the entities corresponding to your
     #  devices where correctly created
@@ -158,20 +157,18 @@ if __name__ == '__main__':
     cbc = ContextBrokerClient(url=CB_URL, fiware_header=fiware_header)
     # Get WeatherStation entity
     print(cbc.get_entity(weather_station.entity_name).json(indent=2))
-    # Get ZoneTemperatureSensor entity
-    print(cbc.get_entity(zone_temperature_sensor.entity_name).json(indent=2))
+    # ToDo: Get ZoneTemperatureSensor entity
+    print(...)
 
     # ToDo: create an MQTTv5 client using filip.clients.mqtt.IoTAMQTTClient
-    mqttc = IoTAMQTTClient(protocol=mqtt.MQTTv5)
-    # set user data if required
-    mqttc.username_pw_set(username=MQTT_USER, password=MQTT_PW)
+    mqttc = IoTAMQTTClient(protocol=...)
     # ToDo: Register the service group with your MQTT-Client
     mqttc.add_service_group(service_group=service_group)
     # ToDo: Register devices with your MQTT-Client
     # register the weather station
     mqttc.add_device(weather_station)
     # ToDo: register the zone temperature sensor
-    mqttc.add_device(zone_temperature_sensor)
+    ...
 
     # The IoTAMQTTClient automatically creates the outgoing topics from the
     # device configuration during runtime. Hence, we need to construct them
@@ -182,14 +179,14 @@ if __name__ == '__main__':
     # "/json/<APIKEY>/<zone_temperature_sensor.device_id>/attrs"
 
     # ToDO: connect to the mqtt broker and subscribe to your topic
-    mqtt_url = urlparse(MQTT_BROKER_URL)
-    mqttc.connect(host=mqtt_url.hostname,
-                  port=mqtt_url.port,
-                  keepalive=60,
-                  bind_address="",
-                  bind_port=0,
-                  clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
-                  properties=None)
+    ...
+
+
+
+
+
+
+
     # subscribe to topics
     # subscribe to all incoming command topics for the registered devices
     mqttc.subscribe()
@@ -209,9 +206,9 @@ if __name__ == '__main__':
                                "simtime": sim_model.t_sim})
 
         # ToDo: publish the simulated zone temperature
-        mqttc.publish(device_id=zone_temperature_sensor.device_id,
-                      payload={"temperature": sim_model.t_zone,
-                               "simtime": sim_model.t_sim})
+        ...
+
+
 
         # simulation step for next loop
         sim_model.do_step(int(t_sim + COM_STEP))
@@ -229,13 +226,14 @@ if __name__ == '__main__':
              "temperature": weather_station_entity.temperature.value})
 
         # ToDo: Get ZoneTemperatureSensor and write values to history
-        zone_temperature_sensor_entity = cbc.get_entity(
-            entity_id=zone_temperature_sensor.entity_name,
-            entity_type=zone_temperature_sensor.entity_type
-        )
-        history_zone_temperature_sensor.append(
-            {"simtime": zone_temperature_sensor_entity.simtime.value,
-             "temperature": zone_temperature_sensor_entity.temperature.value})
+        zone_temperature_sensor_entity = ...
+
+
+
+
+        history_zone_temperature_sensor.append(...)
+
+
 
     # close the mqtt listening thread
     mqttc.loop_stop()
@@ -259,21 +257,3 @@ if __name__ == '__main__':
     ax2.set_ylabel('zone temperature in °C')
 
     plt.show()
-
-    # write devices and groups to file and clear server state
-    assert WRITE_DEVICES_FILEPATH.suffix == '.json', \
-        f"Wrong file extension! {WRITE_DEVICES_FILEPATH.suffix}"
-    WRITE_DEVICES_FILEPATH.touch(exist_ok=True)
-    with WRITE_DEVICES_FILEPATH.open('w', encoding='utf-8') as f:
-        devices = [item.dict() for item in iotac.get_device_list()]
-        json.dump(devices, f, ensure_ascii=False, indent=2)
-
-    assert WRITE_GROUPS_FILEPATH.suffix == '.json', \
-        f"Wrong file extension! {WRITE_GROUPS_FILEPATH.suffix}"
-    WRITE_GROUPS_FILEPATH.touch(exist_ok=True)
-    with WRITE_GROUPS_FILEPATH.open('w', encoding='utf-8') as f:
-        groups = [item.dict() for item in iotac.get_group_list()]
-        json.dump(groups, f, ensure_ascii=False, indent=2)
-
-    clear_context_broker(url=CB_URL, fiware_header=fiware_header)
-    clear_iot_agent(url=IOTA_URL, fiware_header=fiware_header)

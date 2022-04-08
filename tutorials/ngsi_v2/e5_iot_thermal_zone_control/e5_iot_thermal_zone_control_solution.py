@@ -83,16 +83,16 @@ TOPIC_CONTROLLER = f"fiware_workshop/{UNIQUE_ID}/controller"
 print(TOPIC_CONTROLLER)
 # Path to json-files to store entity data for follow up exercises
 WRITE_GROUPS_FILEPATH = \
-    Path("e5_iot_thermal_zone_control_solution_groups.json")
+    Path("../e5_iot_thermal_zone_control_solution_groups.json")
 WRITE_DEVICES_FILEPATH = \
-    Path("e5_iot_thermal_zone_control_solution_devices.json")
+    Path("../e5_iot_thermal_zone_control_solution_devices.json")
 WRITE_SUBSCRIPTIONS_FILEPATH = \
-    Path("e5_iot_thermal_zone_control_solution_subscriptions.json")
+    Path("../e5_iot_thermal_zone_control_solution_subscriptions.json")
 # Path to read json-files from previous exercises
 READ_GROUPS_FILEPATH = \
-    Path("e4_iot_thermal_zone_sensors_solution_groups.json")
+    Path("../e4_iot_thermal_zone_sensors_solution_groups.json")
 READ_DEVICES_FILEPATH = \
-    Path("e4_iot_thermal_zone_sensors_solution_devices.json")
+    Path("../e4_iot_thermal_zone_sensors_solution_devices.json")
 
 # set parameters for the temperature simulation
 TEMPERATURE_MAX = 10  # maximal ambient temperature
