@@ -4,9 +4,9 @@ Create a virtual IoT device that simulates the ambient temperature and
 publishes it via MQTT. The simulation function is already predefined.
 This exercise to give a simple introduction to the communication via MQTT.
 
-<div style="text-align: center;">
+<center>
   <img src="https://raw.githubusercontent.com/RWTH-EBC/FiLiP/139-Add-images-to-tutorials/tutorials/ngsi_v2/e1_virtual_weatherstation/tutorials_ngsi_v2-Exercise1.drawio.png" alt="Virtual Weather Station"/>
-</div>
+</center>
 
 The input sections are marked with 'ToDo'
 
