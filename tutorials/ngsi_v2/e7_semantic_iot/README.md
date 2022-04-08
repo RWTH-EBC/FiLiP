@@ -4,7 +4,7 @@ semantically connect to the context entities that we created in
 `e3_context_entities.py`
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/RWTH-EBC/FiLiP/139-Add-images-to-tutorials/tutorials/ngsi_v2/e7_semantic_iot/tutorials_ngsi_v2-Exercise7.drawio.png" 
+  <img src="https://raw.githubusercontent.com/RWTH-EBC/FiLiP/master/tutorials/ngsi_v2/e7_semantic_iot/tutorials_ngsi_v2-Exercise7.drawio.png" 
 alt="Semantic IoT System"/>
 </p>
 

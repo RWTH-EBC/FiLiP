@@ -6,7 +6,7 @@ controller. The devices from e4_iot_thermal_zone_sensors.py will loaded
 from the stored *.json-files.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/RWTH-EBC/FiLiP/139-Add-images-to-tutorials/tutorials/ngsi_v2/e5_iot_thermal_zone_control/tutorials_ngsi_v2-Exercise5.drawio.png" 
+  <img src="https://raw.githubusercontent.com/RWTH-EBC/FiLiP/master/tutorials/ngsi_v2/e5_iot_thermal_zone_control/tutorials_ngsi_v2-Exercise5.drawio.png" 
 alt="Virtual thermal zone with control"/>
 </p>
 

@@ -3,7 +3,7 @@
 We now want store our data in the historic data storage and visualize it
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/RWTH-EBC/FiLiP/139-Add-images-to-tutorials/tutorials/ngsi_v2/e6_timeseries_data/tutorials_ngsi_v2-Exercise6.drawio.png" alt="Time series stroring"/>
+  <img src="https://raw.githubusercontent.com/RWTH-EBC/FiLiP/master/tutorials/ngsi_v2/e6_timeseries_data/tutorials_ngsi_v2-Exercise6.drawio.png" alt="Time series stroring"/>
 </p>
 
 

@@ -5,7 +5,7 @@ SmartData Models with the properties: `id`, `type`, `address`, `category`,
 https://github.com/smart-data-models/dataModel.Building/blob/master/Building/doc/spec.md
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/RWTH-EBC/FiLiP/139-Add-images-to-tutorials/tutorials/ngsi_v2/e3_context_entities/tutorials_ngsi_v2-Exercise3.drawio.png" alt="Context 
+  <img src="https://raw.githubusercontent.com/RWTH-EBC/FiLiP/master/tutorials/ngsi_v2/e3_context_entities/tutorials_ngsi_v2-Exercise3.drawio.png" alt="Context 
 entities"/>
 </p>
 

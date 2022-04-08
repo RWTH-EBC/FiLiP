@@ -7,7 +7,7 @@ the platform via MQTT. Use the simulation model of
 `e1_virtual_weatherstation.py`
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/RWTH-EBC/FiLiP/139-Add-images-to-tutorials/tutorials/ngsi_v2/e4_iot_thermal_zone_sensors/tutorials_ngsi_v2-Exercise4.drawio.png" 
+  <img src="https://raw.githubusercontent.com/RWTH-EBC/FiLiP/master/tutorials/ngsi_v2/e4_iot_thermal_zone_sensors/tutorials_ngsi_v2-Exercise4.drawio.png" 
 alt="Virtual thermal zone"/>
 </p>
 

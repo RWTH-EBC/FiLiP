@@ -4,7 +4,7 @@ Create one or multiple filip clients and check if the corresponding services
 are up and running by accessing their version information.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/RWTH-EBC/FiLiP/139-Add-images-to-tutorials/tutorials/ngsi_v2/e2_healthcheck/tutorials_ngsi_v2-Exercise2.drawio.png" alt="FiLiP clients"/>
+  <img src="https://raw.githubusercontent.com/RWTH-EBC/FiLiP/master/tutorials/ngsi_v2/e2_healthcheck/tutorials_ngsi_v2-Exercise2.drawio.png" alt="FiLiP clients"/>
 </p>
 
 
