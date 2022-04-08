@@ -1,3 +1,6 @@
+#### v0.2.3
+- Add images to tutorials ([#139](https://github.com/RWTH-EBC/FiLiP/issues/139))
+
 #### v0.2.2
 - Updated requirements for tutorials ([#132](https://github.com/RWTH-EBC/FiLiP/issues/132))
 - fixed quantumleap timeseries header ([#133](https://github.com/RWTH-EBC/FiLiP/issues/133))
