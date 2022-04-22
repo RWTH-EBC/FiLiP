@@ -952,11 +952,13 @@ class ContextBrokerClient(BaseHttpClient):
                     value = f'"{value}"'
                 res = self.put(url=url,
                                headers=headers,
-                               json=value)
+                               json=value,
+                               params=params)
             else:
                 res = self.put(url=url,
                                headers=headers,
-                               json=value)
+                               json=value,
+                               params=params)
             if res.ok:
                 self.logger.info("Attribute '%s' of '%s' "
                                  "successfully updated!", attr_name, entity_id)
