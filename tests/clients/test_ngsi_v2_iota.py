@@ -378,3 +378,9 @@ class TestAgent(unittest.TestCase):
         clear_all(fiware_header=self.fiware_header,
                   cb_url=settings.CB_URL,
                   iota_url=settings.IOTA_JSON_URL)
+
+    def test_filter_device_list(self) -> None:
+        """
+        Test the function filter_device_list
+        """
+        pass

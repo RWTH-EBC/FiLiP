@@ -307,11 +307,11 @@ class IoTAClient(BaseHttpClient):
         return self.post_devices(devices=[device], update=update)
 
     def get_device_list(self, *, limit: int = None, offset: int = None,
-                        detailed: str = 'off', entity: str = None,
-                        protocol: PayloadProtocol = None) -> List[Device]:
+                        entity: str = None) -> List[Device]:
         """
         Returns a list of all the devices in the device registry with all
-        its data.
+        its data. The IoTAgent now only supports "limit" and "offset" as
+        request parameters.
 
         Args:
             limit:
@@ -320,11 +320,9 @@ class IoTAClient(BaseHttpClient):
             offset:
                 if present, skip that number of devices from the original
                 query.
-            detailed:
-                'on' return all device information, 'off' (default)
-                return only name.
             entity:
-            protocol:
+                The entity_id of the device. If given, only the devices
+                with the specified entity_id will be returned
 
         Returns:
             List of devices
@@ -341,11 +339,38 @@ class IoTAClient(BaseHttpClient):
         try:
             res = self.get(url=url, headers=headers, params=params)
             if res.ok:
-                return parse_obj_as(List[Device], res.json()['devices'])
+                devices = parse_obj_as(List[Device], res.json()['devices'])
+                if entity:
+                    # filter with entity id
+                    devices = self.filter_device_list(devices, entity_name=[entity])
+                return devices
             res.raise_for_status()
         except requests.RequestException as err:
             self.log_error(err=err, msg=None)
             raise
+
+    @staticmethod
+    def filter_device_list(devices: List[Device],
+                           entity_name: List[str] = None,
+                           entity_type: List[str] = None) -> List[Device]:
+        """
+        Filter the given device list based on conditions
+
+        Args:
+            devices: device list that need to be filtered
+            entity_name: A list of entity_name (e.g. entity_id) as filter condition
+            entity_type: A list of entity_type as filter condition
+
+        Returns:
+
+        """
+        for key, conditions in locals().items():
+            if key in ["devices"]:
+                continue
+            if not conditions:
+                continue
+            devices = [device for device in devices if device.dict()[key] in conditions]
+        return devices
 
     def get_device(self, *, device_id: str) -> Device:
         """
