@@ -14,7 +14,7 @@ from urllib.parse import urlparse
 from requests import RequestException
 from filip.models.base import FiwareHeader
 from filip.utils.simple_ql import QueryString
-from filip.clients.ngsi_v2 import ContextBrokerClient
+from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient
 from filip.clients.ngsi_v2 import HttpClient, HttpClientConfig
 from filip.config import settings
 from filip.models.ngsi_v2.context import \
@@ -68,6 +68,9 @@ class TestContextBroker(unittest.TestCase):
                                      'type': 'Number'}}
         self.entity = ContextEntity(id='MyId', type='MyType', **self.attr)
 
+        self.iotac = IoTAClient(
+            url=settings.IOTA_JSON_URL,
+            fiware_header=self.fiware_header)
 
         self.client = ContextBrokerClient(
             url=settings.CB_URL,
@@ -772,6 +775,44 @@ class TestContextBroker(unittest.TestCase):
         self.assertEqual(result_entity,
                          self.client.get_entity(entity_id=entity.id))
         self.tearDown()
+
+    def test_delete_entity_devices(self):
+        # create devices
+        base_device_id = "device:"
+
+        base_entity_id_1 = "urn:ngsi-ld:TemperatureSensor:"
+        entity_type_1 = "TemperatureSensor"
+
+        base_entity_id_2 = "urn:ngsi-ld:HumiditySensor:"
+        entity_type_2 = "HumiditySensor"
+
+        devices = []
+
+        for i in range(20):
+            base_entity_id = base_entity_id_1 if i < 10 else base_entity_id_2
+            entity_type = entity_type_1 if i < 10 else entity_type_2
+
+            device_id = base_device_id + str(i)
+            entity_id = base_entity_id + str(i)
+            device = Device(
+                service=settings.FIWARE_SERVICE,
+                service_path=settings.FIWARE_SERVICEPATH,
+                device_id=device_id,
+                entity_type=entity_type,
+                entity_name=entity_id
+            )
+            devices.append(device)
+        self.iotac.post_devices(devices=devices)
+
+        # delete an entity and the related device one by one
+        n_devices = 20
+        while True:
+            if not devices:
+                break
+            device = devices.pop()
+            n_devices += -1
+            self.client.delete_entity(entity_id=device.entity_name, entity_type=device.entity_type, delete_devices=True)
+            self.assertEqual(len(self.iotac.get_device_list()), n_devices)
 
     def tearDown(self) -> None:
         """

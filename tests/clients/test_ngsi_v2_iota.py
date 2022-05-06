@@ -370,6 +370,57 @@ class TestAgent(unittest.TestCase):
             self.assertEqual(live_device.__getattribute__(key), value)
             cb_client.close()
 
+    def test_filter_device_list(self) -> None:
+        """
+        Test the function filter_device_list
+        """
+        # create devices
+        base_device_id = "device:"
+
+        base_entity_id_1 = "urn:ngsi-ld:TemperatureSensor:"
+        entity_type_1 = "TemperatureSensor"
+
+        base_entity_id_2 = "urn:ngsi-ld:HumiditySensor:"
+        entity_type_2 = "HumiditySensor"
+
+        devices = []
+
+        for i in range(20):
+            base_entity_id = base_entity_id_1 if i < 10 else base_entity_id_2
+            entity_type = entity_type_1 if i < 10 else entity_type_2
+
+            device_id = base_device_id + str(i)
+            entity_id = base_entity_id + str(i)
+            device = Device(
+                service=settings.FIWARE_SERVICE,
+                service_path=settings.FIWARE_SERVICEPATH,
+                device_id=device_id,
+                entity_type=entity_type,
+                entity_name=entity_id
+            )
+            devices.append(device)
+
+        entity_id_list = [device.entity_name for device in devices]
+
+        # test with no inputs
+        self.assertEqual(len(self.client.filter_device_list(devices)), len(devices))
+
+        # test with entity type
+        self.assertEqual(len(self.client.filter_device_list(devices, entity_type=[entity_type_1])),
+                         10)
+        self.assertEqual(len(self.client.filter_device_list(devices, entity_type=[entity_type_1, entity_type_2])),
+                         20)
+
+        # test with entity id
+        self.assertEqual(len(self.client.filter_device_list(devices, entity_name=entity_id_list[5:])),
+                         len(entity_id_list[5:]))
+
+        # test with entity type and entity id
+        self.assertEqual(len(self.client.filter_device_list(devices,
+                                                            entity_name=entity_id_list,
+                                                            entity_type=[entity_type_1])),
+                         10)
+
     def tearDown(self) -> None:
         """
         Cleanup test server
@@ -378,9 +429,3 @@ class TestAgent(unittest.TestCase):
         clear_all(fiware_header=self.fiware_header,
                   cb_url=settings.CB_URL,
                   iota_url=settings.IOTA_JSON_URL)
-
-    def test_filter_device_list(self) -> None:
-        """
-        Test the function filter_device_list
-        """
-        pass
