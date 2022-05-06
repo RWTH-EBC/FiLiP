@@ -1211,6 +1211,111 @@ class QuantumLeapClient(BaseHttpClient):
                                    from_date=from_date,
                                    to_date=to_date,
                                    limit=limit,
+                                   offset=offset,
+                                   georel=georel,
+                                   geometry=geometry,
+                                   coords=coords,
+                                   aggr_scope=aggr_scope)
+        return [TimeSeries(index=item.get('index'),
+                           entityType=entity_type,
+                           entityId=item.get('entityId'),
+                           attributes=[
+                               AttributeValues(attrName=attr_name,
+                                               values=item.get('values'))])
+                for item in res.get('values')]
+
+    # v2/attrs
+    def get_entity_by_attrs(self, *,
+                            entity_type: str = None,
+                            from_date: str = None,
+                            to_date: str = None,
+                            limit: int = None,
+                            offset: int = None
+                            ) -> List[TimeSeriesAttrHeader]:
+        """
+        Get list of timeseries data grouped by each existing attribute name.
+        The timeseries data include all entities corresponding to each
+        attribute name as well as the index and values of this attribute in
+        this entity.
+
+        Args:
+            entity_type (str): Comma-separated list of entity types whose data
+                are to be included in the response. Use only one (no comma)
+                when required. If used to resolve ambiguity for the given
+                entityId, make sure the given entityId exists for this
+                entityType.
+            from_date (str): The starting date and time (inclusive) from which
+                the context information is queried. Must be in ISO8601 format
+                (e.g., 2018-01-05T15:44:34)
+            to_date (str): The final date and time (inclusive) from which the
+                context information is queried. Must be in ISO8601 format
+                (e.g., 2018-01-05T15:44:34).
+            limit (int): Maximum number of results to be retrieved.
+                Default value : 10000
+            offset (int): Offset for the results.
+
+        Returns:
+            List of TimeSeriesEntities
+        """
+        url = urljoin(self.base_url, 'v2/attrs')
+        res = self.__query_builder(url=url,
+                                   entity_type=entity_type,
+                                   from_date=from_date,
+                                   to_date=to_date,
+                                   limit=limit,
+                                   offset=offset)
+        return [TimeSeriesAttrHeader(
+            attrName=attr_item.get('attrName'),
+            types=[TimeSeriesEntities(
+                entityType=entities_item.get('entityType'),
+                entities=[EntityValues(
+                    entityId=entity.get('entityId'),
+                    index=entity.get('index'),
+                    values=entity.get('values'))
+                    for entity in entities_item.get('entities')])
+                for entities_item in attr_item.get('types')])
+            for attr_item in res.get('attrs')]
+
+    # v2/attrs/{attr_name}
+    def get_entity_by_attr_name(self, *,
+                                attr_name: str,
+                                entity_type: str = None,
+                                from_date: str = None,
+                                to_date: str = None,
+                                limit: int = None,
+                                offset: int = None
+                                ) -> List[TimeSeriesEntities]:
+        """
+        Get list of all entities containing this attribute name, as well as
+        getting the index and values of this attribute in every corresponding
+        entity.
+
+        Args:
+            attr_name (str): The attribute name in interest.
+            entity_type (str): Comma-separated list of entity types whose data
+                are to be included in the response. Use only one (no comma)
+                when required. If used to resolve ambiguity for the given
+                entityId, make sure the given entityId exists for this
+                entityType.
+            from_date (str): The starting date and time (inclusive) from which
+                the context information is queried. Must be in ISO8601 format
+                (e.g., 2018-01-05T15:44:34)
+            to_date (str): The final date and time (inclusive) from which the
+                context information is queried. Must be in ISO8601 format
+                (e.g., 2018-01-05T15:44:34).
+            limit (int): Maximum number of results to be retrieved.
+                Default value : 10000
+            offset (int): Offset for the results.
+
+        Returns:
+            List of TimeSeriesEntities
+        """
+        url = urljoin(self.base_url, f'/v2/attrs/{attr_name}')
+        res = self.__query_builder(url=url,
+                                   entity_type=entity_type,
+                                   from_date=from_date,
+                                   to_date=to_date,
+                                   limit=limit,
                                    offset=offset)
         return [TimeSeriesEntities(
                 entityType=entities_item.get('entityType'),
