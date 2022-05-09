@@ -364,12 +364,10 @@ class IoTAClient(BaseHttpClient):
         Returns:
 
         """
-        for key, conditions in locals().items():
-            if key in ["devices"]:
-                continue
-            if not conditions:
-                continue
-            devices = [device for device in devices if device.dict()[key] in conditions]
+        if entity_name:
+            devices = [device for device in devices if device.entity_name in entity_name]
+        if entity_type:
+            devices = [device for device in devices if device.entity_type in entity_type]
         return devices
 
     def get_device(self, *, device_id: str) -> Device:
