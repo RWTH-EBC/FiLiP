@@ -9,6 +9,7 @@ from filip.config import settings
 from filip.clients.base_http_client import BaseHttpClient
 from filip.models.base import FiwareHeader
 from filip.models.ngsi_v2.iot import Device, ServiceGroup, PayloadProtocol
+from filip.utils.iot import filter_device_list
 
 
 class IoTAClient(BaseHttpClient):
@@ -342,33 +343,12 @@ class IoTAClient(BaseHttpClient):
                 devices = parse_obj_as(List[Device], res.json()['devices'])
                 if entity:
                     # filter with entity id
-                    devices = self.filter_device_list(devices, entity_name=[entity])
+                    devices = filter_device_list(devices, entity_name=[entity])
                 return devices
             res.raise_for_status()
         except requests.RequestException as err:
             self.log_error(err=err, msg=None)
             raise
-
-    @staticmethod
-    def filter_device_list(devices: List[Device],
-                           entity_name: List[str] = None,
-                           entity_type: List[str] = None) -> List[Device]:
-        """
-        Filter the given device list based on conditions
-
-        Args:
-            devices: device list that need to be filtered
-            entity_name: A list of entity_name (e.g. entity_id) as filter condition
-            entity_type: A list of entity_type as filter condition
-
-        Returns:
-
-        """
-        if entity_name:
-            devices = [device for device in devices if device.entity_name in entity_name]
-        if entity_type:
-            devices = [device for device in devices if device.entity_type in entity_type]
-        return devices
 
     def get_device(self, *, device_id: str) -> Device:
         """

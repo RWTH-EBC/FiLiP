@@ -21,6 +21,7 @@ from filip.models.ngsi_v2.iot import \
     StaticDeviceAttribute
 from filip.utils.cleanup import clear_all, clean_test
 from tests.config import settings
+from filip.utils.iot import filter_device_list
 
 
 logger = logging.getLogger(__name__)
@@ -403,22 +404,20 @@ class TestAgent(unittest.TestCase):
         entity_id_list = [device.entity_name for device in devices]
 
         # test with no inputs
-        self.assertEqual(len(self.client.filter_device_list(devices)), len(devices))
+        self.assertEqual(len(filter_device_list(devices)), len(devices))
 
         # test with entity type
-        self.assertEqual(len(self.client.filter_device_list(devices, entity_type=[entity_type_1])),
+        self.assertEqual(len(filter_device_list(devices, entity_type=[entity_type_1])),
                          10)
-        self.assertEqual(len(self.client.filter_device_list(devices, entity_type=[entity_type_1, entity_type_2])),
+        self.assertEqual(len(filter_device_list(devices, entity_type=[entity_type_1, entity_type_2])),
                          20)
 
         # test with entity id
-        self.assertEqual(len(self.client.filter_device_list(devices, entity_name=entity_id_list[5:])),
+        self.assertEqual(len(filter_device_list(devices, entity_name=entity_id_list[5:])),
                          len(entity_id_list[5:]))
 
         # test with entity type and entity id
-        self.assertEqual(len(self.client.filter_device_list(devices,
-                                                            entity_name=entity_id_list,
-                                                            entity_type=[entity_type_1])),
+        self.assertEqual(len(filter_device_list(devices, entity_name=entity_id_list, entity_type=[entity_type_1])),
                          10)
 
     def tearDown(self) -> None:
