@@ -402,6 +402,7 @@ class TestAgent(unittest.TestCase):
             devices.append(device)
 
         entity_id_list = [device.entity_name for device in devices]
+        device_id_list = [device.device_id for device in devices]
 
         # test with no inputs
         self.assertEqual(len(filter_device_list(devices)), len(devices))
@@ -419,6 +420,10 @@ class TestAgent(unittest.TestCase):
         # test with entity type and entity id
         self.assertEqual(len(filter_device_list(devices, entity_name=entity_id_list, entity_type=[entity_type_1])),
                          10)
+
+        # test with device id
+        self.assertEqual(len(filter_device_list(devices, device_id=device_id_list[5:])),
+                         len(device_id_list[5:]))
 
     def tearDown(self) -> None:
         """
