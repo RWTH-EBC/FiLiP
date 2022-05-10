@@ -803,16 +803,10 @@ class TestContextBroker(unittest.TestCase):
             )
             devices.append(device)
         self.iotac.post_devices(devices=devices)
-
-        # delete an entity and the related device one by one
-        n_devices = 20
-        while True:
-            if not devices:
-                break
+        while devices:
             device = devices.pop()
-            n_devices += -1
             self.client.delete_entity(entity_id=device.entity_name, entity_type=device.entity_type, delete_devices=True)
-            self.assertEqual(len(self.iotac.get_device_list()), n_devices)
+            self.assertEqual(len(self.iotac.get_device_list()), len(devices))
 
     def tearDown(self) -> None:
         """
