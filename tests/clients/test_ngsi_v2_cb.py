@@ -372,9 +372,6 @@ class TestContextBroker(unittest.TestCase):
             id3 = client.post_subscription(sub2)
             self.assertNotEqual(id1, id3)
 
-            # test get subscriptions by entity
-            sub3 = client.get_subscription_by_entity("test", "Building")
-            self.assertGreater(len(sub3), 0)
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,

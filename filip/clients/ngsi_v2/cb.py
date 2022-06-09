@@ -1228,50 +1228,6 @@ class ContextBrokerClient(BaseHttpClient):
             self.log_error(err=err, msg=msg)
             raise
 
-    def get_subscriptions_by_entity(
-            self,
-            entity_id: str,
-            entity_type: str,
-            limit: PositiveInt = inf) -> List[Subscription]:
-        """
-        Returns a list of all the subscriptions present in the system by
-        entity id or id pattern and entity type or type pattern.
-        Args:
-            entity_id: Id of the entity to be matched
-            entity_type: Type of the entity to be matched
-            limit: Limit the number of subscriptions to be retrieved
-        Returns:
-            list of subscriptions by entity
-        """
-        url = urljoin(self.base_url, 'v2/subscriptions/')
-        headers = self.headers.copy()
-        params = {}
-
-        # We always use the 'count' option to check weather pagination is
-        # required
-        params.update({'options': 'count'})
-        try:
-            items = self.__pagination(limit=limit,
-                                      url=url,
-                                      params=params,
-                                      headers=headers)
-            items = parse_obj_as(List[Subscription], items)
-            subscriptions = []
-            for item in items:
-                for entity in item.subject.entities:
-                    if entity.id == entity_id or (
-                            entity.idPattern is not None
-                            and entity.idPattern.match(entity_id)):
-                        if entity.type == entity_type or \
-                                (entity.typePattern is not None and
-                                 entity.typePattern.match(entity_type)):
-                            subscriptions.append(item)
-            return subscriptions
-        except requests.RequestException as err:
-            msg = "Could not load subscriptions!"
-            self.log_error(err=err, msg=msg)
-            raise
-
     # Registration API
     def get_registration_list(self,
                               *,
