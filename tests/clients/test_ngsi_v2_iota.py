@@ -408,22 +408,36 @@ class TestAgent(unittest.TestCase):
         self.assertEqual(len(filter_device_list(devices)), len(devices))
 
         # test with entity type
-        self.assertEqual(len(filter_device_list(devices, entity_type=[entity_type_1])),
+        self.assertEqual(len(filter_device_list(devices, entity_types=[entity_type_1])),
                          10)
-        self.assertEqual(len(filter_device_list(devices, entity_type=[entity_type_1, entity_type_2])),
+        self.assertEqual(len(filter_device_list(devices, entity_types=[entity_type_1, entity_type_2])),
                          20)
 
         # test with entity id
-        self.assertEqual(len(filter_device_list(devices, entity_name=entity_id_list[5:])),
+        self.assertEqual(len(filter_device_list(devices, entity_names=entity_id_list[5:])),
                          len(entity_id_list[5:]))
 
         # test with entity type and entity id
-        self.assertEqual(len(filter_device_list(devices, entity_name=entity_id_list, entity_type=[entity_type_1])),
+        self.assertEqual(len(filter_device_list(devices, entity_names=entity_id_list, entity_types=[entity_type_1])),
                          10)
 
         # test with device id
-        self.assertEqual(len(filter_device_list(devices, device_id=device_id_list[5:])),
+        self.assertEqual(len(filter_device_list(devices, device_ids=device_id_list[5:])),
                          len(device_id_list[5:]))
+
+        # test with single args
+        self.assertEqual(len(filter_device_list(devices,
+                                                device_ids=devices[0].device_id,
+                                                entity_names=devices[0].entity_name,
+                                                entity_types=devices[0].entity_type)), 1)
+
+        # test for errors
+        with self.assertRaises(TypeError):
+            filter_device_list(devices, device_ids={'1234'})
+        with self.assertRaises(TypeError):
+            filter_device_list(devices, entity_names={'1234'})
+        with self.assertRaises(TypeError):
+            filter_device_list(devices, entity_types={'1234'})
 
     def tearDown(self) -> None:
         """
