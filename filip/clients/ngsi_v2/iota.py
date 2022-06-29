@@ -8,7 +8,7 @@ from pydantic import parse_obj_as, AnyHttpUrl
 from filip.config import settings
 from filip.clients.base_http_client import BaseHttpClient
 from filip.models.base import FiwareHeader
-from filip.models.ngsi_v2.iot import Device, ServiceGroup, PayloadProtocol
+from filip.models.ngsi_v2.iot import Device, ServiceGroup
 from filip.utils.iot import filter_device_list
 
 
@@ -537,7 +537,7 @@ class IoTAClient(BaseHttpClient):
                          "timestamp", "apikey", "endpoint",
                          "protocol", "transport",
                          "expressionLanguage"}
-        import json
+
         live_settings = live_device.dict(include=settings_dict)
         new_settings = device.dict(include=settings_dict)
 

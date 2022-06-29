@@ -553,7 +553,7 @@ class ContextBrokerClient(BaseHttpClient):
             iota_client = IoTAClient(url=iota_url,
                                      fiware_header=self.fiware_headers)
 
-            for device in iota_client.get_device_list(entity=entity_id):
+            for device in iota_client.get_device_list(entity_names=[entity_id]):
                 if device.entity_type == entity_type:
                     iota_client.delete_device(device_id=device.device_id)
 
