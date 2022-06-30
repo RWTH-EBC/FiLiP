@@ -8,7 +8,8 @@ from pydantic import parse_obj_as, AnyHttpUrl
 from filip.config import settings
 from filip.clients.base_http_client import BaseHttpClient
 from filip.models.base import FiwareHeader
-from filip.models.ngsi_v2.iot import Device, ServiceGroup, PayloadProtocol
+from filip.models.ngsi_v2.iot import Device, ServiceGroup
+from filip.utils.iot import filter_device_list
 
 
 class IoTAClient(BaseHttpClient):
@@ -298,20 +299,24 @@ class IoTAClient(BaseHttpClient):
         Post a device configuration to the IoT-Agent
         
         Args:
-            device:
-            update:
+            device: IoT device configuration to send
+            update: update device if configuration already exists
 
         Returns:
-
+            None
         """
         return self.post_devices(devices=[device], update=update)
 
-    def get_device_list(self, *, limit: int = None, offset: int = None,
-                        detailed: str = 'off', entity: str = None,
-                        protocol: PayloadProtocol = None) -> List[Device]:
+    def get_device_list(self, *,
+                        limit: int = None,
+                        offset: int = None,
+                        device_ids: Union[str, List[str]] = None,
+                        entity_names: Union[str, List[str]] = None,
+                        entity_types: Union[str, List[str]] = None) -> List[Device]:
         """
         Returns a list of all the devices in the device registry with all
-        its data.
+        its data. The IoTAgent now only supports "limit" and "offset" as
+        request parameters.
 
         Args:
             limit:
@@ -320,14 +325,18 @@ class IoTAClient(BaseHttpClient):
             offset:
                 if present, skip that number of devices from the original
                 query.
-            detailed:
-                'on' return all device information, 'off' (default)
-                return only name.
-            entity:
-            protocol:
+            device_ids:
+                List of device_ids. If given, only devices with matching ids
+                will be returned
+            entity_names:
+                The entity_ids of the devices. If given, only the devices
+                with the specified entity_id will be returned
+            entity_types:
+                The entity_type of the device. If given, only the devices
+                with the specified entity_type will be returned
 
         Returns:
-            List of devices
+            List of matching devices
         """
         if limit:
             if not 1 < limit < 1000:
@@ -341,7 +350,10 @@ class IoTAClient(BaseHttpClient):
         try:
             res = self.get(url=url, headers=headers, params=params)
             if res.ok:
-                return parse_obj_as(List[Device], res.json()['devices'])
+                devices = parse_obj_as(List[Device], res.json()['devices'])
+                # filter by device_ids, entity_names or entity_types
+                devices = filter_device_list(devices, device_ids, entity_names, entity_types)
+                return devices
             res.raise_for_status()
         except requests.RequestException as err:
             self.log_error(err=err, msg=None)
@@ -466,11 +478,11 @@ class IoTAClient(BaseHttpClient):
         if delete_entity:
             # An entity can technically belong to multiple devices
             # Only delete the entity if
-            devices = self.get_device_list(entity=device.entity_name)
+            devices = self.get_device_list(entity_names=[device.entity_name])
             if len(devices) > 0 and not force_entity_deletion:
-                raise Exception(f"The Corresponding Entity to the device "
-                                "{device_id} is linked to multiple devices, "
-                                "it was not deleted")
+                raise Exception(f"The corresponding entity to the device "
+                                f"{device_id} was not deleted because it is "
+                                f"linked to multiple devices. ")
             else:
                 try:
                     from filip.clients.ngsi_v2 import ContextBrokerClient
@@ -525,7 +537,7 @@ class IoTAClient(BaseHttpClient):
                          "timestamp", "apikey", "endpoint",
                          "protocol", "transport",
                          "expressionLanguage"}
-        import json
+
         live_settings = live_device.dict(include=settings_dict)
         new_settings = device.dict(include=settings_dict)
 
