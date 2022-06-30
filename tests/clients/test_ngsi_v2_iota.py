@@ -427,6 +427,15 @@ class TestAgent(unittest.TestCase):
 
         # test with single args
         self.assertEqual(len(filter_device_list(devices,
+                                                device_ids=devices[0].device_id)), 1)
+
+        self.assertEqual(len(filter_device_list(devices,
+                                                entity_names=devices[0].entity_name)), 1)
+
+        self.assertNotEqual(len(filter_device_list(devices,
+                                                   entity_types=devices[0].entity_type)), 1)
+
+        self.assertEqual(len(filter_device_list(devices,
                                                 device_ids=devices[0].device_id,
                                                 entity_names=devices[0].entity_name,
                                                 entity_types=devices[0].entity_type)), 1)
