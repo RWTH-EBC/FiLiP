@@ -480,9 +480,9 @@ class IoTAClient(BaseHttpClient):
             # Only delete the entity if
             devices = self.get_device_list(entity_names=[device.entity_name])
             if len(devices) > 0 and not force_entity_deletion:
-                raise Exception(f"The Corresponding Entity to the device "
-                                f"{device_id} is linked to multiple devices, "
-                                "it was not deleted")
+                raise Exception(f"The corresponding entity to the device "
+                                f"{device_id} was not deleted because it is "
+                                f"linked to multiple devices. ")
             else:
                 try:
                     from filip.clients.ngsi_v2 import ContextBrokerClient
