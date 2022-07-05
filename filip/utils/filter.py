@@ -18,6 +18,7 @@ def filter_subscriptions_by_entity(entity_id: str,
     and entity type or type pattern. The function can be used in two ways,
     wither pass list of subscriptions to filter based on entity or directly pass
     client information to filter subscriptions in a single request.
+
     Args:
         entity_id: Id of the entity to be matched
         entity_type: Type of the entity to be matched
