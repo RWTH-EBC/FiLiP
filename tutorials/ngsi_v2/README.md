@@ -2,7 +2,7 @@
 
 The tutorial NGSI v2 will teach you how you can build your own smart solutions by means of a cloud based heating control using FIWARE as central data integration platform.
 
-You will find all files [here](https://github.com/RWTH-EBC/FiLiP/tree/master/tutorial/ngsi_v2).
+You will find all files [here](https://github.com/RWTH-EBC/FiLiP/tree/master/tutorials/ngsi_v2).
 
 Before starting you need to install the requirements from this directory:
 
