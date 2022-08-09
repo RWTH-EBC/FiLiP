@@ -806,7 +806,10 @@ class TestContextBroker(unittest.TestCase):
         self.iotac.post_devices(devices=devices)
         while devices:
             device = devices.pop()
-            self.client.delete_entity(entity_id=device.entity_name, entity_type=device.entity_type, delete_devices=True)
+            self.client.delete_entity(entity_id=device.entity_name,
+                                      entity_type=device.entity_type,
+                                      delete_devices=True,
+                                      iota_url=settings.IOTA_URL)
             self.assertEqual(len(self.iotac.get_device_list()), len(devices))
 
     def tearDown(self) -> None:
