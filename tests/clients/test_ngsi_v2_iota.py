@@ -21,7 +21,7 @@ from filip.models.ngsi_v2.iot import \
     StaticDeviceAttribute
 from filip.utils.cleanup import clear_all, clean_test
 from tests.config import settings
-from filip.utils.iot import filter_device_list
+from filip.utils.filter import filter_device_list
 
 
 logger = logging.getLogger(__name__)
