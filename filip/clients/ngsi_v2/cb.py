@@ -553,7 +553,7 @@ class ContextBrokerClient(BaseHttpClient):
             iota_client = IoTAClient(url=iota_url,
                                      fiware_header=self.fiware_headers)
 
-            for device in iota_client.get_device_list(entity=entity_id):
+            for device in iota_client.get_device_list(entity_names=[entity_id]):
                 if device.entity_type == entity_type:
                     iota_client.delete_device(device_id=device.device_id)
 
@@ -952,11 +952,13 @@ class ContextBrokerClient(BaseHttpClient):
                     value = f'"{value}"'
                 res = self.put(url=url,
                                headers=headers,
-                               json=value)
+                               json=value,
+                               params=params)
             else:
                 res = self.put(url=url,
                                headers=headers,
-                               json=value)
+                               json=value,
+                               params=params)
             if res.ok:
                 self.logger.info("Attribute '%s' of '%s' "
                                  "successfully updated!", attr_name, entity_id)

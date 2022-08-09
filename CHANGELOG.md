@@ -1,3 +1,6 @@
+#### v0.2.4
+- fixed coupled delete of devices and entities ([#143](https://github.com/RWTH-EBC/FiLiP/issues/143))
+
 #### v0.2.3
 - Add images to tutorials ([#139](https://github.com/RWTH-EBC/FiLiP/issues/139))
 
