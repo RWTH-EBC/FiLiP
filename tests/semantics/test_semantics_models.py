@@ -983,11 +983,16 @@ class TestSemanticsModels(unittest.TestCase):
         """
         Cleanup test server
         """
-        from tests.semantics.models import semantic_manager
-        self.clear_registry(semantic_manager)
-
-        from tests.semantics.models2 import semantic_manager
-        self.clear_registry(semantic_manager)
+        try:
+            from tests.semantics.models import semantic_manager
+            self.clear_registry(semantic_manager)
+        except ModuleNotFoundError:
+            pass
+        try:
+            from tests.semantics.models2 import semantic_manager
+            self.clear_registry(semantic_manager)
+        except ModuleNotFoundError:
+            pass
 
         clear_all(fiware_header=FiwareHeader(
             service=settings.FIWARE_SERVICE,
