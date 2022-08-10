@@ -21,7 +21,6 @@ from filip.models.ngsi_v2.iot import \
     StaticDeviceAttribute
 from filip.utils.cleanup import clear_all, clean_test
 from tests.config import settings
-from filip.utils.filter import filter_device_list
 
 
 logger = logging.getLogger(__name__)
@@ -165,12 +164,15 @@ class TestAgent(unittest.TestCase):
             logger.info(client.get_entity(entity_id=device.entity_name).json(
                 indent=2))
 
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                cb_url=settings.CB_URL,
+                iota_url=settings.IOTA_JSON_URL)
     def test_deletions(self):
         """
         Test the deletion of a context entity/device if the state is always
         correctly cleared
         """
-        self.tearDown()
 
         device_id = 'device_id'
         entity_id = 'entity_id'
@@ -206,11 +208,14 @@ class TestAgent(unittest.TestCase):
         #        that is linked to multiple devices
         # delete with optional parameter -> entity needs to be deleted
         self.client.post_device(device=device)
+
         device2 = copy.deepcopy(device)
         device2.device_id = "device_id2"
         self.client.post_device(device=device2)
-        self.assertRaises(Exception, self.client.delete_device,
-                          device_id=device_id, delete_entity=True)
+        with self.assertRaises(Exception):
+            self.client.delete_device(device_id=device_id,
+                                      delete_entity=True,
+                                      cb_url=settings.CB_URL)
         self.assertTrue(
             len(cb_client.get_entity_list(entity_ids=[entity_id])) == 1)
         self.client.delete_device(device_id=device2.device_id)

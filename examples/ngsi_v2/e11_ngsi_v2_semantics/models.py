@@ -29,7 +29,7 @@ class Thing(SemanticClass):
 	"""
 	Predefined root_class
 
-	Source: 
+	Source(s): 
 		None (Predefined)
 	"""
 
@@ -43,302 +43,11 @@ class Thing(SemanticClass):
 		super().__init__(*args, **kwargs)
 
 
-class Building(Thing):
-	"""
-	Generated SemanticClass without description
-
-	Source: 
-		http://www.semanticweb.org/building (building circuits)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-			self.goalTemperature._rules = [('exactly|1', [['integer']])]
-			self.name._rules = [('exactly|1', [['string']])]
-
-			self.hasFloor._rules = [('min|1', [[Floor]])]
-
-			self.hasFloor._instance_identifier = self.get_identifier()
-			self.goalTemperature._instance_identifier = self.get_identifier()
-			self.name._instance_identifier = self.get_identifier()
-
-	# Data fields
-
-	goalTemperature: DataField = DataField(
-		name='goalTemperature',
-		rule='exactly 1 integer',
-		semantic_manager=semantic_manager)
-
-	name: DataField = DataField(
-		name='name',
-		rule='exactly 1 string',
-		semantic_manager=semantic_manager)
-
-	# Relation fields
-
-	hasFloor: RelationField = RelationField(
-		name='hasFloor',
-		rule='min 1 Floor',
-		semantic_manager=semantic_manager)
-
-
-class Circuit(Thing):
-	"""
-	Generated SemanticClass without description
-
-	Source: 
-		http://www.semanticweb.org/building (building circuits)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-			self.name._rules = [('exactly|1', [['string']])]
-
-			self.hasOutlet._rules = [('min|1', [[Outlet]])]
-			self.hasProducer._rules = [('min|1', [[Producer]])]
-
-			self.hasOutlet._instance_identifier = self.get_identifier()
-			self.hasProducer._instance_identifier = self.get_identifier()
-			self.name._instance_identifier = self.get_identifier()
-
-	# Data fields
-
-	name: DataField = DataField(
-		name='name',
-		rule='exactly 1 string',
-		semantic_manager=semantic_manager)
-
-	# Relation fields
-
-	hasOutlet: RelationField = RelationField(
-		name='hasOutlet',
-		rule='min 1 Outlet',
-		inverse_of=['connectedTo'],
-		semantic_manager=semantic_manager)
-
-	hasProducer: RelationField = RelationField(
-		name='hasProducer',
-		rule='min 1 Producer',
-		semantic_manager=semantic_manager)
-
-
-class Floor(Thing):
-	"""
-	Generated SemanticClass without description
-
-	Source: 
-		http://www.semanticweb.org/building (building circuits)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-			self.name._rules = [('exactly|1', [['string']])]
-
-			self.hasRoom._rules = [('only', [[Room]])]
-
-			self.hasRoom._instance_identifier = self.get_identifier()
-			self.name._instance_identifier = self.get_identifier()
-
-	# Data fields
-
-	name: DataField = DataField(
-		name='name',
-		rule='exactly 1 string',
-		semantic_manager=semantic_manager)
-
-	# Relation fields
-
-	hasRoom: RelationField = RelationField(
-		name='hasRoom',
-		rule='only Room',
-		semantic_manager=semantic_manager)
-
-
-class Outlet(SemanticDeviceClass, Thing):
-	"""
-	Generated SemanticClass without description
-
-	Source: 
-		http://www.semanticweb.org/building (building circuits)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-
-			self.connectedTo._rules = [('min|1', [[Circuit]]), ('exactly|1', [[Room]])]
-
-			self.connectedTo._instance_identifier = self.get_identifier()
-			self.controlCommand._instance_identifier = self.get_identifier()
-			self.state._instance_identifier = self.get_identifier()
-
-	# Data fields
-
-	controlCommand: CommandField = CommandField(
-		name='controlCommand',
-		semantic_manager=semantic_manager)
-
-	state: DeviceAttributeField = DeviceAttributeField(
-		name='state',
-		semantic_manager=semantic_manager)
-
-	# Relation fields
-
-	connectedTo: RelationField = RelationField(
-		name='connectedTo',
-		rule='min 1 Circuit, exactly 1 Room',
-		inverse_of=['hasOutlet'],
-		semantic_manager=semantic_manager)
-
-
-class Producer(SemanticDeviceClass, Thing):
-	"""
-	Generated SemanticClass without description
-
-	Source: 
-		http://www.semanticweb.org/building (building circuits)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-			self.name._rules = [('exactly|1', [['string']])]
-
-			self.controlCommand._instance_identifier = self.get_identifier()
-			self.name._instance_identifier = self.get_identifier()
-			self.state._instance_identifier = self.get_identifier()
-
-	# Data fields
-
-	controlCommand: CommandField = CommandField(
-		name='controlCommand',
-		semantic_manager=semantic_manager)
-
-	name: DataField = DataField(
-		name='name',
-		rule='exactly 1 string',
-		semantic_manager=semantic_manager)
-
-	state: DeviceAttributeField = DeviceAttributeField(
-		name='state',
-		semantic_manager=semantic_manager)
-
-
-class AirProducer(Producer):
-	"""
-	Generated SemanticClass without description
-
-	Source: 
-		http://www.semanticweb.org/building (building circuits)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-			self.name._rules = [('exactly|1', [['string']])]
-
-			self.controlCommand._instance_identifier = self.get_identifier()
-			self.name._instance_identifier = self.get_identifier()
-			self.state._instance_identifier = self.get_identifier()
-
-	# Data fields
-
-	controlCommand: CommandField = CommandField(
-		name='controlCommand',
-		semantic_manager=semantic_manager)
-
-	name: DataField = DataField(
-		name='name',
-		rule='exactly 1 string',
-		semantic_manager=semantic_manager)
-
-	state: DeviceAttributeField = DeviceAttributeField(
-		name='state',
-		semantic_manager=semantic_manager)
-
-
-class ColdProducer(Producer):
-	"""
-	Generated SemanticClass without description
-
-	Source: 
-		http://www.semanticweb.org/building (building circuits)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-			self.name._rules = [('exactly|1', [['string']])]
-
-			self.controlCommand._instance_identifier = self.get_identifier()
-			self.name._instance_identifier = self.get_identifier()
-			self.state._instance_identifier = self.get_identifier()
-
-	# Data fields
-
-	controlCommand: CommandField = CommandField(
-		name='controlCommand',
-		semantic_manager=semantic_manager)
-
-	name: DataField = DataField(
-		name='name',
-		rule='exactly 1 string',
-		semantic_manager=semantic_manager)
-
-	state: DeviceAttributeField = DeviceAttributeField(
-		name='state',
-		semantic_manager=semantic_manager)
-
-
-class HeatProducer(Producer):
-	"""
-	Generated SemanticClass without description
-
-	Source: 
-		http://www.semanticweb.org/building (building circuits)
-	"""
-
-	def __init__(self, *args, **kwargs):
-		is_initialised = 'id' in self.__dict__
-		super().__init__(*args, **kwargs)
-		if not is_initialised:
-			self.name._rules = [('exactly|1', [['string']])]
-
-			self.controlCommand._instance_identifier = self.get_identifier()
-			self.name._instance_identifier = self.get_identifier()
-			self.state._instance_identifier = self.get_identifier()
-
-	# Data fields
-
-	controlCommand: CommandField = CommandField(
-		name='controlCommand',
-		semantic_manager=semantic_manager)
-
-	name: DataField = DataField(
-		name='name',
-		rule='exactly 1 string',
-		semantic_manager=semantic_manager)
-
-	state: DeviceAttributeField = DeviceAttributeField(
-		name='state',
-		semantic_manager=semantic_manager)
-
-
 class Room(Thing):
 	"""
 	Generated SemanticClass without description
 
-	Source: 
+	Source(s): 
 		http://www.semanticweb.org/building (building circuits)
 	"""
 
@@ -397,11 +106,52 @@ class Room(Thing):
 		semantic_manager=semantic_manager)
 
 
+class Building(Thing):
+	"""
+	Generated SemanticClass without description
+
+	Source(s): 
+		http://www.semanticweb.org/building (building circuits)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.goalTemperature._rules = [('exactly|1', [['integer']])]
+			self.name._rules = [('exactly|1', [['string']])]
+
+			self.hasFloor._rules = [('min|1', [[Floor]])]
+
+			self.hasFloor._instance_identifier = self.get_identifier()
+			self.goalTemperature._instance_identifier = self.get_identifier()
+			self.name._instance_identifier = self.get_identifier()
+
+	# Data fields
+
+	goalTemperature: DataField = DataField(
+		name='goalTemperature',
+		rule='exactly 1 integer',
+		semantic_manager=semantic_manager)
+
+	name: DataField = DataField(
+		name='name',
+		rule='exactly 1 string',
+		semantic_manager=semantic_manager)
+
+	# Relation fields
+
+	hasFloor: RelationField = RelationField(
+		name='hasFloor',
+		rule='min 1 Floor',
+		semantic_manager=semantic_manager)
+
+
 class Sensor(SemanticDeviceClass, Thing):
 	"""
 	Generated SemanticClass without description
 
-	Source: 
+	Source(s): 
 		http://www.semanticweb.org/building (building circuits)
 	"""
 
@@ -433,11 +183,117 @@ class Sensor(SemanticDeviceClass, Thing):
 		semantic_manager=semantic_manager)
 
 
+class Producer(SemanticDeviceClass, Thing):
+	"""
+	Generated SemanticClass without description
+
+	Source(s): 
+		http://www.semanticweb.org/building (building circuits)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.name._rules = [('exactly|1', [['string']])]
+
+			self.controlCommand._instance_identifier = self.get_identifier()
+			self.name._instance_identifier = self.get_identifier()
+			self.state._instance_identifier = self.get_identifier()
+
+	# Data fields
+
+	controlCommand: CommandField = CommandField(
+		name='controlCommand',
+		semantic_manager=semantic_manager)
+
+	name: DataField = DataField(
+		name='name',
+		rule='exactly 1 string',
+		semantic_manager=semantic_manager)
+
+	state: DeviceAttributeField = DeviceAttributeField(
+		name='state',
+		semantic_manager=semantic_manager)
+
+
+class Outlet(SemanticDeviceClass, Thing):
+	"""
+	Generated SemanticClass without description
+
+	Source(s): 
+		http://www.semanticweb.org/building (building circuits)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+
+			self.connectedTo._rules = [('min|1', [[Circuit]]), ('exactly|1', [[Room]])]
+
+			self.connectedTo._instance_identifier = self.get_identifier()
+			self.controlCommand._instance_identifier = self.get_identifier()
+			self.state._instance_identifier = self.get_identifier()
+
+	# Data fields
+
+	controlCommand: CommandField = CommandField(
+		name='controlCommand',
+		semantic_manager=semantic_manager)
+
+	state: DeviceAttributeField = DeviceAttributeField(
+		name='state',
+		semantic_manager=semantic_manager)
+
+	# Relation fields
+
+	connectedTo: RelationField = RelationField(
+		name='connectedTo',
+		rule='min 1 Circuit, exactly 1 Room',
+		inverse_of=['hasOutlet'],
+		semantic_manager=semantic_manager)
+
+
+class Floor(Thing):
+	"""
+	Generated SemanticClass without description
+
+	Source(s): 
+		http://www.semanticweb.org/building (building circuits)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.name._rules = [('exactly|1', [['string']])]
+
+			self.hasRoom._rules = [('only', [[Room]])]
+
+			self.hasRoom._instance_identifier = self.get_identifier()
+			self.name._instance_identifier = self.get_identifier()
+
+	# Data fields
+
+	name: DataField = DataField(
+		name='name',
+		rule='exactly 1 string',
+		semantic_manager=semantic_manager)
+
+	# Relation fields
+
+	hasRoom: RelationField = RelationField(
+		name='hasRoom',
+		rule='only Room',
+		semantic_manager=semantic_manager)
+
+
 class Tenant(Thing):
 	"""
 	Generated SemanticClass without description
 
-	Source: 
+	Source(s): 
 		http://www.semanticweb.org/building (building circuits)
 	"""
 
@@ -461,6 +317,150 @@ class Tenant(Thing):
 	name: DataField = DataField(
 		name='name',
 		rule='exactly 1 string',
+		semantic_manager=semantic_manager)
+
+
+class Circuit(Thing):
+	"""
+	Generated SemanticClass without description
+
+	Source(s): 
+		http://www.semanticweb.org/building (building circuits)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.name._rules = [('exactly|1', [['string']])]
+
+			self.hasOutlet._rules = [('min|1', [[Outlet]])]
+			self.hasProducer._rules = [('min|1', [[Producer]])]
+
+			self.hasOutlet._instance_identifier = self.get_identifier()
+			self.hasProducer._instance_identifier = self.get_identifier()
+			self.name._instance_identifier = self.get_identifier()
+
+	# Data fields
+
+	name: DataField = DataField(
+		name='name',
+		rule='exactly 1 string',
+		semantic_manager=semantic_manager)
+
+	# Relation fields
+
+	hasOutlet: RelationField = RelationField(
+		name='hasOutlet',
+		rule='min 1 Outlet',
+		inverse_of=['connectedTo'],
+		semantic_manager=semantic_manager)
+
+	hasProducer: RelationField = RelationField(
+		name='hasProducer',
+		rule='min 1 Producer',
+		semantic_manager=semantic_manager)
+
+
+class HeatProducer(Producer):
+	"""
+	Generated SemanticClass without description
+
+	Source(s): 
+		http://www.semanticweb.org/building (building circuits)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.name._rules = [('exactly|1', [['string']])]
+
+			self.controlCommand._instance_identifier = self.get_identifier()
+			self.name._instance_identifier = self.get_identifier()
+			self.state._instance_identifier = self.get_identifier()
+
+	# Data fields
+
+	controlCommand: CommandField = CommandField(
+		name='controlCommand',
+		semantic_manager=semantic_manager)
+
+	name: DataField = DataField(
+		name='name',
+		rule='exactly 1 string',
+		semantic_manager=semantic_manager)
+
+	state: DeviceAttributeField = DeviceAttributeField(
+		name='state',
+		semantic_manager=semantic_manager)
+
+
+class ColdProducer(Producer):
+	"""
+	Generated SemanticClass without description
+
+	Source(s): 
+		http://www.semanticweb.org/building (building circuits)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.name._rules = [('exactly|1', [['string']])]
+
+			self.controlCommand._instance_identifier = self.get_identifier()
+			self.name._instance_identifier = self.get_identifier()
+			self.state._instance_identifier = self.get_identifier()
+
+	# Data fields
+
+	controlCommand: CommandField = CommandField(
+		name='controlCommand',
+		semantic_manager=semantic_manager)
+
+	name: DataField = DataField(
+		name='name',
+		rule='exactly 1 string',
+		semantic_manager=semantic_manager)
+
+	state: DeviceAttributeField = DeviceAttributeField(
+		name='state',
+		semantic_manager=semantic_manager)
+
+
+class AirProducer(Producer):
+	"""
+	Generated SemanticClass without description
+
+	Source(s): 
+		http://www.semanticweb.org/building (building circuits)
+	"""
+
+	def __init__(self, *args, **kwargs):
+		is_initialised = 'id' in self.__dict__
+		super().__init__(*args, **kwargs)
+		if not is_initialised:
+			self.name._rules = [('exactly|1', [['string']])]
+
+			self.controlCommand._instance_identifier = self.get_identifier()
+			self.name._instance_identifier = self.get_identifier()
+			self.state._instance_identifier = self.get_identifier()
+
+	# Data fields
+
+	controlCommand: CommandField = CommandField(
+		name='controlCommand',
+		semantic_manager=semantic_manager)
+
+	name: DataField = DataField(
+		name='name',
+		rule='exactly 1 string',
+		semantic_manager=semantic_manager)
+
+	state: DeviceAttributeField = DeviceAttributeField(
+		name='state',
 		semantic_manager=semantic_manager)
 
 

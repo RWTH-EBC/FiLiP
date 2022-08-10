@@ -1,4 +1,3 @@
-import copy
 import time
 import unittest
 
@@ -61,7 +60,7 @@ class TestSemanticsModels(unittest.TestCase):
 
     def test_2_default_header(self):
         """
-        Test if a new class without header gets teh default header
+        Test if a new class without header gets the default header
         """
         from tests.semantics.models import Class1, semantic_manager
 
@@ -204,7 +203,7 @@ class TestSemanticsModels(unittest.TestCase):
         """
         Test if referencing of relations correctly works
         """
-        from tests.semantics.models import Class1, Class3, Class2, Class4
+        from tests.semantics.models import Class1, Class3, Class2
 
         c1 = Class1()
         c2 = Class2()
@@ -230,11 +229,10 @@ class TestSemanticsModels(unittest.TestCase):
         """
         Test if instances with the same id point to the same object
         """
-        from tests.semantics.models import Class1, Class13, Class123, \
-            Individual1, Gertrude, semantic_manager
+        from tests.semantics.models import Class1, Class13, semantic_manager
 
         # clear local state to ensure standard test condition
-        self.clear_registry()
+        self.clear_registry(semantic_manager)
 
         class13 = Class13(id="13")
         rel1 = class13.oProp1
@@ -253,11 +251,11 @@ class TestSemanticsModels(unittest.TestCase):
         """
         Test if instances can be saved to Fiware and correctly loaded again
         """
-        from tests.semantics.models import Class1, Class13, Class123, \
-            Individual1, Gertrude, semantic_manager
+        from tests.semantics.models import Class1, Class13, Individual1, \
+            semantic_manager
 
         # clear local state to ensure standard test condition
-        self.clear_registry()
+        self.clear_registry(semantic_manager)
 
         # TEST1: Save local instances to Fiware, clear the local
         # state recreate an instance and check if it was properly loaded from
@@ -277,7 +275,7 @@ class TestSemanticsModels(unittest.TestCase):
         semantic_manager.save_state(assert_validity=False)
 
         # clear local state to ensure standard test condition
-        self.clear_registry()
+        self.clear_registry(semantic_manager)
         self.assertFalse(class13.get_identifier() in
                          semantic_manager.instance_registry._registry)
 
@@ -299,11 +297,10 @@ class TestSemanticsModels(unittest.TestCase):
         deleted from other instances fields if deleted,
         and not be pulled again from Fiware once deleted locally
         """
-        from tests.semantics.models import Class1, Class13, Class123, \
-            Individual1, Gertrude, semantic_manager
+        from tests.semantics.models import Class1, Class13, semantic_manager
 
         # clear local state to ensure standard test condition
-        self.clear_registry()
+        self.clear_registry(semantic_manager)
 
         # Test 1: Local deletion
 
@@ -324,14 +321,14 @@ class TestSemanticsModels(unittest.TestCase):
         self.assertTrue(len(class13.objProp3.get_all_raw()) == 0)
 
         # Test 2:  deletion with Fiware object
-        self.clear_registry()
+        self.clear_registry(semantic_manager)
 
         class13 = Class13(id="13")
         class1 = Class1(id="1")
         class13.objProp3.add(class1)
 
         semantic_manager.save_state(assert_validity=False)
-        self.clear_registry()
+        self.clear_registry(semantic_manager)
 
         # load class1 from Fiware, and delete it
         # class13 should be then also loaded have the reference deleted and
@@ -341,7 +338,7 @@ class TestSemanticsModels(unittest.TestCase):
         class1.delete()
 
         semantic_manager.save_state(assert_validity=False)
-        self.clear_registry()
+        self.clear_registry(semantic_manager)
         self.assertTrue(len(semantic_manager.instance_registry.get_all()) == 0)
 
         # class 1 no longer exists in fiware, and the fiware entry of class13
@@ -354,7 +351,7 @@ class TestSemanticsModels(unittest.TestCase):
 
         # Test 3:  if deleted locally, the instance should not be pulled
         # again from fiware.
-        self.clear_registry()
+        self.clear_registry(semantic_manager)
 
         class13 = Class13(id="13")
         class13.dataProp1.add("Test")
@@ -368,10 +365,14 @@ class TestSemanticsModels(unittest.TestCase):
         """
         Test if the values of fields are correctly set with the list methods
         """
-        from tests.semantics.models import Class1, Class13, Class3, Class123
+        from tests.semantics.models import Class1, \
+            Class13, \
+            Class3, \
+            Class123, \
+            semantic_manager
 
         # clear local state to ensure standard test condition
-        self.clear_registry()
+        self.clear_registry(semantic_manager)
 
         class13 = Class13(id="13")
         class1 = Class1(id="1")
@@ -388,12 +389,12 @@ class TestSemanticsModels(unittest.TestCase):
         self.assertTrue(class13.objProp3._set == {c3.get_identifier(),
                                                   c123.get_identifier()})
 
-    def clear_registry(self):
+    def clear_registry(self, semantic_manager):
         """
         Clear the local state. Needed to test the interaction with Fiware if
         the local state of an instance is missing
         """
-        from tests.semantics.models import semantic_manager
+        # from tests.semantics.models import semantic_manager
         semantic_manager.instance_registry._registry.clear()
         semantic_manager.instance_registry._deleted_identifiers.clear()
         self.assertTrue(len(semantic_manager.instance_registry._registry) == 0)
@@ -447,7 +448,6 @@ class TestSemanticsModels(unittest.TestCase):
         class3_.device_settings.endpoint = "http://test.com"
         self.assertEqual(class3_.device_settings.endpoint, "http://test.com")
 
-
     def test__13_device_saving_and_loading(self):
         """
         Test if a Device can be correctly saved and loaded.
@@ -493,12 +493,12 @@ class TestSemanticsModels(unittest.TestCase):
                 fiware_header=class3_.header.get_fiware_header()) as client:
             assert client.get_entity(entity_id="c3", entity_type="Class3")
 
-        self.clear_registry()
+        self.clear_registry(semantic_manager)
 
         loaded_class = Class3(id="c3")
 
         attr2 = [a for a in class3_.attributeProp.get_all()
-                 if a.name == "d2"][ 0]
+                 if a.name == "d2"][0]
         attr2_ = [a for a in loaded_class.attributeProp.get_all() if
                   a.name == "d2"][0]
         self.assertEqual(attr2.name, attr2_.name)
@@ -542,7 +542,7 @@ class TestSemanticsModels(unittest.TestCase):
 
         class3_.dataProp1.add("TEST!!!")
         semantic_manager.save_state(assert_validity=False)
-        self.clear_registry()
+        self.clear_registry(semantic_manager)
         with semantic_manager.get_iota_client(class3_.header) as client:
             device = client.get_device(device_id=class3_.get_device_id())
             self.assertTrue(len(device.commands), 1)
@@ -562,10 +562,10 @@ class TestSemanticsModels(unittest.TestCase):
         context entry from Fiware.
         All other interactions are covered in the "deleting test"
         """
-        from tests.semantics.models2 import Class1, Class3, semantic_manager
+        from tests.semantics.models2 import Class3, semantic_manager
 
         # clear local state to ensure standard test condition
-        self.clear_registry()
+        self.clear_registry(semantic_manager)
 
         # Test 1: Local deletion
 
@@ -575,28 +575,30 @@ class TestSemanticsModels(unittest.TestCase):
         class3_.device_settings.transport = TransportProtocol.HTTP
 
         semantic_manager.save_state(assert_validity=False)
-        self.clear_registry()
+        self.clear_registry(semantic_manager)
 
         # load class from Fiware, and delete it
         class3_ = Class3(id="13")
         class3_.delete()
 
         semantic_manager.save_state(assert_validity=False)
-        self.clear_registry()
+        self.clear_registry(semantic_manager)
         self.assertTrue(len(semantic_manager.instance_registry.get_all()) == 0)
 
         time.sleep(1)
         # class no longer exists in fiware iota or context broker
         with IoTAClient(
                 url=semantic_manager.default_header.iota_url,
-                fiware_header=semantic_manager.
-                        default_header.get_fiware_header()) as client:
+                fiware_header=
+                semantic_manager.default_header.get_fiware_header()) \
+                as client:
             self.assertEqual(0, len(client.get_device_list()))
 
         with ContextBrokerClient(
                 url=semantic_manager.default_header.cb_url,
-                fiware_header=semantic_manager.
-                        default_header.get_fiware_header()) as client:
+                fiware_header=
+                semantic_manager.default_header.get_fiware_header()) \
+                as client:
             self.assertEqual(0, len(client.get_entity_list()))
 
     def test__15_field_name_checks(self):
@@ -674,16 +676,16 @@ class TestSemanticsModels(unittest.TestCase):
 
         class3_ = Class3(id="15", header=new_header)
         class1_ = Class1(id="11")
-        print(class3_)
+        #print(class3_)
         self.assertTrue("test" in class3_.dataProp1.get_all_raw())
         self.assertEqual(class3_.device_settings.dict(),
                          class3.device_settings.dict())
         self.assertEqual(class3_.commandProp.get_all()[0].name, "c1")
-        self.assertEqual(class3_.attributeProp.get_all()[0].name , "_type")
+        self.assertEqual(class3_.attributeProp.get_all()[0].name, "_type")
         self.assertEqual(class3_.attributeProp.get_all()[0].attribute_type,
-                        DeviceAttributeType.active)
+                         DeviceAttributeType.active)
 
-        print(class3_.header)
+        #print(class3_.header)
         self.assertEqual(class3_.header.service, "testService")
 
         added_class = [c for c in class3_.objProp2.get_all() if
@@ -779,7 +781,7 @@ class TestSemanticsModels(unittest.TestCase):
                          {c3.get_identifier(), c4.get_identifier()})
 
         # live state is merged correctly
-        self.clear_registry()
+        self.clear_registry(semantic_manager)
         inst_1 = Class1(id="100")
         self.assertEqual(set(inst_1.dataProp2.get_all()), {"Test3", "Test4"})
         self.assertEqual(set(inst_1.oProp1.get_all_raw()),
@@ -859,7 +861,7 @@ class TestSemanticsModels(unittest.TestCase):
                          {"test2", "test3"})
 
         # live state is merged correctly
-        self.clear_registry()
+        self.clear_registry(semantic_manager)
         inst_1 = Class3(id="3")
         self.assertEqual(inst_1.device_settings.endpoint, "http://localhost:21")
         self.assertEqual(inst_1.device_settings.apikey, "test")
@@ -893,11 +895,11 @@ class TestSemanticsModels(unittest.TestCase):
         semantic_manager.save_state()
 
         # clear local info
-        self.clear_registry()
+        self.clear_registry(semantic_manager)
 
         # load and check
         inst = Class3(id="1")
-        print(inst)
+        #print(inst)
         self.assertEqual(inst.metadata.name, "TestName")
         self.assertEqual(inst.metadata.comment, "TestComment")
 
@@ -938,8 +940,8 @@ class TestSemanticsModels(unittest.TestCase):
                          [Individual1()])
 
     def test__22_get_instances(self):
-        from tests.semantics.models import Class1, Class13, Class123, \
-            Individual1, Gertrude, semantic_manager, Class3a, Class3
+        from tests.semantics.models import Class1, Class123, \
+            Gertrude, semantic_manager
 
         obj = Gertrude()
         class1 = Class1()
@@ -967,8 +969,7 @@ class TestSemanticsModels(unittest.TestCase):
 
     def test__23_valid_instance_ids(self):
         """Test if inavlid instance ids are prevented and valid ids are accepted"""
-        from tests.semantics.models import Class1, Class13, Class123, \
-            Individual1, Gertrude, semantic_manager, Class3a, Class3
+        from tests.semantics.models import Class1
 
         Class1(id="test")
         Class1(id="!-+~")
@@ -982,7 +983,12 @@ class TestSemanticsModels(unittest.TestCase):
         """
         Cleanup test server
         """
-        self.clear_registry()
+        from tests.semantics.models import semantic_manager
+        self.clear_registry(semantic_manager)
+
+        from tests.semantics.models2 import semantic_manager
+        self.clear_registry(semantic_manager)
+
         clear_all(fiware_header=FiwareHeader(
             service=settings.FIWARE_SERVICE,
             service_path=settings.FIWARE_SERVICEPATH),

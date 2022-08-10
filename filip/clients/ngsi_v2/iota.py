@@ -1,7 +1,11 @@
 """
 IoT-Agent Module for API Client
 """
-from typing import List, Dict, Set, Union, Optional
+from __future__ import annotations
+
+from copy import deepcopy
+from typing import List, Dict, Set, TYPE_CHECKING, Union, Optional
+import warnings
 from urllib.parse import urljoin
 import requests
 from pydantic import parse_obj_as, AnyHttpUrl
@@ -9,8 +13,11 @@ from filip.config import settings
 from filip.clients.base_http_client import BaseHttpClient
 from filip.models.base import FiwareHeader
 from filip.models.ngsi_v2.iot import Device, ServiceGroup
+
 from filip.utils.filter import filter_device_list
 
+if TYPE_CHECKING:
+    from filip.clients.ngsi_v2.cb import ContextBrokerClient
 
 class IoTAClient(BaseHttpClient):
     """
@@ -352,7 +359,10 @@ class IoTAClient(BaseHttpClient):
             if res.ok:
                 devices = parse_obj_as(List[Device], res.json()['devices'])
                 # filter by device_ids, entity_names or entity_types
-                devices = filter_device_list(devices, device_ids, entity_names, entity_types)
+                devices = filter_device_list(devices,
+                                             device_ids,
+                                             entity_names,
+                                             entity_types)
                 return devices
             res.raise_for_status()
         except requests.RequestException as err:
@@ -433,9 +443,11 @@ class IoTAClient(BaseHttpClient):
             self.update_device(device=device, add=add)
 
     def delete_device(self, *, device_id: str,
+                      cb_url: AnyHttpUrl = settings.CB_URL,
                       delete_entity: bool = False,
-                      cb_url: AnyHttpUrl = settings.IOTA_URL,
-                      force_entity_deletion: bool = False) -> None:
+                      force_entity_deletion: bool = False,
+                      cb_client: ContextBrokerClient = None,
+                      ) -> None:
         """
         Remove a device from the device registry. No payload is required
         or received.
@@ -451,11 +463,17 @@ class IoTAClient(BaseHttpClient):
                                     If multiple devices are linked to this
                                     entity, this operation is not executed and
                                     an exception is raised
-            cb_url: AnyHttpUrl ->   ContextBroker Url where the corresponding
-                                    entity resigns
-            force_entity_deletion: bool, if delete_entity is true and
-                                    multiple devices are linked to the linked
-                                    entity, delete it and do not raise an error
+            force_entity_deletion:
+                bool, if delete_entity is true and multiple devices are linked
+                to the linked entity, delete it and do not raise an error
+            cb_client (ContextBrokerClient):
+                Corresponding ContextBrokerClient object for entity manipulation
+            cb_url (AnyHttpUrl):
+                Url of the ContextBroker where the entity is found.
+                This will autogenerate an CB-Client, mirroring the information
+                of the IoTA-Client, e.g. FiwareHeader, and other headers
+                (not recommended!)
+
         Returns:
             None
         """
@@ -479,6 +497,8 @@ class IoTAClient(BaseHttpClient):
             # An entity can technically belong to multiple devices
             # Only delete the entity if
             devices = self.get_device_list(entity_names=[device.entity_name])
+
+            # Zero because we count the remaining devices
             if len(devices) > 0 and not force_entity_deletion:
                 raise Exception(f"The corresponding entity to the device "
                                 f"{device_id} was not deleted because it is "
@@ -486,22 +506,35 @@ class IoTAClient(BaseHttpClient):
             else:
                 try:
                     from filip.clients.ngsi_v2 import ContextBrokerClient
-                    client = ContextBrokerClient(
-                        url=cb_url,
-                        fiware_header=self.fiware_headers)
 
-                    client.delete_entity(entity_id=device.entity_name,
-                                         entity_type=device.entity_type)
+                    if cb_client:
+                        cb_client_local = deepcopy(cb_client)
+                    else:
+                        warnings.warn("No `ContextBrokerClient` "
+                                      "object providesd! Will try to generate "
+                                      "one. This usage is not recommended.")
+
+                        cb_client_local = ContextBrokerClient(
+                            url=cb_url,
+                            fiware_header=self.fiware_headers,
+                            headers=headers)
+
+                    cb_client_local.delete_entity(
+                        entity_id=device.entity_name,
+                        entity_type=device.entity_type)
 
                 except requests.RequestException as err:
                     # Do not throw an error
-                    # It is only important that the entity does not exists after
+                    # It is only important that the entity does not exist after
                     # this methode, not if this methode actively deleted it
                     pass
+
+                cb_client_local.close()
 
     def patch_device(self,
                      device: Device,
                      patch_entity: bool = True,
+                     cb_client: ContextBrokerClient = None,
                      cb_url: AnyHttpUrl = settings.CB_URL) -> None:
         """
         Updates a device state in Fiware, if the device does not exists it
@@ -516,13 +549,17 @@ class IoTAClient(BaseHttpClient):
             device (Device): Device to be posted to /updated in Fiware
             patch_entity (bool): If true the corresponding entity is
                 completely synced
-            cb_url (AnyHttpUrl): Url of the ContextBroker where the entity is
-                found
+            cb_client (ContextBrokerClient):
+                Corresponding ContextBrokerClient object for entity manipulation
+            cb_url (AnyHttpUrl):
+                Url of the ContextBroker where the entity is found.
+                This will autogenerate an CB-Client, mirroring the information
+                of the IoTA-Client, e.g. FiwareHeader, and other headers
+                (not recommended!)
 
         Returns:
             None
         """
-
         try:
             live_device = self.get_device(device_id=device.device_id)
         except requests.RequestException:
@@ -543,7 +580,9 @@ class IoTAClient(BaseHttpClient):
 
         if not live_settings == new_settings:
             self.delete_device(device_id=device.device_id,
-                               delete_entity=True, force_entity_deletion=True)
+                               delete_entity=True,
+                               force_entity_deletion=True,
+                               cb_client=cb_client)
             self.post_device(device=device)
             return
 
@@ -600,11 +639,21 @@ class IoTAClient(BaseHttpClient):
 
         if patch_entity:
             from filip.clients.ngsi_v2 import ContextBrokerClient
-            with ContextBrokerClient(
+            if cb_client:
+                cb_client_local = deepcopy(cb_client)
+            else:
+                warnings.warn("No `ContextBrokerClient` object provided! "
+                              "Will try to generate one. "
+                              "This usage is not recommended.")
+
+                cb_client_local = ContextBrokerClient(
                     url=cb_url,
-                    fiware_header=self.fiware_headers) as client:
-                client.patch_entity(
-                    entity=build_context_entity_from_device(device))
+                    fiware_header=self.fiware_headers,
+                    headers=self.headers)
+
+            cb_client_local.patch_entity(
+                entity=build_context_entity_from_device(device))
+            cb_client_local.close()
 
     def does_device_exists(self, device_id: str) -> bool:
         """
