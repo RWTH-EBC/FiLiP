@@ -21,7 +21,7 @@ from filip.models import FiwareHeader
 from filip.semantics.semantics_models import \
     InstanceIdentifier, SemanticClass, InstanceHeader, Datatype, DataField, \
     RelationField, SemanticIndividual, SemanticDeviceClass, CommandField, \
-    Command, DeviceAttributeField, DeviceAttribute, SemanticMetadata
+    Command, DeviceAttributeField, DeviceAttribute
 from filip.utils.simple_ql import QueryString
 
 
@@ -214,7 +214,7 @@ class SemanticsManager(BaseModel):
     instance_registry: InstanceRegistry = Field(
         description="Registry managing the local state"
     )
-    class_catalogue: Dict[str, Type [SemanticClass]] = Field(
+    class_catalogue: Dict[str, Type[SemanticClass]] = Field(
         default={},
         description="Register of class names to classes"
     )
