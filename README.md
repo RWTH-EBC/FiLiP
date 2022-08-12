@@ -251,9 +251,9 @@ This project is licensed under the BSD License - see the [LICENSE](LICENSE) file
 2021, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy 
 Efficient Buildings and Indoor Climate
 
-[Institute for Energy Efficient Buildings and Indoor Climate (EBC)](http://www.ebc.eonerc.rwth-aachen.de)  
-[E.ON Energy Research Center (E.ON ERC)](http://www.eonerc.rwth-aachen.de)  
-[RWTH University Aachen, Germany](http://www.rwth-aachen.de)
+[Institute for Energy Efficient Buildings and Indoor Climate (EBC)](https://www.ebc.eonerc.rwth-aachen.de)  
+[E.ON Energy Research Center (E.ON ERC)](https://www.eonerc.rwth-aachen.de)  
+[RWTH University Aachen, Germany](https://www.rwth-aachen.de)
 
 ## Disclaimer
 
