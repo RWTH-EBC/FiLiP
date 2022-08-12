@@ -268,7 +268,7 @@ ENERGY" src="https://raw.githubusercontent.com/RWTH-EBC/FiLiP/master/docs/logos/
 <a href="https://n5geh.de/"> <img alt="National 5G Energy Hub" 
 src="https://avatars.githubusercontent.com/u/43948851?s=200&v=4" height="100"></a>
 
-<a href="http://fismep.de/"> <img alt="FISMEP" 
+<a href="https://fismep.de/"> <img alt="FISMEP" 
 src="https://raw.githubusercontent.com/RWTH-EBC/FiLiP/master/docs/logos/FISMEP.png" 
 height="100"></a>
 
@@ -284,5 +284,5 @@ src="https://raw.githubusercontent.com/RWTH-EBC/FiLiP/master/docs/logos/bmwi_log
 
 This project has received funding in the framework of the joint programming initiative ERA-Net Smart Grids Plus, with support from the European Union’s Horizon 2020 research and innovation programme.
 
-<a href="http://www.eranet-smartgridsplus.eu/"> <img alt="ERANET" 
-src="http://fismep.de/wp-content/uploads/2017/09/SmartGridsPlus_rgb-300x55.jpg" height="100"> </a>
+<a href="https://www.eranet-smartgridsplus.eu/"> <img alt="ERANET" 
+src="https://fismep.de/wp-content/uploads/2017/09/SmartGridsPlus_rgb-300x55.jpg" height="100"> </a>
