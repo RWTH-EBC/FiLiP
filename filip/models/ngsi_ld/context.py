@@ -213,7 +213,8 @@ class ContextLDEntity(ContextLDEntityKeyValues, ContextEntity):
                  **data):
 
         # There is currently no validation for extra fields
-        data.update(self._validate_properties(data))
+        #data.update(self._validate_properties(data))
+
         super().__init__(id=id, type=type, **data)
 
     class Config:
@@ -229,7 +230,7 @@ class ContextLDEntity(ContextLDEntityKeyValues, ContextEntity):
         attrs = {}
         for key, attr in data.items():
             if key not in ContextLDEntity.__fields__:
-                if "value" in attr:
+                if "value" in attr: #TODO: check for property
                     attrs[key] = ContextProperty.parse_obj(attr)
                 else:
                     attrs[key] = ContextRelationship.parse_obj(attr)
@@ -257,6 +258,7 @@ class ContextLDEntity(ContextLDEntityKeyValues, ContextEntity):
                 self.dict().items() if key not in
                 ContextLDEntity.__fields__ and
                 value.get('type') != DataTypeLD.RELATIONSHIP]
+
 
     def add_properties(self, attrs: Union[Dict[str, ContextProperty],
                                           List[NamedContextProperty]]) -> None:
