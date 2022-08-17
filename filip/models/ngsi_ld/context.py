@@ -1,95 +1,60 @@
 """
 NGSIv2 models for context broker interaction
 """
-import json
-from typing import Any, Type, List, Dict, Union, Optional, Pattern
+from typing import Any,  List, Dict, Union, Optional
 
 from aenum import Enum
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field
 from filip.models.ngsi_v2 import ContextEntity
 from filip.models.base import FiwareRegex
 
 
 class DataTypeLD(str, Enum):
     """
-    When possible reuse schema.org data types
-    (Text, Number, DateTime, StructuredValue, etc.).
-    Remember that null is not allowed in NGSI-LD and
-    therefore should be avoided as a value.
-
-    https://schema.org/DataType
+    In NGSI-LD the data types on context entities are only divided into properties and relationships.
     """
     _init_ = 'value __doc__'
 
-    PROPERTY = "Property", ""
-    RELATIONSHIP = "Relationship", "Reference to another context entity"
-    STRUCTUREDVALUE = "StructuredValue", "Structered datatype must be " \
-                                         "serializable"
+    PROPERTY = "Property", "All attributes that do not represent a relationship"
+    RELATIONSHIP = "Relationship", "Reference to another context entity, which can be identified with a URN."
+
 
 
 # NGSI-LD entity models
 class ContextProperty(BaseModel):
     """
-    Model for an attribute is represented by a JSON object with the following
-    syntax:
+    The model for a property is represented by a JSON object with the following syntax:
 
-    The attribute value is specified by the value property, whose value may
-    be any JSON datatype.
+    The attribute value is specified by the value, whose value can be any data type. This does not need to be
+    specified further.
 
-    The attribute NGSI type is specified by the type property, whose value
-    is a string containing the NGSI type.
-
-    The attribute metadata is specified by the metadata property. Its value
-    is another JSON object which contains a property per metadata element
-    defined (the name of the property is the name of the metadata element).
-    Each metadata element, in turn, is represented by a JSON object
-    containing the following properties:
-
-    Values of entity attributes. For adding it you need to nest it into a
-    dict in order to give it a name.
-
+    The NGSI type of the attribute is fixed and does not need to be specified.
     Example:
 
         >>> data = {"value": <...>}
 
-        >>> attr = ContextAttribute(**data)
+        >>> attr = ContextProperty(**data)
 
     """
-    type: str = DataTypeLD.PROPERTY
+    type = "Property"
     value: Optional[Union[Union[float, int, bool, str, List, Dict[str, Any]],
                           List[Union[float, int, bool, str, List,
                                      Dict[str, Any]]]]] = Field(
         default=None,
         title="Property value",
         description="the actual data"
-    )  # todo: Add Property and Relationship
-
-    @validator('value')
-    def validate_value_type(cls, value):
-        """validator for field 'value'"""
-        type_ = type(value)
-        if value:
-            if type_ == DataTypeLD.STRUCTUREDVALUE:
-                value = json.dumps(value)
-                return json.loads(value)
-            else:
-                value = json.dumps(value)
-                return json.loads(value)
-        return value
-
+    )
 
 class NamedContextProperty(ContextProperty):
     """
-    Context attributes are properties of context entities. For example, the
-    current speed of a car could be modeled as attribute current_speed of entity
-    car-104.
+    Context properties are properties of context entities. For example, the current speed of a car could be modeled
+    as the current_speed property of the car-104 entity.
 
-    In the NGSI data model, attributes have an attribute name, an attribute type
-    an attribute value and metadata.
+    In the NGSI-LD data model, properties have a name, the type "property" and a value.
     """
     name: str = Field(
-        titel="Attribute name",
-        description="The attribute name describes what kind of property the "
+        titel="Property name",
+        description="The property name describes what kind of property the "
                     "attribute value represents of the entity, for example "
                     "current_speed. Allowed characters "
                     "are the ones in the plain ASCII set, except the following "
@@ -103,23 +68,12 @@ class NamedContextProperty(ContextProperty):
 
 class ContextRelationship(BaseModel):
     """
-    Model for an attribute is represented by a JSON object with the following
-    syntax:
+    The model for a relationship is represented by a JSON object with the following syntax:
 
-    The attribute value is specified by the value property, whose value may
-    be any JSON datatype.
+    The attribute value is specified by the object, whose value can be a reference to another context entity. This
+    should be specified as the URN. The existence of this entity is not assumed.
 
-    The attribute NGSI type is specified by the type property, whose value
-    is a string containing the NGSI type.
-
-    The attribute metadata is specified by the metadata property. Its value
-    is another JSON object which contains a property per metadata element
-    defined (the name of the property is the name of the metadata element).
-    Each metadata element, in turn, is represented by a JSON object
-    containing the following properties:
-
-    Values of entity attributes. For adding it you need to nest it into a
-    dict in order to give it a name.
+    The NGSI type of the attribute is fixed and does not need to be specified.
 
     Example:
 
@@ -128,7 +82,7 @@ class ContextRelationship(BaseModel):
         >>> attr = ContextRelationship(**data)
 
     """
-    type: str = DataTypeLD.RELATIONSHIP
+    type =  "Relationship"
     object: Optional[Union[Union[float, int, bool, str, List, Dict[str, Any]],
                            List[Union[float, int, bool, str, List,
                                       Dict[str, Any]]]]] = Field(
@@ -137,28 +91,15 @@ class ContextRelationship(BaseModel):
         description="the actual object id"
     )
 
-    @validator('value')
-    def validate_value_type(cls, value):
-        """validator for field 'value'"""
-        type_ = type(value)
-        if value:
-            if type_ == DataTypeLD.STRUCTUREDVALUE:
-                value = json.dumps(value)
-                return json.loads(value)
-            else:
-                value = json.dumps(value)
-                return json.loads(value)
-        return value
 
 
 class NamedContextRelationship(ContextRelationship):
     """
-    Context attributes are properties of context entities. For example, the
-    current speed of a car could be modeled as attribute current_speed of entity
-    car-104.
+    Context Relationship are relations of context entities to each other.
+    For example, the current_speed of the entity car-104 could be modeled.
+    The location could be modeled as located_in the entity Room-001.
 
-    In the NGSI data model, attributes have an attribute name, an attribute type
-    an attribute value and metadata.
+    In the NGSI-LD data model, relationships have a name, the type "relationship" and an object.
     """
     name: str = Field(
         titel="Attribute name",
@@ -192,8 +133,9 @@ class ContextLDEntityKeyValues(BaseModel):
         description="Id of an entity in an NGSI context broker. Allowed "
                     "characters are the ones in the plain ASCII set, except "
                     "the following ones: control characters, "
-                    "whitespace, &, ?, / and #.",
-        example='Bcn-Welt',
+                    "whitespace, &, ?, / and #."
+                    "the id should be structured according to the urn naming scheme.",
+        example='urn:ngsi-ld:Room:001',
         max_length=256,
         min_length=1,
         regex=FiwareRegex.standard.value,  # Make it FIWARE-Safe
@@ -233,8 +175,8 @@ class PropertyFormat(str, Enum):
 
 class ContextLDEntity(ContextLDEntityKeyValues, ContextEntity):
     """
-    Context entities, or simply entities, are the center of gravity in the
-    FIWARE NGSI information model. An entity represents a thing, i.e., any
+    Context LD entities, or simply entities, are the center of gravity in the
+    FIWARE NGSI-LD information model. An entity represents a thing, i.e., any
     physical or logical object (e.g., a sensor, a person, a room, an issue in
     a ticketing system, etc.). Each entity has an entity id.
     Furthermore, the type system of FIWARE NGSI enables entities to have an
@@ -242,7 +184,7 @@ class ContextLDEntity(ContextLDEntityKeyValues, ContextEntity):
     the type of thing represented by the entity. For example, a context
     entity #with id sensor-365 could have the type temperatureSensor.
 
-    Each entity is uniquely identified by the combination of its id and type.
+    Each entity is uniquely identified by its id.
 
     The entity id is specified by the object's id property, whose value
     is a string containing the entity id.
@@ -250,16 +192,16 @@ class ContextLDEntity(ContextLDEntityKeyValues, ContextEntity):
     The entity type is specified by the object's type property, whose value
     is a string containing the entity's type name.
 
-    Entity attributes are specified by additional properties, whose names are
+    Entity attributes are specified by additional properties and relationships, whose names are
     the name of the attribute and whose representation is described in the
-    "ContextAttribute"-model. Obviously, id and type are
+    "ContextProperty"/"ContextRelationship"-model. Obviously, id and type are
     not allowed to be used as attribute names.
 
     Example:
 
         >>> data = {'id': 'MyId',
                     'type': 'MyType',
-                    'my_attr': {'value': 20, 'type': 'Number'}}
+                    'my_attr': {'value': 20}}
 
         >>> entity = ContextLDEntity(**data)
 
@@ -284,8 +226,13 @@ class ContextLDEntity(ContextLDEntityKeyValues, ContextEntity):
 
     @classmethod
     def _validate_properties(cls, data: Dict):
-        attrs = {key: ContextProperty.parse_obj(attr) for key, attr in
-                 data.items() if key not in ContextLDEntity.__fields__}
+        attrs = {}
+        for key, attr in data.items():
+            if key not in ContextLDEntity.__fields__:
+                if "value" in attr:
+                    attrs[key] = ContextProperty.parse_obj(attr)
+                else:
+                    attrs[key] = ContextRelationship.parse_obj(attr)
         return attrs
 
     def get_properties(self,
@@ -303,11 +250,13 @@ class ContextLDEntity(ContextLDEntityKeyValues, ContextEntity):
         response_format = PropertyFormat(response_format)
         if response_format == PropertyFormat.DICT:
             return {key: ContextProperty(**value) for key, value in
-                    self.dict().items() if key not in ContextLDEntity.__fields__}
+                    self.dict().items() if key not in ContextLDEntity.__fields__
+                    and value.get('type') != DataTypeLD.RELATIONSHIP}
 
         return [NamedContextProperty(name=key, **value) for key, value in
                 self.dict().items() if key not in
-                ContextLDEntity.__fields__ ]
+                ContextLDEntity.__fields__ and
+                value.get('type') != DataTypeLD.RELATIONSHIP]
 
     def add_properties(self, attrs: Union[Dict[str, ContextProperty],
                                           List[NamedContextProperty]]) -> None:
@@ -320,6 +269,21 @@ class ContextLDEntity(ContextLDEntityKeyValues, ContextEntity):
         """
         if isinstance(attrs, list):
             attrs = {attr.name: ContextProperty(**attr.dict(exclude={'name'}))
+                     for attr in attrs}
+        for key, attr in attrs.items():
+            self.__setattr__(name=key, value=attr)
+
+    def add_relationships(self, attrs: Union[Dict[str, ContextRelationship],
+                                          List[NamedContextRelationship]]) -> None:
+        """
+        Add relationship to entity
+        Args:
+            attrs:
+        Returns:
+            None
+        """
+        if isinstance(attrs, list):
+            attrs = {attr.name: ContextRelationship(**attr.dict(exclude={'name'}))
                      for attr in attrs}
         for key, attr in attrs.items():
             self.__setattr__(name=key, value=attr)
