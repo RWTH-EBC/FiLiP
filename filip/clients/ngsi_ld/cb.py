@@ -3,6 +3,7 @@ Context Broker Module for API Client
 """
 import re
 import warnings
+from enum import Enum
 from math import inf
 from typing import Any, Dict, List, Union, Optional
 from urllib.parse import urljoin
@@ -12,20 +13,17 @@ from pydantic import \
     PositiveInt, \
     PositiveFloat
 from filip.clients.base_http_client import BaseHttpClient
+from filip.clients.ngsi_v2.cb import NgsiURLVersion
 from filip.config import settings
 from filip.models.base import FiwareHeader, PaginationMethod
+from filip.models.ngsi_ld.context import ContextLDEntity, ContextLDEntityKeyValues, ContextProperty, \
+    ContextRelationship, NamedContextProperty, NamedContextRelationship
 from filip.utils.simple_ql import QueryString
 from filip.models.ngsi_v2.context import \
     ActionType, \
     AttrsFormat, \
     Command, \
-    ContextEntity, \
-    ContextEntityKeyValues, \
-    ContextAttribute, \
     NamedCommand, \
-    NamedContextAttribute, \
-    Subscription, \
-    Registration, \
     Query, \
     Update
 
@@ -60,72 +58,8 @@ class ContextBrokerClient(BaseHttpClient):
                          session=session,
                          fiware_header=fiware_header,
                          **kwargs)
+        self._url_version = NgsiURLVersion.ld_url
 
-    def __pagination(self,
-                     *,
-                     method: PaginationMethod = PaginationMethod.GET,
-                     url: str,
-                     headers: Dict,
-                     limit: Union[PositiveInt, PositiveFloat] = None,
-                     params: Dict = None,
-                     data: str = None) -> List[Dict]:
-        """
-        NGSIv2 implements a pagination mechanism in order to help clients to
-        retrieve large sets of resources. This mechanism works for all listing
-        operations in the API (e.g. GET /v2/entities, GET /v2/subscriptions,
-        POST /v2/op/query, etc.). This function helps getting datasets that are
-        larger than the limit for the different GET operations.
-
-        https://fiware-orion.readthedocs.io/en/master/user/pagination/index.html
-
-        Args:
-            url: Information about the url, obtained from the original function
-            headers: The headers from the original function
-            params:
-            limit:
-
-        Returns:
-            object:
-
-        """
-        if limit is None:
-            limit = inf
-        if limit > 1000:
-            params['limit'] = 1000  # maximum items per request
-        else:
-            params['limit'] = limit
-
-        if self.session:
-            session = self.session
-        else:
-            session = requests.Session()
-        with session:
-            res = session.request(method=method,
-                                  url=url,
-                                  params=params,
-                                  headers=headers,
-                                  data=data)
-            if res.ok:
-                items = res.json()
-                # do pagination
-                count = int(res.headers['Fiware-Total-Count'])
-
-                while len(items) < limit and len(items) < count:
-                    # Establishing the offset from where entities are retrieved
-                    params['offset'] = len(items)
-                    params['limit'] = min(1000, (limit - len(items)))
-                    res = session.request(method=method,
-                                          url=url,
-                                          params=params,
-                                          headers=headers,
-                                          data=data)
-                    if res.ok:
-                        items.extend(res.json())
-                    else:
-                        res.raise_for_status()
-                self.logger.debug('Received: %s', items)
-                return items
-            res.raise_for_status()
 
     # MANAGEMENT API
     def get_version(self) -> Dict:
@@ -151,7 +85,7 @@ class ContextBrokerClient(BaseHttpClient):
         Returns:
             Dict
         """
-        url = urljoin(self.base_url, '/v2')
+        url = urljoin(self.base_url, self._url_version)
         try:
             res = self.get(url=url, headers=self.headers)
             if res.ok:
@@ -181,7 +115,7 @@ class ContextBrokerClient(BaseHttpClient):
     # CONTEXT MANAGEMENT API ENDPOINTS
     # Entity Operations
     def post_entity(self,
-                    entity: ContextEntity,
+                    entity: ContextLDEntity,
                     update: bool = False):
         """
         Function registers an Object with the NGSI Context Broker,
@@ -197,7 +131,7 @@ class ContextBrokerClient(BaseHttpClient):
             entity should be updated or not
             entity (ContextEntity): Context Entity Object
         """
-        url = urljoin(self.base_url, 'v2/entities')
+        url = urljoin(self.base_url, f'{self._url_version}/entities')
         headers = self.headers.copy()
         try:
             res = self.post(
@@ -230,12 +164,11 @@ class ContextBrokerClient(BaseHttpClient):
                         coords: str = None,
                         limit: int = inf,
                         attrs: List[str] = None,
-                        metadata: str = None,
                         order_by: str = None,
                         response_format: Union[AttrsFormat, str] =
                         AttrsFormat.NORMALIZED
-                        ) -> List[Union[ContextEntity,
-                                        ContextEntityKeyValues,
+                        ) -> List[Union[ContextLDEntity,
+                                        ContextLDEntityKeyValues,
                                         Dict[str, Any]]]:
         r"""
         Retrieves a list of context entities that match different criteria by
@@ -294,7 +227,7 @@ class ContextBrokerClient(BaseHttpClient):
         Returns:
 
         """
-        url = urljoin(self.base_url, 'v2/entities/')
+        url = urljoin(self.base_url, f'{self._url_version}/entities/')
         headers = self.headers.copy()
         params = {}
 
@@ -324,8 +257,6 @@ class ContextBrokerClient(BaseHttpClient):
             params.update({'typePattern': type_pattern})
         if attrs:
             params.update({'attrs': ','.join(attrs)})
-        if metadata:
-            params.update({'metadata': ','.join(metadata)})
         if q:
             params.update({'q': str(q)})
         if mq:
@@ -349,9 +280,9 @@ class ContextBrokerClient(BaseHttpClient):
                                       params=params,
                                       headers=headers)
             if AttrsFormat.NORMALIZED in response_format:
-                return parse_obj_as(List[ContextEntity], items)
+                return parse_obj_as(List[ContextLDEntity], items)
             if AttrsFormat.KEY_VALUES in response_format:
-                return parse_obj_as(List[ContextEntityKeyValues], items)
+                return parse_obj_as(List[ContextLDEntityKeyValues], items)
             return items
 
         except requests.RequestException as err:
@@ -363,10 +294,9 @@ class ContextBrokerClient(BaseHttpClient):
                    entity_id: str,
                    entity_type: str = None,
                    attrs: List[str] = None,
-                   metadata: List[str] = None,
                    response_format: Union[AttrsFormat, str] =
                    AttrsFormat.NORMALIZED) \
-            -> Union[ContextEntity, ContextEntityKeyValues, Dict[str, Any]]:
+            -> Union[ContextLDEntity, ContextLDEntityKeyValues, Dict[str, Any]]:
         """
         This operation must return one entity element only, but there may be
         more than one entity with the same ID (e.g. entities with same ID but
@@ -393,15 +323,14 @@ class ContextBrokerClient(BaseHttpClient):
         Returns:
             ContextEntity
         """
-        url = urljoin(self.base_url, f'v2/entities/{entity_id}')
+        url = urljoin(self.base_url, f'{self._url_version}/entities/{entity_id}')
         headers = self.headers.copy()
         params = {}
         if entity_type:
             params.update({'type': entity_type})
         if attrs:
             params.update({'attrs': ','.join(attrs)})
-        if metadata:
-            params.update({'metadata': ','.join(metadata)})
+
         if response_format not in list(AttrsFormat):
             raise ValueError(f'Value must be in {list(AttrsFormat)}')
         params.update({'options': response_format})
@@ -412,9 +341,9 @@ class ContextBrokerClient(BaseHttpClient):
                 self.logger.info("Entity successfully retrieved!")
                 self.logger.debug("Received: %s", res.json())
                 if response_format == AttrsFormat.NORMALIZED:
-                    return ContextEntity(**res.json())
+                    return ContextLDEntity(**res.json())
                 if response_format == AttrsFormat.KEY_VALUES:
-                    return ContextEntityKeyValues(**res.json())
+                    return ContextLDEntityKeyValues(**res.json())
                 return res.json()
             res.raise_for_status()
         except requests.RequestException as err:
@@ -426,10 +355,9 @@ class ContextBrokerClient(BaseHttpClient):
                               entity_id: str,
                               entity_type: str = None,
                               attrs: List[str] = None,
-                              metadata: List[str] = None,
                               response_format: Union[AttrsFormat, str] =
                               AttrsFormat.NORMALIZED) -> \
-            Dict[str, ContextAttribute]:
+            Dict[str, Union[ ContextProperty, ContextRelationship]]:
         """
         This request is similar to retrieving the whole entity, however this
         one omits the id and type fields. Just like the general request of
@@ -458,15 +386,13 @@ class ContextBrokerClient(BaseHttpClient):
         Returns:
             Dict
         """
-        url = urljoin(self.base_url, f'v2/entities/{entity_id}/attrs')
+        url = urljoin(self.base_url, f'{self._url_version}/entities/{entity_id}/attrs')
         headers = self.headers.copy()
         params = {}
         if entity_type:
             params.update({'type': entity_type})
         if attrs:
             params.update({'attrs': ','.join(attrs)})
-        if metadata:
-            params.update({'metadata': ','.join(metadata)})
         if response_format not in list(AttrsFormat):
             raise ValueError(f'Value must be in {list(AttrsFormat)}')
         params.update({'options': response_format})
@@ -474,8 +400,13 @@ class ContextBrokerClient(BaseHttpClient):
             res = self.get(url=url, params=params, headers=headers)
             if res.ok:
                 if response_format == AttrsFormat.NORMALIZED:
-                    return {key: ContextAttribute(**values)
-                            for key, values in res.json().items()}
+                    attr = {}
+                    for key, values in res.json().items():
+                        if "value" in values:
+                            attr[key] = ContextProperty(**values)
+                        else:
+                            attr[key] = ContextRelationship(**values)
+                    return attr
                 return res.json()
             res.raise_for_status()
         except requests.RequestException as err:
@@ -484,7 +415,7 @@ class ContextBrokerClient(BaseHttpClient):
             raise
 
     def update_entity(self,
-                      entity: ContextEntity,
+                      entity: ContextLDEntity,
                       options: str = None,
                       append=False):
         """
@@ -497,7 +428,7 @@ class ContextBrokerClient(BaseHttpClient):
         Returns:
 
         """
-        url = urljoin(self.base_url, f'v2/entities/{entity.id}/attrs')
+        url = urljoin(self.base_url, f'{self._url_version}/entities/{entity.id}/attrs')
         headers = self.headers.copy()
         params = {}
         if options:
@@ -517,37 +448,8 @@ class ContextBrokerClient(BaseHttpClient):
             self.log_error(err=err, msg=msg)
             raise
 
-    def delete_entity(self, entity_id: str, entity_type: str = None) -> None:
-
-        """
-        Remove a entity from the context broker. No payload is required
-        or received.
-
-        Args:
-            entity_id: Id of the entity to be deleted
-            entity_type: several entities with the same entity id.
-        Returns:
-            None
-        """
-        url = urljoin(self.base_url, f'v2/entities/{entity_id}')
-        headers = self.headers.copy()
-        if entity_type:
-            params = {'type': entity_type}
-        else:
-            params = {}
-        try:
-            res = self.delete(url=url, params=params, headers=headers)
-            if res.ok:
-                self.logger.info("Entity '%s' successfully deleted!", entity_id)
-            else:
-                res.raise_for_status()
-        except requests.RequestException as err:
-            msg = f"Could not delete entity {entity_id} !"
-            self.log_error(err=err, msg=msg)
-            raise
-
     def replace_entity_attributes(self,
-                                  entity: ContextEntity,
+                                  entity: ContextLDEntity,
                                   options: str = None,
                                   append: bool = True):
         """
@@ -561,7 +463,7 @@ class ContextBrokerClient(BaseHttpClient):
         Returns:
 
         """
-        url = urljoin(self.base_url, f'v2/entities/{entity.id}/attrs')
+        url = urljoin(self.base_url, f'{self._url_version}/entities/{entity.id}/attrs')
         headers = self.headers.copy()
         params = {}
         if options:
@@ -587,8 +489,7 @@ class ContextBrokerClient(BaseHttpClient):
                       entity_id: str,
                       attr_name: str,
                       entity_type: str = None,
-                      metadata: str = None,
-                      response_format = '') -> ContextAttribute:
+                      response_format = '') -> Union[ContextProperty, ContextRelationship]:
         """
         Retrieves a specified attribute from an entity.
 
@@ -608,18 +509,19 @@ class ContextBrokerClient(BaseHttpClient):
 
         """
         url = urljoin(self.base_url,
-                      f'v2/entities/{entity_id}/attrs/{attr_name}')
+                      f'{self._url_version}/entities/{entity_id}/attrs/{attr_name}')
         headers = self.headers.copy()
         params = {}
         if entity_type:
             params.update({'type': entity_type})
-        if metadata:
-            params.update({'metadata': ','.join(metadata)})
         try:
             res = self.get(url=url, params=params, headers=headers)
             if res.ok:
                 self.logger.debug('Received: %s', res.json())
-                return ContextAttribute(**res.json())
+                if "property" in res.json():
+                    return ContextProperty(**res.json())
+                else:
+                    return ContextRelationship(**res.json())
             res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Could not load attribute '{attr_name}' from entity" \
@@ -629,8 +531,8 @@ class ContextBrokerClient(BaseHttpClient):
 
     def update_entity_attribute(self,
                                 entity_id: str,
-                                attr: Union[ContextAttribute,
-                                            NamedContextAttribute],
+                                attr: Union[ContextProperty, ContextRelationship,
+                                            NamedContextProperty, NamedContextRelationship],
                                 *,
                                 entity_type: str = None,
                                 attr_name: str = None):
@@ -643,7 +545,7 @@ class ContextBrokerClient(BaseHttpClient):
             several entities with the same entity id.
         """
         headers = self.headers.copy()
-        if not isinstance(attr, NamedContextAttribute):
+        if not isinstance(attr, NamedContextProperty) or not  isinstance(attr, NamedContextRelationship):
             assert attr_name is not None, "Missing name for attribute. " \
                                           "attr_name must be present if" \
                                           "attr is of type ContextAttribute"
@@ -654,7 +556,7 @@ class ContextBrokerClient(BaseHttpClient):
             attr_name = attr.name
 
         url = urljoin(self.base_url,
-                      f'v2/entities/{entity_id}/attrs/{attr_name}')
+                      f'{self._url_version}/entities/{entity_id}/attrs/{attr_name}')
         params = {}
         if entity_type:
             params.update({'type': entity_type})
@@ -675,476 +577,299 @@ class ContextBrokerClient(BaseHttpClient):
             self.log_error(err=err, msg=msg)
             raise
 
-    def delete_entity_attribute(self,
-                                entity_id: str,
-                                attr_name: str,
-                                entity_type: str = None) -> None:
-        """
-        Removes a specified attribute from an entity.
-        Args:
-            entity_id: Id of the entity.
-            attr_name: Name of the attribute to be retrieved.
-            entity_type: Entity type, to avoid ambiguity in case there are
-            several entities with the same entity id.
-        Raises:
-            Error
-
-        """
-        url = urljoin(self.base_url,
-                      f'v2/entities/{entity_id}/attrs/{attr_name}')
-        headers = self.headers.copy()
-        params = {}
-        if entity_type:
-            params.update({'type': entity_type})
-        try:
-            res = self.delete(url=url, headers=headers)
-            if res.ok:
-                self.logger.info("Attribute '%s' of '%s' "
-                                 "successfully deleted!", attr_name, entity_id)
-            else:
-                res.raise_for_status()
-        except requests.RequestException as err:
-            msg = f"Could not delete attribute '{attr_name}' of entity" \
-                  f"'{entity_id}' "
-            self.log_error(err=err, msg=msg)
-            raise
-
-    # Attribute value operations
-    def get_attribute_value(self,
-                            entity_id: str,
-                            attr_name: str,
-                            entity_type: str = None) -> Any:
-        """
-        This operation returns the value property with the value of the
-        attribute.
-
-        Args:
-            entity_id: Id of the entity. Example: Bcn_Welt
-            attr_name: Name of the attribute to be retrieved.
-                Example: temperature.
-            entity_type: Entity type, to avoid ambiguity in case there are
-                several entities with the same entity id.
-
-        Returns:
-
-        """
-        url = urljoin(self.base_url,
-                      f'v2/entities/{entity_id}/attrs/{attr_name}/value')
-        headers = self.headers.copy()
-        params = {}
-        if entity_type:
-            params.update({'type': entity_type})
-        try:
-            res = self.get(url=url, params=params, headers=headers)
-            if res.ok:
-                self.logger.debug('Received: %s', res.json())
-                return res.json()
-            res.raise_for_status()
-        except requests.RequestException as err:
-            msg = f"Could not load value of attribute '{attr_name}' from " \
-                  f"entity'{entity_id}' "
-            self.log_error(err=err, msg=msg)
-            raise
-
-    def update_attribute_value(self, *,
-                               entity_id: str,
-                               attr_name: str,
-                               value: Any,
-                               entity_type: str = None):
-        """
-        Updates the value of a specified attribute of an entity
-
-        Args:
-            value: update value
-            entity_id: Id of the entity. Example: Bcn_Welt
-            attr_name: Name of the attribute to be retrieved.
-                Example: temperature.
-            entity_type: Entity type, to avoid ambiguity in case there are
-                several entities with the same entity id.
-        Returns:
-
-        """
-        url = urljoin(self.base_url,
-                      f'v2/entities/{entity_id}/attrs/{attr_name}/value')
-        headers = self.headers.copy()
-        params = {}
-        if entity_type:
-            params.update({'type': entity_type})
-        try:
-            if not isinstance(value, (dict, list)):
-                headers.update({'Content-Type': 'text/plain'})
-                if isinstance(value, str):
-                    value = f'"{value}"'
-                res = self.put(url=url,
-                               headers=headers,
-                               json=value)
-            else:
-                res = self.put(url=url,
-                               headers=headers,
-                               json=value)
-            if res.ok:
-                self.logger.info("Attribute '%s' of '%s' "
-                                 "successfully updated!", attr_name, entity_id)
-            else:
-                res.raise_for_status()
-        except requests.RequestException as err:
-            msg = f"Could not update value of attribute '{attr_name}' from " \
-                  f"entity '{entity_id}' "
-            self.log_error(err=err, msg=msg)
-            raise
-
-    # Types Operations
-    def get_entity_types(self,
-                         *,
-                         limit: int = None,
-                         offset: int = None,
-                         options: str = None) -> List[Dict[str, Any]]:
-        """
-
-        Args:
-            limit: Limit the number of types to be retrieved.
-            offset: Skip a number of records.
-            options: Options dictionary. Allowed: count, values
-
-        Returns:
-
-        """
-        url = urljoin(self.base_url, 'v2/types')
-        headers = self.headers.copy()
-        params = {}
-        if limit:
-            params.update({'limit': limit})
-        if offset:
-            params.update({'offset': offset})
-        if options:
-            params.update({'options': options})
-        try:
-            res = self.get(url=url, params=params, headers=headers)
-            if res.ok:
-                self.logger.debug('Received: %s', res.json())
-                return res.json()
-            res.raise_for_status()
-        except requests.RequestException as err:
-            msg = "Could not load entity types!"
-            self.log_error(err=err, msg=msg)
-            raise
-
-    def get_entity_type(self, entity_type: str) -> Dict[str, Any]:
-        """
-
-        Args:
-            entity_type: Entity Type. Example: Room
-
-        Returns:
-
-        """
-        url = urljoin(self.base_url, f'v2/types/{entity_type}')
-        headers = self.headers.copy()
-        params = {}
-        try:
-            res = self.get(url=url, params=params, headers=headers)
-            if res.ok:
-                self.logger.debug('Received: %s', res.json())
-                return res.json()
-            res.raise_for_status()
-        except requests.RequestException as err:
-            msg = f"Could not load entities of type" \
-                  f"'{entity_type}' "
-            self.log_error(err=err, msg=msg)
-            raise
-
-    # SUBSCRIPTION API ENDPOINTS
-    def get_subscription_list(self,
-                              limit: PositiveInt = inf) -> List[Subscription]:
-        """
-        Returns a list of all the subscriptions present in the system.
-        Args:
-            limit: Limit the number of subscriptions to be retrieved
-        Returns:
-            list of subscriptions
-        """
-        url = urljoin(self.base_url, 'v2/subscriptions/')
-        headers = self.headers.copy()
-        params = {}
-
-        # We always use the 'count' option to check weather pagination is
-        # required
-        params.update({'options': 'count'})
-        try:
-            items = self.__pagination(limit=limit,
-                                      url=url,
-                                      params=params,
-                                      headers=headers)
-            return parse_obj_as(List[Subscription], items)
-        except requests.RequestException as err:
-            msg = "Could not load subscriptions!"
-            self.log_error(err=err, msg=msg)
-            raise
-
-    def post_subscription(self, subscription: Subscription,
-                          update: bool = False) -> str:
-        """
-        Creates a new subscription. The subscription is represented by a
-        Subscription object defined in filip.cb.models.
-
-        If the subscription already exists, the adding is prevented and the id
-        of the existing subscription is returned.
-
-        A subscription is deemed as already existing if there exists a
-        subscription with the exact same subject and notification fields. All
-        optional fields are not considered.
-
-        Args:
-            subscription: Subscription
-            update: True - If the subscription already exists, update it
-                    False- If the subscription already exists, throw warning
-        Returns:
-            str: Id of the (created) subscription
-
-        """
-        existing_subscriptions = self.get_subscription_list()
-
-        sub_hash = subscription.json(include={'subject', 'notification'})
-        for ex_sub in existing_subscriptions:
-            if sub_hash == ex_sub.json(include={'subject', 'notification'}):
-                self.logger.info("Subscription already exists")
-                if update:
-                    self.logger.info("Updated subscription")
-                    subscription.id = ex_sub.id
-                    self.update_subscription(subscription)
-                else:
-                    warnings.warn(f"Subscription existed already with the id"
-                                  f" {ex_sub.id}")
-                return ex_sub.id
-
-        url = urljoin(self.base_url, 'v2/subscriptions')
-        headers = self.headers.copy()
-        headers.update({'Content-Type': 'application/json'})
-        try:
-            res = self.post(
-                url=url,
-                headers=headers,
-                data=subscription.json(exclude={'id'},
-                                       exclude_unset=True,
-                                       exclude_defaults=True,
-                                       exclude_none=True))
-            if res.ok:
-                self.logger.info("Subscription successfully created!")
-                return res.headers['Location'].split('/')[-1]
-            res.raise_for_status()
-        except requests.RequestException as err:
-            msg = "Could not send subscription!"
-            self.log_error(err=err, msg=msg)
-            raise
-
-    def get_subscription(self, subscription_id: str) -> Subscription:
-        """
-        Retrieves a subscription from
-        Args:
-            subscription_id: id of the subscription
-
-        Returns:
-
-        """
-        url = urljoin(self.base_url, f'v2/subscriptions/{subscription_id}')
-        headers = self.headers.copy()
-        try:
-            res = self.get(url=url, headers=headers)
-            if res.ok:
-                self.logger.debug('Received: %s', res.json())
-                return Subscription(**res.json())
-            res.raise_for_status()
-        except requests.RequestException as err:
-            msg = f"Could not load subscription {subscription_id}"
-            self.log_error(err=err, msg=msg)
-            raise
-
-    def update_subscription(self, subscription: Subscription):
-        """
-        Only the fields included in the request are updated in the subscription.
-        Args:
-            subscription: Subscription to update
-        Returns:
-
-        """
-        url = urljoin(self.base_url, f'v2/subscriptions/{subscription.id}')
-        headers = self.headers.copy()
-        headers.update({'Content-Type': 'application/json'})
-        try:
-            res = self.patch(
-                url=url,
-                headers=headers,
-                data=subscription.json(exclude={'id'},
-                                       exclude_unset=True,
-                                       exclude_defaults=True,
-                                       exclude_none=True))
-            if res.ok:
-                self.logger.info("Subscription successfully updated!")
-            else:
-                res.raise_for_status()
-        except requests.RequestException as err:
-            msg = f"Could not update subscription {subscription.id}"
-            self.log_error(err=err, msg=msg)
-            raise
-
-    def delete_subscription(self, subscription_id: str) -> None:
-        """
-        Deletes a subscription from a Context Broker
-        Args:
-            subscription_id: id of the subscription
-        """
-        url = urljoin(self.base_url,
-                      f'v2/subscriptions/{subscription_id}')
-        headers = self.headers.copy()
-        try:
-            res = self.delete(url=url, headers=headers)
-            if res.ok:
-                self.logger.info(f"Subscription '{subscription_id}' "
-                                 f"successfully deleted!")
-            else:
-                res.raise_for_status()
-        except requests.RequestException as err:
-            msg = f"Could not delete subscription {subscription_id}"
-            self.log_error(err=err, msg=msg)
-            raise
-
-    # Registration API
-    def get_registration_list(self,
-                              *,
-                              limit: PositiveInt = None) -> List[Registration]:
-        """
-        Lists all the context provider registrations present in the system.
-
-        Args:
-            limit: Limit the number of registrations to be retrieved
-        Returns:
-
-        """
-        url = urljoin(self.base_url, 'v2/registrations/')
-        headers = self.headers.copy()
-        params = {}
-
-        # We always use the 'count' option to check weather pagination is
-        # required
-        params.update({'options': 'count'})
-        try:
-            items = self.__pagination(limit=limit,
-                                      url=url,
-                                      params=params,
-                                      headers=headers)
-
-            return parse_obj_as(List[Registration], items)
-        except requests.RequestException as err:
-            msg = "Could not load registrations!"
-            self.log_error(err=err, msg=msg)
-            raise
-
-    def post_registration(self, registration: Registration):
-        """
-        Creates a new context provider registration. This is typically used
-        for binding context sources as providers of certain data. The
-        registration is represented by cb.models.Registration
-
-        Args:
-            registration (Registration):
-
-        Returns:
-
-        """
-        url = urljoin(self.base_url, 'v2/registrations')
-        headers = self.headers.copy()
-        headers.update({'Content-Type': 'application/json'})
-        try:
-            res = self.post(
-                url=url,
-                headers=headers,
-                data=registration.json(exclude={'id'},
-                                       exclude_unset=True,
-                                       exclude_defaults=True,
-                                       exclude_none=True))
-            if res.ok:
-                self.logger.info("Registration successfully created!")
-                return res.headers['Location'].split('/')[-1]
-            res.raise_for_status()
-        except requests.RequestException as err:
-            msg = f"Could not send registration {registration.id} !"
-            self.log_error(err=err, msg=msg)
-            raise
-
-    def get_registration(self, registration_id: str) -> Registration:
-        """
-        Retrieves a registration from context broker by id
-        Args:
-            registration_id: id of the registration
-        Returns:
-            Registration
-        """
-        url = urljoin(self.base_url, f'v2/registrations/{registration_id}')
-        headers = self.headers.copy()
-        try:
-            res = self.get(url=url, headers=headers)
-            if res.ok:
-                self.logger.debug('Received: %s', res.json())
-                return Registration(**res.json())
-            res.raise_for_status()
-        except requests.RequestException as err:
-            msg = f"Could not load registration {registration_id} !"
-            self.log_error(err=err, msg=msg)
-            raise
-
-    def update_registration(self, registration: Registration):
-        """
-        Only the fields included in the request are updated in the registration.
-        Args:
-            registration: Registration to update
-        Returns:
-
-        """
-        url = urljoin(self.base_url, f'v2/registrations/{registration.id}')
-        headers = self.headers.copy()
-        headers.update({'Content-Type': 'application/json'})
-        try:
-            res = self.patch(
-                url=url,
-                headers=headers,
-                data=registration.json(exclude={'id'},
-                                       exclude_unset=True,
-                                       exclude_defaults=True,
-                                       exclude_none=True))
-            if res.ok:
-                self.logger.info("Registration successfully updated!")
-            else:
-                res.raise_for_status()
-        except requests.RequestException as err:
-            msg = f"Could not update registration {registration.id} !"
-            self.log_error(err=err, msg=msg)
-            raise
-
-    def delete_registration(self, registration_id: str) -> None:
-        """
-        Deletes a subscription from a Context Broker
-        Args:
-            registration_id: id of the subscription
-        """
-        url = urljoin(self.base_url,
-                      f'v2/registrations/{registration_id}')
-        headers = self.headers.copy()
-        try:
-            res = self.delete(url=url, headers=headers)
-            if res.ok:
-                self.logger.info("Registration '%s' "
-                                 "successfully deleted!", registration_id)
-            res.raise_for_status()
-        except requests.RequestException as err:
-            msg = f"Could not delete registration {registration_id} !"
-            self.log_error(err=err, msg=msg)
-            raise
+    #
+    # # SUBSCRIPTION API ENDPOINTS
+    # def get_subscription_list(self,
+    #                           limit: PositiveInt = inf) -> List[Subscription]:
+    #     """
+    #     Returns a list of all the subscriptions present in the system.
+    #     Args:
+    #         limit: Limit the number of subscriptions to be retrieved
+    #     Returns:
+    #         list of subscriptions
+    #     """
+    #     url = urljoin(self.base_url, f'{self._url_version}/subscriptions/')
+    #     headers = self.headers.copy()
+    #     params = {}
+    #
+    #     # We always use the 'count' option to check weather pagination is
+    #     # required
+    #     params.update({'options': 'count'})
+    #     try:
+    #         items = self.__pagination(limit=limit,
+    #                                   url=url,
+    #                                   params=params,
+    #                                   headers=headers)
+    #         return parse_obj_as(List[Subscription], items)
+    #     except requests.RequestException as err:
+    #         msg = "Could not load subscriptions!"
+    #         self.log_error(err=err, msg=msg)
+    #         raise
+    #
+    # def post_subscription(self, subscription: Subscription,
+    #                       update: bool = False) -> str:
+    #     """
+    #     Creates a new subscription. The subscription is represented by a
+    #     Subscription object defined in filip.cb.models.
+    #
+    #     If the subscription already exists, the adding is prevented and the id
+    #     of the existing subscription is returned.
+    #
+    #     A subscription is deemed as already existing if there exists a
+    #     subscription with the exact same subject and notification fields. All
+    #     optional fields are not considered.
+    #
+    #     Args:
+    #         subscription: Subscription
+    #         update: True - If the subscription already exists, update it
+    #                 False- If the subscription already exists, throw warning
+    #     Returns:
+    #         str: Id of the (created) subscription
+    #
+    #     """
+    #     existing_subscriptions = self.get_subscription_list()
+    #
+    #     sub_hash = subscription.json(include={'subject', 'notification'})
+    #     for ex_sub in existing_subscriptions:
+    #         if sub_hash == ex_sub.json(include={'subject', 'notification'}):
+    #             self.logger.info("Subscription already exists")
+    #             if update:
+    #                 self.logger.info("Updated subscription")
+    #                 subscription.id = ex_sub.id
+    #                 self.update_subscription(subscription)
+    #             else:
+    #                 warnings.warn(f"Subscription existed already with the id"
+    #                               f" {ex_sub.id}")
+    #             return ex_sub.id
+    #
+    #     url = urljoin(self.base_url, 'v2/subscriptions')
+    #     headers = self.headers.copy()
+    #     headers.update({'Content-Type': 'application/json'})
+    #     try:
+    #         res = self.post(
+    #             url=url,
+    #             headers=headers,
+    #             data=subscription.json(exclude={'id'},
+    #                                    exclude_unset=True,
+    #                                    exclude_defaults=True,
+    #                                    exclude_none=True))
+    #         if res.ok:
+    #             self.logger.info("Subscription successfully created!")
+    #             return res.headers['Location'].split('/')[-1]
+    #         res.raise_for_status()
+    #     except requests.RequestException as err:
+    #         msg = "Could not send subscription!"
+    #         self.log_error(err=err, msg=msg)
+    #         raise
+    #
+    # def get_subscription(self, subscription_id: str) -> Subscription:
+    #     """
+    #     Retrieves a subscription from
+    #     Args:
+    #         subscription_id: id of the subscription
+    #
+    #     Returns:
+    #
+    #     """
+    #     url = urljoin(self.base_url, f'{self._url_version}/subscriptions/{subscription_id}')
+    #     headers = self.headers.copy()
+    #     try:
+    #         res = self.get(url=url, headers=headers)
+    #         if res.ok:
+    #             self.logger.debug('Received: %s', res.json())
+    #             return Subscription(**res.json())
+    #         res.raise_for_status()
+    #     except requests.RequestException as err:
+    #         msg = f"Could not load subscription {subscription_id}"
+    #         self.log_error(err=err, msg=msg)
+    #         raise
+    #
+    # def update_subscription(self, subscription: Subscription):
+    #     """
+    #     Only the fields included in the request are updated in the subscription.
+    #     Args:
+    #         subscription: Subscription to update
+    #     Returns:
+    #
+    #     """
+    #     url = urljoin(self.base_url, f'{self._url_version}/subscriptions/{subscription.id}')
+    #     headers = self.headers.copy()
+    #     headers.update({'Content-Type': 'application/json'})
+    #     try:
+    #         res = self.patch(
+    #             url=url,
+    #             headers=headers,
+    #             data=subscription.json(exclude={'id'},
+    #                                    exclude_unset=True,
+    #                                    exclude_defaults=True,
+    #                                    exclude_none=True))
+    #         if res.ok:
+    #             self.logger.info("Subscription successfully updated!")
+    #         else:
+    #             res.raise_for_status()
+    #     except requests.RequestException as err:
+    #         msg = f"Could not update subscription {subscription.id}"
+    #         self.log_error(err=err, msg=msg)
+    #         raise
+    #
+    # def delete_subscription(self, subscription_id: str) -> None:
+    #     """
+    #     Deletes a subscription from a Context Broker
+    #     Args:
+    #         subscription_id: id of the subscription
+    #     """
+    #     url = urljoin(self.base_url,
+    #                   f'{self._url_version}/subscriptions/{subscription_id}')
+    #     headers = self.headers.copy()
+    #     try:
+    #         res = self.delete(url=url, headers=headers)
+    #         if res.ok:
+    #             self.logger.info(f"Subscription '{subscription_id}' "
+    #                              f"successfully deleted!")
+    #         else:
+    #             res.raise_for_status()
+    #     except requests.RequestException as err:
+    #         msg = f"Could not delete subscription {subscription_id}"
+    #         self.log_error(err=err, msg=msg)
+    #         raise
+    #
+    # # Registration API
+    # def get_registration_list(self,
+    #                           *,
+    #                           limit: PositiveInt = None) -> List[Registration]:
+    #     """
+    #     Lists all the context provider registrations present in the system.
+    #
+    #     Args:
+    #         limit: Limit the number of registrations to be retrieved
+    #     Returns:
+    #
+    #     """
+    #     url = urljoin(self.base_url, f'{self._url_version}/registrations/')
+    #     headers = self.headers.copy()
+    #     params = {}
+    #
+    #     # We always use the 'count' option to check weather pagination is
+    #     # required
+    #     params.update({'options': 'count'})
+    #     try:
+    #         items = self.__pagination(limit=limit,
+    #                                   url=url,
+    #                                   params=params,
+    #                                   headers=headers)
+    #
+    #         return parse_obj_as(List[Registration], items)
+    #     except requests.RequestException as err:
+    #         msg = "Could not load registrations!"
+    #         self.log_error(err=err, msg=msg)
+    #         raise
+    #
+    # def post_registration(self, registration: Registration):
+    #     """
+    #     Creates a new context provider registration. This is typically used
+    #     for binding context sources as providers of certain data. The
+    #     registration is represented by cb.models.Registration
+    #
+    #     Args:
+    #         registration (Registration):
+    #
+    #     Returns:
+    #
+    #     """
+    #     url = urljoin(self.base_url, f'{self._url_version}/registrations')
+    #     headers = self.headers.copy()
+    #     headers.update({'Content-Type': 'application/json'})
+    #     try:
+    #         res = self.post(
+    #             url=url,
+    #             headers=headers,
+    #             data=registration.json(exclude={'id'},
+    #                                    exclude_unset=True,
+    #                                    exclude_defaults=True,
+    #                                    exclude_none=True))
+    #         if res.ok:
+    #             self.logger.info("Registration successfully created!")
+    #             return res.headers['Location'].split('/')[-1]
+    #         res.raise_for_status()
+    #     except requests.RequestException as err:
+    #         msg = f"Could not send registration {registration.id} !"
+    #         self.log_error(err=err, msg=msg)
+    #         raise
+    #
+    # def get_registration(self, registration_id: str) -> Registration:
+    #     """
+    #     Retrieves a registration from context broker by id
+    #     Args:
+    #         registration_id: id of the registration
+    #     Returns:
+    #         Registration
+    #     """
+    #     url = urljoin(self.base_url, f'{self._url_version}/registrations/{registration_id}')
+    #     headers = self.headers.copy()
+    #     try:
+    #         res = self.get(url=url, headers=headers)
+    #         if res.ok:
+    #             self.logger.debug('Received: %s', res.json())
+    #             return Registration(**res.json())
+    #         res.raise_for_status()
+    #     except requests.RequestException as err:
+    #         msg = f"Could not load registration {registration_id} !"
+    #         self.log_error(err=err, msg=msg)
+    #         raise
+    #
+    # def update_registration(self, registration: Registration):
+    #     """
+    #     Only the fields included in the request are updated in the registration.
+    #     Args:
+    #         registration: Registration to update
+    #     Returns:
+    #
+    #     """
+    #     url = urljoin(self.base_url, f'{self._url_version}/registrations/{registration.id}')
+    #     headers = self.headers.copy()
+    #     headers.update({'Content-Type': 'application/json'})
+    #     try:
+    #         res = self.patch(
+    #             url=url,
+    #             headers=headers,
+    #             data=registration.json(exclude={'id'},
+    #                                    exclude_unset=True,
+    #                                    exclude_defaults=True,
+    #                                    exclude_none=True))
+    #         if res.ok:
+    #             self.logger.info("Registration successfully updated!")
+    #         else:
+    #             res.raise_for_status()
+    #     except requests.RequestException as err:
+    #         msg = f"Could not update registration {registration.id} !"
+    #         self.log_error(err=err, msg=msg)
+    #         raise
+    #
+    # def delete_registration(self, registration_id: str) -> None:
+    #     """
+    #     Deletes a subscription from a Context Broker
+    #     Args:
+    #         registration_id: id of the subscription
+    #     """
+    #     url = urljoin(self.base_url,
+    #                   f'{self._url_version}/registrations/{registration_id}')
+    #     headers = self.headers.copy()
+    #     try:
+    #         res = self.delete(url=url, headers=headers)
+    #         if res.ok:
+    #             self.logger.info("Registration '%s' "
+    #                              "successfully deleted!", registration_id)
+    #         res.raise_for_status()
+    #     except requests.RequestException as err:
+    #         msg = f"Could not delete registration {registration_id} !"
+    #         self.log_error(err=err, msg=msg)
+    #         raise
 
     # Batch operation API
     def update(self,
                *,
-               entities: List[ContextEntity],
-               action_type: Union[ActionType, str],
+               entities: List[ContextLDEntity],
+               action_type: Union[ActionType, str], #TODO: repalce ActionType
                update_format: str = None) -> None:
         """
         This operation allows to create, update and/or delete several entities
@@ -1182,7 +907,7 @@ class ContextBrokerClient(BaseHttpClient):
 
         """
 
-        url = urljoin(self.base_url, 'v2/op/update')
+        url = urljoin(self.base_url, f'{self._url_version}/entityOperations/{action_type}')
         headers = self.headers.copy()
         headers.update({'Content-Type': 'application/json'})
         params = {}
@@ -1190,7 +915,7 @@ class ContextBrokerClient(BaseHttpClient):
             assert update_format == 'keyValues', \
                 "Only 'keyValues' is allowed as update format"
             params.update({'options': 'keyValues'})
-        update = Update(actionType=action_type, entities=entities)
+        update = Update(entities=entities)
         try:
             res = self.post(
                 url=url,
@@ -1227,305 +952,7 @@ class ContextBrokerClient(BaseHttpClient):
             follow the JSON entity representation format (described in the
             section "JSON Entity Representation").
         """
-        url = urljoin(self.base_url, 'v2/op/query')
-        headers = self.headers.copy()
-        headers.update({'Content-Type': 'application/json'})
-        params = {'options': 'count'}
 
-        if response_format:
-            if response_format not in list(AttrsFormat):
-                raise ValueError(f'Value must be in {list(AttrsFormat)}')
-            params['options'] = ','.join([response_format, 'count'])
-        try:
-            items = self.__pagination(method=PaginationMethod.POST,
-                                      url=url,
-                                      headers=headers,
-                                      params=params,
-                                      data=query.json(exclude_unset=True,
-                                                      exclude_none=True),
-                                      limit=limit)
-            if response_format == AttrsFormat.NORMALIZED:
-                return parse_obj_as(List[ContextEntity], items)
-            if response_format == AttrsFormat.KEY_VALUES:
-                return parse_obj_as(List[ContextEntityKeyValues], items)
-            return items
-        except requests.RequestException as err:
-            msg = "Query operation failed!"
-            self.log_error(err=err, msg=msg)
-            raise
+        self.log_error(err=Exception, msg="not yet implemented (by FIWARE)")
 
-    def post_command(self,
-                     *,
-                     entity_id: str,
-                     entity_type: str,
-                     command: Union[Command, NamedCommand, Dict],
-                     command_name: str = None) -> None:
-        """
-        Post a command to a context entity
-        Args:
-            entity_id: Entity identifier
-            command: Command
-            entity_type: Entity type
-            command_name: Name of the command in the entity
-        Returns:
-            None
-        """
-        url = urljoin(self.base_url, f'v2/entities/{entity_id}/attrs')
-        headers = self.headers.copy()
-        params = {"type": entity_type}
-        if command_name:
-            assert isinstance(command, (Command, dict))
-            if isinstance(command, dict):
-                command = Command(**command)
-            command = {command_name: command.dict()}
-        else:
-            assert isinstance(command, (NamedCommand, dict))
-            if isinstance(command, dict):
-                command = NamedCommand(**command)
-            command = {command.name: command.dict(exclude={'name'})}
-        try:
-            res = self.patch(url=url,
-                             headers=headers,
-                             params=params,
-                             json=command)
-            if res.ok:
-                return
-            res.raise_for_status()
-        except requests.RequestException as err:
-            msg = "Query operation failed!"
-            self.log_error(err=err, msg=msg)
-            raise
 
-#    def get_subjects(self, object_entity_name: str, object_entity_type: str, subject_type=None):
-#        """
-#        Function gets the JSON for child / subject entities for a parent /
-#        object entity.
-#        :param object_entity_name: The parent / object entity name
-#        :param object_entity_type: The type of the parent / object entity
-#        :param subject_type: optional parameter, if added only those child /
-#        subject entities are returned that match the type
-#        :return: JSON containing the child / subject information
-#        """
-#        url = self.url + '/v2/entities/?q=ref' + object_entity_type + '==' + object_entity_name + '&options=count'
-#        if subject_type is not None:
-#            url = url + '&attrs=type&type=' + subject_type
-#        headers = self.get_header()
-#        response = self.session.get(url=url, headers=headers, )
-#        ok, retstr = requtils.response_ok(response)
-#        if not ok:
-#            level, retstr = requtils.logging_switch(response)
-#            self.log_switch(level, retstr)
-#        else:
-#            return response.text
-#
-#    def get_objects(self, subject_entity_name: str, subject_entity_type:
-#    str, object_type=None):
-#        """
-#        Function returns a List of all objects associated to a subject. If
-#        object type is not None,
-#        only those are returned, that match the object type.
-#        :param subject_entity_name: The child / subject entity name
-#        :param subject_entity_type: The type of the child / subject entity
-#        :param object_type:
-#        :return: List containing all associated objects
-#        """
-#        url = self.url + '/v2/entities/' + subject_entity_name + '/?type=' + subject_entity_type + '&options=keyValues'
-#        if object_type is not None:
-#            url = url + '&attrs=ref' + object_type
-#        headers = self.get_header()
-#        response = self.session.get(url=url, headers=headers)
-#        ok, retstr = requtils.response_ok(response)
-#        if not ok:
-#            level, retstr = requtils.logging_switch(response)
-#            self.log_switch(level, retstr)
-#        else:
-#            return response.text
-#
-#    def get_associated(self, name: str, entity_type: str,
-#    associated_type=None):
-#        """
-#        Function returns all associated data for a given entity name and type
-#        :param name: name of the entity
-#        :param entity_type: type of the entity
-#        :param associated_type: if only associated data of one type should
-#        be returned, this parameter has to be the type
-#        :return: A dictionary, containing the data of the entity,
-#        a key "subjects" and "objects" that contain each a list
-#                with the reflective data
-#        """
-#        data_dict = {}
-#        associated_objects = self.get_objects(subject_entity_name=name,
-#        subject_entity_type=entity_type,
-#                                              object_type=associated_type)
-#        associated_subjects = self.get_subjects(object_entity_name=name,
-#        object_entity_type=entity_type,
-#                                                subject_type=associated_type)
-#        if associated_subjects is not None:
-#            data_dict["subjects"] = json.loads(associated_subjects)
-#        if associated_objects is not None:
-#            object_json = json.loads(associated_objects)
-#            data_dict["objects"] = []
-#            if isinstance(object_json, list):
-#                for associated_object in object_json:
-#                    entity_name = associated_object["id"]
-#                    object_data = json.loads(self.get_entity(
-#                    entity_name=entity_name))
-#                    data_dict["objects"].append(object_data)
-#            else:
-#                entity_name = object_json["id"]
-#                object_data = json.loads(self.get_entity(
-#                entity_name=entity_name))
-#                data_dict["objects"].append(object_data)
-#
-#        entity_dict = json.loads(self.get_entity(entity_name=name))
-#
-#        whole_dict = {**entity_dict, **data_dict}
-#
-#        return whole_dict
-#
-
-#
-#
-#    def check_duplicate_subscription(self, subscription_body, limit: int = 20):
-#        """
-#        Function compares the subject of the subscription body, on whether a subscription
-#        already exists for a device / entity.
-#        :param subscription_body: the body of the new subscripton
-#        :param limit: pagination parameter, to set the number of
-#        subscriptions bodies the get request should grab
-#        :return: exists, boolean -> True, if such a subscription allready
-#        exists
-#        """
-#        exists = False
-#        subscription_subject = json.loads(subscription_body)["subject"]
-#        # Exact keys depend on subscription body
-#        try:
-#            subscription_url = json.loads(subscription_body)[
-#            "notification"]["httpCustom"]["url"]
-#        except KeyError:
-#            subscription_url = json.loads(subscription_body)[
-#            "notification"]["http"]["url"]
-#
-#        # If the number of subscriptions is larger then the limit,
-#        paginations methods have to be used
-#        url = self.url + '/v2/subscriptions?limit=' + str(limit) +
-#        '&options=count'
-#        response = self.session.get(url, headers=self.get_header())
-#
-#        sub_count = float(response.headers["Fiware-Total-Count"])
-#        response = json.loads(response.text)
-#        if sub_count >= limit:
-#            response = self.get_pagination(url=url, headers=self.get_header(),
-#                                           limit=limit, count=sub_count)
-#            response = json.loads(response)
-#
-#        for existing_subscription in response:
-#            # check whether the exact same subscriptions already exists
-#            if existing_subscription["subject"] == subscription_subject:
-#                exists = True
-#                break
-#            try:
-#                existing_url = existing_subscription["notification"][
-#                "http"]["url"]
-#            except KeyError:
-#                existing_url = existing_subscription["notification"][
-#                "httpCustom"]["url"]
-#            # check whether both subscriptions notify to the same path
-#            if existing_url != subscription_url:
-#                continue
-#            else:
-#                # iterate over all entities included in the subscription object
-#                for entity in subscription_subject["entities"]:
-#                    if 'type' in entity.keys():
-#                        subscription_type = entity['type']
-#                    else:
-#                        subscription_type = entity['typePattern']
-#                    if 'id' in entity.keys():
-#                        subscription_id = entity['id']
-#                    else:
-#                        subscription_id = entity["idPattern"]
-#                    # iterate over all entities included in the exisiting
-#                    subscriptions
-#                    for existing_entity in existing_subscription["subject"][
-#                    "entities"]:
-#                        if "type" in entity.keys():
-#                            type_existing = entity["type"]
-#                        else:
-#                            type_existing = entity["typePattern"]
-#                        if "id" in entity.keys():
-#                            id_existing = entity["id"]
-#                        else:
-#                            id_existing = entity["idPattern"]
-#                        # as the ID field is non optional, it has to match
-#                        # check whether the type match
-#                        # if the type field is empty, they match all types
-#                        if (type_existing == subscription_type) or\
-#                                ('*' in subscription_type) or \
-#                                ('*' in type_existing)\
-#                                or (type_existing == "") or (
-#                                subscription_type == ""):
-#                            # check if on of the subscriptions is a pattern,
-#                            or if they both refer to the same id
-#                            # Get the attrs first, to avoid code duplication
-#                            # last thing to compare is the attributes
-#                            # Assumption -> position is the same as the
-#                            entities list
-#                            # i == j
-#                            i = subscription_subject["entities"].index(entity)
-#                            j = existing_subscription["subject"][
-#                            "entities"].index(existing_entity)
-#                            try:
-#                                subscription_attrs = subscription_subject[
-#                                "condition"]["attrs"][i]
-#                            except (KeyError, IndexError):
-#                                subscription_attrs = []
-#                            try:
-#                                existing_attrs = existing_subscription[
-#                                "subject"]["condition"]["attrs"][j]
-#                            except (KeyError, IndexError):
-#                                existing_attrs = []
-#
-#                            if (".*" in subscription_id) or ('.*' in
-#                            id_existing) or (subscription_id == id_existing):
-#                                # Attributes have to match, or the have to
-#                                be an empty array
-#                                if (subscription_attrs == existing_attrs) or
-#                                (subscription_attrs == []) or (existing_attrs == []):
-#                                        exists = True
-#                            # if they do not match completely or subscribe
-#                            to all ids they have to match up to a certain position
-#                            elif ("*" in subscription_id) or ('*' in
-#                            id_existing):
-#                                    regex_existing = id_existing.find('*')
-#                                    regex_subscription =
-#                                    subscription_id.find('*')
-#                                    # slice the strings to compare
-#                                    if (id_existing[:regex_existing] in
-#                                    subscription_id) or (subscription_id[:regex_subscription] in id_existing) or \
-#                                            (id_existing[regex_existing:] in
-#                                            subscription_id) or (subscription_id[regex_subscription:] in id_existing):
-#                                            if (subscription_attrs ==
-#                                            existing_attrs) or (subscription_attrs == []) or (existing_attrs == []):
-#                                                exists = True
-#                                            else:
-#                                                continue
-#                                    else:
-#                                        continue
-#                            else:
-#                                continue
-#                        else:
-#                            continue
-#                    else:
-#                        continue
-#        return exists
-#
-
-# def post_cmd_v1(self, entity_id: str, entity_type: str, cmd_name: str,
-# cmd_value: str): url = self.url + '/v1/updateContext' payload = {
-# "updateAction": "UPDATE", "contextElements": [ {"id": entity_id, "type":
-# entity_type, "isPattern": "false", "attributes": [ {"name": cmd_name,
-# "type": "command", "value": cmd_value }] }] } headers = self.get_header(
-# requtils.HEADER_CONTENT_JSON) data = json.dumps(payload) response =
-# self.session.post(url, headers=headers, data=data) ok, retstr =
-# requtils.response_ok(response) if not ok: level, retstr =
-# requtils.logging_switch(response) self.log_switch(level, retstr)

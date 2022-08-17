@@ -3,6 +3,7 @@ Context Broker Module for API Client
 """
 import re
 import warnings
+from enum import Enum
 from math import inf
 from typing import Any, Dict, List, Union, Optional
 from urllib.parse import urljoin
@@ -29,6 +30,12 @@ from filip.models.ngsi_v2.context import \
     Query, \
     Update
 
+class NgsiURLVersion(str, Enum):
+    """
+    URL part that defines the NGSI version for the API.
+    """
+    v2_url = "/v2"
+    ld_url = "/ngsi-ld/v1"
 
 class ContextBrokerClient(BaseHttpClient):
     """
@@ -56,6 +63,7 @@ class ContextBrokerClient(BaseHttpClient):
         """
         # set service url
         url = url or settings.CB_URL
+        self._url_version = NgsiURLVersion.v2_url
         super().__init__(url=url,
                          session=session,
                          fiware_header=fiware_header,
@@ -151,7 +159,7 @@ class ContextBrokerClient(BaseHttpClient):
         Returns:
             Dict
         """
-        url = urljoin(self.base_url, '/v2')
+        url = urljoin(self.base_url, self._url_version)
         try:
             res = self.get(url=url, headers=self.headers)
             if res.ok:
@@ -197,7 +205,7 @@ class ContextBrokerClient(BaseHttpClient):
             entity should be updated or not
             entity (ContextEntity): Context Entity Object
         """
-        url = urljoin(self.base_url, 'v2/entities')
+        url = urljoin(self.base_url, f'{self._url_version}/entities')
         headers = self.headers.copy()
         try:
             res = self.post(
@@ -294,7 +302,7 @@ class ContextBrokerClient(BaseHttpClient):
         Returns:
 
         """
-        url = urljoin(self.base_url, 'v2/entities/')
+        url = urljoin(self.base_url, f'{self._url_version}/entities/')
         headers = self.headers.copy()
         params = {}
 
@@ -393,7 +401,7 @@ class ContextBrokerClient(BaseHttpClient):
         Returns:
             ContextEntity
         """
-        url = urljoin(self.base_url, f'v2/entities/{entity_id}')
+        url = urljoin(self.base_url, f'{self._url_version}/entities/{entity_id}')
         headers = self.headers.copy()
         params = {}
         if entity_type:
@@ -458,7 +466,7 @@ class ContextBrokerClient(BaseHttpClient):
         Returns:
             Dict
         """
-        url = urljoin(self.base_url, f'v2/entities/{entity_id}/attrs')
+        url = urljoin(self.base_url, f'{self._url_version}/entities/{entity_id}/attrs')
         headers = self.headers.copy()
         params = {}
         if entity_type:
@@ -497,7 +505,7 @@ class ContextBrokerClient(BaseHttpClient):
         Returns:
 
         """
-        url = urljoin(self.base_url, f'v2/entities/{entity.id}/attrs')
+        url = urljoin(self.base_url, f'{self._url_version}/entities/{entity.id}/attrs')
         headers = self.headers.copy()
         params = {}
         if options:
@@ -529,7 +537,7 @@ class ContextBrokerClient(BaseHttpClient):
         Returns:
             None
         """
-        url = urljoin(self.base_url, f'v2/entities/{entity_id}')
+        url = urljoin(self.base_url, f'{self._url_version}/entities/{entity_id}')
         headers = self.headers.copy()
         if entity_type:
             params = {'type': entity_type}
@@ -561,7 +569,7 @@ class ContextBrokerClient(BaseHttpClient):
         Returns:
 
         """
-        url = urljoin(self.base_url, f'v2/entities/{entity.id}/attrs')
+        url = urljoin(self.base_url, f'{self._url_version}/entities/{entity.id}/attrs')
         headers = self.headers.copy()
         params = {}
         if options:
@@ -608,7 +616,7 @@ class ContextBrokerClient(BaseHttpClient):
 
         """
         url = urljoin(self.base_url,
-                      f'v2/entities/{entity_id}/attrs/{attr_name}')
+                      f'{self._url_version}/entities/{entity_id}/attrs/{attr_name}')
         headers = self.headers.copy()
         params = {}
         if entity_type:
@@ -654,7 +662,7 @@ class ContextBrokerClient(BaseHttpClient):
             attr_name = attr.name
 
         url = urljoin(self.base_url,
-                      f'v2/entities/{entity_id}/attrs/{attr_name}')
+                      f'{self._url_version}/entities/{entity_id}/attrs/{attr_name}')
         params = {}
         if entity_type:
             params.update({'type': entity_type})
@@ -691,7 +699,7 @@ class ContextBrokerClient(BaseHttpClient):
 
         """
         url = urljoin(self.base_url,
-                      f'v2/entities/{entity_id}/attrs/{attr_name}')
+                      f'{self._url_version}/entities/{entity_id}/attrs/{attr_name}')
         headers = self.headers.copy()
         params = {}
         if entity_type:
@@ -729,7 +737,7 @@ class ContextBrokerClient(BaseHttpClient):
 
         """
         url = urljoin(self.base_url,
-                      f'v2/entities/{entity_id}/attrs/{attr_name}/value')
+                      f'{self._url_version}/entities/{entity_id}/attrs/{attr_name}/value')
         headers = self.headers.copy()
         params = {}
         if entity_type:
@@ -765,7 +773,7 @@ class ContextBrokerClient(BaseHttpClient):
 
         """
         url = urljoin(self.base_url,
-                      f'v2/entities/{entity_id}/attrs/{attr_name}/value')
+                      f'{self._url_version}/entities/{entity_id}/attrs/{attr_name}/value')
         headers = self.headers.copy()
         params = {}
         if entity_type:
@@ -809,7 +817,7 @@ class ContextBrokerClient(BaseHttpClient):
         Returns:
 
         """
-        url = urljoin(self.base_url, 'v2/types')
+        url = urljoin(self.base_url, f'{self._url_version}/types')
         headers = self.headers.copy()
         params = {}
         if limit:
@@ -838,7 +846,7 @@ class ContextBrokerClient(BaseHttpClient):
         Returns:
 
         """
-        url = urljoin(self.base_url, f'v2/types/{entity_type}')
+        url = urljoin(self.base_url, f'{self._url_version}/types/{entity_type}')
         headers = self.headers.copy()
         params = {}
         try:
@@ -863,7 +871,7 @@ class ContextBrokerClient(BaseHttpClient):
         Returns:
             list of subscriptions
         """
-        url = urljoin(self.base_url, 'v2/subscriptions/')
+        url = urljoin(self.base_url, f'{self._url_version}/subscriptions/')
         headers = self.headers.copy()
         params = {}
 
@@ -946,7 +954,7 @@ class ContextBrokerClient(BaseHttpClient):
         Returns:
 
         """
-        url = urljoin(self.base_url, f'v2/subscriptions/{subscription_id}')
+        url = urljoin(self.base_url, f'{self._url_version}/subscriptions/{subscription_id}')
         headers = self.headers.copy()
         try:
             res = self.get(url=url, headers=headers)
@@ -967,7 +975,7 @@ class ContextBrokerClient(BaseHttpClient):
         Returns:
 
         """
-        url = urljoin(self.base_url, f'v2/subscriptions/{subscription.id}')
+        url = urljoin(self.base_url, f'{self._url_version}/subscriptions/{subscription.id}')
         headers = self.headers.copy()
         headers.update({'Content-Type': 'application/json'})
         try:
@@ -994,7 +1002,7 @@ class ContextBrokerClient(BaseHttpClient):
             subscription_id: id of the subscription
         """
         url = urljoin(self.base_url,
-                      f'v2/subscriptions/{subscription_id}')
+                      f'{self._url_version}/subscriptions/{subscription_id}')
         headers = self.headers.copy()
         try:
             res = self.delete(url=url, headers=headers)
@@ -1020,7 +1028,7 @@ class ContextBrokerClient(BaseHttpClient):
         Returns:
 
         """
-        url = urljoin(self.base_url, 'v2/registrations/')
+        url = urljoin(self.base_url, f'{self._url_version}/registrations/')
         headers = self.headers.copy()
         params = {}
 
@@ -1051,7 +1059,7 @@ class ContextBrokerClient(BaseHttpClient):
         Returns:
 
         """
-        url = urljoin(self.base_url, 'v2/registrations')
+        url = urljoin(self.base_url, f'{self._url_version}/registrations')
         headers = self.headers.copy()
         headers.update({'Content-Type': 'application/json'})
         try:
@@ -1079,7 +1087,7 @@ class ContextBrokerClient(BaseHttpClient):
         Returns:
             Registration
         """
-        url = urljoin(self.base_url, f'v2/registrations/{registration_id}')
+        url = urljoin(self.base_url, f'{self._url_version}/registrations/{registration_id}')
         headers = self.headers.copy()
         try:
             res = self.get(url=url, headers=headers)
@@ -1100,7 +1108,7 @@ class ContextBrokerClient(BaseHttpClient):
         Returns:
 
         """
-        url = urljoin(self.base_url, f'v2/registrations/{registration.id}')
+        url = urljoin(self.base_url, f'{self._url_version}/registrations/{registration.id}')
         headers = self.headers.copy()
         headers.update({'Content-Type': 'application/json'})
         try:
@@ -1127,7 +1135,7 @@ class ContextBrokerClient(BaseHttpClient):
             registration_id: id of the subscription
         """
         url = urljoin(self.base_url,
-                      f'v2/registrations/{registration_id}')
+                      f'{self._url_version}/registrations/{registration_id}')
         headers = self.headers.copy()
         try:
             res = self.delete(url=url, headers=headers)
@@ -1182,7 +1190,7 @@ class ContextBrokerClient(BaseHttpClient):
 
         """
 
-        url = urljoin(self.base_url, 'v2/op/update')
+        url = urljoin(self.base_url, f'{self._url_version}/op/update')
         headers = self.headers.copy()
         headers.update({'Content-Type': 'application/json'})
         params = {}
@@ -1227,7 +1235,7 @@ class ContextBrokerClient(BaseHttpClient):
             follow the JSON entity representation format (described in the
             section "JSON Entity Representation").
         """
-        url = urljoin(self.base_url, 'v2/op/query')
+        url = urljoin(self.base_url, f'{self._url_version}/op/query')
         headers = self.headers.copy()
         headers.update({'Content-Type': 'application/json'})
         params = {'options': 'count'}
@@ -1270,7 +1278,7 @@ class ContextBrokerClient(BaseHttpClient):
         Returns:
             None
         """
-        url = urljoin(self.base_url, f'v2/entities/{entity_id}/attrs')
+        url = urljoin(self.base_url, f'{self._url_version}/entities/{entity_id}/attrs')
         headers = self.headers.copy()
         params = {"type": entity_type}
         if command_name:
