@@ -134,6 +134,12 @@ class TestSubscriptions(unittest.TestCase):
             compare_dicts(sub.dict(exclude={'id'}),
                           sub_res.dict(exclude={'id'}))
 
+        # test validation of throttling
+        with self.assertRaises(ValidationError):
+            sub.throttling = -1
+        with self.assertRaises(ValidationError):
+            sub.throttling = 0.1
+
     def tearDown(self) -> None:
         """
         Cleanup test server

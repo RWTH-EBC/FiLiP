@@ -9,6 +9,8 @@ from pydantic import \
     BaseModel, \
     Field, \
     Json, \
+    StrictInt, \
+    validate_arguments, \
     root_validator, \
     validator
 from .base import AttrsFormat, EntityPattern, Http, Status, Expression
@@ -363,14 +365,22 @@ class Subscription(BaseModel):
 
     throttling: Optional[int] = Field(
         default=None,
+        ge=0,
+        strict=True,
         description="Minimal period of time in seconds which "
                     "must elapse between two consecutive notifications. "
                     "It is optional."
     )
 
+    @validator('throttling', pre=True)
+    @validate_arguments()
+    def validate_attr(cls, v: StrictInt):
+        return v
+
     class Config:
         """
         Pydantic config
         """
+        validate_assignment = True
         json_encoders = {QueryString: lambda v: v.to_str(),
                          QueryStatement: lambda v: v.to_str()}
