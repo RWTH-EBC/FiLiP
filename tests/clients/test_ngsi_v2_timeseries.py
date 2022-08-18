@@ -117,36 +117,6 @@ class TestTimeSeries(unittest.TestCase):
         time.sleep(1)
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
-                fiware_servicepath=settings.FIWARE_SERVICEPATH,
-                ql_url=settings.QL_URL)
-    def test_throttling(self) -> None:
-        """
-        Test subscription-throttling with throttling 0, 1, 2
-        Returns:
-            None
-        """
-
-        entities = create_entities()
-        for entity in entities:
-            self.cb_client.post_entity(entity)
-        
-        with QuantumLeapClient(
-                url=settings.QL_URL,
-                fiware_header=self.fiware_header) \
-                as client:
-
-            for throttling in range(3):
-                # test for throttling = 0, 1, 2
-                client.post_subscription(cb_url=settings.CB_URL,
-                            ql_url=settings.QL_URL,
-                            entity_id=entities[0].id,
-                            throttling=throttling)
-
-            subscription_list = self.cb_client.get_subscription_list()
-            for subscription in subscription_list:
-                self.assertTrue(subscription.throttling in {None, 0, 1, 2})
-
-    @clean_test(fiware_service=settings.FIWARE_SERVICE,
             fiware_servicepath=settings.FIWARE_SERVICEPATH,
             cb_url=settings.CB_URL,
             ql_url=settings.QL_URL)

@@ -10,6 +10,7 @@ import json
 
 import paho.mqtt.client as mqtt
 from datetime import datetime, timedelta
+from typing import List
 from urllib.parse import urlparse
 from requests import RequestException
 from filip.models.base import FiwareHeader
@@ -772,6 +773,54 @@ class TestContextBroker(unittest.TestCase):
         self.assertEqual(result_entity,
                          self.client.get_entity(entity_id=entity.id))
         self.tearDown()
+
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                cb_url=settings.CB_URL)
+    def test_throttling(self) -> None:
+        """
+        Test subscription-throttling with throttling 0, 1, 2
+
+        Returns:
+            None
+        """
+
+        def create_entities() -> List[ContextEntity]:
+            """
+            Create entities with random values
+            Returns:
+
+            """
+
+            def create_attr():
+                return {'temperature': {'value': random(),
+                                        'type': 'Number'},
+                        'humidity': {'value': random(),
+                                     'type': 'Number'},
+                        'co2': {'value': random(),
+                                'type': 'Number'}}
+
+            return [ContextEntity(id='Kitchen', type='Room', **create_attr()),
+                    ContextEntity(id='LivingRoom', type='Room',
+                                  **create_attr())]
+
+        entities = create_entities()
+        for entity in entities:
+            self.cb_client.post_entity(entity)
+
+        with ContextBrokerClient(
+                url=settings.CB_URL,
+                fiware_header=self.fiware_header) \
+                as client:
+
+            for throttling in range(3):
+                # test for throttling = 0, 1, 2
+                sub = Subscription(entities[0].id)
+                client.post_subscription(subscription=sub)
+
+            subscription_list = self.cb_client.get_subscription_list()
+            for subscription in subscription_list:
+                self.assertTrue(subscription.throttling in {None, 0, 1, 2})
 
     def tearDown(self) -> None:
         """
