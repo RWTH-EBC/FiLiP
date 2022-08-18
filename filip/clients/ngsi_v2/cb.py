@@ -1,7 +1,9 @@
 """
 Context Broker Module for API Client
 """
+from __future__ import annotations
 
+from copy import deepcopy
 from math import inf
 from pkg_resources import parse_version
 from pydantic import \
@@ -9,7 +11,7 @@ from pydantic import \
     PositiveInt, \
     PositiveFloat, \
     AnyHttpUrl
-from typing import Any, Dict, List, Union, Optional
+from typing import Any, Dict, List , Optional, TYPE_CHECKING, Union
 import re
 import requests
 from urllib.parse import urljoin
@@ -32,6 +34,9 @@ from filip.models.ngsi_v2.context import \
 from filip.models.ngsi_v2.base import AttrsFormat
 from filip.models.ngsi_v2.subscriptions import Subscription, Message
 from filip.models.ngsi_v2.registrations import Registration
+
+if TYPE_CHECKING:
+    from filip.clients.ngsi_v2.iota import IoTAClient
 
 
 class ContextBrokerClient(BaseHttpClient):
@@ -518,6 +523,7 @@ class ContextBrokerClient(BaseHttpClient):
                       entity_id: str,
                       entity_type: str,
                       delete_devices: bool = False,
+                      iota_client: IoTAClient = None,
                       iota_url: AnyHttpUrl = settings.IOTA_URL) -> None:
 
         """
@@ -525,11 +531,20 @@ class ContextBrokerClient(BaseHttpClient):
         or received.
 
         Args:
-            entity_id: Id of the entity to be deleted
-            entity_type: several entities with the same entity id.
-            delete_devices: If True, also delete all devices that reference this
-                            entity (entity_id as entity_name)
-            iota_url: URL of the corresponding IotaClient
+            entity_id:
+                Id of the entity to be deleted
+            entity_type:
+                several entities with the same entity id.
+            delete_devices:
+                If True, also delete all devices that reference this
+                entity (entity_id as entity_name)
+            iota_client:
+                Corresponding IoTA-Client used to access IoTA-Agent
+            iota_url:
+                URL of the corresponding IoT-Agent. This will autogenerate
+                an IoTA-Client, mirroring the information of the
+                ContextBrokerClient, e.g. FiwareHeader, and other headers
+
         Returns:
             None
         """
@@ -550,12 +565,25 @@ class ContextBrokerClient(BaseHttpClient):
 
         if delete_devices:
             from filip.clients.ngsi_v2 import IoTAClient
-            iota_client = IoTAClient(url=iota_url,
-                                     fiware_header=self.fiware_headers)
+            if iota_client:
+                iota_client_local = deepcopy(iota_client)
+            else:
+                warnings.warn("No IoTA-Client object provided! "
+                              "Will try to generate one. "
+                              "This usage is not recommended.")
 
-            for device in iota_client.get_device_list(entity=entity_id):
+                iota_client_local = IoTAClient(
+                    url=iota_url,
+                    fiware_header=self.fiware_headers,
+                    headers=self.headers)
+
+            for device in iota_client_local.get_device_list(
+                    entity_names=[entity_id]):
                 if device.entity_type == entity_type:
-                    iota_client.delete_device(device_id=device.device_id)
+                    iota_client_local.delete_device(device_id=device.device_id)
+
+            iota_client_local.close()
+
 
     def delete_entities(self, entities: List[ContextEntity]) -> None:
         """

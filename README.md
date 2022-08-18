@@ -251,9 +251,9 @@ This project is licensed under the BSD License - see the [LICENSE](LICENSE) file
 2021, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy 
 Efficient Buildings and Indoor Climate
 
-[Institute for Energy Efficient Buildings and Indoor Climate (EBC)](http://www.ebc.eonerc.rwth-aachen.de)  
-[E.ON Energy Research Center (E.ON ERC)](http://www.eonerc.rwth-aachen.de)  
-[RWTH University Aachen, Germany](http://www.rwth-aachen.de)
+[Institute for Energy Efficient Buildings and Indoor Climate (EBC)](https://www.ebc.eonerc.rwth-aachen.de)  
+[E.ON Energy Research Center (E.ON ERC)](https://www.eonerc.rwth-aachen.de)  
+[RWTH University Aachen, Germany](https://www.rwth-aachen.de)
 
 ## Disclaimer
 
@@ -268,7 +268,7 @@ ENERGY" src="https://raw.githubusercontent.com/RWTH-EBC/FiLiP/master/docs/logos/
 <a href="https://n5geh.de/"> <img alt="National 5G Energy Hub" 
 src="https://avatars.githubusercontent.com/u/43948851?s=200&v=4" height="100"></a>
 
-<a href="http://fismep.de/"> <img alt="FISMEP" 
+<a href="https://fismep.de/"> <img alt="FISMEP" 
 src="https://raw.githubusercontent.com/RWTH-EBC/FiLiP/master/docs/logos/FISMEP.png" 
 height="100"></a>
 
@@ -284,5 +284,5 @@ src="https://raw.githubusercontent.com/RWTH-EBC/FiLiP/master/docs/logos/bmwi_log
 
 This project has received funding in the framework of the joint programming initiative ERA-Net Smart Grids Plus, with support from the European Union’s Horizon 2020 research and innovation programme.
 
-<a href="http://www.eranet-smartgridsplus.eu/"> <img alt="ERANET" 
-src="http://fismep.de/wp-content/uploads/2017/09/SmartGridsPlus_rgb-300x55.jpg" height="100"> </a>
+<a href="https://www.eranet-smartgridsplus.eu/"> <img alt="ERANET" 
+src="https://fismep.de/wp-content/uploads/2017/09/SmartGridsPlus_rgb-300x55.jpg" height="100"> </a>
