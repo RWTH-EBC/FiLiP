@@ -1,9 +1,10 @@
 """
 Helper functions to handle the devices related with the IoT Agent
 """
+import warnings
 from typing import List, Union
 from filip.models.ngsi_v2.iot import Device
-
+from filip.utils.filter import filter_device_list as filter_device_list_new
 
 def filter_device_list(devices: List[Device],
                        device_ids: Union[str, List[str]] = None,
@@ -21,28 +22,11 @@ def filter_device_list(devices: List[Device],
     Returns:
         List of matching devices
     """
-    if device_ids:
-        if isinstance(device_ids, (list, str)):
-            if isinstance(device_ids, str):
-                device_ids = [device_ids]
-            devices = [device for device in devices if device.device_id in device_ids]
-        else:
-            raise TypeError('device_ids must be a string or a list of strings!')
+    warnings.warn("This function has been moved to 'filip.utils.filter' "
+                  "and will be removed from this module in future releases!",
+                  DeprecationWarning)
 
-    if entity_names:
-        if isinstance(entity_names, (list, str)):
-            if isinstance(entity_names, str):
-                entity_names = [entity_names]
-            devices = [device for device in devices if device.entity_name in entity_names]
-        else:
-            raise TypeError('entity_names must be a string or a list of strings!')
-
-    if entity_types:
-        if isinstance(entity_types, (list, str)):
-            if isinstance(entity_types, str):
-                entity_types = [entity_types]
-            devices = [device for device in devices if device.entity_type in entity_types]
-        else:
-            raise TypeError('entity_types must be a string or a list of strings!')
-
-    return devices
+    return filter_device_list_new(devices=devices,
+                                  device_ids=device_ids,
+                                  entity_names=entity_names,
+                                  entity_types=entity_types)

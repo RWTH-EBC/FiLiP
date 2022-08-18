@@ -21,7 +21,7 @@ from filip.models import FiwareHeader
 from filip.semantics.semantics_models import \
     InstanceIdentifier, SemanticClass, InstanceHeader, Datatype, DataField, \
     RelationField, SemanticIndividual, SemanticDeviceClass, CommandField, \
-    Command, DeviceAttributeField, DeviceAttribute, SemanticMetadata
+    Command, DeviceAttributeField, DeviceAttribute
 from filip.utils.simple_ql import QueryString
 
 
@@ -214,7 +214,7 @@ class SemanticsManager(BaseModel):
     instance_registry: InstanceRegistry = Field(
         description="Registry managing the local state"
     )
-    class_catalogue: Dict[str, Type [SemanticClass]] = Field(
+    class_catalogue: Dict[str, Type[SemanticClass]] = Field(
         default={},
         description="Register of class names to classes"
     )
@@ -496,12 +496,16 @@ class SemanticsManager(BaseModel):
             # clients
 
             client = self.get_client(instance_header=identifier.header)
+            iota_client = self.get_iota_client(
+                instance_header=identifier.header)
             try:
-                client.delete_entity(entity_id=identifier.id,
-                                     entity_type=identifier.type,
-                                     delete_devices=True)
+                client.delete_entity(
+                    entity_id=identifier.id,
+                    entity_type=identifier.type,
+                    delete_devices=True,
+                    iota_client=iota_client)
             except requests.RequestException:
-                pass
+                raise
 
             client.close()
 
@@ -511,22 +515,22 @@ class SemanticsManager(BaseModel):
 
         # save, patch all local instances
         for instance in self.instance_registry.get_all():
+            cb_client = self.get_client(instance_header=instance.header)
             if not isinstance(instance, SemanticDeviceClass):
-                client = self.get_client(instance_header=instance.header)
                 # it is important that we patch the values else the
                 # references field would reach an invalid state if we worked
                 # in parallel on an instance
-                client.patch_entity(instance.build_context_entity(),
-                                    instance.old_state.state)
-                client.close()
+                cb_client.patch_entity(instance.build_context_entity(),
+                                       instance.old_state.state)
             else:
-                client = self.get_iota_client(instance_header=instance.header)
-                client.patch_device(device=instance.build_context_device(),
-                                    patch_entity=True,
-                                    cb_url=instance.header.cb_url)
-
-                client.close()
-
+                iota_client = self.get_iota_client(
+                    instance_header=instance.header)
+                iota_client.patch_device(
+                    device=instance.build_context_device(),
+                    patch_entity=True,
+                    cb_client=cb_client)
+                iota_client.close()
+            cb_client.close()
         # update old_state
         for instance in self.instance_registry.get_all():
             instance.old_state.state = instance.build_context_entity()

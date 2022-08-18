@@ -717,7 +717,7 @@ class VocabularyConfigurator:
             def build_field_comment(cr: CombinedRelation) -> str:
                 comment = vocabulary.get_entity_by_iri(cr.property_iri).comment
                 res = ""
-                if comment is not "":
+                if comment != "":
                     res += f'\n\t"""'
                     for line in split_string_into_lines(comment, 75):
                         res += f'\n\t{line}'
