@@ -112,7 +112,6 @@ class TestSubscriptions(unittest.TestCase):
                 ]
             },
             "expires": "2030-04-05T14:00:00Z",
-            "throttling": 5
         }
 
         sub = Subscription.parse_obj(sub_dict)

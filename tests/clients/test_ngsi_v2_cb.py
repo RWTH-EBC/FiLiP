@@ -325,7 +325,7 @@ class TestContextBroker(unittest.TestCase):
             client.delete_entity(entity_id=self.entity.id,
                                  entity_type=self.entity.type)
 
-    @unittest.skip('Does currently not work in CI')
+    #@unittest.skip('Does currently not work in CI')
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
                 cb_url=settings.CB_URL)
@@ -341,12 +341,16 @@ class TestContextBroker(unittest.TestCase):
             sub_res = client.get_subscription(subscription_id=sub_id)
             time.sleep(1)
             sub_update = sub_res.copy(
-                update={'expires': datetime.now() + timedelta(days=1)})
+                update={'expires': datetime.now() + timedelta(days=1),
+                        'throttling': 1},
+                )
             client.update_subscription(subscription=sub_update)
             sub_res_updated = client.get_subscription(subscription_id=sub_id)
             self.assertNotEqual(sub_res.expires, sub_res_updated.expires)
             self.assertEqual(sub_res.id, sub_res_updated.id)
             self.assertGreaterEqual(sub_res_updated.expires, sub_res.expires)
+            self.assertEqual(sub_res_updated.throttling,
+                             sub_update.throttling)
 
             # test duplicate prevention and update
             sub = self.subscription.copy()
@@ -776,54 +780,6 @@ class TestContextBroker(unittest.TestCase):
         self.assertEqual(result_entity,
                          self.client.get_entity(entity_id=entity.id))
         self.tearDown()
-
-    @clean_test(fiware_service=settings.FIWARE_SERVICE,
-                fiware_servicepath=settings.FIWARE_SERVICEPATH,
-                cb_url=settings.CB_URL)
-    def test_throttling(self) -> None:
-        """
-        Test subscription-throttling with throttling 0, 1, 2
-
-        Returns:
-            None
-        """
-
-        def create_entities() -> List[ContextEntity]:
-            """
-            Create entities with random values
-            Returns:
-
-            """
-
-            def create_attr():
-                return {'temperature': {'value': random.random(),
-                                        'type': 'Number'},
-                        'humidity': {'value': random.random(),
-                                     'type': 'Number'},
-                        'co2': {'value': random.random(),
-                                'type': 'Number'}}
-
-            return [ContextEntity(id='Kitchen', type='Room', **create_attr()),
-                    ContextEntity(id='LivingRoom', type='Room',
-                                  **create_attr())]
-
-        entities = create_entities()
-        for entity in entities:
-            self.cb_client.post_entity(entity)
-
-        with ContextBrokerClient(
-                url=settings.CB_URL,
-                fiware_header=self.fiware_header) \
-                as client:
-
-            for throttling in range(3):
-                # test for throttling = 0, 1, 2
-                sub = Subscription(entities[0].id)
-                client.post_subscription(subscription=sub)
-
-            subscription_list = self.cb_client.get_subscription_list()
-            for subscription in subscription_list:
-                self.assertTrue(subscription.throttling in {None, 0, 1, 2})
 
     def test_delete_entity_devices(self):
         # create devices
