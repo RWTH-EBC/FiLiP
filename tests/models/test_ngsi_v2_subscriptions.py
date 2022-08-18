@@ -112,7 +112,6 @@ class TestSubscriptions(unittest.TestCase):
                 ]
             },
             "expires": "2030-04-05T14:00:00Z",
-            "throttling": 5
         }
 
         sub = Subscription.parse_obj(sub_dict)
@@ -133,6 +132,12 @@ class TestSubscriptions(unittest.TestCase):
 
             compare_dicts(sub.dict(exclude={'id'}),
                           sub_res.dict(exclude={'id'}))
+
+        # test validation of throttling
+        with self.assertRaises(ValidationError):
+            sub.throttling = -1
+        with self.assertRaises(ValidationError):
+            sub.throttling = 0.1
 
     def tearDown(self) -> None:
         """
