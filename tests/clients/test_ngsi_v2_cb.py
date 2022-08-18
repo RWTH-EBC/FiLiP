@@ -10,7 +10,6 @@ import json
 
 import paho.mqtt.client as mqtt
 from datetime import datetime, timedelta
-from typing import List
 from urllib.parse import urlparse
 from requests import RequestException
 from filip.models.base import FiwareHeader
@@ -339,7 +338,7 @@ class TestContextBroker(unittest.TestCase):
             sub_id = client.post_subscription(subscription=self.subscription,
                                               skip_initial_notification=True)
             sub_res = client.get_subscription(subscription_id=sub_id)
-            time.sleep(5)
+            time.sleep(1)
             sub_update = sub_res.copy(
                 update={'expires': datetime.now() + timedelta(days=2),
                         'throttling': 1},
