@@ -796,11 +796,11 @@ class TestContextBroker(unittest.TestCase):
             """
 
             def create_attr():
-                return {'temperature': {'value': random(),
+                return {'temperature': {'value': random.random(),
                                         'type': 'Number'},
-                        'humidity': {'value': random(),
+                        'humidity': {'value': random.random(),
                                      'type': 'Number'},
-                        'co2': {'value': random(),
+                        'co2': {'value': random.random(),
                                 'type': 'Number'}}
 
             return [ContextEntity(id='Kitchen', type='Room', **create_attr()),
