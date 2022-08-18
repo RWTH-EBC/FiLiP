@@ -103,7 +103,7 @@ class TestContextBroker(unittest.TestCase):
                     "humidity"
                 ]
             },
-            "expires": datetime.now(),
+            "expires": datetime.now() + timedelta(days=1),
             "throttling": 0
         })
 
@@ -325,7 +325,7 @@ class TestContextBroker(unittest.TestCase):
             client.delete_entity(entity_id=self.entity.id,
                                  entity_type=self.entity.type)
 
-    #@unittest.skip('Does currently not work in CI')
+    #@unittest.skip('Does currently not reliably work in CI')
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
                 cb_url=settings.CB_URL)
@@ -341,7 +341,7 @@ class TestContextBroker(unittest.TestCase):
             sub_res = client.get_subscription(subscription_id=sub_id)
             time.sleep(5)
             sub_update = sub_res.copy(
-                update={'expires': datetime.now() + timedelta(days=1),
+                update={'expires': datetime.now() + timedelta(days=2),
                         'throttling': 1},
                 )
             client.update_subscription(subscription=sub_update)
@@ -389,7 +389,7 @@ class TestContextBroker(unittest.TestCase):
         Test subscription operations of context broker client
         """
         sub = self.subscription.copy(
-            update={'expires': datetime.now() + timedelta(days=1)})
+            update={'expires': datetime.now() + timedelta(days=2)})
         with ContextBrokerClient(
                 url=settings.CB_URL,
                 fiware_header=self.fiware_header) as client:
