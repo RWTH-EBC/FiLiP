@@ -7,10 +7,9 @@ from datetime import datetime
 from aenum import Enum
 from pydantic import \
     BaseModel, \
+    conint, \
     Field, \
     Json, \
-    StrictInt, \
-    validate_arguments, \
     root_validator, \
     validator
 from .base import AttrsFormat, EntityPattern, Http, Status, Expression
@@ -363,19 +362,14 @@ class Subscription(BaseModel):
                     "Permanent subscriptions must omit this field."
     )
 
-    throttling: Optional[int] = Field(
+    throttling: Optional[conint(strict=True, ge=0,)] = Field(
         default=None,
-        ge=0,
         strict=True,
         description="Minimal period of time in seconds which "
                     "must elapse between two consecutive notifications. "
                     "It is optional."
     )
 
-    @validator('throttling', pre=True)
-    @validate_arguments()
-    def validate_attr(cls, v: StrictInt):
-        return v
 
     class Config:
         """
