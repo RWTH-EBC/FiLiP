@@ -339,7 +339,7 @@ class TestContextBroker(unittest.TestCase):
             sub_id = client.post_subscription(subscription=self.subscription,
                                               skip_initial_notification=True)
             sub_res = client.get_subscription(subscription_id=sub_id)
-            time.sleep(1)
+            time.sleep(5)
             sub_update = sub_res.copy(
                 update={'expires': datetime.now() + timedelta(days=1),
                         'throttling': 1},
