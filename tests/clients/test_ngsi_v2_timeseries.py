@@ -119,7 +119,6 @@ class TestTimeSeries(unittest.TestCase):
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
                 ql_url=settings.QL_URL)
-
     def test_throttling(self) -> None:
         """
         Test subscription-throttling with throttling 0, 1, 2
