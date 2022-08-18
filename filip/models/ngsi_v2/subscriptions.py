@@ -186,6 +186,15 @@ class Notification(BaseModel):
                     'See "Filtering out attributes and metadata" section for '
                     'more detail.'
     )
+    onlyChangedAttrs: Optional[bool] = Field(
+        default=False,
+        description='If set to true then notifications associated to the subscription'
+                    'include only attributes that changed in the triggering update '
+                    'request, in combination with the attrs or exceptAttrs field.'
+                    'For instance, if attrs is [A=1, B=2, C=3] and A=0 is updated.'
+                    'In case onlyChangedAttrs=false, CB notifies [A=0, B=2, C=3].'
+                    'In case onlyChangedAttrs=true, CB notifies [A=0, B=null, C=null].'
+    )
 
     @validator('httpCustom')
     def validate_http(cls, http_custom, values):
