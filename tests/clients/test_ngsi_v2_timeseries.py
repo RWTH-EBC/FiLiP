@@ -150,7 +150,6 @@ class TestTimeSeries(unittest.TestCase):
             fiware_servicepath=settings.FIWARE_SERVICEPATH,
             cb_url=settings.CB_URL,
             ql_url=settings.QL_URL)
-
     def test_entity_context(self) -> None:
         """
         Test entities endpoint
