@@ -1755,7 +1755,7 @@ class ContextBrokerClient(BaseHttpClient):
             )
         for k, v in first.items():
             ex_value = second.get(k, None)
-            if isinstance(v, dict):
+            if isinstance(v, dict) and isinstance(ex_value, dict):
                 equal = self._subscription_dicts_are_equal(v, ex_value)
                 if equal:
                     continue
