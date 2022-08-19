@@ -46,21 +46,21 @@ if __name__ == '__main__':
                                         path=path.joinpath('entity.py'))
     # ## 2. Parsing from external resources
     #
-    create_data_model_file(path=path.joinpath('commons.py'),
-                           url='https://smart-data-models.github.io/data-models/'
-                         'common-schema.json')
+    create_data_model_file(
+        path=path.joinpath('commons.py'),
+        url='https://smart-data-models.github.io/data-models/common-schema.json')
 
     # ## 3. Use generated data models
-    from examples.data_models.commons import \
+    from examples.ngsi_v2.data_models.commons import \
         OpeningHoursSpecificationItem, \
         time, \
-        DayOfWeek, \
+        DayOfWeekEnum, \
         datetime
 
     opening_hours = OpeningHoursSpecificationItem(
         opens=time(hour=10),
         closes=time(hour=19),
-        dayOfWeek=DayOfWeek.Saturday,
+        dayOfWeek=DayOfWeekEnum.Saturday,
         validFrom=datetime(year=2022, month=1, day=1))
 
     print(opening_hours.json(indent=2))

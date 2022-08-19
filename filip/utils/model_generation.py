@@ -140,12 +140,16 @@ def create_context_entity_model(name: str = None,
         if isinstance(path, str):
             path=Path(path)
 
+        # check if directory exists and create if not
+        path.parent.mkdir(exist_ok=True)
+
         with TemporaryDirectory() as temp:
             temp = Path(temp)
             output = Path(temp).joinpath(f'{uuid4()}.json')
             output.touch(exist_ok=True)
             with output.open('w') as f:
                 json.dump(model.schema(), f, indent=2)
+
             if path.suffix == '.json':
                 # move temporary file to output directory
                 shutil.move(str(output), str(path))
