@@ -117,8 +117,9 @@ class TestTimeSeries(unittest.TestCase):
         time.sleep(1)
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
-                fiware_servicepath=settings.FIWARE_SERVICEPATH,
-                ql_url=settings.QL_URL)
+            fiware_servicepath=settings.FIWARE_SERVICEPATH,
+            cb_url=settings.CB_URL,
+            ql_url=settings.QL_URL)
     def test_entity_context(self) -> None:
         """
         Test entities endpoint

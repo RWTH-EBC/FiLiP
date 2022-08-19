@@ -7,6 +7,7 @@ from datetime import datetime
 from aenum import Enum
 from pydantic import \
     BaseModel, \
+    conint, \
     Field, \
     Json, \
     root_validator, \
@@ -370,16 +371,19 @@ class Subscription(BaseModel):
                     "Permanent subscriptions must omit this field."
     )
 
-    throttling: Optional[int] = Field(
+    throttling: Optional[conint(strict=True, ge=0,)] = Field(
         default=None,
+        strict=True,
         description="Minimal period of time in seconds which "
                     "must elapse between two consecutive notifications. "
                     "It is optional."
     )
 
+
     class Config:
         """
         Pydantic config
         """
+        validate_assignment = True
         json_encoders = {QueryString: lambda v: v.to_str(),
                          QueryStatement: lambda v: v.to_str()}
