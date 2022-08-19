@@ -29,7 +29,8 @@ class TestSettings(BaseSettings):
                                     'CB_HOST',
                                     'CONTEXTBROKER_URL',
                                     'OCB_URL'])
-
+    IOTA_URL: AnyHttpUrl = Field(default="http://localhost:4041",
+                                      env='IOTA_URL')
     IOTA_JSON_URL: AnyHttpUrl = Field(default="http://localhost:4041",
                                       env='IOTA_JSON_URL')
 
