@@ -5,7 +5,7 @@ import logging
 from pydantic import AnyHttpUrl
 from typing import Dict, ByteString, List, IO, Tuple, Union
 import requests
-from filip.models.base import FiwareHeader
+from filip.models.base import FiwareHeader, FiwareLDHeader
 from filip.utils import validate_url
 
 
@@ -92,10 +92,16 @@ class BaseHttpClient:
         """
         if isinstance(headers, FiwareHeader):
             self._fiware_headers = headers
+        elif isinstance(headers, FiwareLDHeader):
+            self._fiware_headers = headers
         elif isinstance(headers, dict):
             self._fiware_headers = FiwareHeader.parse_obj(headers)
         elif isinstance(headers, str):
             self._fiware_headers = FiwareHeader.parse_raw(headers)
+        elif isinstance(headers, dict):
+            self._fiware_headers = FiwareLDHeader.parse_obj(headers)
+        elif isinstance(headers, str):
+            self._fiware_headers = FiwareLDHeader.parse_raw(headers)
         else:
             raise TypeError(f'Invalid headers! {type(headers)}')
         self.headers.update(self.fiware_headers.dict(by_alias=True))

@@ -89,6 +89,38 @@ class FiwareHeader(BaseModel):
         allow_population_by_field_name = True
         validate_assignment = True
 
+class FiwareLDHeader(BaseModel):
+    """
+    Define entity service paths which are supported by the NGSI
+    Context Brokers to support hierarchical scopes:
+    https://fiware-orion.readthedocs.io/en/master/user/service_path/index.html
+    """
+    link_header: str = Field(
+        alias="Link",
+        default='<https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; '
+                'type="application/ld+json"',
+        max_length=50,
+        description="Fiware service used for multi-tenancy",
+        regex=r"\w*$"
+    )
+    ngsild_tenant: str = Field(
+        alias="NGSILD-Tenant",
+        default="openiot",
+        max_length=50,
+        description="Alsias to the Fiware service to used for multitancy",
+        regex=r"\w*$"
+    )
+
+    def set_context(self, context: str):
+        self.link = f'<{context}>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"'
+
+
+    class Config(BaseConfig):
+        allow_population_by_field_name = True
+        validate_assignment = True
+
+
+
 
 class FiwareRegex(str, Enum):
     """

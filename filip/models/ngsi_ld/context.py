@@ -3,8 +3,9 @@ NGSIv2 models for context broker interaction
 """
 from typing import Any,  List, Dict, Union, Optional
 
+
 from aenum import Enum
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, validator
 from filip.models.ngsi_v2 import ContextEntity
 from filip.models.base import FiwareRegex
 
@@ -313,3 +314,23 @@ class ContextLDEntity(ContextLDEntityKeyValues, ContextEntity):
                 self.dict().items() if key not in
                 ContextLDEntity.__fields__ and
                 value.get('type') == DataTypeLD.RELATIONSHIP]
+
+class ActionTypeLD(str, Enum):
+    """
+    Options for queries
+    """
+
+    CREATE = "create"
+    UPSERT = "upsert"
+    UPDATE = "update"
+    DELETE = "delete"
+
+class UpdateLD(BaseModel):
+    """
+    Model for update action
+    """
+    entities: List[ContextEntity] = Field(
+        description="an array of entities, each entity specified using the "
+                    "JSON entity representation format "
+    )
+

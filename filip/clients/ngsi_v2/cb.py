@@ -116,7 +116,12 @@ class ContextBrokerClient(BaseHttpClient):
             if res.ok:
                 items = res.json()
                 # do pagination
-                count = int(res.headers['Fiware-Total-Count'])
+                if self._url_version == NgsiURLVersion.v2_url:
+                    count = int(res.headers['Fiware-Total-Count'])
+                elif self._url_version == NgsiURLVersion.ld_url:
+                    count = int(res.headers['NGSILD-Results-Count'])
+                else:
+                    count = 0
 
                 while len(items) < limit and len(items) < count:
                     # Establishing the offset from where entities are retrieved

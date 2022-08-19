@@ -1,6 +1,7 @@
 """
 Context Broker Module for API Client
 """
+import json
 import re
 import warnings
 from enum import Enum
@@ -12,23 +13,20 @@ from pydantic import \
     parse_obj_as, \
     PositiveInt, \
     PositiveFloat
-from filip.clients.base_http_client import BaseHttpClient
-from filip.clients.ngsi_v2.cb import NgsiURLVersion
+from filip.clients.ngsi_v2.cb import ContextBrokerClient, NgsiURLVersion
 from filip.config import settings
-from filip.models.base import FiwareHeader, PaginationMethod
-from filip.models.ngsi_ld.context import ContextLDEntity, ContextLDEntityKeyValues, ContextProperty, \
+from filip.models.base import FiwareLDHeader, PaginationMethod
+from filip.models.ngsi_ld.context import ActionTypeLD, UpdateLD, ContextLDEntity, ContextLDEntityKeyValues, ContextProperty, \
     ContextRelationship, NamedContextProperty, NamedContextRelationship
 from filip.utils.simple_ql import QueryString
 from filip.models.ngsi_v2.context import \
-    ActionType, \
     AttrsFormat, \
     Command, \
     NamedCommand, \
-    Query, \
-    Update
+    Query
 
 
-class ContextBrokerClient(BaseHttpClient):
+class ContextBrokerLDClient(ContextBrokerClient):
     """
     Implementation of NGSI Context Broker functionalities, such as creating
     entities and subscriptions; retrieving, updating and deleting data.
@@ -38,11 +36,12 @@ class ContextBrokerClient(BaseHttpClient):
     Api specifications for v2 are located here:
     https://telefonicaid.github.io/fiware-orion/api/v2/stable/
     """
+
     def __init__(self,
                  url: str = None,
                  *,
                  session: requests.Session = None,
-                 fiware_header: FiwareHeader = None,
+                 fiware_header: FiwareLDHeader = None,
                  **kwargs):
         """
 
@@ -61,56 +60,7 @@ class ContextBrokerClient(BaseHttpClient):
         self._url_version = NgsiURLVersion.ld_url
 
 
-    # MANAGEMENT API
-    def get_version(self) -> Dict:
-        """
-        Gets version of IoT Agent
-        Returns:
-            Dictionary with response
-        """
-        url = urljoin(self.base_url, '/version')
-        try:
-            res = self.get(url=url, headers=self.headers)
-            if res.ok:
-                return res.json()
-            res.raise_for_status()
-        except requests.RequestException as err:
-            self.logger.error(err)
-            raise
 
-    def get_resources(self) -> Dict:
-        """
-        Gets reo
-
-        Returns:
-            Dict
-        """
-        url = urljoin(self.base_url, self._url_version)
-        try:
-            res = self.get(url=url, headers=self.headers)
-            if res.ok:
-                return res.json()
-            res.raise_for_status()
-        except requests.RequestException as err:
-            self.logger.error(err)
-            raise
-
-    # STATISTICS API
-    def get_statistics(self) -> Dict:
-        """
-        Gets statistics of context broker
-        Returns:
-            Dictionary with response
-        """
-        url = urljoin(self.base_url, 'statistics')
-        try:
-            res = self.get(url=url, headers=self.headers)
-            if res.ok:
-                return res.json()
-            res.raise_for_status()
-        except requests.RequestException as err:
-            self.logger.error(err)
-            raise
 
     # CONTEXT MANAGEMENT API ENDPOINTS
     # Entity Operations
@@ -166,7 +116,8 @@ class ContextBrokerClient(BaseHttpClient):
                         attrs: List[str] = None,
                         order_by: str = None,
                         response_format: Union[AttrsFormat, str] =
-                        AttrsFormat.NORMALIZED
+                        AttrsFormat.NORMALIZED,
+                        **kwargs
                         ) -> List[Union[ContextLDEntity,
                                         ContextLDEntityKeyValues,
                                         Dict[str, Any]]]:
@@ -245,6 +196,8 @@ class ContextBrokerClient(BaseHttpClient):
             except re.error as err:
                 raise ValueError(f'Invalid Pattern: {err}') from err
             params.update({'idPattern': id_pattern})
+        else:
+            params.update({'idPattern': "urn*"})
         if entity_types:
             if not isinstance(entity_types, list):
                 entity_types = [entity_types]
@@ -254,7 +207,7 @@ class ContextBrokerClient(BaseHttpClient):
                 re.compile(type_pattern)
             except re.error as err:
                 raise ValueError(f'Invalid Pattern: {err.msg}') from err
-            params.update({'typePattern': type_pattern})
+            params.update({'typePattern': type_pattern}) #TODO ask Thomas
         if attrs:
             params.update({'attrs': ','.join(attrs)})
         if q:
@@ -274,7 +227,7 @@ class ContextBrokerClient(BaseHttpClient):
         response_format = ','.join(['count', response_format])
         params.update({'options': response_format})
         try:
-            items = self.__pagination(method=PaginationMethod.GET,
+            items = self._ContextBrokerClient__pagination(method=PaginationMethod.GET,
                                       limit=limit,
                                       url=url,
                                       params=params,
@@ -295,7 +248,9 @@ class ContextBrokerClient(BaseHttpClient):
                    entity_type: str = None,
                    attrs: List[str] = None,
                    response_format: Union[AttrsFormat, str] =
-                   AttrsFormat.NORMALIZED) \
+                   AttrsFormat.NORMALIZED,
+                   **kwargs
+                   ) \
             -> Union[ContextLDEntity, ContextLDEntityKeyValues, Dict[str, Any]]:
         """
         This operation must return one entity element only, but there may be
@@ -356,8 +311,10 @@ class ContextBrokerClient(BaseHttpClient):
                               entity_type: str = None,
                               attrs: List[str] = None,
                               response_format: Union[AttrsFormat, str] =
-                              AttrsFormat.NORMALIZED) -> \
-            Dict[str, Union[ ContextProperty, ContextRelationship]]:
+                              AttrsFormat.NORMALIZED,
+                              **kwargs
+                              ) -> \
+            Dict[str, Union[ContextProperty, ContextRelationship]]:
         """
         This request is similar to retrieving the whole entity, however this
         one omits the id and type fields. Just like the general request of
@@ -386,7 +343,7 @@ class ContextBrokerClient(BaseHttpClient):
         Returns:
             Dict
         """
-        url = urljoin(self.base_url, f'{self._url_version}/entities/{entity_id}/attrs')
+        url = urljoin(self.base_url, f'/v2/entities/{entity_id}/attrs') # TODO --> nicht nutzbar
         headers = self.headers.copy()
         params = {}
         if entity_type:
@@ -489,7 +446,9 @@ class ContextBrokerClient(BaseHttpClient):
                       entity_id: str,
                       attr_name: str,
                       entity_type: str = None,
-                      response_format = '') -> Union[ContextProperty, ContextRelationship]:
+                      response_format='',
+                      **kwargs
+                      ) -> Union[ContextProperty, ContextRelationship]:
         """
         Retrieves a specified attribute from an entity.
 
@@ -545,7 +504,7 @@ class ContextBrokerClient(BaseHttpClient):
             several entities with the same entity id.
         """
         headers = self.headers.copy()
-        if not isinstance(attr, NamedContextProperty) or not  isinstance(attr, NamedContextRelationship):
+        if not isinstance(attr, NamedContextProperty) or not isinstance(attr, NamedContextRelationship):
             assert attr_name is not None, "Missing name for attribute. " \
                                           "attr_name must be present if" \
                                           "attr is of type ContextAttribute"
@@ -869,7 +828,7 @@ class ContextBrokerClient(BaseHttpClient):
     def update(self,
                *,
                entities: List[ContextLDEntity],
-               action_type: Union[ActionType, str], #TODO: repalce ActionType
+               action_type: Union[ActionTypeLD, str],
                update_format: str = None) -> None:
         """
         This operation allows to create, update and/or delete several entities
@@ -915,13 +874,21 @@ class ContextBrokerClient(BaseHttpClient):
             assert update_format == 'keyValues', \
                 "Only 'keyValues' is allowed as update format"
             params.update({'options': 'keyValues'})
-        update = Update(entities=entities)
+        update = UpdateLD(entities=entities)
         try:
-            res = self.post(
-                url=url,
-                headers=headers,
-                params=params,
-                data=update.json(by_alias=True))
+            if action_type == ActionTypeLD.DELETE:
+                id_list = [entity.id for entity in entities]
+                res = self.post(
+                    url=url,
+                    headers=headers,
+                    params=params,
+                    data=json.dumps(id_list))
+            else:
+                res = self.post(
+                    url=url,
+                    headers=headers,
+                    params=params,
+                    data=update.json(by_alias=True)[12:-1])
             if res.ok:
                 self.logger.info("Update operation '%s' succeeded!",
                                  action_type)
@@ -954,5 +921,3 @@ class ContextBrokerClient(BaseHttpClient):
         """
 
         self.log_error(err=Exception, msg="not yet implemented (by FIWARE)")
-
-
