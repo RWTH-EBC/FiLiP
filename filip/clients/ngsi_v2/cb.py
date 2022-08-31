@@ -48,6 +48,10 @@ class ContextBrokerClient(BaseHttpClient):
 
     Api specifications for v2 are located here:
     https://telefonicaid.github.io/fiware-orion/api/v2/stable/
+
+    Note:
+        We use the reference implementation for development. Therefore, some
+        other brokers may show slightly different behavior!
     """
     def __init__(self,
                  url: str = None,
