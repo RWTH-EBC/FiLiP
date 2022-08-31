@@ -41,6 +41,6 @@ venv
 /filip/external_resources/unece-units-of-measure.hdf
 /external_resources/
 
-/examples/data_models/
+/examples/ngsi_v2/data_models/
 /tests/semantics/models.py
 /tests/semantics/models2.py
