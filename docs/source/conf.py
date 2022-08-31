@@ -18,7 +18,7 @@ sys.setrecursionlimit(1500)
 # -- Project information -----------------------------------------------------
 
 project = 'FiLiP'
-copyright = f'2022-{datetime.datetime.now().year}, RWTH Aachen University, ' \
+copyright = f'2021-{datetime.datetime.now().year}, RWTH Aachen University, ' \
             f'E.ON Energy Research Center, ' \
             f'Institute for Energy Efficient Buildings and Indoor Climate'
 author = 'E.ON ERC - EBC'
