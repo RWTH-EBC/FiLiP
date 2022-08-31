@@ -18,13 +18,13 @@ sys.setrecursionlimit(1500)
 # -- Project information -----------------------------------------------------
 
 project = 'FiLiP'
-copyright = f'2022-{datetime.datetime.now().year}, RWTH Aachen University, ' \
+copyright = f'2021-{datetime.datetime.now().year}, RWTH Aachen University, ' \
             f'E.ON Energy Research Center, ' \
             f'Institute for Energy Efficient Buildings and Indoor Climate'
 author = 'E.ON ERC - EBC'
 
 # The full version, including alpha/beta/rc tags
-release = '0.2.3'
+release = '0.2.2'
 
 # The short X.Y version.
 version = '.'.join(release.split('.')[0:2])

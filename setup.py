@@ -24,11 +24,9 @@ INSTALL_REQUIRES = ['aenum',
 
 SETUP_REQUIRES = INSTALL_REQUIRES.copy()
 
-VERSION = '0.2.3'
-
 setuptools.setup(
     name='filip',
-    version=VERSION,
+    version='0.2.3',
     author='RWTH Aachen University, E.ON Energy Research Center, Institute\
         of Energy Efficient Buildings and Indoor Climate',
     author_email='tstorek@eonerc.rwth-aachen.de',
@@ -36,14 +34,14 @@ setuptools.setup(
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
     url="https://github.com/RWTH-EBC/filip",
-    download_url=f"https://github.com/RWTH-EBC/FiLiP/archive/refs/tags/v{VERSION}.tar.gz",
+    download_url="https://github.com/RWTH-EBC/FiLiP/archive/refs/tags/v0.2.2.tar.gz",
     project_urls={
         "Documentation":
             "https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/docs/index.html",
         "Source":
             "https://github.com/RWTH-EBC/filip",
         "Download":
-            f"https://github.com/RWTH-EBC/FiLiP/archive/refs/tags/v{VERSION}.tar.gz"},
+            "https://github.com/RWTH-EBC/FiLiP/archive/refs/tags/v0.2.2.tar.gz"},
     # Specify the Python versions you support here. In particular, ensure
     # that you indicate whether you support Python 2, Python 3 or both.
     classifiers=['Development Status :: 3 - Alpha',

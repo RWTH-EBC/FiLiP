@@ -248,7 +248,7 @@ This project is licensed under the BSD License - see the [LICENSE](LICENSE) file
 
 <a href="https://www.ebc.eonerc.rwth-aachen.de/"> <img alt="EBC" src="https://www.ebc.eonerc.rwth-aachen.de/global/show_picture.asp?id=aaaaaaaaaakevlz" height="100"> </a>
 
-2021-2022, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy 
+2021, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy 
 Efficient Buildings and Indoor Climate
 
 [Institute for Energy Efficient Buildings and Indoor Climate (EBC)](https://www.ebc.eonerc.rwth-aachen.de)  
