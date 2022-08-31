@@ -75,6 +75,13 @@ class TestSubscriptions(unittest.TestCase):
         with self.assertRaises(ValidationError):
             notification.mqtt = mqttCustom
 
+        # test onlyChangedAttrs-field
+        notification.onlyChangedAttrs = True
+        notification.onlyChangedAttrs = False
+        with self.assertRaises(ValidationError):
+            notification.onlyChangedAttrs = dict()
+
+
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
                 cb_url=settings.CB_URL)

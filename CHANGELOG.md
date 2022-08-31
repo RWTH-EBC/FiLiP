@@ -1,6 +1,7 @@
 #### v0.2.3
 - added `override_metadata` argument according to new metadata update semantics in orion (https://fiware-orion.readthedocs.io/en/master/user/metadata.html#updating-metadata) ([#157](https://github.com/RWTH-EBC/FiLiP/issues/157))
 - fixed test for patch_entity ([#157](https://github.com/RWTH-EBC/FiLiP/issues/157))
+- added flag to ntoify only changed attributes ([#154](https://github.com/RWTH-EBC/FiLiP/issues/154))
 - fixed issue of client generation when multiple clients are required ([#151](https://github.com/RWTH-EBC/FiLiP/issues/151))
 - fixed throttling=0 is not working when posting a subscription ([#148](https://github.com/RWTH-EBC/FiLiP/issues/148))
 - added filter functions for better subscription handling ([#141](https://github.com/RWTH-EBC/FiLiP/issues/141))
