@@ -1663,6 +1663,8 @@ class ContextBrokerClient(BaseHttpClient):
             old_entity: OPTIONAL, if given only the differences between the
                        old_entity and entity are updated in the CB.
                        Other changes made to the entity in CB, can be kept.
+                       If type or id was changed, the old_entity will be
+                       deleted.
             override_attr_metadata:
                 Whether to override or append the attributes metadata.
                 `True` for overwrite or `False` for update/append
@@ -1697,7 +1699,7 @@ class ContextBrokerClient(BaseHttpClient):
 
             # if type or id was changed, the old_entity needs to be deleted
             # and the new_entity created
-            # In this case we will loose the current state of the entity
+            # In this case we will lose the current state of the entity
             if old_entity.id != new_entity.id or \
                     old_entity.type != new_entity.type:
                 self.delete_entity(entity_id=old_entity.id,

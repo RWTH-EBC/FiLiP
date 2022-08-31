@@ -721,8 +721,8 @@ class TestContextBroker(unittest.TestCase):
         self.assertEqual(test_entity,
                          self.client.get_entity(entity_id=test_entity.id))
         # assert that former entity_id is freed again
-        self.assertRaises(RequestException, self.client.get_entity,
-                          entity_id=entity.id)
+        with self.assertRaises(RequestException):
+            self.client.get_entity(entity_id=entity.id)
         self.tearDown()
 
         # sub-Test3: a non valid old_entity is provided, but already entity
