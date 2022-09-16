@@ -1024,7 +1024,7 @@ class ContextBrokerClient(BaseHttpClient):
             if not isinstance(value, (dict, list)):
                 headers.update({'Content-Type': 'text/plain'})
                 if isinstance(value, str):
-                    value = f'"{value}"'
+                    value = f'{value}'
                 res = self.put(url=url,
                                headers=headers,
                                json=value,
