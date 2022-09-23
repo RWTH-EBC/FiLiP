@@ -815,6 +815,25 @@ class TestContextBroker(unittest.TestCase):
                                       iota_url=settings.IOTA_URL)
             self.assertEqual(len(self.iotac.get_device_list()), len(devices))
 
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                cb_url=settings.CB_URL)
+    def test_send_receive_string(self):
+        # test updating a string value
+        entity = ContextEntity(id="string_test", type="test_type1")
+        entityAttr = NamedContextAttribute(name="data", value="")
+        entity.add_attributes([entityAttr])
+        self.client.post_entity(entity=entity)
+
+        testData = "hello_test"
+        self.client.update_attribute_value(entity_id="string_test", attr_name="data", value=testData)
+
+        readback = self.client.get_attribute_value(entity_id="string_test", attr_name="data")
+
+        self.assertEqual(testData, readback)
+
+        self.client.delete_entity(entity_id="string_test", entity_type="test_type1")
+
     def tearDown(self) -> None:
         """
         Cleanup test server
