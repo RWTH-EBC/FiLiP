@@ -97,11 +97,13 @@ class FiwareLDHeader(BaseModel):
     """
     link_header: str = Field(
         alias="Link",
-        default='<https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; '
+        default='<https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld>; '
+                'rel="http://www.w3.org/ns/json-ld#context"; '
                 'type="application/ld+json"',
         max_length=50,
         description="Fiware service used for multi-tenancy",
         regex=r"\w*$"
+
     )
     ngsild_tenant: str = Field(
         alias="NGSILD-Tenant",
@@ -112,7 +114,7 @@ class FiwareLDHeader(BaseModel):
     )
 
     def set_context(self, context: str):
-        self.link = f'<{context}>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"'
+        self.link_header = f'<{context}>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"'
 
 
     class Config(BaseConfig):

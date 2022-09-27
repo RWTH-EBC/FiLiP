@@ -4,7 +4,6 @@ Context Broker Module for API Client
 import json
 import re
 import warnings
-from enum import Enum
 from math import inf
 from typing import Any, Dict, List, Union, Optional
 from urllib.parse import urljoin
@@ -28,13 +27,13 @@ from filip.models.ngsi_v2.context import \
 
 class ContextBrokerLDClient(ContextBrokerClient):
     """
-    Implementation of NGSI Context Broker functionalities, such as creating
+    Implementation of NGSI-LD Context Broker functionalities, such as creating
     entities and subscriptions; retrieving, updating and deleting data.
     Further documentation:
     https://fiware-orion.readthedocs.io/en/master/
 
-    Api specifications for v2 are located here:
-    https://telefonicaid.github.io/fiware-orion/api/v2/stable/
+    Api specifications for LD are located here:
+    https://www.etsi.org/deliver/etsi_gs/CIM/001_099/009/01.04.01_60/gs_cim009v010401p.pdf
     """
 
     def __init__(self,
@@ -57,6 +56,7 @@ class ContextBrokerLDClient(ContextBrokerClient):
                          session=session,
                          fiware_header=fiware_header,
                          **kwargs)
+        # set the version specific url-pattern
         self._url_version = NgsiURLVersion.ld_url
 
 
@@ -68,7 +68,7 @@ class ContextBrokerLDClient(ContextBrokerClient):
                     entity: ContextLDEntity,
                     update: bool = False):
         """
-        Function registers an Object with the NGSI Context Broker,
+        Function registers an Object with the NGSI-LD Context Broker,
         if it already exists it can be automatically updated
         if the overwrite bool is True
         First a post request with the entity is tried, if the response code
@@ -76,10 +76,7 @@ class ContextBrokerLDClient(ContextBrokerClient):
         options, either overwrite it, if the attribute have changed
         (e.g. at least one new/new values) (update = True) or leave
         it the way it is (update=False)
-        Args:
-            update (bool): If the response.status_code is 422, whether the old
-            entity should be updated or not
-            entity (ContextEntity): Context Entity Object
+
         """
         url = urljoin(self.base_url, f'{self._url_version}/entities')
         headers = self.headers.copy()
@@ -141,9 +138,7 @@ class ContextBrokerLDClient(ContextBrokerClient):
             id_pattern: A correctly formatted regular expression. Retrieve
                 entities whose ID matches the regular expression. Incompatible
                 with id, e.g. ngsi-ld.* or sensor.*
-            type_pattern: A correctly formatted regular expression. Retrieve
-                entities whose type matches the regular expression.
-                Incompatible with type, e.g. room.*
+            type_pattern: is not supported in NGSI-LD
             q (SimpleQuery): A query expression, composed of a list of
                 statements separated by ;, i.e.,
                 q=statement1;statement2;statement3. See Simple Query
@@ -184,8 +179,6 @@ class ContextBrokerLDClient(ContextBrokerClient):
 
         if entity_ids and id_pattern:
             raise ValueError
-        if entity_types and type_pattern:
-            raise ValueError
         if entity_ids:
             if not isinstance(entity_ids, list):
                 entity_ids = [entity_ids]
@@ -196,18 +189,12 @@ class ContextBrokerLDClient(ContextBrokerClient):
             except re.error as err:
                 raise ValueError(f'Invalid Pattern: {err}') from err
             params.update({'idPattern': id_pattern})
-        else:
-            params.update({'idPattern': "urn*"})
         if entity_types:
             if not isinstance(entity_types, list):
                 entity_types = [entity_types]
             params.update({'type': ','.join(entity_types)})
         if type_pattern:
-            try:
-                re.compile(type_pattern)
-            except re.error as err:
-                raise ValueError(f'Invalid Pattern: {err.msg}') from err
-            params.update({'typePattern': type_pattern}) #TODO ask Thomas
+            warnings.warn(f"type pattern are not supported by NGSI-LD and will be ignored in this request")
         if attrs:
             params.update({'attrs': ','.join(attrs)})
         if q:
@@ -224,6 +211,13 @@ class ContextBrokerLDClient(ContextBrokerClient):
             params.update({'orderBy': order_by})
         if response_format not in list(AttrsFormat):
             raise ValueError(f'Value must be in {list(AttrsFormat)}')
+        #This interface is only realized via additional specifications.
+        #If no parameters are passed, the idPattern is set to "urn:*".
+        if not params:
+            default_idPattern = "urn:*"
+            params.update({'idPattern': default_idPattern})
+            warnings.warn(f"querying entities without additional parameters is not supported on ngsi-ld. the query is "
+                          f"performed with the idPattern {default_idPattern}")
         response_format = ','.join(['count', response_format])
         params.update({'options': response_format})
         try:
@@ -249,7 +243,7 @@ class ContextBrokerLDClient(ContextBrokerClient):
                    attrs: List[str] = None,
                    response_format: Union[AttrsFormat, str] =
                    AttrsFormat.NORMALIZED,
-                   **kwargs
+                   **kwargs  # TODO how to handle metadata?
                    ) \
             -> Union[ContextLDEntity, ContextLDEntityKeyValues, Dict[str, Any]]:
         """
@@ -270,9 +264,6 @@ class ContextBrokerLDClient(ContextBrokerClient):
                 retrieved in arbitrary order, and all the attributes of the
                 entity are included in the response.
                 Example: temperature, humidity.
-            metadata (List of Strings): A list of metadata names to include in
-                the response. See "Filtering out attributes and metadata"
-                section for more detail. Example: accuracy.
             response_format (AttrsFormat, str): Representation format of
                 response
         Returns:
@@ -335,9 +326,6 @@ class ContextBrokerLDClient(ContextBrokerClient):
                 retrieved in arbitrary order, and all the attributes of the
                 entity are included in the response. Example: temperature,
                 humidity.
-            metadata (List of Strings): A list of metadata names to include in
-                the response. See "Filtering out attributes and metadata"
-                section for more detail. Example: accuracy.
             response_format (AttrsFormat, str): Representation format of
                 response
         Returns:
@@ -535,6 +523,43 @@ class ContextBrokerLDClient(ContextBrokerClient):
                   f"'{entity_id}' "
             self.log_error(err=err, msg=msg)
             raise
+
+    def get_all_attributes(self) -> List:
+        """
+        Retrieves a specified attribute from an entity.
+
+        Args:
+            entity_id: Id of the entity. Example: Bcn_Welt
+            attr_name: Name of the attribute to be retrieved.
+            entity_type (Optional): Type of the entity to retrieve
+            metadata (Optional): A list of metadata names to include in the
+                response. See "Filtering out attributes and metadata" section
+                for more detail.
+
+        Returns:
+            The content of the retrieved attribute as ContextAttribute
+
+        Raises:
+            Error
+
+        """
+        url = urljoin(self.base_url,
+                      f'{self._url_version}/attributes')
+        headers = self.headers.copy()
+        params = {}
+        try:
+            res = self.get(url=url, params=params, headers=headers)
+            if res.ok:
+                self.logger.debug('Received: %s', res.json())
+                if "attributeList" in res.json():
+                    return res.json()["attributeList"]
+            res.raise_for_status()
+
+        except requests.RequestException as err:
+            msg = f"Could not asks for Attributes"
+            self.log_error(err=err, msg=msg)
+            raise
+
 
     #
     # # SUBSCRIPTION API ENDPOINTS

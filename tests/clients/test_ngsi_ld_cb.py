@@ -15,21 +15,14 @@ from filip.models.base import  DataType, FiwareLDHeader
 from filip.models.ngsi_ld.context import ActionTypeLD, ContextLDEntity, ContextProperty, NamedContextProperty
 from filip.utils.simple_ql import QueryString
 
-from urllib.parse import urlparse
-from filip.clients.ngsi_v2 import HttpClient, HttpClientConfig
-from filip.config import settings
+
 from filip.models.ngsi_v2.context import \
     AttrsFormat, \
     NamedCommand, \
     Subscription, \
     Query, \
     Entity
-from filip.models.ngsi_v2.iot import \
-    Device, \
-    DeviceCommand, \
-    DeviceAttribute, \
-    ServiceGroup, \
-    StaticDeviceAttribute
+
 
 # Setting up logging
 logging.basicConfig(
@@ -160,7 +153,7 @@ class TestContextBroker(unittest.TestCase):
                 entity_id=self.entity.id), res_entity.get_properties(
                 response_format='dict'))
             res_entity.testtemperature.value = 25
-            client.update_entity(entity=res_entity)
+            client.update_entity(entity=res_entity)  # TODO: how to use context?
             self.assertEqual(client.get_entity(entity_id=self.entity.id),
                              res_entity)
             res_entity.add_properties({'pressure': ContextProperty(
@@ -265,6 +258,33 @@ class TestContextBroker(unittest.TestCase):
                         range(0, 1000)]
             client.update(entities=entities, action_type=ActionTypeLD.CREATE)
             e = Entity(idPattern=".*", typePattern=".*TypeA$")
+
+    def test_get_all_attributes(self):
+        fiware_header = FiwareLDHeader(service='filip',
+                                       service_path='/testing')
+        with ContextBrokerLDClient(fiware_header=self.fiware_header) as client:
+            entity = self.entity
+            attr_txt = NamedContextProperty(name='attr_txt',
+                                            value="Test")
+            attr_bool = NamedContextProperty(name='attr_bool',
+                                             value=True)
+            attr_float = NamedContextProperty(name='attr_float',
+                                              value=round(random.random(), 5))
+            attr_list = NamedContextProperty(name='attr_list',
+                                             value=[1, 2, 3])
+            attr_dict = NamedContextProperty(name='attr_dict',
+                                             value={'key': 'value'})
+            entity.add_properties([attr_txt,
+                                   attr_bool,
+                                   attr_float,
+                                   attr_list,
+                                   attr_dict])
+
+            client.post_entity(entity=entity, update=True)
+            attrs_list = client.get_all_attributes()
+            self.assertEqual(['attr_bool', 'attr_dict', 'attr_float', 'attr_list', 'attr_txt', 'testtemperature'],
+                             attrs_list)
+
 
 
 

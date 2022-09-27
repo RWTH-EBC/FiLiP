@@ -1,8 +1,7 @@
 """
 NGSIv2 models for context broker interaction
 """
-from typing import Any,  List, Dict, Union, Optional
-
+from typing import Any, List, Dict, Union, Optional
 
 from aenum import Enum
 from pydantic import BaseModel, Field, validator
@@ -18,7 +17,6 @@ class DataTypeLD(str, Enum):
 
     PROPERTY = "Property", "All attributes that do not represent a relationship"
     RELATIONSHIP = "Relationship", "Reference to another context entity, which can be identified with a URN."
-
 
 
 # NGSI-LD entity models
@@ -45,6 +43,7 @@ class ContextProperty(BaseModel):
         title="Property value",
         description="the actual data"
     )
+
 
 class NamedContextProperty(ContextProperty):
     """
@@ -83,7 +82,7 @@ class ContextRelationship(BaseModel):
         >>> attr = ContextRelationship(**data)
 
     """
-    type =  "Relationship"
+    type = "Relationship"
     object: Optional[Union[Union[float, int, bool, str, List, Dict[str, Any]],
                            List[Union[float, int, bool, str, List,
                                       Dict[str, Any]]]]] = Field(
@@ -91,7 +90,6 @@ class ContextRelationship(BaseModel):
         title="Realtionship object",
         description="the actual object id"
     )
-
 
 
 class NamedContextRelationship(ContextRelationship):
@@ -213,9 +211,6 @@ class ContextLDEntity(ContextLDEntityKeyValues, ContextEntity):
                  type: str,
                  **data):
 
-        # There is currently no validation for extra fields
-        #data.update(self._validate_properties(data))
-
         super().__init__(id=id, type=type, **data)
 
     class Config:
@@ -226,15 +221,21 @@ class ContextLDEntity(ContextLDEntityKeyValues, ContextEntity):
         validate_all = True
         validate_assignment = True
 
+    @validator("id")
+    def _validate_id(cls, id: str):
+        if not id.startswith("urn:ngsi-ld:"):
+            raise ValueError('Id has to be an URN and starts with "urn:ngsi-ld:"')
+        return id
+
     @classmethod
     def _validate_properties(cls, data: Dict):
         attrs = {}
         for key, attr in data.items():
-            if key not in ContextLDEntity.__fields__:
-                if "value" in attr: #TODO: check for property
-                    attrs[key] = ContextProperty.parse_obj(attr)
-                else:
+            if key not in ContextEntity.__fields__:
+                if attr["type"] == DataTypeLD.RELATIONSHIP:
                     attrs[key] = ContextRelationship.parse_obj(attr)
+                else:
+                    attrs[key] = ContextProperty.parse_obj(attr)
         return attrs
 
     def get_properties(self,
@@ -260,7 +261,6 @@ class ContextLDEntity(ContextLDEntityKeyValues, ContextEntity):
                 ContextLDEntity.__fields__ and
                 value.get('type') != DataTypeLD.RELATIONSHIP]
 
-
     def add_properties(self, attrs: Union[Dict[str, ContextProperty],
                                           List[NamedContextProperty]]) -> None:
         """
@@ -277,7 +277,7 @@ class ContextLDEntity(ContextLDEntityKeyValues, ContextEntity):
             self.__setattr__(name=key, value=attr)
 
     def add_relationships(self, attrs: Union[Dict[str, ContextRelationship],
-                                          List[NamedContextRelationship]]) -> None:
+                                             List[NamedContextRelationship]]) -> None:
         """
         Add relationship to entity
         Args:
@@ -315,6 +315,7 @@ class ContextLDEntity(ContextLDEntityKeyValues, ContextEntity):
                 ContextLDEntity.__fields__ and
                 value.get('type') == DataTypeLD.RELATIONSHIP]
 
+
 class ActionTypeLD(str, Enum):
     """
     Options for queries
@@ -325,6 +326,7 @@ class ActionTypeLD(str, Enum):
     UPDATE = "update"
     DELETE = "delete"
 
+
 class UpdateLD(BaseModel):
     """
     Model for update action
@@ -333,4 +335,3 @@ class UpdateLD(BaseModel):
         description="an array of entities, each entity specified using the "
                     "JSON entity representation format "
     )
-

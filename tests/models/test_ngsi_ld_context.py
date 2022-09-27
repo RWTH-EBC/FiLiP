@@ -4,6 +4,8 @@ Test module for context broker models
 
 import unittest
 
+from pydantic import ValidationError
+
 from filip.models.ngsi_ld.context import \
     ContextLDEntity, ContextProperty
 
@@ -20,7 +22,7 @@ class TestContextModels(unittest.TestCase):
         """
         self.attr = {'temperature': {'value': 20, 'type': 'Property'}}
         self.relation = {'relation': {'object': 'OtherEntity', 'type': 'Relationship'}}
-        self.entity_data = {'id': 'MyId',
+        self.entity_data = {'id': 'urn:ngsi-ld:MyType:MyId',
                             'type': 'MyType'}
         self.entity_data.update(self.attr)
         self.entity_data.update(self.relation)
@@ -32,11 +34,13 @@ class TestContextModels(unittest.TestCase):
             None
         """
         attr = ContextProperty(**{'value': "20"})
-        self.assertIsInstance(attr.value, int)
+        self.assertIsInstance(attr.value, float)
         attr = ContextProperty(**{'value': 20})
-        self.assertIsInstance(attr.value, str)
+        self.assertIsInstance(attr.value, float)
 
-
+    def test_entity_id(self) -> None:
+        with self.assertRaises(ValidationError):
+            ContextLDEntity(**{'id': 'MyId', 'type': 'MyType'})
 
     def test_cb_entity(self) -> None:
         """
@@ -62,6 +66,4 @@ class TestContextModels(unittest.TestCase):
 
         new_attr = {'new_attr': ContextProperty(type='Number', value=25)}
         entity.add_properties(new_attr)
-
-
 
