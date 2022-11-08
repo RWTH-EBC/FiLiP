@@ -93,7 +93,8 @@ class IoTAClient(BaseHttpClient):
         url = urljoin(self.base_url, 'iot/services')
         headers = self.headers
         data = {'services': [group.dict(exclude={'service', 'subservice'},
-                                        exclude_defaults=True) for
+                                        exclude_none=True,
+                                        exclude_unset=True) for
                              group in service_groups]}
         try:
             res = self.post(url=url, headers=headers, json=data)
