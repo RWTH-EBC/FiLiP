@@ -1747,9 +1747,9 @@ class ContextBrokerClient(BaseHttpClient):
             if isinstance(value, list):
                 return any([_value_is_not_none(value=_v)for _v in value])
             else:
-                return bool(v)
+                return bool(value)
         if first.keys() != second.keys():
-            logger.warning(
+            warnings.warn(
                 "Subscriptions contain a different set of fields. "
                 "Only comparing to new fields of the new one."
             )
@@ -1761,8 +1761,12 @@ class ContextBrokerClient(BaseHttpClient):
                     continue
                 else:
                     return False
-            if not _value_is_not_none(v) and not _value_is_not_none(ex_value):
-                continue
+            if not _value_is_not_none(v) or not _value_is_not_none(ex_value):
+                warnings.warn(
+                    "Different field found:{"
+                    f"{k}: ({v}, {ex_value})"
+                    "}"
+                )
             if v != ex_value:
                 return False
         return True
