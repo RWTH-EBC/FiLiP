@@ -1,4 +1,4 @@
-#### v.0.2.4
+#### v0.2.4
 - fixed ContextAttribute: wrong type conversion for value ([#173](https://github.com/RWTH-EBC/FiLiP/issues/173))
 - fixed Change does_entity_exists create error message if entity does not exist ([#167](https://github.com/RWTH-EBC/FiLiP/issues/167))
 
