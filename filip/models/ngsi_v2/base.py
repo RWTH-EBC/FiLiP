@@ -333,9 +333,7 @@ class BaseValueAttribute(BaseModel):
         min_length=1,
         regex=FiwareRegex.string_protect.value,  # Make it FIWARE-Safe
     )
-    value: Optional[Union[Union[float, int, bool, str, List, Dict[str, Any]],
-                          List[Union[float, int, bool, str, List,
-                                     Dict[str, Any]]]]] = Field(
+    value: Optional[Any] = Field(
         default=None,
         title="Attribute value",
         description="the actual data"
@@ -343,12 +341,19 @@ class BaseValueAttribute(BaseModel):
 
     @validator('value')
     def validate_value_type(cls, value, values):
-        """validator for field 'value'"""
+        """
+        Validator for field 'value'
+        The validator will try autocast the value based on the given type.
+        If `DataType.STRUCTUREDVALUE` is used for type it will also serialize
+        pydantic models. With latter operation all additional features of the
+        original pydantic model will be dumped.
+        If the type is unknown it will check json-serializable.
+        """
 
         type_ = values['type']
         validate_escape_character_free(value)
 
-        if value:
+        if value is not None:
             if type_ == DataType.TEXT:
                 if isinstance(value, list):
                     return [str(item) for item in value]
@@ -373,10 +378,12 @@ class BaseValueAttribute(BaseModel):
                 raise TypeError(f"{type(value)} does not match "
                                 f"{DataType.ARRAY}")
             if type_ == DataType.STRUCTUREDVALUE:
+                if isinstance(value, BaseModel):
+                    return json.loads(value.json())
                 value = json.dumps(value)
                 return json.loads(value)
-            else:
-                value = json.dumps(value)
-                return json.loads(value)
+
+            value = json.dumps(value)
+            return json.loads(value)
 
         return value
