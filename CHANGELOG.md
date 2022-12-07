@@ -2,6 +2,7 @@
 - fixed ContextAttribute: wrong type conversion for value ([#173](https://github.com/RWTH-EBC/FiLiP/issues/173))
 - fixed Change does_entity_exists create error message if entity does not exist ([#167](https://github.com/RWTH-EBC/FiLiP/issues/167))
 - fixed remove additional escape chars when sending a string ([#163](https://github.com/RWTH-EBC/FiLiP/issues/163))
+
 #### v0.2.3
 - added `override_metadata` argument according to new metadata update semantics in orion (https://fiware-orion.readthedocs.io/en/master/user/metadata.html#updating-metadata) ([#157](https://github.com/RWTH-EBC/FiLiP/issues/157))
 - fixed test for patch_entity ([#157](https://github.com/RWTH-EBC/FiLiP/issues/157))
