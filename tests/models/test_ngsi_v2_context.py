@@ -54,8 +54,10 @@ class TestContextModels(unittest.TestCase):
         """
         attr = ContextAttribute(**{'value': 20, 'type': 'Text'})
         self.assertIsInstance(attr.value, str)
+        self.assertEqual(attr.value, '20')
         attr = ContextAttribute(**{'value': 20, 'type': 'Number'})
         self.assertIsInstance(attr.value, float)
+        self.assertEqual(str(attr.value), str(20.0))
         attr = ContextAttribute(**{'value': [20, 20], 'type': 'Float'})
         self.assertIsInstance(attr.value, list)
         attr = ContextAttribute(**{'value': [20.0, 20.0], 'type': 'Integer'})
