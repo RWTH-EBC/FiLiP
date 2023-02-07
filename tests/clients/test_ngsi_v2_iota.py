@@ -376,6 +376,29 @@ class TestAgent(unittest.TestCase):
             self.assertEqual(live_device.__getattribute__(key), value)
             cb_client.close()
 
+    def test_service_group(self):
+        """
+        Test of querying service group based on apikey and resource.
+
+        """
+        # Create dummy service groups
+        group_base = ServiceGroup(service=settings.FIWARE_SERVICE, subservice=settings.FIWARE_SERVICEPATH,
+                                  resource="/iot/json", apikey="base")
+        group1 = ServiceGroup(service=settings.FIWARE_SERVICE, subservice=settings.FIWARE_SERVICEPATH,
+                              resource="/iot/json", apikey="test1")
+        group2 = ServiceGroup(service=settings.FIWARE_SERVICE, subservice=settings.FIWARE_SERVICEPATH,
+                              resource="/iot/json", apikey="test2")
+        self.client.post_groups([group_base, group1, group2], update=True)
+
+        # get service group
+        self.assertEqual(group_base, self.client.get_group(resource="/iot/json", apikey="base"))
+        self.assertEqual(group1, self.client.get_group(resource="/iot/json", apikey="test1"))
+        self.assertEqual(group2, self.client.get_group(resource="/iot/json", apikey="test2"))
+        with self.assertRaises(KeyError):
+            self.client.get_group(resource="/iot/json", apikey="not_exist")
+
+        self.tearDown()
+
     def test_update_service_group(self):
         """
         Test for updating service group

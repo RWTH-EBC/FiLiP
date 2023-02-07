@@ -4,8 +4,9 @@ Filter functions to keep client code clean and easy to use.
 from typing import List, Union
 from filip.clients.ngsi_v2 import ContextBrokerClient
 from filip.models import FiwareHeader
-from filip.models.ngsi_v2.iot import Device
+from filip.models.ngsi_v2.iot import Device, ServiceGroup
 from filip.models.ngsi_v2.subscriptions import Subscription
+from requests.exceptions import RequestException
 
 
 def filter_device_list(devices: List[Device],
@@ -86,4 +87,38 @@ def filter_subscriptions_by_entity(entity_id: str,
                          entity.typePattern.match(entity_type)):
                     filtered_subscriptions.append(subscription)
     return filtered_subscriptions
+
+
+def filter_group_list(group_list: List[ServiceGroup],
+                      resources: Union[str, List[str]] = None,
+                      apikeys: Union[str, List[str]] = None
+                      ) -> List[ServiceGroup]:
+    """
+    Filter service group based on resource and apikey.
+
+    Args:
+        group_list: The list of service groups that need to be filtered
+        resources: see ServiceGroup model
+        apikeys: see ServiceGroup
+
+    Returns: a single service group or Not Found Error
+    """
+    if resources:
+        if isinstance(resources, (list, str)):
+            if isinstance(resources, str):
+                resources = [resources]
+            group_list = [group for group in group_list if group.resource in resources]
+        else:
+            raise TypeError('resources must be a string or a list of strings!')
+
+    if apikeys:
+        if isinstance(apikeys, (list, str)):
+            if isinstance(apikeys, str):
+                apikeys = [apikeys]
+            group_list = [group for group in group_list if group.apikey in apikeys]
+        else:
+            raise TypeError('apikeys must be a string or a list of strings!')
+
+    return group_list
+
 

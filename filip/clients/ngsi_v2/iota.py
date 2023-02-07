@@ -14,7 +14,7 @@ from filip.clients.base_http_client import BaseHttpClient
 from filip.models.base import FiwareHeader
 from filip.models.ngsi_v2.iot import Device, ServiceGroup
 
-from filip.utils.filter import filter_device_list
+from filip.utils.filter import filter_device_list, filter_group_list
 
 if TYPE_CHECKING:
     from filip.clients.ngsi_v2.cb import ContextBrokerClient
@@ -93,7 +93,8 @@ class IoTAClient(BaseHttpClient):
         url = urljoin(self.base_url, 'iot/services')
         headers = self.headers
         data = {'services': [group.dict(exclude={'service', 'subservice'},
-                                        exclude_defaults=True) for
+                                        exclude_none=True,
+                                        exclude_unset=True) for
                              group in service_groups]}
         try:
             res = self.post(url=url, headers=headers, json=data)
@@ -163,19 +164,15 @@ class IoTAClient(BaseHttpClient):
         Returns:
 
         """
-        url = urljoin(self.base_url, 'iot/services')
-        headers = self.headers
-        params = {'resource': resource,
-                  'apikey': apikey}
-
-        try:
-            res = self.get(url=url, headers=headers, params=params)
-            if res.ok:
-                return ServiceGroup(**res.json()['services'][0])
-            res.raise_for_status()
-        except requests.RequestException as err:
-            self.log_error(err=err, msg=None)
-            raise
+        groups = self.get_group_list()
+        groups = filter_group_list(group_list=groups, resources=resource, apikeys=apikey)
+        if len(groups) == 1:
+            group = groups[0]
+            return group
+        elif len(groups) == 0:
+            raise KeyError(f"Service group with resource={resource} and apikey={apikey} was not found")
+        else:
+            raise NotImplementedError("There is a wierd error, try get_group_list() for debugging")
 
     def update_groups(self, *,
                       service_groups: Union[ServiceGroup, List[ServiceGroup]],
