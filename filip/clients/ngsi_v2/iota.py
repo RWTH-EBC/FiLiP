@@ -222,7 +222,7 @@ class IoTAClient(BaseHttpClient):
             res = self.put(url=url,
                            headers=headers,
                            params=params,
-                           data=service_group.json(
+                           json=service_group.dict(
                                include=fields,
                                exclude={'service', 'subservice'},
                                exclude_unset=True))

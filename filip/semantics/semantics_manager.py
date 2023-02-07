@@ -582,8 +582,8 @@ class SemanticsManager(BaseModel):
             return False
         else:
             client = self.get_client(identifier.header)
-            return client.does_entity_exists(entity_id=identifier.id,
-                                             entity_type=identifier.type)
+            return client.does_entity_exist(entity_id=identifier.id,
+                                            entity_type=identifier.type)
 
     def was_instance_deleted(self, identifier: InstanceIdentifier) -> bool:
         """
@@ -1114,8 +1114,8 @@ class SemanticsManager(BaseModel):
 
         # instance is new. Save it as is
         client = self.get_client(instance.header)
-        if not client.does_entity_exists(entity_id=instance.id,
-                                         entity_type=instance.get_type()):
+        if not client.does_entity_exist(entity_id=instance.id,
+                                        entity_type=instance.get_type()):
             return
 
         client = self.get_client(instance.header)

@@ -7,6 +7,7 @@ import logging
 import time
 import random
 import json
+import uuid
 
 import paho.mqtt.client as mqtt
 from datetime import datetime, timedelta
@@ -833,6 +834,22 @@ class TestContextBroker(unittest.TestCase):
         self.assertEqual(testData, readback)
 
         self.client.delete_entity(entity_id="string_test", entity_type="test_type1")
+
+    def test_does_entity_exist(self):
+        _id = uuid.uuid4()
+
+        entity = ContextEntity(id=str(_id), type="test_type1")
+        self.assertFalse(
+            self.client.does_entity_exist(
+                entity_id=entity.id,
+                entity_type=entity.type))
+        self.client.post_entity(entity=entity)
+        self.assertTrue(
+            self.client.does_entity_exist(
+                entity_id=entity.id,
+                entity_type=entity.type)
+        )
+
 
     def tearDown(self) -> None:
         """

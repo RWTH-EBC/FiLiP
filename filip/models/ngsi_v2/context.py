@@ -116,7 +116,7 @@ class ContextEntityKeyValues(BaseModel):
         regex=FiwareRegex.standard.value,  # Make it FIWARE-Safe
         allow_mutation=False
     )
-    type: str = Field(
+    type: Union[str, Enum] = Field(
         ...,
         title="Entity Type",
         description="Id of an entity in an NGSI context broker. "

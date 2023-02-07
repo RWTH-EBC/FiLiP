@@ -399,6 +399,35 @@ class TestAgent(unittest.TestCase):
 
         self.tearDown()
 
+    def test_update_service_group(self):
+        """
+        Test for updating service group
+        """
+        attributes = [DeviceAttribute(name="temperature", type="Number")]
+        group_base = ServiceGroup(service=settings.FIWARE_SERVICE, subservice=settings.FIWARE_SERVICEPATH,
+                                  resource="/iot/json", apikey="base",
+                                  entity_type="Sensor",
+                                  attributes=attributes)
+
+        self.client.post_group(service_group=group_base)
+        self.assertEqual(group_base, self.client.get_group(resource="/iot/json", apikey="base"))
+
+        # # boolean attribute
+        group_base.autoprovision = False
+        self.client.update_group(service_group=group_base)
+        self.assertEqual(group_base, self.client.get_group(resource="/iot/json", apikey="base"))
+
+        # entity type
+        group_base.entity_type = "TemperatureSensor"
+        self.client.update_group(service_group=group_base)
+        self.assertEqual(group_base, self.client.get_group(resource="/iot/json", apikey="base"))
+
+        # attributes
+        humidity = DeviceAttribute(name="humidity", type="Number")
+        group_base.attributes.append(humidity)
+        self.client.update_group(service_group=group_base)
+        self.assertEqual(group_base, self.client.get_group(resource="/iot/json", apikey="base"))
+
     def tearDown(self) -> None:
         """
         Cleanup test server

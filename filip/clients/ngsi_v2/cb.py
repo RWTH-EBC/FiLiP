@@ -1623,9 +1623,9 @@ class ContextBrokerClient(BaseHttpClient):
                                                entity_type=entity_type,
                                                attrs=[command])
 
-    def does_entity_exists(self,
-                           entity_id: str,
-                           entity_type: str) -> bool:
+    def does_entity_exist(self,
+                          entity_id: str,
+                          entity_type: str) -> bool:
         """
         Test if an entity with given id and type is present in the CB
 
@@ -1637,17 +1637,23 @@ class ContextBrokerClient(BaseHttpClient):
             bool; True if entity exists
 
         Raises:
-            RequestException, if any error occurres (e.g: No Connection),
+            RequestException, if any error occurs (e.g: No Connection),
             except that the entity is not found
         """
+        url = urljoin(self.base_url, f'v2/entities/{entity_id}')
+        headers = self.headers.copy()
+        params = {'type': entity_type}
+
         try:
-            self.get_entity(entity_id=entity_id, entity_type=entity_type)
+            res = self.get(url=url, params=params, headers=headers)
+            if res.ok:
+                return True
+            res.raise_for_status()
         except requests.RequestException as err:
             if err.response is None or not err.response.status_code == 404:
                 raise
             return False
-        
-        return True
+
 
     def patch_entity(self,
                      entity: ContextEntity,
@@ -1678,8 +1684,8 @@ class ContextBrokerClient(BaseHttpClient):
         if old_entity is None:
             # If no old entity_was provided we use the current state to compare
             # the entity to
-            if self.does_entity_exists(entity_id=new_entity.id,
-                                       entity_type=new_entity.type):
+            if self.does_entity_exist(entity_id=new_entity.id,
+                                      entity_type=new_entity.type):
                 old_entity = self.get_entity(entity_id=new_entity.id,
                                              entity_type=new_entity.type)
             else:
@@ -1691,8 +1697,8 @@ class ContextBrokerClient(BaseHttpClient):
             # An old_entity was provided
             # check if the old_entity (still) exists else recall methode
             # and discard old_entity
-            if not self.does_entity_exists(entity_id=old_entity.id,
-                                           entity_type=old_entity.type):
+            if not self.does_entity_exist(entity_id=old_entity.id,
+                                          entity_type=old_entity.type):
                 self.patch_entity(new_entity,
                                   override_attr_metadata=override_attr_metadata)
                 return
@@ -1705,8 +1711,8 @@ class ContextBrokerClient(BaseHttpClient):
                 self.delete_entity(entity_id=old_entity.id,
                                    entity_type=old_entity.type)
 
-                if not self.does_entity_exists(entity_id=new_entity.id,
-                                               entity_type=new_entity.type):
+                if not self.does_entity_exist(entity_id=new_entity.id,
+                                              entity_type=new_entity.type):
                     self.post_entity(entity=new_entity, update=False)
                     return
 
