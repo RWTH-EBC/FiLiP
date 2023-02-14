@@ -24,7 +24,7 @@ INSTALL_REQUIRES = ['aenum',
 
 SETUP_REQUIRES = INSTALL_REQUIRES.copy()
 
-VERSION = '0.2.4'
+VERSION = '0.2.5'
 
 setuptools.setup(
     name='filip',
