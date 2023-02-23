@@ -375,7 +375,7 @@ class TestContextBroker(unittest.TestCase):
                 "expires": datetime.now() + timedelta(days=1),
                 "throttling": 0
             })
-            for _sub_raw in [self.subscription, sub_with_nans]:
+            for _sub_raw in [sub_with_nans, self.subscription]:
                 # test duplicate prevention and update
                 sub = self.subscription.copy()
                 id1 = client.post_subscription(sub)
