@@ -54,8 +54,10 @@ class TestContextModels(unittest.TestCase):
         """
         attr = ContextAttribute(**{'value': 20, 'type': 'Text'})
         self.assertIsInstance(attr.value, str)
+        self.assertEqual(attr.value, '20')
         attr = ContextAttribute(**{'value': 20, 'type': 'Number'})
         self.assertIsInstance(attr.value, float)
+        self.assertEqual(str(attr.value), str(20.0))
         attr = ContextAttribute(**{'value': [20, 20], 'type': 'Float'})
         self.assertIsInstance(attr.value, list)
         attr = ContextAttribute(**{'value': [20.0, 20.0], 'type': 'Integer'})
@@ -278,6 +280,20 @@ class TestContextModels(unittest.TestCase):
             self.assertEqual(
                 entity.get_commands(response_format=PropertyFormat.DICT).keys(),
                 {"myCommand", "myCommand2"})
+
+    def test_get_attributes(self):
+        """
+        Test the get_attributes method
+        """
+        entity = ContextEntity(id="test", type="Tester")
+        attributes = [
+            NamedContextAttribute(name="attr1", type="Number"),
+            NamedContextAttribute(name="attr2", type="string"),
+        ]
+        entity.add_attributes(attributes)
+        self.assertEqual(entity.get_attributes(strict_data_type=False), attributes)
+        self.assertNotEqual(entity.get_attributes(strict_data_type=True), attributes)
+        self.assertNotEqual(entity.get_attributes(), attributes)
 
     def tearDown(self) -> None:
         """

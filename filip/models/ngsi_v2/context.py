@@ -116,7 +116,7 @@ class ContextEntityKeyValues(BaseModel):
         regex=FiwareRegex.standard.value,  # Make it FIWARE-Safe
         allow_mutation=False
     )
-    type: str = Field(
+    type: Union[str, Enum] = Field(
         ...,
         title="Entity Type",
         description="Id of an entity in an NGSI context broker. "
@@ -223,7 +223,8 @@ class ContextEntity(ContextEntityKeyValues):
             self,
             whitelisted_attribute_types: Optional[List[DataType]] = None,
             blacklisted_attribute_types: Optional[List[DataType]] = None,
-            response_format: Union[str, PropertyFormat] = PropertyFormat.LIST) \
+            response_format: Union[str, PropertyFormat] = PropertyFormat.LIST,
+            strict_data_type: bool = True) \
             -> Union[List[NamedContextAttribute], Dict[str, ContextAttribute]]:
         """
         Get attributes or a subset from the entity.
@@ -236,6 +237,10 @@ class ContextEntity(ContextEntityKeyValues):
             response_format: Wanted result format,
                                 List -> list of NamedContextAttributes
                                 Dict -> dict of {name: ContextAttribute}
+            strict_data_type: whether to restrict the data type to pre-defined
+                types, True by default.
+                True  -> Only return the attributes with pre-defined types,
+                False -> Do not restrict the data type.
         Raises:
             AssertionError, if both a white and a black list is given
         Returns:
@@ -257,17 +262,27 @@ class ContextEntity(ContextEntityKeyValues):
             attribute_types = [att_type for att_type in list(DataType)]
 
         if response_format == PropertyFormat.DICT:
-            return {key: ContextAttribute(**value)
-                    for key, value in self.dict().items()
-                    if key not in ContextEntity.__fields__
-                    and value.get('type') in
-                    [att.value for att in attribute_types]}
+            if strict_data_type:
+                return {key: ContextAttribute(**value)
+                        for key, value in self.dict().items()
+                        if key not in ContextEntity.__fields__
+                        and value.get('type') in
+                        [att.value for att in attribute_types]}
+            else:
+                return {key: ContextAttribute(**value)
+                        for key, value in self.dict().items()
+                        if key not in ContextEntity.__fields__}
         else:
-            return [NamedContextAttribute(name=key, **value)
-                    for key, value in self.dict().items()
-                    if key not in ContextEntity.__fields__
-                    and value.get('type') in
-                    [att.value for att in attribute_types]]
+            if strict_data_type:
+                return [NamedContextAttribute(name=key, **value)
+                        for key, value in self.dict().items()
+                        if key not in ContextEntity.__fields__
+                        and value.get('type') in
+                        [att.value for att in attribute_types]]
+            else:
+                return [NamedContextAttribute(name=key, **value)
+                        for key, value in self.dict().items()
+                        if key not in ContextEntity.__fields__]
 
     def update_attribute(self,
                          attrs: Union[Dict[str, ContextAttribute],

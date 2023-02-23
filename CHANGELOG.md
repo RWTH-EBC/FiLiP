@@ -1,6 +1,20 @@
+#### v0.2.5
+- fixed service group edition not working ([#170](https://github.com/RWTH-EBC/FiLiP/issues/170))
+- fixed service group can not be retrieved by apikey and resource ([#169](https://github.com/RWTH-EBC/FiLiP/issues/169))
+- add new argument `strict_data_type` to entity.get_attributes to allow disabling the validator of data types ([#182](https://github.com/RWTH-EBC/FiLiP/issues/182))
+
+#### v0.2.4
+- fixed ContextAttribute: wrong type conversion for value ([#173](https://github.com/RWTH-EBC/FiLiP/issues/173))
+- fixed Change does_entity_exists create error message if entity does not exist ([#167](https://github.com/RWTH-EBC/FiLiP/issues/167))
+- fixed remove additional escape chars when sending a string ([#163](https://github.com/RWTH-EBC/FiLiP/issues/163))
+
 #### v0.2.3
+- added `override_metadata` argument according to new metadata update semantics in orion (https://fiware-orion.readthedocs.io/en/master/user/metadata.html#updating-metadata) ([#157](https://github.com/RWTH-EBC/FiLiP/issues/157))
+- fixed test for patch_entity ([#157](https://github.com/RWTH-EBC/FiLiP/issues/157))
+- added flag to ntoify only changed attributes ([#154](https://github.com/RWTH-EBC/FiLiP/issues/154))
 - fixed issue of client generation when multiple clients are required ([#151](https://github.com/RWTH-EBC/FiLiP/issues/151))
-- added filter functions for better subscription handling ([#148](https://github.com/RWTH-EBC/FiLiP/issues/148))
+- fixed throttling=0 is not working when posting a subscription ([#148](https://github.com/RWTH-EBC/FiLiP/issues/148))
+- added filter functions for better subscription handling ([#141](https://github.com/RWTH-EBC/FiLiP/issues/141))
 - added filter functions for better device handling ([#143](https://github.com/RWTH-EBC/FiLiP/issues/143))
 - fixed coupled delete of devices and entities ([#143](https://github.com/RWTH-EBC/FiLiP/issues/143))
 - Add images to tutorials ([#139](https://github.com/RWTH-EBC/FiLiP/issues/139))

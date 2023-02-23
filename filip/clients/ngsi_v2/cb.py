@@ -48,6 +48,10 @@ class ContextBrokerClient(BaseHttpClient):
 
     Api specifications for v2 are located here:
     https://telefonicaid.github.io/fiware-orion/api/v2/stable/
+
+    Note:
+        We use the reference implementation for development. Therefore, some
+        other brokers may show slightly different behavior!
     """
     def __init__(self,
                  url: str = None,
@@ -191,20 +195,36 @@ class ContextBrokerClient(BaseHttpClient):
     # Entity Operations
     def post_entity(self,
                     entity: ContextEntity,
-                    update: bool = False):
+                    update: bool = False,
+                    patch: bool = False,
+                    override_attr_metadata: bool = True
+                    ):
         """
         Function registers an Object with the NGSI Context Broker,
-        if it already exists it can be automatically updated
-        if the overwrite bool is True
+        if it already exists it can be automatically updated (overwritten)
+        if the update bool is True.
         First a post request with the entity is tried, if the response code
         is 422 the entity is uncrossable, as it already exists there are two
         options, either overwrite it, if the attribute have changed
         (e.g. at least one new/new values) (update = True) or leave
         it the way it is (update=False)
+        If you only want to manipulate the entities values, you need to set
+        patch argument.
+
         Args:
-            update (bool): If the response.status_code is 422, whether the old
-            entity should be updated or not
-            entity (ContextEntity): Context Entity Object
+            entity (ContextEntity):
+                Context Entity Object
+            update (bool):
+                If the response.status_code is 422, whether the override and
+                existing entity
+            patch (bool):
+                If the response.status_code is 422, whether the manipulate the
+                existing entity. Omitted if update `True`.
+            override_attr_metadata:
+                Only applies for patch equal to `True`.
+                Whether to override or append the attributes metadata.
+                `True` for overwrite or `False` for update/append
+
         """
         url = urljoin(self.base_url, 'v2/entities')
         headers = self.headers.copy()
@@ -221,7 +241,12 @@ class ContextBrokerClient(BaseHttpClient):
             res.raise_for_status()
         except requests.RequestException as err:
             if update and err.response.status_code == 422:
-                return self.update_entity(entity=entity)
+                return self.update_entity(
+                    entity=entity)
+            if patch and err.response.status_code == 422:
+                return self.patch_entity(
+                    entity=entity,
+                    override_attr_metadata=override_attr_metadata)
             msg = f"Could not post entity {entity.id}"
             self.log_error(err=err, msg=msg)
             raise
@@ -237,7 +262,7 @@ class ContextBrokerClient(BaseHttpClient):
                         georel: str = None,
                         geometry: str = None,
                         coords: str = None,
-                        limit: int = inf,
+                        limit: PositiveInt = inf,
                         attrs: List[str] = None,
                         metadata: str = None,
                         order_by: str = None,
@@ -496,10 +521,15 @@ class ContextBrokerClient(BaseHttpClient):
 
     def update_entity(self,
                       entity: ContextEntity,
-                      append_strict: bool = False):
+                      append_strict: bool = False
+                      ):
         """
         The request payload is an object representing the attributes to
         append or update.
+
+        Note:
+            Update means overwriting the existing entity. If you want to
+            manipulate you should rather use patch_entity.
 
         Args:
             entity (ContextEntity):
@@ -511,8 +541,9 @@ class ContextBrokerClient(BaseHttpClient):
                 to that, in case some of the attributes in the payload
                 already exist in the entity, an error is returned.
                 More precisely this means a strict append procedure.
-        Returns:
 
+        Returns:
+            None
         """
         self.update_or_append_entity_attributes(entity_id=entity.id,
                                                 entity_type=entity.type,
@@ -834,15 +865,27 @@ class ContextBrokerClient(BaseHttpClient):
                                             NamedContextAttribute],
                                 *,
                                 entity_type: str = None,
-                                attr_name: str = None):
+                                attr_name: str = None,
+                                override_metadata: bool = True):
         """
         Updates a specified attribute from an entity.
 
         Args:
-            attr: context attribute to update
-            entity_id: Id of the entity. Example: Bcn_Welt
-            entity_type: Entity type, to avoid ambiguity in case there are
-            several entities with the same entity id.
+            attr:
+                context attribute to update
+            entity_id:
+                Id of the entity. Example: Bcn_Welt
+            entity_type:
+                Entity type, to avoid ambiguity in case there are
+                several entities with the same entity id.
+            override_metadata:
+                Bool, if set to `True` (default) the metadata will be
+                overwritten. This is for backwards compatibility reasons.
+                If `False` the metadata values will be either updated if
+                already existing or append if not.
+                See also:
+                https://fiware-orion.readthedocs.io/en/master/user/metadata.html
+
         """
         headers = self.headers.copy()
         if not isinstance(attr, NamedContextAttribute):
@@ -860,9 +903,13 @@ class ContextBrokerClient(BaseHttpClient):
         params = {}
         if entity_type:
             params.update({'type': entity_type})
+        # set overrideMetadata option (we assure backwards compatibility here)
+        if override_metadata:
+            params.update({'options': 'overrideMetadata'})
         try:
             res = self.put(url=url,
                            headers=headers,
+                           params=params,
                            json=attr.dict(exclude={'name'},
                                           exclude_unset=True,
                                           exclude_none=True))
@@ -977,7 +1024,7 @@ class ContextBrokerClient(BaseHttpClient):
             if not isinstance(value, (dict, list)):
                 headers.update({'Content-Type': 'text/plain'})
                 if isinstance(value, str):
-                    value = f'"{value}"'
+                    value = f'{value}'
                 res = self.put(url=url,
                                headers=headers,
                                json=value,
@@ -1579,9 +1626,9 @@ class ContextBrokerClient(BaseHttpClient):
                                                entity_type=entity_type,
                                                attrs=[command])
 
-    def does_entity_exists(self,
-                           entity_id: str,
-                           entity_type: str) -> bool:
+    def does_entity_exist(self,
+                          entity_id: str,
+                          entity_type: str) -> bool:
         """
         Test if an entity with given id and type is present in the CB
 
@@ -1593,29 +1640,43 @@ class ContextBrokerClient(BaseHttpClient):
             bool; True if entity exists
 
         Raises:
-            RequestException, if any error occurres (e.g: No Connection),
+            RequestException, if any error occurs (e.g: No Connection),
             except that the entity is not found
         """
+        url = urljoin(self.base_url, f'v2/entities/{entity_id}')
+        headers = self.headers.copy()
+        params = {'type': entity_type}
+
         try:
-            self.get_entity(entity_id=entity_id, entity_type=entity_type)
+            res = self.get(url=url, params=params, headers=headers)
+            if res.ok:
+                return True
+            res.raise_for_status()
         except requests.RequestException as err:
             if err.response is None or not err.response.status_code == 404:
                 raise
             return False
-        
-        return True
+
 
     def patch_entity(self,
                      entity: ContextEntity,
-                     old_entity: Optional[ContextEntity] = None) -> None:
+                     old_entity: Optional[ContextEntity] = None,
+                     override_attr_metadata: bool = True) -> None:
         """
         Takes a given entity and updates the state in the CB to match it.
+        It is an extended equivalent to the HTTP method PATCH, which applies
+        partial modifications to a resource.
 
         Args:
-           entity: Entity to update
-           old_entity: OPTIONAL, if given only the differences between the
+            entity: Entity to update
+            old_entity: OPTIONAL, if given only the differences between the
                        old_entity and entity are updated in the CB.
                        Other changes made to the entity in CB, can be kept.
+                       If type or id was changed, the old_entity will be
+                       deleted.
+            override_attr_metadata:
+                Whether to override or append the attributes metadata.
+                `True` for overwrite or `False` for update/append
 
         Returns:
            None
@@ -1626,8 +1687,8 @@ class ContextBrokerClient(BaseHttpClient):
         if old_entity is None:
             # If no old entity_was provided we use the current state to compare
             # the entity to
-            if self.does_entity_exists(entity_id=new_entity.id,
-                                       entity_type=new_entity.type):
+            if self.does_entity_exist(entity_id=new_entity.id,
+                                      entity_type=new_entity.type):
                 old_entity = self.get_entity(entity_id=new_entity.id,
                                              entity_type=new_entity.type)
             else:
@@ -1639,21 +1700,22 @@ class ContextBrokerClient(BaseHttpClient):
             # An old_entity was provided
             # check if the old_entity (still) exists else recall methode
             # and discard old_entity
-            if not self.does_entity_exists(entity_id=old_entity.id,
-                                           entity_type=old_entity.type):
-                self.patch_entity(new_entity)
+            if not self.does_entity_exist(entity_id=old_entity.id,
+                                          entity_type=old_entity.type):
+                self.patch_entity(new_entity,
+                                  override_attr_metadata=override_attr_metadata)
                 return
 
             # if type or id was changed, the old_entity needs to be deleted
             # and the new_entity created
-            # In this case we will loose the current state of the entity
+            # In this case we will lose the current state of the entity
             if old_entity.id != new_entity.id or \
                     old_entity.type != new_entity.type:
                 self.delete_entity(entity_id=old_entity.id,
                                    entity_type=old_entity.type)
 
-                if not self.does_entity_exists(entity_id=new_entity.id,
-                                               entity_type=new_entity.type):
+                if not self.does_entity_exist(entity_id=new_entity.id,
+                                              entity_type=new_entity.type):
                     self.post_entity(entity=new_entity, update=False)
                     return
 
@@ -1689,12 +1751,14 @@ class ContextBrokerClient(BaseHttpClient):
             else:
                 # Check if attributed changed in any way, if yes update
                 # else do nothing and keep current state
-                if not old_attr.__eq__(corresponding_new_attr):
+                if old_attr != corresponding_new_attr:
                     try:
                         self.update_entity_attribute(
                             entity_id=new_entity.id,
                             entity_type=new_entity.type,
-                            attr=corresponding_new_attr)
+                            attr=corresponding_new_attr,
+                            override_metadata=override_attr_metadata
+                        )
                     except requests.RequestException as err:
                         # if the attribute is provided by a registration the
                         # update will fail

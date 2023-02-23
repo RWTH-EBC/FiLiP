@@ -7,6 +7,7 @@ from datetime import datetime
 from aenum import Enum
 from pydantic import \
     BaseModel, \
+    conint, \
     Field, \
     Json, \
     root_validator, \
@@ -186,6 +187,18 @@ class Notification(BaseModel):
                     'See "Filtering out attributes and metadata" section for '
                     'more detail.'
     )
+    onlyChangedAttrs: Optional[bool] = Field(
+        default=False,
+        description='Only supported by Orion Context Broker!'
+                    'If set to true then notifications associated to the '
+                    'subscription include only attributes that changed in the '
+                    'triggering update request, in combination with the attrs '
+                    'or exceptAttrs field. For instance, if attrs is '
+                    '[A=1, B=2, C=3] and A=0 is updated. In case '
+                    'onlyChangedAttrs=false, CB notifies [A=0, B=2, C=3].'
+                    'In case onlyChangedAttrs=true, CB notifies '
+                    '[A=0, B=null, C=null]. This '
+    )
 
     @validator('httpCustom')
     def validate_http(cls, http_custom, values):
@@ -361,16 +374,19 @@ class Subscription(BaseModel):
                     "Permanent subscriptions must omit this field."
     )
 
-    throttling: Optional[int] = Field(
+    throttling: Optional[conint(strict=True, ge=0,)] = Field(
         default=None,
+        strict=True,
         description="Minimal period of time in seconds which "
                     "must elapse between two consecutive notifications. "
                     "It is optional."
     )
 
+
     class Config:
         """
         Pydantic config
         """
+        validate_assignment = True
         json_encoders = {QueryString: lambda v: v.to_str(),
                          QueryStatement: lambda v: v.to_str()}

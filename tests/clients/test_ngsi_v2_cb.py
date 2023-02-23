@@ -7,6 +7,7 @@ import logging
 import time
 import random
 import json
+import uuid
 
 import paho.mqtt.client as mqtt
 from datetime import datetime, timedelta
@@ -102,7 +103,7 @@ class TestContextBroker(unittest.TestCase):
                     "humidity"
                 ]
             },
-            "expires": datetime.now(),
+            "expires": datetime.now() + timedelta(days=1),
             "throttling": 0
         })
 
@@ -324,7 +325,7 @@ class TestContextBroker(unittest.TestCase):
             client.delete_entity(entity_id=self.entity.id,
                                  entity_type=self.entity.type)
 
-    @unittest.skip('Does currently not work in CI')
+    #@unittest.skip('Does currently not reliably work in CI')
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
                 cb_url=settings.CB_URL)
@@ -340,12 +341,16 @@ class TestContextBroker(unittest.TestCase):
             sub_res = client.get_subscription(subscription_id=sub_id)
             time.sleep(1)
             sub_update = sub_res.copy(
-                update={'expires': datetime.now() + timedelta(days=1)})
+                update={'expires': datetime.now() + timedelta(days=2),
+                        'throttling': 1},
+                )
             client.update_subscription(subscription=sub_update)
             sub_res_updated = client.get_subscription(subscription_id=sub_id)
             self.assertNotEqual(sub_res.expires, sub_res_updated.expires)
             self.assertEqual(sub_res.id, sub_res_updated.id)
             self.assertGreaterEqual(sub_res_updated.expires, sub_res.expires)
+            self.assertEqual(sub_res_updated.throttling,
+                             sub_update.throttling)
 
             # test duplicate prevention and update
             sub = self.subscription.copy()
@@ -375,7 +380,6 @@ class TestContextBroker(unittest.TestCase):
             id3 = client.post_subscription(sub2)
             self.assertNotEqual(id1, id3)
 
-
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
                 cb_url=settings.CB_URL,
@@ -385,7 +389,7 @@ class TestContextBroker(unittest.TestCase):
         Test subscription operations of context broker client
         """
         sub = self.subscription.copy(
-            update={'expires': datetime.now() + timedelta(days=1)})
+            update={'expires': datetime.now() + timedelta(days=2)})
         with ContextBrokerClient(
                 url=settings.CB_URL,
                 fiware_header=self.fiware_header) as client:
@@ -688,6 +692,7 @@ class TestContextBroker(unittest.TestCase):
     def test_patch_entity(self) -> None:
         """
         Test the methode: patch_entity
+
         Returns:
            None
         """
@@ -702,46 +707,45 @@ class TestContextBroker(unittest.TestCase):
             NamedMetadata(name="meta2", type="metatype", value="3")
         entity.add_attributes([attr1, attr2])
 
-        # sub-Test1: Post new
+        # sub-Test1: Post new. No old entity not exist or is provided!
         self.client.patch_entity(entity=entity)
         self.assertEqual(entity,
                          self.client.get_entity(entity_id=entity.id))
         self.tearDown()
 
-        # sub-Test2: ID/type of old_entity changed
+        # sub-Test2: ID/type of old_entity changed. Old entity is provided and
+        # updated!
         self.client.post_entity(entity=entity)
         test_entity = ContextEntity(id="newID", type="newType")
         test_entity.add_attributes([attr1, attr2])
         self.client.patch_entity(test_entity, old_entity=entity)
         self.assertEqual(test_entity,
                          self.client.get_entity(entity_id=test_entity.id))
-        self.assertRaises(RequestException, self.client.get_entity,
-                          entity_id=entity.id)
+        # assert that former entity_id is freed again
+        with self.assertRaises(RequestException):
+            self.client.get_entity(entity_id=entity.id)
         self.tearDown()
 
-        # sub-Test3: a non valid old_entity is provided, entity exists
+        # sub-Test3: a non valid old_entity is provided, but already entity
+        # exists
         self.client.post_entity(entity=entity)
         old_entity = ContextEntity(id="newID", type="newType")
-
         self.client.patch_entity(entity, old_entity=old_entity)
         self.assertEqual(entity, self.client.get_entity(entity_id=entity.id))
         self.tearDown()
 
-        # sub-Test4: no old_entity provided, entity is new
+        # sub-Test4: non valid old_entity provided, entity is new
         old_entity = ContextEntity(id="newID", type="newType")
         self.client.patch_entity(entity, old_entity=old_entity)
         self.assertEqual(entity, self.client.get_entity(entity_id=entity.id))
         self.tearDown()
 
-        # sub-Test5: no old_entity provided, entity is new
-        old_entity = ContextEntity(id="newID", type="newType")
-        self.client.patch_entity(entity, old_entity=old_entity)
-        self.assertEqual(entity, self.client.get_entity(entity_id=entity.id))
-        self.tearDown()
-
-        # sub-Test6: New attr, attr del, and attr changed. No Old_entity given
+        # sub-Test5: New attr, attr del, and attr changed. No Old_entity given
         self.client.post_entity(entity=entity)
         test_entity = ContextEntity(id="test_id1", type="test_type1")
+        # check if the test_entity corresponds to the original entity
+        self.assertEqual(test_entity.id, entity.id)
+        self.assertEqual(test_entity.type, entity.type)
         attr1_changed = NamedContextAttribute(name="attr1", value="2")
         attr1_changed.metadata["m4"] = \
             NamedMetadata(name="meta3", type="metatype5", value="4")
@@ -753,7 +757,7 @@ class TestContextBroker(unittest.TestCase):
                          self.client.get_entity(entity_id=entity.id))
         self.tearDown()
 
-        # sub-Test7: Attr changes, concurrent changes in Fiware,
+        # sub-Test6: Attr changes, concurrent changes in Fiware,
         #            old_entity given
 
         self.client.post_entity(entity=entity)
@@ -811,6 +815,41 @@ class TestContextBroker(unittest.TestCase):
                                       delete_devices=True,
                                       iota_url=settings.IOTA_URL)
             self.assertEqual(len(self.iotac.get_device_list()), len(devices))
+
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                cb_url=settings.CB_URL)
+    def test_send_receive_string(self):
+        # test updating a string value
+        entity = ContextEntity(id="string_test", type="test_type1")
+        entityAttr = NamedContextAttribute(name="data", value="")
+        entity.add_attributes([entityAttr])
+        self.client.post_entity(entity=entity)
+
+        testData = "hello_test"
+        self.client.update_attribute_value(entity_id="string_test", attr_name="data", value=testData)
+
+        readback = self.client.get_attribute_value(entity_id="string_test", attr_name="data")
+
+        self.assertEqual(testData, readback)
+
+        self.client.delete_entity(entity_id="string_test", entity_type="test_type1")
+
+    def test_does_entity_exist(self):
+        _id = uuid.uuid4()
+
+        entity = ContextEntity(id=str(_id), type="test_type1")
+        self.assertFalse(
+            self.client.does_entity_exist(
+                entity_id=entity.id,
+                entity_type=entity.type))
+        self.client.post_entity(entity=entity)
+        self.assertTrue(
+            self.client.does_entity_exist(
+                entity_id=entity.id,
+                entity_type=entity.type)
+        )
+
 
     def tearDown(self) -> None:
         """

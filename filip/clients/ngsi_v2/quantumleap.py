@@ -208,10 +208,11 @@ class QuantumLeapClient(BaseHttpClient):
             params.update({'observedAttributes': observed_attributes})
         if notified_attributes:
             params.update({'notifiedAttributes': notified_attributes})
-        if throttling:
-            if throttling < 1:
-                raise TypeError("Throttling must be a positive integer")
-            params.update({'throttling': throttling})
+        if throttling or throttling == 0:
+            if throttling >= 0 and type(throttling) == int:
+                params.update({'throttling': throttling})
+            else:
+                raise TypeError("Throttling must be a positive integer or zero")
         if time_index_attribute:
             params.update({'timeIndexAttribute': time_index_attribute})
 
