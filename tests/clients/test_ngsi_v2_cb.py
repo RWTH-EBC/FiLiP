@@ -352,33 +352,57 @@ class TestContextBroker(unittest.TestCase):
             self.assertEqual(sub_res_updated.throttling,
                              sub_update.throttling)
 
-            # test duplicate prevention and update
-            sub = self.subscription.copy()
-            id1 = client.post_subscription(sub)
-            sub_first_version = client.get_subscription(id1)
-            sub.description = "This subscription shall not pass"
+            sub_with_nans = Subscription.parse_obj({
+                "description": "One subscription to rule them all",
+                "subject": {
+                    "entities": [
+                        {
+                            "idPattern": ".*",
+                            "type": "Room"
+                        }
+                    ],
+                    "condition": {
+                        "attrs": [],
+                        "expression": {}
+                    }
+                },
+                "notification": {
+                    "http": {
+                        "url": "http://localhost:1234"
+                    },
+                    "attrs": []
+                },
+                "expires": datetime.now() + timedelta(days=1),
+                "throttling": 0
+            })
+            for _sub_raw in [self.subscription, sub_with_nans]:
+                # test duplicate prevention and update
+                sub = self.subscription.copy()
+                id1 = client.post_subscription(sub)
+                sub_first_version = client.get_subscription(id1)
+                sub.description = "This subscription shall not pass"
 
-            id2 = client.post_subscription(sub, update=False)
-            self.assertEqual(id1, id2)
-            sub_second_version = client.get_subscription(id2)
-            self.assertEqual(sub_first_version.description,
-                             sub_second_version.description)
+                id2 = client.post_subscription(sub, update=False)
+                self.assertEqual(id1, id2)
+                sub_second_version = client.get_subscription(id2)
+                self.assertEqual(sub_first_version.description,
+                                 sub_second_version.description)
 
-            id2 = client.post_subscription(sub, update=True)
-            self.assertEqual(id1, id2)
-            sub_second_version = client.get_subscription(id2)
-            self.assertNotEqual(sub_first_version.description,
-                                sub_second_version.description)
+                id2 = client.post_subscription(sub, update=True)
+                self.assertEqual(id1, id2)
+                sub_second_version = client.get_subscription(id2)
+                self.assertNotEqual(sub_first_version.description,
+                                    sub_second_version.description)
 
-            # test that duplicate prevention does not prevent to much
-            sub2 = self.subscription.copy()
-            sub2.description = "Take this subscription to Fiware"
-            sub2.subject.entities[0] = {
-                "idPattern": ".*",
-                "type": "Building"
-            }
-            id3 = client.post_subscription(sub2)
-            self.assertNotEqual(id1, id3)
+                # test that duplicate prevention does not prevent to much
+                sub2 = _sub_raw.copy()
+                sub2.description = "Take this subscription to Fiware"
+                sub2.subject.entities[0] = {
+                    "idPattern": ".*",
+                    "type": "Building"
+                }
+                id3 = client.post_subscription(sub2)
+                self.assertNotEqual(id1, id3)
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
