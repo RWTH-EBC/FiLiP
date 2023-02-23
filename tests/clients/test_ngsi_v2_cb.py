@@ -353,12 +353,12 @@ class TestContextBroker(unittest.TestCase):
                              sub_update.throttling)
 
             sub_with_nans = Subscription.parse_obj({
-                "description": "One subscription to rule them all",
+                "description": "Test subscription with empty values",
                 "subject": {
                     "entities": [
                         {
                             "idPattern": ".*",
-                            "type": "Room"
+                            "type": "Device"
                         }
                     ],
                     "condition": {
