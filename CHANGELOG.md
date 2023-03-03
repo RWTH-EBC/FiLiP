@@ -1,4 +1,7 @@
 #### v0.2.5
+- fixed inconsistency of `entity_type` as required argument ([#188](https://github.com/RWTH-EBC/FiLiP/issues/188))
+
+#### v0.2.5
 - fixed service group edition not working ([#170](https://github.com/RWTH-EBC/FiLiP/issues/170))
 - fixed service group can not be retrieved by apikey and resource ([#169](https://github.com/RWTH-EBC/FiLiP/issues/169))
 - add new argument `strict_data_type` to entity.get_attributes to allow disabling the validator of data types ([#182](https://github.com/RWTH-EBC/FiLiP/issues/182))
