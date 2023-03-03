@@ -552,7 +552,7 @@ class ContextBrokerClient(BaseHttpClient):
 
     def delete_entity(self,
                       entity_id: str,
-                      entity_type: str,
+                      entity_type: str = None,
                       delete_devices: bool = False,
                       iota_client: IoTAClient = None,
                       iota_url: AnyHttpUrl = settings.IOTA_URL) -> None:
@@ -565,7 +565,8 @@ class ContextBrokerClient(BaseHttpClient):
             entity_id:
                 Id of the entity to be deleted
             entity_type:
-                several entities with the same entity id.
+                Entity type, to avoid ambiguity in case there are several
+                entities with the same entity id.
             delete_devices:
                 If True, also delete all devices that reference this
                 entity (entity_id as entity_name)
@@ -615,7 +616,6 @@ class ContextBrokerClient(BaseHttpClient):
 
             iota_client_local.close()
 
-
     def delete_entities(self, entities: List[ContextEntity]) -> None:
         """
         Remove a list of entities from the context broker. This methode is
@@ -654,9 +654,9 @@ class ContextBrokerClient(BaseHttpClient):
     def update_or_append_entity_attributes(
             self,
             entity_id: str,
-            entity_type: str,
             attrs: List[Union[NamedContextAttribute,
                               Dict[str, ContextAttribute]]],
+            entity_type: str = None,
             append_strict: bool = False):
         """
         The request payload is an object representing the attributes to
@@ -723,9 +723,9 @@ class ContextBrokerClient(BaseHttpClient):
     def update_existing_entity_attributes(
             self,
             entity_id: str,
-            entity_type: str,
             attrs: List[Union[NamedContextAttribute,
-                              Dict[str, ContextAttribute]]]):
+                              Dict[str, ContextAttribute]]],
+            entity_type: str = None):
         """
         The entity attributes are updated with the ones in the payload.
         In addition to that, if one or more attributes in the payload doesn't
@@ -771,9 +771,9 @@ class ContextBrokerClient(BaseHttpClient):
     def replace_entity_attributes(
             self,
             entity_id: str,
-            entity_type: str,
             attrs: List[Union[NamedContextAttribute,
-                              Dict[str, ContextAttribute]]]):
+                              Dict[str, ContextAttribute]]],
+            entity_type: str = None):
         """
         The attributes previously existing in the entity are removed and
         replaced by the ones in the request. This corresponds to a 'PUT'
@@ -1593,8 +1593,8 @@ class ContextBrokerClient(BaseHttpClient):
     def post_command(self,
                      *,
                      entity_id: str,
-                     entity_type: str,
                      command: Union[Command, NamedCommand, Dict],
+                     entity_type: str = None,
                      command_name: str = None) -> None:
         """
         Post a command to a context entity this corresponds to 'PATCH' of the
@@ -1653,7 +1653,6 @@ class ContextBrokerClient(BaseHttpClient):
             if err.response is None or not err.response.status_code == 404:
                 raise
             return False
-
 
     def patch_entity(self,
                      entity: ContextEntity,
