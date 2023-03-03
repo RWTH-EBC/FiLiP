@@ -136,6 +136,8 @@ class Unit(BaseModel):
     class Config:
         extra = 'ignore'
         allow_population_by_field_name = True
+        allow_mutation = False
+        frozen = True
 
     @root_validator(pre=False, allow_reuse=True)
     def check_consistency(cls, values):
