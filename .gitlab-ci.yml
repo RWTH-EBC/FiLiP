@@ -6,7 +6,7 @@ stages:
     - deploy
 
 variables:
-    EXCLUDE_PYTHON: 36, 311
+    EXCLUDE_PYTHON: 311
     PYTHON_VERSION: "registry.git.rwth-aachen.de/ebc/ebc_all/gitlab_ci/templates:python_3.9"
     PAGES_BRANCH: master
 
