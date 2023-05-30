@@ -1132,7 +1132,7 @@ class RelationField(RuleField):
         elif isinstance(v, SemanticIndividual):
             self._set.remove(v.get_name())
         else:
-            raise KeyError
+            raise KeyError(f"v is neither of type SemanticIndividual nor SemanticClass but {v}")
 
     def _add_inverse(self, v: 'SemanticClass'):
         """
