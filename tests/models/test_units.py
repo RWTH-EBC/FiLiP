@@ -1,7 +1,7 @@
 """
 Test for filip.models.units
 """
-from unittest import TestCase
+import unittest
 import functools
 from filip.models.ngsi_v2.units import \
     Unit, \
@@ -11,7 +11,7 @@ from filip.models.ngsi_v2.units import \
     load_units
 
 
-class TestUnitCodes(TestCase):
+class TestUnitCodes(unittest.TestCase):
 
     def setUp(self):
         self.units_data = load_units()
@@ -109,6 +109,16 @@ class TestUnitCodes(TestCase):
         Returns:
             None
         """
+
+        unit_data = self.unit.copy()
+        unit_data['name'] = "celcius"
+        with self.assertRaises(ValueError):
+            Unit(**unit_data)
+
+    def tearDown(self):
+        """
+        clean up
+        """
         # using garbage collector to clean up all caches
         import gc
         gc.collect()
@@ -121,8 +131,7 @@ class TestUnitCodes(TestCase):
         for object in objects:
             object.cache_clear()
 
-        unit_data = self.unit.copy()
-        unit_data['name'] = "celcius"
-        with self.assertRaises(ValueError):
-            Unit(**unit_data)
+if __name__ == '__main__':
+    unittest.main()
+
 
