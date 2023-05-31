@@ -205,6 +205,7 @@ class Units:
         Return unit as attribute by name or code.
         Notes:
             Underscores will be substituted with whitespaces
+
         Args:
             item: if len(row) == 0:
 
@@ -223,7 +224,7 @@ class Units:
         """
         raise NotImplementedError("The used dataset does currently not "
                                   "contain the information about quantity")
-
+    @lru_cache()
     def __getitem__(self, item: str) -> Unit:
         """
         Get unit by name or code

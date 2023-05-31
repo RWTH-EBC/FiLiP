@@ -2,6 +2,7 @@
 Test for filip.models.units
 """
 from unittest import TestCase
+import functools
 from filip.models.ngsi_v2.units import \
     Unit, \
     Units, \
@@ -39,12 +40,42 @@ class TestUnitCodes(TestCase):
     def test_unit_model(self):
         """
         Test unit model
+
         Returns:
             None
         """
+        # test creation
         unit = Unit(**self.unit)
         unit_from_json = Unit.parse_raw(unit.json(by_alias=True))
         self.assertEqual(unit, unit_from_json)
+
+    def test_unit_model_caching(self):
+        """
+        Test caching of unit model
+
+        Returns:
+            None
+        """
+
+        unit = Unit(**self.unit)
+        # testing hashing and caching
+        from functools import lru_cache
+        from time import perf_counter_ns
+
+        self.assertEqual(unit.__hash__(), unit.__hash__())
+
+        @functools.lru_cache
+        def cache_unit(unit: Unit):
+            return Unit(name=unit.name)
+
+        timers = []
+        for i in range(5):
+            start = perf_counter_ns()
+            cache_unit(unit)
+            stop = perf_counter_ns()
+            timers.append(stop - start)
+            if i > 0:
+                self.assertLess(timers[i], timers[0])
 
     def test_units(self):
         """
@@ -78,6 +109,18 @@ class TestUnitCodes(TestCase):
         Returns:
             None
         """
+        # using garbage collector to clean up all caches
+        import gc
+        gc.collect()
+
+        # All objects collected
+        objects = [i for i in gc.get_objects()
+                   if isinstance(i, functools._lru_cache_wrapper)]
+
+        # All objects cleared
+        for object in objects:
+            object.cache_clear()
+
         unit_data = self.unit.copy()
         unit_data['name'] = "celcius"
         with self.assertRaises(ValueError):
