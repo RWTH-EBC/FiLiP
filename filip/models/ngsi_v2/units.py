@@ -233,7 +233,7 @@ class Units:
             Unit
         """
         idx = self.units.index[((self.units.CommonCode == item.upper()) |
-                                (self.units.Name == item.casefold()))]
+                                (self.units.Name.str.casefold() == item.casefold()))]
         if idx.empty:
             names = self.units.Name.tolist()
             suggestions = [item[0] for item in process.extract(
