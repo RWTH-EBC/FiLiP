@@ -64,7 +64,7 @@ class TestUnitCodes(unittest.TestCase):
 
         self.assertEqual(unit.__hash__(), unit.__hash__())
 
-        @functools.lru_cache
+        @functools.lru_cache(maxsize=128)
         def cache_unit(unit: Unit):
             return Unit(name=unit.name)
 
