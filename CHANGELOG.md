@@ -1,5 +1,7 @@
-#### v0.2.5
-- fixed inconsistency of `entity_type` as required argument ([#188](https://github.com/RWTH-EBC/FiLiP/issues/188))
+#### v0.2.6
+- fixed make unit model hashable for caching ([#186](https://github.com/RWTH-EBC/FiLiP/issues/186))
+- fixed false string matching `__getitem__` of Units ([#189](https://github.com/RWTH-EBC/FiLiP/issues/189))
+- chore add message to all KeyError ([#191](https://github.com/RWTH-EBC/FiLiP/issues/191)) 
 
 #### v0.2.5
 - fixed service group edition not working ([#170](https://github.com/RWTH-EBC/FiLiP/issues/170))
