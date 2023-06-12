@@ -1,4 +1,4 @@
-#### v0.2.5
+#### v0.2.6
 - fixed inconsistency of `entity_type` as required argument ([#188](https://github.com/RWTH-EBC/FiLiP/issues/188))
 
 #### v0.2.5
