@@ -363,7 +363,7 @@ class IoTAMQTTClient(mqtt.Client):
                               device.device_id,
                               'configuration'))
         else:
-            raise KeyError
+            raise KeyError("topic_type not supported")
         return topic
 
     def __subscribe_commands(self, *,
