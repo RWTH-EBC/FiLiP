@@ -12,6 +12,7 @@ from pydantic import \
     PositiveFloat, \
     AnyHttpUrl
 from typing import Any, Dict, List , Optional, TYPE_CHECKING, Union
+from packaging import version
 import re
 import requests
 from urllib.parse import urljoin
@@ -73,6 +74,8 @@ class ContextBrokerClient(BaseHttpClient):
                          session=session,
                          fiware_header=fiware_header,
                          **kwargs)
+
+        self._check_correct_cb_version()
 
     def __pagination(self,
                      *,
@@ -156,6 +159,22 @@ class ContextBrokerClient(BaseHttpClient):
         except requests.RequestException as err:
             self.logger.error(err)
             raise
+
+    def _check_correct_cb_version(self) -> None:
+        """
+        Checks whether Orion version is >= 3.6.0, since breaking change was introduced there which introduced new
+        option, which is implemented in FiLiP, but won't work with lower orion versions.
+        """
+        orion_version = self.get_version()['orion']['version']
+        if version.parse(orion_version) < version.parse('3.6.0'):
+            warnings.warn(
+                f"You are using orion version {orion_version}. There was a breaking change in Orion Version 3.6.0,"
+                f"which changed the default metadata update semantics and introduced the 'overrideMetadata' option. "
+                f"See https://github.com/telefonicaid/fiware-orion/releases/tag/3.6.0 for further details. "
+                f"In your used version {orion_version}, this option is not supported. This will only be a problem, if"
+                f" you try to set the 'overrideMetadata' option in FiLiP (implemented since v0.2.3)."
+            )
+
 
     def get_resources(self) -> Dict:
         """
