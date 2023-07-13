@@ -1,11 +1,8 @@
 """
 Variable types and classes used for better validation
 """
-from pydantic import AnyUrl
+from pydantic import UrlConstraints
+from typing import Annotated
+from pydantic_core import Url
 
-
-class AnyMqttUrl(AnyUrl):
-    """
-    Url used for MQTT communication
-    """
-    allowed_schemes = {'mqtt'}
+AnyMqttUrl = Annotated[Url, UrlConstraints(allowed_schemes=['mqtt'])]
