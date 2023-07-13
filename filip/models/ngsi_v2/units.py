@@ -14,8 +14,8 @@ import logging
 import pandas as pd
 from functools import lru_cache
 from rapidfuzz import process
-from typing import Any, Dict, List, Optional, Union
-from pydantic import BaseModel, Field, root_validator, validator
+from typing import Literal, Any, Dict, List, Optional, Union
+from pydantic import field_validator, model_validator, ConfigDict, BaseModel, Field
 from filip.models.base import NgsiVersion, DataType
 from filip.utils.data import load_datapackage
 
@@ -52,7 +52,7 @@ class UnitCode(BaseModel):
         Currently we only support the UN/CEFACT Common Codes
     """
     type: DataType = Field(default=DataType.TEXT,
-                           const=True,
+                           # const=True,
                            description="Data type")
     value: str = Field(...,
                        title="Code of unit ",
@@ -60,7 +60,8 @@ class UnitCode(BaseModel):
                        min_length=2,
                        max_length=3)
 
-    @validator('value', allow_reuse=True)
+    @field_validator('value')
+    @classmethod
     def validate_code(cls, value):
         units = load_units()
         if len(units.loc[units.CommonCode == value.upper()]) == 1:
@@ -78,7 +79,7 @@ class UnitText(BaseModel):
         We use the names of units of measurements from UN/CEFACT for validation
     """
     type: DataType = Field(default=DataType.TEXT,
-                           const=True,
+                           # const=True,
                            description="Data type")
     value: str = Field(...,
                        title="Name of unit of measurement",
@@ -86,7 +87,8 @@ class UnitText(BaseModel):
                                    "spelling in singular form, "
                                    "e.g. 'newton second per metre'")
 
-    @validator('value', allow_reuse=True)
+    @field_validator('value')
+    @classmethod
     def validate_text(cls, value):
         units = load_units()
 
@@ -107,7 +109,7 @@ class Unit(BaseModel):
     """
     Model for a unit definition
     """
-    _ngsi_version: NgsiVersion = Field(default=NgsiVersion.v2, const=True)
+    _ngsi_version: Literal[NgsiVersion.v2] = NgsiVersion.v2
     name: Optional[Union[str, UnitText]] = Field(
         alias="unitText",
         default=None,
@@ -132,12 +134,10 @@ class Unit(BaseModel):
         alias="unitConversionFactor",
         description="The value used to convert units to the equivalent SI "
                     "unit when applicable.")
+    model_config = ConfigDict(extra='ignore', populate_by_name=True)
 
-    class Config:
-        extra = 'ignore'
-        allow_population_by_field_name = True
-
-    @root_validator(pre=False, allow_reuse=True)
+    @model_validator(mode="before")
+    @classmethod
     def check_consistency(cls, values):
         """
         Validate and auto complete unit data based on the UN/CEFACT data

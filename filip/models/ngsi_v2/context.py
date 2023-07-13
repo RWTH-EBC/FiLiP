@@ -5,9 +5,8 @@ import json
 from typing import Any, List, Dict, Union, Optional, Set, Tuple
 from aenum import Enum
 from pydantic import \
-    BaseModel, \
-    Field, \
-    validator
+    field_validator, ConfigDict, BaseModel, \
+    Field
 
 from filip.models.ngsi_v2.base import \
     EntityPattern, \
@@ -113,8 +112,8 @@ class ContextEntityKeyValues(BaseModel):
         example='Bcn-Welt',
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.standard.value,  # Make it FIWARE-Safe
-        allow_mutation=False
+        pattern=FiwareRegex.standard.value,  # Make it FIWARE-Safe
+        frozen=True
     )
     type: Union[str, Enum] = Field(
         ...,
@@ -126,17 +125,10 @@ class ContextEntityKeyValues(BaseModel):
         example="Room",
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.standard.value,  # Make it FIWARE-Safe
-        allow_mutation=False
+        pattern=FiwareRegex.standard.value,  # Make it FIWARE-Safe
+        frozen=True
     )
-
-    class Config:
-        """
-        Pydantic config
-        """
-        extra = 'allow'
-        validate_all = True
-        validate_assignment = True
+    model_config = ConfigDict(extra='allow', validate_default=True, validate_assignment=True)
 
 
 class PropertyFormat(str, Enum):
@@ -186,14 +178,7 @@ class ContextEntity(ContextEntityKeyValues):
         # There is currently no validation for extra fields
         data.update(self._validate_attributes(data))
         super().__init__(id=id, type=type, **data)
-
-    class Config:
-        """
-        Pydantic config
-        """
-        extra = 'allow'
-        validate_all = True
-        validate_assignment = True
+    model_config = ConfigDict(extra='allow', validate_default=True, validate_assignment=True)
 
     @classmethod
     def _validate_attributes(cls, data: Dict):
@@ -564,7 +549,8 @@ class Update(BaseModel):
                     "JSON entity representation format "
     )
 
-    @validator('action_type')
+    @field_validator('action_type')
+    @classmethod
     def check_action_type(cls, action):
         """
         validates action_type
@@ -585,11 +571,13 @@ class Command(BaseModel):
     """
     type: DataType = Field(default=DataType.COMMAND,
                            description="Command must have the type command",
-                           const=True)
+                           # const=True
+                           )
     value: Any = Field(description="Any json serializable command that will "
                                    "be forwarded to the connected IoT device")
 
-    @validator("value")
+    @field_validator("value")
+    @classmethod
     def check_value(cls, value):
         """
         Check if value is json serializable
@@ -611,5 +599,5 @@ class NamedCommand(Command):
         description="Name of the command",
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.string_protect.value
+        pattern=FiwareRegex.string_protect.value
     )

@@ -8,7 +8,7 @@ from datetime import datetime
 import numpy as np
 import pandas as pd
 from aenum import Enum
-from pydantic import BaseModel, Field
+from pydantic import ConfigDict, BaseModel, Field
 
 
 logger = logging.getLogger(__name__)
@@ -49,9 +49,7 @@ class TimeSeriesHeader(TimeSeriesBase):
     entityType: str = Field(default=None,
                             alias="type",
                             description="The type of an entity")
-
-    class Config:
-        allow_population_by_field_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class IndexedValues(BaseModel):
@@ -124,12 +122,7 @@ class TimeSeries(TimeSeriesHeader):
             names=['entityId', 'entityType', 'attribute'])
 
         return pd.DataFrame(data=values, index=index, columns=columns)
-
-    class Config:
-        """
-        Pydantic configuration
-        """
-        allow_population_by_field_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class AggrMethod(str, Enum):
