@@ -7,7 +7,7 @@ import itertools
 from enum import Enum
 from typing import Any, Dict, Optional, List, Union
 import pytz
-from pydantic import BaseModel, Field, validator, AnyHttpUrl
+from pydantic import field_validator, ConfigDict, BaseModel, Field, AnyHttpUrl
 from filip.models.base import NgsiVersion, DataType, FiwareRegex
 from filip.models.ngsi_v2.base import \
     BaseAttribute, \
@@ -73,7 +73,7 @@ class IoTABaseAttribute(BaseAttribute, BaseNameAttribute):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.standard.value  # Make it FIWARE-Safe"
+        pattern=FiwareRegex.standard.value  # Make it FIWARE-Safe"
     )
     entity_type: Optional[str] = Field(
         default=None,
@@ -83,7 +83,7 @@ class IoTABaseAttribute(BaseAttribute, BaseNameAttribute):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.standard.value
+        pattern=FiwareRegex.standard.value
     )
     reverse: Optional[str] = Field(
         default=None,
@@ -125,7 +125,7 @@ class LazyDeviceAttribute(BaseNameAttribute):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.string_protect.value,  # Make it FIWARE-Safe
+        pattern=FiwareRegex.string_protect.value,  # Make it FIWARE-Safe
     )
 
 
@@ -140,7 +140,7 @@ class DeviceCommand(BaseModel):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.string_protect.value
+        pattern=FiwareRegex.string_protect.value
     )
     type: Union[DataType, str] = Field(
         description="name of the type of the attribute in the target entity. ",
@@ -167,7 +167,7 @@ class ServiceGroup(BaseModel):
     subservice: Optional[str] = Field(
         default=None,
         description="Subservice of the devices of this type.",
-        regex="^/"
+        pattern="^/"
     )
     resource: str = Field(
         description="string representing the Southbound resource that will be "
@@ -195,7 +195,7 @@ class ServiceGroup(BaseModel):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.standard.value  # Make it FIWARE-Safe
+        pattern=FiwareRegex.standard.value  # Make it FIWARE-Safe
     )
     trust: Optional[str] = Field(
         default=None,
@@ -320,9 +320,7 @@ class DeviceSettings(BaseModel):
                     "of measures so that IOTA does not progress. If not "
                     "specified default is false."
     )
-
-    class Config:
-        validate_assignment = True
+    model_config = ConfigDict(validate_assignment=True)
 
 
 class Device(DeviceSettings):
@@ -344,7 +342,7 @@ class Device(DeviceSettings):
         description="Name of the subservice the device belongs to "
                     "(used in the fiware-servicepath header).",
         max_length=51,
-        regex="^/"
+        pattern="^/"
     )
     entity_name: str = Field(
         description="Name of the entity representing the device in "
@@ -353,7 +351,7 @@ class Device(DeviceSettings):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.standard.value  # Make it FIWARE-Safe"
+        pattern=FiwareRegex.standard.value  # Make it FIWARE-Safe"
     )
     entity_type: str = Field(
         description="Type of the entity in the Context Broker. "
@@ -362,7 +360,7 @@ class Device(DeviceSettings):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.standard.value  # Make it FIWARE-Safe"
+        pattern=FiwareRegex.standard.value  # Make it FIWARE-Safe"
     )
     lazy: List[LazyDeviceAttribute] = Field(
         default=[],
@@ -393,12 +391,10 @@ class Device(DeviceSettings):
                     " NGSI-v2 and NGSI-LD payloads. Possible values are: "
                     "v2 or ld. The default is v2. When not running in "
                     "mixed mode, this field is ignored.")
+    model_config = ConfigDict(validate_default=True, validate_assignment=True)
 
-    class Config:
-        validate_all = True
-        validate_assignment = True
-
-    @validator('timezone')
+    @field_validator('timezone')
+    @classmethod
     def validate_timezone(cls, value):
         """
         validate timezone

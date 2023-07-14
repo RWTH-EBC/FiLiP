@@ -6,11 +6,10 @@ from typing import Any, List, Dict, Union, Optional
 from datetime import datetime
 from aenum import Enum
 from pydantic import \
-    BaseModel, \
+    field_validator, model_validator, ConfigDict, BaseModel, \
     conint, \
     Field, \
     Json, \
-    root_validator, \
     validator
 from .base import AttrsFormat, EntityPattern, Http, Status, Expression
 from filip.utils.simple_ql import QueryString, QueryStatement
@@ -85,7 +84,7 @@ class Mqtt(BaseModel):
                     'only includes host and port)')
     topic: str = Field(
         description='to specify the MQTT topic to use',
-        regex=r'^((?![\'\"#+,])[\x00-\x7F])*$')
+        pattern=r'^((?![\'\"#+,])[\x00-\x7F])*$')
     qos: Optional[int] = Field(
         default=0,
         description='to specify the MQTT QoS value to use in the '
@@ -102,7 +101,8 @@ class Mqtt(BaseModel):
         description="password if required"
     )
 
-    @validator('url', allow_reuse=True)
+    @field_validator('url')
+    @classmethod
     def check_url(cls, value):
         """
         Check if url has a valid structure
@@ -200,19 +200,24 @@ class Notification(BaseModel):
                     '[A=0, B=null, C=null]. This '
     )
 
+    # TODO[pydantic]: We couldn't refactor the `validator`, please replace it by `field_validator` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.
     @validator('httpCustom')
     def validate_http(cls, http_custom, values):
         if http_custom is not None:
             assert values['http'] is None
         return http_custom
 
+    # TODO[pydantic]: We couldn't refactor the `validator`, please replace it by `field_validator` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.
     @validator('exceptAttrs')
     def validate_attr(cls, except_attrs, values):
         if except_attrs is not None:
             assert values['attrs'] is None
         return except_attrs
 
-    @root_validator(allow_reuse=True)
+    @model_validator()
+    @classmethod
     def validate_endpoints(cls, values):
         if values['http'] is not None:
             assert all((v is None for k, v in values.items() if k in [
@@ -227,9 +232,7 @@ class Notification(BaseModel):
             assert all((v is None for k, v in values.items() if k in [
                 'http', 'httpCustom', 'mqtt']))
         return values
-
-    class Config:
-        validate_assignment = True
+    model_config = ConfigDict(validate_assignment=True)
 
 
 class Response(Notification):
@@ -285,7 +288,8 @@ class Condition(BaseModel):
                     'field).'
     )
 
-    @validator('attrs')
+    @field_validator('attrs')
+    @classmethod
     def check_attrs(cls, v):
         if isinstance(v, list):
             return v
@@ -293,13 +297,10 @@ class Condition(BaseModel):
             return [v]
         else:
             raise TypeError()
-
-    class Config:
-        """
-        Pydantic config
-        """
-        json_encoders = {QueryString: lambda v: v.to_str(),
-                         QueryStatement: lambda v: v.to_str()}
+    # TODO[pydantic]: The following keys were removed: `json_encoders`.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
+    model_config = ConfigDict(json_encoders={QueryString: lambda v: v.to_str(),
+                     QueryStatement: lambda v: v.to_str()})
 
 
 class Subject(BaseModel):
@@ -313,13 +314,10 @@ class Subject(BaseModel):
     condition: Optional[Condition] = Field(
         default=None,
     )
-
-    class Config:
-        """
-        Pydantic config
-        """
-        json_encoders = {QueryString: lambda v: v.to_str(),
-                         QueryStatement: lambda v: v.to_str()}
+    # TODO[pydantic]: The following keys were removed: `json_encoders`.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
+    model_config = ConfigDict(json_encoders={QueryString: lambda v: v.to_str(),
+                     QueryStatement: lambda v: v.to_str()})
 
 
 class Subscription(BaseModel):
@@ -381,12 +379,7 @@ class Subscription(BaseModel):
                     "must elapse between two consecutive notifications. "
                     "It is optional."
     )
-
-
-    class Config:
-        """
-        Pydantic config
-        """
-        validate_assignment = True
-        json_encoders = {QueryString: lambda v: v.to_str(),
-                         QueryStatement: lambda v: v.to_str()}
+    # TODO[pydantic]: The following keys were removed: `json_encoders`.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
+    model_config = ConfigDict(validate_assignment=True, json_encoders={QueryString: lambda v: v.to_str(),
+                     QueryStatement: lambda v: v.to_str()})

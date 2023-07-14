@@ -3,7 +3,7 @@ Shared data models
 """
 
 from aenum import Enum
-from pydantic import BaseModel, Field, BaseConfig
+from pydantic import ConfigDict, BaseModel, Field, BaseConfig
 
 
 class NgsiVersion(str, Enum):
@@ -84,10 +84,7 @@ class FiwareHeader(BaseModel):
         max_length=51,
         pattern=r'^((\/\w*)|(\/\#))*(\,((\/\w*)|(\/\#)))*$'
     )
-
-    class Config(BaseConfig):
-        allow_population_by_field_name = True
-        validate_assignment = True
+    model_config = ConfigDict(populate_by_name=True, validate_assignment=True)
 
 
 class FiwareRegex(str, Enum):

@@ -3,7 +3,7 @@
 import datetime
 from typing import TYPE_CHECKING, List, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import ConfigDict, BaseModel, Field
 
 from ...models.base import LogLevel
 
@@ -54,9 +54,7 @@ class ParsingError(BaseModel):
     message: str = Field(
         description="Message describing the error"
     )
-
-    class Config:
-        use_enum_values = True
+    model_config = ConfigDict(use_enum_values=True)
 
 
 class Source(BaseModel):

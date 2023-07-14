@@ -61,7 +61,7 @@ class TestSettings(BaseSettings):
                                                                   'FIWARE_SERVICE_PATH'))
 
 
-    @model_validator
+    @model_validator(mode='after')
     def generate_multi_tenancy_setup(cls, values):
         """
         Tests if the fields for multi tenancy in fiware are consistent.
@@ -82,8 +82,7 @@ class TestSettings(BaseSettings):
     model_config = SettingsConfigDict(env_file=find_dotenv('.env'),
                                       env_file_encoding='utf-8',
                                       case_sensitive=False,
-                                      use_enum_values=True,
-                                      allow_reuse=True)
+                                      use_enum_values=True)
 
 
 # create settings object

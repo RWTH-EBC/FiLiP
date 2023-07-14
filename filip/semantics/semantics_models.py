@@ -15,7 +15,7 @@ from filip.models.ngsi_v2.context import ContextEntity, NamedContextAttribute, \
     NamedCommand
 
 from filip.models import FiwareHeader
-from pydantic import BaseModel, Field, AnyHttpUrl
+from pydantic import ConfigDict, BaseModel, Field, AnyHttpUrl
 from filip.config import settings
 from filip.semantics.vocabulary.entities import DatatypeFields, DatatypeType
 from filip.semantics.vocabulary_configurator import label_blacklist, \
@@ -50,14 +50,7 @@ class InstanceHeader(FiwareHeader):
         """
         return FiwareHeader(service=self.service,
                             service_path=self.service_path)
-
-    class Config:
-        """
-        The location of the instance needs to be fixed, and is not changeable.
-        Frozen is further needed so that the header can be used as a hash key
-        """
-        frozen = True
-        use_enum_values = True
+    model_config = ConfigDict(frozen=True, use_enum_values=True)
 
 
 class InstanceIdentifier(BaseModel):
@@ -71,14 +64,7 @@ class InstanceIdentifier(BaseModel):
     header: InstanceHeader = Field(description="describes the Fiware "
                                                "Location were the instance "
                                                "will be / is saved.")
-
-    class Config:
-        """
-        The identifier of the instance needs to be fixed, and is not changeable.
-        Frozen is further needed so that the identifier can be used as a hash
-        key
-        """
-        frozen = True
+    model_config = ConfigDict(frozen=True)
 
 
 class Datatype(DatatypeFields):
@@ -239,9 +225,9 @@ class DeviceProperty(BaseModel):
                 is used
         """
         pass
-
-    class Config:
-        underscore_attrs_are_private = True
+    # TODO[pydantic]: The following keys were removed: `underscore_attrs_are_private`.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
+    model_config = ConfigDict(underscore_attrs_are_private=True)
 
 
 class Command(DeviceProperty):
@@ -303,12 +289,7 @@ class Command(DeviceProperty):
             field_name (Optional[str]): Not used, but needed in the signature
         """
         return [self.name, f"{self.name}_info", f"{self.name}_result"]
-
-    class Config:
-        """if the name is changed the attribute needs to be removed
-        and re-added to the device. With frozen that logic is more clearly
-        given in the library. Further it allows us to hash the object"""
-        frozen = True
+    model_config = ConfigDict(frozen=True)
 
 
 class DeviceAttributeType(str, Enum):
@@ -362,13 +343,7 @@ class DeviceAttribute(DeviceProperty):
         if field_name is None:
             field_name = self._instance_link.field_name
         return [f'{field_name}_{self.name}']
-
-    class Config:
-        """if the name or type is changed the attribute needs to be removed
-        and readded to the device. With frozen that logic is more clearly
-        given in the library. Further it allows us to hash the object"""
-        frozen = True
-        use_enum_values = True
+    model_config = ConfigDict(frozen=True, use_enum_values=True)
 
 
 class Field(BaseModel):
@@ -613,9 +588,9 @@ class Field(BaseModel):
         Overrides the magic "in" to loop over the field values
         """
         return self.get_all().__iter__()
-
-    class Config:
-        underscore_attrs_are_private = True
+    # TODO[pydantic]: The following keys were removed: `underscore_attrs_are_private`.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
+    model_config = ConfigDict(underscore_attrs_are_private=True)
 
 
 class DeviceField(Field):
@@ -1205,7 +1180,7 @@ class InstanceState(BaseModel):
     """State of instance that it had in Fiware on the moment of the last load
     Wrapped in an object to bypass the SemanticClass immutability
     """
-    state: Optional[ContextEntity]
+    state: Optional[ContextEntity] = None
 
 
 class SemanticMetadata(BaseModel):
@@ -1220,9 +1195,7 @@ class SemanticMetadata(BaseModel):
     comment: str = pyd.Field(default="",
                              description="Optional user-given comment for "
                                          "the instance")
-
-    class Config:
-        validate_assignment = True
+    model_config = ConfigDict(validate_assignment=True)
 
 
 class SemanticClass(BaseModel):
@@ -1599,19 +1572,9 @@ class SemanticClass(BaseModel):
         for field in self.get_fields():
             res.extend(field.get_field_names())
         return res
-
-    class Config:
-        """
-        Forbid manipulation of class
-
-        No Fields can be added/removed
-
-        The identifier can not be changed
-        """
-        arbitrary_types_allowed = True
-        allow_mutation = False
-        frozen = True
-        underscore_attrs_are_private = True
+    # TODO[pydantic]: The following keys were removed: `allow_mutation`, `underscore_attrs_are_private`.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
+    model_config = ConfigDict(arbitrary_types_allowed=True, allow_mutation=False, frozen=True, underscore_attrs_are_private=True)
 
     def __str__(self):
         return str(self.dict(exclude={'semantic_manager', 'old_state'}))
@@ -1873,6 +1836,4 @@ class SemanticIndividual(BaseModel):
             if is_instance:
                 return True
         return False
-
-    class Config:
-        frozen = True
+    model_config = ConfigDict(frozen=True)
