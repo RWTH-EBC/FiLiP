@@ -1,6 +1,7 @@
 requests>=2.23.0
 python-dotenv>=0.19.1
-pydantic[dotenv]>=2.0.2
+pydantic>=2.0.2
+pydantic-settings>=2.0.1
 aenum>=3.0.0
 pathlib>=1.0.1
 regex>=2021.3.17

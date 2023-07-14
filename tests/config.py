@@ -1,8 +1,9 @@
 import logging
 from uuid import uuid4
 from dotenv import find_dotenv
-from pydantic import AnyUrl, AnyHttpUrl, BaseSettings, Field, root_validator
+from pydantic import AnyUrl, AnyHttpUrl, Field, AliasChoices, model_validator
 from filip.models.base import FiwareHeader, LogLevel
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 def generate_servicepath():
@@ -21,47 +22,47 @@ class TestSettings(BaseSettings):
     https://pydantic-docs.helpmanual.io/usage/settings/
     """
     LOG_LEVEL: LogLevel = Field(default=LogLevel.ERROR,
-                                env=['LOG_LEVEL', 'LOGLEVEL'])
+                                validation_alias=AliasChoices('LOG_LEVEL', 'LOGLEVEL'))
 
     CB_URL: AnyHttpUrl = Field(default="http://localhost:1026",
-                               env=['ORION_URL',
+                               validation_alias=AliasChoices('ORION_URL',
                                     'CB_URL',
                                     'CB_HOST',
                                     'CONTEXTBROKER_URL',
-                                    'OCB_URL'])
+                                    'OCB_URL'))
     IOTA_URL: AnyHttpUrl = Field(default="http://localhost:4041",
-                                      env='IOTA_URL')
+                                 validation_alias='IOTA_URL')
     IOTA_JSON_URL: AnyHttpUrl = Field(default="http://localhost:4041",
-                                      env='IOTA_JSON_URL')
+                                      validation_alias='IOTA_JSON_URL')
 
     IOTA_UL_URL: AnyHttpUrl = Field(default="http://127.0.0.1:4061",
-                                    env='IOTA_UL_URL')
+                                    validation_alias=AliasChoices('IOTA_UL_URL'))
 
     QL_URL: AnyHttpUrl = Field(default="http://127.0.0.1:8668",
-                               env=['QUANTUMLEAP_URL',
-                                    'QL_URL'])
+                               validation_alias=AliasChoices('QUANTUMLEAP_URL',
+                                                             'QL_URL'))
 
     MQTT_BROKER_URL: AnyUrl = Field(default="mqtt://127.0.0.1:1883",
-                                    env=['MQTT_BROKER_URL',
-                                         'MQTT_URL',
-                                         'MQTT_BROKER'])
+                                    validation_alias=AliasChoices('MQTT_BROKER_URL',
+                                                                  'MQTT_URL',
+                                                                  'MQTT_BROKER'))
 
     # IF CI_JOB_ID is present it will always overwrite the service path
     CI_JOB_ID: str = Field(default=None,
-                           env=['CI_JOB_ID'])
+                           validation_alias=AliasChoices('CI_JOB_ID'))
 
     # create service paths for multi tenancy scenario and concurrent testing
     FIWARE_SERVICE: str = Field(default='filip',
-                                env=['FIWARE_SERVICE'])
+                                validation_alias=AliasChoices('FIWARE_SERVICE'))
 
     FIWARE_SERVICEPATH: str = Field(default_factory=generate_servicepath,
-                                    env=['FIWARE_PATH',
-                                         'FIWARE_SERVICEPATH',
-                                         'FIWARE_SERVICE_PATH'])
+                                    validation_alias=AliasChoices('FIWARE_PATH',
+                                                                  'FIWARE_SERVICEPATH',
+                                                                  'FIWARE_SERVICE_PATH'))
 
 
-    @root_validator
-    def generate_mutltitenancy_setup(cls, values):
+    @model_validator
+    def generate_multi_tenancy_setup(cls, values):
         """
         Tests if the fields for multi tenancy in fiware are consistent.
         If CI_JOB_ID is present it will always overwrite the service path.
@@ -78,22 +79,17 @@ class TestSettings(BaseSettings):
                      service_path=values['FIWARE_SERVICEPATH'])
 
         return values
-
-    class Config:
-        """
-        Pydantic configuration
-        """
-        env_file = find_dotenv('.env')
-        env_file_encoding = 'utf-8'
-        case_sensitive = False
-        use_enum_values = True
-        allow_reuse = True
+    model_config = SettingsConfigDict(env_file=find_dotenv('.env'),
+                                      env_file_encoding='utf-8',
+                                      case_sensitive=False,
+                                      use_enum_values=True,
+                                      allow_reuse=True)
 
 
 # create settings object
 settings = TestSettings()
 print(f"Running tests with the following settings: \n "
-      f"{settings.json(indent=2)}")
+      f"{settings.model_dump_json(indent=2)}")
 
 # configure logging for all tests
 logging.basicConfig(

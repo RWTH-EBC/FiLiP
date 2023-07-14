@@ -20,7 +20,7 @@ class TestSettings(unittest.TestCase):
             self.settings_parsing = \
                 Settings(_env_file='./tests/test_config.env')
 
-        for key, value in self.settings_parsing.dict().items():
+        for key, value in self.settings_parsing.model_dump().items():
             os.environ[key] = value
         self.settings_dotenv = Settings()
 
@@ -45,5 +45,5 @@ class TestSettings(unittest.TestCase):
         self.assertEqual(self.settings_parsing, self.settings_dotenv)
 
     def tearDown(self) -> None:
-        for k in self.settings_parsing.dict().keys():
+        for k in self.settings_parsing.model_dump().keys():
             del os.environ[k]

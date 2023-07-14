@@ -75,14 +75,14 @@ class FiwareHeader(BaseModel):
         default="",
         max_length=50,
         description="Fiware service used for multi-tenancy",
-        regex=r"\w*$"
+        pattern=r"\w*$"
     )
     service_path: str = Field(
         alias="fiware-servicepath",
         default="",
         description="Fiware service path",
         max_length=51,
-        regex=r'^((\/\w*)|(\/\#))*(\,((\/\w*)|(\/\#)))*$'
+        pattern=r'^((\/\w*)|(\/\#))*(\,((\/\w*)|(\/\#)))*$'
     )
 
     class Config(BaseConfig):
@@ -116,7 +116,7 @@ class LogLevel(str, Enum):
     NOTSET = 'NOTSET'
 
     @classmethod
-    def _missing_(cls, name):
+    def _missing_name_(cls, name):
         """
         Class method to realize case insensitive args
 
