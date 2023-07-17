@@ -570,7 +570,7 @@ class Field(BaseModel):
         res = []
         for v in self.get_all_raw():
             if isinstance(v, BaseModel):
-                res.append(v.json())
+                res.append(v.model_dump_json())
             else:
                 res.append(v)
         return res

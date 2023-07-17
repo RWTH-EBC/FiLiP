@@ -149,19 +149,19 @@ class TestAgent(unittest.TestCase):
         device = Device(**self.device)
         device.device_id = "device_with_meta"
         device.add_attribute(attribute=attr)
-        logger.info(device.json(indent=2))
+        logger.info(device.model_dump_json(indent=2))
 
         with IoTAClient(
                 url=settings.IOTA_JSON_URL,
                 fiware_header=self.fiware_header) as client:
             client.post_device(device=device)
-            logger.info(client.get_device(device_id=device.device_id).json(
+            logger.info(client.get_device(device_id=device.device_id).model_dump_json(
                 indent=2, exclude_unset=True))
 
         with ContextBrokerClient(
                 url=settings.CB_URL,
                 fiware_header=self.fiware_header) as client:
-            logger.info(client.get_entity(entity_id=device.entity_name).json(
+            logger.info(client.get_entity(entity_id=device.entity_name).model_dump_json(
                 indent=2))
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,

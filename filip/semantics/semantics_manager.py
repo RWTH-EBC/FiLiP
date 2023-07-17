@@ -144,16 +144,16 @@ class InstanceRegistry(BaseModel):
         for identifier, instance in self._registry.items():
             old_state = None
             if instance.old_state.state is not None:
-                old_state = instance.old_state.state.json()
+                old_state = instance.old_state.state.model_dump_json()
             instance_dict = {
-                "entity": instance.build_context_entity().json(),
-                "header": instance.header.json(),
+                "entity": instance.build_context_entity().model_dump_json(),
+                "header": instance.header.model_dump_json(),
                 "old_state": old_state
             }
             res['instances'].append(instance_dict)
 
         for identifier in self._deleted_identifiers:
-            res['deleted_identifiers'].append(identifier.json())
+            res['deleted_identifiers'].append(identifier.model_dump_json())
 
         return json.dumps(res, indent=4)
 
@@ -997,7 +997,7 @@ class SemanticsManager(BaseModel):
             if isinstance(item, SemanticIndividual):
                 return item.get_name()
             else:
-                return item.get_identifier().json()
+                return item.get_identifier().model_dump_json()
 
         for instance in self.get_all_local_instances():
             label = f'({instance.get_type()}){instance.metadata.name}'

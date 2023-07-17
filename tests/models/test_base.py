@@ -35,7 +35,7 @@ class TestModels(unittest.TestCase):
         header = FiwareHeader.parse_obj(self.fiware_header)
         self.assertEqual(header.dict(by_alias=True),
                          self.fiware_header)
-        self.assertEqual(header.json(by_alias=True),
+        self.assertEqual(header.model_dump_json(by_alias=True),
                          json.dumps(self.fiware_header))
         self.assertRaises(ValidationError, FiwareHeader,
                           service='jkgsadh ', service_path='/testing')
