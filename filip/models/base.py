@@ -70,6 +70,8 @@ class FiwareHeader(BaseModel):
     Context Brokers to support hierarchical scopes:
     https://fiware-orion.readthedocs.io/en/master/user/service_path/index.html
     """
+    model_config = ConfigDict(populate_by_name=True, validate_assignment=True)
+
     service: str = Field(
         alias="fiware-service",
         default="",
@@ -84,7 +86,7 @@ class FiwareHeader(BaseModel):
         max_length=51,
         pattern=r'^((\/\w*)|(\/\#))*(\,((\/\w*)|(\/\#)))*$'
     )
-    model_config = ConfigDict(populate_by_name=True, validate_assignment=True)
+
 
 
 class FiwareRegex(str, Enum):
