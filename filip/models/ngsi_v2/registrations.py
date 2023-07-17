@@ -39,6 +39,8 @@ class Provider(BaseModel):
 
 
 class ForwardingInformation(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
     timesSent: int = Field(
         description="(not editable, only present in GET operations): "
                     "Number of forwarding requests sent due to this "
@@ -61,9 +63,6 @@ class ForwardingInformation(BaseModel):
                     "request forwarding. Not present if registration has "
                     "never had a successful notification."
     )
-    # TODO[pydantic]: The following keys were removed: `allow_mutation`.
-    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
-    model_config = ConfigDict(allow_mutation=False)
 
 
 class DataProvided(BaseModel):

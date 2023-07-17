@@ -10,7 +10,7 @@ from pydantic import \
     conint, \
     Field, \
     Json, \
-    validator
+    validator, model_serializer
 from .base import AttrsFormat, EntityPattern, Http, Status, Expression
 from filip.utils.simple_ql import QueryString, QueryStatement
 from filip.utils.validators import validate_mqtt_url
@@ -200,24 +200,19 @@ class Notification(BaseModel):
                     '[A=0, B=null, C=null]. This '
     )
 
-    # TODO[pydantic]: We couldn't refactor the `validator`, please replace it by `field_validator` manually.
-    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.
-    @validator('httpCustom')
+    @field_validator('httpCustom')
     def validate_http(cls, http_custom, values):
         if http_custom is not None:
             assert values['http'] is None
         return http_custom
 
-    # TODO[pydantic]: We couldn't refactor the `validator`, please replace it by `field_validator` manually.
-    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.
-    @validator('exceptAttrs')
+    @field_validator('exceptAttrs')
     def validate_attr(cls, except_attrs, values):
         if except_attrs is not None:
             assert values['attrs'] is None
         return except_attrs
 
-    @model_validator()
-    @classmethod
+    @model_validator(mode='after')
     def validate_endpoints(cls, values):
         if values['http'] is not None:
             assert all((v is None for k, v in values.items() if k in [
@@ -289,7 +284,6 @@ class Condition(BaseModel):
     )
 
     @field_validator('attrs')
-    @classmethod
     def check_attrs(cls, v):
         if isinstance(v, list):
             return v
@@ -297,10 +291,16 @@ class Condition(BaseModel):
             return [v]
         else:
             raise TypeError()
-    # TODO[pydantic]: The following keys were removed: `json_encoders`.
-    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
-    model_config = ConfigDict(json_encoders={QueryString: lambda v: v.to_str(),
-                     QueryStatement: lambda v: v.to_str()})
+
+    @model_serializer
+    def serialize(self):
+        dump = {}
+        for k, v in self:
+            if isinstance(v, (QueryString, QueryStatement)):
+                dump.update({k: v.to_str()})
+            else:
+                dump.update({k: v})
+        return dump
 
 
 class Subject(BaseModel):
@@ -314,10 +314,16 @@ class Subject(BaseModel):
     condition: Optional[Condition] = Field(
         default=None,
     )
-    # TODO[pydantic]: The following keys were removed: `json_encoders`.
-    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
-    model_config = ConfigDict(json_encoders={QueryString: lambda v: v.to_str(),
-                     QueryStatement: lambda v: v.to_str()})
+
+    @model_serializer
+    def serialize(self):
+        dump = {}
+        for k, v in self:
+            if isinstance(v, (QueryString, QueryStatement)):
+                dump.update({k: v.to_str()})
+            else:
+                dump.update({k: v})
+        return dump
 
 
 class Subscription(BaseModel):
@@ -325,6 +331,8 @@ class Subscription(BaseModel):
     Subscription payload validations
     https://fiware-orion.readthedocs.io/en/master/user/ngsiv2_implementation_notes/index.html#subscription-payload-validations
     """
+    model_config = ConfigDict(validate_assignment=True)
+
     id: Optional[str] = Field(
         default=None,
         description="Subscription unique identifier. Automatically created at "
@@ -379,7 +387,13 @@ class Subscription(BaseModel):
                     "must elapse between two consecutive notifications. "
                     "It is optional."
     )
-    # TODO[pydantic]: The following keys were removed: `json_encoders`.
-    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
-    model_config = ConfigDict(validate_assignment=True, json_encoders={QueryString: lambda v: v.to_str(),
-                     QueryStatement: lambda v: v.to_str()})
+
+    @model_serializer
+    def serialize(self):
+        dump = {}
+        for k, v in self:
+            if isinstance(v, (QueryString, QueryStatement)):
+                dump.update({k: v.to_str()})
+            else:
+                dump.update({k: v})
+        return dump

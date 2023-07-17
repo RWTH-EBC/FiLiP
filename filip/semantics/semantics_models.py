@@ -158,6 +158,7 @@ class DeviceProperty(BaseModel):
     A property can only belong to one field of one instance. Assigning it to
     multiple fields will result in an error.
     """
+    model_config = ConfigDict()
 
     name: str = Field("Internally used name in the IoT Device")
     _instance_link: DevicePropertyInstanceLink = DevicePropertyInstanceLink()
@@ -225,9 +226,8 @@ class DeviceProperty(BaseModel):
                 is used
         """
         pass
-    # TODO[pydantic]: The following keys were removed: `underscore_attrs_are_private`.
-    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
-    model_config = ConfigDict(underscore_attrs_are_private=True)
+
+
 
 
 class Command(DeviceProperty):
@@ -357,6 +357,7 @@ class Field(BaseModel):
     The fields of a class are predefined. A field can contain standard values
     on init
     """
+    model_config = ConfigDict()
 
     name: str = Field(
         default="",
@@ -588,9 +589,8 @@ class Field(BaseModel):
         Overrides the magic "in" to loop over the field values
         """
         return self.get_all().__iter__()
-    # TODO[pydantic]: The following keys were removed: `underscore_attrs_are_private`.
-    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
-    model_config = ConfigDict(underscore_attrs_are_private=True)
+
+
 
 
 class DeviceField(Field):
@@ -1528,6 +1528,7 @@ class SemanticClass(BaseModel):
         Returns:
             ContextEntity
         """
+        model_config = ConfigDict(arbitrary_types_allowed=True, frozen=True)
 
         entity = ContextEntity(
             id=self.id,
@@ -1572,9 +1573,6 @@ class SemanticClass(BaseModel):
         for field in self.get_fields():
             res.extend(field.get_field_names())
         return res
-    # TODO[pydantic]: The following keys were removed: `allow_mutation`, `underscore_attrs_are_private`.
-    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
-    model_config = ConfigDict(arbitrary_types_allowed=True, allow_mutation=False, frozen=True, underscore_attrs_are_private=True)
 
     def __str__(self):
         return str(self.dict(exclude={'semantic_manager', 'old_state'}))
