@@ -21,6 +21,7 @@ class Settings(BaseSettings):
     QL_URL: AnyHttpUrl = Field(default="http://127.0.0.1:8668",
                                env=['QUANTUMLEAP_URL', 'QL_URL'])
 
+    minimum_orion_version: str = '3.6.0'
     class Config:
         env_file = '.env.filip'
         env_file_encoding = 'utf-8'

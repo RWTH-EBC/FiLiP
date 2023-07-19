@@ -166,13 +166,11 @@ class ContextBrokerClient(BaseHttpClient):
         option, which is implemented in FiLiP, but won't work with lower orion versions.
         """
         orion_version = self.get_version()['orion']['version']
-        if version.parse(orion_version) < version.parse('3.6.0'):
+        if version.parse(orion_version) < version.parse(settings.minimum_orion_version):
             warnings.warn(
-                f"You are using orion version {orion_version}. There was a breaking change in Orion Version 3.6.0,"
-                f"which changed the default metadata update semantics and introduced the 'overrideMetadata' option. "
-                f"See https://github.com/telefonicaid/fiware-orion/releases/tag/3.6.0 for further details. "
-                f"In your used version {orion_version}, this option is not supported. This will only be a problem, if"
-                f" you try to set the 'overrideMetadata' option in FiLiP (implemented since v0.2.3)."
+                f"You are using orion version {orion_version}. There was a breaking change in Orion Version "
+                f"{settings.minimum_orion_version}, therefore functionality is not assured when using "
+                f"version {orion_version}."
             )
 
 
