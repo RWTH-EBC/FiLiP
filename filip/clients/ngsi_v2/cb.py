@@ -12,6 +12,7 @@ from pydantic import \
     PositiveFloat, \
     AnyHttpUrl
 from typing import Any, Dict, List , Optional, TYPE_CHECKING, Union
+from packaging import version
 import re
 import requests
 from urllib.parse import urljoin
@@ -73,6 +74,8 @@ class ContextBrokerClient(BaseHttpClient):
                          session=session,
                          fiware_header=fiware_header,
                          **kwargs)
+
+        self._check_correct_cb_version()
 
     def __pagination(self,
                      *,
@@ -156,6 +159,20 @@ class ContextBrokerClient(BaseHttpClient):
         except requests.RequestException as err:
             self.logger.error(err)
             raise
+
+    def _check_correct_cb_version(self) -> None:
+        """
+        Checks whether the used Orion version is greater or equal than the minimum required orion version of
+        the current filip version
+        """
+        orion_version = self.get_version()['orion']['version']
+        if version.parse(orion_version) < version.parse(settings.minimum_orion_version):
+            warnings.warn(
+                f"You are using orion version {orion_version}. There was a breaking change in Orion Version "
+                f"{settings.minimum_orion_version}, therefore functionality is not assured when using "
+                f"version {orion_version}."
+            )
+
 
     def get_resources(self) -> Dict:
         """

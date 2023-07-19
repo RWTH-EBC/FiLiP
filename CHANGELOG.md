@@ -1,5 +1,6 @@
-#### v0.2.5
+#### v0.2.6
 - fixed inconsistency of `entity_type` as required argument ([#188](https://github.com/RWTH-EBC/FiLiP/issues/188))
+- add warning if ``Orion`` version is not supported ([#200](https://github.com/RWTH-EBC/FiLiP/issues/200))
 
 #### v0.2.5
 - fixed service group edition not working ([#170](https://github.com/RWTH-EBC/FiLiP/issues/170))
