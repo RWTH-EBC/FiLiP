@@ -364,7 +364,7 @@ class ContextEntity(ContextEntityKeyValues):
         for attr in self.get_attributes():
             if attr.name == attribute_name:
                 return attr
-        raise KeyError
+        raise KeyError(f"Attribute '{attribute_name}' not in entity")
 
     def get_properties(
             self,
@@ -492,7 +492,7 @@ class ContextEntity(ContextEntityKeyValues):
         commands = self.get_commands(response_format=PropertyFormat.DICT)
 
         if command_attribute_name not in commands:
-            raise KeyError
+            raise KeyError(f"Command '{command_attribute_name}' not in commands")
 
         command = self.get_attribute(command_attribute_name)
 

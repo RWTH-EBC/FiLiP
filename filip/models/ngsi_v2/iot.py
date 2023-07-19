@@ -427,9 +427,10 @@ class Device(DeviceSettings):
                                          self.commands):
             if attribute.name == attribute_name:
                 return attribute
-        logger.error("Device: %s: Could not find "
-                     "attribute with name %s", self.device_id, attribute_name)
-        raise KeyError
+        msg = f"Device: {self.device_id}: Could not " \
+              f"find attribute with name {attribute_name}"
+        logger.error(msg)
+        raise KeyError(msg)
 
     def add_attribute(self,
                       attribute: Union[DeviceAttribute,
@@ -525,10 +526,9 @@ class Device(DeviceSettings):
                                self.device_id, attribute.json(indent=2))
                 self.add_attribute(attribute=attribute)
             else:
-                logger.error("Device: %s: Could not find "
-                             "attribute: \n %s", self.device_id,
-                             attribute.json(indent=2))
-                raise KeyError
+                msg = f"Device: {self.device_id}: Could not find "\
+                      f"attribute: \n {attribute.json(indent=2)}"
+                raise KeyError(msg)
 
     def delete_attribute(self, attribute: Union[DeviceAttribute,
                                                 LazyDeviceAttribute,
