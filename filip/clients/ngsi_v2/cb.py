@@ -162,8 +162,8 @@ class ContextBrokerClient(BaseHttpClient):
 
     def _check_correct_cb_version(self) -> None:
         """
-        Checks whether Orion version is >= 3.6.0, since breaking change was introduced there which introduced new
-        option, which is implemented in FiLiP, but won't work with lower orion versions.
+        Checks whether the used Orion version is greater or equal than the minimum required orion version of
+        the current filip version
         """
         orion_version = self.get_version()['orion']['version']
         if version.parse(orion_version) < version.parse(settings.minimum_orion_version):
