@@ -49,6 +49,7 @@ class TestUnitCodes(TestCase):
     def test_units(self):
         """
         Test units api
+
         Returns:
             None
         """
@@ -59,9 +60,17 @@ class TestUnitCodes(TestCase):
                          units.keys(by_code=True))
         self.assertEqual(self.units_data.CommonCode.to_list(), units.codes)
 
-        for unit in units.values():
-            cmdout = unit.json(indent=2)
-            # print(cmdout)
+        # check get or __getitem__, respectively
+        for k in units.keys():
+            units.get(k)
+
+        for k in units.keys(by_code=True):
+            units.get(k)
+
+        # check serialization
+        for v in units.values():
+            v.json(indent=2)
+
 
     def test_unit_validator(self):
         """

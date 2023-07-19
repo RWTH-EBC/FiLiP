@@ -700,7 +700,7 @@ class IoTAClient(BaseHttpClient):
         """
         level = level.upper()
         if level not in ['INFO', 'ERROR', 'FATAL', 'DEBUG', 'WARNING']:
-            raise KeyError
+            raise KeyError("Given log level is not supported")
 
         url = urljoin(self.base_url, 'admin/log')
         headers = self.headers.copy()
