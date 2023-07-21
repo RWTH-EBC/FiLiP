@@ -11,7 +11,7 @@ from filip.models.base import DataType, FiwareRegex
 from filip.models.ngsi_v2.units import validate_unit_data, Unit
 from filip.utils.simple_ql import QueryString, QueryStatement
 from filip.utils.validators import validate_http_url, \
-    validate_escape_character_free
+    validate_escape_character_free, validate_fiware_datatype_string_protect, validate_fiware_datatype_standard
 
 
 class Http(BaseModel):
@@ -179,8 +179,8 @@ class Metadata(BaseModel):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        pattern=FiwareRegex.standard.value  # Make it FIWARE-Safe
     )
+    valid_type = field_validator("type")(validate_fiware_datatype_standard)
     value: Optional[Any] = Field(
         default=None,
         title="metadata value",
@@ -210,8 +210,8 @@ class NamedMetadata(Metadata):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        pattern=FiwareRegex.standard.value  # Make it FIWARE-Safe
     )
+    valid_name = field_validator("name")(validate_fiware_datatype_standard)
 
     @model_validator(mode='after')
     def validate_data(cls, values):
@@ -260,8 +260,8 @@ class BaseAttribute(BaseModel):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        pattern=FiwareRegex.string_protect.value,  # Make it FIWARE-Safe
     )
+    valid_type = field_validator("type")(validate_fiware_datatype_string_protect)
     metadata: Optional[Union[Dict[str, Metadata],
                              NamedMetadata,
                              List[NamedMetadata],
@@ -311,9 +311,9 @@ class BaseNameAttribute(BaseModel):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        pattern=FiwareRegex.string_protect.value,
         # Make it FIWARE-Safe
     )
+    valid_name = field_validator("name")(validate_fiware_datatype_string_protect)
 
 
 class BaseValueAttribute(BaseModel):
@@ -335,8 +335,8 @@ class BaseValueAttribute(BaseModel):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        pattern=FiwareRegex.string_protect.value,  # Make it FIWARE-Safe
     )
+    valid_type = field_validator("type")(validate_fiware_datatype_string_protect)
     value: Optional[Any] = Field(
         default=None,
         title="Attribute value",

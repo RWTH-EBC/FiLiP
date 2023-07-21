@@ -15,6 +15,7 @@ from filip.models.ngsi_v2.base import \
     BaseValueAttribute, \
     BaseNameAttribute
 from filip.models.base import DataType, FiwareRegex
+from filip.utils.validators import validate_fiware_datatype_standard, validate_fiware_datatype_string_protect
 
 
 class GetEntitiesOptions(str, Enum):
@@ -112,9 +113,9 @@ class ContextEntityKeyValues(BaseModel):
         example='Bcn-Welt',
         max_length=256,
         min_length=1,
-        pattern=FiwareRegex.standard.value,  # Make it FIWARE-Safe
         frozen=True
     )
+    valid_id = field_validator("id")(validate_fiware_datatype_standard)
     type: Union[str, Enum] = Field(
         ...,
         title="Entity Type",
@@ -125,9 +126,9 @@ class ContextEntityKeyValues(BaseModel):
         example="Room",
         max_length=256,
         min_length=1,
-        pattern=FiwareRegex.standard.value,  # Make it FIWARE-Safe
         frozen=True
     )
+    valid_type = field_validator("type")(validate_fiware_datatype_standard)
     model_config = ConfigDict(extra='allow', validate_default=True, validate_assignment=True)
 
 
@@ -599,5 +600,5 @@ class NamedCommand(Command):
         description="Name of the command",
         max_length=256,
         min_length=1,
-        pattern=FiwareRegex.string_protect.value
     )
+    valid_name = field_validator("name")(validate_fiware_datatype_string_protect)

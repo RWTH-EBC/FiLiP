@@ -3,7 +3,9 @@ Shared data models
 """
 
 from aenum import Enum
-from pydantic import ConfigDict, BaseModel, Field, BaseConfig
+from pydantic import ConfigDict, BaseModel, Field, BaseConfig, field_validator
+
+from filip.utils.validators import validate_fiware_service_path
 
 
 class NgsiVersion(str, Enum):
@@ -84,8 +86,9 @@ class FiwareHeader(BaseModel):
         default="",
         description="Fiware service path",
         max_length=51,
-        pattern=r'^((\/\w*)|(\/\#))*(\,((\/\w*)|(\/\#)))*$'
     )
+    valid_service_path = field_validator("service_path")(
+        validate_fiware_service_path)
 
 
 

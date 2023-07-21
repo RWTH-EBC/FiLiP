@@ -13,7 +13,7 @@ from pydantic import \
     validator, model_serializer
 from .base import AttrsFormat, EntityPattern, Http, Status, Expression
 from filip.utils.simple_ql import QueryString, QueryStatement
-from filip.utils.validators import validate_mqtt_url
+from filip.utils.validators import validate_mqtt_url, validate_mqtt_topic
 from filip.models.ngsi_v2.context import ContextEntity
 from filip.types import AnyMqttUrl
 
@@ -84,7 +84,8 @@ class Mqtt(BaseModel):
                     'only includes host and port)')
     topic: str = Field(
         description='to specify the MQTT topic to use',
-        pattern=r'^((?![\'\"#+,])[\x00-\x7F])*$')
+        )
+    valid_type = field_validator("topic")(validate_mqtt_topic)
     qos: Optional[int] = Field(
         default=0,
         description='to specify the MQTT QoS value to use in the '

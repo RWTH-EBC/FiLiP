@@ -2,15 +2,19 @@
 Helper functions to prohibit boiler plate code
 """
 import logging
+import re
 from typing import Dict, Any, List
-from pydantic import AnyHttpUrl, validate_arguments
+from pydantic import AnyHttpUrl, validate_call
+from pydantic_core import PydanticCustomError
+
+from filip.models.base import DataType, FiwareRegex
 from filip.types import AnyMqttUrl
 
 
 logger = logging.getLogger(name=__name__)
 
 
-@validate_arguments
+@validate_call
 def validate_http_url(url: AnyHttpUrl) -> str:
     """
     Function checks whether the host has "http" added in case of http as
@@ -25,7 +29,7 @@ def validate_http_url(url: AnyHttpUrl) -> str:
     return url
 
 
-@validate_arguments
+@validate_call
 def validate_mqtt_url(url: AnyMqttUrl) -> str:
     """
     Function that checks whether a url is valid mqtt endpoint
@@ -80,3 +84,49 @@ def validate_escape_character_free(value: Any) -> Any:
                 raise ValueError(f"The value {value} contains "
                                  f"the forbidden char '")
     return values
+
+
+def match_regex(value: str, pattern: str):
+    regex = re.compile(pattern)
+    if not regex.match(value):
+        raise PydanticCustomError(
+            'string_pattern_mismatch',
+            "String should match pattern '{pattern}'",
+            {'pattern': pattern},
+        )
+    return value
+
+
+def validate_fiware_standard_regex(vale: str):
+    return match_regex(vale, FiwareRegex.standard.value)
+
+
+def validate_fiware_string_protect_regex(vale: str):
+    return match_regex(vale, FiwareRegex.string_protect.value)
+
+
+def validate_mqtt_topic(topic: str):
+    return match_regex(topic, r'^((?![\'\"#+,])[\x00-\x7F])*$')
+
+
+def validate_fiware_datatype_standard(_type):
+    if isinstance(_type, DataType):
+        return _type
+    elif isinstance(_type, str):
+        return validate_fiware_standard_regex(_type)
+    else:
+        raise TypeError(f"Invalid type {type(_type)}")
+
+
+def validate_fiware_datatype_string_protect(_type):
+    if isinstance(_type, DataType):
+        return _type
+    elif isinstance(_type, str):
+        return validate_fiware_string_protect_regex(_type)
+    else:
+        raise TypeError(f"Invalid type {type(_type)}")
+
+
+def validate_fiware_service_path(service_path):
+    return match_regex(service_path,
+                       r'^((\/\w*)|(\/\#))*(\,((\/\w*)|(\/\#)))*$')

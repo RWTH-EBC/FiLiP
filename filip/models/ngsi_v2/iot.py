@@ -13,6 +13,7 @@ from filip.models.ngsi_v2.base import \
     BaseAttribute, \
     BaseValueAttribute, \
     BaseNameAttribute
+from filip.utils.validators import validate_fiware_datatype_string_protect, validate_fiware_datatype_standard
 
 logger = logging.getLogger()
 
@@ -73,8 +74,8 @@ class IoTABaseAttribute(BaseAttribute, BaseNameAttribute):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        pattern=FiwareRegex.standard.value  # Make it FIWARE-Safe"
     )
+    valid_entity_name = field_validator("entity_name")(validate_fiware_datatype_standard)
     entity_type: Optional[str] = Field(
         default=None,
         description="configures the type of an alternative entity. "
@@ -83,8 +84,8 @@ class IoTABaseAttribute(BaseAttribute, BaseNameAttribute):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        pattern=FiwareRegex.standard.value
     )
+    valid_entity_type = field_validator("entity_type")(validate_fiware_datatype_standard)
     reverse: Optional[str] = Field(
         default=None,
         description="add bidirectionality expressions to the attribute. See "
@@ -125,8 +126,8 @@ class LazyDeviceAttribute(BaseNameAttribute):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        pattern=FiwareRegex.string_protect.value,  # Make it FIWARE-Safe
     )
+    valid_type = field_validator("type")(validate_fiware_datatype_string_protect)
 
 
 class DeviceCommand(BaseModel):
@@ -140,8 +141,8 @@ class DeviceCommand(BaseModel):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        pattern=FiwareRegex.string_protect.value
     )
+    valid_name = field_validator("name")(validate_fiware_datatype_string_protect)
     type: Union[DataType, str] = Field(
         description="name of the type of the attribute in the target entity. ",
         default=DataType.COMMAND
@@ -195,8 +196,8 @@ class ServiceGroup(BaseModel):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        pattern=FiwareRegex.standard.value  # Make it FIWARE-Safe
     )
+    valid_entity_type = field_validator("entity_type")(validate_fiware_datatype_standard)
     trust: Optional[str] = Field(
         default=None,
         description="trust token to use for secured access to the "
@@ -351,8 +352,8 @@ class Device(DeviceSettings):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        pattern=FiwareRegex.standard.value  # Make it FIWARE-Safe"
     )
+    valid_entity_name = field_validator("entity_name")(validate_fiware_datatype_standard)
     entity_type: str = Field(
         description="Type of the entity in the Context Broker. "
                     "Allowed characters "
@@ -360,8 +361,8 @@ class Device(DeviceSettings):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        pattern=FiwareRegex.standard.value  # Make it FIWARE-Safe"
     )
+    valid_entity_type = field_validator("entity_type")(validate_fiware_datatype_standard)
     lazy: List[LazyDeviceAttribute] = Field(
         default=[],
         description="List of lazy attributes of the device"
