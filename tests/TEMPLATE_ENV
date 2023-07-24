@@ -4,7 +4,6 @@
 
 LOG_LEVEL="INFO"
 CB_URL="http://localhost:1026"
-IOTA_JSON="http://localhost:4041"
 IOTA_JSON_URL="http://localhost:4041"
 IOTA_UL_URL="http://localhost:4061"
 QL_URL="http://localhost:8668"
