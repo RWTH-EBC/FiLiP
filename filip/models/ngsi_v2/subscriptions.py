@@ -15,7 +15,7 @@ from .base import AttrsFormat, EntityPattern, Http, Status, Expression
 from filip.utils.simple_ql import QueryString, QueryStatement
 from filip.utils.validators import validate_mqtt_url, validate_mqtt_topic
 from filip.models.ngsi_v2.context import ContextEntity
-from filip.types import AnyMqttUrl
+from filip.custom_types import AnyMqttUrl
 
 
 class Message(BaseModel):
