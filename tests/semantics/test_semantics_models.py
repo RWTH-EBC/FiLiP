@@ -92,7 +92,14 @@ class TestSemanticsModels(unittest.TestCase):
         """
         from tests.semantics.models import Class1, Class13, Class2, Class4, \
             Class123, Individual1, Close_Command, State, Open_Close_State, \
-            Measurement
+            Measurement, semantic_manager
+        test_header = InstanceHeader(
+            cb_url=settings.CB_URL,
+            iota_url=settings.IOTA_JSON_URL,
+            service=settings.FIWARE_SERVICE,
+            service_path=settings.FIWARE_SERVICEPATH
+        )
+        semantic_manager.set_default_header(test_header)
 
         class1 = Class1(id="12")
         class13 = Class13()
