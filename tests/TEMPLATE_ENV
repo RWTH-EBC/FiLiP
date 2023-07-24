@@ -2,7 +2,7 @@
 # folder and adjust the values to your needs
 # Do not add the created .env to the git
 
-LOG_LEVEL="info"
+LOG_LEVEL="INFO"
 CB_URL="http://localhost:1026"
 IOTA_JSON="http://localhost:4041"
 IOTA_JSON_URL="http://localhost:4041"
