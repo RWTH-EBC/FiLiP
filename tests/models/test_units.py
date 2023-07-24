@@ -43,7 +43,7 @@ class TestUnitCodes(TestCase):
             None
         """
         unit = Unit(**self.unit)
-        unit_from_json = Unit.model_validate_json(unit.model_dump_json(by_alias=True))
+        unit_from_json = Unit.model_validate_json(json_data=unit.model_dump_json(by_alias=False))
         self.assertEqual(unit, unit_from_json)
 
     def test_units(self):

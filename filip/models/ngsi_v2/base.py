@@ -43,13 +43,13 @@ class EntityPattern(BaseModel):
     @model_validator(mode='after')
     @classmethod
     def validate_conditions(cls, values):
-        assert ((values['id'] and not values['idPattern']) or
-                (not values['id'] and values['idPattern'])), \
+        assert ((values.id and not values.idPattern) or
+                (not values.id and values.idPattern)), \
             "Both cannot be used at the same time, but one of 'id' or " \
             "'idPattern must' be present."
-        if values['type'] or values.get('typePattern', None):
-            assert ((values['type'] and not values['typePattern']) or
-                    (not values['type'] and values['typePattern'])), \
+        if values.type or values.model_dump().get('typePattern', None):
+            assert ((values.type and not values.typePattern) or
+                    (not values.type and values.typePattern)), \
                 "Type or pattern of the affected entities. " \
                 "Both cannot be used at the same time."
         return values
@@ -191,7 +191,7 @@ class Metadata(BaseModel):
     def validate_value(cls, value, values):
         assert json.dumps(value), "metadata not serializable"
 
-        if values["type"].casefold() == "unit":
+        if values.data.get("type").casefold() == "unit":
             value = Unit(**value)
         return value
 
@@ -215,9 +215,9 @@ class NamedMetadata(Metadata):
 
     @model_validator(mode='after')
     def validate_data(cls, values):
-        if values.get("name", "").casefold() in ["unit",
-                                                 "unittext",
-                                                 "unitcode"]:
+        if values.model_dump().get("name", "").casefold() in ["unit",
+                                                              "unittext",
+                                                              "unitcode"]:
             values.update(validate_unit_data(values))
         return values
 
@@ -354,7 +354,7 @@ class BaseValueAttribute(BaseModel):
         If the type is unknown it will check json-serializable.
         """
 
-        type_ = values['type']
+        type_ = values.data.get("type")
         validate_escape_character_free(value)
 
         if value is not None:

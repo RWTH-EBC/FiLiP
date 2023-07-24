@@ -99,7 +99,7 @@ class BaseHttpClient:
             self._fiware_headers = FiwareHeader.model_validate_json(headers)
         else:
             raise TypeError(f'Invalid headers! {type(headers)}')
-        self.headers.update(self.fiware_headers.modul_dump(by_alias=True))
+        self.headers.update(self.fiware_headers.model_dump(by_alias=True))
 
     @property
     def fiware_service(self) -> str:

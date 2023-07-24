@@ -2,6 +2,8 @@
 Functions to clean up a tenant within a fiware based platform.
 """
 from functools import wraps
+
+from pydantic import AnyHttpUrl
 from requests import RequestException
 from typing import Callable, List, Union
 from filip.models import FiwareHeader
@@ -43,7 +45,7 @@ def clear_context_broker(url: str, fiware_header: FiwareHeader):
     assert len(client.get_registration_list()) == 0
 
 
-def clear_iot_agent(url: str, fiware_header: FiwareHeader):
+def clear_iot_agent(url: Union[str, AnyHttpUrl], fiware_header: FiwareHeader):
     """
     Function deletes all device groups and devices for a
     given fiware header
@@ -128,7 +130,7 @@ def clear_all(*,
         None
     """
     if iota_url is not None:
-        if isinstance(iota_url, str):
+        if isinstance(iota_url, str) or isinstance(iota_url, AnyHttpUrl):
             iota_url = [iota_url]
         for url in iota_url:
             clear_iot_agent(url=url, fiware_header=fiware_header)

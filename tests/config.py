@@ -4,6 +4,7 @@ from dotenv import find_dotenv
 from pydantic import AnyUrl, AnyHttpUrl, Field, AliasChoices, model_validator
 from filip.models.base import FiwareHeader, LogLevel
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from typing import Union, Optional
 
 
 def generate_servicepath():
@@ -48,8 +49,8 @@ class TestSettings(BaseSettings):
                                                                   'MQTT_BROKER'))
 
     # IF CI_JOB_ID is present it will always overwrite the service path
-    CI_JOB_ID: str = Field(default=None,
-                           validation_alias=AliasChoices('CI_JOB_ID'))
+    CI_JOB_ID: Optional[str] = Field(default=None,
+                                     validation_alias=AliasChoices('CI_JOB_ID'))
 
     # create service paths for multi tenancy scenario and concurrent testing
     FIWARE_SERVICE: str = Field(default='filip',
@@ -72,11 +73,11 @@ class TestSettings(BaseSettings):
         Returns:
 
         """
-        if values.get('CI_JOB_ID', None):
+        if values.model_dump().get('CI_JOB_ID', None):
             values['FIWARE_SERVICEPATH'] = f"/{values['CI_JOB_ID']}"
 
-        FiwareHeader(service=values['FIWARE_SERVICE'],
-                     service_path=values['FIWARE_SERVICEPATH'])
+        FiwareHeader(service=values.FIWARE_SERVICE,
+                     service_path=values.FIWARE_SERVICEPATH)
 
         return values
     model_config = SettingsConfigDict(env_file=find_dotenv('.env'),

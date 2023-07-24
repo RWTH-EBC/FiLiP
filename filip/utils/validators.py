@@ -7,8 +7,7 @@ from typing import Dict, Any, List
 from pydantic import AnyHttpUrl, validate_call
 from pydantic_core import PydanticCustomError
 
-from filip.models.base import DataType, FiwareRegex
-from filip.types import AnyMqttUrl
+from filip.custom_types import AnyMqttUrl
 
 
 logger = logging.getLogger(name=__name__)
@@ -26,7 +25,7 @@ def validate_http_url(url: AnyHttpUrl) -> str:
     Returns:
         validated url
     """
-    return url
+    return str(url)
 
 
 @validate_call
@@ -98,10 +97,12 @@ def match_regex(value: str, pattern: str):
 
 
 def validate_fiware_standard_regex(vale: str):
+    from filip.models.base import FiwareRegex
     return match_regex(vale, FiwareRegex.standard.value)
 
 
 def validate_fiware_string_protect_regex(vale: str):
+    from filip.models.base import FiwareRegex
     return match_regex(vale, FiwareRegex.string_protect.value)
 
 
@@ -110,6 +111,7 @@ def validate_mqtt_topic(topic: str):
 
 
 def validate_fiware_datatype_standard(_type):
+    from filip.models.base import DataType
     if isinstance(_type, DataType):
         return _type
     elif isinstance(_type, str):
@@ -119,6 +121,7 @@ def validate_fiware_datatype_standard(_type):
 
 
 def validate_fiware_datatype_string_protect(_type):
+    from filip.models.base import DataType
     if isinstance(_type, DataType):
         return _type
     elif isinstance(_type, str):
