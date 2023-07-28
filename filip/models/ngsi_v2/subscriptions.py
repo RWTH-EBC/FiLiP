@@ -214,20 +214,20 @@ class Notification(BaseModel):
         return except_attrs
 
     @model_validator(mode='after')
-    def validate_endpoints(cls, values):
-        if values['http'] is not None:
-            assert all((v is None for k, v in values.items() if k in [
+    def validate_endpoints(self):
+        if self.http is not None:
+            assert all((v is None for k, v in self.model_dump().items() if k in [
                 'httpCustom', 'mqtt', 'mqttCustom']))
-        elif values['httpCustom'] is not None:
-            assert all((v is None for k, v in values.items() if k in [
+        elif self.httpCustom is not None:
+            assert all((v is None for k, v in self.model_dump().items() if k in [
                 'http', 'mqtt', 'mqttCustom']))
-        elif values['mqtt'] is not None:
-            assert all((v is None for k, v in values.items() if k in [
+        elif self.mqtt is not None:
+            assert all((v is None for k, v in self.model_dump().items() if k in [
                 'http', 'httpCustom', 'mqttCustom']))
         else:
-            assert all((v is None for k, v in values.items() if k in [
+            assert all((v is None for k, v in self.model_dump().items() if k in [
                 'http', 'httpCustom', 'mqtt']))
-        return values
+        return self
     model_config = ConfigDict(validate_assignment=True)
 
 

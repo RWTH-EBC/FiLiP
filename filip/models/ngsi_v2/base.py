@@ -41,18 +41,17 @@ class EntityPattern(BaseModel):
     typePattern: Optional[Pattern] = None
 
     @model_validator(mode='after')
-    @classmethod
-    def validate_conditions(cls, values):
-        assert ((values.id and not values.idPattern) or
-                (not values.id and values.idPattern)), \
+    def validate_conditions(self):
+        assert ((self.id and not self.idPattern) or
+                (not self.id and self.idPattern)), \
             "Both cannot be used at the same time, but one of 'id' or " \
             "'idPattern must' be present."
-        if values.type or values.model_dump().get('typePattern', None):
-            assert ((values.type and not values.typePattern) or
-                    (not values.type and values.typePattern)), \
+        if self.type or self.model_dump().get('typePattern', None):
+            assert ((self.type and not self.typePattern) or
+                    (not self.type and self.typePattern)), \
                 "Type or pattern of the affected entities. " \
                 "Both cannot be used at the same time."
-        return values
+        return self
 
 
 class Status(str, Enum):
@@ -214,12 +213,15 @@ class NamedMetadata(Metadata):
     valid_name = field_validator("name")(validate_fiware_datatype_standard)
 
     @model_validator(mode='after')
-    def validate_data(cls, values):
-        if values.model_dump().get("name", "").casefold() in ["unit",
-                                                              "unittext",
-                                                              "unitcode"]:
-            values.update(validate_unit_data(values))
-        return values
+    def validate_data(self):
+        if self.model_dump().get("name", "").casefold() in ["unit",
+                                                            "unittext",
+                                                            "unitcode"]:
+            valide_dict = self.model_dump().update(
+                validate_unit_data(self.model_dump())
+            )
+            return self.model_validate(valide_dict)
+        return self
 
     def to_context_metadata(self):
         return {self.name: Metadata(**self.model_dump())}
