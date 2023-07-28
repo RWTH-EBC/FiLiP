@@ -67,7 +67,7 @@ class TestSubscriptions(unittest.TestCase):
                                 topic=self.mqtt_topic)
 
         # Test validator for conflicting fields
-        notification = Notification.parse_obj(self.notification)
+        notification = Notification.model_validate(self.notification)
         with self.assertRaises(ValidationError):
             notification.mqtt = httpCustom
         with self.assertRaises(ValidationError):
@@ -76,6 +76,7 @@ class TestSubscriptions(unittest.TestCase):
             notification.mqtt = mqttCustom
 
         # test onlyChangedAttrs-field
+        notification = Notification.model_validate(self.notification)
         notification.onlyChangedAttrs = True
         notification.onlyChangedAttrs = False
         with self.assertRaises(ValidationError):
@@ -121,7 +122,7 @@ class TestSubscriptions(unittest.TestCase):
             "expires": "2030-04-05T14:00:00Z",
         }
 
-        sub = Subscription.parse_obj(sub_dict)
+        sub = Subscription.model_validate(sub_dict)
         fiware_header = FiwareHeader(service=settings.FIWARE_SERVICE,
                                      service_path=settings.FIWARE_SERVICEPATH)
         with ContextBrokerClient(

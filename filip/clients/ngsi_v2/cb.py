@@ -7,10 +7,10 @@ from copy import deepcopy
 from math import inf
 from pkg_resources import parse_version
 from pydantic import \
-    parse_obj_as, \
     PositiveInt, \
     PositiveFloat, \
     AnyHttpUrl
+from pydantic.type_adapter import TypeAdapter
 from typing import Any, Dict, List , Optional, TYPE_CHECKING, Union
 import re
 import requests
@@ -385,9 +385,11 @@ class ContextBrokerClient(BaseHttpClient):
                                       params=params,
                                       headers=headers)
             if AttrsFormat.NORMALIZED in response_format:
-                return parse_obj_as(List[ContextEntity], items)
+                ta = TypeAdapter(List[ContextEntity])
+                return ta.validate_python(items)
             if AttrsFormat.KEY_VALUES in response_format:
-                return parse_obj_as(List[ContextEntityKeyValues], items)
+                ta = TypeAdapter(List[ContextEntityKeyValues])
+                return ta.validate_python(items)
             return items
 
         except requests.RequestException as err:
@@ -1127,7 +1129,8 @@ class ContextBrokerClient(BaseHttpClient):
                                       url=url,
                                       params=params,
                                       headers=headers)
-            return parse_obj_as(List[Subscription], items)
+            ta = TypeAdapter(List[Subscription])
+            return ta.validate_python(items)
         except requests.RequestException as err:
             msg = "Could not load subscriptions!"
             self.log_error(err=err, msg=msg)
@@ -1197,10 +1200,10 @@ class ContextBrokerClient(BaseHttpClient):
             res = self.post(
                 url=url,
                 headers=headers,
-                data=subscription.json(exclude={'id'},
-                                       exclude_unset=True,
-                                       exclude_defaults=True,
-                                       exclude_none=True),
+                data=subscription.model_dump_json(exclude={'id'},
+                                                  exclude_unset=True,
+                                                  exclude_defaults=True,
+                                                  exclude_none=True),
                 params=params)
             if res.ok:
                 self.logger.info("Subscription successfully created!")
@@ -1329,8 +1332,8 @@ class ContextBrokerClient(BaseHttpClient):
                                       url=url,
                                       params=params,
                                       headers=headers)
-
-            return parse_obj_as(List[Registration], items)
+            ta = TypeAdapter(List[Registration])
+            return ta.validate_python(items)
         except requests.RequestException as err:
             msg = "Could not load registrations!"
             self.log_error(err=err, msg=msg)
@@ -1545,9 +1548,11 @@ class ContextBrokerClient(BaseHttpClient):
                                                       exclude_none=True),
                                       limit=limit)
             if response_format == AttrsFormat.NORMALIZED:
-                return parse_obj_as(List[ContextEntity], items)
+                ta = TypeAdapter(List[ContextEntity])
+                return ta.validate_python(items)
             if response_format == AttrsFormat.KEY_VALUES:
-                return parse_obj_as(List[ContextEntityKeyValues], items)
+                ta = TypeAdapter(List[ContextEntityKeyValues])
+                return ta.validate_python(items)
             return items
         except requests.RequestException as err:
             msg = "Query operation failed!"

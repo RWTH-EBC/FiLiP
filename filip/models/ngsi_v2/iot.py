@@ -210,6 +210,15 @@ class ServiceGroup(BaseModel):
                     "be used to override the global ones for specific types of "
                     "devices."
     )
+    @field_validator('cbHost')
+    @classmethod
+    def validate_cbHost(cls, value):
+        """
+        convert cbHost to str
+        Returns:
+            timezone
+        """
+        return str(value)
     lazy: Optional[List[LazyDeviceAttribute]] = Field(
         default=[],
         desription="list of common lazy attributes of the device. For each "
@@ -298,6 +307,16 @@ class DeviceSettings(BaseModel):
         description="Endpoint where the device is going to receive commands, "
                     "if any."
     )
+    @field_validator('endpoint')
+    @classmethod
+    def validate_endpoint(cls, value):
+        """
+        convert endpoint to str
+        Returns:
+            timezone
+        """
+        return str(value)
+
     protocol: Optional[Union[PayloadProtocol, str]] = Field(
         default=None,
         description="Name of the device protocol, for its use with an "

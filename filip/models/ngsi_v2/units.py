@@ -148,8 +148,8 @@ class Unit(BaseModel):
             values (dict): Validated data
         """
         units = load_units()
-        name = values.model_dump().get("name")
-        code = values.model_dump().get("code")
+        name = values.get("name")
+        code = values.get("code")
 
         if isinstance(code, UnitCode):
             code = code.value
@@ -186,7 +186,7 @@ class Unit(BaseModel):
         values["name"] = UnitText(value=units.Name[idx[0]]).value
         values["symbol"] = units.Symbol[idx[0]]
         values["conversion_factor"] = units.ConversionFactor[idx[0]]
-        if not values.model_dump().get("description"):
+        if not values.get("description"):
             values["description"] = units.Description[idx[0]]
         return values
 

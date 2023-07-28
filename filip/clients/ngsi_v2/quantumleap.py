@@ -9,7 +9,8 @@ from itertools import count
 from typing import Dict, List, Union, Deque, Optional
 from urllib.parse import urljoin
 import requests
-from pydantic import parse_obj_as, AnyHttpUrl
+from pydantic import AnyHttpUrl
+from pydantic.type_adapter import TypeAdapter
 from filip import settings
 from filip.clients.base_http_client import BaseHttpClient
 from filip.models.base import FiwareHeader
@@ -467,7 +468,8 @@ class QuantumLeapClient(BaseHttpClient):
                                    to_date=to_date,
                                    limit=limit,
                                    offset=offset)
-        return parse_obj_as(List[TimeSeriesHeader], res[0])
+        ta = TypeAdapter(List[TimeSeriesHeader])
+        return ta.validate_python(res[0])
 
     # /entities/{entityId}
     def get_entity_by_id(self,

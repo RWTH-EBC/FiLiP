@@ -3,7 +3,7 @@ Functions to clean up a tenant within a fiware based platform.
 """
 from functools import wraps
 
-from pydantic import AnyHttpUrl
+from pydantic import AnyHttpUrl, AnyUrl
 from requests import RequestException
 from typing import Callable, List, Union
 from filip.models import FiwareHeader
@@ -130,7 +130,7 @@ def clear_all(*,
         None
     """
     if iota_url is not None:
-        if isinstance(iota_url, str) or isinstance(iota_url, AnyHttpUrl):
+        if isinstance(iota_url, str) or isinstance(iota_url, AnyUrl):
             iota_url = [iota_url]
         for url in iota_url:
             clear_iot_agent(url=url, fiware_header=fiware_header)

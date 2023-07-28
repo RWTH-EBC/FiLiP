@@ -587,7 +587,11 @@ class Command(BaseModel):
         Returns:
             value
         """
-        json.dumps(value)
+        try:
+            json.dumps(value)
+        except:
+            raise ValueError(f"Command value {value} "
+                             f"is not serializable")
         return value
 
 

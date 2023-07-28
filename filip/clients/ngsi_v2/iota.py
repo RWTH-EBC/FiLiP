@@ -8,7 +8,8 @@ from typing import List, Dict, Set, TYPE_CHECKING, Union, Optional
 import warnings
 from urllib.parse import urljoin
 import requests
-from pydantic import parse_obj_as, AnyHttpUrl
+from pydantic import AnyHttpUrl
+from pydantic.type_adapter import TypeAdapter
 from filip.config import settings
 from filip.clients.base_http_client import BaseHttpClient
 from filip.models.base import FiwareHeader
@@ -148,7 +149,8 @@ class IoTAClient(BaseHttpClient):
         try:
             res = self.get(url=url, headers=headers)
             if res.ok:
-                return parse_obj_as(List[ServiceGroup], res.json()['services'])
+                ta = TypeAdapter(List[ServiceGroup])
+                return ta.validate_python(res.json()['services'])
             res.raise_for_status()
         except requests.RequestException as err:
             self.log_error(err=err, msg=None)
@@ -283,7 +285,7 @@ class IoTAClient(BaseHttpClient):
             devices = [devices]
         url = urljoin(self.base_url, 'iot/devices')
         headers = self.headers
-        data = {"devices": [device.dict(exclude_none=True) for device in
+        data = {"devices": [device.model_dump(exclude_none=True) for device in
                             devices]}
         try:
             res = self.post(url=url, headers=headers, json=data)
@@ -354,7 +356,8 @@ class IoTAClient(BaseHttpClient):
         try:
             res = self.get(url=url, headers=headers, params=params)
             if res.ok:
-                devices = parse_obj_as(List[Device], res.json()['devices'])
+                ta = TypeAdapter(List[Device])
+                devices = ta.validate_python(res.json()['devices'])
                 # filter by device_ids, entity_names or entity_types
                 devices = filter_device_list(devices,
                                              device_ids,
