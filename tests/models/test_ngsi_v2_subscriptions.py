@@ -1,6 +1,7 @@
 """
 Test module for context subscriptions and notifications
 """
+import json
 import unittest
 
 from pydantic import ValidationError
@@ -43,6 +44,35 @@ class TestSubscriptions(unittest.TestCase):
                 "temperature",
                 "humidity"
             ]
+        }
+        self.sub_dict = {
+            "description": "One subscription to rule them all",
+            "subject": {
+                "entities": [
+                    {
+                        "idPattern": ".*",
+                        "type": "Room"
+                    }
+                ],
+                "condition": {
+                    "attrs": [
+                        "temperature"
+                    ],
+                    "expression": {
+                        "q": "temperature>40"
+                    }
+                }
+            },
+            "notification": {
+                "http": {
+                    "url": "http://localhost:1234"
+                },
+                "attrs": [
+                    "temperature",
+                    "humidity"
+                ]
+            },
+            "expires": "2030-04-05T14:00:00Z",
         }
 
     def test_notification_models(self):
@@ -92,37 +122,7 @@ class TestSubscriptions(unittest.TestCase):
         Returns:
             None
         """
-        sub_dict = {
-            "description": "One subscription to rule them all",
-            "subject": {
-                "entities": [
-                    {
-                        "idPattern": ".*",
-                        "type": "Room"
-                    }
-                ],
-                "condition": {
-                    "attrs": [
-                        "temperature"
-                    ],
-                    "expression": {
-                        "q": "temperature>40"
-                    }
-                }
-            },
-            "notification": {
-                "http": {
-                    "url": "http://localhost:1234"
-                },
-                "attrs": [
-                    "temperature",
-                    "humidity"
-                ]
-            },
-            "expires": "2030-04-05T14:00:00Z",
-        }
-
-        sub = Subscription.model_validate(sub_dict)
+        sub = Subscription.model_validate(self.sub_dict)
         fiware_header = FiwareHeader(service=settings.FIWARE_SERVICE,
                                      service_path=settings.FIWARE_SERVICEPATH)
         with ContextBrokerClient(
@@ -146,6 +146,29 @@ class TestSubscriptions(unittest.TestCase):
             sub.throttling = -1
         with self.assertRaises(ValidationError):
             sub.throttling = 0.1
+
+    def test_model_dump_json(self):
+        sub = Subscription.model_validate(self.sub_dict)
+
+        # test exclude
+        test_dict = json.loads(sub.model_dump_json(exclude={"id"}))
+        with self.assertRaises(KeyError):
+            _ = test_dict["id"]
+
+        # test exclude_none
+        test_dict = json.loads(sub.model_dump_json(exclude_none=True))
+        with self.assertRaises(KeyError):
+            _ = test_dict["throttling"]
+
+        # test exclude_unset
+        test_dict = json.loads(sub.model_dump_json(exclude_unset=True))
+        with self.assertRaises(KeyError):
+            _ = test_dict["status"]
+
+        # test exclude_defaults
+        test_dict = json.loads(sub.model_dump_json(exclude_defaults=True))
+        with self.assertRaises(KeyError):
+            _ = test_dict["status"]
 
     def tearDown(self) -> None:
         """
