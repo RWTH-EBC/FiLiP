@@ -240,7 +240,7 @@ class TestContextModels(unittest.TestCase):
             entity.get_command_triple("--")
 
         # test the automated command creation via Fiware and DeviceModel
-        device = Device(device_id="id",
+        device = Device(device_id="device_id",
                         service=settings.FIWARE_SERVICE,
                         service_path=settings.FIWARE_SERVICEPATH,
                         entity_name="name",

@@ -302,7 +302,7 @@ class DeviceSettings(BaseModel):
         default=None,
         description="Optional Apikey key string to use instead of group apikey"
     )
-    endpoint: Optional[AnyHttpUrl] = Field(
+    endpoint: Optional[Union[AnyHttpUrl, str]] = Field(
         default=None,
         description="Endpoint where the device is going to receive commands, "
                     "if any."

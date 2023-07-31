@@ -444,7 +444,7 @@ class IoTAMQTTClient(mqtt.Client):
             ValueError: if service group already exists
         """
         if isinstance(service_group, dict):
-            service_group = ServiceGroup.parse_obj(service_group)
+            service_group = ServiceGroup.model_validate(service_group)
         assert isinstance(service_group, ServiceGroup), \
             "Invalid content for service group!"
 
