@@ -323,7 +323,7 @@ class DeviceSettings(BaseModel):
                     "IoT Manager."
     )
     transport: Union[TransportProtocol, str] = Field(
-        default=None,
+        default="MQTT",
         description="Name of the device transport protocol, for the IoT Agents "
                     "with multiple transport protocols."
     )
@@ -576,7 +576,7 @@ class Device(DeviceSettings):
             raise
 
         logger.info("Device: %s: Attribute deleted! \n %s",
-                    self.device_id, attribute.json(indent=2))
+                    self.device_id, attribute.model_dump_json(indent=2))
 
     def get_command(self, command_name: str):
         """

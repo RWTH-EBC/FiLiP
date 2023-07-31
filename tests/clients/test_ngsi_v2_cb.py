@@ -813,7 +813,7 @@ class TestContextBroker(unittest.TestCase):
             self.client.delete_entity(entity_id=device.entity_name,
                                       entity_type=device.entity_type,
                                       delete_devices=True,
-                                      iota_url=settings.IOTA_URL)
+                                      iota_url=settings.IOTA_JSON_URL)
             self.assertEqual(len(self.iotac.get_device_list()), len(devices))
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
