@@ -103,7 +103,7 @@ class TestMQTTClient(unittest.TestCase):
                                         callback=on_message_first)
         self.mqttc.message_callback_add(sub=second_topic,
                                         callback=on_message_second)
-        mqtt_broker_url = urlparse(settings.MQTT_BROKER_URL)
+        mqtt_broker_url = urlparse(str(settings.MQTT_BROKER_URL))
 
         self.mqttc.connect(host=mqtt_broker_url.hostname,
                            port=mqtt_broker_url.port,
@@ -144,7 +144,7 @@ class TestMQTTClient(unittest.TestCase):
             self.mqttc.add_service_group(service_group="SomethingRandom")
         with self.assertRaises(ValueError):
             self.mqttc.add_service_group(
-                service_group=self.service_group_json.dict())
+                service_group=self.service_group_json.model_dump())
 
         self.assertEqual(
             self.service_group_json,
@@ -219,7 +219,7 @@ class TestMQTTClient(unittest.TestCase):
         httpc.iota.post_group(service_group=self.service_group_json, update=True)
         httpc.iota.post_device(device=self.device_json, update=True)
 
-        mqtt_broker_url = urlparse(settings.MQTT_BROKER_URL)
+        mqtt_broker_url = urlparse(str(settings.MQTT_BROKER_URL))
 
         self.mqttc.connect(host=mqtt_broker_url.hostname,
                            port=mqtt_broker_url.port,
@@ -279,7 +279,7 @@ class TestMQTTClient(unittest.TestCase):
         httpc.iota.post_group(service_group=self.service_group_json, update=True)
         httpc.iota.post_device(device=self.device_json, update=True)
 
-        mqtt_broker_url = urlparse(settings.MQTT_BROKER_URL)
+        mqtt_broker_url = urlparse(str(settings.MQTT_BROKER_URL))
 
         self.mqttc.connect(host=mqtt_broker_url.hostname,
                            port=mqtt_broker_url.port,
@@ -380,7 +380,7 @@ class TestMQTTClient(unittest.TestCase):
         httpc.iota.post_device(device=self.device_ul, update=True)
 
 
-        mqtt_broker_url = urlparse(settings.MQTT_BROKER_URL)
+        mqtt_broker_url = urlparse(str(settings.MQTT_BROKER_URL))
 
         self.mqttc.connect(host=mqtt_broker_url.hostname,
                            port=mqtt_broker_url.port,
@@ -443,7 +443,7 @@ class TestMQTTClient(unittest.TestCase):
 
         time.sleep(0.5)
 
-        mqtt_broker_url = urlparse(settings.MQTT_BROKER_URL)
+        mqtt_broker_url = urlparse(str(settings.MQTT_BROKER_URL))
 
         self.mqttc.connect(host=mqtt_broker_url.hostname,
                            port=mqtt_broker_url.port,
