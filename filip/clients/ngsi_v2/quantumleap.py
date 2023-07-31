@@ -190,11 +190,11 @@ class QuantumLeapClient(BaseHttpClient):
         params = {}
         url = urljoin(self.base_url, '/v2/subscribe')
         validate_http_url(cb_url)
-        cb_url = urljoin(cb_url, '/v2')
+        cb_url = urljoin(str(cb_url), '/v2')
         params.update({'orionUrl': cb_url.encode('utf-8')})
 
         validate_http_url(ql_url)
-        ql_url = urljoin(ql_url, '/v2')
+        ql_url = urljoin(str(ql_url), '/v2')
         params.update({'quantumleapUrl': ql_url.encode('utf-8')})
 
         if entity_type:
