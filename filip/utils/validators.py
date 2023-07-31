@@ -96,6 +96,14 @@ def match_regex(value: str, pattern: str):
     return value
 
 
+def ignore_none_input(func):
+    def wrapper(arg):
+        if arg is None:
+            return arg
+        return func(arg)
+    return wrapper
+
+
 def validate_fiware_standard_regex(vale: str):
     from filip.models.base import FiwareRegex
     return match_regex(vale, FiwareRegex.standard.value)
@@ -106,10 +114,12 @@ def validate_fiware_string_protect_regex(vale: str):
     return match_regex(vale, FiwareRegex.string_protect.value)
 
 
+@ignore_none_input
 def validate_mqtt_topic(topic: str):
     return match_regex(topic, r'^((?![\'\"#+,])[\x00-\x7F])*$')
 
 
+@ignore_none_input
 def validate_fiware_datatype_standard(_type):
     from filip.models.base import DataType
     if isinstance(_type, DataType):
@@ -120,6 +130,7 @@ def validate_fiware_datatype_standard(_type):
         raise TypeError(f"Invalid type {type(_type)}")
 
 
+@ignore_none_input
 def validate_fiware_datatype_string_protect(_type):
     from filip.models.base import DataType
     if isinstance(_type, DataType):
@@ -130,6 +141,7 @@ def validate_fiware_datatype_string_protect(_type):
         raise TypeError(f"Invalid type {type(_type)}")
 
 
+@ignore_none_input
 def validate_fiware_service_path(service_path):
     return match_regex(service_path,
                        r'^((\/\w*)|(\/\#))*(\,((\/\w*)|(\/\#)))*$')
