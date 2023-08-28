@@ -25,7 +25,7 @@ def validate_http_url(url: AnyHttpUrl) -> str:
     Returns:
         validated url
     """
-    return str(url)
+    return str(url) if url else url
 
 
 @validate_call
@@ -39,7 +39,7 @@ def validate_mqtt_url(url: AnyMqttUrl) -> str:
     Returns:
        validated url
     """
-    return url
+    return str(url) if url else url
 
 
 def validate_escape_character_free(value: Any) -> Any:

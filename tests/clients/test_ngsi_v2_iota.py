@@ -83,7 +83,7 @@ class TestAgent(unittest.TestCase):
     def test_device_model(self):
         device = Device(**self.device)
         self.assertEqual(self.device,
-                         device.dict(exclude_unset=True))
+                         device.model_dump(exclude_unset=True))
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
@@ -360,7 +360,7 @@ class TestAgent(unittest.TestCase):
         live_entity.get_attribute("Att2")
 
         # test update where device information were changed
-        device_settings = {"endpoint": "http://localhost:7071",
+        device_settings = {"endpoint": "http://localhost:7071/",
                            "device_id": "new_id",
                            "entity_name": "new_name",
                            "entity_type": "new_type",

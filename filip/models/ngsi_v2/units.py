@@ -151,6 +151,8 @@ class Unit(BaseModel):
         name = values.get("name")
         code = values.get("code")
 
+        if isinstance(name, dict):
+            name = UnitText.model_validate(name)
         if isinstance(code, UnitCode):
             code = code.value
         if isinstance(name, UnitText):
@@ -325,10 +327,12 @@ def validate_unit_data(data: Dict) -> Dict:
         if data.get("name", "").casefold() == modelname.casefold():
             if data.get("name", "").casefold() == 'unit':
                 data["type"] = 'Unit'
-                data["value"] = model.parse_obj(data["value"])
+                data["value"] = model.model_validate(data["value"])
+                # data["value"] = model.parse_obj(data["value"])
                 return data
             else:
-                data.update(model.parse_obj(data).dict())
+                data.update(model.model_validate(data).model_dump())
+                # data.update(model.parse_obj(data).dict())
                 return data
     raise ValueError(f"Invalid unit data found: \n "
                      f"{json.dumps(data, indent=2)}")

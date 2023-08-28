@@ -468,7 +468,7 @@ class TestContextBroker(unittest.TestCase):
         mqtt_client.on_disconnect = on_disconnect
 
         # connect to the server
-        mqtt_url = urlparse(mqtt_url)
+        mqtt_url = urlparse(str(mqtt_url))
         mqtt_client.connect(host=mqtt_url.hostname,
                             port=mqtt_url.port,
                             keepalive=60,
@@ -648,7 +648,7 @@ class TestContextBroker(unittest.TestCase):
         mqtt_client.on_disconnect = on_disconnect
 
         # extract the form the environment
-        mqtt_broker_url = urlparse(mqtt_broker_url)
+        mqtt_broker_url = urlparse(str(mqtt_broker_url))
 
         mqtt_client.connect(host=mqtt_broker_url.hostname,
                             port=mqtt_broker_url.port,

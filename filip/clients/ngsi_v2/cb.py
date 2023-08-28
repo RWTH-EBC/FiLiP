@@ -1499,7 +1499,7 @@ class ContextBrokerClient(BaseHttpClient):
                 url=url,
                 headers=headers,
                 params=params,
-                data=update.json(by_alias=True))
+                json=update.model_dump(by_alias=True))
             if res.ok:
                 self.logger.info("Update operation '%s' succeeded!",
                                  action_type)

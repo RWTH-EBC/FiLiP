@@ -4,7 +4,9 @@ Shared models that are used by multiple submodules
 import json
 
 from aenum import Enum
-from pydantic import field_validator, model_validator, ConfigDict, AnyHttpUrl, BaseModel, Field, model_serializer
+from pydantic import field_validator, model_validator, ConfigDict, AnyHttpUrl, BaseModel, Field,\
+    model_serializer, SerializationInfo
+
 from typing import Union, Optional, Pattern, List, Dict, Any
 
 from filip.models.base import DataType, FiwareRegex
@@ -119,15 +121,19 @@ class Expression(BaseModel):
         if isinstance(v, str):
             return QueryString.parse_str(v)
 
-    @model_serializer
-    def serialize(self):
-        dump = {}
-        for k, v in self:
-            if isinstance(v, (QueryString, QueryStatement)):
-                dump.update({k: v.to_str()})
-            else:
-                dump.update({k: v})
-        return dump
+    @model_serializer(mode="wrap")
+    def serialize(self, serializer: Any, info: SerializationInfo):
+        if isinstance(self.q, (QueryString, QueryStatement)):
+            self.q = self.q.to_str()
+        if isinstance(self.mq, (QueryString, QueryStatement)):
+            self.mq = self.mq.to_str()
+        if isinstance(self.coords, (QueryString, QueryStatement)):
+            self.coords = self.coords.to_str()
+        if isinstance(self.georel, (QueryString, QueryStatement)):
+            self.georel = self.georel.to_str()
+        if isinstance(self.geometry, (QueryString, QueryStatement)):
+            self.geometry = self.geometry.to_str()
+        return serializer(self)
 
 
 class AttrsFormat(str, Enum):
@@ -191,7 +197,7 @@ class Metadata(BaseModel):
         assert json.dumps(value), "metadata not serializable"
 
         if values.data.get("type").casefold() == "unit":
-            value = Unit(**value)
+            value = Unit.model_validate(value)
         return value
 
 
@@ -217,10 +223,11 @@ class NamedMetadata(Metadata):
         if self.model_dump().get("name", "").casefold() in ["unit",
                                                             "unittext",
                                                             "unitcode"]:
-            valide_dict = self.model_dump().update(
+            valide_dict = self.model_dump()
+            valide_dict.update(
                 validate_unit_data(self.model_dump())
             )
-            return self.model_validate(valide_dict)
+            return self
         return self
 
     def to_context_metadata(self):
@@ -281,7 +288,7 @@ class BaseAttribute(BaseModel):
             value = [value]
         elif isinstance(value, dict):
             if all(isinstance(item, Metadata) for item in value.values()):
-                value = [NamedMetadata(name=key, **item.dict())
+                value = [NamedMetadata(name=key, **item.model_dump())
                          for key, item in value.items()]
             else:
                 json.dumps(value)

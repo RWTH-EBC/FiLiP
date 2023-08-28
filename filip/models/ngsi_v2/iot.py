@@ -99,7 +99,7 @@ class IoTABaseAttribute(BaseAttribute, BaseNameAttribute):
         if isinstance(other, BaseAttribute):
             return self.name == other.name
         else:
-            return self.dict == other
+            return self.model_dump() == other
 
 
 class DeviceAttribute(IoTABaseAttribute):
@@ -315,7 +315,7 @@ class DeviceSettings(BaseModel):
         Returns:
             timezone
         """
-        return str(value)
+        return str(value) if value else value
 
     protocol: Optional[Union[PayloadProtocol, str]] = Field(
         default=None,
