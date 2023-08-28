@@ -9,10 +9,8 @@ from pydantic import \
     field_validator, model_validator, ConfigDict, BaseModel, \
     conint, \
     Field, \
-    Json, \
-    validator, model_serializer
+    Json
 from .base import AttrsFormat, EntityPattern, Http, Status, Expression
-from filip.utils.simple_ql import QueryString, QueryStatement
 from filip.utils.validators import validate_mqtt_url, validate_mqtt_topic
 from filip.models.ngsi_v2.context import ContextEntity
 from filip.custom_types import AnyMqttUrl
@@ -293,16 +291,6 @@ class Condition(BaseModel):
         else:
             raise TypeError()
 
-    @model_serializer
-    def serialize(self):
-        dump = {}
-        for k, v in self:
-            if isinstance(v, (QueryString, QueryStatement)):
-                dump.update({k: v.to_str()})
-            else:
-                dump.update({k: v})
-        return dump
-
 
 class Subject(BaseModel):
     """
@@ -315,16 +303,6 @@ class Subject(BaseModel):
     condition: Optional[Condition] = Field(
         default=None,
     )
-
-    @model_serializer
-    def serialize(self):
-        dump = {}
-        for k, v in self:
-            if isinstance(v, (QueryString, QueryStatement)):
-                dump.update({k: v.to_str()})
-            else:
-                dump.update({k: v})
-        return dump
 
 
 class Subscription(BaseModel):
@@ -389,12 +367,3 @@ class Subscription(BaseModel):
                     "It is optional."
     )
 
-    @model_serializer
-    def serialize(self):
-        dump = {}
-        for k, v in self:
-            if isinstance(v, (QueryString, QueryStatement)):
-                dump.update({k: v.to_str()})
-            else:
-                dump.update({k: v})
-        return dump
