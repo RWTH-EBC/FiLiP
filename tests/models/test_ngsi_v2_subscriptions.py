@@ -147,6 +147,17 @@ class TestSubscriptions(unittest.TestCase):
         with self.assertRaises(ValidationError):
             sub.throttling = 0.1
 
+    def test_query_string_serialization(self):
+        sub = Subscription.model_validate(self.sub_dict)
+        self.assertIsInstance(json.loads(sub.subject.condition.expression.model_dump_json())["q"],
+                              str)
+        self.assertIsInstance(json.loads(sub.subject.condition.model_dump_json())["expression"]["q"],
+                              str)
+        self.assertIsInstance(json.loads(sub.subject.model_dump_json())["condition"]["expression"]["q"],
+                              str)
+        self.assertIsInstance(json.loads(sub.model_dump_json())["subject"]["condition"]["expression"]["q"],
+                              str)
+
     def test_model_dump_json(self):
         sub = Subscription.model_validate(self.sub_dict)
 
