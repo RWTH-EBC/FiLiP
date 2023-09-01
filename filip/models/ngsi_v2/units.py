@@ -14,7 +14,8 @@ import logging
 import pandas as pd
 from functools import lru_cache
 from rapidfuzz import process
-from typing import Literal, Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
+from typing_extensions import Literal
 from pydantic import field_validator, model_validator, ConfigDict, BaseModel, Field
 from filip.models.base import NgsiVersion, DataType
 from filip.utils.data import load_datapackage
