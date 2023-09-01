@@ -74,8 +74,9 @@ class TestSettings(BaseSettings):
 
         """
         if values.model_dump().get('CI_JOB_ID', None):
-            values['FIWARE_SERVICEPATH'] = f"/{values['CI_JOB_ID']}"
+            values.FIWARE_SERVICEPATH = f"/{values.CI_JOB_ID}"
 
+        # validate header
         FiwareHeader(service=values.FIWARE_SERVICE,
                      service_path=values.FIWARE_SERVICEPATH)
 
