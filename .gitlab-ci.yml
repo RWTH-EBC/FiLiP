@@ -9,6 +9,7 @@ variables:
     EXCLUDE_PYTHON: 311
     PYTHON_VERSION: "registry.git.rwth-aachen.de/ebc/ebc_all/gitlab_ci/templates:python_3.9"
     PAGES_BRANCH: master
+    PYTHON_PACKAGE_NAME: "filip"
 
 include:
     - project: 'EBC/EBC_all/gitlab_ci/templates'
