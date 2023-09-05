@@ -26,6 +26,6 @@ include:
       file: 'python/build/build.gitlab-ci.yml'
 
 echo_url:
-  stage: build
+  stage: test
   script:
     - echo "$CI_PAGES_URL"
