@@ -1,5 +1,4 @@
 stages:
-    - test
     - doc
     - code_quality
     - build
@@ -28,4 +27,4 @@ include:
 echo_url:
   stage: build
   script:
-    - echo $CI_GITLAB_URL
+    - echo "$CI_PAGES_URL"
