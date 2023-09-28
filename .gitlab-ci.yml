@@ -24,8 +24,3 @@ include:
       file: 'python/tests/coverage.gitlab-ci.yml'
     - project: 'EBC/EBC_all/gitlab_ci/templates'
       file: 'python/build/build.gitlab-ci.yml'
-
-echo_url:
-  stage: test
-  script:
-    - echo "$CI_PAGES_URL"
