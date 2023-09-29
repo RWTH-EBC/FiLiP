@@ -77,9 +77,9 @@ class TestContextModels(unittest.TestCase):
         attr1 = ContextAttribute(value=20,
                                  type='Integer',
                                  metadata={'info': md1})
-        attr2 = ContextAttribute(**attr1.dict(exclude={'metadata'}),
+        attr2 = ContextAttribute(**attr1.model_dump(exclude={'metadata'}),
                                  metadata=md2)
-        attr3 = ContextAttribute(**attr1.dict(exclude={'metadata'}),
+        attr3 = ContextAttribute(**attr1.model_dump(exclude={'metadata'}),
                                  metadata=md3)
         self.assertEqual(attr1, attr2)
         self.assertEqual(attr1, attr3)
@@ -91,20 +91,20 @@ class TestContextModels(unittest.TestCase):
             None
         """
         entity = ContextEntity(**self.entity_data)
-        self.assertEqual(self.entity_data, entity.dict(exclude_unset=True))
-        entity = ContextEntity.parse_obj(self.entity_data)
-        self.assertEqual(self.entity_data, entity.dict(exclude_unset=True))
+        self.assertEqual(self.entity_data, entity.model_dump(exclude_unset=True))
+        entity = ContextEntity.model_validate(self.entity_data)
+        self.assertEqual(self.entity_data, entity.model_dump(exclude_unset=True))
 
         properties = entity.get_properties(response_format='list')
-        self.assertEqual(self.attr, {properties[0].name: properties[0].dict(
+        self.assertEqual(self.attr, {properties[0].name: properties[0].model_dump(
             exclude={'name', 'metadata'}, exclude_unset=True)})
         properties = entity.get_properties(response_format='dict')
         self.assertEqual(self.attr['temperature'],
-                         properties['temperature'].dict(exclude={'metadata'},
-                                                        exclude_unset=True))
+                         properties['temperature'].model_dump(exclude={'metadata'},
+                                                              exclude_unset=True))
 
         relations = entity.get_relationships()
-        self.assertEqual(self.relation, {relations[0].name: relations[0].dict(
+        self.assertEqual(self.relation, {relations[0].name: relations[0].model_dump(
             exclude={'name', 'metadata'}, exclude_unset=True)})
 
         new_attr = {'new_attr': ContextAttribute(type='Number', value=25)}
@@ -112,9 +112,9 @@ class TestContextModels(unittest.TestCase):
 
         generated_model = create_context_entity_model(data=self.entity_data)
         entity = generated_model(**self.entity_data)
-        self.assertEqual(self.entity_data, entity.dict(exclude_unset=True))
-        entity = generated_model.parse_obj(self.entity_data)
-        self.assertEqual(self.entity_data, entity.dict(exclude_unset=True))
+        self.assertEqual(self.entity_data, entity.model_dump(exclude_unset=True))
+        entity = generated_model.model_validate(self.entity_data)
+        self.assertEqual(self.entity_data, entity.model_dump(exclude_unset=True))
 
     def test_command(self):
         """
@@ -129,6 +129,7 @@ class TestContextModels(unittest.TestCase):
         with self.assertRaises(ValidationError):
             class NotSerializableObject:
                 test: "test"
+
             Command(value=NotSerializableObject())
             Command(type="cmd", value=5)
 
@@ -263,7 +264,6 @@ class TestContextModels(unittest.TestCase):
                 fiware_header=FiwareHeader(
                     service=settings.FIWARE_SERVICE,
                     service_path=settings.FIWARE_SERVICEPATH)) as client:
-
             entity = client.get_entity(entity_id="name", entity_type="type")
 
             (command, c_status, c_info) = entity.get_command_triple("myCommand")

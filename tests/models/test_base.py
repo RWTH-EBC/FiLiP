@@ -53,7 +53,7 @@ class TestModels(unittest.TestCase):
                           service='filip', service_path='/testing ')
         self.assertRaises(ValidationError, FiwareHeader,
                           service='filip', service_path='#')
-        headers = FiwareHeader.parse_obj(self.fiware_header)
+        headers = FiwareHeader.model_validate(self.fiware_header)
         with ContextBrokerClient(url=settings.CB_URL,
                                  fiware_header=headers) as client:
             entity = ContextEntity(id='myId', type='MyType')
@@ -161,7 +161,7 @@ class TestModels(unittest.TestCase):
                             dict_field[f'{field}{test_char}'] = value_
                             test(new_dict)
 
-        header = FiwareHeader.parse_obj(self.fiware_header)
+        header = FiwareHeader.model_validate(self.fiware_header)
         with ContextBrokerClient(url=settings.CB_URL,
                                  fiware_header=header) as client:
 

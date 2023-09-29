@@ -499,11 +499,11 @@ class Device(DeviceSettings):
                 self.update_attribute(attribute, append=False)
                 logger.warning("Device: %s: Attribute already "
                                "exists. Will update: \n %s",
-                               self.device_id, attribute.json(indent=2))
+                               self.device_id, attribute.model_dump_json(indent=2))
             else:
                 logger.error("Device: %s: Attribute already "
                              "exists: \n %s", self.device_id,
-                             attribute.json(indent=2))
+                             attribute.model_dump_json(indent=2))
                 raise
 
     def update_attribute(self,
@@ -525,25 +525,25 @@ class Device(DeviceSettings):
         try:
             if type(attribute) == DeviceAttribute:
                 idx = self.attributes.index(attribute)
-                self.attributes[idx].dict().update(attribute.dict())
+                self.attributes[idx].model_dump().update(attribute.model_dump())
             elif type(attribute) == LazyDeviceAttribute:
                 idx = self.lazy.index(attribute)
-                self.lazy[idx].dict().update(attribute.dict())
+                self.lazy[idx].model_dump().update(attribute.model_dump())
             elif type(attribute) == StaticDeviceAttribute:
                 idx = self.static_attributes.index(attribute)
-                self.static_attributes[idx].dict().update(attribute.dict())
+                self.static_attributes[idx].model_dump().update(attribute.model_dump())
             elif type(attribute) == DeviceCommand:
                 idx = self.commands.index(attribute)
-                self.commands[idx].dict().update(attribute.dict())
+                self.commands[idx].model_dump().update(attribute.model_dump())
         except ValueError:
             if append:
                 logger.warning("Device: %s: Could not find "
                                "attribute: \n %s",
-                               self.device_id, attribute.json(indent=2))
+                               self.device_id, attribute.model_dump_json(indent=2))
                 self.add_attribute(attribute=attribute)
             else:
                 msg = f"Device: {self.device_id}: Could not find "\
-                      f"attribute: \n {attribute.json(indent=2)}"
+                      f"attribute: \n {attribute.model_dump_json(indent=2)}"
                 raise KeyError(msg)
 
     def delete_attribute(self, attribute: Union[DeviceAttribute,
@@ -572,7 +572,7 @@ class Device(DeviceSettings):
         except ValueError:
             logger.warning("Device: %s: Could not delete "
                            "attribute: \n %s",
-                           self.device_id, attribute.json(indent=2))
+                           self.device_id, attribute.model_dump_json(indent=2))
             raise
 
         logger.info("Device: %s: Attribute deleted! \n %s",

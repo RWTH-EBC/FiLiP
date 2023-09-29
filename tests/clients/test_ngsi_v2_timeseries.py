@@ -149,7 +149,7 @@ class TestTimeSeries(unittest.TestCase):
         """
         with QuantumLeapClient(
                 url=settings.QL_URL,
-                fiware_header=self.fiware_header.copy(
+                fiware_header=self.fiware_header.model_copy(
                     update={'service_path': '/static'})) \
                 as client:
 
@@ -191,7 +191,7 @@ class TestTimeSeries(unittest.TestCase):
         """
         with QuantumLeapClient(
                 url=settings.QL_URL,
-                fiware_header=self.fiware_header.copy(
+                fiware_header=self.fiware_header.model_copy(
                     update={'service_path': '/static'})) \
                 as client:
 
@@ -242,7 +242,7 @@ class TestTimeSeries(unittest.TestCase):
         """
         with QuantumLeapClient(
                 url=settings.QL_URL,
-                fiware_header=self.fiware_header.copy(
+                fiware_header=self.fiware_header.model_copy(
                     update={'service_path': '/static'})) \
                 as client:
 

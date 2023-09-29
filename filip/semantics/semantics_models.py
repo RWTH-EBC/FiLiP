@@ -9,13 +9,13 @@ from typing import List, Tuple, Dict, Type, TYPE_CHECKING, Optional, Union, \
     Set, Iterator, Any
 
 import filip.models.ngsi_v2.iot as iot
-from filip.models.ngsi_v2.iot import ExpressionLanguage, TransportProtocol
+# from filip.models.ngsi_v2.iot import ExpressionLanguage, TransportProtocol
 from filip.models.base import DataType, NgsiVersion, FiwareRegex
 from filip.models.ngsi_v2.context import ContextEntity, NamedContextAttribute, \
     NamedCommand
 
 from filip.models import FiwareHeader
-from pydantic import ConfigDict, BaseModel, Field, AnyHttpUrl
+from pydantic import ConfigDict, BaseModel, Field
 from filip.config import settings
 from filip.semantics.vocabulary.entities import DatatypeFields, DatatypeType
 from filip.semantics.vocabulary_configurator import label_blacklist, \
@@ -42,7 +42,7 @@ class InstanceHeader(FiwareHeader):
 
     ngsi_version: NgsiVersion = Field(default=NgsiVersion.v2,
                                       description="Used Version in the "
-                                                    "Fiware setup")
+                                                  "Fiware setup")
 
     def get_fiware_header(self) -> FiwareHeader:
         """
@@ -50,6 +50,7 @@ class InstanceHeader(FiwareHeader):
         """
         return FiwareHeader(service=self.service,
                             service_path=self.service_path)
+
     model_config = ConfigDict(frozen=True, use_enum_values=True)
 
 
@@ -165,7 +166,6 @@ class DeviceProperty(BaseModel):
     """Additional properties describing the instance and field where this \
     property was added"""
 
-
     def _get_instance(self) -> 'SemanticClass':
         """Get the instance object to which this property was added"""
 
@@ -195,9 +195,9 @@ class DeviceProperty(BaseModel):
                             "executed")
 
         try:
-            entity = self._instance_link.semantic_manager.\
+            entity = self._instance_link.semantic_manager. \
                 get_entity_from_fiware(
-                    instance_identifier=self._instance_link.instance_identifier)
+                instance_identifier=self._instance_link.instance_identifier)
         except requests.RequestException:
             raise Exception("The instance to which this property belongs is "
                             "not yet present in Fiware, you need to save the "
@@ -228,8 +228,6 @@ class DeviceProperty(BaseModel):
         pass
 
 
-
-
 class Command(DeviceProperty):
     """
     Model describing a command property of an IoT device.
@@ -251,7 +249,7 @@ class Command(DeviceProperty):
             Exception: If the command was not yet saved to Fiware
         """
         client = self._instance_link.semantic_manager.get_client(
-                 self._instance_link.instance_identifier.header)
+            self._instance_link.instance_identifier.header)
 
         context_command = NamedCommand(name=self.name, value="")
         identifier = self._instance_link.instance_identifier
@@ -289,6 +287,7 @@ class Command(DeviceProperty):
             field_name (Optional[str]): Not used, but needed in the signature
         """
         return [self.name, f"{self.name}_info", f"{self.name}_result"]
+
     model_config = ConfigDict(frozen=True)
 
 
@@ -343,6 +342,7 @@ class DeviceAttribute(DeviceProperty):
         if field_name is None:
             field_name = self._instance_link.field_name
         return [f'{field_name}_{self.name}']
+
     model_config = ConfigDict(frozen=True, use_enum_values=True)
 
 
@@ -374,7 +374,7 @@ class Field(BaseModel):
         default=set(),
         description="Internal set of the field, to which values are saved")
 
-    def __init__(self,  name, semantic_manager):
+    def __init__(self, name, semantic_manager):
         self._semantic_manager = semantic_manager
         super().__init__()
         self.name = name
@@ -395,7 +395,7 @@ class Field(BaseModel):
             NamedContextAttribute
         """
         pass
-    
+
     def build_device_attributes(self) -> List[Union[iot.DeviceAttribute,
                                                     iot.LazyDeviceAttribute,
                                                     iot.StaticDeviceAttribute,
@@ -413,7 +413,7 @@ class Field(BaseModel):
         values = []
         for v in self.get_all_raw():
             if isinstance(v, BaseModel):
-                values.append(v.dict())
+                values.append(v.model_dump())
             else:
                 values.append(v)
 
@@ -525,7 +525,7 @@ class Field(BaseModel):
         internal list
         """
         return self._set
-    
+
     def get_all(self) -> List:
         """
         Get all values of the field in usable form.
@@ -591,8 +591,6 @@ class Field(BaseModel):
         return self.get_all().__iter__()
 
 
-
-
 class DeviceField(Field):
     """
     A Field that represents a logical part of a device.
@@ -655,7 +653,7 @@ class DeviceField(Field):
         v._instance_link.semantic_manager = None
         v._instance_link.field_name = None
         super(DeviceField, self).remove(v)
-        
+
     def add(self, v):
         """List function: If checks pass , add value
 
@@ -711,7 +709,7 @@ class DeviceField(Field):
         values = []
         for v in self.get_all_raw():
             if isinstance(v, BaseModel):
-                values.append(v.dict())
+                values.append(v.model_dump())
             else:
                 values.append(v)
         return NamedContextAttribute(name=self.name, value=values)
@@ -956,6 +954,7 @@ class RuleField(Field):
                     res.add(type_name)
         return res
 
+
 class DataField(RuleField):
     """
     Field for CombinedDataRelation
@@ -980,7 +979,7 @@ class DataField(RuleField):
             self._set.add(v)
 
     def __str__(self):
-        return 'Data'+super().__str__()
+        return 'Data' + super().__str__()
 
     def get_possible_enum_values(self) -> List[str]:
         """
@@ -1005,7 +1004,8 @@ class DataField(RuleField):
             List[Datatype]
         """
         return [self._semantic_manager.get_datatype(type_name)
-                       for type_name in self._get_all_rule_type_names()]
+                for type_name in self._get_all_rule_type_names()]
+
 
 class RelationField(RuleField):
     """
@@ -1042,7 +1042,7 @@ class RelationField(RuleField):
         values = []
         for v in self.get_all_raw():
             if isinstance(v, InstanceIdentifier):
-                values.append(v.dict())
+                values.append(v.model_dump())
             else:
                 values.append(v)
 
@@ -1126,7 +1126,7 @@ class RelationField(RuleField):
 
     def __str__(self):
         """ see class description"""
-        return 'Relation'+super().__str__()
+        return 'Relation' + super().__str__()
 
     def __iter__(self) -> \
             Iterator[Union['SemanticClass', 'SemanticIndividual']]:
@@ -1139,7 +1139,7 @@ class RelationField(RuleField):
         return super().get_all_raw()
 
     def get_all_possible_classes(self, include_subclasses: bool = False) -> \
-            List[ Type['SemanticClass']]:
+            List[Type['SemanticClass']]:
         """
         Get all SemanticClass types that are stated as allowed for this field.
 
@@ -1153,7 +1153,7 @@ class RelationField(RuleField):
         res = set()
         for class_name in self._get_all_rule_type_names():
             if class_name.__name__ in self._semantic_manager.class_catalogue:
-                class_ = self._semantic_manager.\
+                class_ = self._semantic_manager. \
                     get_class_by_name(class_name.__name__)
                 res.add(class_)
                 if include_subclasses:
@@ -1306,7 +1306,7 @@ class SemanticClass(BaseModel):
 
         return super().__new__(cls)
 
-    def __init__(self,  *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         semantic_manager_ = kwargs['semantic_manager']
 
         if 'identifier' in kwargs:
@@ -1315,17 +1315,17 @@ class SemanticClass(BaseModel):
             assert self.get_type() == kwargs['identifier'].type
         else:
             instance_id_ = kwargs['id'] if 'id' in kwargs \
-                                        else str(uuid.uuid4())
+                else str(uuid.uuid4())
             header_ = kwargs['header'] if 'header' in kwargs else \
                 semantic_manager_.get_default_header()
 
         # old_state_ = kwargs['old_state'] if 'old_state' in kwargs else None
 
         identifier_ = InstanceIdentifier(
-                        id=instance_id_,
-                        type=self.get_type(),
-                        header=header_,
-                    )
+            id=instance_id_,
+            type=self.get_type(),
+            header=header_,
+        )
 
         if 'enforce_new' in kwargs:
             enforce_new = kwargs['enforce_new']
@@ -1552,7 +1552,7 @@ class SemanticClass(BaseModel):
             NamedContextAttribute(
                 name="metadata",
                 type=DataType.STRUCTUREDVALUE,
-                value=self.metadata.dict()
+                value=self.metadata.model_dump()
             )
         ])
 
@@ -1575,7 +1575,7 @@ class SemanticClass(BaseModel):
         return res
 
     def __str__(self):
-        return str(self.dict(exclude={'semantic_manager', 'old_state'}))
+        return str(self.model_dump(exclude={'semantic_manager', 'old_state'}))
 
     def __hash__(self):
         values = []
@@ -1594,23 +1594,6 @@ class SemanticClass(BaseModel):
                      ))
 
 
-# class DeviceSettings(BaseModel):
-#     """Settings configuring the communication with an IoT Device
-#     Wrapped in a model to bypass SemanticDeviceClass immutability
-#     """
-#     transport: Optional[TransportProtocol]
-#     endpoint: Optional[AnyHttpUrl]
-#     apikey: Optional[str]
-#     protocol: Optional[str]
-#     timezone: Optional[str]
-#     timestamp: Optional[bool]
-#     expressionLanguage: Optional[ExpressionLanguage]
-#     explicitAttrs: Optional[bool]
-#
-#     class Config:
-#         validate_assignment = True
-
-
 class SemanticDeviceClass(SemanticClass):
     """
     A class representing a vocabulary/ontology class.
@@ -1627,7 +1610,7 @@ class SemanticDeviceClass(SemanticClass):
     """
 
     device_settings: iot.DeviceSettings = pyd.Field(
-        default= iot.DeviceSettings(),
+        default=iot.DeviceSettings(),
         description="Settings configuring the communication with an IoT Device "
                     "Wrapped in a model to bypass SemanticDeviceClass "
                     "immutability")
@@ -1716,7 +1699,7 @@ class SemanticDeviceClass(SemanticClass):
             NamedContextAttribute(
                 name="deviceSettings",
                 type=DataType.STRUCTUREDVALUE,
-                value=self.device_settings.dict()
+                value=self.device_settings.model_dump()
             )
         ])
         return entity
@@ -1765,17 +1748,16 @@ class SemanticDeviceClass(SemanticClass):
             iot.StaticDeviceAttribute(
                 name="metadata",
                 type=DataType.STRUCTUREDVALUE,
-                value=self.metadata.dict()
+                value=self.metadata.model_dump()
             )
         )
         device.add_attribute(
             iot.StaticDeviceAttribute(
                 name="deviceSettings",
                 type=DataType.STRUCTUREDVALUE,
-                value=self.device_settings.dict(),
+                value=self.device_settings.model_dump(),
             )
         )
-
 
         return device
 
@@ -1834,4 +1816,5 @@ class SemanticIndividual(BaseModel):
             if is_instance:
                 return True
         return False
+
     model_config = ConfigDict(frozen=True)

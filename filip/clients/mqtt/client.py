@@ -281,7 +281,7 @@ class IoTAMQTTClient(mqtt.Client):
             AssertionError: for faulty configurations
         """
         if isinstance(device, dict):
-            device = Device.parse_obj(device)
+            device = Device.model_validate(device)
 
         assert isinstance(device, Device), "Invalid device configuration!"
 
@@ -491,7 +491,7 @@ class IoTAMQTTClient(mqtt.Client):
             KeyError: if service group not yet registered
         """
         if isinstance(service_group, dict):
-            service_group = ServiceGroup.parse_obj(service_group)
+            service_group = ServiceGroup.model_validate(service_group)
         assert isinstance(service_group, ServiceGroup), \
             "Invalid content for service group"
 

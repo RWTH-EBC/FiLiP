@@ -31,7 +31,7 @@ class TestFilterFunctions(unittest.TestCase):
                                           fiware_header=self.fiware_header)
         clear_all(fiware_header=self.fiware_header,
                   cb_url=self.url)
-        self.subscription = Subscription.parse_obj({
+        self.subscription = Subscription.model_validate({
             "description": "One subscription to rule them all",
             "subject": {
                 "entities": [
@@ -65,10 +65,10 @@ class TestFilterFunctions(unittest.TestCase):
                                                               type="Room")
 
     def test_filter_subscriptions_by_entity(self):
-        subscription_1 = self.subscription.copy()
+        subscription_1 = self.subscription.model_copy()
         self.client.post_subscription(subscription=subscription_1)
 
-        subscription_2 = self.subscription.copy()
+        subscription_2 = self.subscription.model_copy()
         subscription_2.subject.entities[0] = EntityPattern(idPattern=".*",
                                                            type="Building")
         self.client.post_subscription(subscription=subscription_2)

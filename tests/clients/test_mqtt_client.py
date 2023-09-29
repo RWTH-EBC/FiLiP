@@ -154,7 +154,7 @@ class TestMQTTClient(unittest.TestCase):
 
         with self.assertRaises(KeyError):
             self.mqttc.update_service_group(
-                service_group=self.service_group_json.copy(
+                service_group=self.service_group_json.model_copy(
                     update={'apikey': 'someOther'}))
 
         with self.assertRaises(KeyError):
@@ -174,7 +174,7 @@ class TestMQTTClient(unittest.TestCase):
         self.mqttc.update_device(device=self.device_json)
         with self.assertRaises(KeyError):
             self.mqttc.update_device(
-                device=self.device_json.copy(
+                device=self.device_json.model_copy(
                     update={'device_id': "somethingRandom"}))
 
         self.mqttc.delete_device(device_id=self.device_json.device_id)

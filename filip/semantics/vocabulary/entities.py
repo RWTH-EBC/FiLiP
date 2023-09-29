@@ -586,14 +586,11 @@ class Datatype(Entity, DatatypeFields):
         Returns:
             Dict[str,str]
         """
-        res = self.dict(include={'type', 'number_has_range',
+        res = self.model_dump(include={'type', 'number_has_range',
                                  'number_range_min', 'number_range_max',
                                  'number_decimal_allowed', 'forbidden_chars',
                                  'allowed_chars', 'enum_values'},
-                        exclude_defaults={'type', 'number_has_range',
-                                 'number_range_min', 'number_range_max',
-                                 'number_decimal_allowed', 'forbidden_chars',
-                                 'allowed_chars', 'enum_values'})
+                              exclude_defaults=True)
         res['type'] = self.type.value
         return res
 

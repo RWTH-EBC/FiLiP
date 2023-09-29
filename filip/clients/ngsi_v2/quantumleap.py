@@ -115,9 +115,9 @@ class QuantumLeapClient(BaseHttpClient):
         headers = self.headers.copy()
         data = []
         for entity in notification.data:
-            data.append(entity.dict(exclude_unset=True,
-                                    exclude_defaults=True,
-                                    exclude_none=True))
+            data.append(entity.model_dump(exclude_unset=True,
+                                          exclude_defaults=True,
+                                          exclude_none=True))
         data_set = {
             "data": data,
             "subscriptionId": notification.subscriptionId
@@ -269,7 +269,7 @@ class QuantumLeapClient(BaseHttpClient):
                 self.logger.info("Entity id '%s' successfully deleted!",
                                  entity_id)
                 return entity_id
-            time.sleep(counter*5)
+            time.sleep(counter * 5)
             counter += 1
 
         msg = f"Could not delete QL entity of id {entity_id}"
@@ -584,9 +584,9 @@ class QuantumLeapClient(BaseHttpClient):
                                      geometry=geometry,
                                      coords=coords)
         # merge response chunks
-        res = TimeSeries.parse_obj(res_q.popleft())
+        res = TimeSeries.model_validate(res_q.popleft())
         for item in res_q:
-            res.extend(TimeSeries.parse_obj(item))
+            res.extend(TimeSeries.model_validate(item))
 
         return res
 

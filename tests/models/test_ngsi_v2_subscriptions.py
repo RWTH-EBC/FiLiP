@@ -138,8 +138,8 @@ class TestSubscriptions(unittest.TestCase):
                     else:
                         self.assertEqual(str(value), str(dict2[key]))
 
-            compare_dicts(sub.dict(exclude={'id'}),
-                          sub_res.dict(exclude={'id'}))
+            compare_dicts(sub.model_dump(exclude={'id'}),
+                          sub_res.model_dump(exclude={'id'}))
 
         # test validation of throttling
         with self.assertRaises(ValidationError):

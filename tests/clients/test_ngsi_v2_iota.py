@@ -22,7 +22,6 @@ from filip.models.ngsi_v2.iot import \
 from filip.utils.cleanup import clear_all, clean_test
 from tests.config import settings
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -118,16 +117,15 @@ class TestAgent(unittest.TestCase):
 
             client.post_device(device=device)
             device_res = client.get_device(device_id=device.device_id)
-            self.assertEqual(device.dict(exclude={'service',
-                                                  'service_path',
-                                                  'timezone'}),
-                             device_res.dict(exclude={'service',
-                                                      'service_path',
-                                                      'timezone'}))
+            self.assertEqual(device.model_dump(exclude={'service',
+                                                        'service_path',
+                                                        'timezone'}),
+                             device_res.model_dump(exclude={'service',
+                                                            'service_path',
+                                                            'timezone'}))
             self.assertEqual(self.fiware_header.service, device_res.service)
             self.assertEqual(self.fiware_header.service_path,
                              device_res.service_path)
-
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,

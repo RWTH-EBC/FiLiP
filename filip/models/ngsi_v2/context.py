@@ -183,8 +183,8 @@ class ContextEntity(ContextEntityKeyValues):
 
     @classmethod
     def _validate_attributes(cls, data: Dict):
-        attrs = {key: ContextAttribute.parse_obj(attr) for key, attr in
-                 data.items() if key not in ContextEntity.__fields__}
+        attrs = {key: ContextAttribute.model_validate(attr) for key, attr in
+                 data.items() if key not in ContextEntity.model_fields}
         return attrs
 
     def add_attributes(self, attrs: Union[Dict[str, ContextAttribute],
@@ -200,7 +200,7 @@ class ContextEntity(ContextEntityKeyValues):
             None
         """
         if isinstance(attrs, list):
-            attrs = {attr.name: ContextAttribute(**attr.dict(exclude={'name'}))
+            attrs = {attr.name: ContextAttribute(**attr.model_dump(exclude={'name'}))
                      for attr in attrs}
         for key, attr in attrs.items():
             self.__setattr__(name=key, value=attr)
@@ -250,25 +250,25 @@ class ContextEntity(ContextEntityKeyValues):
         if response_format == PropertyFormat.DICT:
             if strict_data_type:
                 return {key: ContextAttribute(**value)
-                        for key, value in self.dict().items()
-                        if key not in ContextEntity.__fields__
+                        for key, value in self.model_dump().items()
+                        if key not in ContextEntity.model_fields
                         and value.get('type') in
                         [att.value for att in attribute_types]}
             else:
                 return {key: ContextAttribute(**value)
-                        for key, value in self.dict().items()
-                        if key not in ContextEntity.__fields__}
+                        for key, value in self.model_dump().items()
+                        if key not in ContextEntity.model_fields}
         else:
             if strict_data_type:
                 return [NamedContextAttribute(name=key, **value)
-                        for key, value in self.dict().items()
-                        if key not in ContextEntity.__fields__
+                        for key, value in self.model_dump().items()
+                        if key not in ContextEntity.model_fields
                         and value.get('type') in
                         [att.value for att in attribute_types]]
             else:
                 return [NamedContextAttribute(name=key, **value)
-                        for key, value in self.dict().items()
-                        if key not in ContextEntity.__fields__]
+                        for key, value in self.model_dump().items()
+                        if key not in ContextEntity.model_fields]
 
     def update_attribute(self,
                          attrs: Union[Dict[str, ContextAttribute],
@@ -287,7 +287,7 @@ class ContextEntity(ContextEntityKeyValues):
             None
         """
         if isinstance(attrs, list):
-            attrs = {attr.name: ContextAttribute(**attr.dict(exclude={'name'}))
+            attrs = {attr.name: ContextAttribute(**attr.model_dump(exclude={'name'}))
                      for attr in attrs}
 
         existing_attribute_names = self.get_attribute_names()
@@ -304,8 +304,8 @@ class ContextEntity(ContextEntityKeyValues):
             Set[str]
         """
 
-        return {key for key in self.dict()
-                if key not in ContextEntity.__fields__}
+        return {key for key in self.model_dump()
+                if key not in ContextEntity.model_fields}
 
     def delete_attributes(self, attrs: Union[Dict[str, ContextAttribute],
                                              List[NamedContextAttribute],
@@ -386,7 +386,7 @@ class ContextEntity(ContextEntityKeyValues):
         if response_format == PropertyFormat.LIST:
             return property_attributes
         else:
-            return {p.name: ContextAttribute(**p.dict(exclude={'name'}))
+            return {p.name: ContextAttribute(**p.model_dump(exclude={'name'}))
                     for p in property_attributes}
 
     def get_relationships(
@@ -455,7 +455,7 @@ class ContextEntity(ContextEntityKeyValues):
         if response_format == PropertyFormat.LIST:
             return commands
         else:
-            return {c.name: ContextAttribute(**c.dict(exclude={'name'}))
+            return {c.name: ContextAttribute(**c.model_dump(exclude={'name'}))
                     for c in commands}
 
     def get_command_triple(self, command_attribute_name: str)\

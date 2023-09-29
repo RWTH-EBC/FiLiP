@@ -93,7 +93,7 @@ class IoTAClient(BaseHttpClient):
 
         url = urljoin(self.base_url, 'iot/services')
         headers = self.headers
-        data = {'services': [group.dict(exclude={'service', 'subservice'},
+        data = {'services': [group.model_dump(exclude={'service', 'subservice'},
                                         exclude_none=True,
                                         exclude_unset=True) for
                              group in service_groups]}
@@ -219,12 +219,12 @@ class IoTAClient(BaseHttpClient):
             fields = None
         url = urljoin(self.base_url, 'iot/services')
         headers = self.headers
-        params = service_group.dict(include={'resource', 'apikey'})
+        params = service_group.model_dump(include={'resource', 'apikey'})
         try:
             res = self.put(url=url,
                            headers=headers,
                            params=params,
-                           json=service_group.dict(
+                           json=service_group.model_dump(
                                include=fields,
                                exclude={'service', 'subservice'},
                                exclude_unset=True))
@@ -386,7 +386,7 @@ class IoTAClient(BaseHttpClient):
         try:
             res = self.get(url=url, headers=headers)
             if res.ok:
-                return Device.parse_obj(res.json())
+                return Device.model_validate(res.json())
             res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Device {device_id} was not found"
@@ -411,7 +411,7 @@ class IoTAClient(BaseHttpClient):
         url = urljoin(self.base_url, f'iot/devices/{device.device_id}')
         headers = self.headers
         try:
-            res = self.put(url=url, headers=headers, json=device.dict(
+            res = self.put(url=url, headers=headers, json=device.model_dump(
                 include={'attributes', 'lazy', 'commands', 'static_attributes'},
                 exclude_none=True))
             if res.ok:
@@ -575,8 +575,8 @@ class IoTAClient(BaseHttpClient):
                          "protocol", "transport",
                          "expressionLanguage"}
 
-        live_settings = live_device.dict(include=settings_dict)
-        new_settings = device.dict(include=settings_dict)
+        live_settings = live_device.model_dump(include=settings_dict)
+        new_settings = device.model_dump(include=settings_dict)
 
         if not live_settings == new_settings:
             self.delete_device(device_id=device.device_id,
