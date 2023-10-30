@@ -20,6 +20,7 @@ from filip.utils.filter import filter_device_list, filter_group_list
 if TYPE_CHECKING:
     from filip.clients.ngsi_v2.cb import ContextBrokerClient
 
+
 class IoTAClient(BaseHttpClient):
     """
     Client for FIWARE IoT-Agents. The implementation follows the API
@@ -94,8 +95,8 @@ class IoTAClient(BaseHttpClient):
         url = urljoin(self.base_url, 'iot/services')
         headers = self.headers
         data = {'services': [group.model_dump(exclude={'service', 'subservice'},
-                                        exclude_none=True,
-                                        exclude_unset=True) for
+                                              exclude_none=True,
+                                              exclude_unset=True) for
                              group in service_groups]}
         try:
             res = self.post(url=url, headers=headers, json=data)

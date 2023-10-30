@@ -69,6 +69,24 @@ class TestModels(unittest.TestCase):
                 client.delete_entity(entity_id=entity.id,
                                      entity_type=entity.type)
 
+    def test_unit_as_metadata(self) -> None:
+        entity_dict = {
+            "id": 'MyId',
+            "type": 'MyType',
+            'at1': {'value': "20.0", 'type': 'Text'},
+            'at2': {'value': 20.0,
+                    'type': 'StructuredValue',
+                    'metadata': {
+                        'name': 'unit',
+                        'type': 'Unit',
+                        "value": {
+                            "name": "degree Celsius"
+                        }
+                    }
+                    }
+            }
+        entity = ContextEntity(**entity_dict)
+
     def test_strings_in_models(self) -> None:
         """
         Tests for each not fixed key, and for each value the reaction if

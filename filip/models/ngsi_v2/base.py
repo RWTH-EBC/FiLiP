@@ -5,7 +5,7 @@ import json
 
 from aenum import Enum
 from pydantic import field_validator, model_validator, ConfigDict, AnyHttpUrl, BaseModel, Field,\
-    model_serializer, SerializationInfo
+    model_serializer, SerializationInfo, FieldValidationInfo
 
 from typing import Union, Optional, Pattern, List, Dict, Any
 
@@ -193,10 +193,10 @@ class Metadata(BaseModel):
     )
 
     @field_validator('value')
-    def validate_value(cls, value, values):
+    def validate_value(cls, value, info: FieldValidationInfo):
         assert json.dumps(value), "metadata not serializable"
 
-        if values.data.get("type").casefold() == "unit":
+        if info.data.get("type").casefold() == "unit":
             value = Unit.model_validate(value)
         return value
 

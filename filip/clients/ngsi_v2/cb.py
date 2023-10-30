@@ -386,11 +386,11 @@ class ContextBrokerClient(BaseHttpClient):
                                       params=params,
                                       headers=headers)
             if AttrsFormat.NORMALIZED in response_format:
-                ta = TypeAdapter(List[ContextEntity])
-                return ta.validate_python(items)
+                adapter = TypeAdapter(List[ContextEntity])
+                return adapter.validate_python(items)
             if AttrsFormat.KEY_VALUES in response_format:
-                ta = TypeAdapter(List[ContextEntityKeyValues])
-                return ta.validate_python(items)
+                adapter = TypeAdapter(List[ContextEntityKeyValues])
+                return adapter.validate_python(items)
             return items
 
         except requests.RequestException as err:
@@ -1129,8 +1129,8 @@ class ContextBrokerClient(BaseHttpClient):
                                       url=url,
                                       params=params,
                                       headers=headers)
-            ta = TypeAdapter(List[Subscription])
-            return ta.validate_python(items)
+            adapter = TypeAdapter(List[Subscription])
+            return adapter.validate_python(items)
         except requests.RequestException as err:
             msg = "Could not load subscriptions!"
             self.log_error(err=err, msg=msg)
@@ -1332,8 +1332,8 @@ class ContextBrokerClient(BaseHttpClient):
                                       url=url,
                                       params=params,
                                       headers=headers)
-            ta = TypeAdapter(List[Registration])
-            return ta.validate_python(items)
+            adapter = TypeAdapter(List[Registration])
+            return adapter.validate_python(items)
         except requests.RequestException as err:
             msg = "Could not load registrations!"
             self.log_error(err=err, msg=msg)
@@ -1548,11 +1548,11 @@ class ContextBrokerClient(BaseHttpClient):
                                                                  exclude_none=True),
                                       limit=limit)
             if response_format == AttrsFormat.NORMALIZED:
-                ta = TypeAdapter(List[ContextEntity])
-                return ta.validate_python(items)
+                adapter = TypeAdapter(List[ContextEntity])
+                return adapter.validate_python(items)
             if response_format == AttrsFormat.KEY_VALUES:
-                ta = TypeAdapter(List[ContextEntityKeyValues])
-                return ta.validate_python(items)
+                adapter = TypeAdapter(List[ContextEntityKeyValues])
+                return adapter.validate_python(items)
             return items
         except requests.RequestException as err:
             msg = "Query operation failed!"
