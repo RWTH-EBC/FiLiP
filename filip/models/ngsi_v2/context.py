@@ -14,7 +14,7 @@ from filip.models.ngsi_v2.base import \
     BaseAttribute, \
     BaseValueAttribute, \
     BaseNameAttribute
-from filip.models.base import DataType, FiwareRegex
+from filip.models.base import DataType
 from filip.utils.validators import validate_fiware_datatype_standard, validate_fiware_datatype_string_protect
 
 
@@ -455,8 +455,8 @@ class ContextEntity(ContextEntityKeyValues):
         if response_format == PropertyFormat.LIST:
             return commands
         else:
-            return {c.name: ContextAttribute(**c.model_dump(exclude={'name'}))
-                    for c in commands}
+            return {cmd.name: ContextAttribute(**cmd.model_dump(exclude={'name'}))
+                    for cmd in commands}
 
     def get_command_triple(self, command_attribute_name: str)\
             -> Tuple[NamedContextAttribute, NamedContextAttribute,

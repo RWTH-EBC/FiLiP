@@ -37,22 +37,18 @@ class TestModels(unittest.TestCase):
                          self.fiware_header)
         self.assertEqual(json.loads(header.model_dump_json(by_alias=True)),
                          self.fiware_header)
-        # TODO maybe implement in this way
-        # with self.assertRaises(ValidationError):
-        #     FiwareHeader(service='jkgsadh ', service_path='/testing')
-        # TODO I can not see any error, because service allowed all text
-        # self.assertRaises(ValidationError, FiwareHeader,
-        #                   service='jkgsadh ', service_path='/testing')
-        # self.assertRaises(ValidationError, FiwareHeader,
-        #                   service='%', service_path='/testing')
-        self.assertRaises(ValidationError, FiwareHeader,
-                          service='filip', service_path='testing/')
-        self.assertRaises(ValidationError, FiwareHeader,
-                          service='filip', service_path='/$testing')
-        self.assertRaises(ValidationError, FiwareHeader,
-                          service='filip', service_path='/testing ')
-        self.assertRaises(ValidationError, FiwareHeader,
-                          service='filip', service_path='#')
+        with self.assertRaises(ValidationError):
+            FiwareHeader(service='jkgsadh ', service_path='/testing')
+        with self.assertRaises(ValidationError):
+            FiwareHeader(service='%', service_path='/testing')
+        with self.assertRaises(ValidationError):
+            FiwareHeader(service='filip', service_path='testing/')
+        with self.assertRaises(ValidationError):
+            FiwareHeader(service='filip', service_path='/$testing')
+        with self.assertRaises(ValidationError):
+            FiwareHeader(service='filip', service_path='/testing ')
+        with self.assertRaises(ValidationError):
+            FiwareHeader(service='filip', service_path='#')
         headers = FiwareHeader.model_validate(self.fiware_header)
         with ContextBrokerClient(url=settings.CB_URL,
                                  fiware_header=headers) as client:

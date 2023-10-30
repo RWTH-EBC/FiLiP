@@ -10,7 +10,8 @@ from typing import List, Tuple, Dict, Type, TYPE_CHECKING, Optional, Union, \
 
 import filip.models.ngsi_v2.iot as iot
 # from filip.models.ngsi_v2.iot import ExpressionLanguage, TransportProtocol
-from filip.models.base import DataType, NgsiVersion, FiwareRegex
+from filip.models.base import DataType, NgsiVersion
+from filip.utils.validators import FiwareRegex
 from filip.models.ngsi_v2.context import ContextEntity, NamedContextAttribute, \
     NamedCommand
 

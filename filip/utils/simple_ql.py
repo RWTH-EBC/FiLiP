@@ -203,27 +203,6 @@ class QueryStatement(Tuple):
         return self.to_str().__repr__()
 
 
-# # TODO
-# from pydantic import BaseModel, model_validator
-#
-# class QueryStringTest(BaseModel):
-#     qs: Union[Tuple,QueryStatement,List[Union[QueryStatement, Tuple]]]
-#     @model_validator(mode='before')
-#     def __check_arguments(cls, data):
-#         qs = data["qs"]
-#         if isinstance(qs, List):
-#             for idx, item in enumerate(qs):
-#                 if not isinstance(item, QueryStatement):
-#                     qs[idx] = QueryStatement(*item)
-#             # Remove duplicates
-#             qs = list(dict.fromkeys(qs))
-#         elif isinstance(qs, QueryStatement):
-#             qs = [qs]
-#         elif isinstance(qs, tuple):
-#             qs = [QueryStatement(*qs)]
-#         else:
-#             raise ValueError('Invalid argument!')
-#         return data
 class QueryString:
     """
     Class for validated QueryStrings that can be used in api clients

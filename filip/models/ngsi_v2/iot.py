@@ -8,12 +8,13 @@ from enum import Enum
 from typing import Any, Dict, Optional, List, Union
 import pytz
 from pydantic import field_validator, ConfigDict, BaseModel, Field, AnyHttpUrl
-from filip.models.base import NgsiVersion, DataType, FiwareRegex
+from filip.models.base import NgsiVersion, DataType
 from filip.models.ngsi_v2.base import \
     BaseAttribute, \
     BaseValueAttribute, \
     BaseNameAttribute
-from filip.utils.validators import validate_fiware_datatype_string_protect, validate_fiware_datatype_standard
+from filip.utils.validators import validate_fiware_datatype_string_protect, validate_fiware_datatype_standard, \
+    validate_http_url
 
 logger = logging.getLogger()
 
@@ -315,15 +316,18 @@ class DeviceSettings(BaseModel):
         Returns:
             timezone
         """
-        return str(value) if value else value
+        if value:
+            return validate_http_url(url=value)
+        else:
+            return None
 
     protocol: Optional[Union[PayloadProtocol, str]] = Field(
         default=None,
         description="Name of the device protocol, for its use with an "
                     "IoT Manager."
     )
-    transport: Union[TransportProtocol, str] = Field(
-        default="MQTT",
+    transport: Optional[Union[TransportProtocol, str]] = Field(
+        default=None,
         description="Name of the device transport protocol, for the IoT Agents "
                     "with multiple transport protocols."
     )

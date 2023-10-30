@@ -3,7 +3,6 @@ import time
 import unittest
 from random import randrange
 from paho.mqtt.client import MQTT_CLEAN_START_FIRST_ONLY
-from urllib.parse import urlparse
 from filip.models import FiwareHeader
 from filip.models.ngsi_v2.context import NamedCommand
 from filip.models.ngsi_v2.iot import \
@@ -14,6 +13,7 @@ from filip.models.ngsi_v2.iot import \
 from filip.clients.mqtt import IoTAMQTTClient
 from filip.utils.cleanup import clean_test, clear_all
 from tests.config import settings
+from pydantic import AnyUrl
 
 
 logger = logging.getLogger(__name__)
@@ -103,9 +103,9 @@ class TestMQTTClient(unittest.TestCase):
                                         callback=on_message_first)
         self.mqttc.message_callback_add(sub=second_topic,
                                         callback=on_message_second)
-        mqtt_broker_url = urlparse(str(settings.MQTT_BROKER_URL))
+        mqtt_broker_url = settings.MQTT_BROKER_URL
 
-        self.mqttc.connect(host=mqtt_broker_url.hostname,
+        self.mqttc.connect(host=mqtt_broker_url.host,
                            port=mqtt_broker_url.port,
                            keepalive=60,
                            bind_address="",
@@ -219,9 +219,9 @@ class TestMQTTClient(unittest.TestCase):
         httpc.iota.post_group(service_group=self.service_group_json, update=True)
         httpc.iota.post_device(device=self.device_json, update=True)
 
-        mqtt_broker_url = urlparse(str(settings.MQTT_BROKER_URL))
+        mqtt_broker_url: AnyUrl = settings.MQTT_BROKER_URL
 
-        self.mqttc.connect(host=mqtt_broker_url.hostname,
+        self.mqttc.connect(host=mqtt_broker_url.host,
                            port=mqtt_broker_url.port,
                            keepalive=60,
                            bind_address="",
@@ -279,9 +279,9 @@ class TestMQTTClient(unittest.TestCase):
         httpc.iota.post_group(service_group=self.service_group_json, update=True)
         httpc.iota.post_device(device=self.device_json, update=True)
 
-        mqtt_broker_url = urlparse(str(settings.MQTT_BROKER_URL))
+        mqtt_broker_url = settings.MQTT_BROKER_URL
 
-        self.mqttc.connect(host=mqtt_broker_url.hostname,
+        self.mqttc.connect(host=mqtt_broker_url.host,
                            port=mqtt_broker_url.port,
                            keepalive=60,
                            bind_address="",
@@ -379,10 +379,9 @@ class TestMQTTClient(unittest.TestCase):
         httpc.iota.post_group(service_group=self.service_group_ul)
         httpc.iota.post_device(device=self.device_ul, update=True)
 
+        mqtt_broker_url = settings.MQTT_BROKER_URL
 
-        mqtt_broker_url = urlparse(str(settings.MQTT_BROKER_URL))
-
-        self.mqttc.connect(host=mqtt_broker_url.hostname,
+        self.mqttc.connect(host=mqtt_broker_url.host,
                            port=mqtt_broker_url.port,
                            keepalive=60,
                            bind_address="",
@@ -443,9 +442,9 @@ class TestMQTTClient(unittest.TestCase):
 
         time.sleep(0.5)
 
-        mqtt_broker_url = urlparse(str(settings.MQTT_BROKER_URL))
+        mqtt_broker_url = settings.MQTT_BROKER_URL
 
-        self.mqttc.connect(host=mqtt_broker_url.hostname,
+        self.mqttc.connect(host=mqtt_broker_url.host,
                            port=mqtt_broker_url.port,
                            keepalive=60,
                            bind_address="",

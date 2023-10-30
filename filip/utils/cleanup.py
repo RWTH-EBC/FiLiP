@@ -130,7 +130,7 @@ def clear_all(*,
         None
     """
     if iota_url is not None:
-        if isinstance(iota_url, str) or isinstance(iota_url, AnyUrl):
+        if isinstance(iota_url, (str, AnyUrl)):
             iota_url = [iota_url]
         for url in iota_url:
             clear_iot_agent(url=url, fiware_header=fiware_header)
@@ -138,6 +138,7 @@ def clear_all(*,
         clear_context_broker(url=cb_url, fiware_header=fiware_header)
     if ql_url is not None:
         clear_quantumleap(url=ql_url, fiware_header=fiware_header)
+
 
 def clean_test(*,
                fiware_service: str,

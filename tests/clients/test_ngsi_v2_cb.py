@@ -11,7 +11,6 @@ import uuid
 
 import paho.mqtt.client as mqtt
 from datetime import datetime, timedelta
-from urllib.parse import urlparse
 from requests import RequestException
 from filip.models.base import FiwareHeader
 from filip.utils.simple_ql import QueryString
@@ -468,8 +467,7 @@ class TestContextBroker(unittest.TestCase):
         mqtt_client.on_disconnect = on_disconnect
 
         # connect to the server
-        mqtt_url = urlparse(str(mqtt_url))
-        mqtt_client.connect(host=mqtt_url.hostname,
+        mqtt_client.connect(host=mqtt_url.host,
                             port=mqtt_url.port,
                             keepalive=60,
                             bind_address="",
@@ -648,9 +646,7 @@ class TestContextBroker(unittest.TestCase):
         mqtt_client.on_disconnect = on_disconnect
 
         # extract the form the environment
-        mqtt_broker_url = urlparse(str(mqtt_broker_url))
-
-        mqtt_client.connect(host=mqtt_broker_url.hostname,
+        mqtt_client.connect(host=mqtt_broker_url.host,
                             port=mqtt_broker_url.port,
                             keepalive=60,
                             bind_address="",

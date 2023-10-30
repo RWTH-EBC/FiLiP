@@ -5,7 +5,7 @@ Shared data models
 from aenum import Enum
 from pydantic import ConfigDict, BaseModel, Field, BaseConfig, field_validator
 
-from filip.utils.validators import validate_fiware_service_path
+from filip.utils.validators import validate_fiware_service_path, validate_fiware_service
 
 
 class NgsiVersion(str, Enum):
@@ -87,26 +87,10 @@ class FiwareHeader(BaseModel):
         description="Fiware service path",
         max_length=51,
     )
+    valid_service = field_validator("service")(
+        validate_fiware_service)
     valid_service_path = field_validator("service_path")(
         validate_fiware_service_path)
-
-
-
-class FiwareRegex(str, Enum):
-    """
-    Collection of Regex expression used to check if the value of a Pydantic
-    field, can be used in the related Fiware field.
-    """
-    _init_ = 'value __doc__'
-
-    standard = r"(^((?![?&#/\"' ])[\x00-\x7F])*$)", \
-               "Prevents any string that contains at least one of the " \
-               "symbols: ? & # / ' \" or a whitespace"
-    string_protect = r"(?!^id$)(?!^type$)(?!^geo:location$)" \
-                     r"(^((?![?&#/\"' ])[\x00-\x7F])*$)",\
-                     "Prevents any string that contains at least one of " \
-                     "the symbols: ? & # / ' \" or a whitespace." \
-                     "AND the strings: id, type, geo:location"
 
 
 class LogLevel(str, Enum):

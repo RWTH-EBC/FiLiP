@@ -3,14 +3,31 @@ Helper functions to prohibit boiler plate code
 """
 import logging
 import re
+from aenum import Enum
 from typing import Dict, Any, List
 from pydantic import AnyHttpUrl, validate_call
 from pydantic_core import PydanticCustomError
-
 from filip.custom_types import AnyMqttUrl
 
 
 logger = logging.getLogger(name=__name__)
+
+
+class FiwareRegex(str, Enum):
+    """
+    Collection of Regex expression used to check if the value of a Pydantic
+    field, can be used in the related Fiware field.
+    """
+    _init_ = 'value __doc__'
+
+    standard = r"(^((?![?&#/\"' ])[\x00-\x7F])*$)", \
+               "Prevents any string that contains at least one of the " \
+               "symbols: ? & # / ' \" or a whitespace"
+    string_protect = r"(?!^id$)(?!^type$)(?!^geo:location$)" \
+                     r"(^((?![?&#/\"' ])[\x00-\x7F])*$)",\
+                     "Prevents any string that contains at least one of " \
+                     "the symbols: ? & # / ' \" or a whitespace." \
+                     "AND the strings: id, type, geo:location"
 
 
 @validate_call
@@ -105,12 +122,10 @@ def ignore_none_input(func):
 
 
 def validate_fiware_standard_regex(vale: str):
-    from filip.models.base import FiwareRegex
     return match_regex(vale, FiwareRegex.standard.value)
 
 
 def validate_fiware_string_protect_regex(vale: str):
-    from filip.models.base import FiwareRegex
     return match_regex(vale, FiwareRegex.string_protect.value)
 
 
@@ -145,3 +160,9 @@ def validate_fiware_datatype_string_protect(_type):
 def validate_fiware_service_path(service_path):
     return match_regex(service_path,
                        r'^((\/\w*)|(\/\#))*(\,((\/\w*)|(\/\#)))*$')
+
+
+@ignore_none_input
+def validate_fiware_service(service):
+    return match_regex(service,
+                       r"\w*$")

@@ -9,7 +9,7 @@ from pydantic import field_validator, model_validator, ConfigDict, AnyHttpUrl, B
 
 from typing import Union, Optional, Pattern, List, Dict, Any
 
-from filip.models.base import DataType, FiwareRegex
+from filip.models.base import DataType
 from filip.models.ngsi_v2.units import validate_unit_data, Unit
 from filip.utils.simple_ql import QueryString, QueryStatement
 from filip.utils.validators import validate_http_url, \
@@ -353,7 +353,7 @@ class BaseValueAttribute(BaseModel):
     )
 
     @field_validator('value')
-    def validate_value_type(cls, value, values):
+    def validate_value_type(cls, value, info: FieldValidationInfo):
         """
         Validator for field 'value'
         The validator will try autocast the value based on the given type.
@@ -363,7 +363,7 @@ class BaseValueAttribute(BaseModel):
         If the type is unknown it will check json-serializable.
         """
 
-        type_ = values.data.get("type")
+        type_ = info.data.get("type")
         validate_escape_character_free(value)
 
         if value is not None:
