@@ -33,7 +33,7 @@ class InstanceHeader(FiwareHeader):
     The header is not bound to one Fiware Setup, but can describe the
     exact location in the web
     """
-
+    model_config = ConfigDict(frozen=True, use_enum_values=True)
     cb_url: str = Field(default=settings.CB_URL,
                         description="Url of the ContextBroker from the Fiware "
                                     "setup")
@@ -51,8 +51,6 @@ class InstanceHeader(FiwareHeader):
         """
         return FiwareHeader(service=self.service,
                             service_path=self.service_path)
-
-    model_config = ConfigDict(frozen=True, use_enum_values=True)
 
 
 class InstanceIdentifier(BaseModel):
@@ -241,6 +239,7 @@ class Command(DeviceProperty):
     A command can only belong to one field of one instance. Assigning it to
     multiple fields will result in an error.
     """
+    model_config = ConfigDict(frozen=True)
 
     def send(self):
         """
@@ -289,8 +288,6 @@ class Command(DeviceProperty):
         """
         return [self.name, f"{self.name}_info", f"{self.name}_result"]
 
-    model_config = ConfigDict(frozen=True)
-
 
 class DeviceAttributeType(str, Enum):
     """
@@ -313,6 +310,7 @@ class DeviceAttribute(DeviceProperty):
     A DeviceAttribute can only belong to one field of one instance. Assigning
     it to multiple fields will result in an error.
     """
+    model_config = ConfigDict(frozen=True, use_enum_values=True)
     attribute_type: DeviceAttributeType = Field(
         description="States if the attribute is read actively or lazy from "
                     "the IoT Device into Fiware"
@@ -343,8 +341,6 @@ class DeviceAttribute(DeviceProperty):
         if field_name is None:
             field_name = self._instance_link.field_name
         return [f'{field_name}_{self.name}']
-
-    model_config = ConfigDict(frozen=True, use_enum_values=True)
 
 
 class Field(BaseModel):
@@ -1773,7 +1769,7 @@ class SemanticIndividual(BaseModel):
 
     Each instance of an SemanticIndividual Class is equal
     """
-
+    model_config = ConfigDict(frozen=True)
     _parent_classes: List[type] = pyd.Field(
         description="List of ontology parent classes needed to validate "
                     "RelationFields"
@@ -1817,5 +1813,3 @@ class SemanticIndividual(BaseModel):
             if is_instance:
                 return True
         return False
-
-    model_config = ConfigDict(frozen=True)
