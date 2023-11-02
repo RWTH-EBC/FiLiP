@@ -88,6 +88,20 @@ class FiwareHeader(BaseModel):
     class Config(BaseConfig):
         allow_population_by_field_name = True
         validate_assignment = True
+        
+class FiwareHeaderSecure(FiwareHeader):
+    """
+    Defines entity service paths and a autorization via Baerer-Token which are supported by the NGSI
+    Context Brokers to support hierarchical scopes:
+    https://fiware-orion.readthedocs.io/en/master/user/service_path/index.html
+    """
+    authorization: str = Field(
+        alias="authorization",
+        default="",
+        max_length=3000,
+        description="authorization key",
+        regex=r".*"
+    )
 
 
 class FiwareRegex(str, Enum):
