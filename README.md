@@ -224,6 +224,8 @@ how you can contribute to this project.
 
 We presented or applied the library in the following publications:
 
+- S. Blechmann, I. Sowa, M. H. Schraven, R. Streblow, D. Müller & A. Monti. Open source platform application for smart building and smart grid controls. Automation in Construction 145 (2023), 104622. ISSN: 0926-5805. https://doi.org/10.1016/j.autcon.2022.104622
+
 - Haghgoo, M., Dognini, A., Storek, T., Plamanescu, R, Rahe, U., 
   Gheorghe, S, Albu, M., Monti, A., Müller, D. (2021) A cloud-based service-oriented architecture to unlock smart energy services
   https://www.doi.org/10.1186/s42162-021-00143-x
