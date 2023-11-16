@@ -19,18 +19,12 @@ from filip.utils.validators import validate_http_url, \
 class Http(BaseModel):
     """
     Model for notification and registrations sent or retrieved via HTTP
-    """
-    url: Union[AnyHttpUrl, str] = Field(
-        description="URL referencing the service to be invoked when a "
-                    "notification is generated. An NGSIv2 compliant server "
-                    "must support the http URL schema. Other schemas could "
-                    "also be supported."
-    )
 
-    @field_validator('url')
-    @classmethod
-    def check_url(cls, value):
-        return validate_http_url(url=value)
+    url: It references the service to be invoked when a notification is
+    generated. An NGSIv2 compliant server must support the http URL
+    schema. Other schemas could also be supported.
+    """
+    url: AnyHttpUrl
 
 
 class EntityPattern(BaseModel):
