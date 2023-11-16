@@ -103,6 +103,7 @@ class ContextEntityKeyValues(BaseModel):
     is a string containing the entity's type name.
 
     """
+    model_config = ConfigDict(extra='allow', validate_default=True, validate_assignment=True)
     id: str = Field(
         ...,
         title="Entity Id",
@@ -129,7 +130,6 @@ class ContextEntityKeyValues(BaseModel):
         frozen=True
     )
     valid_type = field_validator("type")(validate_fiware_datatype_standard)
-    model_config = ConfigDict(extra='allow', validate_default=True, validate_assignment=True)
 
 
 class PropertyFormat(str, Enum):
@@ -174,12 +174,13 @@ class ContextEntity(ContextEntityKeyValues):
         >>> entity = ContextEntity(**data)
 
     """
+    model_config = ConfigDict(extra='allow', validate_default=True, validate_assignment=True)
+
     def __init__(self, id: str, type: str, **data):
 
         # There is currently no validation for extra fields
         data.update(self._validate_attributes(data))
         super().__init__(id=id, type=type, **data)
-    model_config = ConfigDict(extra='allow', validate_default=True, validate_assignment=True)
 
     @classmethod
     def _validate_attributes(cls, data: Dict):

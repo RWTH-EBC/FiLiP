@@ -287,6 +287,7 @@ class DeviceSettings(BaseModel):
     """
     Model for iot device settings
     """
+    model_config = ConfigDict(validate_assignment=True)
     timezone: Optional[str] = Field(
         default='Europe/London',
         description="Time zone of the sensor if it has any"
@@ -344,7 +345,6 @@ class DeviceSettings(BaseModel):
                     "of measures so that IOTA does not progress. If not "
                     "specified default is false."
     )
-    model_config = ConfigDict(validate_assignment=True)
 
 
 class Device(DeviceSettings):
@@ -352,6 +352,7 @@ class Device(DeviceSettings):
     Model for iot devices.
     https://iotagent-node-lib.readthedocs.io/en/latest/api/index.html#device-api
     """
+    model_config = ConfigDict(validate_default=True, validate_assignment=True)
     device_id: str = Field(
         description="Device ID that will be used to identify the device"
     )
@@ -415,7 +416,6 @@ class Device(DeviceSettings):
                     " NGSI-v2 and NGSI-LD payloads. Possible values are: "
                     "v2 or ld. The default is v2. When not running in "
                     "mixed mode, this field is ignored.")
-    model_config = ConfigDict(validate_default=True, validate_assignment=True)
 
     @field_validator('timezone')
     @classmethod

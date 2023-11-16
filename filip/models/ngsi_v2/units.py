@@ -110,6 +110,7 @@ class Unit(BaseModel):
     """
     Model for a unit definition
     """
+    model_config = ConfigDict(extra='ignore', populate_by_name=True)
     _ngsi_version: Literal[NgsiVersion.v2] = NgsiVersion.v2
     name: Optional[Union[str, UnitText]] = Field(
         alias="unitText",
@@ -135,7 +136,6 @@ class Unit(BaseModel):
         alias="unitConversionFactor",
         description="The value used to convert units to the equivalent SI "
                     "unit when applicable.")
-    model_config = ConfigDict(extra='ignore', populate_by_name=True)
 
     @model_validator(mode="before")
     @classmethod

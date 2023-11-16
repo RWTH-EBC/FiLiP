@@ -252,7 +252,7 @@ class BaseAttribute(BaseModel):
         >>> attr = BaseAttribute(**data)
 
     """
-
+    model_config = ConfigDict(validate_assignment=True)
     type: Union[DataType, str] = Field(
         default=DataType.TEXT,
         description="The attribute type represents the NGSI value type of the "
@@ -297,7 +297,7 @@ class BaseAttribute(BaseModel):
                         for item in value}
 
         raise TypeError(f"Invalid type {type(value)}")
-    model_config = ConfigDict(validate_assignment=True)
+
 
 class BaseNameAttribute(BaseModel):
     """

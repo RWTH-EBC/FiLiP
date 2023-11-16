@@ -37,6 +37,7 @@ class TimeSeriesHeader(TimeSeriesBase):
     """
     Model to describe an available entity in the time series api
     """
+    model_config = ConfigDict(populate_by_name=True)
     # aliases are required due to formally inconsistencies in the api-specs
     entityId: str = Field(default=None,
                           alias="id",
@@ -49,7 +50,6 @@ class TimeSeriesHeader(TimeSeriesBase):
     entityType: str = Field(default=None,
                             alias="type",
                             description="The type of an entity")
-    model_config = ConfigDict(populate_by_name=True)
 
 
 class IndexedValues(BaseModel):
@@ -82,6 +82,7 @@ class TimeSeries(TimeSeriesHeader):
     """
     Model for time series data
     """
+    model_config = ConfigDict(populate_by_name=True)
     attributes: List[AttributeValues] = None
 
     def extend(self, other: TimeSeries) -> None:
@@ -122,7 +123,6 @@ class TimeSeries(TimeSeriesHeader):
             names=['entityId', 'entityType', 'attribute'])
 
         return pd.DataFrame(data=values, index=index, columns=columns)
-    model_config = ConfigDict(populate_by_name=True)
 
 
 class AggrMethod(str, Enum):

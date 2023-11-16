@@ -132,6 +132,7 @@ class Notification(BaseModel):
     included in the notifications. Otherwise, only the specified ones will
     be included.
     """
+    model_config = ConfigDict(validate_assignment=True)
     http: Optional[Http] = Field(
         default=None,
         description='It is used to convey parameters for notifications '
@@ -226,7 +227,6 @@ class Notification(BaseModel):
             assert all((v is None for k, v in self.model_dump().items() if k in [
                 'http', 'httpCustom', 'mqtt']))
         return self
-    model_config = ConfigDict(validate_assignment=True)
 
 
 class Response(Notification):

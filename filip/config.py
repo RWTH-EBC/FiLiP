@@ -14,6 +14,8 @@ class Settings(BaseSettings):
     file or environment variables. The `.env.filip` must be located in the
     current working directory.
     """
+    model_config = SettingsConfigDict(env_file='.env.filip', env_file_encoding='utf-8',
+                                      case_sensitive=False, extra="ignore")
     CB_URL: AnyHttpUrl = Field(default="http://127.0.0.1:1026",
                                validation_alias=AliasChoices(
                                    'ORION_URL', 'CB_URL', 'CB_HOST',
@@ -22,8 +24,6 @@ class Settings(BaseSettings):
                                  validation_alias='IOTA_URL')
     QL_URL: AnyHttpUrl = Field(default="http://127.0.0.1:8668",
                                validation_alias=AliasChoices('QUANTUMLEAP_URL', 'QL_URL'))
-    model_config = SettingsConfigDict(env_file='.env.filip', env_file_encoding='utf-8',
-                                      case_sensitive=False, extra="ignore")
 
 
 # create settings object

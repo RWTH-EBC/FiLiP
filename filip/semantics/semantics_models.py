@@ -58,13 +58,13 @@ class InstanceIdentifier(BaseModel):
     Each Instance of a SemanticClass posses a unique identifier that is
     directly linked to one Fiware entry
     """
+    model_config = ConfigDict(frozen=True)
     id: str = Field(description="Id of the entry in Fiware")
     type: str = Field(description="Type of the entry in Fiware, equal to "
                                   "class_name")
     header: InstanceHeader = Field(description="describes the Fiware "
                                                "Location were the instance "
                                                "will be / is saved.")
-    model_config = ConfigDict(frozen=True)
 
 
 class Datatype(DatatypeFields):
@@ -1186,13 +1186,13 @@ class SemanticMetadata(BaseModel):
     A name and comment that can be used by the user to better identify the
     instance
     """
+    model_config = ConfigDict(validate_assignment=True)
     name: str = pyd.Field(default="",
                           description="Optional user-given name for the "
                                       "instance")
     comment: str = pyd.Field(default="",
                              description="Optional user-given comment for "
                                          "the instance")
-    model_config = ConfigDict(validate_assignment=True)
 
 
 class SemanticClass(BaseModel):
@@ -1209,7 +1209,7 @@ class SemanticClass(BaseModel):
     loaded and returned, else a new instance of the class is initialised and
     returned
     """
-
+    model_config = ConfigDict(arbitrary_types_allowed=True, frozen=True)
     header: InstanceHeader = pyd.Field(
         description="Header of instance. Holds the information where the "
                     "instance is saved in Fiware")
@@ -1525,8 +1525,6 @@ class SemanticClass(BaseModel):
         Returns:
             ContextEntity
         """
-        model_config = ConfigDict(arbitrary_types_allowed=True, frozen=True)
-
         entity = ContextEntity(
             id=self.id,
             type=self._get_class_name()
