@@ -66,6 +66,7 @@ on this.
 If this is not an option for you, FIWARE also provides a testing server.
 You can register for a testing account 
 [here](https://www.fiware.org/developers/fiware-lab/).
+> **Note**: FiLiP is now compatible to [Pydantic V2](https://docs.pydantic.dev/latest/migration/). If your program still require Pydantic V1.x for some reason, please use release [v0.2.5](https://github.com/RWTH-EBC/FiLiP/releases/tag/v0.2.5) or earlier version of FiLiP. Besides, we recommended to use `pydantic~=1.10` in the `requirements.txt`
 
 ### Installation
 

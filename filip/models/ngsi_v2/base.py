@@ -4,53 +4,50 @@ Shared models that are used by multiple submodules
 import json
 
 from aenum import Enum
-from pydantic import AnyHttpUrl, BaseModel, Field, validator, root_validator
+from pydantic import field_validator, model_validator, ConfigDict, AnyHttpUrl, BaseModel, Field,\
+    model_serializer, SerializationInfo, FieldValidationInfo
+
 from typing import Union, Optional, Pattern, List, Dict, Any
 
-from filip.models.base import DataType, FiwareRegex
+from filip.models.base import DataType
 from filip.models.ngsi_v2.units import validate_unit_data, Unit
 from filip.utils.simple_ql import QueryString, QueryStatement
-from filip.utils.validators import validate_http_url, \
-    validate_escape_character_free
+from filip.utils.validators import validate_escape_character_free, \
+    validate_fiware_datatype_string_protect, validate_fiware_datatype_standard
 
 
 class Http(BaseModel):
     """
     Model for notification and registrations sent or retrieved via HTTP
     """
-    url: Union[AnyHttpUrl, str] = Field(
+    url: AnyHttpUrl = Field(
         description="URL referencing the service to be invoked when a "
                     "notification is generated. An NGSIv2 compliant server "
                     "must support the http URL schema. Other schemas could "
-                    "also be supported."
-    )
-
-    @validator('url', allow_reuse=True)
-    def check_url(cls, value):
-        return validate_http_url(url=value)
+                    "also be supported.")
 
 
 class EntityPattern(BaseModel):
     """
     Entity pattern used to create subscriptions or registrations
     """
-    id: Optional[str] = Field(default=None, regex=r"\w")
+    id: Optional[str] = Field(default=None, pattern=r"\w")
     idPattern: Optional[Pattern] = None
-    type: Optional[str] = Field(default=None, regex=r'\w')
+    type: Optional[str] = Field(default=None, pattern=r'\w')
     typePattern: Optional[Pattern] = None
 
-    @root_validator()
-    def validate_conditions(cls, values):
-        assert ((values['id'] and not values['idPattern']) or
-                (not values['id'] and values['idPattern'])), \
+    @model_validator(mode='after')
+    def validate_conditions(self):
+        assert ((self.id and not self.idPattern) or
+                (not self.id and self.idPattern)), \
             "Both cannot be used at the same time, but one of 'id' or " \
             "'idPattern must' be present."
-        if values['type'] or values.get('typePattern', None):
-            assert ((values['type'] and not values['typePattern']) or
-                    (not values['type'] and values['typePattern'])), \
+        if self.type or self.model_dump().get('typePattern', None):
+            assert ((self.type and not self.typePattern) or
+                    (not self.type and self.typePattern)), \
                 "Type or pattern of the affected entities. " \
                 "Both cannot be used at the same time."
-        return values
+        return self
 
 
 class Status(str, Enum):
@@ -71,6 +68,8 @@ class Expression(BaseModel):
     of the data provided.
     https://telefonicaid.github.io/fiware-orion/api/v2/stable
     """
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     q: Optional[Union[str, QueryString]] = Field(
         default=None,
         title='Simple Query Language: filter',
@@ -110,17 +109,25 @@ class Expression(BaseModel):
                     'Geoqueries section of the specification.'
     )
 
-    @validator('q', 'mq')
+    @field_validator('q', 'mq')
+    @classmethod
     def validate_expressions(cls, v):
         if isinstance(v, str):
             return QueryString.parse_str(v)
 
-    class Config:
-        """
-        Pydantic config
-        """
-        json_encoders = {QueryString: lambda v: v.to_str(),
-                         QueryStatement: lambda v: v.to_str()}
+    @model_serializer(mode="wrap")
+    def serialize(self, serializer: Any, info: SerializationInfo):
+        if isinstance(self.q, (QueryString, QueryStatement)):
+            self.q = self.q.to_str()
+        if isinstance(self.mq, (QueryString, QueryStatement)):
+            self.mq = self.mq.to_str()
+        if isinstance(self.coords, (QueryString, QueryStatement)):
+            self.coords = self.coords.to_str()
+        if isinstance(self.georel, (QueryString, QueryStatement)):
+            self.georel = self.georel.to_str()
+        if isinstance(self.geometry, (QueryString, QueryStatement)):
+            self.geometry = self.geometry.to_str()
+        return serializer(self)
 
 
 class AttrsFormat(str, Enum):
@@ -171,20 +178,20 @@ class Metadata(BaseModel):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.standard.value  # Make it FIWARE-Safe
     )
+    valid_type = field_validator("type")(validate_fiware_datatype_standard)
     value: Optional[Any] = Field(
         default=None,
         title="metadata value",
         description="a metadata value containing the actual metadata"
     )
 
-    @validator('value', allow_reuse=True)
-    def validate_value(cls, value, values):
+    @field_validator('value')
+    def validate_value(cls, value, info: FieldValidationInfo):
         assert json.dumps(value), "metadata not serializable"
 
-        if values["type"].casefold() == "unit":
-            value = Unit(**value)
+        if info.data.get("type").casefold() == "unit":
+            value = Unit.model_validate(value)
         return value
 
 
@@ -202,19 +209,23 @@ class NamedMetadata(Metadata):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.standard.value  # Make it FIWARE-Safe
     )
+    valid_name = field_validator("name")(validate_fiware_datatype_standard)
 
-    @root_validator
-    def validate_data(cls, values):
-        if values.get("name", "").casefold() in ["unit",
-                                                 "unittext",
-                                                 "unitcode"]:
-            values.update(validate_unit_data(values))
-        return values
+    @model_validator(mode='after')
+    def validate_data(self):
+        if self.model_dump().get("name", "").casefold() in ["unit",
+                                                            "unittext",
+                                                            "unitcode"]:
+            valide_dict = self.model_dump()
+            valide_dict.update(
+                validate_unit_data(self.model_dump())
+            )
+            return self
+        return self
 
     def to_context_metadata(self):
-        return {self.name: Metadata(**self.dict())}
+        return {self.name: Metadata(**self.model_dump())}
 
 
 class BaseAttribute(BaseModel):
@@ -241,7 +252,7 @@ class BaseAttribute(BaseModel):
         >>> attr = BaseAttribute(**data)
 
     """
-
+    model_config = ConfigDict(validate_assignment=True)
     type: Union[DataType, str] = Field(
         default=DataType.TEXT,
         description="The attribute type represents the NGSI value type of the "
@@ -252,8 +263,8 @@ class BaseAttribute(BaseModel):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.string_protect.value,  # Make it FIWARE-Safe
     )
+    valid_type = field_validator("type")(validate_fiware_datatype_string_protect)
     metadata: Optional[Union[Dict[str, Metadata],
                              NamedMetadata,
                              List[NamedMetadata],
@@ -263,14 +274,15 @@ class BaseAttribute(BaseModel):
         description="optional metadata describing properties of the attribute "
                     "value like e.g. accuracy, provider, or a timestamp")
 
-    @validator('metadata')
+    @field_validator('metadata')
+    @classmethod
     def validate_metadata_type(cls, value):
         """validator for field 'metadata'"""
         if type(value) == NamedMetadata:
             value = [value]
         elif isinstance(value, dict):
             if all(isinstance(item, Metadata) for item in value.values()):
-                value = [NamedMetadata(name=key, **item.dict())
+                value = [NamedMetadata(name=key, **item.model_dump())
                          for key, item in value.items()]
             else:
                 json.dumps(value)
@@ -281,16 +293,11 @@ class BaseAttribute(BaseModel):
             if all(isinstance(item, dict) for item in value):
                 value = [NamedMetadata(**item) for item in value]
             if all(isinstance(item, NamedMetadata) for item in value):
-                return {item.name: Metadata(**item.dict(exclude={'name'}))
+                return {item.name: Metadata(**item.model_dump(exclude={'name'}))
                         for item in value}
 
         raise TypeError(f"Invalid type {type(value)}")
 
-    class Config:
-        """
-        Config class for attributes
-        """
-        validate_assignment = True
 
 class BaseNameAttribute(BaseModel):
     """
@@ -307,9 +314,9 @@ class BaseNameAttribute(BaseModel):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.string_protect.value,
         # Make it FIWARE-Safe
     )
+    valid_name = field_validator("name")(validate_fiware_datatype_string_protect)
 
 
 class BaseValueAttribute(BaseModel):
@@ -331,16 +338,16 @@ class BaseValueAttribute(BaseModel):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.string_protect.value,  # Make it FIWARE-Safe
     )
+    valid_type = field_validator("type")(validate_fiware_datatype_string_protect)
     value: Optional[Any] = Field(
         default=None,
         title="Attribute value",
         description="the actual data"
     )
 
-    @validator('value')
-    def validate_value_type(cls, value, values):
+    @field_validator('value')
+    def validate_value_type(cls, value, info: FieldValidationInfo):
         """
         Validator for field 'value'
         The validator will try autocast the value based on the given type.
@@ -350,7 +357,7 @@ class BaseValueAttribute(BaseModel):
         If the type is unknown it will check json-serializable.
         """
 
-        type_ = values['type']
+        type_ = info.data.get("type")
         validate_escape_character_free(value)
 
         if value is not None:
@@ -379,7 +386,7 @@ class BaseValueAttribute(BaseModel):
                                 f"{DataType.ARRAY}")
             if type_ == DataType.STRUCTUREDVALUE:
                 if isinstance(value, BaseModel):
-                    return json.loads(value.json())
+                    return json.loads(value.model_dump_json())
                 value = json.dumps(value)
                 return json.loads(value)
 

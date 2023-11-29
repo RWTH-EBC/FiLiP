@@ -3,12 +3,14 @@ IoT-Agent Module for API Client
 """
 from __future__ import annotations
 
+import json
 from copy import deepcopy
 from typing import List, Dict, Set, TYPE_CHECKING, Union, Optional
 import warnings
 from urllib.parse import urljoin
 import requests
-from pydantic import parse_obj_as, AnyHttpUrl
+from pydantic import AnyHttpUrl
+from pydantic.type_adapter import TypeAdapter
 from filip.config import settings
 from filip.clients.base_http_client import BaseHttpClient
 from filip.models.base import FiwareHeader
@@ -18,6 +20,7 @@ from filip.utils.filter import filter_device_list, filter_group_list
 
 if TYPE_CHECKING:
     from filip.clients.ngsi_v2.cb import ContextBrokerClient
+
 
 class IoTAClient(BaseHttpClient):
     """
@@ -92,9 +95,9 @@ class IoTAClient(BaseHttpClient):
 
         url = urljoin(self.base_url, 'iot/services')
         headers = self.headers
-        data = {'services': [group.dict(exclude={'service', 'subservice'},
-                                        exclude_none=True,
-                                        exclude_unset=True) for
+        data = {'services': [group.model_dump(exclude={'service', 'subservice'},
+                                              exclude_none=True,
+                                              exclude_unset=True) for
                              group in service_groups]}
         try:
             res = self.post(url=url, headers=headers, json=data)
@@ -148,7 +151,8 @@ class IoTAClient(BaseHttpClient):
         try:
             res = self.get(url=url, headers=headers)
             if res.ok:
-                return parse_obj_as(List[ServiceGroup], res.json()['services'])
+                ta = TypeAdapter(List[ServiceGroup])
+                return ta.validate_python(res.json()['services'])
             res.raise_for_status()
         except requests.RequestException as err:
             self.log_error(err=err, msg=None)
@@ -217,12 +221,12 @@ class IoTAClient(BaseHttpClient):
             fields = None
         url = urljoin(self.base_url, 'iot/services')
         headers = self.headers
-        params = service_group.dict(include={'resource', 'apikey'})
+        params = service_group.model_dump(include={'resource', 'apikey'})
         try:
             res = self.put(url=url,
                            headers=headers,
                            params=params,
-                           json=service_group.dict(
+                           json=service_group.model_dump(
                                include=fields,
                                exclude={'service', 'subservice'},
                                exclude_unset=True))
@@ -283,8 +287,8 @@ class IoTAClient(BaseHttpClient):
             devices = [devices]
         url = urljoin(self.base_url, 'iot/devices')
         headers = self.headers
-        data = {"devices": [device.dict(exclude_none=True) for device in
-                            devices]}
+        data = {"devices": [json.loads(device.model_dump_json(exclude_none=True)
+                                       ) for device in devices]}
         try:
             res = self.post(url=url, headers=headers, json=data)
             if res.ok:
@@ -354,7 +358,8 @@ class IoTAClient(BaseHttpClient):
         try:
             res = self.get(url=url, headers=headers, params=params)
             if res.ok:
-                devices = parse_obj_as(List[Device], res.json()['devices'])
+                ta = TypeAdapter(List[Device])
+                devices = ta.validate_python(res.json()['devices'])
                 # filter by device_ids, entity_names or entity_types
                 devices = filter_device_list(devices,
                                              device_ids,
@@ -383,7 +388,7 @@ class IoTAClient(BaseHttpClient):
         try:
             res = self.get(url=url, headers=headers)
             if res.ok:
-                return Device.parse_obj(res.json())
+                return Device.model_validate(res.json())
             res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Device {device_id} was not found"
@@ -408,7 +413,7 @@ class IoTAClient(BaseHttpClient):
         url = urljoin(self.base_url, f'iot/devices/{device.device_id}')
         headers = self.headers
         try:
-            res = self.put(url=url, headers=headers, json=device.dict(
+            res = self.put(url=url, headers=headers, json=device.model_dump(
                 include={'attributes', 'lazy', 'commands', 'static_attributes'},
                 exclude_none=True))
             if res.ok:
@@ -572,8 +577,8 @@ class IoTAClient(BaseHttpClient):
                          "protocol", "transport",
                          "expressionLanguage"}
 
-        live_settings = live_device.dict(include=settings_dict)
-        new_settings = device.dict(include=settings_dict)
+        live_settings = live_device.model_dump(include=settings_dict)
+        new_settings = device.model_dump(include=settings_dict)
 
         if not live_settings == new_settings:
             self.delete_device(device_id=device.device_id,
