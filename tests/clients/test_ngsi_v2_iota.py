@@ -358,7 +358,7 @@ class TestAgent(unittest.TestCase):
         live_entity.get_attribute("Att2")
 
         # test update where device information were changed
-        device_settings = {"endpoint": "http://localhost:7071/",
+        new_device_dict = {"endpoint": "http://localhost:7071/",
                            "device_id": "new_id",
                            "entity_name": "new_name",
                            "entity_type": "new_type",
@@ -366,12 +366,14 @@ class TestAgent(unittest.TestCase):
                            "apikey": "zuiop",
                            "protocol": "HTTP",
                            "transport": "HTTP"}
+        new_device = Device(**new_device_dict)
 
-        for key, value in device_settings.items():
+        for key, value in new_device_dict.items():
             device.__setattr__(key, value)
             self.client.patch_device(device=device)
             live_device = self.client.get_device(device_id=device.device_id)
-            self.assertEqual(live_device.__getattribute__(key), value)
+            self.assertEqual(live_device.__getattribute__(key),
+                             new_device.__getattribute__(key))
             cb_client.close()
 
     def test_service_group(self):

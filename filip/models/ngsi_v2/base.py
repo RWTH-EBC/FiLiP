@@ -12,19 +12,19 @@ from typing import Union, Optional, Pattern, List, Dict, Any
 from filip.models.base import DataType
 from filip.models.ngsi_v2.units import validate_unit_data, Unit
 from filip.utils.simple_ql import QueryString, QueryStatement
-from filip.utils.validators import validate_http_url, \
-    validate_escape_character_free, validate_fiware_datatype_string_protect, validate_fiware_datatype_standard
+from filip.utils.validators import validate_escape_character_free, \
+    validate_fiware_datatype_string_protect, validate_fiware_datatype_standard
 
 
 class Http(BaseModel):
     """
     Model for notification and registrations sent or retrieved via HTTP
-
-    url: It references the service to be invoked when a notification is
-    generated. An NGSIv2 compliant server must support the http URL
-    schema. Other schemas could also be supported.
     """
-    url: AnyHttpUrl
+    url: AnyHttpUrl = Field(
+        description="URL referencing the service to be invoked when a "
+                    "notification is generated. An NGSIv2 compliant server "
+                    "must support the http URL schema. Other schemas could "
+                    "also be supported.")
 
 
 class EntityPattern(BaseModel):
