@@ -7,25 +7,25 @@ from pathlib import Path
 readme_path = Path(__file__).parent.joinpath("README.md")
 LONG_DESCRIPTION = readme_path.read_text()
 
-INSTALL_REQUIRES = ['aenum',
-                    'datamodel_code_generator[http]>=0.11.16',
-                    'paho-mqtt>=1.6.1',
-                    'pandas>=1.2',
-                    'pandas-datapackage-reader>=0.18.0',
-                    'pydantic>=2.0.2',
-                    'pydantic-settings>=2.0.1',
-                    'PyYAML',
+INSTALL_REQUIRES = ['aenum~=3.1.15',
+                    'datamodel_code_generator[http]~=0.25.0',
+                    'paho-mqtt~=1.6.1',
+                    'pandas~=2.1.3',
+                    'pandas_datapackage_reader~=0.18.0',
+                    'pydantic~=2.5.2',
+                    'pydantic-settings~=2.1.0',
                     'stringcase>=1.2.0',
-                    'igraph==0.9.8',
-                    'rdflib~=6.0.0',
-                    'regex',
-                    'requests',
-                    'rapidfuzz',
-                    'wget']
+                    # semantics module
+                    # 'igraph==0.9.8',
+                    # 'rdflib~=6.0.0',
+                    'regex~=2023.10.3',
+                    'requests~=2.31.0',
+                    'rapidfuzz~=3.5.2',
+                    'wget~=3.2']
 
 SETUP_REQUIRES = INSTALL_REQUIRES.copy()
 
-VERSION = '0.2.5'
+VERSION = '0.3.0'
 
 setuptools.setup(
     name='filip',
