@@ -1,6 +1,8 @@
 #### v0.3.0
-- fixed inconsistency of `entity_type` as required argument ([#188](https://github.com/RWTH-EBC/FiLiP/issues/188))
-- BREAKING CHANGE: Migration of pydantic v1 to v2 ([#199](https://github.com/RWTH-EBC/FiLiP/issues/199))
+- fix: bug in typePattern validation @richardmarston ([#180](https://github.com/RWTH-EBC/FiLiP/pull/180))
+- add: add messages to all KeyErrors @FWuellhorst ([#192](https://github.com/RWTH-EBC/FiLiP/pull/192))
+- fix: get() method of Units dose not work properly by @djs0109 ([#193](https://github.com/RWTH-EBC/FiLiP/pull/193))
+- BREAKING CHANGE: Migration of pydantic v1 to v2 @djs0109 ([#199](https://github.com/RWTH-EBC/FiLiP/issues/199))
 
 #### v0.2.5
 - fixed service group edition not working ([#170](https://github.com/RWTH-EBC/FiLiP/issues/170))
