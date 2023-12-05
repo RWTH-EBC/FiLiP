@@ -3,6 +3,7 @@ IoT-Agent Module for API Client
 """
 from __future__ import annotations
 
+import json
 from copy import deepcopy
 from typing import List, Dict, Set, TYPE_CHECKING, Union, Optional
 import warnings
@@ -286,8 +287,8 @@ class IoTAClient(BaseHttpClient):
             devices = [devices]
         url = urljoin(self.base_url, 'iot/devices')
         headers = self.headers
-        data = {"devices": [device.model_dump(exclude_none=True) for device in
-                            devices]}
+        data = {"devices": [json.loads(device.model_dump_json(exclude_none=True)
+                                       ) for device in devices]}
         try:
             res = self.post(url=url, headers=headers, json=data)
             if res.ok:

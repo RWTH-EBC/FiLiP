@@ -3,6 +3,7 @@ import time
 import unittest
 from random import randrange
 from paho.mqtt.client import MQTT_CLEAN_START_FIRST_ONLY
+from filip.custom_types import AnyMqttUrl
 from filip.models import FiwareHeader
 from filip.models.ngsi_v2.context import NamedCommand
 from filip.models.ngsi_v2.iot import \
@@ -13,7 +14,6 @@ from filip.models.ngsi_v2.iot import \
 from filip.clients.mqtt import IoTAMQTTClient
 from filip.utils.cleanup import clean_test, clear_all
 from tests.config import settings
-from pydantic import AnyUrl
 
 
 logger = logging.getLogger(__name__)
@@ -219,7 +219,7 @@ class TestMQTTClient(unittest.TestCase):
         httpc.iota.post_group(service_group=self.service_group_json, update=True)
         httpc.iota.post_device(device=self.device_json, update=True)
 
-        mqtt_broker_url: AnyUrl = settings.MQTT_BROKER_URL
+        mqtt_broker_url: AnyMqttUrl = settings.MQTT_BROKER_URL
 
         self.mqttc.connect(host=mqtt_broker_url.host,
                            port=mqtt_broker_url.port,

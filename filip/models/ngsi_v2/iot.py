@@ -13,8 +13,8 @@ from filip.models.ngsi_v2.base import \
     BaseAttribute, \
     BaseValueAttribute, \
     BaseNameAttribute
-from filip.utils.validators import validate_fiware_datatype_string_protect, validate_fiware_datatype_standard, \
-    validate_http_url
+from filip.utils.validators import validate_fiware_datatype_string_protect, \
+    validate_fiware_datatype_standard
 
 logger = logging.getLogger()
 
@@ -304,24 +304,11 @@ class DeviceSettings(BaseModel):
         default=None,
         description="Optional Apikey key string to use instead of group apikey"
     )
-    endpoint: Optional[Union[AnyHttpUrl, str]] = Field(
+    endpoint: Optional[AnyHttpUrl] = Field(
         default=None,
         description="Endpoint where the device is going to receive commands, "
                     "if any."
     )
-    @field_validator('endpoint')
-    @classmethod
-    def validate_endpoint(cls, value):
-        """
-        convert endpoint to str
-        Returns:
-            timezone
-        """
-        if value:
-            return validate_http_url(url=value)
-        else:
-            return None
-
     protocol: Optional[Union[PayloadProtocol, str]] = Field(
         default=None,
         description="Name of the device protocol, for its use with an "
