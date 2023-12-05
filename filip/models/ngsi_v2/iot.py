@@ -1,8 +1,4 @@
 """
-created April 1st, 2021
-
-@author Thomas Storek
-
 Module contains models for accessing and interaction with FIWARE's IoT-Agents.
 """
 from __future__ import annotations
@@ -10,12 +6,15 @@ import logging
 import itertools
 from enum import Enum
 from typing import Any, Dict, Optional, List, Union
-import json
 import pytz
-from pydantic import BaseModel, Field, validator, AnyHttpUrl
-from filip.models.base import NgsiVersion, DataType, FiwareRegex
-from filip.models.ngsi_v2.context import NamedContextMetadata
-
+from pydantic import field_validator, ConfigDict, BaseModel, Field, AnyHttpUrl
+from filip.models.base import NgsiVersion, DataType
+from filip.models.ngsi_v2.base import \
+    BaseAttribute, \
+    BaseValueAttribute, \
+    BaseNameAttribute
+from filip.utils.validators import validate_fiware_datatype_string_protect, \
+    validate_fiware_datatype_standard
 
 logger = logging.getLogger()
 
@@ -46,28 +45,13 @@ class TransportProtocol(str, Enum):
     HTTP = "HTTP"
 
 
-class BaseAttribute(BaseModel):
+class IoTABaseAttribute(BaseAttribute, BaseNameAttribute):
     """
     Base model for device attributes
     """
-    name: str = Field(
-        description="ID of the attribute in the target entity in the "
-                    "Context Broker. Allowed characters "
-                    "are the ones in the plain ASCII set, except the following "
-                    "ones: control characters, whitespace, &, ?, / and #.",
-        max_length=256,
-        min_length=1,
-        regex=FiwareRegex.string_protect.value
-    )
-    type: Union[DataType, str] = Field(
-        description="name of the type of the attribute in the target entity. ",
-        regex=FiwareRegex.string_protect.value
-    )
-    metadata: Optional[Dict[str, Any]] = Field(
-        description="additional static metadata for the attribute "
-                    "in the target entity. (e.g. unitCode)"
-    )
+
     expression: Optional[str] = Field(
+        default=None,
         description="indicates that the value of the target attribute will "
                     "not be the plain value or the measurement, but an "
                     "expression based on a combination of the reported values. "
@@ -76,6 +60,7 @@ class BaseAttribute(BaseModel):
                     "expressionLanguage/index.html)"
     )
     entity_name: Optional[str] = Field(
+        default=None,
         description="entity_name: the presence of this attribute indicates "
                     "that the value will not be stored in the original device "
                     "entity but in a new entity with an ID given by this "
@@ -90,18 +75,20 @@ class BaseAttribute(BaseModel):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.standard.value  # Make it FIWARE-Safe"
     )
+    valid_entity_name = field_validator("entity_name")(validate_fiware_datatype_standard)
     entity_type: Optional[str] = Field(
+        default=None,
         description="configures the type of an alternative entity. "
                     "Allowed characters "
                     "are the ones in the plain ASCII set, except the following "
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.standard.value
     )
+    valid_entity_type = field_validator("entity_type")(validate_fiware_datatype_standard)
     reverse: Optional[str] = Field(
+        default=None,
         description="add bidirectionality expressions to the attribute. See "
                     "the bidirectionality transformation plugin in the "
                     "Data Mapping Plugins section for details. "
@@ -113,40 +100,35 @@ class BaseAttribute(BaseModel):
         if isinstance(other, BaseAttribute):
             return self.name == other.name
         else:
-            return self.dict == other
+            return self.model_dump() == other
 
 
-class DeviceAttribute(BaseAttribute):
+class DeviceAttribute(IoTABaseAttribute):
     """
     Model for active device attributes
     """
     object_id: Optional[str] = Field(
+        default=None,
         description="name of the attribute as coming from the device."
     )
-    metadata: Optional[Dict[str, Union[Dict, str]]] = Field(
-        description="Additional meta information for the attribute, "
-                    "e.g. 'unitCode'"
-    )
 
-    @validator('metadata')
-    def validate_metadata(cls, data):
-        """
-        Check metadata object for serialization and units if present.
-        Args:
-            value: value of metadata field
-        Returns:
 
-        """
-        assert json.dumps(data), "metadata not serializable"
-        for k, v in data.items():
-            data.update(NamedContextMetadata(name=k, **v).to_context_metadata())
-        return data
-
-class LazyDeviceAttribute(DeviceAttribute):
+class LazyDeviceAttribute(BaseNameAttribute):
     """
     Model for lazy device attributes
     """
-    pass
+    type: Union[DataType, str] = Field(
+        default=DataType.TEXT,
+        description="The attribute type represents the NGSI value type of the "
+                    "attribute value. Note that FIWARE NGSI has its own type "
+                    "system for attribute values, so NGSI value types are not "
+                    "the same as JSON types. Allowed characters "
+                    "are the ones in the plain ASCII set, except the following "
+                    "ones: control characters, whitespace, &, ?, / and #.",
+        max_length=256,
+        min_length=1,
+    )
+    valid_type = field_validator("type")(validate_fiware_datatype_string_protect)
 
 
 class DeviceCommand(BaseModel):
@@ -160,25 +142,19 @@ class DeviceCommand(BaseModel):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.string_protect.value
     )
+    valid_name = field_validator("name")(validate_fiware_datatype_string_protect)
     type: Union[DataType, str] = Field(
         description="name of the type of the attribute in the target entity. ",
         default=DataType.COMMAND
     )
 
 
-class StaticDeviceAttribute(BaseAttribute):
+class StaticDeviceAttribute(IoTABaseAttribute, BaseValueAttribute):
     """
     Model for static device attributes
     """
-    value: Optional[Union[Dict, List, str, float]] = Field(
-        description="Constant value for this attribute"
-    )
-    metadata: Optional[Dict[str, Dict]] = Field(
-        description="Additional meta information for the attribute, "
-                    "e.g. 'unitCode'"
-    )
+    pass
 
 
 class ServiceGroup(BaseModel):
@@ -187,11 +163,13 @@ class ServiceGroup(BaseModel):
     https://iotagent-node-lib.readthedocs.io/en/latest/api/index.html#service-group-api
     """
     service: Optional[str] = Field(
+        default=None,
         description="ServiceGroup of the devices of this type"
     )
     subservice: Optional[str] = Field(
+        default=None,
         description="Subservice of the devices of this type.",
-        regex="^/"
+        pattern="^/"
     )
     resource: str = Field(
         description="string representing the Southbound resource that will be "
@@ -204,6 +182,7 @@ class ServiceGroup(BaseModel):
                     "apikey, but it must be specified."
     )
     timestamp: Optional[bool] = Field(
+        default=None,
         description="Optional flag about whether or not to add the TimeInstant "
                     "attribute to the device entity created, as well as a "
                     "TimeInstant metadata to each attribute, with the current "
@@ -211,24 +190,36 @@ class ServiceGroup(BaseModel):
                     "property-of-a-property is created instead."
     )
     entity_type: Optional[str] = Field(
+        default=None,
         description="name of the Entity type to assign to the group. "
                     "Allowed characters "
                     "are the ones in the plain ASCII set, except the following "
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.standard.value  # Make it FIWARE-Safe
     )
+    valid_entity_type = field_validator("entity_type")(validate_fiware_datatype_standard)
     trust: Optional[str] = Field(
+        default=None,
         description="trust token to use for secured access to the "
                     "Context Broker for this type of devices (optional; only "
                     "needed for secured scenarios)."
     )
     cbHost: Optional[AnyHttpUrl] = Field(
+        default=None,
         description="Context Broker connection information. This options can "
                     "be used to override the global ones for specific types of "
                     "devices."
     )
+    @field_validator('cbHost')
+    @classmethod
+    def validate_cbHost(cls, value):
+        """
+        convert cbHost to str
+        Returns:
+            timezone
+        """
+        return str(value)
     lazy: Optional[List[LazyDeviceAttribute]] = Field(
         default=[],
         desription="list of common lazy attributes of the device. For each "
@@ -285,22 +276,76 @@ class ServiceGroup(BaseModel):
                     "v2 or ld. The default is v2. When not running in mixed "
                     "mode, this field is ignored.")
     defaultEntityNameConjunction: Optional[str] = Field(
+        default=None,
         description="optional string value to set default conjunction string "
                     "used to compose a default entity_name when is not "
                     "provided at device provisioning time."
     )
 
 
-class Device(BaseModel):
+class DeviceSettings(BaseModel):
+    """
+    Model for iot device settings
+    """
+    model_config = ConfigDict(validate_assignment=True)
+    timezone: Optional[str] = Field(
+        default='Europe/London',
+        description="Time zone of the sensor if it has any"
+    )
+    timestamp: Optional[bool] = Field(
+        default=None,
+        description="Optional flag about whether or not to add the TimeInstant "
+                    "attribute to the device entity created, as well as a "
+                    "TimeInstant metadata to each attribute, with the current "
+                    "timestamp. With NGSI-LD, the Standard observedAt "
+                    "property-of-a-property is created instead."
+    )
+    apikey: Optional[str] = Field(
+        default=None,
+        description="Optional Apikey key string to use instead of group apikey"
+    )
+    endpoint: Optional[AnyHttpUrl] = Field(
+        default=None,
+        description="Endpoint where the device is going to receive commands, "
+                    "if any."
+    )
+    protocol: Optional[Union[PayloadProtocol, str]] = Field(
+        default=None,
+        description="Name of the device protocol, for its use with an "
+                    "IoT Manager."
+    )
+    transport: Optional[Union[TransportProtocol, str]] = Field(
+        default=None,
+        description="Name of the device transport protocol, for the IoT Agents "
+                    "with multiple transport protocols."
+    )
+    expressionLanguage: Optional[ExpressionLanguage] = Field(
+        default=None,
+        description="optional boolean value, to set expression language used "
+                    "to compute expressions, possible values are: "
+                    "legacy or jexl. When not set or wrongly set, legacy "
+                    "is used as default value."
+    )
+    explicitAttrs: Optional[bool] = Field(
+        default=False,
+        description="optional boolean value, to support selective ignore "
+                    "of measures so that IOTA does not progress. If not "
+                    "specified default is false."
+    )
+
+
+class Device(DeviceSettings):
     """
     Model for iot devices.
     https://iotagent-node-lib.readthedocs.io/en/latest/api/index.html#device-api
     """
+    model_config = ConfigDict(validate_default=True, validate_assignment=True)
     device_id: str = Field(
         description="Device ID that will be used to identify the device"
     )
     service: Optional[str] = Field(
-        description="Name of the service_group the device belongs to "
+        default=None,
+        description="Name of the service the device belongs to "
                     "(will be used in the fiware-service header).",
         max_length=50
     )
@@ -309,7 +354,7 @@ class Device(BaseModel):
         description="Name of the subservice the device belongs to "
                     "(used in the fiware-servicepath header).",
         max_length=51,
-        regex="^/"
+        pattern="^/"
     )
     entity_name: str = Field(
         description="Name of the entity representing the device in "
@@ -318,8 +363,8 @@ class Device(BaseModel):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.standard.value  # Make it FIWARE-Safe"
     )
+    valid_entity_name = field_validator("entity_name")(validate_fiware_datatype_standard)
     entity_type: str = Field(
         description="Type of the entity in the Context Broker. "
                     "Allowed characters "
@@ -327,35 +372,9 @@ class Device(BaseModel):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.standard.value  # Make it FIWARE-Safe"
     )
-    timezone: Optional[str] = Field(
-        default='Europe/London',
-        description="Time zone of the sensor if it has any"
-    )
-    timestamp: Optional[bool] = Field(
-        description="Optional flag about whether or not to add the TimeInstant "
-                    "attribute to the device entity created, as well as a "
-                    "TimeInstant metadata to each attribute, with the current "
-                    "timestamp. With NGSI-LD, the Standard observedAt "
-                    "property-of-a-property is created instead."
-    )
-    apikey: Optional[str] = Field(
-        description="Optional Apikey key string to use instead of group apikey"
-    )
-    endpoint: Optional[AnyHttpUrl] = Field(
-        description="Endpoint where the device is going to receive commands, "
-                    "if any."
-    )
-    protocol: Optional[str] = Field(
-        description="Name of the device protocol, for its use with an "
-                    "IoT Manager."
-    )
-    transport: TransportProtocol = Field(
-        description="Name of the device transport protocol, for the IoT Agents "
-                    "with multiple transport protocols."
-    )
-    lazy: List[DeviceAttribute] = Field(
+    valid_entity_type = field_validator("entity_type")(validate_fiware_datatype_standard)
+    lazy: List[LazyDeviceAttribute] = Field(
         default=[],
         description="List of lazy attributes of the device"
     )
@@ -378,18 +397,6 @@ class Device(BaseModel):
         description="List of internal attributes with free format for specific "
                     "IoT Agent configuration"
     )
-    expressionLanguage: Optional[ExpressionLanguage] = Field(
-        description="optional boolean value, to set expression language used "
-                    "to compute expressions, possible values are: "
-                    "legacy or jexl. When not set or wrongly set, legacy "
-                    "is used as default value."
-    )
-    explicitAttrs: Optional[bool] = Field(
-        default=False,
-        description="optional boolean value, to support selective ignore "
-                    "of measures so that IOTA does not progress. If not "
-                    "specified default is false."
-    )
     ngsiVersion: NgsiVersion = Field(
         default=NgsiVersion.v2,
         description="optional string value used in mixed mode to switch between"
@@ -397,11 +404,8 @@ class Device(BaseModel):
                     "v2 or ld. The default is v2. When not running in "
                     "mixed mode, this field is ignored.")
 
-    class Config:
-        validate_all = True
-        validate_assignment = True
-
-    @validator('timezone')
+    @field_validator('timezone')
+    @classmethod
     def validate_timezone(cls, value):
         """
         validate timezone
@@ -430,9 +434,10 @@ class Device(BaseModel):
                                          self.commands):
             if attribute.name == attribute_name:
                 return attribute
-        logger.error("Device: %s: Could not find "
-                     "attribute with name %s", self.device_id, attribute_name)
-        raise KeyError
+        msg = f"Device: {self.device_id}: Could not " \
+              f"find attribute with name {attribute_name}"
+        logger.error(msg)
+        raise KeyError(msg)
 
     def add_attribute(self,
                       attribute: Union[DeviceAttribute,
@@ -450,28 +455,28 @@ class Device(BaseModel):
             None
         """
         try:
-            if isinstance(attribute, DeviceAttribute):
+            if type(attribute) == DeviceAttribute:
                 if attribute in self.attributes:
                     raise ValueError
 
                 self.attributes.append(attribute)
                 self.__setattr__(name='attributes',
                                  value=self.attributes)
-            elif isinstance(attribute, LazyDeviceAttribute):
+            elif type(attribute) == LazyDeviceAttribute:
                 if attribute in self.lazy:
                     raise ValueError
 
                 self.lazy.append(attribute)
                 self.__setattr__(name='lazy',
                                  value=self.lazy)
-            elif isinstance(attribute, StaticDeviceAttribute):
+            elif type(attribute) == StaticDeviceAttribute:
                 if attribute in self.static_attributes:
                     raise ValueError
 
                 self.static_attributes.append(attribute)
                 self.__setattr__(name='static_attributes',
                                  value=self.static_attributes)
-            elif isinstance(attribute, DeviceCommand):
+            elif type(attribute) == DeviceCommand:
                 if attribute in self.commands:
                     raise ValueError
 
@@ -485,11 +490,11 @@ class Device(BaseModel):
                 self.update_attribute(attribute, append=False)
                 logger.warning("Device: %s: Attribute already "
                                "exists. Will update: \n %s",
-                               self.device_id, attribute.json(indent=2))
+                               self.device_id, attribute.model_dump_json(indent=2))
             else:
                 logger.error("Device: %s: Attribute already "
                              "exists: \n %s", self.device_id,
-                             attribute.json(indent=2))
+                             attribute.model_dump_json(indent=2))
                 raise
 
     def update_attribute(self,
@@ -500,6 +505,7 @@ class Device(BaseModel):
                          append: bool = False) -> None:
         """
         Updates existing device attribute
+
         Args:
             attribute: Attribute to add to device configuration
             append (bool): Adds attribute if not exist
@@ -508,29 +514,28 @@ class Device(BaseModel):
             None
         """
         try:
-            if isinstance(attribute, DeviceAttribute):
+            if type(attribute) == DeviceAttribute:
                 idx = self.attributes.index(attribute)
-                self.attributes[idx].dict().update(attribute.dict())
-            elif isinstance(attribute, LazyDeviceAttribute):
+                self.attributes[idx].model_dump().update(attribute.model_dump())
+            elif type(attribute) == LazyDeviceAttribute:
                 idx = self.lazy.index(attribute)
-                self.lazy[idx].dict().update(attribute.dict())
-            elif isinstance(attribute, StaticDeviceAttribute):
+                self.lazy[idx].model_dump().update(attribute.model_dump())
+            elif type(attribute) == StaticDeviceAttribute:
                 idx = self.static_attributes.index(attribute)
-                self.static_attributes[idx].dict().update(attribute.dict())
-            elif isinstance(attribute, DeviceCommand):
+                self.static_attributes[idx].model_dump().update(attribute.model_dump())
+            elif type(attribute) == DeviceCommand:
                 idx = self.commands.index(attribute)
-                self.commands[idx].dict().update(attribute.dict())
+                self.commands[idx].model_dump().update(attribute.model_dump())
         except ValueError:
             if append:
                 logger.warning("Device: %s: Could not find "
                                "attribute: \n %s",
-                               self.device_id, attribute.json(indent=2))
+                               self.device_id, attribute.model_dump_json(indent=2))
                 self.add_attribute(attribute=attribute)
             else:
-                logger.error("Device: %s: Could not find "
-                             "attribute: \n %s", self.device_id,
-                             attribute.json(indent=2))
-                raise KeyError
+                msg = f"Device: {self.device_id}: Could not find "\
+                      f"attribute: \n {attribute.model_dump_json(indent=2)}"
+                raise KeyError(msg)
 
     def delete_attribute(self, attribute: Union[DeviceAttribute,
                                                 LazyDeviceAttribute,
@@ -545,24 +550,24 @@ class Device(BaseModel):
 
         """
         try:
-            if isinstance(attribute, DeviceAttribute):
+            if type(attribute) == DeviceAttribute:
                 self.attributes.remove(attribute)
-            elif isinstance(attribute, LazyDeviceAttribute):
+            elif type(attribute) == LazyDeviceAttribute:
                 self.lazy.remove(attribute)
-            elif isinstance(attribute, StaticDeviceAttribute):
+            elif type(attribute) == StaticDeviceAttribute:
                 self.static_attributes.remove(attribute)
-            elif isinstance(attribute, DeviceCommand):
+            elif type(attribute) == DeviceCommand:
                 self.commands.remove(attribute)
             else:
                 raise ValueError
         except ValueError:
             logger.warning("Device: %s: Could not delete "
                            "attribute: \n %s",
-                           self.device_id, attribute.json(indent=2))
+                           self.device_id, attribute.model_dump_json(indent=2))
             raise
 
         logger.info("Device: %s: Attribute deleted! \n %s",
-                    self.device_id, attribute.json(indent=2))
+                    self.device_id, attribute.model_dump_json(indent=2))
 
     def get_command(self, command_name: str):
         """

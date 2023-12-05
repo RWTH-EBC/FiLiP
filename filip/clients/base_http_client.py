@@ -1,12 +1,12 @@
 """
-Base client module
+Base http client module
 """
 import logging
 from pydantic import AnyHttpUrl
 from typing import Dict, ByteString, List, IO, Tuple, Union
 import requests
 from filip.models.base import FiwareHeader, FiwareLDHeader
-from filip.utils import validate_url
+from filip.utils import validate_http_url
 
 
 class BaseHttpClient:
@@ -36,7 +36,7 @@ class BaseHttpClient:
 
         if url:
             self.logger.debug("Checking url style...")
-            self.base_url = validate_url(url)
+            self.base_url = validate_http_url(url)
 
         if session:
             self.session = session
@@ -57,7 +57,7 @@ class BaseHttpClient:
     def __enter__(self):
         if not self.session:
             self.session = requests.Session()
-            self.headers.update(self.fiware_headers.dict(by_alias=True))
+            self.headers.update(self.fiware_headers.model_dump(by_alias=True))
             self._external_session = False
         return self
 
@@ -95,16 +95,16 @@ class BaseHttpClient:
         elif isinstance(headers, FiwareLDHeader):
             self._fiware_headers = headers
         elif isinstance(headers, dict):
-            self._fiware_headers = FiwareHeader.parse_obj(headers)
+            self._fiware_headers = FiwareHeader.model_validate(headers)
         elif isinstance(headers, str):
-            self._fiware_headers = FiwareHeader.parse_raw(headers)
+            self._fiware_headers = FiwareHeader.model_validate_json(headers)
         elif isinstance(headers, dict):
             self._fiware_headers = FiwareLDHeader.parse_obj(headers)
         elif isinstance(headers, str):
             self._fiware_headers = FiwareLDHeader.parse_raw(headers)
         else:
             raise TypeError(f'Invalid headers! {type(headers)}')
-        self.headers.update(self.fiware_headers.dict(by_alias=True))
+        self.headers.update(self.fiware_headers.model_dump(by_alias=True))
 
     @property
     def fiware_service(self) -> str:
@@ -126,7 +126,7 @@ class BaseHttpClient:
             None
         """
         self._fiware_headers.service = service
-        self.headers.update(self.fiware_headers.dict(by_alias=True))
+        self.headers.update(self.fiware_headers.model_dump(by_alias=True))
 
     @property
     def fiware_service_path(self) -> str:
@@ -148,7 +148,7 @@ class BaseHttpClient:
             None
         """
         self._fiware_headers.service_path = service_path
-        self.headers.update(self.fiware_headers.dict(by_alias=True))
+        self.headers.update(self.fiware_headers.model_dump(by_alias=True))
 
     @property
     def headers(self):
@@ -355,7 +355,7 @@ class BaseHttpClient:
             elif err.response.text and not msg:
                 self.logger.error("%s", err.response.text)
         elif not err.response and msg:
-                self.logger.error("%s \n Reason: %s", msg, err)
+            self.logger.error("%s \n Reason: %s", msg, err)
         else:
             self.logger.error(err)
 

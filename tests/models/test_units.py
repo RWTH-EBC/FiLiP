@@ -9,14 +9,14 @@ from filip.models.ngsi_v2.units import \
     UnitText, \
     load_units
 
+
 class TestUnitCodes(TestCase):
+
     def setUp(self):
         self.units_data = load_units()
         self.units = Units()
-        self.unit = {"code": {"type": "Text",
-                              "value": "C58"},
-                     "name": {"type": "Text",
-                              "value": "newton second per metre"}}
+        self.unit = {"code": "C58",
+                     "name": "newton second per metre"}
 
     def test_unit_code(self):
         """
@@ -43,12 +43,14 @@ class TestUnitCodes(TestCase):
             None
         """
         unit = Unit(**self.unit)
-        unit_from_json = Unit.parse_raw(unit.json(by_alias=True))
+        json_data = unit.model_dump_json(by_alias=False)
+        unit_from_json = Unit.model_validate_json(json_data=json_data)
         self.assertEqual(unit, unit_from_json)
 
     def test_units(self):
         """
         Test units api
+
         Returns:
             None
         """
@@ -59,6 +61,26 @@ class TestUnitCodes(TestCase):
                          units.keys(by_code=True))
         self.assertEqual(self.units_data.CommonCode.to_list(), units.codes)
 
-        for unit in units.values():
-            cmdout = unit.json(indent=2)
-            #print(cmdout)
+        # check get or __getitem__, respectively
+        for k in units.keys():
+            units.get(k)
+
+        for k in units.keys(by_code=True):
+            units.get(k)
+
+        # check serialization
+        for v in units.values():
+            v.model_dump_json(indent=2)
+
+
+    def test_unit_validator(self):
+        """
+        Test if unit hints are given for typos
+        Returns:
+            None
+        """
+        unit_data = self.unit.copy()
+        unit_data['name'] = "celcius"
+        with self.assertRaises(ValueError):
+            Unit(**unit_data)
+

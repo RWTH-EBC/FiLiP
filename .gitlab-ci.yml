@@ -2,17 +2,14 @@ stages:
     - test
     - doc
     - code_quality
+    - build
     - deploy
 
 variables:
-    EXCLUDE_PYTHON: 36
+    EXCLUDE_PYTHON: 311, 312
+    PYTHON_VERSION: "registry.git.rwth-aachen.de/ebc/ebc_all/gitlab_ci/templates:python_3.9"
     PAGES_BRANCH: master
-    CB_URL: http://134.130.166.184:1026
-    IOTA_URL: http://134.130.166.184:4041
-    QL_URL: http://134.130.166.184:8668
-    MQTT_BROKER_URL: mqtt://134.130.166.184:1883
-    
-
+    PYTHON_PACKAGE_NAME: "filip"
 
 include:
     - project: 'EBC/EBC_all/gitlab_ci/templates'
@@ -20,8 +17,10 @@ include:
     - project: 'EBC/EBC_all/gitlab_ci/templates'
       file: 'python/doc/sphinxdoc.gitlab-ci.yml'
     - project: 'EBC/EBC_all/gitlab_ci/templates'
-      file: 'pages/pages.gitlab-ci.yml'
+      file: 'pages/gl-pages.gitlab-ci.yml'
     - project: 'EBC/EBC_all/gitlab_ci/templates'
-      file: 'python/unit-tests/unittest.gitlab-ci.yml'
+      file: 'python/tests/tests.gitlab-ci.yml'
     - project: 'EBC/EBC_all/gitlab_ci/templates'
-      file: 'python/unit-tests/coverage.gitlab-ci.yml'
+      file: 'python/tests/coverage.gitlab-ci.yml'
+    - project: 'EBC/EBC_all/gitlab_ci/templates'
+      file: 'python/build/build.gitlab-ci.yml'
