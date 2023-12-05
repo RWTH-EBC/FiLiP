@@ -1,13 +1,34 @@
-![E.ON EBC RWTH Aachen University](https://raw.githubusercontent.com/N5GEH/n5geh.tools.FiLiP/development/docs/logos/EBC_Logo.png)
+![E.ON EBC RWTH Aachen University](https://raw.githubusercontent.com/RWTH-EBC/FiLiP/master/docs/logos/EBC_Logo.png)
 
+# FiLiP
+
+[![pylint](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/pylint/pylint.svg)](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/pylint/pylint.html)
+[![Documentation](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/docs/doc.svg)](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/docs/index.html)
+[![coverage](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/coverage/badge.svg)](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/coverage)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
-[![Documentation](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/development/docs/doc.svg)](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/development/docs/index.html)
-
-# FiLiP - Fiware Library for Python
+[![build](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/build/build.svg)](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/build/build.svg)
 
 FiLiP (Fiware Library for Python) is a python software development kit (SDK) for 
 accelerating the development of web services that use Fiware's Generic 
 Enablers (GEs) as backend.
+
+It is mainly based on the [Pydantic](https://pydantic-docs.helpmanual.io/) 
+package which is a sophisticated library for data validation and settings 
+management using python type annotations.
+Pydantic enforces type hints at runtime, and provides user friendly errors 
+when data is invalid.
+We mainly use the Pydantic model to build our own data model structure required 
+for efficient data model parsing and validation and interaction with FIWARE 
+services' RestAPIs.
+
+For API interaction, FiLiP relies on the well-known 
+[requests](https://docs.python-requests.org/en/latest/) package. 
+It is important to understand that we do not in any way restrict any 
+features of requests.
+
+Furthermore, FiLiP is designed to help with the fast development of FIWARE-based 
+applications and avoid hundreds of lines of boilerplate, but it cannot 
+substitute learning the basic concepts behind the used FIWARE components.
 
 ## General Motivation
 
@@ -16,7 +37,7 @@ from openapi documentation?
 A general prerequisite to do so is that the documentation is in depth and of 
 good quality. 
 While FIWARE generally provides 
-[openapi documentation](https://github.com/FIWARE/specifications/tree/master/OpenAPI/ngsiv2),
+[openapi documentation](https://github.com/FIWARE/specifications),
 here are some thoughts on the challenges of auto-generating client code from 
 these documents:
 
@@ -24,19 +45,15 @@ these documents:
   depends on the provided input data.
 - Manipulating generated code can result in a big hassle for maintenance if 
   additional features need to be integrated.
-- The underlying NGSI (New Generation Service Interface) for FIWARE is a
+- The underlying NGSI (Next Generation Service Interface) for FIWARE is a
   rather generic specification.
   Hence, generated models may also be of generic types as lists
   and dicts in Python. So there is no real benefit.
   Furthermore, there is no chance for reasonable validation and error handling.
 
-## Structure of FiLiP
-
-![Library Structure](https://raw.githubusercontent.com/N5GEH/n5geh.tools.FiLiP/development/docs/diagrams/out/architecture.png)
-
 ## Getting started
 
-The following section shortly describes use of the library.
+The following section shortly describes how to use the library.
 
 ### Prerequisites
 
@@ -49,59 +66,29 @@ on this.
 If this is not an option for you, FIWARE also provides a testing server.
 You can register for a testing account 
 [here](https://www.fiware.org/developers/fiware-lab/).
+> **Note**: FiLiP is now compatible to [Pydantic V2](https://docs.pydantic.dev/latest/migration/). If your program still require Pydantic V1.x for some reason, please use release [v0.2.5](https://github.com/RWTH-EBC/FiLiP/releases/tag/v0.2.5) or earlier version of FiLiP. Besides, we recommended to use `pydantic~=1.10` in the `requirements.txt`
 
 ### Installation
 
 The easiest way to install the library is via pip:
 
+````
+pip install -U filip
+````
+
+If you want to benefit from the latest changes, use the following command 
+(This will install the current master branch from this repository):
+
 ```
 pip install -U git+git://github.com/RWTH-EBC/filip
 ```
 
-If you want to benefit from the latest changes, use the development branch:
-
-```
-pip install -U git+git://github.com/RWTH-EBC/filip@development
-```
-
-## Documentation
-
-We are still working on the documentation.
-You can find our current documentation 
-[here](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/development/docs/index.html).
-
-### Running examples or tests
-
-Once you have installed the library, you can check the [examples](/examples)
-to learn how to use the different components. 
-
-Currently, we provide basic examples for the usage of FiLiP for the FIWARE 
-GEs mentioned above.
-We suggest to start with the config-example in order to understand the 
-configuration of clients (*Note: This may change in the future*).
-Also, we provide more advanced examples for the semantic 
-context data modeling within a context broker using 
-[relationships](/examples/relationship_example.py).
-Furthermore, the context broker provides a mechanism for an event-based 
-http-notification.
-Using this mechanism is shown [here](/examples/subscription_example.py).
-
-**NOTE**: Currently, we are refactoring the library in order to provide a 
-better validation mechanism. 
-After this big step we will work on further examples, and on the integration of 
-further advanced functions supporting effective context data modeling 
-using validated data model structures. 
-
-## Testing
-
-Currently, we are working on a CI workflow for continuous testing of the library.
-
-## FIWARE
+### Introduction to FIWARE
 
 The following section introduces FIWARE. If you are already familiar with 
 FIWARE, you can skip this section and go straight to [Getting Started](#getting-started).
 
-### What is FIWARE?
+#### What is FIWARE?
 
 FIWARE is a framework of open-source cloud platform components, created 
 to facilitate the development of smart solutions within various application 
@@ -123,7 +110,7 @@ FIWARE also offers extended lessons through their
 However, usually one only requires a small set of components. 
 Hence, we recommend using the cited pages only as needed.
 
-### How to set up a FIWARE platform?
+#### How to set up a FIWARE platform?
 
 The easiest way to set up a FIWARE platform is by using docker as all GEs are 
 open-source and distributed as docker containers on dockerhub.
@@ -133,7 +120,7 @@ Hence, we wrote a small [tutorial](https://github.com/N5GEH/n5geh.platform)
 explaining how to set up a platform suited for most use cases within the energy 
 domain. 
 
-### FIWARE GEs covered by FiLiP
+#### FIWARE GEs covered by FiLiP
 
 FiLiP is a library developed on demand.
 Hence, we do not aim to cover the APIs of all GEs that are included in the 
@@ -186,23 +173,61 @@ Therefore, FiLiP currently only covers the APIs of the following GEs:
   
     - [documentation](https://quantumleap.readthedocs.io/en/latest/)
     - [github](https://github.com/FIWARE-GEs/quantum-leap)
-    - [swagger](https://app.swaggerhub.com/apis/smartsdk/ngsi-tsdb/0.7) (*not 
-      up to date*, newest API version is 8.0)
+    - [swagger](https://app.swaggerhub.com/apis/smartsdk/ngsi-tsdb/0.8.3)
+
+## Structure of FiLiP
+
+![Library Structure](https://raw.githubusercontent.com/RWTH-EBC/FiLiP/master/docs/diagrams/out/architecture.png)
+
+
+## Documentation
+
+We are still working on the documentation.
+You can find our current documentation 
+[here](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/docs/index.html).
+
+## Running examples
+
+Once you have installed the library, you can check the [examples](/examples)
+to learn how to use the different components. 
+
+Currently, we provide basic examples for the usage of FiLiP for the FIWARE 
+GEs mentioned above.
+We suggest to start in the right order to first understand the 
+configuration of clients.
+Afterwards, you can start modelling context data and interacting with the context 
+broker and use its functionalities before you learn how to connect 
+IoT Devices and store historic data.
+
+## Testing
+
+We use unittests to write our test cases.
+To test the source code of the library in our CI workflow, the CI 
+executes all tests located in the `tests`-directory and prefixed with `test_` .
+
+## How to contribute
+
+Please see our [contribution guide](./CONTRIBUTING.md) for more details on 
+how you can contribute to this project.
 
 ## Authors
 
 * [Thomas Storek](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Team2/~lhda/Thomas-Storek/?lidx=1) (corresponding)
 * [Saira Bano](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Systemadministration/~ohhca/Bano-Saira/)
-* [Stephan Göbel](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Team3/~ccdhp/Goebel-Stephan/)
-* [Sebastian Borges](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Team3/~mvoee/Borges-Sebastian/)
+* [Daniel Nikolay](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Systemadministration/~qcqxq/Nikolay-Daniel/)
 
 ## Alumni
 
+* Jeff Reding
 * Felix Rehmann
 
 ## References
 
-We presented the library in the following publications:
+We presented or applied the library in the following publications:
+
+- Haghgoo, M., Dognini, A., Storek, T., Plamanescu, R, Rahe, U., 
+  Gheorghe, S, Albu, M., Monti, A., Müller, D. (2021) A cloud-based service-oriented architecture to unlock smart energy services
+  https://www.doi.org/10.1186/s42162-021-00143-x
 
 - Baranski, M., Storek, T. P. B., Kümpel, A., Blechmann, S., Streblow, R., 
 Müller, D. et al.,
@@ -224,23 +249,41 @@ This project is licensed under the BSD License - see the [LICENSE](LICENSE) file
 
 <a href="https://www.ebc.eonerc.rwth-aachen.de/"> <img alt="EBC" src="https://www.ebc.eonerc.rwth-aachen.de/global/show_picture.asp?id=aaaaaaaaaakevlz" height="100"> </a>
 
-2021, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy 
+2021-2022, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy 
 Efficient Buildings and Indoor Climate
 
-[Institute for Energy Efficient Buildings and Indoor Climate (EBC)](http://www.ebc.eonerc.rwth-aachen.de)  
-[E.ON Energy Research Center (E.ON ERC)](http://www.eonerc.rwth-aachen.de)  
-[RWTH University Aachen, Germany](http://www.rwth-aachen.de)
+[Institute for Energy Efficient Buildings and Indoor Climate (EBC)](https://www.ebc.eonerc.rwth-aachen.de)  
+[E.ON Energy Research Center (E.ON ERC)](https://www.eonerc.rwth-aachen.de)  
+[RWTH University Aachen, Germany](https://www.rwth-aachen.de)
+
+## Disclaimer
+
+This project is part of the cooperation between the RWTH Aachen University and 
+the Research Centre Jülich.
+
+<a href="https://www.jara.org/de/forschung/jara-energy"> <img alt="JARA 
+ENERGY" src="https://raw.githubusercontent.com/RWTH-EBC/FiLiP/master/docs/logos/LogoJARAEnergy.jpg" height="100"> </a>
 
 ## Related projects
-
 
 <a href="https://n5geh.de/"> <img alt="National 5G Energy Hub" 
 src="https://avatars.githubusercontent.com/u/43948851?s=200&v=4" height="100"></a>
 
+<a href="https://fismep.de/"> <img alt="FISMEP" 
+src="https://raw.githubusercontent.com/RWTH-EBC/FiLiP/master/docs/logos/FISMEP.png" 
+height="100"></a>
+
+
 ## Acknowledgments
 
 We gratefully acknowledge the financial support of the Federal Ministry <br /> 
-for Economic Affairs and Energy (BMWi), promotional reference 03ET1561B.
+for Economic Affairs and Climate Action (BMWK), promotional references 
+03ET1495A, 03ET1551A, 0350018A, 03ET1561B.
 
-<a href="https://www.bmwi.de/Navigation/EN/Home/home.html"> <img alt="BMWE" src="https://www.bmwi.de/SiteGlobals/BMWI/StyleBundles/Bilder/bmwi_logo_en.svgz?__blob=normal&v=10" height="100"> </a>
+<a href="https://www.bmwi.de/Navigation/EN/Home/home.html"> <img alt="BMWK" 
+src="https://raw.githubusercontent.com/RWTH-EBC/FiLiP/master/docs/logos/bmwi_logo_en.png" height="100"> </a>
 
+This project has received funding in the framework of the joint programming initiative ERA-Net Smart Grids Plus, with support from the European Union’s Horizon 2020 research and innovation programme.
+
+<a href="https://www.eranet-smartgridsplus.eu/"> <img alt="ERANET" 
+src="https://fismep.de/wp-content/uploads/2017/09/SmartGridsPlus_rgb-300x55.jpg" height="100"> </a>

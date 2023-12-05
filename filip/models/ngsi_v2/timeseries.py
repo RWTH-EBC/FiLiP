@@ -3,13 +3,12 @@ Data models for interacting with FIWARE's time series-api (aka QuantumLeap)
 """
 from __future__ import annotations
 import logging
-from typing import Any, List
+from typing import Any, List, Union
 from datetime import datetime
 import numpy as np
 import pandas as pd
 from aenum import Enum
-from pydantic import BaseModel, Field
-
+from pydantic import ConfigDict, BaseModel, Field
 
 
 logger = logging.getLogger(__name__)
@@ -19,7 +18,7 @@ class TimeSeriesBase(BaseModel):
     """
     Base model for other time series api models
     """
-    index: List[datetime] = Field(
+    index: Union[List[datetime], datetime] = Field(
         default=None,
         description="Array of the timestamps which are indexes of the response "
                     "for the requested data. It's a parallel array to 'values'."
@@ -38,7 +37,8 @@ class TimeSeriesHeader(TimeSeriesBase):
     """
     Model to describe an available entity in the time series api
     """
-    # aliases are required due to inconsistencies in the api-specs
+    model_config = ConfigDict(populate_by_name=True)
+    # aliases are required due to formally inconsistencies in the api-specs
     entityId: str = Field(default=None,
                           alias="id",
                           description="The entity id the time series api."
@@ -50,9 +50,6 @@ class TimeSeriesHeader(TimeSeriesBase):
     entityType: str = Field(default=None,
                             alias="type",
                             description="The type of an entity")
-
-    class Config:
-        allow_population_by_field_name = False
 
 
 class IndexedValues(BaseModel):
@@ -85,7 +82,32 @@ class TimeSeries(TimeSeriesHeader):
     """
     Model for time series data
     """
+    model_config = ConfigDict(populate_by_name=True)
     attributes: List[AttributeValues] = None
+
+    def extend(self, other: TimeSeries) -> None:
+        """
+        Extends the current `TimeSeries` object with an other
+        `TimeSeries` object. With the same format.
+
+        Args:
+            other: TimeSeries Object that will be added to the original object
+
+        Returns:
+            None
+
+        Raises:
+            Assertion Error: if header fields do not fit or if index is not
+                rising
+        """
+        assert self.entityId == other.entityId
+        assert self.entityType == other.entityType
+        assert self.index[-1] < other.index[0]
+
+        for attr, other_attr in zip(self.attributes, other.attributes):
+            assert attr.attrName == other_attr.attrName
+            attr.values.extend(other_attr.values)
+        self.index.extend(other.index)
 
     def to_pandas(self) -> pd.DataFrame:
         """
@@ -101,12 +123,6 @@ class TimeSeries(TimeSeriesHeader):
             names=['entityId', 'entityType', 'attribute'])
 
         return pd.DataFrame(data=values, index=index, columns=columns)
-
-    class Config:
-        """
-        Pydantic configuration
-        """
-        allow_population_by_field_name = True
 
 
 class AggrMethod(str, Enum):

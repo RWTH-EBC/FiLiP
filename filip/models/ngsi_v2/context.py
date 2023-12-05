@@ -2,20 +2,21 @@
 NGSIv2 models for context broker interaction
 """
 import json
-from typing import Any, Type, List, Dict, Union, Optional, Pattern
-from datetime import datetime
+from typing import Any, List, Dict, Union, Optional, Set, Tuple
 from aenum import Enum
 from pydantic import \
-    AnyHttpUrl, \
-    BaseModel, \
-    create_model, \
-    Field, \
-    Json, \
-    root_validator, \
-    validator
-from filip.utils.simple_ql import QueryString, QueryStatement
-from filip.models.base import DataType, FiwareRegex
-from filip.models.ngsi_v2.units import validate_unit_data
+    field_validator, ConfigDict, BaseModel, \
+    Field
+
+from filip.models.ngsi_v2.base import \
+    EntityPattern, \
+    Expression, \
+    BaseAttribute, \
+    BaseValueAttribute, \
+    BaseNameAttribute
+from filip.models.base import DataType
+from filip.utils.validators import validate_fiware_datatype_standard, validate_fiware_datatype_string_protect
+
 
 class GetEntitiesOptions(str, Enum):
     """ Options for queries"""
@@ -47,67 +48,7 @@ class GetEntitiesOptions(str, Enum):
                        "except that values are not repeated"
 
 
-# NGSIv2 entity models
-class ContextMetadata(BaseModel):
-    """
-    Context metadata is used in FIWARE NGSI in several places, one of them being
-    an optional part of the attribute value as described above. Similar to
-    attributes, each piece of metadata has.
-
-    Note:
-         In NGSI it is not foreseen that metadata may contain nested metadata.
-    """
-    type: Optional[Union[DataType, str]] = Field(
-        title="metadata type",
-        description="a metadata type, describing the NGSI value type of the "
-                    "metadata value Allowed characters "
-                    "are the ones in the plain ASCII set, except the following "
-                    "ones: control characters, whitespace, &, ?, / and #.",
-        max_length=256,
-        min_length=1,
-        regex=FiwareRegex.standard.value  # Make it FIWARE-Safe
-    )
-    value: Optional[Any] = Field(
-        title="metadata value",
-        description="a metadata value containing the actual metadata"
-    )
-
-    @validator('value', allow_reuse=True)
-    def validate_value(cls, value):
-        assert json.dumps(value), "metadata not serializable"
-        return value
-
-
-class NamedContextMetadata(ContextMetadata):
-    """
-    Model for metadata including a name
-    """
-    name: str = Field(
-        titel="metadata name",
-        description="a metadata name, describing the role of the metadata in "
-                    "the place where it occurs; for example, the metadata name "
-                    "accuracy indicates that the metadata value describes how "
-                    "accurate a given attribute value is. Allowed characters "
-                    "are the ones in the plain ASCII set, except the following "
-                    "ones: control characters, whitespace, &, ?, / and #.",
-        max_length=256,
-        min_length=1,
-        regex=FiwareRegex.standard.value  # Make it FIWARE-Safe
-    )
-
-    @root_validator
-    def validate_data(cls, values):
-        if values.get("name", "").casefold() in ["unit",
-                                                 "unittext",
-                                                 "unitcode"]:
-             values.update(validate_unit_data(values))
-        return values
-
-    def to_context_metadata(self):
-        return {self.name: ContextMetadata(**self.dict())}
-
-
-class ContextAttribute(BaseModel):
+class ContextAttribute(BaseAttribute, BaseValueAttribute):
     """
     Model for an attribute is represented by a JSON object with the following
     syntax:
@@ -135,90 +76,10 @@ class ContextAttribute(BaseModel):
         >>> attr = ContextAttribute(**data)
 
     """
-    type: Union[DataType, str] = Field(
-        default=DataType.TEXT,
-        description="The attribute type represents the NGSI value type of the "
-                    "attribute value. Note that FIWARE NGSI has its own type "
-                    "system for attribute values, so NGSI value types are not "
-                    "the same as JSON types. Allowed characters "
-                    "are the ones in the plain ASCII set, except the following "
-                    "ones: control characters, whitespace, &, ?, / and #.",
-        max_length=256,
-        min_length=1,
-        regex=FiwareRegex.standard.value,  # Make it FIWARE-Safe
-    )
-    value: Optional[Union[Union[float, int, bool, str, List, Dict[str, Any]],
-                          List[Union[float, int, bool, str, List,
-                                     Dict[str, Any]]]]] = Field(
-        default=None,
-        title="Attribute value",
-        description="the actual data"
-    )
-    metadata: Optional[Union[Dict[str, ContextMetadata],
-                             NamedContextMetadata,
-                             List[NamedContextMetadata]]] = Field(
-        default={},
-        title="Metadata",
-        description="optional metadata describing properties of the attribute "
-                    "value like e.g. accuracy, provider, or a timestamp")
-
-    @validator('value')
-    def validate_value_type(cls, value, values):
-        """validator for field 'value'"""
-        type_ = values['type']
-        if value:
-            if type_ == DataType.TEXT:
-                if isinstance(value, list):
-                    return [str(item) for item in value]
-                return str(value)
-            if type_ == DataType.BOOLEAN:
-                if isinstance(value, list):
-                    return [bool(item) for item in value]
-                return bool(value)
-            if type_ in (DataType.NUMBER, DataType.FLOAT):
-                if isinstance(value, list):
-                    return [float(item) for item in value]
-                return float(value)
-            if type_ == DataType.INTEGER:
-                if isinstance(value, list):
-                    return [int(item) for item in value]
-                return int(value)
-            if type_ == DataType.DATETIME:
-                return value
-            if type_ == DataType.ARRAY:
-                if isinstance(value, list):
-                    return value
-                raise TypeError(f"{type(value)} does not match "
-                                f"{DataType.ARRAY}")
-            if type_ == DataType.STRUCTUREDVALUE:
-                value = json.dumps(value)
-                return json.loads(value)
-            else:
-                value = json.dumps(value)
-                return json.loads(value)
-        return value
-
-    @validator('metadata')
-    def validate_metadata_type(cls, value):
-        """validator for field 'metadata'"""
-        if isinstance(value, NamedContextMetadata):
-            value = [value]
-        elif isinstance(value, dict):
-            if all(isinstance(item, ContextMetadata)
-                   for item in value.values()):
-                return value
-            json.dumps(value)
-            return {key: ContextMetadata(**item) for key, item in value.items()}
-        if isinstance(value, list):
-            if all(isinstance(item, NamedContextMetadata) for item in value):
-                return {item.name: ContextMetadata(**item.dict(exclude={
-                    'name'})) for item in value}
-            if all(isinstance(item, Dict) for item in value):
-                return {key: ContextMetadata(**item) for key, item in value}
-        raise TypeError(f"Invalid type {type(value)}")
+    pass
 
 
-class NamedContextAttribute(ContextAttribute):
+class NamedContextAttribute(ContextAttribute, BaseNameAttribute):
     """
     Context attributes are properties of context entities. For example, the
     current speed of a car could be modeled as attribute current_speed of entity
@@ -227,18 +88,7 @@ class NamedContextAttribute(ContextAttribute):
     In the NGSI data model, attributes have an attribute name, an attribute type
     an attribute value and metadata.
     """
-    name: str = Field(
-        titel="Attribute name",
-        description="The attribute name describes what kind of property the "
-                    "attribute value represents of the entity, for example "
-                    "current_speed. Allowed characters "
-                    "are the ones in the plain ASCII set, except the following "
-                    "ones: control characters, whitespace, &, ?, / and #.",
-        max_length=256,
-        min_length=1,
-        regex=FiwareRegex.string_protect.value,
-        # Make it FIWARE-Safe
-    )
+    pass
 
 
 class ContextEntityKeyValues(BaseModel):
@@ -253,6 +103,7 @@ class ContextEntityKeyValues(BaseModel):
     is a string containing the entity's type name.
 
     """
+    model_config = ConfigDict(extra='allow', validate_default=True, validate_assignment=True)
     id: str = Field(
         ...,
         title="Entity Id",
@@ -263,10 +114,10 @@ class ContextEntityKeyValues(BaseModel):
         example='Bcn-Welt',
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.standard.value,  # Make it FIWARE-Safe
-        allow_mutation=False
+        frozen=True
     )
-    type: str = Field(
+    valid_id = field_validator("id")(validate_fiware_datatype_standard)
+    type: Union[str, Enum] = Field(
         ...,
         title="Entity Type",
         description="Id of an entity in an NGSI context broker. "
@@ -276,17 +127,9 @@ class ContextEntityKeyValues(BaseModel):
         example="Room",
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.standard.value,  # Make it FIWARE-Safe
-        allow_mutation=False
+        frozen=True
     )
-
-    class Config:
-        """
-        Pydantic config
-        """
-        extra = 'allow'
-        validate_all = True
-        validate_assignment = True
+    valid_type = field_validator("type")(validate_fiware_datatype_standard)
 
 
 class PropertyFormat(str, Enum):
@@ -322,7 +165,7 @@ class ContextEntity(ContextEntityKeyValues):
     "ContextAttribute"-model. Obviously, id and type are
     not allowed to be used as attribute names.
 
-    Example:
+    Example::
 
         >>> data = {'id': 'MyId',
                     'type': 'MyType',
@@ -331,674 +174,343 @@ class ContextEntity(ContextEntityKeyValues):
         >>> entity = ContextEntity(**data)
 
     """
-    def __init__(self,
-                 id: str,
-                 type: str,
-                 **data):
+    model_config = ConfigDict(extra='allow', validate_default=True, validate_assignment=True)
+
+    def __init__(self, id: str, type: str, **data):
 
         # There is currently no validation for extra fields
-        data.update(self._validate_properties(data))
+        data.update(self._validate_attributes(data))
         super().__init__(id=id, type=type, **data)
 
-    class Config:
-        """
-        Pydantic config
-        """
-        extra = 'allow'
-        validate_all = True
-        validate_assignment = True
-
     @classmethod
-    def _validate_properties(cls, data: Dict):
-        attrs = {key: ContextAttribute.parse_obj(attr) for key, attr in
-                 data.items() if key not in ContextEntity.__fields__}
+    def _validate_attributes(cls, data: Dict):
+        attrs = {key: ContextAttribute.model_validate(attr) for key, attr in
+                 data.items() if key not in ContextEntity.model_fields}
         return attrs
 
-    def get_properties(self,
-                       response_format: Union[str, PropertyFormat] =
-                       PropertyFormat.LIST) -> \
-            Union[List[NamedContextAttribute],
-                  Dict[str, ContextAttribute]]:
-        """
-        Args:
-            response_format:
-
-        Returns:
-
-        """
-        response_format = PropertyFormat(response_format)
-        if response_format == PropertyFormat.DICT:
-            return {key: ContextAttribute(**value) for key, value in
-                    self.dict().items() if key not in ContextEntity.__fields__
-                    and value.get('type') != DataType.RELATIONSHIP}
-
-        return [NamedContextAttribute(name=key, **value) for key, value in
-                self.dict().items() if key not in
-                ContextEntity.__fields__ and
-                value.get('type') != DataType.RELATIONSHIP]
-
-    def add_properties(self, attrs: Union[Dict[str, ContextAttribute],
+    def add_attributes(self, attrs: Union[Dict[str, ContextAttribute],
                                           List[NamedContextAttribute]]) -> None:
         """
-        Add property to entity
+        Add attributes (properties, relationships) to entity
+
         Args:
-            attrs:
+            attrs: Dict[str, ContextAttribute]: {NAME for attr : Attribute} or
+                   List[NamedContextAttribute]
+
         Returns:
             None
         """
         if isinstance(attrs, list):
-            attrs = {attr.name: ContextAttribute(**attr.dict(exclude={'name'}))
+            attrs = {attr.name: ContextAttribute(**attr.model_dump(exclude={'name'}))
                      for attr in attrs}
         for key, attr in attrs.items():
             self.__setattr__(name=key, value=attr)
 
-    def get_relationships(self,
-                          response_format: Union[str, PropertyFormat] =
-                          PropertyFormat.LIST) \
-            -> Union[List[NamedContextAttribute],
-                     Dict[str, ContextAttribute]]:
+    def get_attributes(
+            self,
+            whitelisted_attribute_types: Optional[List[DataType]] = None,
+            blacklisted_attribute_types: Optional[List[DataType]] = None,
+            response_format: Union[str, PropertyFormat] = PropertyFormat.LIST,
+            strict_data_type: bool = True) \
+            -> Union[List[NamedContextAttribute], Dict[str, ContextAttribute]]:
+        """
+        Get attributes or a subset from the entity.
+
+        Args:
+            whitelisted_attribute_types: Optional list, if given only
+                attributes matching one of the types are returned
+            blacklisted_attribute_types: Optional list, if given all
+                attributes are returned that do not match a list entry
+            response_format: Wanted result format,
+                                List -> list of NamedContextAttributes
+                                Dict -> dict of {name: ContextAttribute}
+            strict_data_type: whether to restrict the data type to pre-defined
+                types, True by default.
+                True  -> Only return the attributes with pre-defined types,
+                False -> Do not restrict the data type.
+        Raises:
+            AssertionError, if both a white and a black list is given
+        Returns:
+            List[NamedContextAttribute] or Dict[str, ContextAttribute]
+        """
+
+        response_format = PropertyFormat(response_format)
+
+        assert whitelisted_attribute_types is None or \
+               blacklisted_attribute_types is None,\
+               "Only whitelist or blacklist is allowed"
+
+        if whitelisted_attribute_types is not None:
+            attribute_types = whitelisted_attribute_types
+        elif blacklisted_attribute_types is not None:
+            attribute_types = [att_type for att_type in list(DataType)
+                               if att_type not in blacklisted_attribute_types]
+        else:
+            attribute_types = [att_type for att_type in list(DataType)]
+
+        if response_format == PropertyFormat.DICT:
+            if strict_data_type:
+                return {key: ContextAttribute(**value)
+                        for key, value in self.model_dump().items()
+                        if key not in ContextEntity.model_fields
+                        and value.get('type') in
+                        [att.value for att in attribute_types]}
+            else:
+                return {key: ContextAttribute(**value)
+                        for key, value in self.model_dump().items()
+                        if key not in ContextEntity.model_fields}
+        else:
+            if strict_data_type:
+                return [NamedContextAttribute(name=key, **value)
+                        for key, value in self.model_dump().items()
+                        if key not in ContextEntity.model_fields
+                        and value.get('type') in
+                        [att.value for att in attribute_types]]
+            else:
+                return [NamedContextAttribute(name=key, **value)
+                        for key, value in self.model_dump().items()
+                        if key not in ContextEntity.model_fields]
+
+    def update_attribute(self,
+                         attrs: Union[Dict[str, ContextAttribute],
+                                      List[NamedContextAttribute]]) -> None:
+        """
+        Update attributes of an entity. Overwrite the current held value
+        for the attribute with the value contained in the corresponding given
+        attribute
+
+        Args:
+            attrs: List of NamedContextAttributes,
+                   Dict of {attribute_name: ContextAttribute}
+        Raises:
+            NameError, if the attribute does not currently exists in the entity
+        Returns:
+            None
+        """
+        if isinstance(attrs, list):
+            attrs = {attr.name: ContextAttribute(**attr.model_dump(exclude={'name'}))
+                     for attr in attrs}
+
+        existing_attribute_names = self.get_attribute_names()
+        for key, attr in attrs.items():
+            if key not in existing_attribute_names:
+                raise NameError
+            self.__setattr__(name=key, value=attr)
+
+    def get_attribute_names(self) -> Set[str]:
+        """
+        Returns a set with all attribute names of this entity
+
+        Returns:
+            Set[str]
+        """
+
+        return {key for key in self.model_dump()
+                if key not in ContextEntity.model_fields}
+
+    def delete_attributes(self, attrs: Union[Dict[str, ContextAttribute],
+                                             List[NamedContextAttribute],
+                                             List[str]]):
+        """
+        Delete the given attributes from the entity
+
+        Args:
+            attrs:  - Dict {name: ContextAttribute}
+                    - List[NamedContextAttribute]
+                    - List[str] -> names of attributes
+        Raises:
+            Exception: if one of the given attrs does not represent an
+                       existing argument
+        """
+
+        names: List[str] = []
+        if isinstance(attrs, list):
+            for entry in attrs:
+                if isinstance(entry, str):
+                    names.append(entry)
+                elif isinstance(entry, NamedContextAttribute):
+                    names.append(entry.name)
+        else:
+            names.extend(list(attrs.keys()))
+        for name in names:
+            delattr(self, name)
+
+    def get_attribute(self, attribute_name: str) -> NamedContextAttribute:
+        """
+        Get the attribute of the entity with the given name
+
+        Args:
+            attribute_name (str): Name of attribute
+
+        Raises:
+            KeyError, if no attribute with given name exists
+
+        Returns:
+            NamedContextAttribute
+        """
+        for attr in self.get_attributes():
+            if attr.name == attribute_name:
+                return attr
+        raise KeyError(f"Attribute '{attribute_name}' not in entity")
+
+    def get_properties(
+            self,
+            response_format: Union[str, PropertyFormat] = PropertyFormat.LIST)\
+            -> Union[List[NamedContextAttribute], Dict[str, ContextAttribute]]:
+        """
+        Returns all attributes of the entity that are not of type Relationship,
+        and are not auto generated command attributes
+
+        Args:
+            response_format: Wanted result format,
+                                List -> list of NamedContextAttributes
+                                Dict -> dict of {name: ContextAttribute}
+
+        Returns:
+            [NamedContextAttribute] or {name: ContextAttribute}
+        """
+        pre_filtered_attrs = self.get_attributes(blacklisted_attribute_types=[
+            DataType.RELATIONSHIP], response_format=PropertyFormat.LIST)
+
+        all_command_attributes_names = set()
+        for command in self.get_commands():
+            (c, c_status, c_info) = self.get_command_triple(command.name)
+            all_command_attributes_names.update([c.name,
+                                                 c_status.name,
+                                                 c_info.name])
+
+        property_attributes = []
+        for attr in pre_filtered_attrs:
+            if attr.name not in all_command_attributes_names:
+                property_attributes.append(attr)
+
+        if response_format == PropertyFormat.LIST:
+            return property_attributes
+        else:
+            return {p.name: ContextAttribute(**p.model_dump(exclude={'name'}))
+                    for p in property_attributes}
+
+    def get_relationships(
+            self,
+            response_format: Union[str, PropertyFormat] = PropertyFormat.LIST)\
+            -> Union[List[NamedContextAttribute], Dict[str, ContextAttribute]]:
         """
         Get all relationships of the context entity
 
         Args:
-            response_format:
+            response_format: Wanted result format,
+                                List -> list of NamedContextAttributes
+                                Dict -> dict of {name: ContextAttribute}
 
         Returns:
+            [NamedContextAttribute] or {name: ContextAttribute}
 
         """
-        response_format = PropertyFormat(response_format)
-        if response_format == PropertyFormat.DICT:
-            return {key: ContextAttribute(**value) for key, value in
-                    self.dict().items() if key not in ContextEntity.__fields__
-                    and value.get('type') == DataType.RELATIONSHIP}
-        return [NamedContextAttribute(name=key, **value) for key, value in
-                self.dict().items() if key not in
-                ContextEntity.__fields__ and
-                value.get('type') == DataType.RELATIONSHIP]
+        return self.get_attributes(whitelisted_attribute_types=[
+            DataType.RELATIONSHIP], response_format=response_format)
 
-
-def create_context_entity_model(name: str = None,
-                                data: Dict = None,
-                                validators: Dict[str, Any] = None) -> \
-        Type['ContextEntity']:
-    r"""
-    Creates a ContextEntity-Model from a dict:
-
-    Args:
-        name: name of the model
-        data: dictionary containing the data structure
-        validators (optional): validators for the new model
-
-    Example:
-
-        >>> def username_alphanumeric(cls, value):
-                assert v.value.isalnum(), 'must be numeric'
-                return value
-
-        >>> model = create_context_entity_model(
-                        name='MyModel',
-                        data={
-                            'id': 'MyId',
-                            'type':'MyType',
-                            'temp': 'MyProperty'}
-                        {'validate_test': validator('temperature')(
-                            username_alphanumeric)})
-
-    Returns:
-        ContextEntity
-
-    """
-    properties = {key: (ContextAttribute, ...) for key in data.keys() if
-                  key not in ContextEntity.__fields__}
-    model = create_model(
-        __model_name=name or 'GeneratedContextEntity',
-        __base__=ContextEntity,
-        __validators__=validators or {},
-        **properties
-    )
-    return model
-
-
-class NotificationMessage(BaseModel):
-    """
-    Model for a notification message, when send to other NGSIv2-APIs
-    """
-    subscriptionId: Optional[str] = Field(
-        description="Id of the subscription the notification comes from",
-    )
-    data: List[ContextEntity] = Field(
-        description="is an array with the notification data itself which "
-                    "includes the entity and all concerned attributes. Each "
-                    "element in the array corresponds to a different entity. "
-                    "By default, the entities are represented in normalized "
-                    "mode. However, using the attrsFormat modifier, a "
-                    "simplified representation mode can be requested."
-    )
-
-
-# Models for Subscriptions start here
-class HttpMethods(str, Enum):
-    _init_ = 'value __doc__'
-
-    POST = "POST", "Post Method"
-    PUT = "PUT", "Put Method"
-    PATCH = "PATCH", "Patch Method"
-
-
-class Http(BaseModel):
-    """
-    Model for notification address
-    """
-    url: AnyHttpUrl = Field(
-        description="URL referencing the service to be invoked when a "
-                    "notification is generated. An NGSIv2 compliant server "
-                    "must support the http URL schema. Other schemas could "
-                    "also be supported."
-    )
-
-
-class HttpCustom(Http):
-    """
-    Model for custom notification address
-    """
-    headers: Optional[Dict[str, Union[str, Json]]] = Field(
-        description="a key-map of HTTP headers that are included in "
-                    "notification messages."
-    )
-    qs: Optional[Dict[str, Union[str, Json]]] = Field(
-        description="a key-map of URL query parameters that are included in "
-                    "notification messages."
-    )
-    method: str = Field(
-        default=HttpMethods.POST,
-        description="the method to use when sending the notification "
-                    "(default is POST). Only valid HTTP methods are allowed. "
-                    "On specifying an invalid HTTP method, a 400 Bad Request "
-                    "error is returned."
-    )
-    payload: Optional[str] = Field(
-        description='the payload to be used in notifications. If omitted, the '
-                    'default payload (see "Notification Messages" sections) '
-                    'is used.'
-    )
-
-
-class AttrsFormat(str, Enum):
-    """
-    Allowed options for attribute formats
-    """
-    _init_ = 'value __doc__'
-
-    NORMALIZED = "normalized", "Normalized message representation"
-    KEY_VALUES = "keyValues", "Key value message representation." \
-                              "This mode represents the entity " \
-                              "attributes by their values only, leaving out " \
-                              "the information about type and metadata. " \
-                              "See example below." \
-                              "Example: " \
-                              "{" \
-                              "  'id': 'R12345'," \
-                              "  'type': 'Room'," \
-                              "  'temperature': 22" \
-                              "}"
-    VALUES = "values", "Key value message representation. " \
-                       "This mode represents the entity as an array of " \
-                       "attribute values. Information about id and type is " \
-                       "left out. See example below. The order of the " \
-                       "attributes in the array is specified by the attrs " \
-                       "URI param (e.g. attrs=branch,colour,engine). " \
-                       "If attrs is not used, the order is arbitrary. " \
-                       "Example:" \
-                       "[ 'Ford', 'black', 78.3 ]"
-
-
-class Notification(BaseModel):
-    """
-    If the notification attributes are left empty, all attributes will be
-    included in the notifications. Otherwise, only the specified ones will
-    be included.
-    """
-    http: Optional[Http] = Field(
-        description='It is used to convey parameters for notifications '
-                    'delivered through the HTTP protocol. Cannot be used '
-                    'together with "httpCustom"'
-    )
-    httpCustom: Optional[HttpCustom] = Field(
-        description='It is used to convey parameters for notifications '
-                    'delivered through the HTTP protocol. Cannot be used '
-                    'together with "http"'
-    )
-    attrs: Optional[List[str]] = Field(
-        description='List of attributes to be included in notification '
-                    'messages. It also defines the order in which attributes '
-                    'must appear in notifications when attrsFormat value is '
-                    'used (see "Notification Messages" section). An empty list '
-                    'means that all attributes are to be included in '
-                    'notifications. See "Filtering out attributes and '
-                    'metadata" section for more detail.'
-    )
-    exceptAttrs: Optional[List[str]] = Field(
-        description='List of attributes to be excluded from the notification '
-                    'message, i.e. a notification message includes all entity '
-                    'attributes except the ones listed in this field.'
-    )
-    attrsFormat: Optional[AttrsFormat] = Field(
-        default=AttrsFormat.NORMALIZED,
-        description='specifies how the entities are represented in '
-                    'notifications. Accepted values are normalized (default), '
-                    'keyValues or values. If attrsFormat takes any value '
-                    'different than those, an error is raised. See detail in '
-                    '"Notification Messages" section.'
-    )
-    metadata: Optional[Any] = Field(
-        description='List of metadata to be included in notification messages. '
-                    'See "Filtering out attributes and metadata" section for '
-                    'more detail.'
-    )
-
-    @validator('httpCustom')
-    def validate_http(cls, http_custom, values):
-        if http_custom is not None:
-            assert values['http'] is None
-        return http_custom
-
-    @validator('exceptAttrs')
-    def validate_attr(cls, except_attrs, values):
-        if except_attrs is not None:
-            assert values['attrs'] is None
-        return except_attrs
-
-
-class NotificationResponse(Notification):
-    """
-    Server response model for notifications
-    """
-    timesSent: int = Field(
-        description='(not editable, only present in GET operations): '
-                    'Number of notifications sent due to this subscription.'
-    )
-    lastNotification: datetime = Field(
-        description='(not editable, only present in GET operations): '
-                    'Last notification timestamp in ISO8601 format.'
-    )
-    lastFailure: Optional[datetime] = Field(
-        description='(not editable, only present in GET operations): '
-                    'Last failure timestamp in ISO8601 format. Not present if '
-                    'subscription has never had a problem with notifications.'
-    )
-    lastSuccess: Optional[datetime] = Field(
-        description='(not editable, only present in GET operations): '
-                    'Timestamp in ISO8601 format for last successful '
-                    'notification. Not present if subscription has never '
-                    'had a successful notification.'
-    )
-
-
-# Models for subscriptions
-class Status(str, Enum):
-    """
-    Current status of a subscription
-    """
-    _init_ = 'value __doc__'
-
-    ACTIVE = "active", "for active subscriptions"
-    INACTIVE = "inactive", "for inactive subscriptions"
-    FAILED = "failed", "for failed subscription"
-    EXPIRED = "expired", "for expired subscription"
-
-
-class Expression(BaseModel):
-    """
-    By means of a filtering expression, allows to express what is the scope
-    of the data provided.
-    http://telefonicaid.github.io/fiware-orion/api/v2/stable
-    """
-    q: Optional[Union[str, QueryString]] = Field(
-        default=None,
-        title='Simple Query Language: filter',
-        description='If filtering by attribute value (i.e. the expression is '
-                    'used in a q query), the rest of tokens (if present) '
-                    'represent the path to a sub-property of the target NGSI '
-                    'attribute value (which should be a JSON object). Such '
-                    'sub-property is defined as the target property.'
-    )
-    mq: Optional[Union[str, QueryString]] = Field(
-        default=None,
-        title='Simple Query Language: metadata filters',
-        description='If filtering by metadata (i.e. the expression is used in '
-                    'a mq query), the second token represents a metadata name '
-                    'associated to the target NGSI attribute, target '
-                    'metadata, and the rest of tokens (if present) represent '
-                    'the path to a sub-property of the target metadata value '
-                    '(which should be a JSON object). Such sub-property is '
-                    'defined as the target property. '
-    )
-    georel: Optional[Union[str, QueryString]] = Field(
-        default=None,
-        title='Metadata filters',
-        description='Any of the geographical relationships as specified by '
-                    'the Geoqueries section of this specification.'
-    )
-    geometry: Optional[Union[str, QueryString]] = Field(
-        default=None,
-        title='Metadata filters',
-        description='Any of the supported geometries as specified by the '
-                    'Geoqueries section of this specification.'
-    )
-    coords: Optional[Union[str, QueryString]] = Field(
-        default=None,
-        title='Metadata filters',
-        description='String representation of coordinates as specified by the '
-                    'Geoqueries section of the specification.'
-    )
-
-    @validator('q', 'mq')
-    def validate_expressions(cls, v):
-        if isinstance(v, str):
-            return QueryString.parse_str(v)
-
-    class Config:
+    def get_commands(
+            self,
+            response_format: Union[str, PropertyFormat] = PropertyFormat.LIST)\
+            -> Union[List[NamedContextAttribute], Dict[str, ContextAttribute]]:
         """
-        Pydantic config
+        Get all commands of the context entity. Only works if the commands
+        were autogenerated by Fiware from an Device.
+
+        Args:
+            response_format: Wanted result format,
+                                List -> list of NamedContextAttributes
+                                Dict -> dict of {name: ContextAttribute}
+
+        Returns:
+            [NamedContextAttribute] or {name: ContextAttribute}
         """
-        json_encoders = {QueryString: lambda v: v.to_str(),
-                         QueryStatement: lambda v: v.to_str()}
 
+        # if an attribute with name n is a command, its type does not need to
+        # be COMMAND.
+        # But the attributes name_info (type: commandResult) and
+        # name_status(type: commandStatus) need to exist. (Autogenerated)
 
-class Condition(BaseModel):
-    """
-    Notification rules are as follow:
-    If attrs and expression are used, a notification is sent whenever one of
-    the attributes in the attrs list changes and at the same time expression
-    matches.
-    If attrs is used and expression is not used, a notification is sent
-    whenever any of the attributes in the attrs list changes.
-    If attrs is not used and expression is used, a notification is sent
-    whenever any of the attributes of the entity changes and at the same time
-    expression matches.
-    If neither attrs nor expression are used, a notification is sent whenever
-    any of the attributes of the entity changes.
+        # Search all attributes of type commandStatus, check for each if a
+        # corresponding _info exists and if also a fitting attribute exists
+        # we know: that is a command.
 
-    """
-    attrs: Optional[Union[str, List[str]]] = Field(
-        default=None,
-        description='array of attribute names'
-    )
-    expression: Optional[Union[str, Expression]] = Field(
-        default=None,
-        description='an expression composed of q, mq, georel, geometry and '
-                    'coords (see "List entities" operation above about this '
-                    'field).'
-    )
+        commands = []
+        for status_attribute in self.get_attributes(
+                whitelisted_attribute_types=[DataType.COMMAND_STATUS]):
 
-    @validator('attrs')
-    def check_attrs(cls, v):
-        if isinstance(v, list):
-            return v
-        elif isinstance(v, str):
-            return [v]
+            if not status_attribute.name.split('_')[-1] == "status":
+                continue
+            base_name = status_attribute.name[:-7]
+
+            try:
+                info_attribute = self.get_attribute(f'{base_name}_info')
+                if not info_attribute.type == DataType.COMMAND_RESULT:
+                    continue
+
+                attribute = self.get_attribute(base_name)
+                commands.append(attribute)
+            except KeyError:
+                continue
+
+        if response_format == PropertyFormat.LIST:
+            return commands
         else:
-            raise TypeError()
+            return {cmd.name: ContextAttribute(**cmd.model_dump(exclude={'name'}))
+                    for cmd in commands}
 
-    class Config:
+    def get_command_triple(self, command_attribute_name: str)\
+            -> Tuple[NamedContextAttribute, NamedContextAttribute,
+                     NamedContextAttribute]:
         """
-        Pydantic config
+        Returns for a given command attribute name all three corresponding
+        attributes as triple
+
+        Args:
+            command_attribute_name: Name of the command attribute
+
+        Raises:
+            KeyError, if the given name does not belong to a command attribute
+
+        Returns:
+            (Command, Command_status, Command_info)
         """
-        json_encoders = {QueryString: lambda v: v.to_str(),
-                         QueryStatement: lambda v: v.to_str()}
 
+        commands = self.get_commands(response_format=PropertyFormat.DICT)
 
-class Entity(BaseModel):
-    """
-    Entity pattern
-    """
-    id: Optional[str] = Field(regex=r"\w")
-    idPattern: Optional[Pattern]
-    type: Optional[str] = Field(regex=r'\w')
-    typePattern: Optional[Pattern]
+        if command_attribute_name not in commands:
+            raise KeyError(f"Command '{command_attribute_name}' not in commands")
 
-    @root_validator()
-    def validate_conditions(cls, values):
-        assert ((values['id'] and not values['idPattern']) or
-                (not values['id'] and values['idPattern'])), \
-            "Both cannot be used at the same time, but one of them " \
-            "must be present."
-        if values['type'] or values.get('typePattern', None):
-            assert ((values['type'] and not values['typePattern']) or
-                    (not values['id'] and values['typePattern'])), \
-                "Type or pattern of the affected entities. " \
-                "Both cannot be used at the same time."
-        return values
+        command = self.get_attribute(command_attribute_name)
 
+        # as the given name was found as a valid command, we know that the
+        # status and info attributes exist correctly
+        command_status = self.get_attribute(f'{command_attribute_name}_status')
+        command_info = self.get_attribute(f'{command_attribute_name}_info')
 
-class Subject(BaseModel):
-    """
-    Model for subscription subject
-    """
-    entities: List[Entity] = Field(
-        description="A list of objects, each one composed of by an Entity "
-                    "Object:"
-    )
-    condition: Optional[Condition] = Field()
-
-    class Config:
-        """
-        Pydantic config
-        """
-        json_encoders = {QueryString: lambda v: v.to_str(),
-                         QueryStatement: lambda v: v.to_str()}
-
-
-class Subscription(BaseModel):
-    """
-    Subscription payload validations
-    https://fiware-orion.readthedocs.io/en/master/user/ngsiv2_implementation_notes/index.html#subscription-payload-validations
-    """
-    id: Optional[str] = Field(
-        description="Subscription unique identifier. Automatically created at "
-                    "creation time."
-    )
-    description: Optional[str] = Field(
-        description="A free text used by the client to describe the "
-                    "subscription."
-    )
-    status: Optional[Status] = Field(
-        default=Status.ACTIVE,
-        description="Either active (for active subscriptions) or inactive "
-                    "(for inactive subscriptions). If this field is not "
-                    "provided at subscription creation time, new subscriptions "
-                    "are created with the active status, which can be changed"
-                    " by clients afterwards. For expired subscriptions, this "
-                    "attribute is set to expired (no matter if the client "
-                    "updates it to active/inactive). Also, for subscriptions "
-                    "experiencing problems with notifications, the status is "
-                    "set to failed. As soon as the notifications start working "
-                    "again, the status is changed back to active."
-    )
-    subject: Subject = Field(
-        description="An object that describes the subject of the subscription.",
-        example={
-            'entities': [{'idPattern': '.*', 'type': 'Room'}],
-            'condition': {
-                'attrs': ['temperature'],
-                'expression': {'q': 'temperature>40'},
-            },
-        },
-    )
-    notification: Notification = Field(
-        description="An object that describes the notification to send when "
-                    "the subscription is triggered.",
-        example={
-            'http': {'url': 'http://localhost:1234'},
-            'attrs': ['temperature', 'humidity'],
-        },
-    )
-    expires: Optional[datetime] = Field(
-        description="Subscription expiration date in ISO8601 format. "
-                    "Permanent subscriptions must omit this field."
-    )
-
-    throttling: Optional[int] = Field(
-        description="Minimal period of time in seconds which "
-                    "must elapse between two consecutive notifications. "
-                    "It is optional."
-    )
-
-    class Config:
-        """
-        Pydantic config
-        """
-        json_encoders = {QueryString: lambda v: v.to_str(),
-                         QueryStatement: lambda v: v.to_str()}
-
-
-# Registration Models
-class ForwardingMode(str, Enum):
-    _init_ = 'value __doc__'
-
-    NONE = "none", "This provider does not support request forwarding."
-    QUERY = "query", "This provider only supports request forwarding to " \
-                     "query data."
-    UPDATE = "update", "This provider only supports request forwarding to " \
-                       "update data."
-    ALL = "all", "This provider supports both query and update forwarding " \
-                 "requests. (Default value)"
-
-
-class Provider(BaseModel):
-    http: AnyHttpUrl = Field(
-        description="It is used to convey parameters for providers that "
-                    "deliver information through the HTTP protocol. (Only "
-                    "protocol supported nowadays). It must contain a subfield "
-                    "named url with the URL that serves as the endpoint that "
-                    "offers the providing interface. The endpoint must not "
-                    "include the protocol specific part (for instance "
-                    "/v2/entities). "
-    )
-    supportedForwardingMode: ForwardingMode = Field(
-        default=ForwardingMode.ALL,
-        description="It is used to convey the forwarding mode supported by "
-                    "this context provider. By default all."
-    )
-
-
-class ForwardingInformation(BaseModel):
-    timesSent: int = Field(
-        description="(not editable, only present in GET operations): "
-                    "Number of forwarding requests sent due to this "
-                    "registration."
-    )
-    lastForwarding: datetime = Field(
-        description="(not editable, only present in GET operations): "
-                    "Last forwarding timestamp in ISO8601 format."
-    )
-    lastFailure: Optional[datetime] = Field(
-        description="(not editable, only present in GET operations): "
-                    "Last failure timestamp in ISO8601 format. Not present "
-                    "if registration has never had a problem with forwarding."
-    )
-    lastSuccess: Optional[datetime] = Field(
-        description="(not editable, only present in GET operations): "
-                    "Timestamp in ISO8601 format for last successful "
-                    "request forwarding. Not present if registration has "
-                    "never had a successful notification."
-    )
-
-    class Config:
-        """
-        Pydantic config
-        """
-        allow_mutation = False
-
-
-class DataProvided(BaseModel):
-    """
-    Model for provided data
-    """
-    entities: List[Entity] = Field(
-        description="A list of objects, each one composed by an entity object"
-    )
-    attrs: Optional[List[str]] = Field(
-        description="List of attributes to be provided "
-                    "(if not specified, all attributes)"
-    )
-    expression: Optional[Union[str, Expression]] = Field(
-        description="By means of a filtering expression, allows to express "
-                    "what is the scope of the data provided. Currently only "
-                    "geographical scopes are supported "
-    )
-
-
-class Registration(BaseModel):
-    """
-    A Context Registration allows to bind external context information
-    sources so that they can play the role of providers of certain subsets
-    (entities, attributes) of the context information space, including those
-    located at specific geographical areas.
-    """
-
-    id: Optional[str] = Field(
-        description="Unique identifier assigned to the registration. "
-                    "Automatically generated at creation time."
-    )
-    description: Optional[str] = Field(
-        description="A free text used by the client to describe the "
-                    "registration.",
-        example="Relative Humidity Context Source"
-    )
-    provider: Provider = Field(
-        description="Object that describes the context source registered.",
-        example='"http": {"url": "http://localhost:1234"}'
-    )
-    dataProvided: DataProvided = Field(
-        description="Object that describes the data provided by this source",
-        example='{'
-                '   "entities": [{"id": "room2", "type": "Room"}],'
-                '   "attrs": ["relativeHumidity"]'
-                '},'
-    )
-    status: Optional[Status] = Field(
-        default=Status.ACTIVE,
-        description="Either active (for active registration) or inactive "
-                    "(for inactive registration). If this field is not "
-                    "provided at registration creation time, new registration "
-                    "are created with the active status, which can be changed"
-                    " by clients afterwards. For expired registration, this "
-                    "attribute is set to expired (no matter if the client "
-                    "updates it to active/inactive). Also, for subscriptions "
-                    "experiencing problems with notifications, the status is "
-                    "set to failed. As soon as the notifications start working "
-                    "again, the status is changed back to active."
-    )
-    expires: Optional[datetime] = Field(
-        description="Registration expiration date in ISO8601 format. "
-                    "Permanent registrations must omit this field."
-    )
-    forwardingInformation: Optional[ForwardingInformation] = Field(
-        description="Information related to the forwarding operations made "
-                    "against the provider. Automatically provided by the "
-                    "implementation, in the case such implementation supports "
-                    "forwarding capabilities."
-    )
+        return command, command_status, command_info
 
 
 class Query(BaseModel):
     """
     Model for queries
     """
-    entities: List[Entity] = Field(
+    entities: List[EntityPattern] = Field(
         description="a list of entities to search for. Each element is "
                     "represented by a JSON object"
     )
     attrs: Optional[List[str]] = Field(
+        default=None,
         description="List of attributes to be provided "
                     "(if not specified, all attributes)."
     )
     expression: Optional[Expression] = Field(
+        default=None,
         description="An expression composed of q, mq, georel, geometry and "
                     "coords "
     )
     metadata: Optional[List[str]] = Field(
+        default=None,
         description='a list of metadata names to include in the response. '
                     'See "Filtering out attributes and metadata" section for '
                     'more detail.'
@@ -1039,7 +551,8 @@ class Update(BaseModel):
                     "JSON entity representation format "
     )
 
-    @validator('action_type')
+    @field_validator('action_type')
+    @classmethod
     def check_action_type(cls, action):
         """
         validates action_type
@@ -1060,11 +573,13 @@ class Command(BaseModel):
     """
     type: DataType = Field(default=DataType.COMMAND,
                            description="Command must have the type command",
-                           const=True)
+                           # const=True
+                           )
     value: Any = Field(description="Any json serializable command that will "
                                    "be forwarded to the connected IoT device")
 
-    @validator("value")
+    @field_validator("value")
+    @classmethod
     def check_value(cls, value):
         """
         Check if value is json serializable
@@ -1073,7 +588,11 @@ class Command(BaseModel):
         Returns:
             value
         """
-        json.dumps(value)
+        try:
+            json.dumps(value)
+        except:
+            raise ValueError(f"Command value {value} "
+                             f"is not serializable")
         return value
 
 
@@ -1086,58 +605,5 @@ class NamedCommand(Command):
         description="Name of the command",
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.string_protect.value
     )
-
-# TODO: Add Relationships
-# class Relationship:
-#    """
-#    Class implements the concept of FIWARE Entity Relationships.
-#    """
-#    def __init__(self, ref_object: Entity, subject: Entity,
-#    predicate: str = None):
-#        """
-#        :param ref_object:  The parent / object of the relationship
-#        :param subject: The child / subject of the relationship
-#        :param predicate: currently not supported -> describes the
-#        relationship between object and subject
-#        """
-#        self.object = ref_object
-#        self.subject = subject
-#        self.predicate = predicate
-#        self.add_ref()
-#
-#    def add_ref(self):
-#        """
-#        Function updates the subject Attribute with the relationship attribute
-#        :return:
-#        """
-#        ref_attr = json.loads(self.get_ref())
-#        self.subject.add_attribute(ref_attr)
-#
-#    def get_ref(self):
-#        """
-#        Function creates the NGSI Ref schema in a ref_dict, needed for the
-#        subject
-#        :return: ref_dict
-#        """
-#        ref_type = self.object.type
-#        ref_key = "ref" + str(ref_type)
-#        ref_dict = dict()
-#        ref_dict[ref_key] = {"type": "Relationship",
-#                             "value": self.object.id}
-#
-#        return json.dumps(ref_dict)
-#
-#    def get_json(self):
-#        """
-#        Function returns a JSON to describe the Relationship,
-#        which then can be pushed to orion
-#        :return: whole_dict
-#        """
-#        temp_dict = dict()
-#        temp_dict["id"] = self.subject.id
-#        temp_dict["type"] = self.subject.type
-#        ref_dict = json.loads(self.get_ref())
-#        whole_dict = {**temp_dict, **ref_dict}
-#        return json.dumps(whole_dict)
+    valid_name = field_validator("name")(validate_fiware_datatype_string_protect)

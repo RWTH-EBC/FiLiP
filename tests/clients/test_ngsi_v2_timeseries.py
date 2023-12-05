@@ -1,48 +1,81 @@
 """
 Tests for time series api client aka QuantumLeap
 """
-import unittest
 import logging
+import unittest
 from random import random
 import requests
-from filip.models.base import FiwareHeader
-from filip.models.ngsi_v2.context import ContextEntity, NotificationMessage
+import time
+from typing import List
 from filip.clients.ngsi_v2 import \
     ContextBrokerClient, \
     QuantumLeapClient
+from filip.models.base import FiwareHeader
+from filip.models.ngsi_v2.context import ContextEntity
+from filip.models.ngsi_v2.subscriptions import Message
+from filip.utils.cleanup import clean_test, clear_all
+from tests.config import settings
 
 
-# Setting up logging
-logging.basicConfig(
-    level='ERROR',
-    format='%(asctime)s %(name)s %(levelname)s: %(message)s')
+logger = logging.getLogger(__name__)
+
+
+def create_entities() -> List[ContextEntity]:
+    """
+    Create entities with random values
+    Returns:
+
+    """
+    def create_attr():
+        return {'temperature': {'value': random(),
+                                'type': 'Number'},
+                'humidity': {'value': random(),
+                             'type': 'Number'},
+                'co2': {'value': random(),
+                        'type': 'Number'}}
+
+    return [ContextEntity(id='Kitchen', type='Room', **create_attr()),
+            ContextEntity(id='LivingRoom', type='Room', **create_attr())]
+
+
+def create_time_series_data(num_records: int = 50000):
+    """
+    creates large testing data sets that should remain on the server.
+    This is mainly to reduce time for testings
+    """
+    fiware_header = FiwareHeader(service=settings.FIWARE_SERVICE,
+                                 service_path="/static")
+
+    with QuantumLeapClient(url=settings.QL_URL, fiware_header=fiware_header) \
+            as client:
+
+        for i in range(num_records):
+            notification_message = Message(data=create_entities(),
+                                           subscriptionId="test")
+            client.post_notification(notification_message)
 
 
 class TestTimeSeries(unittest.TestCase):
     """
     Test class for time series api client
     """
+
     def setUp(self) -> None:
         """
         Setup test data
         Returns:
             None
         """
-        self.fiware_header = FiwareHeader(service='filip',
-                                          service_path='/testing')
-        self.client = QuantumLeapClient(fiware_header=self.fiware_header)
-        self.attr = {'temperature': {'value': random(),
-                                     'type': 'Number'},
-                     'humidity': {'value': random(),
-                                  'type': 'Number'},
-                     'co2': {'value': random(),
-                             'type': 'Number'}}
-        self.entity_1 = ContextEntity(id='Kitchen', type='Room', **self.attr)
-        self.entity_2 = ContextEntity(id='LivingRoom', type='Room', **self.attr)
-        self.cb_client = ContextBrokerClient(fiware_header=self.fiware_header)
+        self.fiware_header = FiwareHeader(
+            service=settings.FIWARE_SERVICE,
+            service_path=settings.FIWARE_SERVICEPATH)
+        self.ql_client = QuantumLeapClient(
+            url=settings.QL_URL,
+            fiware_header=self.fiware_header)
 
-        self.cb_client.post_entity(entity=self.entity_1)
-        self.cb_client.post_entity(entity=self.entity_2)
+        self.cb_client = ContextBrokerClient(
+            url=settings.CB_URL,
+            fiware_header=self.fiware_header)
 
     def test_meta_endpoints(self) -> None:
         """
@@ -50,82 +83,220 @@ class TestTimeSeries(unittest.TestCase):
         Returns:
             None
         """
-        with QuantumLeapClient(fiware_header=self.fiware_header) as client:
+        with QuantumLeapClient(
+                url=settings.QL_URL,
+                fiware_header=self.fiware_header) \
+                as client:
             self.assertIsNotNone(client.get_version())
             self.assertIsNotNone(client.get_health())
 
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                cb_url=settings.CB_URL,
+                ql_url=settings.QL_URL)
     def test_input_endpoints(self) -> None:
         """
         Test input endpoint
         Returns:
             None
         """
-        with QuantumLeapClient(fiware_header=self.fiware_header) as client:
-            data = [self.entity_1, self.entity_2]
-            notification_message = NotificationMessage(data=data,
-                                                       subscriptionId="test")
-            client.post_subscription(entity_id=self.entity_1.id)
-            client.post_notification(notification_message)
+        entities = create_entities()
+        for entity in entities:
+            self.cb_client.post_entity(entity)
 
+        with QuantumLeapClient(
+                url=settings.QL_URL,
+                fiware_header=self.fiware_header) \
+                as client:
+            notification_message = Message(data=entities,
+                                           subscriptionId="test")
+            client.post_subscription(cb_url=settings.CB_URL,
+                                     ql_url=settings.QL_URL,
+                                     entity_id=entities[0].id)
+            client.post_notification(notification_message)
+        time.sleep(1)
+
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+            fiware_servicepath=settings.FIWARE_SERVICEPATH,
+            cb_url=settings.CB_URL,
+            ql_url=settings.QL_URL)
     def test_entity_context(self) -> None:
         """
         Test entities endpoint
         Returns:
             None
         """
-        with QuantumLeapClient(fiware_header=self.fiware_header) as client:
-            entities = client.get_entities(entity_type='Room')
-            for entity in entities:
-                print(entity.json(indent=2))
+        entities = create_entities()
+        with QuantumLeapClient(
+                url=settings.QL_URL,
+                fiware_header=self.fiware_header) \
+                as client:
+            notification_message = Message(data=entities,
+                                           subscriptionId="test")
+            client.post_notification(notification_message)
 
-    def test_query_endpoints(self) -> None:
+            time.sleep(1)
+            entities = client.get_entities(entity_type=entities[0].type)
+            for entity in entities:
+                logger.debug(entity.model_dump_json(indent=2))
+
+    def test_query_endpoints_by_id(self) -> None:
         """
-        Test queries
+        Test queries with default values
+
         Returns:
             None
         """
-        with QuantumLeapClient(fiware_header=self.fiware_header) as client:
+        with QuantumLeapClient(
+                url=settings.QL_URL,
+                fiware_header=self.fiware_header.model_copy(
+                    update={'service_path': '/static'})) \
+                as client:
+
+            entities = create_entities()
+
             with self.assertRaises(requests.RequestException):
-                client.get_entity_by_id(entity_id=self.entity_1.id,
+                client.get_entity_by_id(entity_id=entities[0].id,
                                         entity_type='MyType')
-            attrs_id = client.get_entity_by_id(entity_id=self.entity_1.id,
-                                               aggr_period='minute',
-                                               aggr_method='avg',
-                                               attrs='temperature,co2')
-            print(attrs_id.json(indent=2))
-            print(attrs_id.to_pandas())
+            for entity in entities:
+                # get by id
+                attrs_id = client.get_entity_by_id(entity_id=entity.id,
+                                                   aggr_period='minute',
+                                                   aggr_method='avg',
+                                                   attrs='temperature,co2')
+                logger.debug(attrs_id.model_dump_json(indent=2))
+                logger.debug(attrs_id.to_pandas())
 
-            attrs_values_id = client.get_entity_values_by_id(
-                entity_id=self.entity_1.id)
-            print(attrs_values_id.to_pandas())
+                attrs_values_id = client.get_entity_values_by_id(
+                    entity_id=entity.id)
+                logger.debug(attrs_values_id.to_pandas())
+                self.assertEqual(len(attrs_values_id.index), 10000)
 
-            attr_id = client.get_entity_attr_by_id(
-                entity_id=self.entity_1.id, attr_name="temperature")
-            print(attr_id.to_pandas())
+                attr_id = client.get_entity_attr_by_id(
+                    entity_id=entity.id, attr_name="temperature")
+                logger.debug(attr_id.to_pandas())
+                self.assertEqual(len(attr_id.index), 10000)
 
-            attr_values_id = client.get_entity_attr_values_by_id(
-                entity_id=self.entity_1.id, attr_name="temperature")
-            print(attr_values_id.to_pandas())
+                attr_values_id = client.get_entity_attr_values_by_id(
+                    entity_id=entity.id, attr_name="temperature")
+                logger.debug(attr_values_id.to_pandas())
+                self.assertEqual(len(attrs_values_id.index), 10000)
 
-            attrs_type = client.get_entity_by_type(
-                entity_type=self.entity_1.type)
-            for entity in attrs_type:
-                print(entity.to_pandas())
+    def test_query_endpoints_by_type(self) -> None:
+        """
+        Test queries by type with default values
 
-            attrs_values_type = client.get_entity_values_by_type(
-                 entity_type=self.entity_1.type)
-            for entity in attrs_values_type:
-                print(entity.to_pandas())
+        Returns:
+            None
+        """
+        with QuantumLeapClient(
+                url=settings.QL_URL,
+                fiware_header=self.fiware_header.model_copy(
+                    update={'service_path': '/static'})) \
+                as client:
 
-            attr_type = client.get_entity_attr_by_type(
-                entity_type=self.entity_1.type, attr_name="temperature")
-            for entity in attr_type:
-                print(entity.to_pandas())
+            entities = create_entities()
 
-            attr_values_type = client.get_entity_attr_values_by_type(
-                entity_type=self.entity_1.type, attr_name="temperature")
-            for entity in attr_values_type:
-                print(entity.to_pandas())
+            for entity in entities:
+                # get by type
+                attrs_type = client.get_entity_by_type(
+                    entity_type=entity.type)
+                for entity_id in attrs_type:
+                    logger.debug(entity_id.to_pandas())
+
+                self.assertEqual(sum([len(entity_id.index) for
+                                      entity_id in attrs_type]),
+                                 10000)
+
+                attrs_values_type = client.get_entity_values_by_type(
+                    entity_type=entity.type, )
+                for entity_id in attrs_values_type:
+                    logger.debug(entity_id.to_pandas())
+                self.assertEqual(sum([len(entity_id.index) for
+                                      entity_id in attrs_values_type]),
+                                 10000)
+
+                attr_type = client.get_entity_attr_by_type(
+                    entity_type=entity.type, attr_name="temperature")
+                for entity_id in attr_type:
+                    logger.debug(entity_id.to_pandas())
+                self.assertEqual(sum([len(entity_id.index) for
+                                      entity_id in attr_type]),
+                                 10000)
+
+                attr_values_type = client.get_entity_attr_values_by_type(
+                    entity_type=entity.type, attr_name="temperature")
+                for entity_id in attr_values_type:
+                    logger.debug(entity_id.to_pandas())
+                self.assertEqual(sum([len(entity_id.index) for
+                                      entity_id in attr_values_type]),
+                                 10000)
+
+    @unittest.skip("Currently fails. Because data in CrateDB is not clean")
+    def test_test_query_endpoints_with_args(self) -> None:
+        """
+        Test arguments for queries
+
+        Returns:
+            None
+        """
+        with QuantumLeapClient(
+                url=settings.QL_URL,
+                fiware_header=self.fiware_header.model_copy(
+                    update={'service_path': '/static'})) \
+                as client:
+
+            for entity in create_entities():
+                # test limit
+                for limit in range(5000, 25000, 5000):
+                    records = client.get_entity_by_id(
+                        entity_id=entity.id,
+                        attrs='temperature,co2',
+                        limit=limit)
+
+                    logger.debug(records.model_dump_json(indent=2))
+                    logger.debug(records.to_pandas())
+                    self.assertEqual(len(records.index), limit)
+
+                # test last_n
+                for last_n in range(5000, 25000, 5000):
+                    limit = 15000
+                    last_n_records = client.get_entity_by_id(
+                        entity_id=entity.id,
+                        attrs='temperature,co2',
+                        limit=limit,
+                        last_n=last_n)
+                    self.assertGreater(last_n_records.index[0],
+                                       records.index[0])
+                    self.assertEqual(len(last_n_records.index),
+                                     min(last_n, limit))
+
+                # test offset
+                old_records = None
+                for offset in range(5000, 25000, 5000):
+                    # with limit
+                    records = client.get_entity_by_id(
+                        entity_id=entity.id,
+                        attrs='temperature,co2',
+                        offset=offset)
+
+                    if old_records:
+                        self.assertLess(old_records.index[0],
+                                        records.index[0])
+                    old_records = records
+
+                old_records = None
+                for offset in range(5000, 25000, 5000):
+                    # test with last_n
+                    records = client.get_entity_by_id(
+                        entity_id=entity.id,
+                        attrs='temperature,co2',
+                        offset=offset,
+                        last_n=5)
+                    if old_records:
+                        self.assertGreater(old_records.index[0],
+                                           records.index[0])
+                    old_records = records
 
     def tearDown(self) -> None:
         """
@@ -133,16 +304,9 @@ class TestTimeSeries(unittest.TestCase):
         Returns:
             None
         """
-        try:
-            for sub in self.cb_client.get_subscription_list():
-                self.cb_client.delete_subscription(sub.id)
-        except:
-            pass
-        try:
-            self.cb_client.delete_entity(entity_id=self.entity_1.id)
-            self.cb_client.delete_entity(entity_id=self.entity_2.id)
-        except:
-            pass
+        clear_all(fiware_header=self.fiware_header,
+                  cb_url=settings.CB_URL,
+                  ql_url=settings.QL_URL)
 
-        self.client.close()
+        self.ql_client.close()
         self.cb_client.close()

@@ -1,29 +1,36 @@
 """
 Test module for context broker models
 """
-import time
 import unittest
 from typing import List
-
 from pydantic import ValidationError
-from filip.clients.ngsi_v2 import ContextBrokerClient
+
+from filip.models.base import DataType
+from filip.clients.ngsi_v2 import IoTAClient, ContextBrokerClient
+from filip.models.ngsi_v2.iot import Device, TransportProtocol, DeviceCommand
+from filip.models import FiwareHeader
+from filip.utils.cleanup import clear_all
+from tests.config import settings
+
+from filip.models.ngsi_v2.base import Metadata, NamedMetadata
 from filip.models.ngsi_v2.context import \
     ActionType, \
     Command, \
-    ContextMetadata, \
     ContextAttribute, \
     ContextEntity, \
-    create_context_entity_model, \
-    NamedContextMetadata, \
-    Subscription, \
-    Update, NamedContextAttribute, ContextEntityKeyValues, NamedCommand
-from filip.models.base import FiwareHeader
+    Update, \
+    NamedContextAttribute, \
+    ContextEntityKeyValues, \
+    NamedCommand, \
+    PropertyFormat
+from filip.utils.model_generation import create_context_entity_model
 
 
 class TestContextModels(unittest.TestCase):
     """
     Test class for context broker models
     """
+
     def setUp(self) -> None:
         """
         Setup test data
@@ -47,8 +54,10 @@ class TestContextModels(unittest.TestCase):
         """
         attr = ContextAttribute(**{'value': 20, 'type': 'Text'})
         self.assertIsInstance(attr.value, str)
+        self.assertEqual(attr.value, '20')
         attr = ContextAttribute(**{'value': 20, 'type': 'Number'})
         self.assertIsInstance(attr.value, float)
+        self.assertEqual(str(attr.value), str(20.0))
         attr = ContextAttribute(**{'value': [20, 20], 'type': 'Float'})
         self.assertIsInstance(attr.value, list)
         attr = ContextAttribute(**{'value': [20.0, 20.0], 'type': 'Integer'})
@@ -62,15 +71,15 @@ class TestContextModels(unittest.TestCase):
         Returns:
             None
         """
-        md1 = ContextMetadata(type='Text', value='test')
-        md2 = NamedContextMetadata(name='info', type='Text', value='test')
-        md3 = [NamedContextMetadata(name='info', type='Text', value='test')]
+        md1 = Metadata(type='Text', value='test')
+        md2 = NamedMetadata(name='info', type='Text', value='test')
+        md3 = [NamedMetadata(name='info', type='Text', value='test')]
         attr1 = ContextAttribute(value=20,
                                  type='Integer',
                                  metadata={'info': md1})
-        attr2 = ContextAttribute(**attr1.dict(exclude={'metadata'}),
+        attr2 = ContextAttribute(**attr1.model_dump(exclude={'metadata'}),
                                  metadata=md2)
-        attr3 = ContextAttribute(**attr1.dict(exclude={'metadata'}),
+        attr3 = ContextAttribute(**attr1.model_dump(exclude={'metadata'}),
                                  metadata=md3)
         self.assertEqual(attr1, attr2)
         self.assertEqual(attr1, attr3)
@@ -82,81 +91,30 @@ class TestContextModels(unittest.TestCase):
             None
         """
         entity = ContextEntity(**self.entity_data)
-        self.assertEqual(self.entity_data, entity.dict(exclude_unset=True))
-        entity = ContextEntity.parse_obj(self.entity_data)
-        self.assertEqual(self.entity_data, entity.dict(exclude_unset=True))
+        self.assertEqual(self.entity_data, entity.model_dump(exclude_unset=True))
+        entity = ContextEntity.model_validate(self.entity_data)
+        self.assertEqual(self.entity_data, entity.model_dump(exclude_unset=True))
 
         properties = entity.get_properties(response_format='list')
-        self.assertEqual(self.attr, {properties[0].name: properties[0].dict(
+        self.assertEqual(self.attr, {properties[0].name: properties[0].model_dump(
             exclude={'name', 'metadata'}, exclude_unset=True)})
         properties = entity.get_properties(response_format='dict')
         self.assertEqual(self.attr['temperature'],
-                         properties['temperature'].dict(exclude={'metadata'},
-                                                        exclude_unset=True))
+                         properties['temperature'].model_dump(exclude={'metadata'},
+                                                              exclude_unset=True))
 
         relations = entity.get_relationships()
-        self.assertEqual(self.relation, {relations[0].name: relations[0].dict(
+        self.assertEqual(self.relation, {relations[0].name: relations[0].model_dump(
             exclude={'name', 'metadata'}, exclude_unset=True)})
 
         new_attr = {'new_attr': ContextAttribute(type='Number', value=25)}
-        entity.add_properties(new_attr)
+        entity.add_attributes(new_attr)
 
         generated_model = create_context_entity_model(data=self.entity_data)
         entity = generated_model(**self.entity_data)
-        self.assertEqual(self.entity_data, entity.dict(exclude_unset=True))
-        entity = generated_model.parse_obj(self.entity_data)
-        self.assertEqual(self.entity_data, entity.dict(exclude_unset=True))
-
-    def test_cb_subscriptions(self) -> None:
-        """
-        Test subscription models
-        Returns:
-            None
-        """
-        sub_dict = {
-            "description": "One subscription to rule them all",
-            "subject": {
-                "entities": [
-                    {
-                        "idPattern": ".*",
-                        "type": "Room"
-                    }
-                ],
-                "condition": {
-                    "attrs": [
-                        "temperature"
-                    ],
-                    "expression": {
-                        "q": "temperature>40"
-                    }
-                }
-            },
-            "notification": {
-                "http": {
-                    "url": "http://localhost:1234"
-                },
-                "attrs": [
-                    "temperature",
-                    "humidity"
-                ]
-            },
-            "expires": "2016-04-05T14:00:00Z",
-            "throttling": 5
-        }
-
-        sub = Subscription.parse_obj(sub_dict)
-        fiware_header = FiwareHeader(service='filip',
-                                     service_path='/testing')
-        with ContextBrokerClient(fiware_header=fiware_header) as client:
-            sub_id = client.post_subscription(subscription=sub)
-            sub_res = client.get_subscription(subscription_id=sub_id)
-            self.assertEqual(sub.json(exclude={'id', 'status', 'expires'},
-                                      exclude_none=True),
-                             sub_res.json(exclude={'id', 'status', 'expires'},
-                                          exclude_none=True))
-            sub_ids = [sub.id for sub in client.get_subscription_list()]
-            for sub_id in sub_ids:
-                client.delete_subscription(subscription_id=sub_id)
+        self.assertEqual(self.entity_data, entity.model_dump(exclude_unset=True))
+        entity = generated_model.model_validate(self.entity_data)
+        self.assertEqual(self.entity_data, entity.model_dump(exclude_unset=True))
 
     def test_command(self):
         """
@@ -171,6 +129,7 @@ class TestContextModels(unittest.TestCase):
         with self.assertRaises(ValidationError):
             class NotSerializableObject:
                 test: "test"
+
             Command(value=NotSerializableObject())
             Command(type="cmd", value=5)
 
@@ -204,9 +163,9 @@ class TestContextModels(unittest.TestCase):
         # Test if all needed fields, detect all invalid strings
         for string in invalid_strings:
             self.assertRaises(ValidationError,
-                              ContextMetadata, type=string)
+                              Metadata, type=string)
             self.assertRaises(ValidationError,
-                              NamedContextMetadata, name=string)
+                              NamedMetadata, name=string)
             self.assertRaises(ValidationError,
                               ContextAttribute, type=string)
             self.assertRaises(ValidationError,
@@ -220,22 +179,128 @@ class TestContextModels(unittest.TestCase):
 
         # Test if all needed fields, do not trow wrong errors
         for string in valid_strings:
-            ContextMetadata(type=string)
-            NamedContextMetadata(name=string)
+            Metadata(type=string)
+            NamedMetadata(name=string)
             ContextAttribute(type=string)
             NamedContextAttribute(name=string)
             ContextEntityKeyValues(id=string, type=string)
-            NamedCommand(id=string, name=string)
+            NamedCommand(name=string, value=string)
 
         # Test for the special-string protected field if all strings are blocked
         for string in special_strings:
+            self.assertRaises(ValidationError, ContextAttribute, type=string)
             self.assertRaises(ValidationError,
                               NamedContextAttribute, name=string)
             self.assertRaises(ValidationError,
                               NamedCommand, name=string)
         # Test for the normal protected field if all strings are allowed
         for string in special_strings:
-            ContextMetadata(type=string)
-            NamedContextMetadata(name=string)
-            ContextAttribute(type=string)
+            Metadata(type=string)
+            NamedMetadata(name=string)
             ContextEntityKeyValues(id=string, type=string)
+
+    def test_entity_delete_attributes(self):
+        """
+        Test the delete_attributes methode
+        also tests the get_attribute_name method
+        """
+        attr = ContextAttribute(**{'value': 20, 'type': 'Text'})
+        named_attr = NamedContextAttribute(**{'name': 'test2', 'value': 20,
+                                              'type': 'Text'})
+        attr3 = ContextAttribute(**{'value': 20, 'type': 'Text'})
+
+        entity = ContextEntity(id="12", type="Test")
+
+        entity.add_attributes({"test1": attr, "test3": attr3})
+        entity.add_attributes([named_attr])
+
+        entity.delete_attributes({"test1": attr})
+        self.assertEqual(entity.get_attribute_names(), {"test2", "test3"})
+
+        entity.delete_attributes([named_attr])
+        self.assertEqual(entity.get_attribute_names(), {"test3"})
+
+        entity.delete_attributes(["test3"])
+        self.assertEqual(entity.get_attribute_names(), set())
+
+    def test_entity_get_command_methods(self):
+        """
+        Tests the two methods:
+            get_commands and get_command_triple
+        """
+
+        # test the manual creation of an entity with Command
+        entity = ContextEntity(id="test", type="Tester")
+
+        entity.add_attributes([NamedCommand(name="myCommand", value=".")])
+
+        self.assertEqual(len(entity.get_commands()), 0)
+        with self.assertRaises(KeyError):
+            entity.get_command_triple("myCommand")
+        with self.assertRaises(KeyError):
+            entity.get_command_triple("--")
+
+        # test the automated command creation via Fiware and DeviceModel
+        device = Device(device_id="device_id",
+                        service=settings.FIWARE_SERVICE,
+                        service_path=settings.FIWARE_SERVICEPATH,
+                        entity_name="name",
+                        entity_type="type",
+                        transport=TransportProtocol.HTTP,
+                        endpoint="http://localhost:1234")
+
+        device.add_command(DeviceCommand(name="myCommand"))
+        device.add_command(DeviceCommand(name="myCommand2", type=DataType.TEXT))
+
+        with IoTAClient(
+                url=settings.IOTA_JSON_URL,
+                fiware_header=FiwareHeader(
+                    service=settings.FIWARE_SERVICE,
+                    service_path=settings.FIWARE_SERVICEPATH)) as client:
+            client.post_device(device=device)
+
+        with ContextBrokerClient(
+                url=settings.CB_URL,
+                fiware_header=FiwareHeader(
+                    service=settings.FIWARE_SERVICE,
+                    service_path=settings.FIWARE_SERVICEPATH)) as client:
+            entity = client.get_entity(entity_id="name", entity_type="type")
+
+            (command, c_status, c_info) = entity.get_command_triple("myCommand")
+            self.assertEqual(command.type, DataType.COMMAND)
+            self.assertEqual(c_status.type, DataType.COMMAND_STATUS)
+            self.assertEqual(c_info.type, DataType.COMMAND_RESULT)
+
+            (command, c_status, c_info) = entity.get_command_triple(
+                "myCommand2")
+            self.assertEqual(command.type, DataType.TEXT)
+            self.assertEqual(c_status.type, DataType.COMMAND_STATUS)
+            self.assertEqual(c_info.type, DataType.COMMAND_RESULT)
+
+            self.assertEqual(
+                entity.get_commands(response_format=PropertyFormat.DICT).keys(),
+                {"myCommand", "myCommand2"})
+
+    def test_get_attributes(self):
+        """
+        Test the get_attributes method
+        """
+        entity = ContextEntity(id="test", type="Tester")
+        attributes = [
+            NamedContextAttribute(name="attr1", type="Number"),
+            NamedContextAttribute(name="attr2", type="string"),
+        ]
+        entity.add_attributes(attributes)
+        self.assertEqual(entity.get_attributes(strict_data_type=False), attributes)
+        self.assertNotEqual(entity.get_attributes(strict_data_type=True), attributes)
+        self.assertNotEqual(entity.get_attributes(), attributes)
+
+    def tearDown(self) -> None:
+        """
+        Cleanup test server
+        """
+        clear_all(fiware_header=FiwareHeader(
+            service=settings.FIWARE_SERVICE,
+            service_path=settings.FIWARE_SERVICEPATH),
+            cb_url=settings.CB_URL,
+            iota_url=settings.IOTA_JSON_URL)

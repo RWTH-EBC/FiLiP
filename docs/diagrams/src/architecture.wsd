@@ -1,7 +1,12 @@
 @startwbs
 !theme materia
 skinparam BackgroundColor white
+
 <style>
+  Linecolor black
+  arrow {
+    LineColor #E53027
+  }
 node {
     Padding 2
     Margin 3
@@ -18,7 +23,8 @@ node {
 </style>
 
 * FiLiP
-** config.py \n class Settings
+** config.py \n Settings
+** types.py
 ** clients
 *** BaseClient
 *** mqtt
@@ -33,19 +39,26 @@ node {
 **** ...
 
 ** models
-*** base.py \n class FiwareHeader
-*** units.py \n class Unit
+*** base.py \n e.g. FiwareHeader
 *** ngsi_v2
-**** iot.py \n class Device \n class ServiceGroup \n etc.
-**** context.py \n class ContextEntity \n class ContextAttribute \n etc.
+**** iot.py \n e.g. Device, \n ServiceGroup \n etc.
+**** context.py \n ContextEntity, \n ContextAttribute \n etc.
+**** subscriptions.py \n e.g. Subscription etc.
+**** registrations.py \n e.g.Registration etc.
+**** units.py \n Unit, UnitCode, UnitText
 *** ngsi_ld
 **** ...
 ** utils
+*** cleanup.py
+*** data.py
+*** datetime.py
+*** model_generator.py
 *** simple_ql.py
 *** validators.py
-*** datamodel_generator.py
-*** token_manager.py
-** data (no package)
-*** unece-units.hdf
+
+** data (datapackage)
+*** unece-units
+**** levels.csv
+**** units_of_measure.csv
 
 @endwbs
