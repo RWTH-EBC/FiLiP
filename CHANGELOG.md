@@ -1,3 +1,6 @@
+#### v0.3.1
+- add tutorial for protected endpoint with bearer authentication ([#208](https://github.com/RWTH-EBC/FiLiP/issues/208))
+
 #### v0.3.0
 - fixed inconsistency of `entity_type` as required argument ([#188](https://github.com/RWTH-EBC/FiLiP/issues/188))
 - BREAKING CHANGE: Migration of pydantic v1 to v2 ([#199](https://github.com/RWTH-EBC/FiLiP/issues/199))
