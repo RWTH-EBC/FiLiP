@@ -3,7 +3,9 @@ Shared data models
 """
 
 from aenum import Enum
-from pydantic import BaseModel, Field, BaseConfig
+from pydantic import ConfigDict, BaseModel, Field, BaseConfig, field_validator
+
+from filip.utils.validators import validate_fiware_service_path, validate_fiware_service
 
 
 class NgsiVersion(str, Enum):
@@ -70,25 +72,27 @@ class FiwareHeader(BaseModel):
     Context Brokers to support hierarchical scopes:
     https://fiware-orion.readthedocs.io/en/master/user/service_path/index.html
     """
+    model_config = ConfigDict(populate_by_name=True, validate_assignment=True)
+
     service: str = Field(
         alias="fiware-service",
         default="",
         max_length=50,
         description="Fiware service used for multi-tenancy",
-        regex=r"\w*$"
+        pattern=r"\w*$"
     )
     service_path: str = Field(
         alias="fiware-servicepath",
         default="",
         description="Fiware service path",
         max_length=51,
-        regex=r'^((\/\w*)|(\/\#))*(\,((\/\w*)|(\/\#)))*$'
     )
+    valid_service = field_validator("service")(
+        validate_fiware_service)
+    valid_service_path = field_validator("service_path")(
+        validate_fiware_service_path)
 
-    class Config(BaseConfig):
-        allow_population_by_field_name = True
-        validate_assignment = True
-        
+
 class FiwareHeaderSecure(FiwareHeader):
     """
     Defines entity service paths and a autorization via Baerer-Token which are supported by the NGSI
@@ -104,23 +108,6 @@ class FiwareHeaderSecure(FiwareHeader):
     )
 
 
-class FiwareRegex(str, Enum):
-    """
-    Collection of Regex expression used to check if the value of a Pydantic
-    field, can be used in the related Fiware field.
-    """
-    _init_ = 'value __doc__'
-
-    standard = r"(^((?![?&#/\"' ])[\x00-\x7F])*$)", \
-               "Prevents any string that contains at least one of the " \
-               "symbols: ? & # / ' \" or a whitespace"
-    string_protect = r"(?!^id$)(?!^type$)(?!^geo:location$)" \
-                     r"(^((?![?&#/\"' ])[\x00-\x7F])*$)",\
-                     "Prevents any string that contains at least one of " \
-                     "the symbols: ? & # / ' \" or a whitespace." \
-                     "AND the strings: id, type, geo:location"
-
-
 class LogLevel(str, Enum):
     CRITICAL = 'CRITICAL'
     ERROR = 'ERROR'
@@ -130,7 +117,7 @@ class LogLevel(str, Enum):
     NOTSET = 'NOTSET'
 
     @classmethod
-    def _missing_(cls, name):
+    def _missing_name_(cls, name):
         """
         Class method to realize case insensitive args
 

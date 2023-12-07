@@ -9,7 +9,8 @@ from itertools import count
 from typing import Dict, List, Union, Deque, Optional
 from urllib.parse import urljoin
 import requests
-from pydantic import parse_obj_as, AnyHttpUrl
+from pydantic import AnyHttpUrl
+from pydantic.type_adapter import TypeAdapter
 from filip import settings
 from filip.clients.base_http_client import BaseHttpClient
 from filip.models.base import FiwareHeader
@@ -114,9 +115,9 @@ class QuantumLeapClient(BaseHttpClient):
         headers = self.headers.copy()
         data = []
         for entity in notification.data:
-            data.append(entity.dict(exclude_unset=True,
-                                    exclude_defaults=True,
-                                    exclude_none=True))
+            data.append(entity.model_dump(exclude_unset=True,
+                                          exclude_defaults=True,
+                                          exclude_none=True))
         data_set = {
             "data": data,
             "subscriptionId": notification.subscriptionId
@@ -189,11 +190,11 @@ class QuantumLeapClient(BaseHttpClient):
         params = {}
         url = urljoin(self.base_url, '/v2/subscribe')
         validate_http_url(cb_url)
-        cb_url = urljoin(cb_url, '/v2')
+        cb_url = urljoin(str(cb_url), '/v2')
         params.update({'orionUrl': cb_url.encode('utf-8')})
 
         validate_http_url(ql_url)
-        ql_url = urljoin(ql_url, '/v2')
+        ql_url = urljoin(str(ql_url), '/v2')
         params.update({'quantumleapUrl': ql_url.encode('utf-8')})
 
         if entity_type:
@@ -268,7 +269,7 @@ class QuantumLeapClient(BaseHttpClient):
                 self.logger.info("Entity id '%s' successfully deleted!",
                                  entity_id)
                 return entity_id
-            time.sleep(counter*5)
+            time.sleep(counter * 5)
             counter += 1
 
         msg = f"Could not delete QL entity of id {entity_id}"
@@ -467,7 +468,8 @@ class QuantumLeapClient(BaseHttpClient):
                                    to_date=to_date,
                                    limit=limit,
                                    offset=offset)
-        return parse_obj_as(List[TimeSeriesHeader], res[0])
+        ta = TypeAdapter(List[TimeSeriesHeader])
+        return ta.validate_python(res[0])
 
     # /entities/{entityId}
     def get_entity_by_id(self,
@@ -582,9 +584,9 @@ class QuantumLeapClient(BaseHttpClient):
                                      geometry=geometry,
                                      coords=coords)
         # merge response chunks
-        res = TimeSeries.parse_obj(res_q.popleft())
+        res = TimeSeries.model_validate(res_q.popleft())
         for item in res_q:
-            res.extend(TimeSeries.parse_obj(item))
+            res.extend(TimeSeries.model_validate(item))
 
         return res
 

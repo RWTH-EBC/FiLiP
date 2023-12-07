@@ -5,9 +5,8 @@ import json
 from typing import Any, List, Dict, Union, Optional, Set, Tuple
 from aenum import Enum
 from pydantic import \
-    BaseModel, \
-    Field, \
-    validator
+    field_validator, ConfigDict, BaseModel, \
+    Field
 
 from filip.models.ngsi_v2.base import \
     EntityPattern, \
@@ -15,7 +14,8 @@ from filip.models.ngsi_v2.base import \
     BaseAttribute, \
     BaseValueAttribute, \
     BaseNameAttribute
-from filip.models.base import DataType, FiwareRegex
+from filip.models.base import DataType
+from filip.utils.validators import validate_fiware_datatype_standard, validate_fiware_datatype_string_protect
 
 
 class GetEntitiesOptions(str, Enum):
@@ -103,6 +103,7 @@ class ContextEntityKeyValues(BaseModel):
     is a string containing the entity's type name.
 
     """
+    model_config = ConfigDict(extra='allow', validate_default=True, validate_assignment=True)
     id: str = Field(
         ...,
         title="Entity Id",
@@ -113,9 +114,9 @@ class ContextEntityKeyValues(BaseModel):
         example='Bcn-Welt',
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.standard.value,  # Make it FIWARE-Safe
-        allow_mutation=False
+        frozen=True
     )
+    valid_id = field_validator("id")(validate_fiware_datatype_standard)
     type: Union[str, Enum] = Field(
         ...,
         title="Entity Type",
@@ -126,17 +127,9 @@ class ContextEntityKeyValues(BaseModel):
         example="Room",
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.standard.value,  # Make it FIWARE-Safe
-        allow_mutation=False
+        frozen=True
     )
-
-    class Config:
-        """
-        Pydantic config
-        """
-        extra = 'allow'
-        validate_all = True
-        validate_assignment = True
+    valid_type = field_validator("type")(validate_fiware_datatype_standard)
 
 
 class PropertyFormat(str, Enum):
@@ -181,24 +174,18 @@ class ContextEntity(ContextEntityKeyValues):
         >>> entity = ContextEntity(**data)
 
     """
+    model_config = ConfigDict(extra='allow', validate_default=True, validate_assignment=True)
+
     def __init__(self, id: str, type: str, **data):
 
         # There is currently no validation for extra fields
         data.update(self._validate_attributes(data))
         super().__init__(id=id, type=type, **data)
 
-    class Config:
-        """
-        Pydantic config
-        """
-        extra = 'allow'
-        validate_all = True
-        validate_assignment = True
-
     @classmethod
     def _validate_attributes(cls, data: Dict):
-        attrs = {key: ContextAttribute.parse_obj(attr) for key, attr in
-                 data.items() if key not in ContextEntity.__fields__}
+        attrs = {key: ContextAttribute.model_validate(attr) for key, attr in
+                 data.items() if key not in ContextEntity.model_fields}
         return attrs
 
     def add_attributes(self, attrs: Union[Dict[str, ContextAttribute],
@@ -214,7 +201,7 @@ class ContextEntity(ContextEntityKeyValues):
             None
         """
         if isinstance(attrs, list):
-            attrs = {attr.name: ContextAttribute(**attr.dict(exclude={'name'}))
+            attrs = {attr.name: ContextAttribute(**attr.model_dump(exclude={'name'}))
                      for attr in attrs}
         for key, attr in attrs.items():
             self.__setattr__(name=key, value=attr)
@@ -264,25 +251,25 @@ class ContextEntity(ContextEntityKeyValues):
         if response_format == PropertyFormat.DICT:
             if strict_data_type:
                 return {key: ContextAttribute(**value)
-                        for key, value in self.dict().items()
-                        if key not in ContextEntity.__fields__
+                        for key, value in self.model_dump().items()
+                        if key not in ContextEntity.model_fields
                         and value.get('type') in
                         [att.value for att in attribute_types]}
             else:
                 return {key: ContextAttribute(**value)
-                        for key, value in self.dict().items()
-                        if key not in ContextEntity.__fields__}
+                        for key, value in self.model_dump().items()
+                        if key not in ContextEntity.model_fields}
         else:
             if strict_data_type:
                 return [NamedContextAttribute(name=key, **value)
-                        for key, value in self.dict().items()
-                        if key not in ContextEntity.__fields__
+                        for key, value in self.model_dump().items()
+                        if key not in ContextEntity.model_fields
                         and value.get('type') in
                         [att.value for att in attribute_types]]
             else:
                 return [NamedContextAttribute(name=key, **value)
-                        for key, value in self.dict().items()
-                        if key not in ContextEntity.__fields__]
+                        for key, value in self.model_dump().items()
+                        if key not in ContextEntity.model_fields]
 
     def update_attribute(self,
                          attrs: Union[Dict[str, ContextAttribute],
@@ -301,7 +288,7 @@ class ContextEntity(ContextEntityKeyValues):
             None
         """
         if isinstance(attrs, list):
-            attrs = {attr.name: ContextAttribute(**attr.dict(exclude={'name'}))
+            attrs = {attr.name: ContextAttribute(**attr.model_dump(exclude={'name'}))
                      for attr in attrs}
 
         existing_attribute_names = self.get_attribute_names()
@@ -318,8 +305,8 @@ class ContextEntity(ContextEntityKeyValues):
             Set[str]
         """
 
-        return {key for key in self.dict()
-                if key not in ContextEntity.__fields__}
+        return {key for key in self.model_dump()
+                if key not in ContextEntity.model_fields}
 
     def delete_attributes(self, attrs: Union[Dict[str, ContextAttribute],
                                              List[NamedContextAttribute],
@@ -400,7 +387,7 @@ class ContextEntity(ContextEntityKeyValues):
         if response_format == PropertyFormat.LIST:
             return property_attributes
         else:
-            return {p.name: ContextAttribute(**p.dict(exclude={'name'}))
+            return {p.name: ContextAttribute(**p.model_dump(exclude={'name'}))
                     for p in property_attributes}
 
     def get_relationships(
@@ -469,8 +456,8 @@ class ContextEntity(ContextEntityKeyValues):
         if response_format == PropertyFormat.LIST:
             return commands
         else:
-            return {c.name: ContextAttribute(**c.dict(exclude={'name'}))
-                    for c in commands}
+            return {cmd.name: ContextAttribute(**cmd.model_dump(exclude={'name'}))
+                    for cmd in commands}
 
     def get_command_triple(self, command_attribute_name: str)\
             -> Tuple[NamedContextAttribute, NamedContextAttribute,
@@ -564,7 +551,8 @@ class Update(BaseModel):
                     "JSON entity representation format "
     )
 
-    @validator('action_type')
+    @field_validator('action_type')
+    @classmethod
     def check_action_type(cls, action):
         """
         validates action_type
@@ -585,11 +573,13 @@ class Command(BaseModel):
     """
     type: DataType = Field(default=DataType.COMMAND,
                            description="Command must have the type command",
-                           const=True)
+                           # const=True
+                           )
     value: Any = Field(description="Any json serializable command that will "
                                    "be forwarded to the connected IoT device")
 
-    @validator("value")
+    @field_validator("value")
+    @classmethod
     def check_value(cls, value):
         """
         Check if value is json serializable
@@ -598,7 +588,11 @@ class Command(BaseModel):
         Returns:
             value
         """
-        json.dumps(value)
+        try:
+            json.dumps(value)
+        except:
+            raise ValueError(f"Command value {value} "
+                             f"is not serializable")
         return value
 
 
@@ -611,5 +605,5 @@ class NamedCommand(Command):
         description="Name of the command",
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.string_protect.value
     )
+    valid_name = field_validator("name")(validate_fiware_datatype_string_protect)

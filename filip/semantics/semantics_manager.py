@@ -144,16 +144,16 @@ class InstanceRegistry(BaseModel):
         for identifier, instance in self._registry.items():
             old_state = None
             if instance.old_state.state is not None:
-                old_state = instance.old_state.state.json()
+                old_state = instance.old_state.state.model_dump_json()
             instance_dict = {
-                "entity": instance.build_context_entity().json(),
-                "header": instance.header.json(),
+                "entity": instance.build_context_entity().model_dump_json(),
+                "header": instance.header.model_dump_json(),
                 "old_state": old_state
             }
             res['instances'].append(instance_dict)
 
         for identifier in self._deleted_identifiers:
-            res['deleted_identifiers'].append(identifier.json())
+            res['deleted_identifiers'].append(identifier.model_dump_json())
 
         return json.dumps(res, indent=4)
 
@@ -179,22 +179,22 @@ class InstanceRegistry(BaseModel):
         save = json.loads(json_string)
         for instance_dict in save['instances']:
             entity_json = instance_dict['entity']
-            header = InstanceHeader.parse_raw(instance_dict['header'])
+            header = InstanceHeader.model_validate(instance_dict['header'])
 
-            context_entity = ContextEntity.parse_raw(entity_json)
+            context_entity = ContextEntity.model_validate(entity_json)
 
             instance = semantic_manager._context_entity_to_semantic_class(
                 context_entity, header)
 
             if instance_dict['old_state'] is not None:
                 instance.old_state.state = \
-                    ContextEntity.parse_raw(instance_dict['old_state'])
+                    ContextEntity.model_validate(instance_dict['old_state'])
 
             self._registry[instance.get_identifier()] = instance
 
         for identifier in save['deleted_identifiers']:
             self._deleted_identifiers.append(
-                InstanceIdentifier.parse_raw(identifier))
+                InstanceIdentifier.model_validate(identifier))
 
     def __hash__(self):
         values = (hash(value) for value in self._registry.values())
@@ -338,7 +338,7 @@ class SemanticsManager(BaseModel):
         for identifier_str, prop_list in references.items():
             for prop in prop_list:
                 loaded_class.add_reference(
-                    InstanceIdentifier.parse_raw(identifier_str.replace(
+                    InstanceIdentifier.model_validate_json(identifier_str.replace(
                         "---", ".")), prop)
 
         # load metadata
@@ -349,9 +349,9 @@ class SemanticsManager(BaseModel):
         # load device_settings into instance, if instance is a device
         if isinstance(loaded_class, SemanticDeviceClass):
             settings_attribute = entity.get_attribute("deviceSettings")
-            device_settings = DeviceSettings.parse_obj(settings_attribute.value)
+            device_settings = DeviceSettings.model_validate(settings_attribute.value)
 
-            for key, value in device_settings.dict().items():
+            for key, value in device_settings.model_dump().items():
                 loaded_class.device_settings.__setattr__(key, value)
 
         return loaded_class
@@ -380,7 +380,7 @@ class SemanticsManager(BaseModel):
             else:  # is an instance_identifier
                 # we need to replace back --- with . that we switched,
                 # as a . is not allowed in the dic in Fiware
-                return InstanceIdentifier.parse_raw(
+                return InstanceIdentifier.model_validate_json(
                     str(value).replace("---", ".").replace("'", '"'))
 
         elif isinstance(field, CommandField):
@@ -798,7 +798,7 @@ class SemanticsManager(BaseModel):
         Returns:
             Datatype
         """
-        return Datatype.parse_obj(self.datatype_catalogue[datatype_name])
+        return Datatype.model_validate(self.datatype_catalogue[datatype_name])
 
     def get_individual(self, individual_name: str) -> SemanticIndividual:
         """
@@ -997,7 +997,7 @@ class SemanticsManager(BaseModel):
             if isinstance(item, SemanticIndividual):
                 return item.get_name()
             else:
-                return item.get_identifier().json()
+                return item.get_identifier().model_dump_json()
 
         for instance in self.get_all_local_instances():
             label = f'({instance.get_type()}){instance.metadata.name}'
@@ -1209,7 +1209,7 @@ class SemanticsManager(BaseModel):
         instance.references.clear()
         for key, value in merged_references.items():
             # replace back the protected . (. not allowed in keys in fiware)
-            instance.references[InstanceIdentifier.parse_raw(key.replace(
+            instance.references[InstanceIdentifier.model_validate_json(key.replace(
                 "---", "."))] = value
 
         # ------merge device settings----------------------------------------

@@ -5,7 +5,7 @@ broker.
 from typing import List, Union, Optional
 from datetime import datetime
 from aenum import Enum
-from pydantic import BaseModel, Field
+from pydantic import ConfigDict, BaseModel, Field
 from filip.models.ngsi_v2.base import EntityPattern, Expression, Http, Status
 
 
@@ -39,6 +39,8 @@ class Provider(BaseModel):
 
 
 class ForwardingInformation(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
     timesSent: int = Field(
         description="(not editable, only present in GET operations): "
                     "Number of forwarding requests sent due to this "
@@ -61,12 +63,6 @@ class ForwardingInformation(BaseModel):
                     "request forwarding. Not present if registration has "
                     "never had a successful notification."
     )
-
-    class Config:
-        """
-        Pydantic config
-        """
-        allow_mutation = False
 
 
 class DataProvided(BaseModel):
