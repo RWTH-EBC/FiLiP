@@ -15,8 +15,6 @@ INSTALL_REQUIRES = ['aenum~=3.1.15',
                     'pydantic~=2.5.2',
                     'pydantic-settings~=2.0.0',
                     'stringcase>=1.2.0',
-                    # semantics module
-                    # 'igraph==0.9.8',
                     'rdflib~=6.0.0',
                     'regex~=2023.10.3',
                     'requests~=2.31.0',
@@ -62,6 +60,10 @@ setuptools.setup(
                                                'tutorials']),
     package_data={'filip': ['data/unece-units/*.csv']},
     setup_requires=SETUP_REQUIRES,
+    # optional modules
+    extras_require={
+        "semantics": ["igraph~=0.9.8"]
+    },
     install_requires=INSTALL_REQUIRES,
     python_requires=">=3.7",
 
