@@ -1,6 +1,7 @@
 #### v0.3.0
 - fix: bug in typePattern validation @richardmarston ([#180](https://github.com/RWTH-EBC/FiLiP/pull/180))
 - add: add messages to all KeyErrors @FWuellhorst ([#192](https://github.com/RWTH-EBC/FiLiP/pull/192))
+- add: optional module `semantics` in setup tool @djs0109
 - fix: get() method of Units dose not work properly by @djs0109 ([#193](https://github.com/RWTH-EBC/FiLiP/pull/193))
 - BREAKING CHANGE: Migration of pydantic v1 to v2 @djs0109 ([#199](https://github.com/RWTH-EBC/FiLiP/issues/199))
 
