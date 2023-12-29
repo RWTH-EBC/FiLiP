@@ -116,7 +116,6 @@ class QuantumLeapClient(BaseHttpClient):
         data = []
         for entity in notification.data:
             data.append(entity.model_dump(exclude_unset=True,
-                                          exclude_defaults=True,
                                           exclude_none=True))
         data_set = {
             "data": data,

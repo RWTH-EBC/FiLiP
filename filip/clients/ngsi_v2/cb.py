@@ -234,7 +234,6 @@ class ContextBrokerClient(BaseHttpClient):
                 url=url,
                 headers=headers,
                 json=entity.model_dump(exclude_unset=True,
-                                       exclude_defaults=True,
                                        exclude_none=True))
             if res.ok:
                 self.logger.info("Entity successfully posted!")
@@ -1202,7 +1201,6 @@ class ContextBrokerClient(BaseHttpClient):
                 headers=headers,
                 data=subscription.model_dump_json(exclude={'id'},
                                                   exclude_unset=True,
-                                                  exclude_defaults=True,
                                                   exclude_none=True),
                 params=params)
             if res.ok:
@@ -1276,7 +1274,6 @@ class ContextBrokerClient(BaseHttpClient):
                 headers=headers,
                 data=subscription.model_dump_json(exclude={'id'},
                                                   exclude_unset=True,
-                                                  exclude_defaults=False,
                                                   exclude_none=True))
             if res.ok:
                 self.logger.info("Subscription successfully updated!")
@@ -1360,7 +1357,6 @@ class ContextBrokerClient(BaseHttpClient):
                 headers=headers,
                 data=registration.model_dump_json(exclude={'id'},
                                                   exclude_unset=True,
-                                                  exclude_defaults=True,
                                                   exclude_none=True))
             if res.ok:
                 self.logger.info("Registration successfully created!")
@@ -1412,7 +1408,6 @@ class ContextBrokerClient(BaseHttpClient):
                 headers=headers,
                 data=registration.model_dump_json(exclude={'id'},
                                                   exclude_unset=True,
-                                                  exclude_defaults=True,
                                                   exclude_none=True))
             if res.ok:
                 self.logger.info("Registration successfully updated!")
