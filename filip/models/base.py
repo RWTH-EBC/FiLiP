@@ -44,7 +44,7 @@ class DataType(str, Enum):
         "Number",
         "Use values from 0123456789 (Unicode 'DIGIT ZERO' "
         "(U+0030) to 'DIGIT NINE' (U+0039)) rather than "
-        "superficially similiar Unicode symbols. Use '.' "
+        "superficially similar Unicode symbols. Use '.' "
         "(Unicode 'FULL STOP' (U+002E)) rather than ',' to "
         "indicate a decimal point. Avoid using these symbols "
         "as a readability separator.",
@@ -113,7 +113,7 @@ class FiwareHeader(BaseModel):
 
 class FiwareHeaderSecure(FiwareHeader):
     """
-    Defines entity service paths and an autorization via Baerer-Token which are
+    Defines entity service paths and an authorization via Bearer-Token which are
     supported by the NGSI
     Context Brokers to support hierarchical scopes:
     https://fiware-orion.readthedocs.io/en/master/user/service_path/index.html
