@@ -276,7 +276,7 @@ class TargetStatement(BaseModel):
 # target_statements is a forward reference, so that the class can refer to
 # itself this forward reference need to be resolved after the class has fully
 # loaded
-TargetStatement.update_forward_refs()
+TargetStatement.model_rebuild()
 
 
 class RestrictionType(str, Enum):

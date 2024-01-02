@@ -3,7 +3,7 @@
 import datetime
 from typing import TYPE_CHECKING, List, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import ConfigDict, BaseModel, Field
 
 from ...models.base import LogLevel
 
@@ -35,6 +35,7 @@ class DependencyStatement(BaseModel):
 class ParsingError(BaseModel):
     """Object represents one issue that arose while parsing a source,
        and holds all relevant details for that issue"""
+    model_config = ConfigDict(use_enum_values=True)
     level: LogLevel = Field(description="Severity of error")
     source_iri: str = Field(description=
                             "Iri of the source containing the error")
@@ -54,9 +55,6 @@ class ParsingError(BaseModel):
     message: str = Field(
         description="Message describing the error"
     )
-
-    class Config:
-        use_enum_values = True
 
 
 class Source(BaseModel):

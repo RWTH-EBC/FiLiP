@@ -3,7 +3,7 @@ import time
 import unittest
 from random import randrange
 from paho.mqtt.client import MQTT_CLEAN_START_FIRST_ONLY
-from urllib.parse import urlparse
+from filip.custom_types import AnyMqttUrl
 from filip.models import FiwareHeader
 from filip.models.ngsi_v2.context import NamedCommand
 from filip.models.ngsi_v2.iot import \
@@ -103,9 +103,9 @@ class TestMQTTClient(unittest.TestCase):
                                         callback=on_message_first)
         self.mqttc.message_callback_add(sub=second_topic,
                                         callback=on_message_second)
-        mqtt_broker_url = urlparse(settings.MQTT_BROKER_URL)
+        mqtt_broker_url = settings.MQTT_BROKER_URL
 
-        self.mqttc.connect(host=mqtt_broker_url.hostname,
+        self.mqttc.connect(host=mqtt_broker_url.host,
                            port=mqtt_broker_url.port,
                            keepalive=60,
                            bind_address="",
@@ -144,7 +144,7 @@ class TestMQTTClient(unittest.TestCase):
             self.mqttc.add_service_group(service_group="SomethingRandom")
         with self.assertRaises(ValueError):
             self.mqttc.add_service_group(
-                service_group=self.service_group_json.dict())
+                service_group=self.service_group_json.model_dump())
 
         self.assertEqual(
             self.service_group_json,
@@ -154,7 +154,7 @@ class TestMQTTClient(unittest.TestCase):
 
         with self.assertRaises(KeyError):
             self.mqttc.update_service_group(
-                service_group=self.service_group_json.copy(
+                service_group=self.service_group_json.model_copy(
                     update={'apikey': 'someOther'}))
 
         with self.assertRaises(KeyError):
@@ -174,7 +174,7 @@ class TestMQTTClient(unittest.TestCase):
         self.mqttc.update_device(device=self.device_json)
         with self.assertRaises(KeyError):
             self.mqttc.update_device(
-                device=self.device_json.copy(
+                device=self.device_json.model_copy(
                     update={'device_id': "somethingRandom"}))
 
         self.mqttc.delete_device(device_id=self.device_json.device_id)
@@ -219,9 +219,9 @@ class TestMQTTClient(unittest.TestCase):
         httpc.iota.post_group(service_group=self.service_group_json, update=True)
         httpc.iota.post_device(device=self.device_json, update=True)
 
-        mqtt_broker_url = urlparse(settings.MQTT_BROKER_URL)
+        mqtt_broker_url: AnyMqttUrl = settings.MQTT_BROKER_URL
 
-        self.mqttc.connect(host=mqtt_broker_url.hostname,
+        self.mqttc.connect(host=mqtt_broker_url.host,
                            port=mqtt_broker_url.port,
                            keepalive=60,
                            bind_address="",
@@ -279,9 +279,9 @@ class TestMQTTClient(unittest.TestCase):
         httpc.iota.post_group(service_group=self.service_group_json, update=True)
         httpc.iota.post_device(device=self.device_json, update=True)
 
-        mqtt_broker_url = urlparse(settings.MQTT_BROKER_URL)
+        mqtt_broker_url = settings.MQTT_BROKER_URL
 
-        self.mqttc.connect(host=mqtt_broker_url.hostname,
+        self.mqttc.connect(host=mqtt_broker_url.host,
                            port=mqtt_broker_url.port,
                            keepalive=60,
                            bind_address="",
@@ -379,10 +379,9 @@ class TestMQTTClient(unittest.TestCase):
         httpc.iota.post_group(service_group=self.service_group_ul)
         httpc.iota.post_device(device=self.device_ul, update=True)
 
+        mqtt_broker_url = settings.MQTT_BROKER_URL
 
-        mqtt_broker_url = urlparse(settings.MQTT_BROKER_URL)
-
-        self.mqttc.connect(host=mqtt_broker_url.hostname,
+        self.mqttc.connect(host=mqtt_broker_url.host,
                            port=mqtt_broker_url.port,
                            keepalive=60,
                            bind_address="",
@@ -443,9 +442,9 @@ class TestMQTTClient(unittest.TestCase):
 
         time.sleep(0.5)
 
-        mqtt_broker_url = urlparse(settings.MQTT_BROKER_URL)
+        mqtt_broker_url = settings.MQTT_BROKER_URL
 
-        self.mqttc.connect(host=mqtt_broker_url.hostname,
+        self.mqttc.connect(host=mqtt_broker_url.host,
                            port=mqtt_broker_url.port,
                            keepalive=60,
                            bind_address="",

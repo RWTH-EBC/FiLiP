@@ -58,7 +58,7 @@ class BaseHttpClient:
     def __enter__(self):
         if not self.session:
             self.session = requests.Session()
-            self.headers.update(self.fiware_headers.dict(by_alias=True))
+            self.headers.update(self.fiware_headers.model_dump(by_alias=True))
             self._external_session = False
         return self
 
@@ -94,12 +94,12 @@ class BaseHttpClient:
         if isinstance(headers, FiwareHeader):
             self._fiware_headers = headers
         elif isinstance(headers, dict):
-            self._fiware_headers = FiwareHeader.parse_obj(headers)
+            self._fiware_headers = FiwareHeader.model_validate(headers)
         elif isinstance(headers, str):
-            self._fiware_headers = FiwareHeader.parse_raw(headers)
+            self._fiware_headers = FiwareHeader.model_validate_json(headers)
         else:
             raise TypeError(f'Invalid headers! {type(headers)}')
-        self.headers.update(self.fiware_headers.dict(by_alias=True))
+        self.headers.update(self.fiware_headers.model_dump(by_alias=True))
 
     @property
     def fiware_service(self) -> str:
@@ -121,7 +121,7 @@ class BaseHttpClient:
             None
         """
         self._fiware_headers.service = service
-        self.headers.update(self.fiware_headers.dict(by_alias=True))
+        self.headers.update(self.fiware_headers.model_dump(by_alias=True))
 
     @property
     def fiware_service_path(self) -> str:
@@ -143,7 +143,7 @@ class BaseHttpClient:
             None
         """
         self._fiware_headers.service_path = service_path
-        self.headers.update(self.fiware_headers.dict(by_alias=True))
+        self.headers.update(self.fiware_headers.model_dump(by_alias=True))
 
     @property
     def headers(self):

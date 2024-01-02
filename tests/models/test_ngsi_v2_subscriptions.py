@@ -1,6 +1,7 @@
 """
 Test module for context subscriptions and notifications
 """
+import json
 import unittest
 
 from pydantic import ValidationError
@@ -44,54 +45,7 @@ class TestSubscriptions(unittest.TestCase):
                 "humidity"
             ]
         }
-
-    def test_notification_models(self):
-        """
-        Test notification models
-        """
-        # Test url field sub field validation
-        with self.assertRaises(ValidationError):
-            Http(url="brokenScheme://test.de:80")
-        with self.assertRaises(ValidationError):
-            HttpCustom(url="brokenScheme://test.de:80")
-        with self.assertRaises(ValidationError):
-            Mqtt(url="brokenScheme://test.de:1883",
-                 topic='/testing')
-        with self.assertRaises(ValidationError):
-            Mqtt(url="mqtt://test.de:1883",
-                 topic='/,t')
-        httpCustom = HttpCustom(url=self.http_url)
-        mqtt = Mqtt(url=self.mqtt_url,
-                    topic=self.mqtt_topic)
-        mqttCustom = MqttCustom(url=self.mqtt_url,
-                                topic=self.mqtt_topic)
-
-        # Test validator for conflicting fields
-        notification = Notification.parse_obj(self.notification)
-        with self.assertRaises(ValidationError):
-            notification.mqtt = httpCustom
-        with self.assertRaises(ValidationError):
-            notification.mqtt = mqtt
-        with self.assertRaises(ValidationError):
-            notification.mqtt = mqttCustom
-
-        # test onlyChangedAttrs-field
-        notification.onlyChangedAttrs = True
-        notification.onlyChangedAttrs = False
-        with self.assertRaises(ValidationError):
-            notification.onlyChangedAttrs = dict()
-
-
-    @clean_test(fiware_service=settings.FIWARE_SERVICE,
-                fiware_servicepath=settings.FIWARE_SERVICEPATH,
-                cb_url=settings.CB_URL)
-    def test_subscription_models(self) -> None:
-        """
-        Test subscription models
-        Returns:
-            None
-        """
-        sub_dict = {
+        self.sub_dict = {
             "description": "One subscription to rule them all",
             "subject": {
                 "entities": [
@@ -121,7 +75,54 @@ class TestSubscriptions(unittest.TestCase):
             "expires": "2030-04-05T14:00:00Z",
         }
 
-        sub = Subscription.parse_obj(sub_dict)
+    def test_notification_models(self):
+        """
+        Test notification models
+        """
+        # Test url field sub field validation
+        with self.assertRaises(ValidationError):
+            Http(url="brokenScheme://test.de:80")
+        with self.assertRaises(ValidationError):
+            HttpCustom(url="brokenScheme://test.de:80")
+        with self.assertRaises(ValidationError):
+            Mqtt(url="brokenScheme://test.de:1883",
+                 topic='/testing')
+        with self.assertRaises(ValidationError):
+            Mqtt(url="mqtt://test.de:1883",
+                 topic='/,t')
+        httpCustom = HttpCustom(url=self.http_url)
+        mqtt = Mqtt(url=self.mqtt_url,
+                    topic=self.mqtt_topic)
+        mqttCustom = MqttCustom(url=self.mqtt_url,
+                                topic=self.mqtt_topic)
+
+        # Test validator for conflicting fields
+        notification = Notification.model_validate(self.notification)
+        with self.assertRaises(ValidationError):
+            notification.mqtt = httpCustom
+        with self.assertRaises(ValidationError):
+            notification.mqtt = mqtt
+        with self.assertRaises(ValidationError):
+            notification.mqtt = mqttCustom
+
+        # test onlyChangedAttrs-field
+        notification = Notification.model_validate(self.notification)
+        notification.onlyChangedAttrs = True
+        notification.onlyChangedAttrs = False
+        with self.assertRaises(ValidationError):
+            notification.onlyChangedAttrs = dict()
+
+
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                cb_url=settings.CB_URL)
+    def test_subscription_models(self) -> None:
+        """
+        Test subscription models
+        Returns:
+            None
+        """
+        sub = Subscription.model_validate(self.sub_dict)
         fiware_header = FiwareHeader(service=settings.FIWARE_SERVICE,
                                      service_path=settings.FIWARE_SERVICEPATH)
         with ContextBrokerClient(
@@ -137,14 +138,48 @@ class TestSubscriptions(unittest.TestCase):
                     else:
                         self.assertEqual(str(value), str(dict2[key]))
 
-            compare_dicts(sub.dict(exclude={'id'}),
-                          sub_res.dict(exclude={'id'}))
+            compare_dicts(sub.model_dump(exclude={'id'}),
+                          sub_res.model_dump(exclude={'id'}))
 
         # test validation of throttling
         with self.assertRaises(ValidationError):
             sub.throttling = -1
         with self.assertRaises(ValidationError):
             sub.throttling = 0.1
+
+    def test_query_string_serialization(self):
+        sub = Subscription.model_validate(self.sub_dict)
+        self.assertIsInstance(json.loads(sub.subject.condition.expression.model_dump_json())["q"],
+                              str)
+        self.assertIsInstance(json.loads(sub.subject.condition.model_dump_json())["expression"]["q"],
+                              str)
+        self.assertIsInstance(json.loads(sub.subject.model_dump_json())["condition"]["expression"]["q"],
+                              str)
+        self.assertIsInstance(json.loads(sub.model_dump_json())["subject"]["condition"]["expression"]["q"],
+                              str)
+
+    def test_model_dump_json(self):
+        sub = Subscription.model_validate(self.sub_dict)
+
+        # test exclude
+        test_dict = json.loads(sub.model_dump_json(exclude={"id"}))
+        with self.assertRaises(KeyError):
+            _ = test_dict["id"]
+
+        # test exclude_none
+        test_dict = json.loads(sub.model_dump_json(exclude_none=True))
+        with self.assertRaises(KeyError):
+            _ = test_dict["throttling"]
+
+        # test exclude_unset
+        test_dict = json.loads(sub.model_dump_json(exclude_unset=True))
+        with self.assertRaises(KeyError):
+            _ = test_dict["status"]
+
+        # test exclude_defaults
+        test_dict = json.loads(sub.model_dump_json(exclude_defaults=True))
+        with self.assertRaises(KeyError):
+            _ = test_dict["status"]
 
     def tearDown(self) -> None:
         """

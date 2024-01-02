@@ -12,23 +12,23 @@ FiLiP (Fiware Library for Python) is a python software development kit (SDK) for
 accelerating the development of web services that use Fiware's Generic 
 Enablers (GEs) as backend.
 
-Is it mainly based on the [Pydantic](https://pydantic-docs.helpmanual.io/) 
-package which is sophisticated library for data validation and settings 
+It is mainly based on the [Pydantic](https://pydantic-docs.helpmanual.io/) 
+package which is a sophisticated library for data validation and settings 
 management using python type annotations.
 Pydantic enforces type hints at runtime, and provides user friendly errors 
 when data is invalid.
-We mainly use Pydantic model to build our own data model structure required 
+We mainly use the Pydantic model to build our own data model structure required 
 for efficient data model parsing and validation and interaction with FIWARE 
 services' RestAPIs.
 
-For API interaction FiLiP relies on the well-known 
+For API interaction, FiLiP relies on the well-known 
 [requests](https://docs.python-requests.org/en/latest/) package. 
 It is important to understand that we do not in any way restrict any 
 features of requests.
 
-Furthermore, FiLiP is designed to help with fast development of FIWARE based 
-application and avoid hundreds of lines of boilerplate, but it cannot 
-substitute to learn the basic concepts behind the used FIWARE components.
+Furthermore, FiLiP is designed to help with the fast development of FIWARE-based 
+applications and avoid hundreds of lines of boilerplate, but it cannot 
+substitute learning the basic concepts behind the used FIWARE components.
 
 ## General Motivation
 
@@ -66,6 +66,7 @@ on this.
 If this is not an option for you, FIWARE also provides a testing server.
 You can register for a testing account 
 [here](https://www.fiware.org/developers/fiware-lab/).
+> **Note**: FiLiP is now compatible to [Pydantic V2](https://docs.pydantic.dev/latest/migration/). If your program still require Pydantic V1.x for some reason, please use release [v0.2.5](https://github.com/RWTH-EBC/FiLiP/releases/tag/v0.2.5) or earlier version of FiLiP. Besides, we recommended to use `pydantic~=1.10` in the `requirements.txt`
 
 ### Installation
 
@@ -81,6 +82,13 @@ If you want to benefit from the latest changes, use the following command
 ```
 pip install -U git+git://github.com/RWTH-EBC/filip
 ```
+
+#### Install semantics module (optional)
+
+If you want to use the optional [semantics module](filip/semantics), use the following command (This will install the libraries that only required for the semantics module):
+````
+pip install -U filip[semantics]
+````
 
 ### Introduction to FIWARE
 
@@ -194,15 +202,15 @@ Currently, we provide basic examples for the usage of FiLiP for the FIWARE
 GEs mentioned above.
 We suggest to start in the right order to first understand the 
 configuration of clients.
-Afterwards, you can start modelling context data and interact the context 
+Afterwards, you can start modelling context data and interacting with the context 
 broker and use its functionalities before you learn how to connect 
 IoT Devices and store historic data.
 
 ## Testing
 
 We use unittests to write our test cases.
-To test the source code of the library in our a CI workflow, the CI does 
-execute all tests located in the `tests`-directory and prefixed with `test_` .
+To test the source code of the library in our CI workflow, the CI 
+executes all tests located in the `tests`-directory and prefixed with `test_` .
 
 ## How to contribute
 
@@ -211,14 +219,15 @@ how you can contribute to this project.
 
 ## Authors
 
-* [Thomas Storek](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Team2/~lhda/Thomas-Storek/?lidx=1) (corresponding)
+* [Thomas Storek](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Team2/~lhda/Thomas-Storek/?lidx=1) 
+* [Junsong Du](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Digitale-Energie-Quartiere/~trcib/Du-Junsong/lidx/1/) (corresponding)
 * [Saira Bano](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Systemadministration/~ohhca/Bano-Saira/)
-* [Daniel Nikolay](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Systemadministration/~qcqxq/Nikolay-Daniel/)
 
 ## Alumni
 
 * Jeff Reding
 * Felix Rehmann
+* Daniel Nikolay
 
 ## References
 
@@ -257,7 +266,7 @@ Efficient Buildings and Indoor Climate
 
 ## Disclaimer
 
-This project is part of cooperation between the RWTH Aachen University and 
+This project is part of the cooperation between the RWTH Aachen University and 
 the Research Centre Jülich.
 
 <a href="https://www.jara.org/de/forschung/jara-energy"> <img alt="JARA 
