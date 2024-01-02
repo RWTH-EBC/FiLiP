@@ -351,7 +351,6 @@ class TestContextBroker(unittest.TestCase):
             self.assertEqual(sub_res_updated.throttling,
                              sub_update.throttling)
 
-            # TODO empty expression cause an error
             sub_with_nans = Subscription.model_validate({
                 "description": "Test subscription with empty values",
                 "subject": {
@@ -360,11 +359,7 @@ class TestContextBroker(unittest.TestCase):
                             "idPattern": ".*",
                             "type": "Device"
                         }
-                    ],
-                    "condition": {
-                        "attrs": [],
-                        "expression": {}
-                    }
+                    ]
                 },
                 "notification": {
                     "http": {
