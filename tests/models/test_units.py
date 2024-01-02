@@ -43,7 +43,8 @@ class TestUnitCodes(TestCase):
             None
         """
         unit = Unit(**self.unit)
-        unit_from_json = Unit.parse_raw(unit.json(by_alias=True))
+        json_data = unit.model_dump_json(by_alias=False)
+        unit_from_json = Unit.model_validate_json(json_data=json_data)
         self.assertEqual(unit, unit_from_json)
 
     def test_units(self):
@@ -69,7 +70,7 @@ class TestUnitCodes(TestCase):
 
         # check serialization
         for v in units.values():
-            v.json(indent=2)
+            v.model_dump_json(indent=2)
 
 
     def test_unit_validator(self):

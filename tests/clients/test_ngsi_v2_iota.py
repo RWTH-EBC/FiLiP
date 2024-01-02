@@ -22,7 +22,6 @@ from filip.models.ngsi_v2.iot import \
 from filip.utils.cleanup import clear_all, clean_test
 from tests.config import settings
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -83,7 +82,7 @@ class TestAgent(unittest.TestCase):
     def test_device_model(self):
         device = Device(**self.device)
         self.assertEqual(self.device,
-                         device.dict(exclude_unset=True))
+                         device.model_dump(exclude_unset=True))
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
@@ -118,16 +117,15 @@ class TestAgent(unittest.TestCase):
 
             client.post_device(device=device)
             device_res = client.get_device(device_id=device.device_id)
-            self.assertEqual(device.dict(exclude={'service',
-                                                  'service_path',
-                                                  'timezone'}),
-                             device_res.dict(exclude={'service',
-                                                      'service_path',
-                                                      'timezone'}))
+            self.assertEqual(device.model_dump(exclude={'service',
+                                                        'service_path',
+                                                        'timezone'}),
+                             device_res.model_dump(exclude={'service',
+                                                            'service_path',
+                                                            'timezone'}))
             self.assertEqual(self.fiware_header.service, device_res.service)
             self.assertEqual(self.fiware_header.service_path,
                              device_res.service_path)
-
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
@@ -149,19 +147,19 @@ class TestAgent(unittest.TestCase):
         device = Device(**self.device)
         device.device_id = "device_with_meta"
         device.add_attribute(attribute=attr)
-        logger.info(device.json(indent=2))
+        logger.info(device.model_dump_json(indent=2))
 
         with IoTAClient(
                 url=settings.IOTA_JSON_URL,
                 fiware_header=self.fiware_header) as client:
             client.post_device(device=device)
-            logger.info(client.get_device(device_id=device.device_id).json(
+            logger.info(client.get_device(device_id=device.device_id).model_dump_json(
                 indent=2, exclude_unset=True))
 
         with ContextBrokerClient(
                 url=settings.CB_URL,
                 fiware_header=self.fiware_header) as client:
-            logger.info(client.get_entity(entity_id=device.entity_name).json(
+            logger.info(client.get_entity(entity_id=device.entity_name).model_dump_json(
                 indent=2))
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
@@ -360,7 +358,7 @@ class TestAgent(unittest.TestCase):
         live_entity.get_attribute("Att2")
 
         # test update where device information were changed
-        device_settings = {"endpoint": "http://localhost:7071",
+        new_device_dict = {"endpoint": "http://localhost:7071/",
                            "device_id": "new_id",
                            "entity_name": "new_name",
                            "entity_type": "new_type",
@@ -368,12 +366,14 @@ class TestAgent(unittest.TestCase):
                            "apikey": "zuiop",
                            "protocol": "HTTP",
                            "transport": "HTTP"}
+        new_device = Device(**new_device_dict)
 
-        for key, value in device_settings.items():
+        for key, value in new_device_dict.items():
             device.__setattr__(key, value)
             self.client.patch_device(device=device)
             live_device = self.client.get_device(device_id=device.device_id)
-            self.assertEqual(live_device.__getattribute__(key), value)
+            self.assertEqual(live_device.__getattribute__(key),
+                             new_device.__getattribute__(key))
             cb_client.close()
 
     def test_service_group(self):

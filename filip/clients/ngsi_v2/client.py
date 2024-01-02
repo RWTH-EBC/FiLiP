@@ -101,9 +101,11 @@ class HttpClient(BaseHttpClient):
         if isinstance(config, HttpClientConfig):
             self._config = config
         elif isinstance(config, (str, Path)):
-            self._config = HttpClientConfig.parse_file(config)
+            with open(config) as f:
+                config_json = f.read()
+                self._config = HttpClientConfig.model_validate_json(config_json)
         else:
-            self._config = HttpClientConfig.parse_obj(config)
+            self._config = HttpClientConfig.model_validate(config)
 
     @property
     def cert(self):

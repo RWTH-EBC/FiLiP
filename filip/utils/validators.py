@@ -2,15 +2,35 @@
 Helper functions to prohibit boiler plate code
 """
 import logging
+import re
+from aenum import Enum
 from typing import Dict, Any, List
-from pydantic import AnyHttpUrl, validate_arguments
-from filip.types import AnyMqttUrl
+from pydantic import AnyHttpUrl, validate_call
+from pydantic_core import PydanticCustomError
+from filip.custom_types import AnyMqttUrl
 
 
 logger = logging.getLogger(name=__name__)
 
 
-@validate_arguments
+class FiwareRegex(str, Enum):
+    """
+    Collection of Regex expression used to check if the value of a Pydantic
+    field, can be used in the related Fiware field.
+    """
+    _init_ = 'value __doc__'
+
+    standard = r"(^((?![?&#/\"' ])[\x00-\x7F])*$)", \
+               "Prevents any string that contains at least one of the " \
+               "symbols: ? & # / ' \" or a whitespace"
+    string_protect = r"(?!^id$)(?!^type$)(?!^geo:location$)" \
+                     r"(^((?![?&#/\"' ])[\x00-\x7F])*$)",\
+                     "Prevents any string that contains at least one of " \
+                     "the symbols: ? & # / ' \" or a whitespace." \
+                     "AND the strings: id, type, geo:location"
+
+
+@validate_call
 def validate_http_url(url: AnyHttpUrl) -> str:
     """
     Function checks whether the host has "http" added in case of http as
@@ -22,10 +42,10 @@ def validate_http_url(url: AnyHttpUrl) -> str:
     Returns:
         validated url
     """
-    return url
+    return str(url) if url else url
 
 
-@validate_arguments
+@validate_call
 def validate_mqtt_url(url: AnyMqttUrl) -> str:
     """
     Function that checks whether a url is valid mqtt endpoint
@@ -36,7 +56,7 @@ def validate_mqtt_url(url: AnyMqttUrl) -> str:
     Returns:
        validated url
     """
-    return url
+    return str(url) if url else url
 
 
 def validate_escape_character_free(value: Any) -> Any:
@@ -80,3 +100,69 @@ def validate_escape_character_free(value: Any) -> Any:
                 raise ValueError(f"The value {value} contains "
                                  f"the forbidden char '")
     return values
+
+
+def match_regex(value: str, pattern: str):
+    regex = re.compile(pattern)
+    if not regex.match(value):
+        raise PydanticCustomError(
+            'string_pattern_mismatch',
+            "String should match pattern '{pattern}'",
+            {'pattern': pattern},
+        )
+    return value
+
+
+def ignore_none_input(func):
+    def wrapper(arg):
+        if arg is None:
+            return arg
+        return func(arg)
+    return wrapper
+
+
+def validate_fiware_standard_regex(vale: str):
+    return match_regex(vale, FiwareRegex.standard.value)
+
+
+def validate_fiware_string_protect_regex(vale: str):
+    return match_regex(vale, FiwareRegex.string_protect.value)
+
+
+@ignore_none_input
+def validate_mqtt_topic(topic: str):
+    return match_regex(topic, r'^((?![\'\"#+,])[\x00-\x7F])*$')
+
+
+@ignore_none_input
+def validate_fiware_datatype_standard(_type):
+    from filip.models.base import DataType
+    if isinstance(_type, DataType):
+        return _type
+    elif isinstance(_type, str):
+        return validate_fiware_standard_regex(_type)
+    else:
+        raise TypeError(f"Invalid type {type(_type)}")
+
+
+@ignore_none_input
+def validate_fiware_datatype_string_protect(_type):
+    from filip.models.base import DataType
+    if isinstance(_type, DataType):
+        return _type
+    elif isinstance(_type, str):
+        return validate_fiware_string_protect_regex(_type)
+    else:
+        raise TypeError(f"Invalid type {type(_type)}")
+
+
+@ignore_none_input
+def validate_fiware_service_path(service_path):
+    return match_regex(service_path,
+                       r'^((\/\w*)|(\/\#))*(\,((\/\w*)|(\/\#)))*$')
+
+
+@ignore_none_input
+def validate_fiware_service(service):
+    return match_regex(service,
+                       r"\w*$")

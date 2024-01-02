@@ -7,11 +7,11 @@ from copy import deepcopy
 from math import inf
 from pkg_resources import parse_version
 from pydantic import \
-    parse_obj_as, \
     PositiveInt, \
     PositiveFloat, \
     AnyHttpUrl
-from typing import Any, Dict, List , Optional, TYPE_CHECKING, Union
+from pydantic.type_adapter import TypeAdapter
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 import re
 import requests
 from urllib.parse import urljoin
@@ -53,6 +53,7 @@ class ContextBrokerClient(BaseHttpClient):
         We use the reference implementation for development. Therefore, some
         other brokers may show slightly different behavior!
     """
+
     def __init__(self,
                  url: str = None,
                  *,
@@ -232,9 +233,9 @@ class ContextBrokerClient(BaseHttpClient):
             res = self.post(
                 url=url,
                 headers=headers,
-                json=entity.dict(exclude_unset=True,
-                                 exclude_defaults=True,
-                                 exclude_none=True))
+                json=entity.model_dump(exclude_unset=True,
+                                       exclude_defaults=True,
+                                       exclude_none=True))
             if res.ok:
                 self.logger.info("Entity successfully posted!")
                 return res.headers.get('Location')
@@ -385,9 +386,11 @@ class ContextBrokerClient(BaseHttpClient):
                                       params=params,
                                       headers=headers)
             if AttrsFormat.NORMALIZED in response_format:
-                return parse_obj_as(List[ContextEntity], items)
+                adapter = TypeAdapter(List[ContextEntity])
+                return adapter.validate_python(items)
             if AttrsFormat.KEY_VALUES in response_format:
-                return parse_obj_as(List[ContextEntityKeyValues], items)
+                adapter = TypeAdapter(List[ContextEntityKeyValues])
+                return adapter.validate_python(items)
             return items
 
         except requests.RequestException as err:
@@ -615,7 +618,6 @@ class ContextBrokerClient(BaseHttpClient):
 
             iota_client_local.close()
 
-
     def delete_entities(self, entities: List[ContextEntity]) -> None:
         """
         Remove a list of entities from the context broker. This methode is
@@ -637,8 +639,8 @@ class ContextBrokerClient(BaseHttpClient):
         # attributes.
         entities_with_attributes: List[ContextEntity] = []
         for entity in entities:
-            attribute_names = [key for key in entity.dict() if key not in
-                               ContextEntity.__fields__]
+            attribute_names = [key for key in entity.model_dump() if key not in
+                               ContextEntity.model_fields]
             if len(attribute_names) > 0:
                 entities_with_attributes.append(
                     ContextEntity(id=entity.id, type=entity.type))
@@ -705,9 +707,9 @@ class ContextBrokerClient(BaseHttpClient):
         try:
             res = self.post(url=url,
                             headers=headers,
-                            json=entity.dict(exclude=excluded_keys,
-                                             exclude_unset=True,
-                                             exclude_none=True),
+                            json=entity.model_dump(exclude=excluded_keys,
+                                                   exclude_unset=True,
+                                                   exclude_none=True),
                             params=params)
             if res.ok:
                 self.logger.info("Entity '%s' successfully "
@@ -753,9 +755,9 @@ class ContextBrokerClient(BaseHttpClient):
         try:
             res = self.patch(url=url,
                              headers=headers,
-                             json=entity.dict(exclude={'id', 'type'},
-                                              exclude_unset=True,
-                                              exclude_none=True),
+                             json=entity.model_dump(exclude={'id', 'type'},
+                                                    exclude_unset=True,
+                                                    exclude_none=True),
                              params=params)
             if res.ok:
                 self.logger.info("Entity '%s' successfully "
@@ -800,9 +802,9 @@ class ContextBrokerClient(BaseHttpClient):
         try:
             res = self.put(url=url,
                            headers=headers,
-                           json=entity.dict(exclude={'id', 'type'},
-                                            exclude_unset=True,
-                                            exclude_none=True),
+                           json=entity.model_dump(exclude={'id', 'type'},
+                                                  exclude_unset=True,
+                                                  exclude_none=True),
                            params=params)
             if res.ok:
                 self.logger.info("Entity '%s' successfully "
@@ -820,7 +822,7 @@ class ContextBrokerClient(BaseHttpClient):
                       attr_name: str,
                       entity_type: str = None,
                       metadata: str = None,
-                      response_format = '') -> ContextAttribute:
+                      response_format='') -> ContextAttribute:
         """
         Retrieves a specified attribute from an entity.
 
@@ -910,9 +912,9 @@ class ContextBrokerClient(BaseHttpClient):
             res = self.put(url=url,
                            headers=headers,
                            params=params,
-                           json=attr.dict(exclude={'name'},
-                                          exclude_unset=True,
-                                          exclude_none=True))
+                           json=attr.model_dump(exclude={'name'},
+                                                exclude_unset=True,
+                                                exclude_none=True))
             if res.ok:
                 self.logger.info("Attribute '%s' of '%s' "
                                  "successfully updated!", attr_name, entity_id)
@@ -1127,7 +1129,8 @@ class ContextBrokerClient(BaseHttpClient):
                                       url=url,
                                       params=params,
                                       headers=headers)
-            return parse_obj_as(List[Subscription], items)
+            adapter = TypeAdapter(List[Subscription])
+            return adapter.validate_python(items)
         except requests.RequestException as err:
             msg = "Could not load subscriptions!"
             self.log_error(err=err, msg=msg)
@@ -1162,9 +1165,9 @@ class ContextBrokerClient(BaseHttpClient):
         """
         existing_subscriptions = self.get_subscription_list()
 
-        sub_hash = subscription.json(include={'subject', 'notification'})
+        sub_hash = subscription.model_dump_json(include={'subject', 'notification'})
         for ex_sub in existing_subscriptions:
-            if sub_hash == ex_sub.json(include={'subject', 'notification'}):
+            if sub_hash == ex_sub.model_dump_json(include={'subject', 'notification'}):
                 self.logger.info("Subscription already exists")
                 if update:
                     self.logger.info("Updated subscription")
@@ -1197,10 +1200,10 @@ class ContextBrokerClient(BaseHttpClient):
             res = self.post(
                 url=url,
                 headers=headers,
-                data=subscription.json(exclude={'id'},
-                                       exclude_unset=True,
-                                       exclude_defaults=True,
-                                       exclude_none=True),
+                data=subscription.model_dump_json(exclude={'id'},
+                                                  exclude_unset=True,
+                                                  exclude_defaults=True,
+                                                  exclude_none=True),
                 params=params)
             if res.ok:
                 self.logger.info("Subscription successfully created!")
@@ -1271,10 +1274,10 @@ class ContextBrokerClient(BaseHttpClient):
             res = self.patch(
                 url=url,
                 headers=headers,
-                data=subscription.json(exclude={'id'},
-                                       exclude_unset=True,
-                                       exclude_defaults=False,
-                                       exclude_none=True))
+                data=subscription.model_dump_json(exclude={'id'},
+                                                  exclude_unset=True,
+                                                  exclude_defaults=False,
+                                                  exclude_none=True))
             if res.ok:
                 self.logger.info("Subscription successfully updated!")
             else:
@@ -1329,8 +1332,8 @@ class ContextBrokerClient(BaseHttpClient):
                                       url=url,
                                       params=params,
                                       headers=headers)
-
-            return parse_obj_as(List[Registration], items)
+            adapter = TypeAdapter(List[Registration])
+            return adapter.validate_python(items)
         except requests.RequestException as err:
             msg = "Could not load registrations!"
             self.log_error(err=err, msg=msg)
@@ -1355,10 +1358,10 @@ class ContextBrokerClient(BaseHttpClient):
             res = self.post(
                 url=url,
                 headers=headers,
-                data=registration.json(exclude={'id'},
-                                       exclude_unset=True,
-                                       exclude_defaults=True,
-                                       exclude_none=True))
+                data=registration.model_dump_json(exclude={'id'},
+                                                  exclude_unset=True,
+                                                  exclude_defaults=True,
+                                                  exclude_none=True))
             if res.ok:
                 self.logger.info("Registration successfully created!")
                 return res.headers['Location'].split('/')[-1]
@@ -1407,10 +1410,10 @@ class ContextBrokerClient(BaseHttpClient):
             res = self.patch(
                 url=url,
                 headers=headers,
-                data=registration.json(exclude={'id'},
-                                       exclude_unset=True,
-                                       exclude_defaults=True,
-                                       exclude_none=True))
+                data=registration.model_dump_json(exclude={'id'},
+                                                  exclude_unset=True,
+                                                  exclude_defaults=True,
+                                                  exclude_none=True))
             if res.ok:
                 self.logger.info("Registration successfully updated!")
             else:
@@ -1496,7 +1499,7 @@ class ContextBrokerClient(BaseHttpClient):
                 url=url,
                 headers=headers,
                 params=params,
-                data=update.json(by_alias=True))
+                json=update.model_dump(by_alias=True))
             if res.ok:
                 self.logger.info("Update operation '%s' succeeded!",
                                  action_type)
@@ -1541,13 +1544,15 @@ class ContextBrokerClient(BaseHttpClient):
                                       url=url,
                                       headers=headers,
                                       params=params,
-                                      data=query.json(exclude_unset=True,
-                                                      exclude_none=True),
+                                      data=query.model_dump_json(exclude_unset=True,
+                                                                 exclude_none=True),
                                       limit=limit)
             if response_format == AttrsFormat.NORMALIZED:
-                return parse_obj_as(List[ContextEntity], items)
+                adapter = TypeAdapter(List[ContextEntity])
+                return adapter.validate_python(items)
             if response_format == AttrsFormat.KEY_VALUES:
-                return parse_obj_as(List[ContextEntityKeyValues], items)
+                adapter = TypeAdapter(List[ContextEntityKeyValues])
+                return adapter.validate_python(items)
             return items
         except requests.RequestException as err:
             msg = "Query operation failed!"
@@ -1579,14 +1584,14 @@ class ContextBrokerClient(BaseHttpClient):
                 url=url,
                 headers=headers,
                 params=params,
-                data=message.json(by_alias=True))
+                data=message.model_dump_json(by_alias=True))
             if res.ok:
                 self.logger.info("Notification message sent!")
             else:
                 res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Sending notifcation message failed! \n " \
-                  f"{message.json(inent=2)}"
+                  f"{message.model_dump_json(inent=2)}"
             self.log_error(err=err, msg=msg)
             raise
 
@@ -1613,7 +1618,7 @@ class ContextBrokerClient(BaseHttpClient):
             assert isinstance(command, (Command, dict))
             if isinstance(command, dict):
                 command = Command(**command)
-            command = {command_name: command.dict()}
+            command = {command_name: command.model_dump()}
         else:
             assert isinstance(command, (NamedCommand, dict))
             if isinstance(command, dict):
@@ -1653,7 +1658,6 @@ class ContextBrokerClient(BaseHttpClient):
             if err.response is None or not err.response.status_code == 404:
                 raise
             return False
-
 
     def patch_entity(self,
                      entity: ContextEntity,

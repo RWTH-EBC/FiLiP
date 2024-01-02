@@ -32,24 +32,24 @@ class TestModels(unittest.TestCase):
         """
         Test for fiware header
         """
-        header = FiwareHeader.parse_obj(self.fiware_header)
-        self.assertEqual(header.dict(by_alias=True),
+        header = FiwareHeader.model_validate(self.fiware_header)
+        self.assertEqual(header.model_dump(by_alias=True),
                          self.fiware_header)
-        self.assertEqual(header.json(by_alias=True),
-                         json.dumps(self.fiware_header))
-        self.assertRaises(ValidationError, FiwareHeader,
-                          service='jkgsadh ', service_path='/testing')
-        self.assertRaises(ValidationError, FiwareHeader,
-                          service='%', service_path='/testing')
-        self.assertRaises(ValidationError, FiwareHeader,
-                          service='filip', service_path='testing/')
-        self.assertRaises(ValidationError, FiwareHeader,
-                          service='filip', service_path='/$testing')
-        self.assertRaises(ValidationError, FiwareHeader,
-                          service='filip', service_path='/testing ')
-        self.assertRaises(ValidationError, FiwareHeader,
-                          service='filip', service_path='#')
-        headers = FiwareHeader.parse_obj(self.fiware_header)
+        self.assertEqual(json.loads(header.model_dump_json(by_alias=True)),
+                         self.fiware_header)
+        with self.assertRaises(ValidationError):
+            FiwareHeader(service='jkgsadh ', service_path='/testing')
+        with self.assertRaises(ValidationError):
+            FiwareHeader(service='%', service_path='/testing')
+        with self.assertRaises(ValidationError):
+            FiwareHeader(service='filip', service_path='testing/')
+        with self.assertRaises(ValidationError):
+            FiwareHeader(service='filip', service_path='/$testing')
+        with self.assertRaises(ValidationError):
+            FiwareHeader(service='filip', service_path='/testing ')
+        with self.assertRaises(ValidationError):
+            FiwareHeader(service='filip', service_path='#')
+        headers = FiwareHeader.model_validate(self.fiware_header)
         with ContextBrokerClient(url=settings.CB_URL,
                                  fiware_header=headers) as client:
             entity = ContextEntity(id='myId', type='MyType')
@@ -64,6 +64,24 @@ class TestModels(unittest.TestCase):
                 client.fiware_service_path = path
                 client.delete_entity(entity_id=entity.id,
                                      entity_type=entity.type)
+
+    def test_unit_as_metadata(self) -> None:
+        entity_dict = {
+            "id": 'MyId',
+            "type": 'MyType',
+            'at1': {'value': "20.0", 'type': 'Text'},
+            'at2': {'value': 20.0,
+                    'type': 'StructuredValue',
+                    'metadata': {
+                        'name': 'unit',
+                        'type': 'Unit',
+                        "value": {
+                            "name": "degree Celsius"
+                        }
+                    }
+                    }
+            }
+        entity = ContextEntity(**entity_dict)
 
     def test_strings_in_models(self) -> None:
         """
@@ -157,7 +175,7 @@ class TestModels(unittest.TestCase):
                             dict_field[f'{field}{test_char}'] = value_
                             test(new_dict)
 
-        header = FiwareHeader.parse_obj(self.fiware_header)
+        header = FiwareHeader.model_validate(self.fiware_header)
         with ContextBrokerClient(url=settings.CB_URL,
                                  fiware_header=header) as client:
 

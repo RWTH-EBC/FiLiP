@@ -6,17 +6,14 @@ from typing import Any, List, Dict, Union, Optional
 from datetime import datetime
 from aenum import Enum
 from pydantic import \
-    BaseModel, \
+    field_validator, model_validator, ConfigDict, BaseModel, \
     conint, \
     Field, \
-    Json, \
-    root_validator, \
-    validator
+    Json
 from .base import AttrsFormat, EntityPattern, Http, Status, Expression
-from filip.utils.simple_ql import QueryString, QueryStatement
-from filip.utils.validators import validate_mqtt_url
+from filip.utils.validators import validate_mqtt_url, validate_mqtt_topic
 from filip.models.ngsi_v2.context import ContextEntity
-from filip.types import AnyMqttUrl
+from filip.custom_types import AnyMqttUrl
 
 
 class Message(BaseModel):
@@ -85,7 +82,8 @@ class Mqtt(BaseModel):
                     'only includes host and port)')
     topic: str = Field(
         description='to specify the MQTT topic to use',
-        regex=r'^((?![\'\"#+,])[\x00-\x7F])*$')
+        )
+    valid_type = field_validator("topic")(validate_mqtt_topic)
     qos: Optional[int] = Field(
         default=0,
         description='to specify the MQTT QoS value to use in the '
@@ -102,7 +100,8 @@ class Mqtt(BaseModel):
         description="password if required"
     )
 
-    @validator('url', allow_reuse=True)
+    @field_validator('url')
+    @classmethod
     def check_url(cls, value):
         """
         Check if url has a valid structure
@@ -133,6 +132,7 @@ class Notification(BaseModel):
     included in the notifications. Otherwise, only the specified ones will
     be included.
     """
+    model_config = ConfigDict(validate_assignment=True)
     http: Optional[Http] = Field(
         default=None,
         description='It is used to convey parameters for notifications '
@@ -200,36 +200,33 @@ class Notification(BaseModel):
                     '[A=0, B=null, C=null]. This '
     )
 
-    @validator('httpCustom')
+    @field_validator('httpCustom')
     def validate_http(cls, http_custom, values):
         if http_custom is not None:
             assert values['http'] is None
         return http_custom
 
-    @validator('exceptAttrs')
+    @field_validator('exceptAttrs')
     def validate_attr(cls, except_attrs, values):
         if except_attrs is not None:
             assert values['attrs'] is None
         return except_attrs
 
-    @root_validator(allow_reuse=True)
-    def validate_endpoints(cls, values):
-        if values['http'] is not None:
-            assert all((v is None for k, v in values.items() if k in [
+    @model_validator(mode='after')
+    def validate_endpoints(self):
+        if self.http is not None:
+            assert all((v is None for k, v in self.model_dump().items() if k in [
                 'httpCustom', 'mqtt', 'mqttCustom']))
-        elif values['httpCustom'] is not None:
-            assert all((v is None for k, v in values.items() if k in [
+        elif self.httpCustom is not None:
+            assert all((v is None for k, v in self.model_dump().items() if k in [
                 'http', 'mqtt', 'mqttCustom']))
-        elif values['mqtt'] is not None:
-            assert all((v is None for k, v in values.items() if k in [
+        elif self.mqtt is not None:
+            assert all((v is None for k, v in self.model_dump().items() if k in [
                 'http', 'httpCustom', 'mqttCustom']))
         else:
-            assert all((v is None for k, v in values.items() if k in [
+            assert all((v is None for k, v in self.model_dump().items() if k in [
                 'http', 'httpCustom', 'mqtt']))
-        return values
-
-    class Config:
-        validate_assignment = True
+        return self
 
 
 class Response(Notification):
@@ -285,7 +282,7 @@ class Condition(BaseModel):
                     'field).'
     )
 
-    @validator('attrs')
+    @field_validator('attrs')
     def check_attrs(cls, v):
         if isinstance(v, list):
             return v
@@ -293,13 +290,6 @@ class Condition(BaseModel):
             return [v]
         else:
             raise TypeError()
-
-    class Config:
-        """
-        Pydantic config
-        """
-        json_encoders = {QueryString: lambda v: v.to_str(),
-                         QueryStatement: lambda v: v.to_str()}
 
 
 class Subject(BaseModel):
@@ -314,19 +304,14 @@ class Subject(BaseModel):
         default=None,
     )
 
-    class Config:
-        """
-        Pydantic config
-        """
-        json_encoders = {QueryString: lambda v: v.to_str(),
-                         QueryStatement: lambda v: v.to_str()}
-
 
 class Subscription(BaseModel):
     """
     Subscription payload validations
     https://fiware-orion.readthedocs.io/en/master/user/ngsiv2_implementation_notes/index.html#subscription-payload-validations
     """
+    model_config = ConfigDict(validate_assignment=True)
+
     id: Optional[str] = Field(
         default=None,
         description="Subscription unique identifier. Automatically created at "
@@ -382,11 +367,3 @@ class Subscription(BaseModel):
                     "It is optional."
     )
 
-
-    class Config:
-        """
-        Pydantic config
-        """
-        validate_assignment = True
-        json_encoders = {QueryString: lambda v: v.to_str(),
-                         QueryStatement: lambda v: v.to_str()}
