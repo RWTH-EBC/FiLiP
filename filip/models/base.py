@@ -93,6 +93,21 @@ class FiwareHeader(BaseModel):
         validate_fiware_service_path)
 
 
+class FiwareHeaderSecure(FiwareHeader):
+    """
+    Defines entity service paths and a autorization via Baerer-Token which are supported by the NGSI
+    Context Brokers to support hierarchical scopes:
+    https://fiware-orion.readthedocs.io/en/master/user/service_path/index.html
+    """
+    authorization: str = Field(
+        alias="authorization",
+        default="",
+        max_length=3000,
+        description="authorization key",
+        pattern=r".*"
+    )
+
+
 class LogLevel(str, Enum):
     CRITICAL = 'CRITICAL'
     ERROR = 'ERROR'

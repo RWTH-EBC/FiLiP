@@ -83,6 +83,13 @@ If you want to benefit from the latest changes, use the following command
 pip install -U git+git://github.com/RWTH-EBC/filip
 ```
 
+#### Install semantics module (optional)
+
+If you want to use the optional [semantics module](filip/semantics), use the following command (This will install the libraries that only required for the semantics module):
+````
+pip install -U filip[semantics]
+````
+
 ### Introduction to FIWARE
 
 The following section introduces FIWARE. If you are already familiar with 
@@ -212,14 +219,15 @@ how you can contribute to this project.
 
 ## Authors
 
-* [Thomas Storek](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Team2/~lhda/Thomas-Storek/?lidx=1) (corresponding)
+* [Thomas Storek](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Team2/~lhda/Thomas-Storek/?lidx=1) 
+* [Junsong Du](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Digitale-Energie-Quartiere/~trcib/Du-Junsong/lidx/1/) (corresponding)
 * [Saira Bano](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Systemadministration/~ohhca/Bano-Saira/)
-* [Daniel Nikolay](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Systemadministration/~qcqxq/Nikolay-Daniel/)
 
 ## Alumni
 
 * Jeff Reding
 * Felix Rehmann
+* Daniel Nikolay
 
 ## References
 
