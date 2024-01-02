@@ -1165,13 +1165,12 @@ class ContextBrokerClient(BaseHttpClient):
         """
         existing_subscriptions = self.get_subscription_list()
 
-        sub_hash = subscription.model_dump_json(include={'subject', 'notification'})
-        sub_dict = subscription.dict(include={'subject', 'notification'})
+        sub_dict = subscription.model_dump(include={'subject',
+                                                    'notification'})
         for ex_sub in existing_subscriptions:
-            if sub_hash == ex_sub.model_dump_json(include={'subject', 'notification'}):
             if self._subscription_dicts_are_equal(
                     sub_dict,
-                    ex_sub.dict(include={'subject', 'notification'})
+                    ex_sub.model_dump(include={'subject', 'notification'})
             ):
                 self.logger.info("Subscription already exists")
                 if update:
@@ -1814,7 +1813,8 @@ class ContextBrokerClient(BaseHttpClient):
             If it's neither dict nore list, bool is used.
             """
             if isinstance(value, dict):
-                return any([_value_is_not_none(value=_v) for _v in value.values()])
+                return any([_value_is_not_none(value=_v)
+                            for _v in value.values()])
             if isinstance(value, list):
                 return any([_value_is_not_none(value=_v)for _v in value])
             else:
