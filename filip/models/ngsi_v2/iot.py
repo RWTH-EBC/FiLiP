@@ -7,12 +7,14 @@ import itertools
 from enum import Enum
 from typing import Any, Dict, Optional, List, Union
 import pytz
-from pydantic import BaseModel, Field, validator, AnyHttpUrl
-from filip.models.base import NgsiVersion, DataType, FiwareRegex
+from pydantic import field_validator, ConfigDict, BaseModel, Field, AnyHttpUrl
+from filip.models.base import NgsiVersion, DataType
 from filip.models.ngsi_v2.base import \
     BaseAttribute, \
     BaseValueAttribute, \
     BaseNameAttribute
+from filip.utils.validators import validate_fiware_datatype_string_protect, \
+    validate_fiware_datatype_standard
 
 logger = logging.getLogger()
 
@@ -73,8 +75,8 @@ class IoTABaseAttribute(BaseAttribute, BaseNameAttribute):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.standard.value  # Make it FIWARE-Safe"
     )
+    valid_entity_name = field_validator("entity_name")(validate_fiware_datatype_standard)
     entity_type: Optional[str] = Field(
         default=None,
         description="configures the type of an alternative entity. "
@@ -83,8 +85,8 @@ class IoTABaseAttribute(BaseAttribute, BaseNameAttribute):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.standard.value
     )
+    valid_entity_type = field_validator("entity_type")(validate_fiware_datatype_standard)
     reverse: Optional[str] = Field(
         default=None,
         description="add bidirectionality expressions to the attribute. See "
@@ -98,7 +100,7 @@ class IoTABaseAttribute(BaseAttribute, BaseNameAttribute):
         if isinstance(other, BaseAttribute):
             return self.name == other.name
         else:
-            return self.dict == other
+            return self.model_dump() == other
 
 
 class DeviceAttribute(IoTABaseAttribute):
@@ -125,8 +127,8 @@ class LazyDeviceAttribute(BaseNameAttribute):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.string_protect.value,  # Make it FIWARE-Safe
     )
+    valid_type = field_validator("type")(validate_fiware_datatype_string_protect)
 
 
 class DeviceCommand(BaseModel):
@@ -140,8 +142,8 @@ class DeviceCommand(BaseModel):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.string_protect.value
     )
+    valid_name = field_validator("name")(validate_fiware_datatype_string_protect)
     type: Union[DataType, str] = Field(
         description="name of the type of the attribute in the target entity. ",
         default=DataType.COMMAND
@@ -167,7 +169,7 @@ class ServiceGroup(BaseModel):
     subservice: Optional[str] = Field(
         default=None,
         description="Subservice of the devices of this type.",
-        regex="^/"
+        pattern="^/"
     )
     resource: str = Field(
         description="string representing the Southbound resource that will be "
@@ -195,8 +197,8 @@ class ServiceGroup(BaseModel):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.standard.value  # Make it FIWARE-Safe
     )
+    valid_entity_type = field_validator("entity_type")(validate_fiware_datatype_standard)
     trust: Optional[str] = Field(
         default=None,
         description="trust token to use for secured access to the "
@@ -209,6 +211,15 @@ class ServiceGroup(BaseModel):
                     "be used to override the global ones for specific types of "
                     "devices."
     )
+    @field_validator('cbHost')
+    @classmethod
+    def validate_cbHost(cls, value):
+        """
+        convert cbHost to str
+        Returns:
+            timezone
+        """
+        return str(value)
     lazy: Optional[List[LazyDeviceAttribute]] = Field(
         default=[],
         desription="list of common lazy attributes of the device. For each "
@@ -276,6 +287,7 @@ class DeviceSettings(BaseModel):
     """
     Model for iot device settings
     """
+    model_config = ConfigDict(validate_assignment=True)
     timezone: Optional[str] = Field(
         default='Europe/London',
         description="Time zone of the sensor if it has any"
@@ -302,7 +314,7 @@ class DeviceSettings(BaseModel):
         description="Name of the device protocol, for its use with an "
                     "IoT Manager."
     )
-    transport: Union[TransportProtocol, str] = Field(
+    transport: Optional[Union[TransportProtocol, str]] = Field(
         default=None,
         description="Name of the device transport protocol, for the IoT Agents "
                     "with multiple transport protocols."
@@ -321,15 +333,13 @@ class DeviceSettings(BaseModel):
                     "specified default is false."
     )
 
-    class Config:
-        validate_assignment = True
-
 
 class Device(DeviceSettings):
     """
     Model for iot devices.
     https://iotagent-node-lib.readthedocs.io/en/latest/api/index.html#device-api
     """
+    model_config = ConfigDict(validate_default=True, validate_assignment=True)
     device_id: str = Field(
         description="Device ID that will be used to identify the device"
     )
@@ -344,7 +354,7 @@ class Device(DeviceSettings):
         description="Name of the subservice the device belongs to "
                     "(used in the fiware-servicepath header).",
         max_length=51,
-        regex="^/"
+        pattern="^/"
     )
     entity_name: str = Field(
         description="Name of the entity representing the device in "
@@ -353,8 +363,8 @@ class Device(DeviceSettings):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.standard.value  # Make it FIWARE-Safe"
     )
+    valid_entity_name = field_validator("entity_name")(validate_fiware_datatype_standard)
     entity_type: str = Field(
         description="Type of the entity in the Context Broker. "
                     "Allowed characters "
@@ -362,8 +372,8 @@ class Device(DeviceSettings):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.standard.value  # Make it FIWARE-Safe"
     )
+    valid_entity_type = field_validator("entity_type")(validate_fiware_datatype_standard)
     lazy: List[LazyDeviceAttribute] = Field(
         default=[],
         description="List of lazy attributes of the device"
@@ -394,11 +404,8 @@ class Device(DeviceSettings):
                     "v2 or ld. The default is v2. When not running in "
                     "mixed mode, this field is ignored.")
 
-    class Config:
-        validate_all = True
-        validate_assignment = True
-
-    @validator('timezone')
+    @field_validator('timezone')
+    @classmethod
     def validate_timezone(cls, value):
         """
         validate timezone
@@ -427,9 +434,10 @@ class Device(DeviceSettings):
                                          self.commands):
             if attribute.name == attribute_name:
                 return attribute
-        logger.error("Device: %s: Could not find "
-                     "attribute with name %s", self.device_id, attribute_name)
-        raise KeyError
+        msg = f"Device: {self.device_id}: Could not " \
+              f"find attribute with name {attribute_name}"
+        logger.error(msg)
+        raise KeyError(msg)
 
     def add_attribute(self,
                       attribute: Union[DeviceAttribute,
@@ -482,11 +490,11 @@ class Device(DeviceSettings):
                 self.update_attribute(attribute, append=False)
                 logger.warning("Device: %s: Attribute already "
                                "exists. Will update: \n %s",
-                               self.device_id, attribute.json(indent=2))
+                               self.device_id, attribute.model_dump_json(indent=2))
             else:
                 logger.error("Device: %s: Attribute already "
                              "exists: \n %s", self.device_id,
-                             attribute.json(indent=2))
+                             attribute.model_dump_json(indent=2))
                 raise
 
     def update_attribute(self,
@@ -508,27 +516,26 @@ class Device(DeviceSettings):
         try:
             if type(attribute) == DeviceAttribute:
                 idx = self.attributes.index(attribute)
-                self.attributes[idx].dict().update(attribute.dict())
+                self.attributes[idx].model_dump().update(attribute.model_dump())
             elif type(attribute) == LazyDeviceAttribute:
                 idx = self.lazy.index(attribute)
-                self.lazy[idx].dict().update(attribute.dict())
+                self.lazy[idx].model_dump().update(attribute.model_dump())
             elif type(attribute) == StaticDeviceAttribute:
                 idx = self.static_attributes.index(attribute)
-                self.static_attributes[idx].dict().update(attribute.dict())
+                self.static_attributes[idx].model_dump().update(attribute.model_dump())
             elif type(attribute) == DeviceCommand:
                 idx = self.commands.index(attribute)
-                self.commands[idx].dict().update(attribute.dict())
+                self.commands[idx].model_dump().update(attribute.model_dump())
         except ValueError:
             if append:
                 logger.warning("Device: %s: Could not find "
                                "attribute: \n %s",
-                               self.device_id, attribute.json(indent=2))
+                               self.device_id, attribute.model_dump_json(indent=2))
                 self.add_attribute(attribute=attribute)
             else:
-                logger.error("Device: %s: Could not find "
-                             "attribute: \n %s", self.device_id,
-                             attribute.json(indent=2))
-                raise KeyError
+                msg = f"Device: {self.device_id}: Could not find "\
+                      f"attribute: \n {attribute.model_dump_json(indent=2)}"
+                raise KeyError(msg)
 
     def delete_attribute(self, attribute: Union[DeviceAttribute,
                                                 LazyDeviceAttribute,
@@ -556,11 +563,11 @@ class Device(DeviceSettings):
         except ValueError:
             logger.warning("Device: %s: Could not delete "
                            "attribute: \n %s",
-                           self.device_id, attribute.json(indent=2))
+                           self.device_id, attribute.model_dump_json(indent=2))
             raise
 
         logger.info("Device: %s: Attribute deleted! \n %s",
-                    self.device_id, attribute.json(indent=2))
+                    self.device_id, attribute.model_dump_json(indent=2))
 
     def get_command(self, command_name: str):
         """

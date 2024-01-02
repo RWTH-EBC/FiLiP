@@ -127,7 +127,7 @@ def create_context_entity_model(name: str = None,
 
     """
     properties = {key: (ContextAttribute, ...) for key in data.keys() if
-                  key not in ContextEntity.__fields__}
+                  key not in ContextEntity.model_fields}
     model = create_model(
         __model_name=name or 'GeneratedContextEntity',
         __base__=ContextEntity,
@@ -145,7 +145,7 @@ def create_context_entity_model(name: str = None,
             output = Path(temp).joinpath(f'{uuid4()}.json')
             output.touch(exist_ok=True)
             with output.open('w') as f:
-                json.dump(model.schema(), f, indent=2)
+                json.dump(model.model_json_schema(), f, indent=2)
             if path.suffix == '.json':
                 # move temporary file to output directory
                 shutil.move(str(output), str(path))

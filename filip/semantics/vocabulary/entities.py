@@ -2,7 +2,7 @@
 
 from enum import Enum
 from pydantic import BaseModel, Field
-from typing import List, TYPE_CHECKING, Dict, Union, Set
+from typing import List, TYPE_CHECKING, Dict, Union, Set, Any
 
 from .source import DependencyStatement
 
@@ -32,7 +32,7 @@ class Entity(BaseModel):
         default="",
         description="Label (displayname) extracted from source file "
                     "(multiple Entities could have the same label)")
-    user_set_label = Field(
+    user_set_label: Any = Field(
         default="",
         description="Given by user and overwrites 'label'."
                     " Needed to make labels unique")
@@ -543,7 +543,7 @@ class DatatypeFields(BaseModel):
     """Key Fields describing a Datatype"""
     type: DatatypeType = Field(default=DatatypeType.string,
                                description="Type of the datatype")
-    number_has_range = Field(
+    number_has_range: Any = Field(
         default=False,
         description="If Type==Number: Does the datatype define a range")
     number_range_min: Union[int, str] = Field(
@@ -586,14 +586,11 @@ class Datatype(Entity, DatatypeFields):
         Returns:
             Dict[str,str]
         """
-        res = self.dict(include={'type', 'number_has_range',
+        res = self.model_dump(include={'type', 'number_has_range',
                                  'number_range_min', 'number_range_max',
                                  'number_decimal_allowed', 'forbidden_chars',
                                  'allowed_chars', 'enum_values'},
-                        exclude_defaults={'type', 'number_has_range',
-                                 'number_range_min', 'number_range_max',
-                                 'number_decimal_allowed', 'forbidden_chars',
-                                 'allowed_chars', 'enum_values'})
+                              exclude_defaults=True)
         res['type'] = self.type.value
         return res
 

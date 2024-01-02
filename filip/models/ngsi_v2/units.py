@@ -15,7 +15,8 @@ import pandas as pd
 from functools import lru_cache
 from rapidfuzz import process
 from typing import Any, Dict, List, Optional, Union
-from pydantic import BaseModel, Field, root_validator, validator
+from typing_extensions import Literal
+from pydantic import field_validator, model_validator, ConfigDict, BaseModel, Field
 from filip.models.base import NgsiVersion, DataType
 from filip.utils.data import load_datapackage
 
@@ -52,7 +53,7 @@ class UnitCode(BaseModel):
         Currently we only support the UN/CEFACT Common Codes
     """
     type: DataType = Field(default=DataType.TEXT,
-                           const=True,
+                           # const=True,
                            description="Data type")
     value: str = Field(...,
                        title="Code of unit ",
@@ -60,7 +61,8 @@ class UnitCode(BaseModel):
                        min_length=2,
                        max_length=3)
 
-    @validator('value', allow_reuse=True)
+    @field_validator('value')
+    @classmethod
     def validate_code(cls, value):
         units = load_units()
         if len(units.loc[units.CommonCode == value.upper()]) == 1:
@@ -78,7 +80,7 @@ class UnitText(BaseModel):
         We use the names of units of measurements from UN/CEFACT for validation
     """
     type: DataType = Field(default=DataType.TEXT,
-                           const=True,
+                           # const=True,
                            description="Data type")
     value: str = Field(...,
                        title="Name of unit of measurement",
@@ -86,7 +88,8 @@ class UnitText(BaseModel):
                                    "spelling in singular form, "
                                    "e.g. 'newton second per metre'")
 
-    @validator('value', allow_reuse=True)
+    @field_validator('value')
+    @classmethod
     def validate_text(cls, value):
         units = load_units()
 
@@ -107,7 +110,8 @@ class Unit(BaseModel):
     """
     Model for a unit definition
     """
-    _ngsi_version: NgsiVersion = Field(default=NgsiVersion.v2, const=True)
+    model_config = ConfigDict(extra='ignore', populate_by_name=True)
+    _ngsi_version: Literal[NgsiVersion.v2] = NgsiVersion.v2
     name: Optional[Union[str, UnitText]] = Field(
         alias="unitText",
         default=None,
@@ -133,11 +137,8 @@ class Unit(BaseModel):
         description="The value used to convert units to the equivalent SI "
                     "unit when applicable.")
 
-    class Config:
-        extra = 'ignore'
-        allow_population_by_field_name = True
-
-    @root_validator(pre=False, allow_reuse=True)
+    @model_validator(mode="before")
+    @classmethod
     def check_consistency(cls, values):
         """
         Validate and auto complete unit data based on the UN/CEFACT data
@@ -151,6 +152,8 @@ class Unit(BaseModel):
         name = values.get("name")
         code = values.get("code")
 
+        if isinstance(name, dict):
+            name = UnitText.model_validate(name)
         if isinstance(code, UnitCode):
             code = code.value
         if isinstance(name, UnitText):
@@ -233,7 +236,7 @@ class Units:
             Unit
         """
         idx = self.units.index[((self.units.CommonCode == item.upper()) |
-                                (self.units.Name == item.casefold()))]
+                                (self.units.Name.str.casefold() == item.casefold()))]
         if idx.empty:
             names = self.units.Name.tolist()
             suggestions = [item[0] for item in process.extract(
@@ -325,10 +328,12 @@ def validate_unit_data(data: Dict) -> Dict:
         if data.get("name", "").casefold() == modelname.casefold():
             if data.get("name", "").casefold() == 'unit':
                 data["type"] = 'Unit'
-                data["value"] = model.parse_obj(data["value"])
+                data["value"] = model.model_validate(data["value"])
+                # data["value"] = model.parse_obj(data["value"])
                 return data
             else:
-                data.update(model.parse_obj(data).dict())
+                data.update(model.model_validate(data).model_dump())
+                # data.update(model.parse_obj(data).dict())
                 return data
     raise ValueError(f"Invalid unit data found: \n "
                      f"{json.dumps(data, indent=2)}")

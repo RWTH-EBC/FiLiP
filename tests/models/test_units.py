@@ -43,12 +43,14 @@ class TestUnitCodes(TestCase):
             None
         """
         unit = Unit(**self.unit)
-        unit_from_json = Unit.parse_raw(unit.json(by_alias=True))
+        json_data = unit.model_dump_json(by_alias=False)
+        unit_from_json = Unit.model_validate_json(json_data=json_data)
         self.assertEqual(unit, unit_from_json)
 
     def test_units(self):
         """
         Test units api
+
         Returns:
             None
         """
@@ -59,9 +61,17 @@ class TestUnitCodes(TestCase):
                          units.keys(by_code=True))
         self.assertEqual(self.units_data.CommonCode.to_list(), units.codes)
 
-        for unit in units.values():
-            cmdout = unit.json(indent=2)
-            # print(cmdout)
+        # check get or __getitem__, respectively
+        for k in units.keys():
+            units.get(k)
+
+        for k in units.keys(by_code=True):
+            units.get(k)
+
+        # check serialization
+        for v in units.values():
+            v.model_dump_json(indent=2)
+
 
     def test_unit_validator(self):
         """

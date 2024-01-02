@@ -6,8 +6,10 @@ stages:
     - deploy
 
 variables:
-    EXCLUDE_PYTHON: 36
+    EXCLUDE_PYTHON: 311, 312
+    PYTHON_VERSION: "registry.git.rwth-aachen.de/ebc/ebc_all/gitlab_ci/templates:python_3.9"
     PAGES_BRANCH: master
+    PYTHON_PACKAGE_NAME: "filip"
 
 include:
     - project: 'EBC/EBC_all/gitlab_ci/templates'
@@ -15,10 +17,10 @@ include:
     - project: 'EBC/EBC_all/gitlab_ci/templates'
       file: 'python/doc/sphinxdoc.gitlab-ci.yml'
     - project: 'EBC/EBC_all/gitlab_ci/templates'
-      file: 'pages/pages.gitlab-ci.yml'
+      file: 'pages/gl-pages.gitlab-ci.yml'
     - project: 'EBC/EBC_all/gitlab_ci/templates'
-      file: 'python/unit-tests/unittest.gitlab-ci.yml'
+      file: 'python/tests/tests.gitlab-ci.yml'
     - project: 'EBC/EBC_all/gitlab_ci/templates'
-      file: 'python/unit-tests/coverage.gitlab-ci.yml'
+      file: 'python/tests/coverage.gitlab-ci.yml'
     - project: 'EBC/EBC_all/gitlab_ci/templates'
       file: 'python/build/build.gitlab-ci.yml'

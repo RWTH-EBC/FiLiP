@@ -82,16 +82,16 @@ class TestTimeSeriesModel(unittest.TestCase):
         """
         Test model creation
         """
-        TimeSeries.parse_obj(self.data1)
+        TimeSeries.model_validate(self.data1)
 
     def test_extend(self):
         """
         Test merging of multiple time series objects
         """
 
-        ts1 = TimeSeries.parse_obj(self.data1)
+        ts1 = TimeSeries.model_validate(self.data1)
         logger.debug(f"Initial data set: \n {ts1.to_pandas()}")
-        ts2 = TimeSeries.parse_obj(self.data2)
+        ts2 = TimeSeries.model_validate(self.data2)
         ts1.extend(ts2)
         logger.debug(f"Extended data set: \n {ts1.to_pandas()}")
 
@@ -101,9 +101,9 @@ class TestTimeSeriesModel(unittest.TestCase):
     def test_timeseries_header(self):
         header = TimeSeriesHeader(**self.timeseries_header)
         header_by_alias = TimeSeriesHeader(**self.timeseries_header_alias)
-        self.assertEqual(header.dict(), header_by_alias.dict())
-        self.assertEqual(header.dict(by_alias=True),
-                         header_by_alias.dict(by_alias=True))
+        self.assertEqual(header.model_dump(), header_by_alias.model_dump())
+        self.assertEqual(header.model_dump(by_alias=True),
+                         header_by_alias.model_dump(by_alias=True))
 
 
 if __name__ == '__main__':
