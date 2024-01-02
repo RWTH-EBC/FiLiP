@@ -104,7 +104,7 @@ class FiwareHeaderSecure(FiwareHeader):
         default="",
         max_length=3000,
         description="authorization key",
-        regex=r".*"
+        pattern=r".*"
     )
 
 
