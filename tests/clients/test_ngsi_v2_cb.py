@@ -861,11 +861,13 @@ class TestContextBroker(unittest.TestCase):
         entityAttr.value = "value1"
         attr_data2 = NamedContextAttribute(name="data2", value="value2")
         self.client.update_or_append_entity_attributes(entity_id=test_entity_id,
-                                                       attrs=[entityAttr, attr_data2])
+                                                       attrs=[entityAttr,
+                                                              attr_data2])
 
         # update_existing_entity_attributes
         self.client.update_existing_entity_attributes(entity_id=test_entity_id,
-                                                      attrs=[entityAttr, attr_data2])
+                                                      attrs=[entityAttr,
+                                                             attr_data2])
 
         # replace_entity_attributes
         self.client.replace_entity_attributes(entity_id=test_entity_id,
@@ -885,18 +887,21 @@ class TestContextBroker(unittest.TestCase):
         entityAttr.value = "value1"
         attr_data2 = NamedContextAttribute(name="data2", value="value2")
         with self.assertRaises(requests.HTTPError):
-            self.client.update_or_append_entity_attributes(entity_id=test_entity_id,
-                                                           attrs=[entityAttr, attr_data2])
+            self.client.update_or_append_entity_attributes(
+                entity_id=test_entity_id,
+                attrs=[entityAttr, attr_data2])
 
         # update_existing_entity_attributes
         with self.assertRaises(requests.HTTPError):
-            self.client.update_existing_entity_attributes(entity_id=test_entity_id,
-                                                          attrs=[entityAttr, attr_data2])
+            self.client.update_existing_entity_attributes(
+                entity_id=test_entity_id,
+                attrs=[entityAttr, attr_data2])
 
         # replace_entity_attributes
         with self.assertRaises(requests.HTTPError):
-            self.client.replace_entity_attributes(entity_id=test_entity_id,
-                                                  attrs=[entityAttr, attr_data2])
+            self.client.replace_entity_attributes(
+                entity_id=test_entity_id,
+                attrs=[entityAttr, attr_data2])
 
         # delete entity
         with self.assertRaises(requests.HTTPError):
@@ -916,7 +921,6 @@ class TestContextBroker(unittest.TestCase):
                 entity_id=entity.id,
                 entity_type=entity.type)
         )
-
 
     def tearDown(self) -> None:
         """

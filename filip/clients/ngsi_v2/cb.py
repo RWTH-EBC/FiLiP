@@ -1613,8 +1613,8 @@ class ContextBrokerClient(BaseHttpClient):
     def post_command(self,
                      *,
                      entity_id: str,
-                     entity_type: str,
                      command: Union[Command, NamedCommand, Dict],
+                     entity_type: str = None,
                      command_name: str = None) -> None:
         """
         Post a command to a context entity this corresponds to 'PATCH' of the
