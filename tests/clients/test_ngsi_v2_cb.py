@@ -243,7 +243,7 @@ class TestContextBroker(unittest.TestCase):
                 cb_url=settings.CB_URL)
     def test_entity_update(self):
         """
-        Test different ways to update entity
+        Test different ways (post, update, override, patch) to update entity
         Both with the update scenario
         1) append attribute
         2) update existing attribute value
