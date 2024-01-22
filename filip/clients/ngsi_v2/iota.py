@@ -297,7 +297,7 @@ class IoTAClient(BaseHttpClient):
         except requests.RequestException as err:
             if update:
                 return self.update_devices(devices=devices, add=False)
-            msg = "Could not update devices"
+            msg = "Could not post devices"
             self.log_error(err=err, msg=msg)
             raise
 
