@@ -53,7 +53,6 @@ class ContextBrokerClient(BaseHttpClient):
         We use the reference implementation for development. Therefore, some
         other brokers may show slightly different behavior!
     """
-
     def __init__(self,
                  url: str = None,
                  *,
@@ -555,7 +554,7 @@ class ContextBrokerClient(BaseHttpClient):
 
     def delete_entity(self,
                       entity_id: str,
-                      entity_type: str,
+                      entity_type: str = None,
                       delete_devices: bool = False,
                       iota_client: IoTAClient = None,
                       iota_url: AnyHttpUrl = settings.IOTA_URL) -> None:
@@ -568,7 +567,8 @@ class ContextBrokerClient(BaseHttpClient):
             entity_id:
                 Id of the entity to be deleted
             entity_type:
-                several entities with the same entity id.
+                Entity type, to avoid ambiguity in case there are several
+                entities with the same entity id.
             delete_devices:
                 If True, also delete all devices that reference this
                 entity (entity_id as entity_name)
@@ -584,8 +584,11 @@ class ContextBrokerClient(BaseHttpClient):
         """
         url = urljoin(self.base_url, f'v2/entities/{entity_id}')
         headers = self.headers.copy()
-        params = {'type': entity_type}
 
+        if entity_type:
+            params = {'type': entity_type}
+        else:
+            params = None
         try:
             res = self.delete(url=url, params=params, headers=headers)
             if res.ok:
@@ -598,25 +601,29 @@ class ContextBrokerClient(BaseHttpClient):
             raise
 
         if delete_devices:
-            from filip.clients.ngsi_v2 import IoTAClient
-            if iota_client:
-                iota_client_local = deepcopy(iota_client)
+            if entity_type:
+                from filip.clients.ngsi_v2 import IoTAClient
+                if iota_client:
+                    iota_client_local = deepcopy(iota_client)
+                else:
+                    warnings.warn("No IoTA-Client object provided! "
+                                  "Will try to generate one. "
+                                  "This usage is not recommended.")
+
+                    iota_client_local = IoTAClient(
+                        url=iota_url,
+                        fiware_header=self.fiware_headers,
+                        headers=self.headers)
+
+                for device in iota_client_local.get_device_list(
+                        entity_names=[entity_id]):
+                    if device.entity_type == entity_type:
+                        iota_client_local.delete_device(device_id=device.device_id)
+
+                iota_client_local.close()
             else:
-                warnings.warn("No IoTA-Client object provided! "
-                              "Will try to generate one. "
-                              "This usage is not recommended.")
-
-                iota_client_local = IoTAClient(
-                    url=iota_url,
-                    fiware_header=self.fiware_headers,
-                    headers=self.headers)
-
-            for device in iota_client_local.get_device_list(
-                    entity_names=[entity_id]):
-                if device.entity_type == entity_type:
-                    iota_client_local.delete_device(device_id=device.device_id)
-
-            iota_client_local.close()
+                warnings.warn(f"No entity_type provided! "
+                              f"Devices are not deleted")
 
     def delete_entities(self, entities: List[ContextEntity]) -> None:
         """
@@ -656,9 +663,9 @@ class ContextBrokerClient(BaseHttpClient):
     def update_or_append_entity_attributes(
             self,
             entity_id: str,
-            entity_type: str,
             attrs: List[Union[NamedContextAttribute,
                               Dict[str, ContextAttribute]]],
+            entity_type: str = None,
             append_strict: bool = False):
         """
         The request payload is an object representing the attributes to
@@ -693,6 +700,8 @@ class ContextBrokerClient(BaseHttpClient):
         params = {}
         if entity_type:
             params.update({'type': entity_type})
+        else:
+            entity_type = "dummy"
         if append_strict:
             params.update({'options': 'append'})
 
@@ -725,9 +734,9 @@ class ContextBrokerClient(BaseHttpClient):
     def update_existing_entity_attributes(
             self,
             entity_id: str,
-            entity_type: str,
             attrs: List[Union[NamedContextAttribute,
-                              Dict[str, ContextAttribute]]]):
+                              Dict[str, ContextAttribute]]],
+            entity_type: str = None):
         """
         The entity attributes are updated with the ones in the payload.
         In addition to that, if one or more attributes in the payload doesn't
@@ -746,7 +755,11 @@ class ContextBrokerClient(BaseHttpClient):
         """
         url = urljoin(self.base_url, f'v2/entities/{entity_id}/attrs')
         headers = self.headers.copy()
-        params = {"type": entity_type}
+        if entity_type:
+            params = {"type": entity_type}
+        else:
+            params = None
+            entity_type = "dummy"
 
         entity = ContextEntity(id=entity_id,
                                type=entity_type)
@@ -773,9 +786,9 @@ class ContextBrokerClient(BaseHttpClient):
     def replace_entity_attributes(
             self,
             entity_id: str,
-            entity_type: str,
             attrs: List[Union[NamedContextAttribute,
-                              Dict[str, ContextAttribute]]]):
+                              Dict[str, ContextAttribute]]],
+            entity_type: str = None):
         """
         The attributes previously existing in the entity are removed and
         replaced by the ones in the request. This corresponds to a 'PUT'
@@ -794,6 +807,8 @@ class ContextBrokerClient(BaseHttpClient):
         params = {}
         if entity_type:
             params.update({'type': entity_type})
+        else:
+            entity_type = "dummy"
 
         entity = ContextEntity(id=entity_id,
                                type=entity_type)
@@ -1598,8 +1613,8 @@ class ContextBrokerClient(BaseHttpClient):
     def post_command(self,
                      *,
                      entity_id: str,
-                     entity_type: str,
                      command: Union[Command, NamedCommand, Dict],
+                     entity_type: str = None,
                      command_name: str = None) -> None:
         """
         Post a command to a context entity this corresponds to 'PATCH' of the
