@@ -716,7 +716,8 @@ class ContextBrokerClient(BaseHttpClient):
                 url=url,
                 headers=headers,
                 json=entity.model_dump(
-                    exclude=excluded_keys, exclude_unset=True, exclude_none=True
+                    exclude=excluded_keys,
+                    exclude_none=True
                 ),
                 params=params,
             )
@@ -763,7 +764,8 @@ class ContextBrokerClient(BaseHttpClient):
                 url=url,
                 headers=headers,
                 json=entity.model_dump(
-                    exclude={"id", "type"}, exclude_unset=True, exclude_none=True
+                    exclude={"id", "type"},
+                    exclude_none=True
                 ),
                 params=params,
             )
@@ -809,7 +811,8 @@ class ContextBrokerClient(BaseHttpClient):
                 url=url,
                 headers=headers,
                 json=entity.model_dump(
-                    exclude={"id", "type"}, exclude_unset=True, exclude_none=True
+                    exclude={"id", "type"},
+                    exclude_none=True
                 ),
                 params=params,
             )
@@ -927,7 +930,8 @@ class ContextBrokerClient(BaseHttpClient):
                 headers=headers,
                 params=params,
                 json=attr.model_dump(
-                    exclude={"name"}, exclude_unset=True, exclude_none=True
+                    exclude={"name"},
+                    exclude_none=True
                 ),
             )
             if res.ok:
@@ -1292,7 +1296,8 @@ class ContextBrokerClient(BaseHttpClient):
                 url=url,
                 headers=headers,
                 data=subscription.model_dump_json(
-                    exclude={"id"}, exclude_unset=True, exclude_none=True
+                    exclude={"id"},
+                    exclude_none=True
                 ),
             )
             if res.ok:
@@ -1423,7 +1428,8 @@ class ContextBrokerClient(BaseHttpClient):
                 url=url,
                 headers=headers,
                 data=registration.model_dump_json(
-                    exclude={"id"}, exclude_unset=True, exclude_none=True
+                    exclude={"id"},
+                    exclude_none=True
                 ),
             )
             if res.ok:

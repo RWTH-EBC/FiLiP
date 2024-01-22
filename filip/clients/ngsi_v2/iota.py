@@ -228,7 +228,6 @@ class IoTAClient(BaseHttpClient):
                            json=service_group.model_dump(
                                include=fields,
                                exclude={'service', 'subservice'},
-                               exclude_unset=True,
                                exclude_none=True))
             if res.ok:
                 self.logger.info("ServiceGroup updated!")
