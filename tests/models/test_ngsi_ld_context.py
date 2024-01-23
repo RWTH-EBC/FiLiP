@@ -10,7 +10,7 @@ from filip.models.ngsi_ld.context import \
     ContextLDEntity, ContextProperty
 
 
-class TestContextModels(unittest.TestCase):
+class TestLDContextModels(unittest.TestCase):
     """
     Test class for context broker models
     """
@@ -67,3 +67,49 @@ class TestContextModels(unittest.TestCase):
         new_attr = {'new_attr': ContextProperty(type='Number', value=25)}
         entity.add_properties(new_attr)
 
+    def test_get_attributes(self):
+        """
+        Test the get_attributes method
+        """
+        pass
+        # entity = ContextEntity(id="test", type="Tester")
+        # attributes = [
+        #     NamedContextAttribute(name="attr1", type="Number"),
+        #     NamedContextAttribute(name="attr2", type="string"),
+        # ]
+        # entity.add_attributes(attributes)
+        # self.assertEqual(entity.get_attributes(strict_data_type=False), attributes)
+        # self.assertNotEqual(entity.get_attributes(strict_data_type=True), attributes)
+        # self.assertNotEqual(entity.get_attributes(), attributes)
+
+    def test_entity_delete_attributes(self):
+        """
+        Test the delete_attributes methode
+        also tests the get_attribute_name method
+        """
+        pass
+        # attr = ContextAttribute(**{'value': 20, 'type': 'Text'})
+        # named_attr = NamedContextAttribute(**{'name': 'test2', 'value': 20,
+        #                                       'type': 'Text'})
+        # attr3 = ContextAttribute(**{'value': 20, 'type': 'Text'})
+        #
+        # entity = ContextEntity(id="12", type="Test")
+        #
+        # entity.add_attributes({"test1": attr, "test3": attr3})
+        # entity.add_attributes([named_attr])
+        #
+        # entity.delete_attributes({"test1": attr})
+        # self.assertEqual(entity.get_attribute_names(), {"test2", "test3"})
+        #
+        # entity.delete_attributes([named_attr])
+        # self.assertEqual(entity.get_attribute_names(), {"test3"})
+        #
+        # entity.delete_attributes(["test3"])
+        # self.assertEqual(entity.get_attribute_names(), set())
+
+    def test_entity_add_attributes(self):
+        """
+        Test the add_attributes methode
+        Differentiate between property and relationship
+        """
+        pass
