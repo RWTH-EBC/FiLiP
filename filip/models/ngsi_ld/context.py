@@ -6,7 +6,7 @@ from typing import Any, List, Dict, Union, Optional
 from aenum import Enum
 from pydantic import BaseModel, Field, validator
 from filip.models.ngsi_v2 import ContextEntity
-from filip.utils.validators import FiwareRegex
+from filip.models.base import FiwareRegex
 
 
 class DataTypeLD(str, Enum):
@@ -43,6 +43,25 @@ class ContextProperty(BaseModel):
         title="Property value",
         description="the actual data"
     )
+    observedAt: Optional[str] = Field(
+        titel="Timestamp",
+        description="Representing a timestamp for the "
+                    "incoming value of the property.",
+        max_length=256,
+        min_length=1,
+        regex=FiwareRegex.string_protect.value,
+        # Make it FIWARE-Safe
+    )
+    UnitCode: Optional[str] = Field(
+        titel="Unit Code",
+        description="Representing the unit of the value. "
+                    "Should be part of the defined units "
+                    "by the UN/ECE Recommendation No. 21"
+                    "https://unece.org/fileadmin/DAM/cefact/recommendations/rec20/rec20_rev3_Annex2e.pdf ",
+        max_length=256,
+        min_length=1,
+        regex=FiwareRegex.string_protect.value,  # Make it FIWARE-Safe
+    )
 
 
 class NamedContextProperty(ContextProperty):
@@ -51,6 +70,80 @@ class NamedContextProperty(ContextProperty):
     as the current_speed property of the car-104 entity.
 
     In the NGSI-LD data model, properties have a name, the type "property" and a value.
+    """
+    name: str = Field(
+        titel="Property name",
+        description="The property name describes what kind of property the "
+                    "attribute value represents of the entity, for example "
+                    "current_speed. Allowed characters "
+                    "are the ones in the plain ASCII set, except the following "
+                    "ones: control characters, whitespace, &, ?, / and #.",
+        max_length=256,
+        min_length=1,
+        regex=FiwareRegex.string_protect.value,
+        # Make it FIWARE-Safe
+    )
+
+
+class ContextGeoPropertyValue(BaseModel):
+    """
+    The value for a Geo property is represented by a JSON object with the following syntax:
+
+    A type with value "Point" and the
+    coordinates with a list containing the coordinates as value
+
+    Example:
+        "value": {
+            "type": "Point",
+            "coordinates": [
+                -3.80356167695194,
+                43.46296641666926
+            ]
+        }
+    }
+
+    """
+    type = "Point"
+    coordinates: List[float] = Field(
+        default=None,
+        title="Geo property coordinates",
+        description="the actual coordinates"
+    )
+
+
+class ContextGeoProperty(BaseModel):
+    """
+    The model for a Geo property is represented by a JSON object with the following syntax:
+
+    The attribute value is a JSON object with two contents.
+
+    Example:
+
+        "location": {
+        "type": "GeoProperty",
+        "value": {
+            "type": "Point",
+            "coordinates": [
+                -3.80356167695194,
+                43.46296641666926
+            ]
+        }
+    }
+
+    """
+    type = "GeoProperty"
+    value: Optional[ContextGeoPropertyValue] = Field(
+        default=None,
+        title="GeoProperty value",
+        description="the actual data"
+    )
+
+
+class NamedContextGeoProperty(ContextProperty):
+    """
+    Context GeoProperties are geo properties of context entities. For example, the coordinates of a building .
+
+    In the NGSI-LD data model, properties have a name, the type "Geoproperty" and a value.
     """
     name: str = Field(
         titel="Property name",
@@ -148,6 +241,21 @@ class ContextLDEntityKeyValues(BaseModel):
                     "except the following ones: control characters, "
                     "whitespace, &, ?, / and #.",
         example="Room",
+        max_length=256,
+        min_length=1,
+        regex=FiwareRegex.standard.value,  # Make it FIWARE-Safe
+        allow_mutation=False
+    )
+    context: List[str] = Field(
+        ...,
+        title="@context",
+        description="providing an unambiguous definition by mapping terms to "
+                    "URIs. For practicality reasons, "
+                    "it is recommended to have a unique @context resource, "
+                    "containing all terms, subject to be used in every "
+                    "FIWARE Data Model, the same way as http://schema.org does.",
+        example="[https://schema.lab.fiware.org/ld/context,"
+                "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld]",
         max_length=256,
         min_length=1,
         regex=FiwareRegex.standard.value,  # Make it FIWARE-Safe
