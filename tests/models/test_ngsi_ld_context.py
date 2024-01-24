@@ -14,18 +14,86 @@ class TestLDContextModels(unittest.TestCase):
     """
     Test class for context broker models
     """
+
     def setUp(self) -> None:
         """
         Setup test data
         Returns:
             None
         """
-        self.attr = {'temperature': {'value': 20, 'type': 'Property'}}
-        self.relation = {'relation': {'object': 'OtherEntity', 'type': 'Relationship'}}
-        self.entity_data = {'id': 'urn:ngsi-ld:MyType:MyId',
-                            'type': 'MyType'}
-        self.entity_data.update(self.attr)
-        self.entity_data.update(self.relation)
+        # TODO to remove
+        # self.attr = {'temperature': {'value': 20, 'type': 'Property'}}
+        # self.relation = {
+        #     'relation': {'object': 'OtherEntity', 'type': 'Relationship'}}
+        # self.entity_data = {'id': 'urn:ngsi-ld:MyType:MyId',
+        #                     'type': 'MyType'}
+        # self.entity_data.update(self.attr)
+        # self.entity_data.update(self.relation)
+        self.entity1_dict = {
+            "id": "urn:ngsi-ld:OffStreetParking:Downtown1",
+            "type": "OffStreetParking",
+            "name": {
+                "type": "Property",
+                "value": "Downtown One"
+            },
+            "availableSpotNumber": {
+                "type": "Property",
+                "value": 121,
+                "observedAt": "2017-07-29T12:05:02Z",
+                "reliability": {
+                    "type": "Property",
+                    "value": 0.7
+                },
+                "providedBy": {
+                    "type": "Relationship",
+                    "object": "urn:ngsi-ld:Camera:C1"
+                }
+            },
+            "totalSpotNumber": {
+                "type": "Property",
+                "value": 200
+            },
+            "location": {
+                "type": "GeoProperty",
+                "value": {
+                    "type": "Point",
+                    "coordinates": [-8.5, 41.2]
+                }
+            },
+            "@context": [
+                "http://example.org/ngsi-ld/latest/parking.jsonld",
+                "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.3.jsonld"
+            ]
+        }
+        self.entity2_dict = {
+            "id": "urn:ngsi-ld:Vehicle:A4567",
+            "type": "Vehicle",
+            "@context": [
+                "http://example.org/ngsi-ld/latest/commonTerms.jsonld",
+                "http://example.org/ngsi-ld/latest/vehicle.jsonld",
+                "http://example.org/ngsi-ld/latest/parking.jsonld",
+                "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.3.jsonld"
+            ]
+        }
+        self.entity2_props_dict = {
+            "brandName": {
+                "type": "Property",
+                "value": "Mercedes"
+            }
+        }
+        self.entity2_rel_dict = {
+            "isParked": {
+                "type": "Relationship",
+                "object": "urn:ngsi-ld:OffStreetParking:Downtown1",
+                "observedAt": "2017-07-29T12:00:04Z",
+                "providedBy": {
+                    "type": "Relationship",
+                    "object": "urn:ngsi-ld:Person:Bob"
+                }
+            }
+        }
+        self.entity2_dict.update(self.entity2_props_dict)
+        self.entity2_dict.update(self.entity2_rel_dict)
 
     def test_cb_attribute(self) -> None:
         """
@@ -48,24 +116,36 @@ class TestLDContextModels(unittest.TestCase):
         Returns:
             None
         """
-        entity = ContextLDEntity(**self.entity_data)
-        self.assertEqual(self.entity_data, entity.dict(exclude_unset=True))
-        entity = ContextLDEntity.parse_obj(self.entity_data)
-        self.assertEqual(self.entity_data, entity.dict(exclude_unset=True))
+        entity1 = ContextLDEntity(**self.entity1_dict)
+        entity2 = ContextLDEntity(**self.entity2_dict)
 
-        properties = entity.get_properties(response_format='list')
-        self.assertEqual(self.attr, {properties[0].name: properties[0].dict(exclude={'name'},
-            exclude_unset=True)})
-        properties = entity.get_properties(response_format='dict')
-        self.assertEqual(self.attr['temperature'],
-                         properties['temperature'].dict(exclude_unset=True))
+        self.assertEqual(self.entity1_dict,
+                         entity1.model_dump(exclude_unset=True))
+        entity1 = ContextLDEntity.model_validate(self.entity1_dict)
 
-        relations = entity.get_relationships()
-        self.assertEqual(self.relation, {relations[0].name: relations[0].dict(exclude={'name'},
-             exclude_unset=True)})
+        self.assertEqual(self.entity2_dict,
+                         entity2.model_dump(exclude_unset=True))
+        entity2 = ContextLDEntity.model_validate(self.entity2_dict)
 
-        new_attr = {'new_attr': ContextProperty(type='Number', value=25)}
-        entity.add_properties(new_attr)
+        # check all properties can be returned by get_properties
+        properties = entity2.get_properties(response_format='list')
+        for prop in properties:
+            self.assertEqual(self.entity2_props_dict[prop.name],
+                             prop.model_dump(
+                                 exclude={'name'},
+                                 exclude_unset=True))  # TODO may not work
+
+        # check all relationships can be returned by get_relationships
+        relationships = entity2.get_relationships(response_format='list')
+        for relationship in relationships:
+            self.assertEqual(self.entity2_rel_dict[relationship.name],
+                             relationship.model_dump(
+                                 exclude={'name'},
+                                 exclude_unset=True))  # TODO may not work
+
+        # test add entity
+        new_prop = {'new_prop': ContextProperty(type='Number', value=25)}
+        entity2.add_properties(new_prop)
 
     def test_get_attributes(self):
         """
