@@ -110,7 +110,9 @@ class Unit(BaseModel):
     """
     Model for a unit definition
     """
-    model_config = ConfigDict(extra='ignore', populate_by_name=True)
+    model_config = ConfigDict(extra='ignore',
+                              populate_by_name=True,
+                              frozen=True)
     _ngsi_version: Literal[NgsiVersion.v2] = NgsiVersion.v2
     name: Optional[Union[str, UnitText]] = Field(
         alias="unitText",
@@ -206,6 +208,7 @@ class Units:
         Return unit as attribute by name or code.
         Notes:
             Underscores will be substituted with whitespaces
+
         Args:
             item: if len(row) == 0:
 
@@ -225,6 +228,7 @@ class Units:
         raise NotImplementedError("The used dataset does currently not "
                                   "contain the information about quantity")
 
+    @lru_cache()
     def __getitem__(self, item: str) -> Unit:
         """
         Get unit by name or code
@@ -236,7 +240,8 @@ class Units:
             Unit
         """
         idx = self.units.index[((self.units.CommonCode == item.upper()) |
-                                (self.units.Name.str.casefold() == item.casefold()))]
+                                (self.units.Name.str.casefold() ==
+                                 item.casefold()))]
         if idx.empty:
             names = self.units.Name.tolist()
             suggestions = [item[0] for item in process.extract(
