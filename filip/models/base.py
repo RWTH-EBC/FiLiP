@@ -170,7 +170,7 @@ class FiwareLDHeader(BaseModel):
                 'type="application/ld+json"',
         max_length=50,
         description="Fiware service used for multi-tenancy",
-        pattern=r"\w*$"    )
+        pattern=r"\w*$")
     ngsild_tenant: str = Field(
         alias="NGSILD-Tenant",
         default="openiot",
