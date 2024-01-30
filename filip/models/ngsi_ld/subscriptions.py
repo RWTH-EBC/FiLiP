@@ -1,5 +1,5 @@
 from typing import List, Optional, Union
-from pydantic import BaseModel, Field, HttpUrl
+from pydantic import ConfigDict, BaseModel, Field, HttpUrl
 
 
 class EntityInfo(BaseModel):
@@ -19,9 +19,7 @@ class EntityInfo(BaseModel):
         ...,
         description="Fully Qualified Name of an Entity Type or the Entity Type Name as a short-hand string. See clause 4.6.2"
     )
-
-    class Config:
-        allow_population_by_field_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class GeoQuery(BaseModel):
@@ -38,9 +36,7 @@ class GeoQuery(BaseModel):
         default=None,
         description="Attribute Name as a short-hand string"
     )
-
-    class Config:
-        allow_population_by_field_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class KeyValuePair(BaseModel):
@@ -85,9 +81,7 @@ class Endpoint(BaseModel):
         default=None,
         description="Generic {key, value} array to set up the communication channel"
     )
-
-    class Config:
-        allow_population_by_field_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class NotificationParams(BaseModel):
@@ -125,9 +119,7 @@ class NotificationParams(BaseModel):
         default=None,
         description="Timestamp corresponding to the instant when the last successful notification was sent. Provided by the system when querying the details of a subscription"
     )
-
-    class Config:
-        allow_population_by_field_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class TemporalQuery(BaseModel):
@@ -147,9 +139,7 @@ class TemporalQuery(BaseModel):
         default=None,
         description="String representing a Property name. The name of the Property that contains the temporal data that will be used to resolve the temporal query. If not specified,"
     )
-
-    class Config:
-        allow_population_by_field_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class Subscription(BaseModel):
@@ -227,6 +217,4 @@ class Subscription(BaseModel):
         default=None,
         description="Language filter applied to the query"
     )
-
-    class Config:
-        allow_population_by_field_name = True
+    model_config = ConfigDict(populate_by_name=True)
