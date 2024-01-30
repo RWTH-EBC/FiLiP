@@ -1,7 +1,15 @@
-#### v0.2.6
-- fixed make unit model hashable for caching ([#186](https://github.com/RWTH-EBC/FiLiP/issues/186))
-- fixed false string matching `__getitem__` of Units ([#189](https://github.com/RWTH-EBC/FiLiP/issues/189))
-- chore add message to all KeyError ([#191](https://github.com/RWTH-EBC/FiLiP/issues/191)) 
+#### v0.3.1
+- add tutorial for protected endpoint with bearer authentication ([#208](https://github.com/RWTH-EBC/FiLiP/issues/208))
+- update pandas version to `~=2.1.4` for `python>=3.9` ([#231](https://github.com/RWTH-EBC/FiLiP/pull/231))
+- fix: wrong msg in iotac post device ([#214](https://github.com/RWTH-EBC/FiLiP/pull/214))
+- fix: make unit model hashable for caching ([#187](https://github.com/RWTH-EBC/FiLiP/issues/187))
+
+#### v0.3.0
+- fix: bug in typePattern validation @richardmarston ([#180](https://github.com/RWTH-EBC/FiLiP/pull/180))
+- add: add messages to all KeyErrors @FWuellhorst ([#192](https://github.com/RWTH-EBC/FiLiP/pull/192))
+- add: optional module `semantics` in setup tool @djs0109
+- fix: get() method of Units dose not work properly by @djs0109 ([#193](https://github.com/RWTH-EBC/FiLiP/pull/193))
+- BREAKING CHANGE: Migration of pydantic v1 to v2 @djs0109 ([#199](https://github.com/RWTH-EBC/FiLiP/issues/199))
 
 #### v0.2.5
 - fixed service group edition not working ([#170](https://github.com/RWTH-EBC/FiLiP/issues/170))
