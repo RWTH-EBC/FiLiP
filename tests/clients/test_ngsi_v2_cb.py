@@ -324,7 +324,7 @@ class TestContextBroker(unittest.TestCase):
             client.delete_entity(entity_id=self.entity.id,
                                  entity_type=self.entity.type)
 
-    #@unittest.skip('Does currently not reliably work in CI')
+    # @unittest.skip('Does currently not reliably work in CI')
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
                 cb_url=settings.CB_URL)
@@ -373,17 +373,19 @@ class TestContextBroker(unittest.TestCase):
 
             for _sub_raw in [sub_with_nans, self.subscription]:
                 # test duplicate prevention and update
-                sub = self.subscription.model_copy()
-                id1 = client.post_subscription(sub)
+                sub = self.subscription.model_copy(deep=True)
+                id1 = client.post_subscription(sub, update=True)
                 sub_first_version = client.get_subscription(id1)
                 sub.description = "This subscription shall not pass"
 
+                # update=False, should not override the existing
                 id2 = client.post_subscription(sub, update=False)
                 self.assertEqual(id1, id2)
                 sub_second_version = client.get_subscription(id2)
                 self.assertEqual(sub_first_version.description,
                                  sub_second_version.description)
 
+                # update=True, should override the existing
                 id2 = client.post_subscription(sub, update=True)
                 self.assertEqual(id1, id2)
                 sub_second_version = client.get_subscription(id2)
@@ -402,6 +404,10 @@ class TestContextBroker(unittest.TestCase):
                 ]
                 id3 = client.post_subscription(sub2)
                 self.assertNotEqual(id1, id3)
+
+                # clean the subscriptions after finish each loop
+                client.delete_subscription(id1)
+                client.delete_subscription(id3)
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
