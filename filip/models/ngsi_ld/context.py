@@ -261,6 +261,27 @@ class ContextLDEntity(ContextLDEntityKeyValues, ContextEntity):
                 ContextLDEntity.__fields__ and
                 value.get('type') != DataTypeLD.RELATIONSHIP]
 
+    def add_attributes(self, **kwargs):
+        """
+        Invalid in NGSI-LD
+        """
+        raise NotImplementedError(
+            "This method should not be used in NGSI-LD")
+
+    def get_attribute(self, **kwargs):
+        """
+        Invalid in NGSI-LD
+        """
+        raise NotImplementedError(
+            "This method should not be used in NGSI-LD")
+
+    def get_attributes(self, **kwargs):
+        """
+        Invalid in NGSI-LD
+        """
+        raise NotImplementedError(
+            "This method should not be used in NGSI-LD")
+
     def add_properties(self, attrs: Union[Dict[str, ContextProperty],
                                           List[NamedContextProperty]]) -> None:
         """
