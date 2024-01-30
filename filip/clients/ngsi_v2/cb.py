@@ -659,7 +659,8 @@ class ContextBrokerClient(BaseHttpClient):
             entity_type: str,
             attrs: List[Union[NamedContextAttribute,
                               Dict[str, ContextAttribute]]],
-            append_strict: bool = False):
+            append_strict: bool = False,
+            forcedUpdate: bool = False):
         """
         The request payload is an object representing the attributes to
         append or update. This corresponds to a 'POST' request if append is
@@ -683,7 +684,10 @@ class ContextBrokerClient(BaseHttpClient):
                 to that, in case some of the attributes in the payload
                 already exist in the entity, an error is returned.
                 More precisely this means a strict append procedure.
-
+            forcedUpdate: Update operation have to trigger any matching
+                subscription, no matter if there is an actual attribute
+                update or no instead of the default behavior, which is to
+                updated only if attribute is effectively updated.
         Returns:
             None
 
@@ -693,8 +697,13 @@ class ContextBrokerClient(BaseHttpClient):
         params = {}
         if entity_type:
             params.update({'type': entity_type})
+        options = []
         if append_strict:
-            params.update({'options': 'append'})
+            options.append("append")
+        if forcedUpdate:
+            options.append("forcedUpdate")
+        if options:
+            params.update({'options': ",".join(options)})
 
         entity = ContextEntity(id=entity_id,
                                type=entity_type)
@@ -727,7 +736,10 @@ class ContextBrokerClient(BaseHttpClient):
             entity_id: str,
             entity_type: str,
             attrs: List[Union[NamedContextAttribute,
-                              Dict[str, ContextAttribute]]]):
+                              Dict[str, ContextAttribute]]],
+            forcedUpdate: bool = False,
+            override_metadata: bool = False
+    ):
         """
         The entity attributes are updated with the ones in the payload.
         In addition to that, if one or more attributes in the payload doesn't
@@ -739,7 +751,13 @@ class ContextBrokerClient(BaseHttpClient):
             entity_type: Entity type, to avoid ambiguity in case there are
                 several entities with the same entity id.
             attrs: List of attributes to update or to append
-
+            forcedUpdate: Update operation have to trigger any matching
+                subscription, no matter if there is an actual attribute
+                update or no instead of the default behavior, which is to
+                updated only if attribute is effectively updated.
+            override_metadata:
+                Bool,replace the existing metadata with the one provided in
+                the request
         Returns:
             None
 
@@ -751,6 +769,14 @@ class ContextBrokerClient(BaseHttpClient):
         entity = ContextEntity(id=entity_id,
                                type=entity_type)
         entity.add_attributes(attrs)
+
+        options = []
+        if override_metadata:
+            options.append("overrideMetadata")
+        if forcedUpdate:
+            options.append("forcedUpdate")
+        if options:
+            params.update({'options': ",".join(options)})
 
         try:
             res = self.patch(url=url,
@@ -775,7 +801,9 @@ class ContextBrokerClient(BaseHttpClient):
             entity_id: str,
             entity_type: str,
             attrs: List[Union[NamedContextAttribute,
-                              Dict[str, ContextAttribute]]]):
+                              Dict[str, ContextAttribute]]],
+            forcedUpdate: bool = False
+    ):
         """
         The attributes previously existing in the entity are removed and
         replaced by the ones in the request. This corresponds to a 'PUT'
@@ -786,12 +814,21 @@ class ContextBrokerClient(BaseHttpClient):
             entity_type: Entity type, to avoid ambiguity in case there are
                 several entities with the same entity id.
             attrs: List of attributes to add to the entity
+            forcedUpdate: Update operation have to trigger any matching
+                subscription, no matter if there is an actual attribute
+                update or no instead of the default behavior, which is to
+                updated only if attribute is effectively updated.
         Returns:
             None
         """
         url = urljoin(self.base_url, f'v2/entities/{entity_id}/attrs')
         headers = self.headers.copy()
         params = {}
+        options = []
+        if forcedUpdate:
+            options.append("forcedUpdate")
+        if options:
+            params.update({'options': ",".join(options)})
         if entity_type:
             params.update({'type': entity_type})
 
@@ -868,7 +905,8 @@ class ContextBrokerClient(BaseHttpClient):
                                 *,
                                 entity_type: str = None,
                                 attr_name: str = None,
-                                override_metadata: bool = True):
+                                override_metadata: bool = True,
+                                forcedUpdate: bool = False):
         """
         Updates a specified attribute from an entity.
 
@@ -880,6 +918,10 @@ class ContextBrokerClient(BaseHttpClient):
             entity_type:
                 Entity type, to avoid ambiguity in case there are
                 several entities with the same entity id.
+            forcedUpdate: Update operation have to trigger any matching
+                subscription, no matter if there is an actual attribute
+                update or no instead of the default behavior, which is to
+                updated only if attribute is effectively updated.
             override_metadata:
                 Bool, if set to `True` (default) the metadata will be
                 overwritten. This is for backwards compatibility reasons.
@@ -887,7 +929,6 @@ class ContextBrokerClient(BaseHttpClient):
                 already existing or append if not.
                 See also:
                 https://fiware-orion.readthedocs.io/en/master/user/metadata.html
-
         """
         headers = self.headers.copy()
         if not isinstance(attr, NamedContextAttribute):
@@ -906,8 +947,13 @@ class ContextBrokerClient(BaseHttpClient):
         if entity_type:
             params.update({'type': entity_type})
         # set overrideMetadata option (we assure backwards compatibility here)
+        options = []
         if override_metadata:
-            params.update({'options': 'overrideMetadata'})
+            options.append("overrideMetadata")
+        if forcedUpdate:
+            options.append("forcedUpdate")
+        if options:
+            params.update({'options': ",".join(options)})
         try:
             res = self.put(url=url,
                            headers=headers,
@@ -1002,7 +1048,9 @@ class ContextBrokerClient(BaseHttpClient):
                                entity_id: str,
                                attr_name: str,
                                value: Any,
-                               entity_type: str = None):
+                               entity_type: str = None,
+                               forcedUpdate: bool = False
+                               ):
         """
         Updates the value of a specified attribute of an entity
 
@@ -1013,6 +1061,10 @@ class ContextBrokerClient(BaseHttpClient):
                 Example: temperature.
             entity_type: Entity type, to avoid ambiguity in case there are
                 several entities with the same entity id.
+            forcedUpdate: Update operation have to trigger any matching
+                subscription, no matter if there is an actual attribute
+                update or no instead of the default behavior, which is to
+                updated only if attribute is effectively updated.
         Returns:
 
         """
@@ -1022,6 +1074,11 @@ class ContextBrokerClient(BaseHttpClient):
         params = {}
         if entity_type:
             params.update({'type': entity_type})
+        options = []
+        if forcedUpdate:
+            options.append("forcedUpdate")
+        if options:
+            params.update({'options': ",".join(options)})
         try:
             if not isinstance(value, (dict, list)):
                 headers.update({'Content-Type': 'text/plain'})
@@ -1448,7 +1505,10 @@ class ContextBrokerClient(BaseHttpClient):
                *,
                entities: List[ContextEntity],
                action_type: Union[ActionType, str],
-               update_format: str = None) -> None:
+               update_format: str = None,
+               forcedUpdate: bool = False,
+               override_metadata: bool = False,
+               ) -> None:
         """
         This operation allows to create, update and/or delete several entities
         in a single batch operation.
@@ -1480,7 +1540,13 @@ class ContextBrokerClient(BaseHttpClient):
                     action to do: either append, appendStrict, update, delete,
                     or replace. "
             update_format (str): Optional 'keyValues'
-
+            forcedUpdate: Update operation have to trigger any matching
+                subscription, no matter if there is an actual attribute
+                update or no instead of the default behavior, which is to
+                updated only if attribute is effectively updated.
+            override_metadata:
+                Bool, replace the existing metadata with the one provided in
+                the request
         Returns:
 
         """
@@ -1489,6 +1555,13 @@ class ContextBrokerClient(BaseHttpClient):
         headers = self.headers.copy()
         headers.update({'Content-Type': 'application/json'})
         params = {}
+        options = []
+        if override_metadata:
+            options.append("overrideMetadata")
+        if forcedUpdate:
+            options.append("forcedUpdate")
+        if options:
+            params.update({'options': ",".join(options)})
         if update_format:
             assert update_format == 'keyValues', \
                 "Only 'keyValues' is allowed as update format"
