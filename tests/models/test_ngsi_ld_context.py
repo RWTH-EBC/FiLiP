@@ -7,7 +7,7 @@ import unittest
 from pydantic import ValidationError
 
 from filip.models.ngsi_ld.context import \
-    ContextLDEntity, ContextProperty
+    ContextLDEntity, ContextProperty, NamedContextProperty
 
 
 class TestLDContextModels(unittest.TestCase):
@@ -21,14 +21,6 @@ class TestLDContextModels(unittest.TestCase):
         Returns:
             None
         """
-        # TODO to remove
-        # self.attr = {'temperature': {'value': 20, 'type': 'Property'}}
-        # self.relation = {
-        #     'relation': {'object': 'OtherEntity', 'type': 'Relationship'}}
-        # self.entity_data = {'id': 'urn:ngsi-ld:MyType:MyId',
-        #                     'type': 'MyType'}
-        # self.entity_data.update(self.attr)
-        # self.entity_data.update(self.relation)
         self.entity1_dict = {
             "id": "urn:ngsi-ld:OffStreetParking:Downtown1",
             "type": "OffStreetParking",
@@ -143,24 +135,28 @@ class TestLDContextModels(unittest.TestCase):
                                  exclude={'name'},
                                  exclude_unset=True))  # TODO may not work
 
-        # test add entity
-        new_prop = {'new_prop': ContextProperty(type='Number', value=25)}
+        # test add properties
+        new_prop = {'new_prop': ContextProperty(value=25)}
         entity2.add_properties(new_prop)
+        entity2.get_properties(response_format='list')
+        self.assertIn("new_prop", [prop.name for prop in properties])
 
     def test_get_attributes(self):
         """
         Test the get_attributes method
         """
         pass
-        # entity = ContextEntity(id="test", type="Tester")
-        # attributes = [
-        #     NamedContextAttribute(name="attr1", type="Number"),
-        #     NamedContextAttribute(name="attr2", type="string"),
-        # ]
-        # entity.add_attributes(attributes)
-        # self.assertEqual(entity.get_attributes(strict_data_type=False), attributes)
-        # self.assertNotEqual(entity.get_attributes(strict_data_type=True), attributes)
-        # self.assertNotEqual(entity.get_attributes(), attributes)
+        entity = ContextLDEntity(id="test", type="Tester")
+        properties = [
+            NamedContextProperty(name="attr1"),
+            NamedContextProperty(name="attr2"),
+        ]
+        entity.add_properties(properties)
+        self.assertEqual(entity.get_properties(response_format="list"),
+                         properties)
+        # TODO why it should be different?
+        self.assertNotEqual(entity.get_properties(),
+                            properties)
 
     def test_entity_delete_attributes(self):
         """
