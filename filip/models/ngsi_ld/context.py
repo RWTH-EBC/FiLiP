@@ -6,7 +6,7 @@ from typing import Any, List, Dict, Union, Optional
 from aenum import Enum
 from pydantic import field_validator, ConfigDict, BaseModel, Field
 from filip.models.ngsi_v2 import ContextEntity
-from filip.models.base import FiwareRegex
+from filip.utils.validators import FiwareRegex
 
 
 class DataTypeLD(str, Enum):
