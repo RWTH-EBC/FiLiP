@@ -5,7 +5,7 @@ import logging
 from typing import Any, List, Dict, Union, Optional
 
 from aenum import Enum
-from pydantic import BaseModel, Field, validator
+from pydantic import field_validator, ConfigDict, BaseModel, Field
 from filip.models.ngsi_v2 import ContextEntity
 from filip.models.base import FiwareRegex
 
@@ -45,23 +45,23 @@ class ContextProperty(BaseModel):
         description="the actual data"
     )
     observedAt: Optional[str] = Field(
-        titel="Timestamp",
+        None, titel="Timestamp",
         description="Representing a timestamp for the "
                     "incoming value of the property.",
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.string_protect.value,
+        pattern=FiwareRegex.string_protect.value,
         # Make it FIWARE-Safe
     )
     UnitCode: Optional[str] = Field(
-        titel="Unit Code",
+        None, titel="Unit Code",
         description="Representing the unit of the value. "
                     "Should be part of the defined units "
                     "by the UN/ECE Recommendation No. 21"
                     "https://unece.org/fileadmin/DAM/cefact/recommendations/rec20/rec20_rev3_Annex2e.pdf ",
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.string_protect.value,  # Make it FIWARE-Safe
+        pattern=FiwareRegex.string_protect.value,  # Make it FIWARE-Safe
     )
 
 
@@ -81,7 +81,7 @@ class NamedContextProperty(ContextProperty):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.string_protect.value,
+        pattern=FiwareRegex.string_protect.value,
         # Make it FIWARE-Safe
     )
 
@@ -155,7 +155,7 @@ class NamedContextGeoProperty(ContextProperty):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.string_protect.value,
+        pattern=FiwareRegex.string_protect.value,
         # Make it FIWARE-Safe
     )
 
@@ -203,7 +203,7 @@ class NamedContextRelationship(ContextRelationship):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.string_protect.value,
+        pattern=FiwareRegex.string_protect.value,
         # Make it FIWARE-Safe
     )
 
@@ -228,11 +228,11 @@ class ContextLDEntityKeyValues(BaseModel):
                     "the following ones: control characters, "
                     "whitespace, &, ?, / and #."
                     "the id should be structured according to the urn naming scheme.",
-        example='urn:ngsi-ld:Room:001',
+        examples=['urn:ngsi-ld:Room:001'],
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.standard.value,  # Make it FIWARE-Safe
-        allow_mutation=False
+        pattern=FiwareRegex.standard.value,  # Make it FIWARE-Safe
+        frozen=True
     )
     type: str = Field(
         ...,
@@ -241,11 +241,11 @@ class ContextLDEntityKeyValues(BaseModel):
                     "Allowed characters are the ones in the plain ASCII set, "
                     "except the following ones: control characters, "
                     "whitespace, &, ?, / and #.",
-        example="Room",
+        examples=["Room"],
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.standard.value,  # Make it FIWARE-Safe
-        allow_mutation=False
+        pattern=FiwareRegex.standard.value,  # Make it FIWARE-Safe
+        frozen=True
     )
     context: List[str] = Field(
         ...,
@@ -255,21 +255,14 @@ class ContextLDEntityKeyValues(BaseModel):
                     "it is recommended to have a unique @context resource, "
                     "containing all terms, subject to be used in every "
                     "FIWARE Data Model, the same way as http://schema.org does.",
-        example="[https://schema.lab.fiware.org/ld/context,"
-                "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld]",
+        examples=["[https://schema.lab.fiware.org/ld/context,"
+                "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld]"],
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.standard.value,  # Make it FIWARE-Safe
-        allow_mutation=False
+        pattern=FiwareRegex.standard.value,  # Make it FIWARE-Safe
+        frozen=True
     )
-
-    class Config:
-        """
-        Pydantic config
-        """
-        extra = 'allow'
-        validate_all = True
-        validate_assignment = True
+    model_config = ConfigDict(extra='allow', validate_default=True, validate_assignment=True)
 
 
 class PropertyFormat(str, Enum):
@@ -321,16 +314,10 @@ class ContextLDEntity(ContextLDEntityKeyValues, ContextEntity):
                  **data):
 
         super().__init__(id=id, type=type, **data)
+    model_config = ConfigDict(extra='allow', validate_default=True, validate_assignment=True)
 
-    class Config:
-        """
-        Pydantic config
-        """
-        extra = 'allow'
-        validate_all = True
-        validate_assignment = True
-
-    @validator("id")
+    @field_validator("id")
+    @classmethod
     def _validate_id(cls, id: str):
         if not id.startswith("urn:ngsi-ld:"):
             raise ValueError('Id has to be an URN and starts with "urn:ngsi-ld:"')
@@ -340,11 +327,11 @@ class ContextLDEntity(ContextLDEntityKeyValues, ContextEntity):
     def _validate_properties(cls, data: Dict):
         attrs = {}
         for key, attr in data.items():
-            if key not in ContextEntity.__fields__:
+            if key not in ContextEntity.model_fields:
                 if attr["type"] == DataTypeLD.RELATIONSHIP:
-                    attrs[key] = ContextRelationship.parse_obj(attr)
+                    attrs[key] = ContextRelationship.model_validate(attr)
                 else:
-                    attrs[key] = ContextProperty.parse_obj(attr)
+                    attrs[key] = ContextProperty.model_validate(attr)
         return attrs
 
     def get_properties(self,
@@ -362,12 +349,12 @@ class ContextLDEntity(ContextLDEntityKeyValues, ContextEntity):
         response_format = PropertyFormat(response_format)
         if response_format == PropertyFormat.DICT:
             return {key: ContextProperty(**value) for key, value in
-                    self.dict().items() if key not in ContextLDEntity.__fields__
+                    self.model_dump().items() if key not in ContextLDEntity.model_fields
                     and value.get('type') != DataTypeLD.RELATIONSHIP}
 
         return [NamedContextProperty(name=key, **value) for key, value in
-                self.dict().items() if key not in
-                ContextLDEntity.__fields__ and
+                self.model_dump().items() if key not in
+                ContextLDEntity.model_fields and
                 value.get('type') != DataTypeLD.RELATIONSHIP]
 
     def add_attributes(self, **kwargs):
@@ -479,11 +466,11 @@ class ContextLDEntity(ContextLDEntityKeyValues, ContextEntity):
         response_format = PropertyFormat(response_format)
         if response_format == PropertyFormat.DICT:
             return {key: ContextRelationship(**value) for key, value in
-                    self.dict().items() if key not in ContextLDEntity.__fields__
+                    self.model_dump().items() if key not in ContextLDEntity.model_fields
                     and value.get('type') == DataTypeLD.RELATIONSHIP}
         return [NamedContextRelationship(name=key, **value) for key, value in
-                self.dict().items() if key not in
-                ContextLDEntity.__fields__ and
+                self.model_dump().items() if key not in
+                ContextLDEntity.model_fields and
                 value.get('type') == DataTypeLD.RELATIONSHIP]
 
 
