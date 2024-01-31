@@ -364,14 +364,20 @@ class TestContextBroker(unittest.TestCase):
                 "notification": {
                     "http": {
                         "url": "http://localhost:1234"
-                    },
-                    "attrs": []
+                    }
                 },
                 "expires": datetime.now() + timedelta(days=1),
                 "throttling": 0
             })
 
-            for _sub_raw in [sub_with_nans, self.subscription]:
+            sub_with_empty_list = sub_with_nans.model_copy(deep=True)
+            sub_with_empty_list.notification.attrs = []
+
+            test_subscriptions = [sub_with_empty_list,
+                                  sub_with_nans,
+                                  self.subscription]
+
+            for _sub_raw in test_subscriptions:
                 # test duplicate prevention and update
                 sub = self.subscription.model_copy(deep=True)
                 id1 = client.post_subscription(sub, update=True)
