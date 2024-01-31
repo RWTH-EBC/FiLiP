@@ -526,6 +526,115 @@ class TestContextBroker(unittest.TestCase):
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
                 cb_url=settings.CB_URL)
+    def test_notification(self):
+        entity = ContextEntity.model_validate({
+            "id": "Test:001",
+            "type": "Test",
+            "temperature": {
+                "type": "Number",
+                "value": 0
+            },
+            "humidity": {
+                "type": "Number",
+                "value": 0
+            },
+            "co2": {
+                "type": "Number",
+                "value": 0
+            }
+        })
+        mqtt_topic = "notification/test"
+        sub_with_empty_notification = Subscription.model_validate({
+            "description": "Test notification with empty values",
+            "subject": {
+                "entities": [
+                    {
+                        "id": "Test:001",
+                        "type": "Test"
+                    }
+                ]
+            },
+            "notification": {
+                "mqtt": {
+                    "url": settings.MQTT_BROKER_URL,
+                    "topic": mqtt_topic
+                },
+                "attrs": []  # empty attrs list
+            },
+            "expires": datetime.now() + timedelta(days=1),
+            "throttling": 0
+        })
+
+        # MQTT settings
+        sub_message = None
+        def on_connect(client, userdata, flags, reasonCode, properties=None):
+            if reasonCode != 0:
+                logger.error(f"Connection failed with error code: "
+                             f"'{reasonCode}'")
+                raise ConnectionError
+            else:
+                logger.info("Successfully, connected with result code " + str(
+                    reasonCode))
+            client.subscribe(mqtt_topic)
+
+        def on_subscribe(client, userdata, mid, granted_qos, properties=None):
+            logger.info("Successfully subscribed to with QoS: %s", granted_qos)
+
+        def on_message(client, userdata, msg):
+            logger.info(msg.topic + " " + str(msg.payload))
+            nonlocal sub_message
+            sub_message = Message.model_validate_json(msg.payload)
+
+        def on_disconnect(client, userdata, reasonCode, properties=None):
+            logger.info("MQTT client disconnected with reasonCode "
+                        + str(reasonCode))
+
+        import paho.mqtt.client as mqtt
+        mqtt_client = mqtt.Client(userdata=None,
+                                  protocol=mqtt.MQTTv5,
+                                  transport="tcp")
+        # add our callbacks to the client
+        mqtt_client.on_connect = on_connect
+        mqtt_client.on_subscribe = on_subscribe
+        mqtt_client.on_message = on_message
+        mqtt_client.on_disconnect = on_disconnect
+        # connect to the server
+        mqtt_client.connect(host=settings.MQTT_BROKER_URL.host,
+                            port=settings.MQTT_BROKER_URL.port,
+                            keepalive=60,
+                            bind_address="",
+                            bind_port=0,
+                            clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
+                            properties=None)
+
+        # create a non-blocking thread for mqtt communication
+        mqtt_client.loop_start()
+
+        with ContextBrokerClient(
+                url=settings.CB_URL,
+                fiware_header=self.fiware_header) as client:
+            client.post_entity(entity=entity)
+            # test1 notification with empty attrs
+            sub_id_1 = client.post_subscription(
+                subscription=sub_with_empty_notification)
+            time.sleep(1)
+            client.update_attribute_value(entity_id=entity.id,
+                                          attr_name="temperature",
+                                          value=10
+                                          )
+            # check the notified entities
+            time.sleep(1)
+            sub_1 = client.get_subscription(sub_id_1)
+            self.assertEqual(sub_1.notification.timesSent, 1)
+            self.assertEqual(len(sub_message.data[0].get_attributes()), 3)
+
+            # TODO test2 notification with attrs = none
+            # TODO test3 notification with single attribute
+
+
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                cb_url=settings.CB_URL)
     def test_batch_operations(self):
         """
         Test batch operations of context broker client
