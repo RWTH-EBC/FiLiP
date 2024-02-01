@@ -27,12 +27,12 @@ SERVICE = 'filip'
 # FIWARE-Servicepath
 SERVICE_PATH = '/example'
 
-# Subscription URL
+# Web server URL for receiving notifications
+SERVER_URL = "http://<my_url>/notify/"
 # Replace <my_url> with the URL of the web server, where you'd like to receive notifications
-# e.g. "http://host.docker.internal:8080/notify/"
-# NOTIFICATIONS_URL = "http://<my_url>/notify/"
-NOTIFICATIONS_URL = "http://137.226.124.219:8080/notify/"
-
+# e.g. "http://host.docker.internal:8080/notify/", or if you're not sure how to set up the 
+# server, create a dummy version via 
+# https://fiware-orion.rtfd.io/en/master/user/walkthrough_apiv2.html#starting-accumulator-server
 
 # Setting up logging
 logging.basicConfig(
@@ -74,7 +74,7 @@ if __name__ == "__main__":
         },
         "notification": {
             "http": {
-                "url": NOTIFICATIONS_URL + interesting_entity_id
+                "url": SERVER_URL + interesting_entity_id
             },
             "attrs": [
                 "temperature"
