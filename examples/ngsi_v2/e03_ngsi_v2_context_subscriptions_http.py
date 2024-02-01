@@ -30,7 +30,8 @@ SERVICE_PATH = '/example'
 # Subscription URL
 # Replace <my_url> with the URL of the web server, where you'd like to receive notifications
 # e.g. "http://host.docker.internal:8080/notify/"
-NOTIFICATIONS_URL = "http://<my_url>/notify/"
+# NOTIFICATIONS_URL = "http://<my_url>/notify/"
+NOTIFICATIONS_URL = "http://host.docker.internal:8080/notify/"
 
 
 # Setting up logging
@@ -51,8 +52,9 @@ if __name__ == "__main__":
     entities = cb_client.get_entity_list()
     logger.info(entities)
 
-    # # 2 Setup a subscription # TODO clarify which info does the subscription want in layman's terms
-    #
+    # # 2 Setup a subscription 
+    # to be notified about changes in the "temperature" attribute of the "Room" 
+    # with id "urn:ngsi-ld:Room:001". The subscription expires after 15 mins
     interesting_entity_id = "urn:ngsi-ld:Room:001"
     sub_example = {
         "description": "Subscription to receive HTTP-Notifications about "
