@@ -2,7 +2,7 @@
 # Examples for subscriptions
 
 # create new subscriptions following the API Walkthrough example:
-# https://fiware-orion.readthedocs.io/en/master/user/walkthrough_apiv2/index.html
+# https://fiware-orion.readthedocs.io/en/master/user/walkthrough_apiv2.html#subscriptions
 """
 # ## Import packages
 import logging
@@ -31,7 +31,7 @@ SERVICE_PATH = '/example'
 # Replace <my_url> with the URL of the web server, where you'd like to receive notifications
 # e.g. "http://host.docker.internal:8080/notify/"
 # NOTIFICATIONS_URL = "http://<my_url>/notify/"
-NOTIFICATIONS_URL = "http://host.docker.internal:8080/notify/"
+NOTIFICATIONS_URL = "http://137.226.124.219:8080/notify/"
 
 
 # Setting up logging
