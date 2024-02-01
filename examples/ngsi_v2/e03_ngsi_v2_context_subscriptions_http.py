@@ -97,7 +97,7 @@ if __name__ == "__main__":
     #
     sub_to_update = cb_client.get_subscription(sub_id)
     # Update expiration time of the example subscription
-    sub_to_update = sub_to_update.copy(
+    sub_to_update = sub_to_update.model_copy(
         update={'expires': datetime.datetime.now() +
                            datetime.timedelta(minutes=15)})
     cb_client.update_subscription(sub_to_update)
