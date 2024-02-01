@@ -34,34 +34,34 @@ if __name__ == '__main__':
 
     # # 1 FiwareHeader
     #
-    # First a create a fiware header that you want to work with
+    # First create a fiware header that you want to work with
     # For more details on the headers check the official documentation:
     # https://fiware-orion.readthedocs.io/en/master/user/multitenancy/index.html
     #
-    # In short a fiware header specifies a location in Fiware where the
+    # In short, a fiware header specifies a location in Fiware where the
     # created entities will be saved and requests are executed.
-    # It can be thought of as a separated subdirectory where you work in.
+    # It can be thought of as a separate subdirectory where you work in.
     fiware_header = FiwareHeader(service='filip',
                                  service_path='/example')
 
     # # 2 Client modes
     # You can run the clients in different modes:
     #
-    # ## 2.1 Run it as pure python object.
+    # ## 2.1 Run it as a pure python object.
     #
     # This will open and close a connection each time you use a function.
-    cb_client = ContextBrokerClient(url="http://134.130.166.184:1026",
+    cb_client = ContextBrokerClient(url=CB_URL,
                                     fiware_header=fiware_header)
     print(f"OCB Version: {cb_client.get_version()}")
 
-    # ## 2.2 Run the client via the python's context protocol.
+    # ## 2.2 Run the client via python's context protocol.
     #
     # This will initialize requests.session that the client will reuse for
     # each function.
-    # Formally, this usually lead to an performance boost because the
-    # connection was reused reused. The client and its connection will be
-    # closed after the end of the with-statement. However, thanks to urllib3
-    # the keep-alive and session reuse is handled totally automatically.
+    # Formerly, this usually lead to a performance boost because the
+    # connection was reused. The client and its connection are
+    # closed after the end of the with-statement. However, thanks to urllib3,
+    # the keep-alive and session reuse are handled totally automatically.
     with ContextBrokerClient(fiware_header=fiware_header) as cb_client:
         print(f"OCB Version: {cb_client.get_version()}")
 
@@ -88,12 +88,12 @@ if __name__ == '__main__':
 
     # # 4 URL
     #
-    # Additional to the FiwareHeader each client needs an URL, that points
+    # Additional to the FiwareHeader each client needs a URL, that points
     # to the Fiware-server.
     #
     # ## 4.1 Environment variables
     #
-    # As shown above the client does not need to be given explicitly. If no URL
+    # As shown above, the client does not need to be given explicitly. If no URL
     # is given to the client, it is extracted from the environment variables
     #
     # ## 4.2 Direct Provision
@@ -109,7 +109,7 @@ if __name__ == '__main__':
     # # 5 Combined Client
     #
     # The library also contains a client (HttpClient) that contains all the
-    # particular clients as bundle.
+    # particular clients as a bundle.
     # It works almost the same as the other agents but takes a config. This
     # can be either a dict or the path to a json file:
 
