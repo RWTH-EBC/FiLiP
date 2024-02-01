@@ -7,16 +7,17 @@ import logging
 from filip.clients.ngsi_v2 import ContextBrokerClient
 from filip.models.ngsi_v2.context import ContextEntity
 from filip.models.base import FiwareHeader
+from filip.utils.simple_ql import QueryString
 
 # ## Parameters
 #
 # To run this example you need a working Fiware v2 setup with a context-broker
-# You can here set the address:
+# You can set the address:
 #
 # Host address of Context Broker
 CB_URL = "http://localhost:1026"
 
-# You can here also change the used Fiware service
+# You can also change the used Fiware service
 # FIWARE-Service
 SERVICE = 'filip'
 # FIWARE-Servicepath
@@ -160,15 +161,16 @@ if __name__ == "__main__":
     # ## 2.2 Get entities
     #
     with ContextBrokerClient(fiware_header=fiware_header) as cb_client:
-        # It should return the inventory item according to the relationship
-        logger.info(
-            cb_client.get_entity_list(q="refProduct==urn:ngsi-ld:Product:001"))
-        logger.info(
-            cb_client.get_entity_list(q="refStore==urn:ngsi-ld:Store:001"))
+        # It should return the inventory item according to the relationship        
+        query = QueryString(qs=[('refProduct', '==', 'urn:ngsi-ld:Product:001')])
+        logger.info(cb_client.get_entity_list(q=query))
+        
+        query = QueryString(qs=[('refStore', '==', 'urn:ngsi-ld:Store:001')])
+        logger.info(cb_client.get_entity_list(q=query))
 
         # It should not return the inventory item according to the relationship
-        logger.info(
-            cb_client.get_entity_list(q="refStore==urn:ngsi-ld:Store:002"))
+        query = QueryString(qs=[('refStore', '==', 'urn:ngsi-ld:Store:002')])
+        logger.info(cb_client.get_entity_list(q=query))
 
     # # 3 Delete test entities
     #
