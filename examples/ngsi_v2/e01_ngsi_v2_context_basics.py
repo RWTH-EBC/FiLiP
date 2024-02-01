@@ -1,5 +1,5 @@
 """
-# Example how to use Entity-models and interact with teh orion ContextBroker
+# Example how to use Entity-models and interact with the Orion ContextBroker
 """
 
 # ## Import packages
@@ -13,13 +13,13 @@ from filip.utils.simple_ql import QueryString
 
 # ## Parameters
 #
-# To run this example you need a working Fiware v2 setup with a context-broker
-# You can here set the address:
+# To run this example, you need a working Fiware v2 setup with a context-broker
+# You can set the address here:
 #
 # Host address of Context Broker
 CB_URL = "http://localhost:1026"
 
-# You can here also change the used Fiware service
+# You can also change the used Fiware service
 # FIWARE-Service
 SERVICE = 'filip'
 # FIWARE-Servicepath
@@ -43,8 +43,8 @@ if __name__ == "__main__":
                                     fiware_header=fiware_header)
     # View version
     for key, value in cb_client.get_version().items():
-        logger.info("Context broker version" + value["version"] + " at url " +
-                    cb_client.base_url)
+        logger.info(f'Context broker version{value["version"]} at url \
+                    {cb_client.base_url}')        
 
     # # 2 Create Entities
     #
@@ -74,33 +74,33 @@ if __name__ == "__main__":
 
     # ## 2.2 Post Entities
     #
-    print(cb_client.get_entity_list())
+    logger.info(f'Entity list before posting to CB: {cb_client.get_entity_list()}')
     cb_client.post_entity(entity=room1_entity)
     cb_client.post_entity(entity=room2_entity)
 
     # # 3 Access entities in Fiware
     #
     # Get all entities from context broker
-    logger.info(cb_client.get_entity_list())
+    logger.info(f'Entity list after posting to CB: {cb_client.get_entity_list()}')
 
     # Get entities by id
-    logger.info(cb_client.get_entity_list(entity_ids=["Room1"]))
+    logger.info(f'Entities with ID "Room1": {cb_client.get_entity_list(entity_ids=["Room1"])}')
 
     # Get entities by type
-    logger.info(cb_client.get_entity_list(entity_types=["Room"]))
+    logger.info(f'Entities by type "Room": {cb_client.get_entity_list(entity_types=["Room"])}')
 
     # Get entities by id pattern
-    logger.info(cb_client.get_entity_list(id_pattern="^Room[2-5]"))
+    logger.info(f'Entities with id pattern "^Room[2-5]": {cb_client.get_entity_list(id_pattern="^Room[2-5]")}')
 
     # Get entities by query expression
-    query = QueryString(qs=[('temperature', '>', 22)])
-    logger.info(cb_client.get_entity_list(q=query))
+    query = QueryString(qs=[('temperature', '>=', 22)])
+    logger.info(f'Entities where temperatur >= 22: {cb_client.get_entity_list(q=query)}')
 
     # Get attributes of entities
-    logger.info(cb_client.get_entity_attributes(entity_id="Room1"))
+    logger.info(f'Attributes of entities: {cb_client.get_entity_attributes(entity_id="Room1")}')
 
-    # Accessing non existing ids or attributes will always throw an request
-    # error
+    # Trying to access non-existing ids or attributes will always throw
+    # a request error
 
     # # 4 Changing Entities
     #
@@ -112,8 +112,8 @@ if __name__ == "__main__":
     # ### 4.1.1 Updating directly
     #
     # Using the Filip interface, we can update different properties of our
-    # entity directly in the live version in FIWARE, here are listed a few
-    # examples of what is possible:
+    # entity directly in the live version in FIWARE. A few examples of what 
+    # is possible are listed here:
 
     # Updating value of an attribute of an entity
     logger.info(cb_client.update_attribute_value(entity_id=room1_entity.id,
@@ -130,7 +130,7 @@ if __name__ == "__main__":
     # Hereby it is tried to only make changes that were done locally,
     # keeping as much of the current live state as possible
 
-    # when accessing an attribute a new object is created. We need to
+    # When accessing an attribute a new object is created. We need to
     # manually transmit the made changes.
     temp_attr = room2_entity.get_attribute("temperature")
     temp_attr.value = 15
@@ -146,5 +146,5 @@ if __name__ == "__main__":
     # To delete an entry in Fiware, we can call:
     cb_client.delete_entity(entity_id=room2_entity.id,
                             entity_type=room2_entity.type)
-    # cb_client.delete_entity(entity_id=room1_entity.id,
-    #                         entity_type=room1_entity.type)
+    cb_client.delete_entity(entity_id=room1_entity.id,
+                            entity_type=room1_entity.type)
