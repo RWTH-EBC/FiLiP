@@ -1,7 +1,7 @@
 """
 # Examples for subscriptions
 
-# create new subscription following the API Walkthrough example:
+# create new subscriptions following the API Walkthrough example:
 # https://fiware-orion.readthedocs.io/en/master/user/walkthrough_apiv2/index.html
 """
 # ## Import packages
@@ -16,16 +16,22 @@ from filip.models.base import FiwareHeader
 # ## Parameters
 #
 # To run this example you need a working Fiware v2 setup with a context-broker
-# You can here set the address:
+# You can set the address:
 #
 # Host address of Context Broker
 CB_URL = "http://localhost:1026"
 
-# You can here also change the used Fiware service
+# You can also change the used Fiware service
 # FIWARE-Service
 SERVICE = 'filip'
 # FIWARE-Servicepath
 SERVICE_PATH = '/example'
+
+# Subscription URL
+# Replace <my_url> with the URL of the web server, where you'd like to receive notifications
+# e.g. "http://host.docker.internal:8080/notify/"
+NOTIFICATIONS_URL = "http://<my_url>/notify/"
+
 
 # Setting up logging
 logging.basicConfig(
@@ -42,14 +48,15 @@ if __name__ == "__main__":
                                  service_path=SERVICE_PATH)
     cb_client = ContextBrokerClient(url=CB_URL,
                                     fiware_header=fiware_header)
-    ents = cb_client.get_entity_list()
-    logger.info(ents)
+    entities = cb_client.get_entity_list()
+    logger.info(entities)
 
-    # # 2 Setup a subscription
+    # # 2 Setup a subscription # TODO clarify which info does the subscription want in layman's terms
     #
+    interesting_entity_id = "urn:ngsi-ld:Room:001"
     sub_example = {
         "description": "Subscription to receive HTTP-Notifications about "
-                       "urn:ngsi-ld:Room:001",
+                       + interesting_entity_id,
         "subject": {
             "entities": [
                 {
@@ -65,7 +72,7 @@ if __name__ == "__main__":
         },
         "notification": {
             "http": {
-                "url": "http://<my_url>/notify"
+                "url": NOTIFICATIONS_URL + interesting_entity_id
             },
             "attrs": [
                 "temperature"
