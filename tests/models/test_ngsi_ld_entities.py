@@ -1,13 +1,48 @@
 import _json
 import unittest
-
+from pydantic import ValidationError
+from filip.clients.ngsi_ld.cb import ContextBrokerLDClient
+from filip.models.ngsi_v2.subscriptions import \
+    Http, \
+    HttpCustom, \
+    Mqtt, \
+    MqttCustom, \
+    Notification, \
+    Subscription
+from filip.models.base import FiwareHeader
+from filip.utils.cleanup import clear_all, clean_test
+from tests.config import settings
+from filip.models.ngsi_ld.context import ContextLDEntity
+import requests
 
 class TestEntities(unittest.Testcase):
     """
     Test class for entity endpoints.
-    Args:
-        unittest (_type_): _description_
     """
+
+    def setUp(self) -> None:
+        """
+        Setup test data
+        Returns:
+            None
+        """
+        self.fiware_header = FiwareHeader(
+            service=settings.FIWARE_SERVICE,
+            service_path=settings.FIWARE_SERVICEPATH)
+        self.http_url = "https://test.de:80"
+        self.mqtt_url = "mqtt://test.de:1883"
+        self.mqtt_topic = '/filip/testing'
+
+        CB_URL = "http://localhost:1026"
+
+        self.cb_client = ContextBrokerLDClient(url=CB_URL,
+                                    fiware_header=self.fiware_header)
+        
+        self.entity = ContextLDEntity(id="room1", 
+                                      type="room")
+        
+        
+
 
     def test_get_entites(self):
         """
@@ -25,7 +60,6 @@ class TestEntities(unittest.Testcase):
             - csf(string): Context Source Filter
             - limit(integer): Pagination limit
             - options(string): Options dictionary; Available values : keyValues, sysAttrs
-        
         """
 
     def test_post_entity(self):
@@ -80,6 +114,24 @@ class TestEntities(unittest.Testcase):
             If the entity list does contain the posted entity:
                 Raise Error
         """
+        """Test1"""
+        ret_post = self.cb_client.post_entity(self.entity)
+        # raise not a string error here?
+        entity_list = self.cb_client.get_entity_list()
+        entity_in_entity_list = False
+        for element in entity_list: 
+            if element.id == self.entity.id:
+                entity_in_entity_list = True
+        if not entity_in_entity_list:
+            # Raise Error
+            pass
+
+
+
+        
+
+
+
 
     def test_get_entity(self):
         """
@@ -107,14 +159,12 @@ class TestEntities(unittest.Testcase):
             compare if the posted entity_1 is the same as the get_enity_1
                 If attributes posted entity != attributes get entity:
                     Raise Error
-                type posted entity != type get entity:
-                    yes:
-                        Raise Error
+                If type posted entity != type get entity:
+                    Raise Error
         Test 2: 
             get enitity with enitity_ID that does not exit
-            return != 404 not found?
-                yes:
-                    Raise Error
+            If return != 404:
+                Raise Error
         """
 
 
@@ -137,20 +187,17 @@ class TestEntities(unittest.Testcase):
         """
         Test 1:
             delete entity with non existent entity_ID
-            return != 404 ?
-                yes:
-                    Raise Error
+            If return != 404:
+                Raise Error
         
         Test 2: 
             post an entity with entity_ID and entity_name
             delete entity with entity_ID
-            return != 204 ? 
-                yes:
-                    Raise Error
+            If return != 204:
+                Raise Error
             get entity list 
-            Is eneity with entity_ID in enity list ? 
-                yes: 
-                    Raise Error
+            If entity with entity_ID in entity list:
+                Raise Error
         
         Test 3: 
             delete entity with entity_ID 
@@ -307,113 +354,4 @@ class TestEntities(unittest.Testcase):
             return != 404?
                 yes:
                     Raise Error
-        """
-
-
-        def test_entityOperations_create(self):
-            """
-            Batch Entity creation.
-            Args:
-                - Request body(Entity List); required
-            Returns: 
-                - (200) Success
-                - (400) Bad Request
-            Tests:
-                - Post the creation of batch entities. Check if each of the created entities exists and if all attributes exist.
-            """
-        """
-        Test 1:
-            post create batch entity 
-            return != 200 ? 
-                yes: 
-                    Raise Error
-            get entity list
-            for all elements in entity list: 
-                if entity list element != batch entity element:
-                    Raise Error
-        """
-
-        def test_entityOperations_update(self):
-            """
-            Batch Entity update. 
-            Args:
-                - options(string): Available values: noOverwrite
-                - Request body(EntityList); required
-            Returns: 
-                - (200) Success
-                - (400) Bad Request
-            Tests:
-                - Post the update of batch entities. Check if each of the updated entities exists and if the updates appear.
-                - Try the same with the noOverwrite statement and check if the nooverwrite is acknowledged.  
-            """
-        """
-        Test 1:
-            post create entity batches
-            post update of batch entity 
-            if return != 200:
-                Raise Error
-            get entities
-            for all entities in entity list: 
-                if entity list element != updated batch entity element:
-                    Raise Error
-        Test 2: 
-            post create entity batches
-            post update of batch entity with no overwrite
-            if return != 200:
-                Raise Error
-            get entities
-            for all entities in entity list: 
-                if entity list element != updated batch entity element but not the existings are overwritten:
-                    Raise Error
-
-        """
-        def test_entityOperations_upsert(self):
-            """
-            Batch Entity upsert.
-            Args:
-                - options(string): Available values: replace, update
-                - Request body(EntityList); required
-            Returns: 
-                - (200) Success
-                - (400) Bad request
-            Tests: 
-                - Post entity list and then post the upsert with replace or update. Get the entitiy list and see if the results are correct. 
-            """
-
-        """
-        Test 1: 
-            post a create entity batch
-            post entity upsert
-            if return != 200:
-                Raise Error
-            get entity list
-            for all entities in entity list: 
-                if entity list element != upsert entity list:
-                    Raise Error
-        """
-        def test_entityOperations_delete(self):
-            """
-            Batch entity delete.
-            Args:
-                - Request body(string list); required
-            Returns
-                - (200) Success
-                - (400) Bad request
-            Tests:
-                - Try to delete non existent entity. 
-                - Try to delete existent entity and check if it is deleted. 
-            """             
-        """
-        Test 1:
-            delete batch entity that is non existent
-            if return != 400: 
-                Raise Error
-        Test 2: 
-            post batch entity
-            delete batch entity
-            if return != 200: 
-                Raise Error
-            get entity list
-            if batch entities are still on entity list:
-                Raise Error:
         """
