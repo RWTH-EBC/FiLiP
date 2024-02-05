@@ -700,6 +700,7 @@ class TestContextBroker(unittest.TestCase):
             self.assertNotEqual(sub_id_1, sub_id_3)
             self.assertEqual(len(subscription_list), 2)
 
+            # both sub1 and sub3 will be triggered by this update
             client.update_attribute_value(entity_id=entity.id,
                                           attr_name="co2",
                                           value=30
