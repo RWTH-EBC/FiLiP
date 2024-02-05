@@ -37,7 +37,6 @@ from filip.models.ngsi_v2.iot import \
 from filip.utils.cleanup import clear_all, clean_test
 from tests.config import settings
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -342,7 +341,7 @@ class TestContextBroker(unittest.TestCase):
             sub_update = sub_res.model_copy(
                 update={'expires': datetime.now() + timedelta(days=2),
                         'throttling': 1},
-                )
+            )
             client.update_subscription(subscription=sub_update)
             sub_res_updated = client.get_subscription(subscription_id=sub_id)
             self.assertNotEqual(sub_res.expires, sub_res_updated.expires)
@@ -533,6 +532,7 @@ class TestContextBroker(unittest.TestCase):
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
                 cb_url=settings.CB_URL)
     def test_notification(self):
+        mqtt_sub_url = settings.MQTT_BROKER_URL
         entity = ContextEntity.model_validate({
             "id": "Test:001",
             "type": "Test",
@@ -562,7 +562,7 @@ class TestContextBroker(unittest.TestCase):
             },
             "notification": {
                 "mqtt": {
-                    "url": settings.MQTT_BROKER_URL,
+                    "url": mqtt_sub_url,
                     "topic": mqtt_topic
                 },
                 "attrs": []  # empty attrs list
@@ -570,9 +570,51 @@ class TestContextBroker(unittest.TestCase):
             "expires": datetime.now() + timedelta(days=1),
             "throttling": 0
         })
+        sub_with_none_notification = Subscription.model_validate({
+            "description": "Test notification with none values",
+            "subject": {
+                "entities": [
+                    {
+                        "id": "Test:001",
+                        "type": "Test"
+                    }
+                ]
+            },
+            "notification": {
+                "mqtt": {
+                    "url": mqtt_sub_url,
+                    "topic": mqtt_topic
+                },
+                "attrs": None  # attrs = None
+            },
+            "expires": datetime.now() + timedelta(days=1),
+            "throttling": 0
+        })
+        sub_with_single_attr_notification = Subscription.model_validate({
+            "description": "Test notification with single attribute",
+            "subject": {
+                "entities": [
+                    {
+                        "id": "Test:001",
+                        "type": "Test"
+                    }
+                ]
+            },
+            "notification": {
+                "mqtt": {
+                    "url": mqtt_sub_url,
+                    "topic": mqtt_topic
+                },
+                "attrs": ["temperature"]
+            },
+            "expires": datetime.now() + timedelta(days=1),
+            "throttling": 0
+        })
 
         # MQTT settings
         sub_message = None
+        sub_messages = {}
+
         def on_connect(client, userdata, flags, reasonCode, properties=None):
             if reasonCode != 0:
                 logger.error(f"Connection failed with error code: "
@@ -587,9 +629,10 @@ class TestContextBroker(unittest.TestCase):
             logger.info("Successfully subscribed to with QoS: %s", granted_qos)
 
         def on_message(client, userdata, msg):
-            logger.info(msg.topic + " " + str(msg.payload))
+            logger.info("Received MQTT message: " + msg.topic + " " + str(msg.payload))
             nonlocal sub_message
             sub_message = Message.model_validate_json(msg.payload)
+            sub_messages[sub_message.subscriptionId] = sub_message
 
         def on_disconnect(client, userdata, reasonCode, properties=None):
             logger.info("MQTT client disconnected with reasonCode "
@@ -634,9 +677,42 @@ class TestContextBroker(unittest.TestCase):
             self.assertEqual(sub_1.notification.timesSent, 1)
             self.assertEqual(len(sub_message.data[0].get_attributes()), 3)
 
-            # TODO test2 notification with attrs = none
-            # TODO test3 notification with single attribute
+            # test2 notification with None attrs, which should be identical to the previous one
+            sub_id_2 = client.post_subscription(subscription=sub_with_none_notification)
+            time.sleep(1)
+            subscription_list = client.get_subscription_list()
+            self.assertEqual(sub_id_1, sub_id_2)
+            self.assertEqual(len(subscription_list), 1)
 
+            client.update_attribute_value(entity_id=entity.id,
+                                          attr_name="humidity",
+                                          value=20
+                                          )
+            time.sleep(1)
+            sub_1 = client.get_subscription(sub_id_1)
+            self.assertEqual(sub_1.notification.timesSent, 2)
+            self.assertEqual(sub_message.data[0].get_attribute("humidity").value, 20)
+
+            # test3 notification with single attribute, which should create a new subscription
+            sub_id_3 = client.post_subscription(subscription=sub_with_single_attr_notification)
+            time.sleep(1)
+            subscription_list = client.get_subscription_list()
+            self.assertNotEqual(sub_id_1, sub_id_3)
+            self.assertEqual(len(subscription_list), 2)
+
+            client.update_attribute_value(entity_id=entity.id,
+                                          attr_name="co2",
+                                          value=30
+                                          )
+            time.sleep(1)
+            sub_1 = client.get_subscription(sub_id_1)
+            sub_3 = client.get_subscription(sub_id_3)
+            self.assertEqual(sub_1.notification.timesSent, 3)
+            self.assertEqual(sub_3.notification.timesSent, 1)
+            self.assertEqual(len(sub_messages[sub_id_1].data[0].get_attributes()), 3)
+            self.assertEqual(sub_messages[sub_id_1].data[0].get_attribute("co2").value, 30)
+            self.assertEqual(len(sub_messages[sub_id_3].data[0].get_attributes()), 1)
+            self.assertEqual(sub_messages[sub_id_3].data[0].get_attribute("temperature").value, 10)
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
@@ -990,7 +1066,6 @@ class TestContextBroker(unittest.TestCase):
                 entity_id=entity.id,
                 entity_type=entity.type)
         )
-
 
     def tearDown(self) -> None:
         """
