@@ -1165,9 +1165,13 @@ class ContextBrokerClient(BaseHttpClient):
         """
         existing_subscriptions = self.get_subscription_list()
 
-        sub_hash = subscription.model_dump_json(include={'subject', 'notification'})
+        sub_dict = subscription.model_dump(include={'subject',
+                                                    'notification'})
         for ex_sub in existing_subscriptions:
-            if sub_hash == ex_sub.model_dump_json(include={'subject', 'notification'}):
+            if self._subscription_dicts_are_equal(
+                    sub_dict,
+                    ex_sub.model_dump(include={'subject', 'notification'})
+            ):
                 self.logger.info("Subscription already exists")
                 if update:
                     self.logger.info("Updated subscription")
@@ -1659,6 +1663,7 @@ class ContextBrokerClient(BaseHttpClient):
                 raise
             return False
 
+
     def patch_entity(self,
                      entity: ContextEntity,
                      old_entity: Optional[ContextEntity] = None,
@@ -1784,6 +1789,62 @@ class ContextBrokerClient(BaseHttpClient):
 
         if update_needed:
             self.update_entity(update_entity)
+
+    def _subscription_dicts_are_equal(self, first: dict, second: dict):
+        """
+        Check if two dictionaries and all sub-dictionaries are equal.
+        Logs a warning if the keys are not equal, but ignores the
+        comparison of such keys.
+
+        Args:
+            first dict: Dictionary of first subscription
+            second dict: Dictionary of second subscription
+
+        Returns:
+            True if equal, else False
+        """
+
+        def _value_is_not_none(value):
+            """
+            Recursive function to check if a value equals none.
+            If the value is a dict and any value of the dict is not none,
+            the value is not none.
+            If the value is a list and any item is not none, the value is not none.
+            If it's neither dict nore list, bool is used.
+            """
+            if isinstance(value, dict):
+                return any([_value_is_not_none(value=_v)
+                            for _v in value.values()])
+            if isinstance(value, list):
+                return any([_value_is_not_none(value=_v)for _v in value])
+            else:
+                return bool(value)
+        if first.keys() != second.keys():
+            warnings.warn(
+                "Subscriptions contain a different set of fields. "
+                "Only comparing to new fields of the new one."
+            )
+        for k, v in first.items():
+            ex_value = second.get(k, None)
+            if isinstance(v, dict) and isinstance(ex_value, dict):
+                equal = self._subscription_dicts_are_equal(v, ex_value)
+                if equal:
+                    continue
+                else:
+                    return False
+            if not _value_is_not_none(v) or not _value_is_not_none(ex_value):
+                warnings.warn(
+                    "Different field found:{"
+                    f"{k}: ({v}, {ex_value})"
+                    "}"
+                )
+            if v != ex_value:
+                self.logger.debug(f"Not equal fields for key {k}: ({v}, {ex_value})")
+                if not _value_is_not_none(v) and not _value_is_not_none(ex_value) or k == "timesSent":
+                    continue
+                return False
+        return True
+
 
 #
 #
