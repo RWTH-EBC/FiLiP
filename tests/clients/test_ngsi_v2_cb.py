@@ -629,7 +629,8 @@ class TestContextBroker(unittest.TestCase):
             logger.info("Successfully subscribed to with QoS: %s", granted_qos)
 
         def on_message(client, userdata, msg):
-            logger.info("Received MQTT message: " + msg.topic + " " + str(msg.payload))
+            logger.info("Received MQTT message: " + msg.topic + " " + str(
+                msg.payload))
             nonlocal sub_message
             sub_message = Message.model_validate_json(msg.payload)
             sub_messages[sub_message.subscriptionId] = sub_message
@@ -677,8 +678,10 @@ class TestContextBroker(unittest.TestCase):
             self.assertEqual(sub_1.notification.timesSent, 1)
             self.assertEqual(len(sub_message.data[0].get_attributes()), 3)
 
-            # test2 notification with None attrs, which should be identical to the previous one
-            sub_id_2 = client.post_subscription(subscription=sub_with_none_notification)
+            # test2 notification with None attrs, which should be identical to
+            # the previous one
+            sub_id_2 = client.post_subscription(
+                subscription=sub_with_none_notification)
             time.sleep(1)
             subscription_list = client.get_subscription_list()
             self.assertEqual(sub_id_1, sub_id_2)
@@ -691,10 +694,14 @@ class TestContextBroker(unittest.TestCase):
             time.sleep(1)
             sub_1 = client.get_subscription(sub_id_1)
             self.assertEqual(sub_1.notification.timesSent, 2)
-            self.assertEqual(sub_message.data[0].get_attribute("humidity").value, 20)
+            self.assertEqual(
+                sub_message.data[0].get_attribute("humidity").value, 20)
 
-            # test3 notification with single attribute, which should create a new subscription
-            sub_id_3 = client.post_subscription(subscription=sub_with_single_attr_notification)
+            # test3 notification with single attribute, which should create a
+            # new subscription
+            sub_id_3 = client.post_subscription(
+                subscription=sub_with_single_attr_notification
+            )
             time.sleep(1)
             subscription_list = client.get_subscription_list()
             self.assertNotEqual(sub_id_1, sub_id_3)
@@ -710,10 +717,15 @@ class TestContextBroker(unittest.TestCase):
             sub_3 = client.get_subscription(sub_id_3)
             self.assertEqual(sub_1.notification.timesSent, 3)
             self.assertEqual(sub_3.notification.timesSent, 1)
-            self.assertEqual(len(sub_messages[sub_id_1].data[0].get_attributes()), 3)
-            self.assertEqual(sub_messages[sub_id_1].data[0].get_attribute("co2").value, 30)
-            self.assertEqual(len(sub_messages[sub_id_3].data[0].get_attributes()), 1)
-            self.assertEqual(sub_messages[sub_id_3].data[0].get_attribute("temperature").value, 10)
+            self.assertEqual(
+                len(sub_messages[sub_id_1].data[0].get_attributes()), 3)
+            self.assertEqual(
+                sub_messages[sub_id_1].data[0].get_attribute("co2").value, 30)
+            self.assertEqual(
+                len(sub_messages[sub_id_3].data[0].get_attributes()), 1)
+            self.assertEqual(
+                sub_messages[sub_id_3].data[0].get_attribute(
+                    "temperature").value, 10)
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
