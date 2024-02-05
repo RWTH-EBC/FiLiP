@@ -1,5 +1,6 @@
 #### v0.3.1
 - add tutorial for protected endpoint with bearer authentication ([#208](https://github.com/RWTH-EBC/FiLiP/issues/208))
+- fix: compare subscriptions to prevent duplicated notifications @FWuellhorst, @RCX112 ([#138](https://github.com/RWTH-EBC/FiLiP/pull/138))
 
 #### v0.3.0
 - fix: bug in typePattern validation @richardmarston ([#180](https://github.com/RWTH-EBC/FiLiP/pull/180))
