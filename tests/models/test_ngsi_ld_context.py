@@ -161,27 +161,29 @@ class TestLDContextModels(unittest.TestCase):
     def test_entity_delete_attributes(self):
         """
         Test the delete_attributes methode
-        also tests the get_attribute_name method
         """
-        pass
-        # attr = ContextAttribute(**{'value': 20, 'type': 'Text'})
-        # named_attr = NamedContextAttribute(**{'name': 'test2', 'value': 20,
-        #                                       'type': 'Text'})
-        # attr3 = ContextAttribute(**{'value': 20, 'type': 'Text'})
-        #
-        # entity = ContextEntity(id="12", type="Test")
-        #
-        # entity.add_attributes({"test1": attr, "test3": attr3})
-        # entity.add_attributes([named_attr])
-        #
-        # entity.delete_attributes({"test1": attr})
-        # self.assertEqual(entity.get_attribute_names(), {"test2", "test3"})
-        #
-        # entity.delete_attributes([named_attr])
-        # self.assertEqual(entity.get_attribute_names(), {"test3"})
-        #
-        # entity.delete_attributes(["test3"])
-        # self.assertEqual(entity.get_attribute_names(), set())
+        attr = ContextProperty(**{'value': 20, 'type': 'Text'})
+        named_attr = NamedContextProperty(**{'name': 'test2',
+                                             'value': 20,
+                                             'type': 'Text'})
+        attr3 = ContextProperty(**{'value': 20, 'type': 'Text'})
+
+        entity = ContextLDEntity(id="12", type="Test")
+
+        entity.add_properties({"test1": attr, "test3": attr3})
+        entity.add_properties([named_attr])
+
+        entity.delete_properties({"test1": attr})
+        self.assertEqual(set([_prop.name for _prop in entity.get_properties()]),
+                         {"test2", "test3"})
+
+        entity.delete_properties([named_attr])
+        self.assertEqual(set([_prop.name for _prop in entity.get_properties()]),
+                         {"test3"})
+
+        entity.delete_properties(["test3"])
+        self.assertEqual(set([_prop.name for _prop in entity.get_properties()]),
+                         set())
 
     def test_entity_add_attributes(self):
         """
