@@ -11,7 +11,6 @@ import uuid
 
 import paho.mqtt.client as mqtt
 from datetime import datetime, timedelta
-from urllib.parse import urlparse
 from requests import RequestException
 from filip.models.base import FiwareHeader
 from filip.utils.simple_ql import QueryString
@@ -37,7 +36,6 @@ from filip.models.ngsi_v2.iot import \
     StaticDeviceAttribute
 from filip.utils.cleanup import clear_all, clean_test
 from tests.config import settings
-
 
 logger = logging.getLogger(__name__)
 
@@ -76,7 +74,7 @@ class TestContextBroker(unittest.TestCase):
         self.client = ContextBrokerClient(
             url=settings.CB_URL,
             fiware_header=self.fiware_header)
-        self.subscription = Subscription.parse_obj({
+        self.subscription = Subscription.model_validate({
             "description": "One subscription to rule them all",
             "subject": {
                 "entities": [
@@ -325,7 +323,7 @@ class TestContextBroker(unittest.TestCase):
             client.delete_entity(entity_id=self.entity.id,
                                  entity_type=self.entity.type)
 
-    #@unittest.skip('Does currently not reliably work in CI')
+    # @unittest.skip('Does currently not reliably work in CI')
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
                 cb_url=settings.CB_URL)
@@ -340,10 +338,10 @@ class TestContextBroker(unittest.TestCase):
                                               skip_initial_notification=True)
             sub_res = client.get_subscription(subscription_id=sub_id)
             time.sleep(1)
-            sub_update = sub_res.copy(
+            sub_update = sub_res.model_copy(
                 update={'expires': datetime.now() + timedelta(days=2),
                         'throttling': 1},
-                )
+            )
             client.update_subscription(subscription=sub_update)
             sub_res_updated = client.get_subscription(subscription_id=sub_id)
             self.assertNotEqual(sub_res.expires, sub_res_updated.expires)
@@ -352,33 +350,69 @@ class TestContextBroker(unittest.TestCase):
             self.assertEqual(sub_res_updated.throttling,
                              sub_update.throttling)
 
-            # test duplicate prevention and update
-            sub = self.subscription.copy()
-            id1 = client.post_subscription(sub)
-            sub_first_version = client.get_subscription(id1)
-            sub.description = "This subscription shall not pass"
+            sub_with_nans = Subscription.model_validate({
+                "description": "Test subscription with empty values",
+                "subject": {
+                    "entities": [
+                        {
+                            "idPattern": ".*",
+                            "type": "Device"
+                        }
+                    ]
+                },
+                "notification": {
+                    "http": {
+                        "url": "http://localhost:1234"
+                    }
+                },
+                "expires": datetime.now() + timedelta(days=1),
+                "throttling": 0
+            })
 
-            id2 = client.post_subscription(sub, update=False)
-            self.assertEqual(id1, id2)
-            sub_second_version = client.get_subscription(id2)
-            self.assertEqual(sub_first_version.description,
-                             sub_second_version.description)
+            sub_with_empty_list = sub_with_nans.model_copy(deep=True)
+            sub_with_empty_list.notification.attrs = []
 
-            id2 = client.post_subscription(sub, update=True)
-            self.assertEqual(id1, id2)
-            sub_second_version = client.get_subscription(id2)
-            self.assertNotEqual(sub_first_version.description,
-                                sub_second_version.description)
+            test_subscriptions = [sub_with_empty_list,
+                                  sub_with_nans,
+                                  self.subscription]
 
-            # test that duplicate prevention does not prevent to much
-            sub2 = self.subscription.copy()
-            sub2.description = "Take this subscription to Fiware"
-            sub2.subject.entities[0] = {
-                "idPattern": ".*",
-                "type": "Building"
-            }
-            id3 = client.post_subscription(sub2)
-            self.assertNotEqual(id1, id3)
+            for _sub_raw in test_subscriptions:
+                # test duplicate prevention and update
+                sub = self.subscription.model_copy(deep=True)
+                id1 = client.post_subscription(sub, update=True)
+                sub_first_version = client.get_subscription(id1)
+                sub.description = "This subscription shall not pass"
+
+                # update=False, should not override the existing
+                id2 = client.post_subscription(sub, update=False)
+                self.assertEqual(id1, id2)
+                sub_second_version = client.get_subscription(id2)
+                self.assertEqual(sub_first_version.description,
+                                 sub_second_version.description)
+
+                # update=True, should override the existing
+                id2 = client.post_subscription(sub, update=True)
+                self.assertEqual(id1, id2)
+                sub_second_version = client.get_subscription(id2)
+                self.assertNotEqual(sub_first_version.description,
+                                    sub_second_version.description)
+
+                # test that duplicate prevention does not prevent to much
+                sub2 = _sub_raw.model_copy()
+                sub2.description = "Take this subscription to Fiware"
+                sub2.subject.entities = [
+                    EntityPattern.model_validate({
+                        "idPattern": ".*",
+                        "type": "Building"
+                    }
+                    )
+                ]
+                id3 = client.post_subscription(sub2)
+                self.assertNotEqual(id1, id3)
+
+                # clean the subscriptions after finish each loop
+                client.delete_subscription(id1)
+                client.delete_subscription(id3)
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
@@ -388,7 +422,7 @@ class TestContextBroker(unittest.TestCase):
         """
         Test subscription operations of context broker client
         """
-        sub = self.subscription.copy(
+        sub = self.subscription.model_copy(
             update={'expires': datetime.now() + timedelta(days=2)})
         with ContextBrokerClient(
                 url=settings.CB_URL,
@@ -397,17 +431,17 @@ class TestContextBroker(unittest.TestCase):
             sub_res = client.get_subscription(subscription_id=sub_id)
             self.assertEqual(sub_res.status, Status.ACTIVE)
 
-            sub_inactive = sub_res.copy(update={'status': Status.INACTIVE})
+            sub_inactive = sub_res.model_copy(update={'status': Status.INACTIVE})
             client.update_subscription(subscription=sub_inactive)
             sub_res_inactive = client.get_subscription(subscription_id=sub_id)
             self.assertEqual(sub_res_inactive.status, Status.INACTIVE)
 
-            sub_active = sub_res_inactive.copy(update={'status': Status.ACTIVE})
+            sub_active = sub_res_inactive.model_copy(update={'status': Status.ACTIVE})
             client.update_subscription(subscription=sub_active)
             sub_res_active = client.get_subscription(subscription_id=sub_id)
             self.assertEqual(sub_res_active.status, Status.ACTIVE)
 
-            sub_expired = sub_res_active.copy(
+            sub_expired = sub_res_active.model_copy(
                 update={'expires': datetime.now() - timedelta(days=365)})
             client.update_subscription(subscription=sub_expired)
             sub_res_expired = client.get_subscription(subscription_id=sub_id)
@@ -421,10 +455,10 @@ class TestContextBroker(unittest.TestCase):
         mqtt_url = settings.MQTT_BROKER_URL
         mqtt_topic = ''.join([settings.FIWARE_SERVICE,
                               settings.FIWARE_SERVICEPATH])
-        notification = self.subscription.notification.copy(
+        notification = self.subscription.notification.model_copy(
             update={'http': None, 'mqtt': Mqtt(url=mqtt_url,
                                                topic=mqtt_topic)})
-        subscription = self.subscription.copy(
+        subscription = self.subscription.model_copy(
             update={'notification': notification,
                     'description': 'MQTT test subscription',
                     'expires': None})
@@ -451,7 +485,7 @@ class TestContextBroker(unittest.TestCase):
         def on_message(client, userdata, msg):
             logger.info(msg.topic + " " + str(msg.payload))
             nonlocal sub_message
-            sub_message = Message.parse_raw(msg.payload)
+            sub_message = Message.model_validate_json(msg.payload)
 
         def on_disconnect(client, userdata, reasonCode, properties=None):
             logger.info("MQTT client disconnected with reasonCode "
@@ -468,8 +502,7 @@ class TestContextBroker(unittest.TestCase):
         mqtt_client.on_disconnect = on_disconnect
 
         # connect to the server
-        mqtt_url = urlparse(mqtt_url)
-        mqtt_client.connect(host=mqtt_url.hostname,
+        mqtt_client.connect(host=mqtt_url.host,
                             port=mqtt_url.port,
                             keepalive=60,
                             bind_address="",
@@ -498,6 +531,205 @@ class TestContextBroker(unittest.TestCase):
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
                 cb_url=settings.CB_URL)
+    def test_notification(self):
+        mqtt_sub_url = settings.MQTT_BROKER_URL
+        entity = ContextEntity.model_validate({
+            "id": "Test:001",
+            "type": "Test",
+            "temperature": {
+                "type": "Number",
+                "value": 0
+            },
+            "humidity": {
+                "type": "Number",
+                "value": 0
+            },
+            "co2": {
+                "type": "Number",
+                "value": 0
+            }
+        })
+        mqtt_topic = "notification/test"
+        sub_with_empty_notification = Subscription.model_validate({
+            "description": "Test notification with empty values",
+            "subject": {
+                "entities": [
+                    {
+                        "id": "Test:001",
+                        "type": "Test"
+                    }
+                ]
+            },
+            "notification": {
+                "mqtt": {
+                    "url": mqtt_sub_url,
+                    "topic": mqtt_topic
+                },
+                "attrs": []  # empty attrs list
+            },
+            "expires": datetime.now() + timedelta(days=1),
+            "throttling": 0
+        })
+        sub_with_none_notification = Subscription.model_validate({
+            "description": "Test notification with none values",
+            "subject": {
+                "entities": [
+                    {
+                        "id": "Test:001",
+                        "type": "Test"
+                    }
+                ]
+            },
+            "notification": {
+                "mqtt": {
+                    "url": mqtt_sub_url,
+                    "topic": mqtt_topic
+                },
+                "attrs": None  # attrs = None
+            },
+            "expires": datetime.now() + timedelta(days=1),
+            "throttling": 0
+        })
+        sub_with_single_attr_notification = Subscription.model_validate({
+            "description": "Test notification with single attribute",
+            "subject": {
+                "entities": [
+                    {
+                        "id": "Test:001",
+                        "type": "Test"
+                    }
+                ]
+            },
+            "notification": {
+                "mqtt": {
+                    "url": mqtt_sub_url,
+                    "topic": mqtt_topic
+                },
+                "attrs": ["temperature"]
+            },
+            "expires": datetime.now() + timedelta(days=1),
+            "throttling": 0
+        })
+
+        # MQTT settings
+        sub_message = None
+        sub_messages = {}
+
+        def on_connect(client, userdata, flags, reasonCode, properties=None):
+            if reasonCode != 0:
+                logger.error(f"Connection failed with error code: "
+                             f"'{reasonCode}'")
+                raise ConnectionError
+            else:
+                logger.info("Successfully, connected with result code " + str(
+                    reasonCode))
+            client.subscribe(mqtt_topic)
+
+        def on_subscribe(client, userdata, mid, granted_qos, properties=None):
+            logger.info("Successfully subscribed to with QoS: %s", granted_qos)
+
+        def on_message(client, userdata, msg):
+            logger.info("Received MQTT message: " + msg.topic + " " + str(
+                msg.payload))
+            nonlocal sub_message
+            sub_message = Message.model_validate_json(msg.payload)
+            sub_messages[sub_message.subscriptionId] = sub_message
+
+        def on_disconnect(client, userdata, reasonCode, properties=None):
+            logger.info("MQTT client disconnected with reasonCode "
+                        + str(reasonCode))
+
+        import paho.mqtt.client as mqtt
+        mqtt_client = mqtt.Client(userdata=None,
+                                  protocol=mqtt.MQTTv5,
+                                  transport="tcp")
+        # add our callbacks to the client
+        mqtt_client.on_connect = on_connect
+        mqtt_client.on_subscribe = on_subscribe
+        mqtt_client.on_message = on_message
+        mqtt_client.on_disconnect = on_disconnect
+        # connect to the server
+        mqtt_client.connect(host=settings.MQTT_BROKER_URL.host,
+                            port=settings.MQTT_BROKER_URL.port,
+                            keepalive=60,
+                            bind_address="",
+                            bind_port=0,
+                            clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
+                            properties=None)
+
+        # create a non-blocking thread for mqtt communication
+        mqtt_client.loop_start()
+
+        with ContextBrokerClient(
+                url=settings.CB_URL,
+                fiware_header=self.fiware_header) as client:
+            client.post_entity(entity=entity)
+            # test1 notification with empty attrs
+            sub_id_1 = client.post_subscription(
+                subscription=sub_with_empty_notification)
+            time.sleep(1)
+            client.update_attribute_value(entity_id=entity.id,
+                                          attr_name="temperature",
+                                          value=10
+                                          )
+            # check the notified entities
+            time.sleep(1)
+            sub_1 = client.get_subscription(sub_id_1)
+            self.assertEqual(sub_1.notification.timesSent, 1)
+            self.assertEqual(len(sub_message.data[0].get_attributes()), 3)
+
+            # test2 notification with None attrs, which should be identical to
+            # the previous one
+            sub_id_2 = client.post_subscription(
+                subscription=sub_with_none_notification)
+            time.sleep(1)
+            subscription_list = client.get_subscription_list()
+            self.assertEqual(sub_id_1, sub_id_2)
+            self.assertEqual(len(subscription_list), 1)
+
+            client.update_attribute_value(entity_id=entity.id,
+                                          attr_name="humidity",
+                                          value=20
+                                          )
+            time.sleep(1)
+            sub_1 = client.get_subscription(sub_id_1)
+            self.assertEqual(sub_1.notification.timesSent, 2)
+            self.assertEqual(
+                sub_message.data[0].get_attribute("humidity").value, 20)
+
+            # test3 notification with single attribute, which should create a
+            # new subscription
+            sub_id_3 = client.post_subscription(
+                subscription=sub_with_single_attr_notification
+            )
+            time.sleep(1)
+            subscription_list = client.get_subscription_list()
+            self.assertNotEqual(sub_id_1, sub_id_3)
+            self.assertEqual(len(subscription_list), 2)
+
+            # both sub1 and sub3 will be triggered by this update
+            client.update_attribute_value(entity_id=entity.id,
+                                          attr_name="co2",
+                                          value=30
+                                          )
+            time.sleep(1)
+            sub_1 = client.get_subscription(sub_id_1)
+            sub_3 = client.get_subscription(sub_id_3)
+            self.assertEqual(sub_1.notification.timesSent, 3)
+            self.assertEqual(sub_3.notification.timesSent, 1)
+            self.assertEqual(
+                len(sub_messages[sub_id_1].data[0].get_attributes()), 3)
+            self.assertEqual(
+                sub_messages[sub_id_1].data[0].get_attribute("co2").value, 30)
+            self.assertEqual(
+                len(sub_messages[sub_id_3].data[0].get_attributes()), 1)
+            self.assertEqual(
+                sub_messages[sub_id_3].data[0].get_attribute(
+                    "temperature").value, 10)
+
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                cb_url=settings.CB_URL)
     def test_batch_operations(self):
         """
         Test batch operations of context broker client
@@ -514,8 +746,8 @@ class TestContextBroker(unittest.TestCase):
                         range(0, 1000)]
             client.update(entities=entities, action_type=ActionType.APPEND)
             entity = EntityPattern(idPattern=".*", typePattern=".*TypeA$")
-            query = Query.parse_obj(
-                {"entities": [entity.dict(exclude_unset=True)]})
+            query = Query.model_validate(
+                {"entities": [entity.model_dump(exclude_unset=True)]})
             self.assertEqual(1000,
                              len(client.query(query=query,
                                               response_format='keyValues')))
@@ -648,9 +880,7 @@ class TestContextBroker(unittest.TestCase):
         mqtt_client.on_disconnect = on_disconnect
 
         # extract the form the environment
-        mqtt_broker_url = urlparse(mqtt_broker_url)
-
-        mqtt_client.connect(host=mqtt_broker_url.hostname,
+        mqtt_client.connect(host=mqtt_broker_url.host,
                             port=mqtt_broker_url.port,
                             keepalive=60,
                             bind_address="",
@@ -813,7 +1043,7 @@ class TestContextBroker(unittest.TestCase):
             self.client.delete_entity(entity_id=device.entity_name,
                                       entity_type=device.entity_type,
                                       delete_devices=True,
-                                      iota_url=settings.IOTA_URL)
+                                      iota_url=settings.IOTA_JSON_URL)
             self.assertEqual(len(self.iotac.get_device_list()), len(devices))
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
@@ -849,7 +1079,6 @@ class TestContextBroker(unittest.TestCase):
                 entity_id=entity.id,
                 entity_type=entity.type)
         )
-
 
     def tearDown(self) -> None:
         """
