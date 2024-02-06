@@ -184,10 +184,3 @@ class TestLDContextModels(unittest.TestCase):
         entity.delete_properties(["test3"])
         self.assertEqual(set([_prop.name for _prop in entity.get_properties()]),
                          set())
-
-    def test_entity_add_attributes(self):
-        """
-        Test the add_attributes methode
-        Differentiate between property and relationship
-        """
-        pass
