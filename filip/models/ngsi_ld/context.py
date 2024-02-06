@@ -1,6 +1,7 @@
 """
 NGSIv2 models for context broker interaction
 """
+import logging
 from typing import Any, List, Dict, Union, Optional
 
 from aenum import Enum
@@ -281,6 +282,47 @@ class ContextLDEntity(ContextLDEntityKeyValues, ContextEntity):
         """
         raise NotImplementedError(
             "This method should not be used in NGSI-LD")
+
+    def delete_attributes(self, **kwargs):
+        """
+        Invalid in NGSI-LD
+        """
+        raise NotImplementedError(
+            "This method should not be used in NGSI-LD")
+
+    def delete_properties(self, props: Union[Dict[str, ContextProperty],
+                                             List[NamedContextProperty],
+                                             List[str]]):
+        """
+        Delete the given properties from the entity
+
+        Args:
+            props: can be given in multiple forms
+                1) Dict: {"<property_name>": ContextProperty, ...}
+                2) List: [NamedContextProperty, ...]
+                3) List: ["<property_name>", ...]
+
+        Returns:
+
+        """
+        names: List[str] = []
+        if isinstance(props, list):
+            for entry in props:
+                if isinstance(entry, str):
+                    names.append(entry)
+                elif isinstance(entry, NamedContextProperty):
+                    names.append(entry.name)
+        else:
+            names.extend(list(props.keys()))
+
+        # check there are no relationships
+        relationship_names = [rel.name for rel in self.get_relationships()]
+        for name in names:
+            if name in relationship_names:
+                raise TypeError(f"{name} is a relationship")
+
+        for name in names:
+            delattr(self, name)
 
     def add_properties(self, attrs: Union[Dict[str, ContextProperty],
                                           List[NamedContextProperty]]) -> None:
