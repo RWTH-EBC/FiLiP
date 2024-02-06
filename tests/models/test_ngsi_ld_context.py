@@ -141,9 +141,9 @@ class TestLDContextModels(unittest.TestCase):
         entity2.get_properties(response_format='list')
         self.assertIn("new_prop", [prop.name for prop in properties])
 
-    def test_get_attributes(self):
+    def test_get_properties(self):
         """
-        Test the get_attributes method
+        Test the get_properties method
         """
         pass
         entity = ContextLDEntity(id="test", type="Tester")
@@ -184,3 +184,7 @@ class TestLDContextModels(unittest.TestCase):
         entity.delete_properties(["test3"])
         self.assertEqual(set([_prop.name for _prop in entity.get_properties()]),
                          set())
+
+    def test_entity_relationships(self):
+        pass
+        # TODO relationships CRUD
