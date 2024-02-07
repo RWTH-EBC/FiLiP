@@ -7,7 +7,8 @@ from typing import Any, List, Dict, Union, Optional
 from aenum import Enum
 from pydantic import field_validator, ConfigDict, BaseModel, Field
 from filip.models.ngsi_v2 import ContextEntity
-from filip.utils.validators import FiwareRegex
+from filip.utils.validators import FiwareRegex, \
+    validate_fiware_datatype_string_protect, validate_fiware_standard_regex
 
 
 class DataTypeLD(str, Enum):
@@ -36,7 +37,11 @@ class ContextProperty(BaseModel):
         >>> attr = ContextProperty(**data)
 
     """
-    type = "Property"
+    type: Optional[str] = Field(
+        default="Property",
+        title="type",
+        frozen=True
+    )
     value: Optional[Union[Union[float, int, bool, str, List, Dict[str, Any]],
                           List[Union[float, int, bool, str, List,
                                      Dict[str, Any]]]]] = Field(
@@ -50,9 +55,13 @@ class ContextProperty(BaseModel):
                     "incoming value of the property.",
         max_length=256,
         min_length=1,
-        pattern=FiwareRegex.string_protect.value,
+        # TODO pydantic is not supporting some regex any more
+        #  we build a custom regex validator.
+        #  e.g. valid_name = field_validator("name")(validate_fiware_datatype_string_protect)
+        # pattern=FiwareRegex.string_protect.value,
         # Make it FIWARE-Safe
     )
+    field_validator("observedAt")(validate_fiware_datatype_string_protect)
     UnitCode: Optional[str] = Field(
         None, titel="Unit Code",
         description="Representing the unit of the value. "
@@ -61,8 +70,24 @@ class ContextProperty(BaseModel):
                     "https://unece.org/fileadmin/DAM/cefact/recommendations/rec20/rec20_rev3_Annex2e.pdf ",
         max_length=256,
         min_length=1,
-        pattern=FiwareRegex.string_protect.value,  # Make it FIWARE-Safe
+        # pattern=FiwareRegex.string_protect.value,  # Make it FIWARE-Safe
     )
+    field_validator("UnitCode")(validate_fiware_datatype_string_protect)
+
+    @field_validator("type")
+    @classmethod
+    def check_property_type(cls, value):
+        """
+        Force property type to be "Property"
+        Args:
+            value: value field
+        Returns:
+            value
+        """
+        if not value == "Property":
+            logging.warning(msg='NGSI_LD Properties must have type "Property"')
+        value = "Property"
+        return value
 
 
 class NamedContextProperty(ContextProperty):
@@ -81,9 +106,10 @@ class NamedContextProperty(ContextProperty):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        pattern=FiwareRegex.string_protect.value,
+        # pattern=FiwareRegex.string_protect.value,
         # Make it FIWARE-Safe
     )
+    field_validator("name")(validate_fiware_datatype_string_protect)
 
 
 class ContextGeoPropertyValue(BaseModel):
@@ -104,12 +130,30 @@ class ContextGeoPropertyValue(BaseModel):
     }
 
     """
-    type = "Point"
+    type: Optional[str] = Field(
+        default="Point",
+        title="type",
+        frozen=True
+    )
     coordinates: List[float] = Field(
         default=None,
         title="Geo property coordinates",
         description="the actual coordinates"
     )
+    @field_validator("type")
+    @classmethod
+    def check_geoproperty_value_type(cls, value):
+        """
+        Force property type to be "Point"
+        Args:
+            value: value field
+        Returns:
+            value
+        """
+        if not value == "Point":
+            logging.warning(msg='NGSI_LD GeoProperties must have type "Point"')
+        value = "Point"
+        return value
 
 
 class ContextGeoProperty(BaseModel):
@@ -132,12 +176,17 @@ class ContextGeoProperty(BaseModel):
     }
 
     """
-    type = "GeoProperty"
+    type: Optional[str] = Field(
+        default="GeoProperty",
+        title="type",
+        frozen=True
+    )
     value: Optional[ContextGeoPropertyValue] = Field(
         default=None,
         title="GeoProperty value",
         description="the actual data"
     )
+    # TODO validator to force the value of "type"
 
 
 class NamedContextGeoProperty(ContextProperty):
@@ -155,10 +204,10 @@ class NamedContextGeoProperty(ContextProperty):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        pattern=FiwareRegex.string_protect.value,
+        # pattern=FiwareRegex.string_protect.value,
         # Make it FIWARE-Safe
     )
-
+    field_validator("name")(validate_fiware_datatype_string_protect)
 
 class ContextRelationship(BaseModel):
     """
@@ -176,7 +225,11 @@ class ContextRelationship(BaseModel):
         >>> attr = ContextRelationship(**data)
 
     """
-    type = "Relationship"
+    type: Optional[str] = Field(
+        default="Relationship",
+        title="type",
+        frozen=True
+    )
     object: Optional[Union[Union[float, int, bool, str, List, Dict[str, Any]],
                            List[Union[float, int, bool, str, List,
                                       Dict[str, Any]]]]] = Field(
@@ -184,6 +237,7 @@ class ContextRelationship(BaseModel):
         title="Realtionship object",
         description="the actual object id"
     )
+    # TODO validator to force relationship value
 
 
 class NamedContextRelationship(ContextRelationship):
@@ -203,9 +257,10 @@ class NamedContextRelationship(ContextRelationship):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        pattern=FiwareRegex.string_protect.value,
+        # pattern=FiwareRegex.string_protect.value,
         # Make it FIWARE-Safe
     )
+    field_validator("name")(validate_fiware_datatype_string_protect)
 
 
 class ContextLDEntityKeyValues(BaseModel):
@@ -231,9 +286,10 @@ class ContextLDEntityKeyValues(BaseModel):
         examples=['urn:ngsi-ld:Room:001'],
         max_length=256,
         min_length=1,
-        pattern=FiwareRegex.standard.value,  # Make it FIWARE-Safe
+        # pattern=FiwareRegex.standard.value,  # Make it FIWARE-Safe
         frozen=True
     )
+    field_validator("id")(validate_fiware_standard_regex)
     type: str = Field(
         ...,
         title="Entity Type",
@@ -244,9 +300,10 @@ class ContextLDEntityKeyValues(BaseModel):
         examples=["Room"],
         max_length=256,
         min_length=1,
-        pattern=FiwareRegex.standard.value,  # Make it FIWARE-Safe
+        # pattern=FiwareRegex.standard.value,  # Make it FIWARE-Safe
         frozen=True
     )
+    field_validator("type")(validate_fiware_standard_regex)
     context: List[str] = Field(
         ...,
         title="@context",
@@ -259,10 +316,10 @@ class ContextLDEntityKeyValues(BaseModel):
                 "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld]"],
         max_length=256,
         min_length=1,
-        pattern=FiwareRegex.standard.value,  # Make it FIWARE-Safe
         frozen=True
     )
-    model_config = ConfigDict(extra='allow', validate_default=True, validate_assignment=True)
+    model_config = ConfigDict(extra='allow', validate_default=True,
+                              validate_assignment=True)
 
 
 class PropertyFormat(str, Enum):
