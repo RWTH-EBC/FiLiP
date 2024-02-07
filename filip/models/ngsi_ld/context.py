@@ -1,5 +1,5 @@
 """
-NGSIv2 models for context broker interaction
+NGSI LD models for context broker interaction
 """
 import logging
 from typing import Any, List, Dict, Union, Optional
@@ -55,13 +55,9 @@ class ContextProperty(BaseModel):
                     "incoming value of the property.",
         max_length=256,
         min_length=1,
-        # TODO pydantic is not supporting some regex any more
-        #  we build a custom regex validator.
-        #  e.g. valid_name = field_validator("name")(validate_fiware_datatype_string_protect)
-        # pattern=FiwareRegex.string_protect.value,
-        # Make it FIWARE-Safe
     )
     field_validator("observedAt")(validate_fiware_datatype_string_protect)
+
     UnitCode: Optional[str] = Field(
         None, titel="Unit Code",
         description="Representing the unit of the value. "
@@ -151,8 +147,27 @@ class ContextGeoPropertyValue(BaseModel):
             value
         """
         if not value == "Point":
-            logging.warning(msg='NGSI_LD GeoProperties must have type "Point"')
+            logging.warning(msg='NGSI_LD GeoProperty values must have type "Point"')
         value = "Point"
+        return value
+
+    @field_validator("coordinates")
+    @classmethod
+    def check_geoproperty_value_coordinates(cls, value):
+        """
+        Force property coordinates to be lis of two floats
+        Args:
+            value: value field
+        Returns:
+            value
+        """
+        if not isinstance(value, list) or len(value) != 2:
+            logging.error(msg='NGSI_LD GeoProperty values must have coordinates as list with length two')
+            raise ValueError
+        for element in value:
+            if not isinstance(element, float):
+                logging.error(msg='NGSI_LD GeoProperty values must have coordinates as list of floats')
+                raise TypeError
         return value
 
 
@@ -186,7 +201,21 @@ class ContextGeoProperty(BaseModel):
         title="GeoProperty value",
         description="the actual data"
     )
-    # TODO validator to force the value of "type"
+
+    @field_validator("type")
+    @classmethod
+    def check_geoproperty_type(cls, value):
+        """
+        Force property type to be "GeoProperty"
+        Args:
+            value: value field
+        Returns:
+            value
+        """
+        if not value == "GeoProperty":
+            logging.warning(msg='NGSI_LD GeoProperties must have type "GeoProperty"')
+        value = "GeoProperty"
+        return value
 
 
 class NamedContextGeoProperty(ContextProperty):
@@ -204,10 +233,9 @@ class NamedContextGeoProperty(ContextProperty):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        # pattern=FiwareRegex.string_protect.value,
-        # Make it FIWARE-Safe
     )
     field_validator("name")(validate_fiware_datatype_string_protect)
+
 
 class ContextRelationship(BaseModel):
     """
@@ -237,7 +265,21 @@ class ContextRelationship(BaseModel):
         title="Realtionship object",
         description="the actual object id"
     )
-    # TODO validator to force relationship value
+
+    @field_validator("type")
+    @classmethod
+    def check_relationship_type(cls, value):
+        """
+        Force property type to be "Relationship"
+        Args:
+            value: value field
+        Returns:
+            value
+        """
+        if not value == "Relationship":
+            logging.warning(msg='NGSI_LD relationships must have type "Relationship"')
+        value = "Relationship"
+        return value
 
 
 class NamedContextRelationship(ContextRelationship):
