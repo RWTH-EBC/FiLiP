@@ -310,6 +310,8 @@ class TestContextBroker(unittest.TestCase):
                                  entity_update.get_attribute_names())
                 self.assertNotEqual(entity_updated.temperature.value,
                                     entity_update.temperature.value)
+                # change back the value
+                entity_update.temperature.value = 20.0
                 # 2) update existing attribute value
                 attr_append_update = NamedContextAttribute(**{
                     "name": 'pressure',
