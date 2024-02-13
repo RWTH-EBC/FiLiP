@@ -300,8 +300,16 @@ class TestContextBroker(unittest.TestCase):
                 entity_update = entity_init.model_copy(deep=True)
                 # 1) append attribute
                 entity_update.add_attributes(attrs=[attr_append])
+                # change the value of existing attributes
+                entity_update.temperature.value = 30
                 with self.assertRaises(requests.RequestException):
-                    client.update_entity(entity=entity_update, append_strict=True)
+                    client.update_entity(entity=entity_update,
+                                         append_strict=True)
+                entity_updated = client.get_entity(entity_id=entity_update.id)
+                self.assertEqual(entity_updated.get_attribute_names(),
+                                 entity_update.get_attribute_names())
+                self.assertNotEqual(entity_updated.temperature.value,
+                                    entity_update.temperature.value)
                 # 2) update existing attribute value
                 attr_append_update = NamedContextAttribute(**{
                     "name": 'pressure',
