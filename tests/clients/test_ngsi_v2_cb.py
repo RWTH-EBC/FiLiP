@@ -278,11 +278,11 @@ class TestContextBroker(unittest.TestCase):
                 self.assertEqual(client.get_entity(entity_id=entity_post.id),
                                  entity_post)
                 # 2) update existing attribute value
-                attr_append = NamedContextAttribute(**{
+                attr_append_update = NamedContextAttribute(**{
                     "name": 'pressure',
                     "type": 'Number',
                     "value": 2050})
-                entity_post.update_attribute(attrs=[attr_append])
+                entity_post.update_attribute(attrs=[attr_append_update])
                 client.post_entity(entity=entity_post, patch=True)
                 self.assertEqual(client.get_entity(entity_id=entity_post.id),
                                  entity_post)
@@ -291,6 +291,8 @@ class TestContextBroker(unittest.TestCase):
                 client.post_entity(entity=entity_post, update=True)
                 self.assertEqual(client.get_entity(entity_id=entity_post.id),
                                  entity_post)
+                clear_all(fiware_header=self.fiware_header,
+                          cb_url=settings.CB_URL)
 
             # update_entity()
             if "update_entity":
@@ -301,11 +303,11 @@ class TestContextBroker(unittest.TestCase):
                 with self.assertRaises(requests.RequestException):
                     client.update_entity(entity=entity_update, append_strict=True)
                 # 2) update existing attribute value
-                attr_append = NamedContextAttribute(**{
+                attr_append_update = NamedContextAttribute(**{
                     "name": 'pressure',
                     "type": 'Number',
                     "value": 2050})
-                entity_update.update_attribute(attrs=[attr_append])
+                entity_update.update_attribute(attrs=[attr_append_update])
                 client.update_entity(entity=ContextEntity(
                     **{
                         "id": entity_update.id,
@@ -323,6 +325,8 @@ class TestContextBroker(unittest.TestCase):
                 client.update_entity(entity=entity_update)
                 self.assertNotEqual(client.get_entity(entity_id=entity_update.id),
                                     entity_update)
+                clear_all(fiware_header=self.fiware_header,
+                          cb_url=settings.CB_URL)
 
             # override_entity()
             if "override_entity":
@@ -334,11 +338,11 @@ class TestContextBroker(unittest.TestCase):
                 self.assertEqual(client.get_entity(entity_id=entity_override.id),
                                  entity_override)
                 # 2) update existing attribute value
-                attr_append = NamedContextAttribute(**{
+                attr_append_update = NamedContextAttribute(**{
                     "name": 'pressure',
                     "type": 'Number',
                     "value": 2050})
-                entity_override.update_attribute(attrs=[attr_append])
+                entity_override.update_attribute(attrs=[attr_append_update])
                 client.override_entity(entity=entity_override)
                 self.assertEqual(client.get_entity(entity_id=entity_override.id),
                                  entity_override)
@@ -347,6 +351,8 @@ class TestContextBroker(unittest.TestCase):
                 client.override_entity(entity=entity_override)
                 self.assertEqual(client.get_entity(entity_id=entity_override.id),
                                  entity_override)
+                clear_all(fiware_header=self.fiware_header,
+                          cb_url=settings.CB_URL)
 
             # patch_entity
             if "patch_entity":
@@ -358,11 +364,11 @@ class TestContextBroker(unittest.TestCase):
                 self.assertEqual(client.get_entity(entity_id=entity_patch.id),
                                  entity_patch)
                 # 2) update existing attribute value
-                attr_append = NamedContextAttribute(**{
+                attr_append_update = NamedContextAttribute(**{
                     "name": 'pressure',
                     "type": 'Number',
                     "value": 2050})
-                entity_patch.update_attribute(attrs=[attr_append])
+                entity_patch.update_attribute(attrs=[attr_append_update])
                 client.patch_entity(entity=entity_patch)
                 self.assertEqual(client.get_entity(entity_id=entity_patch.id),
                                  entity_patch)
@@ -372,6 +378,8 @@ class TestContextBroker(unittest.TestCase):
                 # TODO It is expected here not to pass the test
                 self.assertEqual(client.get_entity(entity_id=entity_patch.id),
                                  entity_patch)
+                clear_all(fiware_header=self.fiware_header,
+                          cb_url=settings.CB_URL)
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
