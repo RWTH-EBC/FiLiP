@@ -533,7 +533,7 @@ class TestContextBroker(unittest.TestCase):
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
                 cb_url=settings.CB_URL)
     def test_notification(self):
-        mqtt_sub_url = settings.MQTT_BROKER_URL
+        mqtt_url = settings.MQTT_BROKER_URL
         mqtt_url_internal = settings.MQTT_BROKER_URL_INTERNAL
         entity = ContextEntity.model_validate({
             "id": "Test:001",
@@ -651,8 +651,8 @@ class TestContextBroker(unittest.TestCase):
         mqtt_client.on_message = on_message
         mqtt_client.on_disconnect = on_disconnect
         # connect to the server
-        mqtt_client.connect(host=mqtt_sub_url.host,
-                            port=mqtt_sub_url.port,
+        mqtt_client.connect(host=mqtt_url.host,
+                            port=mqtt_url.port,
                             keepalive=60,
                             bind_address="",
                             bind_port=0,
