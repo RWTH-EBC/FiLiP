@@ -453,10 +453,11 @@ class TestContextBroker(unittest.TestCase):
                 iota_url=settings.IOTA_JSON_URL)
     def test_mqtt_subscriptions(self):
         mqtt_url = settings.MQTT_BROKER_URL
+        mqtt_url_internal = settings.MQTT_BROKER_URL_INTERNAL
         mqtt_topic = ''.join([settings.FIWARE_SERVICE,
                               settings.FIWARE_SERVICEPATH])
         notification = self.subscription.notification.model_copy(
-            update={'http': None, 'mqtt': Mqtt(url=mqtt_url,
+            update={'http': None, 'mqtt': Mqtt(url=mqtt_url_internal,
                                                topic=mqtt_topic)})
         subscription = self.subscription.model_copy(
             update={'notification': notification,
@@ -532,7 +533,8 @@ class TestContextBroker(unittest.TestCase):
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
                 cb_url=settings.CB_URL)
     def test_notification(self):
-        mqtt_sub_url = settings.MQTT_BROKER_URL
+        mqtt_url = settings.MQTT_BROKER_URL
+        mqtt_url_internal = settings.MQTT_BROKER_URL_INTERNAL
         entity = ContextEntity.model_validate({
             "id": "Test:001",
             "type": "Test",
@@ -562,7 +564,7 @@ class TestContextBroker(unittest.TestCase):
             },
             "notification": {
                 "mqtt": {
-                    "url": mqtt_sub_url,
+                    "url": mqtt_url_internal,
                     "topic": mqtt_topic
                 },
                 "attrs": []  # empty attrs list
@@ -582,7 +584,7 @@ class TestContextBroker(unittest.TestCase):
             },
             "notification": {
                 "mqtt": {
-                    "url": mqtt_sub_url,
+                    "url": mqtt_url_internal,
                     "topic": mqtt_topic
                 },
                 "attrs": None  # attrs = None
@@ -602,7 +604,7 @@ class TestContextBroker(unittest.TestCase):
             },
             "notification": {
                 "mqtt": {
-                    "url": mqtt_sub_url,
+                    "url": mqtt_url_internal,
                     "topic": mqtt_topic
                 },
                 "attrs": ["temperature"]
@@ -649,8 +651,8 @@ class TestContextBroker(unittest.TestCase):
         mqtt_client.on_message = on_message
         mqtt_client.on_disconnect = on_disconnect
         # connect to the server
-        mqtt_client.connect(host=settings.MQTT_BROKER_URL.host,
-                            port=settings.MQTT_BROKER_URL.port,
+        mqtt_client.connect(host=mqtt_url.host,
+                            port=mqtt_url.port,
                             keepalive=60,
                             bind_address="",
                             bind_port=0,
