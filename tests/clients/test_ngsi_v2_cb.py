@@ -385,7 +385,6 @@ class TestContextBroker(unittest.TestCase):
                 # 3) delete attribute
                 entity_patch.delete_attributes(attrs=[attr_append])
                 client.patch_entity(entity=entity_patch)
-                # TODO It is expected here not to pass the test
                 self.assertEqual(client.get_entity(entity_id=entity_patch.id),
                                  entity_patch)
                 clear_all(fiware_header=self.fiware_header,
