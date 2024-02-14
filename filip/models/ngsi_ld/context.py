@@ -48,7 +48,8 @@ class ContextProperty(BaseModel):
         default=None,
         title="Property value",
         description="the actual data"
-    )
+    ) #ToDo: Should I add here field validator for value=null prevention
+      # -> raise BadRequestData Error as defined in NGSI-LD spec -> Same for all values of all properties?
     observedAt: Optional[str] = Field(
         None, titel="Timestamp",
         description="Representing a timestamp for the "
@@ -69,6 +70,8 @@ class ContextProperty(BaseModel):
         # pattern=FiwareRegex.string_protect.value,  # Make it FIWARE-Safe
     )
     field_validator("UnitCode")(validate_fiware_datatype_string_protect)
+
+    #ToDo: Should I add datasetId here?
 
     @field_validator("type")
     @classmethod
@@ -170,7 +173,7 @@ class ContextGeoPropertyValue(BaseModel):
                 raise TypeError
         return value
 
-
+#ToDo: Is this ContextGeoProperty sufficcient for the observationSpace and operationSpace Attribute aswell?
 class ContextGeoProperty(BaseModel):
     """
     The model for a Geo property is represented by a JSON object with the following syntax:
@@ -201,6 +204,16 @@ class ContextGeoProperty(BaseModel):
         title="GeoProperty value",
         description="the actual data"
     )
+    observedAt: Optional[str] = Field(
+        None, titel="Timestamp",
+        description="Representing a timestamp for the "
+                    "incoming value of the property.",
+        max_length=256,
+        min_length=1,
+    )
+    field_validator("observedAt")(validate_fiware_datatype_string_protect)
+
+    # ToDo: Should I add datasetId here?
 
     @field_validator("type")
     @classmethod
@@ -265,6 +278,7 @@ class ContextRelationship(BaseModel):
         title="Realtionship object",
         description="the actual object id"
     )
+    #ToDo: Should I add datasetId here aswell?
 
     @field_validator("type")
     @classmethod
