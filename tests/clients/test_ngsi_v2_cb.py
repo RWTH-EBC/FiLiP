@@ -218,7 +218,10 @@ class TestContextBroker(unittest.TestCase):
                 fiware_header=self.fiware_header) as client:
             client.post_entity(entity=self.entity, update=True)
             res_entity = client.get_entity(entity_id=self.entity.id)
-            client.get_entity(entity_id=self.entity.id, attrs=['temperature'])
+            self.assertEqual(res_entity,
+                             client.get_entity(
+                                 entity_id=self.entity.id,
+                                 attrs=list(res_entity.get_attribute_names())))
             self.assertEqual(client.get_entity_attributes(
                 entity_id=self.entity.id), res_entity.get_properties(
                 response_format='dict'))
