@@ -551,6 +551,9 @@ class TestContextBroker(unittest.TestCase):
                              entity_id=entity1.id,
                              response_format=AttrsFormat.KEY_VALUES)
                          )
+        entity2 = self.client.get_entity(entity_id=entity1.id)
+        self.assertEqual(entity1.temperature.type,
+                         entity2.temperature.type)
 
         # update entity with dictionary
         entity1_key_value_dict = entity1_key_value.model_dump()
@@ -564,6 +567,9 @@ class TestContextBroker(unittest.TestCase):
                              entity_id=entity1.id,
                              response_format=AttrsFormat.KEY_VALUES).model_dump()
                          )
+        entity3 = self.client.get_entity(entity_id=entity1.id)
+        self.assertEqual(entity1.temperature.type,
+                         entity3.temperature.type)
         entity1_key_value_dict.update({"humidity": 50})
         with self.assertRaises(RequestException):
             self.client.update_entity_key_value(entity=entity1_key_value_dict)
