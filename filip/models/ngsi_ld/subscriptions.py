@@ -1,5 +1,6 @@
 from typing import List, Optional, Union
-from pydantic import ConfigDict, BaseModel, Field, HttpUrl
+from pydantic import ConfigDict, BaseModel, Field, HttpUrl, AnyUrl,\
+    field_validator
 
 
 class EntityInfo(BaseModel):
@@ -46,6 +47,19 @@ class KeyValuePair(BaseModel):
 
 class Endpoint(BaseModel):
     """
+    This datatype represents the parameters that are required in order to define
+    an endpoint for notifications. This can include the endpoint's URI, a
+    generic{key, value} array, named receiverInfo, which contains, in a
+    generalized form, whatever extra information the broker shall convey to the
+    receiver in order for the broker to successfully communicate with
+    receiver (e.g Authorization material), or for the receiver to correctly
+    interpret the received content (e.g. the Link URL to fetch an @context).
+
+    Additionally, it can include another generic{key, value} array, named
+    notifierInfo, which contains the configuration that the broker needs to
+    know in order to correctly set up the communication channel towards the
+    receiver
+
     Example of "receiverInfo"
         "receiverInfo": [
             {
@@ -57,6 +71,7 @@ class Endpoint(BaseModel):
               "value": "456"
             }
           ]
+
     Example of "notifierInfo"
         "notifierInfo": [
             {
@@ -65,23 +80,39 @@ class Endpoint(BaseModel):
             }
           ]
     """
-    uri: HttpUrl = Field(
-        ...,
+    uri: AnyUrl = Field(
         description="Dereferenceable URI"
     )
     accept: Optional[str] = Field(
         default=None,
-        description="MIME type for the notification payload body (application/json, application/ld+json, application/geo+json)"
+        description="MIME type for the notification payload body "
+                    "(application/json, application/ld+json, "
+                    "application/geo+json)"
     )
     receiverInfo: Optional[List[KeyValuePair]] = Field(
         default=None,
-        description="Generic {key, value} array to convey optional information to the receiver"
+        description="Generic {key, value} array to convey optional information "
+                    "to the receiver"
     )
     notifierInfo: Optional[List[KeyValuePair]] = Field(
         default=None,
-        description="Generic {key, value} array to set up the communication channel"
+        description="Generic {key, value} array to set up the communication "
+                    "channel"
     )
     model_config = ConfigDict(populate_by_name=True)
+
+    @field_validator("uri")
+    @classmethod
+    def check_uri(cls, uri: AnyUrl):
+        if uri.scheme not in ("http", "mqtt"):
+            raise ValueError("NGSI-LD currently only support http and mqtt")
+        return uri
+
+    @field_validator("notifierInfo")
+    @classmethod
+    def check_notifier_info(cls, notifierInfo: List[KeyValuePair]):
+        # TODO add validation of notifierInfo for MQTT notification
+        return notifierInfo
 
 
 class NotificationParams(BaseModel):
