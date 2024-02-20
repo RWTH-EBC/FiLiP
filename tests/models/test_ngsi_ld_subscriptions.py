@@ -5,14 +5,10 @@ import json
 import unittest
 
 from pydantic import ValidationError
-from filip.clients.ngsi_v2 import ContextBrokerClient
-from filip.models.ngsi_v2.subscriptions import \
-    Http, \
-    HttpCustom, \
-    Mqtt, \
-    MqttCustom, \
-    Notification, \
-    Subscription
+# from filip.clients.ngsi_v2 import ContextBrokerClient
+from filip.models.ngsi_ld.subscriptions import \
+    Subscription, \
+    Endpoint
 from filip.models.base import FiwareHeader
 from filip.utils.cleanup import clear_all, clean_test
 from tests.config import settings
@@ -78,7 +74,30 @@ class TestLDSubscriptions(unittest.TestCase):
         Returns:
 
         """
-        pass
+        endpoint_http = Endpoint(**{
+            "uri": "http://my.endpoint.org/notify",
+            "accept": "application/json"
+        })
+        endpoint_mqtt = Endpoint(**{
+            "uri": "mqtt://my.host.org:1883/my/test/topic",
+            "accept": "application/json",  # TODO check whether it works
+            "notifierInfo": [
+                {
+                    "key": "MQTT-Version",
+                    "value": "mqtt5.0"
+                }
+            ]
+        })
+        with self.assertRaises(ValidationError):
+            endpoint_https = Endpoint(**{
+                "uri": "https://my.endpoint.org/notify",
+                "accept": "application/json"
+            })
+        with self.assertRaises(ValidationError):
+            endpoint_amqx = Endpoint(**{
+                "uri": "amqx://my.endpoint.org/notify",
+                "accept": "application/json"
+            })
 
     def test_notification_models(self):
         """
