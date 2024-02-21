@@ -737,7 +737,6 @@ class ContextBrokerClient(BaseHttpClient):
         """
         if isinstance(entity, dict):
             entity = ContextEntityKeyValues(**entity)
-        # TODO what to do with entity type?
         url = urljoin(self.base_url, f'v2/entities/{entity.id}/attrs')
         headers = self.headers.copy()
         params = {"type": entity.type,
@@ -783,7 +782,6 @@ class ContextBrokerClient(BaseHttpClient):
         Returns:
 
         """
-        # TODO check entity type, and detect duplicated entities
         if entity_type:
             pass
         else:
