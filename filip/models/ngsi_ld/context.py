@@ -48,8 +48,7 @@ class ContextProperty(BaseModel):
         default=None,
         title="Property value",
         description="the actual data"
-    ) #ToDo: Should I add here field validator for value=null prevention
-      # -> raise BadRequestData Error as defined in NGSI-LD spec -> Same for all values of all properties?
+    )
     observedAt: Optional[str] = Field(
         None, titel="Timestamp",
         description="Representing a timestamp for the "
@@ -173,7 +172,7 @@ class ContextGeoPropertyValue(BaseModel):
                 raise TypeError
         return value
 
-#ToDo: Is this ContextGeoProperty sufficcient for the observationSpace and operationSpace Attribute aswell?
+
 class ContextGeoProperty(BaseModel):
     """
     The model for a Geo property is represented by a JSON object with the following syntax:
@@ -205,7 +204,8 @@ class ContextGeoProperty(BaseModel):
         description="the actual data"
     )
     observedAt: Optional[str] = Field(
-        None, titel="Timestamp",
+        default=None,
+        titel="Timestamp",
         description="Representing a timestamp for the "
                     "incoming value of the property.",
         max_length=256,
@@ -420,7 +420,7 @@ class ContextLDEntity(ContextLDEntityKeyValues, ContextEntity):
         >>> entity = ContextLDEntity(**data)
 
     """
-
+    #ToDo: Add the the observationSpace and operationSpace Attributes as a normal field as before
     def __init__(self,
                  id: str,
                  type: str,
