@@ -25,7 +25,8 @@ from filip.models.ngsi_v2.context import \
     NamedContextAttribute, \
     NamedCommand, \
     Query, \
-    ActionType
+    ActionType, \
+    ContextEntityKeyValues
 
 from filip.models.ngsi_v2.base import AttrsFormat, EntityPattern, Status, \
     NamedMetadata
@@ -691,6 +692,50 @@ class TestContextBroker(unittest.TestCase):
         mqtt_client.loop_stop()
         mqtt_client.disconnect()
         time.sleep(1)
+
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                cb_url=settings.CB_URL)
+    def test_update_entity_keyvalues(self):
+        entity1 = self.entity.model_copy(deep=True)
+        # initial entity
+        self.client.post_entity(entity1)
+
+        # key value
+        entity1_key_value = self.client.get_entity(
+            entity_id=entity1.id,
+            response_format=AttrsFormat.KEY_VALUES)
+
+        # update entity with ContextEntityKeyValues
+        entity1_key_value.temperature = 30
+        self.client.update_entity_key_value(entity=entity1_key_value)
+        self.assertEqual(entity1_key_value,
+                         self.client.get_entity(
+                             entity_id=entity1.id,
+                             response_format=AttrsFormat.KEY_VALUES)
+                         )
+        entity2 = self.client.get_entity(entity_id=entity1.id)
+        self.assertEqual(entity1.temperature.type,
+                         entity2.temperature.type)
+
+        # update entity with dictionary
+        entity1_key_value_dict = entity1_key_value.model_dump()
+        entity1_key_value_dict["temperature"] = 40
+        self.client.update_entity_key_value(entity=entity1_key_value_dict)
+        self.client.get_entity(
+            entity_id=entity1.id,
+            response_format=AttrsFormat.KEY_VALUES).model_dump()
+        self.assertEqual(entity1_key_value_dict,
+                         self.client.get_entity(
+                             entity_id=entity1.id,
+                             response_format=AttrsFormat.KEY_VALUES).model_dump()
+                         )
+        entity3 = self.client.get_entity(entity_id=entity1.id)
+        self.assertEqual(entity1.temperature.type,
+                         entity3.temperature.type)
+        entity1_key_value_dict.update({"humidity": 50})
+        with self.assertRaises(RequestException):
+            self.client.update_entity_key_value(entity=entity1_key_value_dict)
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,

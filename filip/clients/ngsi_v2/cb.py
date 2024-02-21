@@ -731,6 +731,80 @@ class ContextBrokerClient(BaseHttpClient):
             self.log_error(err=err, msg=msg)
             raise
 
+    def update_entity_key_value(self,
+                                entity: Union[ContextEntityKeyValues, dict],):
+        """
+        The entity are updated with a ContextEntityKeyValues object or a
+        dictionary contain the simplified entity data. This corresponds to a
+        'PATcH' request.
+        Only existing attribute can be updated!
+
+        Args:
+            entity: A ContextEntityKeyValues object or a dictionary contain
+            the simplified entity data
+
+        """
+        if isinstance(entity, dict):
+            entity = ContextEntityKeyValues(**entity)
+        url = urljoin(self.base_url, f'v2/entities/{entity.id}/attrs')
+        headers = self.headers.copy()
+        params = {"type": entity.type,
+                  "options": AttrsFormat.KEY_VALUES.value
+                  }
+        try:
+            res = self.patch(url=url,
+                             headers=headers,
+                             json=entity.model_dump(exclude={'id', 'type'},
+                                                    exclude_unset=True),
+                             params=params)
+            if res.ok:
+                self.logger.info("Entity '%s' successfully "
+                                 "updated!", entity.id)
+            else:
+                res.raise_for_status()
+        except requests.RequestException as err:
+            msg = f"Could not update attributes of entity" \
+                  f" {entity.id} !"
+            self.log_error(err=err, msg=msg)
+            raise
+
+    def update_entity_attributes_key_value(self,
+                                           entity_id: str,
+                                           attrs: dict,
+                                           entity_type: str = None,
+                                           ):
+        """
+        Update entity with attributes in keyValues form.
+        This corresponds to a 'PATcH' request.
+        Only existing attribute can be updated!
+
+        Args:
+            entity_id: Entity id to be updated
+            entity_type: Entity type, to avoid ambiguity in case there are
+                several entities with the same entity id.
+            attrs: a dictionary that contains the attribute values.
+            e.g. {
+                "temperature": 21.4,
+                "humidity": 50
+            }
+
+        Returns:
+
+        """
+        if entity_type:
+            pass
+        else:
+            _entity = self.get_entity(entity_id=entity_id)
+            entity_type = _entity.type
+
+        entity_dict = attrs.copy()
+        entity_dict.update({
+            "id": entity_id,
+            "type": entity_type
+        })
+        entity = ContextEntityKeyValues(**entity_dict)
+        self.update_entity_key_value(entity=entity)
+
     def update_existing_entity_attributes(
         self,
         entity_id: str,
