@@ -11,9 +11,10 @@ from filip.clients.ngsi_v2 import \
     ContextBrokerClient, \
     IoTAClient, \
     QuantumLeapClient
+from requests import Session
 
 
-def clear_context_broker(url: str, fiware_header: FiwareHeader):
+def clear_context_broker(url: str, fiware_header: FiwareHeader, session: Session = None ):
     """
     Function deletes all entities, registrations and subscriptions for a
     given fiware header
@@ -25,12 +26,13 @@ def clear_context_broker(url: str, fiware_header: FiwareHeader):
     Args:
         url: Url of the context broker service
         fiware_header: header of the tenant
+        session: session object with set ca.crt and ca.key for TLS support
 
     Returns:
         None
     """
     # create client
-    client = ContextBrokerClient(url=url, fiware_header=fiware_header)
+    client = ContextBrokerClient(url=url, fiware_header=fiware_header, session=session)
     # clean entities
     client.delete_entities(entities=client.get_entity_list())
 
@@ -45,7 +47,7 @@ def clear_context_broker(url: str, fiware_header: FiwareHeader):
     assert len(client.get_registration_list()) == 0
 
 
-def clear_iot_agent(url: Union[str, AnyHttpUrl], fiware_header: FiwareHeader):
+def clear_iot_agent(url: Union[str, AnyHttpUrl], fiware_header: FiwareHeader, session: Session = None):
     """
     Function deletes all device groups and devices for a
     given fiware header
@@ -53,12 +55,13 @@ def clear_iot_agent(url: Union[str, AnyHttpUrl], fiware_header: FiwareHeader):
     Args:
         url: Url of the context broker service
         fiware_header: header of the tenant
+        session: session object with set ca.crt and ca.key for TLS support
 
     Returns:
         None
     """
     # create client
-    client = IoTAClient(url=url, fiware_header=fiware_header)
+    client = IoTAClient(url=url, fiware_header=fiware_header, session=session)
 
     # clear registrations
     for device in client.get_device_list():
@@ -72,12 +75,13 @@ def clear_iot_agent(url: Union[str, AnyHttpUrl], fiware_header: FiwareHeader):
     assert len(client.get_group_list()) == 0
 
 
-def clear_quantumleap(url: str, fiware_header: FiwareHeader):
+def clear_quantumleap(url: str, fiware_header: FiwareHeader, session: Session = None):
     """
     Function deletes all data for a given fiware header
     Args:
         url: Url of the quantumleap service
         fiware_header: header of the tenant
+        session: session object with set ca.crt and ca.key for TLS support
 
     Returns:
         None
@@ -97,7 +101,7 @@ def clear_quantumleap(url: str, fiware_header: FiwareHeader):
         else:
             raise
     # create client
-    client = QuantumLeapClient(url=url, fiware_header=fiware_header)
+    client = QuantumLeapClient(url=url, fiware_header=fiware_header, session=session)
 
     # clear data
     entities = []
@@ -116,7 +120,8 @@ def clear_all(*,
               fiware_header: FiwareHeader,
               cb_url: str = None,
               iota_url: Union[str, List[str]] = None,
-              ql_url: str = None):
+              ql_url: str = None,
+              session: Session = None):
     """
     Clears all services that a url is provided for
 
@@ -125,6 +130,7 @@ def clear_all(*,
         cb_url: url of the context broker service
         iota_url: url of the IoT-Agent service
         ql_url: url of the QuantumLeap service
+        session: session object with set ca.crt and ca.key for TLS support
 
     Returns:
         None
@@ -133,11 +139,11 @@ def clear_all(*,
         if isinstance(iota_url, (str, AnyUrl)):
             iota_url = [iota_url]
         for url in iota_url:
-            clear_iot_agent(url=url, fiware_header=fiware_header)
+            clear_iot_agent(url=url, fiware_header=fiware_header, session=session)
     if cb_url is not None:
-        clear_context_broker(url=cb_url, fiware_header=fiware_header)
+        clear_context_broker(url=cb_url, fiware_header=fiware_header, session=session)
     if ql_url is not None:
-        clear_quantumleap(url=ql_url, fiware_header=fiware_header)
+        clear_quantumleap(url=ql_url, fiware_header=fiware_header, session=session)
 
 
 def clean_test(*,
@@ -145,7 +151,8 @@ def clean_test(*,
                fiware_servicepath: str,
                cb_url: str = None,
                iota_url: Union[str, List[str]] = None,
-               ql_url: str = None) -> Callable:
+               ql_url: str = None,
+               session: Session = None) -> Callable:
     """
     Decorator to clean up the server before and after the test
 
@@ -161,6 +168,7 @@ def clean_test(*,
         cb_url: url of context broker service
         iota_url: url of IoT-Agent service
         ql_url: url of quantumleap service
+        session: session object with set ca.crt and ca.key for TLS support
 
     Returns:
         Decorator for clean tests
@@ -170,7 +178,8 @@ def clean_test(*,
     clear_all(fiware_header=fiware_header,
               cb_url=cb_url,
               iota_url=iota_url,
-              ql_url=ql_url)
+              ql_url=ql_url,
+              session=session)
     # Inner decorator function
     def decorator(func):
         #  Wrapper function for the decorated function
@@ -182,6 +191,7 @@ def clean_test(*,
     clear_all(fiware_header=fiware_header,
               cb_url=cb_url,
               iota_url=iota_url,
-              ql_url=ql_url)
+              ql_url=ql_url,
+              session=session)
 
     return decorator
