@@ -241,7 +241,8 @@ class ContextBrokerClient(BaseHttpClient):
             res.raise_for_status()
         except requests.RequestException as err:
             if update and err.response.status_code == 422:
-                return self.update_entity(entity=entity)
+                return self.override_entity(
+                    entity=entity)
             if patch and err.response.status_code == 422:
                 return self.patch_entity(
                     entity=entity, override_attr_metadata=override_attr_metadata
@@ -777,6 +778,23 @@ class ContextBrokerClient(BaseHttpClient):
             msg = f"Could not update attributes of entity" f" {entity.id} !"
             self.log_error(err=err, msg=msg)
             raise
+
+    def override_entity(self, entity: ContextEntity):
+        """
+        The request payload is an object representing the attributes to
+        override the existing entity.
+
+        Note:
+            If you want to manipulate you should rather use patch_entity.
+
+        Args:
+            entity (ContextEntity):
+        Returns:
+            None
+        """
+        self.replace_entity_attributes(entity_id=entity.id,
+                                       entity_type=entity.type,
+                                       attrs=entity.get_properties())
 
     def replace_entity_attributes(
         self,
