@@ -66,11 +66,16 @@ class ContextProperty(BaseModel):
                     "https://unece.org/fileadmin/DAM/cefact/recommendations/rec20/rec20_rev3_Annex2e.pdf ",
         max_length=256,
         min_length=1,
-        # pattern=FiwareRegex.string_protect.value,  # Make it FIWARE-Safe
     )
     field_validator("UnitCode")(validate_fiware_datatype_string_protect)
 
-    #ToDo: Should I add datasetId here?
+    datasetId: Optional[str] = Field(
+        None, titel="dataset Id",
+        description="It allows identifying a set or group of property values",
+        max_length=256,
+        min_length=1,
+    )
+    field_validator("datasetId")(validate_fiware_datatype_string_protect)
 
     @field_validator("type")
     @classmethod
@@ -104,8 +109,6 @@ class NamedContextProperty(ContextProperty):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        # pattern=FiwareRegex.string_protect.value,
-        # Make it FIWARE-Safe
     )
     field_validator("name")(validate_fiware_datatype_string_protect)
 
@@ -213,7 +216,13 @@ class ContextGeoProperty(BaseModel):
     )
     field_validator("observedAt")(validate_fiware_datatype_string_protect)
 
-    # ToDo: Should I add datasetId here?
+    datasetId: Optional[str] = Field(
+        None, titel="dataset Id",
+        description="It allows identifying a set or group of property values",
+        max_length=256,
+        min_length=1,
+    )
+    field_validator("datasetId")(validate_fiware_datatype_string_protect)
 
     @field_validator("type")
     @classmethod
@@ -278,7 +287,14 @@ class ContextRelationship(BaseModel):
         title="Realtionship object",
         description="the actual object id"
     )
-    #ToDo: Should I add datasetId here aswell?
+
+    datasetId: Optional[str] = Field(
+        None, titel="dataset Id",
+        description="It allows identifying a set or group of property values",
+        max_length=256,
+        min_length=1,
+    )
+    field_validator("datasetId")(validate_fiware_datatype_string_protect)
 
     @field_validator("type")
     @classmethod
@@ -420,7 +436,29 @@ class ContextLDEntity(ContextLDEntityKeyValues, ContextEntity):
         >>> entity = ContextLDEntity(**data)
 
     """
-    #ToDo: Add the the observationSpace and operationSpace Attributes as a normal field as before
+
+    observationSpace: Optional[ContextGeoProperty] = Field(
+        default=None,
+        title="Observation Space",
+        description="The geospatial Property representing "
+                    "the geographic location that is being "
+                    "observed, e.g. by a sensor. "
+                    "For example, in the case of a camera, "
+                    "the location of the camera and the "
+                    "observationspace are different and "
+                    "can be disjoint. "
+    )
+
+    operationSpace: Optional[ContextGeoProperty] = Field(
+        default=None,
+        title="Operation Space",
+        description="The geospatial Property representing "
+                    "the geographic location in which an "
+                    "Entity,e.g. an actuator is active. "
+                    "For example, a crane can have a "
+                    "certain operation space."
+    )
+
     def __init__(self,
                  id: str,
                  type: str,
