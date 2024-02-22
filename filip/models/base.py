@@ -117,13 +117,13 @@ class FiwareLDHeader(BaseModel):
                 'type="application/ld+json"',
         max_length=50,
         description="Fiware service used for multi-tenancy",
-        regex=r"\w*$"    )
+        pattern=r"\w*$"    )
     ngsild_tenant: str = Field(
         alias="NGSILD-Tenant",
         default="openiot",
         max_length=50,
         description="Alsias to the Fiware service to used for multitancy",
-        regex=r"\w*$"
+        pattern=r"\w*$"
     )
 
     def set_context(self, context: str):
