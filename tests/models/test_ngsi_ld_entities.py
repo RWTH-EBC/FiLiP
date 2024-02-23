@@ -1,6 +1,8 @@
 import _json
 import unittest
 #from pydantic import ValidationError
+from filip.clients.ngsi_v2.cb import ContextBrokerClient	
+
 from filip.clients.ngsi_ld.cb import ContextBrokerLDClient
 # from filip.models.ngsi_v2.subscriptions import \
 #     Http, \
