@@ -94,9 +94,11 @@ class TestLDContextModels(unittest.TestCase):
             None
         """
         attr = ContextProperty(**{'value': "20"})
+        self.assertIsInstance(attr.value, str)
+        attr = ContextProperty(**{'value': 20.53})
         self.assertIsInstance(attr.value, float)
         attr = ContextProperty(**{'value': 20})
-        self.assertIsInstance(attr.value, float)
+        self.assertIsInstance(attr.value, int)
 
     def test_entity_id(self) -> None:
         with self.assertRaises(ValidationError):
@@ -108,7 +110,7 @@ class TestLDContextModels(unittest.TestCase):
         Returns:
             None
         """
-        entity1 = ContextLDEntity(**self.entity1_dict)
+        entity1 = ContextLDEntity(**self.entity1_dict)      # ToDo: @Context is not a ContextAttribute and no dict
         entity2 = ContextLDEntity(**self.entity2_dict)
 
         self.assertEqual(self.entity1_dict,
@@ -138,7 +140,7 @@ class TestLDContextModels(unittest.TestCase):
         # test add properties
         new_prop = {'new_prop': ContextProperty(value=25)}
         entity2.add_properties(new_prop)
-        entity2.get_properties(response_format='list')
+        properties = entity2.get_properties(response_format='list')     # ToDo Check if this is correct
         self.assertIn("new_prop", [prop.name for prop in properties])
 
     def test_get_properties(self):
@@ -146,7 +148,10 @@ class TestLDContextModels(unittest.TestCase):
         Test the get_properties method
         """
         pass
-        entity = ContextLDEntity(id="test", type="Tester")
+        entity = ContextLDEntity(id="urn:ngsi-ld:test", type="Tester")
+        # ToDo: Ask for error: 1 validation error for ContextLDEntity
+        #  context
+        #  Field required [type=missing, input_value={'id': 'urn:ngsi-ld:test', 'type': 'Tester'}, input_type=dict]
         properties = [
             NamedContextProperty(name="attr1"),
             NamedContextProperty(name="attr2"),
@@ -168,7 +173,7 @@ class TestLDContextModels(unittest.TestCase):
                                              'type': 'Text'})
         attr3 = ContextProperty(**{'value': 20, 'type': 'Text'})
 
-        entity = ContextLDEntity(id="12", type="Test")
+        entity = ContextLDEntity(id="urn:ngsi-ld:12", type="Test")
 
         entity.add_properties({"test1": attr, "test3": attr3})
         entity.add_properties([named_attr])
