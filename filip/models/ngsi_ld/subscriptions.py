@@ -1,98 +1,251 @@
-"""
-This module contains NGSI-LD models for context subscription in the context
-broker.
-"""
-from typing import Any, List, Dict, Union, Optional
-from datetime import datetime
-from aenum import Enum
-from pydantic import \
-    field_validator, model_validator, ConfigDict, BaseModel, \
-    conint, \
-    Field, \
-    Json
-from .base import AttrsFormat, EntityPattern, Http, Status, Expression
-from filip.utils.validators import validate_mqtt_url, validate_mqtt_topic
-from filip.models.ngsi_v2.context import ContextEntity
-from filip.custom_types import AnyMqttUrl
+from typing import List, Optional, Union
+from pydantic import ConfigDict, BaseModel, Field, HttpUrl, AnyUrl,\
+    field_validator
 
 
-
-class Subject(BaseModel):
+class EntityInfo(BaseModel):
     """
-    Model for subscription subject
+    In v1.3.1 it is specified as EntityInfo
+    In v1.6.1 it is specified in a new data type, namely EntitySelector
     """
-    entities: List[EntityPattern] = Field(
-        description="A list of objects, each one composed of by an Entity "
-                    "Object:"
-    )
-    condition: Optional[Condition] = Field(
+    id: Optional[HttpUrl] = Field(
         default=None,
+        description="Entity identifier (valid URI)"
     )
+    idPattern: Optional[str] = Field(
+        default=None,
+        description="Regular expression as per IEEE POSIX 1003.2™ [11]"
+    )
+    type: str = Field(
+        ...,
+        description="Fully Qualified Name of an Entity Type or the Entity Type Name as a short-hand string. See clause 4.6.2"
+    )
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GeoQuery(BaseModel):
+    geometry: str = Field(
+        description="A valid GeoJSON [8] geometry, type excepting GeometryCollection"
+    )
+    coordinates: Union[list, str] = Field(
+        description="A JSON Array coherent with the geometry type as per IETF RFC 7946 [8]"
+    )
+    georel: str = Field(
+        description="A valid geo-relationship as defined by clause 4.10 (near, within, etc.)"
+    )
+    geoproperty: Optional[str] = Field(
+        default=None,
+        description="Attribute Name as a short-hand string"
+    )
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class KeyValuePair(BaseModel):
+    key: str
+    value: str
+
+
+class Endpoint(BaseModel):
+    """
+    This datatype represents the parameters that are required in order to define
+    an endpoint for notifications. This can include the endpoint's URI, a
+    generic{key, value} array, named receiverInfo, which contains, in a
+    generalized form, whatever extra information the broker shall convey to the
+    receiver in order for the broker to successfully communicate with
+    receiver (e.g Authorization material), or for the receiver to correctly
+    interpret the received content (e.g. the Link URL to fetch an @context).
+
+    Additionally, it can include another generic{key, value} array, named
+    notifierInfo, which contains the configuration that the broker needs to
+    know in order to correctly set up the communication channel towards the
+    receiver
+
+    Example of "receiverInfo"
+        "receiverInfo": [
+            {
+              "key": "H1",
+              "value": "123"
+            },
+            {
+              "key": "H2",
+              "value": "456"
+            }
+          ]
+
+    Example of "notifierInfo"
+        "notifierInfo": [
+            {
+              "key": "MQTT-Version",
+              "value": "mqtt5.0"
+            }
+          ]
+    """
+    uri: AnyUrl = Field(
+        description="Dereferenceable URI"
+    )
+    accept: Optional[str] = Field(
+        default=None,
+        description="MIME type for the notification payload body "
+                    "(application/json, application/ld+json, "
+                    "application/geo+json)"
+    )
+    receiverInfo: Optional[List[KeyValuePair]] = Field(
+        default=None,
+        description="Generic {key, value} array to convey optional information "
+                    "to the receiver"
+    )
+    notifierInfo: Optional[List[KeyValuePair]] = Field(
+        default=None,
+        description="Generic {key, value} array to set up the communication "
+                    "channel"
+    )
+    model_config = ConfigDict(populate_by_name=True)
+
+    @field_validator("uri")
+    @classmethod
+    def check_uri(cls, uri: AnyUrl):
+        if uri.scheme not in ("http", "mqtt"):
+            raise ValueError("NGSI-LD currently only support http and mqtt")
+        return uri
+
+    @field_validator("notifierInfo")
+    @classmethod
+    def check_notifier_info(cls, notifierInfo: List[KeyValuePair]):
+        # TODO add validation of notifierInfo for MQTT notification
+        return notifierInfo
+
+
+class NotificationParams(BaseModel):
+    attributes: Optional[List[str]] = Field(
+        default=None,
+        description="Entity Attribute Names (Properties or Relationships) to be included in the notification payload body. If undefined, it will mean all Attributes"
+    )
+    format: Optional[str] = Field(
+        default="normalized",
+        description="Conveys the representation format of the entities delivered at notification time. By default, it will be in normalized format"
+    )
+    endpoint: Endpoint = Field(
+        ...,
+        description="Notification endpoint details"
+    )
+    status: Optional[str] = Field(
+        default=None,
+        description="Status of the Notification. It shall be 'ok' if the last attempt to notify the subscriber succeeded. It shall be 'failed' if the last attempt to notify the subscriber failed"
+    )
+
+    # Additional members
+    timesSent: Optional[int] = Field(
+        default=None,
+        description="Number of times that the notification was sent. Provided by the system when querying the details of a subscription"
+    )
+    lastNotification: Optional[str] = Field(
+        default=None,
+        description="Timestamp corresponding to the instant when the last notification was sent. Provided by the system when querying the details of a subscription"
+    )
+    lastFailure: Optional[str] = Field(
+        default=None,
+        description="Timestamp corresponding to the instant when the last notification resulting in failure was sent. Provided by the system when querying the details of a subscription"
+    )
+    lastSuccess: Optional[str] = Field(
+        default=None,
+        description="Timestamp corresponding to the instant when the last successful notification was sent. Provided by the system when querying the details of a subscription"
+    )
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class TemporalQuery(BaseModel):
+    timerel: str = Field(
+        ...,
+        description="String representing the temporal relationship as defined by clause 4.11 (Allowed values: 'before', 'after', and 'between')"
+    )
+    timeAt: str = Field(
+        ...,
+        description="String representing the timeAt parameter as defined by clause 4.11. It shall be a DateTime"
+    )
+    endTimeAt: Optional[str] = Field(
+        default=None,
+        description="String representing the endTimeAt parameter as defined by clause 4.11. It shall be a DateTime. Cardinality shall be 1 if timerel is equal to 'between'"
+    )
+    timeproperty: Optional[str] = Field(
+        default=None,
+        description="String representing a Property name. The name of the Property that contains the temporal data that will be used to resolve the temporal query. If not specified,"
+    )
+    model_config = ConfigDict(populate_by_name=True)
+
 
 class Subscription(BaseModel):
-    """
-    Subscription payload validations
-    https://fiware-orion.readthedocs.io/en/master/user/ngsiv2_implementation_notes/index.html#subscription-payload-validations
-    """
-    model_config = ConfigDict(validate_assignment=True)
-
     id: Optional[str] = Field(
         default=None,
-        description="Subscription unique identifier. Automatically created at "
-                    "creation time."
+        description="Subscription identifier (JSON-LD @id)"
+    )
+    type: str = Field(
+        default="Subscription",
+        description="JSON-LD @type"
+    )
+    subscriptionName: Optional[str] = Field(
+        default=None
+
+        ,
+        description="A (short) name given to this Subscription"
     )
     description: Optional[str] = Field(
         default=None,
-        description="A free text used by the client to describe the "
-                    "subscription."
+        description="Subscription description"
     )
-    status: Optional[Status] = Field(
-        default=Status.ACTIVE,
-        description="Either active (for active subscriptions) or inactive "
-                    "(for inactive subscriptions). If this field is not "
-                    "provided at subscription creation time, new subscriptions "
-                    "are created with the active status, which can be changed"
-                    " by clients afterwards. For expired subscriptions, this "
-                    "attribute is set to expired (no matter if the client "
-                    "updates it to active/inactive). Also, for subscriptions "
-                    "experiencing problems with notifications, the status is "
-                    "set to failed. As soon as the notifications start working "
-                    "again, the status is changed back to active."
-    )
-    data: Data = Field(
-        description="An object that describes the subject of the subscription.",
-        example={
-            'entities': [{'type': 'FillingLevelSensor'}],
-            'condition': {
-                'watchedAttributes': ['filling'],
-                'q': {'q': 'filling>0.4'},
-            },
-        },
-    )
-
-    notification: Notification = Field(
-        description="An object that describes the notification to send when "
-                    "the subscription is triggered.",
-        example={
-            'attributes': ["filling", "controlledAsset"],
-            'format': 'normalized',
-            'endpoint':{
-                'uri': 'http://tutorial:3000/subscription/low-stock-farm001-ngsild',
-                'accept': 'application/json'
-            }
-        },
-    )
-    
-    expires: Optional[datetime] = Field(
+    entities: Optional[List[EntityInfo]] = Field(
         default=None,
-        description="Subscription expiration date in ISO8601 format. "
-                    "Permanent subscriptions must omit this field."
+        description="Entities subscribed"
     )
-
-    throttling: Optional[conint(strict=True, ge=0,)] = Field(
+    watchedAttributes: Optional[List[str]] = Field(
         default=None,
-        strict=True,
-        description="Minimal period of time in seconds which "
-                    "must elapse between two consecutive notifications. "
-                    "It is optional."
+        description="Watched Attributes (Properties or Relationships)"
     )
+    notificationTrigger: Optional[List[str]] = Field(
+        default=None,
+        description="Notification triggers"
+    )
+    timeInterval: Optional[int] = Field(
+        default=None,
+        description="Time interval in seconds"
+    )
+    q: Optional[str] = Field(
+        default=None,
+        description="Query met by subscribed entities to trigger the notification"
+    )
+    geoQ: Optional[GeoQuery] = Field(
+        default=None,
+        description="Geoquery met by subscribed entities to trigger the notification"
+    )
+    csf: Optional[str] = Field(
+        default=None,
+        description="Context source filter"
+    )
+    isActive: bool = Field(
+        default=True,
+        description="Indicates if the Subscription is under operation (True) or paused (False)"
+    )
+    notification: NotificationParams = Field(
+        ...,
+        description="Notification details"
+    )
+    expiresAt: Optional[str] = Field(
+        default=None,
+        description="Expiration date for the subscription"
+    )
+    throttling: Optional[int] = Field(
+        default=None,
+        description="Minimal period of time in seconds between two consecutive notifications"
+    )
+    temporalQ: Optional[TemporalQuery] = Field(
+        default=None,
+        description="Temporal Query"
+    )
+    scopeQ: Optional[str] = Field(
+        default=None,
+        description="Scope query"
+    )
+    lang: Optional[str] = Field(
+        default=None,
+        description="Language filter applied to the query"
+    )
+    model_config = ConfigDict(populate_by_name=True)

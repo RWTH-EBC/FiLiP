@@ -219,9 +219,10 @@ how you can contribute to this project.
 
 ## Authors
 
-* [Thomas Storek](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Team2/~lhda/Thomas-Storek/?lidx=1) 
+* [Thomas Storek](https://github.com/tstorek) 
 * [Junsong Du](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Digitale-Energie-Quartiere/~trcib/Du-Junsong/lidx/1/) (corresponding)
 * [Saira Bano](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Systemadministration/~ohhca/Bano-Saira/)
+* [Sebastian Blechmann](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Team2/~carjd/Blechmann-Sebastian/)
 
 ## Alumni
 
@@ -233,21 +234,23 @@ how you can contribute to this project.
 
 We presented or applied the library in the following publications:
 
+- S. Blechmann, I. Sowa, M. H. Schraven, R. Streblow, D. Müller & A. Monti. Open source platform application for smart building and smart grid controls. Automation in Construction 145 (2023), 104622. ISSN: 0926-5805. https://doi.org/10.1016/j.autcon.2022.104622        
+
 - Haghgoo, M., Dognini, A., Storek, T., Plamanescu, R, Rahe, U., 
   Gheorghe, S, Albu, M., Monti, A., Müller, D. (2021) A cloud-based service-oriented architecture to unlock smart energy services
-  https://www.doi.org/10.1186/s42162-021-00143-x
+  https://www.doi.org/10.1186/s42162-021-00143-x      
 
 - Baranski, M., Storek, T. P. B., Kümpel, A., Blechmann, S., Streblow, R., 
 Müller, D. et al.,
 (2020). National 5G Energy Hub : Application of the Open-Source Cloud Platform 
 FIWARE for Future Energy Management Systems. 
-https://doi.org/10.18154/RWTH-2020-07876
+https://doi.org/10.18154/RWTH-2020-07876      
 
 - T. Storek, J. Lohmöller, A. Kümpel, M. Baranski & D. Müller (2019). 
 Application of the open-source cloud platform FIWARE for future building 
 energy management systems. 
 Journal of Physics: 
-Conference Series, 1343, 12063. https://doi.org/10.1088/1742-6596/1343/1/012063
+Conference Series, 1343, 12063. https://doi.org/10.1088/1742-6596/1343/1/012063     
 
 ## License
 
@@ -257,7 +260,7 @@ This project is licensed under the BSD License - see the [LICENSE](LICENSE) file
 
 <a href="https://www.ebc.eonerc.rwth-aachen.de/"> <img alt="EBC" src="https://www.ebc.eonerc.rwth-aachen.de/global/show_picture.asp?id=aaaaaaaaaakevlz" height="100"> </a>
 
-2021-2022, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy 
+2021-2024, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy 
 Efficient Buildings and Indoor Climate
 
 [Institute for Energy Efficient Buildings and Indoor Climate (EBC)](https://www.ebc.eonerc.rwth-aachen.de)  

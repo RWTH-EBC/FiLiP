@@ -1,5 +1,7 @@
 #### v0.3.1
 - add tutorial for protected endpoint with bearer authentication ([#208](https://github.com/RWTH-EBC/FiLiP/issues/208))
+- update pandas version to `~=2.1.4` for `python>=3.9` ([#231](https://github.com/RWTH-EBC/FiLiP/pull/231))
+- fix: wrong msg in iotac post device ([#214](https://github.com/RWTH-EBC/FiLiP/pull/214))
 
 #### v0.3.0
 - fix: bug in typePattern validation @richardmarston ([#180](https://github.com/RWTH-EBC/FiLiP/pull/180))
