@@ -65,7 +65,7 @@ class QuantumLeapClient(BaseHttpClient):
         """
         url = urljoin(self.base_url, '/version')
         try:
-            res = self.get(url=url)
+            res = self.get(url=url, headers=self.headers)
             if res.ok:
                 return res.json()
             res.raise_for_status()
@@ -88,7 +88,7 @@ class QuantumLeapClient(BaseHttpClient):
         """
         url = urljoin(self.base_url, '/health')
         try:
-            res = self.get(url=url)
+            res = self.get(url=url, headers=self.headers)
             if res.ok:
                 return res.json()
             res.raise_for_status()
