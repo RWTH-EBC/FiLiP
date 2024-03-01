@@ -11,6 +11,8 @@ import uuid
 
 import paho.mqtt.client as mqtt
 from datetime import datetime, timedelta
+
+import requests
 from requests import RequestException
 from filip.models.base import FiwareHeader
 from filip.utils.simple_ql import QueryString
@@ -23,7 +25,8 @@ from filip.models.ngsi_v2.context import \
     NamedContextAttribute, \
     NamedCommand, \
     Query, \
-    ActionType
+    ActionType, \
+    ContextEntityKeyValues
 
 from filip.models.ngsi_v2.base import AttrsFormat, EntityPattern, Status, \
     NamedMetadata
@@ -215,7 +218,10 @@ class TestContextBroker(unittest.TestCase):
                 fiware_header=self.fiware_header) as client:
             client.post_entity(entity=self.entity, update=True)
             res_entity = client.get_entity(entity_id=self.entity.id)
-            client.get_entity(entity_id=self.entity.id, attrs=['temperature'])
+            self.assertEqual(res_entity,
+                             client.get_entity(
+                                 entity_id=self.entity.id,
+                                 attrs=list(res_entity.get_attribute_names())))
             self.assertEqual(client.get_entity_attributes(
                 entity_id=self.entity.id), res_entity.get_properties(
                 response_format='dict'))
@@ -228,6 +234,164 @@ class TestContextBroker(unittest.TestCase):
             client.update_entity(entity=res_entity)
             self.assertEqual(client.get_entity(entity_id=self.entity.id),
                              res_entity)
+            # delete attribute
+            res_entity.delete_attributes(attrs={'pressure': ContextAttribute(
+                type='Number', value=1050)})
+            client.post_entity(entity=res_entity, update=True)
+            self.assertEqual(client.get_entity(entity_id=self.entity.id),
+                             res_entity)
+
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                cb_url=settings.CB_URL)
+    def test_entity_update(self):
+        """
+        Test different ways (post, update, override, patch) to update entity
+        Both with the update scenario
+        1) append attribute
+        2) update existing attribute value
+        1) delete attribute
+        
+        Returns:
+
+        """
+        with ContextBrokerClient(
+                url=settings.CB_URL,
+                fiware_header=self.fiware_header) as client:
+            entity_init = self.entity.model_copy(deep=True)
+            attr_init = entity_init.get_attribute("temperature")
+            attr_init.metadata = {
+                    "metadata_init": {
+                        "type": "Text",
+                        "value": "something"}
+                }
+            attr_append = NamedContextAttribute(**{
+                "name": 'pressure',
+                "type": 'Number',
+                "value": 1050})
+            entity_init.update_attribute(attrs=[attr_init])
+
+            # Post
+            if "post":
+                client.post_entity(entity=entity_init, update=True)
+                entity_post = entity_init.model_copy(deep=True)
+                # 1) append attribute
+                entity_post.add_attributes(attrs=[attr_append])
+                client.post_entity(entity=entity_post, patch=True)
+                self.assertEqual(client.get_entity(entity_id=entity_post.id),
+                                 entity_post)
+                # 2) update existing attribute value
+                attr_append_update = NamedContextAttribute(**{
+                    "name": 'pressure',
+                    "type": 'Number',
+                    "value": 2050})
+                entity_post.update_attribute(attrs=[attr_append_update])
+                client.post_entity(entity=entity_post, patch=True)
+                self.assertEqual(client.get_entity(entity_id=entity_post.id),
+                                 entity_post)
+                # 3) delete attribute
+                entity_post.delete_attributes(attrs=[attr_append])
+                client.post_entity(entity=entity_post, update=True)
+                self.assertEqual(client.get_entity(entity_id=entity_post.id),
+                                 entity_post)
+                clear_all(fiware_header=self.fiware_header,
+                          cb_url=settings.CB_URL)
+
+            # update_entity()
+            if "update_entity":
+                client.post_entity(entity=entity_init, update=True)
+                entity_update = entity_init.model_copy(deep=True)
+                # 1) append attribute
+                entity_update.add_attributes(attrs=[attr_append])
+                # change the value of existing attributes
+                entity_update.temperature.value = 30
+                with self.assertRaises(requests.RequestException):
+                    client.update_entity(entity=entity_update,
+                                         append_strict=True)
+                entity_updated = client.get_entity(entity_id=entity_update.id)
+                self.assertEqual(entity_updated.get_attribute_names(),
+                                 entity_update.get_attribute_names())
+                self.assertNotEqual(entity_updated.temperature.value,
+                                    entity_update.temperature.value)
+                # change back the value
+                entity_update.temperature.value = 20.0
+                # 2) update existing attribute value
+                attr_append_update = NamedContextAttribute(**{
+                    "name": 'pressure',
+                    "type": 'Number',
+                    "value": 2050})
+                entity_update.update_attribute(attrs=[attr_append_update])
+                client.update_entity(entity=ContextEntity(
+                    **{
+                        "id": entity_update.id,
+                        "type": entity_update.type,
+                        "pressure": {
+                            "type": 'Number',
+                            "value": 2050
+                        }
+                    }
+                ))
+                self.assertEqual(client.get_entity(entity_id=entity_update.id),
+                                 entity_update)
+                # 3) delete attribute
+                entity_update.delete_attributes(attrs=[attr_append])
+                client.update_entity(entity=entity_update)
+                self.assertNotEqual(client.get_entity(entity_id=entity_update.id),
+                                    entity_update)
+                clear_all(fiware_header=self.fiware_header,
+                          cb_url=settings.CB_URL)
+
+            # override_entity()
+            if "override_entity":
+                client.post_entity(entity=entity_init, update=True)
+                entity_override = entity_init.model_copy(deep=True)
+                # 1) append attribute
+                entity_override.add_attributes(attrs=[attr_append])
+                client.override_entity(entity=entity_override)
+                self.assertEqual(client.get_entity(entity_id=entity_override.id),
+                                 entity_override)
+                # 2) update existing attribute value
+                attr_append_update = NamedContextAttribute(**{
+                    "name": 'pressure',
+                    "type": 'Number',
+                    "value": 2050})
+                entity_override.update_attribute(attrs=[attr_append_update])
+                client.override_entity(entity=entity_override)
+                self.assertEqual(client.get_entity(entity_id=entity_override.id),
+                                 entity_override)
+                # 3) delete attribute
+                entity_override.delete_attributes(attrs=[attr_append])
+                client.override_entity(entity=entity_override)
+                self.assertEqual(client.get_entity(entity_id=entity_override.id),
+                                 entity_override)
+                clear_all(fiware_header=self.fiware_header,
+                          cb_url=settings.CB_URL)
+
+            # patch_entity
+            if "patch_entity":
+                client.post_entity(entity=entity_init, update=True)
+                entity_patch = entity_init.model_copy(deep=True)
+                # 1) append attribute
+                entity_patch.add_attributes(attrs=[attr_append])
+                client.patch_entity(entity=entity_patch)
+                self.assertEqual(client.get_entity(entity_id=entity_patch.id),
+                                 entity_patch)
+                # 2) update existing attribute value
+                attr_append_update = NamedContextAttribute(**{
+                    "name": 'pressure',
+                    "type": 'Number',
+                    "value": 2050})
+                entity_patch.update_attribute(attrs=[attr_append_update])
+                client.patch_entity(entity=entity_patch)
+                self.assertEqual(client.get_entity(entity_id=entity_patch.id),
+                                 entity_patch)
+                # 3) delete attribute
+                entity_patch.delete_attributes(attrs=[attr_append])
+                client.patch_entity(entity=entity_patch)
+                self.assertEqual(client.get_entity(entity_id=entity_patch.id),
+                                 entity_patch)
+                clear_all(fiware_header=self.fiware_header,
+                          cb_url=settings.CB_URL)
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
@@ -528,6 +692,50 @@ class TestContextBroker(unittest.TestCase):
         mqtt_client.loop_stop()
         mqtt_client.disconnect()
         time.sleep(1)
+
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                cb_url=settings.CB_URL)
+    def test_update_entity_keyvalues(self):
+        entity1 = self.entity.model_copy(deep=True)
+        # initial entity
+        self.client.post_entity(entity1)
+
+        # key value
+        entity1_key_value = self.client.get_entity(
+            entity_id=entity1.id,
+            response_format=AttrsFormat.KEY_VALUES)
+
+        # update entity with ContextEntityKeyValues
+        entity1_key_value.temperature = 30
+        self.client.update_entity_key_value(entity=entity1_key_value)
+        self.assertEqual(entity1_key_value,
+                         self.client.get_entity(
+                             entity_id=entity1.id,
+                             response_format=AttrsFormat.KEY_VALUES)
+                         )
+        entity2 = self.client.get_entity(entity_id=entity1.id)
+        self.assertEqual(entity1.temperature.type,
+                         entity2.temperature.type)
+
+        # update entity with dictionary
+        entity1_key_value_dict = entity1_key_value.model_dump()
+        entity1_key_value_dict["temperature"] = 40
+        self.client.update_entity_key_value(entity=entity1_key_value_dict)
+        self.client.get_entity(
+            entity_id=entity1.id,
+            response_format=AttrsFormat.KEY_VALUES).model_dump()
+        self.assertEqual(entity1_key_value_dict,
+                         self.client.get_entity(
+                             entity_id=entity1.id,
+                             response_format=AttrsFormat.KEY_VALUES).model_dump()
+                         )
+        entity3 = self.client.get_entity(entity_id=entity1.id)
+        self.assertEqual(entity1.temperature.type,
+                         entity3.temperature.type)
+        entity1_key_value_dict.update({"humidity": 50})
+        with self.assertRaises(RequestException):
+            self.client.update_entity_key_value(entity=entity1_key_value_dict)
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
