@@ -376,9 +376,11 @@ class ContextLDEntityKeyValues(BaseModel):
         frozen=True
     )
     field_validator("type")(validate_fiware_standard_regex)
-    context: List[str] = Field(
-        ...,
+    context: Optional[List[str]] = Field(
+        # ToDo: Matthias: Add field validator from subscription
+        #  -> use @context in def @field_validator("@context")
         title="@context",
+        default=None,
         description="providing an unambiguous definition by mapping terms to "
                     "URIs. For practicality reasons, "
                     "it is recommended to have a unique @context resource, "
@@ -465,17 +467,7 @@ class ContextLDEntity(ContextLDEntityKeyValues, ContextEntity):
                  **data):
 
         super().__init__(id=id, type=type, **data)
-        #ToDo: should I Add this logic here instead of super()?:
-        """ # There is currently no validation for extra fields
-        data.update(self._validate_attributes(data))
-        super().__init__(id=id, type=type, **data)
 
-    @classmethod
-    def _validate_attributes(cls, data: Dict):
-        attrs = {key: ContextAttribute.model_validate(attr) for key, attr in
-                 data.items() if key not in ContextEntity.model_fields}
-        return attrs"""
-        # ToDo: Add ContextAttribute in this file aswell? Also a new Base for the @context?
     model_config = ConfigDict(extra='allow', validate_default=True, validate_assignment=True)
 
     @field_validator("id")
