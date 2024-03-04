@@ -14,7 +14,6 @@ class TestLDContextModels(unittest.TestCase):
     """
     Test class for context broker models
     """
-    # ToDo @Matthias -> Run these Tests and find issues -> Try 1st to fix them in the code and otherwise correct test
     def setUp(self) -> None:
         """
         Setup test data
@@ -110,7 +109,7 @@ class TestLDContextModels(unittest.TestCase):
         Returns:
             None
         """
-        entity1 = ContextLDEntity(**self.entity1_dict)      # ToDo: @Context is not a ContextAttribute and no dict
+        entity1 = ContextLDEntity(**self.entity1_dict)
         entity2 = ContextLDEntity(**self.entity2_dict)
 
         self.assertEqual(self.entity1_dict,
@@ -149,9 +148,7 @@ class TestLDContextModels(unittest.TestCase):
         """
         pass
         entity = ContextLDEntity(id="urn:ngsi-ld:test", type="Tester")
-        # ToDo: Ask for error: 1 validation error for ContextLDEntity
-        #  context
-        #  Field required [type=missing, input_value={'id': 'urn:ngsi-ld:test', 'type': 'Tester'}, input_type=dict]
+
         properties = [
             NamedContextProperty(name="attr1"),
             NamedContextProperty(name="attr2"),
@@ -193,3 +190,8 @@ class TestLDContextModels(unittest.TestCase):
     def test_entity_relationships(self):
         pass
         # TODO relationships CRUD
+    
+    # ToDo: Matthias: Add test for context -> create entity with a full dict (e.g. entity1_dict)
+    #  -> if not failing get dict from filip and compare:
+    #  like: self.assertEqual(self.entity1_dict,
+    #                          entity1.model_dump(exclude_unset=True))
