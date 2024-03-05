@@ -22,4 +22,4 @@ matplotlib~=3.5.3; python_version < '3.9'
 matplotlib~=3.8.0; python_version >='3.9'
 # semantics
 rdflib~=6.0.0
-# igraph~=0.9.8
+# igraph~=0.11.2
