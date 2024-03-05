@@ -11,7 +11,7 @@ from filip.utils.validators import (validate_fiware_service_path,
 
 class NgsiVersion(str, Enum):
     """
-    Version of NGSI-Sepcifications that should be used within the target system.
+    Version of NGSI-Specification that should be used within the target system.
     Note:
         Currently, the library only supports functionality for NGSI-v2
     """

@@ -34,6 +34,7 @@ class TestContextModels(unittest.TestCase):
     def setUp(self) -> None:
         """
         Setup test data
+
         Returns:
             None
         """
@@ -49,6 +50,7 @@ class TestContextModels(unittest.TestCase):
     def test_cb_attribute(self) -> None:
         """
         Test context attribute models
+
         Returns:
             None
         """
