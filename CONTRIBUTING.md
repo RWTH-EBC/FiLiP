@@ -10,11 +10,8 @@ Consider labeling the issue with an [appropriate label](https://github.com/RWTH-
 
 If you instead want to contribute new features or fix bugs yourself, we are more than happy.
 
-Please also [raise an issue](https://github.com/RWTH-EBC/filip/issues/new) and create a new branch labeled `XY_some_name`.
-Here, `XY` is the number of your issue and `some_name` is a meaningful 
-description.
-Alternatively and preferred, issue branches are created automatically on issue 
-assignment with [robvanderleek/create-issue-branch](https://github.com/robvanderleek/create-issue-branch).
+Please [raise an issue](https://github.com/RWTH-EBC/filip/issues/new).
+Issue branches are created automatically on issue assignments.
 
 See [workflow definition](.github/workflows/issue-tracker.yml) and 
 [configuration file](.github/issue-branch.yml) for customization.
@@ -41,7 +38,7 @@ For committing style guide please use Conventional Commits 1.0.0. For more detai
 
 All created or modified function should be documented properly. 
 Try to follow the structure already present. 
-If possible, write a little doctest example into the docstring to make clear to user what the desired output of your function is. 
+If possible, write a little doctest example into the docstring to make clear to the user what the desired output of your function is. 
 All non-self-explanatory lines of code should include a comment. 
 Although you will notice that not all docstring are already in this style, we use the google-style for docstrings, e.g.
 
