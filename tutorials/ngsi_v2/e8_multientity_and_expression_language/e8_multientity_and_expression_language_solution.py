@@ -8,18 +8,15 @@
 # #### Steps to complete:
 # 1.
 """
-
 # Import packages
 import logging
-import json
 import time
 
-from filip.clients.ngsi_v2 import IoTAClient
-from filip.models.base import FiwareHeader, DataType
-from filip.models.ngsi_v2.iot import Device, ServiceGroup, TransportProtocol, PayloadProtocol, \
-    StaticDeviceAttribute, DeviceAttribute, LazyDeviceAttribute, DeviceCommand, ExpressionLanguage
+from filip.clients.ngsi_v2 import IoTAClient, ContextBrokerClient
+from filip.models.base import FiwareHeader
+from filip.models.ngsi_v2.iot import (Device, ServiceGroup, TransportProtocol, PayloadProtocol, DeviceAttribute,
+                                      ExpressionLanguage)
 from filip.utils.cleanup import clear_all
-from uuid import uuid4
 from paho.mqtt import client as mqtt_client
 
 # Host address of Context Broker
@@ -46,15 +43,14 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # FIWARE Header
-fiware_header = FiwareHeader(service=SERVICE,
-                             service_path=SERVICE_PATH)
+fiware_header = FiwareHeader(service=SERVICE, service_path=SERVICE_PATH)
 
 # Cleanup at the beginning
 clear_all(fiware_header=fiware_header, cb_url=CB_URL, iota_url=IOTA_URL)
 
-# IoT Agent Client
-iota_client = IoTAClient(url=IOTA_URL,
-                         fiware_header=fiware_header)
+# IoT Agent and OCB Client
+iota_client = IoTAClient(url=IOTA_URL, fiware_header=fiware_header)
+cb_client = ContextBrokerClient(url=CB_URL, fiware_header=fiware_header)
 
 # TODO: Setting expression language to JEXL at Service Group level
 service_group1 = ServiceGroup(entity_type='Thing',
@@ -93,6 +89,8 @@ device2 = Device(device_id="waste_container_002",
                  )
 iota_client.post_device(device=device2)
 
+# time.sleep(2)
+
 client = mqtt_client.Client()
 client.username_pw_set(username="", password="")
 client.connect(MQTT_BROKER_URL, MQTT_BROKER_PORT)
@@ -106,4 +104,39 @@ client.publish(topic=f'/json/{API_KEY}/{device1.device_id}/attrs',
 client.publish(topic=f'/json/{API_KEY}/{device2.device_id}/attrs',
                payload='{"value": 10, "spaces": "     foobar    "}')
 
-client.loop_stop()
+client.disconnect()
+
+# TODO: Create a weather station device with multi entity attributes
+device3 = Device(device_id="weather_station_001",
+                 entity_name="urn:ngsi-ld:WeatherStation:001",
+                 entity_type="WeatherStation",
+                 transport=TransportProtocol.MQTT,
+                 protocol=PayloadProtocol.IOTA_JSON,
+                 expressionLanguage=ExpressionLanguage.JEXL,
+                 attributes=[DeviceAttribute(object_id="v1", name="vol", type="Number", expression="v1*100",
+                                             entity_name="WeatherStation1", entity_type="SubWeatherStation"),
+                             DeviceAttribute(object_id="v2", name="vol", type="Number", expression="v2*100",
+                                             entity_name="WeatherStation2", entity_type="SubWeatherStation"),
+                             DeviceAttribute(object_id="v", name="vol", type="Number", expression="v*100")
+                             ]
+                 )
+iota_client.post_device(device=device3)
+
+# time.sleep(2)
+
+client = mqtt_client.Client()
+client.username_pw_set(username="", password="")
+client.connect(MQTT_BROKER_URL, MQTT_BROKER_PORT)
+client.loop_start()
+
+# TODO: Publish values to (multi entity) attributes of device3
+client.publish(topic=f'/json/{API_KEY}/{device3.device_id}/attrs',
+               payload='{"v1": 10, "v2": 20, "v": 30}')
+
+client.disconnect()
+
+time.sleep(2)
+
+# Printing context entities of OCB
+for context_entity in cb_client.get_entity_list(entity_types=["WasteContainer", "WeatherStation", "SubWeatherStation"]):
+    logger.info(context_entity.model_dump_json(indent=4))
