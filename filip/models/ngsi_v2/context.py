@@ -5,7 +5,8 @@ import json
 from typing import Any, List, Dict, Union, Optional, Set, Tuple
 
 from aenum import Enum
-from pydantic import field_validator, ConfigDict, BaseModel, Field
+from pydantic import field_validator, ConfigDict, BaseModel, Field, \
+    model_validator
 
 from filip.models.ngsi_v2.base import (
     EntityPattern,
@@ -219,15 +220,33 @@ class ContextEntity(ContextEntityKeyValues):
         else:
             super().__init__(id=id, type=type, **data)
 
+    # Validation of attributes
     @classmethod
-    def _validate_attributes(cls, data: Dict):
+    def _validate_attributes(cls, data: dict):
         attrs = {
             key: ContextAttribute.model_validate(attr)
             for key, attr in data.items()
-            if key not in ContextEntity.model_fields
+            if key not in cls.model_fields
         }
         return attrs
 
+    @model_validator(mode="after")
+    @classmethod
+    def check_attributes(cls, values):
+        # TODO: This does not yet work as expected because somethimes attributes
+        #  are not yet validated and therefore not have the type ContextAttribute
+        for attr in cls.model_fields:
+            if attr not in ["id", "type"]:
+                assert (
+                    isinstance(values.get(attr), ContextAttribute)
+                    or values.get(attr) == cls.model_fields[attr].default
+                ), (
+                    f"Attribute {attr} must be a of type or subtype "
+                    f"ContextAttribute"
+                )
+        return values
+
+    # API for attributes and commands
     def add_attributes(
         self, attrs: Union[Dict[str, ContextAttribute], List[NamedContextAttribute]]
     ) -> None:
@@ -568,7 +587,8 @@ class Query(BaseModel):
     )
     expression: Optional[Expression] = Field(
         default=None,
-        description="An expression composed of q, mq, georel, geometry and " "coords ",
+        description="An expression composed of q, mq, georel, geometry and "
+                    "coords",
     )
     metadata: Optional[List[str]] = Field(
         default=None,
