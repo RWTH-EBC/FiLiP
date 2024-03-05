@@ -114,9 +114,11 @@ device3 = Device(device_id="weather_station_001",
                  protocol=PayloadProtocol.IOTA_JSON,
                  expressionLanguage=ExpressionLanguage.JEXL,
                  attributes=[DeviceAttribute(object_id="v1", name="vol", type="Number", expression="v1*100",
-                                             entity_name="WeatherStation1", entity_type="SubWeatherStation"),
+                                             entity_name="urn:ngsi-ld:SubWeatherStation:001",
+                                             entity_type="SubWeatherStation"),
                              DeviceAttribute(object_id="v2", name="vol", type="Number", expression="v2*100",
-                                             entity_name="WeatherStation2", entity_type="SubWeatherStation"),
+                                             entity_name="urn:ngsi-ld:SubWeatherStation:002",
+                                             entity_type="SubWeatherStation"),
                              DeviceAttribute(object_id="v", name="vol", type="Number", expression="v*100")
                              ]
                  )
