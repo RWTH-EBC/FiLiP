@@ -91,8 +91,10 @@ class ContextAttribute(BaseAttribute, BaseValueAttribute):
         >>> attr = ContextAttribute(**data)
 
     """
-
-    pass
+    def __init__(self, type: str = None, **data):
+        if type is None and self.model_fields["type"].default:
+            type = self.model_fields["type"].default
+        super().__init__(type=type, **data)
 
 
 class NamedContextAttribute(ContextAttribute, BaseNameAttribute):
