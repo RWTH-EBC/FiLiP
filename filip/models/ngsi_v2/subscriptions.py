@@ -133,6 +133,11 @@ class Notification(BaseModel):
     be included.
     """
     model_config = ConfigDict(validate_assignment=True)
+    timesSent: Optional[Any] = Field(
+        default=None,
+        description="Not editable, only present in GET operations. "
+                    "Number of notifications sent due to this subscription."
+    )
     http: Optional[Http] = Field(
         default=None,
         description='It is used to convey parameters for notifications '
