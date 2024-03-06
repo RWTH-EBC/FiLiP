@@ -7,6 +7,7 @@ from typing import Any, List, Dict, Union, Optional, Set, Tuple
 from aenum import Enum
 from pydantic import field_validator, ConfigDict, BaseModel, Field, \
     model_validator
+from pydantic_core.core_schema import ValidationInfo
 
 from filip.models.ngsi_v2.base import (
     EntityPattern,
@@ -223,27 +224,48 @@ class ContextEntity(ContextEntityKeyValues):
     # Validation of attributes
     @classmethod
     def _validate_attributes(cls, data: dict):
+        """
+        Validate attributes of the entity if the attribute is not a model
+        field and the type is not already a subtype of ContextAttribute
+        """
         attrs = {
             key: ContextAttribute.model_validate(attr)
             for key, attr in data.items()
-            if key not in cls.model_fields
+            if (key not in cls.model_fields and not isinstance(attr, ContextAttribute))
         }
+
         return attrs
+
+    @field_validator('*')
+    @classmethod
+    def check_attributes(cls, value, info: ValidationInfo):
+        """
+        Check whether all model fields are of subtype of ContextAttribute to
+        ensure full functionality.
+        """
+        if info.field_name in ["id", "type"]:
+             return value
+
+        if info.field_name in cls.model_fields:
+            if not (isinstance(value, ContextAttribute)
+                    or value == cls.model_fields[info.field_name].default):
+                raise ValueError(f"Attribute {info.field_name} must be a of "
+                                 f"type or subtype ContextAttribute")
+        return value
 
     @model_validator(mode="after")
     @classmethod
-    def check_attributes(cls, values):
-        # TODO: This does not yet work as expected because somethimes attributes
-        #  are not yet validated and therefore not have the type ContextAttribute
-        for attr in cls.model_fields:
-            if attr not in ["id", "type"]:
-                assert (
-                    isinstance(values.get(attr), ContextAttribute)
-                    or values.get(attr) == cls.model_fields[attr].default
-                ), (
-                    f"Attribute {attr} must be a of type or subtype "
-                    f"ContextAttribute"
-                )
+    def check_attributes_after(cls, values):
+        try:
+            for attr in values.model_extra:
+                if not isinstance(values.__getattr__(attr), ContextAttribute):
+                    raise ValueError(f"Attribute {attr} must be a of type or "
+                                     f"subtype ContextAttribute. You most "
+                                     f"likely tried to directly assign an "
+                                     f"attribute without converting it to a "
+                                     f"proper Attribute-Type!")
+        except TypeError:
+            pass
         return values
 
     # API for attributes and commands
