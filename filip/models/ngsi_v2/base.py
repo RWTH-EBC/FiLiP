@@ -420,12 +420,14 @@ class BaseValueAttribute(BaseModel):
                 return int(value)
             if type_ == DataType.DATETIME:
                 return value
+            # allows list
             if type_ == DataType.ARRAY:
                 if isinstance(value, list):
                     return value
                 raise TypeError(f"{type(value)} does not match "
                                 f"{DataType.ARRAY}")
-            if type_ == DataType.STRUCTUREDVALUE:
+            # allows dict and BaseModel as object
+            if type_ == DataType.OBJECT:
                 if isinstance(value, dict):
                     value = json.dumps(value)
                     return json.loads(value)
@@ -435,11 +437,25 @@ class BaseValueAttribute(BaseModel):
                 raise TypeError(
                     f"{type(value)} does not match " f"{DataType.STRUCTUREDVALUE}"
                 )
+            # allows list, dict and BaseModel as structured value
+            if type_ == DataType.STRUCTUREDVALUE:
+                if isinstance(value, (dict, list)):
+                    value = json.dumps(value)
+                    return json.loads(value)
+                elif isinstance(value, BaseModel):
+                    value.model_dump_json()
+                    return value
+                raise TypeError(
+                    f"{type(value)} does not match " f"{DataType.STRUCTUREDVALUE}"
+                )
 
+            # if none of the above, check if it is a pydantic model
             if isinstance(value, BaseModel):
                 value.model_dump_json()
                 return value
 
+            # if none of the above, check if serializable. Hence, no further
+            # type check is performed
             value = json.dumps(value)
             return json.loads(value)
 
