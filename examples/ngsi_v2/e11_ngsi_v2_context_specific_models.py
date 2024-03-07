@@ -7,6 +7,11 @@
 #
 # E.g. the Smart Data Models provide their models in such format.
 # https://www.fiware.org/developers/smart-data-models/
+
+# In short: This functionality can be used whenever context entities
+# of a similar type are required. Using default values and type hints makes
+# duplication of code unnecessary and allows for a more consistent
+# entities and systems.
 """
 from pprint import pprint
 from typing import Literal
@@ -22,12 +27,14 @@ from filip.models.ngsi_v2.context import ContextEntity, ContextAttribute
 # Define a context specific attribute model, e.g. an attribute that holds
 # the postal address of location.
 
+
 # First, define the model for the address structure itself. Here, we use the
 # schema.org definition for a postal address.
 class AddressModel(BaseModel):
     """
     https://schema.org/PostalAddress
     """
+
     model_config = ConfigDict(populate_by_name=True)
 
     address_country: str = Field(
@@ -64,6 +71,12 @@ class AddressAttribute(ContextAttribute):
     """
     Context attribute for address
     """
+
+    def __init__(self, type: str = None, **data):
+        if type is None and self.model_fields["type"].default:
+            type = self.model_fields["type"].default
+        super().__init__(type=type, **data)
+
     # add default for type if not explicitly set
     type: Literal["PostalAddress"] = FieldInfo.merge_field_infos(
         # First position is the field info of the parent class
@@ -89,7 +102,6 @@ class WeatherStation(ContextEntity):
     """
     A context specific model for a weather station
     """
-
     # add default for type if not explicitly set
     type: str = FieldInfo.merge_field_infos(
         # First position is the field info of the parent class
@@ -121,9 +133,19 @@ if __name__ == "__main__":
     # Now we can create the weather station model and export it to a
     # json-schema file without explicitly defining the entity-type.
     # Furthermore, we can use the model to create a new weather station entity
-    weather_station = WeatherStation(id="myWeatherStation")
+    weather_station = WeatherStation(
+        id="myWeatherStation",
+        type="brick:WeatherStation",
+    )
     print(weather_station.model_dump_json(indent=2))
 
     # ## Export the model to a json-schema file. The schema now contains all
-    # added information about the customized model.
+    # added information about the customized model. Please note that the
+    # field `type` is no-longer a required field, as it is set to a default
+    # value.
+    pprint(weather_station.model_json_schema())
+
+    # To compare to the version without the custom model, see the output of
+    # the following code which would still require the user to define the type:
+    weather_station = ContextEntity.model_validate(weather_station.model_dump())
     pprint(weather_station.model_json_schema())

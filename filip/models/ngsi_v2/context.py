@@ -91,6 +91,10 @@ class ContextAttribute(BaseAttribute, BaseValueAttribute):
         >>> attr = ContextAttribute(**data)
 
     """
+    # although `type` is a required field in the NGSIv2 specification, it is
+    # set to optional here to allow for the possibility of setting
+    # default-types in child classes. Pydantic will raise the correct error
+    # and also exports the correct json-schema.
     def __init__(self, type: str = None, **data):
         if type is None and self.model_fields["type"].default:
             type = self.model_fields["type"].default
@@ -153,6 +157,10 @@ class ContextEntityKeyValues(BaseModel):
     )
     valid_type = field_validator("type")(validate_fiware_datatype_standard)
 
+    # although `type` is a required field in the NGSIv2 specification, it is
+    # set to optional here to allow for the possibility of setting
+    # default-types in child classes. Pydantic will raise the correct error
+    # and also exports the correct json-schema.
     def __init__(self, id: str, type: Union[str, Enum] = None, **data):
         # this allows to set the type of the entity in child classes
         if type is None:
@@ -213,7 +221,10 @@ class ContextEntity(ContextEntityKeyValues):
     model_config = ConfigDict(
         extra="allow", validate_default=True, validate_assignment=True
     )
-
+    # although `type` is a required field in the NGSIv2 specification, it is
+    # set to optional here to allow for the possibility of setting
+    # default-types in child classes. Pydantic will raise the correct error
+    # and also exports the correct json-schema.
     def __init__(self, id: str, type: str = None, **data):
         # There is currently no validation for extra fields
         data.update(self._validate_attributes(data))
