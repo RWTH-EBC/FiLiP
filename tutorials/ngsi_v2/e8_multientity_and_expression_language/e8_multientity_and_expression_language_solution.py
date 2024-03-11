@@ -70,8 +70,9 @@ service_group1 = ServiceGroup(entity_type='Thing',
                               expressionLanguage=ExpressionLanguage.JEXL)
 iota_client.post_group(service_group=service_group1)
 
-# TODO: Create a device with two attributes location and fillingLevel that use expressions. These attributes are based
-#  on the attributes longitude, latitude and level.
+# TODO: Create a device with two attributes 'location' and 'fillingLevel' that use expressions. These attributes are
+#  based on the attributes 'longitude', 'latitude' and 'level'. 'location' is an array with 'longitude' and 'latitude'.
+#  'fillingLevel' is 'level' divided by 100
 device1 = Device(device_id="waste_container_001",
                  entity_name="urn:ngsi-ld:WasteContainer:001",
                  entity_type="WasteContainer",
@@ -86,7 +87,9 @@ device1 = Device(device_id="waste_container_001",
                  )
 iota_client.post_device(device=device1)
 
-# TODO: Setting expression language to JEXL at Device level with other attributes
+# TODO: Setting expression language to JEXL at Device level with other attributes. The attribute 'value' (Number) is
+#  itself multiplied by 5. The attribute 'consumption' (String) is the trimmed version of the attribute 'spaces'
+#  (String)
 device2 = Device(device_id="waste_container_002",
                  entity_name="urn:ngsi-ld:WasteContainer:002",
                  entity_type="WasteContainer",
@@ -107,17 +110,19 @@ client.username_pw_set(username="", password="")
 client.connect(MQTT_BROKER_URL, MQTT_BROKER_PORT)
 client.loop_start()
 
-# TODO: Publish attributes of device1
+# TODO: Publish attributes 'level', 'longitude' and 'latitude' of device1
 client.publish(topic=f'/json/{API_KEY}/{device1.device_id}/attrs',
                payload='{"level": 99, "longitude": 12.0, "latitude": 23.0}')
 
-# TODO: Publish attributes of device2
+# TODO: Publish attributes 'value' and 'spaces' of device2
 client.publish(topic=f'/json/{API_KEY}/{device2.device_id}/attrs',
                payload='{"value": 10, "spaces": "     foobar    "}')
 
 client.disconnect()
 
-# TODO: Create a weather station device with multi entity attributes
+# TODO: Create a weather station device with multi entity attributes (Number). 'v' is multiplied by 100 and is a
+#  standard attribute. 'v1' and 'v2' are multiplied by 100 and are multi entity attributes of type SubWeatherStation.
+#  The name of each attribute is 'vol'.
 device3 = Device(device_id="weather_station_001",
                  entity_name="urn:ngsi-ld:WeatherStation:001",
                  entity_type="WeatherStation",
@@ -142,7 +147,7 @@ client.username_pw_set(username="", password="")
 client.connect(MQTT_BROKER_URL, MQTT_BROKER_PORT)
 client.loop_start()
 
-# TODO: Publish values to (multi entity) attributes of device3
+# TODO: Publish values to all attributes of device3
 client.publish(topic=f'/json/{API_KEY}/{device3.device_id}/attrs',
                payload='{"v1": 10, "v2": 20, "v": 30}')
 
