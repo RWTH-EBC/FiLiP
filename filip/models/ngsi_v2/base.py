@@ -4,6 +4,16 @@ Shared models that are used by multiple submodules
 import json
 
 from aenum import Enum
+from geojson_pydantic import (
+    Point,
+    MultiPoint,
+    LineString,
+    MultiLineString,
+    Polygon,
+    MultiPolygon,
+    Feature,
+    FeatureCollection,
+)
 from pydantic import (
     field_validator,
     model_validator,
@@ -13,8 +23,7 @@ from pydantic import (
     Field,
     model_serializer,
     SerializationInfo,
-    FieldValidationInfo,
-    ValidationInfo
+    ValidationInfo,
 )
 
 from typing import Union, Optional, Pattern, List, Dict, Any
@@ -215,7 +224,7 @@ class Metadata(BaseModel):
     )
 
     @field_validator("value")
-    def validate_value(cls, value, info: FieldValidationInfo):
+    def validate_value(cls, value, info: ValidationInfo):
         assert json.dumps(value), "metadata not serializable"
 
         if info.data.get("type").casefold() == "unit":
@@ -424,8 +433,7 @@ class BaseValueAttribute(BaseModel):
             if type_ == DataType.ARRAY:
                 if isinstance(value, list):
                     return value
-                raise TypeError(f"{type(value)} does not match "
-                                f"{DataType.ARRAY}")
+                raise TypeError(f"{type(value)} does not match " f"{DataType.ARRAY}")
             # allows dict and BaseModel as object
             if type_ == DataType.OBJECT:
                 if isinstance(value, dict):
@@ -437,6 +445,44 @@ class BaseValueAttribute(BaseModel):
                 raise TypeError(
                     f"{type(value)} does not match " f"{DataType.STRUCTUREDVALUE}"
                 )
+            # allows geojson as structured value
+            if type_ == DataType.GEOJSON:
+                if isinstance(
+                    value,
+                    (
+                        Point,
+                        MultiPoint,
+                        LineString,
+                        MultiLineString,
+                        Polygon,
+                        MultiPolygon,
+                        Feature,
+                        FeatureCollection,
+                    ),
+                ):
+                    return value
+
+                if isinstance(value, dict):
+                    _geo_json_type = value.get("type", None)
+                    if _geo_json_type == "Point":
+                        return Point(**value)
+                    elif _geo_json_type == "MultiPoint":
+                        return MultiPoint(**value)
+                    elif _geo_json_type == "LineString":
+                        return LineString(**value)
+                    elif _geo_json_type == "MultiLineString":
+                        return MultiLineString(**value)
+                    elif _geo_json_type == "Polygon":
+                        return Polygon(**value)
+                    elif _geo_json_type == "MultiPolygon":
+                        return MultiPolygon(**value)
+                    elif _geo_json_type == "Feature":
+                        return Feature(**value)
+                    elif _geo_json_type == "FeatureCollection":
+                        return FeatureCollection(**value)
+                raise TypeError(f"{type(value)} does not match "
+                                f"{DataType.GEOJSON}")
+
             # allows list, dict and BaseModel as structured value
             if type_ == DataType.STRUCTUREDVALUE:
                 if isinstance(value, (dict, list)):
