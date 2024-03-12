@@ -626,9 +626,11 @@ class TestContextModels(unittest.TestCase):
         """
         Cleanup test server
         """
-        pass
-        # clear_all(fiware_header=FiwareHeader(
-        #   service=settings.FIWARE_SERVICE,
-        #   service_path=settings.FIWARE_SERVICEPATH),
-        #   cb_url=settings.CB_URL,
-        #   iota_url=settings.IOTA_JSON_URL)
+        clear_all(
+            fiware_header=FiwareHeader(
+                service=settings.FIWARE_SERVICE,
+                service_path=settings.FIWARE_SERVICEPATH,
+            ),
+            cb_url=settings.CB_URL,
+            iota_url=settings.IOTA_JSON_URL,
+        )
