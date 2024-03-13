@@ -21,7 +21,7 @@ from filip.models.ngsi_v2.base import AttrsFormat
 from filip.models.ngsi_v2.subscriptions import Subscription
 from filip.models.ngsi_ld.context import ContextLDEntity, ContextProperty, ContextRelationship, NamedContextProperty, \
     NamedContextRelationship, ActionTypeLD, UpdateLD
-from models.ngsi_v2.context import Query
+from filip.models.ngsi_v2.context import Query
 
 
 class NgsiURLVersion(str, Enum):
