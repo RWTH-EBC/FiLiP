@@ -35,7 +35,7 @@ class ContextProperty(BaseModel):
         >>> attr = ContextProperty(**data)
 
     """
-    type = "Property"
+    type: str = "Property"
     value: Optional[Union[Union[float, int, bool, str, List, Dict[str, Any]],
                           List[Union[float, int, bool, str, List,
                                      Dict[str, Any]]]]] = Field(
@@ -61,7 +61,8 @@ class NamedContextProperty(ContextProperty):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.string_protect.value,
+        #pattern=FiwareRegex.string_protect.value,
+        pattern=r".*" # TODO: change! - this is wrong, but the value above does not work with pydantic
         # Make it FIWARE-Safe
     )
 
@@ -82,7 +83,7 @@ class ContextRelationship(BaseModel):
         >>> attr = ContextRelationship(**data)
 
     """
-    type = "Relationship"
+    type: str = "Relationship"
     object: Optional[Union[Union[float, int, bool, str, List, Dict[str, Any]],
                            List[Union[float, int, bool, str, List,
                                       Dict[str, Any]]]]] = Field(
@@ -109,7 +110,8 @@ class NamedContextRelationship(ContextRelationship):
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.string_protect.value,
+        #pattern=FiwareRegex.string_protect.value,
+        pattern=r".*" # TODO: change! - this is wrong, but the value above does not work with pydantic
         # Make it FIWARE-Safe
     )
 
@@ -137,7 +139,8 @@ class ContextLDEntityKeyValues(BaseModel):
         example='urn:ngsi-ld:Room:001',
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.standard.value,  # Make it FIWARE-Safe
+        #pattern=FiwareRegex.standard.value,  # Make it FIWARE-Safe
+        pattern=r".*", # TODO: change! - this is wrong, but the value above does not work with pydantic
         allow_mutation=False
     )
     type: str = Field(
@@ -150,7 +153,8 @@ class ContextLDEntityKeyValues(BaseModel):
         example="Room",
         max_length=256,
         min_length=1,
-        regex=FiwareRegex.standard.value,  # Make it FIWARE-Safe
+        #pattern=FiwareRegex.standard.value,  # Make it FIWARE-Safe
+        pattern=r".*", # TODO: change! - this is wrong, but the value above does not work with pydantic
         allow_mutation=False
     )
 

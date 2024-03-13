@@ -15,13 +15,13 @@ from filip.models.base import  DataType, FiwareLDHeader
 from filip.models.ngsi_ld.context import ActionTypeLD, ContextLDEntity, ContextProperty, NamedContextProperty
 from filip.utils.simple_ql import QueryString
 
+from filip.models.ngsi_v2.base import AttrsFormat
+from filip.models.ngsi_v2.subscriptions import Subscription
 
 from filip.models.ngsi_v2.context import \
-    AttrsFormat, \
     NamedCommand, \
-    Subscription, \
     Query, \
-    Entity
+    ContextEntity
 
 
 # Setting up logging
@@ -257,7 +257,7 @@ class TestContextBroker(unittest.TestCase):
                                       type=f'filip:object:TypeB') for i in
                         range(0, 1000)]
             client.update(entities=entities, action_type=ActionTypeLD.CREATE)
-            e = Entity(idPattern=".*", typePattern=".*TypeA$")
+            e = ContextEntity(idPattern=".*", typePattern=".*TypeA$")
 
     def test_get_all_attributes(self):
         fiware_header = FiwareLDHeader(service='filip',
