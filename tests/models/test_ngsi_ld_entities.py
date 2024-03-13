@@ -1,9 +1,9 @@
 import _json
 import unittest
-#from pydantic import ValidationError
+from pydantic import ValidationError
 from filip.clients.ngsi_v2.cb import ContextBrokerClient	
 
-from filip.clients.ngsi_ld.cb import ContextBrokerLDClient
+# from filip.clients.ngsi_ld.cb import ContextBrokerLDClient
 # from filip.models.ngsi_v2.subscriptions import \
 #     Http, \
 #     HttpCustom, \
@@ -17,7 +17,7 @@ from tests.config import settings
 from filip.models.ngsi_ld.context import ContextLDEntity
 import requests
 
-class TestEntities(unittest.Testcase):
+class TestEntities(unittest.TestCase):
     """
     Test class for entity endpoints.
     """
@@ -36,17 +36,22 @@ class TestEntities(unittest.Testcase):
         self.mqtt_topic = '/filip/testing'
 
         CB_URL = "http://localhost:1026"
-
-        self.cb_client = ContextBrokerLDClient(url=CB_URL,
+        self.cb_client = ContextBrokerClient(url=CB_URL,
                                     fiware_header=self.fiware_header)
         
-        self.entity = ContextLDEntity(id="room1", 
-                                      type="room")
-        self.entity_2 = ContextLDEntity(id="room2",
-                                        type="room")
-        
-        
 
+        self.attr = {'testtemperature': {'value': 20.0}}
+        self.entity = ContextLDEntity(id='urn:ngsi-ld:my:id', type='MyType', **self.attr)
+        #self.entity = ContextLDEntity(id="urn:ngsi-ld:room1", type="Room", data={})
+        
+        # self.entity = ContextLDEntity(id="urn:ngsi-ld:room1", type="Room", **room1_data)
+        # self.entity = ContextLDEntity(id="urn:ngsi-ld:room1", 
+                                    #   type="room",
+                                    #   data={})
+        self.entity_2 = ContextLDEntity(id="urn:ngsi-ld:room2",
+                                        type="room",
+                                      data={})
+    
 
     def test_get_entites(self):
         """
@@ -66,7 +71,7 @@ class TestEntities(unittest.Testcase):
             - options(string): Options dictionary; Available values : keyValues, sysAttrs
         """
         pass
-
+    
     def test_post_entity(self):
         """
         Post an entity.
@@ -144,7 +149,7 @@ class TestEntities(unittest.Testcase):
 
         """delete"""
         self.cb_client.delete_entities(entities=entity_list)
-
+    
     def test_get_entity(self):
         """
         Get an entity with an specific ID.
@@ -192,9 +197,7 @@ class TestEntities(unittest.Testcase):
 
         """delete"""
         self.cb_client.delete_entity(entity_id=self.entity.id, entity_type=self.entity.type)
-
-
-
+    
     def test_delete_entity(self):
         """
         Removes an specific Entity from an NGSI-LD system.
@@ -248,8 +251,8 @@ class TestEntities(unittest.Testcase):
         ret = self.cb_client.delete_entity(entity_id=self.entity, entity_type=self.entity.type)
             # Error should be raised in delete_entity function because enitity was already deleted
         if not ret:
-            raise ValueError("There should have been an error raised because of the deletion of an non existent entity.")
-        
+            raise ValueError("There should have been an error raised because of the deletion of an non existent entity.")  
+    
     def test_add_attributes_entity(self):
         """
         Append new Entity attributes to an existing Entity within an NGSI-LD system.
@@ -271,10 +274,6 @@ class TestEntities(unittest.Testcase):
         Test 1:
             post an entity with entity_ID and entity_name
             add attribute to the entity with entity_ID
-            return != 204 ? 
-                yes:
-                    Raise Error
-
             get entity with entity_ID and new attribute
             Is new attribute not added to enitity ? 
                 yes:
@@ -296,6 +295,12 @@ class TestEntities(unittest.Testcase):
         """
         """Test1"""
         self.cb_client.post_entity(self.entity)
+        self.attr = {'testmoisture': {'value': 0.5}}
+        self.entity.add_attributes(self.attr)
+        entity = self.cb_client.get_entity(self.entity.id)
+        entity = ContextLDEntity()
+        # How do I get the attribute?
+        
     def test_patch_entity_attrs(self):
         """
         Update existing Entity attributes within an NGSI-LD system
@@ -335,27 +340,29 @@ class TestEntities(unittest.Testcase):
         """
         """Test1"""
         self.test_post_entity(self.entity)
-        room2_entity = ContextLDEntity(id="Room2", type="Room")
+        room2_entity = ContextLDEntity(id="Room2", 
+                                       type="Room",
+                                      data={})
         temp_attr = NamedContextAttribute(name="temperature", value=22,
                                         type=DataType.FLOAT)
         pressure_attr = NamedContextAttribute(name="pressure", value=222,
                                             type="Integer")
         room2_entity.add_attributes([temp_attr, pressure_attr])
 
-        def test_patch_entity_attrs_attrId(self):
-            """
-            Update existing Entity attribute ID within an NGSI-LD system
-            Args: 
-                - entityId(string): Entity Id; required
-                - attrId(string): Attribute Id; required
-            Returns: 
-                - (204) No Content
-                - (400) Bad Request
-                - (404) Not Found
-            Tests:
-                - Post an enitity with specific attributes. Change the attributes with patch.
-                - Post an enitity with specific attributes and Change non existent attributes.             
-            """
+    def test_patch_entity_attrs_attrId(self):
+        """
+        Update existing Entity attribute ID within an NGSI-LD system
+        Args: 
+            - entityId(string): Entity Id; required
+            - attrId(string): Attribute Id; required
+        Returns: 
+            - (204) No Content
+            - (400) Bad Request
+            - (404) Not Found
+        Tests:
+            - Post an enitity with specific attributes. Change the attributes with patch.
+            - Post an enitity with specific attributes and Change non existent attributes.             
+        """
         """
         Test 1: 
             post an entity with entity_ID, entity_name and attributes
@@ -370,22 +377,23 @@ class TestEntities(unittest.Testcase):
                 yes:
                     Raise Error
         """
-        def test_delete_entity_attribute(self):
-            """
-            Delete existing Entity atrribute within an NGSI-LD system.
-            Args:
-                - entityId: Entity Id; required
-                - attrId: Attribute Id; required
-            Returns: 
-                - (204) No Content
-                - (400) Bad Request
-                - (404) Not Found
-            Tests:
-                - Post an entity with attributes. Try to delete non existent attribute with non existent attribute 
-                    id. Then check response code. 
-                - Post an entity with attributes. Try to delete one the attributes. Test if the attribute is really 
-                    removed by either posting the entity or by trying to delete it again. 
-            """
+    
+    def test_delete_entity_attribute(self):
+        """
+        Delete existing Entity atrribute within an NGSI-LD system.
+        Args:
+            - entityId: Entity Id; required
+            - attrId: Attribute Id; required
+        Returns: 
+            - (204) No Content
+            - (400) Bad Request
+            - (404) Not Found
+        Tests:
+            - Post an entity with attributes. Try to delete non existent attribute with non existent attribute 
+                id. Then check response code. 
+            - Post an entity with attributes. Try to delete one the attributes. Test if the attribute is really 
+                removed by either posting the entity or by trying to delete it again. 
+        """
         """
         Test 1: 
             post an enitity with entity_ID, entity_name and attribute with attribute_ID
