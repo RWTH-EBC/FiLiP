@@ -144,14 +144,14 @@ class FiwareLDHeader(BaseModel):
         default='<https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld>; '
                 'rel="http://www.w3.org/ns/json-ld#context"; '
                 'type="application/ld+json"',
-        max_length=50,
+        max_length=100,
         description="Fiware service used for multi-tenancy",
         pattern=r"\w*$"    )
     ngsild_tenant: str = Field(
         alias="NGSILD-Tenant",
         default="openiot",
         max_length=50,
-        description="Alsias to the Fiware service to used for multitancy",
+        description="Alias to the Fiware service to used for multitenancy",
         pattern=r"\w*$"
     )
 

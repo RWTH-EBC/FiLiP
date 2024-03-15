@@ -4,7 +4,7 @@ NGSIv2 models for context broker interaction
 from typing import Any, List, Dict, Union, Optional
 
 from aenum import Enum
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 from filip.models.ngsi_v2 import ContextEntity
 from filip.utils.validators import FiwareRegex
 
@@ -53,7 +53,7 @@ class NamedContextProperty(ContextProperty):
     In the NGSI-LD data model, properties have a name, the type "property" and a value.
     """
     name: str = Field(
-        titel="Property name",
+        title="Property name",
         description="The property name describes what kind of property the "
                     "attribute value represents of the entity, for example "
                     "current_speed. Allowed characters "
@@ -102,7 +102,7 @@ class NamedContextRelationship(ContextRelationship):
     In the NGSI-LD data model, relationships have a name, the type "relationship" and an object.
     """
     name: str = Field(
-        titel="Attribute name",
+        title="Attribute name",
         description="The attribute name describes what kind of property the "
                     "attribute value represents of the entity, for example "
                     "current_speed. Allowed characters "
@@ -136,12 +136,12 @@ class ContextLDEntityKeyValues(BaseModel):
                     "the following ones: control characters, "
                     "whitespace, &, ?, / and #."
                     "the id should be structured according to the urn naming scheme.",
-        example='urn:ngsi-ld:Room:001',
+        json_schema_extra={"example":"urn:ngsi-ld:Room:001"},
         max_length=256,
         min_length=1,
         #pattern=FiwareRegex.standard.value,  # Make it FIWARE-Safe
         pattern=r".*", # TODO: change! - this is wrong, but the value above does not work with pydantic
-        allow_mutation=False
+        frozen=True
     )
     type: str = Field(
         ...,
@@ -150,15 +150,15 @@ class ContextLDEntityKeyValues(BaseModel):
                     "Allowed characters are the ones in the plain ASCII set, "
                     "except the following ones: control characters, "
                     "whitespace, &, ?, / and #.",
-        example="Room",
+        json_schema_extra={"example":"Room"},
         max_length=256,
         min_length=1,
         #pattern=FiwareRegex.standard.value,  # Make it FIWARE-Safe
         pattern=r".*", # TODO: change! - this is wrong, but the value above does not work with pydantic
-        allow_mutation=False
+        frozen=True
     )
 
-    class Config:
+    class ConfigDict:
         """
         Pydantic config
         """
@@ -217,7 +217,7 @@ class ContextLDEntity(ContextLDEntityKeyValues, ContextEntity):
 
         super().__init__(id=id, type=type, **data)
 
-    class Config:
+    class ConfigDict:
         """
         Pydantic config
         """
@@ -225,7 +225,7 @@ class ContextLDEntity(ContextLDEntityKeyValues, ContextEntity):
         validate_all = True
         validate_assignment = True
 
-    @validator("id")
+    @field_validator("id")
     def _validate_id(cls, id: str):
         if not id.startswith("urn:ngsi-ld:"):
             raise ValueError('Id has to be an URN and starts with "urn:ngsi-ld:"')
