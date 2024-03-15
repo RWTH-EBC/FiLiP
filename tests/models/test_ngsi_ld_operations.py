@@ -3,6 +3,7 @@ import unittest
 # from pydantic import ValidationError
 
 from filip.models.base import FiwareLDHeader
+# FiwareLDHeader issue with pydantic
 from filip.clients.ngsi_ld.cb import ContextBrokerLDClient
 from filip.models.ngsi_ld.context import ContextLDEntity, ActionTypeLD
 
@@ -114,7 +115,8 @@ class TestEntities(unittest.Testcase):
                 self.assertEqual(len(entity_list), 1)
             except:
                 pass
-
+            for entity in entities_a:
+                client.delete_entity_by_id(entity_id=entity.id)
             
     
     def test_entity_operations_update(self) -> None:
@@ -134,8 +136,6 @@ class TestEntities(unittest.Testcase):
         Test 1:
             post create entity batches
             post update of batch entity 
-            if return != 200:
-                Raise Error
             get entities
             for all entities in entity list: 
                 if entity list element != updated batch entity element:
@@ -143,16 +143,66 @@ class TestEntities(unittest.Testcase):
         Test 2: 
             post create entity batches
             post update of batch entity with no overwrite
-            if return != 200:
-                Raise Error
             get entities
             for all entities in entity list: 
                 if entity list element != updated batch entity element but not the existings are overwritten:
                     Raise Error
 
         """
-        pass
-    
+        """Test 1"""
+        fiware_header = FiwareLDHeader()
+        with ContextBrokerLDClient(fiware_header=fiware_header) as client:
+            entities_a = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
+                                        type=f'filip:object:TypeA') for i in
+                          range(0, 5)]
+            client.update(entities=entities_a, action_type=ActionTypeLD.CREATE)
+
+            entities_update = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
+                                        type=f'filip:object:TypeUpdate') for i in
+                          range(3, 6)]
+            client.update(entities=entities_update, action_type=ActionTypeLD.UPDATE)
+            entity_list = client.get_entity_list()
+            for entity in entity_list: 
+                if entity.id in ["urn:ngsi-ld:test:0", 
+                                 "urn:ngsi-ld:test:1", 
+                                 "urn:ngsi-ld:test:2",
+                                 "urn:ngsi-ld:test:3"]:
+                    
+                    self.assertEqual(entity.type, 'filip:object:TypeA')
+                if entity.id in ["urn:ngsi-ld:test:3", 
+                                 "urn:ngsi-ld:test:4", 
+                                 "urn:ngsi-ld:test:5"]:
+                    self.assertEqual(entity.type, 'filip:object:TypeUpdate')
+        
+            for entity in entity_list:
+                client.delete_entity_by_id(entity_id=entity.id)    
+        
+        """Test 2"""
+        fiware_header = FiwareLDHeader()
+        with ContextBrokerLDClient(fiware_header=fiware_header) as client:
+            entities_a = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
+                                        type=f'filip:object:TypeA') for i in
+                          range(0, 4)]
+            client.update(entities=entities_a, action_type=ActionTypeLD.CREATE)
+
+            entities_update = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
+                                        type=f'filip:object:TypeUpdate') for i in
+                          range(2, 6)]
+            client.update(entities=entities_update, action_type=ActionTypeLD.UPDATE, update_format="noOverwrite")
+            entity_list = client.get_entity_list()
+            for entity in entity_list: 
+                if entity.id in ["urn:ngsi-ld:test:0", 
+                                 "urn:ngsi-ld:test:1", 
+                                 "urn:ngsi-ld:test:2",
+                                 "urn:ngsi-ld:test:3"]:                    
+                    self.assertEqual(entity.type, 'filip:object:TypeA')
+                if entity.id in ["urn:ngsi-ld:test:4",  
+                                 "urn:ngsi-ld:test:5"]:
+                    self.assertEqual(entity.type, 'filip:object:TypeUpdate')
+        
+            for entity in entity_list:
+                client.delete_entity_by_id(entity_id=entity.id)    
+                
     def test_entity_operations_upsert(self) -> None:
         """
         Batch Entity upsert.
@@ -163,20 +213,75 @@ class TestEntities(unittest.Testcase):
             - (200) Success
             - (400) Bad request
         Tests: 
-            - Post entity list and then post the upsert with replace or update. Get the entitiy list and see if the results are correct. 
+            - Post entity list and then post the upsert with update. Get the entitiy list and see if the results are correct. 
+            - Post entity list and then post the upsert with replace. Get the entitiy list and see if the results are correct. 
+
         """
         """
         Test 1: 
             post a create entity batch
-            post entity upsert
-            if return != 200:
-                Raise Error
+            post entity upsert with update
+            get entity list
+            for all entities in entity list: 
+                if entity list element != upsert entity list:
+                    Raise Error
+        Test 2: 
+            post a create entity batch
+            post entity upsert with replace
             get entity list
             for all entities in entity list: 
                 if entity list element != upsert entity list:
                     Raise Error
         """
-        pass
+        """Test 1"""
+        fiware_header = FiwareLDHeader()
+        with ContextBrokerLDClient(fiware_header=fiware_header) as client:
+            entities_a = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
+                                        type=f'filip:object:TypeA') for i in
+                          range(0, 4)]
+            client.update(entities=entities_a, action_type=ActionTypeLD.CREATE)
+
+            entities_upsert = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
+                                        type=f'filip:object:TypeUpdate') for i in
+                          range(2, 6)]
+            client.update(entities=entities_upsert, action_type=ActionTypeLD.UPSERT, update_format="update")
+            entities_updated_list = entities_a
+            entities_updated = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
+                                        type=f'filip:object:TypeUpdate') for i in
+                          range(4, 6)]
+            entities_updated_list.extend(entities_updated)
+            entity_list = client.get_entity_list()
+            for entity in entity_list: 
+                self.assertIn(entity, entities_updated_list)
+            for entity in entities_updated_list:
+                self.assertIn(entity, entity_list)
+            for entity in entity_list:
+                client.delete_entity_by_id(entity_id=entity.id)  
+        
+        """Test 2"""
+        fiware_header = FiwareLDHeader()
+        with ContextBrokerLDClient(fiware_header=fiware_header) as client:
+            entities_a = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
+                                        type=f'filip:object:TypeA') for i in
+                          range(0, 4)]
+            client.update(entities=entities_a, action_type=ActionTypeLD.CREATE)
+
+            entities_upsert = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
+                                        type=f'filip:object:TypeUpdate') for i in
+                          range(3, 6)]
+            client.update(entities=entities_upsert, action_type=ActionTypeLD.UPSERT, update_format="replace")
+            entities_updated_list = entities_upsert
+            entities_updated = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
+                                        type=f'filip:object:TypeA') for i in
+                          range(0, 3)]
+            entities_updated_list.extend(entities_updated)
+            entity_list = client.get_entity_list()
+            for entity in entity_list: 
+                self.assertIn(entity, entities_updated_list)
+            for entity in entities_updated_list:
+                self.assertIn(entity, entity_list)
+            for entity in entity_list:
+                client.delete_entity_by_id(entity_id=entity.id)  
     
     def test_entity_operations_delete(self) -> None:
         """
