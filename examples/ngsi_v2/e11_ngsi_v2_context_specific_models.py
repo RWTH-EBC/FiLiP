@@ -13,6 +13,7 @@
 # duplication of code unnecessary and allows for a more consistent
 # entities and systems.
 """
+import json
 from pprint import pprint
 from typing import Literal
 
@@ -41,12 +42,17 @@ class AddressModel(BaseModel):
         alias="addressCountry",
         description="County code according to ISO 3166-1-alpha-2",
     )
+    street_address: str = Field(
+        alias="streetAddress",
+        description="The street address. For example, 1600 Amphitheatre Pkwy.",
+    )
     address_region: str = Field(
         alias="addressRegion",
         default=None,
     )
     address_locality: str = Field(
         alias="addressLocality",
+        default=None,
         description="The locality in which the street address is, and which is "
         "in the region. For example, Mountain View.",
     )
@@ -54,11 +60,6 @@ class AddressModel(BaseModel):
         alias="postalCode",
         default=None,
         description="The postal code. For example, 94043.",
-    )
-    street_address: str = Field(
-        alias="streetAddress",
-        default=None,
-        description="The street address. For example, 1600 Amphitheatre Pkwy.",
     )
 
 
@@ -136,6 +137,16 @@ if __name__ == "__main__":
     weather_station = WeatherStation(
         id="myWeatherStation",
         type="brick:WeatherStation",
+        temperature={"type": "Number",
+                     "value": 25},
+        address={"type": "PostalAddress",
+                 "value": {
+                     # required attributes
+                     "address_country": "Germany",
+                     "street_address": "Mathieustr. 10",
+                     # optional attributes
+                     "postal_code": "52072",
+                 }}
     )
     print(weather_station.model_dump_json(indent=2))
 
@@ -147,5 +158,5 @@ if __name__ == "__main__":
 
     # To compare to the version without the custom model, see the output of
     # the following code which would still require the user to define the type:
-    weather_station = ContextEntity.model_validate(weather_station.model_dump())
-    pprint(weather_station.model_json_schema())
+    weather_station_reference = ContextEntity.model_validate(weather_station.model_dump())
+    pprint(weather_station_reference.model_json_schema())
