@@ -137,6 +137,38 @@ class ContextBrokerLDClient(BaseHttpClient):
                 return items
             res.raise_for_status()
 
+    def get_version(self) -> Dict:
+        """
+        Gets version of Orion-LD context broker
+        Returns:
+            Dictionary with response
+        """
+        url = urljoin(self.base_url, '/version')
+        try:
+            res = self.get(url=url, headers=self.headers)
+            if res.ok:
+                return res.json()
+            res.raise_for_status()
+        except requests.RequestException as err:
+            self.logger.error(err)
+            raise
+
+    def get_statistics(self) -> Dict:
+        """
+        Gets statistics of context broker
+        Returns:
+            Dictionary with response
+        """
+        url = urljoin(self.base_url, 'statistics')
+        try:
+            res = self.get(url=url, headers=self.headers)
+            if res.ok:
+                return res.json()
+            res.raise_for_status()
+        except requests.RequestException as err:
+            self.logger.error(err)
+            raise
+
     def get_entity_by_id(self,
                          entity_id: str,
                          attrs: Optional[str] = None,
@@ -172,7 +204,8 @@ class ContextBrokerLDClient(BaseHttpClient):
 
     def post_entity(self,
                     entity: ContextLDEntity,
-                    append: bool = False):
+                    append: bool = False,
+                    update: bool = False):
         """
         Function registers an Object with the NGSI-LD Context Broker,
         if it already exists it can be automatically updated
@@ -605,7 +638,7 @@ class ContextBrokerLDClient(BaseHttpClient):
 
         """
 
-        url = urljoin(self.base_url, f'{self._url_version}/entityOperations/{action_type}')
+        url = urljoin(self.base_url, f'{self._url_version}/entityOperations/{action_type.value}')
         headers = self.headers.copy()
         # headers.update({'Content-Type': 'application/json'}) # Wie oben, brauche ich?
         params = {}

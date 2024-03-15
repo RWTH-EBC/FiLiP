@@ -465,21 +465,21 @@ class Subscription(BaseModel):
     )
     subject: Subject = Field(
         description="An object that describes the subject of the subscription.",
-        examples=[{
+        json_schema_extra={'example':{
             'entities': [{'idPattern': '.*', 'type': 'Room'}],
             'condition': {
                 'attrs': ['temperature'],
                 'expression': {'q': 'temperature>40'},
-            },
-        }],
+                },
+            }}
     )
     notification: Notification = Field(
         description="An object that describes the notification to send when "
                     "the subscription is triggered.",
-        examples=[{
+        json_schema_extra={'example':{
             'http': {'url': 'http://localhost:1234'},
             'attrs': ['temperature', 'humidity'],
-        }],
+            }}
     )
     expires: Optional[datetime] = Field(
         default=None,
