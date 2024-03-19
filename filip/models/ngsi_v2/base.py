@@ -435,7 +435,7 @@ class BaseValueAttribute(BaseModel):
                     value.model_dump_json()
                     return value
                 raise TypeError(
-                    f"{type(value)} does not match " f"{DataType.STRUCTUREDVALUE}"
+                    f"{type(value)} does not match " f"{DataType.OBJECT}"
                 )
             # allows list, dict and BaseModel as structured value
             if type_ == DataType.STRUCTUREDVALUE:
