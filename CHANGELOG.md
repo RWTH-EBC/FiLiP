@@ -6,6 +6,7 @@
 - fix: wrong msg in iotac post device ([#214](https://github.com/RWTH-EBC/FiLiP/pull/214))
 - add support to update entities with keyValues @djs0109 ([#245](https://github.com/RWTH-EBC/FiLiP/pull/245))
 - add function to override the existing entity ([#232 ](https://github.com/RWTH-EBC/FiLiP/pull/232 ))
+- fix: remove root slash from paths ([#251](https://github.com/RWTH-EBC/FiLiP/issues/251))
 - fix: include headers in some requests ([#250](https://github.com/RWTH-EBC/FiLiP/issues/250))
 - feat: make context-entity more customizable ([#225](https://github.com/RWTH-EBC/FiLiP/issues/225))
 - feat: add geojson support to context-entity ([#226](https://github.com/RWTH-EBC/FiLiP/issues/226))

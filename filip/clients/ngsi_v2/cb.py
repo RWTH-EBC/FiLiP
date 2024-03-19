@@ -149,7 +149,7 @@ class ContextBrokerClient(BaseHttpClient):
         Returns:
             Dictionary with response
         """
-        url = urljoin(self.base_url, "/version")
+        url = urljoin(self.base_url, "version")
         try:
             res = self.get(url=url, headers=self.headers)
             if res.ok:
@@ -166,7 +166,7 @@ class ContextBrokerClient(BaseHttpClient):
         Returns:
             Dict
         """
-        url = urljoin(self.base_url, "/v2")
+        url = urljoin(self.base_url, "v2")
         try:
             res = self.get(url=url, headers=self.headers)
             if res.ok:
