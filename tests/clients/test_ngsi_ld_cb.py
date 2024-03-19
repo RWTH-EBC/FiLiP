@@ -44,12 +44,34 @@ class TestContextBroker(unittest.TestCase):
             "entities_url": "/ngsi-ld/v1/entities",
             "types_url": "/ngsi-ld/v1/types"
         }
-        self.attr = {'testtemperature': {'value': 20.0}}
-        self.entity = ContextLDEntity(id='urn:ngsi-ld:my:id', type='MyType', **self.attr)
+        self.attr = {
+            'testtemperature': {
+                'type': 'Property',
+                'value': 20.0}
+        }
+        self.entity = ContextLDEntity(id='urn:ngsi-ld:my:id4', type='MyType', **self.attr)
         self.fiware_header = FiwareLDHeader()
 
         self.client = ContextBrokerLDClient(fiware_header=self.fiware_header)
 
+    def tearDown(self) -> None:
+        """
+        Cleanup test server
+        """
+        try:
+            entity_list = self.client.get_entity_list(entity_type=self.entity.type)
+            for entity in entity_list:
+                #parsed_entity = ContextLDEntity(**entity)
+                self.client.delete_entity_by_id(entity_id=entity.get('id'))
+                #self.client.delete_entity_by_id(parsed_entity.id)
+            #entities = [            #for entitiy in entity_list:
+            #entities = [ContextLDEntity(entity.id, entity.type) for
+            #            entity in self.client.get_entity_list()]
+            #self.client.update(entities=entities, action_type='delete')
+        except RequestException:
+            pass
+
+        self.client.close()
 
     def test_management_endpoints(self):
         """
@@ -142,26 +164,26 @@ class TestContextBroker(unittest.TestCase):
 
             client.update(action_type=ActionTypeLD.DELETE, entities=entities_b)
 
-    def aatest_entity_operations(self):
+    def test_entity_operations(self):
         """
         Test entity operations of context broker client
         """
         with ContextBrokerLDClient(fiware_header=self.fiware_header) as client:
             client.post_entity(entity=self.entity, update=True)
-            res_entity = client.get_entity(entity_id=self.entity.id)
-            client.get_entity(entity_id=self.entity.id, attrs=['testtemperature'])
-            self.assertEqual(client.get_entity_attributes(
-                entity_id=self.entity.id), res_entity.get_properties(
-                response_format='dict'))
-            res_entity.testtemperature.value = 25
-            client.update_entity(entity=res_entity)  # TODO: how to use context?
-            self.assertEqual(client.get_entity(entity_id=self.entity.id),
-                             res_entity)
-            res_entity.add_properties({'pressure': ContextProperty(
-                type='Number', value=1050)})
-            client.update_entity(entity=res_entity)
-            self.assertEqual(client.get_entity(entity_id=self.entity.id),
-                             res_entity)
+            res_entity = client.get_entity_by_id(entity_id=self.entity.id)
+            client.get_entity_by_id(entity_id=self.entity.id, attrs=['testtemperature'])
+        #    self.assertEqual(client.get_entity_attributes(
+        #        entity_id=self.entity.id), res_entity.get_properties(
+        #        response_format='dict'))
+        #    res_entity.testtemperature.value = 25
+        #    client.update_entity(entity=res_entity)  # TODO: how to use context?
+        #    self.assertEqual(client.get_entity(entity_id=self.entity.id),
+        #                     res_entity)
+        #    res_entity.add_properties({'pressure': ContextProperty(
+        #        type='Number', value=1050)})
+        #    client.update_entity(entity=res_entity)
+        #    self.assertEqual(client.get_entity(entity_id=self.entity.id),
+        #                     res_entity)
 
     def aatest_attribute_operations(self):
         """
@@ -286,20 +308,3 @@ class TestContextBroker(unittest.TestCase):
             self.assertEqual(['attr_bool', 'attr_dict', 'attr_float', 'attr_list', 'attr_txt', 'testtemperature'],
                              attrs_list)
 
-
-
-
-
-
-    def tearDown(self) -> None:
-        """
-        Cleanup test server
-        """
-        try:
-            entities = [ContextLDEntity(id=entity.id, type=entity.type) for
-                        entity in self.client.get_entity_list()]
-            self.client.update(entities=entities, action_type='delete')
-        except RequestException:
-            pass
-
-        self.client.close()
