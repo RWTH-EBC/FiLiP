@@ -38,7 +38,7 @@ from typing import List
 from urllib.parse import urlparse
 from uuid import uuid4
 import paho.mqtt.client as mqtt
-from pydantic import parse_file_as
+from pydantic import TypeAdapter
 import matplotlib.pyplot as plt
 
 # import from filip
@@ -94,6 +94,12 @@ READ_GROUPS_FILEPATH = \
 READ_DEVICES_FILEPATH = \
     Path("../e4_iot_thermal_zone_sensors_devices.json")
 
+with open(READ_GROUPS_FILEPATH, 'r') as file:
+    json_groups = json.load(file)
+
+with open(READ_DEVICES_FILEPATH, 'r') as file:
+    json_devices = json.load(file)
+
 # set parameters for the temperature simulation
 TEMPERATURE_MAX = 10  # maximal ambient temperature
 TEMPERATURE_MIN = -5  # minimal ambient temperature
@@ -125,8 +131,10 @@ if __name__ == '__main__':
     history_heater = []
 
     # Create clients and restore devices and groups from file
-    groups = parse_file_as(List[ServiceGroup], READ_GROUPS_FILEPATH)
-    devices = parse_file_as(List[Device], READ_DEVICES_FILEPATH)
+    ta1 = TypeAdapter(List[ServiceGroup])
+    groups = ta1.validate_python(json_groups)
+    ta2 = TypeAdapter(List[Device])
+    devices = ta2.validate_python(json_devices)
     cbc = ContextBrokerClient(url=CB_URL, fiware_header=fiware_header)
     iotac = IoTAClient(url=IOTA_URL, fiware_header=fiware_header)
     iotac.post_groups(service_groups=groups)
@@ -141,8 +149,8 @@ if __name__ == '__main__':
 
     # ToDo: Create and additional device holding a command attribute and
     #  post it to the IoT-Agent. It should be mapped to the `type` heater
-    # create the simtime attribute and add during device creation
-    t_sim = DeviceAttribute(name='simtime',
+    # create the sim_time attribute and add during device creation
+    t_sim = DeviceAttribute(name='sim_time',
                             object_id='t_sim',
                             type="Number")
 
@@ -167,7 +175,7 @@ if __name__ == '__main__':
     heater_entity = cbc.get_entity(entity_id=heater.entity_name,
                                    entity_type=heater.entity_type)
     print(f"Your device entity before running the simulation: \n "
-          f"{heater_entity.json(indent=2)}")
+          f"{heater_entity.model_dump_json(indent=2)}")
 
     # create a MQTTv5 client with paho-mqtt and the known groups and devices.
     mqttc = IoTAMQTTClient(protocol=mqtt.MQTTv5,
@@ -237,7 +245,7 @@ if __name__ == '__main__':
         """
         Callback for measurement notifications
         """
-        message = Message.parse_raw(msg.payload)
+        message = Message.model_validate_json(msg.payload)
         updated_zone_temperature_sensor = message.data[0]
 
         # ToDo: retrieve the value of temperature attribute
@@ -281,7 +289,7 @@ if __name__ == '__main__':
     mqttc.loop_start()
 
     # Create a loop that publishes every second a message to the broker
-    #  that holds the simulation time "simtime" and the corresponding
+    #  that holds the simulation time "sim_time" and the corresponding
     #  temperature "temperature" the loop should. You may use the `object_id`
     #  or the attribute name as key in your payload.
     for t_sim in range(sim_model.t_start,
@@ -290,16 +298,16 @@ if __name__ == '__main__':
         # publish the simulated ambient temperature
         mqttc.publish(device_id=weather_station.device_id,
                       payload={"temperature": sim_model.t_amb,
-                               "simtime": sim_model.t_sim})
+                               "sim_time": sim_model.t_sim})
 
         # publish the simulated zone temperature
         mqttc.publish(device_id=zone_temperature_sensor.device_id,
                       payload={"temperature": sim_model.t_zone,
-                               "simtime": sim_model.t_sim})
+                               "sim_time": sim_model.t_sim})
 
-        # publish the 'simtime' for the heater device
+        # publish the 'sim_time' for the heater device
         mqttc.publish(device_id=heater.device_id,
-                      payload={"simtime": sim_model.t_sim})
+                      payload={"sim_time": sim_model.t_sim})
 
         time.sleep(0.5)
         # simulation step for next loop
@@ -314,7 +322,7 @@ if __name__ == '__main__':
         )
         # append the data to the local history
         history_weather_station.append(
-            {"simtime": weather_station_entity.simtime.value,
+            {"sim_time": weather_station_entity.sim_time.value,
              "temperature": weather_station_entity.temperature.value})
 
         # Get ZoneTemperatureSensor and write values to history
@@ -323,7 +331,7 @@ if __name__ == '__main__':
             entity_type=zone_temperature_sensor.entity_type
         )
         history_zone_temperature_sensor.append(
-            {"simtime": zone_temperature_sensor_entity.simtime.value,
+            {"sim_time": zone_temperature_sensor_entity.sim_time.value,
              "temperature": zone_temperature_sensor_entity.temperature.value})
 
         # Get ZoneTemperatureSensor and write values to history
@@ -331,7 +339,7 @@ if __name__ == '__main__':
             entity_id=heater.entity_name,
             entity_type=heater.entity_type)
         history_heater.append(
-            {"simtime": heater_entity.simtime.value,
+            {"sim_time": heater_entity.sim_time.value,
              "on_off": heater_entity.heater_on_info.value})
 
     # close the mqtt listening thread
@@ -340,31 +348,32 @@ if __name__ == '__main__':
     mqttc.disconnect()
 
     print(cbc.get_entity(entity_id=heater.entity_name,
-                         entity_type=heater.entity_type).json(indent=2))
+                         entity_type=heater.entity_type).model_dump_json(indent=2))
 
     # plot results
     fig, ax = plt.subplots()
-    t_simulation = [item["simtime"] for item in history_weather_station]
+    t_simulation = [item["sim_time"] for item in history_weather_station]
     temperature = [item["temperature"] for item in history_weather_station]
     ax.plot(t_simulation, temperature)
     ax.set_xlabel('time in s')
     ax.set_ylabel('ambient temperature in °C')
+    plt.show()
 
     fig2, ax2 = plt.subplots()
-    t_simulation = [item["simtime"] for item in history_zone_temperature_sensor]
+    t_simulation = [item["sim_time"] for item in history_zone_temperature_sensor]
     temperature = [item["temperature"] for item in
                    history_zone_temperature_sensor]
     ax2.plot(t_simulation, temperature)
     ax2.set_xlabel('time in s')
     ax2.set_ylabel('zone temperature in °C')
+    plt.show()
 
     fig3, ax3 = plt.subplots()
-    t_simulation = [item["simtime"] for item in history_heater]
+    t_simulation = [item["sim_time"] for item in history_heater]
     on_off = [item["on_off"] for item in history_heater]
     ax3.plot(t_simulation, on_off)
     ax3.set_xlabel('time in s')
     ax3.set_ylabel('on/off')
-
     plt.show()
 
     # write devices and groups to file and clear server state
@@ -372,21 +381,21 @@ if __name__ == '__main__':
         f"Wrong file extension! {WRITE_DEVICES_FILEPATH.suffix}"
     WRITE_DEVICES_FILEPATH.touch(exist_ok=True)
     with WRITE_DEVICES_FILEPATH.open('w', encoding='utf-8') as f:
-        devices = [item.dict() for item in iotac.get_device_list()]
+        devices = [item.model_dump() for item in iotac.get_device_list()]
         json.dump(devices, f, ensure_ascii=False, indent=2)
 
     assert WRITE_GROUPS_FILEPATH.suffix == '.json', \
         f"Wrong file extension! {WRITE_GROUPS_FILEPATH.suffix}"
     WRITE_GROUPS_FILEPATH.touch(exist_ok=True)
     with WRITE_GROUPS_FILEPATH.open('w', encoding='utf-8') as f:
-        groups = [item.dict() for item in iotac.get_group_list()]
+        groups = [item.model_dump() for item in iotac.get_group_list()]
         json.dump(groups, f, ensure_ascii=False, indent=2)
 
     assert WRITE_SUBSCRIPTIONS_FILEPATH.suffix == '.json', \
         f"Wrong file extension! {WRITE_SUBSCRIPTIONS_FILEPATH.suffix}"
     WRITE_SUBSCRIPTIONS_FILEPATH.touch(exist_ok=True)
     with WRITE_SUBSCRIPTIONS_FILEPATH.open('w', encoding='utf-8') as f:
-        subs = [item.dict() for item in cbc.get_subscription_list()]
+        subs = [item.model_dump() for item in cbc.get_subscription_list()]
         json.dump(subs, f, ensure_ascii=False, indent=2)
 
     clear_iot_agent(url=IOTA_URL, fiware_header=fiware_header)
