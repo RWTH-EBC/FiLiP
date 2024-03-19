@@ -103,6 +103,7 @@ class WeatherStation(ContextEntity):
     """
     A context specific model for a weather station
     """
+
     # add default for type if not explicitly set
     type: str = FieldInfo.merge_field_infos(
         # First position is the field info of the parent class
@@ -136,17 +137,18 @@ if __name__ == "__main__":
     # Furthermore, we can use the model to create a new weather station entity
     weather_station = WeatherStation(
         id="myWeatherStation",
-        type="brick:WeatherStation",
-        temperature={"type": "Number",
-                     "value": 25},
-        address={"type": "PostalAddress",
-                 "value": {
-                     # required attributes
-                     "address_country": "Germany",
-                     "street_address": "Mathieustr. 10",
-                     # optional attributes
-                     "postal_code": "52072",
-                 }}
+        type="WeatherStation",
+        temperature={"type": "Number", "value": 25},
+        address={
+            "type": "PostalAddress",
+            "value": {
+                # required attributes
+                "address_country": "Germany",
+                "street_address": "Mathieustr. 10",
+                # optional attributes
+                "postal_code": "52072",
+            },
+        },
     )
     print(weather_station.model_dump_json(indent=2))
 
@@ -158,5 +160,7 @@ if __name__ == "__main__":
 
     # To compare to the version without the custom model, see the output of
     # the following code which would still require the user to define the type:
-    weather_station_reference = ContextEntity.model_validate(weather_station.model_dump())
+    weather_station_reference = ContextEntity.model_validate(
+        weather_station.model_dump()
+    )
     pprint(weather_station_reference.model_json_schema())
