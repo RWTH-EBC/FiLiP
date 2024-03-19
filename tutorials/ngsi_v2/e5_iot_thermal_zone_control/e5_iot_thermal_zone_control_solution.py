@@ -149,8 +149,8 @@ if __name__ == '__main__':
 
     # ToDo: Create and additional device holding a command attribute and
     #  post it to the IoT-Agent. It should be mapped to the `type` heater
-    # create the simtime attribute and add during device creation
-    t_sim = DeviceAttribute(name='simtime',
+    # create the sim_time attribute and add during device creation
+    t_sim = DeviceAttribute(name='sim_time',
                             object_id='t_sim',
                             type="Number")
 
@@ -289,7 +289,7 @@ if __name__ == '__main__':
     mqttc.loop_start()
 
     # Create a loop that publishes every second a message to the broker
-    #  that holds the simulation time "simtime" and the corresponding
+    #  that holds the simulation time "sim_time" and the corresponding
     #  temperature "temperature" the loop should. You may use the `object_id`
     #  or the attribute name as key in your payload.
     for t_sim in range(sim_model.t_start,
@@ -298,16 +298,16 @@ if __name__ == '__main__':
         # publish the simulated ambient temperature
         mqttc.publish(device_id=weather_station.device_id,
                       payload={"temperature": sim_model.t_amb,
-                               "simtime": sim_model.t_sim})
+                               "sim_time": sim_model.t_sim})
 
         # publish the simulated zone temperature
         mqttc.publish(device_id=zone_temperature_sensor.device_id,
                       payload={"temperature": sim_model.t_zone,
-                               "simtime": sim_model.t_sim})
+                               "sim_time": sim_model.t_sim})
 
-        # publish the 'simtime' for the heater device
+        # publish the 'sim_time' for the heater device
         mqttc.publish(device_id=heater.device_id,
-                      payload={"simtime": sim_model.t_sim})
+                      payload={"sim_time": sim_model.t_sim})
 
         time.sleep(0.5)
         # simulation step for next loop
@@ -322,7 +322,7 @@ if __name__ == '__main__':
         )
         # append the data to the local history
         history_weather_station.append(
-            {"simtime": weather_station_entity.simtime.value,
+            {"sim_time": weather_station_entity.sim_time.value,
              "temperature": weather_station_entity.temperature.value})
 
         # Get ZoneTemperatureSensor and write values to history
@@ -331,7 +331,7 @@ if __name__ == '__main__':
             entity_type=zone_temperature_sensor.entity_type
         )
         history_zone_temperature_sensor.append(
-            {"simtime": zone_temperature_sensor_entity.simtime.value,
+            {"sim_time": zone_temperature_sensor_entity.sim_time.value,
              "temperature": zone_temperature_sensor_entity.temperature.value})
 
         # Get ZoneTemperatureSensor and write values to history
@@ -339,7 +339,7 @@ if __name__ == '__main__':
             entity_id=heater.entity_name,
             entity_type=heater.entity_type)
         history_heater.append(
-            {"simtime": heater_entity.simtime.value,
+            {"sim_time": heater_entity.sim_time.value,
              "on_off": heater_entity.heater_on_info.value})
 
     # close the mqtt listening thread
@@ -352,27 +352,28 @@ if __name__ == '__main__':
 
     # plot results
     fig, ax = plt.subplots()
-    t_simulation = [item["simtime"] for item in history_weather_station]
+    t_simulation = [item["sim_time"] for item in history_weather_station]
     temperature = [item["temperature"] for item in history_weather_station]
     ax.plot(t_simulation, temperature)
     ax.set_xlabel('time in s')
     ax.set_ylabel('ambient temperature in °C')
+    plt.show()
 
     fig2, ax2 = plt.subplots()
-    t_simulation = [item["simtime"] for item in history_zone_temperature_sensor]
+    t_simulation = [item["sim_time"] for item in history_zone_temperature_sensor]
     temperature = [item["temperature"] for item in
                    history_zone_temperature_sensor]
     ax2.plot(t_simulation, temperature)
     ax2.set_xlabel('time in s')
     ax2.set_ylabel('zone temperature in °C')
+    plt.show()
 
     fig3, ax3 = plt.subplots()
-    t_simulation = [item["simtime"] for item in history_heater]
+    t_simulation = [item["sim_time"] for item in history_heater]
     on_off = [item["on_off"] for item in history_heater]
     ax3.plot(t_simulation, on_off)
     ax3.set_xlabel('time in s')
     ax3.set_ylabel('on/off')
-
     plt.show()
 
     # write devices and groups to file and clear server state
