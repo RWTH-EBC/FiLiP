@@ -40,12 +40,18 @@ IOTA_URL = "http://localhost:4041"
 MQTT_BROKER_URL = "127.0.0.1"
 MQTT_BROKER_PORT = 1883
 
+# ToDo: Change the name of your service to something unique. If you run
+#  on a shared instance this very important in order to avoid user
+#  collisions. You will use this service through the whole tutorial.
+#  If you forget to change it an error will be raised!
 # FIWARE Service
 SERVICE = 'filip_tutorial'
 SERVICE_PATH = '/'
 
-# Local API key
-API_KEY = "localapikey"
+# ToDo: Change the APIKEY to something unique. This represent the "token"
+#  for IoT devices to connect (send/receive data ) with the platform. In the
+#  context of MQTT, APIKEY is linked with the topic used for communication.
+APIKEY = 'your_apikey'
 
 # Setting up logging
 logging.basicConfig(
@@ -66,7 +72,7 @@ cb_client = ContextBrokerClient(url=CB_URL, fiware_header=fiware_header)
 # TODO: Setting expression language to JEXL at Service Group level
 service_group1 = ServiceGroup(entity_type='Thing',
                               resource='/iot/json',
-                              apikey=API_KEY,
+                              apikey=APIKEY,
                               #...
                               )
 iota_client.post_group(service_group=service_group1)

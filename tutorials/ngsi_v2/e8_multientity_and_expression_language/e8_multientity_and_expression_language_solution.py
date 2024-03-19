@@ -44,8 +44,10 @@ MQTT_BROKER_PORT = 1883
 SERVICE = 'filip_tutorial'
 SERVICE_PATH = '/'
 
-# Local API key
-API_KEY = "localapikey"
+# ToDo: Change the APIKEY to something unique. This represent the "token"
+#  for IoT devices to connect (send/receive data ) with the platform. In the
+#  context of MQTT, APIKEY is linked with the topic used for communication.
+APIKEY = 'your_apikey'
 
 # Setting up logging
 logging.basicConfig(
@@ -66,7 +68,7 @@ cb_client = ContextBrokerClient(url=CB_URL, fiware_header=fiware_header)
 # TODO: Setting expression language to JEXL at Service Group level
 service_group1 = ServiceGroup(entity_type='Thing',
                               resource='/iot/json',
-                              apikey=API_KEY,
+                              apikey=APIKEY,
                               expressionLanguage=ExpressionLanguage.JEXL)
 iota_client.post_group(service_group=service_group1)
 
@@ -111,11 +113,11 @@ client.connect(MQTT_BROKER_URL, MQTT_BROKER_PORT)
 client.loop_start()
 
 # TODO: Publish attributes 'level', 'longitude' and 'latitude' of device1
-client.publish(topic=f'/json/{API_KEY}/{device1.device_id}/attrs',
+client.publish(topic=f'/json/{APIKEY}/{device1.device_id}/attrs',
                payload='{"level": 99, "longitude": 12.0, "latitude": 23.0}')
 
 # TODO: Publish attributes 'value' and 'spaces' of device2
-client.publish(topic=f'/json/{API_KEY}/{device2.device_id}/attrs',
+client.publish(topic=f'/json/{APIKEY}/{device2.device_id}/attrs',
                payload='{"value": 10, "spaces": "     foobar    "}')
 
 client.disconnect()
@@ -148,7 +150,7 @@ client.connect(MQTT_BROKER_URL, MQTT_BROKER_PORT)
 client.loop_start()
 
 # TODO: Publish values to all attributes of device3
-client.publish(topic=f'/json/{API_KEY}/{device3.device_id}/attrs',
+client.publish(topic=f'/json/{APIKEY}/{device3.device_id}/attrs',
                payload='{"v1": 10, "v2": 20, "v": 30}')
 
 client.disconnect()
