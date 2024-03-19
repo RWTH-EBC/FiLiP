@@ -54,8 +54,12 @@ SERVICE = 'filip_tutorial'
 #  on a shared instance this very important in order to avoid user
 #  collisions. You will use this service path through the whole tutorial.
 #  If you forget to change it an error will be raised!
-SERVICE_PATH = '/<your_path>'
-APIKEY = SERVICE_PATH.strip('/')
+SERVICE_PATH = '/'
+
+# ToDo: Change the APIKEY to something unique. This represent the "token"
+#  for IoT devices to connect (send/receive data ) with the platform. In the
+#  context of MQTT, APIKEY is linked with the topic used for communication.
+APIKEY = 'your_apikey'
 
 # Path to read json-files from previous exercises
 READ_GROUPS_FILEPATH = \

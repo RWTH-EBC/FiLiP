@@ -47,14 +47,14 @@ from filip.utils.simple_ql import QueryString
 # ToDo: Enter your context broker host and port, e.g http://localhost:1026
 CB_URL = "http://localhost:1026"
 
+# ToDo: Change the name of your service to something unique. If you run
+#  on a shared instance this very important in order to avoid user
+#  collisions. You will use this service through the whole tutorial.
+#  If you forget to change it an error will be raised!
 # FIWARE-Service
 SERVICE = 'filip_tutorial'
-# FIWARE-Service path
-# ToDo: Change the name of your service-path to something unique. If you run
-#  on a shared instance this very important in order to avoid user
-#  collisions. You will use this service path through the whole tutorial.
-#  If you forget to change it an error will be raised!
-SERVICE_PATH = '/your_path'
+# FIWARE-Servicepath
+SERVICE_PATH = '/'
 
 # ToDo: Path to json-files to store entity data for follow up exercises,
 #  e.g. ./e3_my_entities.json

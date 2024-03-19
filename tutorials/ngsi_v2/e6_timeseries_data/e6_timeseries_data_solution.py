@@ -56,17 +56,22 @@ MQTT_BROKER_URL_EXPOSED = "mqtt://localhost:1883"
 MQTT_BROKER_URL_INTERNAL = "mqtt://mosquitto:1883"
 # ToDo: If required enter your username and password
 MQTT_USER = ""
-MQTT_PW =  ""
+MQTT_PW = ""
 
+# ToDo: Change the name of your service to something unique. If you run
+#  on a shared instance this very important in order to avoid user
+#  collisions. You will use this service through the whole tutorial.
+#  If you forget to change it an error will be raised!
 # FIWARE-Service
 SERVICE = 'filip_tutorial'
 # FIWARE-Servicepath
-# ToDo: Change the name of your service-path to something unique. If you run
-#  on a shared instance this very important in order to avoid user
-#  collisions. You will use this service path through the whole tutorial.
-#  If you forget to change it an error will be raised!
-SERVICE_PATH = '/your_path'
-APIKEY = SERVICE_PATH.strip('/')
+SERVICE_PATH = '/'
+
+# ToDo: Change the APIKEY to something unique. This represent the "token"
+#  for IoT devices to connect (send/receive data ) with the platform. In the
+#  context of MQTT, APIKEY is linked with the topic used for communication.
+APIKEY = 'your_apikey'
+
 UNIQUE_ID = str(uuid4())
 TOPIC_CONTROLLER = f"fiware_workshop/{UNIQUE_ID}/controller"
 print(TOPIC_CONTROLLER)

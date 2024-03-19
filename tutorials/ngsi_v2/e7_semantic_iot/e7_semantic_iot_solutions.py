@@ -47,15 +47,19 @@ CB_URL = "http://localhost:1026"
 # ToDo: Enter your IoT-Agent host and port, e.g http://localhost:4041
 IOTA_URL = "http://localhost:4041"
 
+# ToDo: Change the name of your service to something unique. If you run
+#  on a shared instance this very important in order to avoid user
+#  collisions. You will use this service through the whole tutorial.
+#  If you forget to change it an error will be raised!
 # FIWARE-Service
 SERVICE = 'filip_tutorial'
 # FIWARE-Servicepath
-# ToDo: Change the name of your service-path to something unique. If you run
-#  on a shared instance this very important in order to avoid user
-#  collisions. You will use this service path through the whole tutorial.
-#  If you forget to change it an error will be raised!
-SERVICE_PATH = '/your_path'
-APIKEY = SERVICE_PATH.strip('/')
+SERVICE_PATH = '/'
+
+# ToDo: Change the APIKEY to something unique. This represent the "token"
+#  for IoT devices to connect (send/receive data ) with the platform. In the
+#  context of MQTT, APIKEY is linked with the topic used for communication.
+APIKEY = 'your_apikey'
 
 # Path to read json-files from previous exercises
 READ_GROUPS_FILEPATH = \
