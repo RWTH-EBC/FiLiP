@@ -4,6 +4,16 @@ Test module for context broker models
 import unittest
 from typing import List
 from pydantic import ValidationError
+from geojson_pydantic import (
+    Point,
+    MultiPoint,
+    LineString,
+    MultiLineString,
+    Polygon,
+    MultiPolygon,
+    Feature,
+    FeatureCollection,
+)
 
 from filip.models.base import DataType
 from filip.clients.ngsi_v2 import IoTAClient, ContextBrokerClient
@@ -64,6 +74,300 @@ class TestContextModels(unittest.TestCase):
         self.assertIsInstance(attr.value, list)
         attr = ContextAttribute(**{"value": [20, 20], "type": "Array"})
         self.assertIsInstance(attr.value, list)
+
+    def test_geojson_attribute(self):
+        """
+        Test the GeoJsonAttribute model
+        """
+        # test Point
+        geojson = ContextAttribute(
+            type=DataType.GEOJSON, value={"type": "Point", "coordinates": (125.6, 10.1)}
+        )
+        self.assertIsInstance(geojson.value, Point)
+        self.assertEqual(
+            geojson.value.model_dump(exclude={"bbox"}),
+            {"type": "Point", "coordinates": (125.6, 10.1)},
+        )
+        # test MultiPoint
+        geojson = ContextAttribute(
+            type=DataType.GEOJSON,
+            value={"type": "MultiPoint", "coordinates": [(125.6, 10.1), (125.6, 10.2)]},
+        )
+        self.assertIsInstance(geojson.value, MultiPoint)
+        self.assertEqual(
+            geojson.value.model_dump(exclude={"bbox"}),
+            {"type": "MultiPoint", "coordinates": [(125.6, 10.1), (125.6, 10.2)]},
+        )
+        # test LineString
+        geojson = ContextAttribute(
+            type=DataType.GEOJSON,
+            value={"type": "LineString", "coordinates": [(125.6, 10.1), (125.6, 10.2)]},
+        )
+        self.assertIsInstance(geojson.value, LineString)
+        self.assertEqual(
+            geojson.value.model_dump(exclude={"bbox"}),
+            {"type": "LineString", "coordinates": [(125.6, 10.1), (125.6, 10.2)]},
+        )
+        # test MultiLineString
+        geojson = ContextAttribute(
+            type=DataType.GEOJSON,
+            value={
+                "type": "MultiLineString",
+                "coordinates": [
+                    [(125.6, 10.1), (125.6, 10.2)],
+                    [
+                        (125.6, 10.1),
+                        (125.6, 10.2),
+                    ],
+                ],
+            },
+        )
+        self.assertIsInstance(geojson.value, MultiLineString)
+        self.assertEqual(
+            geojson.value.model_dump(exclude={"bbox"}),
+            {
+                "type": "MultiLineString",
+                "coordinates": [
+                    [(125.6, 10.1), (125.6, 10.2)],
+                    [
+                        (125.6, 10.1),
+                        (125.6, 10.2),
+                    ],
+                ],
+            },
+        )
+        # test Polygon
+        geojson = ContextAttribute(
+            type=DataType.GEOJSON,
+            value={
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        (125.6, 10.1),
+                        (126.6, 10.2),
+                        (126.6, 10.3),
+                        (125.6, 10.1),
+                    ]
+                ],
+            },
+        )
+        self.assertIsInstance(geojson.value, Polygon)
+        self.assertEqual(
+            geojson.value.model_dump(exclude={"bbox"}),
+            {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        (125.6, 10.1),
+                        (126.6, 10.2),
+                        (126.6, 10.3),
+                        (125.6, 10.1),
+                    ]
+                ],
+            },
+        )
+        # test MultiPolygon
+        geojson = ContextAttribute(
+            type=DataType.GEOJSON,
+            value={
+                "type": "MultiPolygon",
+                "coordinates": [
+                    [
+                        [
+                            (125.6, 10.1),
+                            (126.6, 10.2),
+                            (126.6, 10.3),
+                            (125.6, 10.1),
+                        ]
+                    ],
+                    [
+                        [
+                            (125.6, 10.1),
+                            (126.6, 10.2),
+                            (126.6, 10.3),
+                            (125.6, 10.1),
+                        ]
+                    ],
+                ],
+            },
+        )
+        self.assertIsInstance(geojson.value, MultiPolygon)
+        self.assertEqual(
+            geojson.value.model_dump(exclude={"bbox"}),
+            {
+                "type": "MultiPolygon",
+                "coordinates": [
+                    [
+                        [
+                            (125.6, 10.1),
+                            (126.6, 10.2),
+                            (126.6, 10.3),
+                            (125.6, 10.1),
+                        ]
+                    ],
+                    [
+                        [
+                            (125.6, 10.1),
+                            (126.6, 10.2),
+                            (126.6, 10.3),
+                            (125.6, 10.1),
+                        ]
+                    ],
+                ],
+            },
+        )
+        # test Feature
+        feature = Feature(
+            **{
+                "type": "Feature",
+                "bbox": [-10.0, -10.0, 10.0, 10.0],
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [
+                        [
+                            (-10.0, -10.0),
+                            (10.0, -10.0),
+                            (10.0, 10.0),
+                            (-10.0, -10.0),
+                        ]
+                    ],
+                },
+                "properties": {"name": "MyPolygon"},
+                "id": 1,
+            }
+        )
+        geojson = ContextAttribute(
+            type=DataType.GEOJSON,
+            value={
+                "type": "Feature",
+                "bbox": [-10.0, -10.0, 10.0, 10.0],
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [
+                        [
+                            (-10.0, -10.0),
+                            (10.0, -10.0),
+                            (10.0, 10.0),
+                            (-10.0, -10.0),
+                        ]
+                    ],
+                },
+                "properties": {"name": "MyPolygon"},
+                "id": 1,
+            },
+        )
+        self.assertIsInstance(geojson.value, Feature)
+        self.assertEqual(
+            geojson.value.model_dump(),
+            {
+                "type": "Feature",
+                "bbox": (-10.0, -10.0, 10.0, 10.0),
+                "geometry": {
+                    "bbox": None,
+                    "type": "Polygon",
+                    "coordinates": [
+                        [
+                            (-10.0, -10.0),
+                            (10.0, -10.0),
+                            (10.0, 10.0),
+                            (-10.0, -10.0),
+                        ]
+                    ],
+                },
+                "properties": {"name": "MyPolygon"},
+                "id": 1,
+            },
+        )
+        # test FeatureCollection
+        geojson = ContextAttribute(
+            type=DataType.GEOJSON,
+            value={
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "type": "Feature",
+                        "bbox": (-10.0, -10.0, 10.0, 10.0),
+                        "geometry": {
+                            "bbox": None,
+                            "type": "Polygon",
+                            "coordinates": [
+                                [
+                                    (-10.0, -10.0),
+                                    (10.0, -10.0),
+                                    (10.0, 10.0),
+                                    (-10.0, -10.0),
+                                ]
+                            ],
+                        },
+                        "properties": {"name": "MyFirstPolygon"},
+                        "id": 1,
+                    },
+                    {
+                        "type": "Feature",
+                        "bbox": (-10.0, -10.0, 10.0, 10.0),
+                        "geometry": {
+                            "bbox": None,
+                            "type": "Polygon",
+                            "coordinates": [
+                                [
+                                    (-10.0, -10.0),
+                                    (10.0, -10.0),
+                                    (10.0, 10.0),
+                                    (-10.0, -10.0),
+                                ]
+                            ],
+                        },
+                        "properties": {"name": "MySecondPolygon"},
+                        "id": 2,
+                    },
+                ],
+            },
+        )
+        self.assertIsInstance(geojson.value, FeatureCollection)
+        self.assertEqual(
+            geojson.value.model_dump(exclude={"bbox"}),
+            {
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "type": "Feature",
+                        "bbox": (-10.0, -10.0, 10.0, 10.0),
+                        "geometry": {
+                            "bbox": None,
+                            "type": "Polygon",
+                            "coordinates": [
+                                [
+                                    (-10.0, -10.0),
+                                    (10.0, -10.0),
+                                    (10.0, 10.0),
+                                    (-10.0, -10.0),
+                                ]
+                            ],
+                        },
+                        "properties": {"name": "MyFirstPolygon"},
+                        "id": 1,
+                    },
+                    {
+                        "type": "Feature",
+                        "bbox": (-10.0, -10.0, 10.0, 10.0),
+                        "geometry": {
+                            "bbox": None,
+                            "type": "Polygon",
+                            "coordinates": [
+                                [
+                                    (-10.0, -10.0),
+                                    (10.0, -10.0),
+                                    (10.0, 10.0),
+                                    (-10.0, -10.0),
+                                ]
+                            ],
+                        },
+                        "properties": {"name": "MySecondPolygon"},
+                        "id": 2,
+                    },
+                ],
+            },
+        )
 
     def test_cb_metadata(self) -> None:
         """
@@ -127,8 +431,7 @@ class TestContextModels(unittest.TestCase):
 
         # add attribute directly without proper type conversion
         with self.assertRaises(ValueError):
-            new_attr["new_attr"] = \
-                new_attr["new_attr"].model_dump(exclude_unset=True)
+            new_attr["new_attr"] = new_attr["new_attr"].model_dump(exclude_unset=True)
             entity.new_attr = new_attr
 
         # try to generate a model with the entity data
@@ -323,8 +626,11 @@ class TestContextModels(unittest.TestCase):
         """
         Cleanup test server
         """
-        clear_all(fiware_header=FiwareHeader(
-           service=settings.FIWARE_SERVICE,
-           service_path=settings.FIWARE_SERVICEPATH),
-           cb_url=settings.CB_URL,
-           iota_url=settings.IOTA_JSON_URL)
+        clear_all(
+            fiware_header=FiwareHeader(
+                service=settings.FIWARE_SERVICE,
+                service_path=settings.FIWARE_SERVICEPATH,
+            ),
+            cb_url=settings.CB_URL,
+            iota_url=settings.IOTA_JSON_URL,
+        )

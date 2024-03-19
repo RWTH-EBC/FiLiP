@@ -8,6 +8,7 @@
 - add function to override the existing entity ([#232 ](https://github.com/RWTH-EBC/FiLiP/pull/232 ))
 - fix: include headers in some requests ([#250](https://github.com/RWTH-EBC/FiLiP/issues/250))
 - feat: make context-entity more customizable ([#225](https://github.com/RWTH-EBC/FiLiP/issues/225))
+- feat: add geojson support to context-entity ([#226](https://github.com/RWTH-EBC/FiLiP/issues/226))
 
 BREAKING CHANGE:
 - feat: make context-entity more customizable ([#225](https://github.com/RWTH-EBC/FiLiP/issues/225)) enforces stricter type validation as before. This might lead to errors in your code if you are not using the correct types. Please check the documentation for the correct types.
