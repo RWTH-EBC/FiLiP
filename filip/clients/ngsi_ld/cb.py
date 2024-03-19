@@ -19,7 +19,7 @@ from filip.models.base import FiwareLDHeader, PaginationMethod
 from filip.utils.simple_ql import QueryString
 from filip.models.ngsi_v2.base import AttrsFormat
 from filip.models.ngsi_v2.subscriptions import Subscription
-from filip.models.ngsi_ld.context import ContextLDEntity, ContextProperty, ContextRelationship, NamedContextProperty, \
+from filip.models.ngsi_ld.context import ContextLDEntity, ContextLDEntityKeyValues, ContextProperty, ContextRelationship, NamedContextProperty, \
     NamedContextRelationship, ActionTypeLD, UpdateLD
 from filip.models.ngsi_v2.context import Query
 
@@ -173,8 +173,8 @@ class ContextBrokerLDClient(BaseHttpClient):
                          entity_id: str,
                          attrs: Optional[str] = None,
                          entity_type: Optional[str] = None,
-                         # response_format: Optional[Union[AttrsFormat, str]] =
-                         # AttrsFormat.NORMALIZED,  # Einkommentieren sobald das hinzugefütgt wurde
+                         response_format: Optional[Union[AttrsFormat, str]] =
+                          AttrsFormat.KEY_VALUES,
                          ) -> Union[Dict[str, Any]]:
         url = urljoin(self.base_url, f'{self._url_version}/entities/{entity_id}')
 
@@ -191,10 +191,8 @@ class ContextBrokerLDClient(BaseHttpClient):
             if res.ok:
                 self.logger.info(f"Entity {entity_id} successfully retrieved!")
                 self.logger.debug("Received: %s", res.json())
-                # if response_format == AttrsFormat.NORMALIZED:
-                #     return ContextLDEntity(**res.json())
-                # if response_format == AttrsFormat.KEY_VALUES:
-                #     return ContextLDEntityKeyValues(**res.json())
+                if response_format == AttrsFormat.KEY_VALUES:
+                    return ContextLDEntityKeyValues(**res.json())
                 return res.json()
             res.raise_for_status()
         except requests.RequestException as err:
@@ -219,11 +217,12 @@ class ContextBrokerLDClient(BaseHttpClient):
         """
         url = urljoin(self.base_url, f'{self._url_version}/entities')
         headers = self.headers.copy()
+        print(headers)
         try:
             res = self.post(
                 url=url,
                 headers=headers,
-                json=entity.dict(exclude_unset=True,
+                json=entity.model_dump(exclude_unset=True,
                                  exclude_defaults=True,
                                  exclude_none=True))
             if res.ok:
@@ -251,9 +250,7 @@ class ContextBrokerLDClient(BaseHttpClient):
                         geoproperty: Optional[str] = None,
                         csf: Optional[str] = None,
                         limit: Optional[PositiveInt] = None,
-                        # response_format: Optional[Union[AttrsFormat, str]] =
-                        # AttrsFormat.NORMALIZED,
-
+                        response_format: Optional[Union[AttrsFormat, str]] = AttrsFormat.KEY_VALUES.value,
                         ) -> Union[Dict[str, Any]]:
 
         url = urljoin(self.base_url, f'{self._url_version}/entities/')
@@ -282,19 +279,20 @@ class ContextBrokerLDClient(BaseHttpClient):
         if limit:
             params.update({'limit': limit})
 
-        # if response_format not in list(AttrsFormat):
-        #     raise ValueError(f'Value must be in {list(AttrsFormat)}')
-        # params.update({'options': response_format})
+        if response_format not in list(AttrsFormat):
+            raise ValueError(f'Value must be in {list(AttrsFormat)}')
+        params.update({'options': response_format})
 
         try:
             res = self.get(url=url, params=params, headers=headers)
             if res.ok:
                 self.logger.info("Entity successfully retrieved!")
                 self.logger.debug("Received: %s", res.json())
-                # if response_format == AttrsFormat.NORMALIZED:
-                #     return ContextLDEntity(**res.json())
-                # if response_format == AttrsFormat.KEY_VALUES:
-                #     return ContextLDEntityKeyValues(**res.json())
+                #if response_format == AttrsFormat.NORMALIZED:
+                #    return ContextLDEntity(**res.json())
+                if response_format == AttrsFormat.KEY_VALUES:
+                    print(res.json())
+                    #eturn ContextLDEntityKeyValues(**res.json())
                 return res.json()
             res.raise_for_status()
         except requests.RequestException as err:
@@ -929,68 +927,70 @@ class ContextBrokerLDClient(BaseHttpClient):
 #         self.log_error(err=err, msg=msg)
 #         raise
 #
-# def get_entity_attributes(self,
-#                           entity_id: str,
-#                           entity_type: str = None,
-#                           attrs: List[str] = None,
-#                           response_format: Union[AttrsFormat, str] =
-#                           AttrsFormat.NORMALIZED,
-#                           **kwargs
-#                           ) -> \
-#         Dict[str, Union[ContextProperty, ContextRelationship]]:
-#     """
-#     This request is similar to retrieving the whole entity, however this
-#     one omits the id and type fields. Just like the general request of
-#     getting an entire entity, this operation must return only one entity
-#     element. If more than one entity with the same ID is found (e.g.
-#     entities with same ID but different type), an error message is
-#     returned, with the HTTP status code set to 409 Conflict.
-#
-#     Args:
-#         entity_id (String): Id of the entity to be retrieved
-#         entity_type (String): Entity type, to avoid ambiguity in case
-#             there are several entities with the same entity id.
-#         attrs (List of Strings): List of attribute names whose data must be
-#             included in the response. The attributes are retrieved in the
-#             order specified by this parameter.
-#             See "Filtering out attributes and metadata" section for more
-#             detail. If this parameter is not included, the attributes are
-#             retrieved in arbitrary order, and all the attributes of the
-#             entity are included in the response. Example: temperature,
-#             humidity.
-#         response_format (AttrsFormat, str): Representation format of
-#             response
-#     Returns:
-#         Dict
-#     """
-#     url = urljoin(self.base_url, f'/v2/entities/{entity_id}/attrs') # TODO --> nicht nutzbar
-#     headers = self.headers.copy()
-#     params = {}
-#     if entity_type:
-#         params.update({'type': entity_type})
-#     if attrs:
-#         params.update({'attrs': ','.join(attrs)})
-#     if response_format not in list(AttrsFormat):
-#         raise ValueError(f'Value must be in {list(AttrsFormat)}')
-#     params.update({'options': response_format})
-#     try:
-#         res = self.get(url=url, params=params, headers=headers)
-#         if res.ok:
-#             if response_format == AttrsFormat.NORMALIZED:
-#                 attr = {}
-#                 for key, values in res.json().items():
-#                     if "value" in values:
-#                         attr[key] = ContextProperty(**values)
-#                     else:
-#                         attr[key] = ContextRelationship(**values)
-#                 return attr
-#             return res.json()
-#         res.raise_for_status()
-#     except requests.RequestException as err:
-#         msg = f"Could not load attributes from entity {entity_id} !"
-#         self.log_error(err=err, msg=msg)
-#         raise
-#
+
+# There is no endpoint for getting attributes anymore
+# TODO? get entity and return attributes?
+    def get_entity_attributes(self,
+                              entity_id: str,
+                              entity_type: str = None,
+                              attrs: List[str] = None,
+                              response_format: Union[AttrsFormat, str] =
+                              AttrsFormat.KEY_VALUES,
+                              **kwargs
+                              ) -> \
+            Dict[str, Union[ContextProperty, ContextRelationship]]:
+        """
+        This request is similar to retrieving the whole entity, however this
+        one omits the id and type fields. Just like the general request of
+        getting an entire entity, this operation must return only one entity
+        element. If more than one entity with the same ID is found (e.g.
+        entities with same ID but different type), an error message is
+        returned, with the HTTP status code set to 409 Conflict.
+        Args:
+            entity_id (String): Id of the entity to be retrieved
+            entity_type (String): Entity type, to avoid ambiguity in case
+                there are several entities with the same entity id.
+            attrs (List of Strings): List of attribute names whose data must be
+                included in the response. The attributes are retrieved in the
+                order specified by this parameter.
+                See "Filtering out attributes and metadata" section for more
+                detail. If this parameter is not included, the attributes are
+                retrieved in arbitrary order, and all the attributes of the
+                entity are included in the response. Example: temperature,
+                humidity.
+            response_format (AttrsFormat, str): Representation format of
+                response
+        Returns:
+            Dict
+        """
+        url = urljoin(self.base_url, f'{self._url_version}/entities/{entity_id}/attrs')
+        headers = self.headers.copy()
+        params = {}
+        if entity_type:
+            params.update({'type': entity_type})
+        if attrs:
+            params.update({'attrs': ','.join(attrs)})
+        if response_format not in list(AttrsFormat):
+            raise ValueError(f'Value must be in {list(AttrsFormat)}')
+        params.update({'options': response_format})
+        try:
+            res = self.get(url=url, params=params, headers=headers)
+            if res.ok:
+                if response_format == AttrsFormat.KEY_VALUES:
+                    attr = {}
+                    for key, values in res.json().items():
+                        if "value" in values:
+                            attr[key] = ContextProperty(**values)
+                        else:
+                            attr[key] = ContextRelationship(**values)
+                    return attr
+                return res.json()
+            res.raise_for_status()
+        except requests.RequestException as err:
+            msg = f"Could not load attributes from entity {entity_id} !"
+            self.log_error(err=err, msg=msg)
+            raise
+
 # def update_entity(self,
 #                   entity: ContextLDEntity,
 #                   options: str = None,
