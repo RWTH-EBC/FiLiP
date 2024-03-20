@@ -8,7 +8,7 @@ from filip.clients.ngsi_ld.cb import ContextBrokerLDClient
 from filip.models.ngsi_ld.context import ContextLDEntity, ActionTypeLD
 
 
-class TestEntities(unittest.Testcase):
+class EntitiesBatchOperations(unittest.Testcase):
     """
     Test class for entity endpoints.
     Args:
@@ -20,29 +20,29 @@ class TestEntities(unittest.Testcase):
         Returns:
             None
         """
-        self.fiware_header = FiwareHeader(
-            service=settings.FIWARE_SERVICE,
-            service_path=settings.FIWARE_SERVICEPATH)
-        self.http_url = "https://test.de:80"
-        self.mqtt_url = "mqtt://test.de:1883"
-        self.mqtt_topic = '/filip/testing'
+        # self.fiware_header = FiwareHeader(
+        #     service=settings.FIWARE_SERVICE,
+        #     service_path=settings.FIWARE_SERVICEPATH)
+        # self.http_url = "https://test.de:80"
+        # self.mqtt_url = "mqtt://test.de:1883"
+        # self.mqtt_topic = '/filip/testing'
 
-        CB_URL = "http://localhost:1026"
-        self.cb_client = ContextBrokerClient(url=CB_URL,
-                                    fiware_header=self.fiware_header)
+        # CB_URL = "http://localhost:1026"
+        # self.cb_client = ContextBrokerClient(url=CB_URL,
+        #                             fiware_header=self.fiware_header)
         
 
-        self.attr = {'testtemperature': {'value': 20.0}}
-        self.entity = ContextLDEntity(id='urn:ngsi-ld:my:id', type='MyType', **self.attr)
-        #self.entity = ContextLDEntity(id="urn:ngsi-ld:room1", type="Room", data={})
+        # self.attr = {'testtemperature': {'value': 20.0}}
+        # self.entity = ContextLDEntity(id='urn:ngsi-ld:my:id', type='MyType', **self.attr)
+        # #self.entity = ContextLDEntity(id="urn:ngsi-ld:room1", type="Room", data={})
         
-        # self.entity = ContextLDEntity(id="urn:ngsi-ld:room1", type="Room", **room1_data)
-        # self.entity = ContextLDEntity(id="urn:ngsi-ld:room1", 
-                                    #   type="room",
-                                    #   data={})
-        self.entity_2 = ContextLDEntity(id="urn:ngsi-ld:room2",
-                                        type="room",
-                                      data={})
+        # # self.entity = ContextLDEntity(id="urn:ngsi-ld:room1", type="Room", **room1_data)
+        # # self.entity = ContextLDEntity(id="urn:ngsi-ld:room1", 
+        #                             #   type="room",
+        #                             #   data={})
+        # self.entity_2 = ContextLDEntity(id="urn:ngsi-ld:room2",
+        #                                 type="room",
+        #                               data={})
     
     # def test_get_entites_batch(self) -> None:
     #     """
@@ -309,4 +309,32 @@ class TestEntities(unittest.Testcase):
             if batch entities are still on entity list:
                 Raise Error:
         """
-        pass
+        """Test 1"""
+        fiware_header = FiwareLDHeader()
+        with ContextBrokerLDClient(fiware_header=fiware_header) as client:
+            entities_delete = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
+                            type=f'filip:object:TypeA') for i in
+                range(0, 1)]
+            with self.assertRaises(Exception):
+                client.update(entities=entities_delete, action_type=ActionTypeLD.DELETE)
+                
+        """Test 2"""
+        fiware_header = FiwareLDHeader()
+        with ContextBrokerLDClient(fiware_header=fiware_header) as client:
+            entities_a = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
+                                        type=f'filip:object:TypeA') for i in
+                          range(0, 4)]
+            client.update(entities=entities_a, action_type=ActionTypeLD.CREATE)
+
+            entities_delete = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
+                                        type=f'filip:object:TypeA') for i in
+                          range(0, 3)]
+            client.update(entities=entities_delete, action_type=ActionTypeLD.DELETE)
+
+            entity_list = client.get_entity_list()
+            for entity in entity_list: 
+                self.assertIn(entity, entities_a)
+            for entity in entities_delete:
+                self.assertNotIn(entity, entity_list)
+            for entity in entity_list:
+                client.delete_entity_by_id(entity_id=entity.id)  
