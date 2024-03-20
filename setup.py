@@ -10,7 +10,6 @@ LONG_DESCRIPTION = readme_path.read_text()
 INSTALL_REQUIRES = ['aenum~=3.1.15',
                     'datamodel_code_generator[http]~=0.25.0',
                     'paho-mqtt~=1.6.1',
-                    'pandas~=1.3.5',
                     'pandas_datapackage_reader~=0.18.0',
                     'pydantic~=2.5.2',
                     'pydantic-settings~=2.0.0',
@@ -62,7 +61,9 @@ setuptools.setup(
     setup_requires=SETUP_REQUIRES,
     # optional modules
     extras_require={
-        "semantics": ["igraph~=0.9.8"]
+        "semantics": ["igraph~=0.9.8"],
+        ":python_version < '3.9'": ["pandas~=1.3.5"],
+        ":python_version >= '3.9'": ["pandas~=2.1.4"]
     },
     install_requires=INSTALL_REQUIRES,
     python_requires=">=3.7",
