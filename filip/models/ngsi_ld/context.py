@@ -489,6 +489,14 @@ class ContextLDEntity(ContextLDEntityKeyValues):
 
     model_config = ConfigDict(extra='allow', validate_default=True, validate_assignment=True)
 
+    def model_dump(
+        self,
+        *args,
+        by_alias: bool = True,
+        **kwargs
+    ) -> dict[str, Any]:
+        return super().model_dump(*args, by_alias=by_alias, **kwargs)
+
     @field_validator("id")
     @classmethod
     def _validate_id(cls, id: str):
