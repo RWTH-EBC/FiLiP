@@ -390,7 +390,6 @@ class PropertyFormat(str, Enum):
     DICT = 'dict'
 
 
-#class ContextLDEntity(ContextLDEntityKeyValues, ContextEntity):
 class ContextLDEntity(ContextLDEntityKeyValues):
     """
     Context LD entities, or simply entities, are the center of gravity in the
@@ -474,15 +473,20 @@ class ContextLDEntity(ContextLDEntityKeyValues):
                  id: str,
                  type: str,
                  **data):
-
+        # There is currently no validation for extra fields
+        data.update(self._validate_attributes(data))
         super().__init__(id=id, type=type, **data)
 
+    # TODO we should distinguish bettween context relationship
     @classmethod
     def _validate_attributes(cls, data: Dict):
-        attrs = {key: ContextAttribute.model_validate(attr) for key, attr in
-                 data.items() if key not in ContextEntity.model_fields}
-        return attrs"""
-        # ToDo: Add ContextAttribute in this file aswell? Also a new Base for the @context?
+        fields = set([field.validation_alias for (_, field) in cls.model_fields.items()] +
+                     [field_name for field_name in cls.model_fields])
+        fields.remove(None)
+        attrs = {key: ContextProperty.model_validate(attr) for key, attr in
+                 data.items() if key not in fields}
+        return attrs
+
     model_config = ConfigDict(extra='allow', validate_default=True, validate_assignment=True)
 
     @field_validator("id")
