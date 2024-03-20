@@ -17,8 +17,8 @@ class EntityInfo(BaseModel):
         description="Regular expression as per IEEE POSIX 1003.2™ [11]"
     )
     type: str = Field(
-        ...,
-        description="Fully Qualified Name of an Entity Type or the Entity Type Name as a short-hand string. See clause 4.6.2"
+        description="Fully Qualified Name of an Entity Type or the Entity Type Name as a "
+                    "short-hand string. See clause 4.6.2"
     )
     model_config = ConfigDict(populate_by_name=True)
 
