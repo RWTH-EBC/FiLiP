@@ -190,7 +190,7 @@ class TestLDContextModels(unittest.TestCase):
     def test_entity_relationships(self):
         pass
         # TODO relationships CRUD
-    
+
     # ToDo: Matthias: Add test for context -> create entity with a full dict (e.g. entity1_dict)
     #  -> if not failing get dict from filip and compare:
     #  like: self.assertEqual(self.entity1_dict,
