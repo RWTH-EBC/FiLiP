@@ -376,22 +376,7 @@ class ContextLDEntityKeyValues(BaseModel):
         frozen=True
     )
     field_validator("type")(validate_fiware_standard_regex)
-    context: Optional[List[str]] = Field(
-        # ToDo: Matthias: Add field validator from subscription
-        #  -> use @context in def @field_validator("@context")
-        title="@context",
-        default=None,
-        description="providing an unambiguous definition by mapping terms to "
-                    "URIs. For practicality reasons, "
-                    "it is recommended to have a unique @context resource, "
-                    "containing all terms, subject to be used in every "
-                    "FIWARE Data Model, the same way as http://schema.org does.",
-        examples=["[https://schema.lab.fiware.org/ld/context,"
-                "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld]"],
-        max_length=256,
-        min_length=1,
-        frozen=True
-    )
+
     model_config = ConfigDict(extra='allow', validate_default=True,
                               validate_assignment=True)
 
@@ -450,6 +435,29 @@ class ContextLDEntity(ContextLDEntityKeyValues, ContextEntity):
                     "observationspace are different and "
                     "can be disjoint. "
     )
+    context: Optional[List[str]] = Field(
+        # ToDo: Matthias: Add field validator from subscription
+        #  -> use @context in def @field_validator("@context")
+        title="@context",
+        default=None,
+        description="providing an unambiguous definition by mapping terms to "
+                    "URIs. For practicality reasons, "
+                    "it is recommended to have a unique @context resource, "
+                    "containing all terms, subject to be used in every "
+                    "FIWARE Data Model, the same way as http://schema.org does.",
+        examples=["[https://schema.lab.fiware.org/ld/context,"
+                "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld]"],
+        max_length=256,
+        min_length=1,
+        alias="@context",
+        validation_alias="@context",
+        frozen=True
+    )
+
+    @field_validator("context")
+    @classmethod
+    def return_context(cls, context):
+        return context
 
     operationSpace: Optional[ContextGeoProperty] = Field(
         default=None,
@@ -465,7 +473,6 @@ class ContextLDEntity(ContextLDEntityKeyValues, ContextEntity):
                  id: str,
                  type: str,
                  **data):
-
         super().__init__(id=id, type=type, **data)
 
     model_config = ConfigDict(extra='allow', validate_default=True, validate_assignment=True)
