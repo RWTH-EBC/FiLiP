@@ -12,7 +12,7 @@ from filip.clients.ngsi_v2 import \
     QuantumLeapClient
 from filip.models.base import FiwareHeader
 from filip.models.ngsi_v2.context import ContextEntity
-from filip.models.ngsi_v2.subscriptions import Message
+from filip.models.ngsi_v2.subscriptions import Message, Subscription
 from filip.utils.cleanup import clean_test, clear_all
 from tests.config import settings
 
@@ -104,16 +104,29 @@ class TestTimeSeries(unittest.TestCase):
         for entity in entities:
             self.cb_client.post_entity(entity)
 
-        with QuantumLeapClient(
-                url=settings.QL_URL,
+        with ContextBrokerClient(
+                url=settings.CB_URL,
                 fiware_header=self.fiware_header) \
-                as client:
+                as CBclient, QuantumLeapClient(url=settings.CB_URL,
+                fiware_header=self.fiware_header) as QLclient:
             notification_message = Message(data=entities,
                                            subscriptionId="test")
-            client.post_subscription(cb_url=settings.CB_URL,
-                                     ql_url=settings.QL_URL,
-                                     entity_id=entities[0].id)
-            client.post_notification(notification_message)
+            subscription:Subscription = Subscription.model_validate({
+        "subject": {
+            "entities": [
+                {
+                    "id": entities[0].id
+                }
+            ]
+        },
+        "notification": {                           
+            "http": {
+                "url": "http://quantumleap:8668/v2/notify"
+            }
+        }
+    })
+            CBclient.post_subscription(subscription=subscription)
+            QLclient.post_notification(notification_message)
         time.sleep(1)
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,

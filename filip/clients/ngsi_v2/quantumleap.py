@@ -184,6 +184,7 @@ class QuantumLeapClient(BaseHttpClient):
                 used as a
             time index.
         """
+        assert False, "Subscription endpoint of Quantumleap API is deprecated, use the ORION subscription endpoint instead"
         headers = self.headers.copy()
         params = {}
         url = urljoin(self.base_url, '/v2/subscribe')
@@ -302,6 +303,7 @@ class QuantumLeapClient(BaseHttpClient):
                         url,
                         *,
                         entity_id: str = None,
+                        id_pattern: str = None,
                         options: str = None,
                         entity_type: str = None,
                         aggr_method: Union[str, AggrMethod] = None,
@@ -348,6 +350,7 @@ class QuantumLeapClient(BaseHttpClient):
         Returns:
             Dict
         """
+        assert (id_pattern is None or entity_id is None), "Cannot have both id and idPattern as parameter."
         params = {}
         headers = self.headers.copy()
         max_records_per_request = 10000
@@ -387,6 +390,8 @@ class QuantumLeapClient(BaseHttpClient):
             params.update({'aggr_scope': aggr_scope.value})
         if entity_id:
             params.update({'id': entity_id})
+        if id_pattern:
+            params.update({'idPattern': id_pattern})
 
         # This loop will chop large requests into smaller junks.
         # The individual functions will then merge the final response models
@@ -431,6 +436,7 @@ class QuantumLeapClient(BaseHttpClient):
     # v2/entities
     def get_entities(self, *,
                      entity_type: str = None,
+                     id_pattern: str = None,
                      from_date: str = None,
                      to_date: str = None,
                      limit: int = 10000,
@@ -461,6 +467,7 @@ class QuantumLeapClient(BaseHttpClient):
         """
         url = urljoin(self.base_url, 'v2/entities')
         res = self.__query_builder(url=url,
+                                   id_pattern=id_pattern,
                                    entity_type=entity_type,
                                    from_date=from_date,
                                    to_date=to_date,
@@ -821,6 +828,7 @@ class QuantumLeapClient(BaseHttpClient):
                            *,
                            attrs: str = None,
                            entity_id: str = None,
+                           id_pattern: str = None,
                            aggr_method: Union[str, AggrMethod] = None,
                            aggr_period: Union[str, AggrPeriod] = None,
                            from_date: str = None,
@@ -842,6 +850,7 @@ class QuantumLeapClient(BaseHttpClient):
         url = urljoin(self.base_url, f'/v2/types/{entity_type}')
         res_q = self.__query_builder(url=url,
                                      entity_id=entity_id,
+                                     id_pattern=id_pattern,
                                      attrs=attrs,
                                      options=options,
                                      aggr_method=aggr_method,
@@ -874,6 +883,7 @@ class QuantumLeapClient(BaseHttpClient):
                                   *,
                                   attrs: str = None,
                                   entity_id: str = None,
+                                  id_pattern: str = None,
                                   aggr_method: Union[str, AggrMethod] = None,
                                   aggr_period: Union[str, AggrPeriod] = None,
                                   from_date: str = None,
@@ -896,6 +906,7 @@ class QuantumLeapClient(BaseHttpClient):
         url = urljoin(self.base_url, f'/v2/types/{entity_type}/value')
         res_q = self.__query_builder(url=url,
                                      entity_id=entity_id,
+                                     id_pattern=id_pattern,
                                      attrs=attrs,
                                      options=options,
                                      entity_type=entity_type,
@@ -928,6 +939,7 @@ class QuantumLeapClient(BaseHttpClient):
                                 attr_name: str,
                                 *,
                                 entity_id: str = None,
+                                id_pattern: str = None,
                                 aggr_method: Union[str, AggrMethod] = None,
                                 aggr_period: Union[str, AggrPeriod] = None,
                                 from_date: str = None,
@@ -984,6 +996,7 @@ class QuantumLeapClient(BaseHttpClient):
                                      f'/{attr_name}')
         res_q = self.__query_builder(url=url,
                                      entity_id=entity_id,
+                                     id_pattern=id_pattern,
                                      options=options,
                                      entity_type=entity_type,
                                      aggr_method=aggr_method,
@@ -1029,6 +1042,7 @@ class QuantumLeapClient(BaseHttpClient):
                                        attr_name: str,
                                        *,
                                        entity_id: str = None,
+                                       id_pattern: str = None,
                                        aggr_method: Union[
                                            str, AggrMethod] = None,
                                        aggr_period: Union[
@@ -1079,6 +1093,7 @@ class QuantumLeapClient(BaseHttpClient):
                                      f'{attr_name}/value')
         res_q = self.__query_builder(url=url,
                                      entity_id=entity_id,
+                                     id_pattern=id_pattern,
                                      options=options,
                                      entity_type=entity_type,
                                      aggr_method=aggr_method,

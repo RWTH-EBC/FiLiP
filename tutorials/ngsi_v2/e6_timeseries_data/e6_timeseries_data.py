@@ -196,17 +196,29 @@ if __name__ == '__main__':
     qlc = QuantumLeapClient(...)
 
     # ToDO: create a http subscriptions that get triggered by updates of your
-    #  device attributes. Note that you can also post the same subscription
-    #  by the context broker.
-    qlc.post_subscription(entity_id=weather_station.entity_name,
-                          entity_type=weather_station.entity_type,
-                          cb_url="http://orion:1026",
-                          ql_url="http://quantumleap:8668",
-                          throttling=0)
+    #  device attributes. Note that you can only post the subscription
+    #  to the context broker.
+    subscription_payload = {
+        "subject": {
+            "entities": [
+                {
+                    "id": weather_station.entity_name,
+                    "type":weather_station.entity_type
+                }
+            ]
+        },
+        "notification": {  
+            "http": {
+                "url": "http://quantumleap:8668/v2/notify"
+            }
+        }
+    }
 
-    qlc.post_subscription(...)
+    cbc.post_subscription(subscription=Subscription(**subscription_payload))
 
-    qlc.post_subscription(...)
+    cbc.post_subscription(...)
+
+    cbc.post_subscription(...)
 
     # connect to the mqtt broker and subscribe to your topic
     mqtt_url = urlparse(MQTT_BROKER_URL_EXPOSED)
