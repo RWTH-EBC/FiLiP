@@ -8,7 +8,7 @@ from filip.clients.ngsi_ld.cb import ContextBrokerLDClient
 from filip.models.ngsi_ld.context import ContextLDEntity, ActionTypeLD
 
 
-class EntitiesBatchOperations(unittest.Testcase):
+class EntitiesBatchOperations(unittest.TestCase):
     """
     Test class for entity endpoints.
     Args:
@@ -152,9 +152,11 @@ class EntitiesBatchOperations(unittest.Testcase):
         """Test 1"""
         fiware_header = FiwareLDHeader()
         with ContextBrokerLDClient(fiware_header=fiware_header) as client:
+            ContextLDEntity(id=f"urn:ngsi-ld:test:10", type=f'filip:object:TypeA',con)
             entities_a = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
                                         type=f'filip:object:TypeA') for i in
                           range(0, 5)]
+            
             client.update(entities=entities_a, action_type=ActionTypeLD.CREATE)
 
             entities_update = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",

@@ -1,9 +1,9 @@
 import _json
 import unittest
 from pydantic import ValidationError
-from filip.clients.ngsi_v2.cb import ContextBrokerClient	
+#from filip.clients.ngsi_v2.cb import ContextBrokerClient	
 
-# from filip.clients.ngsi_ld.cb import ContextBrokerLDClient
+from filip.clients.ngsi_ld.cb import ContextBrokerLDClient
 # from filip.models.ngsi_v2.subscriptions import \
 #     Http, \
 #     HttpCustom, \
@@ -11,10 +11,13 @@ from filip.clients.ngsi_v2.cb import ContextBrokerClient
 #     MqttCustom, \
 #     Notification, \
 #     Subscription
-from filip.models.base import FiwareHeader
+from filip.models.base import FiwareLDHeader
 from filip.utils.cleanup import clear_all, clean_test
 from tests.config import settings
-from filip.models.ngsi_ld.context import ContextLDEntity
+from filip.models.ngsi_ld.context import \
+    ContextLDEntity, \
+    ContextProperty, \
+    ContextRelationship
 import requests
 
 class TestEntities(unittest.TestCase):
@@ -28,15 +31,16 @@ class TestEntities(unittest.TestCase):
         Returns:
             None
         """
-        self.fiware_header = FiwareHeader(
-            service=settings.FIWARE_SERVICE,
-            service_path=settings.FIWARE_SERVICEPATH)
+        # self.fiware_header = FiwareLDHeader(
+        #     service=settings.FIWARE_SERVICE,
+        #     service_path=settings.FIWARE_SERVICEPATH)
+        self.fiware_header = FiwareLDHeader()
         self.http_url = "https://test.de:80"
         self.mqtt_url = "mqtt://test.de:1883"
         self.mqtt_topic = '/filip/testing'
 
         CB_URL = "http://localhost:1026"
-        self.cb_client = ContextBrokerClient(url=CB_URL,
+        self.cb_client = ContextBrokerLDClient(url=CB_URL,
                                     fiware_header=self.fiware_header)
         
 
@@ -141,11 +145,10 @@ class TestEntities(unittest.TestCase):
             self.assertNotEqual(element.id, self.entity.id)
 
         """Test3"""
-        # ret_post = self.cb_client.post_entity(ContextLDEntity(id="room2"))
-        # # Error raised by post entity function
-        # entity_list = self.cb_client.get_entity_list()
-        # self.assertNotIn("room2", entity_list)
-        # raise ValueError("Uncomplete entity was added to list.")
+        with self.assertRaises(Exception):
+            self.cb_client.post_entity(ContextLDEntity(id="room2"))
+        entity_list = self.cb_client.get_entity_list()
+        self.assertNotIn("room2", entity_list)
 
         """delete"""
         self.cb_client.delete_entities(entities=entity_list)
@@ -280,26 +283,47 @@ class TestEntities(unittest.TestCase):
                     Raise Error
         Test 2: 
             add attribute to an non existent entity
-            return != 404:
-                Raise Error
+            Raise Error
         Test 3:
             post an entity with entity_ID, entity_name, entity_attribute
             add attribute that already exists with noOverwrite
-            return != 207?
-                yes: 
-                    Raise Error
+                Raise Error
             get entity and compare previous with entity attributes
             If attributes are different?
-                yes:
-                    Raise Error
+                Raise Error
         """
-        """Test1"""
+        """Test 1"""
         self.cb_client.post_entity(self.entity)
-        self.attr = {'testmoisture': {'value': 0.5}}
-        self.entity.add_attributes(self.attr)
-        entity = self.cb_client.get_entity(self.entity.id)
-        entity = ContextLDEntity()
-        # How do I get the attribute?
+        attr = ContextProperty(**{'value': 20, 'type': 'Number'})
+        # noOverwrite Option missing ???
+        self.entity.add_properties(attrs=["test_value", attr])
+        entity_list = self.cb_client.get_entity_list()
+        for entity in entity_list:
+            self.assertEqual(first=entity.property, second=attr)
+        for entity in entity_list:
+            self.cb_client.delete_entity_by_id(entity_id=entity.id)
+        
+        """Test 2"""
+        attr = ContextProperty(**{'value': 20, 'type': 'Number'})
+        with self.asserRaises(Exception):
+            self.entity.add_properties(attrs=["test_value", attr])
+            
+        """Test 3"""
+        self.cb_client.post_entity(self.entity)
+        # What makes an property/ attribute unique ???
+        attr = ContextProperty(**{'value': 20, 'type': 'Number'})
+        attr_same = ContextProperty(**{'value': 40, 'type': 'Number'})
+        
+        # noOverwrite Option missing ???
+        self.entity.add_properties(attrs=["test_value", attr])
+        self.entity.add_properties(attrs=["test_value", attr_same])
+
+        entity_list = self.cb_client.get_entity_list()
+        for entity in entity_list:
+            self.assertEqual(first=entity.property, second=attr)
+        
+        for entity in entity_list:
+            self.cb_client.delete_entity_by_id(entity_id=entity.id)
         
     def test_patch_entity_attrs(self):
         """
@@ -340,14 +364,7 @@ class TestEntities(unittest.TestCase):
         """
         """Test1"""
         self.test_post_entity(self.entity)
-        room2_entity = ContextLDEntity(id="Room2", 
-                                       type="Room",
-                                      data={})
-        temp_attr = NamedContextAttribute(name="temperature", value=22,
-                                        type=DataType.FLOAT)
-        pressure_attr = NamedContextAttribute(name="pressure", value=222,
-                                            type="Integer")
-        room2_entity.add_attributes([temp_attr, pressure_attr])
+
 
     def test_patch_entity_attrs_attrId(self):
         """
