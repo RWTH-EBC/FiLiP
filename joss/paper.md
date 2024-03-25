@@ -205,4 +205,7 @@ In conclusion, FiLiP is a versatile and dependable tool that simplifies the deve
 With FiLiP, developers can confidently create innovative and IoT-enabled applications within the landscape of FIWARE. 
 Researchers can investigate smart solutions in various domains, including energy management and beyond.
 
+# Acknowledgements
+We gratefully acknowledge the financial support provided by the Federal Ministry for Economic Affairs and Climate Action (BMWK), promotional references 03ET1495A, 03ET1551A, 0350018A, 03ET1561B, 03EN1030B.
+
 # References
