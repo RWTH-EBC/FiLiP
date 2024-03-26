@@ -344,13 +344,9 @@ class TestEntities(unittest.TestCase):
         Test 1:
             post an enitity with entity_ID and entity_name and attributes
             patch one of the attributes with entity_id by sending request body
-            return != 201 ? 
-                yes: 
-                    Raise Error
             get entity list
-            Is the new attribute not added to the entity?
-                yes:
-                    Raise Error
+            If new attribute is not added to the entity?
+                Raise Error
         Test 2: 
             post an entity with entity_ID and entity_name and attributes
             patch an non existent attribute
@@ -394,7 +390,7 @@ class TestEntities(unittest.TestCase):
                 yes:
                     Raise Error
         """
-    
+        # No function for patch entity attribute???
     def test_delete_entity_attribute(self):
         """
         Delete existing Entity atrribute within an NGSI-LD system.
