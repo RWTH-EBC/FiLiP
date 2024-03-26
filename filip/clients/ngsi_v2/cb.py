@@ -892,9 +892,9 @@ class ContextBrokerClient(BaseHttpClient):
         Returns:
             None
         """
-        self.replace_entity_attributes(entity_id=entity.id,
-                                       entity_type=entity.type,
-                                       attrs=entity.get_properties())
+        return self.replace_entity_attributes(entity_id=entity.id,
+                                              entity_type=entity.type,
+                                              attrs=entity.get_attributes())
 
     def replace_entity_attributes(
             self,
