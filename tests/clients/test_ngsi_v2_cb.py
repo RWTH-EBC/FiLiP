@@ -679,11 +679,12 @@ class TestContextBroker(unittest.TestCase):
         mqtt_client.loop_start()
         new_value = 50
 
+        time.sleep(1)
         self.client.update_attribute_value(entity_id=entity.id,
                                            attr_name='temperature',
                                            value=new_value,
                                            entity_type=entity.type)
-        time.sleep(5)
+        time.sleep(1)
 
         # test if the subscriptions arrives and the content aligns with updates
         self.assertIsNotNone(sub_message)
