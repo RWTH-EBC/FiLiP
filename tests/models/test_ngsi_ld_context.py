@@ -93,9 +93,9 @@ class TestLDContextModels(unittest.TestCase):
         Returns:
             None
         """
-        attr = ContextProperty(**{'value': "20"})
-        self.assertIsInstance(attr.value, float)
-        attr = ContextProperty(**{'value': 20})
+        attr = ContextProperty(**{'value': "20.1"})
+        self.assertNotIsInstance(attr.value, float)
+        attr = ContextProperty(**{'value': 20.1})
         self.assertIsInstance(attr.value, float)
 
     def test_entity_id(self) -> None:
@@ -146,7 +146,7 @@ class TestLDContextModels(unittest.TestCase):
         Test the get_properties method
         """
         pass
-        entity = ContextLDEntity(id="test", type="Tester")
+        entity = ContextLDEntity(id="urn:ngsi-ld:test", type="Tester")
         properties = [
             NamedContextProperty(name="attr1"),
             NamedContextProperty(name="attr2"),
@@ -168,7 +168,7 @@ class TestLDContextModels(unittest.TestCase):
                                              'type': 'Text'})
         attr3 = ContextProperty(**{'value': 20, 'type': 'Text'})
 
-        entity = ContextLDEntity(id="12", type="Test")
+        entity = ContextLDEntity(id="urn:ngsi-ld:12", type="Test")
 
         entity.add_properties({"test1": attr, "test3": attr3})
         entity.add_properties([named_attr])

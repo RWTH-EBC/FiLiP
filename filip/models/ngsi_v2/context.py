@@ -180,7 +180,7 @@ class ContextEntity(ContextEntityKeyValues):
 
         # There is currently no validation for extra fields
         data.update(self._validate_attributes(data))
-        super().__init__(id=id, type=type, **data)
+        super().__init__(id=id, type=type)
 
     @classmethod
     def _validate_attributes(cls, data: Dict):

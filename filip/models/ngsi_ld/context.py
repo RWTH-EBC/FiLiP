@@ -50,7 +50,7 @@ class ContextProperty(BaseModel):
         description="the actual data"
     )
     observedAt: Optional[str] = Field(
-        None, titel="Timestamp",
+        None, title="Timestamp",
         description="Representing a timestamp for the "
                     "incoming value of the property.",
         max_length=256,
@@ -59,7 +59,7 @@ class ContextProperty(BaseModel):
     field_validator("observedAt")(validate_fiware_datatype_string_protect)
 
     UnitCode: Optional[str] = Field(
-        None, titel="Unit Code",
+        None, title="Unit Code",
         description="Representing the unit of the value. "
                     "Should be part of the defined units "
                     "by the UN/ECE Recommendation No. 21"
@@ -70,7 +70,7 @@ class ContextProperty(BaseModel):
     field_validator("UnitCode")(validate_fiware_datatype_string_protect)
 
     datasetId: Optional[str] = Field(
-        None, titel="dataset Id",
+        None, title="dataset Id",
         description="It allows identifying a set or group of property values",
         max_length=256,
         min_length=1,
@@ -101,7 +101,7 @@ class NamedContextProperty(ContextProperty):
     In the NGSI-LD data model, properties have a name, the type "property" and a value.
     """
     name: str = Field(
-        titel="Property name",
+        title="Property name",
         description="The property name describes what kind of property the "
                     "attribute value represents of the entity, for example "
                     "current_speed. Allowed characters "
@@ -208,7 +208,7 @@ class ContextGeoProperty(BaseModel):
     )
     observedAt: Optional[str] = Field(
         default=None,
-        titel="Timestamp",
+        title="Timestamp",
         description="Representing a timestamp for the "
                     "incoming value of the property.",
         max_length=256,
@@ -217,7 +217,7 @@ class ContextGeoProperty(BaseModel):
     field_validator("observedAt")(validate_fiware_datatype_string_protect)
 
     datasetId: Optional[str] = Field(
-        None, titel="dataset Id",
+        None, title="dataset Id",
         description="It allows identifying a set or group of property values",
         max_length=256,
         min_length=1,
@@ -247,7 +247,7 @@ class NamedContextGeoProperty(ContextProperty):
     In the NGSI-LD data model, properties have a name, the type "Geoproperty" and a value.
     """
     name: str = Field(
-        titel="Property name",
+        title="Property name",
         description="The property name describes what kind of property the "
                     "attribute value represents of the entity, for example "
                     "current_speed. Allowed characters "
@@ -289,7 +289,7 @@ class ContextRelationship(BaseModel):
     )
 
     datasetId: Optional[str] = Field(
-        None, titel="dataset Id",
+        None, title="dataset Id",
         description="It allows identifying a set or group of property values",
         max_length=256,
         min_length=1,
@@ -376,20 +376,20 @@ class ContextLDEntityKeyValues(BaseModel):
         frozen=True
     )
     field_validator("type")(validate_fiware_standard_regex)
-    context: List[str] = Field(
-        ...,
-        title="@context",
-        description="providing an unambiguous definition by mapping terms to "
-                    "URIs. For practicality reasons, "
-                    "it is recommended to have a unique @context resource, "
-                    "containing all terms, subject to be used in every "
-                    "FIWARE Data Model, the same way as http://schema.org does.",
-        examples=["[https://schema.lab.fiware.org/ld/context,"
-                "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld]"],
-        max_length=256,
-        min_length=1,
-        frozen=True
-    )
+#    context: List[str] = Field(
+#        ...,
+#        title="@context",
+#        description="providing an unambiguous definition by mapping terms to "
+#                    "URIs. For practicality reasons, "
+#                    "it is recommended to have a unique @context resource, "
+#                    "containing all terms, subject to be used in every "
+#                    "FIWARE Data Model, the same way as http://schema.org does.",
+#        examples=["[https://schema.lab.fiware.org/ld/context,"
+#                "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld]"],
+#        max_length=256,
+#        min_length=1,
+#        frozen=True
+#    )
     model_config = ConfigDict(extra='allow', validate_default=True,
                               validate_assignment=True)
 
@@ -403,7 +403,8 @@ class PropertyFormat(str, Enum):
     DICT = 'dict'
 
 
-class ContextLDEntity(ContextLDEntityKeyValues, ContextEntity):
+#class ContextLDEntity(ContextLDEntityKeyValues, ContextEntity):
+class ContextLDEntity(ContextLDEntityKeyValues):
     """
     Context LD entities, or simply entities, are the center of gravity in the
     FIWARE NGSI-LD information model. An entity represents a thing, i.e., any
@@ -437,27 +438,27 @@ class ContextLDEntity(ContextLDEntityKeyValues, ContextEntity):
 
     """
 
-    observationSpace: Optional[ContextGeoProperty] = Field(
-        default=None,
-        title="Observation Space",
-        description="The geospatial Property representing "
-                    "the geographic location that is being "
-                    "observed, e.g. by a sensor. "
-                    "For example, in the case of a camera, "
-                    "the location of the camera and the "
-                    "observationspace are different and "
-                    "can be disjoint. "
-    )
-
-    operationSpace: Optional[ContextGeoProperty] = Field(
-        default=None,
-        title="Operation Space",
-        description="The geospatial Property representing "
-                    "the geographic location in which an "
-                    "Entity,e.g. an actuator is active. "
-                    "For example, a crane can have a "
-                    "certain operation space."
-    )
+#    observationSpace: Optional[ContextGeoProperty] = Field(
+#        default=None,
+#        title="Observation Space",
+#        description="The geospatial Property representing "
+#                    "the geographic location that is being "
+#                    "observed, e.g. by a sensor. "
+#                    "For example, in the case of a camera, "
+#                    "the location of the camera and the "
+#                    "observationspace are different and "
+#                    "can be disjoint. "
+#    )
+#
+#    operationSpace: Optional[ContextGeoProperty] = Field(
+#        default=None,
+#        title="Operation Space",
+#        description="The geospatial Property representing "
+#                    "the geographic location in which an "
+#                    "Entity,e.g. an actuator is active. "
+#                    "For example, a crane can have a "
+#                    "certain operation space."
+#    )
 
     def __init__(self,
                  id: str,
@@ -640,7 +641,7 @@ class UpdateLD(BaseModel):
     """
     Model for update action
     """
-    entities: List[ContextEntity] = Field(
+    entities: List[ContextLDEntity] = Field(
         description="an array of entities, each entity specified using the "
                     "JSON entity representation format "
     )
