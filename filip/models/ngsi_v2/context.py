@@ -111,7 +111,7 @@ class ContextEntityKeyValues(BaseModel):
                     "characters are the ones in the plain ASCII set, except "
                     "the following ones: control characters, "
                     "whitespace, &, ?, / and #.",
-        example='Bcn-Welt',
+        json_schema_extra={"example":"Bcn-Welt"},
         max_length=256,
         min_length=1,
         frozen=True
@@ -124,7 +124,7 @@ class ContextEntityKeyValues(BaseModel):
                     "Allowed characters are the ones in the plain ASCII set, "
                     "except the following ones: control characters, "
                     "whitespace, &, ?, / and #.",
-        example="Room",
+        json_schema_extra={"example":"Room"},
         max_length=256,
         min_length=1,
         frozen=True
@@ -180,7 +180,7 @@ class ContextEntity(ContextEntityKeyValues):
 
         # There is currently no validation for extra fields
         data.update(self._validate_attributes(data))
-        super().__init__(id=id, type=type, **data)
+        super().__init__(id=id, type=type)
 
     @classmethod
     def _validate_attributes(cls, data: Dict):

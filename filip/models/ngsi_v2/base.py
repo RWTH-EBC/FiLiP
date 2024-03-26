@@ -5,7 +5,7 @@ import json
 
 from aenum import Enum
 from pydantic import field_validator, model_validator, ConfigDict, AnyHttpUrl, BaseModel, Field,\
-    model_serializer, SerializationInfo, FieldValidationInfo
+    model_serializer, SerializationInfo, ValidationInfo
 
 from typing import Union, Optional, Pattern, List, Dict, Any
 
@@ -187,7 +187,7 @@ class Metadata(BaseModel):
     )
 
     @field_validator('value')
-    def validate_value(cls, value, info: FieldValidationInfo):
+    def validate_value(cls, value, info: ValidationInfo):
         assert json.dumps(value), "metadata not serializable"
 
         if info.data.get("type").casefold() == "unit":
@@ -200,7 +200,7 @@ class NamedMetadata(Metadata):
     Model for metadata including a name
     """
     name: str = Field(
-        titel="metadata name",
+        title="metadata name",
         description="a metadata name, describing the role of the metadata in "
                     "the place where it occurs; for example, the metadata name "
                     "accuracy indicates that the metadata value describes how "
@@ -306,7 +306,7 @@ class BaseNameAttribute(BaseModel):
     attribute value represents of the entity
     """
     name: str = Field(
-        titel="Attribute name",
+        title="Attribute name",
         description="The attribute name describes what kind of property the "
                     "attribute value represents of the entity, for example "
                     "current_speed. Allowed characters "
@@ -347,7 +347,7 @@ class BaseValueAttribute(BaseModel):
     )
 
     @field_validator('value')
-    def validate_value_type(cls, value, info: FieldValidationInfo):
+    def validate_value_type(cls, value, info: ValidationInfo):
         """
         Validator for field 'value'
         The validator will try autocast the value based on the given type.
