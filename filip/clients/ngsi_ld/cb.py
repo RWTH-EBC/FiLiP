@@ -217,7 +217,6 @@ class ContextBrokerLDClient(BaseHttpClient):
         """
         url = urljoin(self.base_url, f'{self._url_version}/entities')
         headers = self.headers.copy()
-        print(headers)
         try:
             res = self.post(
                 url=url,
@@ -250,7 +249,7 @@ class ContextBrokerLDClient(BaseHttpClient):
                         geoproperty: Optional[str] = None,
                         csf: Optional[str] = None,
                         limit: Optional[PositiveInt] = None,
-                        response_format: Optional[Union[AttrsFormat, str]] = AttrsFormat.KEY_VALUES.value,
+                        response_format: Optional[Union[AttrsFormat, str]] = AttrsFormat.NORMALIZED.value,
                         ) -> Union[Dict[str, Any]]:
 
         url = urljoin(self.base_url, f'{self._url_version}/entities/')
@@ -279,20 +278,23 @@ class ContextBrokerLDClient(BaseHttpClient):
         if limit:
             params.update({'limit': limit})
 
-        if response_format not in list(AttrsFormat):
-            raise ValueError(f'Value must be in {list(AttrsFormat)}')
-        params.update({'options': response_format})
-
+        if response_format: 
+            if response_format not in list(AttrsFormat):
+                raise ValueError(f'Value must be in {list(AttrsFormat)}')
+            #params.update({'options': response_format})
+        
         try:
             res = self.get(url=url, params=params, headers=headers)
             if res.ok:
                 self.logger.info("Entity successfully retrieved!")
                 self.logger.debug("Received: %s", res.json())
-                #if response_format == AttrsFormat.NORMALIZED:
-                #    return ContextLDEntity(**res.json())
-                if response_format == AttrsFormat.KEY_VALUES:
-                    print(res.json())
-                    #eturn ContextLDEntityKeyValues(**res.json())
+                entity_list: List[ContextLDEntity] = []
+                if response_format == AttrsFormat.NORMALIZED.value:
+                    entity_list = [ContextLDEntity(**item) for item in res.json()]
+                    return entity_list
+                if response_format == AttrsFormat.KEY_VALUES.value:
+                    entity_list = [ContextLDEntityKeyValues(**item) for item in res.json()]
+                    return entity_list
                 return res.json()
             res.raise_for_status()
         except requests.RequestException as err:
@@ -638,12 +640,10 @@ class ContextBrokerLDClient(BaseHttpClient):
 
         url = urljoin(self.base_url, f'{self._url_version}/entityOperations/{action_type.value}')
         headers = self.headers.copy()
-        # headers.update({'Content-Type': 'application/json'}) # Wie oben, brauche ich?
+        headers.update({'Content-Type': 'application/json'})
         params = {}
         if update_format:
-            assert update_format == 'keyValues', \
-                "Only 'keyValues' is allowed as update format"
-            params.update({'options': 'keyValues'})
+            params.update({'options': update_format})
         update = UpdateLD(entities=entities)
         try:
             if action_type == ActionTypeLD.DELETE:
