@@ -697,6 +697,40 @@ class TestContextBroker(unittest.TestCase):
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
                 cb_url=settings.CB_URL)
+    def test_override_entity_keyvalues(self):
+        entity1 = self.entity.model_copy(deep=True)
+        # initial entity
+        self.client.post_entity(entity1)
+
+        # entity with key value
+        entity1_key_value = self.client.get_entity(
+            entity_id=entity1.id,
+            response_format=AttrsFormat.KEY_VALUES)
+
+        # override entity with ContextEntityKeyValues
+        entity1_key_value.temperature = 30
+        self.client.override_entity(entity=entity1_key_value, key_values=True)
+        self.assertEqual(entity1_key_value,
+                         self.client.get_entity(
+                             entity_id=entity1.id,
+                             response_format=AttrsFormat.KEY_VALUES)
+                         )
+        # test replace all attributes
+        entity1_key_value_dict = entity1_key_value.model_dump()
+        entity1_key_value_dict["temp"] = 40
+        entity1_key_value_dict["humidity"] = 50
+        self.client.override_entity(
+            entity=ContextEntityKeyValues(**entity1_key_value_dict),
+            key_values=True)
+        self.assertEqual(entity1_key_value_dict,
+                         self.client.get_entity(
+                             entity_id=entity1.id,
+                             response_format=AttrsFormat.KEY_VALUES).model_dump()
+                         )
+
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                cb_url=settings.CB_URL)
     def test_update_entity_keyvalues(self):
         entity1 = self.entity.model_copy(deep=True)
         # initial entity
@@ -962,6 +996,22 @@ class TestContextBroker(unittest.TestCase):
             self.assertEqual(1000,
                              len(client.query(query=query,
                                               response_format='keyValues')))
+            # update with keyValues
+            entities_keyvalues = [ContextEntityKeyValues(id=str(i),
+                                                         type=f'filip:object:TypeC',
+                                                         attr1="text attribute",
+                                                         attr2=1
+                                                         ) for i in range(0, 1000)]
+            client.update(entities=entities_keyvalues,
+                          update_format="keyValues",
+                          action_type=ActionType.APPEND)
+            entity_keyvalues = EntityPattern(idPattern=".*", typePattern=".*TypeC$")
+            query_keyvalues = Query.model_validate(
+                {"entities": [entity_keyvalues.model_dump(exclude_unset=True)]})
+            entities_keyvalues_query = client.query(query=query_keyvalues,
+                                                    response_format='keyValues')
+            self.assertEqual(1000, len(entities_keyvalues_query))
+            self.assertEqual(1000, sum([e.attr2 for e in entities_keyvalues_query]))
 
     def test_force_update_option(self):
         """
