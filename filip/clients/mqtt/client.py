@@ -7,7 +7,6 @@ import logging
 import warnings
 from datetime import datetime
 from typing import Any, Callable, Dict, List, Tuple, Union
-
 import paho.mqtt.client as mqtt
 
 from filip.clients.mqtt.encoder import BaseEncoder, Json, Ultralight

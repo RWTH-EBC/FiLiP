@@ -38,7 +38,6 @@ from typing import List
 from urllib.parse import urlparse
 from uuid import uuid4
 import paho.mqtt.client as mqtt
-from pydantic import parse_file_as
 import matplotlib.pyplot as plt
 
 # import from filip
@@ -124,9 +123,18 @@ if __name__ == '__main__':
     history_zone_temperature_sensor = []
     history_heater = []
 
+    with open(READ_GROUPS_FILEPATH, 'r') as groups_file, open(READ_DEVICES_FILEPATH, 'r') as devices_file:
+        groups_list = json.loads(groups_file.read())
+        devices_list = json.loads(devices_file.read())
+    
     # Create clients and restore devices and groups from file
-    groups = parse_file_as(List[ServiceGroup], READ_GROUPS_FILEPATH)
-    devices = parse_file_as(List[Device], READ_DEVICES_FILEPATH)
+    groups: List[ServiceGroup] = []
+    devices: List[Device] = []
+    for group_dict in groups_list:
+        groups.append(ServiceGroup(**group_dict))
+    for device_dict in devices_list:
+        devices.append(Device(**device_dict))
+    
     cbc = ContextBrokerClient(url=CB_URL, fiware_header=fiware_header)
     iotac = IoTAClient(url=IOTA_URL, fiware_header=fiware_header)
     iotac.post_groups(service_groups=groups)
