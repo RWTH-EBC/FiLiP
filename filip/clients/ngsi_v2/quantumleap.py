@@ -184,7 +184,7 @@ class QuantumLeapClient(BaseHttpClient):
                 used as a
             time index.
         """
-        assert False, "Subscription endpoint of Quantumleap API is deprecated, use the ORION subscription endpoint instead"
+        raise DeprecationWarning("Subscription endpoint of Quantumleap API is deprecated, use the ORION subscription endpoint instead")
         headers = self.headers.copy()
         params = {}
         url = urljoin(self.base_url, '/v2/subscribe')
