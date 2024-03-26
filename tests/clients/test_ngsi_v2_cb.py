@@ -708,7 +708,7 @@ class TestContextBroker(unittest.TestCase):
 
         # update entity with ContextEntityKeyValues
         entity1_key_value.temperature = 30
-        self.client.update_entity_key_value(entity=entity1_key_value)
+        self.client.update_entity_key_values(entity=entity1_key_value)
         self.assertEqual(entity1_key_value,
                          self.client.get_entity(
                              entity_id=entity1.id,
@@ -721,7 +721,7 @@ class TestContextBroker(unittest.TestCase):
         # update entity with dictionary
         entity1_key_value_dict = entity1_key_value.model_dump()
         entity1_key_value_dict["temperature"] = 40
-        self.client.update_entity_key_value(entity=entity1_key_value_dict)
+        self.client.update_entity_key_values(entity=entity1_key_value_dict)
         self.client.get_entity(
             entity_id=entity1.id,
             response_format=AttrsFormat.KEY_VALUES).model_dump()
@@ -735,7 +735,7 @@ class TestContextBroker(unittest.TestCase):
                          entity3.temperature.type)
         entity1_key_value_dict.update({"humidity": 50})
         with self.assertRaises(RequestException):
-            self.client.update_entity_key_value(entity=entity1_key_value_dict)
+            self.client.update_entity_key_values(entity=entity1_key_value_dict)
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,

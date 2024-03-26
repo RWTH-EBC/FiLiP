@@ -740,12 +740,12 @@ class ContextBrokerClient(BaseHttpClient):
             self.log_error(err=err, msg=msg)
             raise
 
-    def update_entity_key_value(self,
-                                entity: Union[ContextEntityKeyValues, dict],):
+    def update_entity_key_values(self,
+                                 entity: Union[ContextEntityKeyValues, dict],):
         """
         The entity are updated with a ContextEntityKeyValues object or a
         dictionary contain the simplified entity data. This corresponds to a
-        'PATcH' request.
+        'PATCH' request.
         Only existing attribute can be updated!
 
         Args:
@@ -777,11 +777,11 @@ class ContextBrokerClient(BaseHttpClient):
             self.log_error(err=err, msg=msg)
             raise
 
-    def update_entity_attributes_key_value(self,
-                                           entity_id: str,
-                                           attrs: dict,
-                                           entity_type: str = None,
-                                           ):
+    def update_entity_attributes_key_values(self,
+                                            entity_id: str,
+                                            attrs: dict,
+                                            entity_type: str = None,
+                                            ):
         """
         Update entity with attributes in keyValues form.
         This corresponds to a 'PATcH' request.
