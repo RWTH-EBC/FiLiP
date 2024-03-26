@@ -63,6 +63,16 @@ class GetEntitiesOptions(str, Enum):
     )
 
 
+class PropertyFormat(str, Enum):
+    """
+    Format to decide if properties of ContextEntity class are returned as
+    List of NamedContextAttributes or as Dict of ContextAttributes.
+    """
+
+    LIST = "list"
+    DICT = "dict"
+
+
 class ContextAttribute(BaseAttribute, BaseValueAttribute):
     """
     Model for an attribute is represented by a JSON object with the following
@@ -173,15 +183,15 @@ class ContextEntityKeyValues(BaseModel):
         # This will result in usual behavior
         super().__init__(id=id, type=type, **data)
 
+    def get_attributes(self) -> dict:
+        """
+        Get the attribute of the entity with the given name in
+        dict format
 
-class PropertyFormat(str, Enum):
-    """
-    Format to decide if properties of ContextEntity class are returned as
-    List of NamedContextAttributes or as Dict of ContextAttributes.
-    """
-
-    LIST = "list"
-    DICT = "dict"
+        Returns:
+            dict
+        """
+        return self.model_dump(exclude={"id", "type"})
 
 
 class ContextEntity(ContextEntityKeyValues):
@@ -673,7 +683,7 @@ class Update(BaseModel):
         description="actionType, to specify the kind of update action to do: "
         "either append, appendStrict, update, delete, or replace. ",
     )
-    entities: List[ContextEntity] = Field(
+    entities: List[Union[ContextEntity, ContextEntityKeyValues]] = Field(
         description="an array of entities, each entity specified using the "
         "JSON entity representation format "
     )
