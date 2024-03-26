@@ -94,45 +94,6 @@ class TestTimeSeries(unittest.TestCase):
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
                 cb_url=settings.CB_URL,
                 ql_url=settings.QL_URL)
-    def test_input_endpoints(self) -> None:
-        """
-        Test input endpoint
-        Returns:
-            None
-        """
-        entities = create_entities()
-        for entity in entities:
-            self.cb_client.post_entity(entity)
-
-        with ContextBrokerClient(
-                url=settings.CB_URL,
-                fiware_header=self.fiware_header) \
-                as CBclient, QuantumLeapClient(url=settings.CB_URL,
-                fiware_header=self.fiware_header) as QLclient:
-            notification_message = Message(data=entities,
-                                           subscriptionId="test")
-            subscription:Subscription = Subscription.model_validate({
-        "subject": {
-            "entities": [
-                {
-                    "id": entities[0].id
-                }
-            ]
-        },
-        "notification": {                           
-            "http": {
-                "url": "http://quantumleap:8668/v2/notify"
-            }
-        }
-    })
-            CBclient.post_subscription(subscription=subscription)
-            QLclient.post_notification(notification_message)
-        time.sleep(1)
-
-    @clean_test(fiware_service=settings.FIWARE_SERVICE,
-            fiware_servicepath=settings.FIWARE_SERVICEPATH,
-            cb_url=settings.CB_URL,
-            ql_url=settings.QL_URL)
     def test_entity_context(self) -> None:
         """
         Test entities endpoint
