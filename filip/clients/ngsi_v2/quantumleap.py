@@ -184,49 +184,9 @@ class QuantumLeapClient(BaseHttpClient):
                 used as a
             time index.
         """
-        raise DeprecationWarning("Subscription endpoint of Quantumleap API is deprecated, use the ORION subscription endpoint instead")
-        headers = self.headers.copy()
-        params = {}
-        url = urljoin(self.base_url, '/v2/subscribe')
-        validate_http_url(cb_url)
-        cb_url = urljoin(str(cb_url), '/v2')
-        params.update({'orionUrl': cb_url.encode('utf-8')})
-
-        validate_http_url(ql_url)
-        ql_url = urljoin(str(ql_url), '/v2')
-        params.update({'quantumleapUrl': ql_url.encode('utf-8')})
-
-        if entity_type:
-            params.update({'entityType': entity_type})
-        if entity_id:
-            params.update({'entityId': entity_id})
-        if id_pattern:
-            params.update({'idPattern': id_pattern})
-        if attributes:
-            params.update({'attributes': attributes})
-        if observed_attributes:
-            params.update({'observedAttributes': observed_attributes})
-        if notified_attributes:
-            params.update({'notifiedAttributes': notified_attributes})
-        if throttling or throttling == 0:
-            if throttling >= 0 and type(throttling) == int:
-                params.update({'throttling': throttling})
-            else:
-                raise TypeError("Throttling must be a positive integer or zero")
-        if time_index_attribute:
-            params.update({'timeIndexAttribute': time_index_attribute})
-
-        try:
-            res = self.post(url=url, headers=headers, params=params)
-            if res.ok:
-                msg = "Subscription created successfully!"
-                self.logger.info(msg)
-
-            res.raise_for_status()
-        except requests.exceptions.RequestException as err:
-            msg = "Could not create subscription."
-            self.log_error(err=err, msg=msg)
-            raise
+        raise DeprecationWarning("Subscription endpoint of Quantumleap API is "
+                                 "deprecated, use the ORION subscription endpoint "
+                                 "instead")
 
     def delete_entity(self, entity_id: str,
                       entity_type: Optional[str] = None) -> str:
