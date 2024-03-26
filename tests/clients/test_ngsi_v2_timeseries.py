@@ -90,6 +90,23 @@ class TestTimeSeries(unittest.TestCase):
             self.assertIsNotNone(client.get_version())
             self.assertIsNotNone(client.get_health())
 
+    def test_insert_data(self) -> None:
+        """
+        Test insert data directly into QuantumLeap
+        Returns:
+            None
+        """
+        entities = create_entities()
+        for entity in entities:
+            self.cb_client.post_entity(entity)
+
+        with QuantumLeapClient(url=settings.QL_URL,
+                               fiware_header=self.fiware_header) as client:
+            notification_message = Message(data=entities,
+                                           subscriptionId="test")
+            client.post_notification(notification_message)
+        time.sleep(1)
+
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
                 cb_url=settings.CB_URL,
