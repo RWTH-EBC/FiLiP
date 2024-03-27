@@ -35,13 +35,13 @@ if __name__ == "__main__":
     # ToDo: Create a single client for each service and check the service for
     #  its version
     cbc = ContextBrokerClient(url=CB_URL)
-    print(cbc.get_version())
+    print(f"Context Broker Client: {cbc.get_version()}")
 
     iotac = IoTAClient(url=IOTA_URL)
-    print(iotac.get_version())
+    print(f"IoTA Client: {iotac.get_version()}")
 
     qlc = QuantumLeapClient(url=QL_URL)
-    print(qlc.get_version())
+    print(f"Quantum Leap Client: {qlc.get_version()}")
 
     # ToDo: Create a configuration object for a multi client
     config = HttpClientConfig(cb_url=CB_URL, iota_url=IOTA_URL, ql_url=QL_URL)
@@ -49,6 +49,6 @@ if __name__ == "__main__":
     # ToDo: Create a multi client check again all services for their version
     multic = HttpClient(config=config)
 
-    print(multic.cb.get_version())
-    print(multic.iota.get_version())
-    print(multic.timeseries.get_version())
+    print(f"Multi Client (Context Broker): {multic.cb.get_version()}\n"
+          f"Multi Client (IoTA): {multic.iota.get_version()}\n"
+          f"Multi Client (Quantum Leap): {multic.timeseries.get_version()}")

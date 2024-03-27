@@ -31,13 +31,12 @@ import paho.mqtt.client as mqtt
 # import simulation model
 from tutorials.ngsi_v2.simulation_model import SimulationModel
 
-
 # ## Parameters
 # ToDo: Enter your mqtt broker url and port, e.g mqtt://test.mosquitto.org:1883
-MQTT_BROKER_URL =  "mqtt://test.mosquitto.org:1883"
+MQTT_BROKER_URL = "mqtt://test.mosquitto.org:1883"
 # ToDo: If required enter your username and password
 MQTT_USER = ""
-MQTT_PW =  ""
+MQTT_PW = ""
 
 # ToDo: Create a unique topic that your weather station will publish on,
 #  e.g. by using a uuid
@@ -51,7 +50,6 @@ TEMPERATURE_MIN = -5  # minimal ambient temperature
 T_SIM_START = 0  # simulation start time in seconds
 T_SIM_END = 24 * 60 * 60  # simulation end time in seconds
 COM_STEP = 60 * 60 * 1  # 60 min communication step in seconds
-
 
 # ## Main script
 if __name__ == '__main__':
@@ -68,6 +66,7 @@ if __name__ == '__main__':
     mqttc = mqtt.Client(protocol=mqtt.MQTTv5)
     # set user data if required
     mqttc.username_pw_set(username=MQTT_USER, password=MQTT_PW)
+
     # ToDo: Define a callback function that will be executed when the client
     #  receives message on a subscribed topic. It should decode your message
     #  and store the information for later in our history
@@ -81,7 +80,6 @@ if __name__ == '__main__':
         # ToDo: Parse the payload using the `json` package and write it to
         #  the history
         history_weather_station.append(json.loads(payload))
-
 
 
     # add your callback function to the client. You can either use a global
@@ -118,7 +116,7 @@ if __name__ == '__main__':
 
         # simulation step for next loop
         sim_model.do_step(int(t_sim + COM_STEP))
-        time.sleep(1)
+        time.sleep(0.1)
 
     # close the mqtt listening thread
     mqttc.loop_stop()
@@ -127,9 +125,9 @@ if __name__ == '__main__':
 
     # plot results
     fig, ax = plt.subplots()
-    t_simulation = [item["t_sim"] for item in history_weather_station]
+    t_simulation = [item["t_sim"]/3600 for item in history_weather_station]
     temperature = [item["t_amb"] for item in history_weather_station]
     ax.plot(t_simulation, temperature)
-    ax.set_xlabel('time in s')
+    ax.set_xlabel('time in h')
     ax.set_ylabel('ambient temperature in °C')
     plt.show()
