@@ -14,6 +14,7 @@
 """
 
 # ## Import packages
+import json
 from pathlib import Path
 import time
 from typing import List
@@ -21,7 +22,7 @@ from urllib.parse import urlparse
 from uuid import uuid4
 import pandas as pd
 import paho.mqtt.client as mqtt
-from pydantic import parse_file_as
+from pydantic import TypeAdapter
 import matplotlib.pyplot as plt
 # import from filip
 from filip.clients.ngsi_v2 import \
@@ -84,6 +85,15 @@ READ_DEVICES_FILEPATH = \
 READ_SUBSCRIPTIONS_FILEPATH = \
     Path("../e5_iot_thermal_zone_control_solution_subscriptions.json")
 
+# Opening the files
+with (open(READ_GROUPS_FILEPATH, 'r') as groups_file,
+      open(READ_DEVICES_FILEPATH, 'r') as devices_file,
+      open(READ_SUBSCRIPTIONS_FILEPATH, 'r') as subscriptions_file):
+    json_groups = json.load(groups_file)
+    json_devices = json.load(devices_file)
+    json_subscriptions = json.load(subscriptions_file)
+
+
 # set parameters for the temperature simulation
 TEMPERATURE_MAX = 10  # maximal ambient temperature
 TEMPERATURE_MIN = -5  # minimal ambient temperature
@@ -91,7 +101,7 @@ TEMPERATURE_ZONE_START = 20  # start value of the zone temperature
 
 T_SIM_START = 0  # simulation start time in seconds
 T_SIM_END = 24 * 60 * 60  # simulation end time in seconds
-COM_STEP = 60 * 60 * 0.25 # 15 min communication step in seconds
+COM_STEP = 60 * 60 * 0.25  # 15 min communication step in seconds
 
 # ## Main script
 if __name__ == '__main__':
@@ -111,9 +121,10 @@ if __name__ == '__main__':
                                 temp_start=TEMPERATURE_ZONE_START)
 
     # Create clients and restore devices and groups from file
-    groups = parse_file_as(List[ServiceGroup], READ_GROUPS_FILEPATH)
-    devices = parse_file_as(List[Device], READ_DEVICES_FILEPATH)
-    sub = parse_file_as(List[Subscription], READ_SUBSCRIPTIONS_FILEPATH)[0]
+    groups = TypeAdapter(List[ServiceGroup]).validate_python(json_groups)
+    devices = TypeAdapter(List[Device]).validate_python(json_devices)
+    sub = TypeAdapter(List[Subscription]).validate_python(json_subscriptions)[0]
+    # sub = parse_file_as(List[Subscription], READ_SUBSCRIPTIONS_FILEPATH)[0]
     sub.notification.mqtt.topic = TOPIC_CONTROLLER
     sub.notification.mqtt.user = MQTT_USER
     sub.notification.mqtt.passwd = MQTT_PW
@@ -141,6 +152,7 @@ if __name__ == '__main__':
     # Implement a callback function that gets triggered when the
     #  command is sent to the device. The incoming command schould update the
     #  heater attribute of the simulation model
+
     def on_command(client, obj, msg):
         """
         Callback for incoming commands
@@ -170,7 +182,7 @@ if __name__ == '__main__':
         """
         Callback for measurement notifications
         """
-        message = Message.parse_raw(msg.payload)
+        message = Message.model_validate_json(msg.payload)
         updated_zone_temperature_sensor = message.data[0]
 
         # retrieve the value of temperature attribute
@@ -238,7 +250,7 @@ if __name__ == '__main__':
     mqttc.loop_start()
 
     # Create a loop that publishes every second a message to the broker
-    #  that holds the simulation time "simtime" and the corresponding
+    #  that holds the simulation time "sim_time" and the corresponding
     #  temperature "temperature" the loop should. You may use the `object_id`
     #  or the attribute name as key in your payload.
     for t_sim in range(sim_model.t_start,
@@ -247,16 +259,16 @@ if __name__ == '__main__':
         # publish the simulated ambient temperature
         mqttc.publish(device_id=weather_station.device_id,
                       payload={"temperature": sim_model.t_amb,
-                               "simtime": sim_model.t_sim})
+                               "sim_time": sim_model.t_sim})
 
         # publish the simulated zone temperature
         mqttc.publish(device_id=zone_temperature_sensor.device_id,
                       payload={"temperature": sim_model.t_zone,
-                               "simtime": sim_model.t_sim})
+                               "sim_time": sim_model.t_sim})
 
-        # publish the 'simtime' for the heater device
+        # publish the 'sim_time' for the heater device
         mqttc.publish(device_id=heater.device_id,
-                      payload={"simtime": sim_model.t_sim})
+                      payload={"sim_time": sim_model.t_sim})
 
         time.sleep(1)
         # simulation step for next loop
@@ -287,13 +299,13 @@ if __name__ == '__main__':
     # drop unnecessary index levels
     history_weather_station = history_weather_station.droplevel(
         level=("entityId", "entityType"), axis=1)
-    history_weather_station['simtime'] = pd.to_numeric(
-        history_weather_station['simtime'], downcast="float")
+    history_weather_station['sim_time'] = pd.to_numeric(
+        history_weather_station['sim_time'], downcast="float")
     history_weather_station['temperature'] = pd.to_numeric(
         history_weather_station['temperature'], downcast="float")
     # ToDo: plot the results
     fig, ax = plt.subplots()
-    ax.plot(history_weather_station['simtime'],
+    ax.plot(history_weather_station['sim_time'],
             history_weather_station['temperature'])
     ax.set_xlabel('time in s')
     ax.set_ylabel('ambient temperature in °C')
@@ -313,13 +325,13 @@ if __name__ == '__main__':
     # ToDo: drop unnecessary index levels
     history_zone_temperature_sensor = history_zone_temperature_sensor.droplevel(
         level=("entityId", "entityType"), axis=1)
-    history_zone_temperature_sensor['simtime'] = pd.to_numeric(
-        history_zone_temperature_sensor['simtime'], downcast="float")
+    history_zone_temperature_sensor['sim_time'] = pd.to_numeric(
+        history_zone_temperature_sensor['sim_time'], downcast="float")
     history_zone_temperature_sensor['temperature'] = pd.to_numeric(
         history_zone_temperature_sensor['temperature'], downcast="float")
     # ToDo: plot the results
     fig2, ax2 = plt.subplots()
-    ax2.plot(history_zone_temperature_sensor['simtime'],
+    ax2.plot(history_zone_temperature_sensor['sim_time'],
              history_zone_temperature_sensor['temperature'])
     ax2.set_xlabel('time in s')
     ax2.set_ylabel('zone temperature in °C')
@@ -340,13 +352,13 @@ if __name__ == '__main__':
     # ToDo: drop unnecessary index levels
     history_heater = history_heater.droplevel(
         level=("entityId", "entityType"), axis=1)
-    history_heater['simtime'] = pd.to_numeric(
-        history_heater['simtime'], downcast="float")
+    history_heater['sim_time'] = pd.to_numeric(
+        history_heater['sim_time'], downcast="float")
     history_heater['heater_on_info'] = pd.to_numeric(
         history_heater['heater_on_info'], downcast="float")
     # ToDo: plot the results
     fig3, ax3 = plt.subplots()
-    ax3.plot(history_heater['simtime'],
+    ax3.plot(history_heater['sim_time'],
              history_heater['heater_on_info'])
     ax3.set_xlabel('time in s')
     ax3.set_ylabel('set point')
