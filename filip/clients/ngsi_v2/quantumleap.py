@@ -433,6 +433,7 @@ class QuantumLeapClient(BaseHttpClient):
                                    to_date=to_date,
                                    limit=limit,
                                    offset=offset)
+        
         ta = TypeAdapter(List[TimeSeriesHeader])
         return ta.validate_python(res[0])
 

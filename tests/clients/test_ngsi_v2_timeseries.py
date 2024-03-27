@@ -12,7 +12,7 @@ from filip.clients.ngsi_v2 import \
     QuantumLeapClient
 from filip.models.base import FiwareHeader
 from filip.models.ngsi_v2.context import ContextEntity
-from filip.models.ngsi_v2.subscriptions import Message, Subscription
+from filip.models.ngsi_v2.subscriptions import Message
 from filip.utils.cleanup import clean_test, clear_all
 from tests.config import settings
 
@@ -72,7 +72,6 @@ class TestTimeSeries(unittest.TestCase):
         self.ql_client = QuantumLeapClient(
             url=settings.QL_URL,
             fiware_header=self.fiware_header)
-
         self.cb_client = ContextBrokerClient(
             url=settings.CB_URL,
             fiware_header=self.fiware_header)
@@ -222,7 +221,61 @@ class TestTimeSeries(unittest.TestCase):
                 self.assertEqual(sum([len(entity_id.index) for
                                       entity_id in attr_values_type]),
                                  10000)
+                
+    def test_query_endpoints_by_id_pattern(self) -> None:
+        """
+        Test queries by id_pattern with default values
 
+        Returns:
+            None
+        """
+        
+        with QuantumLeapClient(
+                url=settings.QL_URL,
+                fiware_header=self.fiware_header.model_copy(
+                    update={'service_path': '/static'})) \
+                as client:
+            
+            entity = create_entities()[0]
+            re_patterns = {r'.*':100000,r'([K].*)':50000,r'^[L].*m$':50000,r'^a':0}
+            for expression,expected_result in re_patterns.items():
+
+                entities=client.get_entities(id_pattern=expression)
+                self.assertEqual(len(entities),expected_result/50000)
+
+                attrs_type = client.get_entity_by_type(
+                    entity_type=entity.type,id_pattern=expression,limit=100000)
+                for entity_id in attrs_type:
+                    logger.debug(entity_id.to_pandas())
+                
+                self.assertEqual(sum([len(entity_id.index) for
+                                      entity_id in attrs_type]),
+                                 expected_result)
+
+                attrs_values_type = client.get_entity_values_by_type(
+                    entity_type=entity.type,id_pattern=expression,limit=100000)
+                for entity_id in attrs_values_type:
+                    logger.debug(entity_id.to_pandas())
+                self.assertEqual(sum([len(entity_id.index) for
+                                      entity_id in attrs_values_type]),
+                                 expected_result)
+                attr_type = client.get_entity_attr_by_type(
+                    entity_type=entity.type, attr_name="temperature",id_pattern=expression,limit=100000)
+                for entity_id in attr_type:
+                    logger.debug(entity_id.to_pandas())
+                self.assertEqual(sum([len(entity_id.index) for
+                                      entity_id in attr_type]),
+                                 expected_result)
+
+                attr_values_type = client.get_entity_attr_values_by_type(
+                    entity_type=entity.type, attr_name="temperature",id_pattern=expression,limit=100000)
+                for entity_id in attr_values_type:
+                    logger.debug(entity_id.to_pandas())
+                self.assertEqual(sum([len(entity_id.index) for
+                                      entity_id in attr_values_type]),
+                                 expected_result)
+                
+                
     @unittest.skip("Currently fails. Because data in CrateDB is not clean")
     def test_test_query_endpoints_with_args(self) -> None:
         """
@@ -298,6 +351,5 @@ class TestTimeSeries(unittest.TestCase):
         clear_all(fiware_header=self.fiware_header,
                   cb_url=settings.CB_URL,
                   ql_url=settings.QL_URL)
-
         self.ql_client.close()
         self.cb_client.close()
