@@ -99,11 +99,11 @@ READ_GROUPS_FILEPATH = \
 READ_DEVICES_FILEPATH = \
     Path("../e4_iot_thermal_zone_sensors_solution_devices.json")
 
-with open(READ_GROUPS_FILEPATH, 'r') as file:
-    json_groups = json.load(file)
-
-with open(READ_DEVICES_FILEPATH, 'r') as file:
-    json_devices = json.load(file)
+# Opening the files
+with (open(READ_GROUPS_FILEPATH, 'r') as groups_file,
+      open(READ_DEVICES_FILEPATH, 'r') as devices_file):
+    json_groups = json.load(groups_file)
+    json_devices = json.load(devices_file)
 
 # set parameters for the temperature simulation
 TEMPERATURE_MAX = 10  # maximal ambient temperature
@@ -136,10 +136,8 @@ if __name__ == '__main__':
     history_heater = []
 
     # Create clients and restore devices and groups from file
-    ta1 = TypeAdapter(List[ServiceGroup])
-    groups = ta1.validate_python(json_groups)
-    ta2 = TypeAdapter(List[Device])
-    devices = ta2.validate_python(json_devices)
+    groups = TypeAdapter(List[ServiceGroup]).validate_python(json_groups)
+    devices = TypeAdapter(List[Device]).validate_python(json_devices)
     cbc = ContextBrokerClient(url=CB_URL, fiware_header=fiware_header)
     iotac = IoTAClient(url=IOTA_URL, fiware_header=fiware_header)
     iotac.post_groups(service_groups=groups)
