@@ -36,7 +36,7 @@ For committing style guide please use Conventional Commits 1.0.0. For more detai
 
 ## Documentation
 
-All created or modified function should be documented properly. 
+All created or modified functions should be documented properly. 
 Try to follow the structure already present. 
 If possible, write a little doctest example into the docstring to make clear to the user what the desired output of your function is. 
 All non-self-explanatory lines of code should include a comment. 
@@ -70,9 +70,9 @@ other test-files.
 If you are not familiar with unit-tests, here is a quick summary:
 - Test as many things as possible. Even seemingly silly tests like correct input-format help prevent future problems for new users.
 - Use the `self.assertSOMETHING` functions provided by `unittest`. This way a test failure is presented correctly. An error inside your test function will not be handled as a failure but as an error.
-- If the success of your test depends on the used device, you can use decorators like `skip()`, `skipif(numpy.__version__<(1, 0), "not supported with your numpy version")`, etc. 
-- `setUp()` and `tearDown()` are called before and after each test. Use this functions to define parameters used in every test, or to close applications like Dymola once a test is completed.
-- See the [unittest-documentation](https://docs.python.org/3/library/unittest.html#organizing-tests) for further information
+- If the success of your test depends on the used development environment, you can use decorators like `skip()`, `skipif(numpy.__version__<(1, 0), "not supported with your numpy version")`, etc. 
+- `setUp()` and `tearDown()` are called before and after each test. Use these functions to define parameters used in every test, or to close applications like Dymola once a test is completed.
+- See the [unittest-documentation](https://docs.python.org/3/library/unittest.html#organizing-tests) for further information.
 
 You can check your work by running all tests before committing to git. 
 
