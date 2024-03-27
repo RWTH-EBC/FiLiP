@@ -19,9 +19,10 @@
 """
 
 # ## Import packages
+import json
 from pathlib import Path
 from typing import List
-from pydantic import parse_file_as
+from pydantic import TypeAdapter
 
 # import from filip
 from filip.clients.ngsi_v2 import \
@@ -69,6 +70,14 @@ READ_DEVICES_FILEPATH = \
 READ_ENTITIES_FILEPATH = \
     Path("../e3_context_entities_solution_entities.json")
 
+# Opening the files
+with (open(READ_GROUPS_FILEPATH, 'r') as groups_file,
+      open(READ_DEVICES_FILEPATH, 'r') as devices_file,
+      open(READ_ENTITIES_FILEPATH, 'r') as entities_file):
+    json_groups = json.load(groups_file)
+    json_devices = json.load(devices_file)
+    json_entities = json.load(entities_file)
+
 # ## Main script
 if __name__ == '__main__':
     # create a fiware header object
@@ -79,9 +88,9 @@ if __name__ == '__main__':
     clear_context_broker(url=CB_URL, fiware_header=fiware_header)
 
     # Create clients and restore devices and groups from file
-    groups = parse_file_as(List[ServiceGroup], READ_GROUPS_FILEPATH)
-    devices = parse_file_as(List[Device], READ_DEVICES_FILEPATH)
-    entities = parse_file_as(List[ContextEntity], READ_ENTITIES_FILEPATH)
+    groups = TypeAdapter(List[ServiceGroup]).validate_python(json_groups)
+    devices = TypeAdapter(List[Device]).validate_python(json_devices)
+    entities = TypeAdapter(List[ContextEntity]).validate_python(json_entities)
     cbc = ContextBrokerClient(url=CB_URL, fiware_header=fiware_header)
     for entity in entities:
         cbc.post_entity(entity=entity)
@@ -175,22 +184,22 @@ if __name__ == '__main__':
     heater.add_attribute(ref_thermal_zone)
     iotac.update_device(device=heater)
 
-    # ToDo: Add unit metadata to the temperature and simtime attributes of
+    # ToDo: Add unit metadata to the temperature and sim_time attributes of
     #  all devices. Here we use unitcode information. If you can not find
     #  your unit code you can use our unit models for help
     # get code from Unit model for seconds
     code = Unit(name="second [unit of time]").code
-    # add metadata to simtime attribute of the all devices
-    metadata_simtime = NamedMetadata(name="unitCode",
+    # add metadata to sim_time attribute of the all devices
+    metadata_sim_time = NamedMetadata(name="unitCode",
                                      type="Text",
                                      value=code)
-    attr_simtime = weather_station.get_attribute(
-        attribute_name="simtime"
+    attr_sim_time = weather_station.get_attribute(
+        attribute_name="sim_time"
     )
-    attr_simtime.metadata = metadata_simtime
-    weather_station.update_attribute(attribute=attr_simtime)
-    zone_temperature_sensor.update_attribute(attribute=attr_simtime)
-    heater.update_attribute(attribute=attr_simtime)
+    attr_sim_time.metadata = metadata_sim_time
+    weather_station.update_attribute(attribute=attr_sim_time)
+    zone_temperature_sensor.update_attribute(attribute=attr_sim_time)
+    heater.update_attribute(attribute=attr_sim_time)
 
     # ToDo: get code from Unit model for degree celsius
     code = Unit(name="degree Celsius").code
@@ -206,8 +215,8 @@ if __name__ == '__main__':
     weather_station.update_attribute(attribute=attr_t_amb)
 
     metadata_t_zone = NamedMetadata(name="unitCode",
-                                   type="Text",
-                                   value=code)
+                                    type="Text",
+                                    value=code)
     attr_t_zone = zone_temperature_sensor.get_attribute(
         attribute_name="temperature")
     attr_t_zone.metadata = metadata_t_zone
@@ -225,7 +234,7 @@ if __name__ == '__main__':
     # ToDo: Retrieve all ContextEntites and print them
     entities = cbc.get_entity_list()
     for entity in entities:
-        print(entity.json(indent=2))
+        print(entity.model_dump_json(indent=2))
 
     clear_iot_agent(url=IOTA_URL, fiware_header=fiware_header)
     clear_context_broker(url=CB_URL, fiware_header=fiware_header)
