@@ -297,6 +297,7 @@ class TestEntities(unittest.TestCase):
         attr = ContextProperty(**{'value': 20, 'type': 'Number'})
         # noOverwrite Option missing ???
         self.entity.add_properties(attrs=["test_value", attr])
+        self.cb_client.append_entity_attributes(self.entity)
         entity_list = self.cb_client.get_entity_list()
         for entity in entity_list:
             self.assertEqual(first=entity.property, second=attr)
@@ -307,6 +308,8 @@ class TestEntities(unittest.TestCase):
         attr = ContextProperty(**{'value': 20, 'type': 'Number'})
         with self.asserRaises(Exception):
             self.entity.add_properties(attrs=["test_value", attr])
+            self.cb_client.append_entity_attributes(self.entity)
+
             
         """Test 3"""
         self.cb_client.post_entity(self.entity)
@@ -316,7 +319,9 @@ class TestEntities(unittest.TestCase):
         
         # noOverwrite Option missing ???
         self.entity.add_properties(attrs=["test_value", attr])
+        self.cb_client.append_entity_attributes(self.entity)
         self.entity.add_properties(attrs=["test_value", attr_same])
+        self.cb_client.append_entity_attributes(self.entity)
 
         entity_list = self.cb_client.get_entity_list()
         for entity in entity_list:
@@ -348,20 +353,48 @@ class TestEntities(unittest.TestCase):
             If new attribute is not added to the entity?
                 Raise Error
         Test 2: 
-            post an entity with entity_ID and entity_name and attributes
+            post an entity with entity_ID and entity_name 
             patch an non existent attribute
-            return != 400:
-                yes:
-                    Raise Error
-                       get entity list
-            Is the new attribute added to the entity?
-                yes:
-                    Raise Error     
+                Raise Error
+            get entity list
+            If the new attribute is added to the entity?
+                Raise Error     
         """
         """Test1"""
-        self.test_post_entity(self.entity)
+        attr = ContextProperty(**{'value': 20, 'type': 'Number'})
+        attr_same = ContextProperty(**{'value': 40, 'type': 'Number'})
+        new_prop = {'new_prop': ContextProperty(value=25)}
+        newer_prop = {'new_prop': ContextProperty(value=25)}
+        
+        self.entity.add_properties(new_prop)
+        self.cb_client.post_entity(entity=self.entity)        
+        self.cb_client.update_entity_attribute(entity_id=self.entity.id, attr=newer_prop)
+        entity_list = self.cb_client.get_entity_list()
+        for entity in entity_list:  
+            prop_list = self.entity.get_properties()
+            for prop in prop_list:
+                if prop.name == "test_value": 
+                    self.assertEqual(prop.value, 40)
+        
+        for entity in entity_list:
+            self.cb_client.delete_entity_by_id(entity_id=entity.id)    
+        """Test 2"""
+        # attr = ContextProperty(**{'value': 20, 'type': 'Number'})
+        # self.cb_client.post_entity(entity=self.entity)
+        # self.entity.add_properties(attrs=["test_value", attr])
 
-
+        # with self.assertRaises(Exception):
+        #     self.cb_client.update_entity_attribute(entity_id=self.entity.id, attr=attr)
+        # entity_list = self.cb_client.get_entity_list()
+        # for entity in entity_list:  
+        #     prop_list = self.entity.get_properties()
+        #     for prop in prop_list:
+        #         if prop.name == "test_value": 
+        #             self.assertRaises()
+        
+        # for entity in entity_list:
+        #     self.cb_client.delete_entity_by_id(entity_id=entity.id)    
+               
     def test_patch_entity_attrs_attrId(self):
         """
         Update existing Entity attribute ID within an NGSI-LD system
@@ -390,7 +423,26 @@ class TestEntities(unittest.TestCase):
                 yes:
                     Raise Error
         """
-        # No function for patch entity attribute???
+        """Test 1"""
+        attr = ContextProperty(**{'value': 20, 'type': 'Number'})
+        attr_same = ContextProperty(**{'value': 40, 'type': 'Number'})
+        self.entity.add_properties(attrs=["test_value", attr])
+        self.cb_client.post_entity(entity=self.entity)
+        self.cb_client.update_entity_attribute(entity_id=self.entity.id, attr=attr, attr_name="test_value")
+        entity_list = self.cb_client.get_entity_list()
+        for entity in entity_list:  
+            prop_list = self.entity.get_properties()
+            for prop in prop_list:
+                if prop.name == "test_value": 
+                    self.assertEqual(prop.value, 40)
+        
+        for entity in entity_list:
+            self.cb_client.delete_entity_by_id(entity_id=entity.id)    
+        """Test 2"""
+        attr = ContextProperty(**{'value': 20, 'type': 'Number'})
+        attr_same = ContextProperty(**{'value': 40, 'type': 'Number'})
+        self.entity.add_properties(attrs=["test_value", attr])
+        self.cb_client.post_entity(entity=self.entity)
     def test_delete_entity_attribute(self):
         """
         Delete existing Entity atrribute within an NGSI-LD system.
