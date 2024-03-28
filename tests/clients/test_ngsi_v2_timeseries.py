@@ -237,8 +237,20 @@ class TestTimeSeries(unittest.TestCase):
                 as client:
             
             entity = create_entities()[0]
-            re_patterns = {r'.*':100000,r'([K].*)':50000,r'^[L].*m$':50000,r'^a':0}
+            re_patterns = {'.*[^mn]$':0,'.{1,3}i':100000,'.*[R]':50000,'.{5}[^g]':50000}
+            
             for expression,expected_result in re_patterns.items():
+                if expected_result == 0:
+                    self.assertRaises(requests.exceptions.HTTPError, client.get_entities,id_pattern=expression)
+                    self.assertRaises(requests.exceptions.HTTPError, client.get_entity_by_type,entity_type=entity.type,
+                                      id_pattern=expression,limit=100000)
+                    self.assertRaises(requests.exceptions.HTTPError, client.get_entity_values_by_type,entity_type=entity.type,
+                                      id_pattern=expression,limit=100000)
+                    self.assertRaises(requests.exceptions.HTTPError, client.get_entity_attr_by_type,entity_type=entity.type, 
+                                      attr_name="temperature",id_pattern=expression,limit=100000)
+                    self.assertRaises(requests.exceptions.HTTPError, client.get_entity_attr_values_by_type,entity_type=entity.type, 
+                                      attr_name="temperature",id_pattern=expression,limit=100000)
+                    continue
 
                 entities=client.get_entities(id_pattern=expression)
                 self.assertEqual(len(entities),expected_result/50000)
@@ -250,7 +262,7 @@ class TestTimeSeries(unittest.TestCase):
                 
                 self.assertEqual(sum([len(entity_id.index) for
                                       entity_id in attrs_type]),
-                                 expected_result)
+                                 expected_result) 
 
                 attrs_values_type = client.get_entity_values_by_type(
                     entity_type=entity.type,id_pattern=expression,limit=100000)
@@ -258,7 +270,8 @@ class TestTimeSeries(unittest.TestCase):
                     logger.debug(entity_id.to_pandas())
                 self.assertEqual(sum([len(entity_id.index) for
                                       entity_id in attrs_values_type]),
-                                 expected_result)
+                                 expected_result) 
+                
                 attr_type = client.get_entity_attr_by_type(
                     entity_type=entity.type, attr_name="temperature",id_pattern=expression,limit=100000)
                 for entity_id in attr_type:
@@ -273,9 +286,10 @@ class TestTimeSeries(unittest.TestCase):
                     logger.debug(entity_id.to_pandas())
                 self.assertEqual(sum([len(entity_id.index) for
                                       entity_id in attr_values_type]),
-                                 expected_result)
+                                 expected_result) 
+                                 
                 
-                
+   
     @unittest.skip("Currently fails. Because data in CrateDB is not clean")
     def test_test_query_endpoints_with_args(self) -> None:
         """
