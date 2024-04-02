@@ -306,6 +306,10 @@ class QuantumLeapClient(BaseHttpClient):
             coords:
             attrs:
             aggr_scope:
+            id_pattern (str): The pattern covering the entity ids for which
+                to subscribe. The pattern follow regular expressions (POSIX
+                Extendede) e.g. ".*", "Room.*". Detail information:
+                https://en.wikibooks.org/wiki/Regular_Expressions/POSIX-Extended_Regular_Expressions
 
         Returns:
             Dict
@@ -412,6 +416,10 @@ class QuantumLeapClient(BaseHttpClient):
                 when required. If used to resolve ambiguity for the given
                 entityId, make sure the given entityId exists for this
                 entityType.
+            id_pattern (str): The pattern covering the entity ids for which
+                to subscribe. The pattern follow regular expressions (POSIX
+                Extendede) e.g. ".*", "Room.*". Detail information:
+                https://en.wikibooks.org/wiki/Regular_Expressions/POSIX-Extended_Regular_Expressions
             from_date (str): The starting date and time (inclusive) from which
                 the context information is queried. Must be in ISO8601 format
                 (e.g., 2018-01-05T15:44:34)
