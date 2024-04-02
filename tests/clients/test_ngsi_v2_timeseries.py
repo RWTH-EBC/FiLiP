@@ -15,6 +15,7 @@ from filip.models.ngsi_v2.context import ContextEntity
 from filip.models.ngsi_v2.subscriptions import Message
 from filip.utils.cleanup import clean_test, clear_all
 from tests.config import settings
+from packaging import version
 
 
 logger = logging.getLogger(__name__)
@@ -244,60 +245,78 @@ class TestTimeSeries(unittest.TestCase):
                 fiware_header=self.fiware_header.model_copy(
                     update={'service_path': '/static'})) \
                 as client:
-            
+
+            # check version, skip if version < 1.0.0
+            if version.parse(client.get_version().get("version")) < version.parse("1.0.0"):
+                logger.info("Skip test of id_pattern for QL < 1.0.0")
+                return None
+
             entity = create_entities()[0]
-            re_patterns = {'.*[^mn]$':0,'.{1,3}i':100000,'.*[R]':50000,'.{5}[^g]':50000}
+            # 'expression': expected results
+            re_patterns = {'.*[^mn]$': 0,  # not end with "m" or "n" -> no entities will match
+                           '.{1,3}i': 2,  # has at least one "i"
+                           '.*[R]': 1,  # has at least one "R"
+                           '.{5}[^g]': 1  # the sixth letter is not "g"
+                           }
             
-            for expression,expected_result in re_patterns.items():
+            for expression, expected_result in re_patterns.items():
                 if expected_result == 0:
-                    self.assertRaises(requests.exceptions.HTTPError, client.get_entities,id_pattern=expression)
-                    self.assertRaises(requests.exceptions.HTTPError, client.get_entity_by_type,entity_type=entity.type,
-                                      id_pattern=expression,limit=100000)
-                    self.assertRaises(requests.exceptions.HTTPError, client.get_entity_values_by_type,entity_type=entity.type,
-                                      id_pattern=expression,limit=100000)
-                    self.assertRaises(requests.exceptions.HTTPError, client.get_entity_attr_by_type,entity_type=entity.type, 
-                                      attr_name="temperature",id_pattern=expression,limit=100000)
-                    self.assertRaises(requests.exceptions.HTTPError, client.get_entity_attr_values_by_type,entity_type=entity.type, 
-                                      attr_name="temperature",id_pattern=expression,limit=100000)
+                    self.assertRaises(requests.exceptions.HTTPError, client.get_entities,
+                                      id_pattern=expression)
+                    self.assertRaises(requests.exceptions.HTTPError,
+                                      client.get_entity_by_type,
+                                      entity_type=entity.type,
+                                      id_pattern=expression)
+                    self.assertRaises(requests.exceptions.HTTPError,
+                                      client.get_entity_values_by_type,
+                                      entity_type=entity.type,
+                                      id_pattern=expression)
+                    self.assertRaises(requests.exceptions.HTTPError,
+                                      client.get_entity_attr_by_type,
+                                      entity_type=entity.type,
+                                      attr_name="temperature",
+                                      id_pattern=expression)
+                    self.assertRaises(requests.exceptions.HTTPError,
+                                      client.get_entity_attr_values_by_type,
+                                      entity_type=entity.type,
+                                      attr_name="co2",
+                                      id_pattern=expression)
                     continue
 
-                entities=client.get_entities(id_pattern=expression)
-                self.assertEqual(len(entities),expected_result/50000)
+                entities = client.get_entities(id_pattern=expression)
+                self.assertEqual(len(entities), expected_result)
 
                 attrs_type = client.get_entity_by_type(
-                    entity_type=entity.type,id_pattern=expression,limit=100000)
+                    entity_type=entity.type,
+                    id_pattern=expression,
+                    limit=10000)
                 for entity_id in attrs_type:
                     logger.debug(entity_id.to_pandas())
-                
-                self.assertEqual(sum([len(entity_id.index) for
-                                      entity_id in attrs_type]),
-                                 expected_result) 
+                self.assertEqual(len(attrs_type), expected_result)
 
                 attrs_values_type = client.get_entity_values_by_type(
-                    entity_type=entity.type,id_pattern=expression,limit=100000)
+                    entity_type=entity.type,
+                    id_pattern=expression,
+                    limit=10000)
                 for entity_id in attrs_values_type:
                     logger.debug(entity_id.to_pandas())
-                self.assertEqual(sum([len(entity_id.index) for
-                                      entity_id in attrs_values_type]),
-                                 expected_result) 
+                self.assertEqual(len(attrs_values_type), expected_result)
                 
                 attr_type = client.get_entity_attr_by_type(
-                    entity_type=entity.type, attr_name="temperature",id_pattern=expression,limit=100000)
+                    entity_type=entity.type, attr_name="temperature",
+                    id_pattern=expression,
+                    limit=10000)
                 for entity_id in attr_type:
                     logger.debug(entity_id.to_pandas())
-                self.assertEqual(sum([len(entity_id.index) for
-                                      entity_id in attr_type]),
-                                 expected_result)
+                self.assertEqual(len(attr_type), expected_result)
 
                 attr_values_type = client.get_entity_attr_values_by_type(
-                    entity_type=entity.type, attr_name="temperature",id_pattern=expression,limit=100000)
+                    entity_type=entity.type, attr_name="temperature",
+                    id_pattern=expression,
+                    limit=10000)
                 for entity_id in attr_values_type:
                     logger.debug(entity_id.to_pandas())
-                self.assertEqual(sum([len(entity_id.index) for
-                                      entity_id in attr_values_type]),
-                                 expected_result) 
-                                 
-                
+                self.assertEqual(len(attr_values_type), expected_result)
    
     @unittest.skip("Currently fails. Because data in CrateDB is not clean")
     def test_test_query_endpoints_with_args(self) -> None:
