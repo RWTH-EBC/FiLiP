@@ -190,16 +190,21 @@ class TestTimeSeries(unittest.TestCase):
             for entity in entities:
                 # get by type
                 attrs_type = client.get_entity_by_type(
-                    entity_type=entity.type)
+                    entity_type=entity.type,
+                    limit=10000,
+                )
                 for entity_id in attrs_type:
                     logger.debug(entity_id.to_pandas())
 
+                # the limit 10000 will be shared by the two entities
                 self.assertEqual(sum([len(entity_id.index) for
                                       entity_id in attrs_type]),
                                  10000)
 
                 attrs_values_type = client.get_entity_values_by_type(
-                    entity_type=entity.type, )
+                    entity_type=entity.type,
+                    limit=10000,
+                )
                 for entity_id in attrs_values_type:
                     logger.debug(entity_id.to_pandas())
                 self.assertEqual(sum([len(entity_id.index) for
@@ -207,7 +212,9 @@ class TestTimeSeries(unittest.TestCase):
                                  10000)
 
                 attr_type = client.get_entity_attr_by_type(
-                    entity_type=entity.type, attr_name="temperature")
+                    entity_type=entity.type, attr_name="temperature",
+                    limit=10000,
+                )
                 for entity_id in attr_type:
                     logger.debug(entity_id.to_pandas())
                 self.assertEqual(sum([len(entity_id.index) for
@@ -215,7 +222,9 @@ class TestTimeSeries(unittest.TestCase):
                                  10000)
 
                 attr_values_type = client.get_entity_attr_values_by_type(
-                    entity_type=entity.type, attr_name="temperature")
+                    entity_type=entity.type, attr_name="temperature",
+                    limit=10000,
+                )
                 for entity_id in attr_values_type:
                     logger.debug(entity_id.to_pandas())
                 self.assertEqual(sum([len(entity_id.index) for
