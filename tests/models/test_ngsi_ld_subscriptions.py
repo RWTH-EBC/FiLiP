@@ -8,7 +8,7 @@ from pydantic import ValidationError
 # from filip.clients.ngsi_v2 import ContextBrokerClient
 from filip.models.ngsi_ld.subscriptions import \
     Subscription, \
-    Endpoint
+    Endpoint, NotificationParams, EntityInfo
 from filip.models.base import FiwareHeader
 from filip.utils.cleanup import clear_all, clean_test
 from tests.config import settings
@@ -104,38 +104,8 @@ class TestLDSubscriptions(unittest.TestCase):
         Test notification models
         According to NGSI-LD Spec section 5.2.14
         """
-        # Test url field sub field validation
-        with self.assertRaises(ValidationError):
-            Http(url="brokenScheme://test.de:80")
-        with self.assertRaises(ValidationError):
-            HttpCustom(url="brokenScheme://test.de:80")
-        with self.assertRaises(ValidationError):
-            Mqtt(url="brokenScheme://test.de:1883",
-                 topic='/testing')
-        with self.assertRaises(ValidationError):
-            Mqtt(url="mqtt://test.de:1883",
-                 topic='/,t')
-        httpCustom = HttpCustom(url=self.http_url)
-        mqtt = Mqtt(url=self.mqtt_url,
-                    topic=self.mqtt_topic)
-        mqttCustom = MqttCustom(url=self.mqtt_url,
-                                topic=self.mqtt_topic)
-
         # Test validator for conflicting fields
-        notification = Notification.model_validate(self.notification)
-        with self.assertRaises(ValidationError):
-            notification.mqtt = httpCustom
-        with self.assertRaises(ValidationError):
-            notification.mqtt = mqtt
-        with self.assertRaises(ValidationError):
-            notification.mqtt = mqttCustom
-
-        # test onlyChangedAttrs-field
-        notification = Notification.model_validate(self.notification)
-        notification.onlyChangedAttrs = True
-        notification.onlyChangedAttrs = False
-        with self.assertRaises(ValidationError):
-            notification.onlyChangedAttrs = dict()
+        notification = NotificationParams.model_validate(self.notification)
 
     def test_entity_selector_models(self):
         """
@@ -143,7 +113,17 @@ class TestLDSubscriptions(unittest.TestCase):
         Returns:
 
         """
-        pass
+        entity_info = EntityInfo.model_validate({
+                    "type": "Vehicle"
+                })
+        with self.assertRaises(ValueError):
+            entity_info = EntityInfo.model_validate({
+                "id": "test:001"
+            })
+        with self.assertRaises(ValueError):
+            entity_info = EntityInfo.model_validate({
+                "idPattern": ".*"
+            })
 
     def test_temporal_query_models(self):
         """
