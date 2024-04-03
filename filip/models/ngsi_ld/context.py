@@ -9,6 +9,7 @@ from pydantic import field_validator, ConfigDict, BaseModel, Field
 from filip.models.ngsi_v2 import ContextEntity
 from filip.utils.validators import FiwareRegex, \
     validate_fiware_datatype_string_protect, validate_fiware_standard_regex
+from pydantic_core import ValidationError
 
 
 class DataTypeLD(str, Enum):
@@ -240,7 +241,7 @@ class ContextGeoProperty(BaseModel):
         return value
 
 
-class NamedContextGeoProperty(ContextProperty):
+class NamedContextGeoProperty(ContextGeoProperty):
     """
     Context GeoProperties are geo properties of context entities. For example, the coordinates of a building .
 
@@ -436,8 +437,6 @@ class ContextLDEntity(ContextLDEntityKeyValues):
                     "can be disjoint. "
     )
     context: Optional[List[str]] = Field(
-        # ToDo: Matthias: Add field validator from subscription
-        #  -> use @context in def @field_validator("@context")
         title="@context",
         default=None,
         description="providing an unambiguous definition by mapping terms to "
@@ -477,14 +476,39 @@ class ContextLDEntity(ContextLDEntityKeyValues):
         data.update(self._validate_attributes(data))
         super().__init__(id=id, type=type, **data)
 
-    # TODO we should distinguish bettween context relationship
+    # TODO we should distinguish between context relationship
     @classmethod
     def _validate_attributes(cls, data: Dict):
         fields = set([field.validation_alias for (_, field) in cls.model_fields.items()] +
                      [field_name for field_name in cls.model_fields])
         fields.remove(None)
-        attrs = {key: ContextProperty.model_validate(attr) for key, attr in
-                 data.items() if key not in fields}
+        # Initialize the attribute dictionary
+        attrs = {}
+
+        # Iterate through the data
+        for key, attr in data.items():
+            # Check if the keyword is not already present in the fields
+            if key not in fields:
+                try:
+                    for attr_comp in attr:
+                        if attr_comp in ["type", "value", "observedAt", "UnitCode", "datasetId"]:
+                            pass
+                        else:
+                            try:
+                                attrs[key] = ContextGeoProperty.model_validate(attr[attr_comp])
+                            except ValidationError:
+                                attrs[key] = ContextProperty.model_validate(attr[attr_comp])
+                    try:
+                        attrs[key] = ContextGeoProperty.model_validate(attr)
+                    except ValidationError:
+                        attrs[key] = ContextProperty.model_validate(attr)
+                except ValidationError:
+                    try:
+                        attrs[key] = ContextGeoProperty.model_validate(attr)
+                    except ValidationError:
+                        attrs[key] = ContextProperty.model_validate(attr)
+
+
         return attrs
 
     model_config = ConfigDict(extra='allow', validate_default=True, validate_assignment=True)
