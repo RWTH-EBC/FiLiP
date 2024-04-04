@@ -2,7 +2,7 @@
 # # Exercise 4: Virtual Thermal Zone
 
 # Create two virtual IoT devices. One of them represents the temperature
-# sensor for the air temperature of a the thermal zone, whereas the second
+# sensor for the air temperature of a thermal zone, whereas the second
 # represents a virtual weather station. Both devices publish their values to
 # the platform via MQTT. Use the simulation model of
 # e1_virtual_weatherstation.py
@@ -40,35 +40,33 @@ from filip.utils.cleanup import clear_context_broker, clear_iot_agent
 from tutorials.ngsi_v2.simulation_model import SimulationModel
 
 # ## Parameters
-# ToDo: Enter your context broker host and port, e.g. http://localhost:1026
+# ToDo: Enter your context broker host and port, e.g. http://localhost:1026.
 CB_URL = "http://localhost:1026"
-# ToDo: Enter your IoT-Agent host and port, e.g. http://localhost:4041
+# ToDo: Enter your IoT-Agent host and port, e.g. http://localhost:4041.
 IOTA_URL = "http://localhost:4041"
-# ToDo: Enter your mqtt broker url, e.g mqtt://test.mosquitto.org:1883
+# ToDo: Enter your mqtt broker url, e.g. mqtt://test.mosquitto.org:1883.
 MQTT_BROKER_URL = "mqtt://localhost:1883"
-# ToDo: If required, enter your username and password
+# ToDo: If required, enter your username and password.
 MQTT_USER = ""
 MQTT_PW = ""
 
 # ToDo: Change the name of your service to something unique. If you run
-#  on a shared instance this very important in order to avoid user
+#  on a shared instance this is very important in order to avoid user
 #  collisions. You will use this service through the whole tutorial.
-#  If you forget to change it an error will be raised!
+#  If you forget to change it, an error will be raised!
 # FIWARE-Service
 SERVICE = 'filip_tutorial'
-# FIWARE-Servicepath
+# FIWARE-Service path
 SERVICE_PATH = '/'
 
-# ToDo: Change the APIKEY to something unique. This represent the "token"
-#  for IoT devices to connect (send/receive data ) with the platform. In the
+# ToDo: Change the APIKEY to something unique. This represents the "token"
+#  for IoT devices to connect (send/receive data) with the platform. In the
 #  context of MQTT, APIKEY is linked with the topic used for communication.
 APIKEY = 'your_apikey'
 
-# Path to json-files to device configuration data for follow-up exercises
-WRITE_GROUPS_FILEPATH = Path(
-    "../e4_iot_thermal_zone_sensors_solution_groups.json")
-WRITE_DEVICES_FILEPATH = Path(
-    "../e4_iot_thermal_zone_sensors_solution_devices.json")
+# path to json-files to device configuration data for follow-up exercises
+WRITE_GROUPS_FILEPATH = Path("../e4_iot_thermal_zone_sensors_solution_groups.json")
+WRITE_DEVICES_FILEPATH = Path("../e4_iot_thermal_zone_sensors_solution_devices.json")
 
 # set parameters for the temperature simulation
 TEMPERATURE_MAX = 10  # maximal ambient temperature
@@ -99,15 +97,15 @@ if __name__ == '__main__':
     history_weather_station = []
     history_zone_temperature_sensor = []
 
-    # create a service group and add it to your
+    # create a service group with your api key
     service_group = ServiceGroup(apikey=APIKEY,
                                  resource="/iot/json")
 
-    # ToDo: create two IoTA-MQTT devices for the weather station and the zone
+    # ToDo: Create two IoTA-MQTT devices for the weather station and the zone
     #  temperature sensor. Also add the simulation time as `active attribute`
     #  to each device!
     # create the weather station device
-    # create the sim_time attribute and add it to the weather station's attributes
+    # create the `sim_time` attribute and add it to the weather station's attributes
     t_sim = DeviceAttribute(name='sim_time',
                             object_id='t_sim',
                             type="Number")
@@ -122,7 +120,7 @@ if __name__ == '__main__':
                              commands=[])
 
     # create a temperature attribute and add it via the api of the
-    # 'device'-model. Use the 't_amb' as 'object_id'. 'object_id' specifies
+    # `device`-model. Use the `t_amb` as `object_id`. `object_id` specifies
     # what key will be used in the MQTT Message payload
     t_amb = DeviceAttribute(name='temperature',
                             object_id='t_amb',
@@ -130,7 +128,7 @@ if __name__ == '__main__':
 
     weather_station.add_attribute(t_amb)
 
-    # ToDo: Create the zone temperature device add the t_sim attribute upon
+    # ToDo: Create the zone temperature device and add the `t_sim` attribute upon
     #  creation.
     zone_temperature_sensor = Device(device_id='device:002',
                                      entity_name='urn:ngsi-ld:TemperatureSensor:001',
@@ -140,7 +138,8 @@ if __name__ == '__main__':
                                      apikey=APIKEY,
                                      attributes=[t_sim],
                                      commands=[])
-    # ToDo: Create the temperature attribute. Use the 't_zone' as `object_id`.
+
+    # ToDo: Create the temperature attribute. Use the `t_zone` as `object_id`.
     #  `object_id` specifies what key will be used in the MQTT Message payload.
     t_zone = DeviceAttribute(name='temperature',
                              object_id='t_zone',
@@ -164,7 +163,7 @@ if __name__ == '__main__':
     cbc = ContextBrokerClient(url=CB_URL, fiware_header=fiware_header)
     # get weather station entity
     print(f"Weather station:\n{cbc.get_entity(weather_station.entity_name).model_dump_json(indent=2)}")
-    # get zone temperature sensor entity
+    # ToDo: Get zone temperature sensor entity.
     print(f"Zone temperature sensor:\n{cbc.get_entity(zone_temperature_sensor.entity_name).model_dump_json(indent=2)}")
 
     # ToDo: Create an MQTTv5 client using filip.clients.mqtt.IoTAMQTTClient.
@@ -176,7 +175,7 @@ if __name__ == '__main__':
     # ToDo: Register devices with your MQTT-Client.
     # register the weather station
     mqttc.add_device(weather_station)
-    # ToDo: register the zone temperature sensor.
+    # ToDo: Register the zone temperature sensor.
     mqttc.add_device(zone_temperature_sensor)
 
     # The IoTAMQTTClient automatically creates outgoing topics from the
@@ -187,7 +186,7 @@ if __name__ == '__main__':
     # "/json/<APIKEY>/<weather_station.device_id>/attrs"
     # "/json/<APIKEY>/<zone_temperature_sensor.device_id>/attrs"
 
-    # ToDO: Connect to the mqtt broker and subscribe to your topic.
+    # ToDO: Connect to the MQTT broker and subscribe to your topic.
     mqtt_url = urlparse(MQTT_BROKER_URL)
     mqttc.connect(host=mqtt_url.hostname,
                   port=mqtt_url.port,
@@ -203,8 +202,8 @@ if __name__ == '__main__':
     mqttc.loop_start()
 
     # ToDo: Create a loop that publishes a message every 100 milliseconds
-    #  to the broker that holds the simulation time "sim_time" and the
-    #  corresponding temperature "temperature". You may use the 'object_id'
+    #  to the broker that holds the simulation time `sim_time` and the
+    #  corresponding temperature `temperature`. You may use the `object_id`
     #  or the attribute name as a key in your payload.
     for t_sim in range(sim_model.t_start,
                        sim_model.t_end + int(COM_STEP),
@@ -253,6 +252,7 @@ if __name__ == '__main__':
     t_simulation = [item["sim_time"]/3600 for item in history_weather_station]
     temperature = [item["temperature"] for item in history_weather_station]
     ax.plot(t_simulation, temperature)
+    ax.title.set_text("Weather Station")
     ax.set_xlabel('time in h')
     ax.set_ylabel('ambient temperature in °C')
 
@@ -261,6 +261,7 @@ if __name__ == '__main__':
     temperature = [item["temperature"] for item in
                    history_zone_temperature_sensor]
     ax2.plot(t_simulation, temperature)
+    ax2.title.set_text("Zone Temperature Sensor")
     ax2.set_xlabel('time in h')
     ax2.set_ylabel('zone temperature in °C')
 
