@@ -3,7 +3,7 @@
 
 # Create a virtual IoT device that simulates the ambient temperature and
 # publishes it via MQTT. The simulation function is already predefined.
-# This exercise to give a simple introduction to the communication via MQTT.
+# This exercise gives a simple introduction to the communication via MQTT.
 
 # The input sections are marked with 'ToDo'
 
@@ -31,16 +31,15 @@ import paho.mqtt.client as mqtt
 # import simulation model
 from tutorials.ngsi_v2.simulation_model import SimulationModel
 
-
 # ## Parameters
-# ToDo: Enter your mqtt broker url and port, e.g mqtt://test.mosquitto.org:1883
+# ToDo: Enter your mqtt broker url and port, e.g. mqtt://test.mosquitto.org:1883.
 MQTT_BROKER_URL = "mqtt://test.mosquitto.org:1883"
-# ToDo: If required enter your username and password
+# ToDo: If required, enter your username and password.
 MQTT_USER = ""
-MQTT_PW =  ""
+MQTT_PW = ""
 
 # ToDo: Create a unique topic that your weather station will publish on,
-#  e.g. by using a uuid
+#  e.g. by using a uuid.
 UNIQUE_ID = str(uuid4())
 TOPIC_WEATHER_STATION = f"fiware_workshop/{UNIQUE_ID}/weather_station"
 
@@ -50,8 +49,7 @@ TEMPERATURE_MIN = -5  # minimal ambient temperature
 
 T_SIM_START = 0  # simulation start time in seconds
 T_SIM_END = 24 * 60 * 60  # simulation end time in seconds
-COM_STEP = 60 * 60 * 0.25  # 15 min communication step in seconds
-
+COM_STEP = 60 * 60  # 60 min communication step in seconds
 
 # ## Main script
 if __name__ == '__main__':
@@ -64,14 +62,15 @@ if __name__ == '__main__':
     # define a list for storing historical data
     history_weather_station = []
 
-    # ToDo: create a MQTTv5 client with paho-mqtt
+    # ToDo: Create an MQTTv5 client with paho-mqtt.
     mqttc = ...
     # set user data if required
     mqttc.username_pw_set(username=MQTT_USER, password=MQTT_PW)
+
     # ToDo: Define a callback function that will be executed when the client
     #  receives message on a subscribed topic. It should decode your message
-    #  and store the information for later in our history
-    #  Note: do not change function's signature
+    #  and store the information for later in our history.
+    #  Note: Do not change the function's signature!
     def on_message(client, userdata, msg):
         """
         Callback function for incoming messages
@@ -79,7 +78,7 @@ if __name__ == '__main__':
         # decode the payload
         payload = msg.payload.decode('utf-8')
         # ToDo: Parse the payload using the `json` package and write it to
-        #  the history
+        #  the history.
         ...
 
         pass
@@ -88,7 +87,7 @@ if __name__ == '__main__':
     # or a topic specific callback with `mqttc.message_callback_add()`
     mqttc.on_message = on_message
 
-    # ToDO: connect to the mqtt broker and subscribe to your topic
+    # ToDo: Connect to the mqtt broker and subscribe to your topic.
     mqtt_url = urlparse(MQTT_BROKER_URL)
     ...
 
@@ -98,27 +97,27 @@ if __name__ == '__main__':
 
 
 
-    # ToDo: print and subscribe to the weather station topic
+    # ToDo: Print and subscribe to the weather station topic.
     print(f"WeatherStation topic:\n {TOPIC_WEATHER_STATION}")
     mqttc.subscribe(topic=TOPIC_WEATHER_STATION)
 
     # create a non-blocking thread for mqtt communication
     mqttc.loop_start()
 
-    # ToDo: Create a loop that publishes every second a message to the broker
+    # ToDo: Create a loop that publishes every 20 milliseconds a message to the broker
     #  that holds the simulation time "t_sim" and the corresponding temperature
-    #  "t_amb"
+    #  "t_amb".
     for t_sim in range(sim_model.t_start,
                        int(sim_model.t_end + COM_STEP),
                        int(COM_STEP)):
-        # ToDo: publish the simulated ambient temperature
+        # ToDo: Publish the simulated ambient temperature.
         ...
 
 
 
         # simulation step for next loop
         sim_model.do_step(int(t_sim + COM_STEP))
-        time.sleep(1)
+        time.sleep(0.2)
 
     # close the mqtt listening thread
     mqttc.loop_stop()
@@ -127,9 +126,9 @@ if __name__ == '__main__':
 
     # plot results
     fig, ax = plt.subplots()
-    t_simulation = [item["t_sim"] for item in history_weather_station]
+    t_simulation = [item["t_sim"]/3600 for item in history_weather_station]
     temperature = [item["t_amb"] for item in history_weather_station]
     ax.plot(t_simulation, temperature)
-    ax.set_xlabel('time in s')
+    ax.set_xlabel('time in h')
     ax.set_ylabel('ambient temperature in °C')
     plt.show()
