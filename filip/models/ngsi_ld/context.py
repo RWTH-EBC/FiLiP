@@ -77,7 +77,7 @@ class ContextProperty(BaseModel):
         min_length=1,
     )
     field_validator("datasetId")(validate_fiware_datatype_string_protect)
-
+                                                                                # ToDo: Add validator here for nested property validation
     @field_validator("type")
     @classmethod
     def check_property_type(cls, value):
@@ -225,6 +225,14 @@ class ContextGeoProperty(BaseModel):
     )
     field_validator("datasetId")(validate_fiware_datatype_string_protect)
 
+                                                        # ToDo: Add validator here for nested property validation:
+                                                        #    def __init__(self,
+                                                                   #      id: str,
+                                                                   #      value: str,
+                                                                    #     observedAt: ....
+                                                                    #     **data):
+                                                            # There is currently no validation for extra fields
+                                                            #data.update(self._validate_attributes(data))
     @field_validator("type")
     @classmethod
     def check_geoproperty_type(cls, value):
@@ -491,7 +499,7 @@ class ContextLDEntity(ContextLDEntityKeyValues):
             if key not in fields:
                 try:
                     for attr_comp in attr:
-                        if attr_comp in ["type", "value", "observedAt", "UnitCode", "datasetId"]:
+                        if attr_comp in ["type", "value", "observedAt", "UnitCode", "datasetId"]:                       #ToDo: Shorten this section
                             pass
                         else:
                             try:

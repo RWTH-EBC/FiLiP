@@ -110,6 +110,7 @@ class TestLDContextModels(unittest.TestCase):
             None
         """
         entity1 = ContextLDEntity(**self.entity1_dict)
+        #entity1 = ContextLDEntity.model_validate(self.entity1_dict)
         entity2 = ContextLDEntity(**self.entity2_dict)
 
         self.assertEqual(self.entity1_dict,
