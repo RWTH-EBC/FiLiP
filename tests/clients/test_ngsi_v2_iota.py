@@ -7,7 +7,7 @@ import logging
 import requests
 
 from uuid import uuid4
-from filip.utils.cleanup import clear_iot_agent, clear_context_broker
+
 from filip.models.base import FiwareHeader, DataType
 from filip.clients.ngsi_v2 import \
     ContextBrokerClient, \
@@ -19,7 +19,11 @@ from filip.models.ngsi_v2.iot import \
     DeviceCommand, \
     LazyDeviceAttribute, \
     StaticDeviceAttribute
-from filip.utils.cleanup import clear_all, clean_test
+from filip.utils.cleanup import \
+    clear_all, \
+    clean_test, \
+    clear_context_broker, \
+    clear_iot_agent 
 from tests.config import settings
 
 logger = logging.getLogger(__name__)
@@ -248,9 +252,9 @@ class TestAgent(unittest.TestCase):
         device.add_attribute(DeviceAttribute(
             name="Att1", object_id="o1", type=DataType.STRUCTUREDVALUE))
         device.add_attribute(StaticDeviceAttribute(
-            name="Stat1", value="test", type=DataType.STRUCTUREDVALUE))
+            name="Stat1", value="test", type=DataType.TEXT))
         device.add_attribute(StaticDeviceAttribute(
-            name="Stat2", value="test", type=DataType.STRUCTUREDVALUE))
+            name="Stat2", value="test", type=DataType.TEXT))
         device.add_command(DeviceCommand(name="Com1"))
 
         # use update_device to post
@@ -275,7 +279,7 @@ class TestAgent(unittest.TestCase):
         device.add_attribute(DeviceAttribute(
             name="Att2", object_id="o1", type=DataType.STRUCTUREDVALUE))
         device.add_attribute(StaticDeviceAttribute(
-            name="Stat3", value="test3", type=DataType.STRUCTUREDVALUE))
+            name="Stat3", value="test3", type=DataType.TEXT))
         device.add_command(DeviceCommand(name="Com2"))
 
         # device.endpoint = "http://localhost:8080"
@@ -311,9 +315,9 @@ class TestAgent(unittest.TestCase):
         device.add_attribute(DeviceAttribute(
             name="Att1", object_id="o1", type=DataType.STRUCTUREDVALUE))
         device.add_attribute(StaticDeviceAttribute(
-            name="Stat1", value="test", type=DataType.STRUCTUREDVALUE))
+            name="Stat1", value="test", type=DataType.TEXT))
         device.add_attribute(StaticDeviceAttribute(
-            name="Stat2", value="test", type=DataType.STRUCTUREDVALUE))
+            name="Stat2", value="test", type=DataType.TEXT))
         device.add_command(DeviceCommand(name="Com1"))
 
         # use patch_device to post
@@ -338,7 +342,7 @@ class TestAgent(unittest.TestCase):
         device.add_attribute(DeviceAttribute(
             name="Att2", object_id="o1", type=DataType.STRUCTUREDVALUE))
         device.add_attribute(StaticDeviceAttribute(
-            name="Stat3", value="test3", type=DataType.STRUCTUREDVALUE))
+            name="Stat3", value="test3", type=DataType.TEXT))
         device.add_command(DeviceCommand(name="Com2"))
 
         self.client.patch_device(device=device, cb_url=settings.CB_URL)
@@ -379,14 +383,16 @@ class TestAgent(unittest.TestCase):
     def test_service_group(self):
         """
         Test of querying service group based on apikey and resource.
-
         """
         # Create dummy service groups
-        group_base = ServiceGroup(service=settings.FIWARE_SERVICE, subservice=settings.FIWARE_SERVICEPATH,
+        group_base = ServiceGroup(service=settings.FIWARE_SERVICE,
+                                  subservice=settings.FIWARE_SERVICEPATH,
                                   resource="/iot/json", apikey="base")
-        group1 = ServiceGroup(service=settings.FIWARE_SERVICE, subservice=settings.FIWARE_SERVICEPATH,
+        group1 = ServiceGroup(service=settings.FIWARE_SERVICE,
+                              subservice=settings.FIWARE_SERVICEPATH,
                               resource="/iot/json", apikey="test1")
-        group2 = ServiceGroup(service=settings.FIWARE_SERVICE, subservice=settings.FIWARE_SERVICEPATH,
+        group2 = ServiceGroup(service=settings.FIWARE_SERVICE,
+                              subservice=settings.FIWARE_SERVICEPATH,
                               resource="/iot/json", apikey="test2")
         self.client.post_groups([group_base, group1, group2], update=True)
 
@@ -440,10 +446,8 @@ class TestAgent(unittest.TestCase):
         device.add_command(DeviceCommand(name="dummy_cmd"))
         self.client.post_device(device=device)
         clear_context_broker(settings.CB_URL,self.fiware_header)
-        self.assertRaises(requests.HTTPError,
-                          clear_iot_agent,
-                          settings.IOTA_URL,
-                          self.fiware_header)
+        self.assertRaises(requests.HTTPError,clear_iot_agent,
+                          settings.IOTA_URL,self.fiware_header)
 
     def tearDown(self) -> None:
         """
@@ -457,4 +461,3 @@ class TestAgent(unittest.TestCase):
                     iota_url=settings.IOTA_JSON_URL)
         except requests.HTTPError:
             print("Already cleared")
-        
