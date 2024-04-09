@@ -22,7 +22,7 @@ INSTALL_REQUIRES = ['aenum~=3.1.15',
 
 SETUP_REQUIRES = INSTALL_REQUIRES.copy()
 
-VERSION = '0.4.0'
+VERSION = '0.3.0'
 
 setuptools.setup(
     name='filip',
