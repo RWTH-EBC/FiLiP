@@ -133,9 +133,39 @@ class TestLDSubscriptions(unittest.TestCase):
         """
         pass
 
-    @clean_test(fiware_service=settings.FIWARE_SERVICE,
-                fiware_servicepath=settings.FIWARE_SERVICEPATH,
-                cb_url=settings.CB_URL)
+        example2_temporalQ = {
+            "timerel": "between",
+            "timeAt": "2017-12-13T14:20:00Z",
+            "endTimeAt": "2017-12-13T14:40:00Z",
+            "timeproperty": "modifiedAt"
+        }
+        self.assertEqual(example2_temporalQ,
+                         TemporalQuery.model_validate(example2_temporalQ).model_dump())
+
+        example3_temporalQ = {
+            "timerel": "between",
+            "timeAt": "2017-12-13T14:20:00Z"
+        }
+        with self.assertRaises(ValueError):
+            TemporalQuery.model_validate(example3_temporalQ)
+
+        example4_temporalQ = {
+            "timerel": "before",
+            "timeAt": "14:20:00Z"
+        }
+        with self.assertRaises(ValueError):
+            TemporalQuery.model_validate(example4_temporalQ)
+
+        example5_temporalQ = {
+            "timerel": "between",
+            "timeAt": "2017-12-13T14:20:00Z",
+            "endTimeAt": "2017-12-13T14:40:00Z",
+            "timeproperty": "modifiedAt"
+        }
+        with self.assertRaises(ValueError):
+            TemporalQuery.model_validate(example5_temporalQ)
+
+    # TODO clean test for NGSI-LD
     def test_subscription_models(self) -> None:
         """
         Test subscription models
