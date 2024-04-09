@@ -3,7 +3,7 @@
 
 # Create a virtual IoT device that simulates a heater for your
 # thermal zone. The heater can be turned on and off via a simple hysteresis
-# controller. The devices from e4_iot_thermal_zone_sensors.py will loaded
+# controller. The devices from e4_iot_thermal_zone_sensors.py will be loaded
 # from the stored *.json-files.
 
 # The input sections are marked with 'ToDo'
@@ -13,18 +13,18 @@
 # 2. Retrieve the service group and device configurations of already existing
 #    devices from the IoT-Agent
 # 3. Create a third device configuration for a heater holding a command
-#    for turning it `on` and `off`device and post it to the server
+#    for turning it `on` and `off` and post it to the server
 # 4. Create an MQTT client using the filip.client.mqtt package and register
 #    your service group and your devices
 # 4. Define a callback function that will be executed when the client
-#    receives a command. Decode the message and set the update the state in
+#    receives a command. Decode the message and set the update state in
 #    simulation model. Afterwards, acknowledge the command using the api of the
 #    IoTAMQTTClient.
 # 5. Add the callback for your heater device to the IoTAMQTTClient
 # 6. Create an MQTT subscription for asynchronous communication that
 #    gets triggered when the temperature attribute changes.
 # 7. Write a second callback that represents your controller. It should get
-#    triggered when the MQTTClient receive a notification message due to your
+#    triggered when the MQTTClient receives a notification message due to your
 #    subscription. Add the callback to your MQTTClient using the original
 #    paho-api (`message_callback_add`)
 # 8. Run the simulation and plot
@@ -44,7 +44,7 @@ import matplotlib.pyplot as plt
 # import from filip
 from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient
 from filip.clients.mqtt import IoTAMQTTClient
-from filip.models.base import FiwareHeader
+from filip.models.base import DataType, FiwareHeader
 from filip.models.ngsi_v2.context import NamedCommand
 from filip.models.ngsi_v2.subscriptions import Subscription, Message
 from filip.models.ngsi_v2.iot import \
@@ -58,52 +58,52 @@ from filip.utils.cleanup import clear_context_broker, clear_iot_agent
 from tutorials.ngsi_v2.simulation_model import SimulationModel
 
 # ## Parameters
-# ToDo: Enter your context broker host and port, e.g http://localhost:1026
+# ToDo: Enter your context broker host and port, e.g http://localhost:1026.
 CB_URL = "http://localhost:1026"
-# ToDo: Enter your IoT-Agent host and port, e.g http://localhost:4041
+# ToDo: Enter your IoT-Agent host and port, e.g http://localhost:4041.
 IOTA_URL = "http://localhost:4041"
-# ToDo: Enter your mqtt broker url, e.g mqtt://test.mosquitto.org:1883
+# ToDo: Enter your mqtt broker url, e.g mqtt://test.mosquitto.org:1883.
 MQTT_BROKER_URL_EXPOSED = "mqtt://localhost:1883"
-# ToDo: Enter your mqtt broker url, e.g mqtt://mosquitto:1883
+# ToDo: Enter your mqtt broker url, e.g mqtt://mosquitto:1883.
 MQTT_BROKER_URL_INTERNAL = "mqtt://mosquitto:1883"
-# ToDo: If required enter your username and password
+# ToDo: If required, enter your username and password.
 MQTT_USER = ""
 MQTT_PW = ""
 
 # ToDo: Change the name of your service to something unique. If you run
-#  on a shared instance this very important in order to avoid user
+#  on a shared instance this is very important in order to avoid user
 #  collisions. You will use this service through the whole tutorial.
-#  If you forget to change it an error will be raised!
+#  If you forget to change it, an error will be raised!
 # FIWARE-Service
 SERVICE = 'filip_tutorial'
-# FIWARE-Servicepath
+# FIWARE-Service path
 SERVICE_PATH = '/'
 
-# ToDo: Change the APIKEY to something unique. This represent the "token"
-#  for IoT devices to connect (send/receive data ) with the platform. In the
+# ToDo: Change the APIKEY to something unique. This represents the "token"
+#  for IoT devices to connect (send/receive data) with the platform. In the
 #  context of MQTT, APIKEY is linked with the topic used for communication.
 APIKEY = 'your_apikey'
 UNIQUE_ID = str(uuid4())
 TOPIC_CONTROLLER = f"fiware_workshop/{UNIQUE_ID}/controller"
 print(TOPIC_CONTROLLER)
-# Path to json-files to store entity data for follow up exercises
+# path to json-files to store entity data for follow up exercises
 WRITE_GROUPS_FILEPATH = \
     Path("../e5_iot_thermal_zone_control_groups.json")
 WRITE_DEVICES_FILEPATH = \
     Path("../e5_iot_thermal_zone_control_devices.json")
 WRITE_SUBSCRIPTIONS_FILEPATH = \
     Path("../e5_iot_thermal_zone_control_subscriptions.json")
-# Path to read json-files from previous exercises
+# path to read json-files from previous exercises
 READ_GROUPS_FILEPATH = \
     Path("../e4_iot_thermal_zone_sensors_groups.json")
 READ_DEVICES_FILEPATH = \
     Path("../e4_iot_thermal_zone_sensors_devices.json")
 
-with open(READ_GROUPS_FILEPATH, 'r') as file:
-    json_groups = json.load(file)
-
-with open(READ_DEVICES_FILEPATH, 'r') as file:
-    json_devices = json.load(file)
+# opening the files
+with (open(READ_GROUPS_FILEPATH, 'r') as groups_file,
+      open(READ_DEVICES_FILEPATH, 'r') as devices_file):
+    json_groups = json.load(groups_file)
+    json_devices = json.load(devices_file)
 
 # set parameters for the temperature simulation
 TEMPERATURE_MAX = 10  # maximal ambient temperature
@@ -112,7 +112,7 @@ TEMPERATURE_ZONE_START = 20  # start value of the zone temperature
 
 T_SIM_START = 0  # simulation start time in seconds
 T_SIM_END = 24 * 60 * 60  # simulation end time in seconds
-COM_STEP = 60 * 60 * 0.25 # 15 min communication step in seconds
+COM_STEP = 60 * 60 * 0.25  # 15 min communication step in seconds
 
 # ## Main script
 if __name__ == '__main__':
@@ -135,36 +135,34 @@ if __name__ == '__main__':
     history_zone_temperature_sensor = []
     history_heater = []
 
-    # Create clients and restore devices and groups from file
-    ta1 = TypeAdapter(List[ServiceGroup])
-    groups = ta1.validate_python(json_groups)
-    ta2 = TypeAdapter(List[Device])
-    devices = ta2.validate_python(json_devices)
+    # create clients and also restore devices and groups from file
+    groups = TypeAdapter(List[ServiceGroup]).validate_python(json_groups)
+    devices = TypeAdapter(List[Device]).validate_python(json_devices)
     cbc = ContextBrokerClient(url=CB_URL, fiware_header=fiware_header)
     iotac = IoTAClient(url=IOTA_URL, fiware_header=fiware_header)
     iotac.post_groups(service_groups=groups)
     iotac.post_devices(devices=devices)
 
-    # ToDo: Get the device configurations from the server
+    # ToDo: Get the device configurations from the server.
     weather_station = iotac.get_device(device_id="device:001")
     zone_temperature_sensor = ...
 
-    # ToDo: Get the service group configurations from the server
+    # ToDo: Get the service group configurations from the server.
     group = iotac.get_group(resource="/iot/json", apikey=...)
 
-    # ToDo: Create and additional device holding a command attribute and
-    #  post it to the IoT-Agent. It should be mapped to the `type` heater
-    # create the sim_time attribute and add during device creation
+    # ToDo: Create an additional device holding a command attribute and
+    #  post it to the IoT-Agent. It should be mapped to the `type` heater.
+    # create the sim_time attribute and add it during device creation
     t_sim = DeviceAttribute(name='sim_time',
                             object_id='t_sim',
                             type="Number")
 
-    # ToDo: create the command attribute of name `heater_on` (currently it is
-    #  not possible to add metadata here)
+    # ToDo: Create the command attribute of name `heater_on` (currently it is
+    #  not possible to add metadata here).
     cmd = DeviceCommand(name=...,
                         type=...)
 
-    # ToDo: create the device configuration and send it to the server name it
+    # ToDo: Create the device configuration and send it to the server.
     heater = Device(...)
 
 
@@ -176,7 +174,7 @@ if __name__ == '__main__':
 
     iotac.post_device(device=heater)
 
-    # ToDo: Check the entity that corresponds to your device
+    # ToDo: Check the entity that corresponds to your device.
     heater_entity = cbc.get_entity(entity_id=heater.entity_name,
                                    entity_type=heater.entity_type)
     print(f"Your device entity before running the simulation: \n "
@@ -192,27 +190,27 @@ if __name__ == '__main__':
     mqttc.username_pw_set(username=MQTT_USER, password=MQTT_PW)
 
     # ToDo: Implement a callback function that gets triggered when the
-    #  command is sent to the device. The incoming command schould update the
-    #  heater attribute of the simulation model
+    #  command is sent to the device. The incoming command should update the
+    #  heater attribute of the simulation model.
     def on_command(client, obj, msg):
         """
         Callback for incoming commands
         """
-        # Decode the message payload using the libraries builtin encoders
+        # decode the message payload using the libraries builtin encoders
         apikey, device_id, payload = \
             client.get_encoder(PayloadProtocol.IOTA_JSON).decode_message(
                 msg=msg)
         # map the command value to the simulation
         sim_model.heater_on = payload[cmd.name]
 
-        # ToDo: acknowledge the command. Here command are usually single
+        # ToDo: Acknowledge the command. In this case commands are usually single
         #   messages. The first key is equal to the commands name.
         client.publish(device_id=device_id,
                        command_name=...,
                        payload=...)
 
     # ToDo: Add the command callback to your MQTTClient. This will get
-    #  triggered for the specified device_id
+    #  triggered for the specified device_id.
     mqttc.add_command_callback(device_id=...,
                                callback=...)
 
@@ -239,13 +237,13 @@ if __name__ == '__main__':
         },
         "throttling": 0
     }
-    # Generate Subscription object for validation and post it
+    # generate Subscription object for validation and post it
     subscription = Subscription(**subscription)
     subscription_id = cbc.post_subscription(subscription=subscription)
 
     # ToDo: You need to implement a controller that controls the
     #  heater state with respect to the zone temperature. This will be
-    #  implemented with asynchronous communication using MQTT-Subscriptions
+    #  implemented with asynchronous communication using MQTT-Subscriptions.
     def on_measurement(client, obj, msg):
         """
         Callback for measurement notifications
@@ -253,12 +251,9 @@ if __name__ == '__main__':
         message = Message.model_validate_json(msg.payload)
         updated_zone_temperature_sensor = message.data[0]
 
-        # ToDo: retrieve the value of temperature attribute
+        # ToDo: Retrieve the value of temperature attribute.
         temperature = ...
 
-        # ToDo: device if you want update your command
-        #   Note that this could also be substitute by a conditional
-        #   subscription
         update = True
         if temperature <= 19:
             state = 1
@@ -266,7 +261,8 @@ if __name__ == '__main__':
             state = 0
         else:
             update = False
-        # ToDo: send the command to the heater entity
+
+        # ToDo: Send the command to the heater entity.
         if update:
             command = NamedCommand(name=cmd.name, value=state)
             cbc.post_command(...)
@@ -293,9 +289,9 @@ if __name__ == '__main__':
     # create a non-blocking thread for mqtt communication
     mqttc.loop_start()
 
-    # Create a loop that publishes every second a message to the broker
-    #  that holds the simulation time "sim_time" and the corresponding
-    #  temperature "temperature" the loop should. You may use the `object_id`
+    # ToDo: Create a loop that publishes a message every 100 milliseconds
+    #  to the broker that holds the simulation time "sim_time" and the
+    #  corresponding temperature "temperature". You may use the `object_id`
     #  or the attribute name as key in your payload.
     for t_sim in range(sim_model.t_start,
                        sim_model.t_end + int(COM_STEP),
@@ -314,13 +310,13 @@ if __name__ == '__main__':
         mqttc.publish(device_id=heater.device_id,
                       payload={"sim_time": sim_model.t_sim})
 
-        time.sleep(0.5)
+        time.sleep(0.1)
         # simulation step for next loop
         sim_model.do_step(int(t_sim + COM_STEP))
-        # wait for one second before publishing the next values
-        time.sleep(0.5)
+        # wait for 0.1 second before publishing the next values
+        time.sleep(0.1)
 
-        # Get corresponding entities and write values to history
+        # get corresponding entities and write values to history
         weather_station_entity = cbc.get_entity(
             entity_id=weather_station.entity_name,
             entity_type=weather_station.entity_type
@@ -330,7 +326,7 @@ if __name__ == '__main__':
             {"sim_time": weather_station_entity.sim_time.value,
              "temperature": weather_station_entity.temperature.value})
 
-        # Get ZoneTemperatureSensor and write values to history
+        # get zone temperature sensor and write values to history
         zone_temperature_sensor_entity = cbc.get_entity(
             entity_id=zone_temperature_sensor.entity_name,
             entity_type=zone_temperature_sensor.entity_type
@@ -339,7 +335,7 @@ if __name__ == '__main__':
             {"sim_time": zone_temperature_sensor_entity.sim_time.value,
              "temperature": zone_temperature_sensor_entity.temperature.value})
 
-        # Get ZoneTemperatureSensor and write values to history
+        # get zone temperature sensor and write values to history
         heater_entity = cbc.get_entity(
             entity_id=heater.entity_name,
             entity_type=heater.entity_type)
@@ -357,27 +353,30 @@ if __name__ == '__main__':
 
     # plot results
     fig, ax = plt.subplots()
-    t_simulation = [item["sim_time"] for item in history_weather_station]
+    t_simulation = [item["sim_time"]/3600 for item in history_weather_station]
     temperature = [item["temperature"] for item in history_weather_station]
     ax.plot(t_simulation, temperature)
-    ax.set_xlabel('time in s')
+    ax.title.set_text("Weather Station")
+    ax.set_xlabel('time in h')
     ax.set_ylabel('ambient temperature in °C')
     plt.show()
 
     fig2, ax2 = plt.subplots()
-    t_simulation = [item["sim_time"] for item in history_zone_temperature_sensor]
+    t_simulation = [item["sim_time"]/3600 for item in history_zone_temperature_sensor]
     temperature = [item["temperature"] for item in
                    history_zone_temperature_sensor]
     ax2.plot(t_simulation, temperature)
-    ax2.set_xlabel('time in s')
+    ax.title.set_text("Zone Temperature Sensor")
+    ax2.set_xlabel('time in h')
     ax2.set_ylabel('zone temperature in °C')
     plt.show()
 
     fig3, ax3 = plt.subplots()
-    t_simulation = [item["sim_time"] for item in history_heater]
+    t_simulation = [item["sim_time"]/3600 for item in history_heater]
     on_off = [item["on_off"] for item in history_heater]
     ax3.plot(t_simulation, on_off)
-    ax3.set_xlabel('time in s')
+    ax.title.set_text("Heater")
+    ax3.set_xlabel('time in h')
     ax3.set_ylabel('on/off')
     plt.show()
 
