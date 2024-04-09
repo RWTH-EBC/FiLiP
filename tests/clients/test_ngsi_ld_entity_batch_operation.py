@@ -170,7 +170,7 @@ class EntitiesBatchOperations(unittest.TestCase):
         """Test 1"""
         fiware_header = FiwareLDHeader()
         with ContextBrokerLDClient(fiware_header=fiware_header) as client:
-            ContextLDEntity(id=f"urn:ngsi-ld:test:10", type=f'filip:object:TypeA',con)
+            ContextLDEntity(id=f"urn:ngsi-ld:test:10", type=f'filip:object:TypeA')
             entities_a = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
                                         type=f'filip:object:TypeA') for i in
                           range(0, 5)]
