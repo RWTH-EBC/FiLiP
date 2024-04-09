@@ -1,9 +1,9 @@
 import _json
 import unittest
 from pydantic import ValidationError
-from filip.clients.ngsi_v2.cb import ContextBrokerClient	
+#from filip.clients.ngsi_v2.cb import ContextBrokerClient	
 
-# from filip.clients.ngsi_ld.cb import ContextBrokerLDClient
+from filip.clients.ngsi_ld.cb import ContextBrokerLDClient
 # from filip.models.ngsi_v2.subscriptions import \
 #     Http, \
 #     HttpCustom, \
@@ -11,10 +11,14 @@ from filip.clients.ngsi_v2.cb import ContextBrokerClient
 #     MqttCustom, \
 #     Notification, \
 #     Subscription
-from filip.models.base import FiwareHeader
+from filip.models.base import FiwareLDHeader
 from filip.utils.cleanup import clear_all, clean_test
 from tests.config import settings
-from filip.models.ngsi_ld.context import ContextLDEntity
+from filip.models.ngsi_ld.context import \
+    ContextLDEntity, \
+    ContextProperty, \
+    ContextRelationship, \
+    NamedContextProperty
 import requests
 
 class TestEntities(unittest.TestCase):
@@ -28,15 +32,16 @@ class TestEntities(unittest.TestCase):
         Returns:
             None
         """
-        self.fiware_header = FiwareHeader(
-            service=settings.FIWARE_SERVICE,
-            service_path=settings.FIWARE_SERVICEPATH)
+        # self.fiware_header = FiwareLDHeader(
+        #     service=settings.FIWARE_SERVICE,
+        #     service_path=settings.FIWARE_SERVICEPATH)
+        self.fiware_header = FiwareLDHeader()
         self.http_url = "https://test.de:80"
         self.mqtt_url = "mqtt://test.de:1883"
         self.mqtt_topic = '/filip/testing'
 
         CB_URL = "http://localhost:1026"
-        self.cb_client = ContextBrokerClient(url=CB_URL,
+        self.cb_client = ContextBrokerLDClient(url=CB_URL,
                                     fiware_header=self.fiware_header)
         
 
@@ -141,11 +146,10 @@ class TestEntities(unittest.TestCase):
             self.assertNotEqual(element.id, self.entity.id)
 
         """Test3"""
-        # ret_post = self.cb_client.post_entity(ContextLDEntity(id="room2"))
-        # # Error raised by post entity function
-        # entity_list = self.cb_client.get_entity_list()
-        # self.assertNotIn("room2", entity_list)
-        # raise ValueError("Uncomplete entity was added to list.")
+        with self.assertRaises(Exception):
+            self.cb_client.post_entity(ContextLDEntity(id="room2"))
+        entity_list = self.cb_client.get_entity_list()
+        self.assertNotIn("room2", entity_list)
 
         """delete"""
         self.cb_client.delete_entities(entities=entity_list)
@@ -280,26 +284,52 @@ class TestEntities(unittest.TestCase):
                     Raise Error
         Test 2: 
             add attribute to an non existent entity
-            return != 404:
-                Raise Error
+            Raise Error
         Test 3:
             post an entity with entity_ID, entity_name, entity_attribute
             add attribute that already exists with noOverwrite
-            return != 207?
-                yes: 
-                    Raise Error
+                Raise Error
             get entity and compare previous with entity attributes
             If attributes are different?
-                yes:
-                    Raise Error
+                Raise Error
         """
-        """Test1"""
+        """Test 1"""
         self.cb_client.post_entity(self.entity)
-        self.attr = {'testmoisture': {'value': 0.5}}
-        self.entity.add_attributes(self.attr)
-        entity = self.cb_client.get_entity(self.entity.id)
-        entity = ContextLDEntity()
-        # How do I get the attribute?
+        attr = ContextProperty(**{'value': 20, 'type': 'Number'})
+        # noOverwrite Option missing ???
+        self.entity.add_properties(attrs=["test_value", attr])
+        self.cb_client.append_entity_attributes(self.entity)
+        entity_list = self.cb_client.get_entity_list()
+        for entity in entity_list:
+            self.assertEqual(first=entity.property, second=attr)
+        for entity in entity_list:
+            self.cb_client.delete_entity_by_id(entity_id=entity.id)
+        
+        """Test 2"""
+        attr = ContextProperty(**{'value': 20, 'type': 'Number'})
+        with self.asserRaises(Exception):
+            self.entity.add_properties(attrs=["test_value", attr])
+            self.cb_client.append_entity_attributes(self.entity)
+
+            
+        """Test 3"""
+        self.cb_client.post_entity(self.entity)
+        # What makes an property/ attribute unique ???
+        attr = ContextProperty(**{'value': 20, 'type': 'Number'})
+        attr_same = ContextProperty(**{'value': 40, 'type': 'Number'})
+        
+        # noOverwrite Option missing ???
+        self.entity.add_properties(attrs=["test_value", attr])
+        self.cb_client.append_entity_attributes(self.entity)
+        self.entity.add_properties(attrs=["test_value", attr_same])
+        self.cb_client.append_entity_attributes(self.entity)
+
+        entity_list = self.cb_client.get_entity_list()
+        for entity in entity_list:
+            self.assertEqual(first=entity.property, second=attr)
+        
+        for entity in entity_list:
+            self.cb_client.delete_entity_by_id(entity_id=entity.id)
         
     def test_patch_entity_attrs(self):
         """
@@ -314,41 +344,33 @@ class TestEntities(unittest.TestCase):
             - (422) Unprocessable Entity
         Tests:
             - Post an enitity with specific attributes. Change the attributes with patch.
-            - Post an enitity with specific attributes and Change non existent attributes. 
         """
         """
         Test 1:
             post an enitity with entity_ID and entity_name and attributes
             patch one of the attributes with entity_id by sending request body
-            return != 201 ? 
-                yes: 
-                    Raise Error
             get entity list
-            Is the new attribute not added to the entity?
-                yes:
-                    Raise Error
-        Test 2: 
-            post an entity with entity_ID and entity_name and attributes
-            patch an non existent attribute
-            return != 400:
-                yes:
-                    Raise Error
-                       get entity list
-            Is the new attribute added to the entity?
-                yes:
-                    Raise Error     
+            If new attribute is not added to the entity?
+                Raise Error
         """
         """Test1"""
-        self.test_post_entity(self.entity)
-        room2_entity = ContextLDEntity(id="Room2", 
-                                       type="Room",
-                                      data={})
-        temp_attr = NamedContextAttribute(name="temperature", value=22,
-                                        type=DataType.FLOAT)
-        pressure_attr = NamedContextAttribute(name="pressure", value=222,
-                                            type="Integer")
-        room2_entity.add_attributes([temp_attr, pressure_attr])
+        new_prop = {'new_prop': ContextProperty(value=25)}
+        newer_prop = {'new_prop': ContextProperty(value=25)}
+        
+        self.entity.add_properties(new_prop)
+        self.cb_client.post_entity(entity=self.entity)        
+        self.cb_client.update_entity_attribute(entity_id=self.entity.id, attr=newer_prop)
+        entity_list = self.cb_client.get_entity_list()
+        for entity in entity_list:  
+            prop_list = self.entity.get_properties()
+            for prop in prop_list:
+                if prop.name == "test_value": 
+                    self.assertEqual(prop.value, 40)
+        
+        for entity in entity_list:
+            self.cb_client.delete_entity_by_id(entity_id=entity.id)    
 
+               
     def test_patch_entity_attrs_attrId(self):
         """
         Update existing Entity attribute ID within an NGSI-LD system
@@ -361,7 +383,6 @@ class TestEntities(unittest.TestCase):
             - (404) Not Found
         Tests:
             - Post an enitity with specific attributes. Change the attributes with patch.
-            - Post an enitity with specific attributes and Change non existent attributes.             
         """
         """
         Test 1: 
@@ -370,14 +391,23 @@ class TestEntities(unittest.TestCase):
             return != 204: 
                 yes: 
                     Raise Error
-        Test 2: 
-            post an entity with entity_ID, entity_name and attributes
-            patch attribute with non existent attribute_ID with existing entity_ID
-            return != 404: 
-                yes:
-                    Raise Error
         """
-    
+        """Test 1"""
+        attr = NamedContextProperty(name="test_value", 
+                                        value=20)
+        self.entity.add_properties(attrs=[attr])
+        self.cb_client.post_entity(entity=self.entity)
+        self.cb_client.update_entity_attribute(entity_id=self.entity.id, attr=attr, attr_name="test_value")
+        entity_list = self.cb_client.get_entity_list()
+        for entity in entity_list:  
+            prop_list = self.entity.get_properties()
+            for prop in prop_list:
+                if prop.name == "test_value": 
+                    self.assertEqual(prop.value, 40)
+        
+        for entity in entity_list:
+            self.cb_client.delete_entity_by_id(entity_id=entity.id)    
+
     def test_delete_entity_attribute(self):
         """
         Delete existing Entity atrribute within an NGSI-LD system.
@@ -398,20 +428,42 @@ class TestEntities(unittest.TestCase):
         Test 1: 
             post an enitity with entity_ID, entity_name and attribute with attribute_ID
             delete an attribute with an non existent attribute_ID of the entity with the entity_ID
-            return != 404: 
                 Raise Error
         Test 2: 
             post an entity with entity_ID, entitiy_name and attribute with attribute_ID
             delete the attribute with the attribute_ID of the entity with the entity_ID
-            return != 204?
-                yes: 
-                    Raise Error
-            get entity wit entity_ID 
-            Is attribute with attribute_ID still there?
-                yes: 
-                    Raise Error
+            get entity with entity_ID 
+            If attribute with attribute_ID is still there?
+                Raise Error
             delete the attribute with the attribute_ID of the entity with the entity_ID
-            return != 404?
-                yes:
-                    Raise Error
+                Raise Error
         """
+        """Test 1"""
+    
+        attr = NamedContextProperty(name="test_value", 
+                                        value=20)
+        self.entity.add_properties(attrs=[attr])
+        self.cb_client.post_entity(entity=self.entity)
+        # self.cb_client.update_entity_attribute(entity_id=self.entity.id, attr=attr, attr_name="test_value")
+        with self.assertRaises():
+            self.cb_client.delete_attribute(entity_id=self.entity.id, attribute_id="does_not_exist")
+        
+        entity_list = self.cb_client.get_entity_list()
+        
+        for entity in entity_list:
+            self.cb_client.delete_entity_by_id(entity_id=entity.id)    
+            
+        """Test 2"""
+        attr = NamedContextProperty(name="test_value", 
+                                        value=20)
+        self.entity.add_properties(attrs=[attr])
+        self.cb_client.post_entity(entity=self.entity)
+        # self.cb_client.update_entity_attribute(entity_id=self.entity.id, attr=attr, attr_name="test_value")
+        self.cb_client.delete_attribute(entity_id=self.entity.id, attribute_id="test_value")
+        
+        with self.assertRaises():
+            self.cb_client.delete_attribute(entity_id=self.entity.id, attribute_id="test_value")
+        
+        # entity = self.cb_client.get_entity_by_id(self.entity)
+        
+        self.cb_client.delete_entity_by_id(entity_id=entity.id)    
