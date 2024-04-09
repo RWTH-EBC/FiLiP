@@ -596,6 +596,32 @@ class ContextBrokerLDClient(BaseHttpClient):
             self.log_error(err=err, msg=msg)
             raise
 
+    def log_multi_errors(self, errors: Dict[str, Any]) -> None:
+        for error in errors:
+            entity_id = error['entityId']
+            error_details = error['error']
+            error_title = error_details['title']
+            error_status = error_details['status']
+            error_detail = error_details['detail']
+            self.logger.error("Response status: %d, Entity: %s, Reason: %s (%s) ", error_status, entity_id, error_title, error_detail)
+
+    def handle_multi_status_response(self, res):
+        try:
+            res.raise_for_status()
+            if res.text:
+                response_data = res.json()
+                if 'errors' in response_data:
+                    errors = response_data['errors']
+                    self.log_multi_errors(errors)
+                if 'success' in response_data:
+                    successList = response_data['success']
+                    if len(successList) == 0:
+                        raise RuntimeError("Batch operation resulted in errors only, see logs")
+            else:
+                self.logger.info("Empty response received.")
+        except json.JSONDecodeError:
+            self.logger.info("Error decoding JSON. Response may not be in valid JSON format.")
+
     # Batch operation API
     def update(self,
                *,
@@ -659,14 +685,13 @@ class ContextBrokerLDClient(BaseHttpClient):
                     headers=headers,
                     params=params,
                     data=update.model_dump_json(by_alias=True)[12:-1])
-            if res.ok:
-                self.logger.info(f"Update operation {action_type} succeeded!")
-            else:
-                res.raise_for_status()
-        except requests.RequestException as err:
-            msg = f"Update operation '{action_type}' failed!"
-            self.log_error(err=err, msg=msg)
-            raise
+            self.handle_multi_status_response(res)
+        except RuntimeError as rerr:
+            raise rerr
+        except Exception as err:
+            raise err
+        else:
+            self.logger.info(f"Update operation {action_type} succeeded!")
 
     def query(self,
               *,
