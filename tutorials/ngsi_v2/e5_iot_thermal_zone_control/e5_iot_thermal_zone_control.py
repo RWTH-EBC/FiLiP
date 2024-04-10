@@ -353,30 +353,30 @@ if __name__ == '__main__':
 
     # plot results
     fig, ax = plt.subplots()
-    t_simulation = [item["sim_time"]/3600 for item in history_weather_station]
+    t_simulation = [item["sim_time"]/60 for item in history_weather_station]
     temperature = [item["temperature"] for item in history_weather_station]
     ax.plot(t_simulation, temperature)
     ax.title.set_text("Weather Station")
-    ax.set_xlabel('time in h')
+    ax.set_xlabel('time in min')
     ax.set_ylabel('ambient temperature in °C')
     plt.show()
 
     fig2, ax2 = plt.subplots()
-    t_simulation = [item["sim_time"]/3600 for item in history_zone_temperature_sensor]
+    t_simulation = [item["sim_time"]/60 for item in history_zone_temperature_sensor]
     temperature = [item["temperature"] for item in
                    history_zone_temperature_sensor]
     ax2.plot(t_simulation, temperature)
-    ax.title.set_text("Zone Temperature Sensor")
-    ax2.set_xlabel('time in h')
+    ax2.title.set_text("Zone Temperature Sensor")
+    ax2.set_xlabel('time in min')
     ax2.set_ylabel('zone temperature in °C')
     plt.show()
 
     fig3, ax3 = plt.subplots()
-    t_simulation = [item["sim_time"]/3600 for item in history_heater]
+    t_simulation = [item["sim_time"]/60 for item in history_heater]
     on_off = [item["on_off"] for item in history_heater]
     ax3.plot(t_simulation, on_off)
-    ax.title.set_text("Heater")
-    ax3.set_xlabel('time in h')
+    ax3.title.set_text("Heater")
+    ax3.set_xlabel('time in min')
     ax3.set_ylabel('on/off')
     plt.show()
 
