@@ -104,7 +104,7 @@ if __name__ == '__main__':
     # create a non-blocking thread for mqtt communication
     mqttc.loop_start()
 
-    # ToDo: Create a loop that publishes every 20 milliseconds a message to the broker
+    # ToDo: Create a loop that publishes every 0.2 seconds a message to the broker
     #  that holds the simulation time "t_sim" and the corresponding temperature
     #  "t_amb".
     for t_sim in range(sim_model.t_start,
