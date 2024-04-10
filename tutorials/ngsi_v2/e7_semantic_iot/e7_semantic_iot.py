@@ -2,7 +2,7 @@
 # # Exercise 7: Semantic IoT Systems
 #
 # We now want to add a semantic meaning to our measurements. Therefore we
-# semantically connect to the context entities that we created in
+# semantically connect the context entities that we created in
 # `e3_context_entities.py`
 
 # The input sections are marked with 'ToDo'
@@ -14,14 +14,15 @@
 # 3. Add relationships that connect the thermal zone temperature sensor and
 #    the heater to the building, and vice versa
 # 4. Retrieve all entities and print them
-# 5. Congratulations you are now ready to build your own semantic systems for
+# 5. Congratulations! You are now ready to build your own semantic systems. For
 #    advanced semantic functions check on our semantics examples
 """
 
 # ## Import packages
+import json
 from pathlib import Path
 from typing import List
-from pydantic import parse_file_as
+from pydantic import TypeAdapter
 
 # import from filip
 from filip.clients.ngsi_v2 import \
@@ -42,32 +43,40 @@ from filip.utils.cleanup import \
     clear_iot_agent
 
 # ## Parameters
-# ToDo: Enter your context broker host and port, e.g http://localhost:1026
+# ToDo: Enter your context broker host and port, e.g. http://localhost:1026.
 CB_URL = "http://localhost:1026"
-# ToDo: Enter your IoT-Agent host and port, e.g http://localhost:4041
+# ToDo: Enter your IoT-Agent host and port, e.g. http://localhost:4041.
 IOTA_URL = "http://localhost:4041"
 
 # FIWARE-Service
 SERVICE = 'filip_tutorial'
-# FIWARE-Servicepath
+# FIWARE-Service path
 # ToDo: Change the name of your service-path to something unique. If you run
-#  on a shared instance this very important in order to avoid user
+#  on a shared instance this is very important in order to avoid user
 #  collisions. You will use this service path through the whole tutorial.
-#  If you forget to change it an error will be raised!
+#  If you forget to change it, an error will be raised!
 SERVICE_PATH = '/'
 
-# ToDo: Change the APIKEY to something unique. This represent the "token"
-#  for IoT devices to connect (send/receive data ) with the platform. In the
+# ToDo: Change the APIKEY to something unique. This represents the "token"
+#  for IoT devices to connect (send/receive data) with the platform. In the
 #  context of MQTT, APIKEY is linked with the topic used for communication.
 APIKEY = 'your_apikey'
 
-# Path to read json-files from previous exercises
+# path to read json-files from previous exercises
 READ_GROUPS_FILEPATH = \
-    Path("../e5_iot_thermal_zone_control_groups.json")
+    Path("../e5_iot_thermal_zone_control_solution_groups.json")
 READ_DEVICES_FILEPATH = \
-    Path("../e5_iot_thermal_zone_control_devices.json")
+    Path("../e5_iot_thermal_zone_control_solution_devices.json")
 READ_ENTITIES_FILEPATH = \
-    Path("../e3_context_entities_entities.json")
+    Path("../e3_context_entities_solution_entities.json")
+
+# opening the files
+with (open(READ_GROUPS_FILEPATH, 'r') as groups_file,
+      open(READ_DEVICES_FILEPATH, 'r') as devices_file,
+      open(READ_ENTITIES_FILEPATH, 'r') as entities_file):
+    json_groups = json.load(groups_file)
+    json_devices = json.load(devices_file)
+    json_entities = json.load(entities_file)
 
 # ## Main script
 if __name__ == '__main__':
@@ -78,10 +87,10 @@ if __name__ == '__main__':
     clear_iot_agent(url=IOTA_URL, fiware_header=fiware_header)
     clear_context_broker(url=CB_URL, fiware_header=fiware_header)
 
-    # Create clients and restore devices and groups from file
-    groups = parse_file_as(List[ServiceGroup], READ_GROUPS_FILEPATH)
-    devices = parse_file_as(List[Device], READ_DEVICES_FILEPATH)
-    entities = parse_file_as(List[ContextEntity], READ_ENTITIES_FILEPATH)
+    # create clients and restore devices and groups from file
+    groups = TypeAdapter(List[ServiceGroup]).validate_python(json_groups)
+    devices = TypeAdapter(List[Device]).validate_python(json_devices)
+    entities = TypeAdapter(List[ContextEntity]).validate_python(json_entities)
     cbc = ContextBrokerClient(url=CB_URL, fiware_header=fiware_header)
     for entity in entities:
         cbc.post_entity(entity=entity)
@@ -90,15 +99,15 @@ if __name__ == '__main__':
     iotac.post_groups(service_groups=groups)
     iotac.post_devices(devices=devices)
 
-    # ToDo: Retrieve all iot resources from the IoT-Agent
-    # Get the group and device configurations from the server
+    # ToDo: Retrieve all iot resources from the IoT-Agent.
+    # get the group and device configurations from the server
     group = iotac.get_group(resource="/iot/json", apikey=APIKEY)
     weather_station = iotac.get_device(device_id="device:001")
     zone_temperature_sensor = iotac.get_device(device_id="device:002")
     heater = iotac.get_device(device_id="device:003")
 
     # ToDo: Get context entities from the Context Broker
-    #  (exclude the IoT device ones)
+    #  (exclude the IoT device ones).
     building = cbc.get_entity(entity_id="urn:ngsi-ld:building:001",
                               entity_type="Building")
     thermal_zone = cbc.get_entity(entity_id="ThermalZone:001",
@@ -107,7 +116,7 @@ if __name__ == '__main__':
     # ToDo: Semantically connect the weather station and the building. By
     #  adding a `hasWeatherStation` attribute of type `Relationship`. For the
     #  connection from the weather station to the building add a static
-    #  attribute to the weather station
+    #  attribute to the weather station.
 
     # create the context attribute for the building and add it to the
     # building entity
@@ -131,22 +140,21 @@ if __name__ == '__main__':
     #  zone by adding a `hasTemperatureSensor` attribute of type
     #  `Relationship` to the thermal zone entity.
     #  For the connection from the sensor to the zone add a static
-    #  attribute to the temperature sensor device
+    #  attribute to the temperature sensor device.
 
-    # ToDo: create the context attribute for the thermal zone and add it to the
-    #   thermal zone entity
-    has_sensor = ...
+    # ToDo: Create a context attribute for the thermal zone and add it to the
+    #   thermal zone entity.
+    has_sensor =  ...
 
 
 
     thermal_zone.add_attributes(...)
 
-    # ToDo: create a static attribute that connects the zone temperature zone to
-    #  the thermal zone
+    # ToDo: Create a static attribute that connects the zone temperature zone to
+    #  the thermal zone.
     cbc.update_entity(entity=thermal_zone)
 
     ref_thermal_zone = StaticDeviceAttribute(...)
-
 
     zone_temperature_sensor.add_attribute(ref_thermal_zone)
     iotac.update_device(device=zone_temperature_sensor)
@@ -155,18 +163,18 @@ if __name__ == '__main__':
     #  zone by adding a `hasTemperatureSensor` attribute of type
     #  `Relationship` to the thermal zone entity.
     #  For the connection from the sensor to the zone add a static
-    #  attribute to the temperature sensor device
+    #  attribute to the temperature sensor device.
 
-    # ToDo: create the context attribute for the thermal zone and add it to the
-    #   thermal zone entity
+    # ToDo: Create a context attribute for the thermal zone and add it to the
+    #   thermal zone entity.
     has_heater = ...
 
 
 
     thermal_zone.add_attributes(...)
 
-    # ToDo: create a static attribute that connects the zone temperature zone to
-    #  the thermal zone
+    # ToDo: Create a static attribute that connects the zone temperature zone to
+    #  the thermal zone.
     cbc.update_entity(entity=thermal_zone)
 
     ref_thermal_zone = ...
@@ -175,27 +183,27 @@ if __name__ == '__main__':
     heater.add_attribute(ref_thermal_zone)
     iotac.update_device(device=heater)
 
-    # ToDo: Add unit metadata to the temperature and simtime attributes of
-    #  all devices. Here we use unitcode information. If you can not find
-    #  your unit code you can use our unit models for help
+    # ToDo: Add unit metadata to the temperature and sim_time attributes of
+    #  all devices. Here we use unit code information. If you can not find
+    #  your unit code, you can use our unit models for help.
     # get code from Unit model for seconds
     code = Unit(name="second [unit of time]").code
-    # add metadata to simtime attribute of the all devices
-    metadata_simtime = NamedMetadata(name="unitCode",
-                                     type="Text",
-                                     value=code)
-    attr_simtime = weather_station.get_attribute(
-        attribute_name="simtime"
+    # add metadata to sim_time attribute of the all devices
+    metadata_sim_time = NamedMetadata(name="unitCode",
+                                      type="Text",
+                                      value=code)
+    attr_sim_time = weather_station.get_attribute(
+        attribute_name="sim_time"
     )
-    attr_simtime.metadata = metadata_simtime
-    weather_station.update_attribute(attribute=attr_simtime)
-    zone_temperature_sensor.update_attribute(attribute=attr_simtime)
-    heater.update_attribute(attribute=attr_simtime)
+    attr_sim_time.metadata = metadata_sim_time
+    weather_station.update_attribute(attribute=attr_sim_time)
+    zone_temperature_sensor.update_attribute(attribute=attr_sim_time)
+    heater.update_attribute(attribute=attr_sim_time)
 
-    # ToDo: get code from Unit model for degree celsius
+    # ToDo: Get code from Unit model for degree celsius.
     code = Unit(name="degree Celsius").code
-    # ToDo: add metadata to temperature attribute of the weather
-    #  station and the zone temperature sensor
+    # ToDo: Add metadata to temperature attribute of the weather
+    #  station and the zone temperature sensor.
     metadata_t_amb = NamedMetadata(...)
     attr_t_amb = weather_station.get_attribute(
         attribute_name="temperature"
@@ -209,8 +217,8 @@ if __name__ == '__main__':
     attr_t_zone.metadata = ...
     zone_temperature_sensor.update_attribute(...)
 
-    # currently adding metadata via updating does not work perfectly.
-    # Therefore, we do a delete and update
+    # Currently adding metadata via updating does not work perfectly,
+    # therefore, we delete and update them.
     iotac.delete_device(device_id=weather_station.device_id)
     iotac.post_device(device=weather_station)
     iotac.delete_device(device_id=zone_temperature_sensor.device_id)
@@ -218,10 +226,10 @@ if __name__ == '__main__':
     iotac.delete_device(device_id=heater.device_id)
     iotac.post_device(device=heater)
 
-    # ToDo: Retrieve all ContextEntites and print them
+    # ToDo: Retrieve all Context Entities and print them.
     entities = ...
     for entity in entities:
-        print(entity.json(indent=2))
+        print(entity.model_dump_json(indent=2))
 
     clear_iot_agent(url=IOTA_URL, fiware_header=fiware_header)
     clear_context_broker(url=CB_URL, fiware_header=fiware_header)
