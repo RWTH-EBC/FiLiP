@@ -65,9 +65,6 @@ class TestSubscriptions(unittest.TestCase):
             - Set offset for the subscription to retrive and check if the offset was procceded correctly.
             - Save beforehand all posted subscriptions and see if all the subscriptions exist in the list -> added to Test 1
         """
-
-
-
         
         """Test 1"""
         sub_post_list = list()
@@ -86,9 +83,8 @@ class TestSubscriptions(unittest.TestCase):
         for sub in sub_post_list:
             self.assertIn(sub in sub_list)
             
-        for i in range(10):
-            id = "test_sub" + str(i)
-            self.cb_client.delete_subscription(id=id)
+        for sub in sub_list:
+            self.cb_client.delete_subscription(id=sub.id)
             
      
         """Test 2"""
@@ -101,9 +97,8 @@ class TestSubscriptions(unittest.TestCase):
             self.cb_client.post_subscription(sub)
         sub_list = self.cb_client.get_subscription_list()
         self.assertNotEqual(sub_list[0], sub_list[1])
-        for i in range(len(sub_list)):
-            id = "test_sub"
-            self.cb_client.delete_subscription(id=id)
+        for sub in sub_list:
+            self.cb_client.delete_subscription(id=sub.id)
             
             
         """Test 3"""
@@ -116,9 +111,8 @@ class TestSubscriptions(unittest.TestCase):
             self.cb_client.post_subscription(sub)
         sub_list = self.cb_client.get_subscription_list(limit=5)
         self.assertEqual(5, len(sub_list))
-        for i in range(10):
-            id = "test_sub" + str(i)
-            self.cb_client.delete_subscription(id=id)
+        for sub in sub_list:
+            self.cb_client.delete_subscription(id=sub.id)
             
     def test_post_subscription(self, 
                             ):
@@ -159,10 +153,26 @@ class TestSubscriptions(unittest.TestCase):
         Returns:
             - Successful: 204, no content 
         Tests:
-            - Post and delete subscription then do get subscription and see if it returns the subscription still.
-            - Post and delete subscriüption then see if the broker still gets subscribed values.
+            - Post and delete subscription then do get subscriptions and see if it returns the subscription still.
+            - Post and delete subscription then see if the broker still gets subscribed values.
         """
-
+        """Test 1"""
+        for i in range(10): 
+            attr_id = "attr" + str(i)
+            attr = {attr_id: ContextProperty(value=randint(0,50))}
+            notification_param = NotificationParams(attributes=[attr_id], endpoint=self.endpoint_http)       
+            id = "test_sub_" + str(i)
+            sub = Subscription(id=id, notification=notification_param)
+            if i == 0: 
+                subscription = sub
+            self.cb_client.post_subscription(sub)
+        
+        self.cb_client.delete_subscription(id="test_sub_0")
+        sub_list = self.cb_client.get_subscription_list()
+        self.assertNotIn(subscription, sub_list)
+        for sub in sub_list:
+            self.cb_client.delete_subscription(id=sub.id)
+            
     def test_update_subscription(self):
         """
         Only the fileds included in the request are updated in the subscription. 
