@@ -8,9 +8,9 @@ from pydantic import ValidationError
 # from filip.clients.ngsi_v2 import ContextBrokerClient
 from filip.models.ngsi_ld.subscriptions import \
     Subscription, \
-    Endpoint, NotificationParams, EntityInfo
+    Endpoint, NotificationParams, EntityInfo, TemporalQuery
 from filip.models.base import FiwareHeader
-from filip.utils.cleanup import clear_all, clean_test
+from filip.utils.cleanup import clear_all
 from tests.config import settings
 
 
@@ -131,11 +131,59 @@ class TestLDSubscriptions(unittest.TestCase):
         Returns:
 
         """
-        pass
+        example0_temporalQ = {
+            "timerel": "before",
+            "timeAt": "2017-12-13T14:20:00Z"
+        }
+        self.assertEqual(example0_temporalQ,
+                         TemporalQuery.model_validate(example0_temporalQ).model_dump(
+                             exclude_unset=True)
+                         )
 
-    @clean_test(fiware_service=settings.FIWARE_SERVICE,
-                fiware_servicepath=settings.FIWARE_SERVICEPATH,
-                cb_url=settings.CB_URL)
+        example1_temporalQ = {
+            "timerel": "after",
+            "timeAt": "2017-12-13T14:20:00Z"
+        }
+        self.assertEqual(example1_temporalQ,
+                         TemporalQuery.model_validate(example1_temporalQ).model_dump(
+                             exclude_unset=True)
+                         )
+
+        example2_temporalQ = {
+            "timerel": "between",
+            "timeAt": "2017-12-13T14:20:00Z",
+            "endTimeAt": "2017-12-13T14:40:00Z",
+            "timeproperty": "modifiedAt"
+        }
+        self.assertEqual(example2_temporalQ,
+                         TemporalQuery.model_validate(example2_temporalQ).model_dump(
+                             exclude_unset=True)
+                         )
+
+        example3_temporalQ = {
+            "timerel": "between",
+            "timeAt": "2017-12-13T14:20:00Z"
+        }
+        with self.assertRaises(ValueError):
+            TemporalQuery.model_validate(example3_temporalQ)
+
+        example4_temporalQ = {
+            "timerel": "before",
+            "timeAt": "14:20:00Z"
+        }
+        with self.assertRaises(ValueError):
+            TemporalQuery.model_validate(example4_temporalQ)
+
+        example5_temporalQ = {
+            "timerel": "between",
+            "timeAt": "2017-12-13T14:20:00Z",
+            "endTimeAt": "14:40:00Z",
+            "timeproperty": "modifiedAt"
+        }
+        with self.assertRaises(ValueError):
+            TemporalQuery.model_validate(example5_temporalQ)
+
+    # TODO clean test for NGSI-LD
     def test_subscription_models(self) -> None:
         """
         Test subscription models
