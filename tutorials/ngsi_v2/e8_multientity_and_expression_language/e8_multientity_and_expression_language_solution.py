@@ -105,10 +105,10 @@ if __name__ == '__main__':
                                                  expression="5 * value"),
                                  DeviceAttribute(name="spaces", type="String"),
                                  DeviceAttribute(name="consumption", type="String",
-                                                 expression="spaces | trim"),
+                                                 expression="spaces|trim"),
                                  DeviceAttribute(name="timestamp", type="Number"),
                                  DeviceAttribute(name="iso_time", type="String",
-                                                 expression="timestamp | toisodate"),
+                                                 expression="timestamp|toisodate"),
                                  ]
                      )
     iota_client.post_device(device=device2)
