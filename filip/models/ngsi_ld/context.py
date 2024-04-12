@@ -38,6 +38,7 @@ class ContextProperty(BaseModel):
         >>> attr = ContextProperty(**data)
 
     """
+    model_config = ConfigDict(extra='allow')
     type: Optional[str] = Field(
         default="Property",
         title="type",
@@ -77,7 +78,22 @@ class ContextProperty(BaseModel):
         min_length=1,
     )
     field_validator("datasetId")(validate_fiware_datatype_string_protect)
-                                                                                # ToDo: Add validator here for nested property validation
+
+    @classmethod
+    def check_prop(cls, attr):
+        temp_prop = cls.model_validate(attr)
+
+        """for attr_comp in attr:
+            if attr_comp in ["type", "value", "observedAt", "UnitCode", "datasetId"]:
+                pass
+            else:
+                temp_nested_prop = cls.model_validate(attr[attr_comp])
+                print("dsas")
+                temp_prop.__setattr__(name=attr_comp, value=temp_nested_prop)
+                print("dsa")
+                #temp_prop[attr_comp] = temp_nested_prop"""
+        return temp_prop
+
     @field_validator("type")
     @classmethod
     def check_property_type(cls, value):
@@ -89,9 +105,16 @@ class ContextProperty(BaseModel):
             value
         """
         if not value == "Property":
-            logging.warning(msg='NGSI_LD Properties must have type "Property"')
-        value = "Property"
+            if value == "Relationship":
+                value == "Relationship"
+            elif value == "TemporalProperty":
+                value == "TemporalProperty"
+            else:
+                logging.warning(msg='NGSI_LD Properties must have type "Property"')
+                value = "Property"
         return value
+
+
 
 
 class NamedContextProperty(ContextProperty):
@@ -197,6 +220,7 @@ class ContextGeoProperty(BaseModel):
     }
 
     """
+    model_config = ConfigDict(extra='allow')
     type: Optional[str] = Field(
         default="GeoProperty",
         title="type",
@@ -225,14 +249,17 @@ class ContextGeoProperty(BaseModel):
     )
     field_validator("datasetId")(validate_fiware_datatype_string_protect)
 
-                                                        # ToDo: Add validator here for nested property validation:
-                                                        #    def __init__(self,
-                                                                   #      id: str,
-                                                                   #      value: str,
-                                                                    #     observedAt: ....
-                                                                    #     **data):
-                                                            # There is currently no validation for extra fields
-                                                            #data.update(self._validate_attributes(data))
+    @classmethod
+    def check_geoprop(cls, attr):
+        temp_geoprop = cls.model_validate(attr)
+
+        """for attr_comp in attr:
+            if attr_comp in ["type", "value", "observedAt", "UnitCode", "datasetId"]:  # ToDo: Shorten this section
+                pass
+            else:
+                temp_geoprop.model_validate(attr_comp)"""
+        return temp_geoprop
+
     @field_validator("type")
     @classmethod
     def check_geoproperty_type(cls, value):
@@ -244,8 +271,13 @@ class ContextGeoProperty(BaseModel):
             value
         """
         if not value == "GeoProperty":
-            logging.warning(msg='NGSI_LD GeoProperties must have type "GeoProperty"')
-        value = "GeoProperty"
+            if value == "Relationship":
+                value == "Relationship"
+            elif value == "TemporalProperty":
+                value == "TemporalProperty"
+            else:
+                logging.warning(msg='NGSI_LD GeoProperties must have type "Property"')
+                value = "GeoProperty"
         return value
 
 
@@ -498,28 +530,23 @@ class ContextLDEntity(ContextLDEntityKeyValues):
             # Check if the keyword is not already present in the fields
             if key not in fields:
                 try:
-                    for attr_comp in attr:
-                        if attr_comp in ["type", "value", "observedAt", "UnitCode", "datasetId"]:                       #ToDo: Shorten this section
-                            pass
-                        else:
-                            try:
-                                attrs[key] = ContextGeoProperty.model_validate(attr[attr_comp])
-                            except ValidationError:
-                                attrs[key] = ContextProperty.model_validate(attr[attr_comp])
-                    try:
-                        attrs[key] = ContextGeoProperty.model_validate(attr)
-                    except ValidationError:
-                        attrs[key] = ContextProperty.model_validate(attr)
+                    attrs[key] = ContextGeoProperty.check_geoprop(attr=attr)
                 except ValidationError:
-                    try:
-                        attrs[key] = ContextGeoProperty.model_validate(attr)
-                    except ValidationError:
-                        attrs[key] = ContextProperty.model_validate(attr)
-
-
+                    attrs[key] = ContextProperty.check_prop(attr=attr)
         return attrs
 
     model_config = ConfigDict(extra='allow', validate_default=True, validate_assignment=True)
+
+    """
+    # Iterate through the data
+        for key, attr in data.items():
+            # Check if the keyword is not already present in the fields
+            if key not in fields:
+                try:
+                    attrs[key] = ContextGeoProperty.check_geoprop(attr=attr)
+                except ValidationError:
+                    attrs[key] = ContextProperty.check_prop(attr=attr)
+        return attrs"""
 
     def model_dump(
         self,
