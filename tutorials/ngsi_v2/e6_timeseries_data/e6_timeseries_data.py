@@ -32,7 +32,8 @@ from filip.clients.ngsi_v2 import \
 from filip.clients.mqtt import IoTAMQTTClient
 from filip.models.base import FiwareHeader
 from filip.models.ngsi_v2.context import NamedCommand
-from filip.models.ngsi_v2.subscriptions import Subscription, Message
+from filip.models.ngsi_v2.subscriptions import Subscription, Message, Subject, \
+    Notification
 from filip.models.ngsi_v2.iot import \
     Device, \
     PayloadProtocol, \
@@ -201,21 +202,42 @@ if __name__ == '__main__':
     mqttc.message_callback_add(sub=TOPIC_CONTROLLER,
                                callback=on_measurement)
 
-    # ToDo: Create a quantumleap client.
-    qlc = QuantumLeapClient(...)
 
     # ToDo: Create http subscriptions that get triggered by updates of your
     #  device attributes. Note that you can also post the same subscription
     #  by the context broker.
-    qlc.post_subscription(entity_id=weather_station.entity_name,
-                          entity_type=weather_station.entity_type,
-                          cb_url="http://orion:1026",
-                          ql_url="http://quantumleap:8668",
-                          throttling=0)
+    cbc.post_subscription(subscription=Subscription(
+        subject=Subject(**{
+            'entities': [{'id': weather_station.entity_name,
+                          'type': weather_station.entity_type}]
+        }),
+        notification=Notification(**{
+            'http': {'url': 'http://quantumleap:8668/v2/notify'}
+        }),
+        throttling = 0)
+    )
 
-    qlc.post_subscription(...)
+    cbc.post_subscription(subscription=Subscription(
+        subject=Subject(**{
+            'entities': [{'id': zone_temperature_sensor.entity_name,
+                          'type': zone_temperature_sensor.entity_type}]
+        }),
+        notification=Notification(**{
+            'http': {'url': 'http://quantumleap:8668/v2/notify'}
+        }),
+        throttling = 0)
+    )
 
-    qlc.post_subscription(...)
+    cbc.post_subscription(subscription=Subscription(
+        subject=Subject(**{
+            'entities': [{'id': heater.entity_name,
+                          'type': heater.entity_type}]
+        }),
+        notification=Notification(**{
+            'http': {'url': 'http://quantumleap:8668/v2/notify'}
+        }),
+        throttling = 0)
+    )
 
     # connect to the mqtt broker and subscribe to your topic
     mqtt_url = urlparse(MQTT_BROKER_URL_EXPOSED)
@@ -269,6 +291,9 @@ if __name__ == '__main__':
 
     # wait until all data is available
     time.sleep(10)
+
+    # ToDo: Create a quantumleap client.
+    qlc = QuantumLeapClient(...)
 
     # ToDo: Retrieve the historic data from QuantumLeap, convert them to a
     #  pandas dataframe and plot them.
