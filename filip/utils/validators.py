@@ -169,11 +169,11 @@ def validate_fiware_service(service):
                        r"\w*$")
 
 
-def validate_jexl_expression(expression, attribute, device):
+def validate_jexl_expression(expression, attribute_name, device_id):
     try:
         JEXL().parse(expression)
     except ParseError:
-        msg = f"Invalid JEXL expression '{expression}' inside the attribute '{attribute}' of Device '{device}'."
+        msg = f"Invalid JEXL expression '{expression}' inside the attribute '{attribute_name}' of Device '{device_id}'."
         if '|' in expression:
             msg += " If the expression contains the transform operator '|' you need to remove the spaces around it."
         raise ParseError(msg)
