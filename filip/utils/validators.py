@@ -8,7 +8,8 @@ from typing import Dict, Any, List
 from pydantic import AnyHttpUrl, validate_call
 from pydantic_core import PydanticCustomError
 from filip.custom_types import AnyMqttUrl
-
+from pyjexl.jexl import JEXL
+from pyjexl.exceptions import ParseError
 
 logger = logging.getLogger(name=__name__)
 
@@ -166,3 +167,29 @@ def validate_fiware_service_path(service_path):
 def validate_fiware_service(service):
     return match_regex(service,
                        r"\w*$")
+
+
+def validate_jexl_expression(expression, attribute, device):
+    try:
+        JEXL().parse(expression)
+    except ParseError:
+        msg = f"Invalid JEXL expression '{expression}' inside the attribute '{attribute}' of Device '{device}'."
+        if '|' in expression:
+            msg += " If the expression contains the transform operator '|' you need to remove the spaces around it."
+        raise ParseError(msg)
+    return expression
+
+
+def validate_device_expression_language(cls, expressionLanguage):
+    if expressionLanguage == "legacy":
+        logger.warning(f"Using 'LEGACY' expression language inside {cls.__name__} is deprecated. Use 'JEXL' instead.")
+
+    return expressionLanguage
+
+
+def validate_service_group_expression_language(cls, expressionLanguage):
+    if expressionLanguage == "legacy":
+        logger.warning(f"Using 'LEGACY' expression language inside {cls.__name__} does not work anymore, "
+                       f"because each device uses 'JEXL' as default.")
+
+    return expressionLanguage
