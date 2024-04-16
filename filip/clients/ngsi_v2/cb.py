@@ -149,7 +149,7 @@ class ContextBrokerClient(BaseHttpClient):
         Returns:
             Dictionary with response
         """
-        url = urljoin(self.base_url, "/version")
+        url = urljoin(self.base_url, "version")
         try:
             res = self.get(url=url, headers=self.headers)
             if res.ok:
@@ -166,7 +166,7 @@ class ContextBrokerClient(BaseHttpClient):
         Returns:
             Dict
         """
-        url = urljoin(self.base_url, "/v2")
+        url = urljoin(self.base_url, "v2")
         try:
             res = self.get(url=url, headers=self.headers)
             if res.ok:
@@ -662,12 +662,13 @@ class ContextBrokerClient(BaseHttpClient):
             self.update(entities=entities_with_attributes, action_type="delete")
 
     def update_or_append_entity_attributes(
-        self,
-        entity_id: str,
-        entity_type: str,
-        attrs: List[Union[NamedContextAttribute, Dict[str, ContextAttribute]]],
-        append_strict: bool = False,
-    ):
+            self,
+            entity_id: str,
+            entity_type: str,
+            attrs: List[Union[NamedContextAttribute,
+                              Dict[str, ContextAttribute]]],
+            append_strict: bool = False,
+            forcedUpdate: bool = False):
         """
         The request payload is an object representing the attributes to
         append or update. This corresponds to a 'POST' request if append is
@@ -691,7 +692,10 @@ class ContextBrokerClient(BaseHttpClient):
                 to that, in case some of the attributes in the payload
                 already exist in the entity, an error is returned.
                 More precisely this means a strict append procedure.
-
+            forcedUpdate: Update operation have to trigger any matching
+                subscription, no matter if there is an actual attribute
+                update or no instead of the default behavior, which is to
+                updated only if attribute is effectively updated.
         Returns:
             None
 
@@ -700,9 +704,14 @@ class ContextBrokerClient(BaseHttpClient):
         headers = self.headers.copy()
         params = {}
         if entity_type:
-            params.update({"type": entity_type})
+            params.update({'type': entity_type})
+        options = []
         if append_strict:
-            params.update({"options": "append"})
+            options.append("append")
+        if forcedUpdate:
+            options.append("forcedUpdate")
+        if options:
+            params.update({'options': ",".join(options)})
 
         entity = ContextEntity(id=entity_id, type=entity_type)
         entity.add_attributes(attrs)
@@ -731,11 +740,88 @@ class ContextBrokerClient(BaseHttpClient):
             self.log_error(err=err, msg=msg)
             raise
 
+    def update_entity_key_value(self,
+                                entity: Union[ContextEntityKeyValues, dict],):
+        """
+        The entity are updated with a ContextEntityKeyValues object or a
+        dictionary contain the simplified entity data. This corresponds to a
+        'PATcH' request.
+        Only existing attribute can be updated!
+
+        Args:
+            entity: A ContextEntityKeyValues object or a dictionary contain
+            the simplified entity data
+
+        """
+        if isinstance(entity, dict):
+            entity = ContextEntityKeyValues(**entity)
+        url = urljoin(self.base_url, f'v2/entities/{entity.id}/attrs')
+        headers = self.headers.copy()
+        params = {"type": entity.type,
+                  "options": AttrsFormat.KEY_VALUES.value
+                  }
+        try:
+            res = self.patch(url=url,
+                             headers=headers,
+                             json=entity.model_dump(exclude={'id', 'type'},
+                                                    exclude_unset=True),
+                             params=params)
+            if res.ok:
+                self.logger.info("Entity '%s' successfully "
+                                 "updated!", entity.id)
+            else:
+                res.raise_for_status()
+        except requests.RequestException as err:
+            msg = f"Could not update attributes of entity" \
+                  f" {entity.id} !"
+            self.log_error(err=err, msg=msg)
+            raise
+
+    def update_entity_attributes_key_value(self,
+                                           entity_id: str,
+                                           attrs: dict,
+                                           entity_type: str = None,
+                                           ):
+        """
+        Update entity with attributes in keyValues form.
+        This corresponds to a 'PATcH' request.
+        Only existing attribute can be updated!
+
+        Args:
+            entity_id: Entity id to be updated
+            entity_type: Entity type, to avoid ambiguity in case there are
+                several entities with the same entity id.
+            attrs: a dictionary that contains the attribute values.
+            e.g. {
+                "temperature": 21.4,
+                "humidity": 50
+            }
+
+        Returns:
+
+        """
+        if entity_type:
+            pass
+        else:
+            _entity = self.get_entity(entity_id=entity_id)
+            entity_type = _entity.type
+
+        entity_dict = attrs.copy()
+        entity_dict.update({
+            "id": entity_id,
+            "type": entity_type
+        })
+        entity = ContextEntityKeyValues(**entity_dict)
+        self.update_entity_key_value(entity=entity)
+
     def update_existing_entity_attributes(
-        self,
-        entity_id: str,
-        entity_type: str,
-        attrs: List[Union[NamedContextAttribute, Dict[str, ContextAttribute]]],
+            self,
+            entity_id: str,
+            entity_type: str,
+            attrs: List[Union[NamedContextAttribute,
+                              Dict[str, ContextAttribute]]],
+            forcedUpdate: bool = False,
+            override_metadata: bool = False
     ):
         """
         The entity attributes are updated with the ones in the payload.
@@ -748,7 +834,13 @@ class ContextBrokerClient(BaseHttpClient):
             entity_type: Entity type, to avoid ambiguity in case there are
                 several entities with the same entity id.
             attrs: List of attributes to update or to append
-
+            forcedUpdate: Update operation have to trigger any matching
+                subscription, no matter if there is an actual attribute
+                update or no instead of the default behavior, which is to
+                updated only if attribute is effectively updated.
+            override_metadata:
+                Bool,replace the existing metadata with the one provided in
+                the request
         Returns:
             None
 
@@ -759,6 +851,14 @@ class ContextBrokerClient(BaseHttpClient):
 
         entity = ContextEntity(id=entity_id, type=entity_type)
         entity.add_attributes(attrs)
+
+        options = []
+        if override_metadata:
+            options.append("overrideMetadata")
+        if forcedUpdate:
+            options.append("forcedUpdate")
+        if options:
+            params.update({'options': ",".join(options)})
 
         try:
             res = self.patch(
@@ -797,10 +897,12 @@ class ContextBrokerClient(BaseHttpClient):
                                        attrs=entity.get_properties())
 
     def replace_entity_attributes(
-        self,
-        entity_id: str,
-        entity_type: str,
-        attrs: List[Union[NamedContextAttribute, Dict[str, ContextAttribute]]],
+            self,
+            entity_id: str,
+            entity_type: str,
+            attrs: List[Union[NamedContextAttribute,
+                              Dict[str, ContextAttribute]]],
+            forcedUpdate: bool = False
     ):
         """
         The attributes previously existing in the entity are removed and
@@ -812,12 +914,21 @@ class ContextBrokerClient(BaseHttpClient):
             entity_type: Entity type, to avoid ambiguity in case there are
                 several entities with the same entity id.
             attrs: List of attributes to add to the entity
+            forcedUpdate: Update operation have to trigger any matching
+                subscription, no matter if there is an actual attribute
+                update or no instead of the default behavior, which is to
+                updated only if attribute is effectively updated.
         Returns:
             None
         """
         url = urljoin(self.base_url, f"v2/entities/{entity_id}/attrs")
         headers = self.headers.copy()
         params = {}
+        options = []
+        if forcedUpdate:
+            options.append("forcedUpdate")
+        if options:
+            params.update({'options': ",".join(options)})
         if entity_type:
             params.update({"type": entity_type})
 
@@ -890,15 +1001,15 @@ class ContextBrokerClient(BaseHttpClient):
             self.log_error(err=err, msg=msg)
             raise
 
-    def update_entity_attribute(
-        self,
-        entity_id: str,
-        attr: Union[ContextAttribute, NamedContextAttribute],
-        *,
-        entity_type: str = None,
-        attr_name: str = None,
-        override_metadata: bool = True,
-    ):
+    def update_entity_attribute(self,
+                                entity_id: str,
+                                attr: Union[ContextAttribute,
+                                            NamedContextAttribute],
+                                *,
+                                entity_type: str = None,
+                                attr_name: str = None,
+                                override_metadata: bool = True,
+                                forcedUpdate: bool = False):
         """
         Updates a specified attribute from an entity.
 
@@ -910,6 +1021,10 @@ class ContextBrokerClient(BaseHttpClient):
             entity_type:
                 Entity type, to avoid ambiguity in case there are
                 several entities with the same entity id.
+            forcedUpdate: Update operation have to trigger any matching
+                subscription, no matter if there is an actual attribute
+                update or no instead of the default behavior, which is to
+                updated only if attribute is effectively updated.
             attr_name:
                 Name of the attribute to be updated.
             override_metadata:
@@ -940,8 +1055,13 @@ class ContextBrokerClient(BaseHttpClient):
         if entity_type:
             params.update({"type": entity_type})
         # set overrideMetadata option (we assure backwards compatibility here)
+        options = []
         if override_metadata:
-            params.update({"options": "overrideMetadata"})
+            options.append("overrideMetadata")
+        if forcedUpdate:
+            options.append("forcedUpdate")
+        if options:
+            params.update({'options': ",".join(options)})
         try:
             res = self.put(
                 url=url,
@@ -1041,9 +1161,13 @@ class ContextBrokerClient(BaseHttpClient):
             self.log_error(err=err, msg=msg)
             raise
 
-    def update_attribute_value(
-        self, *, entity_id: str, attr_name: str, value: Any, entity_type: str = None
-    ):
+    def update_attribute_value(self, *,
+                               entity_id: str,
+                               attr_name: str,
+                               value: Any,
+                               entity_type: str = None,
+                               forcedUpdate: bool = False
+                               ):
         """
         Updates the value of a specified attribute of an entity
 
@@ -1054,6 +1178,10 @@ class ContextBrokerClient(BaseHttpClient):
                 Example: temperature.
             entity_type: Entity type, to avoid ambiguity in case there are
                 several entities with the same entity id.
+            forcedUpdate: Update operation have to trigger any matching
+                subscription, no matter if there is an actual attribute
+                update or no instead of the default behavior, which is to
+                updated only if attribute is effectively updated.
         Returns:
 
         """
@@ -1061,7 +1189,12 @@ class ContextBrokerClient(BaseHttpClient):
         headers = self.headers.copy()
         params = {}
         if entity_type:
-            params.update({"type": entity_type})
+            params.update({'type': entity_type})
+        options = []
+        if forcedUpdate:
+            options.append("forcedUpdate")
+        if options:
+            params.update({'options': ",".join(options)})
         try:
             if not isinstance(value, (dict, list)):
                 headers.update({"Content-Type": "text/plain"})
@@ -1484,13 +1617,14 @@ class ContextBrokerClient(BaseHttpClient):
             raise
 
     # Batch operation API
-    def update(
-        self,
-        *,
-        entities: List[ContextEntity],
-        action_type: Union[ActionType, str],
-        update_format: str = None,
-    ) -> None:
+    def update(self,
+               *,
+               entities: List[ContextEntity],
+               action_type: Union[ActionType, str],
+               update_format: str = None,
+               forcedUpdate: bool = False,
+               override_metadata: bool = False,
+               ) -> None:
         """
         This operation allows to create, update and/or delete several entities
         in a single batch operation.
@@ -1522,7 +1656,13 @@ class ContextBrokerClient(BaseHttpClient):
                     action to do: either append, appendStrict, update, delete,
                     or replace. "
             update_format (str): Optional 'keyValues'
-
+            forcedUpdate: Update operation have to trigger any matching
+                subscription, no matter if there is an actual attribute
+                update or no instead of the default behavior, which is to
+                updated only if attribute is effectively updated.
+            override_metadata:
+                Bool, replace the existing metadata with the one provided in
+                the request
         Returns:
 
         """
@@ -1531,6 +1671,13 @@ class ContextBrokerClient(BaseHttpClient):
         headers = self.headers.copy()
         headers.update({"Content-Type": "application/json"})
         params = {}
+        options = []
+        if override_metadata:
+            options.append("overrideMetadata")
+        if forcedUpdate:
+            options.append("forcedUpdate")
+        if options:
+            params.update({'options': ",".join(options)})
         if update_format:
             assert (
                 update_format == "keyValues"
