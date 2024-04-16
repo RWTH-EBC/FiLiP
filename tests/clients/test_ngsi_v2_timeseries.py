@@ -90,6 +90,10 @@ class TestTimeSeries(unittest.TestCase):
             self.assertIsNotNone(client.get_version())
             self.assertIsNotNone(client.get_health())
 
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                cb_url=settings.CB_URL,
+                ql_url=settings.QL_URL)
     def test_insert_data(self) -> None:
         """
         Test insert data directly into QuantumLeap
