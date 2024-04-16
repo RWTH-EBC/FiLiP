@@ -64,11 +64,11 @@ APIKEY = 'your_apikey'
 
 # path to read json-files from previous exercises
 READ_GROUPS_FILEPATH = \
-    Path("../e5_iot_thermal_zone_control_solution_groups.json")
+    Path("../e5_iot_thermal_zone_control_groups.json")
 READ_DEVICES_FILEPATH = \
-    Path("../e5_iot_thermal_zone_control_solution_devices.json")
+    Path("../e5_iot_thermal_zone_control_devices.json")
 READ_ENTITIES_FILEPATH = \
-    Path("../e3_context_entities_solution_entities.json")
+    Path("../e3_context_entities.json")
 
 # opening the files
 with open(READ_GROUPS_FILEPATH, 'r') as groups_file, \

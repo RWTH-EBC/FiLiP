@@ -57,8 +57,11 @@ SERVICE = 'filip_tutorial'
 SERVICE_PATH = '/'
 
 # ToDo: Path to json-files to store entity data for follow up exercises,
-#  e.g. ../e3_my_entities.json
-WRITE_ENTITIES_FILEPATH = Path("")
+#  e.g. ../e3_my_entities.json. Files that are used in exercises and files
+#  that are used in solutions are different from each other so be careful
+#  when working with them. You can of course change the paths as you wish,
+#  but it is recommended to use the already given path names.
+WRITE_ENTITIES_FILEPATH = Path("../e3_context_entities.json")
 
 # ## Main script
 if __name__ == '__main__':

@@ -79,11 +79,11 @@ print(TOPIC_CONTROLLER)
 
 # path to read json-files from previous exercises
 READ_GROUPS_FILEPATH = \
-    Path("../e5_iot_thermal_zone_control_solution_groups.json")
+    Path("../e5_iot_thermal_zone_control_groups.json")
 READ_DEVICES_FILEPATH = \
-    Path("../e5_iot_thermal_zone_control_solution_devices.json")
+    Path("../e5_iot_thermal_zone_control_devices.json")
 READ_SUBSCRIPTIONS_FILEPATH = \
-    Path("../e5_iot_thermal_zone_control_solution_subscriptions.json")
+    Path("../e5_iot_thermal_zone_control_subscriptions.json")
 
 # opening the files
 with open(READ_GROUPS_FILEPATH, 'r') as groups_file, \
