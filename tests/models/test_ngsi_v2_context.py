@@ -4,6 +4,16 @@ Test module for context broker models
 import unittest
 from typing import List
 from pydantic import ValidationError
+from geojson_pydantic import (
+    Point,
+    MultiPoint,
+    LineString,
+    MultiLineString,
+    Polygon,
+    MultiPolygon,
+    Feature,
+    FeatureCollection,
+)
 
 from filip.models.base import DataType
 from filip.clients.ngsi_v2 import IoTAClient, ContextBrokerClient
@@ -13,16 +23,17 @@ from filip.utils.cleanup import clear_all
 from tests.config import settings
 
 from filip.models.ngsi_v2.base import Metadata, NamedMetadata
-from filip.models.ngsi_v2.context import \
-    ActionType, \
-    Command, \
-    ContextAttribute, \
-    ContextEntity, \
-    Update, \
-    NamedContextAttribute, \
-    ContextEntityKeyValues, \
-    NamedCommand, \
-    PropertyFormat
+from filip.models.ngsi_v2.context import (
+    ActionType,
+    Command,
+    ContextAttribute,
+    ContextEntity,
+    Update,
+    NamedContextAttribute,
+    ContextEntityKeyValues,
+    NamedCommand,
+    PropertyFormat,
+)
 from filip.utils.model_generation import create_context_entity_model
 
 
@@ -34,36 +45,329 @@ class TestContextModels(unittest.TestCase):
     def setUp(self) -> None:
         """
         Setup test data
+
         Returns:
             None
         """
-        self.attr = {'temperature': {'value': 20,
-                                     'type': 'Number'}}
-        self.relation = {'relation': {'value': 'OtherEntity',
-                                      'type': 'Relationship'}}
-        self.entity_data = {'id': 'MyId',
-                            'type': 'MyType'}
+        self.attr = {"temperature": {"value": 20, "type": "Number"}}
+        self.relation = {"relation": {"value": "OtherEntity", "type": "Relationship"}}
+        self.entity_data = {"id": "MyId", "type": "MyType"}
         self.entity_data.update(self.attr)
         self.entity_data.update(self.relation)
 
     def test_cb_attribute(self) -> None:
         """
         Test context attribute models
+
         Returns:
             None
         """
-        attr = ContextAttribute(**{'value': 20, 'type': 'Text'})
+        attr = ContextAttribute(**{"value": 20, "type": "Text"})
         self.assertIsInstance(attr.value, str)
-        self.assertEqual(attr.value, '20')
-        attr = ContextAttribute(**{'value': 20, 'type': 'Number'})
+        self.assertEqual(attr.value, "20")
+        attr = ContextAttribute(**{"value": 20, "type": "Number"})
         self.assertIsInstance(attr.value, float)
         self.assertEqual(str(attr.value), str(20.0))
-        attr = ContextAttribute(**{'value': [20, 20], 'type': 'Float'})
+        attr = ContextAttribute(**{"value": [20, 20], "type": "Float"})
         self.assertIsInstance(attr.value, list)
-        attr = ContextAttribute(**{'value': [20.0, 20.0], 'type': 'Integer'})
+        attr = ContextAttribute(**{"value": [20.0, 20.0], "type": "Integer"})
         self.assertIsInstance(attr.value, list)
-        attr = ContextAttribute(**{'value': [20, 20], 'type': 'Array'})
+        attr = ContextAttribute(**{"value": [20, 20], "type": "Array"})
         self.assertIsInstance(attr.value, list)
+
+    def test_geojson_attribute(self):
+        """
+        Test the GeoJsonAttribute model
+        """
+        # test Point
+        geojson = ContextAttribute(
+            type=DataType.GEOJSON, value={"type": "Point", "coordinates": (125.6, 10.1)}
+        )
+        self.assertIsInstance(geojson.value, Point)
+        self.assertEqual(
+            geojson.value.model_dump(exclude={"bbox"}),
+            {"type": "Point", "coordinates": (125.6, 10.1)},
+        )
+        # test MultiPoint
+        geojson = ContextAttribute(
+            type=DataType.GEOJSON,
+            value={"type": "MultiPoint", "coordinates": [(125.6, 10.1), (125.6, 10.2)]},
+        )
+        self.assertIsInstance(geojson.value, MultiPoint)
+        self.assertEqual(
+            geojson.value.model_dump(exclude={"bbox"}),
+            {"type": "MultiPoint", "coordinates": [(125.6, 10.1), (125.6, 10.2)]},
+        )
+        # test LineString
+        geojson = ContextAttribute(
+            type=DataType.GEOJSON,
+            value={"type": "LineString", "coordinates": [(125.6, 10.1), (125.6, 10.2)]},
+        )
+        self.assertIsInstance(geojson.value, LineString)
+        self.assertEqual(
+            geojson.value.model_dump(exclude={"bbox"}),
+            {"type": "LineString", "coordinates": [(125.6, 10.1), (125.6, 10.2)]},
+        )
+        # test MultiLineString
+        geojson = ContextAttribute(
+            type=DataType.GEOJSON,
+            value={
+                "type": "MultiLineString",
+                "coordinates": [
+                    [(125.6, 10.1), (125.6, 10.2)],
+                    [
+                        (125.6, 10.1),
+                        (125.6, 10.2),
+                    ],
+                ],
+            },
+        )
+        self.assertIsInstance(geojson.value, MultiLineString)
+        self.assertEqual(
+            geojson.value.model_dump(exclude={"bbox"}),
+            {
+                "type": "MultiLineString",
+                "coordinates": [
+                    [(125.6, 10.1), (125.6, 10.2)],
+                    [
+                        (125.6, 10.1),
+                        (125.6, 10.2),
+                    ],
+                ],
+            },
+        )
+        # test Polygon
+        geojson = ContextAttribute(
+            type=DataType.GEOJSON,
+            value={
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        (125.6, 10.1),
+                        (126.6, 10.2),
+                        (126.6, 10.3),
+                        (125.6, 10.1),
+                    ]
+                ],
+            },
+        )
+        self.assertIsInstance(geojson.value, Polygon)
+        self.assertEqual(
+            geojson.value.model_dump(exclude={"bbox"}),
+            {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        (125.6, 10.1),
+                        (126.6, 10.2),
+                        (126.6, 10.3),
+                        (125.6, 10.1),
+                    ]
+                ],
+            },
+        )
+        # test MultiPolygon
+        geojson = ContextAttribute(
+            type=DataType.GEOJSON,
+            value={
+                "type": "MultiPolygon",
+                "coordinates": [
+                    [
+                        [
+                            (125.6, 10.1),
+                            (126.6, 10.2),
+                            (126.6, 10.3),
+                            (125.6, 10.1),
+                        ]
+                    ],
+                    [
+                        [
+                            (125.6, 10.1),
+                            (126.6, 10.2),
+                            (126.6, 10.3),
+                            (125.6, 10.1),
+                        ]
+                    ],
+                ],
+            },
+        )
+        self.assertIsInstance(geojson.value, MultiPolygon)
+        self.assertEqual(
+            geojson.value.model_dump(exclude={"bbox"}),
+            {
+                "type": "MultiPolygon",
+                "coordinates": [
+                    [
+                        [
+                            (125.6, 10.1),
+                            (126.6, 10.2),
+                            (126.6, 10.3),
+                            (125.6, 10.1),
+                        ]
+                    ],
+                    [
+                        [
+                            (125.6, 10.1),
+                            (126.6, 10.2),
+                            (126.6, 10.3),
+                            (125.6, 10.1),
+                        ]
+                    ],
+                ],
+            },
+        )
+        # test Feature
+        feature = Feature(
+            **{
+                "type": "Feature",
+                "bbox": [-10.0, -10.0, 10.0, 10.0],
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [
+                        [
+                            (-10.0, -10.0),
+                            (10.0, -10.0),
+                            (10.0, 10.0),
+                            (-10.0, -10.0),
+                        ]
+                    ],
+                },
+                "properties": {"name": "MyPolygon"},
+                "id": 1,
+            }
+        )
+        geojson = ContextAttribute(
+            type=DataType.GEOJSON,
+            value={
+                "type": "Feature",
+                "bbox": [-10.0, -10.0, 10.0, 10.0],
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [
+                        [
+                            (-10.0, -10.0),
+                            (10.0, -10.0),
+                            (10.0, 10.0),
+                            (-10.0, -10.0),
+                        ]
+                    ],
+                },
+                "properties": {"name": "MyPolygon"},
+                "id": 1,
+            },
+        )
+        self.assertIsInstance(geojson.value, Feature)
+        self.assertEqual(
+            geojson.value.model_dump(),
+            {
+                "type": "Feature",
+                "bbox": (-10.0, -10.0, 10.0, 10.0),
+                "geometry": {
+                    "bbox": None,
+                    "type": "Polygon",
+                    "coordinates": [
+                        [
+                            (-10.0, -10.0),
+                            (10.0, -10.0),
+                            (10.0, 10.0),
+                            (-10.0, -10.0),
+                        ]
+                    ],
+                },
+                "properties": {"name": "MyPolygon"},
+                "id": 1,
+            },
+        )
+        # test FeatureCollection
+        geojson = ContextAttribute(
+            type=DataType.GEOJSON,
+            value={
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "type": "Feature",
+                        "bbox": (-10.0, -10.0, 10.0, 10.0),
+                        "geometry": {
+                            "bbox": None,
+                            "type": "Polygon",
+                            "coordinates": [
+                                [
+                                    (-10.0, -10.0),
+                                    (10.0, -10.0),
+                                    (10.0, 10.0),
+                                    (-10.0, -10.0),
+                                ]
+                            ],
+                        },
+                        "properties": {"name": "MyFirstPolygon"},
+                        "id": 1,
+                    },
+                    {
+                        "type": "Feature",
+                        "bbox": (-10.0, -10.0, 10.0, 10.0),
+                        "geometry": {
+                            "bbox": None,
+                            "type": "Polygon",
+                            "coordinates": [
+                                [
+                                    (-10.0, -10.0),
+                                    (10.0, -10.0),
+                                    (10.0, 10.0),
+                                    (-10.0, -10.0),
+                                ]
+                            ],
+                        },
+                        "properties": {"name": "MySecondPolygon"},
+                        "id": 2,
+                    },
+                ],
+            },
+        )
+        self.assertIsInstance(geojson.value, FeatureCollection)
+        self.assertEqual(
+            geojson.value.model_dump(exclude={"bbox"}),
+            {
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "type": "Feature",
+                        "bbox": (-10.0, -10.0, 10.0, 10.0),
+                        "geometry": {
+                            "bbox": None,
+                            "type": "Polygon",
+                            "coordinates": [
+                                [
+                                    (-10.0, -10.0),
+                                    (10.0, -10.0),
+                                    (10.0, 10.0),
+                                    (-10.0, -10.0),
+                                ]
+                            ],
+                        },
+                        "properties": {"name": "MyFirstPolygon"},
+                        "id": 1,
+                    },
+                    {
+                        "type": "Feature",
+                        "bbox": (-10.0, -10.0, 10.0, 10.0),
+                        "geometry": {
+                            "bbox": None,
+                            "type": "Polygon",
+                            "coordinates": [
+                                [
+                                    (-10.0, -10.0),
+                                    (10.0, -10.0),
+                                    (10.0, 10.0),
+                                    (-10.0, -10.0),
+                                ]
+                            ],
+                        },
+                        "properties": {"name": "MySecondPolygon"},
+                        "id": 2,
+                    },
+                ],
+            },
+        )
 
     def test_cb_metadata(self) -> None:
         """
@@ -71,16 +375,12 @@ class TestContextModels(unittest.TestCase):
         Returns:
             None
         """
-        md1 = Metadata(type='Text', value='test')
-        md2 = NamedMetadata(name='info', type='Text', value='test')
-        md3 = [NamedMetadata(name='info', type='Text', value='test')]
-        attr1 = ContextAttribute(value=20,
-                                 type='Integer',
-                                 metadata={'info': md1})
-        attr2 = ContextAttribute(**attr1.model_dump(exclude={'metadata'}),
-                                 metadata=md2)
-        attr3 = ContextAttribute(**attr1.model_dump(exclude={'metadata'}),
-                                 metadata=md3)
+        md1 = Metadata(type="Text", value="test")
+        md2 = NamedMetadata(name="info", type="Text", value="test")
+        md3 = [NamedMetadata(name="info", type="Text", value="test")]
+        attr1 = ContextAttribute(value=20, type="Integer", metadata={"info": md1})
+        attr2 = ContextAttribute(**attr1.model_dump(exclude={"metadata"}), metadata=md2)
+        attr3 = ContextAttribute(**attr1.model_dump(exclude={"metadata"}), metadata=md3)
         self.assertEqual(attr1, attr2)
         self.assertEqual(attr1, attr3)
 
@@ -95,21 +395,46 @@ class TestContextModels(unittest.TestCase):
         entity = ContextEntity.model_validate(self.entity_data)
         self.assertEqual(self.entity_data, entity.model_dump(exclude_unset=True))
 
-        properties = entity.get_properties(response_format='list')
-        self.assertEqual(self.attr, {properties[0].name: properties[0].model_dump(
-            exclude={'name', 'metadata'}, exclude_unset=True)})
-        properties = entity.get_properties(response_format='dict')
-        self.assertEqual(self.attr['temperature'],
-                         properties['temperature'].model_dump(exclude={'metadata'},
-                                                              exclude_unset=True))
+        properties = entity.get_properties(response_format="list")
+        self.assertEqual(
+            self.attr,
+            {
+                properties[0]
+                .name: properties[0]
+                .model_dump(exclude={"name", "metadata"}, exclude_unset=True)
+            },
+        )
+        properties = entity.get_properties(response_format="dict")
+        self.assertEqual(
+            self.attr["temperature"],
+            properties["temperature"].model_dump(
+                exclude={"metadata"}, exclude_unset=True
+            ),
+        )
 
         relations = entity.get_relationships()
-        self.assertEqual(self.relation, {relations[0].name: relations[0].model_dump(
-            exclude={'name', 'metadata'}, exclude_unset=True)})
+        self.assertEqual(
+            self.relation,
+            {
+                relations[0]
+                .name: relations[0]
+                .model_dump(exclude={"name", "metadata"}, exclude_unset=True)
+            },
+        )
 
-        new_attr = {'new_attr': ContextAttribute(type='Number', value=25)}
+        # add attribute via API
+        new_attr = {"new_attr": ContextAttribute(type="Number", value=25)}
         entity.add_attributes(new_attr)
 
+        # add attribute directly to the entity
+        entity.new_attr = new_attr["new_attr"]
+
+        # add attribute directly without proper type conversion
+        with self.assertRaises(ValueError):
+            new_attr["new_attr"] = new_attr["new_attr"].model_dump(exclude_unset=True)
+            entity.new_attr = new_attr
+
+        # try to generate a model with the entity data
         generated_model = create_context_entity_model(data=self.entity_data)
         entity = generated_model(**self.entity_data)
         self.assertEqual(self.entity_data, entity.model_dump(exclude_unset=True))
@@ -122,11 +447,11 @@ class TestContextModels(unittest.TestCase):
         Returns:
 
         """
-        cmd_data = {"type": "command",
-                    "value": [5]}
+        cmd_data = {"type": "command", "value": [5]}
         Command(**cmd_data)
         Command(value=[0])
         with self.assertRaises(ValidationError):
+
             class NotSerializableObject:
                 test: "test"
 
@@ -139,11 +464,11 @@ class TestContextModels(unittest.TestCase):
         Returns:
             None
         """
-        entities = [ContextEntity(id='1', type='myType')]
+        entities = [ContextEntity(id="1", type="myType")]
         action_type = ActionType.APPEND
         Update(actionType=action_type, entities=entities)
         with self.assertRaises(ValueError):
-            Update(actionType='test', entities=entities)
+            Update(actionType="test", entities=entities)
 
     def test_fiware_safe_fields(self):
         """
@@ -162,20 +487,17 @@ class TestContextModels(unittest.TestCase):
 
         # Test if all needed fields, detect all invalid strings
         for string in invalid_strings:
-            self.assertRaises(ValidationError,
-                              Metadata, type=string)
-            self.assertRaises(ValidationError,
-                              NamedMetadata, name=string)
-            self.assertRaises(ValidationError,
-                              ContextAttribute, type=string)
-            self.assertRaises(ValidationError,
-                              NamedContextAttribute, name=string)
-            self.assertRaises(ValidationError,
-                              ContextEntityKeyValues, id=string, type="name")
-            self.assertRaises(ValidationError,
-                              ContextEntityKeyValues, id="name", type=string)
-            self.assertRaises(ValidationError,
-                              NamedCommand, name=string)
+            self.assertRaises(ValidationError, Metadata, type=string)
+            self.assertRaises(ValidationError, NamedMetadata, name=string)
+            self.assertRaises(ValidationError, ContextAttribute, type=string)
+            self.assertRaises(ValidationError, NamedContextAttribute, name=string)
+            self.assertRaises(
+                ValidationError, ContextEntityKeyValues, id=string, type="name"
+            )
+            self.assertRaises(
+                ValidationError, ContextEntityKeyValues, id="name", type=string
+            )
+            self.assertRaises(ValidationError, NamedCommand, name=string)
 
         # Test if all needed fields, do not trow wrong errors
         for string in valid_strings:
@@ -189,10 +511,8 @@ class TestContextModels(unittest.TestCase):
         # Test for the special-string protected field if all strings are blocked
         for string in special_strings:
             self.assertRaises(ValidationError, ContextAttribute, type=string)
-            self.assertRaises(ValidationError,
-                              NamedContextAttribute, name=string)
-            self.assertRaises(ValidationError,
-                              NamedCommand, name=string)
+            self.assertRaises(ValidationError, NamedContextAttribute, name=string)
+            self.assertRaises(ValidationError, NamedCommand, name=string)
         # Test for the normal protected field if all strings are allowed
         for string in special_strings:
             Metadata(type=string)
@@ -204,10 +524,11 @@ class TestContextModels(unittest.TestCase):
         Test the delete_attributes methode
         also tests the get_attribute_name method
         """
-        attr = ContextAttribute(**{'value': 20, 'type': 'Text'})
-        named_attr = NamedContextAttribute(**{'name': 'test2', 'value': 20,
-                                              'type': 'Text'})
-        attr3 = ContextAttribute(**{'value': 20, 'type': 'Text'})
+        attr = ContextAttribute(**{"value": 20, "type": "Text"})
+        named_attr = NamedContextAttribute(
+            **{"name": "test2", "value": 20, "type": "Text"}
+        )
+        attr3 = ContextAttribute(**{"value": 20, "type": "Text"})
 
         entity = ContextEntity(id="12", type="Test")
 
@@ -241,29 +562,35 @@ class TestContextModels(unittest.TestCase):
             entity.get_command_triple("--")
 
         # test the automated command creation via Fiware and DeviceModel
-        device = Device(device_id="device_id",
-                        service=settings.FIWARE_SERVICE,
-                        service_path=settings.FIWARE_SERVICEPATH,
-                        entity_name="name",
-                        entity_type="type",
-                        transport=TransportProtocol.HTTP,
-                        endpoint="http://localhost:1234")
+        device = Device(
+            device_id="device_id",
+            service=settings.FIWARE_SERVICE,
+            service_path=settings.FIWARE_SERVICEPATH,
+            entity_name="name",
+            entity_type="type",
+            transport=TransportProtocol.HTTP,
+            endpoint="http://localhost:1234",
+        )
 
         device.add_command(DeviceCommand(name="myCommand"))
         device.add_command(DeviceCommand(name="myCommand2", type=DataType.TEXT))
 
         with IoTAClient(
-                url=settings.IOTA_JSON_URL,
-                fiware_header=FiwareHeader(
-                    service=settings.FIWARE_SERVICE,
-                    service_path=settings.FIWARE_SERVICEPATH)) as client:
+            url=settings.IOTA_JSON_URL,
+            fiware_header=FiwareHeader(
+                service=settings.FIWARE_SERVICE,
+                service_path=settings.FIWARE_SERVICEPATH,
+            ),
+        ) as client:
             client.post_device(device=device)
 
         with ContextBrokerClient(
-                url=settings.CB_URL,
-                fiware_header=FiwareHeader(
-                    service=settings.FIWARE_SERVICE,
-                    service_path=settings.FIWARE_SERVICEPATH)) as client:
+            url=settings.CB_URL,
+            fiware_header=FiwareHeader(
+                service=settings.FIWARE_SERVICE,
+                service_path=settings.FIWARE_SERVICEPATH,
+            ),
+        ) as client:
             entity = client.get_entity(entity_id="name", entity_type="type")
 
             (command, c_status, c_info) = entity.get_command_triple("myCommand")
@@ -271,15 +598,15 @@ class TestContextModels(unittest.TestCase):
             self.assertEqual(c_status.type, DataType.COMMAND_STATUS)
             self.assertEqual(c_info.type, DataType.COMMAND_RESULT)
 
-            (command, c_status, c_info) = entity.get_command_triple(
-                "myCommand2")
+            (command, c_status, c_info) = entity.get_command_triple("myCommand2")
             self.assertEqual(command.type, DataType.TEXT)
             self.assertEqual(c_status.type, DataType.COMMAND_STATUS)
             self.assertEqual(c_info.type, DataType.COMMAND_RESULT)
 
             self.assertEqual(
                 entity.get_commands(response_format=PropertyFormat.DICT).keys(),
-                {"myCommand", "myCommand2"})
+                {"myCommand", "myCommand2"},
+            )
 
     def test_get_attributes(self):
         """
@@ -299,8 +626,11 @@ class TestContextModels(unittest.TestCase):
         """
         Cleanup test server
         """
-        clear_all(fiware_header=FiwareHeader(
-            service=settings.FIWARE_SERVICE,
-            service_path=settings.FIWARE_SERVICEPATH),
+        clear_all(
+            fiware_header=FiwareHeader(
+                service=settings.FIWARE_SERVICE,
+                service_path=settings.FIWARE_SERVICEPATH,
+            ),
             cb_url=settings.CB_URL,
-            iota_url=settings.IOTA_JSON_URL)
+            iota_url=settings.IOTA_JSON_URL,
+        )
