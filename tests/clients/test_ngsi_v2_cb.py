@@ -962,6 +962,151 @@ class TestContextBroker(unittest.TestCase):
                              len(client.query(query=query,
                                               response_format='keyValues')))
 
+    def test_force_update_option(self):
+        """
+        Test the functionality of the flag forceUpdate
+        """
+        entity_dict = {
+            "id": "TestForceupdate:001",
+            "type": "Test",
+            "temperature": {"type": "Number",
+                            "value": 20},
+            "humidity": {"type": "Number",
+                         "value": 50},
+        }
+        entity = ContextEntity(**entity_dict)
+        self.client.post_entity(entity=entity)
+
+        # test with only changed attrs
+        sub_only_changed_attrs = Subscription(**{
+            "description": "One subscription to rule them all",
+            "subject": {
+                "entities": [
+                    {
+                        "id": entity.id,
+                    }
+                ]
+            },
+            "notification": {
+                "http": {
+                    "url": "http://localhost:1234"
+                },
+                "attrs": [
+                    "temperature",
+                    "humidity"
+                ],
+                "onlyChangedAttrs": True
+            }
+        })
+        sub_id_1 = self.client.post_subscription(
+            subscription=sub_only_changed_attrs)
+        time_sent_1 = 0
+
+        # not activate
+        self.client.update_attribute_value(
+            entity_id=entity.id,
+            attr_name="temperature",
+            value=20)
+        time.sleep(1)
+        sub_1 = self.client.get_subscription(sub_id_1)
+        time_sent_1_is = sub_1.notification.timesSent if \
+            sub_1.notification.timesSent else 0
+        self.assertEqual(time_sent_1_is, time_sent_1)
+
+        # activate because value changed
+        self.client.update_attribute_value(
+            entity_id=entity.id,
+            attr_name="temperature",
+            value=21)
+        time_sent_1 += 1  # should be activated
+        time.sleep(1)
+        sub_1 = self.client.get_subscription(sub_id_1)
+        time_sent_1_is = sub_1.notification.timesSent if \
+            sub_1.notification.timesSent else 0
+        self.assertEqual(time_sent_1_is, time_sent_1)
+
+        # activate because forceUpdate
+        self.client.update_attribute_value(
+            entity_id=entity.id,
+            attr_name="temperature",
+            value=21,
+            forcedUpdate=True
+        )
+        time_sent_1 += 1  # should be activated
+        time.sleep(1)
+        sub_1 = self.client.get_subscription(sub_id_1)
+        time_sent_1_is = sub_1.notification.timesSent if \
+            sub_1.notification.timesSent else 0
+        self.assertEqual(time_sent_1_is, time_sent_1)
+
+        # test with conditions
+        sub_with_conditions = Subscription(**{
+            "description": "One subscription to rule them all",
+            "subject": {
+                "entities": [
+                    {
+                        "id": entity.id,
+                    }
+                ],
+                "condition": {
+                    "attrs": [
+                        "temperature"
+                    ],
+                    "expression": {
+                        "q": "temperature>40"
+                    }
+                }
+            },
+            "notification": {
+                "http": {
+                    "url": "http://localhost:1234"
+                },
+                "attrs": [
+                    "temperature",
+                    "humidity"
+                ]
+            }
+        })
+        sub_id_2 = self.client.post_subscription(
+            subscription=sub_with_conditions)
+        time_sent_2 = 0
+
+        # not activate
+        self.client.update_attribute_value(
+            entity_id=entity.id,
+            attr_name="temperature",
+            value=20)
+        time.sleep(1)
+        sub_2 = self.client.get_subscription(sub_id_2)
+        time_sent_2_is = sub_2.notification.timesSent if \
+            sub_2.notification.timesSent else 0
+        self.assertEqual(time_sent_2_is, time_sent_2)
+
+        # activate because condition fulfilled
+        self.client.update_attribute_value(
+            entity_id=entity.id,
+            attr_name="temperature",
+            value=41)
+        time_sent_2 += 1  # should be activated
+        time.sleep(1)
+        sub_2 = self.client.get_subscription(sub_id_2)
+        time_sent_2_is = sub_2.notification.timesSent if \
+            sub_2.notification.timesSent else 0
+        self.assertEqual(time_sent_2_is, time_sent_2)
+
+        # not activate even with forceUpdate
+        self.client.update_attribute_value(
+            entity_id=entity.id,
+            attr_name="temperature",
+            value=20,
+            forcedUpdate=True
+        )
+        time.sleep(1)
+        sub_2 = self.client.get_subscription(sub_id_2)
+        time_sent_2_is = sub_2.notification.timesSent if \
+            sub_2.notification.timesSent else 0
+        self.assertEqual(time_sent_2_is, time_sent_2)
+
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
                 cb_url=settings.CB_URL,
