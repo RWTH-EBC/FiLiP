@@ -150,6 +150,7 @@ if __name__ == '__main__':
     # Implement a callback function that gets triggered when the
     # command is sent to the device. The incoming command should update the
     # heater attribute of the simulation model
+
     def on_command(client, obj, msg):
         """
         Callback for incoming commands
@@ -213,7 +214,7 @@ if __name__ == '__main__':
         notification=Notification(**{
             'http': {'url': 'http://quantumleap:8668/v2/notify'}
         }),
-        throttling = 0)
+        throttling=0)
     )
 
     cbc.post_subscription(subscription=Subscription(
@@ -224,7 +225,7 @@ if __name__ == '__main__':
         notification=Notification(**{
             'http': {'url': 'http://quantumleap:8668/v2/notify'}
         }),
-        throttling = 0)
+        throttling=0)
     )
 
     cbc.post_subscription(subscription=Subscription(
@@ -235,7 +236,7 @@ if __name__ == '__main__':
         notification=Notification(**{
             'http': {'url': 'http://quantumleap:8668/v2/notify'}
         }),
-        throttling = 0)
+        throttling=0)
     )
 
     # connect to the mqtt broker and subscribe to your topic

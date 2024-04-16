@@ -86,7 +86,7 @@ APIKEY = 'your_apikey'
 UNIQUE_ID = str(uuid4())
 TOPIC_CONTROLLER = f"fiware_workshop/{UNIQUE_ID}/controller"
 print(TOPIC_CONTROLLER)
-# path to json-files to store entity data for follow up exercises
+# path to json-files to store entity data for follow-up exercises
 WRITE_GROUPS_FILEPATH = \
     Path("../e5_iot_thermal_zone_control_solution_groups.json")
 WRITE_DEVICES_FILEPATH = \
