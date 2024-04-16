@@ -86,9 +86,9 @@ READ_SUBSCRIPTIONS_FILEPATH = \
     Path("../e5_iot_thermal_zone_control_solution_subscriptions.json")
 
 # opening the files
-with (open(READ_GROUPS_FILEPATH, 'r') as groups_file,
-      open(READ_DEVICES_FILEPATH, 'r') as devices_file,
-      open(READ_SUBSCRIPTIONS_FILEPATH, 'r') as subscriptions_file):
+with open(READ_GROUPS_FILEPATH, 'r') as groups_file, \
+        open(READ_DEVICES_FILEPATH, 'r') as devices_file, \
+        open(READ_SUBSCRIPTIONS_FILEPATH, 'r') as subscriptions_file:
     json_groups = json.load(groups_file)
     json_devices = json.load(devices_file)
     json_subscriptions = json.load(subscriptions_file)

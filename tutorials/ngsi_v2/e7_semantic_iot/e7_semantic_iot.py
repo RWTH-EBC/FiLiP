@@ -71,9 +71,9 @@ READ_ENTITIES_FILEPATH = \
     Path("../e3_context_entities_solution_entities.json")
 
 # opening the files
-with (open(READ_GROUPS_FILEPATH, 'r') as groups_file,
-      open(READ_DEVICES_FILEPATH, 'r') as devices_file,
-      open(READ_ENTITIES_FILEPATH, 'r') as entities_file):
+with open(READ_GROUPS_FILEPATH, 'r') as groups_file, \
+       open(READ_DEVICES_FILEPATH, 'r') as devices_file, \
+       open(READ_ENTITIES_FILEPATH, 'r') as entities_file:
     json_groups = json.load(groups_file)
     json_devices = json.load(devices_file)
     json_entities = json.load(entities_file)

@@ -100,8 +100,8 @@ READ_DEVICES_FILEPATH = \
     Path("../e4_iot_thermal_zone_sensors_devices.json")
 
 # opening the files
-with (open(READ_GROUPS_FILEPATH, 'r') as groups_file,
-      open(READ_DEVICES_FILEPATH, 'r') as devices_file):
+with open(READ_GROUPS_FILEPATH, 'r') as groups_file, \
+       open(READ_DEVICES_FILEPATH, 'r') as devices_file:
     json_groups = json.load(groups_file)
     json_devices = json.load(devices_file)
 
