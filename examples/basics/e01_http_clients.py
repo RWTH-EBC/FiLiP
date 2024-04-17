@@ -23,7 +23,7 @@ IOTA_URL = "http://localhost:4041"
 # Host address of QuantumLeap
 QL_URL = "http://localhost:8668"
 #
-# You can here also change the used Fiware service
+# Here you can also change the used Fiware service
 # FIWARE-Service
 service = 'filip'
 # FIWARE-Servicepath
@@ -67,7 +67,7 @@ if __name__ == '__main__':
 
     # ## 2.3 Run the client with an externally provided requests.Session object
     #
-    # This mode is recommend when you want to reuse requests.Session and mix
+    # This mode is recommended when you want to reuse requests.Session and mix
     # different clients. It is also useful in combination with OAuth2Session
     # objects that handle authentication mechanisms and third party libraries.
     # Please be aware that you need to do the session handling yourself.
@@ -88,7 +88,7 @@ if __name__ == '__main__':
 
     # # 4 URL
     #
-    # Additional to the FiwareHeader each client needs a URL, that points
+    # Additional to the FiwareHeader each client needs a URL that points
     # to the Fiware-server.
     #
     # ## 4.1 Environment variables
