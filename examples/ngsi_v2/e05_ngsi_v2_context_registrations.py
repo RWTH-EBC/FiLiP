@@ -3,7 +3,7 @@
 #
 # Steps :
 # 1. Create a context provider
-# 2. Create an context entity retrieving information from a context provider
+# 2. Create a context entity retrieving information from a context provider
 """
 # ## Import packages
 import logging
@@ -19,12 +19,12 @@ from filip.models.ngsi_v2.registrations import Http, Provider, Registration
 # ## Parameters
 #
 # To run this example you need a working Fiware v2 setup with a context-broker
-# You can here set the address:
+# You can set the address:
 #
 # Host address of Context Broker
 CB_URL = "http://localhost:1026"
 
-# You can here also change the used Fiware service
+# You can also change the used Fiware service
 # FIWARE-Service
 SERVICE = 'filip'
 # FIWARE-Servicepath

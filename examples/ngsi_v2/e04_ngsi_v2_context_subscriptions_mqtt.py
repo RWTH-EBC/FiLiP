@@ -2,7 +2,7 @@
 # Examples for subscriptions
 
 # create new subscription following the API Walkthrough example:
-# https://fiware-orion.readthedocs.io/en/master/user/walkthrough_apiv2/index.html
+# https://fiware-orion.readthedocs.io/en/master/user/walkthrough_apiv2.html#subscriptions
 """
 # ## Import packages
 import logging
@@ -18,12 +18,12 @@ from urllib.parse import urlparse
 # ## Parameters
 #
 # To run this example you need a working Fiware v2 setup with a context-broker
-# You can here set the address:
+# You can set the address:
 #
 # Host address of Context Broker
 CB_URL = "http://localhost:1026"
 
-# You can here also change the used Fiware service
+# You can also change the used Fiware service
 # FIWARE-Service
 SERVICE = 'filip'
 # FIWARE-Servicepath
@@ -72,7 +72,7 @@ if __name__ == "__main__":
     # Additionally, you should be aware of the throttling and expiration of a
     # subscription.
     #
-    # For more details on subscription you might want to
+    # For more details on subscriptions you might want to
     # check the Subscription model or the official tutorials.
     sub_example = {
         "description": "Subscription to receive MQTT-Notifications about "
@@ -106,7 +106,7 @@ if __name__ == "__main__":
     sub = Subscription(**sub_example)
 
     # Posting an example subscription for Room1. Make sure that you store the
-    # returned id because you might need for later updates of the subscription.
+    # returned id because you might need it for later updates of the subscription.
     sub_id = cb_client.post_subscription(subscription=sub)
 
     # # 3 setup callbacks and the MQTT client
