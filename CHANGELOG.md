@@ -1,3 +1,6 @@
+### v0.4.1
+- fix: Session added as optional parameter to enable tls communication with clients ([#249](https://github.com/RWTH-EBC/FiLiP/pull/249))
+
 #### v0.4.0
 - add tutorial for protected endpoint with bearer authentication ([#208](https://github.com/RWTH-EBC/FiLiP/issues/208))
 - add internal mqtt url for unittests @djs0109 ([#239](https://github.com/RWTH-EBC/FiLiP/pull/239))
