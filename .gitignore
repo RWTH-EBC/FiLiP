@@ -8,7 +8,6 @@ __pycache__
 *.log
 .project
 .pydevproject
-
 *.yml
 # include issue branch workflows
 !.github/workflows/issue-tracker.yml

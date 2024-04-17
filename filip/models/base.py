@@ -106,7 +106,7 @@ class FiwareHeader(BaseModel):
     )
     service_path: str = Field(
         alias="fiware-servicepath",
-        default="",
+        default="/",
         description="Fiware service path",
         max_length=51,
     )
