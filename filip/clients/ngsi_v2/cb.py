@@ -2027,12 +2027,6 @@ class ContextBrokerClient(BaseHttpClient):
                     continue
                 else:
                     return False
-            if not _value_is_not_none(v) or not _value_is_not_none(ex_value):
-                warnings.warn(
-                    "Different field found:{"
-                    f"{k}: ({v}, {ex_value})"
-                    "}"
-                )
             if v != ex_value:
                 self.logger.debug(f"Not equal fields for key {k}: ({v}, {ex_value})")
                 if not _value_is_not_none(v) and not _value_is_not_none(ex_value) or k == "timesSent":
