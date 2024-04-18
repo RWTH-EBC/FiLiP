@@ -659,6 +659,7 @@ class TestContextBroker(unittest.TestCase):
         import paho.mqtt.client as mqtt
         mqtt_client = mqtt.Client(userdata=None,
                                   protocol=mqtt.MQTTv5,
+                                  callback_api_version=mqtt.CallbackAPIVersion.VERSION1,
                                   transport="tcp")
         # add our callbacks to the client
         mqtt_client.on_connect = on_connect
@@ -852,6 +853,7 @@ class TestContextBroker(unittest.TestCase):
         import paho.mqtt.client as mqtt
         mqtt_client = mqtt.Client(userdata=None,
                                   protocol=mqtt.MQTTv5,
+                                  callback_api_version=mqtt.CallbackAPIVersion.VERSION1,
                                   transport="tcp")
         # add our callbacks to the client
         mqtt_client.on_connect = on_connect
@@ -1226,6 +1228,7 @@ class TestContextBroker(unittest.TestCase):
         mqtt_client = mqtt.Client(client_id="filip-test",
                                   userdata=None,
                                   protocol=mqtt.MQTTv5,
+                                  callback_api_version=mqtt.CallbackAPIVersion.VERSION1,
                                   transport="tcp")
 
         # add our callbacks to the client
