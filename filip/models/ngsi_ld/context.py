@@ -612,6 +612,7 @@ class ContextLDEntity(ContextLDEntityKeyValues):
                     if isinstance(value, list):
                         pass
         return final_list
+
     def add_attributes(self, **kwargs):
         """
         Invalid in NGSI-LD
@@ -751,6 +752,19 @@ class ContextLDEntity(ContextLDEntityKeyValues):
                     if isinstance(value, list):
                         pass
         return final_list
+
+    def get_context(self):
+        """
+        Args:
+            response_format:
+
+        Returns: context of the entity as list
+
+        """
+        for key, value in self.model_dump(exclude_unset=True).items():
+            if key not in ContextLDEntity.model_fields:
+                if isinstance(value, list):
+                    return value
 
 
 class ActionTypeLD(str, Enum):

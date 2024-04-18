@@ -86,6 +86,10 @@ class TestLDContextModels(unittest.TestCase):
                 "value": "Downtown One"
             },
         }
+        self.entity1_context = [
+                "http://example.org/ngsi-ld/latest/parking.jsonld",
+                "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.3.jsonld"
+            ]
         self.entity2_dict = {
             "id": "urn:ngsi-ld:Vehicle:A4567",
             "type": "Vehicle",
@@ -140,7 +144,6 @@ class TestLDContextModels(unittest.TestCase):
             None
         """
         entity1 = ContextLDEntity(**self.entity1_dict)
-        #entity1 = ContextLDEntity.model_validate(self.entity1_dict)
         entity2 = ContextLDEntity(**self.entity2_dict)
 
         self.assertEqual(self.entity1_dict,
@@ -226,7 +229,9 @@ class TestLDContextModels(unittest.TestCase):
         pass
         # TODO relationships CRUD
 
-    # ToDo: Matthias: Add test for context -> create entity with a full dict (e.g. entity1_dict)
-    #  -> if not failing get dict from filip and compare:
-    #  like: self.assertEqual(self.entity1_dict,
-    #                          entity1.model_dump(exclude_unset=True))
+    def test_get_context(self):
+        entity1 = ContextLDEntity(**self.entity1_dict)
+        context_entity1 = entity1.get_context()
+
+        self.assertEqual(self.entity1_context,
+                         context_entity1)
