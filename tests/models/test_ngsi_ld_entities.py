@@ -291,7 +291,7 @@ class TestEntities(unittest.TestCase):
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.json()["title"], "Entity Not Found")
     
-    def aatest_add_attributes_entity(self):
+    def test_add_attributes_entity(self):
         """
         Append new Entity attributes to an existing Entity within an NGSI-LD system.
         Args: 
@@ -329,20 +329,20 @@ class TestEntities(unittest.TestCase):
         """
         """Test 1"""
         self.cb_client.post_entity(self.entity)
-        attr = ContextProperty(**{'value': 20, 'type': 'Number'})
+        attr = ContextProperty(**{'value': 20, 'unitCode': 'Number'})
         # noOverwrite Option missing ???
-        self.entity.add_properties(attrs=["test_value", attr])
+        self.entity.add_properties({"test_value": attr})
         self.cb_client.append_entity_attributes(self.entity)
         entity_list = self.cb_client.get_entity_list()
         for entity in entity_list:
-            self.assertEqual(first=entity.property, second=attr)
+            self.assertEqual(first=entity.test_value["value"], second=attr.value)
         for entity in entity_list:
             self.cb_client.delete_entity_by_id(entity_id=entity.id)
         
         """Test 2"""
         attr = ContextProperty(**{'value': 20, 'type': 'Number'})
-        with self.asserRaises(Exception):
-            self.entity.add_properties(attrs=["test_value", attr])
+        with self.assertRaises(Exception):
+            self.entity.add_properties({"test_value": attr})
             self.cb_client.append_entity_attributes(self.entity)
 
             
@@ -352,20 +352,19 @@ class TestEntities(unittest.TestCase):
         attr = ContextProperty(**{'value': 20, 'type': 'Number'})
         attr_same = ContextProperty(**{'value': 40, 'type': 'Number'})
         
-        # noOverwrite Option missing ???
-        self.entity.add_properties(attrs=["test_value", attr])
+        self.entity.add_properties({"test_value": attr})
         self.cb_client.append_entity_attributes(self.entity)
-        self.entity.add_properties(attrs=["test_value", attr_same])
-        self.cb_client.append_entity_attributes(self.entity)
+        self.entity.add_properties({"test_value": attr_same})
+        self.cb_client.append_entity_attributes(self.entity, options="noOverwrite")
 
         entity_list = self.cb_client.get_entity_list()
         for entity in entity_list:
-            self.assertEqual(first=entity.property, second=attr)
+            self.assertEqual(first=entity.test_value["value"], second=attr.value)
         
         for entity in entity_list:
             self.cb_client.delete_entity_by_id(entity_id=entity.id)
         
-    def aatest_patch_entity_attrs(self):
+    def test_patch_entity_attrs(self):
         """
         Update existing Entity attributes within an NGSI-LD system
         Args:
@@ -389,16 +388,16 @@ class TestEntities(unittest.TestCase):
         """
         """Test1"""
         new_prop = {'new_prop': ContextProperty(value=25)}
-        newer_prop = {'new_prop': ContextProperty(value=25)}
+        newer_prop = NamedContextProperty(value=40, name='new_prop')
         
         self.entity.add_properties(new_prop)
         self.cb_client.post_entity(entity=self.entity)        
-        self.cb_client.update_entity_attribute(entity_id=self.entity.id, attr=newer_prop)
+        self.cb_client.update_entity_attribute(entity_id=self.entity.id, attr=newer_prop, attr_name='new_prop')
         entity_list = self.cb_client.get_entity_list()
         for entity in entity_list:  
             prop_list = self.entity.get_properties()
             for prop in prop_list:
-                if prop.name == "test_value": 
+                if prop.name == "new_prop":
                     self.assertEqual(prop.value, 40)
         
         for entity in entity_list:
