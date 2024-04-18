@@ -380,7 +380,7 @@ class ContextBrokerLDClient(BaseHttpClient):
         try:
             res = self.patch(url=url,
                              headers=headers,
-                             json=entity.dict(exclude={'id', 'type'},
+                             json=entity.model_dump(exclude={'id', 'type'},
                                               exclude_unset=True,
                                               exclude_none=True))
             if res.ok:
@@ -438,16 +438,25 @@ class ContextBrokerLDClient(BaseHttpClient):
 
     def append_entity_attributes(self,
                                  entity: ContextLDEntity,
+                                 options: Optional[str] = None
                                  ):
         """
         Append new Entity attributes to an existing Entity within an NGSI-LD system
         """
         url = urljoin(self.base_url, f'{self._url_version}/entities/{entity.id}/attrs')
         headers = self.headers.copy()
+        params = {}
+
+        if options:
+            if options != 'noOverwrite':
+                raise ValueError(f'The only available value is \'noOverwrite\'')
+            params.update({'options': options})
+
         try:
             res = self.post(url=url,
                             headers=headers,
-                            json=entity.dict(exclude={'id', 'type'},
+                            params=params,
+                            json=entity.model_dump(exclude={'id', 'type'},
                                              exclude_unset=True,
                                              exclude_none=True))
             if res.ok:
