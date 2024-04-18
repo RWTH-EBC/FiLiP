@@ -9,10 +9,11 @@ LONG_DESCRIPTION = readme_path.read_text()
 
 INSTALL_REQUIRES = ['aenum~=3.1.15',
                     'datamodel_code_generator[http]~=0.25.0',
-                    'paho-mqtt~=1.6.1',
+                    'paho-mqtt>=2.0.0',
                     'pandas_datapackage_reader~=0.18.0',
                     'pydantic~=2.5.2',
                     'pydantic-settings~=2.0.0',
+                    'geojson_pydantic~=1.0.2',
                     'stringcase>=1.2.0',
                     'rdflib~=6.0.0',
                     'regex~=2023.10.3',
