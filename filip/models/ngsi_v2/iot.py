@@ -4,6 +4,7 @@ Module contains models for accessing and interaction with FIWARE's IoT-Agents.
 from __future__ import annotations
 import logging
 import itertools
+import warnings
 from enum import Enum
 from typing import Any, Dict, Optional, List, Union
 import pytz
@@ -433,9 +434,7 @@ class Device(DeviceSettings):
                 if attribute.expression:
                     validate_jexl_expression(attribute.expression, attribute.name, self.device_id)
         elif self.expressionLanguage == ExpressionLanguage.LEGACY:
-            logger.warning(f"No validation for legacy expression language of Device {self.device_id}.")
-        else:
-            raise ValueError(f"Unknown expression language: {self.expressionLanguage}")
+            warnings.warn(f"No validation for legacy expression language of Device {self.device_id}.")
 
         return self
 

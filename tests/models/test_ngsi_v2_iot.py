@@ -4,9 +4,15 @@ Test module for context broker models
 
 import unittest
 from typing import List
+import warnings
 
+from filip.models.base import FiwareHeader
 from filip.models.ngsi_v2.iot import DeviceCommand, ServiceGroup, \
-    Device, TransportProtocol, IoTABaseAttribute
+    Device, TransportProtocol, IoTABaseAttribute, ExpressionLanguage
+from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient
+
+from filip.utils.cleanup import clear_all, clean_test
+from tests.config import settings
 
 
 class TestContextv2IoTModels(unittest.TestCase):
@@ -21,6 +27,19 @@ class TestContextv2IoTModels(unittest.TestCase):
             None
         """
 
+        self.fiware_header = FiwareHeader(
+            service=settings.FIWARE_SERVICE,
+            service_path=settings.FIWARE_SERVICEPATH)
+        clear_all(fiware_header=self.fiware_header,
+                  cb_url=settings.CB_URL,
+                  iota_url=settings.IOTA_JSON_URL)
+        self.iotac = IoTAClient(
+            url=settings.IOTA_JSON_URL,
+            fiware_header=self.fiware_header)
+        self.client = ContextBrokerClient(
+            url=settings.CB_URL,
+            fiware_header=self.fiware_header)
+
     def test_fiware_safe_fields(self):
         """
         Tests all fields of models/ngsi_v2/iot.py that have a regex to
@@ -29,7 +48,7 @@ class TestContextv2IoTModels(unittest.TestCase):
             None
         """
 
-        from pydantic.error_wrappers import ValidationError
+        from pydantic import ValidationError
 
         valid_strings: List[str] = ["name", "test123", "3_:strange-Name!"]
         invalid_strings: List[str] = ["my name", "Test?", "#False", "/notvalid"]
@@ -95,3 +114,31 @@ class TestContextv2IoTModels(unittest.TestCase):
             ServiceGroup(entity_type=string, resource="", apikey="")
             Device(device_id="", entity_name=string, entity_type=string,
                    transport=TransportProtocol.HTTP)
+
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                cb_url=settings.CB_URL,
+                iota_url=settings.IOTA_JSON_URL)
+    def test_expression_language(self):
+        service_group_jexl = ServiceGroup(
+            service=self.fiware_header.service,
+            subservice=self.fiware_header.service_path,
+            apikey=settings.FIWARE_SERVICEPATH.strip('/'),
+            resource='/iot/json',
+            expressionLanguage=ExpressionLanguage.JEXL)
+
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+
+            service_group_legacy = ServiceGroup(
+                service=self.fiware_header.service,
+                subservice=self.fiware_header.service_path,
+                apikey=settings.FIWARE_SERVICEPATH.strip('/'),
+                resource='/iot/json',
+                expressionLanguage=ExpressionLanguage.LEGACY)
+
+            assert len(w) == 1
+            assert issubclass(w[0].category, UserWarning)
+            assert "deprecated" in str(w[0].message)
+
+        self.iotac.post_group(service_group=service_group_jexl)

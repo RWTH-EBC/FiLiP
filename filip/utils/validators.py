@@ -3,6 +3,7 @@ Helper functions to prohibit boiler plate code
 """
 import logging
 import re
+import warnings
 from aenum import Enum
 from typing import Dict, Any, List
 from pydantic import AnyHttpUrl, validate_call
@@ -182,14 +183,14 @@ def validate_jexl_expression(expression, attribute_name, device_id):
 
 def validate_device_expression_language(cls, expressionLanguage):
     if expressionLanguage == "legacy":
-        logger.warning(f"Using 'LEGACY' expression language inside {cls.__name__} is deprecated. Use 'JEXL' instead.")
+        warnings.warn(f"Using 'LEGACY' expression language inside {cls.__name__} is deprecated. Use 'JEXL' instead.")
 
     return expressionLanguage
 
 
 def validate_service_group_expression_language(cls, expressionLanguage):
     if expressionLanguage == "legacy":
-        logger.warning(f"Using 'LEGACY' expression language inside {cls.__name__} does not work anymore, "
-                       f"because each device uses 'JEXL' as default.")
+        warnings.warn(f"Using 'LEGACY' expression language inside {cls.__name__} is deprecated and does not work "
+                      f"anymore, because each device uses 'JEXL' as default.")
 
     return expressionLanguage
