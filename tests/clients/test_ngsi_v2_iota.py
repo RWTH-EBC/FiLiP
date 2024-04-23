@@ -248,9 +248,9 @@ class TestAgent(unittest.TestCase):
         device.add_attribute(DeviceAttribute(
             name="Att1", object_id="o1", type=DataType.STRUCTUREDVALUE))
         device.add_attribute(StaticDeviceAttribute(
-            name="Stat1", value="test", type=DataType.STRUCTUREDVALUE))
+            name="Stat1", value="test", type=DataType.TEXT))
         device.add_attribute(StaticDeviceAttribute(
-            name="Stat2", value="test", type=DataType.STRUCTUREDVALUE))
+            name="Stat2", value="test", type=DataType.TEXT))
         device.add_command(DeviceCommand(name="Com1"))
 
         # use update_device to post
@@ -275,7 +275,7 @@ class TestAgent(unittest.TestCase):
         device.add_attribute(DeviceAttribute(
             name="Att2", object_id="o1", type=DataType.STRUCTUREDVALUE))
         device.add_attribute(StaticDeviceAttribute(
-            name="Stat3", value="test3", type=DataType.STRUCTUREDVALUE))
+            name="Stat3", value="test3", type=DataType.TEXT))
         device.add_command(DeviceCommand(name="Com2"))
 
         # device.endpoint = "http://localhost:8080"
@@ -311,9 +311,9 @@ class TestAgent(unittest.TestCase):
         device.add_attribute(DeviceAttribute(
             name="Att1", object_id="o1", type=DataType.STRUCTUREDVALUE))
         device.add_attribute(StaticDeviceAttribute(
-            name="Stat1", value="test", type=DataType.STRUCTUREDVALUE))
+            name="Stat1", value="test", type=DataType.TEXT))
         device.add_attribute(StaticDeviceAttribute(
-            name="Stat2", value="test", type=DataType.STRUCTUREDVALUE))
+            name="Stat2", value="test", type=DataType.TEXT))
         device.add_command(DeviceCommand(name="Com1"))
 
         # use patch_device to post
@@ -338,7 +338,7 @@ class TestAgent(unittest.TestCase):
         device.add_attribute(DeviceAttribute(
             name="Att2", object_id="o1", type=DataType.STRUCTUREDVALUE))
         device.add_attribute(StaticDeviceAttribute(
-            name="Stat3", value="test3", type=DataType.STRUCTUREDVALUE))
+            name="Stat3", value="test3", type=DataType.TEXT))
         device.add_command(DeviceCommand(name="Com2"))
 
         self.client.patch_device(device=device, cb_url=settings.CB_URL)
@@ -379,14 +379,16 @@ class TestAgent(unittest.TestCase):
     def test_service_group(self):
         """
         Test of querying service group based on apikey and resource.
-
         """
         # Create dummy service groups
-        group_base = ServiceGroup(service=settings.FIWARE_SERVICE, subservice=settings.FIWARE_SERVICEPATH,
+        group_base = ServiceGroup(service=settings.FIWARE_SERVICE,
+                                  subservice=settings.FIWARE_SERVICEPATH,
                                   resource="/iot/json", apikey="base")
-        group1 = ServiceGroup(service=settings.FIWARE_SERVICE, subservice=settings.FIWARE_SERVICEPATH,
+        group1 = ServiceGroup(service=settings.FIWARE_SERVICE,
+                              subservice=settings.FIWARE_SERVICEPATH,
                               resource="/iot/json", apikey="test1")
-        group2 = ServiceGroup(service=settings.FIWARE_SERVICE, subservice=settings.FIWARE_SERVICEPATH,
+        group2 = ServiceGroup(service=settings.FIWARE_SERVICE,
+                              subservice=settings.FIWARE_SERVICEPATH,
                               resource="/iot/json", apikey="test2")
         self.client.post_groups([group_base, group1, group2], update=True)
 

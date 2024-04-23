@@ -3,12 +3,15 @@ stages:
     - doc
     - code_quality
     - build
+    - release
     - deploy
 
 variables:
-    EXCLUDE_PYTHON: 311, 312
+    EXCLUDE_PYTHON: 37
     PYTHON_VERSION: "registry.git.rwth-aachen.de/ebc/ebc_all/gitlab_ci/templates:python_3.9"
     PAGES_BRANCH: master
+    GIT_REPO: "RWTH-EBC/FiLiP"
+    PYTHON_VERSION_NAME: "__version__"
     PYTHON_PACKAGE_NAME: "filip"
 
 include:
@@ -22,5 +25,7 @@ include:
       file: 'python/tests/tests.gitlab-ci.yml'
     - project: 'EBC/EBC_all/gitlab_ci/templates'
       file: 'python/tests/coverage.gitlab-ci.yml'
+    - project: 'EBC/EBC_all/gitlab_ci/templates'
+      file: 'python/pypi-release/release.gitlab-ci.yml'
     - project: 'EBC/EBC_all/gitlab_ci/templates'
       file: 'python/build/build.gitlab-ci.yml'

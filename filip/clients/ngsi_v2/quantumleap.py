@@ -63,7 +63,7 @@ class QuantumLeapClient(BaseHttpClient):
         Returns:
             Dictionary with response
         """
-        url = urljoin(self.base_url, '/version')
+        url = urljoin(self.base_url, 'version')
         try:
             res = self.get(url=url, headers=self.headers)
             if res.ok:
@@ -86,7 +86,7 @@ class QuantumLeapClient(BaseHttpClient):
         Returns:
             Dictionary with response
         """
-        url = urljoin(self.base_url, '/health')
+        url = urljoin(self.base_url, 'health')
         try:
             res = self.get(url=url, headers=self.headers)
             if res.ok:
@@ -111,7 +111,7 @@ class QuantumLeapClient(BaseHttpClient):
         Args:
             notification: Notification Message Object
         """
-        url = urljoin(self.base_url, '/v2/notify')
+        url = urljoin(self.base_url, 'v2/notify')
         headers = self.headers.copy()
         data = []
         for entity in notification.data:
@@ -184,48 +184,9 @@ class QuantumLeapClient(BaseHttpClient):
                 used as a
             time index.
         """
-        headers = self.headers.copy()
-        params = {}
-        url = urljoin(self.base_url, '/v2/subscribe')
-        validate_http_url(cb_url)
-        cb_url = urljoin(str(cb_url), '/v2')
-        params.update({'orionUrl': cb_url.encode('utf-8')})
-
-        validate_http_url(ql_url)
-        ql_url = urljoin(str(ql_url), '/v2')
-        params.update({'quantumleapUrl': ql_url.encode('utf-8')})
-
-        if entity_type:
-            params.update({'entityType': entity_type})
-        if entity_id:
-            params.update({'entityId': entity_id})
-        if id_pattern:
-            params.update({'idPattern': id_pattern})
-        if attributes:
-            params.update({'attributes': attributes})
-        if observed_attributes:
-            params.update({'observedAttributes': observed_attributes})
-        if notified_attributes:
-            params.update({'notifiedAttributes': notified_attributes})
-        if throttling or throttling == 0:
-            if throttling >= 0 and type(throttling) == int:
-                params.update({'throttling': throttling})
-            else:
-                raise TypeError("Throttling must be a positive integer or zero")
-        if time_index_attribute:
-            params.update({'timeIndexAttribute': time_index_attribute})
-
-        try:
-            res = self.post(url=url, headers=headers, params=params)
-            if res.ok:
-                msg = "Subscription created successfully!"
-                self.logger.info(msg)
-
-            res.raise_for_status()
-        except requests.exceptions.RequestException as err:
-            msg = "Could not create subscription."
-            self.log_error(err=err, msg=msg)
-            raise
+        raise DeprecationWarning("Subscription endpoint of Quantumleap API is "
+                                 "deprecated, use the ORION subscription endpoint "
+                                 "instead")
 
     def delete_entity(self, entity_id: str,
                       entity_type: Optional[str] = None) -> str:
@@ -244,7 +205,7 @@ class QuantumLeapClient(BaseHttpClient):
         Returns:
             The entity_id of entity that is deleted.
         """
-        url = urljoin(self.base_url, f'/v2/entities/{entity_id}')
+        url = urljoin(self.base_url, f'v2/entities/{entity_id}')
         headers = self.headers.copy()
         if entity_type is not None:
             params = {'type': entity_type}
@@ -283,7 +244,7 @@ class QuantumLeapClient(BaseHttpClient):
         Returns:
             Entity type of the entities deleted.
         """
-        url = urljoin(self.base_url, f'/v2/types/{entity_type}')
+        url = urljoin(self.base_url, f'v2/types/{entity_type}')
         headers = self.headers.copy()
         try:
             res = self.delete(url=url, headers=headers)
@@ -302,6 +263,7 @@ class QuantumLeapClient(BaseHttpClient):
                         url,
                         *,
                         entity_id: str = None,
+                        id_pattern: str = None,
                         options: str = None,
                         entity_type: str = None,
                         aggr_method: Union[str, AggrMethod] = None,
@@ -344,10 +306,15 @@ class QuantumLeapClient(BaseHttpClient):
             coords:
             attrs:
             aggr_scope:
+            id_pattern (str): The pattern covering the entity ids for which
+                to subscribe. The pattern follow regular expressions (POSIX
+                Extendede) e.g. ".*", "Room.*". Detail information:
+                https://en.wikibooks.org/wiki/Regular_Expressions/POSIX-Extended_Regular_Expressions
 
         Returns:
             Dict
         """
+        assert (id_pattern is None or entity_id is None), "Cannot have both id and idPattern as parameter."
         params = {}
         headers = self.headers.copy()
         max_records_per_request = 10000
@@ -387,6 +354,8 @@ class QuantumLeapClient(BaseHttpClient):
             params.update({'aggr_scope': aggr_scope.value})
         if entity_id:
             params.update({'id': entity_id})
+        if id_pattern:
+            params.update({'idPattern': id_pattern})
 
         # This loop will chop large requests into smaller junks.
         # The individual functions will then merge the final response models
@@ -431,6 +400,7 @@ class QuantumLeapClient(BaseHttpClient):
     # v2/entities
     def get_entities(self, *,
                      entity_type: str = None,
+                     id_pattern: str = None,
                      from_date: str = None,
                      to_date: str = None,
                      limit: int = 10000,
@@ -446,6 +416,10 @@ class QuantumLeapClient(BaseHttpClient):
                 when required. If used to resolve ambiguity for the given
                 entityId, make sure the given entityId exists for this
                 entityType.
+            id_pattern (str): The pattern covering the entity ids for which
+                to subscribe. The pattern follow regular expressions (POSIX
+                Extendede) e.g. ".*", "Room.*". Detail information:
+                https://en.wikibooks.org/wiki/Regular_Expressions/POSIX-Extended_Regular_Expressions
             from_date (str): The starting date and time (inclusive) from which
                 the context information is queried. Must be in ISO8601 format
                 (e.g., 2018-01-05T15:44:34)
@@ -461,11 +435,13 @@ class QuantumLeapClient(BaseHttpClient):
         """
         url = urljoin(self.base_url, 'v2/entities')
         res = self.__query_builder(url=url,
+                                   id_pattern=id_pattern,
                                    entity_type=entity_type,
                                    from_date=from_date,
                                    to_date=to_date,
                                    limit=limit,
                                    offset=offset)
+        
         ta = TypeAdapter(List[TimeSeriesHeader])
         return ta.validate_python(res[0])
 
@@ -566,7 +542,7 @@ class QuantumLeapClient(BaseHttpClient):
         Returns:
             TimeSeries
         """
-        url = urljoin(self.base_url, f'/v2/entities/{entity_id}')
+        url = urljoin(self.base_url, f'v2/entities/{entity_id}')
         res_q = self.__query_builder(url=url,
                                      attrs=attrs,
                                      options=options,
@@ -636,7 +612,7 @@ class QuantumLeapClient(BaseHttpClient):
         Returns:
             Response Model
         """
-        url = urljoin(self.base_url, f'/v2/entities/{entity_id}/value')
+        url = urljoin(self.base_url, f'v2/entities/{entity_id}/value')
         res_q = self.__query_builder(url=url,
                                      attrs=attrs,
                                      options=options,
@@ -707,7 +683,7 @@ class QuantumLeapClient(BaseHttpClient):
         Returns:
             Response Model
         """
-        url = urljoin(self.base_url, f'/v2/entities/{entity_id}/attrs'
+        url = urljoin(self.base_url, f'v2/entities/{entity_id}/attrs'
                                      f'/{attr_name}')
         req_q = self.__query_builder(url=url,
                                      entity_id=entity_id,
@@ -821,6 +797,7 @@ class QuantumLeapClient(BaseHttpClient):
                            *,
                            attrs: str = None,
                            entity_id: str = None,
+                           id_pattern: str = None,
                            aggr_method: Union[str, AggrMethod] = None,
                            aggr_period: Union[str, AggrPeriod] = None,
                            from_date: str = None,
@@ -839,9 +816,10 @@ class QuantumLeapClient(BaseHttpClient):
         For example, query the average pressure, temperature and humidity of
         this month in all the weather stations.
         """
-        url = urljoin(self.base_url, f'/v2/types/{entity_type}')
+        url = urljoin(self.base_url, f'v2/types/{entity_type}')
         res_q = self.__query_builder(url=url,
                                      entity_id=entity_id,
+                                     id_pattern=id_pattern,
                                      attrs=attrs,
                                      options=options,
                                      aggr_method=aggr_method,
@@ -874,6 +852,7 @@ class QuantumLeapClient(BaseHttpClient):
                                   *,
                                   attrs: str = None,
                                   entity_id: str = None,
+                                  id_pattern: str = None,
                                   aggr_method: Union[str, AggrMethod] = None,
                                   aggr_period: Union[str, AggrPeriod] = None,
                                   from_date: str = None,
@@ -893,9 +872,10 @@ class QuantumLeapClient(BaseHttpClient):
         values only, no metadata) of this month in
         all the weather stations.
         """
-        url = urljoin(self.base_url, f'/v2/types/{entity_type}/value')
+        url = urljoin(self.base_url, f'v2/types/{entity_type}/value')
         res_q = self.__query_builder(url=url,
                                      entity_id=entity_id,
+                                     id_pattern=id_pattern,
                                      attrs=attrs,
                                      options=options,
                                      entity_type=entity_type,
@@ -928,6 +908,7 @@ class QuantumLeapClient(BaseHttpClient):
                                 attr_name: str,
                                 *,
                                 entity_id: str = None,
+                                id_pattern: str = None,
                                 aggr_method: Union[str, AggrMethod] = None,
                                 aggr_period: Union[str, AggrPeriod] = None,
                                 from_date: str = None,
@@ -980,10 +961,11 @@ class QuantumLeapClient(BaseHttpClient):
         Returns:
             Response Model
         """
-        url = urljoin(self.base_url, f'/v2/types/{entity_type}/attrs'
+        url = urljoin(self.base_url, f'v2/types/{entity_type}/attrs'
                                      f'/{attr_name}')
         res_q = self.__query_builder(url=url,
                                      entity_id=entity_id,
+                                     id_pattern=id_pattern,
                                      options=options,
                                      entity_type=entity_type,
                                      aggr_method=aggr_method,
@@ -1029,6 +1011,7 @@ class QuantumLeapClient(BaseHttpClient):
                                        attr_name: str,
                                        *,
                                        entity_id: str = None,
+                                       id_pattern: str = None,
                                        aggr_method: Union[
                                            str, AggrMethod] = None,
                                        aggr_period: Union[
@@ -1075,10 +1058,11 @@ class QuantumLeapClient(BaseHttpClient):
         Returns:
             Response Model
         """
-        url = urljoin(self.base_url, f'/v2/types/{entity_type}/attrs/'
+        url = urljoin(self.base_url, f'v2/types/{entity_type}/attrs/'
                                      f'{attr_name}/value')
         res_q = self.__query_builder(url=url,
                                      entity_id=entity_id,
+                                     id_pattern=id_pattern,
                                      options=options,
                                      entity_type=entity_type,
                                      aggr_method=aggr_method,
