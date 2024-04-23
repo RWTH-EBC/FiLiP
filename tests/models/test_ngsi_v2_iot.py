@@ -146,7 +146,7 @@ class TestContextv2IoTModels(unittest.TestCase):
 
         self.iota_client.post_group(service_group=service_group_jexl)
 
-        # Test expression language on device level
+        # Test jexl expression language on device level
         device1 = Device(device_id="test_device",
                          entity_name="test_entity",
                          entity_type="test_entity_type",
@@ -163,12 +163,12 @@ class TestContextv2IoTModels(unittest.TestCase):
                          )
         self.iota_client.post_device(device=device1)
 
-        client = mqtt_client.Client()
-        client.connect(settings.MQTT_BROKER_URL.host, settings.MQTT_BROKER_URL.port)
-        client.loop_start()
+        mqtt_cl = mqtt_client.Client()
+        mqtt_cl.connect(settings.MQTT_BROKER_URL.host, settings.MQTT_BROKER_URL.port)
+        mqtt_cl.loop_start()
 
-        client.publish(topic=f'/json/{api_key}/{device1.device_id}/attrs',
-                       payload='{"value": 12, "spaces": "   foobar   "}')
+        mqtt_cl.publish(topic=f'/json/{api_key}/{device1.device_id}/attrs',
+                        payload='{"value": 12, "spaces": "   foobar   "}')
 
         time.sleep(2)
 
@@ -176,12 +176,50 @@ class TestContextv2IoTModels(unittest.TestCase):
         self.assertEqual(entity1.get_attribute('fraction').value, 1.5)
         self.assertEqual(entity1.get_attribute('trimmed').value, 'foobar')
 
+        mqtt_cl.loop_stop()
+        mqtt_cl.disconnect()
+
+        # Test for wrong jexl expressions
         device2 = Device(device_id="wrong_device",
                          entity_name="test_entity",
                          entity_type="test_entity_type",
                          transport=TransportProtocol.MQTT,
                          protocol=PayloadProtocol.IOTA_JSON)
+
+        attr1 = DeviceAttribute(name="value", type="Number", expression="value ++ 3")
         with self.assertRaises(pyjexl.jexl.ParseError):
-            device2.add_attribute(DeviceAttribute(name="value", type="Number", expression="value ++ 3"))
-            device2.add_attribute(DeviceAttribute(name="spaces", type="Text", expression="spaces | trim"))
-            device2.add_attribute(DeviceAttribute(name="brackets", type="Number", expression="((2 + 3) / 10"))
+            device2.add_attribute(attr1)
+        device2.delete_attribute(attr1)
+
+        attr2 = DeviceAttribute(name="spaces", type="Text", expression="spaces | trim")
+        with self.assertRaises(pyjexl.jexl.ParseError):
+            device2.add_attribute(attr2)
+        device2.delete_attribute(attr2)
+
+        attr3 = DeviceAttribute(name="brackets", type="Number", expression="((2 + 3) / 10")
+        with self.assertRaises(pyjexl.jexl.ParseError):
+            device2.add_attribute(attr3)
+        device2.delete_attribute(attr3)
+
+        # Test for legacy expression warning
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+
+            device3 = Device(device_id="legacy_device",
+                             entity_name="test_entity",
+                             entity_type="test_entity_type",
+                             transport=TransportProtocol.MQTT,
+                             protocol=PayloadProtocol.IOTA_JSON,
+                             expressionLanguage=ExpressionLanguage.LEGACY)
+
+            assert len(w) == 2
+
+    def tearDown(self) -> None:
+        """
+        Cleanup test server
+        """
+        clear_all(fiware_header=self.fiware_header,
+                  cb_url=settings.CB_URL,
+                  iota_url=settings.IOTA_JSON_URL)
+        self.iota_client.close()
+        self.cb_client.close()
