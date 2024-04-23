@@ -757,9 +757,6 @@ class TestContextBroker(unittest.TestCase):
         entity1_key_value_dict = entity1_key_value.model_dump()
         entity1_key_value_dict["temperature"] = 40
         self.client.update_entity_key_values(entity=entity1_key_value_dict)
-        self.client.get_entity(
-            entity_id=entity1.id,
-            response_format=AttrsFormat.KEY_VALUES).model_dump()
         self.assertEqual(entity1_key_value_dict,
                          self.client.get_entity(
                              entity_id=entity1.id,

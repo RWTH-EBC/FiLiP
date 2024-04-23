@@ -12,6 +12,7 @@ from pydantic.fields import Field, FieldInfo
 from filip.models import FiwareHeader
 from filip.models.ngsi_v2.context import ContextEntityKeyValues
 from filip.clients.ngsi_v2.cb import ContextBrokerClient
+from filip.utils.cleanup import clear_context_broker
 from pprint import pprint
 
 # Host address of Context Broker
@@ -93,7 +94,7 @@ class WeatherStationFIWARE(WeatherStation, ContextEntityKeyValues):
 if __name__ == "__main__":
     # Now we can export both the use case model and the FIWARE specific
     # models to json-schema files and share it with other stakeholders
-    # that need the data.
+    # or applications/services that need to use the data.
     use_case_model = WeatherStation.model_json_schema()
     pprint(use_case_model)
 
@@ -128,11 +129,11 @@ if __name__ == "__main__":
     # represent querying data by data users
     weather_station_data = cb_client.get_entity(entity_id="myWeatherStation",
                                                 response_format="keyValues")
-    ## validate with general model
+    # validate with general model
     weather_station_2_general = WeatherStation.model_validate(
         weather_station_data.model_dump()
     )
-    ## validate with fiware specific model
+    # validate with fiware specific model
     weather_station_2_fiware = WeatherStationFIWARE.model_validate(
         weather_station_data.model_dump()
     )
@@ -148,3 +149,6 @@ if __name__ == "__main__":
     print("For usage within FIWARE system, id and type is helpful, e.g. for creating"
           "notification for entity:\n"
           f"{weather_station_2_fiware.model_dump_json(indent=2, include={'id', 'type'})}\n")
+
+    # clear cb
+    clear_context_broker(url=CB_URL, fiware_header=fiware_header)
