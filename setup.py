@@ -18,7 +18,8 @@ INSTALL_REQUIRES = ['aenum~=3.1.15',
                     'regex~=2023.10.3',
                     'requests~=2.31.0',
                     'rapidfuzz~=3.4.0',
-                    'wget~=3.2']
+                    'wget~=3.2',
+                    'pyjexl~=0.3.0']
 
 SETUP_REQUIRES = INSTALL_REQUIRES.copy()
 
