@@ -445,9 +445,9 @@ class TestAgent(unittest.TestCase):
         device = Device(**self.device)
         device.add_command(DeviceCommand(name="dummy_cmd"))
         self.client.post_device(device=device)
-        clear_context_broker(settings.CB_URL,self.fiware_header)
-        self.assertRaises(requests.HTTPError,clear_iot_agent,
-                          settings.IOTA_URL,self.fiware_header)
+        clear_context_broker(settings.CB_URL, self.fiware_header)
+        with self.assertRaises(requests.HTTPError):
+            clear_iot_agent(settings.IOTA_URL, self.fiware_header)
 
     def tearDown(self) -> None:
         """
