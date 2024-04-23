@@ -19,7 +19,7 @@ Pydantic enforces type hints at runtime, and provides user friendly errors
 when data is invalid.
 We mainly use the Pydantic model to build our own data model structure required 
 for efficient data model parsing and validation and interaction with FIWARE 
-services' RestAPIs.
+services' RestAPIs. 
 
 For API interaction, FiLiP relies on the well-known 
 [requests](https://docs.python-requests.org/en/latest/) package. 
