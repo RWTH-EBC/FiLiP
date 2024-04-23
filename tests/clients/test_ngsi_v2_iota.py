@@ -18,7 +18,7 @@ from filip.models.ngsi_v2.iot import \
     DeviceAttribute, \
     DeviceCommand, \
     LazyDeviceAttribute, \
-    StaticDeviceAttribute
+    StaticDeviceAttribute, ExpressionLanguage
 from filip.utils.cleanup import clear_all, clean_test
 from tests.config import settings
 
@@ -51,7 +51,7 @@ class TestAgent(unittest.TestCase):
             "apikey": "1234",
             "endpoint": None,
             "transport": 'HTTP',
-            "expressionLanguage": None
+            "expressionLanguage": ExpressionLanguage.JEXL
         }
         self.client = IoTAClient(
             url=settings.IOTA_JSON_URL,

@@ -90,8 +90,8 @@ if __name__ == '__main__':
 
     # TODO: Setting expression language to JEXL at Device level with other attributes.
     #  The attribute 'value' (Number) is itself multiplied by 5. The attribute
-    #  'consumption' (String) is the trimmed version of the attribute 'spaces' (String).
-    #  The attribute 'iso_time' (String) is the current 'timestamp' (Number) transformed into the ISO format.
+    #  'consumption' (Text) is the trimmed version of the attribute 'spaces' (Text).
+    #  The attribute 'iso_time' (Text) is the current 'timestamp' (Number) transformed into the ISO format.
     device2 = Device(device_id="waste_container_002",
                      entity_name="urn:ngsi-ld:WasteContainer:002",
                      entity_type="WasteContainer",
