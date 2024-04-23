@@ -64,8 +64,10 @@ For more details please check the official [documentation on type hints](https:/
 
 ## Unit-Tests
 Especially when creating new functions or classes, you have to add a unit-test function.
-Open the `test_module.py` file in the `\tests`-directory and add a function to the class `TestModule`with a name like `test_my_new_function`. If you create a new module, you have to create a new `test_my_new_module.py` file and follow the existing structure of the 
-other test-files.
+Tests are located in the `\tests` directory. Every file that includes tests has a `test_` prefix. 
+Open the appropriate module where you want to write a test and add an appropriate function.
+When you are adding tests to an existing test file, it is also recommended that you study the other tests in that file; it will teach you which precautions you have to take to make your tests robust and portable.
+If the corresponding module does not exist, then you should create a new module with `test_` prefix and appropriate name. 
 
 If you are not familiar with unit-tests, here is a quick summary:
 - Test as many things as possible. Even seemingly silly tests like correct input-format help prevent future problems for new users.
