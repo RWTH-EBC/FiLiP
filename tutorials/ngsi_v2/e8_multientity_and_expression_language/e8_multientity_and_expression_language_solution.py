@@ -23,9 +23,11 @@ recommended language to use is jexl, # which is newer and most powerful.
 """
 # Import packages
 import time
+import datetime
 
 from filip.clients.ngsi_v2 import IoTAClient, ContextBrokerClient
 from filip.models.base import FiwareHeader
+from filip.models.ngsi_v2.context import ContextEntity, NamedContextAttribute
 from filip.models.ngsi_v2.iot import (Device, ServiceGroup, TransportProtocol,
                                       PayloadProtocol, DeviceAttribute,
                                       ExpressionLanguage)
@@ -91,7 +93,8 @@ if __name__ == '__main__':
 
     # TODO: Setting expression language to JEXL at Device level with other attributes.
     #  The attribute 'value' (Number) is itself multiplied by 5. The attribute
-    #  'consumption' (String) is the trimmed version of the attribute 'spaces' (String)
+    #  'consumption' (Text) is the trimmed version of the attribute 'spaces' (Text).
+    #  The attribute 'iso_time' (Text) is the current 'timestamp' (Number) transformed into the ISO format.
     device2 = Device(device_id="waste_container_002",
                      entity_name="urn:ngsi-ld:WasteContainer:002",
                      entity_type="WasteContainer",
@@ -100,9 +103,12 @@ if __name__ == '__main__':
                      expressionLanguage=ExpressionLanguage.JEXL,
                      attributes=[DeviceAttribute(name="value", type="Number",
                                                  expression="5 * value"),
-                                 DeviceAttribute(name="spaces", type="String"),
-                                 DeviceAttribute(name="consumption", type="String",
-                                                 expression="spaces | trim")
+                                 DeviceAttribute(name="spaces", type="Text"),
+                                 DeviceAttribute(name="consumption", type="Text",
+                                                 expression="spaces|trim"),
+                                 DeviceAttribute(name="timestamp", type="Number"),
+                                 DeviceAttribute(name="iso_time", type="Text",
+                                                 expression="timestamp|toisodate"),
                                  ]
                      )
     iota_client.post_device(device=device2)
@@ -116,11 +122,23 @@ if __name__ == '__main__':
     client.publish(topic=f'/json/{APIKEY}/{device1.device_id}/attrs',
                    payload='{"level": 99, "longitude": 12.0, "latitude": 23.0}')
 
-    # TODO: Publish attributes 'value' and 'spaces' of device2
+    # TODO: Publish attributes 'value', 'spaces' and 'timestamp' (in ms) of device2
     client.publish(topic=f'/json/{APIKEY}/{device2.device_id}/attrs',
-                   payload='{"value": 10, "spaces": "     foobar    "}')
+                   payload=f'{{ "value": 10, "spaces": "     foobar    ",'
+                           f' "timestamp": {datetime.datetime.now().timestamp() * 1000} }}')
 
     client.disconnect()
+
+    # Creating SubWeatherStation entities
+    entity1 = ContextEntity(id="urn:ngsi-ld:SubWeatherStation:001",
+                            type="SubWeatherStation")
+    entity1.add_attributes(attrs=[NamedContextAttribute(name="vol", type="Number")])
+    cb_client.post_entity(entity1)
+
+    entity2 = ContextEntity(id="urn:ngsi-ld:SubWeatherStation:002",
+                            type="SubWeatherStation")
+    entity2.add_attributes(attrs=[NamedContextAttribute(name="vol", type="Number")])
+    cb_client.post_entity(entity2)
 
     # TODO: Create a weather station device with multi entity attributes (Number). 'v'
     #  is multiplied by 100 and is a standard attribute. 'v1' and 'v2' are multiplied
@@ -133,15 +151,15 @@ if __name__ == '__main__':
                      protocol=PayloadProtocol.IOTA_JSON,
                      expressionLanguage=ExpressionLanguage.JEXL,
                      attributes=[DeviceAttribute(object_id="v1", name="vol", type="Number",
-                                                 expression="v1*100",
+                                                 expression="100 * v1",
                                                  entity_name="urn:ngsi-ld:SubWeatherStation:001",
                                                  entity_type="SubWeatherStation"),
                                  DeviceAttribute(object_id="v2", name="vol", type="Number",
-                                                 expression="v2*100",
+                                                 expression="100 * v2",
                                                  entity_name="urn:ngsi-ld:SubWeatherStation:002",
                                                  entity_type="SubWeatherStation"),
                                  DeviceAttribute(object_id="v", name="vol", type="Number",
-                                                 expression="v*100")
+                                                 expression="100 * v")
                                  ]
                      )
     iota_client.post_device(device=device3)

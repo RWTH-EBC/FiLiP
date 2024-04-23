@@ -1,12 +1,20 @@
 """
 Test module for context broker models
 """
-
+import time
 import unittest
 from typing import List
+import warnings
+from paho.mqtt import client as mqtt_client
+import pyjexl
 
+from filip.models.base import FiwareHeader
 from filip.models.ngsi_v2.iot import DeviceCommand, ServiceGroup, \
-    Device, TransportProtocol, IoTABaseAttribute
+    Device, TransportProtocol, IoTABaseAttribute, ExpressionLanguage, PayloadProtocol, DeviceAttribute
+from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient
+
+from filip.utils.cleanup import clear_all, clean_test
+from tests.config import settings
 
 
 class TestContextv2IoTModels(unittest.TestCase):
@@ -21,6 +29,19 @@ class TestContextv2IoTModels(unittest.TestCase):
             None
         """
 
+        self.fiware_header = FiwareHeader(
+            service=settings.FIWARE_SERVICE,
+            service_path=settings.FIWARE_SERVICEPATH)
+        clear_all(fiware_header=self.fiware_header,
+                  cb_url=settings.CB_URL,
+                  iota_url=settings.IOTA_JSON_URL)
+        self.iota_client = IoTAClient(
+            url=settings.IOTA_JSON_URL,
+            fiware_header=self.fiware_header)
+        self.cb_client = ContextBrokerClient(
+            url=settings.CB_URL,
+            fiware_header=self.fiware_header)
+
     def test_fiware_safe_fields(self):
         """
         Tests all fields of models/ngsi_v2/iot.py that have a regex to
@@ -29,7 +50,7 @@ class TestContextv2IoTModels(unittest.TestCase):
             None
         """
 
-        from pydantic.error_wrappers import ValidationError
+        from pydantic import ValidationError
 
         valid_strings: List[str] = ["name", "test123", "3_:strange-Name!"]
         invalid_strings: List[str] = ["my name", "Test?", "#False", "/notvalid"]
@@ -95,3 +116,72 @@ class TestContextv2IoTModels(unittest.TestCase):
             ServiceGroup(entity_type=string, resource="", apikey="")
             Device(device_id="", entity_name=string, entity_type=string,
                    transport=TransportProtocol.HTTP)
+
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                cb_url=settings.CB_URL,
+                iota_url=settings.IOTA_JSON_URL)
+    def test_expression_language(self):
+        api_key = settings.FIWARE_SERVICEPATH.strip('/')
+
+        # Test expression language on service group level
+        service_group_jexl = ServiceGroup(
+            entity_type='Thing',
+            apikey=api_key,
+            resource='/iot/json',
+            expressionLanguage=ExpressionLanguage.JEXL)
+
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+
+            service_group_legacy = ServiceGroup(
+                entity_type='Thing',
+                apikey=api_key,
+                resource='/iot/json',
+                expressionLanguage=ExpressionLanguage.LEGACY)
+
+            assert len(w) == 1
+            assert issubclass(w[0].category, UserWarning)
+            assert "deprecated" in str(w[0].message)
+
+        self.iota_client.post_group(service_group=service_group_jexl)
+
+        # Test expression language on device level
+        device1 = Device(device_id="test_device",
+                         entity_name="test_entity",
+                         entity_type="test_entity_type",
+                         transport=TransportProtocol.MQTT,
+                         protocol=PayloadProtocol.IOTA_JSON,
+                         expressionLanguage=ExpressionLanguage.JEXL,
+                         attributes=[DeviceAttribute(name="value", type="Number"),
+                                     DeviceAttribute(name="fraction", type="Number",
+                                                     expression="(value + 3) / 10"),
+                                     DeviceAttribute(name="spaces", type="Text"),
+                                     DeviceAttribute(name="trimmed", type="Text",
+                                                     expression="spaces|trim"),
+                                     ]
+                         )
+        self.iota_client.post_device(device=device1)
+
+        client = mqtt_client.Client()
+        client.connect(settings.MQTT_BROKER_URL.host, settings.MQTT_BROKER_URL.port)
+        client.loop_start()
+
+        client.publish(topic=f'/json/{api_key}/{device1.device_id}/attrs',
+                       payload='{"value": 12, "spaces": "   foobar   "}')
+
+        time.sleep(2)
+
+        entity1 = self.cb_client.get_entity(entity_id=device1.entity_name)
+        self.assertEqual(entity1.get_attribute('fraction').value, 1.5)
+        self.assertEqual(entity1.get_attribute('trimmed').value, 'foobar')
+
+        device2 = Device(device_id="wrong_device",
+                         entity_name="test_entity",
+                         entity_type="test_entity_type",
+                         transport=TransportProtocol.MQTT,
+                         protocol=PayloadProtocol.IOTA_JSON)
+        with self.assertRaises(pyjexl.jexl.ParseError):
+            device2.add_attribute(DeviceAttribute(name="value", type="Number", expression="value ++ 3"))
+            device2.add_attribute(DeviceAttribute(name="spaces", type="Text", expression="spaces | trim"))
+            device2.add_attribute(DeviceAttribute(name="brackets", type="Number", expression="((2 + 3) / 10"))

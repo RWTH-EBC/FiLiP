@@ -18,6 +18,7 @@ wget~=3.2
 stringcase~=1.2.0
 paho-mqtt~=1.6.1
 datamodel_code_generator[http]~=0.25.0
+pyjexl~=0.3.0
 # tutorials
 matplotlib~=3.5.3; python_version < '3.9'
 matplotlib~=3.8.0; python_version >='3.9'

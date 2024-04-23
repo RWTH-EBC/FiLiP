@@ -23,6 +23,7 @@ recommended language to use is jexl, # which is newer and most powerful.
 """
 # Import packages
 import time
+import datetime
 
 from filip.clients.ngsi_v2 import IoTAClient, ContextBrokerClient
 from filip.models.base import FiwareHeader
@@ -89,7 +90,8 @@ if __name__ == '__main__':
 
     # TODO: Setting expression language to JEXL at Device level with other attributes.
     #  The attribute 'value' (Number) is itself multiplied by 5. The attribute
-    #  'consumption' (String) is the trimmed version of the attribute 'spaces' (String)
+    #  'consumption' (Text) is the trimmed version of the attribute 'spaces' (Text).
+    #  The attribute 'iso_time' (Text) is the current 'timestamp' (Number) transformed into the ISO format.
     device2 = Device(device_id="waste_container_002",
                      entity_name="urn:ngsi-ld:WasteContainer:002",
                      entity_type="WasteContainer",
@@ -107,7 +109,7 @@ if __name__ == '__main__':
     # TODO: Publish attributes 'level', 'longitude' and 'latitude' of device1
     client.publish(...)
 
-    # TODO: Publish attributes 'value' and 'spaces' of device2
+    # TODO: Publish attributes 'value', 'spaces' and 'timestamp' (in ms) of device2
     client.publish(...)
 
     client.disconnect()
