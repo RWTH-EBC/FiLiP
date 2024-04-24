@@ -1,7 +1,8 @@
-from typing import List, Optional, Union, Literal
+from typing import List, Optional, Literal
 from pydantic import ConfigDict, BaseModel, Field, HttpUrl, AnyUrl, \
     field_validator, model_validator
 import dateutil.parser
+from filip.models.ngsi_ld.base import GeoQuery, validate_ngsi_ld_query
 
 
 class EntityInfo(BaseModel):
@@ -20,23 +21,6 @@ class EntityInfo(BaseModel):
     type: str = Field(
         description="Fully Qualified Name of an Entity Type or the Entity Type Name as a "
                     "short-hand string. See clause 4.6.2"
-    )
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class GeoQuery(BaseModel):
-    geometry: str = Field(
-        description="A valid GeoJSON [8] geometry, type excepting GeometryCollection"
-    )
-    coordinates: Union[list, str] = Field(
-        description="A JSON Array coherent with the geometry type as per IETF RFC 7946 [8]"
-    )
-    georel: str = Field(
-        description="A valid geo-relationship as defined by clause 4.10 (near, within, etc.)"
-    )
-    geoproperty: Optional[str] = Field(
-        default=None,
-        description="Attribute Name as a short-hand string"
     )
     model_config = ConfigDict(populate_by_name=True)
 
@@ -258,6 +242,10 @@ class Subscription(BaseModel):
         default=None,
         description="Query met by subscribed entities to trigger the notification"
     )
+    @field_validator("q")
+    @classmethod
+    def check_q(cls, v: str):
+        return validate_ngsi_ld_query(v)
     geoQ: Optional[GeoQuery] = Field(
         default=None,
         description="Geoquery met by subscribed entities to trigger the notification"
