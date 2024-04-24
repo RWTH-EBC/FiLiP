@@ -62,8 +62,7 @@ if __name__ == "__main__":
     room_entity = ContextEntity(**room_001)
     cb_client.post_entity(entity=room_entity)
 
-
-    # # 2 Setup a subscription and MQTT notifications
+    # # 2 Setup for a subscription and MQTT notifications
     #
     # Create the data for the subscription. Have a look at the condition and
     # the attribute section. Only a change of the temperature attribute will
@@ -128,8 +127,8 @@ if __name__ == "__main__":
 
 
     def on_message(client, userdata, msg):
-        message = Message.parse_raw(msg.payload)
-        logger.info("Received this message:\n" + message.json(indent=2))
+        message = Message.model_validate_json(msg.payload)
+        logger.info("Received this message:\n" + message.model_dump_json(indent=2))
 
 
     def on_disconnect(client, userdata, reasonCode, properties=None):
