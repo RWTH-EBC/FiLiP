@@ -36,5 +36,6 @@ The following topics are covered:
 
 #### How to use ontologies for semantic system modelling?
 
-- [semantics](https://github.com/RWTH-EBC/FiLiP/tree/master/examples/ngsi_v2/e11_ngsi_v2_semantics)
+- [Semantics](https://github.com/RWTH-EBC/FiLiP/tree/master/examples/ngsi_v2/e11_ngsi_v2_semantics)
+- [Use-case specific data modeling](https://github.com/RWTH-EBC/FiLiP/tree/master/examples/ngsi_v2/e12_ngsi_v2_use_case_models.py)
 
