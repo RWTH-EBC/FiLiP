@@ -10,6 +10,7 @@ from pydantic import AnyHttpUrl, validate_call
 from pydantic_core import PydanticCustomError
 from filip.custom_types import AnyMqttUrl
 from pyjexl.jexl import JEXL
+from pyjexl.parser import Transform
 from pyjexl.exceptions import ParseError
 
 logger = logging.getLogger(name=__name__)
@@ -170,9 +171,47 @@ def validate_fiware_service(service):
                        r"\w*$")
 
 
+jexl_transformation_functions = {
+    "jsonparse": "(str) => JSON.parse(str)",
+    "jsonstringify": "(obj) => JSON.stringify(obj)",
+    "indexOf": "(val, char) => String(val).indexOf(char)",
+    "length": "(val) => String(val).length",
+    "trim": "(val) => String(val).trim()",
+    "substr": "(val, int1, int2) => String(val).substr(int1, int2)",
+    "addreduce": "(arr) => arr.reduce((i, v) => i + v)",
+    "lengtharray": "(arr) => len(arr)",
+    "typeof": "(val) => typeof val",
+    "isarray": "(arr) => Array.isArray(arr)",
+    "isnan": "(val) => isNaN(val)",
+    "parseint": "(val) => parseInt(val)",
+    "parsefloat": "(val) => parseFloat(val)",
+    "toisodate": "(val) => new Date(val).toISOString()",
+    "timeoffset": "(isostr) => new Date(isostr).getTimezoneOffset()",
+    "tostring": "(val) => str(val)",
+    "urlencode": "(val) => encodeURI(val)",
+    "urldecode": "(val) => decodeURI(val)",
+    "replacestr": "(str, from, to) => str.replace(from, to)",
+    "replaceregexp": "(str, reg, to) => str.replace(reg, to)",
+    "replaceallstr": "(str, from, to) => str.replace(from, to)",
+    "replaceallregexp": "(str, reg, to) => str.replace(reg, to)",
+    "split": "(str, ch) => str.split(ch)",
+    "mapper": "(val, values, choices) => choices[values.index(val)]",
+    "thmapper": "(val, values, choices) => choices[next((i for i, v in enumerate(values) if val <= v), None)]",
+    "bitwisemask": "(i, mask, op, shf) => ((int(i) & mask) if op == '&' else ((int(i) | mask) if op == '|' else ((int(i) ^ mask) if op == '^' else int(i))) >> shf)",
+    "slice": "(arr, init, end) => arr[init:end]",
+    "addset": "(arr, x) => list(set(arr).add(x))",
+    "removeset": "(arr, x) => list(set(arr).remove(x))",
+    "touppercase": "(val) => str(val).upper()",
+    "tolowercase": "(val) => str(val).lower()"
+}
+
+
 def validate_jexl_expression(expression, attribute_name, device_id):
     try:
-        JEXL().parse(expression)
+        jexl_expression = JEXL().parse(expression)
+        if isinstance(jexl_expression, Transform):
+            if jexl_expression.name not in jexl_transformation_functions.keys():
+                warnings.warn(f"{jexl_expression.name} might not supported")
     except ParseError:
         msg = f"Invalid JEXL expression '{expression}' inside the attribute '{attribute_name}' of Device '{device_id}'."
         if '|' in expression:
