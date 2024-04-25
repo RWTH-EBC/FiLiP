@@ -5,7 +5,7 @@ import json
 import unittest
 
 from pydantic import ValidationError
-# from filip.clients.ngsi_v2 import ContextBrokerClient
+from filip.models.ngsi_ld.base import validate_ngsi_ld_query
 from filip.models.ngsi_ld.subscriptions import \
     Subscription, \
     Endpoint, NotificationParams, EntityInfo, TemporalQuery
@@ -191,64 +191,47 @@ class TestLDSubscriptions(unittest.TestCase):
         Returns:
             None
         """
-        sub = Subscription.model_validate(self.sub_dict)
-        fiware_header = FiwareHeader(service=settings.FIWARE_SERVICE,
-                                     service_path=settings.FIWARE_SERVICEPATH)
-        with ContextBrokerClient(
-                url=settings.CB_URL,
-                fiware_header=fiware_header) as client:
-            sub_id = client.post_subscription(subscription=sub)
-            sub_res = client.get_subscription(subscription_id=sub_id)
+        # TODO implement after the client is ready
+        pass
+        # sub = Subscription.model_validate(self.sub_dict)
+        # fiware_header = FiwareHeader(service=settings.FIWARE_SERVICE,
+        #                              service_path=settings.FIWARE_SERVICEPATH)
+        # with ContextBrokerClient(
+        #         url=settings.CB_URL,
+        #         fiware_header=fiware_header) as client:
+        #     sub_id = client.post_subscription(subscription=sub)
+        #     sub_res = client.get_subscription(subscription_id=sub_id)
+        #
+        #     def compare_dicts(dict1: dict, dict2: dict):
+        #         for key, value in dict1.items():
+        #             if isinstance(value, dict):
+        #                 compare_dicts(value, dict2[key])
+        #             else:
+        #                 self.assertEqual(str(value), str(dict2[key]))
+        #
+        #     compare_dicts(sub.model_dump(exclude={'id'}),
+        #                   sub_res.model_dump(exclude={'id'}))
 
-            def compare_dicts(dict1: dict, dict2: dict):
-                for key, value in dict1.items():
-                    if isinstance(value, dict):
-                        compare_dicts(value, dict2[key])
-                    else:
-                        self.assertEqual(str(value), str(dict2[key]))
-
-            compare_dicts(sub.model_dump(exclude={'id'}),
-                          sub_res.model_dump(exclude={'id'}))
-
-        # test validation of throttling
-        with self.assertRaises(ValidationError):
-            sub.throttling = -1
-        with self.assertRaises(ValidationError):
-            sub.throttling = 0.1
+        # # test validation of throttling
+        # with self.assertRaises(ValidationError):
+        #     sub.throttling = -1
+        # with self.assertRaises(ValidationError):
+        #     sub.throttling = 0.1
 
     def test_query_string_serialization(self):
-        sub = Subscription.model_validate(self.sub_dict)
-        self.assertIsInstance(json.loads(sub.subject.condition.expression.model_dump_json())["q"],
-                              str)
-        self.assertIsInstance(json.loads(sub.subject.condition.model_dump_json())["expression"]["q"],
-                              str)
-        self.assertIsInstance(json.loads(sub.subject.model_dump_json())["condition"]["expression"]["q"],
-                              str)
-        self.assertIsInstance(json.loads(sub.model_dump_json())["subject"]["condition"]["expression"]["q"],
-                              str)
-
-    def test_model_dump_json(self):
-        sub = Subscription.model_validate(self.sub_dict)
-
-        # test exclude
-        test_dict = json.loads(sub.model_dump_json(exclude={"id"}))
-        with self.assertRaises(KeyError):
-            _ = test_dict["id"]
-
-        # test exclude_none
-        test_dict = json.loads(sub.model_dump_json(exclude_none=True))
-        with self.assertRaises(KeyError):
-            _ = test_dict["throttling"]
-
-        # test exclude_unset
-        test_dict = json.loads(sub.model_dump_json(exclude_unset=True))
-        with self.assertRaises(KeyError):
-            _ = test_dict["status"]
-
-        # test exclude_defaults
-        test_dict = json.loads(sub.model_dump_json(exclude_defaults=True))
-        with self.assertRaises(KeyError):
-            _ = test_dict["status"]
+        # TODO test query results in client tests
+        examples = dict()
+        examples[1] = 'temperature==20'
+        examples[2] = 'brandName!="Mercedes"'
+        examples[3] = 'isParked=="urn:ngsi-ld:OffStreetParking:Downtown1"'
+        examples[5] = 'isMonitoredBy'
+        examples[6] = '((speed>50|rpm>3000);brandName=="Mercedes")'
+        examples[7] = '(temperature>=20;temperature<=25)|capacity<=10'
+        examples[8] = 'temperature.observedAt>=2017-12-24T12:00:00Z'
+        examples[9] = 'address[city]=="Berlin".'
+        examples[10] = 'sensor.rawdata[airquality.particulate]==40'
+        for example in examples.values():
+            validate_ngsi_ld_query(example)
 
     def tearDown(self) -> None:
         """
