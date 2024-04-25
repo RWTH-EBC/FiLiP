@@ -38,7 +38,7 @@ class ContextProperty(BaseModel):
         >>> attr = ContextProperty(**data)
 
     """
-    model_config = ConfigDict(extra='allow')
+    model_config = ConfigDict(extra='allow')            # In order to allow nested properties
     type: Optional[str] = Field(
         default="Property",
         title="type",
@@ -78,21 +78,6 @@ class ContextProperty(BaseModel):
         min_length=1,
     )
     field_validator("datasetId")(validate_fiware_datatype_string_protect)
-
-    @classmethod
-    def check_prop(cls, attr):
-        temp_prop = cls.model_validate(attr)
-
-        """for attr_comp in attr:
-            if attr_comp in ["type", "value", "observedAt", "UnitCode", "datasetId"]:
-                pass
-            else:
-                temp_nested_prop = cls.model_validate(attr[attr_comp])
-                print("dsas")
-                temp_prop.__setattr__(name=attr_comp, value=temp_nested_prop)
-                print("dsa")
-                #temp_prop[attr_comp] = temp_nested_prop"""
-        return temp_prop
 
     @field_validator("type")
     @classmethod
@@ -249,12 +234,6 @@ class ContextGeoProperty(BaseModel):
     )
     field_validator("datasetId")(validate_fiware_datatype_string_protect)
 
-    @classmethod
-    def check_geoprop(cls, attr):
-        temp_geoprop = cls.model_validate(attr)
-
-        return temp_geoprop
-
     @field_validator("type")
     @classmethod
     def check_geoproperty_type(cls, value):
@@ -271,9 +250,10 @@ class ContextGeoProperty(BaseModel):
             elif value == "TemporalProperty":
                 value == "TemporalProperty"
             else:
-                logging.warning(msg='NGSI_LD GeoProperties must have type "GeoProperty"')
-                raise ValueError('NGSI_LD GeoProperties must have type "GeoProperty"')
-                #value = "GeoProperty"
+                logging.warning(msg='NGSI_LD GeoProperties must have type "GeoProperty" '
+                                    '-> They are checked first, so if no GeoProperties are used ignore this warning!')
+                raise ValueError('NGSI_LD GeoProperties must have type "GeoProperty" '
+                                 '-> They are checked first, so if no GeoProperties are used ignore this warning!')
         return value
 
 
@@ -312,7 +292,7 @@ class ContextRelationship(BaseModel):
         >>> attr = ContextRelationship(**data)
 
     """
-    model_config = ConfigDict(extra='allow')
+    model_config = ConfigDict(extra='allow')                # In order to allow nested relationships
     type: Optional[str] = Field(
         default="Relationship",
         title="type",
@@ -536,9 +516,9 @@ class ContextLDEntity(ContextLDEntityKeyValues):
             # Check if the keyword is not already present in the fields
             if key not in fields:
                 try:
-                    attrs[key] = ContextGeoProperty.check_geoprop(attr=attr)
+                    attrs[key] = ContextGeoProperty.model_validate(attr)
                 except ValueError:
-                    attrs[key] = ContextProperty.check_prop(attr=attr)
+                    attrs[key] = ContextProperty.model_validate(attr)
         return attrs
 
     model_config = ConfigDict(extra='allow', validate_default=True, validate_assignment=True)
@@ -592,7 +572,7 @@ class ContextLDEntity(ContextLDEntityKeyValues):
                         if value.get('type') != DataTypeLD.RELATIONSHIP:
                             try:
                                 final_dict[key] = ContextGeoProperty(**value)
-                            except ValueError:
+                            except ValueError:          # if context attribute
                                 final_dict[key] = ContextProperty(**value)
                     except AttributeError:
                         if isinstance(value, list):
@@ -606,7 +586,7 @@ class ContextLDEntity(ContextLDEntityKeyValues):
                     if value.get('type') != DataTypeLD.RELATIONSHIP:
                         try:
                             final_list.append(NamedContextGeoProperty(name=key, **value))
-                        except ValueError:
+                        except ValueError:              # if context attribute
                             final_list.append(NamedContextProperty(name=key, **value))
                 except AttributeError:
                     if isinstance(value, list):
@@ -719,15 +699,6 @@ class ContextLDEntity(ContextLDEntityKeyValues):
         Returns:
 
         """
-        """response_format = PropertyFormat(response_format)
-        if response_format == PropertyFormat.DICT:
-            return {key: ContextRelationship(**value) for key, value in
-                    self.model_dump().items() if key not in ContextLDEntity.model_fields
-                    and value.get('type') == DataTypeLD.RELATIONSHIP}
-        return [NamedContextRelationship(name=key, **value) for key, value in
-                self.model_dump().items() if key not in
-                ContextLDEntity.model_fields and
-                value.get('type') == DataTypeLD.RELATIONSHIP]"""
         response_format = PropertyFormat(response_format)
         # response format dict:
         if response_format == PropertyFormat.DICT:
@@ -737,7 +708,7 @@ class ContextLDEntity(ContextLDEntityKeyValues):
                     try:
                         if value.get('type') == DataTypeLD.RELATIONSHIP:
                             final_dict[key] = ContextRelationship(**value)
-                    except AttributeError:
+                    except AttributeError:          # if context attribute
                         if isinstance(value, list):
                             pass
             return final_dict
@@ -748,7 +719,7 @@ class ContextLDEntity(ContextLDEntityKeyValues):
                 try:
                     if value.get('type') == DataTypeLD.RELATIONSHIP:
                         final_list.append(NamedContextRelationship(name=key, **value))
-                except AttributeError:
+                except AttributeError:              # if context attribute
                     if isinstance(value, list):
                         pass
         return final_list
