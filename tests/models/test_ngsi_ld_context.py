@@ -14,7 +14,6 @@ class TestLDContextModels(unittest.TestCase):
     """
     Test class for context broker models
     """
-    # ToDo @Matthias -> Run these Tests and find issues -> Try 1st to fix them in the code and otherwise correct test
     def setUp(self) -> None:
         """
         Setup test data
@@ -57,6 +56,40 @@ class TestLDContextModels(unittest.TestCase):
                 "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.3.jsonld"
             ]
         }
+        self.entity1_props_dict = {
+            "location": {
+                "type": "GeoProperty",
+                "value": {
+                    "type": "Point",
+                    "coordinates": [-8.5, 41.2]
+                }
+            },
+            "totalSpotNumber": {
+                "type": "Property",
+                "value": 200
+            },
+            "availableSpotNumber": {
+                "type": "Property",
+                "value": 121,
+                "observedAt": "2017-07-29T12:05:02Z",
+                "reliability": {
+                    "type": "Property",
+                    "value": 0.7
+                },
+                "providedBy": {
+                    "type": "Relationship",
+                    "object": "urn:ngsi-ld:Camera:C1"
+                }
+            },
+            "name": {
+                "type": "Property",
+                "value": "Downtown One"
+            },
+        }
+        self.entity1_context = [
+                "http://example.org/ngsi-ld/latest/parking.jsonld",
+                "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.3.jsonld"
+            ]
         self.entity2_dict = {
             "id": "urn:ngsi-ld:Vehicle:A4567",
             "type": "Vehicle",
@@ -93,10 +126,12 @@ class TestLDContextModels(unittest.TestCase):
         Returns:
             None
         """
-        attr = ContextProperty(**{'value': "20.1"})
-        self.assertNotIsInstance(attr.value, float)
-        attr = ContextProperty(**{'value': 20.1})
+        attr = ContextProperty(**{'value': "20"})
+        self.assertIsInstance(attr.value, str)
+        attr = ContextProperty(**{'value': 20.53})
         self.assertIsInstance(attr.value, float)
+        attr = ContextProperty(**{'value': 20})
+        self.assertIsInstance(attr.value, int)
 
     def test_entity_id(self) -> None:
         with self.assertRaises(ValidationError):
@@ -120,12 +155,19 @@ class TestLDContextModels(unittest.TestCase):
         entity2 = ContextLDEntity.model_validate(self.entity2_dict)
 
         # check all properties can be returned by get_properties
-        properties = entity2.get_properties(response_format='list')
-        for prop in properties:
+        properties_1 = entity1.get_properties(response_format='list')
+        for prop in properties_1:
+            self.assertEqual(self.entity1_props_dict[prop.name],
+                             prop.model_dump(
+                                 exclude={'name'},
+                                 exclude_unset=True))
+
+        properties_2 = entity2.get_properties(response_format='list')
+        for prop in properties_2:
             self.assertEqual(self.entity2_props_dict[prop.name],
                              prop.model_dump(
                                  exclude={'name'},
-                                 exclude_unset=True))  # TODO may not work
+                                 exclude_unset=True))
 
         # check all relationships can be returned by get_relationships
         relationships = entity2.get_relationships(response_format='list')
@@ -133,12 +175,12 @@ class TestLDContextModels(unittest.TestCase):
             self.assertEqual(self.entity2_rel_dict[relationship.name],
                              relationship.model_dump(
                                  exclude={'name'},
-                                 exclude_unset=True))  # TODO may not work
+                                 exclude_unset=True))
 
         # test add properties
         new_prop = {'new_prop': ContextProperty(value=25)}
         entity2.add_properties(new_prop)
-        entity2.get_properties(response_format='list')
+        properties = entity2.get_properties(response_format='list')
         self.assertIn("new_prop", [prop.name for prop in properties])
 
     def test_get_properties(self):
@@ -154,9 +196,6 @@ class TestLDContextModels(unittest.TestCase):
         entity.add_properties(properties)
         self.assertEqual(entity.get_properties(response_format="list"),
                          properties)
-        # TODO why it should be different?
-        self.assertNotEqual(entity.get_properties(),
-                            properties)
 
     def test_entity_delete_attributes(self):
         """
@@ -188,3 +227,10 @@ class TestLDContextModels(unittest.TestCase):
     def test_entity_relationships(self):
         pass
         # TODO relationships CRUD
+
+    def test_get_context(self):
+        entity1 = ContextLDEntity(**self.entity1_dict)
+        context_entity1 = entity1.get_context()
+
+        self.assertEqual(self.entity1_context,
+                         context_entity1)
