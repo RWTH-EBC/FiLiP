@@ -421,12 +421,22 @@ class ContextBrokerLDClient(BaseHttpClient):
 
         url = urljoin(self.base_url,
                       f'{self._url_version}/entities/{entity_id}/attrs/{attr_name}')
+
+        jsonnn = {}
+        if isinstance(attr, list) or isinstance(attr, NamedContextProperty):
+            jsonnn = attr.model_dump(exclude={'name'},
+                                            exclude_unset=True,
+                                            exclude_none=True)
+        else:
+            prop = attr[attr_name]
+            for key, value in prop:
+                if value and value != 'Property':
+                    jsonnn[key] = value
+
         try:
             res = self.patch(url=url,
                              headers=headers,
-                             json=attr.dict(exclude={'name'},
-                                            exclude_unset=True,
-                                            exclude_none=True))
+                             json=jsonnn)
             if res.ok:
                 self.logger.info(f"Attribute {attr_name} of {entity_id} successfully updated!")
             else:
@@ -496,7 +506,7 @@ class ContextBrokerLDClient(BaseHttpClient):
     def delete_attribute(self,
                          entity_id: str,
                          attribute_id: str):
-        url = urljoin(self.base_url, f'{self._url_version}/entities/{entity_id}/attrs{attribute_id}')
+        url = urljoin(self.base_url, f'{self._url_version}/entities/{entity_id}/attrs/{attribute_id}')
         headers = self.headers.copy()
 
         try:
