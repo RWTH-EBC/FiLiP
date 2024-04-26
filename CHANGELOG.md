@@ -1,8 +1,11 @@
+### v0.4.2
+- add: validation for JEXL based expression ([#260](https://github.com/RWTH-EBC/FiLiP/pull/260))
+- add: tutorials for multi-entity ([#260](https://github.com/RWTH-EBC/FiLiP/pull/260))
+
 ### v0.4.1
 - fix: Session added as optional parameter to enable tls communication with clients ([#249](https://github.com/RWTH-EBC/FiLiP/pull/249))
 - fix: add missing package ``geojson_pydantic`` in setup.py ([#276](https://github.com/RWTH-EBC/FiLiP/pull/276))
 - add: support entity creation with keyvalues ([#264](https://github.com/RWTH-EBC/FiLiP/pull/264))
-
 
 #### v0.4.0
 - add tutorial for protected endpoint with bearer authentication ([#208](https://github.com/RWTH-EBC/FiLiP/issues/208))
