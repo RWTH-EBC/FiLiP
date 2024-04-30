@@ -1,6 +1,7 @@
 ### v0.4.2
 - add: validation for JEXL based expression ([#260](https://github.com/RWTH-EBC/FiLiP/pull/260))
 - add: tutorials for multi-entity ([#260](https://github.com/RWTH-EBC/FiLiP/pull/260))
+- add: flag to determine the deletion of registration when clearing the CB ([#267](https://github.com/RWTH-EBC/FiLiP/pull/267))
 
 ### v0.4.1
 - fix: Session added as optional parameter to enable tls communication with clients ([#249](https://github.com/RWTH-EBC/FiLiP/pull/249))
