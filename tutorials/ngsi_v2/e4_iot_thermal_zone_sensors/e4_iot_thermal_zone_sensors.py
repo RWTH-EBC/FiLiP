@@ -83,8 +83,8 @@ if __name__ == '__main__':
     fiware_header = FiwareHeader(service=SERVICE,
                                  service_path=SERVICE_PATH)
     # clear the state of your service and scope
-    clear_context_broker(url=CB_URL, fiware_header=fiware_header)
     clear_iot_agent(url=IOTA_URL, fiware_header=fiware_header)
+    clear_context_broker(url=CB_URL, fiware_header=fiware_header)
 
     # instantiate simulation model
     sim_model = SimulationModel(t_start=T_SIM_START,
