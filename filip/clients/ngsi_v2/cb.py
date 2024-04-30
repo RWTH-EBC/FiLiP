@@ -567,7 +567,68 @@ class ContextBrokerClient(BaseHttpClient):
         self.update_or_append_entity_attributes(
             entity_id=entity.id,
             entity_type=entity.type,
+            attrs=entity.get_attributes(),
+            append_strict=append_strict,
+        )
+
+    def update_entity_properties(self, entity: ContextEntity, append_strict: bool = False):
+        """
+        The request payload is an object representing the attributes, of any type
+        but Relationship, to append or update.
+
+        Note:
+            Update means overwriting the existing entity. If you want to
+            manipulate you should rather use patch_entity.
+
+        Args:
+            entity (ContextEntity):
+            append_strict: If `False` the entity attributes are updated (if they
+                previously exist) or appended (if they don't previously exist)
+                with the ones in the payload.
+                If `True` all the attributes in the payload not
+                previously existing in the entity are appended. In addition
+                to that, in case some of the attributes in the payload
+                already exist in the entity, an error is returned.
+                More precisely this means a strict append procedure.
+
+        Returns:
+            None
+        """
+        self.update_or_append_entity_attributes(
+            entity_id=entity.id,
+            entity_type=entity.type,
             attrs=entity.get_properties(),
+            append_strict=append_strict,
+        )
+
+    def update_entity_relationships(self, entity: ContextEntity,
+                                    append_strict: bool = False):
+        """
+        The request payload is an object representing only the attributes, of type
+        Relationship, to append or update.
+
+        Note:
+            Update means overwriting the existing entity. If you want to
+            manipulate you should rather use patch_entity.
+
+        Args:
+            entity (ContextEntity):
+            append_strict: If `False` the entity attributes are updated (if they
+                previously exist) or appended (if they don't previously exist)
+                with the ones in the payload.
+                If `True` all the attributes in the payload not
+                previously existing in the entity are appended. In addition
+                to that, in case some of the attributes in the payload
+                already exist in the entity, an error is returned.
+                More precisely this means a strict append procedure.
+
+        Returns:
+            None
+        """
+        self.update_or_append_entity_attributes(
+            entity_id=entity.id,
+            entity_type=entity.type,
+            attrs=entity.get_relationships(),
             append_strict=append_strict,
         )
 
