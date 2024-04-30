@@ -1,6 +1,7 @@
 """
 Functions to clean up a tenant within a fiware based platform.
 """
+import warnings
 from functools import wraps
 
 from pydantic import AnyHttpUrl, AnyUrl
@@ -14,8 +15,8 @@ from filip.clients.ngsi_v2 import \
 
 
 def clear_context_broker(url: str,
-                          fiware_header: FiwareHeader, 
-                          clear_registrations:bool = False):
+                         fiware_header: FiwareHeader,
+                         clear_registrations: bool = False):
     """
     Function deletes all entities, registrations and subscriptions for a
     given fiware header
@@ -49,7 +50,6 @@ def clear_context_broker(url: str,
         for reg in client.get_registration_list():
             client.delete_registration(registration_id=reg.id)
         assert len(client.get_registration_list()) == 0
-    
 
 
 def clear_iot_agent(url: Union[str, AnyHttpUrl], fiware_header: FiwareHeader):
