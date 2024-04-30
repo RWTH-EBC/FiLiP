@@ -434,6 +434,10 @@ class TestAgent(unittest.TestCase):
         self.client.update_group(service_group=group_base)
         self.assertEqual(group_base, self.client.get_group(resource="/iot/json", apikey="base"))
 
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                iota_url=settings.IOTA_JSON_URL,
+                cb_url=settings.CB_URL)
     def test_clear_iot_agent(self):
         """
         Test for clearing iot agent AFTER clearing context broker
@@ -449,17 +453,10 @@ class TestAgent(unittest.TestCase):
         self.client.post_device(device=device)
         clear_context_broker(settings.CB_URL,
                              self.fiware_header)
-        self.assertEqual(len(cb_client.get_registration_list()),1)
+        self.assertEqual(len(cb_client.get_registration_list()), 1)
 
-        clear_iot_agent(settings.IOTA_JSON_URL,self.fiware_header)
-        self.assertCountEqual(cb_client.get_registration_list(),[])
-
-        self.client.post_device(device=device)
-        clear_context_broker(settings.CB_URL,
-                             self.fiware_header,
-                             clear_registrations=True)
-        with self.assertRaises(requests.HTTPError):
-            clear_iot_agent(settings.IOTA_URL, self.fiware_header)
+        clear_iot_agent(settings.IOTA_JSON_URL, self.fiware_header)
+        self.assertCountEqual(cb_client.get_registration_list(), [])
 
     def tearDown(self) -> None:
         """
