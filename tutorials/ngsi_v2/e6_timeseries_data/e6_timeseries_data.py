@@ -196,8 +196,8 @@ if __name__ == '__main__':
     qlc = QuantumLeapClient(...)
 
     # ToDO: create a http subscriptions that get triggered by updates of your
-    #  device attributes. Note that you can also post the same subscription
-    #  by the context broker.
+    #  device attributes. Note that you can only post the subscription
+    #  to the context broker.
     qlc.post_subscription(entity_id=weather_station.entity_name,
                           entity_type=weather_station.entity_type,
                           cb_url="http://orion:1026",

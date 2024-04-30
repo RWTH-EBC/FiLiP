@@ -123,7 +123,7 @@ if __name__ == '__main__':
     history_weather_station = []
     history_zone_temperature_sensor = []
     history_heater = []
-
+    
     # Create clients and restore devices and groups from file
     groups = parse_file_as(List[ServiceGroup], READ_GROUPS_FILEPATH)
     devices = parse_file_as(List[Device], READ_DEVICES_FILEPATH)
