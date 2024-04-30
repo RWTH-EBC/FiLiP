@@ -583,7 +583,8 @@ class ContextBrokerClient(BaseHttpClient):
             append_strict=append_strict,
         )
 
-    def update_entity_relationships(self, entity: ContextEntity, append_strict: bool = False):
+    def update_entity_relationships(self, entity: ContextEntity,
+                                    append_strict: bool = False):
         """
         The request payload is an object representing only the attributes, of type
         Relationship, to append or update.
