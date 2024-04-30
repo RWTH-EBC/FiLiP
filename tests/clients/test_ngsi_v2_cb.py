@@ -398,7 +398,7 @@ class TestContextBroker(unittest.TestCase):
                 # post entity with a relationship attribute
                 entity_init = self.entity.model_copy(deep=True)
                 attrs = [
-                    NamedContextAttribute(name='in', type='Relationship', value='B1')]
+                    NamedContextAttribute(name='in', type='Relationship', value='dummy1')]
                 entity_init.add_attributes(attrs=attrs)
                 client.post_entity(entity=entity_init, update=True)
 
@@ -406,9 +406,9 @@ class TestContextBroker(unittest.TestCase):
                 entity_update = entity_init.model_copy(deep=True)
                 attrs = [NamedContextAttribute(name='temperature',
                                                type='Number',
-                                               value='2.0'),
+                                               value=21),
                          NamedContextAttribute(name='in', type='Relationship',
-                                               value='B2')]
+                                               value='dummy2')]
                 entity_update.update_attribute(attrs=attrs)
 
                 # update only properties and compare
@@ -421,9 +421,9 @@ class TestContextBroker(unittest.TestCase):
                 update_attrs = entity_update.get_attribute(attribute_name='in')
                 self.assertNotEqual(db_attrs, update_attrs)
 
-                # change property, update relationship, compare
+                # update only relationship and compare
                 attrs = [
-                    NamedContextAttribute(name='temperature', type='Number', value=50.0)]
+                    NamedContextAttribute(name='temperature', type='Number', value=22)]
                 entity_update.update_attribute(attrs=attrs)
                 client.update_entity_relationships(entity_update)
                 entity_db = client.get_entity(entity_update.id)
@@ -434,16 +434,20 @@ class TestContextBroker(unittest.TestCase):
                                         attribute_name='temperature'))
 
                 # change both, update both, compare
-                client.update_entity(entity_init)
-                entity_db = client.get_entity(entity_init.id)
+                attrs = [NamedContextAttribute(name='temperature',
+                                               type='Number',
+                                               value=23),
+                         NamedContextAttribute(name='in', type='Relationship',
+                                               value='dummy3')]
+                entity_update.update_attribute(attrs=attrs)
+                client.update_entity(entity_update)
+                entity_db = client.get_entity(entity_update.id)
                 db_attrs = entity_db.get_attribute(attribute_name='in')
                 update_attrs = entity_update.get_attribute(attribute_name='in')
-                self.assertNotEqual(db_attrs, update_attrs)
+                self.assertEqual(db_attrs, update_attrs)
                 db_attrs = entity_db.get_attribute(attribute_name='temperature')
                 update_attrs = entity_update.get_attribute(attribute_name='temperature')
-                self.assertNotEqual(db_attrs, update_attrs)
-                clear_all(fiware_header=self.fiware_header,
-                          cb_url=settings.CB_URL)
+                self.assertEqual(db_attrs, update_attrs)
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
