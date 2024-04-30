@@ -39,11 +39,11 @@ logger = logging.getLogger(__name__)
 if __name__ == '__main__':
     # # 1 Creating models
     #
-    # Create a building with a weather station as context provider
-    # We start from the meta data here. The other way round is also possible but
-    # using the api of the Context Entity Model
+    # Create a building with a weather station as context provider.
+    # We start by creating metadata. The other way round is also possible, but
+    # you have to use the api of the Context Entity Model.
 
-    # Create unit metadata for the temperature sensor of the weather station
+    # create unit metadata for the temperature sensor of the weather station
     temperature_metadata = NamedMetadata(name="unit",
                                          type="Unit",
                                          value=Unit(name="degree Celsius").model_dump())
@@ -56,7 +56,7 @@ if __name__ == '__main__':
                                              type="WeatherStation",
                                              temperature=temperature)
 
-    # print complete weather station object
+    # print the complete weather station object
     print("+" * 80)
     print("Building with weather station with one property from a sensor")
     print("+" * 80)
@@ -65,7 +65,7 @@ if __name__ == '__main__':
     # create additional properties of the weather station
     wind_speed_metadata = NamedMetadata(name="unit",
                                         type="Unit",
-                                        value=Unit(name="kilometre per "
+                                        value=Unit(name="kilometer per "
                                                         "hour").model_dump())
     # create the temperature attribute of the weather station
     wind_speed = ContextAttribute(type="Number",
@@ -73,7 +73,7 @@ if __name__ == '__main__':
                                   metadata=wind_speed_metadata)
     weather_station_building.add_attributes(attrs={"wind_speed": wind_speed})
 
-    # print complete model
+    # print the complete model
     print("+" * 80)
     print("Building with weather station with two properties from a sensor")
     print("+" * 80)
@@ -89,7 +89,7 @@ if __name__ == '__main__':
 
     # # 2 Creating registration
     #
-    # create registration for the weather station as context provider
+    # create a registration for the weather station as a context provider
     http = Http(url=f"http://localhost:1026/v2")
     provider = Provider(http=http)
     registration = Registration.model_validate(
