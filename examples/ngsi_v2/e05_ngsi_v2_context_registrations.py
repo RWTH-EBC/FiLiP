@@ -65,7 +65,7 @@ if __name__ == '__main__':
     # create additional properties of the weather station
     wind_speed_metadata = NamedMetadata(name="unit",
                                         type="Unit",
-                                        value=Unit(name="kilometer per "
+                                        value=Unit(name="kilometre per "
                                                         "hour").model_dump())
     # create the temperature attribute of the weather station
     wind_speed = ContextAttribute(type="Number",
