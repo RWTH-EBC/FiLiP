@@ -276,5 +276,6 @@ if __name__ == '__main__':
         groups = [item.dict() for item in iotac.get_group_list()]
         json.dump(groups, f, ensure_ascii=False, indent=2)
 
-    clear_context_broker(url=CB_URL, fiware_header=fiware_header)
     clear_iot_agent(url=IOTA_URL, fiware_header=fiware_header)
+    clear_context_broker(url=CB_URL, fiware_header=fiware_header)
+    
