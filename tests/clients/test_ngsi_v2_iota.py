@@ -18,12 +18,12 @@ from filip.models.ngsi_v2.iot import \
     DeviceAttribute, \
     DeviceCommand, \
     LazyDeviceAttribute, \
-    StaticDeviceAttribute
+    StaticDeviceAttribute, ExpressionLanguage
 from filip.utils.cleanup import \
     clear_all, \
     clean_test, \
     clear_context_broker, \
-    clear_iot_agent 
+    clear_iot_agent
 from tests.config import settings
 
 logger = logging.getLogger(__name__)
@@ -55,7 +55,7 @@ class TestAgent(unittest.TestCase):
             "apikey": "1234",
             "endpoint": None,
             "transport": 'HTTP',
-            "expressionLanguage": None
+            "expressionLanguage": ExpressionLanguage.JEXL
         }
         self.client = IoTAClient(
             url=settings.IOTA_JSON_URL,
@@ -403,7 +403,7 @@ class TestAgent(unittest.TestCase):
         with self.assertRaises(KeyError):
             self.client.get_group(resource="/iot/json", apikey="not_exist")
 
-        #self.tearDown()
+        self.tearDown()
 
     def test_update_service_group(self):
         """
@@ -463,17 +463,8 @@ class TestAgent(unittest.TestCase):
         Cleanup test server
 
         """
-        cb_client = ContextBrokerClient(url=settings.CB_URL,
-                                        fiware_header=self.fiware_header)
-        devs_with_cmds = [dev.commands for dev in self.client.get_device_list()
-                          if dev.commands !=[]]
-        if devs_with_cmds != [] and cb_client.get_registration_list() == []:
-            print("Dangling device with command and no registration found")
-            clear_context_broker(url=settings.CB_URL,
-                                 fiware_header=self.fiware_header)
-        else:
-            self.client.close()
-            clear_all(fiware_header=self.fiware_header,
-                cb_url=settings.CB_URL,
-                iota_url=settings.IOTA_JSON_URL)
+        self.client.close()
+        clear_all(fiware_header=self.fiware_header,
+                  cb_url=settings.CB_URL,
+                  iota_url=settings.IOTA_JSON_URL)
 

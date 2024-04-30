@@ -6,7 +6,7 @@ import logging
 import time
 import random
 
-from filip.models.ngsi_v2.subscriptions import Message
+from filip.models.ngsi_v2.subscriptions import Message, Subscription
 from filip.models.ngsi_v2.context import ContextEntity
 from filip.models.base import FiwareHeader
 from filip.clients.ngsi_v2 import ContextBrokerClient, QuantumLeapClient
@@ -77,10 +77,22 @@ if __name__ == "__main__":
     # create a subscription
     # Note: that the IP must be the ones that orion and quantumleap can access,
     # e.g. service name or static IP, localhost will not work here.
-    ql_client.post_subscription(entity_id=hall_entity.id,
-                                cb_url="http://orion:1026",
-                                ql_url="http://quantumleap:8668",
-                                throttling=0)
+
+    subscription:Subscription = Subscription.model_validate({
+        "subject": {
+            "entities": [
+                {
+                    "id": hall_entity.id
+                }
+            ]
+        },
+        "notification": {                               #Notify QL automatically
+            "http": {
+                "url": "http://quantumleap:8668/v2/notify"
+            }
+        }
+    })
+    subscription_id = cb_client.post_subscription(subscription=subscription)
 
     # Get all subscriptions
     subscription_list = cb_client.get_subscription_list()
