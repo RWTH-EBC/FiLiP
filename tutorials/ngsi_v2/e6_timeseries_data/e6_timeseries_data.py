@@ -206,7 +206,7 @@ if __name__ == '__main__':
     # ToDo: Create http subscriptions that get triggered by updates of your
     #  device attributes. Note that you can only post the subscription
     #  to the context broker.
-
+    # Subscription for weather station
     cbc.post_subscription(subscription=Subscription(
         subject=Subject(**{
             'entities': [{'id': weather_station.entity_name,
@@ -218,26 +218,16 @@ if __name__ == '__main__':
         throttling=0)
     )
 
+    # Subscription for zone temperature sensor
     cbc.post_subscription(subscription=Subscription(
-        subject=Subject(**{
-            'entities': [{'id': zone_temperature_sensor.entity_name,
-                          'type': zone_temperature_sensor.entity_type}]
-        }),
-        notification=Notification(**{
-            'http': {'url': 'http://quantumleap:8668/v2/notify'}
-        }),
-        throttling=0)
+        ...
+        )
     )
 
+    # Subscription for heater
     cbc.post_subscription(subscription=Subscription(
-        subject=Subject(**{
-            'entities': [{'id': heater.entity_name,
-                          'type': heater.entity_type}]
-        }),
-        notification=Notification(**{
-            'http': {'url': 'http://quantumleap:8668/v2/notify'}
-        }),
-        throttling=0)
+        ...
+        )
     )
 
     # connect to the mqtt broker and subscribe to your topic
