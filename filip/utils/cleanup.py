@@ -13,7 +13,9 @@ from filip.clients.ngsi_v2 import \
     QuantumLeapClient
 
 
-def clear_context_broker(url: str, fiware_header: FiwareHeader):
+def clear_context_broker(url: str,
+                          fiware_header: FiwareHeader, 
+                          clear_registrations:bool = False):
     """
     Function deletes all entities, registrations and subscriptions for a
     given fiware header
@@ -25,7 +27,10 @@ def clear_context_broker(url: str, fiware_header: FiwareHeader):
     Args:
         url: Url of the context broker service
         fiware_header: header of the tenant
-
+        clear_registrations: Determines whether registrations should be deleted.
+                             If registrations are deleted while devices with commands
+                             still exist, these devices become unreachable.
+                             Only set to true once such devices are cleared.
     Returns:
         None
     """
@@ -40,9 +45,11 @@ def clear_context_broker(url: str, fiware_header: FiwareHeader):
     assert len(client.get_subscription_list()) == 0
 
     # clear registrations
-    for reg in client.get_registration_list():
-        client.delete_registration(registration_id=reg.id)
-    assert len(client.get_registration_list()) == 0
+    if clear_registrations:
+        for reg in client.get_registration_list():
+            client.delete_registration(registration_id=reg.id)
+        assert len(client.get_registration_list()) == 0
+    
 
 
 def clear_iot_agent(url: Union[str, AnyHttpUrl], fiware_header: FiwareHeader):
@@ -51,7 +58,7 @@ def clear_iot_agent(url: Union[str, AnyHttpUrl], fiware_header: FiwareHeader):
     given fiware header
 
     Args:
-        url: Url of the context broker service
+        url: Url of the iot agent service
         fiware_header: header of the tenant
 
     Returns:
