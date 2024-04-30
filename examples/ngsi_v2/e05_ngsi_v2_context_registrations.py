@@ -28,7 +28,7 @@ CB_URL = "http://localhost:1026"
 # FIWARE-Service
 SERVICE = 'filip'
 # FIWARE-Servicepath
-SERVICE_PATH = '/example2'
+SERVICE_PATH = '/example'
 
 # Setting up logging
 logging.basicConfig(
