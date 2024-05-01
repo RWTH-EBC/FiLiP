@@ -116,7 +116,7 @@ if __name__ == '__main__':
     device.add_attribute(attribute=device_attr2)
 
     # This will print our configuration that we will send
-    logging.info("This is our device configuration: \n" + device.json(indent=2))
+    logging.info("This is our device configuration: \n" + device.model_dump_json(indent=2))
 
     # ## 2.2 Device Submission
     #
@@ -147,13 +147,13 @@ if __name__ == '__main__':
     # unfortunately the iot API does not return all the metadata. However,
     # it will still appear in the context-entity
     device = client.iota.get_device(device_id=device.device_id)
-    logging.info(f"{device.json(indent=2)}")
+    logging.info(f"{device.model_dump_json(indent=2)}")
 
     # check if the data entity is created in the context broker
     entity = client.cb.get_entity(entity_id=device.device_id,
                                   entity_type=device.entity_type)
     logging.info("This is our data entity belonging to our device: \n" +
-          entity.json(indent=2))
+          entity.model_dump_json(indent=2))
 
     # # 3 MQTT Client
     #
@@ -236,7 +236,7 @@ if __name__ == '__main__':
     entity = client.cb.get_entity(entity_id=device.device_id,
                                   entity_type=device.entity_type)
     logger.info("This is updated entity status after measurements are "
-                "received: \n" + entity.json(indent=2))
+                "received: \n" + entity.model_dump_json(indent=2))
 
     # create and send a command via the context broker
     for i in range(10):
@@ -257,7 +257,7 @@ if __name__ == '__main__':
                                       entity_type=device.entity_type)
         logger.info("This is updated entity status after the command was sent "
                     "and the acknowledge message was received: "
-                    "\n" + entity.json(indent=2))
+                    "\n" + entity.model_dump_json(indent=2))
 
     # close the mqtt listening thread
     mqtt_client.loop_stop()
