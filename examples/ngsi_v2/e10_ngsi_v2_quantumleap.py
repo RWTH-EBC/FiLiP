@@ -49,14 +49,13 @@ if __name__ == "__main__":
     clear_all(fiware_header=fiware_header, cb_url=CB_URL, ql_url=QL_URL)
 
     ql_client = QuantumLeapClient(url=QL_URL, fiware_header=fiware_header)
-    print("Quantum Leap " + ql_client.get_version()["version"] + " at url " +
-          ql_client.base_url)
+    print(f"Quantum Leap Client version: {ql_client.get_version()["version"]}"
+          f" located at url: {ql_client.base_url}")
 
     cb_client = ContextBrokerClient(url=CB_URL, fiware_header=fiware_header)
 
-    print("Context broker version "
-          + cb_client.get_version()["orion"]["version"]
-          + " at url " + cb_client.base_url)
+    print(f"Context Broker version: {cb_client.get_version()["orion"]["version"]}"
+          f" located at url: {cb_client.base_url}")
 
     # ## 2 Interact with QL
     #
@@ -122,16 +121,23 @@ if __name__ == "__main__":
     # Get historical data as object you may directly convert them to pandas
     # dataframes
     try:
-        print(ql_client.get_entity_by_id(hall_entity.id).to_pandas())
-        print(ql_client.get_entity_values_by_id(hall_entity.id))
-        print(ql_client.get_entity_attr_by_id(hall_entity.id,
-                                              "temperature"))
-        print(ql_client.get_entity_attr_values_by_id(hall_entity.id,
-                                                     attr_name="temperature"))
-        print(ql_client.get_entity_attr_by_type(hall_entity.type,
-                                                attr_name="temperature"))
-        print(ql_client.get_entity_attr_values_by_type(hall_entity.type,
-                                                       "temperature"))
+        print(f"get_entity_by_id method converted to pandas:\n"
+              f"{ql_client.get_entity_by_id(hall_entity.id).to_pandas()}\n")
+
+        print(f"get_entity_values_by_id method:\n"
+              f"{ql_client.get_entity_values_by_id(hall_entity.id)}\n")
+
+        print(f"get_entity_attr_by_id method:\n"
+              f"{ql_client.get_entity_attr_by_id(hall_entity.id, "temperature")}\n")
+
+        print(f"get_entity_attr_values_by_id method:\n"
+              f"{ql_client.get_entity_attr_values_by_id(hall_entity.id, attr_name="temperature")}\n")
+
+        print(f"get_entity_attr_by_type method:\n"
+              f"{ql_client.get_entity_attr_by_type(hall_entity.type, attr_name="temperature")}\n")
+
+        print(f"get_entity_attr_values_by_type method:\n"
+              f"{ql_client.get_entity_attr_values_by_type(hall_entity.type, "temperature")}")
     except:
         logger.info("There might be no historical data for some calls.")
 
