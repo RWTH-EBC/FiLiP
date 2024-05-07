@@ -31,10 +31,10 @@ SERVICE_PATH = '/example'
 # Setting up logging
 logging.basicConfig(
     level='INFO',
-    format='%(asctime)s %(name)s %(levelname)s: %(message)s')
+    format='%(asctime)s %(name)s %(levelname)s: %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S')
 
 logger = logging.getLogger(__name__)
-
 
 if __name__ == "__main__":
     # ## 1 Setup
@@ -42,7 +42,7 @@ if __name__ == "__main__":
     # A QuantumLeapClient and a ContextBrokerClient are created to access
     # FIWARE in the space given by the FiwareHeader. For more information see:
     # e01_http_clients.py
-    
+
     fiware_header = FiwareHeader(service=SERVICE, service_path=SERVICE_PATH)
 
     # clear all existing data
@@ -71,14 +71,14 @@ if __name__ == "__main__":
 
     hall_entity = ContextEntity(**hall)
     cb_client.post_entity(hall_entity)
-    
+
     # ### 2.2 Manage subscriptions
     #
     # create a subscription
     # Note: that the IP must be the ones that orion and quantumleap can access,
     # e.g. service name or static IP, localhost will not work here.
 
-    subscription:Subscription = Subscription.model_validate({
+    subscription: Subscription = Subscription.model_validate({
         "subject": {
             "entities": [
                 {
@@ -86,7 +86,7 @@ if __name__ == "__main__":
                 }
             ]
         },
-        "notification": {                               #Notify QL automatically
+        "notification": {  # Notify QL automatically
             "http": {
                 "url": "http://quantumleap:8668/v2/notify"
             }
@@ -96,7 +96,7 @@ if __name__ == "__main__":
 
     # Get all subscriptions
     subscription_list = cb_client.get_subscription_list()
-    
+
     # Notify QL manually
     subscription_id = ""
     for sub in subscription_list:
@@ -156,7 +156,7 @@ if __name__ == "__main__":
         cb_client.delete_subscription(subscription_id)
     except:
         logger.error("Can not delete subscription from context broker.")
-    
+
     # # 3 Clean up (Optional)
     #
     # Close clients
