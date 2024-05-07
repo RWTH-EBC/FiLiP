@@ -601,29 +601,27 @@ class ContextBrokerClient(BaseHttpClient):
             raise
 
         if delete_devices:
-            if entity_type:
-                from filip.clients.ngsi_v2 import IoTAClient
-                if iota_client:
-                    iota_client_local = deepcopy(iota_client)
-                else:
-                    warnings.warn("No IoTA-Client object provided! "
-                                  "Will try to generate one. "
-                                  "This usage is not recommended.")
+            from filip.clients.ngsi_v2 import IoTAClient
+            if iota_client:
+                iota_client_local = deepcopy(iota_client)
+            else:
+                warnings.warn("No IoTA-Client object provided! "
+                              "Will try to generate one. "
+                              "This usage is not recommended.")
 
-                    iota_client_local = IoTAClient(
-                        url=iota_url,
-                        fiware_header=self.fiware_headers,
-                        headers=self.headers)
+                iota_client_local = IoTAClient(
+                    url=iota_url,
+                    fiware_header=self.fiware_headers,
+                    headers=self.headers)
 
-                for device in iota_client_local.get_device_list(
-                        entity_names=[entity_id]):
+            for device in iota_client_local.get_device_list(
+                    entity_names=[entity_id]):
+                if entity_type:
                     if device.entity_type == entity_type:
                         iota_client_local.delete_device(device_id=device.device_id)
-
-                iota_client_local.close()
-            else:
-                warnings.warn(f"No entity_type provided! "
-                              f"Devices are not deleted")
+                else:
+                    iota_client_local.delete_device(device_id=device.device_id)
+            iota_client_local.close()
 
     def delete_entities(self, entities: List[ContextEntity]) -> None:
         """
