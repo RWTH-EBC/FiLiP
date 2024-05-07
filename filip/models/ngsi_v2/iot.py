@@ -438,7 +438,23 @@ class Device(DeviceSettings):
 
         return self
 
-    @model_validator(mode='before')
+    @model_validator(mode='after')
+    def validate_duplicated_device_attributes(self):
+        """
+        Check whether device has identical attributes
+        Args:
+            self: dict of Device instance.
+
+        Returns:
+            The dict of Device instance after validation.
+        """
+        for i, attr in enumerate(self.attributes):
+            for other_attr in self.attributes[:i] + self.attributes[i + 1:]:
+                if attr.model_dump() == other_attr.model_dump():
+                    raise ValueError(f"Duplicated attributes found: {attr.name}")
+        return self
+
+    @model_validator(mode='after')
     def validate_device_attributes_name_object_id(self):
         """
         Validate the device regarding the behavior with devices attributes.
@@ -453,8 +469,8 @@ class Device(DeviceSettings):
         Returns:
             The dict of Device instance after validation.
         """
-        for i, attr in enumerate(self.get("attributes")):
-            for other_attr in self.get("attributes")[:i] + self.get("attributes")[i + 1:]:
+        for i, attr in enumerate(self.attributes):
+            for other_attr in self.attributes[:i] + self.attributes[i + 1:]:
                 if attr.object_id and other_attr.object_id and \
                         attr.object_id == other_attr.object_id:
                     raise ValueError(f"object_id {attr.object_id} is not unique")
