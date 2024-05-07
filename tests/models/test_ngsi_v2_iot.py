@@ -214,7 +214,7 @@ class TestContextv2IoTModels(unittest.TestCase):
 
             assert len(w) == 2
 
-    def test_device_attributes(self):
+    def test_add_device_attributes(self):
         """
         Test the device model regarding the behavior with devices attributes.
         According to https://iotagent-node-lib.readthedocs.io/en/latest/api.html and
@@ -277,6 +277,78 @@ class TestContextv2IoTModels(unittest.TestCase):
         )
         with self.assertRaises(ValueError):
             device_c.add_attribute(attribute=attr5)
+
+    def test_device_creation(self):
+        """
+        Test the device model regarding the behavior with devices attributes while
+        creating the devices.
+        According to https://iotagent-node-lib.readthedocs.io/en/latest/api.html and
+        based on our best practice, following rules are checked
+            - name is required, but not necessarily unique
+            - object_id is not required, if given must be unique, i.e. not equal to any
+                existing object_id and name
+        """
+
+        def create_device(attr1_name, attr2_name,
+                          attr1_object_id=None, attr2_object_id=None):
+            _attr1 = DeviceAttribute(
+                name=attr1_name,
+                object_id=attr1_object_id,
+                type="Number"
+            )
+            _attr2 = DeviceAttribute(
+                name=attr2_name,
+                object_id=attr2_object_id,
+                type="Number"
+            )
+            return Device(
+                device_id="dummy:01",
+                entity_name="entity:01",
+                entity_type="MyEntity",
+                attributes=[_attr1, _attr2]
+            )
+
+        # fail, because attr1 and attr ara identical
+        with self.assertRaises(ValueError):
+            create_device(
+                attr1_name="temperature",
+                attr2_name="temperature",
+                attr1_object_id=None,
+                attr2_object_id=None
+            )
+
+        # fail, because the object_id is duplicated with the name of attr1
+        with self.assertRaises(ValueError):
+            create_device(
+                attr1_name="temperature",
+                attr2_name="temperature",
+                attr1_object_id=None,
+                attr2_object_id="temperature"
+            )
+
+        # success
+        device = create_device(
+            attr1_name="temperature",
+            attr2_name="temperature",
+            attr1_object_id=None,
+            attr2_object_id="t1"
+        )
+        # success
+        attr4 = DeviceAttribute(
+            name="temperature",
+            type="Number",
+            object_id="t2"
+        )
+        device.add_attribute(attribute=attr4)
+
+        # fail, because object id is duplicated
+        with self.assertRaises(ValueError):
+            create_device(
+                attr1_name="temperature2",
+                attr2_name="temperature",
+                attr1_object_id="t",
+                attr2_object_id="t"
+            )
 
     def tearDown(self) -> None:
         """
