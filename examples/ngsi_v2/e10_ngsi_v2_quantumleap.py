@@ -14,19 +14,18 @@ from filip.utils.cleanup import clear_all
 # ## Parameters
 #
 # To run this example you need a working Fiware v2 setup with a
-# context-broker and QuantumLeap. You can here set the addresses:
+# Context Broker and QuantumLeap. Here you can set the addresses:
 #
 # Host address of Context Broker
 CB_URL = "http://localhost:1026"
 # Host address of QuantumLeap
 QL_URL = "http://localhost:8668"
 
-# You can here also change the used Fiware service
+# Here you can also change FIWARE service and service path.
 # FIWARE-Service
 SERVICE = 'filip'
-# FIWARE-Servicepath
+# FIWARE-Service path
 SERVICE_PATH = '/example'
-
 
 # Setting up logging
 logging.basicConfig(
@@ -39,9 +38,10 @@ logger = logging.getLogger(__name__)
 if __name__ == "__main__":
     # ## 1 Setup
     #
-    # A QuantumLeapClient and a ContextBrokerClient are created to access
-    # FIWARE in the space given by the FiwareHeader. For more information see:
-    # e01_http_clients.py
+    # QuantumLeapClient and ContextBrokerClient are created to access
+    # FIWARE in the space given by the FiwareHeader.
+    #
+    # For more information see: e01_http_clients.py
 
     fiware_header = FiwareHeader(service=SERVICE, service_path=SERVICE_PATH)
 
@@ -61,7 +61,7 @@ if __name__ == "__main__":
     #
     # ### 2.1 Create a ContextEntity to work with
     #
-    # for more details see: e01_ngsi_v2_context_basics.py
+    # For more information see: e01_ngsi_v2_context_basics.py
     hall = {"id": "Hall_1",
             "type": "Room",
             "temperature": {"value": random.randint(0, 100),
@@ -73,8 +73,8 @@ if __name__ == "__main__":
 
     # ### 2.2 Manage subscriptions
     #
-    # create a subscription
-    # Note: that the IP must be the ones that orion and quantumleap can access,
+    # Create a subscription
+    # Note: The IPs must be the ones that Orion and quantumleap can access,
     # e.g. service name or static IP, localhost will not work here.
 
     subscription: Subscription = Subscription.model_validate({
@@ -93,10 +93,10 @@ if __name__ == "__main__":
     })
     subscription_id = cb_client.post_subscription(subscription=subscription)
 
-    # Get all subscriptions
+    # get all subscriptions
     subscription_list = cb_client.get_subscription_list()
 
-    # Notify QL manually
+    # notify QL manually
     subscription_id = ""
     for sub in subscription_list:
         for entity in sub.subject.entities:
@@ -110,7 +110,7 @@ if __name__ == "__main__":
                 except:
                     logger.error("Can not notify QL")
 
-    # Notify QL via Orion
+    # notify QL via Orion
     for i in range(5, 10):
         cb_client.update_attribute_value(entity_id=hall_entity.id,
                                          entity_type=hall_entity.type,
@@ -118,8 +118,7 @@ if __name__ == "__main__":
                                          value=i)
 
     time.sleep(1)
-    # Get historical data as object you may directly convert them to pandas
-    # dataframes
+    # get historical data as object and you can directly convert them to pandas dataframes
     try:
         print(f"get_entity_by_id method converted to pandas:\n"
               f"{ql_client.get_entity_by_id(hall_entity.id).to_pandas()}\n")
@@ -143,21 +142,21 @@ if __name__ == "__main__":
 
     # ## 2.3 Delete
     #
-    # delete entity in QL
+    # Delete entity in QL
     try:
         ql_client.delete_entity(entity_id=hall_entity.id,
                                 entity_type=hall_entity.type)
     except:
         logger.error("Can not delete data from QL")
 
-    # delete entity in  CV
+    # delete entity in CV
     try:
         cb_client.delete_entity(entity_id=hall_entity.id,
                                 entity_type=hall_entity.type)
     except:
         logger.error("Can not delete entity from context broker")
 
-    # delete subscription
+    # delete the subscription
     try:
         cb_client.delete_subscription(subscription_id)
     except:
