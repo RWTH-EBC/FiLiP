@@ -97,7 +97,6 @@ if __name__ == "__main__":
     subscription_list = cb_client.get_subscription_list()
 
     # notify QL manually
-    subscription_id = ""
     for sub in subscription_list:
         for entity in sub.subject.entities:
             if entity.id == hall_entity.id:
