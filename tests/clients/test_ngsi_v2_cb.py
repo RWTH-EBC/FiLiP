@@ -25,7 +25,8 @@ from filip.models.ngsi_v2.context import \
     NamedContextAttribute, \
     NamedCommand, \
     Query, \
-    ActionType
+    ActionType, \
+    ContextEntityKeyValues
 
 from filip.models.ngsi_v2.base import AttrsFormat, EntityPattern, Status, \
     NamedMetadata
@@ -38,7 +39,6 @@ from filip.models.ngsi_v2.iot import \
     StaticDeviceAttribute
 from filip.utils.cleanup import clear_all, clean_test
 from tests.config import settings
-
 
 logger = logging.getLogger(__name__)
 
@@ -218,7 +218,10 @@ class TestContextBroker(unittest.TestCase):
                 fiware_header=self.fiware_header) as client:
             client.post_entity(entity=self.entity, update=True)
             res_entity = client.get_entity(entity_id=self.entity.id)
-            client.get_entity(entity_id=self.entity.id, attrs=['temperature'])
+            self.assertEqual(res_entity,
+                             client.get_entity(
+                                 entity_id=self.entity.id,
+                                 attrs=list(res_entity.get_attribute_names())))
             self.assertEqual(client.get_entity_attributes(
                 entity_id=self.entity.id), res_entity.get_properties(
                 response_format='dict'))
@@ -231,6 +234,220 @@ class TestContextBroker(unittest.TestCase):
             client.update_entity(entity=res_entity)
             self.assertEqual(client.get_entity(entity_id=self.entity.id),
                              res_entity)
+            # delete attribute
+            res_entity.delete_attributes(attrs={'pressure': ContextAttribute(
+                type='Number', value=1050)})
+            client.post_entity(entity=res_entity, update=True)
+            self.assertEqual(client.get_entity(entity_id=self.entity.id),
+                             res_entity)
+
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                cb_url=settings.CB_URL)
+    def test_entity_update(self):
+        """
+        Test different ways (post, update, override, patch) to update entity
+        Both with the update scenario
+        1) append attribute
+        2) update existing attribute value
+        1) delete attribute
+
+        Returns:
+
+        """
+        with ContextBrokerClient(
+                url=settings.CB_URL,
+                fiware_header=self.fiware_header) as client:
+            entity_init = self.entity.model_copy(deep=True)
+            attr_init = entity_init.get_attribute("temperature")
+            attr_init.metadata = {
+                "metadata_init": {
+                    "type": "Text",
+                    "value": "something"}
+            }
+            attr_append = NamedContextAttribute(**{
+                "name": 'pressure',
+                "type": 'Number',
+                "value": 1050})
+            entity_init.update_attribute(attrs=[attr_init])
+
+            # Post
+            if "post":
+                client.post_entity(entity=entity_init, update=True)
+                entity_post = entity_init.model_copy(deep=True)
+                # 1) append attribute
+                entity_post.add_attributes(attrs=[attr_append])
+                client.post_entity(entity=entity_post, patch=True)
+                self.assertEqual(client.get_entity(entity_id=entity_post.id),
+                                 entity_post)
+                # 2) update existing attribute value
+                attr_append_update = NamedContextAttribute(**{
+                    "name": 'pressure',
+                    "type": 'Number',
+                    "value": 2050})
+                entity_post.update_attribute(attrs=[attr_append_update])
+                client.post_entity(entity=entity_post, patch=True)
+                self.assertEqual(client.get_entity(entity_id=entity_post.id),
+                                 entity_post)
+                # 3) delete attribute
+                entity_post.delete_attributes(attrs=[attr_append])
+                client.post_entity(entity=entity_post, update=True)
+                self.assertEqual(client.get_entity(entity_id=entity_post.id),
+                                 entity_post)
+                clear_all(fiware_header=self.fiware_header,
+                          cb_url=settings.CB_URL)
+
+            # update_entity()
+            if "update_entity":
+                client.post_entity(entity=entity_init, update=True)
+                entity_update = entity_init.model_copy(deep=True)
+                # 1) append attribute
+                entity_update.add_attributes(attrs=[attr_append])
+                # change the value of existing attributes
+                entity_update.temperature.value = 30
+                with self.assertRaises(requests.RequestException):
+                    client.update_entity(entity=entity_update,
+                                         append_strict=True)
+                entity_updated = client.get_entity(entity_id=entity_update.id)
+                self.assertEqual(entity_updated.get_attribute_names(),
+                                 entity_update.get_attribute_names())
+                self.assertNotEqual(entity_updated.temperature.value,
+                                    entity_update.temperature.value)
+                # change back the value
+                entity_update.temperature.value = 20.0
+                # 2) update existing attribute value
+                attr_append_update = NamedContextAttribute(**{
+                    "name": 'pressure',
+                    "type": 'Number',
+                    "value": 2050})
+                entity_update.update_attribute(attrs=[attr_append_update])
+                client.update_entity(entity=ContextEntity(
+                    **{
+                        "id": entity_update.id,
+                        "type": entity_update.type,
+                        "pressure": {
+                            "type": 'Number',
+                            "value": 2050
+                        }
+                    }
+                ))
+                self.assertEqual(client.get_entity(entity_id=entity_update.id),
+                                 entity_update)
+                # 3) delete attribute
+                entity_update.delete_attributes(attrs=[attr_append])
+                client.update_entity(entity=entity_update)
+                self.assertNotEqual(client.get_entity(entity_id=entity_update.id),
+                                    entity_update)
+                clear_all(fiware_header=self.fiware_header,
+                          cb_url=settings.CB_URL)
+
+            # override_entity()
+            if "override_entity":
+                client.post_entity(entity=entity_init, update=True)
+                entity_override = entity_init.model_copy(deep=True)
+                # 1) append attribute
+                entity_override.add_attributes(attrs=[attr_append])
+                client.override_entity(entity=entity_override)
+                self.assertEqual(client.get_entity(entity_id=entity_override.id),
+                                 entity_override)
+                # 2) update existing attribute value
+                attr_append_update = NamedContextAttribute(**{
+                    "name": 'pressure',
+                    "type": 'Number',
+                    "value": 2050})
+                entity_override.update_attribute(attrs=[attr_append_update])
+                client.override_entity(entity=entity_override)
+                self.assertEqual(client.get_entity(entity_id=entity_override.id),
+                                 entity_override)
+                # 3) delete attribute
+                entity_override.delete_attributes(attrs=[attr_append])
+                client.override_entity(entity=entity_override)
+                self.assertEqual(client.get_entity(entity_id=entity_override.id),
+                                 entity_override)
+                clear_all(fiware_header=self.fiware_header,
+                          cb_url=settings.CB_URL)
+
+            # patch_entity
+            if "patch_entity":
+                client.post_entity(entity=entity_init, update=True)
+                entity_patch = entity_init.model_copy(deep=True)
+                # 1) append attribute
+                entity_patch.add_attributes(attrs=[attr_append])
+                client.patch_entity(entity=entity_patch)
+                self.assertEqual(client.get_entity(entity_id=entity_patch.id),
+                                 entity_patch)
+                # 2) update existing attribute value
+                attr_append_update = NamedContextAttribute(**{
+                    "name": 'pressure',
+                    "type": 'Number',
+                    "value": 2050})
+                entity_patch.update_attribute(attrs=[attr_append_update])
+                client.patch_entity(entity=entity_patch)
+                self.assertEqual(client.get_entity(entity_id=entity_patch.id),
+                                 entity_patch)
+                # 3) delete attribute
+                entity_patch.delete_attributes(attrs=[attr_append])
+                client.patch_entity(entity=entity_patch)
+                self.assertEqual(client.get_entity(entity_id=entity_patch.id),
+                                 entity_patch)
+                clear_all(fiware_header=self.fiware_header,
+                          cb_url=settings.CB_URL)
+
+            # 4) update only property or relationship
+            if "update_entity_properties" or "update_entity_relationship":
+                # post entity with a relationship attribute
+                entity_init = self.entity.model_copy(deep=True)
+                attrs = [
+                    NamedContextAttribute(name='in', type='Relationship', value='dummy1')]
+                entity_init.add_attributes(attrs=attrs)
+                client.post_entity(entity=entity_init, update=True)
+
+                # create entity that differs in both attributes
+                entity_update = entity_init.model_copy(deep=True)
+                attrs = [NamedContextAttribute(name='temperature',
+                                               type='Number',
+                                               value=21),
+                         NamedContextAttribute(name='in', type='Relationship',
+                                               value='dummy2')]
+                entity_update.update_attribute(attrs=attrs)
+
+                # update only properties and compare
+                client.update_entity_properties(entity_update)
+                entity_db = client.get_entity(entity_update.id)
+                db_attrs = entity_db.get_attribute(attribute_name='temperature')
+                update_attrs = entity_update.get_attribute(attribute_name='temperature')
+                self.assertEqual(db_attrs, update_attrs)
+                db_attrs = entity_db.get_attribute(attribute_name='in')
+                update_attrs = entity_update.get_attribute(attribute_name='in')
+                self.assertNotEqual(db_attrs, update_attrs)
+
+                # update only relationship and compare
+                attrs = [
+                    NamedContextAttribute(name='temperature', type='Number', value=22)]
+                entity_update.update_attribute(attrs=attrs)
+                client.update_entity_relationships(entity_update)
+                entity_db = client.get_entity(entity_update.id)
+                self.assertEqual(entity_db.get_attribute(attribute_name='in'),
+                                 entity_update.get_attribute(attribute_name='in'))
+                self.assertNotEqual(entity_db.get_attribute(attribute_name='temperature'),
+                                    entity_update.get_attribute(
+                                        attribute_name='temperature'))
+
+                # change both, update both, compare
+                attrs = [NamedContextAttribute(name='temperature',
+                                               type='Number',
+                                               value=23),
+                         NamedContextAttribute(name='in', type='Relationship',
+                                               value='dummy3')]
+                entity_update.update_attribute(attrs=attrs)
+                client.update_entity(entity_update)
+                entity_db = client.get_entity(entity_update.id)
+                db_attrs = entity_db.get_attribute(attribute_name='in')
+                update_attrs = entity_update.get_attribute(attribute_name='in')
+                self.assertEqual(db_attrs, update_attrs)
+                db_attrs = entity_db.get_attribute(attribute_name='temperature')
+                update_attrs = entity_update.get_attribute(attribute_name='temperature')
+                self.assertEqual(db_attrs, update_attrs)
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
@@ -326,7 +543,7 @@ class TestContextBroker(unittest.TestCase):
             client.delete_entity(entity_id=self.entity.id,
                                  entity_type=self.entity.type)
 
-    #@unittest.skip('Does currently not reliably work in CI')
+    # @unittest.skip('Does currently not reliably work in CI')
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
                 cb_url=settings.CB_URL)
@@ -344,7 +561,7 @@ class TestContextBroker(unittest.TestCase):
             sub_update = sub_res.model_copy(
                 update={'expires': datetime.now() + timedelta(days=2),
                         'throttling': 1},
-                )
+            )
             client.update_subscription(subscription=sub_update)
             sub_res_updated = client.get_subscription(subscription_id=sub_id)
             self.assertNotEqual(sub_res.expires, sub_res_updated.expires)
@@ -353,33 +570,69 @@ class TestContextBroker(unittest.TestCase):
             self.assertEqual(sub_res_updated.throttling,
                              sub_update.throttling)
 
-            # test duplicate prevention and update
-            sub = self.subscription.model_copy()
-            id1 = client.post_subscription(sub)
-            sub_first_version = client.get_subscription(id1)
-            sub.description = "This subscription shall not pass"
+            sub_with_nans = Subscription.model_validate({
+                "description": "Test subscription with empty values",
+                "subject": {
+                    "entities": [
+                        {
+                            "idPattern": ".*",
+                            "type": "Device"
+                        }
+                    ]
+                },
+                "notification": {
+                    "http": {
+                        "url": "http://localhost:1234"
+                    }
+                },
+                "expires": datetime.now() + timedelta(days=1),
+                "throttling": 0
+            })
 
-            id2 = client.post_subscription(sub, update=False)
-            self.assertEqual(id1, id2)
-            sub_second_version = client.get_subscription(id2)
-            self.assertEqual(sub_first_version.description,
-                             sub_second_version.description)
+            sub_with_empty_list = sub_with_nans.model_copy(deep=True)
+            sub_with_empty_list.notification.attrs = []
 
-            id2 = client.post_subscription(sub, update=True)
-            self.assertEqual(id1, id2)
-            sub_second_version = client.get_subscription(id2)
-            self.assertNotEqual(sub_first_version.description,
-                                sub_second_version.description)
+            test_subscriptions = [sub_with_empty_list,
+                                  sub_with_nans,
+                                  self.subscription]
 
-            # test that duplicate prevention does not prevent to much
-            sub2 = self.subscription.model_copy()
-            sub2.description = "Take this subscription to Fiware"
-            sub2.subject.entities[0] = {
-                "idPattern": ".*",
-                "type": "Building"
-            }
-            id3 = client.post_subscription(sub2)
-            self.assertNotEqual(id1, id3)
+            for _sub_raw in test_subscriptions:
+                # test duplicate prevention and update
+                sub = self.subscription.model_copy(deep=True)
+                id1 = client.post_subscription(sub, update=True)
+                sub_first_version = client.get_subscription(id1)
+                sub.description = "This subscription shall not pass"
+
+                # update=False, should not override the existing
+                id2 = client.post_subscription(sub, update=False)
+                self.assertEqual(id1, id2)
+                sub_second_version = client.get_subscription(id2)
+                self.assertEqual(sub_first_version.description,
+                                 sub_second_version.description)
+
+                # update=True, should override the existing
+                id2 = client.post_subscription(sub, update=True)
+                self.assertEqual(id1, id2)
+                sub_second_version = client.get_subscription(id2)
+                self.assertNotEqual(sub_first_version.description,
+                                    sub_second_version.description)
+
+                # test that duplicate prevention does not prevent to much
+                sub2 = _sub_raw.model_copy()
+                sub2.description = "Take this subscription to Fiware"
+                sub2.subject.entities = [
+                    EntityPattern.model_validate({
+                        "idPattern": ".*",
+                        "type": "Building"
+                    }
+                    )
+                ]
+                id3 = client.post_subscription(sub2)
+                self.assertNotEqual(id1, id3)
+
+                # clean the subscriptions after finish each loop
+                client.delete_subscription(id1)
+                client.delete_subscription(id3)
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
@@ -420,10 +673,11 @@ class TestContextBroker(unittest.TestCase):
                 iota_url=settings.IOTA_JSON_URL)
     def test_mqtt_subscriptions(self):
         mqtt_url = settings.MQTT_BROKER_URL
+        mqtt_url_internal = settings.MQTT_BROKER_URL_INTERNAL
         mqtt_topic = ''.join([settings.FIWARE_SERVICE,
                               settings.FIWARE_SERVICEPATH])
         notification = self.subscription.notification.model_copy(
-            update={'http': None, 'mqtt': Mqtt(url=mqtt_url,
+            update={'http': None, 'mqtt': Mqtt(url=mqtt_url_internal,
                                                topic=mqtt_topic)})
         subscription = self.subscription.model_copy(
             update={'notification': notification,
@@ -481,11 +735,12 @@ class TestContextBroker(unittest.TestCase):
         mqtt_client.loop_start()
         new_value = 50
 
+        time.sleep(1)
         self.client.update_attribute_value(entity_id=entity.id,
                                            attr_name='temperature',
                                            value=new_value,
                                            entity_type=entity.type)
-        time.sleep(5)
+        time.sleep(1)
 
         # test if the subscriptions arrives and the content aligns with updates
         self.assertIsNotNone(sub_message)
@@ -494,6 +749,281 @@ class TestContextBroker(unittest.TestCase):
         mqtt_client.loop_stop()
         mqtt_client.disconnect()
         time.sleep(1)
+
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                cb_url=settings.CB_URL)
+    def test_override_entity_keyvalues(self):
+        entity1 = self.entity.model_copy(deep=True)
+        # initial entity
+        self.client.post_entity(entity1)
+
+        # entity with key value
+        entity1_key_value = self.client.get_entity(
+            entity_id=entity1.id,
+            response_format=AttrsFormat.KEY_VALUES)
+
+        # override entity with ContextEntityKeyValues
+        entity1_key_value.temperature = 30
+        self.client.override_entity(entity=entity1_key_value, key_values=True)
+        self.assertEqual(entity1_key_value,
+                         self.client.get_entity(
+                             entity_id=entity1.id,
+                             response_format=AttrsFormat.KEY_VALUES)
+                         )
+        # test replace all attributes
+        entity1_key_value_dict = entity1_key_value.model_dump()
+        entity1_key_value_dict["temp"] = 40
+        entity1_key_value_dict["humidity"] = 50
+        self.client.override_entity(
+            entity=ContextEntityKeyValues(**entity1_key_value_dict),
+            key_values=True)
+        self.assertEqual(entity1_key_value_dict,
+                         self.client.get_entity(
+                             entity_id=entity1.id,
+                             response_format=AttrsFormat.KEY_VALUES).model_dump()
+                         )
+
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                cb_url=settings.CB_URL)
+    def test_update_entity_keyvalues(self):
+        entity1 = self.entity.model_copy(deep=True)
+        # initial entity
+        self.client.post_entity(entity1)
+
+        # key value
+        entity1_key_value = self.client.get_entity(
+            entity_id=entity1.id,
+            response_format=AttrsFormat.KEY_VALUES)
+
+        # update entity with ContextEntityKeyValues
+        entity1_key_value.temperature = 30
+        self.client.update_entity_key_values(entity=entity1_key_value)
+        self.assertEqual(entity1_key_value,
+                         self.client.get_entity(
+                             entity_id=entity1.id,
+                             response_format=AttrsFormat.KEY_VALUES)
+                         )
+        entity2 = self.client.get_entity(entity_id=entity1.id)
+        self.assertEqual(entity1.temperature.type,
+                         entity2.temperature.type)
+
+        # update entity with dictionary
+        entity1_key_value_dict = entity1_key_value.model_dump()
+        entity1_key_value_dict["temperature"] = 40
+        self.client.update_entity_key_values(entity=entity1_key_value_dict)
+        self.assertEqual(entity1_key_value_dict,
+                         self.client.get_entity(
+                             entity_id=entity1.id,
+                             response_format=AttrsFormat.KEY_VALUES).model_dump()
+                         )
+        entity3 = self.client.get_entity(entity_id=entity1.id)
+        self.assertEqual(entity1.temperature.type,
+                         entity3.temperature.type)
+        entity1_key_value_dict.update({"humidity": 50})
+        with self.assertRaises(RequestException):
+            self.client.update_entity_key_values(entity=entity1_key_value_dict)
+
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                cb_url=settings.CB_URL)
+    def test_notification(self):
+        mqtt_url = settings.MQTT_BROKER_URL
+        mqtt_url_internal = settings.MQTT_BROKER_URL_INTERNAL
+        entity = ContextEntity.model_validate({
+            "id": "Test:001",
+            "type": "Test",
+            "temperature": {
+                "type": "Number",
+                "value": 0
+            },
+            "humidity": {
+                "type": "Number",
+                "value": 0
+            },
+            "co2": {
+                "type": "Number",
+                "value": 0
+            }
+        })
+        mqtt_topic = "notification/test"
+        sub_with_empty_notification = Subscription.model_validate({
+            "description": "Test notification with empty values",
+            "subject": {
+                "entities": [
+                    {
+                        "id": "Test:001",
+                        "type": "Test"
+                    }
+                ]
+            },
+            "notification": {
+                "mqtt": {
+                    "url": mqtt_url_internal,
+                    "topic": mqtt_topic
+                },
+                "attrs": []  # empty attrs list
+            },
+            "expires": datetime.now() + timedelta(days=1),
+            "throttling": 0
+        })
+        sub_with_none_notification = Subscription.model_validate({
+            "description": "Test notification with none values",
+            "subject": {
+                "entities": [
+                    {
+                        "id": "Test:001",
+                        "type": "Test"
+                    }
+                ]
+            },
+            "notification": {
+                "mqtt": {
+                    "url": mqtt_url_internal,
+                    "topic": mqtt_topic
+                },
+                "attrs": None  # attrs = None
+            },
+            "expires": datetime.now() + timedelta(days=1),
+            "throttling": 0
+        })
+        sub_with_single_attr_notification = Subscription.model_validate({
+            "description": "Test notification with single attribute",
+            "subject": {
+                "entities": [
+                    {
+                        "id": "Test:001",
+                        "type": "Test"
+                    }
+                ]
+            },
+            "notification": {
+                "mqtt": {
+                    "url": mqtt_url_internal,
+                    "topic": mqtt_topic
+                },
+                "attrs": ["temperature"]
+            },
+            "expires": datetime.now() + timedelta(days=1),
+            "throttling": 0
+        })
+
+        # MQTT settings
+        sub_message = None
+        sub_messages = {}
+
+        def on_connect(client, userdata, flags, reasonCode, properties=None):
+            if reasonCode != 0:
+                logger.error(f"Connection failed with error code: "
+                             f"'{reasonCode}'")
+                raise ConnectionError
+            else:
+                logger.info("Successfully, connected with result code " + str(
+                    reasonCode))
+            client.subscribe(mqtt_topic)
+
+        def on_subscribe(client, userdata, mid, granted_qos, properties=None):
+            logger.info("Successfully subscribed to with QoS: %s", granted_qos)
+
+        def on_message(client, userdata, msg):
+            logger.info("Received MQTT message: " + msg.topic + " " + str(
+                msg.payload))
+            nonlocal sub_message
+            sub_message = Message.model_validate_json(msg.payload)
+            sub_messages[sub_message.subscriptionId] = sub_message
+
+        def on_disconnect(client, userdata, reasonCode, properties=None):
+            logger.info("MQTT client disconnected with reasonCode "
+                        + str(reasonCode))
+
+        import paho.mqtt.client as mqtt
+        mqtt_client = mqtt.Client(userdata=None,
+                                  protocol=mqtt.MQTTv5,
+                                  transport="tcp")
+        # add our callbacks to the client
+        mqtt_client.on_connect = on_connect
+        mqtt_client.on_subscribe = on_subscribe
+        mqtt_client.on_message = on_message
+        mqtt_client.on_disconnect = on_disconnect
+        # connect to the server
+        mqtt_client.connect(host=mqtt_url.host,
+                            port=mqtt_url.port,
+                            keepalive=60,
+                            bind_address="",
+                            bind_port=0,
+                            clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
+                            properties=None)
+
+        # create a non-blocking thread for mqtt communication
+        mqtt_client.loop_start()
+
+        with ContextBrokerClient(
+                url=settings.CB_URL,
+                fiware_header=self.fiware_header) as client:
+            client.post_entity(entity=entity)
+            # test1 notification with empty attrs
+            sub_id_1 = client.post_subscription(
+                subscription=sub_with_empty_notification)
+            time.sleep(1)
+            client.update_attribute_value(entity_id=entity.id,
+                                          attr_name="temperature",
+                                          value=10
+                                          )
+            # check the notified entities
+            time.sleep(1)
+            sub_1 = client.get_subscription(sub_id_1)
+            self.assertEqual(sub_1.notification.timesSent, 1)
+            self.assertEqual(len(sub_message.data[0].get_attributes()), 3)
+
+            # test2 notification with None attrs, which should be identical to
+            # the previous one
+            sub_id_2 = client.post_subscription(
+                subscription=sub_with_none_notification)
+            time.sleep(1)
+            subscription_list = client.get_subscription_list()
+            self.assertEqual(sub_id_1, sub_id_2)
+            self.assertEqual(len(subscription_list), 1)
+
+            client.update_attribute_value(entity_id=entity.id,
+                                          attr_name="humidity",
+                                          value=20
+                                          )
+            time.sleep(1)
+            sub_1 = client.get_subscription(sub_id_1)
+            self.assertEqual(sub_1.notification.timesSent, 2)
+            self.assertEqual(
+                sub_message.data[0].get_attribute("humidity").value, 20)
+
+            # test3 notification with single attribute, which should create a
+            # new subscription
+            sub_id_3 = client.post_subscription(
+                subscription=sub_with_single_attr_notification
+            )
+            time.sleep(1)
+            subscription_list = client.get_subscription_list()
+            self.assertNotEqual(sub_id_1, sub_id_3)
+            self.assertEqual(len(subscription_list), 2)
+
+            # both sub1 and sub3 will be triggered by this update
+            client.update_attribute_value(entity_id=entity.id,
+                                          attr_name="co2",
+                                          value=30
+                                          )
+            time.sleep(1)
+            sub_1 = client.get_subscription(sub_id_1)
+            sub_3 = client.get_subscription(sub_id_3)
+            self.assertEqual(sub_1.notification.timesSent, 3)
+            self.assertEqual(sub_3.notification.timesSent, 1)
+            self.assertEqual(
+                len(sub_messages[sub_id_1].data[0].get_attributes()), 3)
+            self.assertEqual(
+                sub_messages[sub_id_1].data[0].get_attribute("co2").value, 30)
+            self.assertEqual(
+                len(sub_messages[sub_id_3].data[0].get_attributes()), 1)
+            self.assertEqual(
+                sub_messages[sub_id_3].data[0].get_attribute(
+                    "temperature").value, 10)
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
@@ -519,6 +1049,167 @@ class TestContextBroker(unittest.TestCase):
             self.assertEqual(1000,
                              len(client.query(query=query,
                                               response_format='keyValues')))
+            # update with keyValues
+            entities_keyvalues = [ContextEntityKeyValues(id=str(i),
+                                                         type=f'filip:object:TypeC',
+                                                         attr1="text attribute",
+                                                         attr2=1
+                                                         ) for i in range(0, 1000)]
+            client.update(entities=entities_keyvalues,
+                          update_format="keyValues",
+                          action_type=ActionType.APPEND)
+            entity_keyvalues = EntityPattern(idPattern=".*", typePattern=".*TypeC$")
+            query_keyvalues = Query.model_validate(
+                {"entities": [entity_keyvalues.model_dump(exclude_unset=True)]})
+            entities_keyvalues_query = client.query(query=query_keyvalues,
+                                                    response_format='keyValues')
+            self.assertEqual(1000, len(entities_keyvalues_query))
+            self.assertEqual(1000, sum([e.attr2 for e in entities_keyvalues_query]))
+
+    def test_force_update_option(self):
+        """
+        Test the functionality of the flag forceUpdate
+        """
+        entity_dict = {
+            "id": "TestForceupdate:001",
+            "type": "Test",
+            "temperature": {"type": "Number",
+                            "value": 20},
+            "humidity": {"type": "Number",
+                         "value": 50},
+        }
+        entity = ContextEntity(**entity_dict)
+        self.client.post_entity(entity=entity)
+
+        # test with only changed attrs
+        sub_only_changed_attrs = Subscription(**{
+            "description": "One subscription to rule them all",
+            "subject": {
+                "entities": [
+                    {
+                        "id": entity.id,
+                    }
+                ]
+            },
+            "notification": {
+                "http": {
+                    "url": "http://localhost:1234"
+                },
+                "attrs": [
+                    "temperature",
+                    "humidity"
+                ],
+                "onlyChangedAttrs": True
+            }
+        })
+        sub_id_1 = self.client.post_subscription(
+            subscription=sub_only_changed_attrs)
+        time_sent_1 = 0
+
+        # not activate
+        self.client.update_attribute_value(
+            entity_id=entity.id,
+            attr_name="temperature",
+            value=20)
+        time.sleep(1)
+        sub_1 = self.client.get_subscription(sub_id_1)
+        time_sent_1_is = sub_1.notification.timesSent if \
+            sub_1.notification.timesSent else 0
+        self.assertEqual(time_sent_1_is, time_sent_1)
+
+        # activate because value changed
+        self.client.update_attribute_value(
+            entity_id=entity.id,
+            attr_name="temperature",
+            value=21)
+        time_sent_1 += 1  # should be activated
+        time.sleep(1)
+        sub_1 = self.client.get_subscription(sub_id_1)
+        time_sent_1_is = sub_1.notification.timesSent if \
+            sub_1.notification.timesSent else 0
+        self.assertEqual(time_sent_1_is, time_sent_1)
+
+        # activate because forceUpdate
+        self.client.update_attribute_value(
+            entity_id=entity.id,
+            attr_name="temperature",
+            value=21,
+            forcedUpdate=True
+        )
+        time_sent_1 += 1  # should be activated
+        time.sleep(1)
+        sub_1 = self.client.get_subscription(sub_id_1)
+        time_sent_1_is = sub_1.notification.timesSent if \
+            sub_1.notification.timesSent else 0
+        self.assertEqual(time_sent_1_is, time_sent_1)
+
+        # test with conditions
+        sub_with_conditions = Subscription(**{
+            "description": "One subscription to rule them all",
+            "subject": {
+                "entities": [
+                    {
+                        "id": entity.id,
+                    }
+                ],
+                "condition": {
+                    "attrs": [
+                        "temperature"
+                    ],
+                    "expression": {
+                        "q": "temperature>40"
+                    }
+                }
+            },
+            "notification": {
+                "http": {
+                    "url": "http://localhost:1234"
+                },
+                "attrs": [
+                    "temperature",
+                    "humidity"
+                ]
+            }
+        })
+        sub_id_2 = self.client.post_subscription(
+            subscription=sub_with_conditions)
+        time_sent_2 = 0
+
+        # not activate
+        self.client.update_attribute_value(
+            entity_id=entity.id,
+            attr_name="temperature",
+            value=20)
+        time.sleep(1)
+        sub_2 = self.client.get_subscription(sub_id_2)
+        time_sent_2_is = sub_2.notification.timesSent if \
+            sub_2.notification.timesSent else 0
+        self.assertEqual(time_sent_2_is, time_sent_2)
+
+        # activate because condition fulfilled
+        self.client.update_attribute_value(
+            entity_id=entity.id,
+            attr_name="temperature",
+            value=41)
+        time_sent_2 += 1  # should be activated
+        time.sleep(1)
+        sub_2 = self.client.get_subscription(sub_id_2)
+        time_sent_2_is = sub_2.notification.timesSent if \
+            sub_2.notification.timesSent else 0
+        self.assertEqual(time_sent_2_is, time_sent_2)
+
+        # not activate even with forceUpdate
+        self.client.update_attribute_value(
+            entity_id=entity.id,
+            attr_name="temperature",
+            value=20,
+            forcedUpdate=True
+        )
+        time.sleep(1)
+        sub_2 = self.client.get_subscription(sub_id_2)
+        time_sent_2_is = sub_2.notification.timesSent if \
+            sub_2.notification.timesSent else 0
+        self.assertEqual(time_sent_2_is, time_sent_2)
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
@@ -825,9 +1516,11 @@ class TestContextBroker(unittest.TestCase):
         self.client.post_entity(entity=entity)
 
         testData = "hello_test"
-        self.client.update_attribute_value(entity_id="string_test", attr_name="data", value=testData)
+        self.client.update_attribute_value(entity_id="string_test", attr_name="data",
+                                           value=testData)
 
-        readback = self.client.get_attribute_value(entity_id="string_test", attr_name="data")
+        readback = self.client.get_attribute_value(entity_id="string_test",
+                                                   attr_name="data")
 
         self.assertEqual(testData, readback)
 

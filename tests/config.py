@@ -44,9 +44,15 @@ class TestSettings(BaseSettings):
                                                              'QL_URL'))
 
     MQTT_BROKER_URL: AnyUrl = Field(default="mqtt://127.0.0.1:1883",
-                                    validation_alias=AliasChoices('MQTT_BROKER_URL',
-                                                                  'MQTT_URL',
-                                                                  'MQTT_BROKER'))
+                                    validation_alias=AliasChoices(
+                                        'MQTT_BROKER_URL',
+                                        'MQTT_URL',
+                                        'MQTT_BROKER'))
+
+    MQTT_BROKER_URL_INTERNAL: AnyUrl = Field(default="mqtt://mosquitto:1883",
+                                             validation_alias=AliasChoices(
+                                                 'MQTT_BROKER_URL_INTERNAL',
+                                                 'MQTT_URL_INTERNAL'))
 
     # IF CI_JOB_ID is present it will always overwrite the service path
     CI_JOB_ID: Optional[str] = Field(default=None,

@@ -1,8 +1,32 @@
-#### v0.3.1
+### v0.4.2
+- add: validation for JEXL based expression ([#260](https://github.com/RWTH-EBC/FiLiP/pull/260))
+- add: tutorials for multi-entity ([#260](https://github.com/RWTH-EBC/FiLiP/pull/260))
+- add: add ``update_entity_relationships`` to allow relationship update ([#271](https://github.com/RWTH-EBC/FiLiP/pull/271))
+- add: flag to determine the deletion of registration when clearing the CB ([#267](https://github.com/RWTH-EBC/FiLiP/pull/267))
+- fix: rework tutorials for pydantic v2 ([#259](https://github.com/RWTH-EBC/FiLiP/pull/259))
+- fix: inconsistency of `entity_type` as required argument ([#188](https://github.com/RWTH-EBC/FiLiP/pull/188))
+
+### v0.4.1
+- fix: Session added as optional parameter to enable tls communication with clients ([#249](https://github.com/RWTH-EBC/FiLiP/pull/249))
+- fix: add missing package ``geojson_pydantic`` in setup.py ([#276](https://github.com/RWTH-EBC/FiLiP/pull/276))
+- add: support entity creation with keyvalues ([#264](https://github.com/RWTH-EBC/FiLiP/pull/264))
+
+#### v0.4.0
 - add tutorial for protected endpoint with bearer authentication ([#208](https://github.com/RWTH-EBC/FiLiP/issues/208))
-- fixed inconsistency of `entity_type` as required argument ([#188](https://github.com/RWTH-EBC/FiLiP/pull/188))
+- add internal mqtt url for unittests @djs0109 ([#239](https://github.com/RWTH-EBC/FiLiP/pull/239))
+- fix: compare subscriptions to prevent duplicated notifications @FWuellhorst, @RCX112 ([#138](https://github.com/RWTH-EBC/FiLiP/pull/138))
 - update pandas version to `~=2.1.4` for `python>=3.9` ([#231](https://github.com/RWTH-EBC/FiLiP/pull/231))
 - fix: wrong msg in iotac post device ([#214](https://github.com/RWTH-EBC/FiLiP/pull/214))
+- add support to update entities with keyValues @djs0109 ([#245](https://github.com/RWTH-EBC/FiLiP/pull/245))
+- add function to override the existing entity ([#232 ](https://github.com/RWTH-EBC/FiLiP/pull/232 ))
+- fix: remove root slash from paths ([#251](https://github.com/RWTH-EBC/FiLiP/issues/251))
+- fix: include headers in some requests ([#250](https://github.com/RWTH-EBC/FiLiP/issues/250))
+- add: `forcedUpdate` and missing `overrideMetadata` in request parameters ([#236](https://github.com/RWTH-EBC/FiLiP/pull/236))
+- feat: make context-entity more customizable ([#225](https://github.com/RWTH-EBC/FiLiP/issues/225))
+- feat: add geojson support to context-entity ([#226](https://github.com/RWTH-EBC/FiLiP/issues/226))
+
+BREAKING CHANGE:
+- feat: make context-entity more customizable ([#225](https://github.com/RWTH-EBC/FiLiP/issues/225)) enforces stricter type validation as before. This might lead to errors in your code if you are not using the correct types. Please check the documentation for the correct types.
 
 #### v0.3.0
 - fix: bug in typePattern validation @richardmarston ([#180](https://github.com/RWTH-EBC/FiLiP/pull/180))

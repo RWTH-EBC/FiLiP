@@ -3,49 +3,74 @@ NGSIv2 models for context broker interaction
 """
 import json
 from typing import Any, List, Dict, Union, Optional, Set, Tuple
-from aenum import Enum
-from pydantic import \
-    field_validator, ConfigDict, BaseModel, \
-    Field
 
-from filip.models.ngsi_v2.base import \
-    EntityPattern, \
-    Expression, \
-    BaseAttribute, \
-    BaseValueAttribute, \
-    BaseNameAttribute
+from aenum import Enum
+from pydantic import field_validator, ConfigDict, BaseModel, Field, \
+    model_validator
+from pydantic_core.core_schema import ValidationInfo
+
+from filip.models.ngsi_v2.base import (
+    EntityPattern,
+    Expression,
+    BaseAttribute,
+    BaseValueAttribute,
+    BaseNameAttribute,
+)
 from filip.models.base import DataType
-from filip.utils.validators import validate_fiware_datatype_standard, validate_fiware_datatype_string_protect
+from filip.utils.validators import (
+    validate_fiware_datatype_standard,
+    validate_fiware_datatype_string_protect,
+)
 
 
 class GetEntitiesOptions(str, Enum):
-    """ Options for queries"""
-    _init_ = 'value __doc__'
+    """Options for queries"""
+
+    _init_ = "value __doc__"
 
     NORMALIZED = "normalized", "Normalized message representation"
-    KEY_VALUES = "keyValues", "Key value message representation." \
-                              "This mode represents the entity " \
-                              "attributes by their values only, leaving out " \
-                              "the information about type and metadata. " \
-                              "See example " \
-                              "below." \
-                              "Example: " \
-                              "{" \
-                              "  'id': 'R12345'," \
-                              "  'type': 'Room'," \
-                              "  'temperature': 22" \
-                              "}"
-    VALUES = "values", "Key value message representation. " \
-                       "This mode represents the entity as an array of " \
-                       "attribute values. Information about id and type is " \
-                       "left out. See example below. The order of the " \
-                       "attributes in the array is specified by the attrs " \
-                       "URI param (e.g. attrs=branch,colour,engine). " \
-                       "If attrs is not used, the order is arbitrary. " \
-                       "Example:" \
-                       "[ 'Ford', 'black', 78.3 ]"
-    UNIQUE = 'unique', "unique mode. This mode is just like values mode, " \
-                       "except that values are not repeated"
+    KEY_VALUES = (
+        "keyValues",
+        "Key value message representation."
+        "This mode represents the entity "
+        "attributes by their values only, leaving out "
+        "the information about type and metadata. "
+        "See example "
+        "below."
+        "Example: "
+        "{"
+        "  'id': 'R12345',"
+        "  'type': 'Room',"
+        "  'temperature': 22"
+        "}",
+    )
+    VALUES = (
+        "values",
+        "Key value message representation. "
+        "This mode represents the entity as an array of "
+        "attribute values. Information about id and type is "
+        "left out. See example below. The order of the "
+        "attributes in the array is specified by the attrs "
+        "URI param (e.g. attrs=branch,colour,engine). "
+        "If attrs is not used, the order is arbitrary. "
+        "Example:"
+        "[ 'Ford', 'black', 78.3 ]",
+    )
+    UNIQUE = (
+        "unique",
+        "unique mode. This mode is just like values mode, "
+        "except that values are not repeated",
+    )
+
+
+class PropertyFormat(str, Enum):
+    """
+    Format to decide if properties of ContextEntity class are returned as
+    List of NamedContextAttributes or as Dict of ContextAttributes.
+    """
+
+    LIST = "list"
+    DICT = "dict"
 
 
 class ContextAttribute(BaseAttribute, BaseValueAttribute):
@@ -76,7 +101,14 @@ class ContextAttribute(BaseAttribute, BaseValueAttribute):
         >>> attr = ContextAttribute(**data)
 
     """
-    pass
+    # although `type` is a required field in the NGSIv2 specification, it is
+    # set to optional here to allow for the possibility of setting
+    # default-types in child classes. Pydantic will raise the correct error
+    # and also exports the correct json-schema.
+    def __init__(self, type: str = None, **data):
+        if type is None and self.model_fields["type"].default:
+            type = self.model_fields["type"].default
+        super().__init__(type=type, **data)
 
 
 class NamedContextAttribute(ContextAttribute, BaseNameAttribute):
@@ -88,6 +120,7 @@ class NamedContextAttribute(ContextAttribute, BaseNameAttribute):
     In the NGSI data model, attributes have an attribute name, an attribute type
     an attribute value and metadata.
     """
+
     pass
 
 
@@ -103,42 +136,62 @@ class ContextEntityKeyValues(BaseModel):
     is a string containing the entity's type name.
 
     """
-    model_config = ConfigDict(extra='allow', validate_default=True, validate_assignment=True)
+
+    model_config = ConfigDict(
+        extra="allow", validate_default=True, validate_assignment=True
+    )
     id: str = Field(
         ...,
         title="Entity Id",
         description="Id of an entity in an NGSI context broker. Allowed "
-                    "characters are the ones in the plain ASCII set, except "
-                    "the following ones: control characters, "
-                    "whitespace, &, ?, / and #.",
-        example='Bcn-Welt',
+        "characters are the ones in the plain ASCII set, except "
+        "the following ones: control characters, "
+        "whitespace, &, ?, / and #.",
+        example="Bcn-Welt",
         max_length=256,
         min_length=1,
-        frozen=True
+        frozen=True,
     )
     valid_id = field_validator("id")(validate_fiware_datatype_standard)
     type: Union[str, Enum] = Field(
         ...,
         title="Entity Type",
         description="Id of an entity in an NGSI context broker. "
-                    "Allowed characters are the ones in the plain ASCII set, "
-                    "except the following ones: control characters, "
-                    "whitespace, &, ?, / and #.",
+        "Allowed characters are the ones in the plain ASCII set, "
+        "except the following ones: control characters, "
+        "whitespace, &, ?, / and #.",
         example="Room",
         max_length=256,
         min_length=1,
-        frozen=True
+        frozen=True,
     )
     valid_type = field_validator("type")(validate_fiware_datatype_standard)
 
+    # although `type` is a required field in the NGSIv2 specification, it is
+    # set to optional here to allow for the possibility of setting
+    # default-types in child classes. Pydantic will raise the correct error
+    # and also exports the correct json-schema.
+    def __init__(self, id: str, type: Union[str, Enum] = None, **data):
+        # this allows to set the type of the entity in child classes
+        if type is None:
+            if isinstance(self.model_fields["type"].default, str):
+                type = self.model_fields["type"].default
+            else:
+                # if this statement is reached not proper default-value for
+                # `type` was found and pydantic will raise the correct error
+                super().__init__(id=id, **data)
+        # This will result in usual behavior
+        super().__init__(id=id, type=type, **data)
 
-class PropertyFormat(str, Enum):
-    """
-    Format to decide if properties of ContextEntity class are returned as
-    List of NamedContextAttributes or as Dict of ContextAttributes.
-    """
-    LIST = 'list'
-    DICT = 'dict'
+    def get_attributes(self) -> dict:
+        """
+        Get the attribute of the entity with the given name in
+        dict format
+
+        Returns:
+            dict
+        """
+        return self.model_dump(exclude={"id", "type"})
 
 
 class ContextEntity(ContextEntityKeyValues):
@@ -161,9 +214,9 @@ class ContextEntity(ContextEntityKeyValues):
     is a string containing the entity's type name.
 
     Entity attributes are specified by additional properties, whose names are
-    the name of the attribute and whose representation is described in the
-    "ContextAttribute"-model. Obviously, id and type are
-    not allowed to be used as attribute names.
+    the name of the attribute and whose representation is described by the
+    "ContextAttribute"-model. Obviously, `id` and `type` are
+    not allowed as attribute names.
 
     Example::
 
@@ -174,22 +227,74 @@ class ContextEntity(ContextEntityKeyValues):
         >>> entity = ContextEntity(**data)
 
     """
-    model_config = ConfigDict(extra='allow', validate_default=True, validate_assignment=True)
 
-    def __init__(self, id: str, type: str, **data):
-
+    model_config = ConfigDict(
+        extra="allow", validate_default=True, validate_assignment=True
+    )
+    # although `type` is a required field in the NGSIv2 specification, it is
+    # set to optional here to allow for the possibility of setting
+    # default-types in child classes. Pydantic will raise the correct error
+    # and also exports the correct json-schema.
+    def __init__(self, id: str, type: str = None, **data):
         # There is currently no validation for extra fields
         data.update(self._validate_attributes(data))
-        super().__init__(id=id, type=type, **data)
+        # case where type is None to raise correct error message
+        if type is None:
+            super().__init__(id=id, **data)
+        else:
+            super().__init__(id=id, type=type, **data)
 
+    # Validation of attributes
     @classmethod
-    def _validate_attributes(cls, data: Dict):
-        attrs = {key: ContextAttribute.model_validate(attr) for key, attr in
-                 data.items() if key not in ContextEntity.model_fields}
+    def _validate_attributes(cls, data: dict):
+        """
+        Validate attributes of the entity if the attribute is not a model
+        field and the type is not already a subtype of ContextAttribute
+        """
+        attrs = {
+            key: ContextAttribute.model_validate(attr)
+            for key, attr in data.items()
+            if (key not in cls.model_fields and not isinstance(attr, ContextAttribute))
+        }
+
         return attrs
 
-    def add_attributes(self, attrs: Union[Dict[str, ContextAttribute],
-                                          List[NamedContextAttribute]]) -> None:
+    @field_validator('*')
+    @classmethod
+    def check_attributes(cls, value, info: ValidationInfo):
+        """
+        Check whether all model fields are of subtype of ContextAttribute to
+        ensure full functionality.
+        """
+        if info.field_name in ["id", "type"]:
+             return value
+
+        if info.field_name in cls.model_fields:
+            if not (isinstance(value, ContextAttribute)
+                    or value == cls.model_fields[info.field_name].default):
+                raise ValueError(f"Attribute {info.field_name} must be a of "
+                                 f"type or subtype ContextAttribute")
+        return value
+
+    @model_validator(mode="after")
+    @classmethod
+    def check_attributes_after(cls, values):
+        try:
+            for attr in values.model_extra:
+                if not isinstance(values.__getattr__(attr), ContextAttribute):
+                    raise ValueError(f"Attribute {attr} must be a of type or "
+                                     f"subtype ContextAttribute. You most "
+                                     f"likely tried to directly assign an "
+                                     f"attribute without converting it to a "
+                                     f"proper Attribute-Type!")
+        except TypeError:
+            pass
+        return values
+
+    # API for attributes and commands
+    def add_attributes(
+        self, attrs: Union[Dict[str, ContextAttribute], List[NamedContextAttribute]]
+    ) -> None:
         """
         Add attributes (properties, relationships) to entity
 
@@ -201,18 +306,20 @@ class ContextEntity(ContextEntityKeyValues):
             None
         """
         if isinstance(attrs, list):
-            attrs = {attr.name: ContextAttribute(**attr.model_dump(exclude={'name'}))
-                     for attr in attrs}
+            attrs = {
+                attr.name: ContextAttribute(**attr.model_dump(exclude={"name"}))
+                for attr in attrs
+            }
         for key, attr in attrs.items():
             self.__setattr__(name=key, value=attr)
 
     def get_attributes(
-            self,
-            whitelisted_attribute_types: Optional[List[DataType]] = None,
-            blacklisted_attribute_types: Optional[List[DataType]] = None,
-            response_format: Union[str, PropertyFormat] = PropertyFormat.LIST,
-            strict_data_type: bool = True) \
-            -> Union[List[NamedContextAttribute], Dict[str, ContextAttribute]]:
+        self,
+        whitelisted_attribute_types: Optional[List[DataType]] = None,
+        blacklisted_attribute_types: Optional[List[DataType]] = None,
+        response_format: Union[str, PropertyFormat] = PropertyFormat.LIST,
+        strict_data_type: bool = True,
+    ) -> Union[List[NamedContextAttribute], Dict[str, ContextAttribute]]:
         """
         Get attributes or a subset from the entity.
 
@@ -236,44 +343,53 @@ class ContextEntity(ContextEntityKeyValues):
 
         response_format = PropertyFormat(response_format)
 
-        assert whitelisted_attribute_types is None or \
-               blacklisted_attribute_types is None,\
-               "Only whitelist or blacklist is allowed"
+        assert (
+            whitelisted_attribute_types is None or blacklisted_attribute_types is None
+        ), "Only whitelist or blacklist is allowed"
 
         if whitelisted_attribute_types is not None:
             attribute_types = whitelisted_attribute_types
         elif blacklisted_attribute_types is not None:
-            attribute_types = [att_type for att_type in list(DataType)
-                               if att_type not in blacklisted_attribute_types]
+            attribute_types = [
+                att_type
+                for att_type in list(DataType)
+                if att_type not in blacklisted_attribute_types
+            ]
         else:
             attribute_types = [att_type for att_type in list(DataType)]
 
         if response_format == PropertyFormat.DICT:
             if strict_data_type:
-                return {key: ContextAttribute(**value)
-                        for key, value in self.model_dump().items()
-                        if key not in ContextEntity.model_fields
-                        and value.get('type') in
-                        [att.value for att in attribute_types]}
+                return {
+                    key: ContextAttribute(**value)
+                    for key, value in self.model_dump().items()
+                    if key not in ContextEntity.model_fields
+                    and value.get("type") in [att.value for att in attribute_types]
+                }
             else:
-                return {key: ContextAttribute(**value)
-                        for key, value in self.model_dump().items()
-                        if key not in ContextEntity.model_fields}
+                return {
+                    key: ContextAttribute(**value)
+                    for key, value in self.model_dump().items()
+                    if key not in ContextEntity.model_fields
+                }
         else:
             if strict_data_type:
-                return [NamedContextAttribute(name=key, **value)
-                        for key, value in self.model_dump().items()
-                        if key not in ContextEntity.model_fields
-                        and value.get('type') in
-                        [att.value for att in attribute_types]]
+                return [
+                    NamedContextAttribute(name=key, **value)
+                    for key, value in self.model_dump().items()
+                    if key not in ContextEntity.model_fields
+                    and value.get("type") in [att.value for att in attribute_types]
+                ]
             else:
-                return [NamedContextAttribute(name=key, **value)
-                        for key, value in self.model_dump().items()
-                        if key not in ContextEntity.model_fields]
+                return [
+                    NamedContextAttribute(name=key, **value)
+                    for key, value in self.model_dump().items()
+                    if key not in ContextEntity.model_fields
+                ]
 
-    def update_attribute(self,
-                         attrs: Union[Dict[str, ContextAttribute],
-                                      List[NamedContextAttribute]]) -> None:
+    def update_attribute(
+        self, attrs: Union[Dict[str, ContextAttribute], List[NamedContextAttribute]]
+    ) -> None:
         """
         Update attributes of an entity. Overwrite the current held value
         for the attribute with the value contained in the corresponding given
@@ -283,13 +399,15 @@ class ContextEntity(ContextEntityKeyValues):
             attrs: List of NamedContextAttributes,
                    Dict of {attribute_name: ContextAttribute}
         Raises:
-            NameError, if the attribute does not currently exists in the entity
+            NameError, if the attribute does not currently exist in the entity
         Returns:
             None
         """
         if isinstance(attrs, list):
-            attrs = {attr.name: ContextAttribute(**attr.model_dump(exclude={'name'}))
-                     for attr in attrs}
+            attrs = {
+                attr.name: ContextAttribute(**attr.model_dump(exclude={"name"}))
+                for attr in attrs
+            }
 
         existing_attribute_names = self.get_attribute_names()
         for key, attr in attrs.items():
@@ -305,12 +423,16 @@ class ContextEntity(ContextEntityKeyValues):
             Set[str]
         """
 
-        return {key for key in self.model_dump()
-                if key not in ContextEntity.model_fields}
+        return {
+            key for key in self.model_dump() if key not in ContextEntity.model_fields
+        }
 
-    def delete_attributes(self, attrs: Union[Dict[str, ContextAttribute],
-                                             List[NamedContextAttribute],
-                                             List[str]]):
+    def delete_attributes(
+        self,
+        attrs: Union[
+            Dict[str, ContextAttribute], List[NamedContextAttribute], List[str]
+        ],
+    ):
         """
         Delete the given attributes from the entity
 
@@ -354,9 +476,8 @@ class ContextEntity(ContextEntityKeyValues):
         raise KeyError(f"Attribute '{attribute_name}' not in entity")
 
     def get_properties(
-            self,
-            response_format: Union[str, PropertyFormat] = PropertyFormat.LIST)\
-            -> Union[List[NamedContextAttribute], Dict[str, ContextAttribute]]:
+        self, response_format: Union[str, PropertyFormat] = PropertyFormat.LIST
+    ) -> Union[List[NamedContextAttribute], Dict[str, ContextAttribute]]:
         """
         Returns all attributes of the entity that are not of type Relationship,
         and are not auto generated command attributes
@@ -369,15 +490,15 @@ class ContextEntity(ContextEntityKeyValues):
         Returns:
             [NamedContextAttribute] or {name: ContextAttribute}
         """
-        pre_filtered_attrs = self.get_attributes(blacklisted_attribute_types=[
-            DataType.RELATIONSHIP], response_format=PropertyFormat.LIST)
+        pre_filtered_attrs = self.get_attributes(
+            blacklisted_attribute_types=[DataType.RELATIONSHIP],
+            response_format=PropertyFormat.LIST,
+        )
 
         all_command_attributes_names = set()
         for command in self.get_commands():
             (c, c_status, c_info) = self.get_command_triple(command.name)
-            all_command_attributes_names.update([c.name,
-                                                 c_status.name,
-                                                 c_info.name])
+            all_command_attributes_names.update([c.name, c_status.name, c_info.name])
 
         property_attributes = []
         for attr in pre_filtered_attrs:
@@ -387,13 +508,14 @@ class ContextEntity(ContextEntityKeyValues):
         if response_format == PropertyFormat.LIST:
             return property_attributes
         else:
-            return {p.name: ContextAttribute(**p.model_dump(exclude={'name'}))
-                    for p in property_attributes}
+            return {
+                p.name: ContextAttribute(**p.model_dump(exclude={"name"}))
+                for p in property_attributes
+            }
 
     def get_relationships(
-            self,
-            response_format: Union[str, PropertyFormat] = PropertyFormat.LIST)\
-            -> Union[List[NamedContextAttribute], Dict[str, ContextAttribute]]:
+        self, response_format: Union[str, PropertyFormat] = PropertyFormat.LIST
+    ) -> Union[List[NamedContextAttribute], Dict[str, ContextAttribute]]:
         """
         Get all relationships of the context entity
 
@@ -406,13 +528,14 @@ class ContextEntity(ContextEntityKeyValues):
             [NamedContextAttribute] or {name: ContextAttribute}
 
         """
-        return self.get_attributes(whitelisted_attribute_types=[
-            DataType.RELATIONSHIP], response_format=response_format)
+        return self.get_attributes(
+            whitelisted_attribute_types=[DataType.RELATIONSHIP],
+            response_format=response_format,
+        )
 
     def get_commands(
-            self,
-            response_format: Union[str, PropertyFormat] = PropertyFormat.LIST)\
-            -> Union[List[NamedContextAttribute], Dict[str, ContextAttribute]]:
+        self, response_format: Union[str, PropertyFormat] = PropertyFormat.LIST
+    ) -> Union[List[NamedContextAttribute], Dict[str, ContextAttribute]]:
         """
         Get all commands of the context entity. Only works if the commands
         were autogenerated by Fiware from an Device.
@@ -437,14 +560,14 @@ class ContextEntity(ContextEntityKeyValues):
 
         commands = []
         for status_attribute in self.get_attributes(
-                whitelisted_attribute_types=[DataType.COMMAND_STATUS]):
-
-            if not status_attribute.name.split('_')[-1] == "status":
+            whitelisted_attribute_types=[DataType.COMMAND_STATUS]
+        ):
+            if not status_attribute.name.split("_")[-1] == "status":
                 continue
             base_name = status_attribute.name[:-7]
 
             try:
-                info_attribute = self.get_attribute(f'{base_name}_info')
+                info_attribute = self.get_attribute(f"{base_name}_info")
                 if not info_attribute.type == DataType.COMMAND_RESULT:
                     continue
 
@@ -456,12 +579,14 @@ class ContextEntity(ContextEntityKeyValues):
         if response_format == PropertyFormat.LIST:
             return commands
         else:
-            return {cmd.name: ContextAttribute(**cmd.model_dump(exclude={'name'}))
-                    for cmd in commands}
+            return {
+                cmd.name: ContextAttribute(**cmd.model_dump(exclude={"name"}))
+                for cmd in commands
+            }
 
-    def get_command_triple(self, command_attribute_name: str)\
-            -> Tuple[NamedContextAttribute, NamedContextAttribute,
-                     NamedContextAttribute]:
+    def get_command_triple(
+        self, command_attribute_name: str
+    ) -> Tuple[NamedContextAttribute, NamedContextAttribute, NamedContextAttribute]:
         """
         Returns for a given command attribute name all three corresponding
         attributes as triple
@@ -485,8 +610,8 @@ class ContextEntity(ContextEntityKeyValues):
 
         # as the given name was found as a valid command, we know that the
         # status and info attributes exist correctly
-        command_status = self.get_attribute(f'{command_attribute_name}_status')
-        command_info = self.get_attribute(f'{command_attribute_name}_info')
+        command_status = self.get_attribute(f"{command_attribute_name}_status")
+        command_info = self.get_attribute(f"{command_attribute_name}_info")
 
         return command, command_status, command_info
 
@@ -495,25 +620,26 @@ class Query(BaseModel):
     """
     Model for queries
     """
+
     entities: List[EntityPattern] = Field(
         description="a list of entities to search for. Each element is "
-                    "represented by a JSON object"
+        "represented by a JSON object"
     )
     attrs: Optional[List[str]] = Field(
         default=None,
         description="List of attributes to be provided "
-                    "(if not specified, all attributes)."
+        "(if not specified, all attributes).",
     )
     expression: Optional[Expression] = Field(
         default=None,
         description="An expression composed of q, mq, georel, geometry and "
-                    "coords "
+                    "coords",
     )
     metadata: Optional[List[str]] = Field(
         default=None,
-        description='a list of metadata names to include in the response. '
-                    'See "Filtering out attributes and metadata" section for '
-                    'more detail.'
+        description="a list of metadata names to include in the response. "
+        'See "Filtering out attributes and metadata" section for '
+        "more detail.",
     )
 
 
@@ -521,19 +647,29 @@ class ActionType(str, Enum):
     """
     Options for queries
     """
-    _init_ = 'value __doc__'
-    APPEND = "append", "maps to POST /v2/entities (if the entity does not " \
-                       "already exist) or POST /v2/entities/<id>/attrs (if " \
-                       "the entity already exists). "
-    APPEND_STRICT = "appendStrict", "maps to POST /v2/entities (if the " \
-                                    "entity does not already exist) or POST " \
-                                    "/v2/entities/<id>/attrs?options=append " \
-                                    "(if the entity already exists)."
+
+    _init_ = "value __doc__"
+    APPEND = (
+        "append",
+        "maps to POST /v2/entities (if the entity does not "
+        "already exist) or POST /v2/entities/<id>/attrs (if "
+        "the entity already exists). ",
+    )
+    APPEND_STRICT = (
+        "appendStrict",
+        "maps to POST /v2/entities (if the "
+        "entity does not already exist) or POST "
+        "/v2/entities/<id>/attrs?options=append "
+        "(if the entity already exists).",
+    )
     UPDATE = "update", "maps to PATCH /v2/entities/<id>/attrs."
-    DELETE = "delete", "maps to DELETE /v2/entities/<id>/attrs/<attrName> on " \
-                       "every attribute included in the entity or to DELETE " \
-                       "/v2/entities/<id> if no attribute were included in " \
-                       "the entity."
+    DELETE = (
+        "delete",
+        "maps to DELETE /v2/entities/<id>/attrs/<attrName> on "
+        "every attribute included in the entity or to DELETE "
+        "/v2/entities/<id> if no attribute were included in "
+        "the entity.",
+    )
     REPLACE = "replace", "maps to PUT /v2/entities/<id>/attrs"
 
 
@@ -541,17 +677,18 @@ class Update(BaseModel):
     """
     Model for update action
     """
+
     action_type: Union[ActionType, str] = Field(
-        alias='actionType',
+        alias="actionType",
         description="actionType, to specify the kind of update action to do: "
-                    "either append, appendStrict, update, delete, or replace. "
+        "either append, appendStrict, update, delete, or replace. ",
     )
-    entities: List[ContextEntity] = Field(
+    entities: List[Union[ContextEntity, ContextEntityKeyValues]] = Field(
         description="an array of entities, each entity specified using the "
-                    "JSON entity representation format "
+        "JSON entity representation format "
     )
 
-    @field_validator('action_type')
+    @field_validator("action_type")
     @classmethod
     def check_action_type(cls, action):
         """
@@ -571,12 +708,16 @@ class Command(BaseModel):
     FIWARE uses its registration mechanism in order to connect the command
     with an IoT-Device
     """
-    type: DataType = Field(default=DataType.COMMAND,
-                           description="Command must have the type command",
-                           # const=True
-                           )
-    value: Any = Field(description="Any json serializable command that will "
-                                   "be forwarded to the connected IoT device")
+
+    type: DataType = Field(
+        default=DataType.COMMAND,
+        description="Command must have the type command",
+        # const=True
+    )
+    value: Any = Field(
+        description="Any json serializable command that will "
+        "be forwarded to the connected IoT device"
+    )
 
     @field_validator("value")
     @classmethod
@@ -591,8 +732,7 @@ class Command(BaseModel):
         try:
             json.dumps(value)
         except:
-            raise ValueError(f"Command value {value} "
-                             f"is not serializable")
+            raise ValueError(f"Command value {value} " f"is not serializable")
         return value
 
 
@@ -601,6 +741,7 @@ class NamedCommand(Command):
     Class for sending command to IoT-Device.
     Extend :class: Command with command Name
     """
+
     name: str = Field(
         description="Name of the command",
         max_length=256,
