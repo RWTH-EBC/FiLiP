@@ -1,6 +1,7 @@
 ### v0.4.2
 - add: validation for JEXL based expression ([#260](https://github.com/RWTH-EBC/FiLiP/pull/260))
 - add: tutorials for multi-entity ([#260](https://github.com/RWTH-EBC/FiLiP/pull/260))
+- update: allow duplicated name in device, check uniqueness of object_id ([#279](https://github.com/RWTH-EBC/FiLiP/pull/279))
 
 ### v0.4.1
 - fix: Session added as optional parameter to enable tls communication with clients ([#249](https://github.com/RWTH-EBC/FiLiP/pull/249))
