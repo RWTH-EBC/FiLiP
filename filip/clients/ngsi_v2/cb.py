@@ -1030,8 +1030,14 @@ class ContextBrokerClient(BaseHttpClient):
         headers = self.headers.copy()
         params = {}
         options = []
+        if entity_type:
+            params.update({"type": entity_type})
+        else:
+            entity_type = "dummy"
+
         if forcedUpdate:
             options.append("forcedUpdate")
+
         if key_values:
             options.append("keyValues")
             assert isinstance(attrs, dict)
@@ -1044,14 +1050,6 @@ class ContextBrokerClient(BaseHttpClient):
                 )
         if options:
             params.update({'options': ",".join(options)})
-        if entity_type:
-            params.update({"type": entity_type})
-        else:
-            entity_type = "dummy"
-
-        entity = ContextEntity(id=entity_id,
-                               type=entity_type)
-        entity.add_attributes(attrs)
 
         try:
             res = self.put(
