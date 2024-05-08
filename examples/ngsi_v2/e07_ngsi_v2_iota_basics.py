@@ -29,7 +29,9 @@ SERVICE_PATH = '/example'
 # Setting up logging
 logging.basicConfig(
     level='INFO',
-    format='%(asctime)s %(name)s %(levelname)s: %(message)s')
+    format='%(asctime)s %(name)s %(levelname)s: %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S')
+
 logger = logging.getLogger(__name__)
 
 
@@ -47,8 +49,8 @@ if __name__ == "__main__":
     iota_client = IoTAClient(url=IOTA_URL,
                              fiware_header=fiware_header)
 
-    print("IoTA " + json.dumps(iota_client.get_version(), indent=2)
-          + " at url " + iota_client.base_url)
+    print(f"IoTA: {json.dumps(iota_client.get_version(), indent=2)}"
+          f" located at the url: {iota_client.base_url}")
 
     # # 2 Device Model
     #
