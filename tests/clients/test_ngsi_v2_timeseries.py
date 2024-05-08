@@ -394,14 +394,32 @@ class TestTimeSeries(unittest.TestCase):
         Returns:
             None
         """
+        n = 50
+        create_time_series_data(n)
         with QuantumLeapClient(
                 url=settings.QL_URL,
-                fiware_header=self.fiware_header.model_copy(
-                    update={'service_path': '/static'})) \
+                fiware_header=FiwareHeader(service='filip',
+                                 service_path="/static")) \
                 as client:
+            attr_names = ['temperature','humidity','co2']
+            for attr_name in attr_names:
+                entities_by_attr_name = client.get_entity_by_attr_name(
+                    attr_name=attr_name) 
+                #we expect as many timeseries as there are unique ids
+                self.assertEqual(len(entities_by_attr_name), 2) 
+
+                #we expect the sizes of the index and attribute values to be the same
+                for timeseries in entities_by_attr_name:
+                    for attribute in timeseries.attributes:
+                        self.assertEqual(len(attribute.values),len(timeseries.index))
+
+            entities_by_attr = client.get_entity_by_attrs()
+            # we expect as many timeseries as : n of unique ids x n of different attrs
+            self.assertEqual(len(entities_by_attr), 2*3)
+            for timeseries in entities_by_attr:
+                for attribute in timeseries.attributes:
+                    self.assertEqual(len(attribute.values),len(timeseries.index))
             
-
-
 
     def tearDown(self) -> None:
         """

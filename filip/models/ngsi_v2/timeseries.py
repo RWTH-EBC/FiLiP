@@ -138,19 +138,6 @@ class TimeSeriesAttrHeader(BaseModel):
         description="Array of entities grouped by each entityType."
     )
 
-class TimeSeriesEntities(BaseModel):
-    """
-    Model for entities grouped by entityType
-    """
-    entityType: str = Field(default=None,
-                            alias="entityType",
-                            description="The type of an entity")
-    entities: List[Any] = Field(
-        default=None,
-        description="Array of entities."
-    )
-
-
 class EntityValues(TimeSeriesBase, IndexedValues):
     """
     Model of indexed attribute values with entityId
@@ -165,19 +152,6 @@ class EntityValues(TimeSeriesBase, IndexedValues):
                                       "attribute to resolve ambiguity.")
 
 
-class TimeSeriesAttrHeader(BaseModel):
-    """
-    Model for timeseries data grouped by attribute names
-    """
-    attrName: str = Field(
-        title="Attribute name",
-        description=""
-    )
-    types: List[Any] = Field(
-        default=None,
-        description="Array of entities grouped by each entityType."
-    )
-
 class TimeSeriesEntities(BaseModel):
     """
     Model for entities grouped by entityType
@@ -189,20 +163,6 @@ class TimeSeriesEntities(BaseModel):
         default=None,
         description="Array of entities."
     )
-
-
-class EntityValues(TimeSeriesBase, IndexedValues):
-    """
-    Model of indexed attribute values with entityId
-    """
-    entityId: str = Field(default=None,
-                          alias="entityId",
-                          description="The entity id the time series api."
-                                      "If the id is unique among all entity "
-                                      "types, this could be used to uniquely "
-                                      "identify the entity instance. Otherwise,"
-                                      " you will have to use the entityType "
-                                      "attribute to resolve ambiguity.")
 
 
 class AggrMethod(str, Enum):

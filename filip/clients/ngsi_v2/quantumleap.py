@@ -22,7 +22,10 @@ from filip.models.ngsi_v2.timeseries import \
     AggrScope, \
     AttributeValues, \
     TimeSeries, \
-    TimeSeriesHeader
+    TimeSeriesHeader, \
+    TimeSeriesAttrHeader, \
+    TimeSeriesEntities, \
+    EntityValues
 from filip.utils.validators import validate_http_url
 
 
@@ -1138,6 +1141,7 @@ class QuantumLeapClient(BaseHttpClient):
         
         return list(res)
    
+
     # v2/attrs/{attr_name}
     def get_entity_by_attr_name(self, *,
                                 attr_name: str,
@@ -1146,7 +1150,7 @@ class QuantumLeapClient(BaseHttpClient):
                                 to_date: str = None,
                                 limit: int = None,
                                 offset: int = None
-                                ) -> List[TimeSeries]:
+                                ) -> List[TimeSeriesEntities]:
         """
         Get list of all entities containing this attribute name, as well as
         getting the index and values of this attribute in every corresponding
@@ -1179,6 +1183,7 @@ class QuantumLeapClient(BaseHttpClient):
                                    to_date=to_date,
                                    limit=limit,
                                    offset=offset)
+
         first = res_q.popleft()
         res = self.transform_attr_response_model(first)
 
@@ -1204,6 +1209,3 @@ class QuantumLeapClient(BaseHttpClient):
                              entity_group.get("entities"))
             res.append(timeseries)
         return chain.from_iterable(res)
-    
-        
-       
