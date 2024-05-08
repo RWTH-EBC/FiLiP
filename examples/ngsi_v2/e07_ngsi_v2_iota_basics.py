@@ -13,17 +13,17 @@ from uuid import uuid4
 # ## Parameters
 #
 # To run this example you need a working Fiware v2 setup with a context-broker
-# and an iota-broker. You can here set the addresses:
+# and an iota-broker. Here you can set the addresses:
 #
 # Host address of Context Broker
 CB_URL = "http://localhost:1026"
 # Host address of IoT-Agent
 IOTA_URL = "http://localhost:4041"
 
-# You can here also change the used Fiware service
+# Here you can also change FIWARE service and service path.
 # FIWARE-Service
 SERVICE = 'filip'
-# FIWARE-Servicepath
+# FIWARE-Service path
 SERVICE_PATH = '/example'
 
 # Setting up logging
@@ -36,13 +36,16 @@ logger = logging.getLogger(__name__)
 if __name__ == "__main__":
     # # 1 Setup IoTAClient
     #
-    # First a client is initialised that provides as access to our
-    # Fiware-server space. For more details on this step see e01_http_clients.py
+    # First a client is initialised that provides access to our
+    # Fiware-server space.
+    #
+    # For more details about this step see e01_http_clients.py.
+
     fiware_header = FiwareHeader(service=SERVICE,
                                  service_path=SERVICE_PATH)
-    iota_client =  IoTAClient(
-        url=IOTA_URL,
-        fiware_header=fiware_header)
+
+    iota_client = IoTAClient(url=IOTA_URL,
+                             fiware_header=fiware_header)
 
     print("IoTA " + json.dumps(iota_client.get_version(), indent=2)
           + " at url " + iota_client.base_url)
@@ -51,13 +54,13 @@ if __name__ == "__main__":
     #
     # ## 2.1 Create a device
     #
-    # A device can be created in two ways
+    # A device can be created in two ways.
     # For all information about the needed device attributes, please
     # reference the DeviceModel directly.
     #
     # When a device is posted to Fiware, Fiware will automatically create a
     # ContextEntity that symbolises the current device state. Through the
-    # ContextBrokerClient an the entity the state of the device can be seen
+    # ContextBrokerClient and the entity, the state of the device can be seen
     # and manipulated.
     #
     # Dictionary:
@@ -91,20 +94,20 @@ if __name__ == "__main__":
 
     # ## 2.2 Device Attributes
     #
-    # To a device attributes can be added, they will automatically be
+    # You can add attributes to a device, and they will automatically be
     # mirrored to the related context entity.
     # Each attribute needs a unique name.
     #
     # ### 2.2.1 StaticDeviceAttribute
     #
-    # These attributes represent static information (as names) and are
+    # These attributes represent static information (such as names) and are
     # mirrored 1:1
     device2.add_attribute(StaticDeviceAttribute(name="address",
                                                 type=DataType.TEXT,
                                                 value="Lichtenhof 3"))
     # ### 2.2.2 DeviceAttribute
     #
-    # These attributes represent a live information of the device.
+    # These attributes represent live information of the device.
     # The value can be read by accessing the mirrored attribute in the
     # context entity.
     # It is differentiated between two kinds:
@@ -129,8 +132,8 @@ if __name__ == "__main__":
     # # 3 Interact with Fiware
     #
     # ## 3.1 Upload a new Device
-    print(f"Payload that will be send to the IoT-Agent:\n "
-          f"{device2.json(indent=2)}")
+    print(f"Payload that will be sent to the IoT-Agent:\n "
+          f"{device2.model_dump_json(indent=2)}")
     iota_client.post_device(device=device2)
     #
     # ## 3.2 Load a specific device as model
@@ -142,7 +145,7 @@ if __name__ == "__main__":
     # ## 3.4 Update a device
     #
     # After changes were made to the device, the simplest way to transfer
-    # them to Fiware is:
+    # them to Fiware is through patch_device method:
     iota_client.patch_device(my_device)
     #
     # ## 3.5 Delete a device
@@ -157,8 +160,8 @@ if __name__ == "__main__":
 
     # ## 4.1. Create a service group
     service_group1 = ServiceGroup(entity_type='Thing',
-                                      resource='/iot/json',
-                                      apikey=str(uuid4()))
+                                  resource='/iot/json',
+                                  apikey=str(uuid4()))
     iota_client.post_groups(service_groups=[service_group1])
 
     # ## 4.2 Access a service group
