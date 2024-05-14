@@ -261,10 +261,10 @@ class TestContextBroker(unittest.TestCase):
             entity_init = self.entity.model_copy(deep=True)
             attr_init = entity_init.get_attribute("temperature")
             attr_init.metadata = {
-                    "metadata_init": {
-                        "type": "Text",
-                        "value": "something"}
-                }
+                "metadata_init": {
+                    "type": "Text",
+                    "value": "something"}
+            }
             attr_append = NamedContextAttribute(**{
                 "name": 'pressure',
                 "type": 'Number',
@@ -392,6 +392,62 @@ class TestContextBroker(unittest.TestCase):
                                  entity_patch)
                 clear_all(fiware_header=self.fiware_header,
                           cb_url=settings.CB_URL)
+
+            # 4) update only property or relationship
+            if "update_entity_properties" or "update_entity_relationship":
+                # post entity with a relationship attribute
+                entity_init = self.entity.model_copy(deep=True)
+                attrs = [
+                    NamedContextAttribute(name='in', type='Relationship', value='dummy1')]
+                entity_init.add_attributes(attrs=attrs)
+                client.post_entity(entity=entity_init, update=True)
+
+                # create entity that differs in both attributes
+                entity_update = entity_init.model_copy(deep=True)
+                attrs = [NamedContextAttribute(name='temperature',
+                                               type='Number',
+                                               value=21),
+                         NamedContextAttribute(name='in', type='Relationship',
+                                               value='dummy2')]
+                entity_update.update_attribute(attrs=attrs)
+
+                # update only properties and compare
+                client.update_entity_properties(entity_update)
+                entity_db = client.get_entity(entity_update.id)
+                db_attrs = entity_db.get_attribute(attribute_name='temperature')
+                update_attrs = entity_update.get_attribute(attribute_name='temperature')
+                self.assertEqual(db_attrs, update_attrs)
+                db_attrs = entity_db.get_attribute(attribute_name='in')
+                update_attrs = entity_update.get_attribute(attribute_name='in')
+                self.assertNotEqual(db_attrs, update_attrs)
+
+                # update only relationship and compare
+                attrs = [
+                    NamedContextAttribute(name='temperature', type='Number', value=22)]
+                entity_update.update_attribute(attrs=attrs)
+                client.update_entity_relationships(entity_update)
+                entity_db = client.get_entity(entity_update.id)
+                self.assertEqual(entity_db.get_attribute(attribute_name='in'),
+                                 entity_update.get_attribute(attribute_name='in'))
+                self.assertNotEqual(entity_db.get_attribute(attribute_name='temperature'),
+                                    entity_update.get_attribute(
+                                        attribute_name='temperature'))
+
+                # change both, update both, compare
+                attrs = [NamedContextAttribute(name='temperature',
+                                               type='Number',
+                                               value=23),
+                         NamedContextAttribute(name='in', type='Relationship',
+                                               value='dummy3')]
+                entity_update.update_attribute(attrs=attrs)
+                client.update_entity(entity_update)
+                entity_db = client.get_entity(entity_update.id)
+                db_attrs = entity_db.get_attribute(attribute_name='in')
+                update_attrs = entity_update.get_attribute(attribute_name='in')
+                self.assertEqual(db_attrs, update_attrs)
+                db_attrs = entity_db.get_attribute(attribute_name='temperature')
+                update_attrs = entity_update.get_attribute(attribute_name='temperature')
+                self.assertEqual(db_attrs, update_attrs)
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
@@ -1460,9 +1516,11 @@ class TestContextBroker(unittest.TestCase):
         self.client.post_entity(entity=entity)
 
         testData = "hello_test"
-        self.client.update_attribute_value(entity_id="string_test", attr_name="data", value=testData)
+        self.client.update_attribute_value(entity_id="string_test", attr_name="data",
+                                           value=testData)
 
-        readback = self.client.get_attribute_value(entity_id="string_test", attr_name="data")
+        readback = self.client.get_attribute_value(entity_id="string_test",
+                                                   attr_name="data")
 
         self.assertEqual(testData, readback)
 
