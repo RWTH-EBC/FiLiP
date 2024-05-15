@@ -98,16 +98,16 @@ if __name__ == '__main__':
     #
     mqttc = IoTAMQTTClient()
 
-    def on_connect(mqttc, obj, flags, rc):
+    def on_connect(mqttc, obj, flags, rc, properties=None):
         mqttc.logger.info("rc: " + str(rc))
 
     def on_connect_fail(mqttc, obj):
         mqttc.logger.info("Connect failed")
 
-    def on_publish(mqttc, obj, mid):
+    def on_publish(mqttc, obj, mid,rc,properties=None):
         mqttc.logger.info("mid: " + str(mid))
 
-    def on_subscribe(mqttc, obj, mid, granted_qos):
+    def on_subscribe(mqttc, obj, mid, granted_qos,properties=None):
         mqttc.logger.info("Subscribed: " + str(mid)
                           + " " + str(granted_qos))
 

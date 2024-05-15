@@ -132,7 +132,7 @@ if __name__ == "__main__":
         logger.info("Received this message:\n" + message.json(indent=2))
 
 
-    def on_disconnect(client, userdata, reasonCode, properties=None):
+    def on_disconnect(client, userdata, flags, reasonCode, properties=None):
         logger.info("MQTT client disconnected with reasonCode "
                     + str(reasonCode))
 

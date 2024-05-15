@@ -827,7 +827,7 @@ class ContextBrokerClient(BaseHttpClient):
         The entity attributes are updated with the ones in the payload.
         In addition to that, if one or more attributes in the payload doesn't
         exist in the entity, an error is returned. This corresponds to a
-        'PATcH' request.
+        'PATCH' request.
 
         Args:
             entity_id: Entity id to be updated
