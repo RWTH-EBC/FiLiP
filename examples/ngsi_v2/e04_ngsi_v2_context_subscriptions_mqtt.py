@@ -141,7 +141,7 @@ if __name__ == "__main__":
 
     mqtt_client = mqtt.Client(userdata=None,
                               protocol=mqtt.MQTTv5,
-                              callback_api_version=mqtt.CallbackAPIVersion.VERSION1,
+                              callback_api_version=mqtt.CallbackAPIVersion.VERSION2,
                               transport="tcp")
     # add callbacks to the mqtt-client
     mqtt_client.on_connect = on_connect

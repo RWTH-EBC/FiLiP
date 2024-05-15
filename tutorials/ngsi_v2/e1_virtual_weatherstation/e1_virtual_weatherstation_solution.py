@@ -65,7 +65,7 @@ if __name__ == '__main__':
     history_weather_station = []
 
     # ToDo: create a MQTTv5 client with paho-mqtt
-    mqttc = mqtt.Client(protocol=mqtt.MQTTv5, callback_api_version=mqtt.CallbackAPIVersion.VERSION1)
+    mqttc = mqtt.Client(protocol=mqtt.MQTTv5, callback_api_version=mqtt.CallbackAPIVersion.VERSION2)
     # set user data if required
     mqttc.username_pw_set(username=MQTT_USER, password=MQTT_PW)
     # ToDo: Define a callback function that will be executed when the client

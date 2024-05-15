@@ -207,7 +207,7 @@ if __name__ == '__main__':
     mqtt_client = mqtt.Client(client_id="filip-iot-example",
                               userdata=None,
                               protocol=mqtt.MQTTv5,
-                              callback_api_version=mqtt.CallbackAPIVersion.VERSION1,
+                              callback_api_version=mqtt.CallbackAPIVersion.VERSION2,
                               transport="tcp")
     # add our callbacks to the client
     mqtt_client.on_connect = on_connect
