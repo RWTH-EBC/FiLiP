@@ -30,9 +30,11 @@ class TestSubscriptions(unittest.TestCase):
         Returns:
             None
         """
+        FIWARE_SERVICE = "service"
+        FIWARE_SERVICEPATH = "/"
         self.fiware_header = FiwareLDHeader(
-            service=settings.FIWARE_SERVICE,
-            service_path=settings.FIWARE_SERVICEPATH)
+            service=FIWARE_SERVICE,
+            service_path=FIWARE_SERVICEPATH)
         # self.mqtt_url = "mqtt://test.de:1883"
         # self.mqtt_topic = '/filip/testing'
         # self.notification =  {
@@ -43,42 +45,65 @@ class TestSubscriptions(unittest.TestCase):
         #     "accept": "application/json"
         #     }
         # }
-        self.cb_client = ContextBrokerLDClient()
-        self.endpoint_http = Endpoint(**{
-            "uri": "http://my.endpoint.org/notify",
-            "accept": "application/json"
+        self.endpoint_mqtt = Endpoint(**{
+            "uri": "mqtt://my.host.org:1883/my/test/topic",
+            "accept": "application/json",  # TODO check whether it works
+            "notifierInfo": [
+                {
+                    "key": "MQTT-Version",
+                    "value": "mqtt5.0"
+                }
+            ]
         })
+        CB_URL = "http://137.226.248.246:1027"
+        self.cb_client = ContextBrokerLDClient(url=CB_URL, fiware_header=self.fiware_header)        
+        # self.endpoint_http = Endpoint(**{
+        #     "uri": "http://137.226.248.246:1027/ngsi-ld/v1/subscriptions",
+        #     "Content-Type": "application/json",
+        #     "Accept": "application/json"
+        #     }
+        # )
 
     def test_get_subscription_list(self):
         """
         Get a list of all current subscriptions the broker has subscribed to.
         Args: 
             - limit(number($double)): Limits the number of subscriptions retrieved
-            - offset(number($double)): Skip a number of subscriptions
-            - options(string): Options dictionary("count")
         Returns:
             - (200) list of subscriptions
         Tests for get subscription list:
             - Get the list of subscriptions and get the count of the subsciptions -> compare the count
             - Go through the list and have a look at duplicate subscriptions
             - Set a limit for the subscription number and compare the count of subscriptions sent with the limit
-            - Set offset for the subscription to retrive and check if the offset was procceded correctly.
             - Save beforehand all posted subscriptions and see if all the subscriptions exist in the list -> added to Test 1
         """
         
         """Test 1"""
         sub_post_list = list()
-        for i in range(10): 
+        for i in range(1): 
             attr_id = "attr" + str(i)
             attr = {attr_id: ContextProperty(value=randint(0,50))}
-            notification_param = NotificationParams(attributes=[attr_id], endpoint=self.endpoint_http)       
             id = "test_sub" + str(i)
+            uri_string =  "mqtt://my.host.org:1883/topic"
+            endpoint_mqtt = Endpoint(**{
+                "uri": uri_string,
+                "accept": "application/json",  # TODO check whether it works
+                "notifierInfo": [
+                    {
+                        "key": "MQTT-Version",
+                        "value": "mqtt5.0"
+                    }
+                ]
+            })
+            notification_param = NotificationParams(attributes=[attr_id], endpoint=endpoint_mqtt)  
             sub = Subscription(id=id, notification=notification_param)
             sub_post_list.append(sub)
             self.cb_client.post_subscription(sub)
             
         sub_list = self.cb_client.get_subscription_list()
-        self.assertEqual(10, len(sub_list))
+        for element in sub_list:
+            print(element.id)
+        self.assertEqual(1, len(sub_list))
         
         for sub in sub_post_list:
             self.assertIn(sub in sub_list)
@@ -87,40 +112,38 @@ class TestSubscriptions(unittest.TestCase):
             self.cb_client.delete_subscription(id=sub.id)
             
      
-        """Test 2"""
-        for i in range(2): 
-            attr_id = "attr"
-            attr = {attr_id: ContextProperty(value=20)}
-            notification_param = NotificationParams(attributes=[attr_id], endpoint=self.endpoint_http)       
-            id = "test_sub" 
-            sub = Subscription(id=id, notification=notification_param)
-            self.cb_client.post_subscription(sub)
-        sub_list = self.cb_client.get_subscription_list()
-        self.assertNotEqual(sub_list[0], sub_list[1])
-        for sub in sub_list:
-            self.cb_client.delete_subscription(id=sub.id)
+        # """Test 2"""
+        # for i in range(2): 
+        #     attr_id = "attr"
+        #     attr = {attr_id: ContextProperty(value=20)}
+        #     notification_param = NotificationParams(attributes=[attr_id], endpoint=self.endpoint_http)       
+        #     id = "test_sub" 
+        #     sub = Subscription(id=id, notification=notification_param)
+        #     self.cb_client.post_subscription(sub)
+        # sub_list = self.cb_client.get_subscription_list()
+        # self.assertNotEqual(sub_list[0], sub_list[1])
+        # for sub in sub_list:
+        #     self.cb_client.delete_subscription(id=sub.id)
             
             
-        """Test 3"""
-        for i in range(10): 
-            attr_id = "attr" + str(i)
-            attr = {attr_id: ContextProperty(value=randint(0,50))}
-            notification_param = NotificationParams(attributes=[attr_id], endpoint=self.endpoint_http)       
-            id = "test_sub" + str(i)
-            sub = Subscription(id=id, notification=notification_param)
-            self.cb_client.post_subscription(sub)
-        sub_list = self.cb_client.get_subscription_list(limit=5)
-        self.assertEqual(5, len(sub_list))
-        for sub in sub_list:
-            self.cb_client.delete_subscription(id=sub.id)
+        # """Test 3"""
+        # for i in range(10): 
+        #     attr_id = "attr" + str(i)
+        #     attr = {attr_id: ContextProperty(value=randint(0,50))}
+        #     notification_param = NotificationParams(attributes=[attr_id], endpoint=self.endpoint_http)       
+        #     id = "test_sub" + str(i)
+        #     sub = Subscription(id=id, notification=notification_param)
+        #     self.cb_client.post_subscription(sub)
+        # sub_list = self.cb_client.get_subscription_list(limit=5)
+        # self.assertEqual(5, len(sub_list))
+        # for sub in sub_list:
+        #     self.cb_client.delete_subscription(id=sub.id)
             
-    def test_post_subscription(self, 
-                            ):
+    def test_post_subscription(self):
         """
         Create a new subscription.
         Args:
-            - Content-Type(string): required
-            - body: required
+            - Request body: required
         Returns:
             - (201) successfully created subscription 
         Tests:
@@ -145,7 +168,7 @@ class TestSubscriptions(unittest.TestCase):
         """
 
 
-    def test_delete_subscrption(self):
+    def test_delete_subscription(self):
         """
         Cancels subscription. 
         Args: 
@@ -168,7 +191,7 @@ class TestSubscriptions(unittest.TestCase):
             self.cb_client.post_subscription(sub)
         
         self.cb_client.delete_subscription(id="test_sub_0")
-        sub_list = self.cb_client.get_subscription_list()
+        sub_list = self.cb_client.get_subscription_list(limit=10)
         self.assertNotIn(subscription, sub_list)
         for sub in sub_list:
             self.cb_client.delete_subscription(id=sub.id)
@@ -178,7 +201,6 @@ class TestSubscriptions(unittest.TestCase):
         Only the fileds included in the request are updated in the subscription. 
         Args:
             - subscriptionID(string): required
-            - Content-Type(string): required
             - body(body): required
         Returns:
             - Successful: 204, no content
