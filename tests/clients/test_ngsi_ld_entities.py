@@ -150,7 +150,7 @@ class TestEntities(unittest.TestCase):
         self.assertEqual(len(entity_list), 1)
         self.assertEqual(entity_list[0].id, self.entity.id)
         self.assertEqual(entity_list[0].type, self.entity.type)
-        self.assertEqual(entity_list[0].testtemperature["value"], self.entity.testtemperature["value"])
+        self.assertEqual(entity_list[0].testtemperature.value, self.entity.testtemperature.value)
         
         """Test2"""
         self.entity_identical= self.entity.model_copy()
@@ -334,7 +334,7 @@ class TestEntities(unittest.TestCase):
         self.cb_client.append_entity_attributes(self.entity)
         entity_list = self.cb_client.get_entity_list()
         for entity in entity_list:
-            self.assertEqual(first=entity.test_value["value"], second=attr.value)
+            self.assertEqual(first=entity.test_value.value, second=attr.value)
         for entity in entity_list:
             self.cb_client.delete_entity_by_id(entity_id=entity.id)
         
@@ -358,7 +358,7 @@ class TestEntities(unittest.TestCase):
 
         entity_list = self.cb_client.get_entity_list()
         for entity in entity_list:
-            self.assertEqual(first=entity.test_value["value"], second=attr.value)
+            self.assertEqual(first=entity.test_value.value, second=attr.value)
         
         for entity in entity_list:
             self.cb_client.delete_entity_by_id(entity_id=entity.id)
