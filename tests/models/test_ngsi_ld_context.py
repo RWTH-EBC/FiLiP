@@ -120,6 +120,20 @@ class TestLDContextModels(unittest.TestCase):
         self.entity2_dict.update(self.entity2_props_dict)
         self.entity2_dict.update(self.entity2_rel_dict)
 
+        self.entity3_dict = {
+            "id": "urn:ngsi-ld:Vehicle:test1243",
+            "type": "Vehicle",
+            "isParked": {
+                "type": "Relationship",
+                "object": "urn:ngsi-ld:OffStreetParking:Downtown1",
+                "observedAt": "2017-07-29T12:00:04Z",
+                "providedBy": {
+                    "type": "Relationship",
+                    "object": "urn:ngsi-ld:Person:Bob"
+                }
+            }
+        }
+
     def test_cb_attribute(self) -> None:
         """
         Test context attribute models
@@ -235,3 +249,10 @@ class TestLDContextModels(unittest.TestCase):
 
         self.assertEqual(self.entity1_context,
                          context_entity1)
+
+        # test here if entity without context can be validated and get_context works accordingly:
+        entity3 = ContextLDEntity(**self.entity3_dict)
+        context_entity3 = entity3.get_context()
+
+        self.assertEqual(None,
+                         context_entity3)
