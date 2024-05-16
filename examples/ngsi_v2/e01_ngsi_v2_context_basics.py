@@ -22,7 +22,7 @@ CB_URL = "http://localhost:1026"
 # You can also change the used Fiware service
 # FIWARE-Service
 SERVICE = 'filip'
-# FIWARE-Servicepath
+# FIWARE-Service path
 SERVICE_PATH = '/example'
 
 # Setting up logging
@@ -32,9 +32,8 @@ logging.basicConfig(
     datefmt='%d-%m-%Y %H:%M:%S')
 logger = logging.getLogger(__name__)
 
-
 if __name__ == "__main__":
-   
+
     # # 1 Setup Client
     #
     # create the client, for more details view the example: e01_http_clients.py
@@ -55,18 +54,18 @@ if __name__ == "__main__":
     #
     # ### 2.1.1 Passing a dict:
     #
-    room1 = {"id": "Room1",
-             "type": "Room",
-             "temperature": {"value": 11,
-                             "type": "Float"},
-             "pressure": {"value": 111,
-                          "type": "Integer"}
-             }
-    room1_entity = ContextEntity(**room1)
+    room1_dictionary = {"id": "urn:ngsi-ld:Room:001",
+                        "type": "Room",
+                        "temperature": {"value": 11,
+                                        "type": "Float"},
+                        "pressure": {"value": 111,
+                                     "type": "Integer"}
+                        }
+    room1_entity = ContextEntity(**room1_dictionary)
 
     # ### 2.1.2 Using the constructor and interfaces
     #
-    room2_entity = ContextEntity(id="Room2", type="Room")
+    room2_entity = ContextEntity(id="urn:ngsi-ld:Room:002", type="Room")
     temp_attr = NamedContextAttribute(name="temperature", value=22,
                                       type=DataType.FLOAT)
     pressure_attr = NamedContextAttribute(name="pressure", value=222,
@@ -85,20 +84,24 @@ if __name__ == "__main__":
     logger.info(f'Entity list after posting to CB: {cb_client.get_entity_list()}')
 
     # Get entities by id
-    logger.info(f'Entities with ID "Room1": {cb_client.get_entity_list(entity_ids=["Room1"])}')
+    logger.info(f'Entities with ID "urn:ngsi-ld:Room:001": '
+                f'{cb_client.get_entity_list(entity_ids=["urn:ngsi-ld:Room:001"])}')
 
     # Get entities by type
     logger.info(f'Entities by type "Room": {cb_client.get_entity_list(entity_types=["Room"])}')
 
     # Get entities by id pattern
-    logger.info(f'Entities with id pattern "^Room[2-5]": {cb_client.get_entity_list(id_pattern="^Room[2-5]")}')
+    # The regular expression filters the rooms that have the id number 2 through 5
+    # with the prefix 'urn:ngsi-ld:Room:'
+    logger.info(f'Entities with id pattern "^urn:ngsi-ld:Room:00[2-5]": '
+                f'{cb_client.get_entity_list(id_pattern="^urn:ngsi-ld:Room:00[2-5]")}')
 
     # Get entities by query expression
     query = QueryString(qs=[('temperature', '>=', 22)])
-    logger.info(f'Entities where temperatur >= 22: {cb_client.get_entity_list(q=query)}')
+    logger.info(f'Entities with temperature >= 22: {cb_client.get_entity_list(q=query)}')
 
     # Get attributes of entities
-    logger.info(f'Attributes of entities: {cb_client.get_entity_attributes(entity_id="Room1")}')
+    logger.info(f'Attributes of entities: {cb_client.get_entity_attributes(entity_id="urn:ngsi-ld:Room:001")}')
 
     # Trying to access non-existing ids or attributes will always throw
     # a request error
