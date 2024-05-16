@@ -30,7 +30,7 @@ SERVICE_PATH = '/example'
 logging.basicConfig(
     level='INFO',
     format='%(asctime)s %(name)s %(levelname)s: %(message)s',
-    datefmt='%Y-%m-%d %H:%M:%S')
+    datefmt='%d-%m-%Y %H:%M:%S')
 
 logger = logging.getLogger(__name__)
 
