@@ -567,14 +567,75 @@ class ContextBrokerClient(BaseHttpClient):
         self.update_or_append_entity_attributes(
             entity_id=entity.id,
             entity_type=entity.type,
+            attrs=entity.get_attributes(),
+            append_strict=append_strict,
+        )
+
+    def update_entity_properties(self, entity: ContextEntity, append_strict: bool = False):
+        """
+        The request payload is an object representing the attributes, of any type
+        but Relationship, to append or update.
+
+        Note:
+            Update means overwriting the existing entity. If you want to
+            manipulate you should rather use patch_entity.
+
+        Args:
+            entity (ContextEntity):
+            append_strict: If `False` the entity attributes are updated (if they
+                previously exist) or appended (if they don't previously exist)
+                with the ones in the payload.
+                If `True` all the attributes in the payload not
+                previously existing in the entity are appended. In addition
+                to that, in case some of the attributes in the payload
+                already exist in the entity, an error is returned.
+                More precisely this means a strict append procedure.
+
+        Returns:
+            None
+        """
+        self.update_or_append_entity_attributes(
+            entity_id=entity.id,
+            entity_type=entity.type,
             attrs=entity.get_properties(),
+            append_strict=append_strict,
+        )
+
+    def update_entity_relationships(self, entity: ContextEntity,
+                                    append_strict: bool = False):
+        """
+        The request payload is an object representing only the attributes, of type
+        Relationship, to append or update.
+
+        Note:
+            Update means overwriting the existing entity. If you want to
+            manipulate you should rather use patch_entity.
+
+        Args:
+            entity (ContextEntity):
+            append_strict: If `False` the entity attributes are updated (if they
+                previously exist) or appended (if they don't previously exist)
+                with the ones in the payload.
+                If `True` all the attributes in the payload not
+                previously existing in the entity are appended. In addition
+                to that, in case some of the attributes in the payload
+                already exist in the entity, an error is returned.
+                More precisely this means a strict append procedure.
+
+        Returns:
+            None
+        """
+        self.update_or_append_entity_attributes(
+            entity_id=entity.id,
+            entity_type=entity.type,
+            attrs=entity.get_relationships(),
             append_strict=append_strict,
         )
 
     def delete_entity(
         self,
         entity_id: str,
-        entity_type: str,
+        entity_type: str= None,
         delete_devices: bool = False,
         iota_client: IoTAClient = None,
         iota_url: AnyHttpUrl = settings.IOTA_URL,
@@ -587,7 +648,8 @@ class ContextBrokerClient(BaseHttpClient):
             entity_id:
                 Id of the entity to be deleted
             entity_type:
-                several entities with the same entity id.
+                Entity type, to avoid ambiguity in case there are several
+                entities with the same entity id.
             delete_devices:
                 If True, also delete all devices that reference this
                 entity (entity_id as entity_name)
@@ -603,8 +665,10 @@ class ContextBrokerClient(BaseHttpClient):
         """
         url = urljoin(self.base_url, f"v2/entities/{entity_id}")
         headers = self.headers.copy()
-        params = {"type": entity_type}
-
+        if entity_type:
+            params = {'type': entity_type}
+        else:
+            params = None
         try:
             res = self.delete(url=url, params=params, headers=headers)
             if res.ok:
@@ -634,10 +698,13 @@ class ContextBrokerClient(BaseHttpClient):
                     headers=self.headers,
                 )
 
-            for device in iota_client_local.get_device_list(entity_names=[entity_id]):
-                if device.entity_type == entity_type:
+            for device in iota_client_local.get_device_list(
+                    entity_names=[entity_id]):
+                if entity_type:
+                    if device.entity_type == entity_type:
+                        iota_client_local.delete_device(device_id=device.device_id)
+                else:
                     iota_client_local.delete_device(device_id=device.device_id)
-
             iota_client_local.close()
 
     def delete_entities(self, entities: List[ContextEntity]) -> None:
@@ -682,9 +749,9 @@ class ContextBrokerClient(BaseHttpClient):
     def update_or_append_entity_attributes(
             self,
             entity_id: str,
-            entity_type: str,
             attrs: List[Union[NamedContextAttribute,
                               Dict[str, ContextAttribute]]],
+            entity_type: str = None,
             append_strict: bool = False,
             forcedUpdate: bool = False):
         """
@@ -723,6 +790,9 @@ class ContextBrokerClient(BaseHttpClient):
         params = {}
         if entity_type:
             params.update({'type': entity_type})
+        else:
+            entity_type = "dummy"
+
         options = []
         if append_strict:
             options.append("append")
@@ -835,9 +905,9 @@ class ContextBrokerClient(BaseHttpClient):
     def update_existing_entity_attributes(
             self,
             entity_id: str,
-            entity_type: str,
             attrs: List[Union[NamedContextAttribute,
                               Dict[str, ContextAttribute]]],
+            entity_type: str = None,
             forcedUpdate: bool = False,
             override_metadata: bool = False
     ):
@@ -865,7 +935,11 @@ class ContextBrokerClient(BaseHttpClient):
         """
         url = urljoin(self.base_url, f"v2/entities/{entity_id}/attrs")
         headers = self.headers.copy()
-        params = {"type": entity_type}
+        if entity_type:
+            params = {"type": entity_type}
+        else:
+            params = None
+            entity_type = "dummy"
 
         entity = ContextEntity(id=entity_id, type=entity_type)
         entity.add_attributes(attrs)
@@ -922,10 +996,10 @@ class ContextBrokerClient(BaseHttpClient):
     def replace_entity_attributes(
             self,
             entity_id: str,
-            entity_type: str,
             attrs: Union[List[Union[NamedContextAttribute,
                               Dict[str, ContextAttribute]]],
                          Dict],
+            entity_type: str = None,
             forcedUpdate: bool = False,
             key_values: bool = False,
     ):
@@ -956,8 +1030,14 @@ class ContextBrokerClient(BaseHttpClient):
         headers = self.headers.copy()
         params = {}
         options = []
+        if entity_type:
+            params.update({"type": entity_type})
+        else:
+            entity_type = "dummy"
+
         if forcedUpdate:
             options.append("forcedUpdate")
+
         if key_values:
             options.append("keyValues")
             assert isinstance(attrs, dict)
@@ -970,8 +1050,6 @@ class ContextBrokerClient(BaseHttpClient):
                 )
         if options:
             params.update({'options': ",".join(options)})
-        if entity_type:
-            params.update({"type": entity_type})
 
         try:
             res = self.put(
@@ -1829,8 +1907,8 @@ class ContextBrokerClient(BaseHttpClient):
         self,
         *,
         entity_id: str,
-        entity_type: str,
         command: Union[Command, NamedCommand, Dict],
+        entity_type: str = None,
         command_name: str = None,
     ) -> None:
         """
