@@ -26,7 +26,7 @@ CB_URL = "http://localhost:1026"
 # You can also change the used Fiware service
 # FIWARE-Service
 SERVICE = 'filip'
-# FIWARE-Servicepath
+# FIWARE-Service path
 SERVICE_PATH = '/example'
 
 # MQTT URL for eclipse mosquitto
@@ -45,7 +45,7 @@ logger = logging.getLogger(__name__)
 
 
 if __name__ == "__main__":
-    # # 1 Setup Client
+    # # 1 Client setup
     #
     # create the client, for more details view the example: e01_http_clients.py
     fiware_header = FiwareHeader(service=SERVICE,
@@ -66,7 +66,7 @@ if __name__ == "__main__":
     # # 2 Setup for a subscription and MQTT notifications
     #
     # Create the data for the subscription. Have a look at the condition and
-    # the attribute section. Only a change of the temperature attribute will
+    # the attribute section. Only the change of the temperature attribute will
     # trigger the subscription and only temperature data will be included
     # into the message.
     # Additionally, you should be aware of the throttling and expiration of a
@@ -109,22 +109,22 @@ if __name__ == "__main__":
     # returned id because you might need it for later updates of the subscription.
     sub_id = cb_client.post_subscription(subscription=sub)
 
-    # # 3 setup callbacks and the MQTT client
+    # # 3 Setup for callbacks and the MQTT client
     #
-    # define callbacks for the mqtt client. They will be triggered by
+    # Define callbacks for the mqtt client. They will be triggered by
     # different events. Do not change their signature!
     def on_connect(client, userdata, flags, reasonCode, properties=None):
         if reasonCode != 0:
-            logger.error(f"Connection failed with error code: "
+            logger.error(f"Connection failed with the error code: "
                          f"'{reasonCode}'")
             raise ConnectionError
         else:
-            logger.info("Successfully, connected with result code " + str(
+            logger.info("Successfully connected with the result code: " + str(
                 reasonCode))
         client.subscribe(mqtt_topic)
 
     def on_subscribe(client, userdata, mid, granted_qos, properties=None):
-        logger.info("Successfully subscribed to with QoS: %s", granted_qos)
+        logger.info("Successfully subscribed with QoS: %s", granted_qos)
 
 
     def on_message(client, userdata, msg):
@@ -133,7 +133,7 @@ if __name__ == "__main__":
 
 
     def on_disconnect(client, userdata, reasonCode, properties=None):
-        logger.info("MQTT client disconnected with reasonCode "
+        logger.info("MQTT client disconnected with the reason code: "
                     + str(reasonCode))
 
     # MQTT client
