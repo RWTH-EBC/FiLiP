@@ -9,7 +9,7 @@ import logging
 import datetime
 import time
 
-from filip.models.ngsi_v2.subscriptions import Subscription, Mqtt, Message
+from filip.models.ngsi_v2.subscriptions import Subscription, Message
 from filip.clients.ngsi_v2.cb import ContextBrokerClient
 from filip.models.base import FiwareHeader
 from filip.models.ngsi_v2.context import ContextEntity
