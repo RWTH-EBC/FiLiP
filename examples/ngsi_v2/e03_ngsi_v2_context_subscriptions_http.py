@@ -43,9 +43,9 @@ logger = logging.getLogger(__name__)
 
 
 if __name__ == "__main__":
-    # # 1 Setup Client
+    # # 1 Client setup
     #
-    # create the client, for more details view the example: e01_http_clients.py
+    # Create the context broker client, for more details view the example: e01_http_clients.py
     fiware_header = FiwareHeader(service=SERVICE,
                                  service_path=SERVICE_PATH)
     cb_client = ContextBrokerClient(url=CB_URL,
@@ -53,9 +53,12 @@ if __name__ == "__main__":
     entities = cb_client.get_entity_list()
     logger.info(entities)
 
-    # # 2 Setup a subscription 
-    # to be notified about changes in the "temperature" attribute of the "Room" 
-    # with id "urn:ngsi-ld:Room:001". The subscription expires after 15 mins
+    # # 2 Subscription setup
+    #
+    # The system is notified every time the "temperature" attribute of the entity (subject)
+    # with the id "urn:ngsi-ld:Room:001" changes. The payload of the notification includes
+    # only "temperature" attribute. Payload is completely modifiable.
+    # The subscription expires after 15 minutes.
     interesting_entity_id = "urn:ngsi-ld:Room:001"
     sub_example = {
         "description": "Subscription to receive HTTP-Notifications about "
