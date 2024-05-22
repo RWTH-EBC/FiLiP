@@ -1093,7 +1093,7 @@ class QuantumLeapClient(BaseHttpClient):
                             entity_type: str = None,
                             from_date: str = None,
                             to_date: str = None,
-                            limit: int = None,
+                            limit: int = 10000,
                             offset: int = None
                             ) -> List[TimeSeries]:
         """
@@ -1140,7 +1140,6 @@ class QuantumLeapClient(BaseHttpClient):
                 old.extend(new)
         
         return list(res)
-   
 
     # v2/attrs/{attr_name}
     def get_entity_by_attr_name(self, *,
@@ -1148,7 +1147,7 @@ class QuantumLeapClient(BaseHttpClient):
                                 entity_type: str = None,
                                 from_date: str = None,
                                 to_date: str = None,
-                                limit: int = None,
+                                limit: int = 10000,
                                 offset: int = None
                                 ) -> List[TimeSeriesEntities]:
         """
@@ -1178,11 +1177,11 @@ class QuantumLeapClient(BaseHttpClient):
         """
         url = urljoin(self.base_url, f'/v2/attrs/{attr_name}')
         res_q = self.__query_builder(url=url,
-                                   entity_type=entity_type,
-                                   from_date=from_date,
-                                   to_date=to_date,
-                                   limit=limit,
-                                   offset=offset)
+                                     entity_type=entity_type,
+                                     from_date=from_date,
+                                     to_date=to_date,
+                                     limit=limit,
+                                     offset=offset)
 
         first = res_q.popleft()
         res = self.transform_attr_response_model(first)
