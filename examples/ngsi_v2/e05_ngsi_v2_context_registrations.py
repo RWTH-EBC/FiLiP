@@ -27,7 +27,7 @@ CB_URL = "http://localhost:1026"
 # You can also change the used Fiware service
 # FIWARE-Service
 SERVICE = 'filip'
-# FIWARE-Servicepath
+# FIWARE-Service path
 SERVICE_PATH = '/example'
 
 # Setting up logging
@@ -40,7 +40,7 @@ logger = logging.getLogger(__name__)
 if __name__ == '__main__':
     # # 1 Creating models
     #
-    # Create a building with a weather station as context provider.
+    # Create a building with a weather station as a context provider.
     # We start by creating metadata. The other way round is also possible, but
     # you have to use the api of the Context Entity Model.
 
@@ -48,22 +48,20 @@ if __name__ == '__main__':
     temperature_metadata = NamedMetadata(name="unit",
                                          type="Unit",
                                          value=Unit(name="degree Celsius").model_dump())
-    # create the temperature attribute of the weather station
+    # create the 'temperature' attribute of the weather station
     temperature = ContextAttribute(type="Number",
                                    value=20.5,
                                    metadata=temperature_metadata)
-    # create the complete model of the building with the weather station
-    weather_station_building = ContextEntity(id="urn:ngsi-ld:WeatherStation:001",
-                                             type="WeatherStation",
-                                             temperature=temperature)
+    # create the complete model of the weather station
+    weather_station = ContextEntity(id="urn:ngsi-ld:WeatherStation:001",
+                                    type="WeatherStation",
+                                    temperature=temperature)
 
     # print the complete weather station object
-    print("+" * 80)
-    print("Building with weather station with one property from a sensor")
-    print("+" * 80)
-    print(weather_station_building.model_dump_json(indent=2))
+    print(f"{'*' * 80}\nWeather station with one attribute\n{'*' * 80}")
+    print(weather_station.model_dump_json(indent=2))
 
-    # create additional properties of the weather station
+    # create an additional attribute 'wind_speed' of the weather station
     wind_speed_metadata = NamedMetadata(name="unit",
                                         type="Unit",
                                         value=Unit(name="kilometre per "
@@ -72,21 +70,17 @@ if __name__ == '__main__':
     wind_speed = ContextAttribute(type="Number",
                                   value=60,
                                   metadata=wind_speed_metadata)
-    weather_station_building.add_attributes(attrs={"wind_speed": wind_speed})
+    weather_station.add_attributes(attrs={"wind_speed": wind_speed})
 
     # print the complete model
-    print("+" * 80)
-    print("Building with weather station with two properties from a sensor")
-    print("+" * 80)
-    print(weather_station_building.model_dump_json(indent=2))
+    print(f"{'*' * 80}\nWeather station with two attributes\n{'*' * 80}")
+    print(weather_station.model_dump_json(indent=2))
 
-    building_1 = ContextEntity(id="urn:ngsi-ld:building:001",
-                               type="Building")
+    building = ContextEntity(id="urn:ngsi-ld:building:001",
+                             type="Building")
 
-    print("+" * 80)
-    print("Building without own properties")
-    print("+" * 80)
-    print(building_1.model_dump_json(indent=2))
+    print(f"{'*' * 80}\nBuilding without own attributes\n{'*' * 80}")
+    print(building.model_dump_json(indent=2))
 
     # # 2 Creating registration
     #
@@ -107,38 +101,35 @@ if __name__ == '__main__':
             },
             "provider": provider.model_dump()
         })
-    print("+" * 80)
-    print("Registration that makes the first building a context "
-          "provider for the second building")
-    print("+" * 80)
+    print(f"{'*' * 80}\nRegistration that makes the weather station a context provider for the building\n{'*' * 80}")
     print(registration.model_dump_json(indent=2))
 
     # # 3 Post created objects to Fiware
     #
     fiware_header = FiwareHeader(service=SERVICE,
                                  service_path=SERVICE_PATH)
-    print(fiware_header.model_dump_json(by_alias=True, indent=2))
     client = ContextBrokerClient(url=CB_URL,
                                  fiware_header=fiware_header)
-    client.post_entity(entity=weather_station_building)
-    client.post_entity(entity=building_1)
+    client.post_entity(entity=weather_station)
+    client.post_entity(entity=building)
     registration_id = client.post_registration(registration=registration)
-    print(registration_id)
 
-    # # 4 Read in objects from Fiware
+    # # 4 Reading objects from Fiware
+    #
     #
     registration = client.get_registration(registration_id=registration_id)
+    print(f"{'*' * 80}\nPosted registration to the context broker\n{'*' * 80}")
     print(registration.model_dump_json(indent=2))
 
-    weather_station = client.get_entity(entity_id=weather_station_building.id,
-                                        entity_type=weather_station_building.type)
+    weather_station = client.get_entity(entity_id=weather_station.id,
+                                        entity_type=weather_station.type)
+    print(f"{'*' * 80}\nPosted weather station to the context broker\n{'*' * 80}")
     print(weather_station.model_dump_json(indent=2))
-    building_1 = client.get_entity(entity_id=building_1.id,
-                                   entity_type=building_1.type)
-    print(building_1.model_dump_json(indent=2))
 
-    registration = client.get_registration(registration_id=registration_id)
-    print(80 * "+" + "\n" + registration.model_dump_json(indent=2))
+    building = client.get_entity(entity_id=building.id,
+                                 entity_type=building.type)
+    print(f"{'*' * 80}\nPosted building to the context broker\n{'*' * 80}")
+    print(building.model_dump_json(indent=2))
 
     # # 5 Query Fiware
     #
@@ -147,6 +138,7 @@ if __name__ == '__main__':
     entity = EntityPattern(idPattern=".*", type="Building")
     query = Query(entities=[entity])
 
+    print(f"{'*' * 80}\nQuery with the idPattern='.*' and type='Building\n{'*' * 80}")
     print(query.model_dump_json(indent=2))
 
     res = client.query(query=query)
@@ -157,6 +149,6 @@ if __name__ == '__main__':
     #
     client.delete_entity(entity_id=weather_station.id,
                          entity_type=weather_station.type)
-    client.delete_entity(entity_id=building_1.id,
-                         entity_type=building_1.type)
+    client.delete_entity(entity_id=building.id,
+                         entity_type=building.type)
     client.delete_registration(registration_id)
