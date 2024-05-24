@@ -1,11 +1,11 @@
 """
 # # Exercise 3: Context Entities and Relationships
 
-# Create building context entity of type 'Building' according to FIWARE's
+# Create a building context entity of type 'Building' according to FIWARE's
 # SmartData Models with the properties: `id`, `type`, `address`, `category`,
 # https://github.com/smart-data-models/dataModel.Building/blob/master/Building/doc/spec.md
 
-# For the single properties check on the "Data Model description of
+# For the single properties check the "Data Model description of
 # properties" section. The input sections are marked with 'ToDo'
 
 # #### Steps to complete:
@@ -18,12 +18,12 @@
 #    ContextBroker. Afterwards, check if the Context Broker returns the
 #    correct information about your building
 # 6. Create an `opening hours` attribute add them to the server
-# 7. Retrieve the `opening hours` manipulate them and update the model at the
+# 7. Retrieve the `opening hours`, manipulate them and update the model in the
 #    server
 # 8. Repeat the procedure with a thermal zone. Currently, the smart data
 #    models hold no definition of a thermal zone. Therefore, we first only add a
 #    description attribute.
-# 9. Add a `Relationship` attribute to your thermal zone with name
+# 9. Add a `Relationship` attribute to your thermal zone with the name
 #    `refBuilding` and type `Relationship` pointing to your building and post
 #    the model to the context broker
 # 10. Add a `Relationship` attribute to your building with name
@@ -44,20 +44,23 @@ from filip.utils.cleanup import clear_context_broker
 from filip.utils.simple_ql import QueryString
 
 # ## Parameters
-# ToDo: Enter your context broker host and port, e.g http://localhost:1026
+# ToDo: Enter your context broker host and port, e.g. http://localhost:1026.
 CB_URL = "http://localhost:1026"
 
+# ToDo: Change the name of your service to something unique. If you run
+#  on a shared instance this is very important in order to avoid user
+#  collisions. You will use this service through the whole tutorial.
+#  If you forget to change it, an error will be raised!
 # FIWARE-Service
 SERVICE = 'filip_tutorial'
-# FIWARE-Servicepath
-# ToDo: Change the name of your service-path to something unique. If you run
-#  on a shared instance this very important in order to avoid user
-#  collisions. You will use this service path through the whole tutorial.
-#  If you forget to change it an error will be raised!
-SERVICE_PATH = '/your_path'
+# FIWARE-Service path
+SERVICE_PATH = '/'
 
 # ToDo: Path to json-files to store entity data for follow up exercises,
-#  e.g. ./e3_my_entities.json
+#  e.g. ../e3_my_entities.json. Files that are used in exercises and files
+#  that are used in solutions are different from each other so be careful
+#  when working with them. You can of course change the paths as you wish,
+#  but it is recommended to use the already given path names.
 WRITE_ENTITIES_FILEPATH = Path("../e3_context_entities_solution_entities.json")
 
 # ## Main script
@@ -78,7 +81,7 @@ if __name__ == '__main__':
                                      type="Array",
                                      value=["office"])
 
-    # ToDo: create a property `address` for your building. Follow the full yaml
+    # ToDo: Create a property `address` for your building. Follow the full yaml
     #  description in the specifications. It reuses the specification from
     #  here: https://schema.org/PostalAddress
     address = NamedContextAttribute(name="address",
@@ -90,7 +93,7 @@ if __name__ == '__main__':
                                         "streetAddress": "Any Street 5"
                                     })
 
-    # ToDo: create a `description` property for your building
+    # ToDo: Create a `description` property for your building.
     building_description = NamedContextAttribute(name="description",
                                                  type="Text",
                                                  value="Small office building "
@@ -103,10 +106,10 @@ if __name__ == '__main__':
                                    category,
                                    address])
 
-    # ToDo: Create a context broker client and add the fiware_header
+    # ToDo: Create a context broker client and add the fiware_header.
     cbc = ContextBrokerClient(url=CB_URL, fiware_header=fiware_header)
     # ToDo: Send your building model to the context broker. Check the client
-    #  for the proper function
+    #  for proper functioning.
     cbc.post_entity(entity=building)
 
     # Update your local building model with the one from the server
@@ -116,7 +119,7 @@ if __name__ == '__main__':
     # print your `building model` as json
     print(f"This is your building model: \n {building.model_dump_json(indent=2)} \n")
 
-    # ToDo: create a `opening hours` property and add it to the building object
+    # ToDo: Create an `opening hours` property and add it to the building object
     #  in the context broker. Do not update the whole entity! In real
     #  scenarios it might have been modified by other users.
     opening_hours = NamedContextAttribute(name="openingHours",
@@ -132,13 +135,13 @@ if __name__ == '__main__':
         entity_type=building.type,
         attrs=[opening_hours])
 
-    # ToDo: retrieve and print the opening hours
+    # ToDo: Retrieve and print the property `opening hours`.
     hours = cbc.get_attribute_value(entity_id=building.id,
                                     entity_type=building.type,
                                     attr_name=opening_hours.name)
-    print(f"Your opening hours: {hours} \n" )
+    print(f"Your opening hours: {hours} \n")
 
-    # ToDo: modify the `opening hours` of the building
+    # ToDo: Modify the property `opening hours` of the building.
     cbc.update_attribute_value(entity_id=building.id,
                                entity_type=building.type,
                                attr_name=opening_hours.name,
@@ -152,10 +155,10 @@ if __name__ == '__main__':
                               entity_type=building.type)
 
     # print your building
-    print(f"Your updated building model: \n {building.model_dump_json(indent=2)}")
+    print(f"Your updated building model: \n {building.model_dump_json(indent=2)} \n")
 
-    # ToDo: Create an entity of thermal zone and add a description property
-    #  to it
+    # ToDo: Create an entity of the thermal zone and add a description property
+    #  to it.
     thermal_zone = ContextEntity(id="ThermalZone:001",
                                  type="ThermalZone")
 
@@ -165,8 +168,8 @@ if __name__ == '__main__':
                                                            "the entire building")
     thermal_zone.add_attributes(attrs=[thermal_zone_description])
 
-    # ToDo: Create and a property that references your building model. Use the
-    #  `Relationship` for type and `refBuilding` for its name
+    # ToDo: Create and add a property that references your building model. Use the
+    #  `Relationship` for type and `refBuilding` for its name.
     ref_building = NamedContextAttribute(name="refBuilding",
                                          type="Relationship",
                                          value=building.id)
@@ -174,15 +177,15 @@ if __name__ == '__main__':
 
     # print all relationships of your thermal zone
     for relationship in thermal_zone.get_relationships():
-        print(f"Relationship properties of your thermal zone mdoel: \n "
+        print(f"Relationship properties of your thermal zone model: \n "
               f"{relationship.model_dump_json(indent=2)} \n")
 
-    # ToDo: Post your thermal zone model to the context broker
+    # ToDo: Post your thermal zone model to the context broker.
     cbc.post_entity(entity=thermal_zone)
     thermal_zone = cbc.get_entity(entity_id=thermal_zone.id,
                                   entity_type=thermal_zone.type)
 
-    # ToDo: Create and a property that references your thermal zone. Use the
+    # ToDo: Create and add a property that references your thermal zone. Use the
     #  `Relationship` for type and `hasZone` for its name. Make sure that
     #  your local model and the server model are in sync afterwards.
     ref_zone = NamedContextAttribute(name="hasZone",
@@ -194,23 +197,23 @@ if __name__ == '__main__':
     building = cbc.get_entity(entity_id=building.id,
                               entity_type=building.type)
 
-    # ToDo: create a filter request that retrieves all entities from the
-    #   server`that have `refBuilding` attribute that references your building
+    # ToDo: Create a filter request that retrieves all entities from the
+    #   server that have `refBuilding` attribute that reference your building
     #   by using the FIWARE's simple query language.
-    #   `filip.utils.simple_ql` module helps you to validate your query string
-    #   1. prepare the query string using the `filip.utils.simple_ql`
-    #   2. use the string in a context broker request and retrieve the entities.
+    #   `filip.utils.simple_ql` module helps you to validate your query string.
+    #   1. Prepare the query string using the `filip.utils.simple_ql`.
+    #   2. Use the string in a context broker request and retrieve the entities.
     query = QueryString(qs=("refBuilding", "==", building.id))
     for entity in cbc.get_entity_list(q=query):
         print(f"All entities referencing the building: "
               f"\n {entity.model_dump_json(indent=2)}\n")
 
-    # ToDo: create a filter request that retrieves all entities from the
-    #   server`that have `hasZone' attribute that references your thermal zone
+    # ToDo: Create a filter request that retrieves all entities from the
+    #   server that have `hasZone` attribute that reference your thermal zone
     #   by using the FIWARE's simple query language.
-    #   `filip.utils.simple_ql` module helps you to validate your query string
-    #   1. prepare the query string using the `filip.utils.simple_ql`
-    #   2. use the string in a context broker request and retrieve the entities.
+    #   `filip.utils.simple_ql` module helps you to validate your query string.
+    #   1. Prepare the query string using the `filip.utils.simple_ql`.
+    #   2. Use the string in a context broker request and retrieve the entities.
     query = QueryString(qs=("hasZone", "==", thermal_zone.id))
     for entity in cbc.get_entity_list(q=query):
         print(f"All entities referencing the thermal zone: "

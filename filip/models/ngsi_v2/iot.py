@@ -221,9 +221,7 @@ class ServiceGroup(BaseModel):
         Returns:
             timezone
         """
-        if value is None:
-            return value
-        return str(value)
+        return str(value) if value else value
     lazy: Optional[List[LazyDeviceAttribute]] = Field(
         default=[],
         desription="list of common lazy attributes of the device. For each "
@@ -440,6 +438,46 @@ class Device(DeviceSettings):
 
         return self
 
+    @model_validator(mode='after')
+    def validate_duplicated_device_attributes(self):
+        """
+        Check whether device has identical attributes
+        Args:
+            self: dict of Device instance.
+
+        Returns:
+            The dict of Device instance after validation.
+        """
+        for i, attr in enumerate(self.attributes):
+            for other_attr in self.attributes[:i] + self.attributes[i + 1:]:
+                if attr.model_dump() == other_attr.model_dump():
+                    raise ValueError(f"Duplicated attributes found: {attr.name}")
+        return self
+
+    @model_validator(mode='after')
+    def validate_device_attributes_name_object_id(self):
+        """
+        Validate the device regarding the behavior with devices attributes.
+        According to https://iotagent-node-lib.readthedocs.io/en/latest/api.html and
+        based on our best practice, following rules are checked
+            - name is required, but not necessarily unique
+            - object_id is not required, if given must be unique, i.e. not equal to any
+                existing object_id and name
+        Args:
+            self: dict of Device instance.
+
+        Returns:
+            The dict of Device instance after validation.
+        """
+        for i, attr in enumerate(self.attributes):
+            for other_attr in self.attributes[:i] + self.attributes[i + 1:]:
+                if attr.object_id and other_attr.object_id and \
+                        attr.object_id == other_attr.object_id:
+                    raise ValueError(f"object_id {attr.object_id} is not unique")
+                if attr.object_id and attr.object_id == other_attr.name:
+                    raise ValueError(f"object_id {attr.object_id} is not unique")
+        return self
+
     def get_attribute(self, attribute_name: str) -> Union[DeviceAttribute,
                                                           LazyDeviceAttribute,
                                                           StaticDeviceAttribute,
@@ -481,7 +519,8 @@ class Device(DeviceSettings):
         """
         try:
             if type(attribute) == DeviceAttribute:
-                if attribute in self.attributes:
+                if attribute.model_dump(exclude_none=True) in \
+                        [attr.model_dump(exclude_none=True) for attr in self.attributes]:
                     raise ValueError
 
                 self.attributes.append(attribute)
