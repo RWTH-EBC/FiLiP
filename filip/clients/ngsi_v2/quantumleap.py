@@ -1065,28 +1065,44 @@ class QuantumLeapClient(BaseHttpClient):
         """
         url = urljoin(self.base_url, f'v2/types/{entity_type}/attrs/'
                                      f'{attr_name}/value')
-        res = self.__query_builder(url=url,
-                                   entity_id=entity_id,
-                                   options=options,
-                                   entity_type=entity_type,
-                                   aggr_method=aggr_method,
-                                   aggr_period=aggr_period,
-                                   from_date=from_date,
-                                   to_date=to_date,
-                                   last_n=last_n,
-                                   limit=limit,
-                                   offset=offset,
-                                   georel=georel,
-                                   geometry=geometry,
-                                   coords=coords,
-                                   aggr_scope=aggr_scope)
-        return [TimeSeries(index=item.get('index'),
-                           entityType=entity_type,
-                           entityId=item.get('entityId'),
-                           attributes=[
-                               AttributeValues(attrName=attr_name,
-                                               values=item.get('values'))])
-                for item in res.get('values')]
+        res_q = self.__query_builder(url=url,
+                                     entity_id=entity_id,
+                                     id_pattern=id_pattern,
+                                     options=options,
+                                     entity_type=entity_type,
+                                     aggr_method=aggr_method,
+                                     aggr_period=aggr_period,
+                                     from_date=from_date,
+                                     to_date=to_date,
+                                     last_n=last_n,
+                                     limit=limit,
+                                     offset=offset,
+                                     georel=georel,
+                                     geometry=geometry,
+                                     coords=coords,
+                                     aggr_scope=aggr_scope)
+
+        # merge chunks of response
+        res = [TimeSeries(index=item.get('index'),
+                          entityType=entity_type,
+                          entityId=item.get('entityId'),
+                          attributes=[
+                              AttributeValues(attrName=attr_name,
+                                              values=item.get('values'))])
+               for item in res_q.popleft().get('values')]
+
+        for chunk in res_q:
+            chunk = [TimeSeries(index=item.get('index'),
+                                entityType=entity_type,
+                                entityId=item.get('entityId'),
+                                attributes=[
+                                    AttributeValues(attrName=attr_name,
+                                                    values=item.get('values'))])
+                     for item in chunk.get('values')]
+
+            for new, old in zip(chunk, res):
+                old.extend(new)
+        return res
 
     # v2/attrs
     def get_entity_by_attrs(self, *,
@@ -1192,8 +1208,7 @@ class QuantumLeapClient(BaseHttpClient):
                 old.extend(new)
         
         return list(res)
-        
-    
+
     def transform_attr_response_model(self,attr_response):
         res =[]
         attr_name=attr_response.get("attrName")
