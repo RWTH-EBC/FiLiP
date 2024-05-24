@@ -21,7 +21,8 @@
 # ## Import packages
 from pathlib import Path
 from typing import List
-from pydantic import parse_file_as
+import json
+from pydantic import TypeAdapter
 
 # import from filip
 from filip.clients.ngsi_v2 import \
@@ -75,9 +76,15 @@ if __name__ == '__main__':
     clear_context_broker(url=CB_URL, fiware_header=fiware_header)
 
     # Create clients and restore devices and groups from file
-    groups = parse_file_as(List[ServiceGroup], READ_GROUPS_FILEPATH)
-    devices = parse_file_as(List[Device], READ_DEVICES_FILEPATH)
-    entities = parse_file_as(List[ContextEntity], READ_ENTITIES_FILEPATH)
+    with open(READ_GROUPS_FILEPATH, "r") as file:
+        read_groups = list(json.load(file))
+    with open(READ_DEVICES_FILEPATH, "r") as file:
+        read_devices = list(json.load(file))
+    with open(READ_ENTITIES_FILEPATH, "r") as file:
+        read_entities = list(json.load(file))
+    groups = TypeAdapter(List[ServiceGroup]).validate_python(read_groups)
+    devices = TypeAdapter(List[Device]).validate_python(read_devices)
+    entities = TypeAdapter(List[ContextEntity]).validate_python(read_entities)
     cbc = ContextBrokerClient(url=CB_URL, fiware_header=fiware_header)
     for entity in entities:
         cbc.post_entity(entity=entity)
@@ -217,7 +224,7 @@ if __name__ == '__main__':
     # ToDo: Retrieve all ContextEntites and print them
     entities = ...
     for entity in entities:
-        print(entity.json(indent=2))
+        print(entity.model_dump_json(indent=2))
 
     clear_iot_agent(url=IOTA_URL, fiware_header=fiware_header)
     clear_context_broker(url=CB_URL, fiware_header=fiware_header)

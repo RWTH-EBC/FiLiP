@@ -158,9 +158,9 @@ if __name__ == '__main__':
     # ToDo: Create a context broker client
     cbc = ContextBrokerClient(url=CB_URL, fiware_header=fiware_header)
     # Get WeatherStation entity
-    print(cbc.get_entity(weather_station.entity_name).json(indent=2))
+    print(cbc.get_entity(weather_station.entity_name).model_dump_json(indent=2))
     # Get ZoneTemperatureSensor entity
-    print(cbc.get_entity(zone_temperature_sensor.entity_name).json(indent=2))
+    print(cbc.get_entity(zone_temperature_sensor.entity_name).model_dump_json(indent=2))
 
     # ToDo: create an MQTTv5 client using filip.clients.mqtt.IoTAMQTTClient
     mqttc = IoTAMQTTClient(protocol=mqtt.MQTTv5)
@@ -266,14 +266,14 @@ if __name__ == '__main__':
         f"Wrong file extension! {WRITE_DEVICES_FILEPATH.suffix}"
     WRITE_DEVICES_FILEPATH.touch(exist_ok=True)
     with WRITE_DEVICES_FILEPATH.open('w', encoding='utf-8') as f:
-        devices = [item.dict() for item in iotac.get_device_list()]
+        devices = [item.model_dump() for item in iotac.get_device_list()]
         json.dump(devices, f, ensure_ascii=False, indent=2)
 
     assert WRITE_GROUPS_FILEPATH.suffix == '.json', \
         f"Wrong file extension! {WRITE_GROUPS_FILEPATH.suffix}"
     WRITE_GROUPS_FILEPATH.touch(exist_ok=True)
     with WRITE_GROUPS_FILEPATH.open('w', encoding='utf-8') as f:
-        groups = [item.dict() for item in iotac.get_group_list()]
+        groups = [item.model_dump() for item in iotac.get_group_list()]
         json.dump(groups, f, ensure_ascii=False, indent=2)
 
     clear_iot_agent(url=IOTA_URL, fiware_header=fiware_header)

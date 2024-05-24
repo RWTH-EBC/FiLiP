@@ -221,6 +221,8 @@ class ServiceGroup(BaseModel):
         Returns:
             timezone
         """
+        if value is None:
+            return value
         return str(value)
     lazy: Optional[List[LazyDeviceAttribute]] = Field(
         default=[],

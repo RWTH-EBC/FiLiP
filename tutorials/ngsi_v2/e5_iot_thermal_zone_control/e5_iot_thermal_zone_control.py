@@ -38,7 +38,7 @@ from typing import List
 from urllib.parse import urlparse
 from uuid import uuid4
 import paho.mqtt.client as mqtt
-from pydantic import parse_file_as
+from pydantic import TypeAdapter
 import matplotlib.pyplot as plt
 
 # import from filip
@@ -125,8 +125,12 @@ if __name__ == '__main__':
     history_heater = []
 
     # Create clients and restore devices and groups from file
-    groups = parse_file_as(List[ServiceGroup], READ_GROUPS_FILEPATH)
-    devices = parse_file_as(List[Device], READ_DEVICES_FILEPATH)
+    with open(READ_GROUPS_FILEPATH, "r") as file:
+        read_groups = list(json.load(file))
+    with open(READ_DEVICES_FILEPATH, "r") as file:
+        read_devices = list(json.load(file))
+    groups = TypeAdapter(List[ServiceGroup]).validate_python(read_groups)
+    devices = TypeAdapter(List[Device]).validate_python(read_devices)
     cbc = ContextBrokerClient(url=CB_URL, fiware_header=fiware_header)
     iotac = IoTAClient(url=IOTA_URL, fiware_header=fiware_header)
     iotac.post_groups(service_groups=groups)
@@ -167,7 +171,7 @@ if __name__ == '__main__':
     heater_entity = cbc.get_entity(entity_id=heater.entity_name,
                                    entity_type=heater.entity_type)
     print(f"Your device entity before running the simulation: \n "
-          f"{heater_entity.json(indent=2)}")
+          f"{heater_entity.model_dump_json(indent=2)}")
 
     # create a MQTTv5 client with paho-mqtt and the known groups and devices.
     mqttc = IoTAMQTTClient(protocol=mqtt.MQTTv5,
@@ -237,7 +241,7 @@ if __name__ == '__main__':
         """
         Callback for measurement notifications
         """
-        message = Message.parse_raw(msg.payload)
+        message = Message.model_validate_json(msg.payload)
         updated_zone_temperature_sensor = message.data[0]
 
         # ToDo: retrieve the value of temperature attribute
@@ -340,7 +344,7 @@ if __name__ == '__main__':
     mqttc.disconnect()
 
     print(cbc.get_entity(entity_id=heater.entity_name,
-                         entity_type=heater.entity_type).json(indent=2))
+                         entity_type=heater.entity_type).model_dump_json(indent=2))
 
     # plot results
     fig, ax = plt.subplots()
@@ -372,21 +376,21 @@ if __name__ == '__main__':
         f"Wrong file extension! {WRITE_DEVICES_FILEPATH.suffix}"
     WRITE_DEVICES_FILEPATH.touch(exist_ok=True)
     with WRITE_DEVICES_FILEPATH.open('w', encoding='utf-8') as f:
-        devices = [item.dict() for item in iotac.get_device_list()]
+        devices = [item.model_dump() for item in iotac.get_device_list()]
         json.dump(devices, f, ensure_ascii=False, indent=2)
 
     assert WRITE_GROUPS_FILEPATH.suffix == '.json', \
         f"Wrong file extension! {WRITE_GROUPS_FILEPATH.suffix}"
     WRITE_GROUPS_FILEPATH.touch(exist_ok=True)
     with WRITE_GROUPS_FILEPATH.open('w', encoding='utf-8') as f:
-        groups = [item.dict() for item in iotac.get_group_list()]
+        groups = [item.model_dump() for item in iotac.get_group_list()]
         json.dump(groups, f, ensure_ascii=False, indent=2)
 
     assert WRITE_SUBSCRIPTIONS_FILEPATH.suffix == '.json', \
         f"Wrong file extension! {WRITE_SUBSCRIPTIONS_FILEPATH.suffix}"
     WRITE_SUBSCRIPTIONS_FILEPATH.touch(exist_ok=True)
     with WRITE_SUBSCRIPTIONS_FILEPATH.open('w', encoding='utf-8') as f:
-        subs = [item.dict() for item in cbc.get_subscription_list()]
+        subs = [item.model_dump() for item in cbc.get_subscription_list()]
         json.dump(subs, f, ensure_ascii=False, indent=2)
 
     clear_iot_agent(url=IOTA_URL, fiware_header=fiware_header)

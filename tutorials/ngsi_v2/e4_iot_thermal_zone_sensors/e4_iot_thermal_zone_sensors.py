@@ -156,7 +156,7 @@ if __name__ == '__main__':
     # ToDo: Create a context broker client
     cbc = ContextBrokerClient(url=CB_URL, fiware_header=fiware_header)
     # Get WeatherStation entity
-    print(cbc.get_entity(weather_station.entity_name).json(indent=2))
+    print(cbc.get_entity(weather_station.entity_name).model_dump_json(indent=2))
     # ToDo: Get ZoneTemperatureSensor entity
     print(...)
 

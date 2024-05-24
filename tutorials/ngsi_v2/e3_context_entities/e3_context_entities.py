@@ -114,7 +114,7 @@ if __name__ == '__main__':
                               entity_type=building.type)
 
     # print your `building model` as json
-    print(f"This is your building model: \n {building.json(indent=2)} \n")
+    print(f"This is your building model: \n {building.model_dump_json(indent=2)} \n")
 
     # ToDo: create a `opening hours` property and add it to the building object
     #  in the context broker. Do not update the whole entity! In real
@@ -152,7 +152,7 @@ if __name__ == '__main__':
                               entity_type=building.type)
 
     # print your building
-    print(f"Your updated building model: \n {building.json(indent=2)}")
+    print(f"Your updated building model: \n {building.model_dump_json(indent=2)}")
 
     # ToDo: Create an entity of thermal zone and add a description property
     #  to it
@@ -175,7 +175,7 @@ if __name__ == '__main__':
     # print all relationships of your thermal zone
     for relationship in thermal_zone.get_relationships():
         print(f"Relationship properties of your thermal zone mdoel: \n "
-              f"{relationship.json(indent=2)} \n")
+              f"{relationship.model_dump_json(indent=2)} \n")
 
     # ToDo: Post your thermal zone model to the context broker
     ...
@@ -203,7 +203,7 @@ if __name__ == '__main__':
     query = QueryString(qs=("refBuilding", "==", building.id))
     for entity in cbc.get_entity_list(q=query):
         print(f"All entities referencing the building: "
-              f"\n {entity.json(indent=2)}\n")
+              f"\n {entity.model_dump_json(indent=2)}\n")
 
     # ToDo: create a filter request that retrieves all entities from the
     #   server`that have `hasZone' attribute that references your thermal zone
@@ -214,14 +214,14 @@ if __name__ == '__main__':
     query = ...
     for entity in cbc.get_entity_list(q=query):
         print(f"All entities referencing the thermal zone: "
-              f"\n {entity.json(indent=2)} \n")
+              f"\n {entity.model_dump_json(indent=2)} \n")
 
     # write entities to file and clear server state
     assert WRITE_ENTITIES_FILEPATH.suffix == '.json', \
         f"Wrong file extension! {WRITE_ENTITIES_FILEPATH.suffix}"
     WRITE_ENTITIES_FILEPATH.touch(exist_ok=True)
     with WRITE_ENTITIES_FILEPATH.open('w', encoding='utf-8') as f:
-        entities = [item.dict() for item in cbc.get_entity_list()]
+        entities = [item.model_dump() for item in cbc.get_entity_list()]
         json.dump(entities, f, ensure_ascii=False, indent=2)
 
     clear_context_broker(url=CB_URL, fiware_header=fiware_header)
