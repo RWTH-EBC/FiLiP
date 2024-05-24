@@ -411,15 +411,14 @@ class TestTimeSeries(unittest.TestCase):
                 # we expect the sizes of the index and attribute values to be the same
                 for timeseries in entities_by_attr_name:
                     for attribute in timeseries.attributes:
-                        self.assertEqual(len(attribute.values),len(timeseries.index))
+                        self.assertEqual(len(attribute.values), len(timeseries.index))
 
             entities_by_attr = client.get_entity_by_attrs()
             # we expect as many timeseries as : n of unique ids x n of different attrs
             self.assertEqual(len(entities_by_attr), 2*3)
             for timeseries in entities_by_attr:
                 for attribute in timeseries.attributes:
-                    self.assertEqual(len(attribute.values),len(timeseries.index))
-            
+                    self.assertEqual(len(attribute.values), len(timeseries.index))
 
     def tearDown(self) -> None:
         """
