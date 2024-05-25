@@ -388,7 +388,7 @@ class TestTimeSeries(unittest.TestCase):
                                            records.index[0])
                     old_records = records
     
-    def test_attr_endpoints(self)->None:
+    def test_attr_endpoints(self) -> None:
         """
         Test get entity by attr/attr name endpoints
         Returns:

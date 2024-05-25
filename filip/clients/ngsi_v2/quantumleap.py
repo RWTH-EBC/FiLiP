@@ -2,7 +2,6 @@
 TimeSeries Module for QuantumLeap API Client
 """
 import logging
-import numpy as np
 import time
 from math import inf
 from collections import deque
@@ -22,11 +21,7 @@ from filip.models.ngsi_v2.timeseries import \
     AggrScope, \
     AttributeValues, \
     TimeSeries, \
-    TimeSeriesHeader, \
-    TimeSeriesAttrHeader, \
-    TimeSeriesEntities, \
-    EntityValues
-from filip.utils.validators import validate_http_url
+    TimeSeriesHeader
 
 
 logger = logging.getLogger(__name__)
@@ -1165,7 +1160,7 @@ class QuantumLeapClient(BaseHttpClient):
                                 to_date: str = None,
                                 limit: int = 10000,
                                 offset: int = None
-                                ) -> List[TimeSeriesEntities]:
+                                ) -> List[TimeSeries]:
         """
         Get list of all entities containing this attribute name, as well as
         getting the index and values of this attribute in every corresponding
@@ -1189,7 +1184,7 @@ class QuantumLeapClient(BaseHttpClient):
             offset (int): Offset for the results.
 
         Returns:
-            List of TimeSeriesEntities
+            List of TimeSeries
         """
         url = urljoin(self.base_url, f'/v2/attrs/{attr_name}')
         res_q = self.__query_builder(url=url,
@@ -1206,20 +1201,20 @@ class QuantumLeapClient(BaseHttpClient):
             chunk = self.transform_attr_response_model(chunk)
             for new, old in zip(chunk, res):
                 old.extend(new)
-        
         return list(res)
 
-    def transform_attr_response_model(self,attr_response):
-        res =[]
-        attr_name=attr_response.get("attrName")
+    def transform_attr_response_model(self, attr_response):
+        res = []
+        attr_name = attr_response.get("attrName")
         for entity_group in attr_response.get("types"):
             timeseries = map(lambda entity: 
                              TimeSeries(entityId=entity.get("entityId"),
                                         entityType=entity_group.get("entityType"),
-                                        index = entity.get("index"),
+                                        index=entity.get("index"),
                                         attributes=[
                                              AttributeValues(attrName=attr_name,
-                                                             values=entity.get("values"))]),
+                                                             values=entity.get("values"))]
+                                        ),
                              entity_group.get("entities"))
             res.append(timeseries)
         return chain.from_iterable(res)
