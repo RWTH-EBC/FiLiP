@@ -34,7 +34,6 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-
 if __name__ == "__main__":
     # # 1 Setup IoTAClient
     #
@@ -66,27 +65,27 @@ if __name__ == "__main__":
     # and manipulated.
     #
     # Dictionary:
-    example_device = {"device_id": "sensor008",
-                      "service": SERVICE,
-                      "service_path": SERVICE_PATH,
-                      "entity_name": "sensor1",
-                      "entity_type": "Sensor",
-                      "timezone": 'Europe/Berlin',
-                      "timestamp": True,
-                      "apikey": "1234",
-                      "protocol": "IoTA-UL",
-                      "transport": "MQTT",
-                      "lazy": [],
-                      "commands": [],
-                      "attributes": [],
-                      "static_attributes": [],
-                      "internal_attributes": [],
-                      "explicitAttrs": False,
-                      "ngsiVersion": "v2"}
-    device1 = Device(**example_device)
+    example_device_dict = {"device_id": "urn:ngsi-ld:sensor:001",
+                           "service": SERVICE,
+                           "service_path": SERVICE_PATH,
+                           "entity_name": "sensor1",
+                           "entity_type": "Sensor",
+                           "timezone": 'Europe/Berlin',
+                           "timestamp": True,
+                           "apikey": "1234",
+                           "protocol": "IoTA-UL",
+                           "transport": "MQTT",
+                           "lazy": [],
+                           "commands": [],
+                           "attributes": [],
+                           "static_attributes": [],
+                           "internal_attributes": [],
+                           "explicitAttrs": False,
+                           "ngsiVersion": "v2"}
+    device1 = Device(**example_device_dict)
 
     # Direct Parameters:
-    device2 = Device(device_id="sensor009",
+    device2 = Device(device_id="urn:ngsi-ld:sensor:002",
                      service=SERVICE,
                      service_path=SERVICE_PATH,
                      entity_name="sensor2",
