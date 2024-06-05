@@ -44,7 +44,7 @@ SERVICE_PATH = '/example'
 # ApiKey of the Device
 DEVICE_APIKEY = 'filip-example-device'
 # ApiKey of the ServiceGroup
-SERVICE_GROUP_APIKEY= 'filip-example-service-group'
+SERVICE_GROUP_APIKEY = 'filip-example-service-group'
 
 # Setting up logging
 logging.basicConfig(
@@ -111,8 +111,8 @@ if __name__ == '__main__':
                                    object_id='h',
                                    type="Number",
                                    metadata={"unitText":
-                                                {"value": "percent",
-                                                 "type": "Text"}})
+                                                 {"value": "percent",
+                                                  "type": "Text"}})
 
     device.add_attribute(attribute=device_attr2)
 
@@ -138,7 +138,7 @@ if __name__ == '__main__':
 
     # create the Http client node that once sent the device cannot be posted
     # again and you need to use the update command
-    config=HttpClientConfig(cb_url=CB_URL, iota_url=IOTA_URL)
+    config = HttpClientConfig(cb_url=CB_URL, iota_url=IOTA_URL)
     client = HttpClient(fiware_header=fiware_header, config=config)
     client.iota.post_group(service_group=service_group, update=True)
     client.iota.post_device(device=device, update=True)
@@ -154,7 +154,7 @@ if __name__ == '__main__':
     entity = client.cb.get_entity(entity_id=device.device_id,
                                   entity_type=device.entity_type)
     logging.info("This is our data entity belonging to our device: \n" +
-          entity.model_dump_json(indent=2))
+                 entity.model_dump_json(indent=2))
 
     # # 3 MQTT Client
     #
@@ -175,7 +175,7 @@ if __name__ == '__main__':
             logger.error(f"Connection failed with error code: '{reasonCode}'")
             raise ConnectionError
         else:
-            logger.info("Successfully, connected with result code "+str(
+            logger.info("Successfully, connected with result code " + str(
                 reasonCode))
         # Subscribing in on_connect() means that if we lose the connection and
         # reconnect then subscriptions will be renewed.
@@ -227,11 +227,12 @@ if __name__ == '__main__':
     mqtt_client.loop_start()
 
     for attr in device.attributes:
-        payload = json.dumps({attr.object_id: random.randint(0,9)})
+        random_number = random.randint(0, 9)
+        payload = json.dumps({attr.object_id: random_number})
         logger.info("Send data to platform:" + payload)
         mqtt_client.publish(
             topic=f"/json/{service_group.apikey}/{device.device_id}/attrs",
-            payload=json.dumps({attr.object_id: random.randint(0,9)}))
+            payload=payload)
 
     time.sleep(1)
     entity = client.cb.get_entity(entity_id=device.device_id,
@@ -245,7 +246,7 @@ if __name__ == '__main__':
             value = True
         else:
             value = False
-            
+
         context_command = NamedCommand(name=device_command.name,
                                        value=value)
         client.cb.post_command(entity_id=entity.id,
