@@ -26,7 +26,7 @@ services:
             - "IOTA_PROVIDER_URL=http://iot-agent:4041"
             - "IOTA_MQTT_HOST=mosquitto"
             - "IOTA_MQTT_PORT=1883"
-            - "IOTA_DEFAULT_RESOURCE="
+            - "IOTA_DEFAULT_RESOURCE=/iot/json"
             - "IOTA_DEFAULT_TRANSPORT=MQTT"
             - "IOTA_LOG_LEVEL=DEBUG"
             - "IOTA_TIMESTAMP=true"
