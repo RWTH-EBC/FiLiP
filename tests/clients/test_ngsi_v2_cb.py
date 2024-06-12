@@ -16,7 +16,6 @@ from filip.models.base import FiwareHeader
 from filip.utils.simple_ql import QueryString
 from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient
 from filip.clients.ngsi_v2 import HttpClient, HttpClientConfig
-from filip.config import settings
 from filip.models.ngsi_v2.context import \
     ContextEntity, \
     ContextAttribute, \
