@@ -113,18 +113,17 @@ if __name__ == "__main__":
     #
     # Define callbacks for the mqtt client. They will be triggered by
     # different events. Do not change their signature!
-    def on_connect(client, userdata, flags, reasonCode, properties=None):
-        if reasonCode != 0:
-            logger.error(f"Connection failed with the error code: "
-                         f"'{reasonCode}'")
+    def on_connect(client, userdata, flags, reason_code, properties=None):
+        if reason_code != 0:
+            logger.error(f"MQTT Client failed to connect with the error code: "
+                         f"{reason_code}")
             raise ConnectionError
         else:
-            logger.info("Successfully connected with the result code: " + str(
-                reasonCode))
+            logger.info(f"MQTT Client successfully connected with the reason code: {reason_code}")
         client.subscribe(mqtt_topic)
 
     def on_subscribe(client, userdata, mid, granted_qos, properties=None):
-        logger.info("Successfully subscribed with QoS: %s", granted_qos)
+        logger.info(f"MQTT Client successfully subscribed: {granted_qos[0]}")
 
 
     def on_message(client, userdata, msg):
@@ -132,9 +131,8 @@ if __name__ == "__main__":
         logger.info("Received this message:\n" + message.model_dump_json(indent=2))
 
 
-    def on_disconnect(client, userdata, reasonCode, properties=None):
-        logger.info("MQTT client disconnected with the reason code: "
-                    + str(reasonCode))
+    def on_disconnect(client, userdata, reason_code, properties=None):
+        logger.info(f"MQTT Client disconnected with the reason code: {reason_code}")
 
     # MQTT client
     import paho.mqtt.client as mqtt

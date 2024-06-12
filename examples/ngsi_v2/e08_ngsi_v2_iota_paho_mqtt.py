@@ -173,11 +173,11 @@ if __name__ == '__main__':
     # client will not be able to execute them.
     def on_connect(client, userdata, flags, reason_code, properties=None):
         if reason_code != 0:
-            logger.error(f"Connection failed with error code: '{reason_code}'")
+            logger.error(f"MQTT Client failed to connect with the error code: '{reason_code}'")
             raise ConnectionError
         else:
-            logger.info("Successfully, connected with result code " + str(
-                reason_code))
+            logger.info(f"MQTT Client successfully connected with the reason code: {reason_code}")
+
         # Subscribing in on_connect() means that if we lose the connection and
         # reconnect then subscriptions will be renewed.
         # We do subscribe to the topic that the platform will publish our
@@ -186,7 +186,7 @@ if __name__ == '__main__':
 
     # Callback when the command topic is successfully subscribed
     def on_subscribe(client, userdata, mid, granted_qos, properties=None):
-        logger.info("Successfully subscribed to with QoS: %s", granted_qos[0])
+        logger.info(f"MQTT Client successfully subscribed: {granted_qos[0]}")
 
     # The callback for when the device receives a PUBLISH message like a
     # command from the server. Here, the received command will be printed and a
@@ -198,13 +198,13 @@ if __name__ == '__main__':
         logger.info(msg.topic + " " + str(msg.payload))
         data = json.loads(msg.payload)
         res = {k: v for k, v in data.items()}
-        print(msg.payload)
+        print(f"MQTT Client on_message payload: {msg.payload}")
         client.publish(topic=f"/json/{service_group.apikey}"
                              f"/{device.device_id}/cmdexe",
                        payload=json.dumps(res))
 
-    def on_disconnect(client, userdata, reasonCode, properties):
-        logger.info("MQTT client disconnected" + str(reasonCode))
+    def on_disconnect(client, userdata, reason_code, properties):
+        logger.info(f"MQTT Client disconnected with the reason code: {reason_code}")
 
     mqtt_client = mqtt.Client(client_id="filip-iot-example",
                               userdata=None,
