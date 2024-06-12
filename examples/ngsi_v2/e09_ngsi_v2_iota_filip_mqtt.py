@@ -36,7 +36,7 @@ MQTT_BROKER_URL = "mqtt://localhost:1883"
 # You can here also change the used Fiware service
 # FIWARE-Service
 SERVICE = 'filip'
-# FIWARE-Servicepath
+# FIWARE-Service path
 SERVICE_PATH = '/example'
 
 # You may also change the ApiKey Information
@@ -100,17 +100,16 @@ if __name__ == '__main__':
     mqttc = IoTAMQTTClient()
 
     def on_connect(mqttc, obj, flags, rc):
-        mqttc.logger.info("rc: " + str(rc))
+        mqttc.logger.info(f"on_connect callback function: Reason code: {rc}")
 
     def on_connect_fail(mqttc, obj):
         mqttc.logger.info("Connect failed")
 
     def on_publish(mqttc, obj, mid):
-        mqttc.logger.info("mid: " + str(mid))
+        mqttc.logger.info(f"on_publish callback function: Message identifier: {mid}")
 
     def on_subscribe(mqttc, obj, mid, granted_qos):
-        mqttc.logger.info("Subscribed: " + str(mid)
-                          + " " + str(granted_qos))
+        mqttc.logger.info(f"Subscribed: {granted_qos[0]}, message identifier: {mid}")
 
     def on_log(mqttc, obj, level, string):
         mqttc.logger.info(string)
@@ -158,11 +157,11 @@ if __name__ == '__main__':
                   properties=None)
     mqttc.subscribe(topic=first_topic)
 
-    # create a non blocking loop
+    # create a non-blocking loop
     mqttc.loop_start()
     mqttc.publish(topic=first_topic, payload="filip_test")
 
-    # add additional subscription to connection
+    # add additional subscription to the connection
     mqttc.subscribe(topic=second_topic)
     mqttc.publish(topic=second_topic, payload="filip_test")
 
@@ -172,7 +171,7 @@ if __name__ == '__main__':
     mqttc.unsubscribe(first_topic)
     mqttc.unsubscribe(second_topic)
 
-    # stop network loop and disconnect cleanly
+    # stop the network loop and disconnect cleanly
     # close the mqtt listening thread
     mqttc.loop_stop()
     # disconnect the mqtt device
@@ -280,12 +279,12 @@ if __name__ == '__main__':
     entity = httpc.cb.get_entity(entity_id=device_json.device_id,
                                  entity_type=device_json.entity_type)
 
-    # The entity.heater_status.value should now have the status ok
-    print(entity.heater_status.value)
+    # The entity.heater_status.value should now have the status 'OK'
+    print(f"Heater status value: {entity.heater_status.value}")
 
     # ## 4.3 Publish
     #
-    payload = random.randrange(0, 100, 1) / 1000
+    payload = random.randint(0, 30)
     mqttc.publish(device_id=device_json.device_id,
                   payload={device_json.attributes[0].object_id: payload})
     time.sleep(1)
@@ -293,9 +292,9 @@ if __name__ == '__main__':
                                  entity_type=device_json.entity_type)
 
     # Set Temperature Value
-    print(entity.temperature.value)
+    print(f"Entity temperature value before publishing: {entity.temperature.value}")
 
-    payload = random.randrange(0, 100, 1) / 1000
+    payload = random.randint(0, 30)
     mqttc.publish(device_id=device_json.device_id,
                   attribute_name="temperature",
                   payload=payload)
@@ -303,7 +302,7 @@ if __name__ == '__main__':
     entity = httpc.cb.get_entity(entity_id=device_json.device_id,
                                  entity_type=device_json.entity_type)
     # Changed Temperature Value
-    print(entity.temperature.value)
+    print(f"Entity temperature value after publishing: {entity.temperature.value}")
 
     # ## 4.4 Close Client
 
