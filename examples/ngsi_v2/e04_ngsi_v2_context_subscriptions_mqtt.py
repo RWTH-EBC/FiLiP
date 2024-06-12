@@ -128,7 +128,7 @@ if __name__ == "__main__":
 
     def on_message(client, userdata, msg):
         message = Message.model_validate_json(msg.payload)
-        logger.info("Received this message:\n" + message.model_dump_json(indent=2))
+        logger.info("MQTT Client received this message:\n" + message.model_dump_json(indent=2))
 
 
     def on_disconnect(client, userdata, reason_code, properties=None):
