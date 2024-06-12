@@ -40,7 +40,7 @@ class TestEntities(unittest.TestCase):
         self.mqtt_url = "mqtt://test.de:1883"
         self.mqtt_topic = '/filip/testing'
 
-        CB_URL = "http://localhost:1026"
+        CB_URL = "http://localhost:1027"
         self.cb_client = ContextBrokerLDClient(url=CB_URL,
                                     fiware_header=self.fiware_header)
         
