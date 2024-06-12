@@ -17,7 +17,7 @@ from filip.utils.simple_ql import QueryString
 
 from filip.models.ngsi_v2.base import AttrsFormat
 from filip.models.ngsi_v2.subscriptions import Subscription
-
+from tests.config import settings
 from filip.models.ngsi_v2.context import \
     NamedCommand, \
     Query, \
@@ -50,44 +50,42 @@ class TestContextBroker(unittest.TestCase):
                 'value': 20.0}
         }
         self.entity = ContextLDEntity(id='urn:ngsi-ld:my:id4', type='MyType', **self.attr)
-        self.fiware_header = FiwareLDHeader()
-
-        self.client = ContextBrokerLDClient(fiware_header=self.fiware_header)
+        self.fiware_header = FiwareLDHeader(ngsild_tenant=settings.FIWARE_SERVICE)
+        self.client = ContextBrokerLDClient(fiware_header=self.fiware_header,
+                                            url=settings.LD_CB_URL)
+        # todo replace with clean up function for ld
+        try:
+            entity_list = self.client.get_entity_list(entity_type=self.entity.type)
+            for entity in entity_list:
+                self.client.delete_entity_by_id(entity_id=entity.id)
+        except RequestException:
+            pass
 
     def tearDown(self) -> None:
         """
         Cleanup test server
         """
+        # todo replace with clean up function for ld
         try:
             entity_list = self.client.get_entity_list(entity_type=self.entity.type)
             for entity in entity_list:
-                #parsed_entity = ContextLDEntity(**entity)
-                self.client.delete_entity_by_id(entity_id=entity.get('id'))
-                #self.client.delete_entity_by_id(parsed_entity.id)
-            #entities = [            #for entitiy in entity_list:
-            #entities = [ContextLDEntity(entity.id, entity.type) for
-            #            entity in self.client.get_entity_list()]
-            #self.client.update(entities=entities, action_type='delete')
+                self.client.delete_entity_by_id(entity_id=entity.id)
         except RequestException:
             pass
-
         self.client.close()
 
     def test_management_endpoints(self):
         """
         Test management functions of context broker client
         """
-        with ContextBrokerLDClient(fiware_header=self.fiware_header) as client:
-            self.assertIsNotNone(client.get_version())
-            # there is no resources endpoint like in NGSI v2
-            # TODO: check whether there are other "management" endpoints
+        self.assertIsNotNone(self.client.get_version())
+        # TODO: check whether there are other "management" endpoints
 
     def test_statistics(self):
         """
         Test statistics of context broker client
         """
-        with ContextBrokerLDClient(fiware_header=self.fiware_header) as client:
-            self.assertIsNotNone(client.get_statistics())
+        self.assertIsNotNone(self.client.get_statistics())
 
     def aatest_pagination(self):
         """
@@ -168,10 +166,9 @@ class TestContextBroker(unittest.TestCase):
         """
         Test entity operations of context broker client
         """
-        with ContextBrokerLDClient(fiware_header=self.fiware_header) as client:
-            client.post_entity(entity=self.entity, update=True)
-            res_entity = client.get_entity_by_id(entity_id=self.entity.id)
-            client.get_entity_by_id(entity_id=self.entity.id, attrs=['testtemperature'])
+        self.client.post_entity(entity=self.entity, update=True)
+        res_entity = self.client.get_entity_by_id(entity_id=self.entity.id)
+        self.client.get_entity_by_id(entity_id=self.entity.id, attrs=['testtemperature'])
         #    self.assertEqual(client.get_entity_attributes(
         #        entity_id=self.entity.id), res_entity.get_properties(
         #        response_format='dict'))
