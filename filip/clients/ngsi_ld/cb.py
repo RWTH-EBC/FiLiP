@@ -171,7 +171,7 @@ class ContextBrokerLDClient(BaseHttpClient):
 
     def get_entity_by_id(self,
                          entity_id: str,
-                         attrs: Optional[str] = None,
+                         attrs: Optional[List[str]] = None,
                          entity_type: Optional[str] = None,
                          response_format: Optional[Union[AttrsFormat, str]] =
                           AttrsFormat.KEY_VALUES,
