@@ -9,6 +9,9 @@ import json
 import paho.mqtt.client as mqtt
 from datetime import datetime
 from requests import RequestException
+import os
+
+
 
 from filip.clients.ngsi_ld.cb import ContextBrokerLDClient
 from filip.models.base import  DataType, FiwareLDHeader
@@ -16,12 +19,8 @@ from filip.models.ngsi_ld.context import ActionTypeLD, ContextLDEntity, ContextP
 from filip.utils.simple_ql import QueryString
 
 
-from filip.models.ngsi_v2.context import \
-    AttrsFormat, \
-    NamedCommand, \
-    Subscription, \
-    Query, \
-    Entity
+from filip.models.ngsi_v2.base import AttrsFormat
+    
 
 
 # Setting up logging
