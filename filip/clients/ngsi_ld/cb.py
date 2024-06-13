@@ -572,9 +572,9 @@ class ContextBrokerLDClient(BaseHttpClient):
         """
         existing_subscriptions = self.get_subscription_list()
 
-        sub_hash = subscription.model_dump_json(include={'subject', 'notification'})
+        sub_hash = subscription.model_dump_json(include={'subject', 'notification', 'type'})
         for ex_sub in existing_subscriptions:
-            if sub_hash == ex_sub.model_dump_json(include={'subject', 'notification'}):
+            if sub_hash == ex_sub.model_dump_json(include={'subject', 'notification', 'type'}):
                 self.logger.info("Subscription already exists")
                 if update:
                     self.logger.info("Updated subscription")
@@ -587,14 +587,14 @@ class ContextBrokerLDClient(BaseHttpClient):
 
         url = urljoin(self.base_url, f'{self._url_version}/subscriptions')
         headers = self.headers.copy()
-        # headers.update({'Content-Type': 'application/json'}) Das brauche ich nicht oder? testen
+        headers.update({'Content-Type': 'application/json'})
         try:
             res = self.post(
                 url=url,
                 headers=headers,
                 data=subscription.model_dump_json(exclude={'id'},
-                                                  exclude_unset=True,
-                                                  exclude_defaults=True,
+                                                  exclude_unset=False,
+                                                  exclude_defaults=False,
                                                   exclude_none=True))
             if res.ok:
                 self.logger.info("Subscription successfully created!")
