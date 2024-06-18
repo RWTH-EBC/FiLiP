@@ -107,7 +107,7 @@ if __name__ == "__main__":
     cb_client = ContextBrokerClient(url=CB_URL,
                                     fiware_header=fiware_header)
     # clear cb
-    clear_context_broker(cb_client=cb_client)
+    clear_context_broker(cb_client=cb_client, fiware_header=fiware_header, url=CB_URL)
 
     # 1. Crate data
     weather_station = WeatherStationFIWARE(
@@ -153,4 +153,4 @@ if __name__ == "__main__":
           f"{weather_station_2_fiware.model_dump_json(indent=2, include={'id', 'type'})}\n")
 
     # clear cb
-    clear_context_broker(cb_client=cb_client)
+    clear_context_broker(cb_client=cb_client, fiware_header=fiware_header, url=CB_URL)
