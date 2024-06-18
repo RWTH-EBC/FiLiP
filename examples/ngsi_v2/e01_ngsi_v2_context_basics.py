@@ -43,7 +43,7 @@ if __name__ == "__main__":
                                     fiware_header=fiware_header)
     # View version
     for key, value in cb_client.get_version().items():
-        logger.info(f"Context broker version: {value["version"]} at url: "
+        logger.info(f"Context broker version: {value['version']} at url: "
                     f"{cb_client.base_url}")
 
     # # 2 Create Entities

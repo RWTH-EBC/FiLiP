@@ -48,12 +48,12 @@ if __name__ == "__main__":
     clear_all(fiware_header=fiware_header, cb_url=CB_URL, ql_url=QL_URL)
 
     ql_client = QuantumLeapClient(url=QL_URL, fiware_header=fiware_header)
-    print(f"Quantum Leap Client version: {ql_client.get_version()["version"]}"
+    print(f"Quantum Leap Client version: {ql_client.get_version()['version']}"
           f" located at url: {ql_client.base_url}")
 
     cb_client = ContextBrokerClient(url=CB_URL, fiware_header=fiware_header)
 
-    print(f"Context Broker version: {cb_client.get_version()["orion"]["version"]}"
+    print(f"Context Broker version: {cb_client.get_version()['orion']['version']}"
           f" located at url: {cb_client.base_url}")
 
     # ## 2 Interact with QL
@@ -125,16 +125,16 @@ if __name__ == "__main__":
               f"{ql_client.get_entity_values_by_id(hall_entity.id)}\n")
 
         print(f"get_entity_attr_by_id method:\n"
-              f"{ql_client.get_entity_attr_by_id(hall_entity.id, "temperature")}\n")
+              f"{ql_client.get_entity_attr_by_id(hall_entity.id, 'temperature')}\n")
 
         print(f"get_entity_attr_values_by_id method:\n"
-              f"{ql_client.get_entity_attr_values_by_id(hall_entity.id, attr_name="temperature")}\n")
+              f"{ql_client.get_entity_attr_values_by_id(hall_entity.id, attr_name='temperature')}\n")
 
         print(f"get_entity_attr_by_type method:\n"
-              f"{ql_client.get_entity_attr_by_type(hall_entity.type, attr_name="temperature")}\n")
+              f"{ql_client.get_entity_attr_by_type(hall_entity.type, attr_name='temperature')}\n")
 
         print(f"get_entity_attr_values_by_type method:\n"
-              f"{ql_client.get_entity_attr_values_by_type(hall_entity.type, "temperature")}")
+              f"{ql_client.get_entity_attr_values_by_type(hall_entity.type, 'temperature')}")
     except:
         logger.info("There might be no historical data for some calls.")
 
