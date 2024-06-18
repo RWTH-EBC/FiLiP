@@ -3,6 +3,7 @@
 - add: validation for JEXL based expression ([#260](https://github.com/RWTH-EBC/FiLiP/pull/260))
 - add: tutorials for multi-entity ([#260](https://github.com/RWTH-EBC/FiLiP/pull/260))
 - add: add ``update_entity_relationships`` to allow relationship update ([#271](https://github.com/RWTH-EBC/FiLiP/pull/271))
+- add: timeseries query with all attrs and specific attr name ([#16](https://github.com/RWTH-EBC/FiLiP/pull/16))
 - add: flag to determine the deletion of registration when clearing the CB ([#267](https://github.com/RWTH-EBC/FiLiP/pull/267))
 - fix: rework tutorials for pydantic v2 ([#259](https://github.com/RWTH-EBC/FiLiP/pull/259))
 - fix: inconsistency of `entity_type` as required argument ([#188](https://github.com/RWTH-EBC/FiLiP/pull/188))
