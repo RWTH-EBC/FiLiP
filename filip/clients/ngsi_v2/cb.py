@@ -1232,7 +1232,7 @@ class ContextBrokerClient(BaseHttpClient):
                 res.raise_for_status()
         except requests.RequestException as err:
             msg = (
-                f"Could not delete attribute '{attr_name}' of entity" f"'{entity_id}' "
+                f"Could not delete attribute '{attr_name}' of entity '{entity_id}'"
             )
             self.log_error(err=err, msg=msg)
             raise
