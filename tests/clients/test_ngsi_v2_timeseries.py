@@ -42,7 +42,7 @@ def create_entities() -> List[ContextEntity]:
 def create_time_series_data(num_records: int = 50000):
     """
     creates large testing data sets that should remain on the server.
-    This is mainly to reduce time for testingsv
+    This is mainly to reduce time for testings
     """
     fiware_header = FiwareHeader(service=settings.FIWARE_SERVICE,
                                  service_path="/static")
@@ -394,8 +394,6 @@ class TestTimeSeries(unittest.TestCase):
         Returns:
             None
         """
-        n = 50
-        create_time_series_data(n)
         with QuantumLeapClient(
                 url=settings.QL_URL,
                 fiware_header=FiwareHeader(service='filip',
