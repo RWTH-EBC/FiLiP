@@ -240,7 +240,7 @@ class TestMQTTClient(unittest.TestCase):
                               entity_type=entity.type,
                               command=context_command)
 
-        time.sleep(2)
+        time.sleep(5)
         # close the mqtt listening thread
         self.mqttc.loop_stop()
         # disconnect the mqtt device
