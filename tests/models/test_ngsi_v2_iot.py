@@ -6,6 +6,7 @@ import unittest
 from typing import List
 import warnings
 from paho.mqtt import client as mqtt_client
+from paho.mqtt.client import CallbackAPIVersion
 import pyjexl
 
 from filip.models.base import FiwareHeader
@@ -163,7 +164,7 @@ class TestContextv2IoTModels(unittest.TestCase):
                          )
         self.iota_client.post_device(device=device1)
 
-        mqtt_cl = mqtt_client.Client()
+        mqtt_cl = mqtt_client.Client(callback_api_version=CallbackAPIVersion.VERSION2)
         mqtt_cl.connect(settings.MQTT_BROKER_URL.host, settings.MQTT_BROKER_URL.port)
         mqtt_cl.loop_start()
 

@@ -708,13 +708,14 @@ class TestContextBroker(unittest.TestCase):
             nonlocal sub_message
             sub_message = Message.model_validate_json(msg.payload)
 
-        def on_disconnect(client, userdata, reasonCode, properties=None):
+        def on_disconnect(client, userdata, flags, reasonCode, properties=None):
             logger.info("MQTT client disconnected with reasonCode "
                         + str(reasonCode))
 
         import paho.mqtt.client as mqtt
         mqtt_client = mqtt.Client(userdata=None,
                                   protocol=mqtt.MQTTv5,
+                                  callback_api_version=mqtt.CallbackAPIVersion.VERSION2,
                                   transport="tcp")
         # add our callbacks to the client
         mqtt_client.on_connect = on_connect
@@ -933,13 +934,14 @@ class TestContextBroker(unittest.TestCase):
             sub_message = Message.model_validate_json(msg.payload)
             sub_messages[sub_message.subscriptionId] = sub_message
 
-        def on_disconnect(client, userdata, reasonCode, properties=None):
+        def on_disconnect(client, userdata, flags, reasonCode, properties=None):
             logger.info("MQTT client disconnected with reasonCode "
                         + str(reasonCode))
 
         import paho.mqtt.client as mqtt
         mqtt_client = mqtt.Client(userdata=None,
                                   protocol=mqtt.MQTTv5,
+                                  callback_api_version=mqtt.CallbackAPIVersion.VERSION2,
                                   transport="tcp")
         # add our callbacks to the client
         mqtt_client.on_connect = on_connect
@@ -1324,12 +1326,13 @@ class TestContextBroker(unittest.TestCase):
                                  f"/{device.device_id}/cmdexe",
                            payload=json.dumps(res))
 
-        def on_disconnect(client, userdata, reasonCode, properties=None):
+        def on_disconnect(client, userdata, flags, reasonCode, properties=None):
             pass
 
         mqtt_client = mqtt.Client(client_id="filip-test",
                                   userdata=None,
                                   protocol=mqtt.MQTTv5,
+                                  callback_api_version=mqtt.CallbackAPIVersion.VERSION2,
                                   transport="tcp")
 
         # add our callbacks to the client
