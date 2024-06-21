@@ -60,7 +60,7 @@ if __name__ == "__main__":
                              "type": "Integer"}
                 }
     room_entity = ContextEntity(**room_001)
-    cb_client.post_entity(entity=room_entity)
+    cb_client.post_entity(entity=room_entity, update=True)
 
 
     # # 2 Setup a subscription and MQTT notifications

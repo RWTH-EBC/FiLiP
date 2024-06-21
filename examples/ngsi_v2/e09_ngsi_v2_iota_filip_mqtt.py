@@ -104,10 +104,10 @@ if __name__ == '__main__':
     def on_connect_fail(mqttc, obj):
         mqttc.logger.info("Connect failed")
 
-    def on_publish(mqttc, obj, mid,rc,properties=None):
+    def on_publish(mqttc, obj, mid, rc, properties=None):
         mqttc.logger.info("mid: " + str(mid))
 
-    def on_subscribe(mqttc, obj, mid, granted_qos,properties=None):
+    def on_subscribe(mqttc, obj, mid, granted_qos, properties=None):
         mqttc.logger.info("Subscribed: " + str(mid)
                           + " " + str(granted_qos))
 
