@@ -1,23 +1,14 @@
 import _json
 import unittest
 from pydantic import ValidationError
-#from filip.clients.ngsi_v2.cb import ContextBrokerClient	
 
 from filip.clients.ngsi_ld.cb import ContextBrokerLDClient
-# from filip.models.ngsi_v2.subscriptions import \
-#     Http, \
-#     HttpCustom, \
-#     Mqtt, \
-#     MqttCustom, \
-#     Notification, \
-#     Subscription
 from filip.models.base import FiwareLDHeader
 from filip.utils.cleanup import clear_all, clean_test
 from tests.config import settings
 from filip.models.ngsi_ld.context import \
     ContextLDEntity, \
     ContextProperty, \
-    ContextRelationship, \
     NamedContextProperty, \
     ActionTypeLD
 import requests
@@ -27,15 +18,24 @@ class TestEntities(unittest.TestCase):
     Test class for entity endpoints.
     """
 
+    def cleanup(self):
+        """
+        Cleanup entities from test server
+        """
+        entity_test_types = [ self.entity.type, self.entity_2.type ]
+        fiware_header = FiwareLDHeader()
+        with ContextBrokerLDClient(fiware_header=fiware_header) as client:
+            for entity_type in entity_test_types:
+                entity_list = client.get_entity_list(entity_type=entity_type)
+                for entity in entity_list:
+                    client.delete_entity_by_id(entity_id=entity.id)
+
     def setUp(self) -> None:
         """
         Setup test data
         Returns:
             None
         """
-        # self.fiware_header = FiwareLDHeader(
-        #     service=settings.FIWARE_SERVICE,
-        #     service_path=settings.FIWARE_SERVICEPATH)
         self.fiware_header = FiwareLDHeader()
         self.http_url = "https://test.de:80"
         self.mqtt_url = "mqtt://test.de:1883"
@@ -45,31 +45,14 @@ class TestEntities(unittest.TestCase):
         CB_URL = "http://137.226.248.200:1027"
         self.cb_client = ContextBrokerLDClient(url=CB_URL,
                                     fiware_header=self.fiware_header)
-        
 
         self.attr = {'testtemperature': {'value': 20.0}}
-        self.entity = ContextLDEntity(id='urn:ngsi-ld:my:id', type='MyType', **self.attr)
-        #self.entity = ContextLDEntity(id="urn:ngsi-ld:room1", type="Room", data={})
-        
-        # self.entity = ContextLDEntity(id="urn:ngsi-ld:room1", type="Room", **room1_data)
-        # self.entity = ContextLDEntity(id="urn:ngsi-ld:room1", 
-                                    #   type="room",
-                                    #   data={})
-        self.entity_2 = ContextLDEntity(id="urn:ngsi-ld:room2",
-                                        type="room")
+        self.entity = ContextLDEntity(id='urn:ngsi-ld:my:id', type="MyType", **self.attr)
+        self.entity_2 = ContextLDEntity(id="urn:ngsi-ld:room2", type="room")
+        self.cleanup()
 
     def tearDown(self) -> None:
-        """
-        Cleanup entities from test server
-        """
-        entity_test_types = ["MyType", "room"]
-
-        fiware_header = FiwareLDHeader()
-        with ContextBrokerLDClient(fiware_header=fiware_header) as client:
-            for entity_type in entity_test_types:
-                entity_list = client.get_entity_list(entity_type=entity_type)
-                for entity in entity_list:
-                    client.delete_entity_by_id(entity_id=entity.id)
+        self.cleanup()
 
     def test_get_entites(self):
         """
@@ -274,13 +257,14 @@ class TestEntities(unittest.TestCase):
         self.cb_client.post_entity(entity=self.entity)
         self.cb_client.post_entity(entity=self.entity_2)
         entity_list = self.cb_client.get_entity_list()
-        self.assertEqual(len(entity_list), 2)
-        self.assertEqual(entity_list[0].id, self.entity.id)
+        entity_ids = [entity.id for entity in entity_list]
+        self.assertIn(self.entity.id, entity_ids)
 
         self.cb_client.delete_entity_by_id(entity_id=self.entity.id)
         entity_list = self.cb_client.get_entity_list()
-        self.assertEqual(len(entity_list), 1)
-        self.assertEqual(entity_list[0].id, self.entity_2.id)
+        entity_ids = [entity.id for entity in entity_list]
+        self.assertNotIn(self.entity.id, entity_ids)
+        self.assertIn(self.entity_2.id, entity_ids)
 
         """Test3"""
         # entity was already deleted

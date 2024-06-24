@@ -311,7 +311,7 @@ class ContextBrokerLDClient(BaseHttpClient):
                         csf: Optional[str] = None,
                         limit: Optional[PositiveInt] = 100,
                         response_format: Optional[Union[AttrsFormat, str]] = AttrsFormat.NORMALIZED.value,
-                        ) -> Union[Dict[str, Any]]:
+                        ) -> List[ContextLDEntity]:
 
         url = urljoin(self.base_url, f'{self._url_version}/entities/')
         headers = self.headers.copy()
