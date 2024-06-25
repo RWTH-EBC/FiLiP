@@ -274,6 +274,8 @@ class Condition(BaseModel):
     expression matches.
     If neither attrs nor expression are used, a notification is sent whenever
     any of the attributes of the entity changes.
+    alterationTypes: for more information about this field, see
+    https://github.com/telefonicaid/fiware-orion/blob/3.8.0/doc/manuals/orion-api.md#subscriptions-based-in-alteration-type
 
     """
     attrs: Optional[Union[str, List[str]]] = Field(
@@ -286,6 +288,10 @@ class Condition(BaseModel):
                     'coords (see "List entities" operation above about this '
                     'field).'
     )
+    alterationTypes: Optional[List[str]] = Field(
+        default=None,
+        description='list of alteration types triggering the subscription'
+    )
 
     @field_validator('attrs')
     def check_attrs(cls, v):
@@ -295,6 +301,20 @@ class Condition(BaseModel):
             return [v]
         else:
             raise TypeError()
+
+    @field_validator('alterationTypes')
+    def check_alteration_types(cls, v):
+        allowed_types = {"entityCreate", "entityDelete", "entityUpdate", "entityChange"}
+
+        if v is None:
+            return None
+        elif isinstance(v, list):
+            for item in v:
+                if item not in allowed_types:
+                    raise ValueError(f'{item} is not a valid alterationType')
+            return v
+        else:
+            raise ValueError('alterationTypes must be a list of strings')
 
 
 class Subject(BaseModel):
