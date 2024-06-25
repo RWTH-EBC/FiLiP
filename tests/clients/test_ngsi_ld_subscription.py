@@ -16,8 +16,9 @@ from filip.models.ngsi_ld.subscriptions import \
     NotificationParams, \
     Subscription
 from filip.utils.cleanup import clear_all, clean_test
-from tests.clients.config import TestSettings
+from tests.config import settings
 from random import randint
+
 
 class TestSubscriptions(unittest.TestCase):
     """
@@ -30,11 +31,9 @@ class TestSubscriptions(unittest.TestCase):
         Returns:
             None
         """
-        FIWARE_SERVICE = "service"
-        FIWARE_SERVICEPATH = "/"
-        self.fiware_header = FiwareLDHeader(
-            service=FIWARE_SERVICE,
-            service_path=FIWARE_SERVICEPATH)
+        self.fiware_header = FiwareLDHeader(ngsild_tenant=settings.FIWARE_SERVICE)
+        self.cb_client = ContextBrokerLDClient(fiware_header=self.fiware_header,
+                                               url=settings.LD_CB_URL)
         # self.mqtt_url = "mqtt://test.de:1883"
         # self.mqtt_topic = '/filip/testing'
         # self.notification =  {
@@ -45,34 +44,26 @@ class TestSubscriptions(unittest.TestCase):
         #     "accept": "application/json"
         #     }
         # }
-        #self.mqtt_url = TestSettings.MQTT_BROKER_URL
-        self.mqtt_topic = ''.join([FIWARE_SERVICE, FIWARE_SERVICEPATH])
-        self.MQTT_BROKER_URL_INTERNAL = "mqtt://mosquitto:1883"
-        self.MQTT_BROKER_URL_EXPOSED = "mqtt://localhost:1883"
-        self.endpoint_mqtt = Endpoint(**{
-            "uri": "mqtt://my.host.org:1883/my/test/topic",
-            "accept": "application/json",  # TODO check whether it works
+        self.cb_client = ContextBrokerLDClient()
+        self.endpoint_http = Endpoint(**{
+            "uri": "http://my.endpoint.org/notify",
+            "accept": "application/json"
         })
-        CB_URL = "http://137.226.248.246:1027"
-        self.cb_client = ContextBrokerLDClient(url=CB_URL, fiware_header=self.fiware_header)        
-        # self.endpoint_http = Endpoint(**{
-        #     "uri": "http://137.226.248.246:1027/ngsi-ld/v1/subscriptions",
-        #     "Content-Type": "application/json",
-        #     "Accept": "application/json"
-        #     }
-        # )
 
     def test_get_subscription_list(self):
         """
         Get a list of all current subscriptions the broker has subscribed to.
         Args: 
             - limit(number($double)): Limits the number of subscriptions retrieved
+            - offset(number($double)): Skip a number of subscriptions
+            - options(string): Options dictionary("count")
         Returns:
             - (200) list of subscriptions
         Tests for get subscription list:
             - Get the list of subscriptions and get the count of the subsciptions -> compare the count
             - Go through the list and have a look at duplicate subscriptions
             - Set a limit for the subscription number and compare the count of subscriptions sent with the limit
+            - Set offset for the subscription to retrive and check if the offset was procceded correctly.
             - Save beforehand all posted subscriptions and see if all the subscriptions exist in the list -> added to Test 1
         """
         
@@ -83,10 +74,10 @@ class TestSubscriptions(unittest.TestCase):
             attr = {attr_id: ContextProperty(value=randint(0,50))}
             id = "test_sub" + str(i)
             uri_string =  "mqtt://my.host.org:1883/topic/" + str(i)
-            
+
             endpoint_mqtt = Endpoint(**{
                 "uri": uri_string,
-                "accept": "application/json", 
+                "accept": "application/json",
                 "notifierInfo": [
                     {
                         "key": "MQTT-Version",
@@ -94,7 +85,7 @@ class TestSubscriptions(unittest.TestCase):
                     }
                 ]
             })
-            notification_param = NotificationParams(attributes=[attr_id], endpoint=endpoint_mqtt)  
+            notification_param = NotificationParams(attributes=[attr_id], endpoint=endpoint_mqtt)
             sub = Subscription(id=id, notification=notification_param)
             self.cb_client.post_subscription(sub)
         # attr_id = "attr" + str(1)
@@ -130,7 +121,7 @@ class TestSubscriptions(unittest.TestCase):
     }
         endpoint_mqtt = Endpoint(**{
             "uri": uri_string,
-            "accept": "application/json", 
+            "accept": "application/json",
             "notifierInfo": [
                 {
                     "key": "MQTT-Version",
@@ -139,20 +130,19 @@ class TestSubscriptions(unittest.TestCase):
             ]
         })
         self.cb_client.post_subscription(sub_example)
-        
-        notification_param = NotificationParams(attributes=[attr_id], endpoint=endpoint_mqtt)  
+
+        notification_param = NotificationParams(attributes=[attr_id], endpoint=endpoint_mqtt)
         sub = Subscription(id=id, notification=notification_param)
         #self.cb_client.post_subscription(sub)
         sub_list = self.cb_client.get_subscription_list()
-        # for element in sub_list:
-        #     print(element.id)
-        # self.assertEqual(1, len(sub_list))
+        self.assertEqual(10, len(sub_list))
         
-        # for sub in sub_post_list:
-        #     self.assertIn(sub in sub_list)
+        for sub in sub_post_list:
+            self.assertIn(sub in sub_list)
             
         for sub in sub_list:
             self.cb_client.delete_subscription(id=sub.id)
+            
      
         """Test 2"""
         for i in range(2): 
@@ -257,4 +247,4 @@ class TestSubscriptions(unittest.TestCase):
         Cleanup test server
         """
         clear_all(fiware_header=self.fiware_header,
-                cb_url=TestSettings.CB_URL)
+                cb_url=settings.CB_URL)
