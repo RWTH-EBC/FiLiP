@@ -19,6 +19,7 @@ from filip.utils.cleanup import clear_all, clean_test
 from tests.config import settings
 from random import randint
 
+
 class TestSubscriptions(unittest.TestCase):
     """
     Test class for context broker models
@@ -30,9 +31,9 @@ class TestSubscriptions(unittest.TestCase):
         Returns:
             None
         """
-        self.fiware_header = FiwareLDHeader(
-            service=settings.FIWARE_SERVICE,
-            service_path=settings.FIWARE_SERVICEPATH)
+        self.fiware_header = FiwareLDHeader(ngsild_tenant=settings.FIWARE_SERVICE)
+        self.cb_client = ContextBrokerLDClient(fiware_header=self.fiware_header,
+                                               url=settings.LD_CB_URL)
         # self.mqtt_url = "mqtt://test.de:1883"
         # self.mqtt_topic = '/filip/testing'
         # self.notification =  {
@@ -43,7 +44,6 @@ class TestSubscriptions(unittest.TestCase):
         #     "accept": "application/json"
         #     }
         # }
-        self.cb_client = ContextBrokerLDClient()
         self.endpoint_http = Endpoint(**{
             "uri": "http://my.endpoint.org/notify",
             "accept": "application/json"
