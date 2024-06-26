@@ -676,14 +676,15 @@ class ContextBrokerLDClient(BaseHttpClient):
             self.log_error(err=err, msg=msg)
             raise
 
-    def log_multi_errors(self, errors: Dict[str, Any]) -> None:
+    def log_multi_errors(self, errors: List[Dict]) -> None:
         for error in errors:
             entity_id = error['entityId']
-            error_details = error['error']
-            error_title = error_details['title']
-            error_status = error_details['status']
-            error_detail = error_details['detail']
-            self.logger.error("Response status: %d, Entity: %s, Reason: %s (%s) ", error_status, entity_id, error_title, error_detail)
+            error_details: dict = error['error']
+            error_title = error_details.get('title')
+            error_status = error_details.get('status')
+            # error_detail = error_details['detail']
+            self.logger.error("Response status: %d, Entity: %s, Reason: %s",
+                              error_status, entity_id, error_title)
 
     def handle_multi_status_response(self, res):
         try:
@@ -764,7 +765,9 @@ class ContextBrokerLDClient(BaseHttpClient):
                     url=url,
                     headers=headers,
                     params=params,
-                    data=update.model_dump_json(by_alias=True)[12:-1])
+                    data=json.dumps(update.model_dump(by_alias=True,
+                                                      exclude_unset=True).get('entities'))
+                )
             self.handle_multi_status_response(res)
         except RuntimeError as rerr:
             raise rerr
