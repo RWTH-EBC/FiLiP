@@ -108,32 +108,6 @@ class FiwareHeaderSecure(FiwareHeader):
     )
 
 
-<<<<<<< HEAD
-class LogLevel(str, Enum):
-    CRITICAL = 'CRITICAL'
-    ERROR = 'ERROR'
-    WARNING = 'WARNING'
-    INFO = 'INFO'
-    DEBUG = 'DEBUG'
-    NOTSET = 'NOTSET'
-
-    @classmethod
-    def _missing_name_(cls, name):
-        """
-        Class method to realize case insensitive args
-
-        Args:
-            name: missing argument
-
-        Returns:
-            valid member of enum
-        """
-        for member in cls:
-            if member.value.casefold() == name.casefold():
-                return member
-
-=======
->>>>>>> origin/221-ngsi-ld-migrate-V2-datamodels-in-ld
 class FiwareLDHeader(BaseModel):
     """
     Define entity service paths which are supported by the NGSI
@@ -147,18 +121,14 @@ class FiwareLDHeader(BaseModel):
         default='<https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld>; '
                 'rel="http://www.w3.org/ns/json-ld#context"; '
                 'type="application/ld+json"',
-        max_length=50,
+        max_length=100,
         description="Fiware service used for multi-tenancy",
-<<<<<<< HEAD
-        pattern=r"\w*$"    )
-=======
         pattern=r"\w*$")
->>>>>>> origin/221-ngsi-ld-migrate-V2-datamodels-in-ld
     ngsild_tenant: str = Field(
         alias="NGSILD-Tenant",
         default="openiot",
         max_length=50,
-        description="Alsias to the Fiware service to used for multitancy",
+        description="Alias to the Fiware service to used for multitenancy",
         pattern=r"\w*$"
     )
 
@@ -174,8 +144,6 @@ class LogLevel(str, Enum):
     DEBUG = 'DEBUG'
     NOTSET = 'NOTSET'
 
-<<<<<<< HEAD
-=======
     @classmethod
     def _missing_name_(cls, name):
         """
@@ -190,4 +158,3 @@ class LogLevel(str, Enum):
         for member in cls:
             if member.value.casefold() == name.casefold():
                 return member
->>>>>>> origin/221-ngsi-ld-migrate-V2-datamodels-in-ld

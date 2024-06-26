@@ -5,12 +5,12 @@ import json
 import unittest
 
 from pydantic import ValidationError
-# from filip.clients.ngsi_v2 import ContextBrokerClient
+from filip.models.ngsi_ld.base import validate_ngsi_ld_query
 from filip.models.ngsi_ld.subscriptions import \
     Subscription, \
-    Endpoint
+    Endpoint, NotificationParams, EntityInfo, TemporalQuery
 from filip.models.base import FiwareHeader
-from filip.utils.cleanup import clear_all, clean_test
+from filip.utils.cleanup import clear_all
 from tests.config import settings
 
 
@@ -104,38 +104,8 @@ class TestLDSubscriptions(unittest.TestCase):
         Test notification models
         According to NGSI-LD Spec section 5.2.14
         """
-        # Test url field sub field validation
-        with self.assertRaises(ValidationError):
-            Http(url="brokenScheme://test.de:80")
-        with self.assertRaises(ValidationError):
-            HttpCustom(url="brokenScheme://test.de:80")
-        with self.assertRaises(ValidationError):
-            Mqtt(url="brokenScheme://test.de:1883",
-                 topic='/testing')
-        with self.assertRaises(ValidationError):
-            Mqtt(url="mqtt://test.de:1883",
-                 topic='/,t')
-        httpCustom = HttpCustom(url=self.http_url)
-        mqtt = Mqtt(url=self.mqtt_url,
-                    topic=self.mqtt_topic)
-        mqttCustom = MqttCustom(url=self.mqtt_url,
-                                topic=self.mqtt_topic)
-
         # Test validator for conflicting fields
-        notification = Notification.model_validate(self.notification)
-        with self.assertRaises(ValidationError):
-            notification.mqtt = httpCustom
-        with self.assertRaises(ValidationError):
-            notification.mqtt = mqtt
-        with self.assertRaises(ValidationError):
-            notification.mqtt = mqttCustom
-
-        # test onlyChangedAttrs-field
-        notification = Notification.model_validate(self.notification)
-        notification.onlyChangedAttrs = True
-        notification.onlyChangedAttrs = False
-        with self.assertRaises(ValidationError):
-            notification.onlyChangedAttrs = dict()
+        notification = NotificationParams.model_validate(self.notification)
 
     def test_entity_selector_models(self):
         """
@@ -143,7 +113,17 @@ class TestLDSubscriptions(unittest.TestCase):
         Returns:
 
         """
-        pass
+        entity_info = EntityInfo.model_validate({
+                    "type": "Vehicle"
+                })
+        with self.assertRaises(ValueError):
+            entity_info = EntityInfo.model_validate({
+                "id": "test:001"
+            })
+        with self.assertRaises(ValueError):
+            entity_info = EntityInfo.model_validate({
+                "idPattern": ".*"
+            })
 
     def test_temporal_query_models(self):
         """
@@ -151,11 +131,59 @@ class TestLDSubscriptions(unittest.TestCase):
         Returns:
 
         """
-        pass
+        example0_temporalQ = {
+            "timerel": "before",
+            "timeAt": "2017-12-13T14:20:00Z"
+        }
+        self.assertEqual(example0_temporalQ,
+                         TemporalQuery.model_validate(example0_temporalQ).model_dump(
+                             exclude_unset=True)
+                         )
 
-    @clean_test(fiware_service=settings.FIWARE_SERVICE,
-                fiware_servicepath=settings.FIWARE_SERVICEPATH,
-                cb_url=settings.CB_URL)
+        example1_temporalQ = {
+            "timerel": "after",
+            "timeAt": "2017-12-13T14:20:00Z"
+        }
+        self.assertEqual(example1_temporalQ,
+                         TemporalQuery.model_validate(example1_temporalQ).model_dump(
+                             exclude_unset=True)
+                         )
+
+        example2_temporalQ = {
+            "timerel": "between",
+            "timeAt": "2017-12-13T14:20:00Z",
+            "endTimeAt": "2017-12-13T14:40:00Z",
+            "timeproperty": "modifiedAt"
+        }
+        self.assertEqual(example2_temporalQ,
+                         TemporalQuery.model_validate(example2_temporalQ).model_dump(
+                             exclude_unset=True)
+                         )
+
+        example3_temporalQ = {
+            "timerel": "between",
+            "timeAt": "2017-12-13T14:20:00Z"
+        }
+        with self.assertRaises(ValueError):
+            TemporalQuery.model_validate(example3_temporalQ)
+
+        example4_temporalQ = {
+            "timerel": "before",
+            "timeAt": "14:20:00Z"
+        }
+        with self.assertRaises(ValueError):
+            TemporalQuery.model_validate(example4_temporalQ)
+
+        example5_temporalQ = {
+            "timerel": "between",
+            "timeAt": "2017-12-13T14:20:00Z",
+            "endTimeAt": "14:40:00Z",
+            "timeproperty": "modifiedAt"
+        }
+        with self.assertRaises(ValueError):
+            TemporalQuery.model_validate(example5_temporalQ)
+
+    # TODO clean test for NGSI-LD
     def test_subscription_models(self) -> None:
         """
         Test subscription models
@@ -163,64 +191,47 @@ class TestLDSubscriptions(unittest.TestCase):
         Returns:
             None
         """
-        sub = Subscription.model_validate(self.sub_dict)
-        fiware_header = FiwareHeader(service=settings.FIWARE_SERVICE,
-                                     service_path=settings.FIWARE_SERVICEPATH)
-        with ContextBrokerClient(
-                url=settings.CB_URL,
-                fiware_header=fiware_header) as client:
-            sub_id = client.post_subscription(subscription=sub)
-            sub_res = client.get_subscription(subscription_id=sub_id)
+        # TODO implement after the client is ready
+        pass
+        # sub = Subscription.model_validate(self.sub_dict)
+        # fiware_header = FiwareHeader(service=settings.FIWARE_SERVICE,
+        #                              service_path=settings.FIWARE_SERVICEPATH)
+        # with ContextBrokerClient(
+        #         url=settings.CB_URL,
+        #         fiware_header=fiware_header) as client:
+        #     sub_id = client.post_subscription(subscription=sub)
+        #     sub_res = client.get_subscription(subscription_id=sub_id)
+        #
+        #     def compare_dicts(dict1: dict, dict2: dict):
+        #         for key, value in dict1.items():
+        #             if isinstance(value, dict):
+        #                 compare_dicts(value, dict2[key])
+        #             else:
+        #                 self.assertEqual(str(value), str(dict2[key]))
+        #
+        #     compare_dicts(sub.model_dump(exclude={'id'}),
+        #                   sub_res.model_dump(exclude={'id'}))
 
-            def compare_dicts(dict1: dict, dict2: dict):
-                for key, value in dict1.items():
-                    if isinstance(value, dict):
-                        compare_dicts(value, dict2[key])
-                    else:
-                        self.assertEqual(str(value), str(dict2[key]))
-
-            compare_dicts(sub.model_dump(exclude={'id'}),
-                          sub_res.model_dump(exclude={'id'}))
-
-        # test validation of throttling
-        with self.assertRaises(ValidationError):
-            sub.throttling = -1
-        with self.assertRaises(ValidationError):
-            sub.throttling = 0.1
+        # # test validation of throttling
+        # with self.assertRaises(ValidationError):
+        #     sub.throttling = -1
+        # with self.assertRaises(ValidationError):
+        #     sub.throttling = 0.1
 
     def test_query_string_serialization(self):
-        sub = Subscription.model_validate(self.sub_dict)
-        self.assertIsInstance(json.loads(sub.subject.condition.expression.model_dump_json())["q"],
-                              str)
-        self.assertIsInstance(json.loads(sub.subject.condition.model_dump_json())["expression"]["q"],
-                              str)
-        self.assertIsInstance(json.loads(sub.subject.model_dump_json())["condition"]["expression"]["q"],
-                              str)
-        self.assertIsInstance(json.loads(sub.model_dump_json())["subject"]["condition"]["expression"]["q"],
-                              str)
-
-    def test_model_dump_json(self):
-        sub = Subscription.model_validate(self.sub_dict)
-
-        # test exclude
-        test_dict = json.loads(sub.model_dump_json(exclude={"id"}))
-        with self.assertRaises(KeyError):
-            _ = test_dict["id"]
-
-        # test exclude_none
-        test_dict = json.loads(sub.model_dump_json(exclude_none=True))
-        with self.assertRaises(KeyError):
-            _ = test_dict["throttling"]
-
-        # test exclude_unset
-        test_dict = json.loads(sub.model_dump_json(exclude_unset=True))
-        with self.assertRaises(KeyError):
-            _ = test_dict["status"]
-
-        # test exclude_defaults
-        test_dict = json.loads(sub.model_dump_json(exclude_defaults=True))
-        with self.assertRaises(KeyError):
-            _ = test_dict["status"]
+        # TODO test query results in client tests
+        examples = dict()
+        examples[1] = 'temperature==20'
+        examples[2] = 'brandName!="Mercedes"'
+        examples[3] = 'isParked=="urn:ngsi-ld:OffStreetParking:Downtown1"'
+        examples[5] = 'isMonitoredBy'
+        examples[6] = '((speed>50|rpm>3000);brandName=="Mercedes")'
+        examples[7] = '(temperature>=20;temperature<=25)|capacity<=10'
+        examples[8] = 'temperature.observedAt>=2017-12-24T12:00:00Z'
+        examples[9] = 'address[city]=="Berlin".'
+        examples[10] = 'sensor.rawdata[airquality.particulate]==40'
+        for example in examples.values():
+            validate_ngsi_ld_query(example)
 
     def tearDown(self) -> None:
         """

@@ -1,24 +1,16 @@
 import _json
 import unittest
 from pydantic import ValidationError
-#from filip.clients.ngsi_v2.cb import ContextBrokerClient	
 
 from filip.clients.ngsi_ld.cb import ContextBrokerLDClient
-# from filip.models.ngsi_v2.subscriptions import \
-#     Http, \
-#     HttpCustom, \
-#     Mqtt, \
-#     MqttCustom, \
-#     Notification, \
-#     Subscription
 from filip.models.base import FiwareLDHeader
 from filip.utils.cleanup import clear_all, clean_test
 from tests.config import settings
 from filip.models.ngsi_ld.context import \
     ContextLDEntity, \
     ContextProperty, \
-    ContextRelationship, \
-    NamedContextProperty
+    NamedContextProperty, \
+    ActionTypeLD
 import requests
 
 class TestEntities(unittest.TestCase):
@@ -26,37 +18,41 @@ class TestEntities(unittest.TestCase):
     Test class for entity endpoints.
     """
 
+    def cleanup(self):
+        """
+        Cleanup entities from test server
+        """
+        entity_test_types = [ self.entity.type, self.entity_2.type ]
+        fiware_header = FiwareLDHeader()
+        with ContextBrokerLDClient(fiware_header=fiware_header) as client:
+            for entity_type in entity_test_types:
+                entity_list = client.get_entity_list(entity_type=entity_type)
+                for entity in entity_list:
+                    client.delete_entity_by_id(entity_id=entity.id)
+
     def setUp(self) -> None:
         """
         Setup test data
         Returns:
             None
         """
-        # self.fiware_header = FiwareLDHeader(
-        #     service=settings.FIWARE_SERVICE,
-        #     service_path=settings.FIWARE_SERVICEPATH)
         self.fiware_header = FiwareLDHeader()
         self.http_url = "https://test.de:80"
         self.mqtt_url = "mqtt://test.de:1883"
         self.mqtt_topic = '/filip/testing'
 
-        CB_URL = "http://localhost:1027"
-        self.cb_client = ContextBrokerLDClient(url=CB_URL,
+        #CB_URL = "http://localhost:1026"
+        CB_URL = "http://137.226.248.200:1027"
+        self.cb_client = ContextBrokerLDClient(url=settings.LD_CB_URL,
                                     fiware_header=self.fiware_header)
-        
 
         self.attr = {'testtemperature': {'value': 20.0}}
-        self.entity = ContextLDEntity(id='urn:ngsi-ld:my:id', type='MyType', **self.attr)
-        #self.entity = ContextLDEntity(id="urn:ngsi-ld:room1", type="Room", data={})
-        
-        # self.entity = ContextLDEntity(id="urn:ngsi-ld:room1", type="Room", **room1_data)
-        # self.entity = ContextLDEntity(id="urn:ngsi-ld:room1", 
-                                    #   type="room",
-                                    #   data={})
-        self.entity_2 = ContextLDEntity(id="urn:ngsi-ld:room2",
-                                        type="room",
-                                      data={})
-    
+        self.entity = ContextLDEntity(id='urn:ngsi-ld:my:id', type="MyType", **self.attr)
+        self.entity_2 = ContextLDEntity(id="urn:ngsi-ld:room2", type="room")
+        self.cleanup()
+
+    def tearDown(self) -> None:
+        self.cleanup()
 
     def test_get_entites(self):
         """
@@ -110,16 +106,16 @@ class TestEntities(unittest.TestCase):
             Post enitity with entity_ID and entity_name
             if return != 201:
                 Raise Error
-            Get enitity list 
+            Get entity list
             If entity with entity_ID is not on entity list:
                 Raise Error
         Test 2: 
-            Post enitity with entity_ID and entity_name
+            Post entity with entity_ID and entity_name
             Post entity with the same entity_ID and entity_name as before
             If return != 409: 
                 Raise Error
-            Get enitity list
-            If there are duplicates on enity list:
+            Get entity list
+            If there are duplicates on entity list:
                 Raise Error
         Test 3: 
             Post an entity with an entity_ID and without an entity_name 
@@ -132,18 +128,22 @@ class TestEntities(unittest.TestCase):
             post two entities with the same enitity id but different entity type-> should throw error.
         """
         """Test1"""
-        ret_post = self.cb_client.post_entity(entity=self.entity)
-        # Raise already done in cb
-        entity_list = self.cb_client.get_entity_list()
-        self.assertIn(self.entity, entity_list)   
+        self.cb_client.post_entity(entity=self.entity)
+        entity_list = self.cb_client.get_entity_list(entity_type=self.entity.type)
+        self.assertEqual(len(entity_list), 1)
+        self.assertEqual(entity_list[0].id, self.entity.id)
+        self.assertEqual(entity_list[0].type, self.entity.type)
+        self.assertEqual(entity_list[0].testtemperature.value, self.entity.testtemperature.value)
         
         """Test2"""
         self.entity_identical= self.entity.model_copy()
-        ret_post = self.cb_client.post_entity(entity=self.entity_identical)
-        # What is gonna be the return? Is already an error being raised?
-        entity_list = self.cb_client.get_entity_list()
-        for element in entity_list: 
-            self.assertNotEqual(element.id, self.entity.id)
+        with self.assertRaises(requests.exceptions.HTTPError) as contextmanager:
+            self.cb_client.post_entity(entity=self.entity_identical)
+        response = contextmanager.exception.response
+        self.assertEqual(response.status_code, 409)
+
+        entity_list = self.cb_client.get_entity_list(entity_type=self.entity_identical.type)
+        self.assertEqual(len(entity_list), 1)
 
         """Test3"""
         with self.assertRaises(Exception):
@@ -152,7 +152,7 @@ class TestEntities(unittest.TestCase):
         self.assertNotIn("room2", entity_list)
 
         """delete"""
-        self.cb_client.delete_entities(entities=entity_list)
+        self.cb_client.update(entities=entity_list, action_type=ActionTypeLD.DELETE)
     
     def test_get_entity(self):
         """
@@ -182,7 +182,7 @@ class TestEntities(unittest.TestCase):
                     Raise Error
                 If type posted entity != type get entity:
                     Raise Error
-        Test 2: 
+        Test 2:
             get enitity with enitity_ID that does not exit
             If return != 404:
                 Raise Error
@@ -193,15 +193,22 @@ class TestEntities(unittest.TestCase):
         self.assertEqual(ret_entity.id,self.entity.id)
         self.assertEqual(ret_entity.type,self.entity.type)
 
-        """Test2"""
-        ret_entity = self.cb_client.get_entity("roomDoesnotExist")
-        # Error should be raised in get_entity function
-        if ret_entity:
-            raise ValueError("There should not be any return.")
+        """Test2""" 
+        with self.assertRaises(requests.exceptions.HTTPError) as contextmanager:
+            self.cb_client.get_entity("urn:roomDoesnotExist")
+        response = contextmanager.exception.response
+        self.assertEqual(response.status_code, 404)
 
-        """delete"""
-        self.cb_client.delete_entity(entity_id=self.entity.id, entity_type=self.entity.type)
+        with self.assertRaises(requests.exceptions.HTTPError) as contextmanager:
+            self.cb_client.get_entity("roomDoesnotExist")
+        response = contextmanager.exception.response
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json()["detail"], "Not a URL nor a URN")
     
+    # TODO: write test which tries to delete entity with id AND type
+    # for orion-ld version 1.4.0, error BadRequestData (title: Unsupported URI parameter) happens
+    # def test_delete_entity_with_type(self):
+
     def test_delete_entity(self):
         """
         Removes an specific Entity from an NGSI-LD system.
@@ -239,23 +246,33 @@ class TestEntities(unittest.TestCase):
         """
             
         """Test1"""
-        ret = self.cb_client.delete_entity(entity_id=self.entity.id, entity_type=self.entity.type)
-        # Error should be raised in delete_entity function
-        if not ret:
-            raise ValueError("There should have been an error raised because of the deletion of an non existent entity.")
+        # try to delete nonexistent entity
+        with self.assertRaises(requests.exceptions.HTTPError) as contextmanager:
+            self.cb_client.get_entity(entity_id=self.entity.id)
+        response = contextmanager.exception.response
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json()["title"], "Entity Not Found")
+
         """Test2"""
         self.cb_client.post_entity(entity=self.entity)
         self.cb_client.post_entity(entity=self.entity_2)
-        self.cb_client.delete_entity(entity_id=self.entity.id, entity_type=self.entity.type)
         entity_list = self.cb_client.get_entity_list()
-        for element in entity_list: 
-            self.assertNotEqual(element.id,self.entity.id)
-            # raise ValueError("This element was deleted and should not be visible in the entity list.")
+        entity_ids = [entity.id for entity in entity_list]
+        self.assertIn(self.entity.id, entity_ids)
+
+        self.cb_client.delete_entity_by_id(entity_id=self.entity.id)
+        entity_list = self.cb_client.get_entity_list()
+        entity_ids = [entity.id for entity in entity_list]
+        self.assertNotIn(self.entity.id, entity_ids)
+        self.assertIn(self.entity_2.id, entity_ids)
+
         """Test3"""
-        ret = self.cb_client.delete_entity(entity_id=self.entity, entity_type=self.entity.type)
-            # Error should be raised in delete_entity function because enitity was already deleted
-        if not ret:
-            raise ValueError("There should have been an error raised because of the deletion of an non existent entity.")  
+        # entity was already deleted
+        with self.assertRaises(requests.exceptions.HTTPError) as contextmanager:
+            self.cb_client.get_entity(entity_id=self.entity.id)
+        response = contextmanager.exception.response
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json()["title"], "Entity Not Found")
     
     def test_add_attributes_entity(self):
         """
@@ -295,20 +312,20 @@ class TestEntities(unittest.TestCase):
         """
         """Test 1"""
         self.cb_client.post_entity(self.entity)
-        attr = ContextProperty(**{'value': 20, 'type': 'Number'})
+        attr = ContextProperty(**{'value': 20, 'unitCode': 'Number'})
         # noOverwrite Option missing ???
-        self.entity.add_properties(attrs=["test_value", attr])
+        self.entity.add_properties({"test_value": attr})
         self.cb_client.append_entity_attributes(self.entity)
         entity_list = self.cb_client.get_entity_list()
         for entity in entity_list:
-            self.assertEqual(first=entity.property, second=attr)
+            self.assertEqual(first=entity.test_value.value, second=attr.value)
         for entity in entity_list:
             self.cb_client.delete_entity_by_id(entity_id=entity.id)
         
         """Test 2"""
         attr = ContextProperty(**{'value': 20, 'type': 'Number'})
-        with self.asserRaises(Exception):
-            self.entity.add_properties(attrs=["test_value", attr])
+        with self.assertRaises(Exception):
+            self.entity.add_properties({"test_value": attr})
             self.cb_client.append_entity_attributes(self.entity)
 
             
@@ -318,15 +335,14 @@ class TestEntities(unittest.TestCase):
         attr = ContextProperty(**{'value': 20, 'type': 'Number'})
         attr_same = ContextProperty(**{'value': 40, 'type': 'Number'})
         
-        # noOverwrite Option missing ???
-        self.entity.add_properties(attrs=["test_value", attr])
+        self.entity.add_properties({"test_value": attr})
         self.cb_client.append_entity_attributes(self.entity)
-        self.entity.add_properties(attrs=["test_value", attr_same])
-        self.cb_client.append_entity_attributes(self.entity)
+        self.entity.add_properties({"test_value": attr_same})
+        self.cb_client.append_entity_attributes(self.entity, options="noOverwrite")
 
         entity_list = self.cb_client.get_entity_list()
         for entity in entity_list:
-            self.assertEqual(first=entity.property, second=attr)
+            self.assertEqual(first=entity.test_value.value, second=attr.value)
         
         for entity in entity_list:
             self.cb_client.delete_entity_by_id(entity_id=entity.id)
@@ -355,21 +371,55 @@ class TestEntities(unittest.TestCase):
         """
         """Test1"""
         new_prop = {'new_prop': ContextProperty(value=25)}
-        newer_prop = {'new_prop': ContextProperty(value=25)}
+        newer_prop = NamedContextProperty(value=40, name='new_prop')
         
         self.entity.add_properties(new_prop)
         self.cb_client.post_entity(entity=self.entity)        
-        self.cb_client.update_entity_attribute(entity_id=self.entity.id, attr=newer_prop)
+        self.cb_client.update_entity_attribute(entity_id=self.entity.id, attr=newer_prop, attr_name='new_prop')
         entity_list = self.cb_client.get_entity_list()
+        self.assertEqual(len(entity_list), 1)
         for entity in entity_list:  
-            prop_list = self.entity.get_properties()
+            prop_list = entity.get_properties()
             for prop in prop_list:
-                if prop.name == "test_value": 
+                if prop.name == "new_prop":
                     self.assertEqual(prop.value, 40)
-        
-        for entity in entity_list:
-            self.cb_client.delete_entity_by_id(entity_id=entity.id)    
 
+    def test_patch_entity_attrs_contextprop(self):
+        """
+        Update existing Entity attributes within an NGSI-LD system
+        Args:
+            - entityId(string): Entity ID; required
+            - Request body; required
+        Returns:
+            - (201) Created. Contains the resource URI of the created Entity
+            - (400) Bad request
+            - (409) Already exists
+            - (422) Unprocessable Entity
+        Tests:
+            - Post an enitity with specific attributes. Change the attributes with patch.
+        """
+        """
+        Test 1:
+            post an enitity with entity_ID and entity_name and attributes
+            patch one of the attributes with entity_id by sending request body
+            get entity list
+            If new attribute is not added to the entity?
+                Raise Error
+        """
+        """Test1"""
+        new_prop = {'new_prop': ContextProperty(value=25)}
+        newer_prop = {'new_prop': ContextProperty(value=55)}
+
+        self.entity.add_properties(new_prop)
+        self.cb_client.post_entity(entity=self.entity)
+        self.cb_client.update_entity_attribute(entity_id=self.entity.id, attr=newer_prop, attr_name='new_prop')
+        entity_list = self.cb_client.get_entity_list()
+        self.assertEqual(len(entity_list), 1)
+        for entity in entity_list:
+            prop_list = entity.get_properties()
+            for prop in prop_list:
+                if prop.name == "new_prop":
+                    self.assertEqual(prop.value, 55)
                
     def test_patch_entity_attrs_attrId(self):
         """
@@ -397,10 +447,12 @@ class TestEntities(unittest.TestCase):
                                         value=20)
         self.entity.add_properties(attrs=[attr])
         self.cb_client.post_entity(entity=self.entity)
+
+        attr.value = 40
         self.cb_client.update_entity_attribute(entity_id=self.entity.id, attr=attr, attr_name="test_value")
         entity_list = self.cb_client.get_entity_list()
         for entity in entity_list:  
-            prop_list = self.entity.get_properties()
+            prop_list = entity.get_properties()
             for prop in prop_list:
                 if prop.name == "test_value": 
                     self.assertEqual(prop.value, 40)
@@ -444,8 +496,7 @@ class TestEntities(unittest.TestCase):
                                         value=20)
         self.entity.add_properties(attrs=[attr])
         self.cb_client.post_entity(entity=self.entity)
-        # self.cb_client.update_entity_attribute(entity_id=self.entity.id, attr=attr, attr_name="test_value")
-        with self.assertRaises():
+        with self.assertRaises(Exception):
             self.cb_client.delete_attribute(entity_id=self.entity.id, attribute_id="does_not_exist")
         
         entity_list = self.cb_client.get_entity_list()
@@ -458,12 +509,9 @@ class TestEntities(unittest.TestCase):
                                         value=20)
         self.entity.add_properties(attrs=[attr])
         self.cb_client.post_entity(entity=self.entity)
-        # self.cb_client.update_entity_attribute(entity_id=self.entity.id, attr=attr, attr_name="test_value")
         self.cb_client.delete_attribute(entity_id=self.entity.id, attribute_id="test_value")
         
-        with self.assertRaises():
+        with self.assertRaises(requests.exceptions.HTTPError) as contextmanager:
             self.cb_client.delete_attribute(entity_id=self.entity.id, attribute_id="test_value")
-        
-        # entity = self.cb_client.get_entity_by_id(self.entity)
-        
-        self.cb_client.delete_entity_by_id(entity_id=entity.id)    
+        response = contextmanager.exception.response
+        self.assertEqual(response.status_code, 404)

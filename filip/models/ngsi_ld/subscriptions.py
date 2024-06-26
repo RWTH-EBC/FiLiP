@@ -1,6 +1,8 @@
-from typing import List, Optional, Union
-from pydantic import ConfigDict, BaseModel, Field, HttpUrl, AnyUrl,\
-    field_validator
+from typing import List, Optional, Literal
+from pydantic import ConfigDict, BaseModel, Field, HttpUrl, AnyUrl, \
+    field_validator, model_validator
+import dateutil.parser
+from filip.models.ngsi_ld.base import GeoQuery, validate_ngsi_ld_query
 
 
 class EntityInfo(BaseModel):
@@ -17,25 +19,8 @@ class EntityInfo(BaseModel):
         description="Regular expression as per IEEE POSIX 1003.2™ [11]"
     )
     type: str = Field(
-        ...,
-        description="Fully Qualified Name of an Entity Type or the Entity Type Name as a short-hand string. See clause 4.6.2"
-    )
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class GeoQuery(BaseModel):
-    geometry: str = Field(
-        description="A valid GeoJSON [8] geometry, type excepting GeometryCollection"
-    )
-    coordinates: Union[list, str] = Field(
-        description="A JSON Array coherent with the geometry type as per IETF RFC 7946 [8]"
-    )
-    georel: str = Field(
-        description="A valid geo-relationship as defined by clause 4.10 (near, within, etc.)"
-    )
-    geoproperty: Optional[str] = Field(
-        default=None,
-        description="Attribute Name as a short-hand string"
+        description="Fully Qualified Name of an Entity Type or the Entity Type Name as a "
+                    "short-hand string. See clause 4.6.2"
     )
     model_config = ConfigDict(populate_by_name=True)
 
@@ -154,23 +139,68 @@ class NotificationParams(BaseModel):
 
 
 class TemporalQuery(BaseModel):
-    timerel: str = Field(
+    """
+    Temporal query according to NGSI-LD Spec section 5.2.21
+
+    timerel:
+        Temporal relationship, one of "before", "after" and "between".
+        "before": before the time specified by timeAt.
+        "after": after the time specified by timeAt.
+        "between": after the time specified by timeAt and before the time specified by
+            endtimeAt
+    timeAt:
+        A DateTime object following ISO 8061, e.g. 2007-12-24T18:21Z
+    endTimeAt (optional):
+        A DateTime object following ISO 8061, e.g. 2007-12-24T18:21Z
+        Only required when timerel="between"
+    timeproperty: str
+        Representing a Propertyname of the Property that contains the temporal data that
+        will be used to resolve the temporal query. If not specified, the default is
+        "observedAt"
+
+    """
+    model_config = ConfigDict(populate_by_name=True)
+    timerel: Literal['before', 'after', 'between'] = Field(
         ...,
-        description="String representing the temporal relationship as defined by clause 4.11 (Allowed values: 'before', 'after', and 'between')"
+        description="String representing the temporal relationship as defined by clause "
+                    "4.11 (Allowed values: 'before', 'after', and 'between') "
     )
     timeAt: str = Field(
         ...,
-        description="String representing the timeAt parameter as defined by clause 4.11. It shall be a DateTime"
+        description="String representing the timeAt parameter as defined by clause "
+                    "4.11. It shall be a DateTime "
     )
     endTimeAt: Optional[str] = Field(
         default=None,
-        description="String representing the endTimeAt parameter as defined by clause 4.11. It shall be a DateTime. Cardinality shall be 1 if timerel is equal to 'between'"
+        description="String representing the endTimeAt parameter as defined by clause "
+                    "4.11. It shall be a DateTime. Cardinality shall be 1 if timerel is "
+                    "equal to 'between' "
     )
     timeproperty: Optional[str] = Field(
         default=None,
-        description="String representing a Property name. The name of the Property that contains the temporal data that will be used to resolve the temporal query. If not specified,"
+        description="String representing a Property name. The name of the Property that "
+                    "contains the temporal data that will be used to resolve the "
+                    "temporal query. If not specified, "
     )
-    model_config = ConfigDict(populate_by_name=True)
+
+    @field_validator("timeAt", "endTimeAt")
+    @classmethod
+    def check_uri(cls, v: str):
+        if not v:
+            return v
+        else:
+            try:
+                dateutil.parser.isoparse(v)
+            except ValueError:
+                raise ValueError("timeAt must be in ISO8061 format")
+            return v
+
+    # when timerel=between, endTimeAt must be specified
+    @model_validator(mode='after')
+    def check_passwords_match(self) -> 'TemporalQuery':
+        if self.timerel == "between" and self.endTimeAt is None:
+            raise ValueError('When timerel="between", endTimeAt must be specified')
+        return self
 
 
 class Subscription(BaseModel):
@@ -212,6 +242,10 @@ class Subscription(BaseModel):
         default=None,
         description="Query met by subscribed entities to trigger the notification"
     )
+    @field_validator("q")
+    @classmethod
+    def check_q(cls, v: str):
+        return validate_ngsi_ld_query(v)
     geoQ: Optional[GeoQuery] = Field(
         default=None,
         description="Geoquery met by subscribed entities to trigger the notification"

@@ -222,12 +222,12 @@ class ServiceGroup(BaseModel):
         return str(value)
     lazy: Optional[List[LazyDeviceAttribute]] = Field(
         default=[],
-        desription="list of common lazy attributes of the device. For each "
+        description="list of common lazy attributes of the device. For each "
                    "attribute, its name and type must be provided."
     )
     commands: Optional[List[DeviceCommand]] = Field(
         default=[],
-        desription="list of common commands attributes of the device. For each "
+        description="list of common commands attributes of the device. For each "
                    "attribute, its name and type must be provided, additional "
                    "metadata is optional"
     )
@@ -380,7 +380,7 @@ class Device(DeviceSettings):
     )
     commands: List[DeviceCommand] = Field(
         default=[],
-        desription="List of commands of the device"
+        description="List of commands of the device"
     )
     attributes: List[DeviceAttribute] = Field(
         default=[],

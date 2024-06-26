@@ -9,6 +9,7 @@ from pydantic import field_validator, ConfigDict, BaseModel, Field
 from filip.models.ngsi_v2 import ContextEntity
 from filip.utils.validators import FiwareRegex, \
     validate_fiware_datatype_string_protect, validate_fiware_standard_regex
+from pydantic_core import ValidationError
 
 
 class DataTypeLD(str, Enum):
@@ -37,6 +38,7 @@ class ContextProperty(BaseModel):
         >>> attr = ContextProperty(**data)
 
     """
+    model_config = ConfigDict(extra='allow')            # In order to allow nested properties
     type: Optional[str] = Field(
         default="Property",
         title="type",
@@ -50,7 +52,7 @@ class ContextProperty(BaseModel):
         description="the actual data"
     )
     observedAt: Optional[str] = Field(
-        None, titel="Timestamp",
+        None, title="Timestamp",
         description="Representing a timestamp for the "
                     "incoming value of the property.",
         max_length=256,
@@ -59,7 +61,7 @@ class ContextProperty(BaseModel):
     field_validator("observedAt")(validate_fiware_datatype_string_protect)
 
     UnitCode: Optional[str] = Field(
-        None, titel="Unit Code",
+        None, title="Unit Code",
         description="Representing the unit of the value. "
                     "Should be part of the defined units "
                     "by the UN/ECE Recommendation No. 21"
@@ -70,7 +72,7 @@ class ContextProperty(BaseModel):
     field_validator("UnitCode")(validate_fiware_datatype_string_protect)
 
     datasetId: Optional[str] = Field(
-        None, titel="dataset Id",
+        None, title="dataset Id",
         description="It allows identifying a set or group of property values",
         max_length=256,
         min_length=1,
@@ -88,9 +90,16 @@ class ContextProperty(BaseModel):
             value
         """
         if not value == "Property":
-            logging.warning(msg='NGSI_LD Properties must have type "Property"')
-        value = "Property"
+            if value == "Relationship":
+                value == "Relationship"
+            elif value == "TemporalProperty":
+                value == "TemporalProperty"
+            else:
+                logging.warning(msg='NGSI_LD Properties must have type "Property"')
+                value = "Property"
         return value
+
+
 
 
 class NamedContextProperty(ContextProperty):
@@ -101,7 +110,7 @@ class NamedContextProperty(ContextProperty):
     In the NGSI-LD data model, properties have a name, the type "property" and a value.
     """
     name: str = Field(
-        titel="Property name",
+        title="Property name",
         description="The property name describes what kind of property the "
                     "attribute value represents of the entity, for example "
                     "current_speed. Allowed characters "
@@ -196,6 +205,7 @@ class ContextGeoProperty(BaseModel):
     }
 
     """
+    model_config = ConfigDict(extra='allow')
     type: Optional[str] = Field(
         default="GeoProperty",
         title="type",
@@ -208,7 +218,7 @@ class ContextGeoProperty(BaseModel):
     )
     observedAt: Optional[str] = Field(
         default=None,
-        titel="Timestamp",
+        title="Timestamp",
         description="Representing a timestamp for the "
                     "incoming value of the property.",
         max_length=256,
@@ -217,7 +227,7 @@ class ContextGeoProperty(BaseModel):
     field_validator("observedAt")(validate_fiware_datatype_string_protect)
 
     datasetId: Optional[str] = Field(
-        None, titel="dataset Id",
+        None, title="dataset Id",
         description="It allows identifying a set or group of property values",
         max_length=256,
         min_length=1,
@@ -235,19 +245,26 @@ class ContextGeoProperty(BaseModel):
             value
         """
         if not value == "GeoProperty":
-            logging.warning(msg='NGSI_LD GeoProperties must have type "GeoProperty"')
-        value = "GeoProperty"
+            if value == "Relationship":
+                value == "Relationship"
+            elif value == "TemporalProperty":
+                value == "TemporalProperty"
+            else:
+                logging.warning(msg='NGSI_LD GeoProperties must have type "GeoProperty" '
+                                    '-> They are checked first, so if no GeoProperties are used ignore this warning!')
+                raise ValueError('NGSI_LD GeoProperties must have type "GeoProperty" '
+                                 '-> They are checked first, so if no GeoProperties are used ignore this warning!')
         return value
 
 
-class NamedContextGeoProperty(ContextProperty):
+class NamedContextGeoProperty(ContextGeoProperty):
     """
     Context GeoProperties are geo properties of context entities. For example, the coordinates of a building .
 
     In the NGSI-LD data model, properties have a name, the type "Geoproperty" and a value.
     """
     name: str = Field(
-        titel="Property name",
+        title="Property name",
         description="The property name describes what kind of property the "
                     "attribute value represents of the entity, for example "
                     "current_speed. Allowed characters "
@@ -275,6 +292,7 @@ class ContextRelationship(BaseModel):
         >>> attr = ContextRelationship(**data)
 
     """
+    model_config = ConfigDict(extra='allow')                # In order to allow nested relationships
     type: Optional[str] = Field(
         default="Relationship",
         title="type",
@@ -289,12 +307,21 @@ class ContextRelationship(BaseModel):
     )
 
     datasetId: Optional[str] = Field(
-        None, titel="dataset Id",
+        None, title="dataset Id",
         description="It allows identifying a set or group of property values",
         max_length=256,
         min_length=1,
     )
     field_validator("datasetId")(validate_fiware_datatype_string_protect)
+
+    observedAt: Optional[str] = Field(
+        None, titel="Timestamp",
+        description="Representing a timestamp for the "
+                    "incoming value of the property.",
+        max_length=256,
+        min_length=1,
+    )
+    field_validator("observedAt")(validate_fiware_datatype_string_protect)
 
     @field_validator("type")
     @classmethod
@@ -321,7 +348,7 @@ class NamedContextRelationship(ContextRelationship):
     In the NGSI-LD data model, relationships have a name, the type "relationship" and an object.
     """
     name: str = Field(
-        titel="Attribute name",
+        title="Attribute name",
         description="The attribute name describes what kind of property the "
                     "attribute value represents of the entity, for example "
                     "current_speed. Allowed characters "
@@ -355,7 +382,7 @@ class ContextLDEntityKeyValues(BaseModel):
                     "the following ones: control characters, "
                     "whitespace, &, ?, / and #."
                     "the id should be structured according to the urn naming scheme.",
-        examples=['urn:ngsi-ld:Room:001'],
+        example="urn:ngsi-ld:Room:001",
         max_length=256,
         min_length=1,
         # pattern=FiwareRegex.standard.value,  # Make it FIWARE-Safe
@@ -376,20 +403,6 @@ class ContextLDEntityKeyValues(BaseModel):
         frozen=True
     )
     field_validator("type")(validate_fiware_standard_regex)
-    context: List[str] = Field(
-        ...,
-        title="@context",
-        description="providing an unambiguous definition by mapping terms to "
-                    "URIs. For practicality reasons, "
-                    "it is recommended to have a unique @context resource, "
-                    "containing all terms, subject to be used in every "
-                    "FIWARE Data Model, the same way as http://schema.org does.",
-        examples=["[https://schema.lab.fiware.org/ld/context,"
-                "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld]"],
-        max_length=256,
-        min_length=1,
-        frozen=True
-    )
     model_config = ConfigDict(extra='allow', validate_default=True,
                               validate_assignment=True)
 
@@ -403,7 +416,7 @@ class PropertyFormat(str, Enum):
     DICT = 'dict'
 
 
-class ContextLDEntity(ContextLDEntityKeyValues, ContextEntity):
+class ContextLDEntity(ContextLDEntityKeyValues):
     """
     Context LD entities, or simply entities, are the center of gravity in the
     FIWARE NGSI-LD information model. An entity represents a thing, i.e., any
@@ -448,6 +461,27 @@ class ContextLDEntity(ContextLDEntityKeyValues, ContextEntity):
                     "observationspace are different and "
                     "can be disjoint. "
     )
+    context: Optional[List[str]] = Field(
+        title="@context",
+        default=None,
+        description="providing an unambiguous definition by mapping terms to "
+                    "URIs. For practicality reasons, "
+                    "it is recommended to have a unique @context resource, "
+                    "containing all terms, subject to be used in every "
+                    "FIWARE Data Model, the same way as http://schema.org does.",
+        examples=["[https://schema.lab.fiware.org/ld/context,"
+                "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld]"],
+        max_length=256,
+        min_length=1,
+        alias="@context",
+        validation_alias="@context",
+        frozen=True
+    )
+
+    @field_validator("context")
+    @classmethod
+    def return_context(cls, context):
+        return context
 
     operationSpace: Optional[ContextGeoProperty] = Field(
         default=None,
@@ -463,9 +497,39 @@ class ContextLDEntity(ContextLDEntityKeyValues, ContextEntity):
                  id: str,
                  type: str,
                  **data):
-
+        # There is currently no validation for extra fields
+        data.update(self._validate_attributes(data))
         super().__init__(id=id, type=type, **data)
+
+    # TODO we should distinguish between context relationship
+    @classmethod
+    def _validate_attributes(cls, data: Dict):
+        fields = set([field.validation_alias for (_, field) in cls.model_fields.items()] +
+                     [field_name for field_name in cls.model_fields])
+        fields.remove(None)
+        # Initialize the attribute dictionary
+        attrs = {}
+
+        # Iterate through the data
+        for key, attr in data.items():
+            # Check if the keyword is not already present in the fields
+            if key not in fields:
+                try:
+                    attrs[key] = ContextGeoProperty.model_validate(attr)
+                except ValueError:
+                    attrs[key] = ContextProperty.model_validate(attr)
+        return attrs
+
     model_config = ConfigDict(extra='allow', validate_default=True, validate_assignment=True)
+
+
+    def model_dump(
+        self,
+        *args,
+        by_alias: bool = True,
+        **kwargs
+    ) -> dict[str, Any]:
+        return super().model_dump(*args, by_alias=by_alias, **kwargs)
 
     @field_validator("id")
     @classmethod
@@ -498,15 +562,35 @@ class ContextLDEntity(ContextLDEntityKeyValues, ContextEntity):
 
         """
         response_format = PropertyFormat(response_format)
+        # response format dict:
         if response_format == PropertyFormat.DICT:
-            return {key: ContextProperty(**value) for key, value in
-                    self.model_dump().items() if key not in ContextLDEntity.model_fields
-                    and value.get('type') != DataTypeLD.RELATIONSHIP}
-
-        return [NamedContextProperty(name=key, **value) for key, value in
-                self.model_dump().items() if key not in
-                ContextLDEntity.model_fields and
-                value.get('type') != DataTypeLD.RELATIONSHIP]
+            final_dict = {}
+            for key, value in self.model_dump(exclude_unset=True).items():
+                if key not in ContextLDEntity.model_fields:
+                    try:
+                        if value.get('type') != DataTypeLD.RELATIONSHIP:
+                            try:
+                                final_dict[key] = ContextGeoProperty(**value)
+                            except ValueError:          # if context attribute
+                                final_dict[key] = ContextProperty(**value)
+                    except AttributeError:
+                        if isinstance(value, list):
+                            pass
+            return final_dict
+        # response format list:
+        final_list = []
+        for key, value in self.model_dump(exclude_unset=True).items():
+            if key not in ContextLDEntity.model_fields:
+                try:
+                    if value.get('type') != DataTypeLD.RELATIONSHIP:
+                        try:
+                            final_list.append(NamedContextGeoProperty(name=key, **value))
+                        except ValueError:              # if context attribute
+                            final_list.append(NamedContextProperty(name=key, **value))
+                except AttributeError:
+                    if isinstance(value, list):
+                        pass
+        return final_list
 
     def add_attributes(self, **kwargs):
         """
@@ -580,7 +664,7 @@ class ContextLDEntity(ContextLDEntityKeyValues, ContextEntity):
             None
         """
         if isinstance(attrs, list):
-            attrs = {attr.name: ContextProperty(**attr.dict(exclude={'name'}))
+            attrs = {attr.name: ContextProperty(**attr.model_dump(exclude={'name'}))
                      for attr in attrs}
         for key, attr in attrs.items():
             self.__setattr__(name=key, value=attr)
@@ -615,14 +699,42 @@ class ContextLDEntity(ContextLDEntityKeyValues, ContextEntity):
 
         """
         response_format = PropertyFormat(response_format)
+        # response format dict:
         if response_format == PropertyFormat.DICT:
-            return {key: ContextRelationship(**value) for key, value in
-                    self.model_dump().items() if key not in ContextLDEntity.model_fields
-                    and value.get('type') == DataTypeLD.RELATIONSHIP}
-        return [NamedContextRelationship(name=key, **value) for key, value in
-                self.model_dump().items() if key not in
-                ContextLDEntity.model_fields and
-                value.get('type') == DataTypeLD.RELATIONSHIP]
+            final_dict = {}
+            for key, value in self.model_dump(exclude_unset=True).items():
+                if key not in ContextLDEntity.model_fields:
+                    try:
+                        if value.get('type') == DataTypeLD.RELATIONSHIP:
+                            final_dict[key] = ContextRelationship(**value)
+                    except AttributeError:          # if context attribute
+                        if isinstance(value, list):
+                            pass
+            return final_dict
+        # response format list:
+        final_list = []
+        for key, value in self.model_dump(exclude_unset=True).items():
+            if key not in ContextLDEntity.model_fields:
+                try:
+                    if value.get('type') == DataTypeLD.RELATIONSHIP:
+                        final_list.append(NamedContextRelationship(name=key, **value))
+                except AttributeError:              # if context attribute
+                    if isinstance(value, list):
+                        pass
+        return final_list
+
+    def get_context(self):
+        """
+        Args:
+            response_format:
+
+        Returns: context of the entity as list
+
+        """
+        for key, value in self.model_dump(exclude_unset=True).items():
+            if key not in ContextLDEntity.model_fields:
+                if isinstance(value, list):
+                    return value
 
 
 class ActionTypeLD(str, Enum):
@@ -640,7 +752,7 @@ class UpdateLD(BaseModel):
     """
     Model for update action
     """
-    entities: List[ContextEntity] = Field(
+    entities: List[ContextLDEntity] = Field(
         description="an array of entities, each entity specified using the "
                     "JSON entity representation format "
     )
