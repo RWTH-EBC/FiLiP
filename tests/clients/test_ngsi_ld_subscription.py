@@ -16,8 +16,9 @@ from filip.models.ngsi_ld.subscriptions import \
     NotificationParams, \
     Subscription
 from filip.utils.cleanup import clear_all, clean_test
-from tests.clients.config import TestSettings
+from tests.config import TestSettings
 from random import randint
+
 
 class TestSubscriptions(unittest.TestCase):
     """
@@ -55,12 +56,12 @@ class TestSubscriptions(unittest.TestCase):
         })
         CB_URL = "http://137.226.248.246:1027"
         self.cb_client = ContextBrokerLDClient(url=CB_URL, fiware_header=self.fiware_header)        
-        # self.endpoint_http = Endpoint(**{
-        #     "uri": "http://137.226.248.246:1027/ngsi-ld/v1/subscriptions",
-        #     "Content-Type": "application/json",
-        #     "Accept": "application/json"
-        #     }
-        # )
+        self.endpoint_http = Endpoint(**{
+            "uri": "http://137.226.248.246:1027/ngsi-ld/v1/subscriptions",
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        }
+     )
 
     def test_get_subscription_list(self):
         """
@@ -256,5 +257,5 @@ class TestSubscriptions(unittest.TestCase):
         """
         Cleanup test server
         """
-        clear_all(fiware_header=self.fiware_header,
-                cb_url=TestSettings.CB_URL)
+#        clear_all(fiware_header=self.fiware_header,
+#                cb_url=TestSettings.CB_URL)

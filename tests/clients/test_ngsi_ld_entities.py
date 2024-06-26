@@ -12,6 +12,8 @@ from filip.models.ngsi_ld.context import \
     NamedContextProperty, \
     ActionTypeLD
 import requests
+from tests.config import settings
+
 
 class TestEntities(unittest.TestCase):
     """
@@ -24,11 +26,10 @@ class TestEntities(unittest.TestCase):
         """
         entity_test_types = [ self.entity.type, self.entity_2.type ]
         fiware_header = FiwareLDHeader()
-        with ContextBrokerLDClient(fiware_header=fiware_header) as client:
-            for entity_type in entity_test_types:
-                entity_list = client.get_entity_list(entity_type=entity_type)
-                for entity in entity_list:
-                    client.delete_entity_by_id(entity_id=entity.id)
+        for entity_type in entity_test_types:
+            entity_list = self.cb_client.get_entity_list(entity_type=entity_type)
+            for entity in entity_list:
+                self.cb_client.delete_entity_by_id(entity_id=entity.id)
 
     def setUp(self) -> None:
         """
@@ -36,13 +37,13 @@ class TestEntities(unittest.TestCase):
         Returns:
             None
         """
-        self.fiware_header = FiwareLDHeader()
+        self.fiware_header = FiwareLDHeader(ngsild_tenant=settings.FIWARE_SERVICE)
+        self.cb_client = ContextBrokerLDClient(fiware_header=self.fiware_header,
+                                            url=settings.LD_CB_URL)
         self.http_url = "https://test.de:80"
         self.mqtt_url = "mqtt://test.de:1883"
         self.mqtt_topic = '/filip/testing'
 
-        #CB_URL = "http://localhost:1026"
-        CB_URL = "http://137.226.248.200:1027"
         self.cb_client = ContextBrokerLDClient(url=settings.LD_CB_URL,
                                     fiware_header=self.fiware_header)
 
