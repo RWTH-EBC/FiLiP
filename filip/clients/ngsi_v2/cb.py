@@ -1898,7 +1898,7 @@ class ContextBrokerClient(BaseHttpClient):
         except requests.RequestException as err:
             msg = (
                 f"Sending notifcation message failed! \n "
-                f"{message.model_dump_json(inent=2)}"
+                f"{message.model_dump_json(indent=2)}"
             )
             self.log_error(err=err, msg=msg)
             raise
