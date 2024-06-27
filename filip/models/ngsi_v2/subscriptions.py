@@ -9,7 +9,8 @@ from pydantic import \
     field_validator, model_validator, ConfigDict, BaseModel, \
     conint, \
     Field, \
-    Json
+    Json, \
+    AliasChoices
 from .base import AttrsFormat, EntityPattern, Http, Status, Expression
 from filip.utils.validators import validate_mqtt_url, validate_mqtt_topic
 from filip.models.ngsi_v2.context import ContextEntity
@@ -69,6 +70,22 @@ class HttpCustom(Http):
                     'default payload (see "Notification Messages" sections) '
                     'is used.'
     )
+    json: Optional[Dict[str,Any]] = Field(
+        default=None,
+        description='get a json as notification. If omitted, the default'
+                    'payload (see "Notification Messages" sections) is used.'
+    )
+    ngsi:Optional[ContextEntity] = Field(
+        default=None,
+        description='get an NGSI-v2 normalized entity as notification.If omitted, '
+                    'the default payload (see "Notification Messages" sections) is used.'
+    )
+
+    @model_validator(mode='after')
+    def validate_payload_type(self):
+        assert len([v for k, v in self.model_dump().items()
+                    if((v is not None) and (k in ['payload','ngsi','json']))]) <= 1
+        return self
 
 
 class Mqtt(BaseModel):
@@ -124,6 +141,21 @@ class MqttCustom(Mqtt):
                     'default payload (see "Notification Messages" sections) '
                     'is used.'
     )
+    json: Optional[Dict[str,Any]] = Field(
+        default=None,
+        description='get a json as notification. If omitted, the default'
+                    'payload (see "Notification Messages" sections) is used.'
+    )
+    ngsi:Optional[ContextEntity] = Field(
+        default=None,
+        description='get an NGSI-v2 normalized entity as notification.If omitted, '
+                    'the default payload (see "Notification Messages" sections) is used.'
+    )
+    @model_validator(mode='after')
+    def validate_payload_type(self):
+        assert len([v for k, v in self.model_dump().items()
+                    if((v is not None) and (k in ['payload','ngsi','json']))]) <= 1
+        return self
 
 
 class Notification(BaseModel):
@@ -204,12 +236,6 @@ class Notification(BaseModel):
                     'In case onlyChangedAttrs=true, CB notifies '
                     '[A=0, B=null, C=null]. This '
     )
-
-    @field_validator('httpCustom')
-    def validate_http(cls, http_custom, values):
-        if http_custom is not None:
-            assert values['http'] is None
-        return http_custom
 
     @field_validator('exceptAttrs')
     def validate_attr(cls, except_attrs, values):
