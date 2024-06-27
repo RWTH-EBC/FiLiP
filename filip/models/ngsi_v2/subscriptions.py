@@ -92,7 +92,7 @@ class HttpCustom(Http):
     )
 
     @model_validator(mode='after')
-    def validate_http(self):
+    def validate_notification_payloads(self):
         fields = [self.payload, self.json, self.ngsi]
         filled_fields = [field for field in fields if field is not None]
 
