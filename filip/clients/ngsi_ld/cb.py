@@ -18,7 +18,7 @@ from filip.config import settings
 from filip.models.base import FiwareLDHeader, PaginationMethod
 from filip.utils.simple_ql import QueryString
 from filip.models.ngsi_v2.base import AttrsFormat
-from filip.models.ngsi_v2.subscriptions import Subscription
+from filip.models.ngsi_ld.subscriptions import Subscription
 from filip.models.ngsi_ld.context import ContextLDEntity, ContextLDEntityKeyValues, ContextProperty, ContextRelationship, NamedContextProperty, \
     NamedContextRelationship, ActionTypeLD, UpdateLD
 from filip.models.ngsi_v2.context import Query
@@ -592,8 +592,7 @@ class ContextBrokerLDClient(BaseHttpClient):
             res = self.post(
                 url=url,
                 headers=headers,
-                data=subscription.model_dump_json(exclude={'id'},
-                                                  exclude_unset=False,
+                data=subscription.model_dump_json(exclude_unset=False,
                                                   exclude_defaults=False,
                                                   exclude_none=True))
             if res.ok:
