@@ -12,7 +12,9 @@ from filip.models.ngsi_v2.subscriptions import \
     Mqtt, \
     MqttCustom, \
     Notification, \
-    Subscription
+    Subscription, \
+    NgsiPayload, \
+    NgsiPayloadAttr
 from filip.models.base import FiwareHeader
 from filip.utils.cleanup import clear_all, clean_test
 from tests.config import settings
@@ -104,6 +106,27 @@ class TestSubscriptions(unittest.TestCase):
             notification.mqtt = mqtt
         with self.assertRaises(ValidationError):
             notification.mqtt = mqttCustom
+        with self.assertRaises(ValidationError):
+            HttpCustom(url=self.http_url,json={},payload="")
+        with self.assertRaises(ValidationError):
+            MqttCustom(url=self.mqtt_url,
+                       topic=self.mqtt_topic,ngsi=NgsiPayload(),payload="")
+        with self.assertRaises(ValidationError):
+            HttpCustom(url=self.http_url,ngsi=NgsiPayload(),json="")
+        
+        #Test validator for ngsi payload type
+        with self.assertRaises(ValidationError):
+            attr_dict={
+                "metadata":{}
+            }
+            NgsiPayloadAttr(**attr_dict)
+        with self.assertRaises(ValidationError):
+            attr_dict={
+                "id":"entityId",
+                "type":"entityType",
+                "k":"v"
+            }
+            NgsiPayload(NgsiPayloadAttr(**attr_dict),id="someId",type="someType")
 
         # test onlyChangedAttrs-field
         notification = Notification.model_validate(self.notification)

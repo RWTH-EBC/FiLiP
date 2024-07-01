@@ -24,7 +24,7 @@ from filip.models.ngsi_v2.base import (
 from filip.custom_types import AnyMqttUrl
 
 
-class NotificationAttr(BaseValueAttribute):
+class NgsiPayloadAttr(BaseValueAttribute):
     """
     Model for NGSI V2 type payload in httpCustom/mqttCustom notifications.
     The difference between this model and the usual BaseValueAttribute model is that
@@ -35,15 +35,12 @@ class NotificationAttr(BaseValueAttribute):
     """
     model_config=ConfigDict(extra="forbid")
 
-class NotificationEntity(BaseModel):
+class NgsiPayload(BaseModel):
     """
     Model for NGSI V2 type payload in httpCustom/mqttCustom notifications.
     Differences between this model and the usual Context entity models include:
         - id and type are not mandatory
-        - a metadata Attribute field is not allowed
-    In the absence of type/value in some attribute field, one should resort to partial 
-    representations ( as specified in the orion api manual), done by the BaseValueAttr.
-    model.
+        - an attribute metadata field is not allowed
     """
     model_config = ConfigDict(
         extra="allow", validate_default=True
@@ -64,7 +61,7 @@ class NotificationEntity(BaseModel):
     @model_validator(mode='after')
     def validate_notification_attrs(self):
         for v in self.model_dump(exclude={"id","type"}).values():
-            assert isinstance(NotificationAttr.model_validate(v),NotificationAttr)
+            assert isinstance(NgsiPayloadAttr.model_validate(v),NgsiPayloadAttr)
         return self
     
 
@@ -127,7 +124,7 @@ class HttpCustom(Http):
         description='get a json as notification. If omitted, the default'
                     'payload (see "Notification Messages" sections) is used.'
     )
-    ngsi:Optional[NotificationEntity] = Field(
+    ngsi:Optional[NgsiPayload] = Field(
         default=None,
         description='get an NGSI-v2 normalized entity as notification.If omitted, '
                     'the default payload (see "Notification Messages" sections) is used.'
@@ -198,7 +195,7 @@ class MqttCustom(Mqtt):
         description='get a json as notification. If omitted, the default'
                     'payload (see "Notification Messages" sections) is used.'
     )
-    ngsi:Optional[NotificationEntity] = Field(
+    ngsi:Optional[NgsiPayload] = Field(
         default=None,
         description='get an NGSI-v2 normalized entity as notification.If omitted, '
                     'the default payload (see "Notification Messages" sections) is used.'
