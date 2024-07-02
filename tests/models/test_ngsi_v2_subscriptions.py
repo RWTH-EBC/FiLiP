@@ -145,7 +145,8 @@ class TestSubscriptions(unittest.TestCase):
         Returns:
             None
         """
-        sub = Subscription.model_validate(self.sub_dict)
+        tmp_dict=self.sub_dict.copy()
+        sub = Subscription.model_validate(tmp_dict)
         fiware_header = FiwareHeader(service=settings.FIWARE_SERVICE,
                                      service_path=settings.FIWARE_SERVICEPATH)
         with ContextBrokerClient(
@@ -161,6 +162,65 @@ class TestSubscriptions(unittest.TestCase):
                     else:
                         self.assertEqual(str(value), str(dict2[key]))
 
+            compare_dicts(sub.model_dump(exclude={'id'}),
+                          sub_res.model_dump(exclude={'id'}))
+            
+            tmp_dict.update({"notification":{
+                "httpCustom": {
+                    "url": "http://localhost:1234",
+                    "ngsi":{
+                        "patchattr":{
+                            "value":"${temperature/2}",
+                            "type":"Calculated"
+                        }
+                    },
+                    "method":"POST"
+                },
+                "attrs": [
+                    "temperature",
+                    "humidity"
+                ]
+            }})
+            sub = Subscription.model_validate(tmp_dict)
+            sub_id = client.post_subscription(subscription=sub)
+            sub_res = client.get_subscription(subscription_id=sub_id)
+            compare_dicts(sub.model_dump(exclude={'id'}),
+                          sub_res.model_dump(exclude={'id'}))
+            
+            tmp_dict.update({"notification":{
+                "httpCustom": {
+                    "url": "http://localhost:1234",
+                    "json":{
+                        "t":"${temperate}",
+                        "h":"${humidity}"
+                    },
+                    "method":"POST"
+                },
+                "attrs": [
+                    "temperature",
+                    "humidity"
+                ]
+            }})
+            sub = Subscription.model_validate(tmp_dict)
+            sub_id = client.post_subscription(subscription=sub)
+            sub_res = client.get_subscription(subscription_id=sub_id)
+            compare_dicts(sub.model_dump(exclude={'id'}),
+                          sub_res.model_dump(exclude={'id'}))
+
+            tmp_dict.update({"notification":{
+                "httpCustom": {
+                    "url": "http://localhost:1234",
+                    "payload":"Temperature is ${temperature} and humidity ${humidity}",
+                    "method":"POST"
+                },
+                "attrs": [
+                    "temperature",
+                    "humidity"
+                ]
+            }})
+            sub = Subscription.model_validate(tmp_dict)
+            sub_id = client.post_subscription(subscription=sub)
+            sub_res = client.get_subscription(subscription_id=sub_id)
             compare_dicts(sub.model_dump(exclude={'id'}),
                           sub_res.model_dump(exclude={'id'}))
 
