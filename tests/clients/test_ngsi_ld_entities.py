@@ -104,22 +104,22 @@ class TestEntities(unittest.TestCase):
         """
         """
         Test 1:
-            Post enitity with entity_ID and entity_name
+            Post enitity with entity_ID and entity_type
             if return != 201:
                 Raise Error
             Get entity list
             If entity with entity_ID is not on entity list:
                 Raise Error
         Test 2: 
-            Post entity with entity_ID and entity_name
-            Post entity with the same entity_ID and entity_name as before
+            Post entity with entity_ID and entity_type
+            Post entity with the same entity_ID and entity_type as before
             If return != 409: 
                 Raise Error
             Get entity list
             If there are duplicates on entity list:
                 Raise Error
         Test 3: 
-            Post an entity with an entity_ID and without an entity_name 
+            Post an entity with an entity_ID and without an entity_type 
             If return != 422:
                 Raise Error
             Get entity list 
@@ -233,7 +233,7 @@ class TestEntities(unittest.TestCase):
                 Raise Error
         
         Test 2: 
-            post an entity with entity_ID and entity_name
+            post an entity with entity_ID and entity_type
             delete entity with entity_ID
             get entity list 
             If entity with entity_ID in entity list:
@@ -294,7 +294,7 @@ class TestEntities(unittest.TestCase):
         """
         """
         Test 1:
-            post an entity with entity_ID and entity_name
+            post an entity with entity_ID and entity_type
             add attribute to the entity with entity_ID
             get entity with entity_ID and new attribute
             Is new attribute not added to enitity ? 
@@ -304,7 +304,7 @@ class TestEntities(unittest.TestCase):
             add attribute to an non existent entity
             Raise Error
         Test 3:
-            post an entity with entity_ID, entity_name, entity_attribute
+            post an entity with entity_ID, entity_type, entity_attribute
             add attribute that already exists with noOverwrite
                 Raise Error
             get entity and compare previous with entity attributes
@@ -364,7 +364,7 @@ class TestEntities(unittest.TestCase):
         """
         """
         Test 1:
-            post an enitity with entity_ID and entity_name and attributes
+            post an enitity with entity_ID and entity_type and attributes
             patch one of the attributes with entity_id by sending request body
             get entity list
             If new attribute is not added to the entity?
@@ -401,7 +401,7 @@ class TestEntities(unittest.TestCase):
         """
         """
         Test 1:
-            post an enitity with entity_ID and entity_name and attributes
+            post an enitity with entity_ID and entity_type and attributes
             patch one of the attributes with entity_id by sending request body
             get entity list
             If new attribute is not added to the entity?
@@ -437,7 +437,7 @@ class TestEntities(unittest.TestCase):
         """
         """
         Test 1: 
-            post an entity with entity_ID, entity_name and attributes
+            post an entity with entity_ID, entity_type and attributes
             patch with entity_ID and attribute_ID 
             return != 204: 
                 yes: 
@@ -479,7 +479,7 @@ class TestEntities(unittest.TestCase):
         """
         """
         Test 1: 
-            post an enitity with entity_ID, entity_name and attribute with attribute_ID
+            post an enitity with entity_ID, entity_type and attribute with attribute_ID
             delete an attribute with an non existent attribute_ID of the entity with the entity_ID
                 Raise Error
         Test 2: 
