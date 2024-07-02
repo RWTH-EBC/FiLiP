@@ -93,13 +93,19 @@ class FiwareHeader(BaseModel):
         validate_fiware_service_path)
 
 
-class LogLevel(str, Enum):
-    CRITICAL = 'CRITICAL'
-    ERROR = 'ERROR'
-    WARNING = 'WARNING'
-    INFO = 'INFO'
-    DEBUG = 'DEBUG'
-    NOTSET = 'NOTSET'
+class FiwareHeaderSecure(FiwareHeader):
+    """
+    Defines entity service paths and a autorization via Baerer-Token which are supported by the NGSI
+    Context Brokers to support hierarchical scopes:
+    https://fiware-orion.readthedocs.io/en/master/user/service_path/index.html
+    """
+    authorization: str = Field(
+        alias="authorization",
+        default="",
+        max_length=3000,
+        description="authorization key",
+        pattern=r".*"
+    )
 
 
 class FiwareLDHeader(BaseModel):
@@ -115,19 +121,40 @@ class FiwareLDHeader(BaseModel):
         default='<https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld>; '
                 'rel="http://www.w3.org/ns/json-ld#context"; '
                 'type="application/ld+json"',
-        max_length=50,
+        max_length=100,
         description="Fiware service used for multi-tenancy",
-        regex=r"\w*$"    )
+        pattern=r"\w*$")
     ngsild_tenant: str = Field(
         alias="NGSILD-Tenant",
         default="openiot",
         max_length=50,
-        description="Alsias to the Fiware service to used for multitancy",
-        regex=r"\w*$"
+        description="Alias to the Fiware service to used for multitenancy",
+        pattern=r"\w*$"
     )
 
     def set_context(self, context: str):
         self.link_header = f'<{context}>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"'
 
 
+class LogLevel(str, Enum):
+    CRITICAL = 'CRITICAL'
+    ERROR = 'ERROR'
+    WARNING = 'WARNING'
+    INFO = 'INFO'
+    DEBUG = 'DEBUG'
+    NOTSET = 'NOTSET'
 
+    @classmethod
+    def _missing_name_(cls, name):
+        """
+        Class method to realize case insensitive args
+
+        Args:
+            name: missing argument
+
+        Returns:
+            valid member of enum
+        """
+        for member in cls:
+            if member.value.casefold() == name.casefold():
+                return member
