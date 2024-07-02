@@ -11,9 +11,59 @@ from pydantic import \
     Field, \
     Json
 from .base import AttrsFormat, EntityPattern, Http, Status, Expression
-from filip.utils.validators import validate_mqtt_url, validate_mqtt_topic
+from filip.utils.validators import (
+    validate_mqtt_url,
+    validate_mqtt_topic
+)
 from filip.models.ngsi_v2.context import ContextEntity
+from filip.models.ngsi_v2.base import (
+    EntityPattern,
+    Expression,
+    BaseValueAttribute
+)
 from filip.custom_types import AnyMqttUrl
+
+
+class NgsiPayloadAttr(BaseValueAttribute):
+    """
+    Model for NGSI V2 type payload in httpCustom/mqttCustom notifications.
+    The difference between this model and the usual BaseValueAttribute model is that
+    a metadata field is not allowed.
+    In the absence of type/value in some attribute field, one should resort to partial 
+    representations ( as specified in the orion api manual), done by the BaseValueAttr.
+    model.
+    """
+    model_config=ConfigDict(extra="forbid")
+
+class NgsiPayload(BaseModel):
+    """
+    Model for NGSI V2 type payload in httpCustom/mqttCustom notifications.
+    Differences between this model and the usual Context entity models include:
+        - id and type are not mandatory
+        - an attribute metadata field is not allowed
+    """
+    model_config = ConfigDict(
+        extra="allow", validate_default=True
+    )
+    id: Optional[str] = Field(
+        default=None,
+        max_length=256,
+        min_length=1,
+        frozen=True
+    )
+    type: Optional[Union[str, Enum]] = Field(
+        default=None,
+        max_length=256,
+        min_length=1,
+        frozen=True,
+    )
+
+    @model_validator(mode='after')
+    def validate_notification_attrs(self):
+        for v in self.model_dump(exclude={"id","type"}).values():
+            assert isinstance(NgsiPayloadAttr.model_validate(v),NgsiPayloadAttr)
+        return self
+    
 
 
 class Message(BaseModel):
@@ -69,6 +119,22 @@ class HttpCustom(Http):
                     'default payload (see "Notification Messages" sections) '
                     'is used.'
     )
+    json: Optional[Dict[str,Any]] = Field(
+        default=None,
+        description='get a json as notification. If omitted, the default'
+                    'payload (see "Notification Messages" sections) is used.'
+    )
+    ngsi:Optional[NgsiPayload] = Field(
+        default=None,
+        description='get an NGSI-v2 normalized entity as notification.If omitted, '
+                    'the default payload (see "Notification Messages" sections) is used.'
+    )
+
+    @model_validator(mode='after')
+    def validate_payload_type(self):
+        assert len([v for k, v in self.model_dump().items()
+                    if((v is not None) and (k in ['payload','ngsi','json']))]) <= 1
+        return self
 
 
 class Mqtt(BaseModel):
@@ -124,6 +190,21 @@ class MqttCustom(Mqtt):
                     'default payload (see "Notification Messages" sections) '
                     'is used.'
     )
+    json: Optional[Dict[str,Any]] = Field(
+        default=None,
+        description='get a json as notification. If omitted, the default'
+                    'payload (see "Notification Messages" sections) is used.'
+    )
+    ngsi:Optional[NgsiPayload] = Field(
+        default=None,
+        description='get an NGSI-v2 normalized entity as notification.If omitted, '
+                    'the default payload (see "Notification Messages" sections) is used.'
+    )
+    @model_validator(mode='after')
+    def validate_payload_type(self):
+        assert len([v for k, v in self.model_dump().items()
+                    if((v is not None) and (k in ['payload','ngsi','json']))]) <= 1
+        return self
 
 
 class Notification(BaseModel):
@@ -204,12 +285,6 @@ class Notification(BaseModel):
                     'In case onlyChangedAttrs=true, CB notifies '
                     '[A=0, B=null, C=null]. This '
     )
-
-    @field_validator('httpCustom')
-    def validate_http(cls, http_custom, values):
-        if http_custom is not None:
-            assert values['http'] is None
-        return http_custom
 
     @field_validator('exceptAttrs')
     def validate_attr(cls, except_attrs, values):
