@@ -60,7 +60,7 @@ if __name__ == "__main__":
                              "type": "Integer"}
                 }
     room_entity = ContextEntity(**room_001)
-    cb_client.post_entity(entity=room_entity)
+    cb_client.post_entity(entity=room_entity, update=True)
 
 
     # # 2 Setup a subscription and MQTT notifications
@@ -132,7 +132,7 @@ if __name__ == "__main__":
         logger.info("Received this message:\n" + message.json(indent=2))
 
 
-    def on_disconnect(client, userdata, reasonCode, properties=None):
+    def on_disconnect(client, userdata, flags, reasonCode, properties=None):
         logger.info("MQTT client disconnected with reasonCode "
                     + str(reasonCode))
 
@@ -141,6 +141,7 @@ if __name__ == "__main__":
 
     mqtt_client = mqtt.Client(userdata=None,
                               protocol=mqtt.MQTTv5,
+                              callback_api_version=mqtt.CallbackAPIVersion.VERSION2,
                               transport="tcp")
     # add callbacks to the mqtt-client
     mqtt_client.on_connect = on_connect

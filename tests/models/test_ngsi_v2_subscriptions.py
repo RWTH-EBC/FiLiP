@@ -92,6 +92,10 @@ class TestSubscriptions(unittest.TestCase):
         with self.assertRaises(ValidationError):
             Mqtt(url="mqtt://test.de:1883",
                  topic='/,t')
+        with self.assertRaises(ValidationError):
+            HttpCustom(url="https://working-url.de:80", json={}, ngsi={})
+        with self.assertRaises(ValidationError):
+            HttpCustom(url="https://working-url.de:80", payload="", json={})
         httpCustom = HttpCustom(url=self.http_url)
         mqtt = Mqtt(url=self.mqtt_url,
                     topic=self.mqtt_topic)
@@ -102,29 +106,31 @@ class TestSubscriptions(unittest.TestCase):
         notification = Notification.model_validate(self.notification)
         with self.assertRaises(ValidationError):
             notification.mqtt = httpCustom
+        notification = Notification.model_validate(self.notification)
         with self.assertRaises(ValidationError):
             notification.mqtt = mqtt
+        notification = Notification.model_validate(self.notification)
         with self.assertRaises(ValidationError):
             notification.mqtt = mqttCustom
         with self.assertRaises(ValidationError):
-            HttpCustom(url=self.http_url,json={},payload="")
+            HttpCustom(url=self.http_url, json={}, payload="")
         with self.assertRaises(ValidationError):
             MqttCustom(url=self.mqtt_url,
-                       topic=self.mqtt_topic,ngsi=NgsiPayload(),payload="")
+                       topic=self.mqtt_topic, ngsi=NgsiPayload(), payload="")
         with self.assertRaises(ValidationError):
-            HttpCustom(url=self.http_url,ngsi=NgsiPayload(),json="")
-        
+            HttpCustom(url=self.http_url, ngsi=NgsiPayload(), json="")
+
         #Test validator for ngsi payload type
         with self.assertRaises(ValidationError):
-            attr_dict={
-                "metadata":{}
+            attr_dict = {
+                "metadata": {}
             }
             NgsiPayloadAttr(**attr_dict)
         with self.assertRaises(ValidationError):
-            attr_dict={
-                "id":"entityId",
-                "type":"entityType",
-                "k":"v"
+            attr_dict = {
+                "id": "entityId",
+                "type": "entityType",
+                "k": "v"
             }
             NgsiPayload(NgsiPayloadAttr(**attr_dict),id="someId",type="someType")
 
@@ -164,7 +170,7 @@ class TestSubscriptions(unittest.TestCase):
 
             compare_dicts(sub.model_dump(exclude={'id'}),
                           sub_res.model_dump(exclude={'id'}))
-            
+
             tmp_dict.update({"notification":{
                 "httpCustom": {
                     "url": "http://localhost:1234",
@@ -186,7 +192,7 @@ class TestSubscriptions(unittest.TestCase):
             sub_res = client.get_subscription(subscription_id=sub_id)
             compare_dicts(sub.model_dump(exclude={'id'}),
                           sub_res.model_dump(exclude={'id'}))
-            
+
             tmp_dict.update({"notification":{
                 "httpCustom": {
                     "url": "http://localhost:1234",

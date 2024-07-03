@@ -22,6 +22,11 @@ from filip.models.ngsi_v2.base import (
     BaseValueAttribute
 )
 from filip.custom_types import AnyMqttUrl
+import warnings
+
+# The pydantic models still have a .json() function, but this method is deprecated.
+warnings.filterwarnings("ignore", category=UserWarning,
+                        message='Field name "json" shadows an attribute in parent "Http"')
 
 
 class NgsiPayloadAttr(BaseValueAttribute):
@@ -29,7 +34,7 @@ class NgsiPayloadAttr(BaseValueAttribute):
     Model for NGSI V2 type payload in httpCustom/mqttCustom notifications.
     The difference between this model and the usual BaseValueAttribute model is that
     a metadata field is not allowed.
-    In the absence of type/value in some attribute field, one should resort to partial 
+    In the absence of type/value in some attribute field, one should resort to partial
     representations ( as specified in the orion api manual), done by the BaseValueAttr.
     model.
     """
@@ -63,7 +68,7 @@ class NgsiPayload(BaseModel):
         for v in self.model_dump(exclude={"id","type"}).values():
             assert isinstance(NgsiPayloadAttr.model_validate(v),NgsiPayloadAttr)
         return self
-    
+
 
 
 class Message(BaseModel):
@@ -119,7 +124,7 @@ class HttpCustom(Http):
                     'default payload (see "Notification Messages" sections) '
                     'is used.'
     )
-    json: Optional[Dict[str,Any]] = Field(
+    json: Optional[Dict[str, Union[str, Json]]] = Field(
         default=None,
         description='get a json as notification. If omitted, the default'
                     'payload (see "Notification Messages" sections) is used.'
@@ -129,11 +134,22 @@ class HttpCustom(Http):
         description='get an NGSI-v2 normalized entity as notification.If omitted, '
                     'the default payload (see "Notification Messages" sections) is used.'
     )
+    timeout: Optional[int] = Field(
+        default=None,
+        description="Maximum time (in milliseconds) the subscription waits for the response. The maximum value allowed "
+                    "for this parameter is 1800000 (30 minutes). If timeout is defined to 0 or omitted, then the value "
+                    "passed as -httpTimeout CLI parameter is used. See section in the 'Command line options' for more "
+                    "details."
+    )
 
     @model_validator(mode='after')
-    def validate_payload_type(self):
-        assert len([v for k, v in self.model_dump().items()
-                    if((v is not None) and (k in ['payload','ngsi','json']))]) <= 1
+    def validate_notification_payloads(self):
+        fields = [self.payload, self.json, self.ngsi]
+        filled_fields = [field for field in fields if field is not None]
+
+        if len(filled_fields) > 1:
+            raise ValueError("Only one of payload, json or ngsi fields accepted at the same time in httpCustom.")
+
         return self
 
 
@@ -148,7 +164,7 @@ class Mqtt(BaseModel):
                     'only includes host and port)')
     topic: str = Field(
         description='to specify the MQTT topic to use',
-        )
+    )
     valid_type = field_validator("topic")(validate_mqtt_topic)
     qos: Optional[int] = Field(
         default=0,
@@ -286,11 +302,17 @@ class Notification(BaseModel):
                     '[A=0, B=null, C=null]. This '
     )
 
-    @field_validator('exceptAttrs')
-    def validate_attr(cls, except_attrs, values):
-        if except_attrs is not None:
-            assert values['attrs'] is None
-        return except_attrs
+    @model_validator(mode='after')
+    def validate_http(self):
+        if self.httpCustom is not None:
+            assert self.http is None
+        return self
+
+    @model_validator(mode='after')
+    def validate_attr(self):
+        if self.exceptAttrs is not None:
+            assert self.attrs is None
+        return self
 
     @model_validator(mode='after')
     def validate_endpoints(self):
@@ -322,7 +344,7 @@ class Response(Notification):
                     'Last notification timestamp in ISO8601 format.'
     )
     lastFailure: Optional[datetime] = Field(
-        default = None,
+        default=None,
         description='(not editable, only present in GET operations): '
                     'Last failure timestamp in ISO8601 format. Not present if '
                     'subscription has never had a problem with notifications.'
@@ -417,21 +439,21 @@ class Subscription(BaseModel):
     )
     subject: Subject = Field(
         description="An object that describes the subject of the subscription.",
-        example={
+        examples=[{
             'entities': [{'idPattern': '.*', 'type': 'Room'}],
             'condition': {
                 'attrs': ['temperature'],
                 'expression': {'q': 'temperature>40'},
             },
-        },
+        }],
     )
     notification: Notification = Field(
         description="An object that describes the notification to send when "
                     "the subscription is triggered.",
-        example={
+        examples=[{
             'http': {'url': 'http://localhost:1234'},
             'attrs': ['temperature', 'humidity'],
-        },
+        }],
     )
     expires: Optional[datetime] = Field(
         default=None,
@@ -439,11 +461,10 @@ class Subscription(BaseModel):
                     "Permanent subscriptions must omit this field."
     )
 
-    throttling: Optional[conint(strict=True, ge=0,)] = Field(
+    throttling: Optional[conint(strict=True, ge=0, )] = Field(
         default=None,
         strict=True,
         description="Minimal period of time in seconds which "
                     "must elapse between two consecutive notifications. "
                     "It is optional."
     )
-

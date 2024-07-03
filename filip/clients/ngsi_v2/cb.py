@@ -915,7 +915,7 @@ class ContextBrokerClient(BaseHttpClient):
         The entity attributes are updated with the ones in the payload.
         In addition to that, if one or more attributes in the payload doesn't
         exist in the entity, an error is returned. This corresponds to a
-        'PATcH' request.
+        'PATCH' request.
 
         Args:
             entity_id: Entity id to be updated
@@ -1898,7 +1898,7 @@ class ContextBrokerClient(BaseHttpClient):
         except requests.RequestException as err:
             msg = (
                 f"Sending notifcation message failed! \n "
-                f"{message.model_dump_json(inent=2)}"
+                f"{message.model_dump_json(indent=2)}"
             )
             self.log_error(err=err, msg=msg)
             raise
@@ -2140,12 +2140,6 @@ class ContextBrokerClient(BaseHttpClient):
                     continue
                 else:
                     return False
-            if not _value_is_not_none(v) or not _value_is_not_none(ex_value):
-                warnings.warn(
-                    "Different field found:{"
-                    f"{k}: ({v}, {ex_value})"
-                    "}"
-                )
             if v != ex_value:
                 self.logger.debug(f"Not equal fields for key {k}: ({v}, {ex_value})")
                 if not _value_is_not_none(v) and not _value_is_not_none(ex_value) or k == "timesSent":

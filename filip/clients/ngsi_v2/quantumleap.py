@@ -5,7 +5,7 @@ import logging
 import time
 from math import inf
 from collections import deque
-from itertools import count
+from itertools import count,chain
 from typing import Dict, List, Union, Deque, Optional
 from urllib.parse import urljoin
 import requests
@@ -22,7 +22,7 @@ from filip.models.ngsi_v2.timeseries import \
     AttributeValues, \
     TimeSeries, \
     TimeSeriesHeader
-from filip.utils.validators import validate_http_url
+
 
 logger = logging.getLogger(__name__)
 
@@ -1097,5 +1097,124 @@ class QuantumLeapClient(BaseHttpClient):
 
             for new, old in zip(chunk, res):
                 old.extend(new)
-
         return res
+
+    # v2/attrs
+    def get_entity_by_attrs(self, *,
+                            entity_type: str = None,
+                            from_date: str = None,
+                            to_date: str = None,
+                            limit: int = 10000,
+                            offset: int = None
+                            ) -> List[TimeSeries]:
+        """
+        Get list of timeseries data grouped by each existing attribute name.
+        The timeseries data include all entities corresponding to each
+        attribute name as well as the index and values of this attribute in
+        this entity.
+
+        Args:
+            entity_type (str): Comma-separated list of entity types whose data
+                are to be included in the response. Use only one (no comma)
+                when required. If used to resolve ambiguity for the given
+                entityId, make sure the given entityId exists for this
+                entityType.
+            from_date (str): The starting date and time (inclusive) from which
+                the context information is queried. Must be in ISO8601 format
+                (e.g., 2018-01-05T15:44:34)
+            to_date (str): The final date and time (inclusive) from which the
+                context information is queried. Must be in ISO8601 format
+                (e.g., 2018-01-05T15:44:34).
+            limit (int): Maximum number of results to be retrieved.
+                Default value : 10000
+            offset (int): Offset for the results.
+        
+        Returns:
+            List of TimeSeriesEntities
+        """
+        url = urljoin(self.base_url, 'v2/attrs')
+        res_q = self.__query_builder(url=url,
+                                   entity_type=entity_type,
+                                   from_date=from_date,
+                                   to_date=to_date,
+                                   limit=limit,
+                                   offset=offset)
+        first = res_q.popleft()
+        
+        res = chain.from_iterable(map(lambda x: self.transform_attr_response_model(x), 
+                          first.get("attrs")))
+        for chunk in res_q:
+            chunk = chain.from_iterable(map(lambda x: self.transform_attr_response_model(x), 
+                                        chunk.get("attrs")))
+            
+            for new, old in zip(chunk, res):
+                old.extend(new)
+        
+        return list(res)
+
+    # v2/attrs/{attr_name}
+    def get_entity_by_attr_name(self, *,
+                                attr_name: str,
+                                entity_type: str = None,
+                                from_date: str = None,
+                                to_date: str = None,
+                                limit: int = 10000,
+                                offset: int = None
+                                ) -> List[TimeSeries]:
+        """
+        Get list of all entities containing this attribute name, as well as
+        getting the index and values of this attribute in every corresponding
+        entity.
+
+        Args:
+            attr_name (str): The attribute name in interest.
+            entity_type (str): Comma-separated list of entity types whose data
+                are to be included in the response. Use only one (no comma)
+                when required. If used to resolve ambiguity for the given
+                entityId, make sure the given entityId exists for this
+                entityType.
+            from_date (str): The starting date and time (inclusive) from which
+                the context information is queried. Must be in ISO8601 format
+                (e.g., 2018-01-05T15:44:34)
+            to_date (str): The final date and time (inclusive) from which the
+                context information is queried. Must be in ISO8601 format
+                (e.g., 2018-01-05T15:44:34).
+            limit (int): Maximum number of results to be retrieved.
+                Default value : 10000
+            offset (int): Offset for the results.
+
+        Returns:
+            List of TimeSeries
+        """
+        url = urljoin(self.base_url, f'/v2/attrs/{attr_name}')
+        res_q = self.__query_builder(url=url,
+                                     entity_type=entity_type,
+                                     from_date=from_date,
+                                     to_date=to_date,
+                                     limit=limit,
+                                     offset=offset)
+
+        first = res_q.popleft()
+        res = self.transform_attr_response_model(first)
+
+        for chunk in res_q:
+            chunk = self.transform_attr_response_model(chunk)
+            for new, old in zip(chunk, res):
+                old.extend(new)
+        return list(res)
+
+    def transform_attr_response_model(self, attr_response):
+        res = []
+        attr_name = attr_response.get("attrName")
+        for entity_group in attr_response.get("types"):
+            timeseries = map(lambda entity: 
+                             TimeSeries(entityId=entity.get("entityId"),
+                                        entityType=entity_group.get("entityType"),
+                                        index=entity.get("index"),
+                                        attributes=[
+                                             AttributeValues(attrName=attr_name,
+                                                             values=entity.get("values"))]
+                                        ),
+                             entity_group.get("entities"))
+            res.append(timeseries)
+        return chain.from_iterable(res)
