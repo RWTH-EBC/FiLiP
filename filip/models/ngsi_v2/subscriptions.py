@@ -136,10 +136,11 @@ class HttpCustom(Http):
     )
     timeout: Optional[int] = Field(
         default=None,
-        description="Maximum time (in milliseconds) the subscription waits for the response. The maximum value allowed "
-                    "for this parameter is 1800000 (30 minutes). If timeout is defined to 0 or omitted, then the value "
-                    "passed as -httpTimeout CLI parameter is used. See section in the 'Command line options' for more "
-                    "details."
+        description="Maximum time (in milliseconds) the subscription waits for the "
+                    "response. The maximum value allowed for this parameter is 1800000 "
+                    "(30 minutes). If timeout is defined to 0 or omitted, then the value "
+                    "passed as -httpTimeout CLI parameter is used. See section in the "
+                    "'Command line options' for more details."
     )
 
     @model_validator(mode='after')
@@ -148,7 +149,8 @@ class HttpCustom(Http):
         filled_fields = [field for field in fields if field is not None]
 
         if len(filled_fields) > 1:
-            raise ValueError("Only one of payload, json or ngsi fields accepted at the same time in httpCustom.")
+            raise ValueError("Only one of payload, json or ngsi fields accepted at the "
+                             "same time in httpCustom.")
 
         return self
 
