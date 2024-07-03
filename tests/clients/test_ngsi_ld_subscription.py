@@ -98,7 +98,7 @@ class TestSubscriptions(unittest.TestCase):
     def test_get_subscription_list(self):
         """
         Get a list of all current subscriptions the broker has subscribed to.
-        Args: 
+        Args:
             - limit(number($double)): Limits the number of subscriptions retrieved
             - offset(number($double)): Skip a number of subscriptions
             - options(string): Options dictionary("count")
@@ -111,10 +111,10 @@ class TestSubscriptions(unittest.TestCase):
             - Set offset for the subscription to retrive and check if the offset was procceded correctly.
             - Save beforehand all posted subscriptions and see if all the subscriptions exist in the list -> added to Test 1
         """
-        
+
         """Test 1"""
         sub_post_list = list()
-        for i in range(10): 
+        for i in range(10):
             attr_id = "attr" + str(i)
             attr = {attr_id: ContextProperty(value=randint(0,50))}
             id = "test_sub" + str(i)
@@ -188,26 +188,26 @@ class TestSubscriptions(unittest.TestCase):
         for sub in sub_list:
             self.cb_client.delete_subscription(id=sub.id)
 
-     
+
         """Test 2"""
-        for i in range(2): 
+        for i in range(2):
             attr_id = "attr"
             attr = {attr_id: ContextProperty(value=20)}
-            notification_param = NotificationParams(attributes=[attr_id], endpoint=self.endpoint_http)       
-            id = "test_sub" 
+            notification_param = NotificationParams(attributes=[attr_id], endpoint=self.endpoint_http)
+            id = "test_sub"
             sub = Subscription(id=id, notification=notification_param)
             self.cb_client.post_subscription(sub)
         sub_list = self.cb_client.get_subscription_list()
         self.assertNotEqual(sub_list[0], sub_list[1])
         for sub in sub_list:
             self.cb_client.delete_subscription(id=sub.id)
-            
-            
+
+
         """Test 3"""
-        for i in range(10): 
+        for i in range(10):
             attr_id = "attr" + str(i)
             attr = {attr_id: ContextProperty(value=randint(0,50))}
-            notification_param = NotificationParams(attributes=[attr_id], endpoint=self.endpoint_http)       
+            notification_param = NotificationParams(attributes=[attr_id], endpoint=self.endpoint_http)
             id = "test_sub" + str(i)
             sub = Subscription(id=id, notification=notification_param)
             self.cb_client.post_subscription(sub)
@@ -215,24 +215,24 @@ class TestSubscriptions(unittest.TestCase):
         self.assertEqual(5, len(sub_list))
         for sub in sub_list:
             self.cb_client.delete_subscription(id=sub.id)
-            
+
     def test_post_subscription(self):
         """
         Create a new subscription.
         Args:
             - Request body: required
         Returns:
-            - (201) successfully created subscription 
+            - (201) successfully created subscription
         Tests:
-            - Create a subscription and post something from this subscription 
+            - Create a subscription and post something from this subscription
                 to see if the subscribed broker gets the message.
-            - Create a subscription twice to one message and see if the message is 
+            - Create a subscription twice to one message and see if the message is
                 received twice or just once.
         """
 
     def test_post_subscription_http_check_broker(self):
         """
-        Create a new HTTP subscription.
+        Create a new HTTP subscription and check whether messages are received.
         Args:
             - Request body: required
         Returns:
@@ -245,7 +245,6 @@ class TestSubscriptions(unittest.TestCase):
         """
         pass
 
-
     def test_get_subscription(self):
         """
         Returns the subscription if it exists.
@@ -255,8 +254,7 @@ class TestSubscriptions(unittest.TestCase):
             - (200) subscription or empty list if successful 
             - Error Code
         Tests:
-            - Subscribe to a message and see if it appears when the message is subscribed to
-            - Choose a non-existent ID and see if the return is an empty array
+            - Get Subscription and check if the subscription is the same as the one posted
         """
         attr_id = "attr"
         id = "urn:ngsi-ld:Subscription:" + "test_sub0"
@@ -340,20 +338,6 @@ class TestSubscriptions(unittest.TestCase):
 #        #self.cb_client.post_subscription(sub)
         pass
 
-    def test_subscription_check_notifications(self):
-        """
-        Create a new MQTT subscription and check if messages are received.
-        Args:
-            - Request body: required
-        Returns:
-            - (201) successfully created subscription
-        Tests:
-            - Create a subscription and post something from this subscription
-                to see if the subscribed broker gets the message.
-            - Create a subscription twice to one message and see if the message is
-                received twice or just once.
-        """
-        pass
 
     def test_get_subscription_list(self):
         """
@@ -363,9 +347,8 @@ class TestSubscriptions(unittest.TestCase):
         Returns:
             - (200) list of subscriptions
         Tests for get subscription list:
-            - Get the list of subscriptions and get the count of the subsciptions -> compare the count
-            - Go through the list and have a look at duplicate subscriptions
-            - Set a limit for the subscription number and compare the count of subscriptions sent with the limit
+            - Create list of subscriptions and get the list of subscriptions -> compare the lists
+            - Set a limit for the subscription number and compare the count of subscriptions
         """
         sub_post_list = list()
         for i in range(10):
@@ -404,15 +387,22 @@ class TestSubscriptions(unittest.TestCase):
             sub = Subscription(id=id, notification=notification_param, entities=[{"type": "Room"}])
 
             if i == 0: 
-                subscription = sub
+                del_sub = sub
+                del_id = id
             self.cb_client.post_subscription(sub)
         
-        self.cb_client.delete_subscription(subscription_id=id)
         sub_list = self.cb_client.get_subscription_list(limit=10)
-        self.assertNotIn(subscription, sub_list)
+        sub_id_list = [sub.id for sub in sub_list]
+        self.assertIn(del_sub.id, sub_id_list)
+
+        self.cb_client.delete_subscription(subscription_id=del_id)
+        sub_list = self.cb_client.get_subscription_list(limit=10)
+        sub_id_list = [sub.id for sub in sub_list]
+        self.assertNotIn(del_sub.id, sub_id_list)
 
         for sub in sub_list:
             self.cb_client.delete_subscription(subscription_id=sub.id)
+
 
     def test_delete_subscription_check_broker(self):
         """
@@ -429,7 +419,8 @@ class TestSubscriptions(unittest.TestCase):
             
     def test_update_subscription(self):
         """
-        Only the fileds included in the request are updated in the subscription. 
+        Update a subscription.
+        Only the fields included in the request are updated in the subscription.
         Args:
             - subscriptionID(string): required
             - body(body): required
@@ -437,7 +428,7 @@ class TestSubscriptions(unittest.TestCase):
             - Successful: 204, no content
         Tests: 
             - Patch existing subscription and read out if the subscription got patched.
-            - Try to patch non-existent subscriüptions.
+            - Try to patch non-existent subscriptions.
             - Try to patch more than one subscription at once.
         """
         attr_id = "attr"
@@ -452,10 +443,15 @@ class TestSubscriptions(unittest.TestCase):
 
         self.cb_client.update_subscription(sub_changed)
 
+        # Try to patch non-existent subscriptions.
+        # TODO
+        #Try to patch more than one subscription at once.
+        # TODO
+
 
     def test_update_subscription_check_broker(self):
         """
-        Only the fileds included in the request are updated in the subscription.
+        Update a subscription and check changes in received messages.
         Args:
             - subscriptionID(string): required
             - body(body): required
@@ -463,7 +459,5 @@ class TestSubscriptions(unittest.TestCase):
             - Successful: 204, no content
         Tests:
             - Patch existing subscription and read out if the subscription got patched.
-            - Try to patch non-existent subscriüptions.
-            - Try to patch more than one subscription at once.
         """
         pass
