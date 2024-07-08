@@ -83,6 +83,11 @@ If you want to benefit from the latest changes, use the following command
 pip install -U git+git://github.com/RWTH-EBC/filip
 ```
 
+> **Note**: For local development, you can install the library in editable mode with the following command:
+> ````
+> pip install -e .
+> ````
+
 #### Install semantics module (optional)
 
 If you want to use the optional [semantics module](filip/semantics), use the following command (This will install the libraries that only required for the semantics module):
