@@ -4,7 +4,7 @@ example for other applications such as webapp that use the library. Using
 `*.env` belongs to best practices in containerized applications. Pydantic
 provides a convenient and clean way to manage environments.
 """
-from pydantic import Field, AnyHttpUrl, AliasChoices
+from pydantic import Field, AnyHttpUrl, AliasChoices, AnyUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pathlib import Path
 import os
@@ -33,6 +33,11 @@ class Settings(BaseSettings):
     QL_URL: AnyHttpUrl = Field(default="http://127.0.0.1:8668",
                                validation_alias=AliasChoices('QUANTUMLEAP_URL', 'QL_URL'))
 
+    MQTT_BROKER_URL: AnyUrl = Field(default="mqtt://127.0.0.1:1883",
+                                    validation_alias=AliasChoices(
+                                        'MQTT_BROKER_URL',
+                                        'MQTT_URL',
+                                        'MQTT_BROKER'))
 
 # create settings object
 settings = Settings()
