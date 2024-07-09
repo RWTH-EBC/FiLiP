@@ -14,9 +14,9 @@ from filip.models.ngsi_v2.context import ContextEntityKeyValues
 from filip.clients.ngsi_v2.cb import ContextBrokerClient
 from filip.utils.cleanup import clear_context_broker
 from pprint import pprint
-
+from filip.config import settings
 # Host address of Context Broker
-CB_URL = "http://localhost:1026"
+CB_URL = settings.CB_URL
 
 # You can here also change the used Fiware service
 # FIWARE-Service
@@ -107,7 +107,7 @@ if __name__ == "__main__":
     cb_client = ContextBrokerClient(url=CB_URL,
                                     fiware_header=fiware_header)
     # clear cb
-    clear_context_broker(cb_client=cb_client)
+    clear_context_broker(cb_client=cb_client, fiware_header=fiware_header, url=CB_URL)
 
     # 1. Crate data
     weather_station = WeatherStationFIWARE(
@@ -153,4 +153,4 @@ if __name__ == "__main__":
           f"{weather_station_2_fiware.model_dump_json(indent=2, include={'id', 'type'})}\n")
 
     # clear cb
-    clear_context_broker(cb_client=cb_client)
+    clear_context_broker(cb_client=cb_client, fiware_header=fiware_header, url=CB_URL)

@@ -2,14 +2,14 @@
 # Examples for subscriptions
 
 # create new subscription following the API Walkthrough example:
-# https://fiware-orion.readthedocs.io/en/master/user/walkthrough_apiv2/index.html
+# https://fiware-orion.readthedocs.io/en/master/user/walkthrough_apiv2.html#subscriptions
 """
 # ## Import packages
 import logging
 import datetime
 import time
-
-from filip.models.ngsi_v2.subscriptions import Subscription, Mqtt, Message
+from filip.config import settings
+from filip.models.ngsi_v2.subscriptions import Subscription, Message
 from filip.clients.ngsi_v2.cb import ContextBrokerClient
 from filip.models.base import FiwareHeader
 from filip.models.ngsi_v2.context import ContextEntity
@@ -18,20 +18,20 @@ from urllib.parse import urlparse
 # ## Parameters
 #
 # To run this example you need a working Fiware v2 setup with a context-broker
-# You can here set the address:
+# You can set the address:
 #
 # Host address of Context Broker
-CB_URL = "http://localhost:1026"
+CB_URL = settings.CB_URL
 
-# You can here also change the used Fiware service
+# You can also change the used Fiware service
 # FIWARE-Service
 SERVICE = 'filip'
-# FIWARE-Servicepath
+# FIWARE-Service path
 SERVICE_PATH = '/example'
 
 # MQTT URL for eclipse mosquitto
 MQTT_BROKER_URL_INTERNAL = "mqtt://mosquitto:1883"
-MQTT_BROKER_URL_EXPOSED = "mqtt://localhost:1883"
+MQTT_BROKER_URL_EXPOSED = str(settings.MQTT_BROKER_URL)
 
 # MQTT topic that the subscription will send to
 mqtt_topic = ''.join([SERVICE, SERVICE_PATH])
@@ -39,12 +39,13 @@ mqtt_topic = ''.join([SERVICE, SERVICE_PATH])
 # Setting up logging
 logging.basicConfig(
     level='INFO',
-    format='%(asctime)s %(name)s %(levelname)s: %(message)s')
+    format='%(asctime)s %(name)s %(levelname)s: %(message)s',
+    datefmt='%d-%m-%Y %H:%M:%S')
 logger = logging.getLogger(__name__)
 
 
 if __name__ == "__main__":
-    # # 1 Setup Client
+    # # 1 Client setup
     #
     # create the client, for more details view the example: e01_http_clients.py
     fiware_header = FiwareHeader(service=SERVICE,
@@ -62,17 +63,16 @@ if __name__ == "__main__":
     room_entity = ContextEntity(**room_001)
     cb_client.post_entity(entity=room_entity, update=True)
 
-
-    # # 2 Setup a subscription and MQTT notifications
+    # # 2 Setup for a subscription and MQTT notifications
     #
     # Create the data for the subscription. Have a look at the condition and
-    # the attribute section. Only a change of the temperature attribute will
+    # the attribute section. Only the change of the temperature attribute will
     # trigger the subscription and only temperature data will be included
     # into the message.
     # Additionally, you should be aware of the throttling and expiration of a
     # subscription.
     #
-    # For more details on subscription you might want to
+    # For more details on subscriptions you might want to
     # check the Subscription model or the official tutorials.
     sub_example = {
         "description": "Subscription to receive MQTT-Notifications about "
@@ -106,34 +106,33 @@ if __name__ == "__main__":
     sub = Subscription(**sub_example)
 
     # Posting an example subscription for Room1. Make sure that you store the
-    # returned id because you might need for later updates of the subscription.
+    # returned id because you might need it for later updates of the subscription.
     sub_id = cb_client.post_subscription(subscription=sub)
 
-    # # 3 setup callbacks and the MQTT client
+    # # 3 Setup for callbacks and the MQTT client
     #
-    # define callbacks for the mqtt client. They will be triggered by
+    # Define callbacks for the mqtt client. They will be triggered by
     # different events. Do not change their signature!
-    def on_connect(client, userdata, flags, reasonCode, properties=None):
-        if reasonCode != 0:
-            logger.error(f"Connection failed with error code: "
-                         f"'{reasonCode}'")
+    def on_connect(client, userdata, flags, reason_code, properties=None):
+        if reason_code != 0:
+            logger.error(f"MQTT Client failed to connect with the error code: "
+                         f"{reason_code}")
             raise ConnectionError
         else:
-            logger.info("Successfully, connected with result code " + str(
-                reasonCode))
+            logger.info(f"MQTT Client successfully connected with the reason code: {reason_code}")
         client.subscribe(mqtt_topic)
 
     def on_subscribe(client, userdata, mid, granted_qos, properties=None):
-        logger.info("Successfully subscribed to with QoS: %s", granted_qos)
+        logger.info(f"MQTT Client successfully subscribed: {granted_qos[0]}")
 
 
     def on_message(client, userdata, msg):
-        message = Message.parse_raw(msg.payload)
-        logger.info("Received this message:\n" + message.json(indent=2))
+        message = Message.model_validate_json(msg.payload)
+        logger.info("MQTT Client received this message:\n" + message.model_dump_json(indent=2))
 
 
     def on_disconnect(client, userdata, flags, reasonCode, properties=None):
-        logger.info("MQTT client disconnected with reasonCode "
+        logger.info("MQTT Client disconnected with reasonCode "
                     + str(reasonCode))
 
     # MQTT client

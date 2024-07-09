@@ -37,12 +37,12 @@ if __name__ == '__main__':
 
     # ### 1.1 create the model and write it to a json-schema file
     model = create_context_entity_model(name="MyModel",
-                                        data=entity.dict(),
+                                        data=entity.model_dump(),
                                         path=path.joinpath('entity.json'))
 
     # ### 1.2 create the model and write it to a python file
     model = create_context_entity_model(name="MyModel",
-                                        data=entity.dict(),
+                                        data=entity.model_dump(),
                                         path=path.joinpath('entity.py'))
     # ## 2. Parsing from external resources
     #
@@ -51,7 +51,7 @@ if __name__ == '__main__':
                          'common-schema.json')
 
     # ## 3. Use generated data models
-    from examples.data_models.commons import \
+    from examples.ngsi_v2.data_models.commons import \
         OpeningHoursSpecificationItem, \
         time, \
         DayOfWeek, \

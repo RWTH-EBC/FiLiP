@@ -11,8 +11,9 @@
 To run this example you need a working Fiware v2 setup with a context-broker 
 and an iota-broker. You can here set the addresses:
 """
-cb_url = "http://localhost:1026"
-iota_url = "http://localhost:4041"
+from filip.config import settings
+cb_url = settings.CB_URL
+iota_url = settings.IOTA_URL
 
 if __name__ == '__main__':
 

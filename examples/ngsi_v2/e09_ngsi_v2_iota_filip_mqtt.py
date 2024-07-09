@@ -8,7 +8,7 @@ import logging
 import random
 import time
 import paho.mqtt.client as mqtt
-
+from filip.config import settings
 from urllib.parse import urlparse
 from filip.clients.mqtt import IoTAMQTTClient
 from filip.models import FiwareHeader
@@ -27,16 +27,16 @@ from filip.models.ngsi_v2.context import NamedCommand
 # addresses:
 #
 # Host address of Context Broker
-CB_URL = "http://localhost:1026"
+CB_URL = settings.CB_URL
 # Host address of IoT-Agent
-IOTA_URL = "http://localhost:4041"
+IOTA_URL = settings.IOTA_URL
 # Host address of the MQTT-Broker
-MQTT_BROKER_URL = "mqtt://localhost:1883"
+MQTT_BROKER_URL = str(settings.MQTT_BROKER_URL)
 
 # You can here also change the used Fiware service
 # FIWARE-Service
 SERVICE = 'filip'
-# FIWARE-Servicepath
+# FIWARE-Service path
 SERVICE_PATH = '/example'
 
 # You may also change the ApiKey Information
@@ -47,7 +47,8 @@ SERVICE_GROUP_APIKEY = 'filip-example-service-group'
 # Setting up logging
 logging.basicConfig(
     level='INFO',
-    format='%(asctime)s %(name)s %(levelname)s: %(message)s')
+    format='%(asctime)s %(name)s %(levelname)s: %(message)s',
+    datefmt='%d-%m-%Y %H:%M:%S')
 
 logger = logging.getLogger(__name__)
 
@@ -99,17 +100,16 @@ if __name__ == '__main__':
     mqttc = IoTAMQTTClient()
 
     def on_connect(mqttc, obj, flags, rc, properties=None):
-        mqttc.logger.info("rc: " + str(rc))
+        mqttc.logger.info(f"on_connect callback function: Reason code: {rc}")
 
     def on_connect_fail(mqttc, obj):
         mqttc.logger.info("Connect failed")
 
     def on_publish(mqttc, obj, mid, rc, properties=None):
-        mqttc.logger.info("mid: " + str(mid))
+        mqttc.logger.info(f"on_publish callback function: Message identifier: {mid}")
 
     def on_subscribe(mqttc, obj, mid, granted_qos, properties=None):
-        mqttc.logger.info("Subscribed: " + str(mid)
-                          + " " + str(granted_qos))
+        mqttc.logger.info(f"Subscribed: {granted_qos[0]}, message identifier: {mid}")
 
     def on_log(mqttc, obj, level, string):
         mqttc.logger.info(string)
@@ -157,11 +157,11 @@ if __name__ == '__main__':
                   properties=None)
     mqttc.subscribe(topic=first_topic)
 
-    # create a non blocking loop
+    # create a non-blocking loop
     mqttc.loop_start()
     mqttc.publish(topic=first_topic, payload="filip_test")
 
-    # add additional subscription to connection
+    # add additional subscription to the connection
     mqttc.subscribe(topic=second_topic)
     mqttc.publish(topic=second_topic, payload="filip_test")
 
@@ -171,7 +171,7 @@ if __name__ == '__main__':
     mqttc.unsubscribe(first_topic)
     mqttc.unsubscribe(second_topic)
 
-    # stop network loop and disconnect cleanly
+    # stop the network loop and disconnect cleanly
     # close the mqtt listening thread
     mqttc.loop_stop()
     # disconnect the mqtt device
@@ -279,12 +279,12 @@ if __name__ == '__main__':
     entity = httpc.cb.get_entity(entity_id=device_json.device_id,
                                  entity_type=device_json.entity_type)
 
-    # The entity.heater_status.value should now have the status ok
-    print(entity.heater_status.value)
+    # The entity.heater_status.value should now have the status 'OK'
+    print(f"Heater status value: {entity.heater_status.value}")
 
     # ## 4.3 Publish
     #
-    payload = random.randrange(0, 100, 1) / 1000
+    payload = random.randint(0, 30)
     mqttc.publish(device_id=device_json.device_id,
                   payload={device_json.attributes[0].object_id: payload})
     time.sleep(1)
@@ -292,9 +292,9 @@ if __name__ == '__main__':
                                  entity_type=device_json.entity_type)
 
     # Set Temperature Value
-    print(entity.temperature.value)
+    print(f"Entity temperature value before publishing: {entity.temperature.value}")
 
-    payload = random.randrange(0, 100, 1) / 1000
+    payload = random.randint(0, 30)
     mqttc.publish(device_id=device_json.device_id,
                   attribute_name="temperature",
                   payload=payload)
@@ -302,7 +302,7 @@ if __name__ == '__main__':
     entity = httpc.cb.get_entity(entity_id=device_json.device_id,
                                  entity_type=device_json.entity_type)
     # Changed Temperature Value
-    print(entity.temperature.value)
+    print(f"Entity temperature value after publishing: {entity.temperature.value}")
 
     # ## 4.4 Close Client
 
