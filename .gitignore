@@ -43,3 +43,4 @@ venv
 /examples/ngsi_v2/data_models/
 /tests/semantics/models.py
 /tests/semantics/models2.py
+/.env.filip

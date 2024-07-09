@@ -4,18 +4,12 @@ example for other applications such as webapp that use the library. Using
 `*.env` belongs to best practices in containerized applications. Pydantic
 provides a convenient and clean way to manage environments.
 """
-import glob
-import git
-
 from pydantic import Field, AnyHttpUrl, AliasChoices
 from pydantic_settings import BaseSettings, SettingsConfigDict
-
-
-REPO_PATH = git.Repo('.', search_parent_directories=True)
-ENV_FILIP_PATH = glob.glob(pathname='**\\.env.filip',
-                           recursive=True,
-                           root_dir=REPO_PATH.working_tree_dir,
-                           include_hidden=True)
+from pathlib import Path
+import os
+from dotenv import find_dotenv
+ROOT_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), '..'))
 
 
 class Settings(BaseSettings):
@@ -24,7 +18,7 @@ class Settings(BaseSettings):
     file or environment variables. The `.env.filip` can be located anywhere
     in the FiLiP repository.
     """
-    model_config = SettingsConfigDict(env_file=f'{REPO_PATH.working_tree_dir}\\{ENV_FILIP_PATH[0]}',
+    model_config = SettingsConfigDict(env_file=find_dotenv(Path(ROOT_DIR) / '.env.filip'),
                                       env_file_encoding='utf-8',
                                       case_sensitive=False, extra="ignore")
 
