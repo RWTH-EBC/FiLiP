@@ -28,8 +28,9 @@ SERVICE = 'filip'
 SERVICE_PATH = '/example'
 
 # Web server URL for receiving notifications
-SERVER_URL = "http://<my_url>/notify/"
-# Replace <my_url> with the URL of the web server, where you'd like to receive notifications
+# It has to be accessible from the context broker!
+SERVER_URL = "http://example.com"
+# You can replace SERVER_URL with the URL of the web server, where you'd like to receive notifications
 # e.g. "http://host.docker.internal:8080/notify/", or if you're not sure how to set up the 
 # server, create a dummy version via 
 # https://fiware-orion.rtfd.io/en/master/user/walkthrough_apiv2.html#starting-accumulator-server
@@ -78,7 +79,7 @@ if __name__ == "__main__":
         },
         "notification": {
             "http": {
-                "url": SERVER_URL + interesting_entity_id
+                "url": SERVER_URL
             },
             "attrs": [
                 "temperature"
@@ -89,7 +90,7 @@ if __name__ == "__main__":
     }
     sub = Subscription(**sub_example)
     # Posting an example subscription for Room1
-    sub_id = cb_client.post_subscription(subscription=sub)
+    sub_id = cb_client.post_subscription(subscription=sub, update=True)
 
     # # 3 Filter subscriptions
     retrieve_sub = cb_client.get_subscription(sub_id)

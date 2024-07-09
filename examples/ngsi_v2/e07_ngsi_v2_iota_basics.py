@@ -19,7 +19,7 @@ from filip.config import settings
 # Host address of Context Broker
 CB_URL = settings.CB_URL
 # Host address of IoT-Agent
-IOTA_URL = "http://localhost:4041"
+IOTA_URL = settings.IOTA_URL
 
 # Here you can also change FIWARE service and service path.
 # FIWARE-Service
@@ -92,7 +92,7 @@ if __name__ == "__main__":
                      entity_name="sensor2",
                      entity_type="Sensor",
                      transport=TransportProtocol.HTTP,
-                     endpoint="http://localhost:1234")
+                     endpoint="http://orion:1026")  # URL for IoTAgent to reach Orion
 
     # ## 2.2 Device Attributes
     #
@@ -136,7 +136,7 @@ if __name__ == "__main__":
     # ## 3.1 Upload a new Device
     print(f"Payload that will be sent to the IoT-Agent:\n "
           f"{device2.model_dump_json(indent=2)}")
-    iota_client.post_device(device=device2)
+    iota_client.post_device(device=device2, update=True)
     #
     # ## 3.2 Load a specific device as model
     my_device = iota_client.get_device(device_id=device2.device_id)
