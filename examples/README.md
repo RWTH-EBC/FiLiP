@@ -6,7 +6,9 @@ In order to execute the examples you need a working FIWARE instance. For more de
 look into the [required prerequisites](https://github.com/RWTH-EBC/FiLiP?tab=readme-ov-file#prerequisites) of the
 library.  
 Each example should be executable with only small adjustments according to 
-your FIWARE instance, e.g. URL settings.
+your FIWARE instance, e.g. URL settings. To do so, you can create a copy of the 
+``.env.filip.EXAMPLE`` file in the **root folder (i.e., ``.../FiLiP``)** and name it ``.env.filip``. By default,
+we assume that the FIWARE instance is running on localhost.
 
 The following topics are covered:
 
