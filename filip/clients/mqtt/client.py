@@ -7,6 +7,7 @@ import logging
 import warnings
 from datetime import datetime
 from typing import Any, Callable, Dict, List, Tuple, Union
+
 import paho.mqtt.client as mqtt
 
 from filip.clients.mqtt.encoder import BaseEncoder, Json, Ultralight
@@ -126,6 +127,7 @@ class IoTAMQTTClient(mqtt.Client):
                  userdata=None,
                  protocol=mqtt.MQTTv311,
                  transport="tcp",
+                 callback_api_version=mqtt.CallbackAPIVersion.VERSION2,
                  devices: List[Device] = None,
                  service_groups: List[ServiceGroup] = None,
                  custom_encoder: Dict[str, BaseEncoder] = None):
@@ -188,6 +190,7 @@ class IoTAMQTTClient(mqtt.Client):
                          clean_session=clean_session,
                          userdata=userdata,
                          protocol=protocol,
+                         callback_api_version=callback_api_version,
                          transport=transport)
 
         # setup logging functionality

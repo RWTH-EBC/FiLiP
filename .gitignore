@@ -23,6 +23,7 @@ __pycache__
 dist
 *.pypirc
 build
+requirements.txt
 
 # PyCharm #
 #####################

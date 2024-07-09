@@ -203,12 +203,13 @@ if __name__ == '__main__':
                              f"/{device.device_id}/cmdexe",
                        payload=json.dumps(res))
 
-    def on_disconnect(client, userdata, reason_code, properties):
-        logger.info(f"MQTT Client disconnected with the reason code: {reason_code}")
+    def on_disconnect(client, userdata, flags, reasonCode, properties):
+        logger.info("MQTT Client disconnected" + str(reasonCode))
 
     mqtt_client = mqtt.Client(client_id="filip-iot-example",
                               userdata=None,
                               protocol=mqtt.MQTTv5,
+                              callback_api_version=mqtt.CallbackAPIVersion.VERSION2,
                               transport="tcp")
     # bind callbacks to the client
     mqtt_client.on_connect = on_connect

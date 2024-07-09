@@ -61,7 +61,7 @@ if __name__ == "__main__":
                              "type": "Integer"}
                 }
     room_entity = ContextEntity(**room_001)
-    cb_client.post_entity(entity=room_entity)
+    cb_client.post_entity(entity=room_entity, update=True)
 
     # # 2 Setup for a subscription and MQTT notifications
     #
@@ -131,14 +131,16 @@ if __name__ == "__main__":
         logger.info("MQTT Client received this message:\n" + message.model_dump_json(indent=2))
 
 
-    def on_disconnect(client, userdata, reason_code, properties=None):
-        logger.info(f"MQTT Client disconnected with the reason code: {reason_code}")
+    def on_disconnect(client, userdata, flags, reasonCode, properties=None):
+        logger.info("MQTT Client disconnected with reasonCode "
+                    + str(reasonCode))
 
     # MQTT client
     import paho.mqtt.client as mqtt
 
     mqtt_client = mqtt.Client(userdata=None,
                               protocol=mqtt.MQTTv5,
+                              callback_api_version=mqtt.CallbackAPIVersion.VERSION2,
                               transport="tcp")
     # add callbacks to the mqtt-client
     mqtt_client.on_connect = on_connect
