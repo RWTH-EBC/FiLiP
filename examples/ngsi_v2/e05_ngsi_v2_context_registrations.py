@@ -15,6 +15,7 @@ from filip.models.ngsi_v2.context import \
     ContextEntity
 from filip.models.ngsi_v2.units import Unit
 from filip.models.ngsi_v2.registrations import Http, Provider, Registration
+from filip.config import settings
 
 # ## Parameters
 #
@@ -22,7 +23,7 @@ from filip.models.ngsi_v2.registrations import Http, Provider, Registration
 # You can set the address:
 #
 # Host address of Context Broker
-CB_URL = "http://localhost:1026"
+CB_URL = settings.CB_URL
 
 # You can also change the used Fiware service
 # FIWARE-Service

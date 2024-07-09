@@ -3,7 +3,7 @@
 """
 # ## Import packages
 import logging
-
+from filip.config import settings
 from filip.clients.ngsi_v2 import ContextBrokerClient
 from filip.models.ngsi_v2.context import ContextEntity
 from filip.models.base import FiwareHeader
@@ -15,7 +15,7 @@ from filip.utils.simple_ql import QueryString
 # You can set the address:
 #
 # Host address of Context Broker
-CB_URL = "http://localhost:1026"
+CB_URL = settings.CB_URL
 
 # You can also change the used Fiware service
 # FIWARE-Service

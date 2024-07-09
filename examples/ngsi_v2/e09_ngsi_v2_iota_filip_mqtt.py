@@ -8,7 +8,7 @@ import logging
 import random
 import time
 import paho.mqtt.client as mqtt
-
+from filip.config import settings
 from urllib.parse import urlparse
 from filip.clients.mqtt import IoTAMQTTClient
 from filip.models import FiwareHeader
@@ -27,11 +27,11 @@ from filip.models.ngsi_v2.context import NamedCommand
 # addresses:
 #
 # Host address of Context Broker
-CB_URL = "http://localhost:1026"
+CB_URL = settings.CB_URL
 # Host address of IoT-Agent
-IOTA_URL = "http://localhost:4041"
+IOTA_URL = settings.IOTA_URL
 # Host address of the MQTT-Broker
-MQTT_BROKER_URL = "mqtt://localhost:1883"
+MQTT_BROKER_URL = settings.MQTT_BROKER_URL
 
 # You can here also change the used Fiware service
 # FIWARE-Service

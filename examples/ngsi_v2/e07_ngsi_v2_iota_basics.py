@@ -9,6 +9,7 @@ from filip.models.base import FiwareHeader, DataType
 from filip.models.ngsi_v2.iot import Device, ServiceGroup, TransportProtocol, \
     StaticDeviceAttribute, DeviceAttribute, LazyDeviceAttribute, DeviceCommand
 from uuid import uuid4
+from filip.config import settings
 
 # ## Parameters
 #
@@ -16,7 +17,7 @@ from uuid import uuid4
 # and an iota-broker. Here you can set the addresses:
 #
 # Host address of Context Broker
-CB_URL = "http://localhost:1026"
+CB_URL = settings.CB_URL
 # Host address of IoT-Agent
 IOTA_URL = "http://localhost:4041"
 

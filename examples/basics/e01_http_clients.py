@@ -11,17 +11,17 @@ from filip.clients.ngsi_v2 import \
     IoTAClient, \
     QuantumLeapClient
 from filip.models.base import FiwareHeader
-
+from filip.config import settings
 # ## Parameters
 #
 # Note: This example also reads parameters from the '.env.filip'-file
 #
 # Host address of Context Broker
-CB_URL = "http://localhost:1026"
+CB_URL = settings.CB_URL
 # Host address of IoT-Agent
-IOTA_URL = "http://localhost:4041"
+IOTA_URL = settings.IOTA_URL
 # Host address of QuantumLeap
-QL_URL = "http://localhost:8668"
+QL_URL = settings.QL_URL
 #
 # Here you can also change the used Fiware service
 # FIWARE-Service

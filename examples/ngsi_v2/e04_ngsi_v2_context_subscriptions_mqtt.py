@@ -8,7 +8,7 @@
 import logging
 import datetime
 import time
-
+from filip.config import settings
 from filip.models.ngsi_v2.subscriptions import Subscription, Message
 from filip.clients.ngsi_v2.cb import ContextBrokerClient
 from filip.models.base import FiwareHeader
@@ -21,7 +21,7 @@ from urllib.parse import urlparse
 # You can set the address:
 #
 # Host address of Context Broker
-CB_URL = "http://localhost:1026"
+CB_URL = settings.CB_URL
 
 # You can also change the used Fiware service
 # FIWARE-Service

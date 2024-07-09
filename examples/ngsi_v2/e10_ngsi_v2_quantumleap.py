@@ -5,7 +5,7 @@
 import logging
 import time
 import random
-
+from filip.config import settings
 from filip.models.ngsi_v2.subscriptions import Message, Subscription
 from filip.models.ngsi_v2.context import ContextEntity
 from filip.models.base import FiwareHeader
@@ -17,9 +17,9 @@ from filip.utils.cleanup import clear_all
 # Context Broker and QuantumLeap. Here you can set the addresses:
 #
 # Host address of Context Broker
-CB_URL = "http://localhost:1026"
+CB_URL = settings.CB_URL
 # Host address of QuantumLeap
-QL_URL = "http://localhost:8668"
+QL_URL = settings.QL_URL
 
 # Here you can also change FIWARE service and service path.
 # FIWARE-Service
