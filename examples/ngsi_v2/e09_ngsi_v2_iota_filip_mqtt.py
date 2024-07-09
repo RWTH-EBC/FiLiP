@@ -31,7 +31,7 @@ CB_URL = settings.CB_URL
 # Host address of IoT-Agent
 IOTA_URL = settings.IOTA_URL
 # Host address of the MQTT-Broker
-MQTT_BROKER_URL = settings.MQTT_BROKER_URL
+MQTT_BROKER_URL = str(settings.MQTT_BROKER_URL)
 
 # You can here also change the used Fiware service
 # FIWARE-Service

@@ -31,7 +31,7 @@ SERVICE_PATH = '/example'
 
 # MQTT URL for eclipse mosquitto
 MQTT_BROKER_URL_INTERNAL = "mqtt://mosquitto:1883"
-MQTT_BROKER_URL_EXPOSED = "mqtt://localhost:1883"
+MQTT_BROKER_URL_EXPOSED = str(settings.MQTT_BROKER_URL)
 
 # MQTT topic that the subscription will send to
 mqtt_topic = ''.join([SERVICE, SERVICE_PATH])
