@@ -119,7 +119,6 @@ class TestLDContextModels(unittest.TestCase):
         }
         self.entity2_dict.update(self.entity2_props_dict)
         self.entity2_dict.update(self.entity2_rel_dict)
-
         self.entity3_dict = {
             "id": "urn:ngsi-ld:Vehicle:test1243",
             "type": "Vehicle",
@@ -131,6 +130,37 @@ class TestLDContextModels(unittest.TestCase):
                     "type": "Relationship",
                     "object": "urn:ngsi-ld:Person:Bob"
                 }
+            }
+        }
+        # The entity for testing the nested structure of properties
+        self.entity_sub_props_dict = {
+            "id": "urn:ngsi-ld:Vehicle:test1243",
+            "type": "Vehicle",
+            "prop1": {
+                "type": "Property",
+                "value": 1,
+                "sub_property": {
+                    "type": "Property",
+                    "value": 10,
+                    "sub_sub_property": {
+                        "type": "Property",
+                        "value": 100
+                    }
+                },
+                "sub_properties_list": [
+                    {
+                        "sub_prop_1": {
+                            "value": 100,
+                            "type": "Property"
+                        }
+                    },
+                    {
+                        "sub_prop_2": {
+                            "value": 200,
+                            "type": "Property"
+                        }
+                    }
+                ],
             }
         }
 
