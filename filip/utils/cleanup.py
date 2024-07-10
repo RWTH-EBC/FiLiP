@@ -171,11 +171,17 @@ def clear_all(*,
     Returns:
         None
     """
-    if iota_url is not None or iota_client is not None:
+    if iota_url is None:
+        # loop client
+        if isinstance(iota_client, IoTAClient):
+            iota_client = [iota_client]
+        for client in iota_client:
+            clear_iot_agent(fiware_header=fiware_header, iota_client=client)
+    else:
         if isinstance(iota_url, (str, AnyUrl)):
             iota_url = [iota_url]
         for url in iota_url:
-            clear_iot_agent(url=url, fiware_header=fiware_header, iota_client=iota_client)
+            clear_iot_agent(url=url, fiware_header=fiware_header)
 
     if cb_url is not None or cb_client is not None:
         clear_context_broker(url=cb_url, fiware_header=fiware_header, cb_client=cb_client)
