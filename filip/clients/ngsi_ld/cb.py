@@ -59,12 +59,18 @@ class ContextBrokerLDClient(BaseHttpClient):
         """
         # set service url
         url = url or settings.CB_URL
+        #base_http_client overwrites empty header with FiwareHeader instead of FiwareLD
+        init_header = FiwareLDHeader()
+        if fiware_header:
+            init_header=fiware_header
         super().__init__(url=url,
                          session=session,
-                         fiware_header=fiware_header,
+                         fiware_header=init_header,
                          **kwargs)
         # set the version specific url-pattern
         self._url_version = NgsiURLVersion.ld_url
+        # init Content-Type header , account for @context field further down
+        self.headers.update({'Content-Type':'application/json'})
 
     def __pagination(self,
                      *,
@@ -217,6 +223,8 @@ class ContextBrokerLDClient(BaseHttpClient):
         """
         url = urljoin(self.base_url, f'{self._url_version}/entities')
         headers = self.headers.copy()
+        if entity.model_dump().get('@context',None) is not None:
+            headers.update({'Content-Type:application/ld+json'})
         try:
             res = self.post(
                 url=url,
@@ -377,6 +385,8 @@ class ContextBrokerLDClient(BaseHttpClient):
         """
         url = urljoin(self.base_url, f'{self._url_version}/entities/{entity.id}/attrs')
         headers = self.headers.copy()
+        if entity.model_dump().get('@context',None) is not None:
+            headers.update({'Content-Type:application/ld+json'})
         try:
             res = self.patch(url=url,
                              headers=headers,
@@ -455,6 +465,8 @@ class ContextBrokerLDClient(BaseHttpClient):
         """
         url = urljoin(self.base_url, f'{self._url_version}/entities/{entity.id}/attrs')
         headers = self.headers.copy()
+        if entity.model_dump().get('@context',None) is not None:
+            headers.update({'Content-Type:application/ld+json'})
         params = {}
 
         if options:
@@ -587,7 +599,8 @@ class ContextBrokerLDClient(BaseHttpClient):
 
         url = urljoin(self.base_url, f'{self._url_version}/subscriptions')
         headers = self.headers.copy()
-        headers.update({'Content-Type': 'application/json'})
+        if subscription.model_dump().get('@context',None) is not None:
+            headers.update({'Content-Type':'application/ld+json'})
         try:
             res = self.post(
                 url=url,
@@ -636,7 +649,8 @@ class ContextBrokerLDClient(BaseHttpClient):
         """
         url = urljoin(self.base_url, f'{self._url_version}/subscriptions/{subscription.id}')
         headers = self.headers.copy()
-        # headers.update({'Content-Type': 'application/json'}) Wie oben, brauche ich nicht oder? contetnt type bleibt json-ld
+        if subscription.model_dump().get('@context',None) is not None:
+            headers.update({'Content-Type':'application/ld+json'})
         try:
             res = self.patch(
                 url=url,
