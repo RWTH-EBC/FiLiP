@@ -93,7 +93,9 @@ class TestSubscriptions(unittest.TestCase):
         notification_param = NotificationParams(attributes=[attr_id], endpoint=self.endpoint_http)
         sub = Subscription(id=id, notification=notification_param, entities=[{"type": "Room"}])
         self.cb_client.post_subscription(sub)
-
+        sub_list = [x for x in self.cb_client.get_subscription_list() 
+                    if x.id == 'urn:ngsi-ld:Subscription:test_sub0']
+        self.assertEqual(len(sub_list),1)
 
     def test_get_subscription_list(self):
         """
