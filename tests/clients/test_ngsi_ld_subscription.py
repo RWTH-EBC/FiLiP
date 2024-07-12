@@ -5,12 +5,15 @@ import json
 import unittest
 
 from pydantic import ValidationError
-
+import threading
+from paho.mqtt.enums import CallbackAPIVersion
+import paho.mqtt.client as mqtt
 from filip.clients.ngsi_ld.cb import ContextBrokerLDClient
 from filip.models.base import FiwareLDHeader
 from filip.models.ngsi_ld.context import \
     ContextProperty, \
-    NamedContextProperty
+    NamedContextProperty, \
+    ContextLDEntity
 from filip.models.ngsi_ld.subscriptions import \
     Endpoint, \
     NotificationParams, \
@@ -33,6 +36,10 @@ class TestSubscriptions(unittest.TestCase):
         for sub in sub_list:
             if sub.id.startswith('urn:ngsi-ld:Subscription:test_sub'):
                 self.cb_client.delete_subscription(sub.id)
+        entity_list = self.cb_client.get_entity_list()
+        for entity in entity_list:
+            if entity.id.startswith('urn:ngsi-ld:Entity:test_entity'):
+                self.cb_client.delete_entity_by_id(entity_id=entity.id)
 
     def setUp(self) -> None:
         """
@@ -65,8 +72,18 @@ class TestSubscriptions(unittest.TestCase):
             "uri": "mqtt://my.host.org:1883/my/test/topic",
             "accept": "application/json",  # TODO check whether it works
         })
-        self.cb_client = ContextBrokerLDClient(url=settings.LD_CB_URL,
-                                               fiware_header=self.fiware_header)
+        self.cb_client = ContextBrokerLDClient(url=settings.LD_CB_URL, fiware_header=self.fiware_header)
+        self.mqtt_client = mqtt.Client(callback_api_version=CallbackAPIVersion.VERSION2)
+        #on_message callbacks differ from test to test, but on connect callbacks dont
+        def on_connect_fail(client,userdata):
+            self.fail("Test failed due to broker being down")
+
+        def on_connect(client,userdata,flags,reason_code,properties):
+            self.mqtt_client.subscribe("my/test/topic")
+
+        self.mqtt_client.on_connect_fail = on_connect_fail
+        self.mqtt_client.on_connect = on_connect
+
         self.endpoint_http = Endpoint(**{
             "uri": "http://137.226.248.246:1027/ngsi-ld/v1/subscriptions",
             "Content-Type": "application/json",
@@ -74,6 +91,48 @@ class TestSubscriptions(unittest.TestCase):
         }
                                       )
         self.cleanup()
+        self.entity_dict = {
+            'id':'urn:ngsi-ld:Entity:test_entity03',
+            'type':'Room',
+            'temperature':{
+                'type':'Property',
+                'value':30
+            }
+        }
+        #posting one single entity to check subscription existence/triggers
+        self.cb_client.post_entity(entity=ContextLDEntity(**self.entity_dict))
+
+        #copy and update a single dict as the corresponding test requires
+        self.sub_dict = {
+            'description':'Test Subscription',
+            'id':'urn:ngsi-ld:Subscription:test_sub25',
+            'type':'Subscription',
+            'entities':[
+                {
+                    'type':'Room'
+                }
+            ],
+            'watchedAttributes':[
+                'temperature'
+            ],
+            'q':'temperature<30',
+            'notification':{
+                'attributes':[
+                    'temperature'
+                ],
+                'format':'normalized',
+                'endpoint':{
+                    'uri':'mqtt://mosquitto:1883/my/test/topic', # change uri
+                    'Accept':'application/json'
+                },
+                'notifierInfo':[
+                    {
+                        "key":"MQTT-Version",
+                        "value":"mqtt5.0"
+                    }
+                ]
+            }
+        }
 
     def tearDown(self) -> None:
         self.cleanup()
@@ -284,60 +343,33 @@ class TestSubscriptions(unittest.TestCase):
         pass
 
     def test_post_subscription_mqtt(self):
-#            uri_string =  "mqtt://my.host.org:1883/topic/" + str(i)
-#            endpoint_mqtt = Endpoint(**{
-#                "uri": uri_string,
-#                "accept": "application/json",
-#                "notifierInfo": [
-#                    {
-#                        "key": "MQTT-Version",
-#                        "value": "mqtt5.0"
-#                    }
-#                ]
-#            })
-#            notification_param = NotificationParams(attributes=[attr_id], endpoint=endpoint_mqtt)
+         #if a notification is not received before timer runs out, test is assumed failed
+        def timeout_func(x):
+            x.fail("Test timeout: Broker did not receive Notification")
 
-#        sub_example = {
-#        "description": "Subscription to receive MQTT-Notifications about "
-#                       "urn:ngsi-ld:Room:001",
-#        "subject": {
-#            "entities": [
-#                {
-#                    "id": "urn:ngsi-ld:Room:001",
-#                    "type": "Room"
-#                }
-#            ],
-#            "condition": {
-#                "attrs": [
-#                    "temperature"
-#                ]
-#            }
-#        },
-#        "notification": {
-#            "mqtt": {
-#                "url": self.MQTT_BROKER_URL_INTERNAL,
-#                "topic": self.mqtt_topic
-#            },
-#            "attrs": [
-#                "temperature"
-#            ]
-#        },
-#        "throttling": 0
-#    }
-#        endpoint_mqtt = Endpoint(**{
-#            "uri": uri_string,
-#            "accept": "application/json",
-#            "notifierInfo": [
-#                {
-#                    "key": "MQTT-Version",
-#                    "value": "mqtt5.0"
-#                }
-#            ]
-#        })
-#        self.cb_client.post_subscription(sub_example)
-#        notification_param = NotificationParams(attributes=[attr_id], endpoint=endpoint_mqtt)
-#        sub = Subscription(id=id, notification=notification_param)
-#        #self.cb_client.post_subscription(sub)
+        #adjust timeout as needed
+        timeout_proc = threading.Timer(10,timeout_func,args=[self])
+
+        def on_message(client,userdata,msg):
+            timeout_proc.cancel()
+            updated_entity = self.entity_dict.copy()
+            updated_entity.update({'temperature':{'type':'Property','value':25}})
+            self.mqtt_client.loop_stop()
+            self.mqtt_client.disconnect()
+            self.assertEqual(updated_entity,
+                             json.loads(msg.payload.decode())['body']['data'][0])
+
+        self.mqtt_client.on_message = on_message
+        self.mqtt_client.connect("localhost",1883,60)
+        self.mqtt_client.loop_start()
+        self.cb_client.post_subscription(subscription=Subscription(**self.sub_dict))
+        timeout_proc.start()
+        self.cb_client.update_entity_attribute(entity_id='urn:ngsi-ld:Entity:test_entity03',
+                                               attr=NamedContextProperty(type="Property",
+                                                             value=25,
+                                                             name='temperature'),
+                                               attr_name='temperature')
+
         pass
 
 
