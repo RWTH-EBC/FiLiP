@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>filip.clients.mqtt.client &mdash; FiLiP 0.2.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/autodoc_pydantic.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../contents.html" class="icon icon-home">
+            FiLiP
+          </a>
+              <div class="version">
+                0.2
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index.html">FiLiP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/index.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contribute as a user</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html#contribute-as-a-developer">Contribute as a developer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../about/index.html">About FiLiP</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../contents.html">FiLiP</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../contents.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">filip.clients.mqtt.client</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for filip.clients.mqtt.client</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Implementation of an extended MQTT client that automatically handles the</span>
+<span class="sd">topic subscription for FIWARE&#39;s IoT communication pattern.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">paho.mqtt.client</span> <span class="k">as</span> <span class="nn">mqtt</span>
+
+<span class="kn">from</span> <span class="nn">filip.clients.mqtt.encoder</span> <span class="kn">import</span> <span class="n">BaseEncoder</span><span class="p">,</span> <span class="n">Json</span><span class="p">,</span> <span class="n">Ultralight</span>
+<span class="kn">from</span> <span class="nn">filip.models.mqtt</span> <span class="kn">import</span> <span class="n">IoTAMQTTMessageType</span>
+<span class="kn">from</span> <span class="nn">filip.models.ngsi_v2.iot</span> <span class="kn">import</span> \
+    <span class="n">Device</span><span class="p">,</span> \
+    <span class="n">PayloadProtocol</span><span class="p">,</span> \
+    <span class="n">ServiceGroup</span><span class="p">,</span> \
+    <span class="n">TransportProtocol</span>
+
+
+<div class="viewcode-block" id="IoTAMQTTClient"><a class="viewcode-back" href="../../../../code/filip.clients.mqtt.html#filip.clients.mqtt.client.IoTAMQTTClient">[docs]</a><span class="k">class</span> <span class="nc">IoTAMQTTClient</span><span class="p">(</span><span class="n">mqtt</span><span class="o">.</span><span class="n">Client</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class is an extension to the MQTT client from the well established</span>
+<span class="sd">    Eclipse Paho™ MQTT Python Client. The official documentation is located</span>
+<span class="sd">    here: https://github.com/eclipse/paho.mqtt.python</span>
+
+<span class="sd">    The class adds additional functions to facilitate the communication to</span>
+<span class="sd">    FIWARE&#39;s IoT-Agent via MQTT. It magically generates and subscribes to all</span>
+<span class="sd">    important topics that are necessary to establish a</span>
+<span class="sd">    bi-directional communication with the IoT-Agent.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        The client does not sync the device configuration with the IoT-Agent.</span>
+<span class="sd">        This is up to the user!</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        The extension does not effect the normal workflow or any other</span>
+<span class="sd">        functionality known from the original client.</span>
+
+<span class="sd">        The client does not yet support the retrieval of command</span>
+<span class="sd">        configurations via mqtt documented here:</span>
+<span class="sd">        https://fiware-iotagent-json.readthedocs.io/en/latest/usermanual/index.html#api-overview</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        This example shows the basic usage of the client. It does not</span>
+<span class="sd">        demonstrate its whole capabilities. Please check the single methods</span>
+<span class="sd">        for more details. Please also keep in mind that this still requires</span>
+<span class="sd">        provisioning of the device in the IoT-Agent and sending the commands</span>
+<span class="sd">        via the context broker. For more details check the additional example</span>
+<span class="sd">        section::</span>
+
+<span class="sd">            from filip.models.ngsi_v2.iot import Device, DeviceAttribute, DeviceCommand, ServiceGroup</span>
+<span class="sd">            from filip.clients.mqtt import MQTTClient</span>
+<span class="sd">            from filip.clients.mqtt.encoder import IoTA_Json</span>
+
+<span class="sd">            # create a device configuration</span>
+<span class="sd">            device_attr = DeviceAttribute(name=&#39;temperature&#39;,</span>
+<span class="sd">                                          object_id=&#39;t&#39;,</span>
+<span class="sd">                                          type=&quot;Number&quot;)</span>
+<span class="sd">            device_command = DeviceCommand(name=&#39;heater&#39;, type=&quot;Boolean&quot;)</span>
+<span class="sd">            device = Device(device_id=&#39;MyDevice&#39;,</span>
+<span class="sd">                            entity_name=&#39;MyDevice&#39;,</span>
+<span class="sd">                            entity_type=&#39;Thing&#39;,</span>
+<span class="sd">                            protocol=&#39;IoTA-JSON&#39;,</span>
+<span class="sd">                            transport=&#39;MQTT&#39;,</span>
+<span class="sd">                            apikey=YourApiKey,</span>
+<span class="sd">                            attributes=[device_attr],</span>
+<span class="sd">                            commands=[device_command])</span>
+
+<span class="sd">            service_group = ServiceGroup(apikey=&quot;YourApiKey&quot;, resource=&quot;/iot&quot;)</span>
+
+<span class="sd">            mqttc = MQTTClient(client_id=&quot;YourID&quot;,</span>
+<span class="sd">                               userdata=None,</span>
+<span class="sd">                               protocol=mqtt.MQTTv5,</span>
+<span class="sd">                               transport=&quot;tcp&quot;,</span>
+<span class="sd">                               _devices = [device],</span>
+<span class="sd">                               service_groups = [service_group])</span>
+
+<span class="sd">            # create a callback function that will be called for incoming</span>
+<span class="sd">            # commands and add it for a single device</span>
+<span class="sd">            def on_command(client, obj, msg):</span>
+<span class="sd">                apikey, device_id, payload = \</span>
+<span class="sd">                    client.get_encoder().decode_message(msg=msg)</span>
+
+<span class="sd">                # do_something with the message.</span>
+<span class="sd">                # For instance write into a queue.</span>
+
+<span class="sd">                # acknowledge a command</span>
+<span class="sd">                client.publish(device_id=device_id,</span>
+<span class="sd">                               command_name=next(iter(payload))</span>
+<span class="sd">                               payload=payload)</span>
+
+<span class="sd">            mqttc.add_command_callback(on_command)</span>
+
+<span class="sd">            # create a non blocking loop</span>
+<span class="sd">            mqttc.loop_start()</span>
+
+<span class="sd">            # publish a multi-measurement for a device</span>
+<span class="sd">            mqttc.publish(device_id=&#39;MyDevice&#39;, payload={&#39;t&#39;: 50})</span>
+
+<span class="sd">            # publish a single measurement for a device</span>
+<span class="sd">            mqttc.publish(device_id=&#39;MyDevice&#39;,</span>
+<span class="sd">                          attribute_name=&#39;temperature&#39;,</span>
+<span class="sd">                          payload=50)</span>
+
+<span class="sd">            # adding timestamps to measurements using the client</span>
+
+
+<span class="sd">            # adding timestamps to measurements in payload</span>
+<span class="sd">            from datetime import datetime</span>
+
+<span class="sd">            mqttc.publish(device_id=&#39;MyDevice&#39;,</span>
+<span class="sd">                          payload={&#39;t&#39;: 50,</span>
+<span class="sd">                                   &#39;timeInstant&#39;: datetime.now().astimezone().isoformat()},</span>
+<span class="sd">                          timestamp=true)</span>
+
+<span class="sd">            # stop network loop and disconnect cleanly</span>
+<span class="sd">            mqttc.loop_stop()</span>
+<span class="sd">            mqttc.disconnect()</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">client_id</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                 <span class="n">clean_session</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">userdata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">protocol</span><span class="o">=</span><span class="n">mqtt</span><span class="o">.</span><span class="n">MQTTv311</span><span class="p">,</span>
+                 <span class="n">transport</span><span class="o">=</span><span class="s2">&quot;tcp&quot;</span><span class="p">,</span>
+                 <span class="n">callback_api_version</span><span class="o">=</span><span class="n">mqtt</span><span class="o">.</span><span class="n">CallbackAPIVersion</span><span class="o">.</span><span class="n">VERSION2</span><span class="p">,</span>
+                 <span class="n">devices</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Device</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">service_groups</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ServiceGroup</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">custom_encoder</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">BaseEncoder</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            client_id:</span>
+<span class="sd">                Unique client id string used when connecting</span>
+<span class="sd">                to the broker. If client_id is zero length or None, then the</span>
+<span class="sd">                behaviour is defined by which protocol version is in use. If</span>
+<span class="sd">                using MQTT v3.1.1, then a zero length client id will be sent</span>
+<span class="sd">                to the broker and the broker will generate a random for the</span>
+<span class="sd">                client. If using MQTT v3.1 then an id will be randomly</span>
+<span class="sd">                generated. In both cases, clean_session must be True.</span>
+<span class="sd">                If this is not the case a ValueError will be raised.</span>
+<span class="sd">            clean_session:</span>
+<span class="sd">                boolean that determines the client type. If True,</span>
+<span class="sd">                the broker will remove all information about this client when it</span>
+<span class="sd">                disconnects. If False, the client is a persistent client and</span>
+<span class="sd">                subscription information and queued messages will be retained</span>
+<span class="sd">                when the client disconnects.</span>
+<span class="sd">                Note that a client will never discard its own outgoing</span>
+<span class="sd">                messages on disconnect. Calling connect() or reconnect() will</span>
+<span class="sd">                cause the messages to be resent.  Use reinitialise() to reset</span>
+<span class="sd">                a client to its original state. The clean_session argument</span>
+<span class="sd">                only applies to MQTT versions v3.1.1 and v3.1. It is not</span>
+<span class="sd">                accepted if the MQTT version is v5.0 - use the clean_start</span>
+<span class="sd">                argument on connect() instead.</span>
+<span class="sd">            userdata:</span>
+<span class="sd">                defined data of any type that is passed as the &quot;userdata&quot;</span>
+<span class="sd">                parameter to callbacks. It may be updated at a later point</span>
+<span class="sd">                with the user_data_set() function.</span>
+<span class="sd">            protocol:</span>
+<span class="sd">                explicit setting of the MQTT version to use for this client.</span>
+<span class="sd">                Can be paho.mqtt.client.MQTTv311 (v3.1.1),</span>
+<span class="sd">                paho.mqtt.client.MQTTv31 (v3.1) or paho.mqtt.client.MQTTv5</span>
+<span class="sd">                (v5.0), with the default being v3.1.1.</span>
+<span class="sd">            transport:</span>
+<span class="sd">                Set to &quot;websockets&quot; to use WebSockets as the transport</span>
+<span class="sd">                mechanism. Set to &quot;tcp&quot; to use raw TCP, which is the default.</span>
+<span class="sd">            devices:</span>
+<span class="sd">                List of device configurations that will be registered</span>
+<span class="sd">                with the client. Consequently, the client will be able to</span>
+<span class="sd">                subscribe to all registered device topics. Furthermore,</span>
+<span class="sd">                after registration messages can simply published by the</span>
+<span class="sd">                _devices id.</span>
+<span class="sd">            service_groups:</span>
+<span class="sd">                List of service group configurations that will be registered</span>
+<span class="sd">                with the client. These should be known upon subscribing</span>
+<span class="sd">                because the client will check for a matching service group if</span>
+<span class="sd">                this is not known or registered with the IoT-Agent service</span>
+<span class="sd">                the receiving of commands will fail. Please check the</span>
+<span class="sd">                official documentation of the IoT-Agents API for more details.</span>
+<span class="sd">            custom_encoder:</span>
+<span class="sd">                Custom encoder class that will automatically parse the supported</span>
+<span class="sd">                payload formats to a dictionary and vice versa. This</span>
+<span class="sd">                essentially saves boiler plate code.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># initialize parent client</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">client_id</span><span class="o">=</span><span class="n">client_id</span><span class="p">,</span>
+                         <span class="n">clean_session</span><span class="o">=</span><span class="n">clean_session</span><span class="p">,</span>
+                         <span class="n">userdata</span><span class="o">=</span><span class="n">userdata</span><span class="p">,</span>
+                         <span class="n">protocol</span><span class="o">=</span><span class="n">protocol</span><span class="p">,</span>
+                         <span class="n">callback_api_version</span><span class="o">=</span><span class="n">callback_api_version</span><span class="p">,</span>
+                         <span class="n">transport</span><span class="o">=</span><span class="n">transport</span><span class="p">)</span>
+
+        <span class="c1"># setup logging functionality</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">NullHandler</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">enable_logger</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+
+        <span class="c1"># create dictionary holding the registered service groups</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">service_groups</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">ServiceGroup</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">service_groups</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">service_groups</span> <span class="o">=</span> <span class="p">{</span><span class="n">gr</span><span class="o">.</span><span class="n">apikey</span><span class="p">:</span> <span class="n">gr</span> <span class="k">for</span> <span class="n">gr</span> <span class="ow">in</span> <span class="n">service_groups</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">service_groups</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># create dictionary holding the registered device configurations</span>
+        <span class="c1"># check if all _devices have the right transport protocol</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_devices</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Device</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">devices</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">devices</span> <span class="o">=</span> <span class="n">devices</span>
+
+        <span class="c1"># create dict with available encoders</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_encoders</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;IoTA-JSON&#39;</span><span class="p">:</span> <span class="n">Json</span><span class="p">(),</span>
+                          <span class="s1">&#39;PDI-IoTA-UltraLight&#39;</span><span class="p">:</span> <span class="n">Ultralight</span><span class="p">()}</span>
+
+        <span class="c1"># add custom encoder for message parsing</span>
+        <span class="k">if</span> <span class="n">custom_encoder</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_encoder</span><span class="p">(</span><span class="n">custom_encoder</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">devices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns as list of all registered device configurations</span>
+<span class="sd">        Returns:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_devices</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+    <span class="nd">@devices</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">devices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">devices</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Device</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets list of device configurations</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            devices: List of device configurations</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: if duplicate device id was found</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">device</span> <span class="ow">in</span> <span class="n">devices</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">add_device</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Duplicate device_id: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">device_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="IoTAMQTTClient.get_encoder"><a class="viewcode-back" href="../../../../code/filip.clients.mqtt.html#filip.clients.mqtt.client.IoTAMQTTClient.get_encoder">[docs]</a>    <span class="k">def</span> <span class="nf">get_encoder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">encoder</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">PayloadProtocol</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the encoder by key</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            encoder: encoder name</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Subclass of Baseencoder</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_encoders</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">encoder</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="IoTAMQTTClient.add_encoder"><a class="viewcode-back" href="../../../../code/filip.clients.mqtt.html#filip.clients.mqtt.client.IoTAMQTTClient.add_encoder">[docs]</a>    <span class="k">def</span> <span class="nf">add_encoder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">encoder</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">BaseEncoder</span><span class="p">]):</span>
+        <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">encoder</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">BaseEncoder</span><span class="p">),</span> \
+                <span class="sa">f</span><span class="s2">&quot;Encoder must be a subclass of </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">BaseEncoder</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_encoders</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">encoder</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">__validate_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Device</span><span class="p">,</span> <span class="n">Dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Device</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validates configuration of an IoT Device</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            device: device model to check on</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Device: validated model</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            AssertionError: for faulty configurations</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">device</span> <span class="o">=</span> <span class="n">Device</span><span class="o">.</span><span class="n">model_validate</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="n">Device</span><span class="p">),</span> <span class="s2">&quot;Invalid device configuration!&quot;</span>
+
+        <span class="k">assert</span> <span class="n">device</span><span class="o">.</span><span class="n">transport</span> <span class="o">==</span> <span class="n">TransportProtocol</span><span class="o">.</span><span class="n">MQTT</span><span class="p">,</span> \
+            <span class="s2">&quot;Unsupported transport protocol found in device configuration!&quot;</span>
+
+        <span class="k">if</span> <span class="n">device</span><span class="o">.</span><span class="n">apikey</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">service_groups</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">pass</span>
+        <span class="c1"># check if matching service group is registered</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Could not find matching service group! &quot;</span> \
+                  <span class="s2">&quot;Communication may not work correctly!&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">device</span>
+
+    <span class="k">def</span> <span class="nf">__create_topic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                       <span class="o">*</span><span class="p">,</span>
+                       <span class="n">topic_type</span><span class="p">:</span> <span class="n">IoTAMQTTMessageType</span><span class="p">,</span>
+                       <span class="n">device</span><span class="p">:</span> <span class="n">Device</span><span class="p">,</span>
+                       <span class="n">attribute</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a topic for a device configuration based on the requested</span>
+<span class="sd">        topic type.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            device:</span>
+<span class="sd">                Configuration of an IoT device</span>
+<span class="sd">            topic_type:</span>
+<span class="sd">                type of the topic to be created,</span>
+<span class="sd">                &#39;multi&#39; for topics that the device is suppose to publish on.</span>
+<span class="sd">                &#39;single&#39; for topics that the device is suppose to publish on.</span>
+<span class="sd">                &#39;cmd&#39; for topic the device is expecting its commands on.</span>
+<span class="sd">                &#39;cmdexe&#39; for topic the device can acknowledge its commands on.</span>
+<span class="sd">                &#39;configuration&#39; for topic the device can request command</span>
+<span class="sd">                    configurations on</span>
+<span class="sd">            attribute:</span>
+<span class="sd">                attribute needs to be set for single measurements</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            string with topic</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyError:</span>
+<span class="sd">                If unknown message type is used</span>
+<span class="sd">            ValueError:</span>
+<span class="sd">                If attribute name is missing for single measurements</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">topic_type</span> <span class="o">==</span> <span class="n">IoTAMQTTMessageType</span><span class="o">.</span><span class="n">MULTI</span><span class="p">:</span>
+            <span class="n">topic</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_encoders</span><span class="p">[</span><span class="n">device</span><span class="o">.</span><span class="n">protocol</span><span class="p">]</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span>
+                              <span class="n">device</span><span class="o">.</span><span class="n">apikey</span><span class="p">,</span>
+                              <span class="n">device</span><span class="o">.</span><span class="n">device_id</span><span class="p">,</span>
+                              <span class="s1">&#39;attrs&#39;</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">topic_type</span> <span class="o">==</span> <span class="n">IoTAMQTTMessageType</span><span class="o">.</span><span class="n">SINGLE</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">attribute</span><span class="p">:</span>
+                <span class="n">attr</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">attr</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">device</span><span class="o">.</span><span class="n">attributes</span>
+                            <span class="k">if</span> <span class="n">attr</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">attribute</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">attr</span><span class="o">.</span><span class="n">object_id</span><span class="p">:</span>
+                    <span class="n">attr_suffix</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">object_id</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">attr_suffix</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">name</span>
+                <span class="n">topic</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_encoders</span><span class="p">[</span><span class="n">device</span><span class="o">.</span><span class="n">protocol</span><span class="p">]</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span>
+                                  <span class="n">device</span><span class="o">.</span><span class="n">apikey</span><span class="p">,</span>
+                                  <span class="n">device</span><span class="o">.</span><span class="n">device_id</span><span class="p">,</span>
+                                  <span class="s1">&#39;attrs&#39;</span><span class="p">,</span>
+                                  <span class="n">attr_suffix</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Missing argument name for single measurement&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">topic_type</span> <span class="o">==</span> <span class="n">IoTAMQTTMessageType</span><span class="o">.</span><span class="n">CMD</span><span class="p">:</span>
+            <span class="n">topic</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">device</span><span class="o">.</span><span class="n">apikey</span><span class="p">,</span> <span class="n">device</span><span class="o">.</span><span class="n">device_id</span><span class="p">,</span> <span class="s1">&#39;cmd&#39;</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">topic_type</span> <span class="o">==</span> <span class="n">IoTAMQTTMessageType</span><span class="o">.</span><span class="n">CMDEXE</span><span class="p">:</span>
+            <span class="n">topic</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_encoders</span><span class="p">[</span><span class="n">device</span><span class="o">.</span><span class="n">protocol</span><span class="p">]</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span>
+                              <span class="n">device</span><span class="o">.</span><span class="n">apikey</span><span class="p">,</span>
+                              <span class="n">device</span><span class="o">.</span><span class="n">device_id</span><span class="p">,</span>
+                              <span class="s1">&#39;cmdexe&#39;</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">topic_type</span> <span class="o">==</span> <span class="n">IoTAMQTTMessageType</span><span class="o">.</span><span class="n">CONFIG</span><span class="p">:</span>
+            <span class="n">topic</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_encoders</span><span class="p">[</span><span class="n">device</span><span class="o">.</span><span class="n">protocol</span><span class="p">]</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span>
+                              <span class="n">device</span><span class="o">.</span><span class="n">apikey</span><span class="p">,</span>
+                              <span class="n">device</span><span class="o">.</span><span class="n">device_id</span><span class="p">,</span>
+                              <span class="s1">&#39;configuration&#39;</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;topic_type not supported&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">topic</span>
+
+    <span class="k">def</span> <span class="nf">__subscribe_commands</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+                             <span class="n">device</span><span class="p">:</span> <span class="n">Device</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                             <span class="n">qos</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                             <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                             <span class="n">properties</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Subscribes commands based on device configuration. If device argument is</span>
+<span class="sd">        omitted the function will subscribe to all topics of already registered</span>
+<span class="sd">        _devices.</span>
+<span class="sd">        Additionally, it will also check if a matching service group is</span>
+<span class="sd">        registered with the client. If nor a warning will be raised.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            device: Configuration of an IoT device</span>
+<span class="sd">            qos: Quality of service can be 0, 1 or 2</span>
+<span class="sd">            options: MQTT v5.0 subscribe options</span>
+<span class="sd">            properties: MQTT v5.0 properties</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">Device</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">commands</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">topic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__create_topic</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
+                                            <span class="n">topic_type</span><span class="o">=</span><span class="n">IoTAMQTTMessageType</span><span class="o">.</span><span class="n">CMD</span><span class="p">)</span>
+                <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">topic</span><span class="o">=</span><span class="n">topic</span><span class="p">,</span>
+                                  <span class="n">qos</span><span class="o">=</span><span class="n">qos</span><span class="p">,</span>
+                                  <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+                                  <span class="n">properties</span><span class="o">=</span><span class="n">properties</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># call itself but with device argument for all registered _devices</span>
+            <span class="k">for</span> <span class="n">device</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_devices</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__subscribe_commands</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
+                                          <span class="n">qos</span><span class="o">=</span><span class="n">qos</span><span class="p">,</span>
+                                          <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+                                          <span class="n">properties</span><span class="o">=</span><span class="n">properties</span><span class="p">)</span>
+
+<div class="viewcode-block" id="IoTAMQTTClient.get_service_group"><a class="viewcode-back" href="../../../../code/filip.clients.mqtt.html#filip.clients.mqtt.client.IoTAMQTTClient.get_service_group">[docs]</a>    <span class="k">def</span> <span class="nf">get_service_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">apikey</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceGroup</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns registered service group configuration</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            apikey: Unique APIKey of the service group</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ServiceGroup</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyError: if service group not yet registered</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            from filip.clients.mqtt import MQTTClient</span>
+
+<span class="sd">            mqttc = MQTTClient()</span>
+<span class="sd">            group = mqttc.get_service_group(apikey=&quot;MyAPIKEY&quot;)</span>
+<span class="sd">            print(group.json(indent=2))</span>
+<span class="sd">            print(type(group))</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">group</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">service_groups</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">apikey</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">group</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Service group with apikey </span><span class="si">%s</span><span class="s2"> not found!&quot;</span><span class="p">,</span> <span class="n">apikey</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">group</span></div>
+
+<div class="viewcode-block" id="IoTAMQTTClient.add_service_group"><a class="viewcode-back" href="../../../../code/filip.clients.mqtt.html#filip.clients.mqtt.client.IoTAMQTTClient.add_service_group">[docs]</a>    <span class="k">def</span> <span class="nf">add_service_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">service_group</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ServiceGroup</span><span class="p">,</span> <span class="n">Dict</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Registers a device service group with the client</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            service_group: Service group configuration</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: if service group already exists</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">service_group</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">service_group</span> <span class="o">=</span> <span class="n">ServiceGroup</span><span class="o">.</span><span class="n">model_validate</span><span class="p">(</span><span class="n">service_group</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">service_group</span><span class="p">,</span> <span class="n">ServiceGroup</span><span class="p">),</span> \
+            <span class="s2">&quot;Invalid content for service group!&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">service_groups</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">service_group</span><span class="o">.</span><span class="n">apikey</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Service group already exists! </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+                             <span class="n">service_group</span><span class="o">.</span><span class="n">apikey</span><span class="p">)</span>
+        <span class="c1"># add service group configuration to the service group list</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">service_groups</span><span class="p">[</span><span class="n">service_group</span><span class="o">.</span><span class="n">apikey</span><span class="p">]</span> <span class="o">=</span> <span class="n">service_group</span></div>
+
+<div class="viewcode-block" id="IoTAMQTTClient.delete_service_group"><a class="viewcode-back" href="../../../../code/filip.clients.mqtt.html#filip.clients.mqtt.client.IoTAMQTTClient.delete_service_group">[docs]</a>    <span class="k">def</span> <span class="nf">delete_service_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">apikey</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Unregisters a service group and removes</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            apikey: Unique APIKey of the service group</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">group</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">service_groups</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">apikey</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">group</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Successfully unregistered Service Group &#39;</span><span class="si">%s</span><span class="s2">&#39;!&quot;</span><span class="p">,</span>
+                             <span class="n">apikey</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Could not unregister service group &#39;</span><span class="si">%s</span><span class="s2">&#39;!&quot;</span><span class="p">,</span>
+                              <span class="n">apikey</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Device not found!&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="IoTAMQTTClient.update_service_group"><a class="viewcode-back" href="../../../../code/filip.clients.mqtt.html#filip.clients.mqtt.client.IoTAMQTTClient.update_service_group">[docs]</a>    <span class="k">def</span> <span class="nf">update_service_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">service_group</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ServiceGroup</span><span class="p">,</span> <span class="n">Dict</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Updates a registered service group configuration. There is no</span>
+<span class="sd">        opportunity to only partially update the device. Hence, your service</span>
+<span class="sd">        group model should be complete.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            service_group: Service group configuration</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyError: if service group not yet registered</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">service_group</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">service_group</span> <span class="o">=</span> <span class="n">ServiceGroup</span><span class="o">.</span><span class="n">model_validate</span><span class="p">(</span><span class="n">service_group</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">service_group</span><span class="p">,</span> <span class="n">ServiceGroup</span><span class="p">),</span> \
+            <span class="s2">&quot;Invalid content for service group&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">service_groups</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">service_group</span><span class="o">.</span><span class="n">apikey</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Service group not found! </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+                           <span class="n">service_group</span><span class="o">.</span><span class="n">apikey</span><span class="p">)</span>
+        <span class="c1"># add service group configuration to the service group list</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">service_groups</span><span class="p">[</span><span class="n">service_group</span><span class="o">.</span><span class="n">apikey</span><span class="p">]</span> <span class="o">=</span> <span class="n">service_group</span></div>
+
+<div class="viewcode-block" id="IoTAMQTTClient.get_device"><a class="viewcode-back" href="../../../../code/filip.clients.mqtt.html#filip.clients.mqtt.client.IoTAMQTTClient.get_device">[docs]</a>    <span class="k">def</span> <span class="nf">get_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Device</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the configuration of a registered device.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            device_id: Id of the requested device</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">           Device: Device model of the requested device</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyError: if requested device is not registered with the client</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            from filip.clients.mqtt import MQTTClient</span>
+
+<span class="sd">            mqttc = MQTTClient()</span>
+<span class="sd">            device = mqttc.get_device(device_id=&quot;MyDeviceId&quot;)</span>
+<span class="sd">            print(device.json(indent=2))</span>
+<span class="sd">            print(type(device))</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_devices</span><span class="p">[</span><span class="n">device_id</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="IoTAMQTTClient.add_device"><a class="viewcode-back" href="../../../../code/filip.clients.mqtt.html#filip.clients.mqtt.client.IoTAMQTTClient.add_device">[docs]</a>    <span class="k">def</span> <span class="nf">add_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                   <span class="n">device</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Device</span><span class="p">,</span> <span class="n">Dict</span><span class="p">],</span>
+                   <span class="n">qos</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                   <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                   <span class="n">properties</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Registers a device config with the mqtt client. Subsequently,</span>
+<span class="sd">        the client will magically subscribe to the corresponding topics based</span>
+<span class="sd">        on the device config and any matching registered service group config</span>
+<span class="sd">        if exists.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            To register the device config only with this client is not</span>
+<span class="sd">            sufficient for data streaming the configuration also needs to be</span>
+<span class="sd">            registered with IoTA-Agent.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            device: Configuration of an IoT device</span>
+<span class="sd">            qos: Quality of service can be 0, 1 or 2</span>
+<span class="sd">            options: MQTT v5.0 subscribe options</span>
+<span class="sd">            properties: MQTT v5.0 properties</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: if device configuration already exists</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">device</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__validate_device</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_devices</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">device_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Device already exists! </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">.</span><span class="n">device_id</span><span class="p">)</span>
+        <span class="c1"># add device configuration to the device list</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_devices</span><span class="p">[</span><span class="n">device</span><span class="o">.</span><span class="n">device_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">device</span>
+        <span class="c1"># subscribes to the command topic</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__subscribe_commands</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
+                                  <span class="n">qos</span><span class="o">=</span><span class="n">qos</span><span class="p">,</span>
+                                  <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+                                  <span class="n">properties</span><span class="o">=</span><span class="n">properties</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="IoTAMQTTClient.delete_device"><a class="viewcode-back" href="../../../../code/filip.clients.mqtt.html#filip.clients.mqtt.client.IoTAMQTTClient.delete_device">[docs]</a>    <span class="k">def</span> <span class="nf">delete_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Unregisters a device and removes its subscriptions and callbacks</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            device_id: id of and IoT device</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">device</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_devices</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">device_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">device</span><span class="p">:</span>
+            <span class="n">topic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__create_topic</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
+                                        <span class="n">topic_type</span><span class="o">=</span><span class="n">IoTAMQTTMessageType</span><span class="o">.</span><span class="n">CMD</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">unsubscribe</span><span class="p">(</span><span class="n">topic</span><span class="o">=</span><span class="n">topic</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">message_callback_remove</span><span class="p">(</span><span class="n">sub</span><span class="o">=</span><span class="n">topic</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Successfully unregistered Device &#39;</span><span class="si">%s</span><span class="s2">&#39;!&quot;</span><span class="p">,</span>
+                             <span class="n">device_id</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Could not unregister device &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span><span class="p">,</span> <span class="n">device_id</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="IoTAMQTTClient.update_device"><a class="viewcode-back" href="../../../../code/filip.clients.mqtt.html#filip.clients.mqtt.client.IoTAMQTTClient.update_device">[docs]</a>    <span class="k">def</span> <span class="nf">update_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                      <span class="n">device</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Device</span><span class="p">,</span> <span class="n">Dict</span><span class="p">],</span>
+                      <span class="n">qos</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                      <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                      <span class="n">properties</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Updates a registered device configuration. There is no opportunity</span>
+<span class="sd">        to only partially update the device. Hence, your device model should</span>
+<span class="sd">        be complete.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            device: Configuration of an IoT device</span>
+<span class="sd">            qos: Quality of service can be 0, 1 or 2</span>
+<span class="sd">            options: MQTT v5.0 subscribe options</span>
+<span class="sd">            properties: MQTT v5.0 properties</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyError: if device not yet registered</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">device</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__validate_device</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_devices</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">device_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Device not found! </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">.</span><span class="n">device_id</span><span class="p">)</span>
+
+        <span class="c1"># update device configuration in the device list</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_devices</span><span class="p">[</span><span class="n">device</span><span class="o">.</span><span class="n">device_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">device</span>
+        <span class="c1"># subscribes to the command topic</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__subscribe_commands</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
+                                  <span class="n">qos</span><span class="o">=</span><span class="n">qos</span><span class="p">,</span>
+                                  <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+                                  <span class="n">properties</span><span class="o">=</span><span class="n">properties</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="IoTAMQTTClient.add_command_callback"><a class="viewcode-back" href="../../../../code/filip.clients.mqtt.html#filip.clients.mqtt.client.IoTAMQTTClient.add_command_callback">[docs]</a>    <span class="k">def</span> <span class="nf">add_command_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds callback function for a device configuration.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            device_id:</span>
+<span class="sd">                id of and IoT device</span>
+<span class="sd">            callback:</span>
+<span class="sd">                function that will be called for incoming commands.</span>
+<span class="sd">                This function should have the following format:</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            def on_command(client, obj, msg):</span>
+<span class="sd">                apikey, device_id, payload = \</span>
+<span class="sd">                    client.encoder.decode_message(msg=msg)</span>
+
+<span class="sd">                # do_something with the message.</span>
+<span class="sd">                # For instance write into a queue.</span>
+
+<span class="sd">                # acknowledge a command. Here command are usually single</span>
+<span class="sd">                # messages. The first key is equal to the commands name.</span>
+<span class="sd">                client.publish(device_id=device_id,</span>
+<span class="sd">                               command_name=next(iter(payload)),</span>
+<span class="sd">                               payload=payload)</span>
+
+<span class="sd">            mqttc.add_command_callback(device_id=&quot;MyDevice&quot;,</span>
+<span class="sd">                                       callback=on_command)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">device</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_devices</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">device_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">device</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Device does not exist! </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">device_id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__subscribe_commands</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">topic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__create_topic</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
+                                    <span class="n">topic_type</span><span class="o">=</span><span class="n">IoTAMQTTMessageType</span><span class="o">.</span><span class="n">CMD</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message_callback_add</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">callback</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="IoTAMQTTClient.publish"><a class="viewcode-back" href="../../../../code/filip.clients.mqtt.html#filip.clients.mqtt.client.IoTAMQTTClient.publish">[docs]</a>    <span class="k">def</span> <span class="nf">publish</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                <span class="n">topic</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">payload</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">qos</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="n">retain</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="n">properties</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">attribute_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">command_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">timestamp</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Publish an MQTT Message to a specified topic. If you want to publish</span>
+<span class="sd">        a device specific message to a device use the device_id argument for</span>
+<span class="sd">        multi-measurement. The function will then automatically validate</span>
+<span class="sd">        against the registered device configuration if the payload keys are</span>
+<span class="sd">        valid. If you want to publish a single measurement the attribute_name</span>
+<span class="sd">        argument is required as well.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            If the device_id argument is set, the topic argument will be</span>
+<span class="sd">            ignored.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            topic:</span>
+<span class="sd">                The topic that the message should be published on.</span>
+<span class="sd">            payload:</span>
+<span class="sd">                The actual message to send. If not given, or set to None a</span>
+<span class="sd">                zero length message will be used. Passing an int or float will</span>
+<span class="sd">                result in the payload being converted to a string</span>
+<span class="sd">                representing that number. If you wish to send a true</span>
+<span class="sd">                int/float, use struct.pack() to create the</span>
+<span class="sd">                payload you require. For publishing to a device use a dict</span>
+<span class="sd">                containing the object_ids as keys.</span>
+<span class="sd">            qos:</span>
+<span class="sd">                The quality of service level to use.</span>
+<span class="sd">            retain:</span>
+<span class="sd">                If set to true, the message will be set as the &quot;last known</span>
+<span class="sd">                good&quot;/retained message for the topic.</span>
+<span class="sd">            properties:</span>
+<span class="sd">                (MQTT v5.0 only) the MQTT v5.0 properties to be included.</span>
+<span class="sd">                Use the Properties class.</span>
+<span class="sd">            device_id:</span>
+<span class="sd">                Id of the IoT device you want to publish for. The topics will</span>
+<span class="sd">                automatically created. If set, the message type will be</span>
+<span class="sd">                assumed to be multi measurement.</span>
+<span class="sd">            attribute_name:</span>
+<span class="sd">                Name of an attribute of the device. Do only use this for</span>
+<span class="sd">                single measurements. If set, `command_name` must</span>
+<span class="sd">                be omitted.</span>
+<span class="sd">            command_name:</span>
+<span class="sd">                Name of a command of the device that should be acknowledged. If</span>
+<span class="sd">                set `attribute_name` must be omitted.</span>
+<span class="sd">            timestamp:</span>
+<span class="sd">                If `true` the client will generate a valid timestamp based on</span>
+<span class="sd">                utc and added to the multi measurement payload.</span>
+<span class="sd">                If a `timeInstant` is already contained in the</span>
+<span class="sd">                message payload it will not overwritten.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyError: if device configuration is not registered with client</span>
+<span class="sd">            ValueError: if the passed arguments are inconsistent or a</span>
+<span class="sd">                timestamp does not match the ISO 8601 format.</span>
+<span class="sd">            AssertionError: if the message payload does not match the device</span>
+<span class="sd">                configuration.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># TODO: time stamps are not tested yet</span>
+
+        <span class="k">if</span> <span class="n">device_id</span><span class="p">:</span>
+            <span class="n">device</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_device</span><span class="p">(</span><span class="n">device_id</span><span class="o">=</span><span class="n">device_id</span><span class="p">)</span>
+
+            <span class="c1"># create message for multi measurement payload</span>
+            <span class="k">if</span> <span class="n">attribute_name</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">command_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="nb">dict</span><span class="p">),</span> \
+                    <span class="s2">&quot;Payload must be a dictionary&quot;</span>
+
+                <span class="k">if</span> <span class="n">timestamp</span> <span class="ow">and</span> <span class="s1">&#39;timeInstant&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">payload</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">payload</span><span class="p">[</span><span class="s2">&quot;timeInstant&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span>
+                <span class="c1"># validate if dict keys match device configuration</span>
+
+                <span class="n">msg_payload</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">payload</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">device</span><span class="o">.</span><span class="n">attributes</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">attr</span><span class="o">.</span><span class="n">object_id</span> <span class="ow">or</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;timeInstant&#39;</span><span class="p">:</span>
+                            <span class="k">break</span>
+                        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="n">attr</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">attr</span><span class="o">.</span><span class="n">object_id</span><span class="p">:</span>
+                                <span class="n">msg_payload</span><span class="p">[</span><span class="n">attr</span><span class="o">.</span><span class="n">object_id</span><span class="p">]</span> <span class="o">=</span> \
+                                    <span class="n">msg_payload</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                            <span class="k">break</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">err_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Attribute key &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; is not allowed &quot;</span> \
+                                  <span class="sa">f</span><span class="s2">&quot;in the message payload for this &quot;</span> \
+                                  <span class="sa">f</span><span class="s2">&quot;device configuration with device_id &quot;</span> \
+                                  <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">device_id</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+                        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">err_msg</span><span class="p">)</span>
+                <span class="n">topic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__create_topic</span><span class="p">(</span>
+                    <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
+                    <span class="n">topic_type</span><span class="o">=</span><span class="n">IoTAMQTTMessageType</span><span class="o">.</span><span class="n">MULTI</span><span class="p">)</span>
+                <span class="n">payload</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_encoders</span><span class="p">[</span><span class="n">device</span><span class="o">.</span><span class="n">protocol</span><span class="p">]</span><span class="o">.</span><span class="n">encode_msg</span><span class="p">(</span>
+                    <span class="n">device_id</span><span class="o">=</span><span class="n">device_id</span><span class="p">,</span>
+                    <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span>
+                    <span class="n">msg_type</span><span class="o">=</span><span class="n">IoTAMQTTMessageType</span><span class="o">.</span><span class="n">MULTI</span><span class="p">)</span>
+
+            <span class="c1"># create message for command acknowledgement</span>
+            <span class="k">elif</span> <span class="n">attribute_name</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">command_name</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">Dict</span><span class="p">),</span> <span class="s2">&quot;Payload must be a dictionary&quot;</span>
+                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">payload</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> \
+                    <span class="s2">&quot;Cannot acknowledge multiple commands simultaneously&quot;</span>
+                <span class="k">assert</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">payload</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span> <span class="ow">in</span> \
+                       <span class="p">[</span><span class="n">cmd</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">cmd</span> <span class="ow">in</span> <span class="n">device</span><span class="o">.</span><span class="n">commands</span><span class="p">],</span> \
+                    <span class="s2">&quot;Unknown command for this device!&quot;</span>
+                <span class="n">topic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__create_topic</span><span class="p">(</span>
+                    <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
+                    <span class="n">topic_type</span><span class="o">=</span><span class="n">IoTAMQTTMessageType</span><span class="o">.</span><span class="n">CMDEXE</span><span class="p">)</span>
+                <span class="n">payload</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_encoders</span><span class="p">[</span><span class="n">device</span><span class="o">.</span><span class="n">protocol</span><span class="p">]</span><span class="o">.</span><span class="n">encode_msg</span><span class="p">(</span>
+                    <span class="n">device_id</span><span class="o">=</span><span class="n">device_id</span><span class="p">,</span>
+                    <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span>
+                    <span class="n">msg_type</span><span class="o">=</span><span class="n">IoTAMQTTMessageType</span><span class="o">.</span><span class="n">CMDEXE</span><span class="p">)</span>
+
+            <span class="c1"># create message for single measurement</span>
+            <span class="k">elif</span> <span class="n">attribute_name</span> <span class="ow">and</span> <span class="n">command_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">topic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__create_topic</span><span class="p">(</span>
+                    <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
+                    <span class="n">topic_type</span><span class="o">=</span><span class="n">IoTAMQTTMessageType</span><span class="o">.</span><span class="n">SINGLE</span><span class="p">,</span>
+                    <span class="n">attribute</span><span class="o">=</span><span class="n">attribute_name</span><span class="p">)</span>
+                <span class="n">payload</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_encoders</span><span class="p">[</span><span class="n">device</span><span class="o">.</span><span class="n">protocol</span><span class="p">]</span><span class="o">.</span><span class="n">encode_msg</span><span class="p">(</span>
+                    <span class="n">device_id</span><span class="o">=</span><span class="n">device_id</span><span class="p">,</span>
+                    <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span>
+                    <span class="n">msg_type</span><span class="o">=</span><span class="n">IoTAMQTTMessageType</span><span class="o">.</span><span class="n">SINGLE</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Inconsistent arguments!&quot;</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">topic</span><span class="o">=</span><span class="n">topic</span><span class="p">,</span>
+                        <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span>
+                        <span class="n">qos</span><span class="o">=</span><span class="n">qos</span><span class="p">,</span>
+                        <span class="n">retain</span><span class="o">=</span><span class="n">retain</span><span class="p">,</span>
+                        <span class="n">properties</span><span class="o">=</span><span class="n">properties</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="IoTAMQTTClient.subscribe"><a class="viewcode-back" href="../../../../code/filip.clients.mqtt.html#filip.clients.mqtt.client.IoTAMQTTClient.subscribe">[docs]</a>    <span class="k">def</span> <span class="nf">subscribe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">topic</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">qos</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">properties</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extends the normal subscribe function of the paho.mqtt.client.</span>
+<span class="sd">        If the topic argument is omitted the client will subscribe to all</span>
+<span class="sd">        registered device command topics.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            topic:</span>
+<span class="sd">                A string specifying the subscription topic to subscribe to.</span>
+<span class="sd">            qos:</span>
+<span class="sd">                The desired quality of service level for the subscription.</span>
+<span class="sd">                Defaults to 0.</span>
+<span class="sd">            options: Not used.</span>
+<span class="sd">            properties: Not used.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">topic</span><span class="p">:</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">topic</span><span class="o">=</span><span class="n">topic</span><span class="p">,</span>
+                              <span class="n">qos</span><span class="o">=</span><span class="n">qos</span><span class="p">,</span>
+                              <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+                              <span class="n">properties</span><span class="o">=</span><span class="n">properties</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">device</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_devices</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__subscribe_commands</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
+                                          <span class="n">qos</span><span class="o">=</span><span class="n">qos</span><span class="p">,</span>
+                                          <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+                                          <span class="n">properties</span><span class="o">=</span><span class="n">properties</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021-2024, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
