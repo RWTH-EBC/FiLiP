@@ -27,6 +27,8 @@ import warnings
 # The pydantic models still have a .json() function, but this method is deprecated.
 warnings.filterwarnings("ignore", category=UserWarning,
                         message='Field name "json" shadows an attribute in parent "Http"')
+warnings.filterwarnings("ignore", category=UserWarning,
+                        message='Field name "json" shadows an attribute in parent "Mqtt"')
 
 
 class NgsiPayloadAttr(BaseValueAttribute):
@@ -38,7 +40,8 @@ class NgsiPayloadAttr(BaseValueAttribute):
     representations ( as specified in the orion api manual), done by the BaseValueAttr.
     model.
     """
-    model_config=ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="forbid")
+
 
 class NgsiPayload(BaseModel):
     """
@@ -65,10 +68,9 @@ class NgsiPayload(BaseModel):
 
     @model_validator(mode='after')
     def validate_notification_attrs(self):
-        for v in self.model_dump(exclude={"id","type"}).values():
-            assert isinstance(NgsiPayloadAttr.model_validate(v),NgsiPayloadAttr)
+        for v in self.model_dump(exclude={"id", "type"}).values():
+            assert isinstance(NgsiPayloadAttr.model_validate(v), NgsiPayloadAttr)
         return self
-
 
 
 class Message(BaseModel):
@@ -129,7 +131,7 @@ class HttpCustom(Http):
         description='get a json as notification. If omitted, the default'
                     'payload (see "Notification Messages" sections) is used.'
     )
-    ngsi:Optional[NgsiPayload] = Field(
+    ngsi: Optional[NgsiPayload] = Field(
         default=None,
         description='get an NGSI-v2 normalized entity as notification.If omitted, '
                     'the default payload (see "Notification Messages" sections) is used.'
@@ -208,20 +210,21 @@ class MqttCustom(Mqtt):
                     'default payload (see "Notification Messages" sections) '
                     'is used.'
     )
-    json: Optional[Dict[str,Any]] = Field(
+    json: Optional[Dict[str, Any]] = Field(
         default=None,
         description='get a json as notification. If omitted, the default'
                     'payload (see "Notification Messages" sections) is used.'
     )
-    ngsi:Optional[NgsiPayload] = Field(
+    ngsi: Optional[NgsiPayload] = Field(
         default=None,
         description='get an NGSI-v2 normalized entity as notification.If omitted, '
                     'the default payload (see "Notification Messages" sections) is used.'
     )
+
     @model_validator(mode='after')
     def validate_payload_type(self):
         assert len([v for k, v in self.model_dump().items()
-                    if((v is not None) and (k in ['payload','ngsi','json']))]) <= 1
+                    if ((v is not None) and (k in ['payload', 'ngsi', 'json']))]) <= 1
         return self
 
 
