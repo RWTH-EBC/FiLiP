@@ -1,0 +1,56 @@
+filip package
+=============
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   filip.clients
+   filip.models
+   filip.semantics
+   filip.utils
+
+Submodules
+----------
+
+filip.config module
+-------------------
+
+.. automodule:: filip.config
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+filip.custom\_types module
+--------------------------
+
+.. automodule:: filip.custom_types
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+filip.test\_2 module
+--------------------
+
+.. automodule:: filip.test_2
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+filip.test\_config\_1 module
+----------------------------
+
+.. automodule:: filip.test_config_1
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: filip
+   :members:
+   :undoc-members:
+   :show-inheritance:
