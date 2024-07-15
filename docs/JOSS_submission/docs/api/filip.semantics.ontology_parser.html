@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>filip.semantics.ontology_parser package &mdash; FiLiP 0.4.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/autodoc_pydantic.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="filip.semantics.vocabulary package" href="filip.semantics.vocabulary.html" />
+    <link rel="prev" title="filip.semantics package" href="filip.semantics.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../contents.html" class="icon icon-home">
+            FiLiP
+          </a>
+              <div class="version">
+                0.4
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index.html">FiLiP</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="filip.clients.html">filip.clients package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="filip.models.html">filip.models package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="filip.semantics.html">filip.semantics package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="filip.semantics.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.html#filip-semantics-semantics-manager-module">filip.semantics.semantics_manager module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.html#filip-semantics-semantics-models-module">filip.semantics.semantics_models module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.html#module-filip.semantics.vocabulary_configurator">filip.semantics.vocabulary_configurator module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.html#module-filip.semantics">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="filip.utils.html">filip.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#module-filip.config">filip.config module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#filip-types-module">filip.types module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#module-filip">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contribute as a user</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html#contribute-as-a-developer">Contribute as a developer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/index.html">About FiLiP</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../contents.html">FiLiP</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../contents.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">API Documentation</a></li>
+          <li class="breadcrumb-item"><a href="filip.semantics.html">filip.semantics package</a></li>
+      <li class="breadcrumb-item active">filip.semantics.ontology_parser package</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/RWTH-EBC/filip/blob/master/docs/source/api/filip.semantics.ontology_parser.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="filip-semantics-ontology-parser-package">
+<h1>filip.semantics.ontology_parser package<a class="headerlink" href="#filip-semantics-ontology-parser-package" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-filip.semantics.ontology_parser.post_processer">
+<span id="filip-semantics-ontology-parser-post-processer-module"></span><h2>filip.semantics.ontology_parser.post_processer module<a class="headerlink" href="#module-filip.semantics.ontology_parser.post_processer" title="Permalink to this heading"></a></h2>
+<p>The PostProcessing gets called after the vocabulary was parsed from sources</p>
+<p>The postprocessing has the goal to add predefined values,
+compute combinedRelations, reload user settings, and precompute
+information as: duplicate labels or sort relations</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="filip.semantics.ontology_parser.post_processer.PostProcessor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">filip.semantics.ontology_parser.post_processer.</span></span><span class="sig-name descname"><span class="pre">PostProcessor</span></span><a class="reference internal" href="../_modules/filip/semantics/ontology_parser/post_processer.html#PostProcessor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.semantics.ontology_parser.post_processer.PostProcessor" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Class offering postprocessing as cls-methods for a vocabulary</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.semantics.ontology_parser.post_processer.PostProcessor.post_process_vocabulary">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">post_process_vocabulary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vocabulary</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary" title="filip.semantics.vocabulary.vocabulary.Vocabulary"><span class="pre">Vocabulary</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">old_vocabulary</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary" title="filip.semantics.vocabulary.vocabulary.Vocabulary"><span class="pre">Vocabulary</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/semantics/ontology_parser/post_processer.html#PostProcessor.post_process_vocabulary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.semantics.ontology_parser.post_processer.PostProcessor.post_process_vocabulary" title="Permalink to this definition"></a></dt>
+<dd><p>Main methode to be called for post processing</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vocabulary</strong> (<a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary" title="filip.semantics.vocabulary.vocabulary.Vocabulary"><em>Vocabulary</em></a>) – Freshly parsed Vocabulary</p></li>
+<li><p><strong>old_vocabulary</strong> (<a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary" title="filip.semantics.vocabulary.vocabulary.Vocabulary"><em>Vocabulary</em></a>) – Existing Vocabulary of which the
+settings should be overtaken</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.semantics.ontology_parser.post_processer.PostProcessor.transfer_settings">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">transfer_settings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_vocabulary</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary" title="filip.semantics.vocabulary.vocabulary.Vocabulary"><span class="pre">Vocabulary</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">old_vocabulary</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary" title="filip.semantics.vocabulary.vocabulary.Vocabulary"><span class="pre">Vocabulary</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/semantics/ontology_parser/post_processer.html#PostProcessor.transfer_settings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.semantics.ontology_parser.post_processer.PostProcessor.transfer_settings" title="Permalink to this definition"></a></dt>
+<dd><p>Transfer all the user made settings (labels, ..)
+from an old vocabulary to a new vocabulary</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>new_vocabulary</strong> (<a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary" title="filip.semantics.vocabulary.vocabulary.Vocabulary"><em>Vocabulary</em></a>) – Vocabulary to which the settings should
+be transferred</p></li>
+<li><p><strong>old_vocabulary</strong> (<a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary" title="filip.semantics.vocabulary.vocabulary.Vocabulary"><em>Vocabulary</em></a>) – Vocabulary of which the settings should
+be transferred</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-filip.semantics.ontology_parser.rdfparser">
+<span id="filip-semantics-ontology-parser-rdfparser-module"></span><h2>filip.semantics.ontology_parser.rdfparser module<a class="headerlink" href="#module-filip.semantics.ontology_parser.rdfparser" title="Permalink to this heading"></a></h2>
+<p>Module contains the RDFParser that can create a Vocabulary object out of a
+given ontology</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="filip.semantics.ontology_parser.rdfparser.RdfParser">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">filip.semantics.ontology_parser.rdfparser.</span></span><span class="sig-name descname"><span class="pre">RdfParser</span></span><a class="reference internal" href="../_modules/filip/semantics/ontology_parser/rdfparser.html#RdfParser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.semantics.ontology_parser.rdfparser.RdfParser" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Class that parses a given source into a vocabulary.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="filip.semantics.ontology_parser.rdfparser.RdfParser.current_class_iri">
+<span class="sig-name descname"><span class="pre">current_class_iri</span></span><a class="headerlink" href="#filip.semantics.ontology_parser.rdfparser.RdfParser.current_class_iri" title="Permalink to this definition"></a></dt>
+<dd><p>Iri of class which is currently parsed, used for Log entries</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="filip.semantics.ontology_parser.rdfparser.RdfParser.current_source">
+<span class="sig-name descname"><span class="pre">current_source</span></span><a class="headerlink" href="#filip.semantics.ontology_parser.rdfparser.RdfParser.current_source" title="Permalink to this definition"></a></dt>
+<dd><p>Current source which is parsed, used for Log entries</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.semantics.ontology_parser.rdfparser.RdfParser.parse_source_into_vocabulary">
+<span class="sig-name descname"><span class="pre">parse_source_into_vocabulary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.source.Source" title="filip.semantics.vocabulary.source.Source"><span class="pre">Source</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">vocabulary</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary" title="filip.semantics.vocabulary.vocabulary.Vocabulary"><span class="pre">Vocabulary</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../_modules/filip/semantics/ontology_parser/rdfparser.html#RdfParser.parse_source_into_vocabulary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.semantics.ontology_parser.rdfparser.RdfParser.parse_source_into_vocabulary" title="Permalink to this definition"></a></dt>
+<dd><p>Parse a Source into the given vocabulary
+:param source:
+:type source: Source
+:param vocabulary:
+:type vocabulary: Vocabulary</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool, True if success, False if Error occurred, as an invalid File</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="filip.semantics.ontology_parser.rdfparser.Tags">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">filip.semantics.ontology_parser.rdfparser.</span></span><span class="sig-name descname"><span class="pre">Tags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/semantics/ontology_parser/rdfparser.html#Tags"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.semantics.ontology_parser.rdfparser.Tags" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
+<p>Collection of tags used as structures in ontologies, that were used more
+than once in the rdfparser code</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="filip.semantics.ontology_parser.rdfparser.Tags.owl_individual">
+<span class="sig-name descname"><span class="pre">owl_individual</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'http://www.w3.org/2002/07/owl#NamedIndividual'</span></em><a class="headerlink" href="#filip.semantics.ontology_parser.rdfparser.Tags.owl_individual" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="filip.semantics.ontology_parser.rdfparser.Tags.owl_intersection">
+<span class="sig-name descname"><span class="pre">owl_intersection</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'http://www.w3.org/2002/07/owl#intersectionOf'</span></em><a class="headerlink" href="#filip.semantics.ontology_parser.rdfparser.Tags.owl_intersection" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="filip.semantics.ontology_parser.rdfparser.Tags.owl_on_class">
+<span class="sig-name descname"><span class="pre">owl_on_class</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'http://www.w3.org/2002/07/owl#onClass'</span></em><a class="headerlink" href="#filip.semantics.ontology_parser.rdfparser.Tags.owl_on_class" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="filip.semantics.ontology_parser.rdfparser.Tags.owl_on_data_range">
+<span class="sig-name descname"><span class="pre">owl_on_data_range</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'http://www.w3.org/2002/07/owl#onDataRange'</span></em><a class="headerlink" href="#filip.semantics.ontology_parser.rdfparser.Tags.owl_on_data_range" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="filip.semantics.ontology_parser.rdfparser.Tags.owl_one_of">
+<span class="sig-name descname"><span class="pre">owl_one_of</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'http://www.w3.org/2002/07/owl#oneOf'</span></em><a class="headerlink" href="#filip.semantics.ontology_parser.rdfparser.Tags.owl_one_of" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="filip.semantics.ontology_parser.rdfparser.Tags.owl_union">
+<span class="sig-name descname"><span class="pre">owl_union</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'http://www.w3.org/2002/07/owl#unionOf'</span></em><a class="headerlink" href="#filip.semantics.ontology_parser.rdfparser.Tags.owl_union" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="filip.semantics.ontology_parser.rdfparser.Tags.rdf_type">
+<span class="sig-name descname"><span class="pre">rdf_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'</span></em><a class="headerlink" href="#filip.semantics.ontology_parser.rdfparser.Tags.rdf_type" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="filip.semantics.ontology_parser.rdfparser.get_base_out_of_iri">
+<span class="sig-prename descclassname"><span class="pre">filip.semantics.ontology_parser.rdfparser.</span></span><span class="sig-name descname"><span class="pre">get_base_out_of_iri</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iri</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/filip/semantics/ontology_parser/rdfparser.html#get_base_out_of_iri"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.semantics.ontology_parser.rdfparser.get_base_out_of_iri" title="Permalink to this definition"></a></dt>
+<dd><p>Give an iri, returns an the ontology base name</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>iri</strong> – </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="filip.semantics.ontology_parser.rdfparser.get_iri_from_uriref">
+<span class="sig-prename descclassname"><span class="pre">filip.semantics.ontology_parser.rdfparser.</span></span><span class="sig-name descname"><span class="pre">get_iri_from_uriref</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uriref</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">URIRef</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/filip/semantics/ontology_parser/rdfparser.html#get_iri_from_uriref"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.semantics.ontology_parser.rdfparser.get_iri_from_uriref" title="Permalink to this definition"></a></dt>
+<dd><p>Give an Uriref object, returns an iri</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>uriref</strong> – Object describing the iri</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="filip.semantics.ontology_parser.rdfparser.specifier_base_iris">
+<span class="sig-prename descclassname"><span class="pre">filip.semantics.ontology_parser.rdfparser.</span></span><span class="sig-name descname"><span class="pre">specifier_base_iris</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['http://www.w3.org/2002/07/owl',</span> <span class="pre">'http://www.w3.org/1999/02/22-rdf-syntax-ns',</span> <span class="pre">'http://www.w3.org/XML/1998/namespace',</span> <span class="pre">'http://www.w3.org/2001/XMLSchema',</span> <span class="pre">'http://www.w3.org/2000/01/rdf-schema']</span></em><a class="headerlink" href="#filip.semantics.ontology_parser.rdfparser.specifier_base_iris" title="Permalink to this definition"></a></dt>
+<dd><p>Defines a set of base iris, that describe elements that belong to the
+description language not the ontology itself</p>
+</dd></dl>
+
+</section>
+<section id="module-filip.semantics.ontology_parser.vocabulary_builder">
+<span id="filip-semantics-ontology-parser-vocabulary-builder-module"></span><h2>filip.semantics.ontology_parser.vocabulary_builder module<a class="headerlink" href="#module-filip.semantics.ontology_parser.vocabulary_builder" title="Permalink to this heading"></a></h2>
+<p>Wrapper module to provide manipulation functions for vocabulary that
+should later be hidden from the user</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="filip.semantics.ontology_parser.vocabulary_builder.IdType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">filip.semantics.ontology_parser.vocabulary_builder.</span></span><span class="sig-name descname"><span class="pre">IdType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/semantics/ontology_parser/vocabulary_builder.html#IdType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.semantics.ontology_parser.vocabulary_builder.IdType" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="filip.semantics.ontology_parser.vocabulary_builder.IdType.class_">
+<span class="sig-name descname"><span class="pre">class_</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Class'</span></em><a class="headerlink" href="#filip.semantics.ontology_parser.vocabulary_builder.IdType.class_" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="filip.semantics.ontology_parser.vocabulary_builder.IdType.combined_relation">
+<span class="sig-name descname"><span class="pre">combined_relation</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Combined</span> <span class="pre">Relation'</span></em><a class="headerlink" href="#filip.semantics.ontology_parser.vocabulary_builder.IdType.combined_relation" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="filip.semantics.ontology_parser.vocabulary_builder.IdType.data_property">
+<span class="sig-name descname"><span class="pre">data_property</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Data</span> <span class="pre">Property'</span></em><a class="headerlink" href="#filip.semantics.ontology_parser.vocabulary_builder.IdType.data_property" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="filip.semantics.ontology_parser.vocabulary_builder.IdType.datatype">
+<span class="sig-name descname"><span class="pre">datatype</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Datatype'</span></em><a class="headerlink" href="#filip.semantics.ontology_parser.vocabulary_builder.IdType.datatype" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="filip.semantics.ontology_parser.vocabulary_builder.IdType.individual">
+<span class="sig-name descname"><span class="pre">individual</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Individual'</span></em><a class="headerlink" href="#filip.semantics.ontology_parser.vocabulary_builder.IdType.individual" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="filip.semantics.ontology_parser.vocabulary_builder.IdType.object_property">
+<span class="sig-name descname"><span class="pre">object_property</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Object</span> <span class="pre">Property'</span></em><a class="headerlink" href="#filip.semantics.ontology_parser.vocabulary_builder.IdType.object_property" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="filip.semantics.ontology_parser.vocabulary_builder.IdType.relation">
+<span class="sig-name descname"><span class="pre">relation</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Relation'</span></em><a class="headerlink" href="#filip.semantics.ontology_parser.vocabulary_builder.IdType.relation" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="filip.semantics.ontology_parser.vocabulary_builder.IdType.source">
+<span class="sig-name descname"><span class="pre">source</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Source'</span></em><a class="headerlink" href="#filip.semantics.ontology_parser.vocabulary_builder.IdType.source" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class pydantic_model">
+<dt class="sig sig-object py" id="filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder">
+<em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">filip.semantics.ontology_parser.vocabulary_builder.</span></span><span class="sig-name descname"><span class="pre">VocabularyBuilder</span></span><a class="reference internal" href="../_modules/filip/semantics/ontology_parser/vocabulary_builder.html#VocabularyBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>Wrapper class to provide manipulation functions for vocabulary that
+should later be hidden from the user</p>
+<dl class="field-list simple">
+<dt class="field-odd">Fields<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.current_source" title="filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.current_source"><code class="xref py py-obj docutils literal notranslate"><span class="pre">current_source</span> <span class="pre">(filip.semantics.vocabulary.source.Source)</span></code></a></p></li>
+<li><p><a class="reference internal" href="../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.vocabulary" title="filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.vocabulary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vocabulary</span> <span class="pre">(filip.semantics.vocabulary.vocabulary.Vocabulary)</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.current_source">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">current_source</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.source.Source" title="filip.semantics.vocabulary.source.Source"><span class="pre">Source</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.current_source" title="Permalink to this definition"></a></dt>
+<dd><p>Current source to which entities are added,needed while parsing</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.vocabulary">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">vocabulary</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary" title="filip.semantics.vocabulary.vocabulary.Vocabulary"><span class="pre">Vocabulary</span></a></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.vocabulary" title="Permalink to this definition"></a></dt>
+<dd><p>Vocabulary to manipulate</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_class">
+<span class="sig-name descname"><span class="pre">add_class</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">class_</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Class" title="filip.semantics.vocabulary.entities.Class"><span class="pre">Class</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/semantics/ontology_parser/vocabulary_builder.html#VocabularyBuilder.add_class"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_class" title="Permalink to this definition"></a></dt>
+<dd><p>Add a class to the vocabulary</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>class</strong> (<a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Class" title="filip.semantics.vocabulary.entities.Class"><em>Class</em></a>) – class to be added</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_combined_data_relation_for_class">
+<span class="sig-name descname"><span class="pre">add_combined_data_relation_for_class</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">class_iri</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">cdata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedDataRelation" title="filip.semantics.vocabulary.combined_relations.CombinedDataRelation"><span class="pre">CombinedDataRelation</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/semantics/ontology_parser/vocabulary_builder.html#VocabularyBuilder.add_combined_data_relation_for_class"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_combined_data_relation_for_class" title="Permalink to this definition"></a></dt>
+<dd><p>Add a combined data relation object to a class</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>class_iri</strong> – Iri of the class to which the cd-relation should be added</p></li>
+<li><p><strong>cdata</strong> – CombinedDataRelation to add</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_combined_object_relation_for_class">
+<span class="sig-name descname"><span class="pre">add_combined_object_relation_for_class</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">class_iri</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">crel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedObjectRelation" title="filip.semantics.vocabulary.combined_relations.CombinedObjectRelation"><span class="pre">CombinedObjectRelation</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/semantics/ontology_parser/vocabulary_builder.html#VocabularyBuilder.add_combined_object_relation_for_class"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_combined_object_relation_for_class" title="Permalink to this definition"></a></dt>
+<dd><p>Add a combined object relation object to a class</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>class_iri</strong> – Iri of the class to which the co-relation should be added</p></li>
+<li><p><strong>crel</strong> – CombinedObjectRelation to add</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_data_property">
+<span class="sig-name descname"><span class="pre">add_data_property</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_prop</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.DataProperty" title="filip.semantics.vocabulary.entities.DataProperty"><span class="pre">DataProperty</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/semantics/ontology_parser/vocabulary_builder.html#VocabularyBuilder.add_data_property"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_data_property" title="Permalink to this definition"></a></dt>
+<dd><p>Add an DataProperty to the vocabulary</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data_prop</strong> (<a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.DataProperty" title="filip.semantics.vocabulary.entities.DataProperty"><em>DataProperty</em></a>) – DataProperty to be added</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_datatype">
+<span class="sig-name descname"><span class="pre">add_datatype</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datatype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Datatype" title="filip.semantics.vocabulary.entities.Datatype"><span class="pre">Datatype</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/semantics/ontology_parser/vocabulary_builder.html#VocabularyBuilder.add_datatype"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_datatype" title="Permalink to this definition"></a></dt>
+<dd><p>Add a DataType to the vocabulary</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>datatype</strong> (<a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Datatype" title="filip.semantics.vocabulary.entities.Datatype"><em>Datatype</em></a>) – Datatype to be added</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_individual">
+<span class="sig-name descname"><span class="pre">add_individual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">individual</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Individual" title="filip.semantics.vocabulary.entities.Individual"><span class="pre">Individual</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/semantics/ontology_parser/vocabulary_builder.html#VocabularyBuilder.add_individual"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_individual" title="Permalink to this definition"></a></dt>
+<dd><p>Add an Individual to the vocabulary</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>individual</strong> (<a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Individual" title="filip.semantics.vocabulary.entities.Individual"><em>Individual</em></a>) – Individual to be added</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_object_property">
+<span class="sig-name descname"><span class="pre">add_object_property</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj_prop</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.ObjectProperty" title="filip.semantics.vocabulary.entities.ObjectProperty"><span class="pre">ObjectProperty</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/semantics/ontology_parser/vocabulary_builder.html#VocabularyBuilder.add_object_property"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_object_property" title="Permalink to this definition"></a></dt>
+<dd><p>Add an ObjectProperty to the vocabulary</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>obj_prop</strong> (<a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.ObjectProperty" title="filip.semantics.vocabulary.entities.ObjectProperty"><em>ObjectProperty</em></a>) – ObjectProperty to be added</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_predefined_datatype">
+<span class="sig-name descname"><span class="pre">add_predefined_datatype</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datatype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Datatype" title="filip.semantics.vocabulary.entities.Datatype"><span class="pre">Datatype</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/semantics/ontology_parser/vocabulary_builder.html#VocabularyBuilder.add_predefined_datatype"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_predefined_datatype" title="Permalink to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Add a DataType to the vocabulary, that belongs to the source:</dt><dd><p>Predefined</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>datatype</strong> (<a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Datatype" title="filip.semantics.vocabulary.entities.Datatype"><em>Datatype</em></a>) – Datatype to be added</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_relation_for_class">
+<span class="sig-name descname"><span class="pre">add_relation_for_class</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">class_iri</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.Relation" title="filip.semantics.vocabulary.relation.Relation"><span class="pre">Relation</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/semantics/ontology_parser/vocabulary_builder.html#VocabularyBuilder.add_relation_for_class"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_relation_for_class" title="Permalink to this definition"></a></dt>
+<dd><p>Add a relation object to a class</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>class_iri</strong> – Iri of the class to which the relation should be added</p></li>
+<li><p><strong>rel</strong> – Relation to add</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_source">
+<span class="sig-name descname"><span class="pre">add_source</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.source.Source" title="filip.semantics.vocabulary.source.Source"><span class="pre">Source</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/semantics/ontology_parser/vocabulary_builder.html#VocabularyBuilder.add_source"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_source" title="Permalink to this definition"></a></dt>
+<dd><p>Add a source to the vocabulary</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source</strong> – source to add</p></li>
+<li><p><strong>id</strong> – id of source, if none is given a random id is generated</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.clear">
+<span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/semantics/ontology_parser/vocabulary_builder.html#VocabularyBuilder.clear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.clear" title="Permalink to this definition"></a></dt>
+<dd><p>Clear all objects form the vocabulary</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.entity_is_known">
+<span class="sig-name descname"><span class="pre">entity_is_known</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iri</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../_modules/filip/semantics/ontology_parser/vocabulary_builder.html#VocabularyBuilder.entity_is_known"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.entity_is_known" title="Permalink to this definition"></a></dt>
+<dd><p>Test if the given iri is in vocabulary, if not it belongs to a
+dependency which is not yet loaded</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>iri</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.set_current_source">
+<span class="sig-name descname"><span class="pre">set_current_source</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/semantics/ontology_parser/vocabulary_builder.html#VocabularyBuilder.set_current_source"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.set_current_source" title="Permalink to this definition"></a></dt>
+<dd><p>Set the source of the vocabulary to which new added objects belong</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>source_id</strong> – id of source to activate</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-filip.semantics.ontology_parser">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-filip.semantics.ontology_parser" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="filip.semantics.html" class="btn btn-neutral float-left" title="filip.semantics package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="filip.semantics.vocabulary.html" class="btn btn-neutral float-right" title="filip.semantics.vocabulary package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021-2024, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>filip.utils.simple_ql &mdash; FiLiP 0.4.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/autodoc_pydantic.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../contents.html" class="icon icon-home">
+            FiLiP
+          </a>
+              <div class="version">
+                0.4
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">FiLiP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contribute as a user</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html#contribute-as-a-developer">Contribute as a developer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../about/index.html">About FiLiP</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../contents.html">FiLiP</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../contents.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">filip.utils.simple_ql</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for filip.utils.simple_ql</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">The Simple Query Language provides a simplified syntax to retrieve entities</span>
+<span class="sd">which match a set of conditions. A query is composed by a list of</span>
+<span class="sd">statements separated by the &#39;;&#39; character. Each statement expresses a</span>
+<span class="sd">matching condition. The query returns all the entities that match all</span>
+<span class="sd">the matching conditions (AND logical operator).</span>
+
+<span class="sd">For further details of the language please refer to:</span>
+
+<span class="sd">https://telefonicaid.github.io/fiware-orion/api/v2/stable/</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">regex</span> <span class="k">as</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">aenum</span> <span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Any</span>
+
+
+<div class="viewcode-block" id="Operator"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.simple_ql.Operator">[docs]</a><span class="k">class</span> <span class="nc">Operator</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The list of operators (and the format of the values they use) is as follows:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_init_</span> <span class="o">=</span> <span class="s1">&#39;value __doc__&#39;</span>
+
+    <span class="n">EQUAL</span> <span class="o">=</span> <span class="s1">&#39;==&#39;</span><span class="p">,</span> <span class="s2">&quot;Single element, e.g. temperature!=41. For an entity to &quot;</span> \
+                  <span class="s2">&quot;match, it must contain the target property (temperature) &quot;</span> \
+                  <span class="s2">&quot;and the target property value must not be the query value &quot;</span> \
+                  <span class="s2">&quot;(41). &quot;</span> \
+                  <span class="s2">&quot;A list of comma-separated values, e.g. color!=black,&quot;</span> \
+                  <span class="s2">&quot;red. For an entity to match, it must contain the target &quot;</span> \
+                  <span class="s2">&quot;property and the target property value must not be any &quot;</span> \
+                  <span class="s2">&quot;of the values in the list (AND clause) (or not include any &quot;</span>\
+                  <span class="s2">&quot;of the values in the list in case the target property &quot;</span> \
+                  <span class="s2">&quot;value is an array). Eg. entities whose attribute color is &quot;</span> \
+                  <span class="s2">&quot;set to black will not match, while entities whose &quot;</span> \
+                  <span class="s2">&quot;attribute color is set to white will match.&quot;</span> \
+                  <span class="s2">&quot;A range, specified as a minimum and maximum separated by &quot;</span> \
+                  <span class="s2">&quot;.., e.g. temperature!=10..20. For an entity to match, &quot;</span> \
+                  <span class="s2">&quot;it must contain the target property (temperature) and the &quot;</span> \
+                  <span class="s2">&quot;target property value must not be between the upper and &quot;</span> \
+                  <span class="s2">&quot;lower limits (both included). Ranges can only be used &quot;</span> \
+                  <span class="s2">&quot;with elements target properties that represent dates (in &quot;</span> \
+                  <span class="s2">&quot;ISO8601 format), numbers or strings. &quot;</span>
+    <span class="n">UNEQUAL</span> <span class="o">=</span> <span class="s1">&#39;!=&#39;</span><span class="p">,</span> <span class="s2">&quot;Single element, e.g. temperature!=41. For an entity to &quot;</span> \
+                    <span class="s2">&quot;match, it must contain the target property &quot;</span> \
+                    <span class="s2">&quot;(temperature) and the target property value must not be &quot;</span> \
+                    <span class="s2">&quot;the query value (41). A list of comma-separated values, &quot;</span> \
+                    <span class="s2">&quot;e.g. color!=black,red. For an entity to match, it must &quot;</span> \
+                    <span class="s2">&quot;contain the target property and the target property &quot;</span> \
+                    <span class="s2">&quot;value must not be any of the values in the list (AND &quot;</span> \
+                    <span class="s2">&quot;clause) (or not include any of the values in the list &quot;</span> \
+                    <span class="s2">&quot;in case the target property value is an array). Eg. &quot;</span> \
+                    <span class="s2">&quot;entities whose attribute color is set to black will not &quot;</span> \
+                    <span class="s2">&quot;match, while entities whose attribute color is set to &quot;</span> \
+                    <span class="s2">&quot;white will match. A range, specified as a minimum and &quot;</span> \
+                    <span class="s2">&quot;maximum separated by .., e.g. temperature!=10..20. For &quot;</span> \
+                    <span class="s2">&quot;an entity to match, it must contain the target property &quot;</span> \
+                    <span class="s2">&quot;(temperature) and the target property value must not be &quot;</span> \
+                    <span class="s2">&quot;between the upper and lower limits (both included). &quot;</span> \
+                    <span class="s2">&quot;Ranges can only be used with elements target properties &quot;</span> \
+                    <span class="s2">&quot;that represent dates (in ISO8601 format), numbers or &quot;</span> \
+                    <span class="s2">&quot;strings. &quot;</span>
+    <span class="n">GREATER_THAN</span> <span class="o">=</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">,</span> <span class="s2">&quot;The right-hand side must be a single element, e.g. &quot;</span> \
+                        <span class="s2">&quot;temperature&gt;42. For an entity to match, it must &quot;</span> \
+                        <span class="s2">&quot;contain the target property (temperature) and the &quot;</span> \
+                        <span class="s2">&quot;target property value must be strictly greater than &quot;</span> \
+                        <span class="s2">&quot;the query value (42). This operation is only valid &quot;</span> \
+                        <span class="s2">&quot;for target properties of type date, number or &quot;</span> \
+                        <span class="s2">&quot;string (used with target properties of other types &quot;</span> \
+                        <span class="s2">&quot;may lead to unpredictable results). &quot;</span>
+    <span class="n">LESS_THAN</span> <span class="o">=</span> <span class="s1">&#39;&lt;&#39;</span><span class="p">,</span> <span class="s2">&quot;The right-hand side must be a single element, e.g. &quot;</span> \
+                     <span class="s2">&quot;temperature&lt;43. For an entity to match, it must &quot;</span> \
+                     <span class="s2">&quot;contain the target property (temperature) and the &quot;</span> \
+                     <span class="s2">&quot;target property value must be strictly less than the &quot;</span> \
+                     <span class="s2">&quot;value (43). This operation is only valid for target &quot;</span> \
+                     <span class="s2">&quot;properties of type date, number or string (used with &quot;</span> \
+                     <span class="s2">&quot;target properties of other types may lead to &quot;</span> \
+                     <span class="s2">&quot;unpredictable results). &quot;</span>
+    <span class="n">GREATER_OR_EQUAL</span> <span class="o">=</span> <span class="s1">&#39;&gt;=&#39;</span><span class="p">,</span> <span class="s2">&quot;The right-hand side must be a single element, &quot;</span> \
+                             <span class="s2">&quot;e.g. temperature&gt;=44. For an entity to match, &quot;</span> \
+                             <span class="s2">&quot;it must contain the target property (&quot;</span> \
+                             <span class="s2">&quot;temperature) and the target property value &quot;</span> \
+                             <span class="s2">&quot;must be greater than or equal to that value &quot;</span> \
+                             <span class="s2">&quot;(44). This operation is only valid for target &quot;</span> \
+                             <span class="s2">&quot;properties of type date, number or string &quot;</span> \
+                             <span class="s2">&quot;(used with target properties of other types &quot;</span> \
+                             <span class="s2">&quot;may lead to unpredictable results). &quot;</span>
+    <span class="n">LESS_OR_EQUAL</span> <span class="o">=</span> <span class="s1">&#39;&lt;=&#39;</span><span class="p">,</span> <span class="s2">&quot;The right-hand side must be a single element, &quot;</span> \
+                          <span class="s2">&quot;e.g. temperature&lt;=45. For an entity to match, &quot;</span> \
+                          <span class="s2">&quot;it must contain the target property (temperature) &quot;</span> \
+                          <span class="s2">&quot;and the target property value must be less than &quot;</span> \
+                          <span class="s2">&quot;or equal to that value (45). This operation is &quot;</span> \
+                          <span class="s2">&quot;only valid for target properties of type date, &quot;</span> \
+                          <span class="s2">&quot;number or string (used with target properties of &quot;</span> \
+                          <span class="s2">&quot;other types may lead to unpredictable results). &quot;</span>
+    <span class="n">MATCH_PATTERN</span> <span class="o">=</span> <span class="s1">&#39;~=&#39;</span><span class="p">,</span> <span class="s2">&quot;The value matches a given pattern, expressed as a &quot;</span> \
+                          <span class="s2">&quot;regular expression, e.g. color~=ow. For an entity &quot;</span> \
+                          <span class="s2">&quot;to match, it must contain the target property (&quot;</span> \
+                          <span class="s2">&quot;color) and the target property value must match &quot;</span> \
+                          <span class="s2">&quot;the string in the right-hand side, &#39;ow&#39; in this &quot;</span> \
+                          <span class="s2">&quot;example (brown and yellow would match, black and &quot;</span> \
+                          <span class="s2">&quot;white would not). This operation is only valid &quot;</span> \
+                          <span class="s2">&quot;for target properties of type string. &quot;</span>
+
+<div class="viewcode-block" id="Operator.list"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.simple_ql.Operator.list">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">list</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list of all valid values</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">c</span><span class="p">:</span> <span class="n">c</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="bp">cls</span><span class="p">))</span></div></div>
+
+
+<div class="viewcode-block" id="QueryStatement"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.simple_ql.QueryStatement">[docs]</a><span class="k">class</span> <span class="nc">QueryStatement</span><span class="p">(</span><span class="n">Tuple</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Simple query statement</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">left</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">op</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Operator</span><span class="p">],</span> <span class="n">right</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="nb">tuple</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="n">QueryStatement</span><span class="p">,</span> <span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">op</span><span class="p">,</span> <span class="n">right</span><span class="p">))</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">q</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">__get_validators__</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">yield</span> <span class="bp">cls</span><span class="o">.</span><span class="n">validate</span>
+
+<div class="viewcode-block" id="QueryStatement.validate"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.simple_ql.QueryStatement.validate">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validates statements</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            value:</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="n">QueryStatement</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;3-tuple required&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;First argument must be a string!&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">Operator</span><span class="o">.</span><span class="n">list</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Invalid comparison operator!&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">Operator</span><span class="o">.</span><span class="n">EQUAL</span><span class="p">,</span>
+                                <span class="n">Operator</span><span class="o">.</span><span class="n">UNEQUAL</span><span class="p">,</span>
+                                <span class="n">Operator</span><span class="o">.</span><span class="n">MATCH_PATTERN</span><span class="p">]:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+                <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+                    <span class="n">err</span><span class="o">.</span><span class="n">args</span> <span class="o">+=</span> <span class="p">(</span><span class="s2">&quot;Invalid combination of operator and right &quot;</span>
+                                 <span class="s2">&quot;hand side!&quot;</span><span class="p">,)</span>
+                    <span class="k">raise</span>
+            <span class="k">return</span> <span class="n">value</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">parse_str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span></div>
+
+<div class="viewcode-block" id="QueryStatement.to_str"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.simple_ql.QueryStatement.to_str">[docs]</a>    <span class="k">def</span> <span class="nf">to_str</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parses QueryStatement to String</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            String</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">right</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">isnumeric</span><span class="p">():</span>
+            <span class="n">right</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">right</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">right</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="QueryStatement.parse_str"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.simple_ql.QueryStatement.parse_str">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">parse_str</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates QueryStatement form string</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            string:</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            QueryStatement</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">Operator</span><span class="o">.</span><span class="n">list</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="sa">rf</span><span class="s2">&quot;^\w((\w|[^&amp;,?,/,#,\*,\s]\w)?)*</span><span class="si">{</span><span class="n">op</span><span class="si">}</span><span class="s2">\w+$&quot;</span><span class="p">,</span> <span class="n">string</span><span class="p">):</span>
+                <span class="n">args</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">isnumeric</span><span class="p">():</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="n">right</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                            <span class="n">right</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                        <span class="k">return</span> <span class="n">QueryStatement</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">op</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">QueryStatement</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">op</span><span class="p">,</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span></div>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Return str(self). &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Return repr(self). &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="QueryString"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.simple_ql.QueryString">[docs]</a><span class="k">class</span> <span class="nc">QueryString</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for validated QueryStrings that can be used in api clients</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">,</span>
+                                 <span class="n">QueryStatement</span><span class="p">,</span>
+                                 <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">QueryStatement</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">]]]):</span>
+        <span class="n">qs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__check_arguments</span><span class="p">(</span><span class="n">qs</span><span class="o">=</span><span class="n">qs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_qs</span> <span class="o">=</span> <span class="n">qs</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">__check_arguments</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">qs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check arguments on consistency</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            qs: queny statement object</span>
+
+<span class="sd">        returns:</span>
+<span class="sd">            List of QueryStatements</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">qs</span><span class="p">,</span> <span class="n">List</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">qs</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">QueryStatement</span><span class="p">):</span>
+                    <span class="n">qs</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">QueryStatement</span><span class="p">(</span><span class="o">*</span><span class="n">item</span><span class="p">)</span>
+            <span class="c1"># Remove duplicates</span>
+            <span class="n">qs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">qs</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">qs</span><span class="p">,</span> <span class="n">QueryStatement</span><span class="p">):</span>
+            <span class="n">qs</span> <span class="o">=</span> <span class="p">[</span><span class="n">qs</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">qs</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="n">qs</span> <span class="o">=</span> <span class="p">[</span><span class="n">QueryStatement</span><span class="p">(</span><span class="o">*</span><span class="n">qs</span><span class="p">)]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid argument!&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">qs</span>
+
+<div class="viewcode-block" id="QueryString.update"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.simple_ql.QueryString.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">,</span> <span class="n">QueryStatement</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">QueryStatement</span><span class="p">]]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds or updates QueryStatement within QueryString. First to arguments</span>
+<span class="sd">        must match an existing argument for update. This redundant rules</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            qs: Query statement to add to the string object</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">qs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__check_arguments</span><span class="p">(</span><span class="n">qs</span><span class="o">=</span><span class="n">qs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_qs</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">qs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_qs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">qs</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="QueryString.remove"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.simple_ql.QueryString.remove">[docs]</a>    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">,</span> <span class="n">QueryStatement</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">QueryStatement</span><span class="p">]]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove Statement from QueryString</span>
+<span class="sd">        Args:</span>
+<span class="sd">            qs:</span>
+
+<span class="sd">        Returns:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">qs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__check_arguments</span><span class="p">(</span><span class="n">qs</span><span class="o">=</span><span class="n">qs</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">qs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_qs</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">q</span><span class="p">)</span></div>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">__get_validators__</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">yield</span> <span class="bp">cls</span><span class="o">.</span><span class="n">validate</span>
+
+<div class="viewcode-block" id="QueryString.validate"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.simple_ql.QueryString.validate">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;validate QueryString&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">QueryString</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">v</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">parse_str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid argument!&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="QueryString.to_str"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.simple_ql.QueryString.to_str">[docs]</a>    <span class="k">def</span> <span class="nf">to_str</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parsing self.qs to string object</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            String: query string that can be added to requests as parameter</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s1">&#39;;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">q</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qs</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="QueryString.parse_str"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.simple_ql.QueryString.parse_str">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">parse_str</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates QueryString from string</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            string:</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            QueryString</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">q_parts</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)</span>
+        <span class="n">qs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">q_parts</span><span class="p">:</span>
+            <span class="n">q</span> <span class="o">=</span> <span class="n">QueryStatement</span><span class="o">.</span><span class="n">parse_str</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
+            <span class="n">qs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">QueryString</span><span class="p">(</span><span class="n">qs</span><span class="o">=</span><span class="n">qs</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Return str(self). &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Return repr(self). &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021-2024, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

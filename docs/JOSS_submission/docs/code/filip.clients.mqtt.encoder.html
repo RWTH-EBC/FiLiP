@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>filip.clients.mqtt.encoder package &mdash; FiLiP 0.4.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/autodoc_pydantic.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../contents.html" class="icon icon-home">
+            FiLiP
+          </a>
+              <div class="version">
+                0.4
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">FiLiP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contribute as a user</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html#contribute-as-a-developer">Contribute as a developer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/index.html">About FiLiP</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../contents.html">FiLiP</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../contents.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">filip.clients.mqtt.encoder package</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/RWTH-EBC/filip/blob/master/docs/source/code/filip.clients.mqtt.encoder.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-filip.clients.mqtt.encoder">
+<span id="filip-clients-mqtt-encoder-package"></span><h1>filip.clients.mqtt.encoder package<a class="headerlink" href="#module-filip.clients.mqtt.encoder" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-filip.clients.mqtt.encoder.base_encoder">
+<span id="filip-clients-mqtt-encoder-base-encoder-module"></span><h2>filip.clients.mqtt.encoder.base_encoder module<a class="headerlink" href="#module-filip.clients.mqtt.encoder.base_encoder" title="Permalink to this heading"></a></h2>
+<p>Abstract class for all IoTA MQTT message encoders</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="filip.clients.mqtt.encoder.base_encoder.BaseEncoder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">filip.clients.mqtt.encoder.base_encoder.</span></span><span class="sig-name descname"><span class="pre">BaseEncoder</span></span><a class="reference internal" href="../_modules/filip/clients/mqtt/encoder/base_encoder.html#BaseEncoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.mqtt.encoder.base_encoder.BaseEncoder" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></a></p>
+<p>Abstract class for all IoTA MQTT message encoders</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.mqtt.encoder.base_encoder.BaseEncoder.decode_message">
+<span class="sig-name descname"><span class="pre">decode_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MQTTMessage</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decoder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'utf-8'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.12)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/filip/clients/mqtt/encoder/base_encoder.html#BaseEncoder.decode_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.mqtt.encoder.base_encoder.BaseEncoder.decode_message" title="Permalink to this definition"></a></dt>
+<dd><p>Decode message for ingoing traffic
+:param msg: Message class
+:param decoder: encoding identifier</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>apikey
+device_id
+payload</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.mqtt.encoder.base_encoder.BaseEncoder.encode_msg">
+<span class="sig-name descname"><span class="pre">encode_msg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">payload</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.12)"><span class="pre">Dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="filip.models.html#filip.models.mqtt.IoTAMQTTMessageType" title="filip.models.mqtt.IoTAMQTTMessageType"><span class="pre">IoTAMQTTMessageType</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/filip/clients/mqtt/encoder/base_encoder.html#BaseEncoder.encode_msg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.mqtt.encoder.base_encoder.BaseEncoder.encode_msg" title="Permalink to this definition"></a></dt>
+<dd><p>Encode message for outgoing traffic</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>device_id</strong> – id of the iot device</p></li>
+<li><p><strong>payload</strong> – payload to send</p></li>
+<li><p><strong>msg_type</strong> – kind of message to send</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="filip.clients.mqtt.encoder.base_encoder.BaseEncoder.prefix">
+<span class="sig-name descname"><span class="pre">prefix</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#filip.clients.mqtt.encoder.base_encoder.BaseEncoder.prefix" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-filip.clients.mqtt.encoder.json">
+<span id="filip-clients-mqtt-encoder-json-module"></span><h2>filip.clients.mqtt.encoder.json module<a class="headerlink" href="#module-filip.clients.mqtt.encoder.json" title="Permalink to this heading"></a></h2>
+<p>Json encoder class for all IoTA-JSON MQTT message encoders</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="filip.clients.mqtt.encoder.json.Json">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">filip.clients.mqtt.encoder.json.</span></span><span class="sig-name descname"><span class="pre">Json</span></span><a class="reference internal" href="../_modules/filip/clients/mqtt/encoder/json.html#Json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.mqtt.encoder.json.Json" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#filip.clients.mqtt.encoder.base_encoder.BaseEncoder" title="filip.clients.mqtt.encoder.base_encoder.BaseEncoder"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEncoder</span></code></a></p>
+<p>Json encoder class for all IoTA-JSON MQTT message encoders</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.mqtt.encoder.json.Json.decode_message">
+<span class="sig-name descname"><span class="pre">decode_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decoder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'utf-8'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.12)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.12)"><span class="pre">Dict</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/filip/clients/mqtt/encoder/json.html#Json.decode_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.mqtt.encoder.json.Json.decode_message" title="Permalink to this definition"></a></dt>
+<dd><p>Decode message for ingoing traffic
+:param msg: Message class
+:param decoder: encoding identifier</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>apikey
+device_id
+payload</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.mqtt.encoder.json.Json.encode_msg">
+<span class="sig-name descname"><span class="pre">encode_msg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">payload</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="filip.models.html#filip.models.mqtt.IoTAMQTTMessageType" title="filip.models.mqtt.IoTAMQTTMessageType"><span class="pre">IoTAMQTTMessageType</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/filip/clients/mqtt/encoder/json.html#Json.encode_msg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.mqtt.encoder.json.Json.encode_msg" title="Permalink to this definition"></a></dt>
+<dd><p>Encode message for outgoing traffic</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>device_id</strong> – id of the iot device</p></li>
+<li><p><strong>payload</strong> – payload to send</p></li>
+<li><p><strong>msg_type</strong> – kind of message to send</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="filip.clients.mqtt.encoder.json.Json.prefix">
+<span class="sig-name descname"><span class="pre">prefix</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/json'</span></em><a class="headerlink" href="#filip.clients.mqtt.encoder.json.Json.prefix" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-filip.clients.mqtt.encoder.ulralight">
+<span id="filip-clients-mqtt-encoder-ulralight-module"></span><h2>filip.clients.mqtt.encoder.ulralight module<a class="headerlink" href="#module-filip.clients.mqtt.encoder.ulralight" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="filip.clients.mqtt.encoder.ulralight.Ultralight">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">filip.clients.mqtt.encoder.ulralight.</span></span><span class="sig-name descname"><span class="pre">Ultralight</span></span><a class="reference internal" href="../_modules/filip/clients/mqtt/encoder/ulralight.html#Ultralight"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.mqtt.encoder.ulralight.Ultralight" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#filip.clients.mqtt.encoder.base_encoder.BaseEncoder" title="filip.clients.mqtt.encoder.base_encoder.BaseEncoder"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEncoder</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.mqtt.encoder.ulralight.Ultralight.decode_message">
+<span class="sig-name descname"><span class="pre">decode_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decoder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'utf-8'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.12)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.12)"><span class="pre">Dict</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/filip/clients/mqtt/encoder/ulralight.html#Ultralight.decode_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.mqtt.encoder.ulralight.Ultralight.decode_message" title="Permalink to this definition"></a></dt>
+<dd><p>Decode message for ingoing traffic
+:param msg: Message class
+:param decoder: encoding identifier</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>apikey
+device_id
+payload</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.mqtt.encoder.ulralight.Ultralight.encode_msg">
+<span class="sig-name descname"><span class="pre">encode_msg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">payload</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="filip.models.html#filip.models.mqtt.IoTAMQTTMessageType" title="filip.models.mqtt.IoTAMQTTMessageType"><span class="pre">IoTAMQTTMessageType</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/filip/clients/mqtt/encoder/ulralight.html#Ultralight.encode_msg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.mqtt.encoder.ulralight.Ultralight.encode_msg" title="Permalink to this definition"></a></dt>
+<dd><p>Encode message for outgoing traffic</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>device_id</strong> – id of the iot device</p></li>
+<li><p><strong>payload</strong> – payload to send</p></li>
+<li><p><strong>msg_type</strong> – kind of message to send</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="filip.clients.mqtt.encoder.ulralight.Ultralight.prefix">
+<span class="sig-name descname"><span class="pre">prefix</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/ul'</span></em><a class="headerlink" href="#filip.clients.mqtt.encoder.ulralight.Ultralight.prefix" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021-2024, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

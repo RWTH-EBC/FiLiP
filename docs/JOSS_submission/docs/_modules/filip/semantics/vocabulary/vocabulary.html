@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>filip.semantics.vocabulary.vocabulary &mdash; FiLiP 0.4.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/autodoc_pydantic.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../contents.html" class="icon icon-home">
+            FiLiP
+          </a>
+              <div class="version">
+                0.4
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index.html">FiLiP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/index.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contribute as a user</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html#contribute-as-a-developer">Contribute as a developer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../about/index.html">About FiLiP</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../contents.html">FiLiP</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../contents.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">filip.semantics.vocabulary.vocabulary</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for filip.semantics.vocabulary.vocabulary</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Main Vocabulary Model, and Submodels&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">operator</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">from</span> <span class="nn">...models.base</span> <span class="kn">import</span> <span class="n">LogLevel</span>
+
+
+<div class="viewcode-block" id="LabelSummary"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.LabelSummary">[docs]</a><span class="k">class</span> <span class="nc">LabelSummary</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Model holding all information for label conflicts in a vocabulary</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">class_label_duplicates</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Entity</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;All Labels that are used more than once for class_names &quot;</span>
+                    <span class="s2">&quot;on export.&quot;</span>
+                    <span class="s2">&quot;Key: Label, Values: List of entities with key label&quot;</span>
+    <span class="p">)</span>
+    <span class="n">field_label_duplicates</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Entity</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;All Labels that are used more than once for property_names&quot;</span>
+                    <span class="s2">&quot;on export.&quot;</span>
+                    <span class="s2">&quot;Key: Label, Values: List of entities with key label&quot;</span>
+    <span class="p">)</span>
+    <span class="n">datatype_label_duplicates</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Entity</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;All Labels that are used more than once for datatype &quot;</span>
+                    <span class="s2">&quot;on export.&quot;</span> 
+                    <span class="s2">&quot;Key: Label, Values: List of entities with key label&quot;</span>
+    <span class="p">)</span>
+
+    <span class="n">blacklisted_labels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Entity</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;All Labels that are blacklisted, &quot;</span>
+                    <span class="s2">&quot;Tuple(Label, Entity with label)&quot;</span>
+    <span class="p">)</span>
+    <span class="n">labels_with_illegal_chars</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Entity</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;All Labels that contain illegal characters, &quot;</span>
+                    <span class="s2">&quot;Tuple(Label, Entity with label)&quot;</span>
+    <span class="p">)</span>
+
+<div class="viewcode-block" id="LabelSummary.is_valid"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.LabelSummary.is_valid">[docs]</a>    <span class="k">def</span> <span class="nf">is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test if Labels are valid</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool, True if no entries exist</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">class_label_duplicates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> \
+               <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">field_label_duplicates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> \
+               <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">datatype_label_duplicates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> \
+               <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">blacklisted_labels</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> \
+               <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labels_with_illegal_chars</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span></div>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">print_collection</span><span class="p">(</span><span class="n">collection</span><span class="p">):</span>
+            <span class="n">sub_res</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">collection</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">sub_res</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">: &quot;</span>
+                <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
+                    <span class="n">sub_res</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; </span><span class="se">\n\t\t</span><span class="si">{</span><span class="n">v</span><span class="o">.</span><span class="n">iri</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">sub_res</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">collection</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">sub_res</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">/</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">return</span> <span class="n">sub_res</span>
+
+        <span class="k">def</span> <span class="nf">print_list</span><span class="p">(</span><span class="n">collection</span><span class="p">):</span>
+            <span class="n">sub_res</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">:</span>
+                <span class="n">sub_res</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">: </span><span class="se">\t</span><span class="s2"> </span><span class="si">{</span><span class="n">value</span><span class="o">.</span><span class="n">iri</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">sub_res</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">collection</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">sub_res</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">/</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">return</span> <span class="n">sub_res</span>
+
+        <span class="n">res</span> <span class="o">+=</span> <span class="s2">&quot;class_label_duplicates:</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">res</span> <span class="o">+=</span> <span class="n">print_collection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">class_label_duplicates</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">+=</span> <span class="s2">&quot;field_label_duplicates:</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">res</span> <span class="o">+=</span> <span class="n">print_collection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">field_label_duplicates</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">+=</span> <span class="s2">&quot;datatype_label_duplicates:</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">res</span> <span class="o">+=</span> <span class="n">print_collection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">datatype_label_duplicates</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">+=</span> <span class="s2">&quot;blacklisted_labels:</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">res</span> <span class="o">+=</span> <span class="n">print_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">blacklisted_labels</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">+=</span> <span class="s2">&quot;labels_with_illegal_chars:</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">res</span> <span class="o">+=</span> <span class="n">print_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labels_with_illegal_chars</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span></div>
+
+
+<div class="viewcode-block" id="IdType"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.IdType">[docs]</a><span class="k">class</span> <span class="nc">IdType</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Type of object that is referenced by an id/iri&quot;&quot;&quot;</span>
+    <span class="n">class_</span> <span class="o">=</span> <span class="s1">&#39;Class&#39;</span>
+    <span class="n">object_property</span> <span class="o">=</span> <span class="s1">&#39;Object Property&#39;</span>
+    <span class="n">data_property</span> <span class="o">=</span> <span class="s1">&#39;Data Property&#39;</span>
+    <span class="n">datatype</span> <span class="o">=</span> <span class="s1">&#39;Datatype&#39;</span>
+    <span class="n">relation</span> <span class="o">=</span> <span class="s1">&#39;Relation&#39;</span>
+    <span class="n">combined_relation</span> <span class="o">=</span> <span class="s1">&#39;Combined Relation&#39;</span>
+    <span class="n">individual</span> <span class="o">=</span> <span class="s1">&#39;Individual&#39;</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;Source&#39;</span></div>
+
+
+<div class="viewcode-block" id="VocabularySettings"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.VocabularySettings">[docs]</a><span class="k">class</span> <span class="nc">VocabularySettings</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Settings that state how labels of ontology entities should be</span>
+<span class="sd">    automatically converted on parsing</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pascal_case_class_labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;If true, convert all class labels given in the ontologies &quot;</span>
+                    <span class="s2">&quot;to PascalCase&quot;</span>
+    <span class="p">)</span>
+    <span class="n">pascal_case_individual_labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;If true, convert all labels of individuals given in the &quot;</span>
+                    <span class="s2">&quot;ontologies to PascalCase&quot;</span>
+    <span class="p">)</span>
+    <span class="n">camel_case_property_labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;If true, convert all labels of properties given in the &quot;</span>
+                    <span class="s2">&quot;ontologies to camelCase&quot;</span>
+    <span class="p">)</span>
+    <span class="n">camel_case_datatype_labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;If true, convert all labels of datatypes given in the &quot;</span>
+                    <span class="s2">&quot;ontologies to camelCase&quot;</span>
+    <span class="p">)</span>
+    <span class="n">pascal_case_datatype_enum_labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;If true, convert all values of enum datatypes given in &quot;</span>
+                    <span class="s2">&quot;the to PascalCase&quot;</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Vocabulary"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary">[docs]</a><span class="k">class</span> <span class="nc">Vocabulary</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Semantic Vocabulary of a project</span>
+
+<span class="sd">    This class holds all objects in a vocabulary as central unit.</span>
+<span class="sd">    These objects can be accessed with the according ids/iris</span>
+
+<span class="sd">    The vocabulary consists out of multiple sources, that each contribute</span>
+<span class="sd">    objects</span>
+
+<span class="sd">    From the vocabulary nothing should be added or deleted manually. The sources</span>
+<span class="sd">    are added and removed through the respective methods. Everything else should</span>
+<span class="sd">    be used as READ-ONLY</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">classes</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Class</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">{},</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Classes of the vocabulary. Key: class_iri&quot;</span><span class="p">)</span>
+    <span class="n">object_properties</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ObjectProperty</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">{},</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;ObjectProperties of the vocabulary. &quot;</span>
+                    <span class="s2">&quot;Key: object_property_iri&quot;</span><span class="p">)</span>
+    <span class="n">data_properties</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">DataProperty</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">{},</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;DataProperties of the vocabulary. Key: data_property_iri&quot;</span><span class="p">)</span>
+    <span class="n">datatypes</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Datatype</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">{},</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Datatypes of the vocabulary. Key: datatype_iri&quot;</span><span class="p">)</span>
+    <span class="n">individuals</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Individual</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">{},</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Individuals in the vocabulary. Key: individual_iri&quot;</span><span class="p">)</span>
+
+    <span class="n">relations</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Relation</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">{},</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Relations of classes in the vocabulary. Key: relation_id&quot;</span><span class="p">)</span>
+    <span class="n">combined_object_relations</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">CombinedObjectRelation</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">{},</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;CombinedObjectRelations of classes in the vocabulary.&quot;</span>
+                    <span class="s2">&quot; Key: combined_relation_id&quot;</span><span class="p">)</span>
+    <span class="n">combined_data_relations</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">CombinedDataRelation</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">{},</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;CombinedDataRelations of classes in the vocabulary.&quot;</span>
+                    <span class="s2">&quot;Key: combined_data_id&quot;</span><span class="p">)</span>
+
+    <span class="n">sources</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Source</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">{},</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Sources of the vocabulary. Key: source_id&quot;</span><span class="p">)</span>
+
+    <span class="n">id_types</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">IdType</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">{},</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Maps all entity iris and (combined)relations to their &quot;</span>
+                    <span class="s2">&quot;Entity/Object type, to speed up lookups&quot;</span><span class="p">)</span>
+
+    <span class="n">original_label_summary</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LabelSummary</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Original label after parsing, before the user made &quot;</span>
+                    <span class="s2">&quot;changes&quot;</span><span class="p">)</span>
+
+    <span class="n">settings</span><span class="p">:</span> <span class="n">VocabularySettings</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">VocabularySettings</span><span class="p">(),</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Settings how to auto transform the entity labels&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Vocabulary.get_type_of_id"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_type_of_id">[docs]</a>    <span class="k">def</span> <span class="nf">get_type_of_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">IdType</span><span class="p">,</span><span class="kc">None</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the type (class, relation,...) of an iri/id</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            id (str): id/iri of which the type should be returned</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            IdType or None if id/iri not registered</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">id_types</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="Vocabulary.get_class_by_iri"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_class_by_iri">[docs]</a>    <span class="k">def</span> <span class="nf">get_class_by_iri</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">class_iri</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Class</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the class belonging to the class_iri</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            class_iri (str): iri</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Class or None if iri not a registered class</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">class_iri</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Vocabulary.get_object_property"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_object_property">[docs]</a>    <span class="k">def</span> <span class="nf">get_object_property</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj_prop_iri</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ObjectProperty</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the object property beloning to the iri</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            obj_prop_iri (str): iri</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ObjectProperty</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyError: if not a registered obj property</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">object_properties</span><span class="p">[</span><span class="n">obj_prop_iri</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Vocabulary.get_data_property"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_data_property">[docs]</a>    <span class="k">def</span> <span class="nf">get_data_property</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_prop_iri</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataProperty</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the data property belonging to the iri</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data_prop_iri (str): iri</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            DataProperty</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyError: if not a registered obj property</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_properties</span><span class="p">[</span><span class="n">data_prop_iri</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Vocabulary.iri_is_predefined_datatype"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.iri_is_predefined_datatype">[docs]</a>    <span class="k">def</span> <span class="nf">iri_is_predefined_datatype</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iri</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test if an iri belongs to a predefined datatype</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            iri (str): Iri to test</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">iri</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">id_types</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">id_types</span><span class="p">[</span><span class="n">iri</span><span class="p">]</span> <span class="ow">is</span> <span class="n">IdType</span><span class="o">.</span><span class="n">datatype</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_datatype</span><span class="p">(</span><span class="n">iri</span><span class="p">)</span><span class="o">.</span><span class="n">predefined</span></div>
+
+<div class="viewcode-block" id="Vocabulary.get_datatype"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_datatype">[docs]</a>    <span class="k">def</span> <span class="nf">get_datatype</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datatype_iri</span><span class="p">:</span><span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Datatype</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the datatype belonging to the iri</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            datatype_iri (str): iri</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            DataType</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyError: if not a registered datatype</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">datatypes</span><span class="p">[</span><span class="n">datatype_iri</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Vocabulary.get_individual"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_individual">[docs]</a>    <span class="k">def</span> <span class="nf">get_individual</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">individual_iri</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Individual</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the individual belonging to the iri</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            individual_iri (str): iri</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">             Individual</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyError: if not a registered  Individual</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">individuals</span><span class="p">[</span><span class="n">individual_iri</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Vocabulary.get_all_individuals_of_class"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_all_individuals_of_class">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_individuals_of_class</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">class_iri</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Individual</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get all individual that have the class_iri as parent</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">             class_iri (str): iri of parent class</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">             List[Individual]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">individual</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">individuals</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">class_iri</span> <span class="ow">in</span> <span class="n">individual</span><span class="o">.</span><span class="n">parent_class_iris</span><span class="p">:</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">individual</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="Vocabulary.is_id_from_individual"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.is_id_from_individual">[docs]</a>    <span class="k">def</span> <span class="nf">is_id_from_individual</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Test if an id is from an Individual. Used to distinguish between</span>
+<span class="sd">        instances and individuals</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            id (str): id</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_type_of_id</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span> <span class="o">==</span> <span class="n">IdType</span><span class="o">.</span><span class="n">individual</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="Vocabulary.get_classes"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_classes">[docs]</a>    <span class="k">def</span> <span class="nf">get_classes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Class</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get all classes in this vocabulary</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List[Class]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">values</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="Vocabulary.get_classes_sorted_by_label"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_classes_sorted_by_label">[docs]</a>    <span class="k">def</span> <span class="nf">get_classes_sorted_by_label</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Class</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get all classes sorted by their labels</span>
+
+<span class="sd">         Returns:</span>
+<span class="sd">            List[Class]: sorted classes, ascending</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span>
+                      <span class="n">key</span><span class="o">=</span><span class="n">operator</span><span class="o">.</span><span class="n">methodcaller</span><span class="p">(</span><span class="s2">&quot;get_label&quot;</span><span class="p">),</span>
+                      <span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Vocabulary.get_entity_list_sorted_by_label"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_entity_list_sorted_by_label">[docs]</a>    <span class="k">def</span> <span class="nf">get_entity_list_sorted_by_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Entity</span><span class="p">])</span> \
+            <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Entity</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sort a given entity list by their labels</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            list (List[Entity]) : entities to be sorted</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            List[Entity]: sorted list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">operator</span><span class="o">.</span><span class="n">methodcaller</span><span class="p">(</span><span class="s2">&quot;get_label&quot;</span><span class="p">),</span>
+                      <span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Vocabulary.get_object_properties_sorted_by_label"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_object_properties_sorted_by_label">[docs]</a>    <span class="k">def</span> <span class="nf">get_object_properties_sorted_by_label</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ObjectProperty</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get all object properties of the vocabulary sorted by their labels</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List[ObjectProperty], sorted by ascending labels</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">object_properties</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span>
+                      <span class="n">key</span><span class="o">=</span><span class="n">operator</span><span class="o">.</span><span class="n">methodcaller</span><span class="p">(</span><span class="s2">&quot;get_label&quot;</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Vocabulary.get_data_properties_sorted_by_label"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_data_properties_sorted_by_label">[docs]</a>    <span class="k">def</span> <span class="nf">get_data_properties_sorted_by_label</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">DataProperty</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get all data properties of the vocabulary sorted by their labels</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List[DataProperty], sorted by ascending labels</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_properties</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span>
+                      <span class="n">key</span><span class="o">=</span><span class="n">operator</span><span class="o">.</span><span class="n">methodcaller</span><span class="p">(</span><span class="s2">&quot;get_label&quot;</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Vocabulary.get_individuals_sorted_by_label"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_individuals_sorted_by_label">[docs]</a>    <span class="k">def</span> <span class="nf">get_individuals_sorted_by_label</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Individual</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get all individuals of the vocabulary sorted by their labels</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List[Individual], sorted by ascending labels</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">individuals</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span>
+                      <span class="n">key</span><span class="o">=</span><span class="n">operator</span><span class="o">.</span><span class="n">methodcaller</span><span class="p">(</span><span class="s2">&quot;get_label&quot;</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Vocabulary.get_datatypes_sorted_by_label"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_datatypes_sorted_by_label">[docs]</a>    <span class="k">def</span> <span class="nf">get_datatypes_sorted_by_label</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Datatype</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get all datatypes of the vocabulary sorted by their labels</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List[Datatype], sorted by ascending labels</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">datatypes</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span>
+                      <span class="n">key</span><span class="o">=</span><span class="n">operator</span><span class="o">.</span><span class="n">methodcaller</span><span class="p">(</span><span class="s2">&quot;get_label&quot;</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Vocabulary.get_relation_by_id"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_relation_by_id">[docs]</a>    <span class="k">def</span> <span class="nf">get_relation_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Relation</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get Relation by relation id</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            id (str): relation_id</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Relation</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyError: if id not registered as relation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">relations</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Vocabulary.get_combined_relation_by_id"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_combined_relation_by_id">[docs]</a>    <span class="k">def</span> <span class="nf">get_combined_relation_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CombinedRelation</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get CombinedRelation by id</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            id (str): combined_relation_id</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            CombinedRelation</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyError: if id not registered as CombinedObjectRelation</span>
+<span class="sd">                        or CombinedDataRelation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">combined_object_relations</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">combined_object_relations</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">combined_data_relations</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Vocabulary.get_combined_data_relation_by_id"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_combined_data_relation_by_id">[docs]</a>    <span class="k">def</span> <span class="nf">get_combined_data_relation_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CombinedDataRelation</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get CombinedDataRelation by id</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            id (str): combined_relation_id</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            CombinedDataRelation</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyError: if id not registered as CombinedDataRelation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">combined_data_relations</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Vocabulary.get_combined_object_relation_by_id"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_combined_object_relation_by_id">[docs]</a>    <span class="k">def</span> <span class="nf">get_combined_object_relation_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span>\
+            <span class="o">-&gt;</span> <span class="n">CombinedObjectRelation</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get CombinedObjectRelation by id</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            id (str): combined_relation_id</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            CombinedObjectRelation</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyError: if id not registered as CombinedObjectRelation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">combined_object_relations</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Vocabulary.get_source"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_source">[docs]</a>    <span class="k">def</span> <span class="nf">get_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Source</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the source with the given id</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            source_id (str): id</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Source</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyError: if source_id is not registered</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sources</span><span class="p">[</span><span class="n">source_id</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Vocabulary.get_source_list"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_source_list">[docs]</a>    <span class="k">def</span> <span class="nf">get_source_list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Source</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get all source objects of the vocabulary as list</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List[Source]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">iri</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sources</span><span class="p">:</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sources</span><span class="p">[</span><span class="n">iri</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">res</span></div>
+
+<div class="viewcode-block" id="Vocabulary.has_source"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.has_source">[docs]</a>    <span class="k">def</span> <span class="nf">has_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test if the vocabulary contains a source with the given id</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            source_id (str): id to test</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">source_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sources</span></div>
+
+<div class="viewcode-block" id="Vocabulary.is_id_of_type"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.is_id_of_type">[docs]</a>    <span class="k">def</span> <span class="nf">is_id_of_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">type</span><span class="p">:</span> <span class="n">IdType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test if an iri/id is of a given type</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            id (str): id to test</span>
+<span class="sd">            type (str): Type to test against</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyError: if id not registered</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">id_types</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">==</span> <span class="nb">type</span></div>
+
+<div class="viewcode-block" id="Vocabulary.get_label_for_entity_iri"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_label_for_entity_iri">[docs]</a>    <span class="k">def</span> <span class="nf">get_label_for_entity_iri</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iri</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the label of the entity with the given iri</span>
+<span class="sd">        Fast efficient methode</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            iri (str)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str, &quot;&quot; if iri does not belong to an entity</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">entity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_entity_by_iri</span><span class="p">(</span><span class="n">iri</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">entity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">entity</span><span class="o">.</span><span class="n">get_label</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="Vocabulary.get_base_out_of_iri"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_base_out_of_iri">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_base_out_of_iri</span><span class="p">(</span><span class="n">iri</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract out of a given iri the base aka ontology name</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            iri (str), iri to extract</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str, base of iri</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="s2">&quot;#&quot;</span> <span class="ow">in</span> <span class="n">iri</span><span class="p">:</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="n">iri</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">iri</span><span class="p">[:</span><span class="n">index</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># for example if uri looks like:</span>
+            <span class="c1"># http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="n">iri</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">iri</span><span class="p">[:</span><span class="n">index</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Vocabulary.get_entity_by_iri"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_entity_by_iri">[docs]</a>    <span class="k">def</span> <span class="nf">get_entity_by_iri</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iri</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Entity</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the entity with the given iri</span>
+<span class="sd">        Fast efficient methode</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            iri (str)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Entity or None if iri does not belong to an Entity</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">iri</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">id_types</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">id_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_type_of_id</span><span class="p">(</span><span class="n">iri</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">id_type</span> <span class="o">==</span> <span class="n">IdType</span><span class="o">.</span><span class="n">individual</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_individual</span><span class="p">(</span><span class="n">iri</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">id_type</span> <span class="o">==</span> <span class="n">IdType</span><span class="o">.</span><span class="n">class_</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_class_by_iri</span><span class="p">(</span><span class="n">iri</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">id_type</span> <span class="o">==</span> <span class="n">IdType</span><span class="o">.</span><span class="n">datatype</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_datatype</span><span class="p">(</span><span class="n">iri</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">id_type</span> <span class="o">==</span> <span class="n">IdType</span><span class="o">.</span><span class="n">object_property</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_object_property</span><span class="p">(</span><span class="n">iri</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">id_type</span> <span class="o">==</span> <span class="n">IdType</span><span class="o">.</span><span class="n">data_property</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_data_property</span><span class="p">(</span><span class="n">iri</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="Vocabulary.is_iri_registered"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.is_iri_registered">[docs]</a>    <span class="k">def</span> <span class="nf">is_iri_registered</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iri</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test if iri/id is registered (Entities or (Combined)relations)</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            iri (str): iri to test</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">iri</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">id_types</span></div>
+
+<div class="viewcode-block" id="Vocabulary.set_label_for_entity"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.set_label_for_entity">[docs]</a>    <span class="k">def</span> <span class="nf">set_label_for_entity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iri</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set a userset label for the given entity</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            iri (str): entity iri</span>
+<span class="sd">            label (str): new label</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">entity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_entity_by_iri</span><span class="p">(</span><span class="n">iri</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">entity</span><span class="o">.</span><span class="n">get_original_label</span><span class="p">()</span> <span class="o">==</span> <span class="n">label</span><span class="p">:</span>
+            <span class="n">entity</span><span class="o">.</span><span class="n">user_set_label</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">elif</span> <span class="n">label</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">entity</span><span class="o">.</span><span class="n">user_set_label</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">entity</span><span class="o">.</span><span class="n">user_set_label</span> <span class="o">=</span> <span class="n">label</span></div>
+
+<div class="viewcode-block" id="Vocabulary.get_all_entities"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_all_entities">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_entities</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Entity</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get all registered Entities</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List[Entity]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">lists</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span>
+                 <span class="bp">self</span><span class="o">.</span><span class="n">object_properties</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span>
+                 <span class="bp">self</span><span class="o">.</span><span class="n">data_properties</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span>
+                 <span class="bp">self</span><span class="o">.</span><span class="n">datatypes</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span>
+                 <span class="bp">self</span><span class="o">.</span><span class="n">individuals</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+                 <span class="p">]</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">lists</span><span class="p">:</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span></div>
+
+<div class="viewcode-block" id="Vocabulary.get_enum_dataytypes"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_enum_dataytypes">[docs]</a>    <span class="k">def</span> <span class="nf">get_enum_dataytypes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Datatype</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get all datatypes of vocabularies that are of type ENUM</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dict[str, Datatype], {datatype.iri: Datatype}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">datatype</span><span class="o">.</span><span class="n">iri</span><span class="p">:</span> <span class="n">datatype</span> <span class="k">for</span> <span class="n">datatype</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">datatypes</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">datatype</span><span class="o">.</span><span class="n">enum_values</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">datatype</span><span class="o">.</span><span class="n">predefined</span><span class="p">}</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021-2024, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
