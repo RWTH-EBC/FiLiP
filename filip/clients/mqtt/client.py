@@ -127,6 +127,7 @@ class IoTAMQTTClient(mqtt.Client):
                  userdata=None,
                  protocol=mqtt.MQTTv311,
                  transport="tcp",
+                 callback_api_version=mqtt.CallbackAPIVersion.VERSION2,
                  devices: List[Device] = None,
                  service_groups: List[ServiceGroup] = None,
                  custom_encoder: Dict[str, BaseEncoder] = None):
@@ -189,12 +190,12 @@ class IoTAMQTTClient(mqtt.Client):
                          clean_session=clean_session,
                          userdata=userdata,
                          protocol=protocol,
+                         callback_api_version=callback_api_version,
                          transport=transport)
 
         # setup logging functionality
         self.logger = logging.getLogger(
-            name=f"{self.__class__.__module__}."
-                 f"{self.__class__.__name__}")
+            name=f"{self.__class__.__name__}")
         self.logger.addHandler(logging.NullHandler())
         self.enable_logger(self.logger)
 

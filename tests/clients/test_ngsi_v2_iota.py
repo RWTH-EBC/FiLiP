@@ -18,8 +18,12 @@ from filip.models.ngsi_v2.iot import \
     DeviceAttribute, \
     DeviceCommand, \
     LazyDeviceAttribute, \
-    StaticDeviceAttribute
-from filip.utils.cleanup import clear_all, clean_test
+    StaticDeviceAttribute, ExpressionLanguage
+from filip.utils.cleanup import \
+    clear_all, \
+    clean_test, \
+    clear_context_broker, \
+    clear_iot_agent
 from tests.config import settings
 
 logger = logging.getLogger(__name__)
@@ -51,7 +55,7 @@ class TestAgent(unittest.TestCase):
             "apikey": "1234",
             "endpoint": None,
             "transport": 'HTTP',
-            "expressionLanguage": None
+            "expressionLanguage": ExpressionLanguage.JEXL
         }
         self.client = IoTAClient(
             url=settings.IOTA_JSON_URL,
@@ -430,11 +434,37 @@ class TestAgent(unittest.TestCase):
         self.client.update_group(service_group=group_base)
         self.assertEqual(group_base, self.client.get_group(resource="/iot/json", apikey="base"))
 
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                iota_url=settings.IOTA_JSON_URL,
+                cb_url=settings.CB_URL)
+    def test_clear_iot_agent(self):
+        """
+        Test for clearing iot agent AFTER clearing context broker
+        while having a device with a command
+
+        Returns:
+            None
+        """
+        cb_client = ContextBrokerClient(url=settings.CB_URL,
+                                        fiware_header=self.fiware_header)
+        device = Device(**self.device)
+        device.add_command(DeviceCommand(name="dummy_cmd"))
+        self.client.post_device(device=device)
+        clear_context_broker(settings.CB_URL,
+                             self.fiware_header)
+        self.assertEqual(len(cb_client.get_registration_list()), 1)
+
+        clear_iot_agent(settings.IOTA_JSON_URL, self.fiware_header)
+        self.assertCountEqual(cb_client.get_registration_list(), [])
+
     def tearDown(self) -> None:
         """
         Cleanup test server
+
         """
         self.client.close()
         clear_all(fiware_header=self.fiware_header,
                   cb_url=settings.CB_URL,
                   iota_url=settings.IOTA_JSON_URL)
+

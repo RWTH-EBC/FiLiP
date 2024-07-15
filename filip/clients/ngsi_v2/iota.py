@@ -286,6 +286,7 @@ class IoTAClient(BaseHttpClient):
             devices = [devices]
         url = urljoin(self.base_url, 'iot/devices')
         headers = self.headers
+        
         data = {"devices": [json.loads(device.model_dump_json(exclude_none=True)
                                        ) for device in devices]}
         try:

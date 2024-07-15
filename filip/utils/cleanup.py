@@ -1,6 +1,7 @@
 """
 Functions to clean up a tenant within a fiware based platform.
 """
+import warnings
 from functools import wraps
 
 from pydantic import AnyHttpUrl, AnyUrl
@@ -13,10 +14,15 @@ from filip.clients.ngsi_v2 import \
     QuantumLeapClient
 
 
-def clear_context_broker(url: str, fiware_header: FiwareHeader):
+def clear_context_broker(url: str,
+                         fiware_header: FiwareHeader,
+                         clear_registrations: bool = False,
+                         cb_client: ContextBrokerClient = None
+                         ):
     """
     Function deletes all entities, registrations and subscriptions for a
-    given fiware header
+    given fiware header. To use TLS connection you need to provide the cb_client parameter
+    as an argument with the Session object including the certificate and private key.
 
     Note:
         Always clear the devices first because the IoT-Agent will otherwise
@@ -25,12 +31,22 @@ def clear_context_broker(url: str, fiware_header: FiwareHeader):
     Args:
         url: Url of the context broker service
         fiware_header: header of the tenant
-
+        cb_client: enables TLS communication if created with Session object, only needed
+                    for self-signed certificates
+        clear_registrations: Determines whether registrations should be deleted.
+                             If registrations are deleted while devices with commands
+                             still exist, these devices become unreachable.
+                             Only set to true once such devices are cleared.
     Returns:
         None
     """
+    assert url or cb_client, "Either url or client object must be given"
     # create client
-    client = ContextBrokerClient(url=url, fiware_header=fiware_header)
+    if cb_client is None:
+        client = ContextBrokerClient(url=url, fiware_header=fiware_header)
+    else:
+        client = cb_client
+
     # clean entities
     client.delete_entities(entities=client.get_entity_list())
 
@@ -40,25 +56,34 @@ def clear_context_broker(url: str, fiware_header: FiwareHeader):
     assert len(client.get_subscription_list()) == 0
 
     # clear registrations
-    for reg in client.get_registration_list():
-        client.delete_registration(registration_id=reg.id)
-    assert len(client.get_registration_list()) == 0
+    if clear_registrations:
+        for reg in client.get_registration_list():
+            client.delete_registration(registration_id=reg.id)
+        assert len(client.get_registration_list()) == 0
 
 
-def clear_iot_agent(url: Union[str, AnyHttpUrl], fiware_header: FiwareHeader):
+def clear_iot_agent(url: Union[str, AnyHttpUrl] = None,
+                    fiware_header: FiwareHeader = None,
+                    iota_client: IoTAClient = None):
     """
     Function deletes all device groups and devices for a
-    given fiware header
+    given fiware header. To use TLS connection you need to provide the iota_client parameter
+    as an argument with the Session object including the certificate and private key.
 
     Args:
-        url: Url of the context broker service
+        url: Url of the iot agent service
         fiware_header: header of the tenant
+        iota_client: enables TLS communication if created with Session object, only needed for self-signed certificates
 
     Returns:
         None
     """
+    assert url or iota_client, "Either url or client object must be given"
     # create client
-    client = IoTAClient(url=url, fiware_header=fiware_header)
+    if iota_client is None:
+        client = IoTAClient(url=url, fiware_header=fiware_header)
+    else:
+        client = iota_client
 
     # clear registrations
     for device in client.get_device_list():
@@ -72,12 +97,16 @@ def clear_iot_agent(url: Union[str, AnyHttpUrl], fiware_header: FiwareHeader):
     assert len(client.get_group_list()) == 0
 
 
-def clear_quantumleap(url: str, fiware_header: FiwareHeader):
+def clear_quantumleap(url: str = None,
+                      fiware_header: FiwareHeader = None,
+                      ql_client: QuantumLeapClient = None):
     """
-    Function deletes all data for a given fiware header
+    Function deletes all data for a given fiware header. To use TLS connection you need to provide the ql_client parameter
+    as an argument with the Session object including the certificate and private key.
     Args:
         url: Url of the quantumleap service
         fiware_header: header of the tenant
+        ql_client: enables TLS communication if created with Session object, only needed for self-signed certificates
 
     Returns:
         None
@@ -96,8 +125,12 @@ def clear_quantumleap(url: str, fiware_header: FiwareHeader):
             pass
         else:
             raise
+    assert url or ql_client, "Either url or client object must be given"
     # create client
-    client = QuantumLeapClient(url=url, fiware_header=fiware_header)
+    if ql_client is None:
+        client = QuantumLeapClient(url=url, fiware_header=fiware_header)
+    else:
+        client = ql_client
 
     # clear data
     entities = []
@@ -113,10 +146,13 @@ def clear_quantumleap(url: str, fiware_header: FiwareHeader):
 
 
 def clear_all(*,
-              fiware_header: FiwareHeader,
+              fiware_header: FiwareHeader = None,
               cb_url: str = None,
               iota_url: Union[str, List[str]] = None,
-              ql_url: str = None):
+              ql_url: str = None,
+              cb_client: ContextBrokerClient = None,
+              iota_client: IoTAClient = None,
+              ql_client: QuantumLeapClient = None):
     """
     Clears all services that a url is provided for
 
@@ -125,19 +161,27 @@ def clear_all(*,
         cb_url: url of the context broker service
         iota_url: url of the IoT-Agent service
         ql_url: url of the QuantumLeap service
+        cb_client: enables TLS communication if created with Session object, only needed
+         for self-signed certificates
+        iota_client: enables TLS communication if created with Session object, only needed
+         for self-signed certificates
+        ql_client: enables TLS communication if created with Session object, only needed
+         for self-signed certificates
 
     Returns:
         None
     """
-    if iota_url is not None:
+    if iota_url is not None or iota_client is not None:
         if isinstance(iota_url, (str, AnyUrl)):
             iota_url = [iota_url]
         for url in iota_url:
-            clear_iot_agent(url=url, fiware_header=fiware_header)
-    if cb_url is not None:
-        clear_context_broker(url=cb_url, fiware_header=fiware_header)
-    if ql_url is not None:
-        clear_quantumleap(url=ql_url, fiware_header=fiware_header)
+            clear_iot_agent(url=url, fiware_header=fiware_header, iota_client=iota_client)
+
+    if cb_url is not None or cb_client is not None:
+        clear_context_broker(url=cb_url, fiware_header=fiware_header, cb_client=cb_client)
+
+    if ql_url is not None or ql_client is not None:
+        clear_quantumleap(url=ql_url, fiware_header=fiware_header, ql_client=ql_client)
 
 
 def clean_test(*,
@@ -145,7 +189,10 @@ def clean_test(*,
                fiware_servicepath: str,
                cb_url: str = None,
                iota_url: Union[str, List[str]] = None,
-               ql_url: str = None) -> Callable:
+               ql_url: str = None,
+               cb_client: ContextBrokerClient = None,
+               iota_client: IoTAClient = None,
+               ql_client: QuantumLeapClient = None) -> Callable:
     """
     Decorator to clean up the server before and after the test
 
@@ -161,6 +208,9 @@ def clean_test(*,
         cb_url: url of context broker service
         iota_url: url of IoT-Agent service
         ql_url: url of quantumleap service
+        cb_client: enables TLS communication if created with Session object, only needed for self-signed certificates
+        iota_client: enables TLS communication if created with Session object, only needed for self-signed certificates
+        ql_client: enables TLS communication if created with Session object, only needed for self-signed certificates
 
     Returns:
         Decorator for clean tests
@@ -170,7 +220,10 @@ def clean_test(*,
     clear_all(fiware_header=fiware_header,
               cb_url=cb_url,
               iota_url=iota_url,
-              ql_url=ql_url)
+              ql_url=ql_url,
+              cb_client=cb_client,
+              iota_client=iota_client,
+              ql_client=ql_client)
     # Inner decorator function
     def decorator(func):
         #  Wrapper function for the decorated function
@@ -182,6 +235,9 @@ def clean_test(*,
     clear_all(fiware_header=fiware_header,
               cb_url=cb_url,
               iota_url=iota_url,
-              ql_url=ql_url)
+              ql_url=ql_url,
+              cb_client=cb_client,
+              iota_client=iota_client,
+              ql_client=ql_client)
 
     return decorator

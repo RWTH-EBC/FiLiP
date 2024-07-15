@@ -3,12 +3,15 @@ Helper functions to prohibit boiler plate code
 """
 import logging
 import re
+import warnings
 from aenum import Enum
 from typing import Dict, Any, List
 from pydantic import AnyHttpUrl, validate_call
 from pydantic_core import PydanticCustomError
 from filip.custom_types import AnyMqttUrl
-
+from pyjexl.jexl import JEXL
+from pyjexl.parser import Transform
+from pyjexl.exceptions import ParseError
 
 logger = logging.getLogger(name=__name__)
 
@@ -166,3 +169,67 @@ def validate_fiware_service_path(service_path):
 def validate_fiware_service(service):
     return match_regex(service,
                        r"\w*$")
+
+
+jexl_transformation_functions = {
+    "jsonparse": "(str) => JSON.parse(str)",
+    "jsonstringify": "(obj) => JSON.stringify(obj)",
+    "indexOf": "(val, char) => String(val).indexOf(char)",
+    "length": "(val) => String(val).length",
+    "trim": "(val) => String(val).trim()",
+    "substr": "(val, int1, int2) => String(val).substr(int1, int2)",
+    "addreduce": "(arr) => arr.reduce((i, v) => i + v)",
+    "lengtharray": "(arr) => len(arr)",
+    "typeof": "(val) => typeof val",
+    "isarray": "(arr) => Array.isArray(arr)",
+    "isnan": "(val) => isNaN(val)",
+    "parseint": "(val) => parseInt(val)",
+    "parsefloat": "(val) => parseFloat(val)",
+    "toisodate": "(val) => new Date(val).toISOString()",
+    "timeoffset": "(isostr) => new Date(isostr).getTimezoneOffset()",
+    "tostring": "(val) => str(val)",
+    "urlencode": "(val) => encodeURI(val)",
+    "urldecode": "(val) => decodeURI(val)",
+    "replacestr": "(str, from, to) => str.replace(from, to)",
+    "replaceregexp": "(str, reg, to) => str.replace(reg, to)",
+    "replaceallstr": "(str, from, to) => str.replace(from, to)",
+    "replaceallregexp": "(str, reg, to) => str.replace(reg, to)",
+    "split": "(str, ch) => str.split(ch)",
+    "mapper": "(val, values, choices) => choices[values.index(val)]",
+    "thmapper": "(val, values, choices) => choices[next((i for i, v in enumerate(values) if val <= v), None)]",
+    "bitwisemask": "(i, mask, op, shf) => ((int(i) & mask) if op == '&' else ((int(i) | mask) if op == '|' else ((int(i) ^ mask) if op == '^' else int(i))) >> shf)",
+    "slice": "(arr, init, end) => arr[init:end]",
+    "addset": "(arr, x) => list(set(arr).add(x))",
+    "removeset": "(arr, x) => list(set(arr).remove(x))",
+    "touppercase": "(val) => str(val).upper()",
+    "tolowercase": "(val) => str(val).lower()"
+}
+
+
+def validate_jexl_expression(expression, attribute_name, device_id):
+    try:
+        jexl_expression = JEXL().parse(expression)
+        if isinstance(jexl_expression, Transform):
+            if jexl_expression.name not in jexl_transformation_functions.keys():
+                warnings.warn(f"{jexl_expression.name} might not supported")
+    except ParseError:
+        msg = f"Invalid JEXL expression '{expression}' inside the attribute '{attribute_name}' of Device '{device_id}'."
+        if '|' in expression:
+            msg += " If the expression contains the transform operator '|' you need to remove the spaces around it."
+        raise ParseError(msg)
+    return expression
+
+
+def validate_device_expression_language(cls, expressionLanguage):
+    if expressionLanguage == "legacy":
+        warnings.warn(f"Using 'LEGACY' expression language inside {cls.__name__} is deprecated. Use 'JEXL' instead.")
+
+    return expressionLanguage
+
+
+def validate_service_group_expression_language(cls, expressionLanguage):
+    if expressionLanguage == "legacy":
+        warnings.warn(f"Using 'LEGACY' expression language inside {cls.__name__} is deprecated and does not work "
+                      f"anymore, because each device uses 'JEXL' as default.")
+
+    return expressionLanguage
