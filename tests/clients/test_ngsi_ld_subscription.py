@@ -208,12 +208,12 @@ class TestSubscriptions(unittest.TestCase):
 
     def test_post_subscription_mqtt(self):
          #if a notification is not received before timer runs out, test is assumed failed
+         #Apparently python threads get copies of primitive type objects, hence a small
+         #hack with a list holding the variable
+        test_res = [True]
         def timeout_func(x):
-            x.fail("Test timeout: Broker did not receive Notification")
-
-        #adjust timeout as needed
-        timeout_proc = threading.Timer(10,timeout_func,args=[self])
-
+            x[0] = False
+        
         def on_message(client,userdata,msg):
             timeout_proc.cancel()
             updated_entity = self.entity_dict.copy()
@@ -223,19 +223,21 @@ class TestSubscriptions(unittest.TestCase):
             self.assertEqual(updated_entity,
                              json.loads(msg.payload.decode())['body']['data'][0])
 
+        timeout_proc = threading.Timer(5,timeout_func,args=[test_res])
+        
         self.mqtt_client.on_message = on_message
         self.mqtt_client.connect("localhost",1883,60)
         self.mqtt_client.loop_start()
         self.cb_client.post_subscription(subscription=Subscription(**self.sub_dict))
         timeout_proc.start()
         self.cb_client.update_entity_attribute(entity_id='urn:ngsi-ld:Entity:test_entity03',
-                                               attr=NamedContextProperty(type="Property",
-                                                             value=25,
-                                                             name='temperature'),
-                                               attr_name='temperature')
-
-        pass
-
+                                            attr=NamedContextProperty(type="Property",
+                                                                        value=25,
+                                                                        name='temperature'),
+                                            attr_name='temperature')
+        while(timeout_proc.is_alive()):
+            continue
+        self.assertTrue(test_res[0])
 
     def test_get_subscription_list(self):
         """
