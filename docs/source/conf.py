@@ -26,8 +26,7 @@ author = 'E.ON ERC - EBC'
 
 # The full version, including alpha/beta/rc tags
 # Get the version from FiliP/filip/__init__.py:
-with open(Path(__file__).parents[2].joinpath(project,
-                                             "filip", "__init__.py"), "r") as file:
+with open(Path(__file__).parents[2].joinpath("filip", "__init__.py"), "r") as file:
     for line in file.readlines():
         if line.startswith("__version__"):
             release = line.replace("__version__", "").split("=")[1].strip().replace(
