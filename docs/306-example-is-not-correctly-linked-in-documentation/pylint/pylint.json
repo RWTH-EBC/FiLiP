@@ -1,0 +1,1232 @@
+{
+    "messages": [
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'print-statement' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'parameter-unpacking' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'unpacking-in-except' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'old-raise-syntax' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'backtick' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'import-star-module-level' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'apply-builtin' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'basestring-builtin' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'buffer-builtin' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'cmp-builtin' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'coerce-builtin' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'execfile-builtin' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'file-builtin' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'long-builtin' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'raw_input-builtin' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'reduce-builtin' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'standarderror-builtin' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'unicode-builtin' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'xrange-builtin' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'coerce-method' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'delslice-method' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'getslice-method' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'setslice-method' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'no-absolute-import' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'old-division' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'dict-iter-method' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'dict-view-method' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'next-method-called' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'metaclass-assignment' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'indexing-exception' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'raising-string' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'reload-builtin' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'oct-method' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'hex-method' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'nonzero-method' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'cmp-method' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'input-builtin' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'round-builtin' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'intern-builtin' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'unichr-builtin' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'map-builtin-not-iterating' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'zip-builtin-not-iterating' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'range-builtin-not-iterating' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'filter-builtin-not-iterating' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'using-cmp-argument' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'div-method' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'idiv-method' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'rdiv-method' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'exception-message-attribute' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'invalid-str-codec' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'sys-max-int' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'bad-python3-import' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'deprecated-string-function' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'deprecated-str-translate-call' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'deprecated-itertools-function' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'deprecated-types-field' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'next-method-defined' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'dict-items-not-iterating' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'dict-keys-not-iterating' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'dict-values-not-iterating' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'deprecated-operator-function' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'deprecated-urllib-function' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'xreadlines-attribute' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'deprecated-sys-function' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'exception-escape' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'comprehension-escape' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "refactor",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "useless-option-value",
+            "message": "Useless option value for '--disable', 'no-self-use' was moved to an optional extension, see https://pylint.readthedocs.io/en/latest/whatsnew/2/2.14/summary.html#removed-checkers.",
+            "message-id": "R0022"
+        },
+        {
+            "type": "warning",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "unknown-option-value",
+            "message": "Unknown option value for '--disable', expected a valid pylint message and got 'long-suffix'",
+            "message-id": "W0012"
+        },
+        {
+            "type": "warning",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "unknown-option-value",
+            "message": "Unknown option value for '--disable', expected a valid pylint message and got 'old-ne-operator'",
+            "message-id": "W0012"
+        },
+        {
+            "type": "warning",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "unknown-option-value",
+            "message": "Unknown option value for '--disable', expected a valid pylint message and got 'old-octal-literal'",
+            "message-id": "W0012"
+        },
+        {
+            "type": "warning",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "unknown-option-value",
+            "message": "Unknown option value for '--disable', expected a valid pylint message and got 'non-ascii-bytes-literal'",
+            "message-id": "W0012"
+        },
+        {
+            "type": "warning",
+            "module": "/builds/EBC/EBC_all/github_ci/FiLiP/pylintrc",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "pylintrc",
+            "symbol": "unknown-option-value",
+            "message": "Unknown option value for '--disable', expected a valid pylint message and got 'eq-without-hash'",
+            "message-id": "W0012"
+        },
+        {
+            "type": "convention",
+            "module": "filip.config",
+            "obj": "",
+            "line": 9,
+            "column": 0,
+            "path": "filip/config.py",
+            "symbol": "wrong-import-order",
+            "message": "standard import \"from pathlib import Path\" should be placed before \"from pydantic import Field, AnyHttpUrl, AliasChoices, AnyUrl\"",
+            "message-id": "C0411"
+        },
+        {
+            "type": "convention",
+            "module": "filip.config",
+            "obj": "",
+            "line": 10,
+            "column": 0,
+            "path": "filip/config.py",
+            "symbol": "wrong-import-order",
+            "message": "standard import \"import os\" should be placed before \"from pydantic import Field, AnyHttpUrl, AliasChoices, AnyUrl\"",
+            "message-id": "C0411"
+        },
+        {
+            "type": "convention",
+            "module": "tests.config",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "tests/config.py",
+            "symbol": "missing-module-docstring",
+            "message": "Missing module docstring",
+            "message-id": "C0114"
+        },
+        {
+            "type": "convention",
+            "module": "tests.config",
+            "obj": "",
+            "line": 6,
+            "column": 0,
+            "path": "tests/config.py",
+            "symbol": "wrong-import-order",
+            "message": "third party import \"from pydantic_settings import BaseSettings, SettingsConfigDict\" should be placed before \"from filip.models.base import FiwareHeader, LogLevel\"",
+            "message-id": "C0411"
+        },
+        {
+            "type": "convention",
+            "module": "tests.config",
+            "obj": "",
+            "line": 7,
+            "column": 0,
+            "path": "tests/config.py",
+            "symbol": "wrong-import-order",
+            "message": "standard import \"from typing import Union, Optional\" should be placed before \"from dotenv import find_dotenv\"",
+            "message-id": "C0411"
+        },
+        {
+            "type": "warning",
+            "module": "tests.config",
+            "obj": "",
+            "line": 7,
+            "column": 0,
+            "path": "tests/config.py",
+            "symbol": "unused-import",
+            "message": "Unused Union imported from typing",
+            "message-id": "W0611"
+        },
+        {
+            "type": "convention",
+            "module": "tests.test_config",
+            "obj": "",
+            "line": 36,
+            "column": 0,
+            "path": "tests/test_config.py",
+            "symbol": "line-too-long",
+            "message": "Line too long (101/100)",
+            "message-id": "C0301"
+        },
+        {
+            "type": "convention",
+            "module": "tests.test_config",
+            "obj": "",
+            "line": 7,
+            "column": 0,
+            "path": "tests/test_config.py",
+            "symbol": "wrong-import-order",
+            "message": "standard import \"import json\" should be placed before \"from filip.config import Settings\"",
+            "message-id": "C0411"
+        },
+        {
+            "type": "convention",
+            "module": "tests.test_config",
+            "obj": "",
+            "line": 8,
+            "column": 0,
+            "path": "tests/test_config.py",
+            "symbol": "wrong-import-order",
+            "message": "third party import \"from pydantic import AnyHttpUrl\" should be placed before \"from filip.config import Settings\"",
+            "message-id": "C0411"
+        },
+        {
+            "type": "refactor",
+            "module": "tutorials.__init__",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "tutorials/__init__.py",
+            "symbol": "duplicate-code",
+            "message": "Similar lines in 2 files\n==filip.config:[35:42]\n==tests.config:[45:51]\n    MQTT_BROKER_URL: AnyUrl = Field(default=\"mqtt://127.0.0.1:1883\",\n                                    validation_alias=AliasChoices(\n                                        'MQTT_BROKER_URL',\n                                        'MQTT_URL',\n                                        'MQTT_BROKER'))\n",
+            "message-id": "R0801"
+        }
+    ],
+    "stats": {
+        "bad_names": {
+            "argument": 0,
+            "attr": 0,
+            "klass": 0,
+            "class_attribute": 0,
+            "class_const": 0,
+            "const": 0,
+            "inlinevar": 0,
+            "function": 0,
+            "method": 0,
+            "module": 0,
+            "variable": 0,
+            "typevar": 0,
+            "typealias": 0
+        },
+        "by_module": {
+            "filip.__init__": {
+                "convention": 0,
+                "error": 0,
+                "fatal": 0,
+                "info": 0,
+                "refactor": 0,
+                "statement": 3,
+                "warning": 0
+            },
+            "filip.config": {
+                "convention": 2,
+                "error": 0,
+                "fatal": 0,
+                "info": 0,
+                "refactor": 0,
+                "statement": 13,
+                "warning": 0
+            },
+            "filip.custom_types": {
+                "convention": 0,
+                "error": 0,
+                "fatal": 0,
+                "info": 0,
+                "refactor": 0,
+                "statement": 4,
+                "warning": 0
+            },
+            "tests.__init__": {
+                "convention": 0,
+                "error": 0,
+                "fatal": 0,
+                "info": 0,
+                "refactor": 0,
+                "statement": 0,
+                "warning": 0
+            },
+            "tests.config": {
+                "convention": 3,
+                "error": 0,
+                "fatal": 0,
+                "info": 0,
+                "refactor": 0,
+                "statement": 30,
+                "warning": 1
+            },
+            "tests.test_config": {
+                "convention": 3,
+                "error": 0,
+                "fatal": 0,
+                "info": 0,
+                "refactor": 0,
+                "statement": 22,
+                "warning": 0
+            },
+            "tests.test_logging": {
+                "convention": 0,
+                "error": 0,
+                "fatal": 0,
+                "info": 0,
+                "refactor": 0,
+                "statement": 31,
+                "warning": 0
+            },
+            "tutorials.__init__": {
+                "convention": 0,
+                "error": 0,
+                "fatal": 0,
+                "info": 0,
+                "refactor": 1,
+                "statement": 0,
+                "warning": 0
+            }
+        },
+        "by_msg": {
+            "wrong-import-order": 6,
+            "missing-module-docstring": 1,
+            "unused-import": 1,
+            "line-too-long": 1,
+            "duplicate-code": 1
+        },
+        "code_type_count": {
+            "code": 0,
+            "comment": 0,
+            "docstring": 0,
+            "empty": 0,
+            "total": 0
+        },
+        "dependencies": {
+            "filip.config": [
+                "tests.test_config",
+                "filip"
+            ],
+            "filip.clients.ngsi_v2": [
+                "filip"
+            ],
+            "pydantic": [
+                "tests.test_config",
+                "filip.custom_types",
+                "tests.config",
+                "filip.config"
+            ],
+            "pydantic_settings": [
+                "tests.config",
+                "filip.config"
+            ],
+            "dotenv": [
+                "tests.config",
+                "filip.config"
+            ],
+            "typing_extensions": [
+                "filip.custom_types"
+            ],
+            "pydantic_core": [
+                "filip.custom_types"
+            ],
+            "filip.models.base": [
+                "tests.config"
+            ]
+        },
+        "duplicated_lines": {
+            "nb_duplicated_lines": 0,
+            "percent_duplicated_lines": 0.0
+        },
+        "node_count": {
+            "function": 1,
+            "klass": 4,
+            "method": 8,
+            "module": 8
+        },
+        "undocumented": {
+            "function": 0,
+            "klass": 0,
+            "method": 0,
+            "module": 1
+        },
+        "convention": 8,
+        "error": 0,
+        "fatal": 0,
+        "info": 0,
+        "refactor": 1,
+        "statement": 103,
+        "warning": 1,
+        "global_note": 0,
+        "nb_duplicated_lines": 5,
+        "percent_duplicated_lines": 1.7241379310344827
+    },
+    "previous": {
+        "bad_names": {
+            "argument": 0,
+            "attr": 0,
+            "klass": 0,
+            "class_attribute": 0,
+            "class_const": 0,
+            "const": 0,
+            "inlinevar": 0,
+            "function": 0,
+            "method": 0,
+            "module": 0,
+            "variable": 0,
+            "typevar": 0,
+            "typealias": 0
+        },
+        "by_module": {
+            "filip.__init__": {
+                "convention": 0,
+                "error": 0,
+                "fatal": 0,
+                "info": 0,
+                "refactor": 0,
+                "statement": 3,
+                "warning": 0
+            },
+            "filip.config": {
+                "convention": 2,
+                "error": 0,
+                "fatal": 0,
+                "info": 0,
+                "refactor": 0,
+                "statement": 13,
+                "warning": 0
+            },
+            "filip.custom_types": {
+                "convention": 0,
+                "error": 0,
+                "fatal": 0,
+                "info": 0,
+                "refactor": 0,
+                "statement": 4,
+                "warning": 0
+            },
+            "tests.__init__": {
+                "convention": 0,
+                "error": 0,
+                "fatal": 0,
+                "info": 0,
+                "refactor": 0,
+                "statement": 0,
+                "warning": 0
+            },
+            "tests.config": {
+                "convention": 3,
+                "error": 0,
+                "fatal": 0,
+                "info": 0,
+                "refactor": 0,
+                "statement": 30,
+                "warning": 1
+            },
+            "tests.test_config": {
+                "convention": 3,
+                "error": 0,
+                "fatal": 0,
+                "info": 0,
+                "refactor": 0,
+                "statement": 22,
+                "warning": 0
+            },
+            "tests.test_logging": {
+                "convention": 0,
+                "error": 0,
+                "fatal": 0,
+                "info": 0,
+                "refactor": 0,
+                "statement": 31,
+                "warning": 0
+            },
+            "tutorials.__init__": {
+                "convention": 0,
+                "error": 0,
+                "fatal": 0,
+                "info": 0,
+                "refactor": 1,
+                "statement": 0,
+                "warning": 0
+            }
+        },
+        "by_msg": {
+            "wrong-import-order": 6,
+            "missing-module-docstring": 1,
+            "unused-import": 1,
+            "line-too-long": 1,
+            "duplicate-code": 1
+        },
+        "code_type_count": {
+            "code": 0,
+            "comment": 0,
+            "docstring": 0,
+            "empty": 0,
+            "total": 0
+        },
+        "dependencies": {
+            "filip.config": [
+                "tests.test_config",
+                "filip"
+            ],
+            "filip.clients.ngsi_v2": [
+                "filip"
+            ],
+            "pydantic": [
+                "tests.test_config",
+                "filip.custom_types",
+                "tests.config",
+                "filip.config"
+            ],
+            "pydantic_settings": [
+                "tests.config",
+                "filip.config"
+            ],
+            "dotenv": [
+                "tests.config",
+                "filip.config"
+            ],
+            "typing_extensions": [
+                "filip.custom_types"
+            ],
+            "pydantic_core": [
+                "filip.custom_types"
+            ],
+            "filip.models.base": [
+                "tests.config"
+            ]
+        },
+        "duplicated_lines": {
+            "nb_duplicated_lines": 0,
+            "percent_duplicated_lines": 0.0
+        },
+        "node_count": {
+            "function": 1,
+            "klass": 4,
+            "method": 8,
+            "module": 8
+        },
+        "undocumented": {
+            "function": 0,
+            "klass": 0,
+            "method": 0,
+            "module": 1
+        },
+        "convention": 8,
+        "error": 0,
+        "fatal": 0,
+        "info": 0,
+        "refactor": 1,
+        "statement": 103,
+        "warning": 1,
+        "global_note": 9.029126213592233,
+        "nb_duplicated_lines": 5,
+        "percent_duplicated_lines": 1.7241379310344827
+    }
+}
