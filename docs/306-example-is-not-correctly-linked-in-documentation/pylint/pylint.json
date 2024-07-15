@@ -899,7 +899,7 @@
             "column": 0,
             "path": "tutorials/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.config:[35:42]\n==tests.config:[45:51]\n    MQTT_BROKER_URL: AnyUrl = Field(default=\"mqtt://127.0.0.1:1883\",\n                                    validation_alias=AliasChoices(\n                                        'MQTT_BROKER_URL',\n                                        'MQTT_URL',\n                                        'MQTT_BROKER'))\n\n# create settings object",
+            "message": "Similar lines in 2 files\n==filip.config:[35:42]\n==tests.config:[45:51]\n    MQTT_BROKER_URL: AnyUrl = Field(default=\"mqtt://127.0.0.1:1883\",\n                                    validation_alias=AliasChoices(\n                                        'MQTT_BROKER_URL',\n                                        'MQTT_URL',\n                                        'MQTT_BROKER'))\n",
             "message-id": "R0801"
         }
     ],
@@ -1009,25 +1009,25 @@
         },
         "dependencies": {
             "filip.config": [
-                "filip",
-                "tests.test_config"
+                "tests.test_config",
+                "filip"
             ],
             "filip.clients.ngsi_v2": [
                 "filip"
             ],
             "pydantic": [
                 "tests.test_config",
-                "filip.config",
                 "tests.config",
-                "filip.custom_types"
+                "filip.custom_types",
+                "filip.config"
             ],
             "pydantic_settings": [
-                "filip.config",
-                "tests.config"
+                "tests.config",
+                "filip.config"
             ],
             "dotenv": [
-                "filip.config",
-                "tests.config"
+                "tests.config",
+                "filip.config"
             ],
             "typing_extensions": [
                 "filip.custom_types"
@@ -1172,25 +1172,25 @@
         },
         "dependencies": {
             "filip.config": [
-                "filip",
-                "tests.test_config"
+                "tests.test_config",
+                "filip"
             ],
             "filip.clients.ngsi_v2": [
                 "filip"
             ],
             "pydantic": [
                 "tests.test_config",
-                "filip.config",
                 "tests.config",
-                "filip.custom_types"
+                "filip.custom_types",
+                "filip.config"
             ],
             "pydantic_settings": [
-                "filip.config",
-                "tests.config"
+                "tests.config",
+                "filip.config"
             ],
             "dotenv": [
-                "filip.config",
-                "tests.config"
+                "tests.config",
+                "filip.config"
             ],
             "typing_extensions": [
                 "filip.custom_types"
