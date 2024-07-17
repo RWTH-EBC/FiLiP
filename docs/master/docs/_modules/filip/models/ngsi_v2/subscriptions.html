@@ -94,9 +94,66 @@
     <span class="n">Field</span><span class="p">,</span> \
     <span class="n">Json</span>
 <span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">AttrsFormat</span><span class="p">,</span> <span class="n">EntityPattern</span><span class="p">,</span> <span class="n">Http</span><span class="p">,</span> <span class="n">Status</span><span class="p">,</span> <span class="n">Expression</span>
-<span class="kn">from</span> <span class="nn">filip.utils.validators</span> <span class="kn">import</span> <span class="n">validate_mqtt_url</span><span class="p">,</span> <span class="n">validate_mqtt_topic</span>
+<span class="kn">from</span> <span class="nn">filip.utils.validators</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">validate_mqtt_url</span><span class="p">,</span>
+    <span class="n">validate_mqtt_topic</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">filip.models.ngsi_v2.context</span> <span class="kn">import</span> <span class="n">ContextEntity</span>
+<span class="kn">from</span> <span class="nn">filip.models.ngsi_v2.base</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">EntityPattern</span><span class="p">,</span>
+    <span class="n">Expression</span><span class="p">,</span>
+    <span class="n">BaseValueAttribute</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">filip.custom_types</span> <span class="kn">import</span> <span class="n">AnyMqttUrl</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="c1"># The pydantic models still have a .json() function, but this method is deprecated.</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">UserWarning</span><span class="p">,</span>
+                        <span class="n">message</span><span class="o">=</span><span class="s1">&#39;Field name &quot;json&quot; shadows an attribute in parent &quot;Http&quot;&#39;</span><span class="p">)</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">UserWarning</span><span class="p">,</span>
+                        <span class="n">message</span><span class="o">=</span><span class="s1">&#39;Field name &quot;json&quot; shadows an attribute in parent &quot;Mqtt&quot;&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="NgsiPayloadAttr"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.subscriptions.NgsiPayloadAttr">[docs]</a><span class="k">class</span> <span class="nc">NgsiPayloadAttr</span><span class="p">(</span><span class="n">BaseValueAttribute</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Model for NGSI V2 type payload in httpCustom/mqttCustom notifications.</span>
+<span class="sd">    The difference between this model and the usual BaseValueAttribute model is that</span>
+<span class="sd">    a metadata field is not allowed.</span>
+<span class="sd">    In the absence of type/value in some attribute field, one should resort to partial</span>
+<span class="sd">    representations ( as specified in the orion api manual), done by the BaseValueAttr.</span>
+<span class="sd">    model.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s2">&quot;forbid&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NgsiPayload"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.subscriptions.NgsiPayload">[docs]</a><span class="k">class</span> <span class="nc">NgsiPayload</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Model for NGSI V2 type payload in httpCustom/mqttCustom notifications.</span>
+<span class="sd">    Differences between this model and the usual Context entity models include:</span>
+<span class="sd">        - id and type are not mandatory</span>
+<span class="sd">        - an attribute metadata field is not allowed</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span>
+        <span class="n">extra</span><span class="o">=</span><span class="s2">&quot;allow&quot;</span><span class="p">,</span> <span class="n">validate_default</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
+        <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
+        <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+
+<div class="viewcode-block" id="NgsiPayload.validate_notification_attrs"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.subscriptions.NgsiPayload.validate_notification_attrs">[docs]</a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;after&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">validate_notification_attrs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">})</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">NgsiPayloadAttr</span><span class="o">.</span><span class="n">model_validate</span><span class="p">(</span><span class="n">v</span><span class="p">),</span> <span class="n">NgsiPayloadAttr</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div></div>
 
 
 <div class="viewcode-block" id="Message"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.subscriptions.Message">[docs]</a><span class="k">class</span> <span class="nc">Message</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
@@ -151,7 +208,36 @@
         <span class="n">description</span><span class="o">=</span><span class="s1">&#39;the payload to be used in notifications. If omitted, the &#39;</span>
                     <span class="s1">&#39;default payload (see &quot;Notification Messages&quot; sections) &#39;</span>
                     <span class="s1">&#39;is used.&#39;</span>
-    <span class="p">)</span></div>
+    <span class="p">)</span>
+    <span class="n">json</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Json</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;get a json as notification. If omitted, the default&#39;</span>
+                    <span class="s1">&#39;payload (see &quot;Notification Messages&quot; sections) is used.&#39;</span>
+    <span class="p">)</span>
+    <span class="n">ngsi</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">NgsiPayload</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;get an NGSI-v2 normalized entity as notification.If omitted, &#39;</span>
+                    <span class="s1">&#39;the default payload (see &quot;Notification Messages&quot; sections) is used.&#39;</span>
+    <span class="p">)</span>
+    <span class="n">timeout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Maximum time (in milliseconds) the subscription waits for the &quot;</span>
+                    <span class="s2">&quot;response. The maximum value allowed for this parameter is 1800000 &quot;</span>
+                    <span class="s2">&quot;(30 minutes). If timeout is defined to 0 or omitted, then the value &quot;</span>
+                    <span class="s2">&quot;passed as -httpTimeout CLI parameter is used. See section in the &quot;</span>
+                    <span class="s2">&quot;&#39;Command line options&#39; for more details.&quot;</span>
+    <span class="p">)</span>
+
+<div class="viewcode-block" id="HttpCustom.validate_notification_payloads"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.subscriptions.HttpCustom.validate_notification_payloads">[docs]</a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;after&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">validate_notification_payloads</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">payload</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">json</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ngsi</span><span class="p">]</span>
+        <span class="n">filled_fields</span> <span class="o">=</span> <span class="p">[</span><span class="n">field</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span> <span class="k">if</span> <span class="n">field</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">filled_fields</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Only one of payload, json or ngsi fields accepted at the &quot;</span>
+                             <span class="s2">&quot;same time in httpCustom.&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div></div>
 
 
 <div class="viewcode-block" id="Mqtt"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.subscriptions.Mqtt">[docs]</a><span class="k">class</span> <span class="nc">Mqtt</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
@@ -165,7 +251,7 @@
                     <span class="s1">&#39;only includes host and port)&#39;</span><span class="p">)</span>
     <span class="n">topic</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s1">&#39;to specify the MQTT topic to use&#39;</span><span class="p">,</span>
-        <span class="p">)</span>
+    <span class="p">)</span>
     <span class="n">valid_type</span> <span class="o">=</span> <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;topic&quot;</span><span class="p">)(</span><span class="n">validate_mqtt_topic</span><span class="p">)</span>
     <span class="n">qos</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
@@ -206,7 +292,23 @@
         <span class="n">description</span><span class="o">=</span><span class="s1">&#39;the payload to be used in notifications. If omitted, the &#39;</span>
                     <span class="s1">&#39;default payload (see &quot;Notification Messages&quot; sections) &#39;</span>
                     <span class="s1">&#39;is used.&#39;</span>
-    <span class="p">)</span></div>
+    <span class="p">)</span>
+    <span class="n">json</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;get a json as notification. If omitted, the default&#39;</span>
+                    <span class="s1">&#39;payload (see &quot;Notification Messages&quot; sections) is used.&#39;</span>
+    <span class="p">)</span>
+    <span class="n">ngsi</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">NgsiPayload</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;get an NGSI-v2 normalized entity as notification.If omitted, &#39;</span>
+                    <span class="s1">&#39;the default payload (see &quot;Notification Messages&quot; sections) is used.&#39;</span>
+    <span class="p">)</span>
+
+<div class="viewcode-block" id="MqttCustom.validate_payload_type"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.subscriptions.MqttCustom.validate_payload_type">[docs]</a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;after&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">validate_payload_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">([</span><span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="p">((</span><span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;payload&#39;</span><span class="p">,</span> <span class="s1">&#39;ngsi&#39;</span><span class="p">,</span> <span class="s1">&#39;json&#39;</span><span class="p">]))])</span> <span class="o">&lt;=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="bp">self</span></div></div>
 
 
 <div class="viewcode-block" id="Notification"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.subscriptions.Notification">[docs]</a><span class="k">class</span> <span class="nc">Notification</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
@@ -288,17 +390,17 @@
                     <span class="s1">&#39;[A=0, B=null, C=null]. This &#39;</span>
     <span class="p">)</span>
 
-<div class="viewcode-block" id="Notification.validate_http"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.subscriptions.Notification.validate_http">[docs]</a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s1">&#39;httpCustom&#39;</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">validate_http</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">http_custom</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">http_custom</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="n">values</span><span class="p">[</span><span class="s1">&#39;http&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span>
-        <span class="k">return</span> <span class="n">http_custom</span></div>
+<div class="viewcode-block" id="Notification.validate_http"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.subscriptions.Notification.validate_http">[docs]</a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;after&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">validate_http</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">httpCustom</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">http</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="Notification.validate_attr"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.subscriptions.Notification.validate_attr">[docs]</a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s1">&#39;exceptAttrs&#39;</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">validate_attr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">except_attrs</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">except_attrs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="n">values</span><span class="p">[</span><span class="s1">&#39;attrs&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span>
-        <span class="k">return</span> <span class="n">except_attrs</span></div>
+<div class="viewcode-block" id="Notification.validate_attr"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.subscriptions.Notification.validate_attr">[docs]</a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;after&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">validate_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">exceptAttrs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">attrs</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="Notification.validate_endpoints"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints">[docs]</a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;after&#39;</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">validate_endpoints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -330,7 +432,7 @@
                     <span class="s1">&#39;Last notification timestamp in ISO8601 format.&#39;</span>
     <span class="p">)</span>
     <span class="n">lastFailure</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">default</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s1">&#39;(not editable, only present in GET operations): &#39;</span>
                     <span class="s1">&#39;Last failure timestamp in ISO8601 format. Not present if &#39;</span>
                     <span class="s1">&#39;subscription has never had a problem with notifications.&#39;</span>
@@ -425,21 +527,21 @@
     <span class="p">)</span>
     <span class="n">subject</span><span class="p">:</span> <span class="n">Subject</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;An object that describes the subject of the subscription.&quot;</span><span class="p">,</span>
-        <span class="n">example</span><span class="o">=</span><span class="p">{</span>
+        <span class="n">examples</span><span class="o">=</span><span class="p">[{</span>
             <span class="s1">&#39;entities&#39;</span><span class="p">:</span> <span class="p">[{</span><span class="s1">&#39;idPattern&#39;</span><span class="p">:</span> <span class="s1">&#39;.*&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;Room&#39;</span><span class="p">}],</span>
             <span class="s1">&#39;condition&#39;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="s1">&#39;attrs&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;temperature&#39;</span><span class="p">],</span>
                 <span class="s1">&#39;expression&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;q&#39;</span><span class="p">:</span> <span class="s1">&#39;temperature&gt;40&#39;</span><span class="p">},</span>
             <span class="p">},</span>
-        <span class="p">},</span>
+        <span class="p">}],</span>
     <span class="p">)</span>
     <span class="n">notification</span><span class="p">:</span> <span class="n">Notification</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;An object that describes the notification to send when &quot;</span>
                     <span class="s2">&quot;the subscription is triggered.&quot;</span><span class="p">,</span>
-        <span class="n">example</span><span class="o">=</span><span class="p">{</span>
+        <span class="n">examples</span><span class="o">=</span><span class="p">[{</span>
             <span class="s1">&#39;http&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="s1">&#39;http://localhost:1234&#39;</span><span class="p">},</span>
             <span class="s1">&#39;attrs&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;temperature&#39;</span><span class="p">,</span> <span class="s1">&#39;humidity&#39;</span><span class="p">],</span>
-        <span class="p">},</span>
+        <span class="p">}],</span>
     <span class="p">)</span>
     <span class="n">expires</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -447,14 +549,13 @@
                     <span class="s2">&quot;Permanent subscriptions must omit this field.&quot;</span>
     <span class="p">)</span>
 
-    <span class="n">throttling</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">conint</span><span class="p">(</span><span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ge</span><span class="o">=</span><span class="mi">0</span><span class="p">,)]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">throttling</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">conint</span><span class="p">(</span><span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ge</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="p">)]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Minimal period of time in seconds which &quot;</span>
                     <span class="s2">&quot;must elapse between two consecutive notifications. &quot;</span>
                     <span class="s2">&quot;It is optional.&quot;</span>
     <span class="p">)</span></div>
-
 </pre></div>
 
            </div>

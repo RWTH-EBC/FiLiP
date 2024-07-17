@@ -464,7 +464,7 @@ of the data provided.
 
 <dl class="py method pydantic_validator">
 <dt class="sig sig-object py" id="filip.models.ngsi_v2.base.Expression.validate_expressions">
-<em class="property"><span class="pre">validator</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_expressions</span></span><em class="autodoc_pydantic_validator_arrow property">&#160; <span class="pre">»</span>&#160; </em><a class="reference internal" href="#filip.models.ngsi_v2.base.Expression.mq" title="filip.models.ngsi_v2.base.Expression.mq"><em class="xref py py-obj"><span class="pre">mq</span></em></a><em class="property"><span class="pre">,</span> </em><a class="reference internal" href="#filip.models.ngsi_v2.base.Expression.q" title="filip.models.ngsi_v2.base.Expression.q"><em class="xref py py-obj"><span class="pre">q</span></em></a><a class="reference internal" href="../_modules/filip/models/ngsi_v2/base.html#Expression.validate_expressions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_v2.base.Expression.validate_expressions" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">validator</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_expressions</span></span><em class="autodoc_pydantic_validator_arrow property">&#160; <span class="pre">»</span>&#160; </em><a class="reference internal" href="#filip.models.ngsi_v2.base.Expression.q" title="filip.models.ngsi_v2.base.Expression.q"><em class="xref py py-obj"><span class="pre">q</span></em></a><em class="property"><span class="pre">,</span> </em><a class="reference internal" href="#filip.models.ngsi_v2.base.Expression.mq" title="filip.models.ngsi_v2.base.Expression.mq"><em class="xref py py-obj"><span class="pre">mq</span></em></a><a class="reference internal" href="../_modules/filip/models/ngsi_v2/base.html#Expression.validate_expressions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_v2.base.Expression.validate_expressions" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -3197,9 +3197,16 @@ any of the attributes of the entity changes.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.HttpCustom.headers" title="filip.models.ngsi_v2.subscriptions.HttpCustom.headers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">headers</span> <span class="pre">(Dict[str,</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">pydantic.types.Json]</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.HttpCustom.method" title="filip.models.ngsi_v2.subscriptions.HttpCustom.method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">method</span> <span class="pre">(str)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.HttpCustom.ngsi" title="filip.models.ngsi_v2.subscriptions.HttpCustom.ngsi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ngsi</span> <span class="pre">(filip.models.ngsi_v2.subscriptions.NgsiPayload</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.HttpCustom.payload" title="filip.models.ngsi_v2.subscriptions.HttpCustom.payload"><code class="xref py py-obj docutils literal notranslate"><span class="pre">payload</span> <span class="pre">(str</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.HttpCustom.qs" title="filip.models.ngsi_v2.subscriptions.HttpCustom.qs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">qs</span> <span class="pre">(Dict[str,</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">pydantic.types.Json]</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.HttpCustom.timeout" title="filip.models.ngsi_v2.subscriptions.HttpCustom.timeout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">timeout</span> <span class="pre">(int</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.HttpCustom.url" title="filip.models.ngsi_v2.subscriptions.HttpCustom.url"><code class="xref py py-obj docutils literal notranslate"><span class="pre">url</span> <span class="pre">(AnyHttpUrl)</span></code></a></p></li>
+</ul>
+</dd>
+<dt class="field-even">Validators<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.HttpCustom.validate_notification_payloads" title="filip.models.ngsi_v2.subscriptions.HttpCustom.validate_notification_payloads"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_notification_payloads</span></code></a> » <code class="xref py py-obj docutils literal notranslate"><span class="pre">all</span> <span class="pre">fields</span></code></p></li>
 </ul>
 </dd>
 </dl>
@@ -3207,24 +3214,78 @@ any of the attributes of the entity changes.</p>
 <dt class="sig sig-object py" id="filip.models.ngsi_v2.subscriptions.HttpCustom.headers">
 <em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">headers</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.12)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Json</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_v2.subscriptions.HttpCustom.headers" title="Permalink to this definition"></a></dt>
 <dd><p>a key-map of HTTP headers that are included in notification messages.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Validated by<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.HttpCustom.validate_notification_payloads" title="filip.models.ngsi_v2.subscriptions.HttpCustom.validate_notification_payloads"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_notification_payloads</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="filip.models.ngsi_v2.subscriptions.HttpCustom.method">
 <em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">method</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">HttpMethods.POST</span></em><a class="headerlink" href="#filip.models.ngsi_v2.subscriptions.HttpCustom.method" title="Permalink to this definition"></a></dt>
 <dd><p>the method to use when sending the notification (default is POST). Only valid HTTP methods are allowed. On specifying an invalid HTTP method, a 400 Bad Request error is returned.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Validated by<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.HttpCustom.validate_notification_payloads" title="filip.models.ngsi_v2.subscriptions.HttpCustom.validate_notification_payloads"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_notification_payloads</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.subscriptions.HttpCustom.ngsi">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ngsi</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.NgsiPayload" title="filip.models.ngsi_v2.subscriptions.NgsiPayload"><span class="pre">NgsiPayload</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_v2.subscriptions.HttpCustom.ngsi" title="Permalink to this definition"></a></dt>
+<dd><p>get an NGSI-v2 normalized entity as notification.If omitted, the default payload (see “Notification Messages” sections) is used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Validated by<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.HttpCustom.validate_notification_payloads" title="filip.models.ngsi_v2.subscriptions.HttpCustom.validate_notification_payloads"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_notification_payloads</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="filip.models.ngsi_v2.subscriptions.HttpCustom.payload">
 <em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">payload</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_v2.subscriptions.HttpCustom.payload" title="Permalink to this definition"></a></dt>
 <dd><p>the payload to be used in notifications. If omitted, the default payload (see “Notification Messages” sections) is used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Validated by<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.HttpCustom.validate_notification_payloads" title="filip.models.ngsi_v2.subscriptions.HttpCustom.validate_notification_payloads"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_notification_payloads</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="filip.models.ngsi_v2.subscriptions.HttpCustom.qs">
 <em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">qs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.12)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Json</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_v2.subscriptions.HttpCustom.qs" title="Permalink to this definition"></a></dt>
 <dd><p>a key-map of URL query parameters that are included in notification messages.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Validated by<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.HttpCustom.validate_notification_payloads" title="filip.models.ngsi_v2.subscriptions.HttpCustom.validate_notification_payloads"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_notification_payloads</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.subscriptions.HttpCustom.timeout">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">timeout</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_v2.subscriptions.HttpCustom.timeout" title="Permalink to this definition"></a></dt>
+<dd><p>Maximum time (in milliseconds) the subscription waits for the response. The maximum value allowed for this parameter is 1800000 (30 minutes). If timeout is defined to 0 or omitted, then the value passed as -httpTimeout CLI parameter is used. See section in the ‘Command line options’ for more details.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Validated by<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.HttpCustom.validate_notification_payloads" title="filip.models.ngsi_v2.subscriptions.HttpCustom.validate_notification_payloads"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_notification_payloads</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute pydantic_field">
@@ -3237,8 +3298,18 @@ any of the attributes of the entity changes.</p>
 <li><p><strong>allowed_schemes</strong> = [‘http’, ‘https’]</p></li>
 </ul>
 </dd>
+<dt class="field-even">Validated by<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.HttpCustom.validate_notification_payloads" title="filip.models.ngsi_v2.subscriptions.HttpCustom.validate_notification_payloads"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_notification_payloads</span></code></a></p></li>
+</ul>
+</dd>
 </dl>
 </dd></dl>
+
+<dl class="py method pydantic_validator">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.subscriptions.HttpCustom.validate_notification_payloads">
+<em class="property"><span class="pre">validator</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_notification_payloads</span></span><em class="autodoc_pydantic_validator_arrow property">&#160; <span class="pre">»</span>&#160; </em><em class="xref py py-obj"><span class="pre">all</span> <span class="pre">fields</span></em><a class="reference internal" href="../_modules/filip/models/ngsi_v2/subscriptions.html#HttpCustom.validate_notification_payloads"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_v2.subscriptions.HttpCustom.validate_notification_payloads" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -3389,6 +3460,7 @@ any of the attributes of the entity changes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Fields<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.MqttCustom.ngsi" title="filip.models.ngsi_v2.subscriptions.MqttCustom.ngsi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ngsi</span> <span class="pre">(filip.models.ngsi_v2.subscriptions.NgsiPayload</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.MqttCustom.passwd" title="filip.models.ngsi_v2.subscriptions.MqttCustom.passwd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">passwd</span> <span class="pre">(Optional[str])</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.MqttCustom.payload" title="filip.models.ngsi_v2.subscriptions.MqttCustom.payload"><code class="xref py py-obj docutils literal notranslate"><span class="pre">payload</span> <span class="pre">(str</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.MqttCustom.qos" title="filip.models.ngsi_v2.subscriptions.MqttCustom.qos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">qos</span> <span class="pre">(Optional[int])</span></code></a></p></li>
@@ -3400,20 +3472,48 @@ any of the attributes of the entity changes.</p>
 <dt class="field-even">Validators<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Mqtt.check_url" title="filip.models.ngsi_v2.subscriptions.Mqtt.check_url"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_url</span></code></a> » <a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.MqttCustom.url" title="filip.models.ngsi_v2.subscriptions.MqttCustom.url"><code class="xref py py-obj docutils literal notranslate"><span class="pre">url</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.MqttCustom.validate_payload_type" title="filip.models.ngsi_v2.subscriptions.MqttCustom.validate_payload_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_payload_type</span></code></a> » <code class="xref py py-obj docutils literal notranslate"><span class="pre">all</span> <span class="pre">fields</span></code></p></li>
 <li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrapper</span></code> » <a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.MqttCustom.topic" title="filip.models.ngsi_v2.subscriptions.MqttCustom.topic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">topic</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.subscriptions.MqttCustom.ngsi">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ngsi</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.NgsiPayload" title="filip.models.ngsi_v2.subscriptions.NgsiPayload"><span class="pre">NgsiPayload</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_v2.subscriptions.MqttCustom.ngsi" title="Permalink to this definition"></a></dt>
+<dd><p>get an NGSI-v2 normalized entity as notification.If omitted, the default payload (see “Notification Messages” sections) is used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Validated by<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.MqttCustom.validate_payload_type" title="filip.models.ngsi_v2.subscriptions.MqttCustom.validate_payload_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_payload_type</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="filip.models.ngsi_v2.subscriptions.MqttCustom.passwd">
 <em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">passwd</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_v2.subscriptions.MqttCustom.passwd" title="Permalink to this definition"></a></dt>
 <dd><p>password if required</p>
+<dl class="field-list simple">
+<dt class="field-odd">Validated by<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.MqttCustom.validate_payload_type" title="filip.models.ngsi_v2.subscriptions.MqttCustom.validate_payload_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_payload_type</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="filip.models.ngsi_v2.subscriptions.MqttCustom.payload">
 <em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">payload</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_v2.subscriptions.MqttCustom.payload" title="Permalink to this definition"></a></dt>
 <dd><p>the payload to be used in notifications. If omitted, the default payload (see “Notification Messages” sections) is used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Validated by<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.MqttCustom.validate_payload_type" title="filip.models.ngsi_v2.subscriptions.MqttCustom.validate_payload_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_payload_type</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute pydantic_field">
@@ -3427,6 +3527,11 @@ any of the attributes of the entity changes.</p>
 <li><p><strong>le</strong> = 2</p></li>
 </ul>
 </dd>
+<dt class="field-even">Validated by<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.MqttCustom.validate_payload_type" title="filip.models.ngsi_v2.subscriptions.MqttCustom.validate_payload_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_payload_type</span></code></a></p></li>
+</ul>
+</dd>
 </dl>
 </dd></dl>
 
@@ -3437,6 +3542,7 @@ any of the attributes of the entity changes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.MqttCustom.validate_payload_type" title="filip.models.ngsi_v2.subscriptions.MqttCustom.validate_payload_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_payload_type</span></code></a></p></li>
 <li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrapper</span></code></p></li>
 </ul>
 </dd>
@@ -3451,6 +3557,7 @@ any of the attributes of the entity changes.</p>
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Mqtt.check_url" title="filip.models.ngsi_v2.subscriptions.Mqtt.check_url"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_url</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.MqttCustom.validate_payload_type" title="filip.models.ngsi_v2.subscriptions.MqttCustom.validate_payload_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_payload_type</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
@@ -3460,6 +3567,155 @@ any of the attributes of the entity changes.</p>
 <dt class="sig sig-object py" id="filip.models.ngsi_v2.subscriptions.MqttCustom.user">
 <em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">user</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_v2.subscriptions.MqttCustom.user" title="Permalink to this definition"></a></dt>
 <dd><p>username if required</p>
+<dl class="field-list simple">
+<dt class="field-odd">Validated by<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.MqttCustom.validate_payload_type" title="filip.models.ngsi_v2.subscriptions.MqttCustom.validate_payload_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_payload_type</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method pydantic_validator">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.subscriptions.MqttCustom.validate_payload_type">
+<em class="property"><span class="pre">validator</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_payload_type</span></span><em class="autodoc_pydantic_validator_arrow property">&#160; <span class="pre">»</span>&#160; </em><em class="xref py py-obj"><span class="pre">all</span> <span class="pre">fields</span></em><a class="reference internal" href="../_modules/filip/models/ngsi_v2/subscriptions.html#MqttCustom.validate_payload_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_v2.subscriptions.MqttCustom.validate_payload_type" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class pydantic_model">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.subscriptions.NgsiPayload">
+<em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">filip.models.ngsi_v2.subscriptions.</span></span><span class="sig-name descname"><span class="pre">NgsiPayload</span></span><a class="reference internal" href="../_modules/filip/models/ngsi_v2/subscriptions.html#NgsiPayload"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_v2.subscriptions.NgsiPayload" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>Model for NGSI V2 type payload in httpCustom/mqttCustom notifications.
+Differences between this model and the usual Context entity models include:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>id and type are not mandatory</p></li>
+<li><p>an attribute metadata field is not allowed</p></li>
+</ul>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Config<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>extra</strong>: <em>str = allow</em></p></li>
+<li><p><strong>validate_default</strong>: <em>bool = True</em></p></li>
+</ul>
+</dd>
+<dt class="field-even">Fields<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.NgsiPayload.id" title="filip.models.ngsi_v2.subscriptions.NgsiPayload.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span> <span class="pre">(str</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.NgsiPayload.type" title="filip.models.ngsi_v2.subscriptions.NgsiPayload.type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">type</span> <span class="pre">(str</span> <span class="pre">|</span> <span class="pre">aenum._enum.Enum</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
+</ul>
+</dd>
+<dt class="field-odd">Validators<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.NgsiPayload.validate_notification_attrs" title="filip.models.ngsi_v2.subscriptions.NgsiPayload.validate_notification_attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_notification_attrs</span></code></a> » <code class="xref py py-obj docutils literal notranslate"><span class="pre">all</span> <span class="pre">fields</span></code></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.subscriptions.NgsiPayload.id">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_v2.subscriptions.NgsiPayload.id" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Constraints<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>min_length</strong> = 1</p></li>
+<li><p><strong>max_length</strong> = 256</p></li>
+</ul>
+</dd>
+<dt class="field-even">Validated by<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.NgsiPayload.validate_notification_attrs" title="filip.models.ngsi_v2.subscriptions.NgsiPayload.validate_notification_attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_notification_attrs</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.subscriptions.NgsiPayload.type">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Enum</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_v2.subscriptions.NgsiPayload.type" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Constraints<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>min_length</strong> = 1</p></li>
+<li><p><strong>max_length</strong> = 256</p></li>
+</ul>
+</dd>
+<dt class="field-even">Validated by<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.NgsiPayload.validate_notification_attrs" title="filip.models.ngsi_v2.subscriptions.NgsiPayload.validate_notification_attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_notification_attrs</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method pydantic_validator">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.subscriptions.NgsiPayload.validate_notification_attrs">
+<em class="property"><span class="pre">validator</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_notification_attrs</span></span><em class="autodoc_pydantic_validator_arrow property">&#160; <span class="pre">»</span>&#160; </em><em class="xref py py-obj"><span class="pre">all</span> <span class="pre">fields</span></em><a class="reference internal" href="../_modules/filip/models/ngsi_v2/subscriptions.html#NgsiPayload.validate_notification_attrs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_v2.subscriptions.NgsiPayload.validate_notification_attrs" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class pydantic_model">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.subscriptions.NgsiPayloadAttr">
+<em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">filip.models.ngsi_v2.subscriptions.</span></span><span class="sig-name descname"><span class="pre">NgsiPayloadAttr</span></span><a class="reference internal" href="../_modules/filip/models/ngsi_v2/subscriptions.html#NgsiPayloadAttr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_v2.subscriptions.NgsiPayloadAttr" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#filip.models.ngsi_v2.base.BaseValueAttribute" title="filip.models.ngsi_v2.base.BaseValueAttribute"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseValueAttribute</span></code></a></p>
+<p>Model for NGSI V2 type payload in httpCustom/mqttCustom notifications.
+The difference between this model and the usual BaseValueAttribute model is that
+a metadata field is not allowed.
+In the absence of type/value in some attribute field, one should resort to partial
+representations ( as specified in the orion api manual), done by the BaseValueAttr.
+model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Config<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>extra</strong>: <em>str = forbid</em></p></li>
+</ul>
+</dd>
+<dt class="field-even">Fields<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.NgsiPayloadAttr.type" title="filip.models.ngsi_v2.subscriptions.NgsiPayloadAttr.type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">type</span> <span class="pre">(filip.models.base.DataType</span> <span class="pre">|</span> <span class="pre">str)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.NgsiPayloadAttr.value" title="filip.models.ngsi_v2.subscriptions.NgsiPayloadAttr.value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span> <span class="pre">(Any</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
+</ul>
+</dd>
+<dt class="field-odd">Validators<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_type" title="filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_value_type</span></code></a> » <a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.NgsiPayloadAttr.value" title="filip.models.ngsi_v2.subscriptions.NgsiPayloadAttr.value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span></code></a></p></li>
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrapper</span></code> » <a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.NgsiPayloadAttr.type" title="filip.models.ngsi_v2.subscriptions.NgsiPayloadAttr.type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">type</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.subscriptions.NgsiPayloadAttr.type">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="filip.models.html#filip.models.base.DataType" title="filip.models.base.DataType"><span class="pre">DataType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">DataType.TEXT</span></em><a class="headerlink" href="#filip.models.ngsi_v2.subscriptions.NgsiPayloadAttr.type" title="Permalink to this definition"></a></dt>
+<dd><p>The attribute type represents the NGSI value type of the attribute value. Note that FIWARE NGSI has its own type system for attribute values, so NGSI value types are not the same as JSON types. Allowed characters are the ones in the plain ASCII set, except the following ones: control characters, whitespace, &amp;, ?, / and #.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Constraints<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>min_length</strong> = 1</p></li>
+<li><p><strong>max_length</strong> = 256</p></li>
+</ul>
+</dd>
+<dt class="field-even">Validated by<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrapper</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.subscriptions.NgsiPayloadAttr.value">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">value</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_v2.subscriptions.NgsiPayloadAttr.value" title="Permalink to this definition"></a></dt>
+<dd><p>the actual data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Validated by<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_type" title="filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_value_type</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -3493,9 +3749,9 @@ be included.</p>
 </dd>
 <dt class="field-odd">Validators<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a> » <a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.exceptAttrs" title="filip.models.ngsi_v2.subscriptions.Notification.exceptAttrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">exceptAttrs</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a> » <code class="xref py py-obj docutils literal notranslate"><span class="pre">all</span> <span class="pre">fields</span></code></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a> » <code class="xref py py-obj docutils literal notranslate"><span class="pre">all</span> <span class="pre">fields</span></code></p></li>
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a> » <a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.httpCustom" title="filip.models.ngsi_v2.subscriptions.Notification.httpCustom"><code class="xref py py-obj docutils literal notranslate"><span class="pre">httpCustom</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a> » <code class="xref py py-obj docutils literal notranslate"><span class="pre">all</span> <span class="pre">fields</span></code></p></li>
 </ul>
 </dd>
 </dl>
@@ -3506,7 +3762,9 @@ be included.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
@@ -3519,7 +3777,9 @@ be included.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
@@ -3534,6 +3794,7 @@ be included.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
@@ -3546,7 +3807,9 @@ be included.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
@@ -3559,6 +3822,7 @@ be included.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
@@ -3573,7 +3837,9 @@ be included.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
@@ -3586,7 +3852,9 @@ be included.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
@@ -3599,7 +3867,9 @@ be included.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
@@ -3612,7 +3882,9 @@ be included.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
@@ -3625,7 +3897,9 @@ be included.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
@@ -3633,7 +3907,7 @@ be included.</p>
 
 <dl class="py method pydantic_validator">
 <dt class="sig sig-object py" id="filip.models.ngsi_v2.subscriptions.Notification.validate_attr">
-<em class="property"><span class="pre">validator</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_attr</span></span><em class="autodoc_pydantic_validator_arrow property">&#160; <span class="pre">»</span>&#160; </em><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.exceptAttrs" title="filip.models.ngsi_v2.subscriptions.Notification.exceptAttrs"><em class="xref py py-obj"><span class="pre">exceptAttrs</span></em></a><a class="reference internal" href="../_modules/filip/models/ngsi_v2/subscriptions.html#Notification.validate_attr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">validator</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_attr</span></span><em class="autodoc_pydantic_validator_arrow property">&#160; <span class="pre">»</span>&#160; </em><em class="xref py py-obj"><span class="pre">all</span> <span class="pre">fields</span></em><a class="reference internal" href="../_modules/filip/models/ngsi_v2/subscriptions.html#Notification.validate_attr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method pydantic_validator">
@@ -3643,7 +3917,7 @@ be included.</p>
 
 <dl class="py method pydantic_validator">
 <dt class="sig sig-object py" id="filip.models.ngsi_v2.subscriptions.Notification.validate_http">
-<em class="property"><span class="pre">validator</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_http</span></span><em class="autodoc_pydantic_validator_arrow property">&#160; <span class="pre">»</span>&#160; </em><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.httpCustom" title="filip.models.ngsi_v2.subscriptions.Notification.httpCustom"><em class="xref py py-obj"><span class="pre">httpCustom</span></em></a><a class="reference internal" href="../_modules/filip/models/ngsi_v2/subscriptions.html#Notification.validate_http"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">validator</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_http</span></span><em class="autodoc_pydantic_validator_arrow property">&#160; <span class="pre">»</span>&#160; </em><em class="xref py py-obj"><span class="pre">all</span> <span class="pre">fields</span></em><a class="reference internal" href="../_modules/filip/models/ngsi_v2/subscriptions.html#Notification.validate_http"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -3677,11 +3951,7 @@ be included.</p>
 </ul>
 </dd>
 <dt class="field-odd">Validators<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a> » <a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Response.exceptAttrs" title="filip.models.ngsi_v2.subscriptions.Response.exceptAttrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">exceptAttrs</span></code></a></p></li>
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a> » <a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Response.httpCustom" title="filip.models.ngsi_v2.subscriptions.Response.httpCustom"><code class="xref py py-obj docutils literal notranslate"><span class="pre">httpCustom</span></code></a></p></li>
-</ul>
-</dd>
+<dd class="field-odd"><p></p></dd>
 </dl>
 <dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="filip.models.ngsi_v2.subscriptions.Response.attrs">
@@ -3690,7 +3960,9 @@ be included.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
@@ -3703,7 +3975,9 @@ be included.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
@@ -3718,6 +3992,7 @@ be included.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
@@ -3730,7 +4005,9 @@ be included.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
@@ -3743,6 +4020,7 @@ be included.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
@@ -3757,7 +4035,9 @@ be included.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
@@ -3770,7 +4050,9 @@ be included.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
@@ -3783,7 +4065,9 @@ be included.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
@@ -3796,7 +4080,9 @@ be included.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
@@ -3809,7 +4095,9 @@ be included.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
@@ -3822,7 +4110,9 @@ be included.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
@@ -3835,7 +4125,9 @@ be included.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
@@ -3848,7 +4140,9 @@ be included.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
 </dd>
 </dl>

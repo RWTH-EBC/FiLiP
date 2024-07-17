@@ -1017,9 +1017,9 @@
             ],
             "pydantic": [
                 "filip.config",
-                "tests.test_config",
+                "tests.config",
                 "filip.custom_types",
-                "tests.config"
+                "tests.test_config"
             ],
             "pydantic_settings": [
                 "filip.config",
@@ -1179,18 +1179,18 @@
                 "filip"
             ],
             "pydantic": [
+                "tests.config",
                 "filip.config",
-                "tests.test_config",
                 "filip.custom_types",
-                "tests.config"
+                "tests.test_config"
             ],
             "pydantic_settings": [
-                "filip.config",
-                "tests.config"
+                "tests.config",
+                "filip.config"
             ],
             "dotenv": [
-                "filip.config",
-                "tests.config"
+                "tests.config",
+                "filip.config"
             ],
             "typing_extensions": [
                 "filip.custom_types"
