@@ -21,6 +21,8 @@ include:
       file: 'python/doc/sphinxdoc.gitlab-ci.yml'
     - project: 'EBC/EBC_all/gitlab_ci/templates'
       file: 'pages/gh-pages.gitlab-ci.yml'
+      rules:
+        - if: $CI_COMMIT_BRANCH == "master" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master"
     - project: 'EBC/EBC_all/gitlab_ci/templates'
       file: 'python/tests/tests.gitlab-ci.yml'
     - project: 'EBC/EBC_all/gitlab_ci/templates'
