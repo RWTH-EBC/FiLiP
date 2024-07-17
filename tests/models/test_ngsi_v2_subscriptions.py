@@ -12,7 +12,9 @@ from filip.models.ngsi_v2.subscriptions import \
     Mqtt, \
     MqttCustom, \
     Notification, \
-    Subscription
+    Subscription, \
+    NgsiPayload, \
+    NgsiPayloadAttr
 from filip.models.base import FiwareHeader
 from filip.utils.cleanup import clear_all, clean_test
 from tests.config import settings
@@ -90,6 +92,10 @@ class TestSubscriptions(unittest.TestCase):
         with self.assertRaises(ValidationError):
             Mqtt(url="mqtt://test.de:1883",
                  topic='/,t')
+        with self.assertRaises(ValidationError):
+            HttpCustom(url="https://working-url.de:80", json={}, ngsi={})
+        with self.assertRaises(ValidationError):
+            HttpCustom(url="https://working-url.de:80", payload="", json={})
         httpCustom = HttpCustom(url=self.http_url)
         mqtt = Mqtt(url=self.mqtt_url,
                     topic=self.mqtt_topic)
@@ -100,10 +106,33 @@ class TestSubscriptions(unittest.TestCase):
         notification = Notification.model_validate(self.notification)
         with self.assertRaises(ValidationError):
             notification.mqtt = httpCustom
+        notification = Notification.model_validate(self.notification)
         with self.assertRaises(ValidationError):
             notification.mqtt = mqtt
+        notification = Notification.model_validate(self.notification)
         with self.assertRaises(ValidationError):
             notification.mqtt = mqttCustom
+        with self.assertRaises(ValidationError):
+            HttpCustom(url=self.http_url, json={}, payload="")
+        with self.assertRaises(ValidationError):
+            MqttCustom(url=self.mqtt_url,
+                       topic=self.mqtt_topic, ngsi=NgsiPayload(), payload="")
+        with self.assertRaises(ValidationError):
+            HttpCustom(url=self.http_url, ngsi=NgsiPayload(), json="")
+
+        #Test validator for ngsi payload type
+        with self.assertRaises(ValidationError):
+            attr_dict = {
+                "metadata": {}
+            }
+            NgsiPayloadAttr(**attr_dict)
+        with self.assertRaises(ValidationError):
+            attr_dict = {
+                "id": "entityId",
+                "type": "entityType",
+                "k": "v"
+            }
+            NgsiPayload(NgsiPayloadAttr(**attr_dict),id="someId",type="someType")
 
         # test onlyChangedAttrs-field
         notification = Notification.model_validate(self.notification)
@@ -122,7 +151,8 @@ class TestSubscriptions(unittest.TestCase):
         Returns:
             None
         """
-        sub = Subscription.model_validate(self.sub_dict)
+        tmp_dict=self.sub_dict.copy()
+        sub = Subscription.model_validate(tmp_dict)
         fiware_header = FiwareHeader(service=settings.FIWARE_SERVICE,
                                      service_path=settings.FIWARE_SERVICEPATH)
         with ContextBrokerClient(
@@ -138,6 +168,65 @@ class TestSubscriptions(unittest.TestCase):
                     else:
                         self.assertEqual(str(value), str(dict2[key]))
 
+            compare_dicts(sub.model_dump(exclude={'id'}),
+                          sub_res.model_dump(exclude={'id'}))
+
+            tmp_dict.update({"notification":{
+                "httpCustom": {
+                    "url": "http://localhost:1234",
+                    "ngsi":{
+                        "patchattr":{
+                            "value":"${temperature/2}",
+                            "type":"Calculated"
+                        }
+                    },
+                    "method":"POST"
+                },
+                "attrs": [
+                    "temperature",
+                    "humidity"
+                ]
+            }})
+            sub = Subscription.model_validate(tmp_dict)
+            sub_id = client.post_subscription(subscription=sub)
+            sub_res = client.get_subscription(subscription_id=sub_id)
+            compare_dicts(sub.model_dump(exclude={'id'}),
+                          sub_res.model_dump(exclude={'id'}))
+
+            tmp_dict.update({"notification":{
+                "httpCustom": {
+                    "url": "http://localhost:1234",
+                    "json":{
+                        "t":"${temperate}",
+                        "h":"${humidity}"
+                    },
+                    "method":"POST"
+                },
+                "attrs": [
+                    "temperature",
+                    "humidity"
+                ]
+            }})
+            sub = Subscription.model_validate(tmp_dict)
+            sub_id = client.post_subscription(subscription=sub)
+            sub_res = client.get_subscription(subscription_id=sub_id)
+            compare_dicts(sub.model_dump(exclude={'id'}),
+                          sub_res.model_dump(exclude={'id'}))
+
+            tmp_dict.update({"notification":{
+                "httpCustom": {
+                    "url": "http://localhost:1234",
+                    "payload":"Temperature is ${temperature} and humidity ${humidity}",
+                    "method":"POST"
+                },
+                "attrs": [
+                    "temperature",
+                    "humidity"
+                ]
+            }})
+            sub = Subscription.model_validate(tmp_dict)
+            sub_id = client.post_subscription(subscription=sub)
+            sub_res = client.get_subscription(subscription_id=sub_id)
             compare_dicts(sub.model_dump(exclude={'id'}),
                           sub_res.model_dump(exclude={'id'}))
 
