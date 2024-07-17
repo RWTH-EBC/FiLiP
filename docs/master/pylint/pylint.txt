@@ -92,7 +92,8 @@ tutorials/__init__.py:1:0: R0801: Similar lines in 2 files
                                         'MQTT_BROKER_URL',
                                         'MQTT_URL',
                                         'MQTT_BROKER'))
- (duplicate-code)
+
+# create settings object (duplicate-code)
 
 -----------------------------------
 Your code has been rated at 9.03/10

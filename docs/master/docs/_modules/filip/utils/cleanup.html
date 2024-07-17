@@ -255,10 +255,17 @@
 <span class="sd">        None</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">iota_url</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">iota_client</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">iota_url</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">AnyUrl</span><span class="p">)):</span>
-            <span class="n">iota_url</span> <span class="o">=</span> <span class="p">[</span><span class="n">iota_url</span><span class="p">]</span>
-        <span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">iota_url</span><span class="p">:</span>
-            <span class="n">clear_iot_agent</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">fiware_header</span><span class="o">=</span><span class="n">fiware_header</span><span class="p">,</span> <span class="n">iota_client</span><span class="o">=</span><span class="n">iota_client</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">iota_url</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># loop client</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">iota_client</span><span class="p">,</span> <span class="n">IoTAClient</span><span class="p">):</span>
+                <span class="n">iota_client</span> <span class="o">=</span> <span class="p">[</span><span class="n">iota_client</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">client</span> <span class="ow">in</span> <span class="n">iota_client</span><span class="p">:</span>
+                <span class="n">clear_iot_agent</span><span class="p">(</span><span class="n">fiware_header</span><span class="o">=</span><span class="n">fiware_header</span><span class="p">,</span> <span class="n">iota_client</span><span class="o">=</span><span class="n">client</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">iota_url</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">AnyUrl</span><span class="p">)):</span>
+                <span class="n">iota_url</span> <span class="o">=</span> <span class="p">[</span><span class="n">iota_url</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">iota_url</span><span class="p">:</span>
+                <span class="n">clear_iot_agent</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">fiware_header</span><span class="o">=</span><span class="n">fiware_header</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">cb_url</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">cb_client</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">clear_context_broker</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">cb_url</span><span class="p">,</span> <span class="n">fiware_header</span><span class="o">=</span><span class="n">fiware_header</span><span class="p">,</span> <span class="n">cb_client</span><span class="o">=</span><span class="n">cb_client</span><span class="p">)</span>
