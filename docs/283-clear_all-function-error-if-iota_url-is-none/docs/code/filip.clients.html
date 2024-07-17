@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>filip.clients package &mdash; FiLiP 0.4.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/autodoc_pydantic.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../contents.html" class="icon icon-home">
+            FiLiP
+          </a>
+              <div class="version">
+                0.4
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">FiLiP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contribute as a user</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html#contribute-as-a-developer">Contribute as a developer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/index.html">About FiLiP</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../contents.html">FiLiP</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../contents.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">filip.clients package</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/RWTH-EBC/filip/blob/master/docs/source/code/filip.clients.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-filip.clients">
+<span id="filip-clients-package"></span><h1>filip.clients package<a class="headerlink" href="#module-filip.clients" title="Permalink to this heading"></a></h1>
+<p>Clients to interact with FIWARE’s APIs</p>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="filip.clients.mqtt.html">filip.clients.mqtt package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="filip.clients.mqtt.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="filip.clients.mqtt.encoder.html">filip.clients.mqtt.encoder package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.mqtt.encoder.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.mqtt.encoder.html#module-filip.clients.mqtt.encoder.base_encoder">filip.clients.mqtt.encoder.base_encoder module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.mqtt.encoder.html#module-filip.clients.mqtt.encoder.json">filip.clients.mqtt.encoder.json module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.mqtt.encoder.html#module-filip.clients.mqtt.encoder.ulralight">filip.clients.mqtt.encoder.ulralight module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="filip.clients.mqtt.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="filip.clients.mqtt.html#module-filip.clients.mqtt.client">filip.clients.mqtt.client module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="filip.clients.mqtt.html#filip.clients.mqtt.client.IoTAMQTTClient"><code class="docutils literal notranslate"><span class="pre">IoTAMQTTClient</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.mqtt.html#filip.clients.mqtt.client.IoTAMQTTClient.add_command_callback"><code class="docutils literal notranslate"><span class="pre">IoTAMQTTClient.add_command_callback()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.mqtt.html#filip.clients.mqtt.client.IoTAMQTTClient.add_device"><code class="docutils literal notranslate"><span class="pre">IoTAMQTTClient.add_device()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.mqtt.html#filip.clients.mqtt.client.IoTAMQTTClient.add_encoder"><code class="docutils literal notranslate"><span class="pre">IoTAMQTTClient.add_encoder()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.mqtt.html#filip.clients.mqtt.client.IoTAMQTTClient.add_service_group"><code class="docutils literal notranslate"><span class="pre">IoTAMQTTClient.add_service_group()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.mqtt.html#filip.clients.mqtt.client.IoTAMQTTClient.delete_device"><code class="docutils literal notranslate"><span class="pre">IoTAMQTTClient.delete_device()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.mqtt.html#filip.clients.mqtt.client.IoTAMQTTClient.delete_service_group"><code class="docutils literal notranslate"><span class="pre">IoTAMQTTClient.delete_service_group()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.mqtt.html#filip.clients.mqtt.client.IoTAMQTTClient.devices"><code class="docutils literal notranslate"><span class="pre">IoTAMQTTClient.devices</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.mqtt.html#filip.clients.mqtt.client.IoTAMQTTClient.get_device"><code class="docutils literal notranslate"><span class="pre">IoTAMQTTClient.get_device()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.mqtt.html#filip.clients.mqtt.client.IoTAMQTTClient.get_encoder"><code class="docutils literal notranslate"><span class="pre">IoTAMQTTClient.get_encoder()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.mqtt.html#filip.clients.mqtt.client.IoTAMQTTClient.get_service_group"><code class="docutils literal notranslate"><span class="pre">IoTAMQTTClient.get_service_group()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.mqtt.html#filip.clients.mqtt.client.IoTAMQTTClient.publish"><code class="docutils literal notranslate"><span class="pre">IoTAMQTTClient.publish()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.mqtt.html#filip.clients.mqtt.client.IoTAMQTTClient.subscribe"><code class="docutils literal notranslate"><span class="pre">IoTAMQTTClient.subscribe()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.mqtt.html#filip.clients.mqtt.client.IoTAMQTTClient.update_device"><code class="docutils literal notranslate"><span class="pre">IoTAMQTTClient.update_device()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.mqtt.html#filip.clients.mqtt.client.IoTAMQTTClient.update_service_group"><code class="docutils literal notranslate"><span class="pre">IoTAMQTTClient.update_service_group()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="filip.clients.ngsi_ld.html">filip.clients.ngsi_ld package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="filip.clients.ngsi_v2.html">filip.clients.ngsi_v2 package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="filip.clients.ngsi_v2.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="filip.clients.ngsi_v2.html#module-filip.clients.ngsi_v2.cb">filip.clients.ngsi_v2.cb module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient"><code class="docutils literal notranslate"><span class="pre">ContextBrokerClient</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.delete_entities"><code class="docutils literal notranslate"><span class="pre">ContextBrokerClient.delete_entities()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.delete_entity"><code class="docutils literal notranslate"><span class="pre">ContextBrokerClient.delete_entity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.delete_entity_attribute"><code class="docutils literal notranslate"><span class="pre">ContextBrokerClient.delete_entity_attribute()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.delete_registration"><code class="docutils literal notranslate"><span class="pre">ContextBrokerClient.delete_registration()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.delete_subscription"><code class="docutils literal notranslate"><span class="pre">ContextBrokerClient.delete_subscription()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.does_entity_exist"><code class="docutils literal notranslate"><span class="pre">ContextBrokerClient.does_entity_exist()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.get_attribute"><code class="docutils literal notranslate"><span class="pre">ContextBrokerClient.get_attribute()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.get_attribute_value"><code class="docutils literal notranslate"><span class="pre">ContextBrokerClient.get_attribute_value()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.get_entity"><code class="docutils literal notranslate"><span class="pre">ContextBrokerClient.get_entity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.get_entity_attributes"><code class="docutils literal notranslate"><span class="pre">ContextBrokerClient.get_entity_attributes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.get_entity_list"><code class="docutils literal notranslate"><span class="pre">ContextBrokerClient.get_entity_list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.get_entity_type"><code class="docutils literal notranslate"><span class="pre">ContextBrokerClient.get_entity_type()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.get_entity_types"><code class="docutils literal notranslate"><span class="pre">ContextBrokerClient.get_entity_types()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.get_registration"><code class="docutils literal notranslate"><span class="pre">ContextBrokerClient.get_registration()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.get_registration_list"><code class="docutils literal notranslate"><span class="pre">ContextBrokerClient.get_registration_list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.get_resources"><code class="docutils literal notranslate"><span class="pre">ContextBrokerClient.get_resources()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.get_statistics"><code class="docutils literal notranslate"><span class="pre">ContextBrokerClient.get_statistics()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.get_subscription"><code class="docutils literal notranslate"><span class="pre">ContextBrokerClient.get_subscription()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.get_subscription_list"><code class="docutils literal notranslate"><span class="pre">ContextBrokerClient.get_subscription_list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.get_version"><code class="docutils literal notranslate"><span class="pre">ContextBrokerClient.get_version()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.notify"><code class="docutils literal notranslate"><span class="pre">ContextBrokerClient.notify()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.override_entity"><code class="docutils literal notranslate"><span class="pre">ContextBrokerClient.override_entity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.patch_entity"><code class="docutils literal notranslate"><span class="pre">ContextBrokerClient.patch_entity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.post_command"><code class="docutils literal notranslate"><span class="pre">ContextBrokerClient.post_command()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.post_entity"><code class="docutils literal notranslate"><span class="pre">ContextBrokerClient.post_entity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.post_registration"><code class="docutils literal notranslate"><span class="pre">ContextBrokerClient.post_registration()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.post_subscription"><code class="docutils literal notranslate"><span class="pre">ContextBrokerClient.post_subscription()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.query"><code class="docutils literal notranslate"><span class="pre">ContextBrokerClient.query()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.replace_entity_attributes"><code class="docutils literal notranslate"><span class="pre">ContextBrokerClient.replace_entity_attributes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.update"><code class="docutils literal notranslate"><span class="pre">ContextBrokerClient.update()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.update_attribute_value"><code class="docutils literal notranslate"><span class="pre">ContextBrokerClient.update_attribute_value()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.update_entity"><code class="docutils literal notranslate"><span class="pre">ContextBrokerClient.update_entity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.update_entity_attribute"><code class="docutils literal notranslate"><span class="pre">ContextBrokerClient.update_entity_attribute()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.update_entity_attributes_key_values"><code class="docutils literal notranslate"><span class="pre">ContextBrokerClient.update_entity_attributes_key_values()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.update_entity_key_values"><code class="docutils literal notranslate"><span class="pre">ContextBrokerClient.update_entity_key_values()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.update_entity_properties"><code class="docutils literal notranslate"><span class="pre">ContextBrokerClient.update_entity_properties()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.update_entity_relationships"><code class="docutils literal notranslate"><span class="pre">ContextBrokerClient.update_entity_relationships()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.update_existing_entity_attributes"><code class="docutils literal notranslate"><span class="pre">ContextBrokerClient.update_existing_entity_attributes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.update_or_append_entity_attributes"><code class="docutils literal notranslate"><span class="pre">ContextBrokerClient.update_or_append_entity_attributes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.update_registration"><code class="docutils literal notranslate"><span class="pre">ContextBrokerClient.update_registration()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.update_subscription"><code class="docutils literal notranslate"><span class="pre">ContextBrokerClient.update_subscription()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="filip.clients.ngsi_v2.html#module-filip.clients.ngsi_v2.client">filip.clients.ngsi_v2.client module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.client.HttpClient"><code class="docutils literal notranslate"><span class="pre">HttpClient</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.client.HttpClient.cert"><code class="docutils literal notranslate"><span class="pre">HttpClient.cert</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.client.HttpClient.config"><code class="docutils literal notranslate"><span class="pre">HttpClient.config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.client.HttpClient.secrets"><code class="docutils literal notranslate"><span class="pre">HttpClient.secrets</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.client.HttpClientConfig"><code class="docutils literal notranslate"><span class="pre">HttpClientConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.client.HttpClientConfig.auth"><code class="docutils literal notranslate"><span class="pre">HttpClientConfig.auth</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.client.HttpClientConfig.cb_url"><code class="docutils literal notranslate"><span class="pre">HttpClientConfig.cb_url</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.client.HttpClientConfig.iota_url"><code class="docutils literal notranslate"><span class="pre">HttpClientConfig.iota_url</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.client.HttpClientConfig.ql_url"><code class="docutils literal notranslate"><span class="pre">HttpClientConfig.ql_url</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="filip.clients.ngsi_v2.html#module-filip.clients.ngsi_v2.iota">filip.clients.ngsi_v2.iota module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.iota.IoTAClient"><code class="docutils literal notranslate"><span class="pre">IoTAClient</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.iota.IoTAClient.change_loglevel_of_agent"><code class="docutils literal notranslate"><span class="pre">IoTAClient.change_loglevel_of_agent()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.iota.IoTAClient.delete_device"><code class="docutils literal notranslate"><span class="pre">IoTAClient.delete_device()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.iota.IoTAClient.delete_group"><code class="docutils literal notranslate"><span class="pre">IoTAClient.delete_group()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.iota.IoTAClient.does_device_exists"><code class="docutils literal notranslate"><span class="pre">IoTAClient.does_device_exists()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.iota.IoTAClient.get_device"><code class="docutils literal notranslate"><span class="pre">IoTAClient.get_device()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.iota.IoTAClient.get_device_list"><code class="docutils literal notranslate"><span class="pre">IoTAClient.get_device_list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.iota.IoTAClient.get_group"><code class="docutils literal notranslate"><span class="pre">IoTAClient.get_group()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.iota.IoTAClient.get_group_list"><code class="docutils literal notranslate"><span class="pre">IoTAClient.get_group_list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.iota.IoTAClient.get_loglevel_of_agent"><code class="docutils literal notranslate"><span class="pre">IoTAClient.get_loglevel_of_agent()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.iota.IoTAClient.get_version"><code class="docutils literal notranslate"><span class="pre">IoTAClient.get_version()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.iota.IoTAClient.patch_device"><code class="docutils literal notranslate"><span class="pre">IoTAClient.patch_device()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.iota.IoTAClient.post_device"><code class="docutils literal notranslate"><span class="pre">IoTAClient.post_device()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.iota.IoTAClient.post_devices"><code class="docutils literal notranslate"><span class="pre">IoTAClient.post_devices()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.iota.IoTAClient.post_group"><code class="docutils literal notranslate"><span class="pre">IoTAClient.post_group()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.iota.IoTAClient.post_groups"><code class="docutils literal notranslate"><span class="pre">IoTAClient.post_groups()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.iota.IoTAClient.update_device"><code class="docutils literal notranslate"><span class="pre">IoTAClient.update_device()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.iota.IoTAClient.update_devices"><code class="docutils literal notranslate"><span class="pre">IoTAClient.update_devices()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.iota.IoTAClient.update_group"><code class="docutils literal notranslate"><span class="pre">IoTAClient.update_group()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.iota.IoTAClient.update_groups"><code class="docutils literal notranslate"><span class="pre">IoTAClient.update_groups()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="filip.clients.ngsi_v2.html#module-filip.clients.ngsi_v2.quantumleap">filip.clients.ngsi_v2.quantumleap module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.quantumleap.QuantumLeapClient"><code class="docutils literal notranslate"><span class="pre">QuantumLeapClient</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.quantumleap.QuantumLeapClient.delete_entity"><code class="docutils literal notranslate"><span class="pre">QuantumLeapClient.delete_entity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.quantumleap.QuantumLeapClient.delete_entity_type"><code class="docutils literal notranslate"><span class="pre">QuantumLeapClient.delete_entity_type()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.quantumleap.QuantumLeapClient.get_entities"><code class="docutils literal notranslate"><span class="pre">QuantumLeapClient.get_entities()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.quantumleap.QuantumLeapClient.get_entity_attr_by_id"><code class="docutils literal notranslate"><span class="pre">QuantumLeapClient.get_entity_attr_by_id()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.quantumleap.QuantumLeapClient.get_entity_attr_by_type"><code class="docutils literal notranslate"><span class="pre">QuantumLeapClient.get_entity_attr_by_type()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.quantumleap.QuantumLeapClient.get_entity_attr_values_by_id"><code class="docutils literal notranslate"><span class="pre">QuantumLeapClient.get_entity_attr_values_by_id()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.quantumleap.QuantumLeapClient.get_entity_attr_values_by_type"><code class="docutils literal notranslate"><span class="pre">QuantumLeapClient.get_entity_attr_values_by_type()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.quantumleap.QuantumLeapClient.get_entity_by_attr_name"><code class="docutils literal notranslate"><span class="pre">QuantumLeapClient.get_entity_by_attr_name()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.quantumleap.QuantumLeapClient.get_entity_by_attrs"><code class="docutils literal notranslate"><span class="pre">QuantumLeapClient.get_entity_by_attrs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.quantumleap.QuantumLeapClient.get_entity_by_id"><code class="docutils literal notranslate"><span class="pre">QuantumLeapClient.get_entity_by_id()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.quantumleap.QuantumLeapClient.get_entity_by_type"><code class="docutils literal notranslate"><span class="pre">QuantumLeapClient.get_entity_by_type()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.quantumleap.QuantumLeapClient.get_entity_values_by_id"><code class="docutils literal notranslate"><span class="pre">QuantumLeapClient.get_entity_values_by_id()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.quantumleap.QuantumLeapClient.get_entity_values_by_type"><code class="docutils literal notranslate"><span class="pre">QuantumLeapClient.get_entity_values_by_type()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.quantumleap.QuantumLeapClient.get_health"><code class="docutils literal notranslate"><span class="pre">QuantumLeapClient.get_health()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.quantumleap.QuantumLeapClient.get_version"><code class="docutils literal notranslate"><span class="pre">QuantumLeapClient.get_version()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.quantumleap.QuantumLeapClient.post_config"><code class="docutils literal notranslate"><span class="pre">QuantumLeapClient.post_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.quantumleap.QuantumLeapClient.post_notification"><code class="docutils literal notranslate"><span class="pre">QuantumLeapClient.post_notification()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.quantumleap.QuantumLeapClient.post_subscription"><code class="docutils literal notranslate"><span class="pre">QuantumLeapClient.post_subscription()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.quantumleap.QuantumLeapClient.transform_attr_response_model"><code class="docutils literal notranslate"><span class="pre">QuantumLeapClient.transform_attr_response_model()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-filip.clients.base_http_client">
+<span id="filip-clients-base-http-client-module"></span><h2>filip.clients.base_http_client module<a class="headerlink" href="#module-filip.clients.base_http_client" title="Permalink to this heading"></a></h2>
+<p>Base http client module</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="filip.clients.base_http_client.BaseHttpClient">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">filip.clients.base_http_client.</span></span><span class="sig-name descname"><span class="pre">BaseHttpClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Url</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fiware_header</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.12)"><span class="pre">Dict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="filip.models.html#filip.models.base.FiwareHeader" title="filip.models.base.FiwareHeader"><span class="pre">FiwareHeader</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/clients/base_http_client.html#BaseHttpClient"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.base_http_client.BaseHttpClient" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Base client for all derived api-clients.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>session</strong> – request session object. This is required for reusing
+the same connection</p></li>
+<li><p><strong>reuse_session</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – </p></li>
+<li><p><strong>fiware_header</strong> – Fiware header object required for multi tenancy</p></li>
+<li><p><strong>**kwargs</strong> – Optional arguments that <code class="docutils literal notranslate"><span class="pre">request</span></code> takes.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.base_http_client.BaseHttpClient.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/filip/clients/base_http_client.html#BaseHttpClient.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.base_http_client.BaseHttpClient.close" title="Permalink to this definition"></a></dt>
+<dd><p>Close http session
+:returns: None</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.base_http_client.BaseHttpClient.delete">
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Response</span></span></span><a class="reference internal" href="../_modules/filip/clients/base_http_client.html#BaseHttpClient.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.base_http_client.BaseHttpClient.delete" title="Permalink to this definition"></a></dt>
+<dd><p>Sends a DELETE request either using the provided session or the
+single session.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – URL for the new <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code> object.</p></li>
+<li><p><strong>**kwargs</strong> – Optional arguments that <code class="docutils literal notranslate"><span class="pre">request</span></code> takes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>request.Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="filip.clients.base_http_client.BaseHttpClient.fiware_headers">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fiware_headers</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="filip.models.html#filip.models.base.FiwareHeader" title="filip.models.base.FiwareHeader"><span class="pre">FiwareHeader</span></a></em><a class="headerlink" href="#filip.clients.base_http_client.BaseHttpClient.fiware_headers" title="Permalink to this definition"></a></dt>
+<dd><p>Get fiware header</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>FiwareHeader</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="filip.clients.base_http_client.BaseHttpClient.fiware_service">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fiware_service</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></em><a class="headerlink" href="#filip.clients.base_http_client.BaseHttpClient.fiware_service" title="Permalink to this definition"></a></dt>
+<dd><p>Get current fiware service
+:returns: str</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="filip.clients.base_http_client.BaseHttpClient.fiware_service_path">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fiware_service_path</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></em><a class="headerlink" href="#filip.clients.base_http_client.BaseHttpClient.fiware_service_path" title="Permalink to this definition"></a></dt>
+<dd><p>Get current fiware service path
+:returns: str</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.base_http_client.BaseHttpClient.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.12)"><span class="pre">Dict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.12)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.12)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ByteString" title="(in Python v3.12)"><span class="pre">ByteString</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Response</span></span></span><a class="reference internal" href="../_modules/filip/clients/base_http_client.html#BaseHttpClient.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.base_http_client.BaseHttpClient.get" title="Permalink to this definition"></a></dt>
+<dd><p>Sends a GET request either using the provided session or the single
+session.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – URL for the new <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code> object.</p></li>
+<li><p><strong>params</strong> (<em>optional</em>) – (optional) Dictionary, list of tuples or bytes
+to send in the query string for the <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code>.</p></li>
+<li><p><strong>**kwargs</strong> – Optional arguments that <code class="docutils literal notranslate"><span class="pre">request</span></code> takes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>requests.Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.base_http_client.BaseHttpClient.head">
+<span class="sig-name descname"><span class="pre">head</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.12)"><span class="pre">Dict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.12)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.12)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ByteString" title="(in Python v3.12)"><span class="pre">ByteString</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Response</span></span></span><a class="reference internal" href="../_modules/filip/clients/base_http_client.html#BaseHttpClient.head"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.base_http_client.BaseHttpClient.head" title="Permalink to this definition"></a></dt>
+<dd><p>Sends a HEAD request either using the provided session or the
+single session.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – URL for the new <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code> object.</p></li>
+<li><p><strong>params</strong> (<em>optional</em>) – Dictionary, list of tuples or bytes
+to send in the query string for the <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code>.</p></li>
+<li><p><strong>**kwargs</strong> – Optional arguments that <code class="docutils literal notranslate"><span class="pre">request</span></code> takes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>requests.Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="filip.clients.base_http_client.BaseHttpClient.headers">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">headers</span></span><a class="headerlink" href="#filip.clients.base_http_client.BaseHttpClient.headers" title="Permalink to this definition"></a></dt>
+<dd><p>Return current session headers
+:returns: dict with headers</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.base_http_client.BaseHttpClient.log_error">
+<span class="sig-name descname"><span class="pre">log_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">err</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">RequestException</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/filip/clients/base_http_client.html#BaseHttpClient.log_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.base_http_client.BaseHttpClient.log_error" title="Permalink to this definition"></a></dt>
+<dd><p>Outputs the error messages from the client request function. If
+additional information is available in the server response this will
+be forwarded to the logging output.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The user is responsible to setup the logging system</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>err</strong> – Request Error</p></li>
+<li><p><strong>msg</strong> – error message from calling function</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.base_http_client.BaseHttpClient.options">
+<span class="sig-name descname"><span class="pre">options</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Response</span></span></span><a class="reference internal" href="../_modules/filip/clients/base_http_client.html#BaseHttpClient.options"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.base_http_client.BaseHttpClient.options" title="Permalink to this definition"></a></dt>
+<dd><p>Sends an OPTIONS request either using the provided session or the
+single session.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – </p></li>
+<li><p><strong>**kwargs</strong> – Optional arguments that <code class="docutils literal notranslate"><span class="pre">request</span></code> takes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>requests.Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.base_http_client.BaseHttpClient.patch">
+<span class="sig-name descname"><span class="pre">patch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.12)"><span class="pre">Dict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ByteString" title="(in Python v3.12)"><span class="pre">ByteString</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.12)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.12)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.IO" title="(in Python v3.12)"><span class="pre">IO</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.12)"><span class="pre">Dict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Response</span></span></span><a class="reference internal" href="../_modules/filip/clients/base_http_client.html#BaseHttpClient.patch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.base_http_client.BaseHttpClient.patch" title="Permalink to this definition"></a></dt>
+<dd><p>Sends a PATCH request either using the provided session or the
+single session.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> – URL for the new <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code> object.</p></li>
+<li><p><strong>data</strong> (<em>Union</em><em>[</em><em>Dict</em><em>, </em><em>ByteString</em><em>, </em><em>List</em><em>[</em><em>Tuple</em><em>]</em><em>, </em><em>IO</em><em>]</em>) – Dictionary, list of tuples, bytes, or file-like
+object to send in the body of the <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code>.</p></li>
+<li><p><strong>json</strong> (<em>Dict</em>) – A JSON serializable Python object to send in the
+body of the <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code>..</p></li>
+<li><p><strong>**kwargs</strong> – Optional arguments that <code class="docutils literal notranslate"><span class="pre">request</span></code> takes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>request.Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.base_http_client.BaseHttpClient.post">
+<span class="sig-name descname"><span class="pre">post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.12)"><span class="pre">Dict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ByteString" title="(in Python v3.12)"><span class="pre">ByteString</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.12)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.12)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.IO" title="(in Python v3.12)"><span class="pre">IO</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.12)"><span class="pre">Dict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Response</span></span></span><a class="reference internal" href="../_modules/filip/clients/base_http_client.html#BaseHttpClient.post"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.base_http_client.BaseHttpClient.post" title="Permalink to this definition"></a></dt>
+<dd><p>Sends a POST request either using the provided session or the
+single session.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> – URL for the new <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code> object.</p></li>
+<li><p><strong>data</strong> – Dictionary, list of tuples, bytes, or file-like object to
+send in the body of the <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code>.</p></li>
+<li><p><strong>json</strong> – A JSON serializable Python object to send in the
+body of the <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code>.</p></li>
+<li><p><strong>**kwargs</strong> – Optional arguments that <code class="docutils literal notranslate"><span class="pre">request</span></code> takes.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.base_http_client.BaseHttpClient.put">
+<span class="sig-name descname"><span class="pre">put</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.12)"><span class="pre">Dict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ByteString" title="(in Python v3.12)"><span class="pre">ByteString</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.12)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.12)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.IO" title="(in Python v3.12)"><span class="pre">IO</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.12)"><span class="pre">Dict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Response</span></span></span><a class="reference internal" href="../_modules/filip/clients/base_http_client.html#BaseHttpClient.put"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.base_http_client.BaseHttpClient.put" title="Permalink to this definition"></a></dt>
+<dd><p>Sends a PUT request either using the provided session or the
+single session.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> – URL for the new <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code> object.</p></li>
+<li><p><strong>data</strong> (<em>Union</em><em>[</em><em>Dict</em><em>, </em><em>ByteString</em><em>, </em><em>List</em><em>[</em><em>Tuple</em><em>]</em><em>, </em><em>IO</em><em>]</em>) – Dictionary, list of tuples, bytes, or file-like
+object to send in the body of the <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code>.</p></li>
+<li><p><strong>json</strong> (<em>Dict</em>) – A JSON serializable Python object to send in the
+body of the <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code>..</p></li>
+<li><p><strong>**kwargs</strong> – Optional arguments that <code class="docutils literal notranslate"><span class="pre">request</span></code> takes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>request.Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021-2024, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
