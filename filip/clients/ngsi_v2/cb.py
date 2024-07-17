@@ -915,7 +915,7 @@ class ContextBrokerClient(BaseHttpClient):
         The entity attributes are updated with the ones in the payload.
         In addition to that, if one or more attributes in the payload doesn't
         exist in the entity, an error is returned. This corresponds to a
-        'PATcH' request.
+        'PATCH' request.
 
         Args:
             entity_id: Entity id to be updated
@@ -1232,7 +1232,7 @@ class ContextBrokerClient(BaseHttpClient):
                 res.raise_for_status()
         except requests.RequestException as err:
             msg = (
-                f"Could not delete attribute '{attr_name}' of entity" f"'{entity_id}' "
+                f"Could not delete attribute '{attr_name}' of entity '{entity_id}'"
             )
             self.log_error(err=err, msg=msg)
             raise
@@ -2140,12 +2140,6 @@ class ContextBrokerClient(BaseHttpClient):
                     continue
                 else:
                     return False
-            if not _value_is_not_none(v) or not _value_is_not_none(ex_value):
-                warnings.warn(
-                    "Different field found:{"
-                    f"{k}: ({v}, {ex_value})"
-                    "}"
-                )
             if v != ex_value:
                 self.logger.debug(f"Not equal fields for key {k}: ({v}, {ex_value})")
                 if not _value_is_not_none(v) and not _value_is_not_none(ex_value) or k == "timesSent":

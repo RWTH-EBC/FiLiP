@@ -7,11 +7,11 @@ Configuration or Device provisioning APIs.
 
 # The IoTAgent Library provides an expression language for measurement transformation,
 that can be used to adapt the # information coming from the South Bound APIs to the
-information reported to the Context Broker. This is really useful # when you need to
+information reported to the Context Broker. This is really useful when you need to
 adapt measure.
 
 # There are available two different expression languages jexl and legacy. The
-recommended language to use is jexl, # which is newer and most powerful.
+recommended language to use is jexl, which is newer and most powerful.
 
 # The input sections are marked with 'TODO'
 
@@ -129,6 +129,8 @@ if __name__ == '__main__':
                            f' "timestamp": {datetime.datetime.now().timestamp() * 1000} }}')
 
     client.disconnect()
+
+    time.sleep(2)
 
     # Printing context entities of OCB
     for context_entity in cb_client.get_entity_list(entity_types=["WasteContainer"]):
