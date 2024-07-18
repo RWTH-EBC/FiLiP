@@ -413,7 +413,8 @@ class Condition(BaseModel):
         elif isinstance(v, list):
             for item in v:
                 if item not in allowed_types:
-                    raise ValueError(f'{item} is not a valid alterationType')
+                    raise ValueError(f'{item} is not a valid alterationType'
+                                     f' allowed values are {allowed_types}')
             return v
         else:
             raise ValueError('alterationTypes must be a list of strings')
