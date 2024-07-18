@@ -14,7 +14,7 @@ from filip.models.ngsi_v2.subscriptions import \
     Notification, \
     Subscription, \
     NgsiPayload, \
-    NgsiPayloadAttr
+    NgsiPayloadAttr, Condition
 from filip.models.base import FiwareHeader
 from filip.utils.cleanup import clear_all, clean_test
 from tests.config import settings
@@ -269,6 +269,22 @@ class TestSubscriptions(unittest.TestCase):
         test_dict = json.loads(sub.model_dump_json(exclude_defaults=True))
         with self.assertRaises(KeyError):
             _ = test_dict["status"]
+
+    def test_alteration_types_model(self):
+        c = Condition(alterationTypes=["entityCreate", "entityDelete"])
+        # entity override is not a valid alteration type
+        with self.assertRaises(ValueError):
+            c = Condition(alterationTypes=["entityOverride", "entityDelete"])
+        # test alteration types with different input types
+        # list success
+        c = Condition(alterationTypes=["entityCreate", "entityDelete"])
+        # tuple success
+        c = Condition(alterationTypes=("entityChange", "entityDelete"))
+        # set success
+        c = Condition(alterationTypes={"entityUpdate", "entityDelete"})
+        # str fail
+        with self.assertRaises(ValueError):
+            c = Condition(alterationTypes="entityCreate")
 
     def tearDown(self) -> None:
         """

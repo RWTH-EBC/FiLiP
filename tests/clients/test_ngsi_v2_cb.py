@@ -30,7 +30,8 @@ from filip.models.ngsi_v2.context import \
 
 from filip.models.ngsi_v2.base import AttrsFormat, EntityPattern, Status, \
     NamedMetadata
-from filip.models.ngsi_v2.subscriptions import Mqtt, Message, Subscription
+from filip.models.ngsi_v2.subscriptions import Mqtt, Message, Subscription, Condition, \
+    Notification
 from filip.models.ngsi_v2.iot import \
     Device, \
     DeviceCommand, \
@@ -666,6 +667,101 @@ class TestContextBroker(unittest.TestCase):
             client.update_subscription(subscription=sub_expired)
             sub_res_expired = client.get_subscription(subscription_id=sub_id)
             self.assertEqual(sub_res_expired.status, Status.EXPIRED)
+
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                cb_url=settings.CB_URL,
+                iota_url=settings.IOTA_JSON_URL)
+    def test_subscription_alterationtypes(self):
+        """
+        Test behavior of subscription alterationtypes since Orion 3.7.0
+        """
+        sub = self.subscription.model_copy()
+        sub.subject.condition = Condition(alterationTypes=[])
+        sub.notification = Notification(
+            mqtt=Mqtt(
+                url=settings.MQTT_BROKER_URL_INTERNAL,
+                topic="test/alterationtypes"))
+        test_entity = ContextEntity(id="test:alterationtypes", type="Room",
+                                    temperature={"type": "Number",
+                                                 "value": 25.0}
+                                    )
+
+        # test default with empty alterationTypes, triggered during actual change
+        self.client.post_entity(test_entity)
+        sub_id_default = self.client.post_subscription(subscription=sub)
+        test_entity = self.client.get_entity(entity_id=test_entity.id)
+        test_entity.temperature.value = 26.0
+        self.client.update_entity(test_entity)
+        time.sleep(1)
+        sub_result_default = self.client.get_subscription(sub_id_default)
+        self.assertEqual(sub_result_default.notification.timesSent, 1)
+        # not triggered during with no actual update
+        self.client.update_entity(test_entity)
+        time.sleep(1)
+        sub_result_default = self.client.get_subscription(sub_id_default)
+        self.assertEqual(sub_result_default.notification.timesSent, 1)
+        self.client.delete_subscription(sub_id_default)
+
+        # test entityChange
+        sub.subject.condition.alterationTypes = ["entityChange"]
+        sub_id_change = self.client.post_subscription(subscription=sub)
+        test_entity.temperature.value = 27.0
+        self.client.update_entity(test_entity)
+        time.sleep(1)
+        sub_result_change = self.client.get_subscription(sub_id_change)
+        self.assertEqual(sub_result_change.notification.timesSent, 1)
+        # not triggered during with no actual update
+        self.client.update_entity(test_entity)
+        time.sleep(1)
+        sub_result_change = self.client.get_subscription(sub_id_change)
+        self.assertEqual(sub_result_change.notification.timesSent, 1)
+        self.client.delete_subscription(sub_id_change)
+
+        # test entityCreate
+        test_entity_create = ContextEntity(id="test:alterationtypes2", type="Room",
+                                           temperature={"type": "Number",
+                                                        "value": 25.0}
+                                           )
+        sub.subject.condition.alterationTypes = ["entityCreate"]
+        sub_id_create = self.client.post_subscription(subscription=sub)
+        self.client.post_entity(test_entity_create)
+        time.sleep(1)
+        sub_result_create = self.client.get_subscription(sub_id_create)
+        self.assertEqual(sub_result_create.notification.timesSent, 1)
+        # not triggered during when update
+        test_entity_create = self.client.get_entity(entity_id=test_entity_create.id)
+        test_entity_create.temperature.value = 26.0
+        self.client.update_entity(test_entity_create)
+        time.sleep(1)
+        sub_result_create = self.client.get_subscription(sub_id_create)
+        self.assertEqual(sub_result_create.notification.timesSent, 1)
+        self.client.delete_subscription(sub_id_create)
+
+        # test entityDelete
+        sub.subject.condition.alterationTypes = ["entityDelete"]
+        sub_id_delete = self.client.post_subscription(subscription=sub)
+        self.client.delete_entity(test_entity_create.id)
+        time.sleep(1)
+        sub_result_delete = self.client.get_subscription(sub_id_delete)
+        self.assertEqual(sub_result_delete.notification.timesSent, 1)
+        self.client.delete_subscription(sub_id_delete)
+
+        # test entityUpdate (no matter if the entity actually changed or not)
+        sub.subject.condition.alterationTypes = ["entityUpdate"]
+        sub_id_update = self.client.post_subscription(subscription=sub)
+        # triggered when actual change
+        test_entity.temperature.value = 28.0
+        self.client.update_entity(test_entity)
+        time.sleep(1)
+        sub_result_update = self.client.get_subscription(sub_id_update)
+        self.assertEqual(sub_result_update.notification.timesSent, 1)
+        # triggered when no actual change
+        self.client.update_entity(test_entity)
+        time.sleep(1)
+        sub_result_update = self.client.get_subscription(sub_id_update)
+        self.assertEqual(sub_result_update.notification.timesSent, 2)
+        self.client.delete_subscription(sub_id_update)
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
