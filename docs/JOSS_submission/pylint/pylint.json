@@ -899,7 +899,7 @@
             "column": 0,
             "path": "tutorials/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.config:[35:42]\n==tests.config:[45:51]\n    MQTT_BROKER_URL: AnyUrl = Field(default=\"mqtt://127.0.0.1:1883\",\n                                    validation_alias=AliasChoices(\n                                        'MQTT_BROKER_URL',\n                                        'MQTT_URL',\n                                        'MQTT_BROKER'))\n",
+            "message": "Similar lines in 2 files\n==filip.config:[35:42]\n==tests.config:[45:51]\n    MQTT_BROKER_URL: AnyUrl = Field(default=\"mqtt://127.0.0.1:1883\",\n                                    validation_alias=AliasChoices(\n                                        'MQTT_BROKER_URL',\n                                        'MQTT_URL',\n                                        'MQTT_BROKER'))\n\n# create settings object",
             "message-id": "R0801"
         }
     ],
@@ -1009,16 +1009,16 @@
         },
         "dependencies": {
             "filip.config": [
-                "tests.test_config",
-                "filip"
+                "filip",
+                "tests.test_config"
             ],
             "filip.clients.ngsi_v2": [
                 "filip"
             ],
             "pydantic": [
                 "tests.test_config",
-                "tests.config",
                 "filip.custom_types",
+                "tests.config",
                 "filip.config"
             ],
             "pydantic_settings": [
@@ -1172,16 +1172,16 @@
         },
         "dependencies": {
             "filip.config": [
-                "tests.test_config",
-                "filip"
+                "filip",
+                "tests.test_config"
             ],
             "filip.clients.ngsi_v2": [
                 "filip"
             ],
             "pydantic": [
                 "tests.test_config",
-                "tests.config",
                 "filip.custom_types",
+                "tests.config",
                 "filip.config"
             ],
             "pydantic_settings": [
