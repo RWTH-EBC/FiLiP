@@ -2,11 +2,11 @@
 
 # FiLiP
 
-[![pylint](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/pylint/pylint.svg)](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/pylint/pylint.html)
-[![Documentation](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/docs/doc.svg)](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/docs/index.html)
-[![coverage](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/coverage/badge.svg)](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/coverage)
+[![pylint](https://rwth-ebc.github.io/FiLiP/master/pylint/pylint.svg)](https://rwth-ebc.github.io/FiLiP/master/pylint/pylint.html)
+[![Documentation](https://rwth-ebc.github.io/FiLiP/master/docs/doc.svg)](https://rwth-ebc.github.io/FiLiP/master/docs/index.html)
+[![coverage](https://rwth-ebc.github.io/FiLiP/master/coverage/badge.svg)](https://rwth-ebc.github.io/FiLiP/master/coverage)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
-[![build](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/build/build.svg)](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/build/build.svg)
+[![build](https://rwth-ebc.github.io/FiLiP/master/build/build.svg)](https://rwth-ebc.github.io/FiLiP/master/build/build.svg)
 
 FiLiP (Fiware Library for Python) is a python software development kit (SDK) for 
 accelerating the development of web services that use Fiware's Generic 
@@ -66,7 +66,7 @@ on this.
 If this is not an option for you, FIWARE also provides a testing server.
 You can register for a testing account 
 [here](https://www.fiware.org/developers/fiware-lab/).
-> **Note**: FiLiP is now compatible to [Pydantic V2](https://docs.pydantic.dev/latest/migration/). If your program still require Pydantic V1.x for some reason, please use release [v0.2.5](https://github.com/RWTH-EBC/FiLiP/releases/tag/v0.2.5) or earlier version of FiLiP. Besides, we recommended to use `pydantic~=1.10` in the `requirements.txt`
+> **Note**: FiLiP is now compatible to [Pydantic V2](https://docs.pydantic.dev/latest/migration/). If your program still require Pydantic V1.x for some reason, please use release [v0.2.5](https://github.com/RWTH-EBC/FiLiP/releases/tag/v0.2.5) or earlier version of FiLiP. Besides, we recommended to set `pydantic~=1.10` in the `requirements.txt`, otherwise Pydantic V2 might still be installed.
 
 ### Installation
 
@@ -82,6 +82,11 @@ If you want to benefit from the latest changes, use the following command
 ```
 pip install -U git+git://github.com/RWTH-EBC/filip
 ```
+
+> **Note**: For local development, you can install the library in editable mode with the following command:
+> ````
+> pip install -e .
+> ````
 
 #### Install semantics module (optional)
 
@@ -191,7 +196,7 @@ Therefore, FiLiP currently only covers the APIs of the following GEs:
 
 We are still working on the documentation.
 You can find our current documentation 
-[here](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/docs/index.html).
+[here](https://rwth-ebc.github.io/FiLiP/master/docs/index.html).
 
 ## Running examples
 
