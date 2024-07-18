@@ -459,6 +459,8 @@
 <span class="sd">    expression matches.</span>
 <span class="sd">    If neither attrs nor expression are used, a notification is sent whenever</span>
 <span class="sd">    any of the attributes of the entity changes.</span>
+<span class="sd">    alterationTypes: for more information about this field, see</span>
+<span class="sd">    https://github.com/telefonicaid/fiware-orion/blob/3.8.0/doc/manuals/orion-api.md#subscriptions-based-in-alteration-type</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">attrs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
@@ -471,6 +473,10 @@
                     <span class="s1">&#39;coords (see &quot;List entities&quot; operation above about this &#39;</span>
                     <span class="s1">&#39;field).&#39;</span>
     <span class="p">)</span>
+    <span class="n">alterationTypes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;list of alteration types triggering the subscription&#39;</span>
+    <span class="p">)</span>
 
 <div class="viewcode-block" id="Condition.check_attrs"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.subscriptions.Condition.check_attrs">[docs]</a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s1">&#39;attrs&#39;</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">check_attrs</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
@@ -479,7 +485,22 @@
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">return</span> <span class="p">[</span><span class="n">v</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">()</span></div></div>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Condition.check_alteration_types"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.subscriptions.Condition.check_alteration_types">[docs]</a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s1">&#39;alterationTypes&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">check_alteration_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="n">allowed_types</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;entityCreate&quot;</span><span class="p">,</span> <span class="s2">&quot;entityDelete&quot;</span><span class="p">,</span> <span class="s2">&quot;entityUpdate&quot;</span><span class="p">,</span> <span class="s2">&quot;entityChange&quot;</span><span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">item</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">allowed_types</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s1"> is not a valid alterationType&#39;</span>
+                                     <span class="sa">f</span><span class="s1">&#39; allowed values are </span><span class="si">{</span><span class="n">allowed_types</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">v</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;alterationTypes must be a list of strings&#39;</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="Subject"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.subscriptions.Subject">[docs]</a><span class="k">class</span> <span class="nc">Subject</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>

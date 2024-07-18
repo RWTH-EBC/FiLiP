@@ -464,7 +464,7 @@ of the data provided.
 
 <dl class="py method pydantic_validator">
 <dt class="sig sig-object py" id="filip.models.ngsi_v2.base.Expression.validate_expressions">
-<em class="property"><span class="pre">validator</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_expressions</span></span><em class="autodoc_pydantic_validator_arrow property">&#160; <span class="pre">»</span>&#160; </em><a class="reference internal" href="#filip.models.ngsi_v2.base.Expression.q" title="filip.models.ngsi_v2.base.Expression.q"><em class="xref py py-obj"><span class="pre">q</span></em></a><em class="property"><span class="pre">,</span> </em><a class="reference internal" href="#filip.models.ngsi_v2.base.Expression.mq" title="filip.models.ngsi_v2.base.Expression.mq"><em class="xref py py-obj"><span class="pre">mq</span></em></a><a class="reference internal" href="../_modules/filip/models/ngsi_v2/base.html#Expression.validate_expressions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_v2.base.Expression.validate_expressions" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">validator</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_expressions</span></span><em class="autodoc_pydantic_validator_arrow property">&#160; <span class="pre">»</span>&#160; </em><a class="reference internal" href="#filip.models.ngsi_v2.base.Expression.mq" title="filip.models.ngsi_v2.base.Expression.mq"><em class="xref py py-obj"><span class="pre">mq</span></em></a><em class="property"><span class="pre">,</span> </em><a class="reference internal" href="#filip.models.ngsi_v2.base.Expression.q" title="filip.models.ngsi_v2.base.Expression.q"><em class="xref py py-obj"><span class="pre">q</span></em></a><a class="reference internal" href="../_modules/filip/models/ngsi_v2/base.html#Expression.validate_expressions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_v2.base.Expression.validate_expressions" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -3147,20 +3147,37 @@ If attrs is not used and expression is used, a notification is sent
 whenever any of the attributes of the entity changes and at the same time
 expression matches.
 If neither attrs nor expression are used, a notification is sent whenever
-any of the attributes of the entity changes.</p>
+any of the attributes of the entity changes.
+alterationTypes: for more information about this field, see
+<a class="reference external" href="https://github.com/telefonicaid/fiware-orion/blob/3.8.0/doc/manuals/orion-api.md#subscriptions-based-in-alteration-type">https://github.com/telefonicaid/fiware-orion/blob/3.8.0/doc/manuals/orion-api.md#subscriptions-based-in-alteration-type</a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Fields<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Condition.alterationTypes" title="filip.models.ngsi_v2.subscriptions.Condition.alterationTypes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">alterationTypes</span> <span class="pre">(List[str]</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Condition.attrs" title="filip.models.ngsi_v2.subscriptions.Condition.attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">attrs</span> <span class="pre">(str</span> <span class="pre">|</span> <span class="pre">List[str]</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Condition.expression" title="filip.models.ngsi_v2.subscriptions.Condition.expression"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expression</span> <span class="pre">(str</span> <span class="pre">|</span> <span class="pre">filip.models.ngsi_v2.base.Expression</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 </ul>
 </dd>
 <dt class="field-even">Validators<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Condition.check_alteration_types" title="filip.models.ngsi_v2.subscriptions.Condition.check_alteration_types"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_alteration_types</span></code></a> » <a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Condition.alterationTypes" title="filip.models.ngsi_v2.subscriptions.Condition.alterationTypes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">alterationTypes</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Condition.check_attrs" title="filip.models.ngsi_v2.subscriptions.Condition.check_attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_attrs</span></code></a> » <a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Condition.attrs" title="filip.models.ngsi_v2.subscriptions.Condition.attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">attrs</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.subscriptions.Condition.alterationTypes">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">alterationTypes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.12)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_v2.subscriptions.Condition.alterationTypes" title="Permalink to this definition"></a></dt>
+<dd><p>list of alteration types triggering the subscription</p>
+<dl class="field-list simple">
+<dt class="field-odd">Validated by<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Condition.check_alteration_types" title="filip.models.ngsi_v2.subscriptions.Condition.check_alteration_types"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_alteration_types</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="filip.models.ngsi_v2.subscriptions.Condition.attrs">
 <em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">attrs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.12)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_v2.subscriptions.Condition.attrs" title="Permalink to this definition"></a></dt>
@@ -3179,6 +3196,11 @@ any of the attributes of the entity changes.</p>
 <em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">expression</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#filip.models.ngsi_v2.base.Expression" title="filip.models.ngsi_v2.base.Expression"><span class="pre">Expression</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_v2.subscriptions.Condition.expression" title="Permalink to this definition"></a></dt>
 <dd><p>an expression composed of q, mq, georel, geometry and coords (see “List entities” operation above about this field).</p>
 </dd></dl>
+
+<dl class="py method pydantic_validator">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.subscriptions.Condition.check_alteration_types">
+<em class="property"><span class="pre">validator</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">check_alteration_types</span></span><em class="autodoc_pydantic_validator_arrow property">&#160; <span class="pre">»</span>&#160; </em><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Condition.alterationTypes" title="filip.models.ngsi_v2.subscriptions.Condition.alterationTypes"><em class="xref py py-obj"><span class="pre">alterationTypes</span></em></a><a class="reference internal" href="../_modules/filip/models/ngsi_v2/subscriptions.html#Condition.check_alteration_types"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_v2.subscriptions.Condition.check_alteration_types" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py method pydantic_validator">
 <dt class="sig sig-object py" id="filip.models.ngsi_v2.subscriptions.Condition.check_attrs">
