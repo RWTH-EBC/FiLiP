@@ -909,6 +909,27 @@ class TestContextBroker(unittest.TestCase):
             "expires": datetime.now() + timedelta(days=1),
             "throttling": 0
         })
+        sub_with_covered_attrs_notification = Subscription.model_validate({
+            "description": "Test notification with covered attributes",
+            "subject": {
+                "entities": [
+                    {
+                        "id": "Test:001",
+                        "type": "Test"
+                    }
+                ]
+            },
+            "notification": {
+                "mqtt": {
+                    "url": mqtt_url_internal,
+                    "topic": mqtt_topic
+                },
+                "attrs": ["temperature", "not_exist_attr"],
+                "covered": True
+            },
+            "expires": datetime.now() + timedelta(days=1),
+            "throttling": 0
+        })
 
         # MQTT settings
         sub_message = None
@@ -1026,6 +1047,28 @@ class TestContextBroker(unittest.TestCase):
             self.assertEqual(
                 sub_messages[sub_id_3].data[0].get_attribute(
                     "temperature").value, 10)
+
+            # test4 notification with covered attributes
+            sub_id_4 = client.post_subscription(
+                subscription=sub_with_covered_attrs_notification,
+                )
+            time.sleep(1)
+            client.update_attribute_value(entity_id=entity.id,
+                                          attr_name="temperature",
+                                          value=40
+                                          )
+            time.sleep(1)
+            sub_4 = client.get_subscription(sub_id_4)
+            self.assertEqual(sub_4.notification.timesSent, 1)
+            notified_attr_names = sub_messages[sub_id_4].data[0].get_attribute_names()
+            self.assertEqual(
+                len(notified_attr_names), 2)
+            self.assertIn("temperature", notified_attr_names)
+            self.assertIn("not_exist_attr", notified_attr_names)
+            with self.assertRaises(KeyError):
+                # The attribute "not_exist_attr" has type None,
+                #  so it will not be taken as an attribute by filip
+                sub_messages[sub_id_4].data[0].get_attribute("not_exist_attr")
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
