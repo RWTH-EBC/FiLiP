@@ -30,7 +30,8 @@ from filip.models.ngsi_v2.context import \
 
 from filip.models.ngsi_v2.base import AttrsFormat, EntityPattern, Status, \
     NamedMetadata
-from filip.models.ngsi_v2.subscriptions import Mqtt, Message, Subscription
+from filip.models.ngsi_v2.subscriptions import Mqtt, Message, Subscription, Condition, \
+    Notification
 from filip.models.ngsi_v2.iot import \
     Device, \
     DeviceCommand, \
@@ -671,6 +672,101 @@ class TestContextBroker(unittest.TestCase):
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
                 cb_url=settings.CB_URL,
                 iota_url=settings.IOTA_JSON_URL)
+    def test_subscription_alterationtypes(self):
+        """
+        Test behavior of subscription alterationtypes since Orion 3.7.0
+        """
+        sub = self.subscription.model_copy()
+        sub.subject.condition = Condition(alterationTypes=[])
+        sub.notification = Notification(
+            mqtt=Mqtt(
+                url=settings.MQTT_BROKER_URL_INTERNAL,
+                topic="test/alterationtypes"))
+        test_entity = ContextEntity(id="test:alterationtypes", type="Room",
+                                    temperature={"type": "Number",
+                                                 "value": 25.0}
+                                    )
+
+        # test default with empty alterationTypes, triggered during actual change
+        self.client.post_entity(test_entity)
+        sub_id_default = self.client.post_subscription(subscription=sub)
+        test_entity = self.client.get_entity(entity_id=test_entity.id)
+        test_entity.temperature.value = 26.0
+        self.client.update_entity(test_entity)
+        time.sleep(1)
+        sub_result_default = self.client.get_subscription(sub_id_default)
+        self.assertEqual(sub_result_default.notification.timesSent, 1)
+        # not triggered during with no actual update
+        self.client.update_entity(test_entity)
+        time.sleep(1)
+        sub_result_default = self.client.get_subscription(sub_id_default)
+        self.assertEqual(sub_result_default.notification.timesSent, 1)
+        self.client.delete_subscription(sub_id_default)
+
+        # test entityChange
+        sub.subject.condition.alterationTypes = ["entityChange"]
+        sub_id_change = self.client.post_subscription(subscription=sub)
+        test_entity.temperature.value = 27.0
+        self.client.update_entity(test_entity)
+        time.sleep(1)
+        sub_result_change = self.client.get_subscription(sub_id_change)
+        self.assertEqual(sub_result_change.notification.timesSent, 1)
+        # not triggered during with no actual update
+        self.client.update_entity(test_entity)
+        time.sleep(1)
+        sub_result_change = self.client.get_subscription(sub_id_change)
+        self.assertEqual(sub_result_change.notification.timesSent, 1)
+        self.client.delete_subscription(sub_id_change)
+
+        # test entityCreate
+        test_entity_create = ContextEntity(id="test:alterationtypes2", type="Room",
+                                           temperature={"type": "Number",
+                                                        "value": 25.0}
+                                           )
+        sub.subject.condition.alterationTypes = ["entityCreate"]
+        sub_id_create = self.client.post_subscription(subscription=sub)
+        self.client.post_entity(test_entity_create)
+        time.sleep(1)
+        sub_result_create = self.client.get_subscription(sub_id_create)
+        self.assertEqual(sub_result_create.notification.timesSent, 1)
+        # not triggered during when update
+        test_entity_create = self.client.get_entity(entity_id=test_entity_create.id)
+        test_entity_create.temperature.value = 26.0
+        self.client.update_entity(test_entity_create)
+        time.sleep(1)
+        sub_result_create = self.client.get_subscription(sub_id_create)
+        self.assertEqual(sub_result_create.notification.timesSent, 1)
+        self.client.delete_subscription(sub_id_create)
+
+        # test entityDelete
+        sub.subject.condition.alterationTypes = ["entityDelete"]
+        sub_id_delete = self.client.post_subscription(subscription=sub)
+        self.client.delete_entity(test_entity_create.id)
+        time.sleep(1)
+        sub_result_delete = self.client.get_subscription(sub_id_delete)
+        self.assertEqual(sub_result_delete.notification.timesSent, 1)
+        self.client.delete_subscription(sub_id_delete)
+
+        # test entityUpdate (no matter if the entity actually changed or not)
+        sub.subject.condition.alterationTypes = ["entityUpdate"]
+        sub_id_update = self.client.post_subscription(subscription=sub)
+        # triggered when actual change
+        test_entity.temperature.value = 28.0
+        self.client.update_entity(test_entity)
+        time.sleep(1)
+        sub_result_update = self.client.get_subscription(sub_id_update)
+        self.assertEqual(sub_result_update.notification.timesSent, 1)
+        # triggered when no actual change
+        self.client.update_entity(test_entity)
+        time.sleep(1)
+        sub_result_update = self.client.get_subscription(sub_id_update)
+        self.assertEqual(sub_result_update.notification.timesSent, 2)
+        self.client.delete_subscription(sub_id_update)
+
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                cb_url=settings.CB_URL,
+                iota_url=settings.IOTA_JSON_URL)
     def test_mqtt_subscriptions(self):
         mqtt_url = settings.MQTT_BROKER_URL
         mqtt_url_internal = settings.MQTT_BROKER_URL_INTERNAL
@@ -909,6 +1005,90 @@ class TestContextBroker(unittest.TestCase):
             "expires": datetime.now() + timedelta(days=1),
             "throttling": 0
         })
+
+        mqtt_custom_topic = "notification/custom"
+        sub_with_mqtt_custom_notification_payload = Subscription.model_validate({
+            "description": "Test mqtt custom notification with payload message",
+            "subject": {
+                "entities": [
+                    {
+                        "id": "Test:001",
+                        "type": "Test"
+                    }
+                ]
+            },
+            "notification": {
+                "mqttCustom": {
+                    "url": mqtt_url_internal,
+                    "topic": mqtt_custom_topic,
+                    "payload": "The value of the %22temperature%22 attribute %28of the device ${id}, ${type}%29 is"
+                               " ${temperature}. Humidity is ${humidity} and CO2 is ${co2}."
+                },
+                "attrs": ["temperature", "humidity", "co2"],
+                "onlyChangedAttrs": False
+            },
+            "expires": datetime.now() + timedelta(days=1),
+            "throttling": 0
+        })
+
+        sub_with_mqtt_custom_notification_json = Subscription.model_validate({
+            "description": "Test mqtt custom notification with json message",
+            "subject": {
+                "entities": [
+                    {
+                        "id": "Test:001",
+                        "type": "Test"
+                    }
+                ]
+            },
+            "notification": {
+                "mqttCustom": {
+                    "url": mqtt_url_internal,
+                    "topic": mqtt_custom_topic,
+                    "json": {
+                        "t": "${temperature}",
+                        "h": "${humidity}",
+                        "c": "${co2}"
+                    }
+                },
+                "attrs": ["temperature", "humidity", "co2"],
+                "onlyChangedAttrs": False
+            },
+            "expires": datetime.now() + timedelta(days=1),
+            "throttling": 0
+        })
+
+        sub_with_mqtt_custom_notification_ngsi = Subscription.model_validate({
+            "description": "Test mqtt custom notification with ngsi message",
+            "subject": {
+                "entities": [
+                    {
+                        "id": "Test:001",
+                        "type": "Test"
+                    }
+                ]
+            },
+            "notification": {
+                "mqttCustom": {
+                    "url": mqtt_url_internal,
+                    "topic": mqtt_custom_topic,
+                    "ngsi": {
+                        "id": "prefix:${id}",
+                        "type": "newType",
+                        "temperature": {
+                            "value": 123,
+                            "type": "Number"
+                        },
+
+                    }
+                },
+                "attrs": ["temperature", "humidity", "co2"],
+                "onlyChangedAttrs": False
+            },
+            "expires": datetime.now() + timedelta(days=1),
+            "throttling": 0
+        })
+
         sub_with_covered_attrs_notification = Subscription.model_validate({
             "description": "Test notification with covered attributes",
             "subject": {
@@ -932,6 +1112,7 @@ class TestContextBroker(unittest.TestCase):
         })
 
         # MQTT settings
+        custom_sub_message = None
         sub_message = None
         sub_messages = {}
 
@@ -944,6 +1125,7 @@ class TestContextBroker(unittest.TestCase):
                 logger.info("Successfully, connected with result code " + str(
                     reasonCode))
             client.subscribe(mqtt_topic)
+            client.subscribe(mqtt_custom_topic)
 
         def on_subscribe(client, userdata, mid, granted_qos, properties=None):
             logger.info("Successfully subscribed to with QoS: %s", granted_qos)
@@ -952,8 +1134,12 @@ class TestContextBroker(unittest.TestCase):
             logger.info("Received MQTT message: " + msg.topic + " " + str(
                 msg.payload))
             nonlocal sub_message
-            sub_message = Message.model_validate_json(msg.payload)
-            sub_messages[sub_message.subscriptionId] = sub_message
+            nonlocal custom_sub_message
+            if msg.topic == mqtt_topic:
+                sub_message = Message.model_validate_json(msg.payload)
+                sub_messages[sub_message.subscriptionId] = sub_message
+            elif msg.topic == mqtt_custom_topic:
+                custom_sub_message = msg.payload
 
         def on_disconnect(client, userdata, flags, reasonCode, properties=None):
             logger.info("MQTT client disconnected with reasonCode "
@@ -1048,8 +1234,58 @@ class TestContextBroker(unittest.TestCase):
                 sub_messages[sub_id_3].data[0].get_attribute(
                     "temperature").value, 10)
 
-            # test4 notification with covered attributes
+            # test4 notification with mqtt custom notification (payload)
             sub_id_4 = client.post_subscription(
+                subscription=sub_with_mqtt_custom_notification_payload)
+            time.sleep(1)
+            client.update_attribute_value(entity_id=entity.id,
+                                          attr_name="temperature",
+                                          value=44
+                                          )
+            time.sleep(1)
+            sub_4 = client.get_subscription(sub_id_4)
+            self.assertEqual(first=custom_sub_message,
+                             second=b'The value of the "temperature" attribute (of the device Test:001, Test) is 44. '
+                                    b'Humidity is 20 and CO2 is 30.')
+            self.assertEqual(sub_4.notification.timesSent, 1)
+            client.delete_subscription(sub_id_4)
+
+            # test5 notification with mqtt custom notification (json)
+            sub_id_5 = client.post_subscription(
+                subscription=sub_with_mqtt_custom_notification_json)
+            time.sleep(1)
+            client.update_attribute_value(entity_id=entity.id,
+                                          attr_name="humidity",
+                                          value=67
+                                          )
+            time.sleep(1)
+            sub_5 = client.get_subscription(sub_id_5)
+            self.assertEqual(first=custom_sub_message,
+                             second=b'{"t":44,"h":67,"c":30}')
+            self.assertEqual(sub_5.notification.timesSent, 1)
+            client.delete_subscription(sub_id_5)
+
+            # test6 notification with mqtt custom notification (ngsi)
+            sub_id_6 = client.post_subscription(
+                subscription=sub_with_mqtt_custom_notification_ngsi)
+            time.sleep(1)
+            client.update_attribute_value(entity_id=entity.id,
+                                          attr_name="co2",
+                                          value=78
+                                          )
+            time.sleep(1)
+            sub_6 = client.get_subscription(sub_id_6)
+            sub_message = Message.model_validate_json(custom_sub_message)
+            self.assertEqual(sub_6.notification.timesSent, 1)
+            self.assertEqual(len(sub_message.data[0].get_attributes()), 3)
+            self.assertEqual(sub_message.data[0].id, "prefix:Test:001")
+            self.assertEqual(sub_message.data[0].type, "newType")
+            self.assertEqual(sub_message.data[0].get_attribute("co2").value, 78)
+            self.assertEqual(sub_message.data[0].get_attribute("temperature").value, 123)
+            client.delete_subscription(sub_id_6)
+
+            # test7 notification with covered attributes
+            sub_id_7 = client.post_subscription(
                 subscription=sub_with_covered_attrs_notification,
                 )
             time.sleep(1)
@@ -1058,9 +1294,9 @@ class TestContextBroker(unittest.TestCase):
                                           value=40
                                           )
             time.sleep(1)
-            sub_4 = client.get_subscription(sub_id_4)
+            sub_4 = client.get_subscription(sub_id_7)
             self.assertEqual(sub_4.notification.timesSent, 1)
-            notified_attr_names = sub_messages[sub_id_4].data[0].get_attribute_names()
+            notified_attr_names = sub_messages[sub_id_7].data[0].get_attribute_names()
             self.assertEqual(
                 len(notified_attr_names), 2)
             self.assertIn("temperature", notified_attr_names)
@@ -1068,7 +1304,7 @@ class TestContextBroker(unittest.TestCase):
             with self.assertRaises(KeyError):
                 # The attribute "not_exist_attr" has type None,
                 #  so it will not be taken as an attribute by filip
-                sub_messages[sub_id_4].data[0].get_attribute("not_exist_attr")
+                sub_messages[sub_id_7].data[0].get_attribute("not_exist_attr")
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
