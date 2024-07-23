@@ -5,6 +5,7 @@
 - add: add ``update_entity_relationships`` to allow relationship update ([#271](https://github.com/RWTH-EBC/FiLiP/pull/271))
 - add: timeseries query with all attrs and specific attr name ([#16](https://github.com/RWTH-EBC/FiLiP/pull/16))
 - add: flag to determine the deletion of registration when clearing the CB ([#267](https://github.com/RWTH-EBC/FiLiP/pull/267))
+- add: ``covered`` flag in notification model ([#310](https://github.com/RWTH-EBC/FiLiP/pull/310))
 - fix: rework tutorials for pydantic v2 ([#259](https://github.com/RWTH-EBC/FiLiP/pull/259))
 - fix: inconsistency of `entity_type` as required argument ([#188](https://github.com/RWTH-EBC/FiLiP/pull/188))
 
