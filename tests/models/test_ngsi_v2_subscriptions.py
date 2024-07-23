@@ -112,6 +112,11 @@ class TestSubscriptions(unittest.TestCase):
         with self.assertRaises(ValidationError):
             notification.onlyChangedAttrs = dict()
 
+        # test covered
+        notification = Notification.model_validate(self.notification)
+        notification.covered = True
+        with self.assertRaises(ValidationError):
+            notification.attrs = []
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
