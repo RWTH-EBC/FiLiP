@@ -36,10 +36,6 @@ class TestSubscriptions(unittest.TestCase):
         for sub in sub_list:
             if sub.id.startswith('urn:ngsi-ld:Subscription:test_sub'):
                 self.cb_client.delete_subscription(sub.id)
-        entity_list = self.cb_client.get_entity_list()
-        for entity in entity_list:
-            if entity.id.startswith('urn:ngsi-ld:Entity:test_entity'):
-                self.cb_client.delete_entity_by_id(entity_id=entity.id)
 
     def setUp(self) -> None:
         """
@@ -73,17 +69,6 @@ class TestSubscriptions(unittest.TestCase):
             "accept": "application/json",  # TODO check whether it works
         })
         self.cb_client = ContextBrokerLDClient(url=settings.LD_CB_URL, fiware_header=self.fiware_header)
-        self.mqtt_client = mqtt.Client(callback_api_version=CallbackAPIVersion.VERSION2)
-        #on_message callbacks differ from test to test, but on connect callbacks dont
-        def on_connect_fail(client,userdata):
-            self.fail("Test failed due to broker being down")
-
-        def on_connect(client,userdata,flags,reason_code,properties):
-            self.mqtt_client.subscribe("my/test/topic")
-
-        self.mqtt_client.on_connect_fail = on_connect_fail
-        self.mqtt_client.on_connect = on_connect
-
         self.endpoint_http = Endpoint(**{
             "uri": "http://137.226.248.246:1027/ngsi-ld/v1/subscriptions",
             "Content-Type": "application/json",
@@ -91,48 +76,6 @@ class TestSubscriptions(unittest.TestCase):
         }
                                       )
         self.cleanup()
-        self.entity_dict = {
-            'id':'urn:ngsi-ld:Entity:test_entity03',
-            'type':'Room',
-            'temperature':{
-                'type':'Property',
-                'value':30
-            }
-        }
-        #posting one single entity to check subscription existence/triggers
-        self.cb_client.post_entity(entity=ContextLDEntity(**self.entity_dict))
-
-        #copy and update a single dict as the corresponding test requires
-        self.sub_dict = {
-            'description':'Test Subscription',
-            'id':'urn:ngsi-ld:Subscription:test_sub25',
-            'type':'Subscription',
-            'entities':[
-                {
-                    'type':'Room'
-                }
-            ],
-            'watchedAttributes':[
-                'temperature'
-            ],
-            'q':'temperature<30',
-            'notification':{
-                'attributes':[
-                    'temperature'
-                ],
-                'format':'normalized',
-                'endpoint':{
-                    'uri':'mqtt://mosquitto:1883/my/test/topic', # change uri
-                    'Accept':'application/json'
-                },
-                'notifierInfo':[
-                    {
-                        "key":"MQTT-Version",
-                        "value":"mqtt5.0"
-                    }
-                ]
-            }
-        }
 
     def tearDown(self) -> None:
         self.cleanup()
@@ -327,54 +270,6 @@ class TestSubscriptions(unittest.TestCase):
         self.assertEqual(sub.notification.attributes, sub_get.notification.attributes)
         self.assertEqual(sub.notification.endpoint.uri, sub_get.notification.endpoint.uri)
 
-
-    def test_get_subscription_check_broker(self):
-        """
-        Returns the subscription if it exists.
-        Args:
-            - subscriptionId(string): required
-        Returns:
-            - (200) subscription or empty list if successful
-            - Error Code
-        Tests:
-            - Subscribe to a message and see if it appears when the message is subscribed to
-            - Choose a non-existent ID and see if the return is an empty array
-        """
-        pass
-
-    def test_post_subscription_mqtt(self):
-         #if a notification is not received before timer runs out, test is assumed failed
-         #Apparently python threads get copies of primitive type objects, hence a small
-         #hack with a list holding the variable
-        test_res = [True]
-        def timeout_func(x):
-            x[0] = False
-        
-        def on_message(client,userdata,msg):
-            timeout_proc.cancel()
-            updated_entity = self.entity_dict.copy()
-            updated_entity.update({'temperature':{'type':'Property','value':25}})
-            self.mqtt_client.loop_stop()
-            self.mqtt_client.disconnect()
-            self.assertEqual(updated_entity,
-                             json.loads(msg.payload.decode())['body']['data'][0])
-
-        timeout_proc = threading.Timer(5,timeout_func,args=[test_res])
-        
-        self.mqtt_client.on_message = on_message
-        self.mqtt_client.connect("localhost",1883,60)
-        self.mqtt_client.loop_start()
-        self.cb_client.post_subscription(subscription=Subscription(**self.sub_dict))
-        timeout_proc.start()
-        self.cb_client.update_entity_attribute(entity_id='urn:ngsi-ld:Entity:test_entity03',
-                                            attr=NamedContextProperty(type="Property",
-                                                                        value=25,
-                                                                        name='temperature'),
-                                            attr_name='temperature')
-        while(timeout_proc.is_alive()):
-            continue
-        self.assertTrue(test_res[0])
-
     def test_get_subscription_list(self):
         """
         Get a list of all current subscriptions the broker has subscribed to.
@@ -438,20 +333,6 @@ class TestSubscriptions(unittest.TestCase):
 
         for sub in sub_list:
             self.cb_client.delete_subscription(subscription_id=sub.id)
-
-
-    def test_delete_subscription_check_broker(self):
-        """
-        Cancels subscription and checks on subscribed values.
-        Args:
-            - subscriptionID(string): required
-        Returns:
-            - Successful: 204, no content
-        Tests:
-            - Post and delete subscription then see if the broker still gets subscribed values.
-        """
-        pass
-
             
     def test_update_subscription(self):
         """
@@ -484,7 +365,139 @@ class TestSubscriptions(unittest.TestCase):
         #Try to patch more than one subscription at once.
         # TODO
 
+class TestSubsCheckBroker(unittest.TestCase):
+    entity_dict = {
+        'id':'urn:ngsi-ld:Entity:test_entity03',
+        'type':'Room',
+        'temperature':{
+            'type':'Property',
+            'value':30
+        }
+    }
+    
+    sub_dict = {
+        'description':'Test Subscription',
+        'id':'urn:ngsi-ld:Subscription:test_sub25',
+        'type':'Subscription',
+        'entities':[
+            {
+                'type':'Room'
+            }
+        ],
+        'watchedAttributes':[
+            'temperature'
+        ],
+        'q':'temperature<30',
+        'notification':{
+            'attributes':[
+                'temperature'
+            ],
+            'format':'normalized',
+            'endpoint':{
+                'uri':'mqtt://mosquitto:1883/my/test/topic', # change uri
+                'Accept':'application/json'
+            },
+            'notifierInfo':[
+                {
+                    "key":"MQTT-Version",
+                    "value":"mqtt5.0"
+                }
+            ]
+        }
+    }
 
+    def cleanup(self):
+        """
+        Cleanup test subscriptions
+        """
+        sub_list = self.cb_client.get_subscription_list()
+        for sub in sub_list:
+            if sub.id.startswith('urn:ngsi-ld:Subscription:test_sub'):
+                self.cb_client.delete_subscription(sub.id)
+        entity_list = self.cb_client.get_entity_list()
+        for entity in entity_list:
+            if entity.id.startswith('urn:ngsi-ld:Entity:test_entity'):
+                self.cb_client.delete_entity_by_id(entity_id=entity.id)
+
+    def setUp(self) -> None:
+        """
+        Setup test data
+        Returns:
+            None
+        """
+        FIWARE_SERVICE = "service"
+        FIWARE_SERVICEPATH = "/"
+        self.fiware_header = FiwareLDHeader(
+            service=FIWARE_SERVICE,
+            service_path=FIWARE_SERVICEPATH)
+        self.cb_client = ContextBrokerLDClient(url=settings.LD_CB_URL, 
+                                               fiware_header=self.fiware_header)
+        self.mqtt_client = mqtt.Client(callback_api_version=CallbackAPIVersion.VERSION2)
+        #on_message callbacks differ from test to test, but on connect callbacks dont
+        def on_connect_fail(client,userdata):
+            self.fail("Test failed due to broker being down")
+
+        def on_connect(client,userdata,flags,reason_code,properties):
+            self.mqtt_client.subscribe("my/test/topic")
+
+        self.mqtt_client.on_connect_fail = on_connect_fail
+        self.mqtt_client.on_connect = on_connect
+        self.cleanup()
+        #posting one single entity to check subscription existence/triggers
+        self.cb_client.post_entity(entity=ContextLDEntity(**self.entity_dict))
+
+
+    def tearDown(self) -> None:
+        self.cleanup()
+
+
+    def test_post_subscription_mqtt(self):
+        """
+        Tests:
+            - Subscribe using an mqtt topic as endpoint and see if notification is received
+        """
+        #Declare timer function, mqtt message callback and a check variable(test_res)
+        #Variable is in list because python threads get copies of primitive objects (e.g bool)
+        #but not of iterables
+        test_res = [True]
+        def timeout_func(x):
+            #The timer changes the variable when it runs out
+            x[0] = False
+        
+        def on_message(client,userdata,msg):
+            #the callback cancels the timer if a message comes through
+            timeout_proc.cancel()
+            updated_entity = self.entity_dict.copy()
+            updated_entity.update({'temperature':{'type':'Property','value':25}})
+            self.mqtt_client.loop_stop()
+            self.mqtt_client.disconnect()
+            #extra sanity check on the contents of the notification(in case we are 
+            #catching a rogue one)
+            self.assertEqual(updated_entity,
+                             json.loads(msg.payload.decode())['body']['data'][0])
+
+        #adjust timeout here as needed
+        timeout_proc = threading.Timer(5,timeout_func,args=[test_res])
+        self.mqtt_client.on_message = on_message
+        
+        self.mqtt_client.connect("localhost",1883,60)
+        self.mqtt_client.loop_start()
+        #post subscription then start timer
+        self.cb_client.post_subscription(subscription=Subscription(**self.sub_dict))
+        timeout_proc.start()
+        #update entity to (ideally) get a notification
+        self.cb_client.update_entity_attribute(entity_id='urn:ngsi-ld:Entity:test_entity03',
+                                            attr=NamedContextProperty(type="Property",
+                                                                        value=25,
+                                                                        name='temperature'),
+                                            attr_name='temperature')
+        #this loop is necessary otherwise the test does not fail when the time runs out
+        while(timeout_proc.is_alive()):
+            continue
+        #if all goes well, the callback is triggered, and cancels the timer before
+        #it gets to change the test_res variable to False, making the following assertion true
+        self.assertTrue(test_res[0])
+    
     def test_update_subscription_check_broker(self):
         """
         Update a subscription and check changes in received messages.
@@ -495,5 +508,31 @@ class TestSubscriptions(unittest.TestCase):
             - Successful: 204, no content
         Tests:
             - Patch existing subscription and read out if the subscription got patched.
+        """
+        pass
+
+    def test_delete_subscription_check_broker(self):
+        """
+        Cancels subscription and checks on subscribed values.
+        Args:
+            - subscriptionID(string): required
+        Returns:
+            - Successful: 204, no content
+        Tests:
+            - Post and delete subscription then see if the broker still gets subscribed values.
+        """
+        pass
+
+    def test_get_subscription_check_broker(self):
+        """
+        Returns the subscription if it exists.
+        Args:
+            - subscriptionId(string): required
+        Returns:
+            - (200) subscription or empty list if successful
+            - Error Code
+        Tests:
+            - Subscribe to a message and see if it appears when the message is subscribed to
+            - Choose a non-existent ID and see if the return is an empty array
         """
         pass
