@@ -410,7 +410,7 @@ class BaseValueAttribute(BaseModel):
             value_ = value.model_dump()
         validate_escape_character_free(value_)
 
-        if value is not None and value is not "":
+        if value not in (None, "", " "):
             if type_ == DataType.TEXT:
                 if isinstance(value, list):
                     return [str(item) for item in value]
