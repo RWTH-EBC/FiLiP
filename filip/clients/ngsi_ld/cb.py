@@ -438,8 +438,8 @@ class ContextBrokerLDClient(BaseHttpClient):
                                             exclude_unset=True,
                                             exclude_none=True)
         else:
-            prop = attr[attr_name]
-            for key, value in prop:
+            prop = attr.model_dump()
+            for key, value in prop.items():
                 if value and value != 'Property':
                     jsonnn[key] = value
 
