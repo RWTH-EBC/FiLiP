@@ -164,18 +164,18 @@ class TestLDContextModels(unittest.TestCase):
             }
         }
 
-    def test_cb_attribute(self) -> None:
+    def test_cb_property(self) -> None:
         """
-        Test context attribute models
+        Test context property models
         Returns:
             None
         """
-        attr = ContextProperty(**{'value': "20"})
-        self.assertIsInstance(attr.value, str)
-        attr = ContextProperty(**{'value': 20.53})
-        self.assertIsInstance(attr.value, float)
-        attr = ContextProperty(**{'value': 20})
-        self.assertIsInstance(attr.value, int)
+        prop = ContextProperty(**{'value': "20"})
+        self.assertIsInstance(prop.value, str)
+        prop = ContextProperty(**{'value': 20.53})
+        self.assertIsInstance(prop.value, float)
+        prop = ContextProperty(**{'value': 20})
+        self.assertIsInstance(prop.value, int)
 
     def test_entity_id(self) -> None:
         with self.assertRaises(ValidationError):
@@ -235,33 +235,33 @@ class TestLDContextModels(unittest.TestCase):
         entity = ContextLDEntity(id="urn:ngsi-ld:test", type="Tester")
 
         properties = [
-            NamedContextProperty(name="attr1"),
-            NamedContextProperty(name="attr2"),
+            NamedContextProperty(name="prop1"),
+            NamedContextProperty(name="prop2"),
         ]
         entity.add_properties(properties)
         self.assertEqual(entity.get_properties(response_format="list"),
                          properties)
 
-    def test_entity_delete_attributes(self):
+    def test_entity_delete_properties(self):
         """
-        Test the delete_attributes methode
+        Test the delete_properties method
         """
-        attr = ContextProperty(**{'value': 20, 'type': 'Text'})
-        named_attr = NamedContextProperty(**{'name': 'test2',
+        prop = ContextProperty(**{'value': 20, 'type': 'Text'})
+        named_prop = NamedContextProperty(**{'name': 'test2',
                                              'value': 20,
                                              'type': 'Text'})
-        attr3 = ContextProperty(**{'value': 20, 'type': 'Text'})
+        prop3 = ContextProperty(**{'value': 20, 'type': 'Text'})
 
         entity = ContextLDEntity(id="urn:ngsi-ld:12", type="Test")
 
-        entity.add_properties({"test1": attr, "test3": attr3})
-        entity.add_properties([named_attr])
+        entity.add_properties({"test1": prop, "test3": prop3})
+        entity.add_properties([named_prop])
 
-        entity.delete_properties({"test1": attr})
+        entity.delete_properties({"test1": prop})
         self.assertEqual(set([_prop.name for _prop in entity.get_properties()]),
                          {"test2", "test3"})
 
-        entity.delete_properties([named_attr])
+        entity.delete_properties([named_prop])
         self.assertEqual(set([_prop.name for _prop in entity.get_properties()]),
                          {"test3"})
 
