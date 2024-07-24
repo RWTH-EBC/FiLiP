@@ -61,7 +61,8 @@ class TestSubscriptions(unittest.TestCase):
             "uri": "http://my.endpoint.org/notify",
             "accept": "application/json"
         })
-        self.mqtt_topic = ''.join([FIWARE_SERVICE, FIWARE_SERVICEPATH])
+        self.mqtt_topic = ''.join([settings.FIWARE_SERVICE,
+                                   settings.FIWARE_SERVICEPATH])
         self.MQTT_BROKER_URL_INTERNAL = "mqtt://mosquitto:1883"
         self.MQTT_BROKER_URL_EXPOSED = "mqtt://localhost:1883"
         self.endpoint_mqtt = Endpoint(**{
