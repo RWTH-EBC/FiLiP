@@ -426,9 +426,8 @@ class TestSubsCheckBroker(unittest.TestCase):
                 'format':'normalized',
                 'endpoint':{
                     'uri':f'mqtt://'
-                          # TODO need to change to using settings
-                          f'{self.MQTT_BROKER_URL_INTERNAL.host}:'
-                          f'{self.MQTT_BROKER_URL_INTERNAL.port}/my/test/topic', # change uri
+                          f'{settings.MQTT_BROKER_URL_INTERNAL.host}:'
+                          f'{settings.MQTT_BROKER_URL_INTERNAL.port}/my/test/topic', # change uri
                     'Accept':'application/json'
                 },
                 'notifierInfo':[
