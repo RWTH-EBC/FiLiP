@@ -225,6 +225,7 @@ class ContextBrokerLDClient(BaseHttpClient):
         headers = self.headers.copy()
         if entity.model_dump().get('@context',None) is not None:
             headers.update({'Content-Type':'application/ld+json'})
+            headers.update({'Link':None})
         try:
             res = self.post(
                 url=url,
@@ -387,6 +388,7 @@ class ContextBrokerLDClient(BaseHttpClient):
         headers = self.headers.copy()
         if entity.model_dump().get('@context',None) is not None:
             headers.update({'Content-Type':'application/ld+json'})
+            headers.update({'Link':None})
         try:
             res = self.patch(url=url,
                              headers=headers,
@@ -467,6 +469,7 @@ class ContextBrokerLDClient(BaseHttpClient):
         headers = self.headers.copy()
         if entity.model_dump().get('@context',None) is not None:
             headers.update({'Content-Type':'application/ld+json'})
+            headers.update({'Link':None})
         params = {}
 
         if options:
@@ -601,6 +604,7 @@ class ContextBrokerLDClient(BaseHttpClient):
         headers = self.headers.copy()
         if subscription.model_dump().get('@context',None) is not None:
             headers.update({'Content-Type':'application/ld+json'})
+            headers.update({'Link':None})
         try:
             res = self.post(
                 url=url,
@@ -651,6 +655,7 @@ class ContextBrokerLDClient(BaseHttpClient):
         headers = self.headers.copy()
         if subscription.model_dump().get('@context',None) is not None:
             headers.update({'Content-Type':'application/ld+json'})
+            headers.update({'Link':None})
         try:
             res = self.patch(
                 url=url,
