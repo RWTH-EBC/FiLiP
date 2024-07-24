@@ -71,7 +71,7 @@ class TestModels(unittest.TestCase):
             "type": 'MyType',
             'at1': {'value': "20.0", 'type': 'Text'},
             'at2': {'value': 20.0,
-                    'type': 'StructuredValue',
+                    'type': 'Number',
                     'metadata': {
                         'name': 'unit',
                         'type': 'Unit',

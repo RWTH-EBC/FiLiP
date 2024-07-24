@@ -3,20 +3,21 @@
 """
 # ## Import packages
 import logging
-
+from filip.config import settings
 from filip.clients.ngsi_v2 import ContextBrokerClient
 from filip.models.ngsi_v2.context import ContextEntity
 from filip.models.base import FiwareHeader
+from filip.utils.simple_ql import QueryString
 
 # ## Parameters
 #
 # To run this example you need a working Fiware v2 setup with a context-broker
-# You can here set the address:
+# You can set the address:
 #
 # Host address of Context Broker
-CB_URL = "http://localhost:1026"
+CB_URL = settings.CB_URL
 
-# You can here also change the used Fiware service
+# You can also change the used Fiware service
 # FIWARE-Service
 SERVICE = 'filip'
 # FIWARE-Servicepath
@@ -25,7 +26,8 @@ SERVICE_PATH = '/example'
 # Setting up logging
 logging.basicConfig(
     level='INFO',
-    format='%(asctime)s %(name)s %(levelname)s: %(message)s')
+    format='%(asctime)s %(name)s %(levelname)s: %(message)s',
+    datefmt='%d-%m-%Y %H:%M:%S')
 logger = logging.getLogger(__name__)
 
 if __name__ == "__main__":
@@ -160,15 +162,16 @@ if __name__ == "__main__":
     # ## 2.2 Get entities
     #
     with ContextBrokerClient(fiware_header=fiware_header) as cb_client:
-        # It should return the inventory item according to the relationship
-        logger.info(
-            cb_client.get_entity_list(q="refProduct==urn:ngsi-ld:Product:001"))
-        logger.info(
-            cb_client.get_entity_list(q="refStore==urn:ngsi-ld:Store:001"))
+        # It should return the inventory item according to the relationship        
+        query = QueryString(qs=[('refProduct', '==', 'urn:ngsi-ld:Product:001')])
+        logger.info(cb_client.get_entity_list(q=query))
+        
+        query = QueryString(qs=[('refStore', '==', 'urn:ngsi-ld:Store:001')])
+        logger.info(cb_client.get_entity_list(q=query))
 
         # It should not return the inventory item according to the relationship
-        logger.info(
-            cb_client.get_entity_list(q="refStore==urn:ngsi-ld:Store:002"))
+        query = QueryString(qs=[('refStore', '==', 'urn:ngsi-ld:Store:002')])
+        logger.info(cb_client.get_entity_list(q=query))
 
     # # 3 Delete test entities
     #

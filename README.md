@@ -2,11 +2,11 @@
 
 # FiLiP
 
-[![pylint](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/pylint/pylint.svg)](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/pylint/pylint.html)
-[![Documentation](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/docs/doc.svg)](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/docs/index.html)
-[![coverage](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/coverage/badge.svg)](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/coverage)
+[![pylint](https://rwth-ebc.github.io/FiLiP/master/pylint/pylint.svg)](https://rwth-ebc.github.io/FiLiP/master/pylint/pylint.html)
+[![Documentation](https://rwth-ebc.github.io/FiLiP/master/docs/doc.svg)](https://rwth-ebc.github.io/FiLiP/master/docs/index.html)
+[![coverage](https://rwth-ebc.github.io/FiLiP/master/coverage/badge.svg)](https://rwth-ebc.github.io/FiLiP/master/coverage)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
-[![build](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/build/build.svg)](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/build/build.svg)
+[![build](https://rwth-ebc.github.io/FiLiP/master/build/build.svg)](https://rwth-ebc.github.io/FiLiP/master/build/build.svg)
 
 FiLiP (Fiware Library for Python) is a python software development kit (SDK) for 
 accelerating the development of web services that use Fiware's Generic 
@@ -19,7 +19,7 @@ Pydantic enforces type hints at runtime, and provides user friendly errors
 when data is invalid.
 We mainly use the Pydantic model to build our own data model structure required 
 for efficient data model parsing and validation and interaction with FIWARE 
-services' RestAPIs.
+services' RestAPIs. 
 
 For API interaction, FiLiP relies on the well-known 
 [requests](https://docs.python-requests.org/en/latest/) package. 
@@ -66,7 +66,7 @@ on this.
 If this is not an option for you, FIWARE also provides a testing server.
 You can register for a testing account 
 [here](https://www.fiware.org/developers/fiware-lab/).
-> **Note**: FiLiP is now compatible to [Pydantic V2](https://docs.pydantic.dev/latest/migration/). If your program still require Pydantic V1.x for some reason, please use release [v0.2.5](https://github.com/RWTH-EBC/FiLiP/releases/tag/v0.2.5) or earlier version of FiLiP. Besides, we recommended to use `pydantic~=1.10` in the `requirements.txt`
+> **Note**: FiLiP is now compatible to [Pydantic V2](https://docs.pydantic.dev/latest/migration/). If your program still require Pydantic V1.x for some reason, please use release [v0.2.5](https://github.com/RWTH-EBC/FiLiP/releases/tag/v0.2.5) or earlier version of FiLiP. Besides, we recommended to set `pydantic~=1.10` in the `requirements.txt`, otherwise Pydantic V2 might still be installed.
 
 ### Installation
 
@@ -82,6 +82,18 @@ If you want to benefit from the latest changes, use the following command
 ```
 pip install -U git+git://github.com/RWTH-EBC/filip
 ```
+
+> **Note**: For local development, you can install the library in editable mode with the following command:
+> ````
+> pip install -e .
+> ````
+
+#### Install semantics module (optional)
+
+If you want to use the optional [semantics module](filip/semantics), use the following command (This will install the libraries that only required for the semantics module):
+````
+pip install -U filip[semantics]
+````
 
 ### Introduction to FIWARE
 
@@ -184,7 +196,7 @@ Therefore, FiLiP currently only covers the APIs of the following GEs:
 
 We are still working on the documentation.
 You can find our current documentation 
-[here](https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/docs/index.html).
+[here](https://rwth-ebc.github.io/FiLiP/master/docs/index.html).
 
 ## Running examples
 
@@ -212,34 +224,38 @@ how you can contribute to this project.
 
 ## Authors
 
-* [Thomas Storek](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Team2/~lhda/Thomas-Storek/?lidx=1) (corresponding)
+* [Thomas Storek](https://github.com/tstorek) 
+* [Junsong Du](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Digitale-Energie-Quartiere/~trcib/Du-Junsong/lidx/1/) (corresponding)
 * [Saira Bano](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Systemadministration/~ohhca/Bano-Saira/)
-* [Daniel Nikolay](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Systemadministration/~qcqxq/Nikolay-Daniel/)
+* [Sebastian Blechmann](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Team2/~carjd/Blechmann-Sebastian/)
 
 ## Alumni
 
 * Jeff Reding
 * Felix Rehmann
+* Daniel Nikolay
 
 ## References
 
 We presented or applied the library in the following publications:
 
+- S. Blechmann, I. Sowa, M. H. Schraven, R. Streblow, D. Müller & A. Monti. Open source platform application for smart building and smart grid controls. Automation in Construction 145 (2023), 104622. ISSN: 0926-5805. https://doi.org/10.1016/j.autcon.2022.104622        
+
 - Haghgoo, M., Dognini, A., Storek, T., Plamanescu, R, Rahe, U., 
   Gheorghe, S, Albu, M., Monti, A., Müller, D. (2021) A cloud-based service-oriented architecture to unlock smart energy services
-  https://www.doi.org/10.1186/s42162-021-00143-x
+  https://www.doi.org/10.1186/s42162-021-00143-x      
 
 - Baranski, M., Storek, T. P. B., Kümpel, A., Blechmann, S., Streblow, R., 
 Müller, D. et al.,
 (2020). National 5G Energy Hub : Application of the Open-Source Cloud Platform 
 FIWARE for Future Energy Management Systems. 
-https://doi.org/10.18154/RWTH-2020-07876
+https://doi.org/10.18154/RWTH-2020-07876      
 
 - T. Storek, J. Lohmöller, A. Kümpel, M. Baranski & D. Müller (2019). 
 Application of the open-source cloud platform FIWARE for future building 
 energy management systems. 
 Journal of Physics: 
-Conference Series, 1343, 12063. https://doi.org/10.1088/1742-6596/1343/1/012063
+Conference Series, 1343, 12063. https://doi.org/10.1088/1742-6596/1343/1/012063     
 
 ## License
 
@@ -249,7 +265,7 @@ This project is licensed under the BSD License - see the [LICENSE](LICENSE) file
 
 <a href="https://www.ebc.eonerc.rwth-aachen.de/"> <img alt="EBC" src="https://www.ebc.eonerc.rwth-aachen.de/global/show_picture.asp?id=aaaaaaaaaakevlz" height="100"> </a>
 
-2021-2022, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy 
+2021-2024, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy 
 Efficient Buildings and Indoor Climate
 
 [Institute for Energy Efficient Buildings and Indoor Climate (EBC)](https://www.ebc.eonerc.rwth-aachen.de)  
