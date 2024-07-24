@@ -21,7 +21,7 @@ from filip.models.ngsi_ld.subscriptions import \
 from filip.utils.cleanup import clear_all, clean_test
 from tests.config import settings
 from random import randint
-
+from pydantic import AnyUrl
 
 class TestSubscriptions(unittest.TestCase):
     """
@@ -313,9 +313,13 @@ class TestSubscriptions(unittest.TestCase):
         """
         for i in range(10): 
             attr_id = "attr" + str(i)
-            notification_param = NotificationParams(attributes=[attr_id], endpoint=self.endpoint_http)
+            notification_param = NotificationParams(
+                attributes=[attr_id], endpoint=self.endpoint_http)
             id = "urn:ngsi-ld:Subscription:" + "test_sub" + str(i)
-            sub = Subscription(id=id, notification=notification_param, entities=[{"type": "Room"}])
+            sub = Subscription(id=id,
+                               notification=notification_param,
+                               entities=[{"type": "Room"}]
+                               )
 
             if i == 0: 
                 del_sub = sub
@@ -390,6 +394,8 @@ class TestSubsCheckBroker(unittest.TestCase):
         Returns:
             None
         """
+        self.MQTT_BROKER_URL_INTERNAL = "mqtt://mqtt-broker-ld:1883"
+        self.MQTT_BROKER_URL_INTERNAL = AnyUrl(self.MQTT_BROKER_URL_INTERNAL)
         self.entity_dict = {
             'id':'urn:ngsi-ld:Entity:test_entity03',
             'type':'Room',
@@ -418,7 +424,10 @@ class TestSubsCheckBroker(unittest.TestCase):
                 ],
                 'format':'normalized',
                 'endpoint':{
-                    'uri':'mqtt://mosquitto:1883/my/test/topic', # change uri
+                    'uri':f'mqtt://'
+                          # TODO need to change to using settings
+                          f'{self.MQTT_BROKER_URL_INTERNAL.host}:'
+                          f'{self.MQTT_BROKER_URL_INTERNAL.port}/my/test/topic', # change uri
                     'Accept':'application/json'
                 },
                 'notifierInfo':[
@@ -481,8 +490,9 @@ class TestSubsCheckBroker(unittest.TestCase):
             self.assertEqual(updated_entity,
                              json.loads(msg.payload.decode())['body']['data'][0])
         self.mqtt_client.on_message = on_message
-        
-        self.mqtt_client.connect("localhost",1883,60)
+        self.mqtt_client.connect(settings.MQTT_BROKER_URL.host,
+                                 settings.MQTT_BROKER_URL.port,
+                                 60)
         self.mqtt_client.loop_start()
         #post subscription then start timer
         self.cb_client.post_subscription(subscription=Subscription(**self.sub_dict))
