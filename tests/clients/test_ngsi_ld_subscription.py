@@ -366,45 +366,10 @@ class TestSubscriptions(unittest.TestCase):
         # TODO
 
 class TestSubsCheckBroker(unittest.TestCase):
-    entity_dict = {
-        'id':'urn:ngsi-ld:Entity:test_entity03',
-        'type':'Room',
-        'temperature':{
-            'type':'Property',
-            'value':30
-        }
-    }
-    
-    sub_dict = {
-        'description':'Test Subscription',
-        'id':'urn:ngsi-ld:Subscription:test_sub25',
-        'type':'Subscription',
-        'entities':[
-            {
-                'type':'Room'
-            }
-        ],
-        'watchedAttributes':[
-            'temperature'
-        ],
-        'q':'temperature<30',
-        'notification':{
-            'attributes':[
-                'temperature'
-            ],
-            'format':'normalized',
-            'endpoint':{
-                'uri':'mqtt://mosquitto:1883/my/test/topic', # change uri
-                'Accept':'application/json'
-            },
-            'notifierInfo':[
-                {
-                    "key":"MQTT-Version",
-                    "value":"mqtt5.0"
-                }
-            ]
-        }
-    }
+
+    @unittest.skip("Helper function for timer")
+    def timeout_func(x):
+            x[0] = False
 
     def cleanup(self):
         """
@@ -425,6 +390,45 @@ class TestSubsCheckBroker(unittest.TestCase):
         Returns:
             None
         """
+        self.entity_dict = {
+            'id':'urn:ngsi-ld:Entity:test_entity03',
+            'type':'Room',
+            'temperature':{
+                'type':'Property',
+                'value':30
+            }
+        }
+        
+        self.sub_dict = {
+            'description':'Test Subscription',
+            'id':'urn:ngsi-ld:Subscription:test_sub25',
+            'type':'Subscription',
+            'entities':[
+                {
+                    'type':'Room'
+                }
+            ],
+            'watchedAttributes':[
+                'temperature'
+            ],
+            'q':'temperature<30',
+            'notification':{
+                'attributes':[
+                    'temperature'
+                ],
+                'format':'normalized',
+                'endpoint':{
+                    'uri':'mqtt://mosquitto:1883/my/test/topic', # change uri
+                    'Accept':'application/json'
+                },
+                'notifierInfo':[
+                    {
+                        "key":"MQTT-Version",
+                        "value":"mqtt5.0"
+                    }
+                ]
+            }
+        }
         FIWARE_SERVICE = "service"
         FIWARE_SERVICEPATH = "/"
         self.fiware_header = FiwareLDHeader(
@@ -446,6 +450,15 @@ class TestSubsCheckBroker(unittest.TestCase):
         #posting one single entity to check subscription existence/triggers
         self.cb_client.post_entity(entity=ContextLDEntity(**self.entity_dict))
 
+        #All broker tests rely on awaiting a message. This timer helps with:
+        #   -Avoiding hang ups in the case of a lost connection
+        #   -Avoid ending the tests early, in the case a notification takes longer
+
+        self.timeout = 5 # in seconds
+        self.last_test_timeout = [True]
+        self.timeout_proc = threading.Timer(self.timeout,self.timeout_func,
+                                            args=[self.last_test_timeout])
+
 
     def tearDown(self) -> None:
         self.cleanup()
@@ -456,17 +469,9 @@ class TestSubsCheckBroker(unittest.TestCase):
         Tests:
             - Subscribe using an mqtt topic as endpoint and see if notification is received
         """
-        #Declare timer function, mqtt message callback and a check variable(test_res)
-        #Variable is in list because python threads get copies of primitive objects (e.g bool)
-        #but not of iterables
-        test_res = [True]
-        def timeout_func(x):
-            #The timer changes the variable when it runs out
-            x[0] = False
-        
         def on_message(client,userdata,msg):
             #the callback cancels the timer if a message comes through
-            timeout_proc.cancel()
+            self.timeout_proc.cancel()
             updated_entity = self.entity_dict.copy()
             updated_entity.update({'temperature':{'type':'Property','value':25}})
             self.mqtt_client.loop_stop()
@@ -475,16 +480,13 @@ class TestSubsCheckBroker(unittest.TestCase):
             #catching a rogue one)
             self.assertEqual(updated_entity,
                              json.loads(msg.payload.decode())['body']['data'][0])
-
-        #adjust timeout here as needed
-        timeout_proc = threading.Timer(5,timeout_func,args=[test_res])
         self.mqtt_client.on_message = on_message
         
         self.mqtt_client.connect("localhost",1883,60)
         self.mqtt_client.loop_start()
         #post subscription then start timer
         self.cb_client.post_subscription(subscription=Subscription(**self.sub_dict))
-        timeout_proc.start()
+        self.timeout_proc.start()
         #update entity to (ideally) get a notification
         self.cb_client.update_entity_attribute(entity_id='urn:ngsi-ld:Entity:test_entity03',
                                             attr=NamedContextProperty(type="Property",
@@ -492,11 +494,11 @@ class TestSubsCheckBroker(unittest.TestCase):
                                                                         name='temperature'),
                                             attr_name='temperature')
         #this loop is necessary otherwise the test does not fail when the time runs out
-        while(timeout_proc.is_alive()):
+        while(self.timeout_proc.is_alive()):
             continue
         #if all goes well, the callback is triggered, and cancels the timer before
-        #it gets to change the test_res variable to False, making the following assertion true
-        self.assertTrue(test_res[0])
+        #it gets to change the timeout variable to False, making the following assertion true
+        self.assertTrue(self.last_test_timeout[0])
     
     def test_update_subscription_check_broker(self):
         """
@@ -508,8 +510,53 @@ class TestSubsCheckBroker(unittest.TestCase):
             - Successful: 204, no content
         Tests:
             - Patch existing subscription and read out if the subscription got patched.
+        Steps:
+            - Create Subscription with q = x
+            - Update entity to trigger sub with valid condition x
+            - Update subscription to q = x̄ 
+            - Update entity to trigger sub with opposite condition x̄
         """
-        pass
+        current_val = 25
+        def on_message(client,userdata,msg):
+            self.timeout_proc.cancel()
+            self.mqtt_client.loop_stop()
+            self.mqtt_client.disconnect()
+            self.assertEqual(current_val,
+                             json.loads(msg.payload.decode())
+                             ['body']['data'][0]['temperature']['value'])
+
+        self.mqtt_client.on_message = on_message
+        
+        self.mqtt_client.connect("localhost",1883,60)
+        self.mqtt_client.loop_start()
+        self.cb_client.post_subscription(subscription=Subscription(**self.sub_dict))
+        self.timeout_proc.start()
+
+        self.cb_client.update_entity_attribute(entity_id='urn:ngsi-ld:Entity:test_entity03',
+                                            attr=NamedContextProperty(type="Property",
+                                                                        value=current_val,
+                                                                        name='temperature'),
+                                            attr_name='temperature')
+        while(self.timeout_proc.is_alive()):
+            continue
+        self.assertTrue(self.last_test_timeout[0])
+
+        self.last_test_timeout = [True]
+        self.timeout_proc = threading.Timer(self.timeout,self.timeout_func,
+                                            args=[self.last_test_timeout])
+        
+        current_val=33
+        self.sub_dict.update({'q':'temperature>30'})
+        self.cb_client.update_subscription(subscription=Subscription(**self.sub_dict))
+        self.timeout_proc.start()
+        self.cb_client.update_entity_attribute(entity_id='urn:ngsi-ld:Entity:test_entity03',
+                                            attr=NamedContextProperty(type="Property",
+                                                                        value=current_val,
+                                                                        name='temperature'),
+                                            attr_name='temperature')
+        while(self.timeout_proc.is_alive()):
+            continue
+        self.assertTrue(self.last_test_timeout[0])
 
     def test_delete_subscription_check_broker(self):
         """

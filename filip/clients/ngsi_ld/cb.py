@@ -224,7 +224,7 @@ class ContextBrokerLDClient(BaseHttpClient):
         url = urljoin(self.base_url, f'{self._url_version}/entities')
         headers = self.headers.copy()
         if entity.model_dump().get('@context',None) is not None:
-            headers.update({'Content-Type:application/ld+json'})
+            headers.update({'Content-Type':'application/ld+json'})
         try:
             res = self.post(
                 url=url,
@@ -386,7 +386,7 @@ class ContextBrokerLDClient(BaseHttpClient):
         url = urljoin(self.base_url, f'{self._url_version}/entities/{entity.id}/attrs')
         headers = self.headers.copy()
         if entity.model_dump().get('@context',None) is not None:
-            headers.update({'Content-Type:application/ld+json'})
+            headers.update({'Content-Type':'application/ld+json'})
         try:
             res = self.patch(url=url,
                              headers=headers,
@@ -466,7 +466,7 @@ class ContextBrokerLDClient(BaseHttpClient):
         url = urljoin(self.base_url, f'{self._url_version}/entities/{entity.id}/attrs')
         headers = self.headers.copy()
         if entity.model_dump().get('@context',None) is not None:
-            headers.update({'Content-Type:application/ld+json'})
+            headers.update({'Content-Type':'application/ld+json'})
         params = {}
 
         if options:
