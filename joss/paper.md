@@ -49,16 +49,16 @@ Hence, adopting the specification for domain-specific engineering applications r
 Additionally, the specification has continuously evolved over time, necessitating significant efforts to define domain-specific data models and to ensure that applications and models comply with the latest specification.
 
 Existing FIWARE APIs client libraries can already provide some basic support but often fall short in several key areas.
-A comparison as shown in \autoref{Comparison} reveals the shortage of various existing libraries, including limited support for multiple FIWARE APIs, lack of advanced validation and data models integration, and unsatisfactory usability and reliability.
+A comparison as shown in Table \ref{Comparison} reveals the shortage of various existing libraries, including limited support for multiple FIWARE APIs, lack of advanced validation and data models integration, and unsatisfactory usability and reliability.
 
-| Library                    | API Support                                  | Validation         | Datamodel            | Learning Support                           | Tests                         |
-|----------------------------|----------------------------------------------|--------------------|----------------------|--------------------------------------------|-------------------------------|
-| [@QuantumLeapClient]       | TimeSeries                                   | -                  | -                    | Readme file                                | 18                            |
-| [@fiware-ngsi-api]         | Device, Entity                               | Basic    | Proprietary     | -                                          | -                             |
-| [@fiot-client-ngsi-python] | Device (incomplete), Entity, Subscription    | -                  | -                    | Readme file (documentation not deployed)   | 31                            |
-| [@orion-python-client]     | Entity, Subscription (incomplete)            | -                  | -                    | Readme file                                | 1                             |
-| FiLiP                      | Device, Entity, Subscription, TimeSeries     | Enhanced | Customizable         | Documentation, 12 examples, and 8 tutorials| 82 (84% coverage)             |
-\label{Comparison}
+| Library                    | API Support                                               | Validation         | Datamodel            | Learning Support                         | Test Cases           |
+|----------------------------|-----------------------------------------------------------|--------------------|----------------------|------------------------------------------|----------------------|
+| [@QuantumLeapClient]       | TS                                                        | -                  | -                    | Readme file                              | 18                   |
+| [@fiware-ngsi-api]         | D, E                                                      | Basic    | Proprietary     | -                                        | -                    |
+| [@fiot-client-ngsi-python] | D<sup>*</sup>, E, S                                       | -                  | -                    | Readme file  | 31                   |
+| [@orion-python-client]     | E, S<sup>*</sup>                                          | -                  | -                    | Readme file                              | 1                    |
+| FiLiP                      | Device (D), Entity (E), Subscription (S), TimeSeries (TS) | Enhanced | Customizable         | Documentation, 12 examples, and 8 tutorials| 82 (84% coverage)    |
+: Comparison of FiLiP with existing FIWARE APIs client libraries. "-" indicates that the feature is not supported or not available. "*" indicates that the feature is available but incomplete.\label{Comparison}
 
 Although FIWARE provides OpenAPI specifications [@openapi] [@canterafonsecaFIWARENGSIV2Specification], which can be used to automatically generate API clients for various programming languages, there are still issues that make those auto-generated API clients less reliable:
 
