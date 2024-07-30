@@ -132,7 +132,9 @@ class TestSubscriptions(unittest.TestCase):
                 "type": "entityType",
                 "k": "v"
             }
-            NgsiPayload(NgsiPayloadAttr(**attr_dict),id="someId",type="someType")
+            NgsiPayload(NgsiPayloadAttr(**attr_dict),
+                        id="someId",
+                        type="someType")
 
         # test onlyChangedAttrs-field
         notification = Notification.model_validate(self.notification)
@@ -146,6 +148,72 @@ class TestSubscriptions(unittest.TestCase):
         notification.covered = True
         with self.assertRaises(ValidationError):
             notification.attrs = []
+
+    def test_substitution_models(self):
+        """
+        Test substibution in notification models
+        Check: https://fiware-orion.readthedocs.io/en/3.8.1/orion-api.html#custom-notifications
+        """
+        # Substitution in payloads
+        payload = "t=${temperature}"
+        _json = {
+            "t1": "${temperature}"
+        }
+        ngsi_payload = {  # NGSI payload (templatized)
+            "id": "some_prefix:${id}",
+            "type": "NewType",
+            "t2": "${temperature}"
+        }
+
+        # In case of httpCustom:
+        notification_httpCustom_data = {
+            "httpCustom":
+            {
+                "url": "http://localhost:1234"
+            },
+            "attrs": [
+                "temperature",
+                "humidity"
+            ]
+        }
+        notification_httpCustom = Notification.model_validate(
+            notification_httpCustom_data)
+        notification_httpCustom.httpCustom.url = "http://${hostName}.com"
+        # Headers (both header name and value can be templatized)
+        notification_httpCustom.httpCustom.headers = {
+            "Fiware-Service": "${Service}",
+            "Fiware-ServicePath": "${ServicePath}",
+            "x-auth-token": "${authToken}"
+        }
+        notification_httpCustom.httpCustom.qs = {
+            "type": "${type}",
+        }
+        notification_httpCustom.httpCustom.method = "${method}"
+        notification_httpCustom.httpCustom.payload = payload
+        notification_httpCustom.httpCustom.payload = None
+        notification_httpCustom.httpCustom.json = _json
+        notification_httpCustom.httpCustom.json = None
+        notification_httpCustom.httpCustom.ngsi = ngsi_payload
+
+        # In case of mqttCustom:
+        notification_mqttCustom_data = {
+            "mqttCustom":
+            {
+                "url": "mqtt://localhost:1883",
+                "topic": "/some/topic/${id}"
+            },
+            "attrs": [
+                "temperature",
+                "humidity"
+            ]
+        }
+        notification_mqttCustom = Notification.model_validate(
+            notification_mqttCustom_data)
+        notification_mqttCustom.mqttCustom.payload = payload
+        notification_mqttCustom.mqttCustom.payload = None
+        notification_mqttCustom.mqttCustom.json = _json
+        notification_mqttCustom.mqttCustom.json = None
+        notification_mqttCustom.mqttCustom.ngsi = ngsi_payload
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,

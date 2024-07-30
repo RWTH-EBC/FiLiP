@@ -410,7 +410,7 @@ class BaseValueAttribute(BaseModel):
             value_ = value.model_dump()
         validate_escape_character_free(value_)
 
-        if value is not None:
+        if value not in (None, "", " "):
             if type_ == DataType.TEXT:
                 if isinstance(value, list):
                     return [str(item) for item in value]
@@ -445,6 +445,7 @@ class BaseValueAttribute(BaseModel):
                 raise TypeError(
                     f"{type(value)} does not match " f"{DataType.OBJECT}"
                 )
+
             # allows geojson as structured value
             if type_ == DataType.GEOJSON:
                 if isinstance(
@@ -461,7 +462,6 @@ class BaseValueAttribute(BaseModel):
                     ),
                 ):
                     return value
-
                 if isinstance(value, dict):
                     _geo_json_type = value.get("type", None)
                     if _geo_json_type == "Point":

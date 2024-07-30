@@ -9,6 +9,7 @@
 - add: ``covered`` flag in notification model ([#310](https://github.com/RWTH-EBC/FiLiP/pull/310))
 - fix: rework tutorials for pydantic v2 ([#259](https://github.com/RWTH-EBC/FiLiP/pull/259))
 - fix: inconsistency of `entity_type` as required argument ([#188](https://github.com/RWTH-EBC/FiLiP/pull/188))
+- fix: allow empty string in attribute value validation ([#311](https://github.com/RWTH-EBC/FiLiP/pull/311))
 
 ### v0.4.1
 - fix: Session added as optional parameter to enable tls communication with clients ([#249](https://github.com/RWTH-EBC/FiLiP/pull/249))
