@@ -223,6 +223,8 @@ def validate_jexl_expression(expression, attribute_name, device_id):
 def validate_device_expression_language(cls, expressionLanguage):
     if expressionLanguage == "legacy":
         warnings.warn(f"Using 'LEGACY' expression language inside {cls.__name__} is deprecated. Use 'JEXL' instead.")
+    elif expressionLanguage is None:
+        expressionLanguage = "jexl"
 
     return expressionLanguage
 
@@ -231,5 +233,7 @@ def validate_service_group_expression_language(cls, expressionLanguage):
     if expressionLanguage == "legacy":
         warnings.warn(f"Using 'LEGACY' expression language inside {cls.__name__} is deprecated and does not work "
                       f"anymore, because each device uses 'JEXL' as default.")
+    elif expressionLanguage is None:
+        expressionLanguage = "jexl"
 
     return expressionLanguage

@@ -250,7 +250,7 @@ class ServiceGroup(BaseModel):
                     "IoT Agents to store information along with the devices "
                     "in the Device Registry."
     )
-    expressionLanguage: ExpressionLanguage = Field(
+    expressionLanguage: Optional[ExpressionLanguage] = Field(
         default=ExpressionLanguage.JEXL,
         description="optional boolean value, to set expression language used "
                     "to compute expressions, possible values are: "
@@ -321,7 +321,7 @@ class DeviceSettings(BaseModel):
         description="Name of the device transport protocol, for the IoT Agents "
                     "with multiple transport protocols."
     )
-    expressionLanguage: ExpressionLanguage = Field(
+    expressionLanguage: Optional[ExpressionLanguage] = Field(
         default=ExpressionLanguage.JEXL,
         description="optional boolean value, to set expression language used "
                     "to compute expressions, possible values are: "
