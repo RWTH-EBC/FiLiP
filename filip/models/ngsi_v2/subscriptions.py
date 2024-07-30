@@ -306,6 +306,15 @@ class Notification(BaseModel):
                     'In case onlyChangedAttrs=true, CB notifies '
                     '[A=0, B=null, C=null]. This '
     )
+    covered: Optional[bool] = Field(
+        default=False,
+        description="A flag to decide whether to include not existing attribute in "
+                    "notifications. It can be useful for those notification endpoints "
+                    "that are not flexible enough for a variable set of attributes and "
+                    "needs always the same set of incoming attributes in every received"
+                    " notification "
+                    "https://fiware-orion.readthedocs.io/en/master/orion-api.html#covered-subscriptions"
+    )
 
     @model_validator(mode='after')
     def validate_http(self):
@@ -333,6 +342,15 @@ class Notification(BaseModel):
         else:
             assert all((v is None for k, v in self.model_dump().items() if k in [
                 'http', 'httpCustom', 'mqtt']))
+        return self
+
+    @model_validator(mode='after')
+    def validate_covered_attrs(self):
+        if self.covered is True:
+            if isinstance(self.attrs, list) and len(self.attrs) > 0:
+                return self
+            else:
+                raise ValueError('Covered notification need an explicit list of attrs.')
         return self
 
 
