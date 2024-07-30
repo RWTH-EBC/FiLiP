@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>filip.models.ngsi_v2 package &mdash; FiLiP 0.4.1 documentation</title>
+  <title>filip.models.ngsi_v2 package &mdash; FiLiP 0.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
@@ -37,7 +37,7 @@
             FiLiP
           </a>
               <div class="version">
-                0.4
+                0.5
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -1560,7 +1560,7 @@ List of NamedContextAttributes or as Dict of ContextAttributes.</p>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.Device.entity_name" title="filip.models.ngsi_v2.iot.Device.entity_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">entity_name</span> <span class="pre">(str)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.Device.entity_type" title="filip.models.ngsi_v2.iot.Device.entity_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">entity_type</span> <span class="pre">(str)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.Device.explicitAttrs" title="filip.models.ngsi_v2.iot.Device.explicitAttrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">explicitAttrs</span> <span class="pre">(Optional[bool])</span></code></a></p></li>
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.Device.expressionLanguage" title="filip.models.ngsi_v2.iot.Device.expressionLanguage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expressionLanguage</span> <span class="pre">(ExpressionLanguage)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.Device.expressionLanguage" title="filip.models.ngsi_v2.iot.Device.expressionLanguage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expressionLanguage</span> <span class="pre">(Optional[ExpressionLanguage])</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.Device.internal_attributes" title="filip.models.ngsi_v2.iot.Device.internal_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">internal_attributes</span> <span class="pre">(Optional[List[Dict[str,</span> <span class="pre">Any]]])</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.Device.lazy" title="filip.models.ngsi_v2.iot.Device.lazy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lazy</span> <span class="pre">(List[LazyDeviceAttribute])</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.Device.ngsiVersion" title="filip.models.ngsi_v2.iot.Device.ngsiVersion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ngsiVersion</span> <span class="pre">(NgsiVersion)</span></code></a></p></li>
@@ -1577,8 +1577,8 @@ List of NamedContextAttributes or as Dict of ContextAttributes.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.Device.validate_device_attributes_expression" title="filip.models.ngsi_v2.iot.Device.validate_device_attributes_expression"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_device_attributes_expression</span></code></a> » <code class="xref py py-obj docutils literal notranslate"><span class="pre">all</span> <span class="pre">fields</span></code></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.Device.validate_device_attributes_name_object_id" title="filip.models.ngsi_v2.iot.Device.validate_device_attributes_name_object_id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_device_attributes_name_object_id</span></code></a> » <code class="xref py py-obj docutils literal notranslate"><span class="pre">all</span> <span class="pre">fields</span></code></p></li>
-<li><p><a class="reference internal" href="filip.utils.html#filip.utils.validators.validate_device_expression_language" title="filip.utils.validators.validate_device_expression_language"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_device_expression_language</span></code></a> » <a class="reference internal" href="#filip.models.ngsi_v2.iot.Device.expressionLanguage" title="filip.models.ngsi_v2.iot.Device.expressionLanguage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expressionLanguage</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.Device.validate_duplicated_device_attributes" title="filip.models.ngsi_v2.iot.Device.validate_duplicated_device_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_duplicated_device_attributes</span></code></a> » <code class="xref py py-obj docutils literal notranslate"><span class="pre">all</span> <span class="pre">fields</span></code></p></li>
+<li><p><a class="reference internal" href="filip.utils.html#filip.utils.validators.validate_expression_language" title="filip.utils.validators.validate_expression_language"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_expression_language</span></code></a> » <a class="reference internal" href="#filip.models.ngsi_v2.iot.Device.expressionLanguage" title="filip.models.ngsi_v2.iot.Device.expressionLanguage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expressionLanguage</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.Device.validate_timezone" title="filip.models.ngsi_v2.iot.Device.validate_timezone"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_timezone</span></code></a> » <a class="reference internal" href="#filip.models.ngsi_v2.iot.Device.timezone" title="filip.models.ngsi_v2.iot.Device.timezone"><code class="xref py py-obj docutils literal notranslate"><span class="pre">timezone</span></code></a></p></li>
 <li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrapper</span></code> » <a class="reference internal" href="#filip.models.ngsi_v2.iot.Device.entity_name" title="filip.models.ngsi_v2.iot.Device.entity_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">entity_name</span></code></a></p></li>
 <li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrapper</span></code> » <a class="reference internal" href="#filip.models.ngsi_v2.iot.Device.entity_type" title="filip.models.ngsi_v2.iot.Device.entity_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">entity_type</span></code></a></p></li>
@@ -1720,15 +1720,15 @@ List of NamedContextAttributes or as Dict of ContextAttributes.</p>
 
 <dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.Device.expressionLanguage">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">expressionLanguage</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#filip.models.ngsi_v2.iot.ExpressionLanguage" title="filip.models.ngsi_v2.iot.ExpressionLanguage"><span class="pre">ExpressionLanguage</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">ExpressionLanguage.JEXL</span></em><a class="headerlink" href="#filip.models.ngsi_v2.iot.Device.expressionLanguage" title="Permalink to this definition"></a></dt>
-<dd><p>optional boolean value, to set expression language used to compute expressions, possible values are: legacy or jexl, but legacy is deprecated.</p>
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">expressionLanguage</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#filip.models.ngsi_v2.iot.ExpressionLanguage" title="filip.models.ngsi_v2.iot.ExpressionLanguage"><span class="pre">ExpressionLanguage</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">ExpressionLanguage.JEXL</span></em><a class="headerlink" href="#filip.models.ngsi_v2.iot.Device.expressionLanguage" title="Permalink to this definition"></a></dt>
+<dd><p>optional boolean value, to set expression language used to compute expressions, possible values are: legacy or jexl, but legacy is deprecated. If it is set None, jexl is used.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.Device.validate_device_attributes_expression" title="filip.models.ngsi_v2.iot.Device.validate_device_attributes_expression"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_device_attributes_expression</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.Device.validate_device_attributes_name_object_id" title="filip.models.ngsi_v2.iot.Device.validate_device_attributes_name_object_id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_device_attributes_name_object_id</span></code></a></p></li>
-<li><p><a class="reference internal" href="filip.utils.html#filip.utils.validators.validate_device_expression_language" title="filip.utils.validators.validate_device_expression_language"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_device_expression_language</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.Device.validate_duplicated_device_attributes" title="filip.models.ngsi_v2.iot.Device.validate_duplicated_device_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_duplicated_device_attributes</span></code></a></p></li>
+<li><p><a class="reference internal" href="filip.utils.html#filip.utils.validators.validate_expression_language" title="filip.utils.validators.validate_expression_language"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_expression_language</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
@@ -2255,7 +2255,7 @@ based on our best practice, following rules are checked</p>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.DeviceSettings.apikey" title="filip.models.ngsi_v2.iot.DeviceSettings.apikey"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apikey</span> <span class="pre">(Optional[str])</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.DeviceSettings.endpoint" title="filip.models.ngsi_v2.iot.DeviceSettings.endpoint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">endpoint</span> <span class="pre">(Optional[AnyHttpUrl])</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.DeviceSettings.explicitAttrs" title="filip.models.ngsi_v2.iot.DeviceSettings.explicitAttrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">explicitAttrs</span> <span class="pre">(Optional[bool])</span></code></a></p></li>
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.DeviceSettings.expressionLanguage" title="filip.models.ngsi_v2.iot.DeviceSettings.expressionLanguage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expressionLanguage</span> <span class="pre">(ExpressionLanguage)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.DeviceSettings.expressionLanguage" title="filip.models.ngsi_v2.iot.DeviceSettings.expressionLanguage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expressionLanguage</span> <span class="pre">(Optional[ExpressionLanguage])</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.DeviceSettings.protocol" title="filip.models.ngsi_v2.iot.DeviceSettings.protocol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">protocol</span> <span class="pre">(Optional[Union[PayloadProtocol,</span> <span class="pre">str]])</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.DeviceSettings.timestamp" title="filip.models.ngsi_v2.iot.DeviceSettings.timestamp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">timestamp</span> <span class="pre">(Optional[bool])</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.DeviceSettings.timezone" title="filip.models.ngsi_v2.iot.DeviceSettings.timezone"><code class="xref py py-obj docutils literal notranslate"><span class="pre">timezone</span> <span class="pre">(Optional[str])</span></code></a></p></li>
@@ -2264,7 +2264,7 @@ based on our best practice, following rules are checked</p>
 </dd>
 <dt class="field-odd">Validators<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><a class="reference internal" href="filip.utils.html#filip.utils.validators.validate_device_expression_language" title="filip.utils.validators.validate_device_expression_language"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_device_expression_language</span></code></a> » <a class="reference internal" href="#filip.models.ngsi_v2.iot.DeviceSettings.expressionLanguage" title="filip.models.ngsi_v2.iot.DeviceSettings.expressionLanguage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expressionLanguage</span></code></a></p></li>
+<li><p><a class="reference internal" href="filip.utils.html#filip.utils.validators.validate_expression_language" title="filip.utils.validators.validate_expression_language"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_expression_language</span></code></a> » <a class="reference internal" href="#filip.models.ngsi_v2.iot.DeviceSettings.expressionLanguage" title="filip.models.ngsi_v2.iot.DeviceSettings.expressionLanguage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expressionLanguage</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
@@ -2288,12 +2288,12 @@ based on our best practice, following rules are checked</p>
 
 <dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.DeviceSettings.expressionLanguage">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">expressionLanguage</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#filip.models.ngsi_v2.iot.ExpressionLanguage" title="filip.models.ngsi_v2.iot.ExpressionLanguage"><span class="pre">ExpressionLanguage</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">ExpressionLanguage.JEXL</span></em><a class="headerlink" href="#filip.models.ngsi_v2.iot.DeviceSettings.expressionLanguage" title="Permalink to this definition"></a></dt>
-<dd><p>optional boolean value, to set expression language used to compute expressions, possible values are: legacy or jexl, but legacy is deprecated.</p>
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">expressionLanguage</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#filip.models.ngsi_v2.iot.ExpressionLanguage" title="filip.models.ngsi_v2.iot.ExpressionLanguage"><span class="pre">ExpressionLanguage</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">ExpressionLanguage.JEXL</span></em><a class="headerlink" href="#filip.models.ngsi_v2.iot.DeviceSettings.expressionLanguage" title="Permalink to this definition"></a></dt>
+<dd><p>optional boolean value, to set expression language used to compute expressions, possible values are: legacy or jexl, but legacy is deprecated. If it is set None, jexl is used.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><a class="reference internal" href="filip.utils.html#filip.utils.validators.validate_device_expression_language" title="filip.utils.validators.validate_device_expression_language"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_device_expression_language</span></code></a></p></li>
+<li><p><a class="reference internal" href="filip.utils.html#filip.utils.validators.validate_expression_language" title="filip.utils.validators.validate_expression_language"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_expression_language</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
@@ -2580,7 +2580,7 @@ based on our best practice, following rules are checked</p>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.ServiceGroup.defaultEntityNameConjunction" title="filip.models.ngsi_v2.iot.ServiceGroup.defaultEntityNameConjunction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">defaultEntityNameConjunction</span> <span class="pre">(Optional[str])</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.ServiceGroup.entity_type" title="filip.models.ngsi_v2.iot.ServiceGroup.entity_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">entity_type</span> <span class="pre">(Optional[str])</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.ServiceGroup.explicitAttrs" title="filip.models.ngsi_v2.iot.ServiceGroup.explicitAttrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">explicitAttrs</span> <span class="pre">(Optional[bool])</span></code></a></p></li>
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.ServiceGroup.expressionLanguage" title="filip.models.ngsi_v2.iot.ServiceGroup.expressionLanguage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expressionLanguage</span> <span class="pre">(ExpressionLanguage)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.ServiceGroup.expressionLanguage" title="filip.models.ngsi_v2.iot.ServiceGroup.expressionLanguage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expressionLanguage</span> <span class="pre">(Optional[ExpressionLanguage])</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.ServiceGroup.internal_attributes" title="filip.models.ngsi_v2.iot.ServiceGroup.internal_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">internal_attributes</span> <span class="pre">(Optional[List[Dict[str,</span> <span class="pre">Any]]])</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.ServiceGroup.lazy" title="filip.models.ngsi_v2.iot.ServiceGroup.lazy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lazy</span> <span class="pre">(Optional[List[LazyDeviceAttribute]])</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.ServiceGroup.ngsiVersion" title="filip.models.ngsi_v2.iot.ServiceGroup.ngsiVersion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ngsiVersion</span> <span class="pre">(Optional[NgsiVersion])</span></code></a></p></li>
@@ -2595,7 +2595,7 @@ based on our best practice, following rules are checked</p>
 <dt class="field-even">Validators<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.ServiceGroup.validate_cbHost" title="filip.models.ngsi_v2.iot.ServiceGroup.validate_cbHost"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_cbHost</span></code></a> » <a class="reference internal" href="#filip.models.ngsi_v2.iot.ServiceGroup.cbHost" title="filip.models.ngsi_v2.iot.ServiceGroup.cbHost"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cbHost</span></code></a></p></li>
-<li><p><a class="reference internal" href="filip.utils.html#filip.utils.validators.validate_service_group_expression_language" title="filip.utils.validators.validate_service_group_expression_language"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_service_group_expression_language</span></code></a> » <a class="reference internal" href="#filip.models.ngsi_v2.iot.ServiceGroup.expressionLanguage" title="filip.models.ngsi_v2.iot.ServiceGroup.expressionLanguage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expressionLanguage</span></code></a></p></li>
+<li><p><a class="reference internal" href="filip.utils.html#filip.utils.validators.validate_expression_language" title="filip.utils.validators.validate_expression_language"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_expression_language</span></code></a> » <a class="reference internal" href="#filip.models.ngsi_v2.iot.ServiceGroup.expressionLanguage" title="filip.models.ngsi_v2.iot.ServiceGroup.expressionLanguage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expressionLanguage</span></code></a></p></li>
 <li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrapper</span></code> » <a class="reference internal" href="#filip.models.ngsi_v2.iot.ServiceGroup.entity_type" title="filip.models.ngsi_v2.iot.ServiceGroup.entity_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">entity_type</span></code></a></p></li>
 </ul>
 </dd>
@@ -2669,12 +2669,12 @@ based on our best practice, following rules are checked</p>
 
 <dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.ServiceGroup.expressionLanguage">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">expressionLanguage</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#filip.models.ngsi_v2.iot.ExpressionLanguage" title="filip.models.ngsi_v2.iot.ExpressionLanguage"><span class="pre">ExpressionLanguage</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">ExpressionLanguage.JEXL</span></em><a class="headerlink" href="#filip.models.ngsi_v2.iot.ServiceGroup.expressionLanguage" title="Permalink to this definition"></a></dt>
-<dd><p>optional boolean value, to set expression language used to compute expressions, possible values are: legacy or jexl, but legacy is deprecated.</p>
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">expressionLanguage</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#filip.models.ngsi_v2.iot.ExpressionLanguage" title="filip.models.ngsi_v2.iot.ExpressionLanguage"><span class="pre">ExpressionLanguage</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">ExpressionLanguage.JEXL</span></em><a class="headerlink" href="#filip.models.ngsi_v2.iot.ServiceGroup.expressionLanguage" title="Permalink to this definition"></a></dt>
+<dd><p>optional boolean value, to set expression language used to compute expressions, possible values are: legacy or jexl, but legacy is deprecated. If it is set None, jexl is used.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><a class="reference internal" href="filip.utils.html#filip.utils.validators.validate_service_group_expression_language" title="filip.utils.validators.validate_service_group_expression_language"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_service_group_expression_language</span></code></a></p></li>
+<li><p><a class="reference internal" href="filip.utils.html#filip.utils.validators.validate_expression_language" title="filip.utils.validators.validate_expression_language"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_expression_language</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
@@ -3759,6 +3759,7 @@ be included.</p>
 <dd class="field-even"><ul class="simple">
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.attrs" title="filip.models.ngsi_v2.subscriptions.Notification.attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">attrs</span> <span class="pre">(List[str]</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.attrsFormat" title="filip.models.ngsi_v2.subscriptions.Notification.attrsFormat"><code class="xref py py-obj docutils literal notranslate"><span class="pre">attrsFormat</span> <span class="pre">(filip.models.ngsi_v2.base.AttrsFormat</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.covered" title="filip.models.ngsi_v2.subscriptions.Notification.covered"><code class="xref py py-obj docutils literal notranslate"><span class="pre">covered</span> <span class="pre">(bool</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.exceptAttrs" title="filip.models.ngsi_v2.subscriptions.Notification.exceptAttrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">exceptAttrs</span> <span class="pre">(List[str]</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.http" title="filip.models.ngsi_v2.subscriptions.Notification.http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">http</span> <span class="pre">(filip.models.ngsi_v2.base.Http</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.httpCustom" title="filip.models.ngsi_v2.subscriptions.Notification.httpCustom"><code class="xref py py-obj docutils literal notranslate"><span class="pre">httpCustom</span> <span class="pre">(filip.models.ngsi_v2.subscriptions.HttpCustom</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
@@ -3772,6 +3773,7 @@ be included.</p>
 <dt class="field-odd">Validators<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a> » <code class="xref py py-obj docutils literal notranslate"><span class="pre">all</span> <span class="pre">fields</span></code></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs" title="filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_covered_attrs</span></code></a> » <code class="xref py py-obj docutils literal notranslate"><span class="pre">all</span> <span class="pre">fields</span></code></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a> » <code class="xref py py-obj docutils literal notranslate"><span class="pre">all</span> <span class="pre">fields</span></code></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a> » <code class="xref py py-obj docutils literal notranslate"><span class="pre">all</span> <span class="pre">fields</span></code></p></li>
 </ul>
@@ -3785,6 +3787,7 @@ be included.</p>
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs" title="filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_covered_attrs</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
@@ -3800,6 +3803,23 @@ be included.</p>
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs" title="filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_covered_attrs</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.subscriptions.Notification.covered">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">covered</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#filip.models.ngsi_v2.subscriptions.Notification.covered" title="Permalink to this definition"></a></dt>
+<dd><p>A flag to decide whether to include not existing attribute in notifications. It can be useful for those notification endpoints that are not flexible enough for a variable set of attributes and needs always the same set of incoming attributes in every received notification <a class="reference external" href="https://fiware-orion.readthedocs.io/en/master/orion-api.html#covered-subscriptions">https://fiware-orion.readthedocs.io/en/master/orion-api.html#covered-subscriptions</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Validated by<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs" title="filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_covered_attrs</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
@@ -3815,6 +3835,7 @@ be included.</p>
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs" title="filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_covered_attrs</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
@@ -3830,6 +3851,7 @@ be included.</p>
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs" title="filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_covered_attrs</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
@@ -3845,6 +3867,7 @@ be included.</p>
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs" title="filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_covered_attrs</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
@@ -3860,6 +3883,7 @@ be included.</p>
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs" title="filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_covered_attrs</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
@@ -3875,6 +3899,7 @@ be included.</p>
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs" title="filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_covered_attrs</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
@@ -3890,6 +3915,7 @@ be included.</p>
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs" title="filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_covered_attrs</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
@@ -3905,6 +3931,7 @@ be included.</p>
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs" title="filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_covered_attrs</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
@@ -3920,6 +3947,7 @@ be included.</p>
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs" title="filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_covered_attrs</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
@@ -3930,6 +3958,11 @@ be included.</p>
 <dl class="py method pydantic_validator">
 <dt class="sig sig-object py" id="filip.models.ngsi_v2.subscriptions.Notification.validate_attr">
 <em class="property"><span class="pre">validator</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_attr</span></span><em class="autodoc_pydantic_validator_arrow property">&#160; <span class="pre">»</span>&#160; </em><em class="xref py py-obj"><span class="pre">all</span> <span class="pre">fields</span></em><a class="reference internal" href="../_modules/filip/models/ngsi_v2/subscriptions.html#Notification.validate_attr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method pydantic_validator">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs">
+<em class="property"><span class="pre">validator</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_covered_attrs</span></span><em class="autodoc_pydantic_validator_arrow property">&#160; <span class="pre">»</span>&#160; </em><em class="xref py py-obj"><span class="pre">all</span> <span class="pre">fields</span></em><a class="reference internal" href="../_modules/filip/models/ngsi_v2/subscriptions.html#Notification.validate_covered_attrs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method pydantic_validator">
@@ -3959,6 +3992,7 @@ be included.</p>
 <dd class="field-even"><ul class="simple">
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Response.attrs" title="filip.models.ngsi_v2.subscriptions.Response.attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">attrs</span> <span class="pre">(Optional[List[str]])</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Response.attrsFormat" title="filip.models.ngsi_v2.subscriptions.Response.attrsFormat"><code class="xref py py-obj docutils literal notranslate"><span class="pre">attrsFormat</span> <span class="pre">(Optional[AttrsFormat])</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Response.covered" title="filip.models.ngsi_v2.subscriptions.Response.covered"><code class="xref py py-obj docutils literal notranslate"><span class="pre">covered</span> <span class="pre">(Optional[bool])</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Response.exceptAttrs" title="filip.models.ngsi_v2.subscriptions.Response.exceptAttrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">exceptAttrs</span> <span class="pre">(Optional[List[str]])</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Response.http" title="filip.models.ngsi_v2.subscriptions.Response.http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">http</span> <span class="pre">(Optional[Http])</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Response.httpCustom" title="filip.models.ngsi_v2.subscriptions.Response.httpCustom"><code class="xref py py-obj docutils literal notranslate"><span class="pre">httpCustom</span> <span class="pre">(Optional[HttpCustom])</span></code></a></p></li>
@@ -3983,6 +4017,7 @@ be included.</p>
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs" title="filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_covered_attrs</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
@@ -3998,6 +4033,23 @@ be included.</p>
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs" title="filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_covered_attrs</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.subscriptions.Response.covered">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">covered</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#filip.models.ngsi_v2.subscriptions.Response.covered" title="Permalink to this definition"></a></dt>
+<dd><p>A flag to decide whether to include not existing attribute in notifications. It can be useful for those notification endpoints that are not flexible enough for a variable set of attributes and needs always the same set of incoming attributes in every received notification <a class="reference external" href="https://fiware-orion.readthedocs.io/en/master/orion-api.html#covered-subscriptions">https://fiware-orion.readthedocs.io/en/master/orion-api.html#covered-subscriptions</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Validated by<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs" title="filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_covered_attrs</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
@@ -4013,6 +4065,7 @@ be included.</p>
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs" title="filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_covered_attrs</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
@@ -4028,6 +4081,7 @@ be included.</p>
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs" title="filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_covered_attrs</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
@@ -4043,6 +4097,7 @@ be included.</p>
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs" title="filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_covered_attrs</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
@@ -4058,6 +4113,7 @@ be included.</p>
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs" title="filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_covered_attrs</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
@@ -4073,6 +4129,7 @@ be included.</p>
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs" title="filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_covered_attrs</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
@@ -4088,6 +4145,7 @@ be included.</p>
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs" title="filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_covered_attrs</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
@@ -4103,6 +4161,7 @@ be included.</p>
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs" title="filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_covered_attrs</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
@@ -4118,6 +4177,7 @@ be included.</p>
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs" title="filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_covered_attrs</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
@@ -4133,6 +4193,7 @@ be included.</p>
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs" title="filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_covered_attrs</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
@@ -4148,6 +4209,7 @@ be included.</p>
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs" title="filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_covered_attrs</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>
@@ -4163,6 +4225,7 @@ be included.</p>
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_attr" title="filip.models.ngsi_v2.subscriptions.Notification.validate_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_attr</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs" title="filip.models.ngsi_v2.subscriptions.Notification.validate_covered_attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_covered_attrs</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints" title="filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_endpoints</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.Notification.validate_http" title="filip.models.ngsi_v2.subscriptions.Notification.validate_http"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_http</span></code></a></p></li>
 </ul>

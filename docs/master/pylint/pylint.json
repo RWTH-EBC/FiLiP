@@ -899,7 +899,7 @@
             "column": 0,
             "path": "tutorials/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.config:[35:42]\n==tests.config:[45:51]\n    MQTT_BROKER_URL: AnyUrl = Field(default=\"mqtt://127.0.0.1:1883\",\n                                    validation_alias=AliasChoices(\n                                        'MQTT_BROKER_URL',\n                                        'MQTT_URL',\n                                        'MQTT_BROKER'))\n",
+            "message": "Similar lines in 2 files\n==filip.config:[35:42]\n==tests.config:[45:51]\n    MQTT_BROKER_URL: AnyUrl = Field(default=\"mqtt://127.0.0.1:1883\",\n                                    validation_alias=AliasChoices(\n                                        'MQTT_BROKER_URL',\n                                        'MQTT_URL',\n                                        'MQTT_BROKER'))\n\n# create settings object",
             "message-id": "R0801"
         }
     ],
@@ -1016,10 +1016,10 @@
                 "filip"
             ],
             "pydantic": [
-                "filip.custom_types",
-                "filip.config",
+                "tests.test_config",
                 "tests.config",
-                "tests.test_config"
+                "filip.custom_types",
+                "filip.config"
             ],
             "pydantic_settings": [
                 "tests.config",
@@ -1179,10 +1179,10 @@
                 "filip"
             ],
             "pydantic": [
-                "filip.custom_types",
+                "tests.test_config",
                 "tests.config",
-                "filip.config",
-                "tests.test_config"
+                "filip.custom_types",
+                "filip.config"
             ],
             "pydantic_settings": [
                 "tests.config",

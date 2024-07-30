@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Version History &mdash; FiLiP 0.4.1 documentation</title>
+  <title>Version History &mdash; FiLiP 0.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
@@ -39,7 +39,7 @@
             FiLiP
           </a>
               <div class="version">
-                0.4
+                0.5
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -58,7 +58,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../contributing.html#contribute-as-a-developer">Contribute as a developer</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">About FiLiP</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Version History</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#v0-4-2">v0.4.2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v0-5-0">v0.5.0</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#v0-4-1">v0.4.1</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#v0-4-0">v0.4.0</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#v0-3-0">v0.3.0</a></li>
@@ -107,20 +107,24 @@
              
   <section id="version-history">
 <h1>Version History<a class="headerlink" href="#version-history" title="Permalink to this heading"></a></h1>
-<section id="v0-4-2">
-<h2>v0.4.2<a class="headerlink" href="#v0-4-2" title="Permalink to this heading"></a></h2>
+<section id="v0-5-0">
+<h2>v0.5.0<a class="headerlink" href="#v0-5-0" title="Permalink to this heading"></a></h2>
 <ul class="simple">
 <li><p>update: allow duplicated name in device, check uniqueness of object_id (<a class="reference external" href="https://github.com/RWTH-EBC/FiLiP/pull/279">#279</a>)</p></li>
+<li><p>update: upgrade dependency of <code class="docutils literal notranslate"><span class="pre">paho-mqtt</span></code> to v2 (<a class="reference external" href="https://github.com/RWTH-EBC/FiLiP/pull/273/">#273</a>)</p></li>
+<li><p>add: <code class="docutils literal notranslate"><span class="pre">json</span></code> and <code class="docutils literal notranslate"><span class="pre">ngsi</span></code> as payload format in custom notification model (<a class="reference external" href="https://github.com/RWTH-EBC/FiLiP/pull/296">#296</a>)</p></li>
 <li><p>add: support alterationTypes in subscription model (<a class="reference external" href="https://github.com/RWTH-EBC/FiLiP/pull/293">#293</a>)</p></li>
 <li><p>add: validation for JEXL based expression (<a class="reference external" href="https://github.com/RWTH-EBC/FiLiP/pull/260">#260</a>)</p></li>
 <li><p>add: tutorials for multi-entity (<a class="reference external" href="https://github.com/RWTH-EBC/FiLiP/pull/260">#260</a>)</p></li>
 <li><p>add: add <code class="docutils literal notranslate"><span class="pre">update_entity_relationships</span></code> to allow relationship update (<a class="reference external" href="https://github.com/RWTH-EBC/FiLiP/pull/271">#271</a>)</p></li>
 <li><p>add: timeseries query with all attrs and specific attr name (<a class="reference external" href="https://github.com/RWTH-EBC/FiLiP/pull/16">#16</a>)</p></li>
 <li><p>add: flag to determine the deletion of registration when clearing the CB (<a class="reference external" href="https://github.com/RWTH-EBC/FiLiP/pull/267">#267</a>)</p></li>
+<li><p>add: <code class="docutils literal notranslate"><span class="pre">covered</span></code> flag in notification model (<a class="reference external" href="https://github.com/RWTH-EBC/FiLiP/pull/310">#310</a>)</p></li>
 <li><p>fix: rework tutorials for pydantic v2 (<a class="reference external" href="https://github.com/RWTH-EBC/FiLiP/pull/259">#259</a>)</p></li>
 <li><p>fix: inconsistency of <code class="docutils literal notranslate"><span class="pre">entity_type</span></code> as required argument (<a class="reference external" href="https://github.com/RWTH-EBC/FiLiP/pull/188">#188</a>)</p></li>
 <li><p>fix: allow empty string in attribute value validation (<a class="reference external" href="https://github.com/RWTH-EBC/FiLiP/pull/311">#311</a>)</p></li>
 </ul>
+<p>BREAKING CHANGE: upgrade dependency of <code class="docutils literal notranslate"><span class="pre">paho-mqtt</span></code> to v2 (<a class="reference external" href="https://github.com/RWTH-EBC/FiLiP/pull/273/">#273</a>)</p>
 </section>
 <section id="v0-4-1">
 <h2>v0.4.1<a class="headerlink" href="#v0-4-1" title="Permalink to this heading"></a></h2>
