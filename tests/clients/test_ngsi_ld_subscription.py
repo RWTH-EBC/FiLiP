@@ -255,9 +255,8 @@ class TestSubscriptions(unittest.TestCase):
 
 class TestSubsCheckBroker(unittest.TestCase):
 
-    @unittest.skip("Helper function for timer")
-    def timeout_func(x):
-            x[0] = False
+    def timeout_func(self):
+            self.last_test_timeout =[False]
 
     def cleanup(self):
         """
@@ -349,8 +348,7 @@ class TestSubsCheckBroker(unittest.TestCase):
 
         self.timeout = 5 # in seconds
         self.last_test_timeout = [True]
-        self.timeout_proc = threading.Timer(self.timeout,self.timeout_func,
-                                            args=[self.last_test_timeout])
+        self.timeout_proc = threading.Timer(self.timeout,self.timeout_func)
 
 
     def tearDown(self) -> None:
@@ -392,7 +390,7 @@ class TestSubsCheckBroker(unittest.TestCase):
             continue
         #if all goes well, the callback is triggered, and cancels the timer before
         #it gets to change the timeout variable to False, making the following assertion true
-        self.assertTrue(self.last_test_timeout[0])
+        self.assertTrue(self.last_test_timeout[0],"Operation timed out")
     
     def test_update_subscription_check_broker(self):
         """
@@ -433,11 +431,10 @@ class TestSubsCheckBroker(unittest.TestCase):
                                             attr_name='temperature')
         while(self.timeout_proc.is_alive()):
             continue
-        self.assertTrue(self.last_test_timeout[0])
+        self.assertTrue(self.last_test_timeout[0],"Operation timed out")
 
         self.last_test_timeout = [True]
-        self.timeout_proc = threading.Timer(self.timeout,self.timeout_func,
-                                            args=[self.last_test_timeout])
+        self.timeout_proc = threading.Timer(self.timeout,self.timeout_func)
         
         current_val=33
         self.sub_dict.update({'q':'temperature>30'})
@@ -450,7 +447,9 @@ class TestSubsCheckBroker(unittest.TestCase):
                                             attr_name='temperature')
         while(self.timeout_proc.is_alive()):
             continue
-        self.assertTrue(self.last_test_timeout[0])
+        self.assertTrue(self.last_test_timeout[0],"Operation timed out")
+        self.mqtt_client.loop_stop()
+        self.mqtt_client.disconnect()
 
     def test_delete_subscription_check_broker(self):
         """
