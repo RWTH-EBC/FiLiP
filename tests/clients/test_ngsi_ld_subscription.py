@@ -438,11 +438,8 @@ class TestSubsCheckBroker(unittest.TestCase):
                 ]
             }
         }
-        FIWARE_SERVICE = "service"
-        FIWARE_SERVICEPATH = "/"
         self.fiware_header = FiwareLDHeader(
-            service=FIWARE_SERVICE,
-            service_path=FIWARE_SERVICEPATH)
+            ngsild_tenant=settings.FIWARE_SERVICE)
         self.cb_client = ContextBrokerLDClient(url=settings.LD_CB_URL, 
                                                fiware_header=self.fiware_header)
         self.mqtt_client = mqtt.Client(callback_api_version=CallbackAPIVersion.VERSION2)
