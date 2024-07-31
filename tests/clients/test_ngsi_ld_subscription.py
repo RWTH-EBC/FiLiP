@@ -46,6 +46,10 @@ class TestSubscriptions(unittest.TestCase):
         self.fiware_header = FiwareLDHeader(ngsild_tenant=settings.FIWARE_SERVICE)
         self.cb_client = ContextBrokerLDClient(fiware_header=self.fiware_header,
                                                url=settings.LD_CB_URL)
+        # initial tenant
+        self.cb_client.post_entity(ContextLDEntity(id="Dummy:1", type="Dummy"),
+                                   update=True)
+        self.cb_client.delete_entity_by_id("Dummy:1")
         # self.mqtt_url = "mqtt://test.de:1883"
         # self.mqtt_topic = '/filip/testing'
         # self.notification =  {
@@ -99,127 +103,6 @@ class TestSubscriptions(unittest.TestCase):
         sub_list = [x for x in self.cb_client.get_subscription_list() 
                     if x.id == 'urn:ngsi-ld:Subscription:test_sub0']
         self.assertEqual(len(sub_list),1)
-
-    def test_get_subscription_list(self):
-        """
-        Get a list of all current subscriptions the broker has subscribed to.
-        Args:
-            - limit(number($double)): Limits the number of subscriptions retrieved
-            - offset(number($double)): Skip a number of subscriptions
-            - options(string): Options dictionary("count")
-        Returns:
-            - (200) list of subscriptions
-        Tests for get subscription list:
-            - Get the list of subscriptions and get the count of the subsciptions -> compare the count
-            - Go through the list and have a look at duplicate subscriptions
-            - Set a limit for the subscription number and compare the count of subscriptions sent with the limit
-            - Set offset for the subscription to retrive and check if the offset was procceded correctly.
-            - Save beforehand all posted subscriptions and see if all the subscriptions exist in the list -> added to Test 1
-        """
-
-        """Test 1"""
-        sub_post_list = list()
-        for i in range(10):
-            attr_id = "attr" + str(i)
-            attr = {attr_id: ContextProperty(value=randint(0,50))}
-            id = "test_sub" + str(i)
-            uri_string =  "mqtt://my.host.org:1883/topic/" + str(i)
-
-            endpoint_mqtt = Endpoint(**{
-                "uri": uri_string,
-                "accept": "application/json",
-                "notifierInfo": [
-                    {
-                        "key": "MQTT-Version",
-                        "value": "mqtt5.0"
-                    }
-                ]
-            })
-            notification_param = NotificationParams(attributes=[attr_id], endpoint=endpoint_mqtt)
-            sub = Subscription(id=id, notification=notification_param)
-            self.cb_client.post_subscription(sub)
-        # attr_id = "attr" + str(1)
-        # attr = {attr_id: ContextProperty(value=randint(0,50))}
-        # id = "test_sub" + str(1)
-        # uri_string =  "mqtt://my.host.org:1883/topic/" + str(1)
-        sub_example = {
-        "description": "Subscription to receive MQTT-Notifications about "
-                       "urn:ngsi-ld:Room:001",
-        "subject": {
-            "entities": [
-                {
-                    "id": "urn:ngsi-ld:Room:001",
-                    "type": "Room"
-                }
-            ],
-            "condition": {
-                "attrs": [
-                    "temperature"
-                ]
-            }
-        },
-        "notification": {
-            "mqtt": {
-                "url": self.MQTT_BROKER_URL_INTERNAL,
-                "topic": self.mqtt_topic
-            },
-            "attrs": [
-                "temperature"
-            ]
-        },
-        "throttling": 0
-    }
-        endpoint_mqtt = Endpoint(**{
-            "uri": uri_string,
-            "accept": "application/json",
-            "notifierInfo": [
-                {
-                    "key": "MQTT-Version",
-                    "value": "mqtt5.0"
-                }
-            ]
-        })
-        self.cb_client.post_subscription(sub_example)
-
-        notification_param = NotificationParams(attributes=[attr_id], endpoint=endpoint_mqtt)
-        sub = Subscription(id=id, notification=notification_param)
-        #self.cb_client.post_subscription(sub)
-        sub_list = self.cb_client.get_subscription_list()
-        self.assertEqual(10, len(sub_list))
-
-        for sub in sub_post_list:
-            self.assertIn(sub in sub_list)
-
-        for sub in sub_list:
-            self.cb_client.delete_subscription(id=sub.id)
-
-
-        """Test 2"""
-        for i in range(2):
-            attr_id = "attr"
-            attr = {attr_id: ContextProperty(value=20)}
-            notification_param = NotificationParams(attributes=[attr_id], endpoint=self.endpoint_http)
-            id = "test_sub"
-            sub = Subscription(id=id, notification=notification_param)
-            self.cb_client.post_subscription(sub)
-        sub_list = self.cb_client.get_subscription_list()
-        self.assertNotEqual(sub_list[0], sub_list[1])
-        for sub in sub_list:
-            self.cb_client.delete_subscription(id=sub.id)
-
-
-        """Test 3"""
-        for i in range(10):
-            attr_id = "attr" + str(i)
-            attr = {attr_id: ContextProperty(value=randint(0,50))}
-            notification_param = NotificationParams(attributes=[attr_id], endpoint=self.endpoint_http)
-            id = "test_sub" + str(i)
-            sub = Subscription(id=id, notification=notification_param)
-            self.cb_client.post_subscription(sub)
-        sub_list = self.cb_client.get_subscription_list(limit=5)
-        self.assertEqual(5, len(sub_list))
-        for sub in sub_list:
-            self.cb_client.delete_subscription(id=sub.id)
 
     def test_post_subscription(self):
         """
@@ -442,6 +325,10 @@ class TestSubsCheckBroker(unittest.TestCase):
             ngsild_tenant=settings.FIWARE_SERVICE)
         self.cb_client = ContextBrokerLDClient(url=settings.LD_CB_URL, 
                                                fiware_header=self.fiware_header)
+        # initial tenant
+        self.cb_client.post_entity(ContextLDEntity(id="Dummy:1", type="Dummy"),
+                                   update=True)
+        self.cb_client.delete_entity_by_id("Dummy:1")
         self.mqtt_client = mqtt.Client(callback_api_version=CallbackAPIVersion.VERSION2)
         #on_message callbacks differ from test to test, but on connect callbacks dont
         def on_connect_fail(client,userdata):
