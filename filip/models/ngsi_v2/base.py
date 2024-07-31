@@ -238,7 +238,7 @@ class NamedMetadata(Metadata):
     """
 
     name: str = Field(
-        titel="metadata name",
+        title="metadata name",
         description="a metadata name, describing the role of the metadata in "
         "the place where it occurs; for example, the metadata name "
         "accuracy indicates that the metadata value describes how "
@@ -354,7 +354,7 @@ class BaseNameAttribute(BaseModel):
     """
 
     name: str = Field(
-        titel="Attribute name",
+        title="Attribute name",
         description="The attribute name describes what kind of property the "
         "attribute value represents of the entity, for example "
         "current_speed. Allowed characters "

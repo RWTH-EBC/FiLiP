@@ -144,10 +144,10 @@ class ContextEntityKeyValues(BaseModel):
         ...,
         title="Entity Id",
         description="Id of an entity in an NGSI context broker. Allowed "
-        "characters are the ones in the plain ASCII set, except "
-        "the following ones: control characters, "
-        "whitespace, &, ?, / and #.",
-        example="Bcn-Welt",
+                    "characters are the ones in the plain ASCII set, except "
+                    "the following ones: control characters, "
+                    "whitespace, &, ?, / and #.",
+        json_schema_extra={"example":"Bcn-Welt"},
         max_length=256,
         min_length=1,
         frozen=True,
@@ -157,10 +157,10 @@ class ContextEntityKeyValues(BaseModel):
         ...,
         title="Entity Type",
         description="Id of an entity in an NGSI context broker. "
-        "Allowed characters are the ones in the plain ASCII set, "
-        "except the following ones: control characters, "
-        "whitespace, &, ?, / and #.",
-        example="Room",
+                    "Allowed characters are the ones in the plain ASCII set, "
+                    "except the following ones: control characters, "
+                    "whitespace, &, ?, / and #.",
+        json_schema_extra={"example":"Room"},
         max_length=256,
         min_length=1,
         frozen=True,
