@@ -535,7 +535,8 @@ class ContextLDEntity(ContextLDEntityKeyValues):
     @classmethod
     def _validate_id(cls, id: str):
         if not id.startswith("urn:ngsi-ld:"):
-            raise ValueError('Id has to be an URN and starts with "urn:ngsi-ld:"')
+            logging.warning(msg='It is recommended that the entity id to be a URN,'
+                                'starting with the namespace "urn:ngsi-ld:"')
         return id
 
     @classmethod
