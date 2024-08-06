@@ -5,6 +5,7 @@ import copy
 import unittest
 import logging
 import requests
+import json
 
 from uuid import uuid4
 
@@ -12,6 +13,7 @@ from filip.models.base import FiwareHeader, DataType
 from filip.clients.ngsi_v2 import \
     ContextBrokerClient, \
     IoTAClient
+from filip.clients.exceptions import BaseHttpClientException
 from filip.models.ngsi_v2.iot import \
     ServiceGroup, \
     Device, \
@@ -380,6 +382,23 @@ class TestAgent(unittest.TestCase):
                              new_device.__getattribute__(key))
             cb_client.close()
 
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                cb_url=settings.CB_URL,
+                iota_url=settings.IOTA_JSON_URL)
+    def test_device_exceptions(self):
+        """
+        Test for exceptions when handling a Device
+        """
+        with IoTAClient(url=settings.IOTA_JSON_URL, fiware_header=self.fiware_header) as client:
+            device = Device(**self.device)
+            client.post_device(device=device)
+
+            try:
+                client.post_device(device=device)
+            except BaseHttpClientException as err:
+                self.assertEqual(json.loads(err.response.text)["name"], "DUPLICATE_DEVICE_ID")
+
     def test_service_group(self):
         """
         Test of querying service group based on apikey and resource.
@@ -467,4 +486,3 @@ class TestAgent(unittest.TestCase):
         clear_all(fiware_header=self.fiware_header,
                   cb_url=settings.CB_URL,
                   iota_url=settings.IOTA_JSON_URL)
-

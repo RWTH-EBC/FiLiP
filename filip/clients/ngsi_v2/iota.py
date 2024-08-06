@@ -13,6 +13,7 @@ from pydantic import AnyHttpUrl
 from pydantic.type_adapter import TypeAdapter
 from filip.config import settings
 from filip.clients.base_http_client import BaseHttpClient
+from filip.clients.exceptions import BaseHttpClientException
 from filip.models.base import FiwareHeader
 from filip.models.ngsi_v2.iot import Device, ServiceGroup
 
@@ -299,8 +300,7 @@ class IoTAClient(BaseHttpClient):
             if update:
                 return self.update_devices(devices=devices, add=False)
             msg = "Could not post devices"
-            self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def post_device(self, *, device: Device, update: bool = False) -> None:
         """
