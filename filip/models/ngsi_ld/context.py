@@ -60,6 +60,24 @@ class ContextProperty(BaseModel):
     )
     field_validator("observedAt")(validate_fiware_datatype_string_protect)
 
+    createdAt: Optional[str] = Field(
+        None, title="Timestamp",
+        description="Representing a timestamp for the "
+                    "creation time of the property.",
+        max_length=256,
+        min_length=1,
+    )
+    field_validator("createdAt")(validate_fiware_datatype_string_protect)
+
+    modifiedAt: Optional[str] = Field(
+        None, title="Timestamp",
+        description="Representing a timestamp for the "
+                    "last modification of the property.",
+        max_length=256,
+        min_length=1,
+    )
+    field_validator("modifiedAt")(validate_fiware_datatype_string_protect)
+
     UnitCode: Optional[str] = Field(
         None, title="Unit Code",
         description="Representing the unit of the value. "
@@ -494,6 +512,24 @@ class ContextLDEntity(ContextLDEntityKeyValues):
                     "certain operation space."
     )
 
+    createdAt: Optional[str] = Field(
+        None, title="Timestamp",
+        description="Representing a timestamp for the "
+                    "creation time of the property.",
+        max_length=256,
+        min_length=1,
+    )
+    field_validator("createdAt")(validate_fiware_datatype_string_protect)
+
+    modifiedAt: Optional[str] = Field(
+        None, title="Timestamp",
+        description="Representing a timestamp for the "
+                    "last modification of the property.",
+        max_length=256,
+        min_length=1,
+    )
+    field_validator("modifiedAt")(validate_fiware_datatype_string_protect)
+
     def __init__(self,
                  id: str,
                  type: str,
@@ -753,7 +789,7 @@ class UpdateLD(BaseModel):
     """
     Model for update action
     """
-    entities: List[ContextLDEntity] = Field(
+    entities: List[Union[ContextLDEntity, ContextLDEntityKeyValues]] = Field(
         description="an array of entities, each entity specified using the "
                     "JSON entity representation format "
     )

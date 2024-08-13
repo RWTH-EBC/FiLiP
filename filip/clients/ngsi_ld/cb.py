@@ -175,36 +175,6 @@ class ContextBrokerLDClient(BaseHttpClient):
             self.logger.error(err)
             raise
 
-    def get_entity_by_id(self,
-                         entity_id: str,
-                         attrs: Optional[List[str]] = None,
-                         entity_type: Optional[str] = None,
-                         response_format: Optional[Union[AttrsFormat, str]] =
-                          AttrsFormat.KEY_VALUES,
-                         ) -> Union[Dict[str, Any]]:
-        url = urljoin(self.base_url, f'{self._url_version}/entities/{entity_id}')
-
-        headers = self.headers.copy()
-        params = {}
-
-        if attrs:
-            params.update({'attrs': attrs})
-        if entity_type:
-            params.update({'type': entity_type})
-
-        try:
-            res = self.get(url=url, params=params, headers=headers)
-            if res.ok:
-                self.logger.info(f"Entity {entity_id} successfully retrieved!")
-                self.logger.debug("Received: %s", res.json())
-                if response_format == AttrsFormat.KEY_VALUES:
-                    return ContextLDEntityKeyValues(**res.json())
-                return res.json()
-            res.raise_for_status()
-        except requests.RequestException as err:
-            msg = f"Could not load entity matching{params}"
-            self.log_error(err=err, msg=msg)
-            raise
 
     def post_entity(self,
                     entity: ContextLDEntity,
@@ -250,8 +220,7 @@ class ContextBrokerLDClient(BaseHttpClient):
                    entity_id: str,
                    entity_type: str = None,
                    attrs: List[str] = None,
-                   response_format: Union[AttrsFormat, str] =
-                   AttrsFormat.NORMALIZED,
+                   options: Optional[str] = "keyValues",
                    **kwargs  # TODO how to handle metadata?
                    ) \
             -> Union[ContextLDEntity, ContextLDEntityKeyValues, Dict[str, Any]]:
@@ -273,8 +242,8 @@ class ContextBrokerLDClient(BaseHttpClient):
                 retrieved in arbitrary order, and all the attributes of the
                 entity are included in the response.
                 Example: temperature, humidity.
-            response_format (AttrsFormat, str): Representation format of
-                response
+            options (String): keyValues (simplified representation of entity)
+                or sysAttrs (include generated attrs createdAt and modifiedAt)
         Returns:
             ContextEntity
         """
@@ -285,22 +254,19 @@ class ContextBrokerLDClient(BaseHttpClient):
             params.update({'type': entity_type})
         if attrs:
             params.update({'attrs': ','.join(attrs)})
-
-        if response_format:
-            if response_format not in list(AttrsFormat):
-                raise ValueError(f'Value must be in {list(AttrsFormat)}')
-            #params.update({'options': response_format})
+        if options != 'keyValues' and options != 'sysAttrs':
+            raise ValueError(f'Only available options are \'keyValues\' and \'sysAttrs\'')
+        params.update({'options': options})
 
         try:
             res = self.get(url=url, params=params, headers=headers)
             if res.ok:
                 self.logger.info("Entity successfully retrieved!")
                 self.logger.debug("Received: %s", res.json())
-                if response_format == AttrsFormat.NORMALIZED:
-                    return ContextLDEntity(**res.json())
-                if response_format == AttrsFormat.KEY_VALUES:
+                if options == "keyValues":
                     return ContextLDEntityKeyValues(**res.json())
-                return res.json()
+                if options == "sysAttrs":
+                    return ContextLDEntity(**res.json())
             res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Could not load entity {entity_id}"
@@ -319,7 +285,7 @@ class ContextBrokerLDClient(BaseHttpClient):
                         geoproperty: Optional[str] = None,
                         csf: Optional[str] = None,
                         limit: Optional[PositiveInt] = 100,
-                        response_format: Optional[Union[AttrsFormat, str]] = AttrsFormat.NORMALIZED.value,
+                        options: Optional[str] = "keyValues",
                         ) -> List[ContextLDEntity]:
 
         url = urljoin(self.base_url, f'{self._url_version}/entities/')
@@ -347,25 +313,22 @@ class ContextBrokerLDClient(BaseHttpClient):
             params.update({'csf': csf})
         if limit:
             params.update({'limit': limit})
+        if options != 'keyValues' and options != 'sysAttrs':
+            raise ValueError(f'Only available options are \'keyValues\' and \'sysAttrs\'')
+        params.update({'options': options})
 
-        if response_format: 
-            if response_format not in list(AttrsFormat):
-                raise ValueError(f'Value must be in {list(AttrsFormat)}')
-            #params.update({'options': response_format})
-        
         try:
             res = self.get(url=url, params=params, headers=headers)
             if res.ok:
                 self.logger.info("Entity successfully retrieved!")
                 self.logger.debug("Received: %s", res.json())
                 entity_list: List[ContextLDEntity] = []
-                if response_format == AttrsFormat.NORMALIZED.value:
-                    entity_list = [ContextLDEntity(**item) for item in res.json()]
-                    return entity_list
-                if response_format == AttrsFormat.KEY_VALUES.value:
+                if options == "keyValues":
                     entity_list = [ContextLDEntityKeyValues(**item) for item in res.json()]
                     return entity_list
-                return res.json()
+                if options == "sysAttrs":
+                    entity_list = [ContextLDEntity(**item) for item in res.json()]
+                    return entity_list
             res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Could not load entity matching{params}"
@@ -429,7 +392,6 @@ class ContextBrokerLDClient(BaseHttpClient):
             assert attr_name is None, "Invalid argument attr_name. Do not set " \
                                       "attr_name if attr is of type " \
                                       "NamedContextAttribute or NamedContextRelationship"
-            attr_name = attr.name
 
         url = urljoin(self.base_url,
                       f'{self._url_version}/entities/{entity_id}/attrs/{attr_name}')

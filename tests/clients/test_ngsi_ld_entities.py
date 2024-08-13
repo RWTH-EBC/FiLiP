@@ -1,4 +1,3 @@
-import _json
 import unittest
 from pydantic import ValidationError
 
@@ -25,7 +24,6 @@ class TestEntities(unittest.TestCase):
         Cleanup entities from test server
         """
         entity_test_types = [ self.entity.type, self.entity_2.type ]
-        fiware_header = FiwareLDHeader()
         for entity_type in entity_test_types:
             entity_list = self.cb_client.get_entity_list(entity_type=entity_type)
             for entity in entity_list:
@@ -72,7 +70,18 @@ class TestEntities(unittest.TestCase):
             - limit(integer): Pagination limit
             - options(string): Options dictionary; Available values : keyValues, sysAttrs
         """
-        pass
+        entity_list = self.cb_client.get_entity_list()
+        self.assertEqual(len(entity_list), 0)
+
+        self.cb_client.post_entity(entity=self.entity)
+        entity_list_idpattern = self.cb_client.get_entity_list(id_pattern="urn:ngsi-ld:my*")
+        self.assertEqual(len(entity_list_idpattern), 1)
+        self.assertEqual(entity_list_idpattern[0].id, self.entity.id)
+
+        entity_list_attrs = self.cb_client.get_entity_list(attrs=["testtemperature"])
+        self.assertEqual(len(entity_list_attrs), 1)
+        self.assertEqual(entity_list_attrs[0].id, self.entity.id)
+
     
     def test_post_entity(self):
         """
@@ -134,7 +143,7 @@ class TestEntities(unittest.TestCase):
         self.assertEqual(len(entity_list), 1)
         self.assertEqual(entity_list[0].id, self.entity.id)
         self.assertEqual(entity_list[0].type, self.entity.type)
-        self.assertEqual(entity_list[0].testtemperature.value, self.entity.testtemperature.value)
+        self.assertEqual(entity_list[0].testtemperature, self.entity.testtemperature.value)
         
         """Test2"""
         self.entity_identical= self.entity.model_copy()
@@ -191,8 +200,19 @@ class TestEntities(unittest.TestCase):
         """Test1"""
         self.cb_client.post_entity(entity=self.entity)
         ret_entity = self.cb_client.get_entity(entity_id=self.entity.id)
+        ret_entity_with_type = self.cb_client.get_entity(entity_id=self.entity.id, entity_type=self.entity.type)
+        ret_entity_keyValues = self.cb_client.get_entity(entity_id=self.entity.id, options="keyValues")
+        ret_entity_sysAttrs = self.cb_client.get_entity(entity_id=self.entity.id, options="sysAttrs")
+
         self.assertEqual(ret_entity.id,self.entity.id)
         self.assertEqual(ret_entity.type,self.entity.type)
+        self.assertEqual(ret_entity_with_type.id,self.entity.id)
+        self.assertEqual(ret_entity_with_type.type,self.entity.type)
+        self.assertEqual(ret_entity_keyValues.id,self.entity.id)
+        self.assertEqual(ret_entity_keyValues.type,self.entity.type)
+        self.assertEqual(ret_entity_sysAttrs.id,self.entity.id)
+        self.assertEqual(ret_entity_sysAttrs.type,self.entity.type)
+        self.assertNotEqual(ret_entity_sysAttrs.createdAt, None)
 
         """Test2"""
         with self.assertRaises(requests.exceptions.HTTPError) as contextmanager:
@@ -319,7 +339,7 @@ class TestEntities(unittest.TestCase):
         self.cb_client.append_entity_attributes(self.entity)
         entity_list = self.cb_client.get_entity_list()
         for entity in entity_list:
-            self.assertEqual(first=entity.test_value.value, second=attr.value)
+            self.assertEqual(first=entity.test_value, second=attr.value)
         for entity in entity_list:
             self.cb_client.delete_entity_by_id(entity_id=entity.id)
         
@@ -343,7 +363,7 @@ class TestEntities(unittest.TestCase):
 
         entity_list = self.cb_client.get_entity_list()
         for entity in entity_list:
-            self.assertEqual(first=entity.test_value.value, second=attr.value)
+            self.assertEqual(first=entity.test_value, second=attr.value)
         
         for entity in entity_list:
             self.cb_client.delete_entity_by_id(entity_id=entity.id)
@@ -377,13 +397,11 @@ class TestEntities(unittest.TestCase):
         self.entity.add_properties(new_prop)
         self.cb_client.post_entity(entity=self.entity)        
         self.cb_client.update_entity_attribute(entity_id=self.entity.id, attr=newer_prop, attr_name='new_prop')
-        entity_list = self.cb_client.get_entity_list()
-        self.assertEqual(len(entity_list), 1)
-        for entity in entity_list:  
-            prop_list = entity.get_properties()
-            for prop in prop_list:
-                if prop.name == "new_prop":
-                    self.assertEqual(prop.value, 40)
+        entity = self.cb_client.get_entity(entity_id=self.entity.id)
+        prop_dict = entity.model_dump()
+        self.assertIn("new_prop", prop_dict)
+        self.assertEqual(prop_dict["new_prop"], 40)
+
 
     def test_patch_entity_attrs_contextprop(self):
         """
@@ -409,18 +427,16 @@ class TestEntities(unittest.TestCase):
         """
         """Test1"""
         new_prop = {'new_prop': ContextProperty(value=25)}
-        newer_prop = {'new_prop': ContextProperty(value=55)}
+        newer_prop = ContextProperty(value=55)
 
         self.entity.add_properties(new_prop)
         self.cb_client.post_entity(entity=self.entity)
         self.cb_client.update_entity_attribute(entity_id=self.entity.id, attr=newer_prop, attr_name='new_prop')
-        entity_list = self.cb_client.get_entity_list()
-        self.assertEqual(len(entity_list), 1)
-        for entity in entity_list:
-            prop_list = entity.get_properties()
-            for prop in prop_list:
-                if prop.name == "new_prop":
-                    self.assertEqual(prop.value, 55)
+        entity = self.cb_client.get_entity(entity_id=self.entity.id)
+        prop_dict = entity.model_dump()
+        self.assertIn("new_prop", prop_dict)
+        self.assertEqual(prop_dict["new_prop"], 55)
+
                
     def test_patch_entity_attrs_attrId(self):
         """
@@ -451,15 +467,11 @@ class TestEntities(unittest.TestCase):
 
         attr.value = 40
         self.cb_client.update_entity_attribute(entity_id=self.entity.id, attr=attr, attr_name="test_value")
-        entity_list = self.cb_client.get_entity_list()
-        for entity in entity_list:  
-            prop_list = entity.get_properties()
-            for prop in prop_list:
-                if prop.name == "test_value": 
-                    self.assertEqual(prop.value, 40)
-        
-        for entity in entity_list:
-            self.cb_client.delete_entity_by_id(entity_id=entity.id)    
+        entity = self.cb_client.get_entity(entity_id=self.entity.id)
+        prop_dict = entity.model_dump()
+        self.assertIn("test_value", prop_dict)
+        self.assertEqual(prop_dict["test_value"], 40)
+
 
     def test_delete_entity_attribute(self):
         """
@@ -467,7 +479,7 @@ class TestEntities(unittest.TestCase):
         Args:
             - entityId: Entity Id; required
             - attrId: Attribute Id; required
-        Returns: 
+        Returns:
             - (204) No Content
             - (400) Bad Request
             - (404) Not Found
@@ -482,7 +494,7 @@ class TestEntities(unittest.TestCase):
             post an enitity with entity_ID, entity_type and attribute with attribute_ID
             delete an attribute with an non existent attribute_ID of the entity with the entity_ID
                 Raise Error
-        Test 2: 
+        Test 2:
             post an entity with entity_ID, entitiy_name and attribute with attribute_ID
             delete the attribute with the attribute_ID of the entity with the entity_ID
             get entity with entity_ID 
@@ -516,3 +528,68 @@ class TestEntities(unittest.TestCase):
             self.cb_client.delete_attribute(entity_id=self.entity.id, attribute_id="test_value")
         response = contextmanager.exception.response
         self.assertEqual(response.status_code, 404)
+
+
+    def test_replacing_attributes(self):
+        """
+        Patch existing Entity attributes within an NGSI-LD system.
+        Args:
+            - entityId: Entity Id; required
+        Returns:
+            - (204) No Content
+            - (400) Bad Request
+            - (404) Not Found
+        Tests:
+            - Post an entity with attribute. Change the attributes with patch.
+        """
+        """
+        Test 1:
+            replace attribute with same name and different value
+        Test 2:
+            replace two attributes
+        """
+
+        """Test 1"""
+        attr1 = NamedContextProperty(name="test_value", value=20)
+        self.entity.add_properties(attrs=[attr1])
+        self.cb_client.post_entity(entity=self.entity)
+        entity = self.cb_client.get_entity(entity_id=self.entity.id)
+        prop_dict = entity.model_dump()
+        self.assertIn("test_value", prop_dict)
+        self.assertEqual(prop_dict["test_value"], 20)
+
+        attr2 = NamedContextProperty(name="test_value", value=44)
+        self.entity.delete_properties(props=[attr1])
+        self.entity.add_properties(attrs=[attr2])
+        self.cb_client.replace_existing_attributes_of_entity(entity=self.entity)
+        entity = self.cb_client.get_entity(entity_id=self.entity.id)
+        prop_dict = entity.model_dump()
+        self.assertIn("test_value", prop_dict)
+        self.assertEqual(prop_dict["test_value"], 44)
+
+        self.cb_client.delete_entity_by_id(entity_id=self.entity.id)
+
+        """Test 2"""
+        attr1 = NamedContextProperty(name="test_value", value=20)
+        attr2 = NamedContextProperty(name="my_value", value=44)
+        self.entity.add_properties(attrs=[attr1, attr2])
+        self.cb_client.post_entity(entity=self.entity)
+        entity = self.cb_client.get_entity(entity_id=self.entity.id)
+        prop_dict = entity.model_dump()
+        self.assertIn("test_value", prop_dict)
+        self.assertEqual(prop_dict["test_value"], 20)
+        self.assertIn("my_value", prop_dict)
+        self.assertEqual(prop_dict["my_value"], 44)
+
+        self.entity.delete_properties(props=[attr1])
+        self.entity.delete_properties(props=[attr2])
+        attr3 = NamedContextProperty(name="test_value", value=25)
+        attr4 = NamedContextProperty(name="my_value", value=45)
+        self.entity.add_properties(attrs=[attr3, attr4])
+        self.cb_client.replace_existing_attributes_of_entity(entity=self.entity)
+        entity = self.cb_client.get_entity(entity_id=self.entity.id)
+        prop_dict = entity.model_dump()
+        self.assertIn("test_value", prop_dict)
+        self.assertEqual(prop_dict["test_value"], 25)
+        self.assertIn("my_value", prop_dict)
+        self.assertEqual(prop_dict["my_value"], 45)
