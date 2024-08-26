@@ -9,15 +9,20 @@ tags:
   - Semantic
 authors:
   - name: Thomas Storek
+    orcid: 0000-0002-2652-1686
     affiliation: "1, 2"
   - name: Junsong Du
+    orcid: 0000-0003-2247-2423
     corresponding: true
     affiliation: 1 
   - name: Sebastian Blechmann
+    orcid: 0000-0002-8135-1843
     affiliation: 1
   - name: Rita Streblow
+    orcid: 0000-0001-7640-0930
     affiliation: 1
   - name: Dirk Müller
+    orcid: 0000-0002-6106-6607
     affiliation: 1
 affiliations:
   - name: Institute for Energy Efficient Buildings and Indoor Climate, RWTH Aachen University, Germany
@@ -30,10 +35,10 @@ bibliography: paper.bib
 
 # Summary
 
-FIWARE, an open-source initiative providing open-source software platform components and a set of standardized APIs (Application Programming Interfaces), has been instrumental in driving digitalization across various domains and research fields.
+FIWARE, an open-source initiative providing open-source software platform components and a set of standardized APIs (Application Programming Interfaces), has been instrumental in driving digitalization across various domains and research fields [@araujo_performance_2019].
 The use of FIWARE enables faster, easier, and cheaper developments of a wide range of IoT-enabled solutions [@fiware:2023]. 
 Over the years, the FIWARE Next-Generation-Service-Interface (NGSI-v2) API specification has been well-developed. 
-There is also a variety of reusable software components, so-called Generic Enablers (GEs), complying with NGSI-v2, including Orion Context Broker, IoT Agent, and QuantumLeap. 
+There is also a variety of reusable software components, so-called Generic Enablers ([GEs](https://github.com/FIWARE-GEs)), complying with NGSI-v2 [@canterafonsecaFIWARENGSIV2Specification], including [Orion Context Broker](https://github.com/telefonicaid/fiware-orion), [IoT Agent](https://github.com/telefonicaid/iotagent-node-lib), and [QuantumLeap](https://github.com/orchestracities/ngsi-timeseries-api?tab=readme-ov-file). 
 These components play a pivotal role in core context information management, IoT device connectivity, and time-series database interaction [@fiware:2023].
 
 In this context, we developed FiLiP, a Python Software Development Kit (SDK) designed to accelerate the development of services that interact with the aforementioned FIWARE GEs. 
@@ -51,22 +56,22 @@ Additionally, the specification has continuously evolved over time, necessitatin
 Existing FIWARE APIs client libraries can already provide some basic support but often fall short in several key areas.
 A comparison as shown in Table \ref{Comparison} reveals the shortage of various existing libraries, including limited support for multiple FIWARE APIs, lack of advanced validation and data models integration, and unsatisfactory usability and reliability.
 
-| Library                    | API Support                                               | Validation         | Datamodel            | Learning Support                         | Test Cases           |
-|----------------------------|-----------------------------------------------------------|--------------------|----------------------|------------------------------------------|----------------------|
-| [@QuantumLeapClient]       | TS                                                        | -                  | -                    | Readme file                              | 18                   |
-| [@fiware-ngsi-api]         | D, E                                                      | Basic    | Proprietary     | -                                        | -                    |
-| [@fiot-client-ngsi-python] | D<sup>*</sup>, E, S                                       | -                  | -                    | Readme file  | 31                   |
-| [@orion-python-client]     | E, S<sup>*</sup>                                          | -                  | -                    | Readme file                              | 1                    |
-| FiLiP                      | Device (D), Entity (E), Subscription (S), TimeSeries (TS) | Enhanced | Customizable         | Documentation, 12 examples, and 8 tutorials| 82 (84% coverage)    |
+| Library                                            | API Support                                               | Validation         | Datamodel            | Learning Support                         | Test Cases           |
+|----------------------------------------------------|-----------------------------------------------------------|--------------------|----------------------|------------------------------------------|----------------------|
+| QuantumLeapClient [@QuantumLeapClient]             | TS                                                        | -                  | -                    | Readme file                              | 18                   |
+| fiware-ngsi-api [@fiware-ngsi-api]                 | D, E                                                      | Basic    | Proprietary     | -                                        | -                    |
+| fiot-client-ngsi-python [@fiot-client-ngsi-python] | D<sup>*</sup>, E, S                                       | -                  | -                    | Readme file  | 31                   |
+| orion-python-client [@orion-python-client]         | E, S<sup>*</sup>                                          | -                  | -                    | Readme file                              | 1                    |
+| FiLiP                                              | Device (D), Entity (E), Subscription (S), TimeSeries (TS) | Enhanced | Customizable         | Documentation, 12 examples, and 8 tutorials| 82 (84% coverage)    |
 : Comparison of FiLiP with existing FIWARE APIs client libraries. "-" indicates that the feature is not supported or not available. "*" indicates that the feature is available but incomplete.\label{Comparison}
 
 Although FIWARE provides OpenAPI specifications [@openapi] [@canterafonsecaFIWARENGSIV2Specification], which can be used to automatically generate API clients for various programming languages, there are still issues that make those auto-generated API clients less reliable:
 
 - The quality of auto-generated code strongly depends on the provided input data, i.e. OpenAPI specification.
 - Integrating additional features is generally not viable because manipulating the generated code can result in larger maintenance efforts.
-- The generated clients does not enable advanced data validation and reasonable error handling.
+- The generated clients do not enable advanced data validation and reasonable error handling.
 
-As a result, the lack of a comprehensive and reliable tool kit continue to hinder the adoption of FIWARE-based platforms in research fields and industrial applications.
+As a result, the lack of a comprehensive and reliable tool kit continues to hinder the adoption of FIWARE-based platforms in research fields and industrial applications.
 To overcome the aforementioned issues and shortcomings of the existing solutions, we present FiLiP (Fiware Library for Python).
 
 # Implementation
@@ -84,7 +89,7 @@ One of them is the robust and enhanced implementation of data parsing and valida
 The information models defined by NGSI-v2 API standards are implemented as Pydantic data models in FiLiP.
 In addition to basic validation tasks such as verifying the `id` and `type` required to identify an entity, FiLiP offers numerous enhanced validation functionalities.
 For instance, we have developed a custom validator that checks the unit specified in metadata based on UN/CEFACT standards[@uncefact].
-When these validations are successful, the validator enriches the metadata with additional information such as symbol, conversion_factor, and description.
+When these validations are successful, the validator enriches the metadata with additional information such as symbol, conversion factor, and description.
 This enhanced validation functionality ensures data quality and integrity in interactions with FIWARE GEs, while also reducing the effort required from developers.
 
 Another enhanced functionality of FiLiP is the data model integration. In practice, individual domains often necessitate domain-specific, and even application-specific data models to meet distinct requirements.
@@ -164,7 +169,7 @@ office.add_attributes(attrs=[hasSensor, locatedIn])
 ```
 
 To this end, data can be exchanged between the FIWARE-based platform and the smart devices.
-A PID controller can then be deployed as a cloud service to regulate the indoor temperature of the office. 
+A controller can then be deployed as a cloud service to regulate the indoor temperature of the office. 
 With the help of FiLiP, a communication interface between the controller and the FIWARE GEs can be efficiently established as well.
 
 ```python
