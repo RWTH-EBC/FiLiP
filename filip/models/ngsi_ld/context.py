@@ -2,10 +2,11 @@
 NGSI LD models for context broker interaction
 """
 import logging
-from typing import Any, List, Dict, Union, Optional
+from typing import Any, List, Dict, Union, Optional 
+from typing_extensions import Self
 
 from aenum import Enum
-from pydantic import field_validator, ConfigDict, BaseModel, Field
+from pydantic import field_validator, model_validator, ConfigDict, BaseModel, Field
 from filip.models.ngsi_v2 import ContextEntity
 from filip.utils.validators import FiwareRegex, \
     validate_fiware_datatype_string_protect, validate_fiware_standard_regex
@@ -503,6 +504,7 @@ class ContextLDEntity(ContextLDEntityKeyValues):
         super().__init__(id=id, type=type, **data)
 
     # TODO we should distinguish between context relationship
+    # TODO is "validate_attributes" still relevant for LD entities?
     @classmethod
     def _validate_attributes(cls, data: Dict):
         fields = set([field.validation_alias for (_, field) in cls.model_fields.items()] +
@@ -538,17 +540,48 @@ class ContextLDEntity(ContextLDEntityKeyValues):
         if not id.startswith("urn:ngsi-ld:"):
             raise ValueError('Id has to be an URN and starts with "urn:ngsi-ld:"')
         return id
+    
+    # @classmethod
+    # def _validate_properties(cls, data: Dict):
+    #     attrs = {}
+    #     for key, attr in data.items():
+    #         if key not in ContextEntity.model_fields:
+    #             if attr["type"] == DataTypeLD.RELATIONSHIP:
+    #                 attrs[key] = ContextRelationship.model_validate(attr)
+    #             else:
+    #                 attrs[key] = ContextProperty.model_validate(attr)
+    #     return attrs
+    
+    def _validate_single_property(self, data, validity):
+        if data is None or isinstance(data, (str, int, float)):
+            return validity
+        if isinstance(data, list):
+            for item in data:
+                validity = validity and self._validate_single_property(item, validity)
+        elif isinstance(data, dict):   
+            for key, attr in data.items():
+                if key == 'type':
+                    if attr == DataTypeLD.RELATIONSHIP:
+                        ContextRelationship.model_validate(data)
+                    else:
+                        ContextProperty.model_validate(data)
+                validity = validity and self._validate_single_property(attr, validity)
+        else:
+            raise NotImplementedError(
+            f"The property type ({type(data)}) for {data} is not implemented yet")
+        return validity
 
-    @classmethod
-    def _validate_properties(cls, data: Dict):
-        attrs = {}
-        for key, attr in data.items():
-            if key not in ContextEntity.model_fields:
-                if attr["type"] == DataTypeLD.RELATIONSHIP:
-                    attrs[key] = ContextRelationship.model_validate(attr)
-                else:
-                    attrs[key] = ContextProperty.model_validate(attr)
-        return attrs
+    @model_validator(mode='after')
+    def _validate_properties(self) -> Self:
+        model_dump = self.model_dump()
+        valid = True
+        for key, attr in model_dump.items():
+            if key in ContextEntity.model_fields:
+                continue
+            valid = self._validate_single_property(attr, valid)
+            if not valid:
+                raise ValueError('Properties not valid')
+        return self
 
     def get_properties(self,
                        response_format: Union[str, PropertyFormat] =
