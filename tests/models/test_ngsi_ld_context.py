@@ -145,52 +145,44 @@ class TestLDContextModels(unittest.TestCase):
                     "Year": {
                         "type": "Property",
                         "value": 2024
-                    }
-                },
-                "Warranty": [
-                    {
+                    },                    
+                    "Warranty": {
                         "Coverage": {
                             "value": "Premium",
                             "type": "Property"
-                        }
-                    },
-                    {
+                        },
                         "Duration": {
                             "value": 5,
                             "type": "Property"
                         }
-                    }
-                ],
+                    },
+                },
             }
         }
         self.entity_sub_props_dict_wrong = {
             "id": "urn:ngsi-ld:Vehicle:test1243",
             "type": "Vehicle",
             "Make": {
-                "type": "NotAProperty",
+                "type": "NotAProperty_level1",
                 "value": "Tesla",
                 "Model": {
-                    "type": "NotAProperty",
+                    "type": "NotAProperty_level2",
                     "value": "Model 3",
                     "Year": {
-                        "type": "Property",
+                        "type": "NotAProperty_level3",
                         "value": 2024
-                    }
-                },
-                "Warranty": [
-                    {
+                    },
+                    "Warranty": {
                         "Coverage": {
                             "value": "Premium",
                             "type": "Property"
-                        }
-                    },
-                    {
+                        },
                         "Duration": {
                             "value": 5,
                             "type": "Property"
                         }
-                    }
-                ],
+                    },
+                },
             }
         }
 
