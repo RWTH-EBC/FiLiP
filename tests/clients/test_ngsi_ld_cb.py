@@ -55,9 +55,12 @@ class TestContextBroker(unittest.TestCase):
                                             url=settings.LD_CB_URL)
         # todo replace with clean up function for ld
         try:
-            entity_list = self.client.get_entity_list(entity_type=self.entity.type)
-            for entity in entity_list:
-                self.client.delete_entity_by_id(entity_id=entity.id)
+            # todo implement with pagination, the default limit is 20
+            #  and max limit is 1000 for orion-ld
+            for i in range(0, 10):
+                entity_list = self.client.get_entity_list(limit=1000)
+                for entity in entity_list:
+                    self.client.delete_entity_by_id(entity_id=entity.id)
         except RequestException:
             pass
 
@@ -67,9 +70,10 @@ class TestContextBroker(unittest.TestCase):
         """
         # todo replace with clean up function for ld
         try:
-            entity_list = self.client.get_entity_list(entity_type=self.entity.type)
-            for entity in entity_list:
-                self.client.delete_entity_by_id(entity_id=entity.id)
+            for i in range(0, 10):
+                entity_list = self.client.get_entity_list(limit=1000)
+                for entity in entity_list:
+                    self.client.delete_entity_by_id(entity_id=entity.id)
         except RequestException:
             pass
         self.client.close()
@@ -262,22 +266,60 @@ class TestContextBroker(unittest.TestCase):
             client.get_entity_type(entity_type='MyType')
             client.delete_entity(entity_id=self.entity.id)
 
-    def aatest_batch_operations(self):
+    def test_batch_operations(self):
         """
         Test batch operations of context broker client
         """
-        fiware_header = FiwareLDHeader(service='filip',
-                                     service_path='/testing')
-        with ContextBrokerLDClient(fiware_header=fiware_header) as client:
-            entities = [ContextLDEntity(id=str(i),
-                                      type=f'filip:object:TypeA') for i in
+
+        entities = [ContextLDEntity(id=f"test:{i}",
+                                    type=f'filip:object:TypeA') for i in
+                    range(0, 1000)]
+        self.client.update(entities=entities, action_type=ActionTypeLD.CREATE)
+        with self.assertRaises(RuntimeError):
+            # the entity id must be unique
+            entities = [ContextLDEntity(id=f"test:{i}",
+                                        type=f'filip:object:TypeB') for i in
                         range(0, 1000)]
-            client.update(entities=entities, action_type=ActionTypeLD.CREATE)
-            entities = [ContextLDEntity(id=str(i),
-                                      type=f'filip:object:TypeB') for i in
-                        range(0, 1000)]
-            client.update(entities=entities, action_type=ActionTypeLD.CREATE)
-            e = ContextEntity(idPattern=".*", typePattern=".*TypeA$")
+            self.client.update(entities=entities, action_type=ActionTypeLD.CREATE)
+        # check upsert
+        entities_upsert = [ContextLDEntity(id=f"test:{i}",
+                                           type=f'filip:object:TypeB') for i in
+                           range(0, 1000)]
+        with self.assertRaises(RuntimeError):
+            # cannot use upsert to change the type
+            self.client.update(entities=entities_upsert, action_type=ActionTypeLD.UPSERT)
+        entities_upsert = [ContextLDEntity(id=f"testUpsert:{i}",
+                                           type=f'filip:object:TypeB'
+                                           ) for i in
+                           range(0, 1000)]
+        # create entities
+        self.client.update(entities=entities_upsert, action_type=ActionTypeLD.UPSERT)
+        # add properties
+        for entity_upsert in entities_upsert:
+            entity_upsert.add_properties([NamedContextProperty(name='testAttr',
+                                                               value='testValue')])
+        self.client.update(entities=entities_upsert, action_type=ActionTypeLD.UPSERT)
+        entities_query = self.client.get_entity_list(
+            entity_type=f'filip:object:TypeB',
+            limit=1000)
+        for entity_query in entities_query:
+            self.assertEqual(len(entity_query.get_properties()), 1)
+        # check update
+        entities_update = [ContextLDEntity(id=f"test:{i}",
+                                           type=f'filip:object:TypeC') for i in
+                           range(0, 1000)]
+        self.client.update(entities=entities_update, action_type=ActionTypeLD.UPDATE)
+        entities_query_update = self.client.get_entity_list(
+            entity_type=f'filip:object:TypeC',
+            limit=1000)
+        for entity_query_update in entities_query_update:
+            self.assertIn(entity_query_update, entities_update)
+        # check delete
+        self.client.update(entities=entities_update, action_type=ActionTypeLD.DELETE)
+        entities_query_update = self.client.get_entity_list(
+            entity_type=f'filip:object:TypeC',
+            limit=1000)
+        self.assertEqual(len(entities_query_update), 0)
 
     def aatest_get_all_attributes(self):
         fiware_header = FiwareLDHeader(service='filip',

@@ -701,7 +701,8 @@ class ContextLDEntity(ContextLDEntityKeyValues):
             None
         """
         if isinstance(attrs, list):
-            attrs = {attr.name: ContextProperty(**attr.model_dump(exclude={'name'}))
+            attrs = {attr.name: ContextProperty(**attr.model_dump(exclude={'name'},
+                                                                  exclude_unset=True))
                      for attr in attrs}
         for key, attr in attrs.items():
             self.__setattr__(name=key, value=attr)

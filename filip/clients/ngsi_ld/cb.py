@@ -284,9 +284,9 @@ class ContextBrokerLDClient(BaseHttpClient):
                         coordinates: Optional[str] = None,
                         geoproperty: Optional[str] = None,
                         csf: Optional[str] = None,
-                        limit: Optional[PositiveInt] = 100,
-                        options: Optional[str] = "keyValues",
-                        ) -> List[ContextLDEntity]:
+                        limit: Optional[PositiveInt] = None,
+                        options: Optional[str] = None,
+                        ) -> List[Union[ContextLDEntity, ContextLDEntityKeyValues]]:
 
         url = urljoin(self.base_url, f'{self._url_version}/entities/')
         headers = self.headers.copy()
@@ -313,20 +313,21 @@ class ContextBrokerLDClient(BaseHttpClient):
             params.update({'csf': csf})
         if limit:
             params.update({'limit': limit})
-        if options != 'keyValues' and options != 'sysAttrs':
-            raise ValueError(f'Only available options are \'keyValues\' and \'sysAttrs\'')
-        params.update({'options': options})
+        if options:
+            if options != 'keyValues' and options != 'sysAttrs':
+                raise ValueError(f'Only available options are \'keyValues\' and \'sysAttrs\'')
+            params.update({'options': options})
+        # params.update({'local': 'true'})
 
         try:
             res = self.get(url=url, params=params, headers=headers)
             if res.ok:
                 self.logger.info("Entity successfully retrieved!")
-                self.logger.debug("Received: %s", res.json())
-                entity_list: List[ContextLDEntity] = []
+                entity_list: List[Union[ContextLDEntity, ContextLDEntityKeyValues]] = []
                 if options == "keyValues":
                     entity_list = [ContextLDEntityKeyValues(**item) for item in res.json()]
                     return entity_list
-                if options == "sysAttrs":
+                else:
                     entity_list = [ContextLDEntity(**item) for item in res.json()]
                     return entity_list
             res.raise_for_status()
@@ -746,7 +747,8 @@ class ContextBrokerLDClient(BaseHttpClient):
                     headers=headers,
                     params=params,
                     data=json.dumps(update.model_dump(by_alias=True,
-                                                      exclude_unset=True).get('entities'))
+                                                      exclude_unset=True,
+                                                      ).get('entities'))
                 )
             self.handle_multi_status_response(res)
         except RuntimeError as rerr:
