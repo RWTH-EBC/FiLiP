@@ -2,6 +2,7 @@
 Test the endpoint for subscription related task of NGSI-LD for ContextBrokerClient
 """
 import json
+import time
 import unittest
 
 from pydantic import ValidationError
@@ -103,20 +104,6 @@ class TestSubscriptions(unittest.TestCase):
         sub_list = [x for x in self.cb_client.get_subscription_list() 
                     if x.id == 'urn:ngsi-ld:Subscription:test_sub0']
         self.assertEqual(len(sub_list),1)
-
-    def test_post_subscription(self):
-        """
-        Create a new subscription.
-        Args:
-            - Request body: required
-        Returns:
-            - (201) successfully created subscription
-        Tests:
-            - Create a subscription and post something from this subscription
-                to see if the subscribed broker gets the message.
-            - Create a subscription twice to one message and see if the message is
-                received twice or just once.
-        """
 
     def test_post_subscription_http_check_broker(self):
         """
@@ -254,7 +241,10 @@ class TestSubscriptions(unittest.TestCase):
         # TODO
 
 class TestSubsCheckBroker(unittest.TestCase):
-
+    """
+    These tests are more oriented towards testing the actual broker.
+    Some functionality in Orion LD may not be consistent at times.
+    """
     def timeout_func(self):
             self.last_test_timeout =[False]
 
@@ -371,6 +361,7 @@ class TestSubsCheckBroker(unittest.TestCase):
             #catching a rogue one)
             self.assertEqual(updated_entity,
                              json.loads(msg.payload.decode())['body']['data'][0])
+
         self.mqtt_client.on_message = on_message
         self.mqtt_client.connect(settings.MQTT_BROKER_URL.host,
                                  settings.MQTT_BROKER_URL.port,
@@ -389,7 +380,7 @@ class TestSubsCheckBroker(unittest.TestCase):
         while(self.timeout_proc.is_alive()):
             continue
         #if all goes well, the callback is triggered, and cancels the timer before
-        #it gets to change the timeout variable to False, making the following assertion true
+        #it gets to change the timeout variable to False, making the following assertion True
         self.assertTrue(self.last_test_timeout[0],"Operation timed out")
     
     def test_update_subscription_check_broker(self):
@@ -408,12 +399,21 @@ class TestSubsCheckBroker(unittest.TestCase):
             - Update subscription to q = x̄ 
             - Update entity to trigger sub with opposite condition x̄
         """
-        current_val = 25
+        current_vals = [25,33]
+
+        def idx_generator(n):
+            while(n<2):
+                yield n
+                n+=1
+    
+        gen = idx_generator(0)
+
         def on_message(client,userdata,msg):
+            idx = next(gen)
             self.timeout_proc.cancel()
-            self.mqtt_client.loop_stop()
-            self.mqtt_client.disconnect()
-            self.assertEqual(current_val,
+            print(json.loads(msg.payload.decode())
+                             ['body']['data'][0]['temperature']['value'])
+            self.assertEqual(current_vals[idx],
                              json.loads(msg.payload.decode())
                              ['body']['data'][0]['temperature']['value'])
 
@@ -425,10 +425,10 @@ class TestSubsCheckBroker(unittest.TestCase):
         self.timeout_proc.start()
 
         self.cb_client.update_entity_attribute(entity_id='urn:ngsi-ld:Entity:test_entity03',
-                                            attr=NamedContextProperty(type="Property",
-                                                                        value=current_val,
-                                                                        name='temperature'),
-                                            attr_name='temperature')
+                                                attr=NamedContextProperty(type="Property",
+                                                                            value=current_vals[0],
+                                                                            name='temperature'),
+                                                attr_name='temperature')
         while(self.timeout_proc.is_alive()):
             continue
         self.assertTrue(self.last_test_timeout[0],"Operation timed out")
@@ -436,13 +436,15 @@ class TestSubsCheckBroker(unittest.TestCase):
         self.last_test_timeout = [True]
         self.timeout_proc = threading.Timer(self.timeout,self.timeout_func)
         
-        current_val=33
         self.sub_dict.update({'q':'temperature>30'})
         self.cb_client.update_subscription(subscription=Subscription(**self.sub_dict))
+        time.sleep(5)
+        updated = self.cb_client.get_subscription(self.sub_dict['id'])
+        self.assertEqual(updated.q,'temperature>30')
         self.timeout_proc.start()
         self.cb_client.update_entity_attribute(entity_id='urn:ngsi-ld:Entity:test_entity03',
                                             attr=NamedContextProperty(type="Property",
-                                                                        value=current_val,
+                                                                        value=current_vals[1],
                                                                         name='temperature'),
                                             attr_name='temperature')
         while(self.timeout_proc.is_alive()):
@@ -460,6 +462,7 @@ class TestSubsCheckBroker(unittest.TestCase):
             - Successful: 204, no content
         Tests:
             - Post and delete subscription then see if the broker still gets subscribed values.
+        
         """
         pass
 
