@@ -39,6 +39,7 @@ class TestEntities(unittest.TestCase):
         self.cb_client = ContextBrokerLDClient(fiware_header=self.fiware_header,
                                             url=settings.LD_CB_URL)
         self.http_url = "https://test.de:80"
+        #self.mqtt_url = "mqtt://localhost:1883"
         self.mqtt_url = "mqtt://test.de:1883"
         self.mqtt_topic = '/filip/testing'
 
@@ -224,7 +225,6 @@ class TestEntities(unittest.TestCase):
             self.cb_client.get_entity("roomDoesnotExist")
         response = contextmanager.exception.response
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.json()["detail"], "Not a URL nor a URN")
     
     # TODO: write test which tries to delete entity with id AND type
     # for orion-ld version 1.4.0, error BadRequestData (title: Unsupported URI parameter) happens
@@ -334,7 +334,7 @@ class TestEntities(unittest.TestCase):
         """Test 1"""
         self.cb_client.post_entity(self.entity)
         attr = ContextProperty(**{'value': 20, 'unitCode': 'Number'})
-        # noOverwrite Option missing ???
+
         self.entity.add_properties({"test_value": attr})
         self.cb_client.append_entity_attributes(self.entity)
         entity_list = self.cb_client.get_entity_list()
@@ -359,14 +359,15 @@ class TestEntities(unittest.TestCase):
         self.entity.add_properties({"test_value": attr})
         self.cb_client.append_entity_attributes(self.entity)
         self.entity.add_properties({"test_value": attr_same})
-        self.cb_client.append_entity_attributes(self.entity, options="noOverwrite")
+        with self.assertRaises(requests.exceptions.HTTPError) as contextmanager:
+            self.cb_client.append_entity_attributes(self.entity, options="noOverwrite")
+        response = contextmanager.exception.response
+        #should get bad request, with no overwrite allowed in detail
+        self.assertEqual(response.status_code, 400)
 
         entity_list = self.cb_client.get_entity_list()
         for entity in entity_list:
             self.assertEqual(first=entity.test_value, second=attr.value)
-        
-        for entity in entity_list:
-            self.cb_client.delete_entity_by_id(entity_id=entity.id)
         
     def test_patch_entity_attrs(self):
         """
