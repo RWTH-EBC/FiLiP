@@ -685,11 +685,11 @@ class ContextBrokerLDClient(BaseHttpClient):
             self.logger.info("Error decoding JSON. Response may not be in valid JSON format.")
 
     # Batch operation API
-    def update(self,
-               *,
-               entities: List[ContextLDEntity],
-               action_type: Union[ActionTypeLD, str],
-               update_format: str = None) -> None:
+    def entity_batch_operation(self,
+                               *,
+                               entities: List[ContextLDEntity],
+                               action_type: Union[ActionTypeLD, str],
+                               update_format: str = None) -> None:
         """
         This operation allows to create, update and/or delete several entities
         in a single batch operation.

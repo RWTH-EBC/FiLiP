@@ -101,18 +101,18 @@ class TestContextBroker(unittest.TestCase):
             entities_a = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
                                         type=f'filip:object:TypeA') for i in
                           range(0, 1000)]
-            client.update(action_type=ActionTypeLD.CREATE, entities=entities_a)
+            client.entity_batch_operation(action_type=ActionTypeLD.CREATE, entities=entities_a)
             entities_b = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
                                         type=f'filip:object:TypeB') for i in
                           range(1000, 2001)]
-            client.update(action_type=ActionTypeLD.CREATE, entities=entities_b)
+            client.entity_batch_operation(action_type=ActionTypeLD.CREATE, entities=entities_b)
             self.assertLessEqual(len(client.get_entity_list(limit=1)), 1)
             self.assertLessEqual(len(client.get_entity_list(limit=999)), 999)
             self.assertLessEqual(len(client.get_entity_list(limit=1001)), 1001)
             self.assertLessEqual(len(client.get_entity_list(limit=2001)), 2001)
 
-            client.update(action_type=ActionTypeLD.DELETE, entities=entities_a)
-            client.update(action_type=ActionTypeLD.DELETE, entities=entities_b)
+            client.entity_batch_operation(action_type=ActionTypeLD.DELETE, entities=entities_a)
+            client.entity_batch_operation(action_type=ActionTypeLD.DELETE, entities=entities_b)
 
     def aatest_entity_filtering(self):
         """
@@ -130,12 +130,12 @@ class TestContextBroker(unittest.TestCase):
                                         type=f'filip:object:TypeA') for i in
                           range(0, 5)]
 
-            client.update(action_type=ActionTypeLD.CREATE, entities=entities_a)
+            client.entity_batch_operation(action_type=ActionTypeLD.CREATE, entities=entities_a)
             entities_b = [ContextLDEntity(id=f"urn:ngsi-ld:TypeB:{str(i)}",
                                         type=f'filip:object:TypeB') for i in
                           range(6, 10)]
 
-            client.update(action_type=ActionTypeLD.CREATE, entities=entities_b)
+            client.entity_batch_operation(action_type=ActionTypeLD.CREATE, entities=entities_b)
 
             entities_all = client.get_entity_list()
             entities_by_id_pattern = client.get_entity_list(
@@ -162,9 +162,9 @@ class TestContextBroker(unittest.TestCase):
             with self.assertRaises(ValueError):
                 client.get_entity_list(response_format='not in AttrFormat')
 
-            client.update(action_type=ActionTypeLD.DELETE, entities=entities_a)
+            client.entity_batch_operation(action_type=ActionTypeLD.DELETE, entities=entities_a)
 
-            client.update(action_type=ActionTypeLD.DELETE, entities=entities_b)
+            client.entity_batch_operation(action_type=ActionTypeLD.DELETE, entities=entities_b)
 
     def test_entity_operations(self):
         """
@@ -274,31 +274,31 @@ class TestContextBroker(unittest.TestCase):
         entities = [ContextLDEntity(id=f"test:{i}",
                                     type=f'filip:object:TypeA') for i in
                     range(0, 1000)]
-        self.client.update(entities=entities, action_type=ActionTypeLD.CREATE)
+        self.client.entity_batch_operation(entities=entities, action_type=ActionTypeLD.CREATE)
         with self.assertRaises(RuntimeError):
             # the entity id must be unique
             entities = [ContextLDEntity(id=f"test:{i}",
                                         type=f'filip:object:TypeB') for i in
                         range(0, 1000)]
-            self.client.update(entities=entities, action_type=ActionTypeLD.CREATE)
+            self.client.entity_batch_operation(entities=entities, action_type=ActionTypeLD.CREATE)
         # check upsert
         entities_upsert = [ContextLDEntity(id=f"test:{i}",
                                            type=f'filip:object:TypeB') for i in
                            range(0, 1000)]
         with self.assertRaises(RuntimeError):
             # cannot use upsert to change the type
-            self.client.update(entities=entities_upsert, action_type=ActionTypeLD.UPSERT)
+            self.client.entity_batch_operation(entities=entities_upsert, action_type=ActionTypeLD.UPSERT)
         entities_upsert = [ContextLDEntity(id=f"testUpsert:{i}",
                                            type=f'filip:object:TypeB'
                                            ) for i in
                            range(0, 1000)]
         # create entities
-        self.client.update(entities=entities_upsert, action_type=ActionTypeLD.UPSERT)
+        self.client.entity_batch_operation(entities=entities_upsert, action_type=ActionTypeLD.UPSERT)
         # add properties
         for entity_upsert in entities_upsert:
             entity_upsert.add_properties([NamedContextProperty(name='testAttr',
                                                                value='testValue')])
-        self.client.update(entities=entities_upsert, action_type=ActionTypeLD.UPSERT)
+        self.client.entity_batch_operation(entities=entities_upsert, action_type=ActionTypeLD.UPSERT)
         entities_query = self.client.get_entity_list(
             entity_type=f'filip:object:TypeB',
             limit=1000)
@@ -308,14 +308,14 @@ class TestContextBroker(unittest.TestCase):
         entities_update = [ContextLDEntity(id=f"test:{i}",
                                            type=f'filip:object:TypeC') for i in
                            range(0, 1000)]
-        self.client.update(entities=entities_update, action_type=ActionTypeLD.UPDATE)
+        self.client.entity_batch_operation(entities=entities_update, action_type=ActionTypeLD.UPDATE)
         entities_query_update = self.client.get_entity_list(
             entity_type=f'filip:object:TypeC',
             limit=1000)
         for entity_query_update in entities_query_update:
             self.assertIn(entity_query_update, entities_update)
         # check delete
-        self.client.update(entities=entities_update, action_type=ActionTypeLD.DELETE)
+        self.client.entity_batch_operation(entities=entities_update, action_type=ActionTypeLD.DELETE)
         entities_query_update = self.client.get_entity_list(
             entity_type=f'filip:object:TypeC',
             limit=1000)

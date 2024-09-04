@@ -100,7 +100,7 @@ class EntitiesBatchOperations(unittest.TestCase):
         entities_a = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
                                       type=f'filip:object:TypeA') for i in
                       range(0, 10)]
-        self.cb_client.update(entities=entities_a, action_type=ActionTypeLD.CREATE)
+        self.cb_client.entity_batch_operation(entities=entities_a, action_type=ActionTypeLD.CREATE)
         entity_list = self.cb_client.get_entity_list(entity_type=f'filip:object:TypeA')
         id_list = [entity.id for entity in entity_list]
         self.assertEqual(len(entities_a), len(entity_list))
@@ -117,7 +117,7 @@ class EntitiesBatchOperations(unittest.TestCase):
                                       type=f'filip:object:TypeB')]
         entity_list_b = []
         try:
-            self.cb_client.update(entities=entities_b, action_type=ActionTypeLD.CREATE)
+            self.cb_client.entity_batch_operation(entities=entities_b, action_type=ActionTypeLD.CREATE)
             entity_list_b = self.cb_client.get_entity_list(
                 entity_type=f'filip:object:TypeB')
             self.assertEqual(len(entity_list), 1)
@@ -163,12 +163,12 @@ class EntitiesBatchOperations(unittest.TestCase):
                                       type=f'filip:object:TypeA') for i in
                       range(0, 5)]
 
-        self.cb_client.update(entities=entities_a, action_type=ActionTypeLD.CREATE)
+        self.cb_client.entity_batch_operation(entities=entities_a, action_type=ActionTypeLD.CREATE)
 
         entities_update = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
                                            type=f'filip:object:TypeUpdate') for i in
                            range(3, 6)]
-        self.cb_client.update(entities=entities_update, action_type=ActionTypeLD.UPDATE)
+        self.cb_client.entity_batch_operation(entities=entities_update, action_type=ActionTypeLD.UPDATE)
         entity_list_a = self.cb_client.get_entity_list(entity_type=f'filip:object:TypeA')
         entity_list_b = self.cb_client.get_entity_list(
             entity_type=f'filip:object:TypeUpdate')
@@ -194,13 +194,13 @@ class EntitiesBatchOperations(unittest.TestCase):
         entities_a = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
                                       type=f'filip:object:TypeA') for i in
                       range(0, 4)]
-        self.cb_client.update(entities=entities_a, action_type=ActionTypeLD.CREATE)
+        self.cb_client.entity_batch_operation(entities=entities_a, action_type=ActionTypeLD.CREATE)
 
         entities_update = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
                                            type=f'filip:object:TypeUpdate') for i in
                            range(2, 6)]
-        self.cb_client.update(entities=entities_update, action_type=ActionTypeLD.UPDATE,
-                              update_format="noOverwrite")
+        self.cb_client.entity_batch_operation(entities=entities_update, action_type=ActionTypeLD.UPDATE,
+                                              update_format="noOverwrite")
         entity_list_a = self.cb_client.get_entity_list(entity_type=f'filip:object:TypeA')
         entity_list_b = self.cb_client.get_entity_list(
             entity_type=f'filip:object:TypeUpdate')
@@ -260,14 +260,14 @@ class EntitiesBatchOperations(unittest.TestCase):
         entities_a = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
                                       type=f'filip:object:TypeA') for i in
                       range(0, 4)]
-        self.cb_client.update(entities=entities_a, action_type=ActionTypeLD.CREATE)
+        self.cb_client.entity_batch_operation(entities=entities_a, action_type=ActionTypeLD.CREATE)
 
         entities_upsert = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
                                            type=f'filip:object:TypeUpdate') for i in
                            range(2, 6)]
         # TODO: this should work with newer release of orion-ld broker
-        self.cb_client.update(entities=entities_upsert, action_type=ActionTypeLD.UPSERT,
-                              update_format="update")
+        self.cb_client.entity_batch_operation(entities=entities_upsert, action_type=ActionTypeLD.UPSERT,
+                                              update_format="update")
 
         # read entities from broker and check that entities were not replaced
         entity_list_a = self.cb_client.get_entity_list(entity_type=f'filip:object:TypeA')
@@ -299,13 +299,13 @@ class EntitiesBatchOperations(unittest.TestCase):
         entities_a = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
                                       type=f'filip:object:TypeA') for i in
                       range(0, 4)]
-        self.cb_client.update(entities=entities_a, action_type=ActionTypeLD.CREATE)
+        self.cb_client.entity_batch_operation(entities=entities_a, action_type=ActionTypeLD.CREATE)
 
         entities_upsert = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
                                            type=f'filip:object:TypeUpdate') for i in
                            range(3, 6)]
-        self.cb_client.update(entities=entities_upsert, action_type=ActionTypeLD.UPSERT,
-                              update_format="replace")
+        self.cb_client.entity_batch_operation(entities=entities_upsert, action_type=ActionTypeLD.UPSERT,
+                                              update_format="replace")
 
         # read entities from broker and check that entities were replaced
         entity_list_a = self.cb_client.get_entity_list(entity_type=f'filip:object:TypeA')
@@ -363,8 +363,8 @@ class EntitiesBatchOperations(unittest.TestCase):
                                            type=f'filip:object:TypeDELETE') for i in
                            range(0, 1)]
         with self.assertRaises(Exception):
-            self.cb_client.update(entities=entities_delete,
-                                  action_type=ActionTypeLD.DELETE)
+            self.cb_client.entity_batch_operation(entities=entities_delete,
+                                                  action_type=ActionTypeLD.DELETE)
 
         """Test 2"""
         entity_del_type = 'filip:object:TypeDELETE'
@@ -375,7 +375,7 @@ class EntitiesBatchOperations(unittest.TestCase):
                                       type=entity_del_type) for id_a in
                       entities_ids_a]
 
-        self.cb_client.update(entities=entities_a, action_type=ActionTypeLD.CREATE)
+        self.cb_client.entity_batch_operation(entities=entities_a, action_type=ActionTypeLD.CREATE)
 
         entities_delete = [ContextLDEntity(id=id_a,
                                            type=entity_del_type) for id_a in
@@ -383,7 +383,7 @@ class EntitiesBatchOperations(unittest.TestCase):
         entities_delete_ids = [entity.id for entity in entities_delete]
 
         # send update to delete entities
-        self.cb_client.update(entities=entities_delete, action_type=ActionTypeLD.DELETE)
+        self.cb_client.entity_batch_operation(entities=entities_delete, action_type=ActionTypeLD.DELETE)
 
         # get list of entities which is still stored
         entity_list = self.cb_client.get_entity_list(entity_type=entity_del_type)

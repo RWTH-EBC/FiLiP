@@ -162,7 +162,7 @@ class TestEntities(unittest.TestCase):
         self.assertNotIn("room2", entity_list)
 
         """delete"""
-        self.cb_client.update(entities=entity_list, action_type=ActionTypeLD.DELETE)
+        self.cb_client.entity_batch_operation(entities=entity_list, action_type=ActionTypeLD.DELETE)
     
     def test_get_entity(self):
         """
