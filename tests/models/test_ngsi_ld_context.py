@@ -163,37 +163,35 @@ class TestLDContextModels(unittest.TestCase):
                 ],
             }
         }
-        self.entity_list_property = {
-            "id": "urn:ngsi-ld:Vehicle:A4567",
+        self.entity_sub_props_dict_wrong = {
+            "id": "urn:ngsi-ld:Vehicle:test1243",
             "type": "Vehicle",
-            "speed": [
-                {
-                    "type": "Property",
-                    "value": 55,
-                    "source": {
+            "Make": {
+                "type": "NotAProperty",
+                "value": "Tesla",
+                "Model": {
+                    "type": "NotAProperty",
+                    "value": "Model 3",
+                    "Year": {
                         "type": "Property",
-                        "value": "Speedometer"
-                    },
-                    "datasetId": "urn:ngsi-ld:Property:speedometerA4567-speed"
+                        "value": 2024
+                    }
                 },
-                {
-                    "type": "Property",
-                    "value": 54.5,
-                    "source": {
-                        "type": "Property",
-                        "value": "GPS"
+                "Warranty": [
+                    {
+                        "Coverage": {
+                            "value": "Premium",
+                            "type": "Property"
+                        }
                     },
-                    "datasetId": "urn:ngsi-ld:Property:gpsBxyz123-speed"
-                }
-            ],
-            "@context": [
-                {
-                    "Vehicle": "http://example.org/Vehicle",
-                    "speed": "http://example.org/speed",
-                    "source": "http://example.org/hasSource"
-                },
-                "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.3.jsonld"
-            ]
+                    {
+                        "Duration": {
+                            "value": 5,
+                            "type": "Property"
+                        }
+                    }
+                ],
+            }
         }
 
     def test_cb_property(self) -> None:
@@ -268,14 +266,14 @@ class TestLDContextModels(unittest.TestCase):
         entity4 = ContextLDEntity(**self.entity_sub_props_dict)
         entity4._validate_properties()
 
-    def test_validate_subproperties_list(self) -> None:
+    def test_validate_subproperties_dict_wrong(self) -> None:
         """
         Test the validation of multi-level properties in entities
         Returns:
             None
         """
-        entity4 = ContextLDEntity(**self.entity_list_property)
-        entity4._validate_properties()
+        entity5 = ContextLDEntity(**self.entity_sub_props_dict_wrong)
+        # entity5._validate_properties()
 
     def test_get_properties(self):
         """

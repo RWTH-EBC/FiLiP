@@ -552,36 +552,40 @@ class ContextLDEntity(ContextLDEntityKeyValues):
     #                 attrs[key] = ContextProperty.model_validate(attr)
     #     return attrs
     
-    def _validate_single_property(self, data, validity):
-        if data is None or isinstance(data, (str, int, float)):
+    def _validate_single_property(self, key, data, validity):
+        if key == 'type':
+            if data == DataTypeLD.RELATIONSHIP:
+                ContextRelationship.model_validate(data)
+            else:
+                ContextProperty.model_validate(data)
+        elif data is None or isinstance(data, (str, int, float)):
+            print('Skipping checking ',data,' because single value')
             return validity
-        if isinstance(data, list):
-            for item in data:
-                validity = validity and self._validate_single_property(item, validity)
+        # elif isinstance(data, list):
+        #     for item in data:
+        #         validity = validity and self._validate_single_property(item, validity)
         elif isinstance(data, dict):   
-            for key, attr in data.items():
-                if key == 'type':
-                    if attr == DataTypeLD.RELATIONSHIP:
-                        ContextRelationship.model_validate(data)
-                    else:
-                        ContextProperty.model_validate(data)
-                validity = validity and self._validate_single_property(attr, validity)
+            for attr_key, attr in data.items():                
+                validity = validity and self._validate_single_property(attr_key, attr, validity)
         else:
             raise NotImplementedError(
             f"The property type ({type(data)}) for {data} is not implemented yet")
         return validity
 
-    @model_validator(mode='after')
-    def _validate_properties(self) -> Self:
+    def _validate_properties(self):
         model_dump = self.model_dump()
+        print('\nModel dump as is:\n',model_dump)
         valid = True
+        for entity_key in ContextEntity.model_fields:
+            model_dump.pop(entity_key, None)
+        print('\nModel dump after removing entity keys:\n',model_dump)
         for key, attr in model_dump.items():
-            if key in ContextEntity.model_fields:
-                continue
-            valid = self._validate_single_property(attr, valid)
+            print('About to check single property ',key,': ',attr)
+            valid = self._validate_single_property(key, attr, valid)
+            print('Single property ',attr, ' is valid: ',valid)
             if not valid:
                 raise ValueError('Properties not valid')
-        return self
+        return valid
 
     def get_properties(self,
                        response_format: Union[str, PropertyFormat] =
