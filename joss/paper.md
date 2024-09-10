@@ -88,7 +88,7 @@ To enhance the efficiency of service development, FiLiP offers a range of advanc
 One of them is the robust and enhanced implementation of data parsing and validation via the Pydantic library [@pydantic]. 
 The information models defined by NGSI-v2 API standards are implemented as Pydantic data models in FiLiP.
 In addition to basic validation tasks such as verifying the `id` and `type` required to identify an entity, FiLiP offers numerous enhanced validation functionalities.
-For instance, we have developed a custom validator that checks the unit specified in metadata based on UN/CEFACT standards[@uncefact].
+For instance, we have developed a custom validator that checks the unit specified in metadata based on UN/CEFACT standards [@uncefact].
 When these validations are successful, the validator enriches the metadata with additional information such as symbol, conversion factor, and description.
 This enhanced validation functionality ensures data quality and integrity in interactions with FIWARE GEs, while also reducing the effort required from developers.
 
@@ -105,7 +105,7 @@ Thus, FiLiP effectively avoids the use for unreliable boilerplate code, thereby 
 
 # Use Case
 
-FiLiP has already been used to deploy various cloud-based building energy management systems [@storek_application_2019], [@kumpel_cloud_2019], [@blechmann_open_2023]. 
+FiLiP has already been used to deploy various cloud-based building energy management systems [@storek_application_2019; @kumpel_cloud_2019; @blechmann_open_2023].
 Among those, one simplified use case is to regulate the indoor air temperature of an office via IoT-enabled devices and a simple controller. 
 \autoref{fig:usecase} shows an office in a building equipped with two smart devices: a smart temperature sensor and a smart electrical heater, which can send measurements or receive commands, respectively, via Message Queuing Telemetry Transport (MQTT) protocol. 
 FiLiP provides reliable functionalities to deploy and commission a control service efficiently.
