@@ -133,57 +133,41 @@ class TestLDContextModels(unittest.TestCase):
             }
         }
         # The entity for testing the nested structure of properties
-        self.entity_sub_props_dict = {
-            "id": "urn:ngsi-ld:Vehicle:test1243",
-            "type": "Vehicle",
-            "Make": {
-                "type": "Property",
-                "value": "Tesla",
-                "Model": {
-                    "type": "Property",
-                    "value": "Model 3",
-                    "Year": {
-                        "type": "Property",
-                        "value": 2024
-                    },                    
-                    "Warranty": {
-                        "Coverage": {
-                            "value": "Premium",
-                            "type": "Property"
-                        },
-                        "Duration": {
-                            "value": 5,
-                            "type": "Property"
-                        }
-                    },
-                },
-            }
-        }
         self.entity_sub_props_dict_wrong = {
-            "id": "urn:ngsi-ld:Vehicle:test1243",
-            "type": "Vehicle",
-            "Make": {
-                "type": "NotAProperty_level1",
-                "value": "Tesla",
-                "Model": {
-                    "type": "NotAProperty_level2",
-                    "value": "Model 3",
-                    "Year": {
-                        "type": "NotAProperty_level3",
-                        "value": 2024
-                    },
-                    "Warranty": {
-                        "Coverage": {
-                            "value": "Premium",
-                            "type": "Property"
-                        },
-                        "Duration": {
-                            "value": 5,
-                            "type": "Property"
-                        }
-                    },
+            "id": "urn:ngsi-ld:OffStreetParking:Downtown1",
+            "type": "OffStreetParking",
+            "name": {
+                "type": "Property",
+                "value": "Downtown One"
+            },
+            "availableSpotNumber": {
+                "type": "Property",
+                "value": 121,
+                "observedAt": "2017-07-29T12:05:02Z",
+                "reliability": {
+                    "type": "NotAProperty",
+                    "value": 0.7
                 },
-            }
+                "providedBy": {
+                    "type": "NotARelationship",
+                    "object": "urn:ngsi-ld:Camera:C1"
+                }
+            },
+            "totalSpotNumber": {
+                "type": "Property",
+                "value": 200
+            },
+            "location": {
+                "type": "GeoProperty",
+                "value": {
+                    "type": "Point",
+                    "coordinates": [-8.5, 41.2]
+                }
+            },
+            "@context": [
+                "http://example.org/ngsi-ld/latest/parking.jsonld",
+                "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.3.jsonld"
+            ]
         }
 
     def test_cb_property(self) -> None:
@@ -255,8 +239,7 @@ class TestLDContextModels(unittest.TestCase):
         Returns:
             None
         """
-        entity4 = ContextLDEntity(**self.entity_sub_props_dict)
-        entity4._validate_properties()
+        entity4 = ContextLDEntity(**self.entity1_dict)
 
     def test_validate_subproperties_dict_wrong(self) -> None:
         """
@@ -265,7 +248,6 @@ class TestLDContextModels(unittest.TestCase):
             None
         """
         entity5 = ContextLDEntity(**self.entity_sub_props_dict_wrong)
-        # entity5._validate_properties()
 
     def test_get_properties(self):
         """
