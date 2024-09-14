@@ -516,7 +516,6 @@ class ContextLDEntity(ContextLDEntityKeyValues):
     def _validate_attributes(cls, data: Dict):
         fields = set([field.validation_alias for (_, field) in cls.model_fields.items()] +
                      [field_name for field_name in cls.model_fields])
-        print('Fields: ',fields)
         fields.remove(None)
         # Initialize the attribute dictionary
         attrs = {}
