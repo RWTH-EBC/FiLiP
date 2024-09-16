@@ -896,7 +896,7 @@ class TestContextBroker(unittest.TestCase):
 
         # update entity with ContextEntityKeyValues
         entity1_key_value.temperature = 30
-        self.client.update_entity_key_values(entity=entity1_key_value)
+        self.client.update_entity(entity=entity1_key_value, key_values=True)
         self.assertEqual(entity1_key_value,
                          self.client.get_entity(
                              entity_id=entity1.id,
@@ -909,7 +909,8 @@ class TestContextBroker(unittest.TestCase):
         # update entity with dictionary
         entity1_key_value_dict = entity1_key_value.model_dump()
         entity1_key_value_dict["temperature"] = 40
-        self.client.update_entity_key_values(entity=entity1_key_value_dict)
+        self.client.update_entity(entity=entity1_key_value_dict,
+                                  key_values=True)
         self.assertEqual(entity1_key_value_dict,
                          self.client.get_entity(
                              entity_id=entity1.id,
@@ -918,9 +919,57 @@ class TestContextBroker(unittest.TestCase):
         entity3 = self.client.get_entity(entity_id=entity1.id)
         self.assertEqual(entity1.temperature.type,
                          entity3.temperature.type)
+        # if attribute not existing, will be created
         entity1_key_value_dict.update({"humidity": 50})
+        self.client.update_entity(entity=entity1_key_value_dict,
+                                  key_values=True)
+        self.assertEqual(entity1_key_value_dict,
+                         self.client.get_entity(
+                             entity_id=entity1.id,
+                             response_format=AttrsFormat.KEY_VALUES).model_dump()
+                         )
+
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                cb_url=settings.CB_URL)
+    def test_update_attributes_keyvalues(self):
+        entity1 = self.entity.model_copy(deep=True)
+        # initial entity
+        self.client.post_entity(entity1)
+
+        # update existing attributes
+        self.client.update_or_append_entity_attributes(
+            entity_id=entity1.id,
+            attrs={"temperature": 30},
+            key_values=True)
+        self.assertEqual(30, self.client.get_attribute_value(entity_id=entity1.id,
+                                                             attr_name="temperature"))
+
+        # update not existing attributes
+        self.client.update_or_append_entity_attributes(
+            entity_id=entity1.id,
+            attrs={"humidity": 40},
+            key_values=True)
+        self.assertEqual(40, self.client.get_attribute_value(entity_id=entity1.id,
+                                                             attr_name="humidity"))
+
+        # update both existing and not existing attributes
         with self.assertRaises(RequestException):
-            self.client.update_entity_key_values(entity=entity1_key_value_dict)
+            self.client.update_or_append_entity_attributes(
+                entity_id=entity1.id,
+                attrs={"humidity": 50, "co2": 300},
+                append_strict=True,
+                key_values=True)
+        self.client.update_or_append_entity_attributes(
+            entity_id=entity1.id,
+            attrs={"humidity": 50, "co2": 300},
+            key_values=True)
+        self.assertEqual(50, self.client.get_attribute_value(entity_id=entity1.id,
+                                                             attr_name="humidity"))
+        self.assertEqual(300, self.client.get_attribute_value(entity_id=entity1.id,
+                                                              attr_name="co2"))
+        self.assertEqual(30, self.client.get_attribute_value(entity_id=entity1.id,
+                                                             attr_name="temperature"))
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,

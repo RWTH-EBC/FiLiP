@@ -3,6 +3,7 @@ Context Broker Module for API Client
 """
 from __future__ import annotations
 
+import copy
 from copy import deepcopy
 from math import inf
 from pkg_resources import parse_version
@@ -264,7 +265,7 @@ class ContextBrokerClient(BaseHttpClient):
                         entity=entity, override_attr_metadata=override_attr_metadata
                     )
                 else:
-                    return self.update_entity_key_values(entity=entity)
+                    return self._patch_entity_key_values(entity=entity)
             msg = f"Could not post entity {entity.id}"
             self.log_error(err=err, msg=msg)
             raise
@@ -541,7 +542,10 @@ class ContextBrokerClient(BaseHttpClient):
             self.log_error(err=err, msg=msg)
             raise
 
-    def update_entity(self, entity: ContextEntity, append_strict: bool = False):
+    def update_entity(self, entity: Union[ContextEntity, ContextEntityKeyValues, dict],
+                      append_strict: bool = False,
+                      key_values: bool = False
+                      ):
         """
         The request payload is an object representing the attributes to
         append or update.
@@ -560,15 +564,29 @@ class ContextBrokerClient(BaseHttpClient):
                 to that, in case some of the attributes in the payload
                 already exist in the entity, an error is returned.
                 More precisely this means a strict append procedure.
-
+            key_values: By default False. If set to True, the payload uses
+                the keyValues simplified entity representation, i.e.
+                ContextEntityKeyValues.
         Returns:
             None
         """
+        if key_values:
+            if isinstance(entity, dict):
+                entity = copy.deepcopy(entity)
+                _id = entity.pop("id")
+                _type = entity.pop("type")
+                attrs = entity
+                entity = ContextEntityKeyValues(id=_id, type=_type)
+            else:
+                attrs = entity.model_dump(exclude={"id", "type"})
+        else:
+            attrs = entity.get_attributes()
         self.update_or_append_entity_attributes(
             entity_id=entity.id,
             entity_type=entity.type,
-            attrs=entity.get_attributes(),
+            attrs=attrs,
             append_strict=append_strict,
+            key_values=key_values,
         )
 
     def update_entity_properties(self, entity: ContextEntity, append_strict: bool = False):
@@ -749,11 +767,14 @@ class ContextBrokerClient(BaseHttpClient):
     def update_or_append_entity_attributes(
             self,
             entity_id: str,
-            attrs: List[Union[NamedContextAttribute,
-                              Dict[str, ContextAttribute]]],
+            attrs: Union[List[NamedContextAttribute],
+                         Dict[str, ContextAttribute],
+                         Dict[str, Any]],
             entity_type: str = None,
             append_strict: bool = False,
-            forcedUpdate: bool = False):
+            forcedUpdate: bool = False,
+            key_values: bool = False
+    ):
         """
         The request payload is an object representing the attributes to
         append or update. This corresponds to a 'POST' request if append is
@@ -781,6 +802,9 @@ class ContextBrokerClient(BaseHttpClient):
                 subscription, no matter if there is an actual attribute
                 update or no instead of the default behavior, which is to
                 updated only if attribute is effectively updated.
+            key_values: By default False. If set to True, the payload uses
+                the keyValues simplified entity representation, i.e.
+                ContextEntityKeyValues.
         Returns:
             None
 
@@ -798,17 +822,23 @@ class ContextBrokerClient(BaseHttpClient):
             options.append("append")
         if forcedUpdate:
             options.append("forcedUpdate")
+        if key_values:
+            assert isinstance(attrs, dict), "for keyValues attrs has to be a dict"
+            options.append("keyValues")
         if options:
             params.update({'options': ",".join(options)})
 
-        entity = ContextEntity(id=entity_id, type=entity_type)
-        entity.add_attributes(attrs)
+        if key_values:
+            entity = ContextEntityKeyValues(id=entity_id, type=entity_type, **attrs)
+        else:
+            entity = ContextEntity(id=entity_id, type=entity_type)
+            entity.add_attributes(attrs)
         # exclude commands from the send data,
         # as they live in the IoTA-agent
         excluded_keys = {"id", "type"}
-        excluded_keys.update(
-            entity.get_commands(response_format=PropertyFormat.DICT).keys()
-        )
+        # excluded_keys.update(
+        #     entity.get_commands(response_format=PropertyFormat.DICT).keys()
+        # )
         try:
             res = self.post(
                 url=url,
@@ -828,7 +858,7 @@ class ContextBrokerClient(BaseHttpClient):
             self.log_error(err=err, msg=msg)
             raise
 
-    def update_entity_key_values(self,
+    def _patch_entity_key_values(self,
                                  entity: Union[ContextEntityKeyValues, dict],):
         """
         The entity are updated with a ContextEntityKeyValues object or a
@@ -865,51 +895,16 @@ class ContextBrokerClient(BaseHttpClient):
             self.log_error(err=err, msg=msg)
             raise
 
-    def update_entity_attributes_key_values(self,
-                                            entity_id: str,
-                                            attrs: dict,
-                                            entity_type: str = None,
-                                            ):
-        """
-        Update entity with attributes in keyValues form.
-        This corresponds to a 'PATcH' request.
-        Only existing attribute can be updated!
-
-        Args:
-            entity_id: Entity id to be updated
-            entity_type: Entity type, to avoid ambiguity in case there are
-                several entities with the same entity id.
-            attrs: a dictionary that contains the attribute values.
-            e.g. {
-                "temperature": 21.4,
-                "humidity": 50
-            }
-
-        Returns:
-
-        """
-        if entity_type:
-            pass
-        else:
-            _entity = self.get_entity(entity_id=entity_id)
-            entity_type = _entity.type
-
-        entity_dict = attrs.copy()
-        entity_dict.update({
-            "id": entity_id,
-            "type": entity_type
-        })
-        entity = ContextEntityKeyValues(**entity_dict)
-        self.update_entity_key_values(entity=entity)
-
     def update_existing_entity_attributes(
             self,
             entity_id: str,
-            attrs: List[Union[NamedContextAttribute,
-                              Dict[str, ContextAttribute]]],
+            attrs: Union[List[NamedContextAttribute],
+                         Dict[str, ContextAttribute],
+                         Dict[str, Any]],
             entity_type: str = None,
             forcedUpdate: bool = False,
-            override_metadata: bool = False
+            override_metadata: bool = False,
+            key_values: bool = False,
     ):
         """
         The entity attributes are updated with the ones in the payload.
@@ -929,6 +924,9 @@ class ContextBrokerClient(BaseHttpClient):
             override_metadata:
                 Bool,replace the existing metadata with the one provided in
                 the request
+            key_values: By default False. If set to True, the payload uses
+                the keyValues simplified entity representation, i.e.
+                ContextEntityKeyValues.
         Returns:
             None
 
@@ -941,14 +939,22 @@ class ContextBrokerClient(BaseHttpClient):
             params = None
             entity_type = "dummy"
 
-        entity = ContextEntity(id=entity_id, type=entity_type)
-        entity.add_attributes(attrs)
-
         options = []
         if override_metadata:
             options.append("overrideMetadata")
         if forcedUpdate:
             options.append("forcedUpdate")
+        if key_values:
+            assert isinstance(attrs, dict), "for keyValues the attrs must be dict"
+            payload = attrs
+            options.append("keyValues")
+        else:
+            entity = ContextEntity(id=entity_id, type=entity_type)
+            entity.add_attributes(attrs)
+            payload = entity.model_dump(
+                    exclude={"id", "type"},
+                    exclude_none=True
+                )
         if options:
             params.update({'options': ",".join(options)})
 
@@ -956,18 +962,15 @@ class ContextBrokerClient(BaseHttpClient):
             res = self.patch(
                 url=url,
                 headers=headers,
-                json=entity.model_dump(
-                    exclude={"id", "type"},
-                    exclude_none=True
-                ),
+                json=payload,
                 params=params,
             )
             if res.ok:
-                self.logger.info("Entity '%s' successfully " "updated!", entity.id)
+                self.logger.info("Entity '%s' successfully " "updated!", entity_id)
             else:
                 res.raise_for_status()
         except requests.RequestException as err:
-            msg = f"Could not update attributes of entity" f" {entity.id} !"
+            msg = f"Could not update attributes of entity" f" {entity_id} !"
             self.log_error(err=err, msg=msg)
             raise
 
