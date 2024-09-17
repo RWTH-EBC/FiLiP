@@ -119,6 +119,50 @@ class TestLDContextModels(unittest.TestCase):
         }
         self.entity2_dict.update(self.entity2_props_dict)
         self.entity2_dict.update(self.entity2_rel_dict)
+        self.entity3_dict = {
+            "id": "urn:ngsi-ld:Vehicle:test1243",
+            "type": "Vehicle",
+            "isParked": {
+                "type": "Relationship",
+                "object": "urn:ngsi-ld:OffStreetParking:Downtown1",
+                "observedAt": "2017-07-29T12:00:04Z",
+                "providedBy": {
+                    "type": "Relationship",
+                    "object": "urn:ngsi-ld:Person:Bob"
+                }
+            }
+        }
+        # The entity for testing the nested structure of properties
+        self.entity_sub_props_dict = {
+            "id": "urn:ngsi-ld:Vehicle:test1243",
+            "type": "Vehicle",
+            "prop1": {
+                "type": "Property",
+                "value": 1,
+                "sub_property": {
+                    "type": "Property",
+                    "value": 10,
+                    "sub_sub_property": {
+                        "type": "Property",
+                        "value": 100
+                    }
+                },
+                "sub_properties_list": [
+                    {
+                        "sub_prop_1": {
+                            "value": 100,
+                            "type": "Property"
+                        }
+                    },
+                    {
+                        "sub_prop_2": {
+                            "value": 200,
+                            "type": "Property"
+                        }
+                    }
+                ],
+            }
+        }
 
     def test_cb_attribute(self) -> None:
         """
@@ -235,3 +279,10 @@ class TestLDContextModels(unittest.TestCase):
 
         self.assertEqual(self.entity1_context,
                          context_entity1)
+
+        # test here if entity without context can be validated and get_context works accordingly:
+        entity3 = ContextLDEntity(**self.entity3_dict)
+        context_entity3 = entity3.get_context()
+
+        self.assertEqual(None,
+                         context_entity3)

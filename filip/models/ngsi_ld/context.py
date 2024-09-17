@@ -769,10 +769,15 @@ class ContextLDEntity(ContextLDEntityKeyValues):
         Returns: context of the entity as list
 
         """
+        found_list = False
         for key, value in self.model_dump(exclude_unset=True).items():
             if key not in ContextLDEntity.model_fields:
                 if isinstance(value, list):
+                    found_list = True
                     return value
+        if not found_list:
+            logging.warning("No context in entity")
+        return None
 
 
 class ActionTypeLD(str, Enum):
