@@ -3,8 +3,7 @@ Test the endpoint for subscription related task of NGSI-LD for ContextBrokerClie
 """
 import json
 import time
-import unittest
-
+from unittest import TestCase
 from pydantic import ValidationError
 import threading
 from paho.mqtt.enums import CallbackAPIVersion
@@ -24,19 +23,10 @@ from tests.config import settings
 from random import randint
 from pydantic import AnyUrl
 
-class TestSubscriptions(unittest.TestCase):
+class TestSubscriptions(TestCase):
     """
     Test class for context broker models
     """
-
-    def cleanup(self):
-        """
-        Cleanup test subscriptions
-        """
-        sub_list = self.cb_client.get_subscription_list()
-        for sub in sub_list:
-            if sub.id.startswith('urn:ngsi-ld:Subscription:test_sub'):
-                self.cb_client.delete_subscription(sub.id)
 
     def setUp(self) -> None:
         """
@@ -62,10 +52,6 @@ class TestSubscriptions(unittest.TestCase):
         #     }
         # }
         self.cb_client = ContextBrokerLDClient()
-        self.endpoint_http = Endpoint(**{
-            "uri": "http://my.endpoint.org/notify",
-            "accept": "application/json"
-        })
         self.mqtt_topic = ''.join([settings.FIWARE_SERVICE,
                                    settings.FIWARE_SERVICEPATH])
         self.MQTT_BROKER_URL_INTERNAL = "mqtt://mosquitto:1883"
@@ -77,14 +63,22 @@ class TestSubscriptions(unittest.TestCase):
         self.cb_client = ContextBrokerLDClient(url=settings.LD_CB_URL, fiware_header=self.fiware_header)
         self.endpoint_http = Endpoint(**{
             "uri": "http://137.226.248.246:1027/ngsi-ld/v1/subscriptions",
-            "Content-Type": "application/json",
-            "Accept": "application/json"
+            "accept": "application/json"
         }
                                       )
         self.cleanup()
 
     def tearDown(self) -> None:
         self.cleanup()
+    
+    def cleanup(self):
+        """
+        Cleanup test subscriptions
+        """
+        sub_list = self.cb_client.get_subscription_list()
+        for sub in sub_list:
+            if sub.id.startswith('urn:ngsi-ld:Subscription:test_sub'):
+                self.cb_client.delete_subscription(sub.id)
 
     def test_post_subscription_http(self):
         """
@@ -230,17 +224,24 @@ class TestSubscriptions(unittest.TestCase):
         self.cb_client.post_subscription(sub)
         sub_list = self.cb_client.get_subscription_list()
         self.assertEqual(len(sub_list), 1)
-
+        print(self.endpoint_http.model_dump())
         sub_changed = Subscription(id=id, notification=notification_param, entities=[{"type": "House"}])
-
         self.cb_client.update_subscription(sub_changed)
-
-        # Try to patch non-existent subscriptions.
-        # TODO
+        u_sub= self.cb_client.get_subscription(subscription_id=id)
+        self.assertNotEqual(u_sub,sub_list[0])
+        self.maxDiff = None
+        self.assertDictEqual(sub_changed.model_dump(),u_sub.model_dump())
+        sub_list = self.cb_client.get_subscription_list()
+        self.assertEqual(u_sub.model_dump(),sub_list[0])
+        non_sub = Subscription(id="urn:ngsi-ld:Subscription:nonexist", 
+                                notification=notification_param, 
+                                entities=[{"type":"house"}])
+        with self.assertRaises(Exception):
+            self.cb_client.update_subscription(non_sub)
         #Try to patch more than one subscription at once.
         # TODO
 
-class TestSubsCheckBroker(unittest.TestCase):
+class TestSubsCheckBroker(TestCase):
     """
     These tests are more oriented towards testing the actual broker.
     Some functionality in Orion LD may not be consistent at times.
@@ -401,6 +402,7 @@ class TestSubsCheckBroker(unittest.TestCase):
         """
         current_vals = [25,33]
 
+        #re-assigning a variable inside an inline function does not work => hence generator
         def idx_generator(n):
             while(n<2):
                 yield n

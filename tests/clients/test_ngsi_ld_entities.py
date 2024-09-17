@@ -35,7 +35,7 @@ class TestEntities(unittest.TestCase):
         Returns:
             None
         """
-        self.fiware_header = FiwareLDHeader(ngsild_tenant=settings.FIWARE_SERVICE)
+        self.fiware_header = FiwareLDHeader()
         self.cb_client = ContextBrokerLDClient(fiware_header=self.fiware_header,
                                             url=settings.LD_CB_URL)
         self.http_url = "https://test.de:80"
@@ -144,7 +144,7 @@ class TestEntities(unittest.TestCase):
         self.assertEqual(len(entity_list), 1)
         self.assertEqual(entity_list[0].id, self.entity.id)
         self.assertEqual(entity_list[0].type, self.entity.type)
-        self.assertEqual(entity_list[0].testtemperature, self.entity.testtemperature.value)
+        self.assertEqual(entity_list[0].testtemperature.value, self.entity.testtemperature.value)
         
         """Test2"""
         self.entity_identical= self.entity.model_copy()
@@ -339,7 +339,7 @@ class TestEntities(unittest.TestCase):
         self.cb_client.append_entity_attributes(self.entity)
         entity_list = self.cb_client.get_entity_list()
         for entity in entity_list:
-            self.assertEqual(first=entity.test_value, second=attr.value)
+            self.assertEqual(first=entity.test_value.value, second=attr.value)
         for entity in entity_list:
             self.cb_client.delete_entity_by_id(entity_id=entity.id)
         
@@ -359,15 +359,12 @@ class TestEntities(unittest.TestCase):
         self.entity.add_properties({"test_value": attr})
         self.cb_client.append_entity_attributes(self.entity)
         self.entity.add_properties({"test_value": attr_same})
-        with self.assertRaises(requests.exceptions.HTTPError) as contextmanager:
-            self.cb_client.append_entity_attributes(self.entity, options="noOverwrite")
-        response = contextmanager.exception.response
-        #should get bad request, with no overwrite allowed in detail
-        self.assertEqual(response.status_code, 400)
-
+        # Removed raise check because noOverwrite gives back a 207 and not a 400 (res IS ok)
+        self.cb_client.append_entity_attributes(self.entity, options="noOverwrite")
         entity_list = self.cb_client.get_entity_list()
         for entity in entity_list:
-            self.assertEqual(first=entity.test_value, second=attr.value)
+            self.assertEqual(first=entity.test_value.value, second=attr.value)
+            self.assertNotEqual(first=entity.test_value,second=attr_same.value)
         
     def test_patch_entity_attrs(self):
         """
