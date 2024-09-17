@@ -92,10 +92,10 @@ class ContextProperty(BaseModel):
         """
         valid_property_types = ["Property", "Relationship", "TemporalProperty"]
         if value not in valid_property_types:
-            logging.warning(
-                msg=f'NGSI_LD Properties must have type {valid_property_types}, '
-                    f'not "{value}"')
-            raise ValueError
+            msg = f'NGSI_LD Properties must have type {valid_property_types}, ' \
+                  f'not "{value}"'
+            logging.warning(msg=msg)
+            raise ValueError(msg)
         return value
 
 class NamedContextProperty(ContextProperty):
