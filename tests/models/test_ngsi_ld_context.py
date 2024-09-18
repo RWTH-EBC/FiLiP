@@ -9,7 +9,7 @@ from pydantic import ValidationError
 
 from filip.models.ngsi_ld.context import \
     ContextLDEntity, ContextProperty, NamedContextProperty, \
-    ContextGeoPropertyValue, ContextGeoProperty
+    ContextGeoPropertyValue, ContextGeoProperty, NamedContextGeoProperty
 
 
 class TestLDContextModels(unittest.TestCase):
@@ -264,33 +264,33 @@ class TestLDContextModels(unittest.TestCase):
         """
         geo_entity = ContextLDEntity(**self.entity_geo_dict)
         new_entity = ContextLDEntity(id="urn:ngsi-ld:Geometry:002", type="MyGeometry")
-        test_point = NamedContextProperty(
+        test_point = NamedContextGeoProperty(
             name="testpoint",
             type="GeoProperty",
             value=Point(**self.testpoint_value)
         )
-        test_MultiPoint = NamedContextProperty(
+        test_MultiPoint = NamedContextGeoProperty(
             name="testmultipoint",
             type="GeoProperty",
             value=MultiPoint(**self.testmultipoint_value)
         )
-        test_LineString = NamedContextProperty(
+        test_LineString = NamedContextGeoProperty(
             name="testlinestring",
             type="GeoProperty",
             value=LineString(**self.testlinestring_value)
         )
-        test_Polygon = NamedContextProperty(
+        test_Polygon = NamedContextGeoProperty(
             name="testpolygon",
-            type="Polygon",
+            type="GeoProperty",
             value=Polygon(**self.testpolygon_value)
         )
-        test_GeometryCollection = NamedContextProperty(
+        test_GeometryCollection = NamedContextGeoProperty(
             name="testgeometrycollection",
-            type="GeometryCollection",
+            type="GeoProperty",
             value=GeometryCollection(**self.testgeometrycollection_value)
         )
-        new_entity.add_properties([test_point, test_MultiPoint, test_LineString,
-                                   test_Polygon, test_GeometryCollection])
+        new_entity.add_geo_properties([test_point, test_MultiPoint, test_LineString,
+                                       test_Polygon, test_GeometryCollection])
 
     def test_cb_entity(self) -> None:
         """

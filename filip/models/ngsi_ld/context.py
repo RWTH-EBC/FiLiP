@@ -121,8 +121,6 @@ class ContextProperty(BaseModel):
         return value
 
 
-
-
 class NamedContextProperty(ContextProperty):
     """
     Context properties are properties of context entities. For example, the current speed of a car could be modeled
@@ -175,14 +173,14 @@ class ContextGeoPropertyValue(BaseModel):
         """
         if self.model_dump().get("type") == "Point":
             return Point(**self.model_dump())
-        elif self.model_dump().get("type") == "MultiPoint":
-            return MultiPoint(**self.model_dump())
         elif self.model_dump().get("type") == "LineString":
             return LineString(**self.model_dump())
-        elif self.model_dump().get("type") == "MultiLineString":
-            return MultiLineString(**self.model_dump())
         elif self.model_dump().get("type") == "Polygon":
             return Polygon(**self.model_dump())
+        elif self.model_dump().get("type") == "MultiPoint":
+            return MultiPoint(**self.model_dump())
+        elif self.model_dump().get("type") == "MultiLineString":
+            return MultiLineString(**self.model_dump())
         elif self.model_dump().get("type") == "MultiPolygon":
             return MultiPolygon(**self.model_dump())
         elif self.model_dump().get("type") == "GeometryCollection":
@@ -215,7 +213,10 @@ class ContextGeoProperty(BaseModel):
         title="type",
         frozen=True
     )
-    value: Optional[ContextGeoPropertyValue] = Field(
+    value: Optional[Union[ContextGeoPropertyValue,
+                          Point, LineString, Polygon,
+                          MultiPoint, MultiPolygon,
+                          MultiLineString, GeometryCollection]] = Field(
         default=None,
         title="GeoProperty value",
         description="the actual data"
@@ -674,11 +675,24 @@ class ContextLDEntity(ContextLDEntityKeyValues):
         for name in names:
             delattr(self, name)
 
-    def add_properties(self, attrs: Union[Dict[str, Union[ContextProperty,
-                                                          ContextGeoProperty]],
-                                          List[Union[NamedContextProperty,
-                                                     NamedContextGeoProperty]]
-                                            ]) -> None:
+    def add_geo_properties(self, attrs: Union[Dict[str, ContextGeoProperty],
+                                              List[NamedContextGeoProperty]]) -> None:
+        """
+        Add property to entity
+        Args:
+            attrs:
+        Returns:
+            None
+        """
+        if isinstance(attrs, list):
+            attrs = {attr.name: ContextGeoProperty(**attr.model_dump(exclude={'name'},
+                                                                     exclude_unset=True))
+                     for attr in attrs}
+        for key, attr in attrs.items():
+            self.__setattr__(name=key, value=attr)
+
+    def add_properties(self, attrs: Union[Dict[str, ContextProperty],
+                                          List[NamedContextProperty]]) -> None:
         """
         Add property to entity
         Args:
