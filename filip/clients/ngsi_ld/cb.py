@@ -151,7 +151,7 @@ class ContextBrokerLDClient(BaseHttpClient):
         """
         url = urljoin(self.base_url, '/version')
         try:
-            res = self.get(url=url, headers=self.headers)
+            res = self.get(url=url)
             if res.ok:
                 return res.json()
             res.raise_for_status()
@@ -167,7 +167,7 @@ class ContextBrokerLDClient(BaseHttpClient):
         """
         url = urljoin(self.base_url, 'statistics')
         try:
-            res = self.get(url=url, headers=self.headers)
+            res = self.get(url=url)
             if res.ok:
                 return res.json()
             res.raise_for_status()

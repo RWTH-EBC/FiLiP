@@ -171,8 +171,8 @@ class TestContextBroker(unittest.TestCase):
         Test entity operations of context broker client
         """
         self.client.post_entity(entity=self.entity, update=True)
-        res_entity = self.client.get_entity_by_id(entity_id=self.entity.id)
-        self.client.get_entity_by_id(entity_id=self.entity.id, attrs=['testtemperature'])
+        res_entity = self.client.get_entity(entity_id=self.entity.id)
+        self.client.get_entity(entity_id=self.entity.id, attrs=['testtemperature'])
         #    self.assertEqual(client.get_entity_attributes(
         #        entity_id=self.entity.id), res_entity.get_properties(
         #        response_format='dict'))
