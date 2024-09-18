@@ -4,8 +4,11 @@ NGSI LD models for context broker interaction
 import logging
 from typing import Any, List, Dict, Union, Optional
 
+from geojson_pydantic import Point, MultiPoint, LineString, MultiLineString, Polygon, \
+    MultiPolygon, GeometryCollection
+from typing_extensions import Self
 from aenum import Enum
-from pydantic import field_validator, ConfigDict, BaseModel, Field
+from pydantic import field_validator, ConfigDict, BaseModel, Field, model_validator
 from filip.models.ngsi_v2 import ContextEntity
 from filip.utils.validators import FiwareRegex, \
     validate_fiware_datatype_string_protect, validate_fiware_standard_regex
@@ -159,48 +162,31 @@ class ContextGeoPropertyValue(BaseModel):
 
     """
     type: Optional[str] = Field(
-        default="Point",
+        default=None,
         title="type",
         frozen=True
     )
-    coordinates: List[float] = Field(
-        default=None,
-        title="Geo property coordinates",
-        description="the actual coordinates"
-    )
-    @field_validator("type")
-    @classmethod
-    def check_geoproperty_value_type(cls, value):
-        """
-        Force property type to be "Point"
-        Args:
-            value: value field
-        Returns:
-            value
-        """
-        if not value == "Point":
-            logging.warning(msg='NGSI_LD GeoProperty values must have type "Point"')
-        value = "Point"
-        return value
+    model_config = ConfigDict(extra='allow')
 
-    @field_validator("coordinates")
-    @classmethod
-    def check_geoproperty_value_coordinates(cls, value):
+    @model_validator(mode='after')
+    def check_geoproperty_value(self) -> Self:
         """
-        Force property coordinates to be lis of two floats
-        Args:
-            value: value field
-        Returns:
-            value
+        Check if the value is a valid GeoProperty
         """
-        if not isinstance(value, list) or len(value) != 2:
-            logging.error(msg='NGSI_LD GeoProperty values must have coordinates as list with length two')
-            raise ValueError
-        for element in value:
-            if not isinstance(element, float):
-                logging.error(msg='NGSI_LD GeoProperty values must have coordinates as list of floats')
-                raise TypeError
-        return value
+        if self.model_dump().get("type") == "Point":
+            return Point(**self.model_dump())
+        elif self.model_dump().get("type") == "MultiPoint":
+            return MultiPoint(**self.model_dump())
+        elif self.model_dump().get("type") == "LineString":
+            return LineString(**self.model_dump())
+        elif self.model_dump().get("type") == "MultiLineString":
+            return MultiLineString(**self.model_dump())
+        elif self.model_dump().get("type") == "Polygon":
+            return Polygon(**self.model_dump())
+        elif self.model_dump().get("type") == "MultiPolygon":
+            return MultiPolygon(**self.model_dump())
+        elif self.model_dump().get("type") == "GeometryCollection":
+            return GeometryCollection(**self.model_dump())
 
 
 class ContextGeoProperty(BaseModel):
@@ -263,15 +249,12 @@ class ContextGeoProperty(BaseModel):
             value
         """
         if not value == "GeoProperty":
-            if value == "Relationship":
-                value == "Relationship"
-            elif value == "TemporalProperty":
-                value == "TemporalProperty"
-            else:
-                logging.warning(msg='NGSI_LD GeoProperties must have type "GeoProperty" '
-                                    '-> They are checked first, so if no GeoProperties are used ignore this warning!')
-                raise ValueError('NGSI_LD GeoProperties must have type "GeoProperty" '
-                                 '-> They are checked first, so if no GeoProperties are used ignore this warning!')
+            logging.warning(msg='NGSI_LD GeoProperties must have type "GeoProperty" '
+                                '-> They are checked first, so if no GeoProperties are '
+                                'used ignore this warning!')
+            raise ValueError('NGSI_LD GeoProperties must have type "GeoProperty" '
+                             '-> They are checked first, so if no GeoProperties are used'
+                             ' ignore this warning!')
         return value
 
 
@@ -691,8 +674,11 @@ class ContextLDEntity(ContextLDEntityKeyValues):
         for name in names:
             delattr(self, name)
 
-    def add_properties(self, attrs: Union[Dict[str, ContextProperty],
-                                          List[NamedContextProperty]]) -> None:
+    def add_properties(self, attrs: Union[Dict[str, Union[ContextProperty,
+                                                          ContextGeoProperty]],
+                                          List[Union[NamedContextProperty,
+                                                     NamedContextGeoProperty]]
+                                            ]) -> None:
         """
         Add property to entity
         Args:

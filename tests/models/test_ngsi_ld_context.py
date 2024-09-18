@@ -4,10 +4,12 @@ Test module for context broker models
 
 import unittest
 
+from geojson_pydantic import Point, MultiPoint, LineString, Polygon, GeometryCollection
 from pydantic import ValidationError
 
 from filip.models.ngsi_ld.context import \
-    ContextLDEntity, ContextProperty, NamedContextProperty
+    ContextLDEntity, ContextProperty, NamedContextProperty, \
+    ContextGeoPropertyValue, ContextGeoProperty
 
 
 class TestLDContextModels(unittest.TestCase):
@@ -163,6 +165,79 @@ class TestLDContextModels(unittest.TestCase):
                 ],
             }
         }
+        self.testpoint_value = {
+            "type": "Point",
+            "coordinates": [-8.5, 41.2]
+        }
+        self.testmultipoint_value = {
+            "type": "MultiPoint",
+            "coordinates": [
+                [-3.80356167695194, 43.46296641666926],
+                [-3.804056, 43.464638]
+            ]
+        }
+        self.testlinestring_value = {
+            "type": "LineString",
+            "coordinates": [
+                [-3.80356167695194, 43.46296641666926],
+                [-3.804056, 43.464638]
+            ]
+        }
+        self.testpolygon_value = {
+            "type": "Polygon",
+            "coordinates": [
+                [
+                    [-3.80356167695194, 43.46296641666926],
+                    [-3.804056, 43.464638],
+                    [-3.805056, 43.463638],
+                    [-3.80356167695194, 43.46296641666926]
+                ]
+            ]
+        }
+        self.testgeometrycollection_value = {
+            "type": "GeometryCollection",
+            "geometries": [
+                {
+                    "type": "Point",
+                    "coordinates": [-3.80356167695194, 43.46296641666926]
+                },
+                {
+                    "type": "LineString",
+                    "coordinates": [
+                        [-3.804056, 43.464638],
+                        [-3.805056, 43.463638]
+                    ]
+                }
+            ]
+        }
+        self.entity_geo_dict = {
+            "id": "urn:ngsi-ld:Geometry:001",
+            "type": "MyGeometry",
+            "testpoint": {
+                "type": "GeoProperty",
+                "value": self.testpoint_value
+            },
+            "testmultipoint": {
+                "type": "GeoProperty",
+                "value": self.testmultipoint_value,
+                "observedAt": "2023-09-12T12:35:00Z"
+            },
+            "testlinestring": {
+                "type": "GeoProperty",
+                "value": self.testlinestring_value,
+                "observedAt": "2023-09-12T12:35:30Z"
+            },
+            "testpolygon": {
+                "type": "GeoProperty",
+                "value": self.testpolygon_value,
+                "observedAt": "2023-09-12T12:36:00Z"
+            },
+            "testgeometrycollection": {
+                "type": "GeoProperty",
+                "value": self.testgeometrycollection_value,
+                "observedAt": "2023-09-12T12:36:30Z"
+            }
+        }
 
     def test_cb_attribute(self) -> None:
         """
@@ -180,6 +255,42 @@ class TestLDContextModels(unittest.TestCase):
     def test_entity_id(self) -> None:
         with self.assertRaises(ValidationError):
             ContextLDEntity(**{'id': 'MyId', 'type': 'MyType'})
+
+    def test_geo_property(self) -> None:
+        """
+        Test ContextGeoPropertyValue models
+        Returns:
+            None
+        """
+        geo_entity = ContextLDEntity(**self.entity_geo_dict)
+        new_entity = ContextLDEntity(id="urn:ngsi-ld:Geometry:002", type="MyGeometry")
+        test_point = NamedContextProperty(
+            name="testpoint",
+            type="GeoProperty",
+            value=Point(**self.testpoint_value)
+        )
+        test_MultiPoint = NamedContextProperty(
+            name="testmultipoint",
+            type="GeoProperty",
+            value=MultiPoint(**self.testmultipoint_value)
+        )
+        test_LineString = NamedContextProperty(
+            name="testlinestring",
+            type="GeoProperty",
+            value=LineString(**self.testlinestring_value)
+        )
+        test_Polygon = NamedContextProperty(
+            name="testpolygon",
+            type="Polygon",
+            value=Polygon(**self.testpolygon_value)
+        )
+        test_GeometryCollection = NamedContextProperty(
+            name="testgeometrycollection",
+            type="GeometryCollection",
+            value=GeometryCollection(**self.testgeometrycollection_value)
+        )
+        new_entity.add_properties([test_point, test_MultiPoint, test_LineString,
+                                   test_Polygon, test_GeometryCollection])
 
     def test_cb_entity(self) -> None:
         """
