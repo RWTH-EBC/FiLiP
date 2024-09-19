@@ -28,49 +28,13 @@ class EntitiesBatchOperations(unittest.TestCase):
         self.cb_client = ContextBrokerLDClient(fiware_header=self.fiware_header,
                                                url=settings.LD_CB_URL)
 
-        # self.attr = {'testtemperature': {'value': 20.0}}
-        # self.entity = ContextLDEntity(id='urn:ngsi-ld:my:id', type='MyType', **self.attr)
-        # #self.entity = ContextLDEntity(id="urn:ngsi-ld:room1", type="Room", data={})
-
-        # # self.entity = ContextLDEntity(id="urn:ngsi-ld:room1", type="Room", **room1_data)
-        # # self.entity = ContextLDEntity(id="urn:ngsi-ld:room1", 
-        #                             #   type="room",
-        #                             #   data={})
-        # self.entity_2 = ContextLDEntity(id="urn:ngsi-ld:room2",
-        #                                 type="room",
-        #                               data={})
-
-    # def test_get_entites_batch(self) -> None:
-    #     """
-    #     Retrieve a set of entities which matches a specific query from an NGSI-LD system
-    #     Args: 
-    #         - id(string): Comma separated list of URIs to be retrieved
-    #         - idPattern(string): Regular expression that must be matched by Entity ids
-    #         - type(string): Comma separated list of Entity type names to be retrieved
-    #         - attrs(string): Comma separated list of attribute names (properties or relationships) to be retrieved
-    #         - q(string): Query
-    #         - georel: Geo-relationship
-    #         - geometry(string): Geometry; Available values : Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon
-    #         - coordinates: Coordinates serialized as a string
-    #         - geoproperty(string): The name of the property that contains the geo-spatial data that will be used to resolve the geoquery
-    #         - csf(string): Context Source Filter
-    #         - limit(integer): Pagination limit
-    #         - options(string): Options dictionary; Available values : keyValues, sysAttrs
-
-    #     """
-    #     if 1 == 1:
-    #         self.assertNotEqual(1,2)
-    #     pass 
-
     def tearDown(self) -> None:
         """
         Cleanup entities from test server
         """
-        entity_test_types = ["filip:object:test","filip:object:TypeA","filip:object:TypeB"]
-        for entity_type in entity_test_types:
-            entity_list = self.cb_client.get_entity_list(entity_type=entity_type)
-            for entity in entity_list:
-                self.cb_client.delete_entity_by_id(entity_id=entity.id)
+        entity_list = self.cb_client.get_entity_list(entity_type="filip:object:test")
+        for entity in entity_list:
+            self.cb_client.delete_entity_by_id(entity_id=entity.id)
 
     def test_entity_batch_operations_create(self) -> None:
         """
@@ -99,10 +63,10 @@ class EntitiesBatchOperations(unittest.TestCase):
         """
         """Test 1"""
         entities_a = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
-                                      type=f'filip:object:TypeA') for i in
+                                      type=f'filip:object:test') for i in
                       range(0, 10)]
         self.cb_client.entity_batch_operation(entities=entities_a, action_type=ActionTypeLD.CREATE)
-        entity_list = self.cb_client.get_entity_list(entity_type=f'filip:object:TypeA')
+        entity_list = self.cb_client.get_entity_list(entity_type=f'filip:object:test')
         id_list = [entity.id for entity in entity_list]
         self.assertEqual(len(entities_a), len(entity_list))
         for entity in entities_a:
@@ -113,14 +77,14 @@ class EntitiesBatchOperations(unittest.TestCase):
 
         """Test 2"""
         entities_b = [ContextLDEntity(id=f"urn:ngsi-ld:test:eins",
-                                      type=f'filip:object:TypeB'),
+                                      type=f'filip:object:test'),
                       ContextLDEntity(id=f"urn:ngsi-ld:test:eins",
-                                      type=f'filip:object:TypeB')]
+                                      type=f'filip:object:test')]
         entity_list_b = []
         try:
             self.cb_client.entity_batch_operation(entities=entities_b, action_type=ActionTypeLD.CREATE)
             entity_list_b = self.cb_client.get_entity_list(
-                entity_type=f'filip:object:TypeB')
+                entity_type=f'filip:object:test')
             self.assertEqual(len(entity_list), 1)
         except:
             pass
@@ -159,7 +123,6 @@ class EntitiesBatchOperations(unittest.TestCase):
 
         """
         """Test 1"""
-        ContextLDEntity(id=f"urn:ngsi-ld:test:10", type=f'filip:object:TypeA')
         entities_a = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
                                       type=f'filip:object:test',
                                       **{'temperature': {'value': self.r.randint(20,50)}}) for i in
@@ -325,15 +288,15 @@ class EntitiesBatchOperations(unittest.TestCase):
         """
         """Test 1"""
         entities_delete = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
-                                           type=f'filip:object:TypeDELETE') for i in
+                                           type=f'filip:object:test') for i in
                            range(0, 1)]
         with self.assertRaises(Exception):
             self.cb_client.entity_batch_operation(entities=entities_delete,
                                                   action_type=ActionTypeLD.DELETE)
 
         """Test 2"""
-        entity_del_type = 'filip:object:TypeDELETE'
-        entity_del_type = 'filip:object:TypeDELETE'
+        entity_del_type = 'filip:object:test'
+        entity_del_type = 'filip:object:test'
         entities_ids_a = [f"urn:ngsi-ld:test:{str(i)}" for i in
                           range(0, 4)]
         entities_a = [ContextLDEntity(id=id_a,
