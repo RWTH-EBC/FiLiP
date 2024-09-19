@@ -1,6 +1,7 @@
-import _json
+from random import Random
 import unittest
-# from pydantic import ValidationError
+from requests.exceptions import HTTPError
+from pydantic import ValidationError
 
 from filip.models.base import FiwareLDHeader
 # FiwareLDHeader issue with pydantic
@@ -22,6 +23,7 @@ class EntitiesBatchOperations(unittest.TestCase):
         Returns:
             None
         """
+        self.r = Random()
         self.fiware_header = FiwareLDHeader(ngsild_tenant=settings.FIWARE_SERVICE)
         self.cb_client = ContextBrokerLDClient(fiware_header=self.fiware_header,
                                                url=settings.LD_CB_URL)
@@ -64,8 +66,7 @@ class EntitiesBatchOperations(unittest.TestCase):
         """
         Cleanup entities from test server
         """
-        entity_test_types = ["filip:object:TypeA", "filip:object:TypeB",
-                             "filip:object:TypeUpdate", "filip:object:TypeDELETE"]
+        entity_test_types = ["filip:object:test"]
         for entity_type in entity_test_types:
             entity_list = self.cb_client.get_entity_list(entity_type=entity_type)
             for entity in entity_list:
@@ -160,71 +161,55 @@ class EntitiesBatchOperations(unittest.TestCase):
         """Test 1"""
         ContextLDEntity(id=f"urn:ngsi-ld:test:10", type=f'filip:object:TypeA')
         entities_a = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
-                                      type=f'filip:object:TypeA') for i in
+                                      type=f'filip:object:test',
+                                      **{'temperature': {'value': self.r.randint(20,50)}}) for i in
                       range(0, 5)]
 
         self.cb_client.entity_batch_operation(entities=entities_a, action_type=ActionTypeLD.CREATE)
 
         entities_update = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
-                                           type=f'filip:object:TypeUpdate') for i in
+                                           type=f'filip:object:test',
+                                           **{'temperature': {'value': self.r.randint(0,20)}}) for i in
                            range(3, 6)]
         self.cb_client.entity_batch_operation(entities=entities_update, action_type=ActionTypeLD.UPDATE)
-        entity_list_a = self.cb_client.get_entity_list(entity_type=f'filip:object:TypeA')
-        entity_list_b = self.cb_client.get_entity_list(
-            entity_type=f'filip:object:TypeUpdate')
+        entity_list = self.cb_client.get_entity_list(entity_type=f'filip:object:test')
+        self.assertEqual(len(entity_list),5)
+        updated = [x for x in entity_list if int(x.id.split(':')[3]) in range(3,5)]
+        nupdated = [x for x in entity_list if int(x.id.split(':')[3]) in range(0,3)]
+        self.assertCountEqual(entities_a[0:3],nupdated)
+        self.assertCountEqual(entities_update[0:2],updated)
         # TODO @lro: does Test 1 still provide any benefit when the entities are retrieved with two calls?
-        for entity in entity_list_a:
-            if entity.id in ["urn:ngsi-ld:test:0",
-                             "urn:ngsi-ld:test:1",
-                             "urn:ngsi-ld:test:2",
-                             "urn:ngsi-ld:test:3"]:
-                self.assertEqual(entity.type, 'filip:object:TypeA')
-        for entity in entity_list_b:
-            if entity.id in ["urn:ngsi-ld:test:3",
-                             "urn:ngsi-ld:test:4",
-                             "urn:ngsi-ld:test:5"]:
-                self.assertEqual(entity.type, 'filip:object:TypeUpdate')
-
-        for entity in entity_list_a:
-            self.cb_client.delete_entity_by_id(entity_id=entity.id)
-        for entity in entity_list_b:
-            self.cb_client.delete_entity_by_id(entity_id=entity.id)
 
         """Test 2"""
-        entities_a = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
-                                      type=f'filip:object:TypeA') for i in
-                      range(0, 4)]
-        self.cb_client.entity_batch_operation(entities=entities_a, action_type=ActionTypeLD.CREATE)
-
+        #use that all entities have attr temperature at this point
         entities_update = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
-                                           type=f'filip:object:TypeUpdate') for i in
-                           range(2, 6)]
+                                           type=f'filip:object:test',
+                                           **{'temperature': {'value': self.r.randint(20,50)},
+                                              'pressure':{'value': self.r.randint(1,100)}}) for i in
+                           range(0, 5)]
         self.cb_client.entity_batch_operation(entities=entities_update, action_type=ActionTypeLD.UPDATE,
                                               update_format="noOverwrite")
-        entity_list_a = self.cb_client.get_entity_list(entity_type=f'filip:object:TypeA')
-        entity_list_b = self.cb_client.get_entity_list(
-            entity_type=f'filip:object:TypeUpdate')
-        for entity in entity_list_a:
-            if entity.id in ["urn:ngsi-ld:test:0",
-                             "urn:ngsi-ld:test:1",
-                             "urn:ngsi-ld:test:2",
-                             "urn:ngsi-ld:test:3"]:
-                self.assertEqual(entity.type, 'filip:object:TypeA')
-        for entity in entity_list_b:
-            if entity.id in ["urn:ngsi-ld:test:4",
-                             "urn:ngsi-ld:test:5"]:
-                self.assertEqual(entity.type, 'filip:object:TypeUpdate')
+        previous = entity_list
+        entity_list = self.cb_client.get_entity_list(entity_type=f'filip:object:test')
+        previous.sort(key=lambda x: int(x.id.split(':')[3]))
+        entity_list.sort(key=lambda x: int(x.id.split(':')[3]))
+        
+        self.assertEqual(len(entity_list),len(entities_update))
+        for (updated,entity,prev) in zip(entities_update,entity_list,previous):
+            self.assertEqual(updated.model_dump().get('pressure'),
+                             entity.model_dump().get('pressure'))
+            self.assertEqual(prev.model_dump().get('temperature'),
+                             entity.model_dump().get('temperature'))
 
-        for entity in entity_list_a:
+        with self.assertRaises(HTTPError):
+            self.cb_client.entity_batch_operation(entities=[],action_type=ActionTypeLD.UPDATE)
+        
+        with self.assertRaises(ValidationError):
+            self.cb_client.entity_batch_operation(entities=[None],action_type=ActionTypeLD.UPDATE)
+            
+        for entity in entity_list:
             self.cb_client.delete_entity_by_id(entity_id=entity.id)
-        for entity in entity_list_b:
-            self.cb_client.delete_entity_by_id(entity_id=entity.id)
 
-            # TODO @lro:
-
-    # - changing the entity type needs to be tested with new release, did not work so far
-    # - a test with empty array and/or containing null value would also be good,
-    # should result in BadRequestData error
     def test_entity_operations_upsert(self) -> None:
         """
         Batch Entity upsert.
