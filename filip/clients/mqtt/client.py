@@ -751,13 +751,22 @@ class IoTAMQTTClient(mqtt.Client):
                 msg_payload = payload.copy()
                 for key in payload.keys():
                     for attr in device.attributes:
-                        if key in attr.object_id or key == 'timeInstant':
+                        key_constraint = key == "timeInstant"
+                        def elif_action(msg): None
+
+                        if attr.object_id is not None:
+                            key_constraint = key_constraint or (key in attr.object_id)
+                            def elif_action(msg): msg[attr.object_id] = msg.pop(key)
+                                            
+                        #could be made more compact by pulling up the second condition
+                        #but would probably make the code less readable...
+                        if key_constraint:
                             break
+                                            
                         elif key == attr.name:
-                            if attr.object_id:
-                                msg_payload[attr.object_id] = \
-                                    msg_payload.pop(key)
+                            elif_action(msg_payload)
                             break
+
                     else:
                         err_msg = f"Attribute key '{key}' is not allowed " \
                                   f"in the message payload for this " \
