@@ -160,7 +160,7 @@ class HttpCustom(Http):
 class Mqtt(BaseModel):
     """
     Model for notifications sent via MQTT
-    https://fiware-orion.readthedocs.io/en/3.2.0/user/mqtt_notifications/index.html
+    https://fiware-orion.readthedocs.io/en/3.8.0/user/mqtt_notifications/index.html
     """
     url: Union[AnyMqttUrl, str] = Field(
         description='to specify the MQTT broker endpoint to use. URL must '
@@ -202,7 +202,7 @@ class Mqtt(BaseModel):
 class MqttCustom(Mqtt):
     """
     Model for custom notification patterns sent via MQTT
-    https://fiware-orion.readthedocs.io/en/3.2.0/user/mqtt_notifications/index.html
+    https://fiware-orion.readthedocs.io/en/3.8.0/user/mqtt_notifications/index.html
     """
     payload: Optional[str] = Field(
         default=None,
