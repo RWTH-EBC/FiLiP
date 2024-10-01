@@ -184,6 +184,6 @@ if __name__ == '__main__':
     time.sleep(2)
 
     # Clean up
-    clear_context_broker(url=CB_URL, fiware_header=fiware_header)
     actuator_client.loop_stop()
     actuator_client.disconnect()
+    clear_context_broker(url=CB_URL, fiware_header=fiware_header)
