@@ -1,8 +1,9 @@
 import logging
 import time
+import datetime
 import unittest
-from random import randrange
-from paho.mqtt.client import MQTT_CLEAN_START_FIRST_ONLY
+from random import randrange,Random
+from paho.mqtt.client import MQTT_CLEAN_START_FIRST_ONLY,MQTTv5
 from filip.custom_types import AnyMqttUrl
 from filip.models import FiwareHeader
 from filip.models.ngsi_v2.context import NamedCommand
@@ -10,7 +11,8 @@ from filip.models.ngsi_v2.iot import \
     Device, \
     DeviceAttribute, \
     DeviceCommand, \
-    ServiceGroup, PayloadProtocol
+    ServiceGroup, PayloadProtocol, \
+    TransportProtocol
 from filip.clients.mqtt import IoTAMQTTClient
 from filip.utils.cleanup import clean_test, clear_all
 from tests.config import settings
@@ -131,6 +133,58 @@ class TestMQTTClient(unittest.TestCase):
         # stop network loop and disconnect cleanly
         self.mqttc.loop_stop()
         self.mqttc.disconnect()
+    
+    def test_optional_object_id(self):
+        """
+        Test:
+            Verify the IotaMQTTClient publish function
+            is not raising when missing an object_id.
+            The test setup is minimal, we are not concerned 
+            with commands/command callbacks, just that publish 
+            works for a specific device argument
+        Setup:
+            publish with:
+            - attr_name=None
+            - command_name=None
+            - Dict payload
+            - with and without object_id
+            - with key = attr.name/in object_id
+        """
+        tmp_id="dev_id"
+        tmp_attrs = [DeviceAttribute(name="temperature",
+                                     type="Number"),
+                    DeviceAttribute(name="temperature",
+                                    type="Number",
+                                    object_id="temp")]
+        
+        payloads = [{"temperature":Random().randint(0,50)},
+                    {"temp":Random().randint(0,50)}]
+        
+        for p,attr in zip(payloads,tmp_attrs):
+            tmp_dev = Device(device_id=tmp_id,
+                             attributes=[attr],
+                             entity_name="tmp_entity",
+                             entity_type="tmp_type",
+                             apikey="tmp_key",
+                             transport=TransportProtocol.MQTT,
+                             protocol=PayloadProtocol.IOTA_JSON)
+            tmp_mqttc = IoTAMQTTClient(protocol=MQTTv5 ,devices=[tmp_dev])
+            tmp_mqttc.publish(device_id=tmp_id,payload=p)
+            tmp_mqttc.delete_device(device_id=tmp_id)
+
+        #checking if raises correctly
+        with self.assertRaises(KeyError):
+            tmp_dev = Device(device_id=tmp_id,
+                             attributes=[tmp_attrs[0]],
+                             entity_name="tmp_entity",
+                             entity_type="tmp_type",
+                             apikey="tmp_key",
+                             transport=TransportProtocol.MQTT,
+                             protocol=PayloadProtocol.IOTA_JSON)
+            tmp_mqttc = IoTAMQTTClient(protocol=MQTTv5, devices=[tmp_dev])
+            tmp_mqttc.publish(device_id=tmp_id,
+                              payload={"t": Random().randint(0,50)})
+            tmp_mqttc.delete_device(device_id=tmp_id)
 
     def test_init(self):
         devices = [self.device_json, self.device_ul]
