@@ -154,20 +154,20 @@ class TestMQTTClient(unittest.TestCase):
         tmp_attrs = [DeviceAttribute(name="temperature",
                                      type="Number"),
                     DeviceAttribute(name="temperature",
-                                     type="Number",
-                                     object_id="temp")]
+                                    type="Number",
+                                    object_id="temp")]
         
         payloads = [{"temperature":Random().randint(0,50)},
-                    {"t":Random().randint(0,50)}]
+                    {"temp":Random().randint(0,50)}]
         
         for p,attr in zip(payloads,tmp_attrs):
             tmp_dev = Device(device_id=tmp_id,
-                        attributes=[attr],
-                        entity_name="tmp_entity",
-                        entity_type="tmp_type",
-                        apikey="tmp_key",
-                        transport=TransportProtocol.MQTT,
-                        protocol=PayloadProtocol.IOTA_JSON)
+                             attributes=[attr],
+                             entity_name="tmp_entity",
+                             entity_type="tmp_type",
+                             apikey="tmp_key",
+                             transport=TransportProtocol.MQTT,
+                             protocol=PayloadProtocol.IOTA_JSON)
             tmp_mqttc = IoTAMQTTClient(protocol=MQTTv5 ,devices=[tmp_dev])
             tmp_mqttc.publish(device_id=tmp_id,payload=p)
             tmp_mqttc.delete_device(device_id=tmp_id)
@@ -175,13 +175,15 @@ class TestMQTTClient(unittest.TestCase):
         #checking if raises correctly
         with self.assertRaises(KeyError):
             tmp_dev = Device(device_id=tmp_id,
-                        attributes=[tmp_attrs[0]],
-                        entity_name="tmp_entity",
-                        entity_type="tmp_type",
-                        apikey="tmp_key",
-                        transport=TransportProtocol.MQTT,
-                        protocol=PayloadProtocol.IOTA_JSON)
-            tmp_mqttc.publish(device_id=tmp_id,payload={"t":Random().randint(0,50)})
+                             attributes=[tmp_attrs[0]],
+                             entity_name="tmp_entity",
+                             entity_type="tmp_type",
+                             apikey="tmp_key",
+                             transport=TransportProtocol.MQTT,
+                             protocol=PayloadProtocol.IOTA_JSON)
+            tmp_mqttc = IoTAMQTTClient(protocol=MQTTv5, devices=[tmp_dev])
+            tmp_mqttc.publish(device_id=tmp_id,
+                              payload={"t": Random().randint(0,50)})
             tmp_mqttc.delete_device(device_id=tmp_id)
 
     def test_init(self):
