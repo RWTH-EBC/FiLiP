@@ -239,25 +239,6 @@ class ContextGeoProperty(BaseModel):
     )
     field_validator("datasetId")(validate_fiware_datatype_string_protect)
 
-    @field_validator("type")
-    @classmethod
-    def check_geoproperty_type(cls, value):
-        """
-        Force property type to be "GeoProperty"
-        Args:
-            value: value field
-        Returns:
-            value
-        """
-        if not value == "GeoProperty":
-            logging.warning(msg='NGSI_LD GeoProperties must have type "GeoProperty" '
-                                '-> They are checked first, so if no GeoProperties are '
-                                'used ignore this warning!')
-            raise ValueError('NGSI_LD GeoProperties must have type "GeoProperty" '
-                             '-> They are checked first, so if no GeoProperties are used'
-                             ' ignore this warning!')
-        return value
-
 
 class NamedContextGeoProperty(ContextGeoProperty):
     """
@@ -522,7 +503,6 @@ class ContextLDEntity(ContextLDEntityKeyValues):
         data.update(self._validate_attributes(data))
         super().__init__(id=id, type=type, **data)
 
-    # TODO we should distinguish between context relationship
     @classmethod
     def _validate_attributes(cls, data: Dict):
         fields = set([field.validation_alias for (_, field) in cls.model_fields.items()] +
@@ -535,10 +515,15 @@ class ContextLDEntity(ContextLDEntityKeyValues):
         for key, attr in data.items():
             # Check if the keyword is not already present in the fields
             if key not in fields:
-                try:
+                if attr.get("type") == "Relationship":
+                    attrs[key] = ContextRelationship.model_validate(attr)
+                elif attr.get("type") == "GeoProperty":
                     attrs[key] = ContextGeoProperty.model_validate(attr)
-                except ValueError:
+                elif attr.get("type") == "Property":
                     attrs[key] = ContextProperty.model_validate(attr)
+                else:
+                    raise ValueError(f"Attribute {attr.get('type')} "
+                                     "is not a valid type")
         return attrs
 
     model_config = ConfigDict(extra='allow', validate_default=True, validate_assignment=True)
