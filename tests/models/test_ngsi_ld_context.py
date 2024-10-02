@@ -1,7 +1,6 @@
 """
 Test module for context broker models
 """
-
 import unittest
 
 from geojson_pydantic import Point, MultiPoint, LineString, Polygon, GeometryCollection
@@ -50,7 +49,7 @@ class TestLDContextModels(unittest.TestCase):
                 "type": "GeoProperty",
                 "value": {
                     "type": "Point",
-                    "coordinates": [-8.5, 41.2]
+                    "coordinates": (-8.5, 41.2)  # coordinates are normally a tuple
                 }
             },
             "@context": [
@@ -63,7 +62,7 @@ class TestLDContextModels(unittest.TestCase):
                 "type": "GeoProperty",
                 "value": {
                     "type": "Point",
-                    "coordinates": [-8.5, 41.2]
+                    "coordinates": (-8.5, 41.2)
                 }
             },
             "totalSpotNumber": {
@@ -167,46 +166,46 @@ class TestLDContextModels(unittest.TestCase):
         }
         self.testpoint_value = {
             "type": "Point",
-            "coordinates": [-8.5, 41.2]
+            "coordinates": (-8.5, 41.2)
         }
         self.testmultipoint_value = {
             "type": "MultiPoint",
-            "coordinates": [
-                [-3.80356167695194, 43.46296641666926],
-                [-3.804056, 43.464638]
-            ]
+            "coordinates": (
+                (-3.80356167695194, 43.46296641666926),
+                (-3.804056, 43.464638)
+            )
         }
         self.testlinestring_value = {
             "type": "LineString",
-            "coordinates": [
-                [-3.80356167695194, 43.46296641666926],
-                [-3.804056, 43.464638]
-            ]
+            "coordinates": (
+                (-3.80356167695194, 43.46296641666926),
+                (-3.804056, 43.464638)
+            )
         }
         self.testpolygon_value = {
             "type": "Polygon",
-            "coordinates": [
-                [
-                    [-3.80356167695194, 43.46296641666926],
-                    [-3.804056, 43.464638],
-                    [-3.805056, 43.463638],
-                    [-3.80356167695194, 43.46296641666926]
-                ]
-            ]
+            "coordinates": (
+                (
+                    (-3.80356167695194, 43.46296641666926),
+                    (-3.804056, 43.464638),
+                    (-3.805056, 43.463638),
+                    (-3.80356167695194, 43.46296641666926)
+                )
+            )
         }
         self.testgeometrycollection_value = {
             "type": "GeometryCollection",
             "geometries": [
                 {
                     "type": "Point",
-                    "coordinates": [-3.80356167695194, 43.46296641666926]
+                    "coordinates": (-3.80356167695194, 43.46296641666926)
                 },
                 {
                     "type": "LineString",
-                    "coordinates": [
-                        [-3.804056, 43.464638],
-                        [-3.805056, 43.463638]
-                    ]
+                    "coordinates": (
+                        (-3.804056, 43.464638),
+                        (-3.805056, 43.463638)
+                    )
                 }
             ]
         }
