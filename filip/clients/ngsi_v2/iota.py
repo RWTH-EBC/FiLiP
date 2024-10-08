@@ -119,7 +119,7 @@ class IoTAClient(BaseHttpClient):
                 res.raise_for_status()
         except requests.RequestException as err:
             self.log_error(err=err, msg=None)
-            raise
+            raise BaseHttpClientException(message=err.response.text, response=err.response) from err
 
     def post_group(self, service_group: ServiceGroup, update: bool = False):
         """
@@ -156,7 +156,7 @@ class IoTAClient(BaseHttpClient):
             res.raise_for_status()
         except requests.RequestException as err:
             self.log_error(err=err, msg=None)
-            raise
+            raise BaseHttpClientException(message=err.response.text, response=err.response) from err
 
     def get_group(self, *, resource: str, apikey: str) -> ServiceGroup:
         """
@@ -238,7 +238,7 @@ class IoTAClient(BaseHttpClient):
                 res.raise_for_status()
         except requests.RequestException as err:
             self.log_error(err=err, msg=None)
-            raise
+            raise BaseHttpClientException(message=err.response.text, response=err.response) from err
 
     def delete_group(self, *, resource: str, apikey: str):
         """
@@ -267,7 +267,7 @@ class IoTAClient(BaseHttpClient):
             msg = f"Could not delete ServiceGroup with resource " \
                   f"'{resource}' and apikey '{apikey}'!"
             self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     # DEVICE API
     def post_devices(self, *, devices: Union[Device, List[Device]],
@@ -369,7 +369,7 @@ class IoTAClient(BaseHttpClient):
             res.raise_for_status()
         except requests.RequestException as err:
             self.log_error(err=err, msg=None)
-            raise
+            raise BaseHttpClientException(message=err.response.text, response=err.response) from err
 
     def get_device(self, *, device_id: str) -> Device:
         """
@@ -393,7 +393,7 @@ class IoTAClient(BaseHttpClient):
         except requests.RequestException as err:
             msg = f"Device {device_id} was not found"
             self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def update_device(self, *, device: Device, add: bool = True) -> None:
         """
@@ -426,7 +426,7 @@ class IoTAClient(BaseHttpClient):
         except requests.RequestException as err:
             msg = f"Could not update device '{device.device_id}'"
             self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def update_devices(self, *, devices: Union[Device, List[Device]],
                        add: False) -> None:
@@ -493,7 +493,7 @@ class IoTAClient(BaseHttpClient):
         except requests.RequestException as err:
             msg = f"Could not delete device {device_id}!"
             self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
         if delete_entity:
             # An entity can technically belong to multiple devices
@@ -506,6 +506,7 @@ class IoTAClient(BaseHttpClient):
                                 f"{device_id} was not deleted because it is "
                                 f"linked to multiple devices. ")
             else:
+                cb_client_local = None
                 try:
                     from filip.clients.ngsi_v2 import ContextBrokerClient
 
@@ -513,7 +514,7 @@ class IoTAClient(BaseHttpClient):
                         cb_client_local = deepcopy(cb_client)
                     else:
                         warnings.warn("No `ContextBrokerClient` "
-                                      "object providesd! Will try to generate "
+                                      "object provided! Will try to generate "
                                       "one. This usage is not recommended.")
 
                         cb_client_local = ContextBrokerClient(
@@ -531,7 +532,8 @@ class IoTAClient(BaseHttpClient):
                     # this methode, not if this methode actively deleted it
                     pass
 
-                cb_client_local.close()
+                if cb_client_local:
+                    cb_client_local.close()
 
     def patch_device(self,
                      device: Device,
