@@ -14,8 +14,8 @@ from filip.clients.ngsi_v2 import \
     QuantumLeapClient
 
 
-def clear_context_broker(url: str,
-                         fiware_header: FiwareHeader,
+def clear_context_broker(url: str=None,
+                         fiware_header: FiwareHeader=None,
                          clear_registrations: bool = False,
                          cb_client: ContextBrokerClient = None
                          ):
@@ -40,7 +40,7 @@ def clear_context_broker(url: str,
     Returns:
         None
     """
-    assert url or cb_client, "Either url or client object must be given"
+    assert (url and fiware_header) or cb_client, "Either url and headers or client object must be given"
     # create client
     if cb_client is None:
         client = ContextBrokerClient(url=url, fiware_header=fiware_header)
