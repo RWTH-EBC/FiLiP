@@ -502,32 +502,41 @@ class ContextLDEntity(ContextLDEntityKeyValues):
 
     # TODO should geoproperty has subproperties? and can geoproperty be subproperties?
     @classmethod
-    def _validate_single_property(cls, key, attr):
-        subattrs = {}
+    def _validate_single_property(cls, attr) -> ContextProperty:
+        property_fields = set([field.validation_alias
+                      for (_, field) in ContextProperty.model_fields.items()] +
+                     [field_name for field_name in ContextProperty.model_fields])
+        property_fields.remove(None)
+        # subattrs = {}
         if attr.get("type") == "Relationship":
-            attr = ContextRelationship.model_validate(attr)
+            attr_instance = ContextRelationship.model_validate(attr)
         elif attr.get("type") == "GeoProperty":
-            attrs[key] = ContextGeoProperty.model_validate(attr)
+            attr_instance = ContextGeoProperty.model_validate(attr)
         elif attr.get("type") == "Property":
-            attrs[key] = ContextProperty.model_validate(attr)
+            attr_instance = ContextProperty.model_validate(attr)
         else:
             raise ValueError(f"Attribute {attr.get('type')} "
                              "is not a valid type")
-        return subattrs
+        for subkey, subattr in attr.items():
+            # TODO can we ensure that the subattr can only be dict?
+            if isinstance(subattr, dict) and subkey not in property_fields:
+                attr_instance.model_extra.update(
+                    {subkey: cls._validate_single_property(attr=subattr)}
+                )
+        return attr_instance
 
-    # TODO is "validate_attributes" still relevant for LD entities?
     @classmethod
     def _validate_attributes(cls, data: Dict):
-        fields = set([field.validation_alias for (_, field) in cls.model_fields.items()] +
+        entity_fields = set([field.validation_alias for (_, field) in cls.model_fields.items()] +
                      [field_name for field_name in cls.model_fields])
-        fields.remove(None)
+        entity_fields.remove(None)
         # Initialize the attribute dictionary
         attrs = {}
         # Iterate through the data
         for key, attr in data.items():
             # Check if the keyword is not already present in the fields
-            if key not in fields: # TODO why ignoring all in fields?
-                attrs[key] = cls._validate_single_property(key, attr)
+            if key not in entity_fields:
+                attrs[key] = cls._validate_single_property(attr=attr)
         return attrs
 
     model_config = ConfigDict(extra='allow', validate_default=True, validate_assignment=True)
