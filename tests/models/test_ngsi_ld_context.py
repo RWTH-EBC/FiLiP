@@ -1,13 +1,14 @@
 """
 Test module for context broker models
 """
-
 import unittest
 
+from geojson_pydantic import Point, MultiPoint, LineString, Polygon, GeometryCollection
 from pydantic import ValidationError
 
 from filip.models.ngsi_ld.context import \
-    ContextLDEntity, ContextProperty, NamedContextProperty
+    ContextLDEntity, ContextProperty, NamedContextProperty, \
+    ContextGeoPropertyValue, ContextGeoProperty, NamedContextGeoProperty
 
 
 class TestLDContextModels(unittest.TestCase):
@@ -48,7 +49,7 @@ class TestLDContextModels(unittest.TestCase):
                 "type": "GeoProperty",
                 "value": {
                     "type": "Point",
-                    "coordinates": [-8.5, 41.2]
+                    "coordinates": (-8.5, 41.2)  # coordinates are normally a tuple
                 }
             },
             "@context": [
@@ -61,7 +62,7 @@ class TestLDContextModels(unittest.TestCase):
                 "type": "GeoProperty",
                 "value": {
                     "type": "Point",
-                    "coordinates": [-8.5, 41.2]
+                    "coordinates": (-8.5, 41.2)
                 }
             },
             "totalSpotNumber": {
@@ -133,53 +134,168 @@ class TestLDContextModels(unittest.TestCase):
             }
         }
         # The entity for testing the nested structure of properties
-        self.entity_sub_props_dict = {
-            "id": "urn:ngsi-ld:Vehicle:test1243",
-            "type": "Vehicle",
-            "prop1": {
+        self.entity_sub_props_dict_wrong = {
+            "id": "urn:ngsi-ld:OffStreetParking:Downtown1",
+            "type": "OffStreetParking",
+            "name": {
                 "type": "Property",
-                "value": 1,
-                "sub_property": {
-                    "type": "Property",
-                    "value": 10,
-                    "sub_sub_property": {
-                        "type": "Property",
-                        "value": 100
-                    }
+                "value": "Downtown One"
+            },
+            "availableSpotNumber": {
+                "type": "Property",
+                "value": 121,
+                "observedAt": "2017-07-29T12:05:02Z",
+                "reliability": {
+                    "type": "NotAProperty",
+                    "value": 0.7
                 },
-                "sub_properties_list": [
-                    {
-                        "sub_prop_1": {
-                            "value": 100,
-                            "type": "Property"
-                        }
-                    },
-                    {
-                        "sub_prop_2": {
-                            "value": 200,
-                            "type": "Property"
-                        }
-                    }
-                ],
+                "providedBy": {
+                    "type": "NotARelationship",
+                    "object": "urn:ngsi-ld:Camera:C1"
+                }
+            },
+            "totalSpotNumber": {
+                "type": "Property",
+                "value": 200
+            },
+            "location": {
+                "type": "GeoProperty",
+                "value": {
+                    "type": "Point",
+                    "coordinates": [-8.5, 41.2]
+                }
+            },
+            "@context": [
+                "http://example.org/ngsi-ld/latest/parking.jsonld",
+                "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.3.jsonld"
+            ]
+        }
+        self.testpoint_value = {
+            "type": "Point",
+            "coordinates": (-8.5, 41.2)
+        }
+        self.testmultipoint_value = {
+            "type": "MultiPoint",
+            "coordinates": (
+                (-3.80356167695194, 43.46296641666926),
+                (-3.804056, 43.464638)
+            )
+        }
+        self.testlinestring_value = {
+            "type": "LineString",
+            "coordinates": (
+                (-3.80356167695194, 43.46296641666926),
+                (-3.804056, 43.464638)
+            )
+        }
+        self.testpolygon_value = {
+            "type": "Polygon",
+            "coordinates": (
+                (
+                    (-3.80356167695194, 43.46296641666926),
+                    (-3.804056, 43.464638),
+                    (-3.805056, 43.463638),
+                    (-3.80356167695194, 43.46296641666926)
+                )
+            )
+        }
+        self.testgeometrycollection_value = {
+            "type": "GeometryCollection",
+            "geometries": [
+                {
+                    "type": "Point",
+                    "coordinates": (-3.80356167695194, 43.46296641666926)
+                },
+                {
+                    "type": "LineString",
+                    "coordinates": (
+                        (-3.804056, 43.464638),
+                        (-3.805056, 43.463638)
+                    )
+                }
+            ]
+        }
+        self.entity_geo_dict = {
+            "id": "urn:ngsi-ld:Geometry:001",
+            "type": "MyGeometry",
+            "testpoint": {
+                "type": "GeoProperty",
+                "value": self.testpoint_value
+            },
+            "testmultipoint": {
+                "type": "GeoProperty",
+                "value": self.testmultipoint_value,
+                "observedAt": "2023-09-12T12:35:00Z"
+            },
+            "testlinestring": {
+                "type": "GeoProperty",
+                "value": self.testlinestring_value,
+                "observedAt": "2023-09-12T12:35:30Z"
+            },
+            "testpolygon": {
+                "type": "GeoProperty",
+                "value": self.testpolygon_value,
+                "observedAt": "2023-09-12T12:36:00Z"
+            },
+            "testgeometrycollection": {
+                "type": "GeoProperty",
+                "value": self.testgeometrycollection_value,
+                "observedAt": "2023-09-12T12:36:30Z"
             }
         }
 
-    def test_cb_attribute(self) -> None:
+    def test_cb_property(self) -> None:
         """
-        Test context attribute models
+        Test context property models
         Returns:
             None
         """
-        attr = ContextProperty(**{'value': "20"})
-        self.assertIsInstance(attr.value, str)
-        attr = ContextProperty(**{'value': 20.53})
-        self.assertIsInstance(attr.value, float)
-        attr = ContextProperty(**{'value': 20})
-        self.assertIsInstance(attr.value, int)
+        prop = ContextProperty(**{'value': "20"})
+        self.assertIsInstance(prop.value, str)
+        prop = ContextProperty(**{'value': 20.53})
+        self.assertIsInstance(prop.value, float)
+        prop = ContextProperty(**{'value': 20})
+        self.assertIsInstance(prop.value, int)
 
     def test_entity_id(self) -> None:
         with self.assertRaises(ValidationError):
             ContextLDEntity(**{'id': 'MyId', 'type': 'MyType'})
+
+    def test_geo_property(self) -> None:
+        """
+        Test ContextGeoPropertyValue models
+        Returns:
+            None
+        """
+        geo_entity = ContextLDEntity(**self.entity_geo_dict)
+        new_entity = ContextLDEntity(id="urn:ngsi-ld:Geometry:002", type="MyGeometry")
+        test_point = NamedContextGeoProperty(
+            name="testpoint",
+            type="GeoProperty",
+            value=Point(**self.testpoint_value)
+        )
+        test_MultiPoint = NamedContextGeoProperty(
+            name="testmultipoint",
+            type="GeoProperty",
+            value=MultiPoint(**self.testmultipoint_value)
+        )
+        test_LineString = NamedContextGeoProperty(
+            name="testlinestring",
+            type="GeoProperty",
+            value=LineString(**self.testlinestring_value)
+        )
+        test_Polygon = NamedContextGeoProperty(
+            name="testpolygon",
+            type="GeoProperty",
+            value=Polygon(**self.testpolygon_value)
+        )
+        test_GeometryCollection = NamedContextGeoProperty(
+            name="testgeometrycollection",
+            type="GeoProperty",
+            value=GeometryCollection(**self.testgeometrycollection_value)
+        )
+        new_entity.add_geo_properties([test_point, test_MultiPoint, test_LineString,
+                                       test_Polygon, test_GeometryCollection])
 
     def test_cb_entity(self) -> None:
         """
@@ -227,6 +343,22 @@ class TestLDContextModels(unittest.TestCase):
         properties = entity2.get_properties(response_format='list')
         self.assertIn("new_prop", [prop.name for prop in properties])
 
+    def test_validate_subproperties_dict(self) -> None:
+        """
+        Test the validation of multi-level properties in entities
+        Returns:
+            None
+        """
+        entity4 = ContextLDEntity(**self.entity1_dict)
+
+    def test_validate_subproperties_dict_wrong(self) -> None:
+        """
+        Test the validation of multi-level properties in entities
+        Returns:
+            None
+        """
+        entity5 = ContextLDEntity(**self.entity_sub_props_dict_wrong)
+
     def test_get_properties(self):
         """
         Test the get_properties method
@@ -235,33 +367,33 @@ class TestLDContextModels(unittest.TestCase):
         entity = ContextLDEntity(id="urn:ngsi-ld:test", type="Tester")
 
         properties = [
-            NamedContextProperty(name="attr1"),
-            NamedContextProperty(name="attr2"),
+            NamedContextProperty(name="prop1"),
+            NamedContextProperty(name="prop2"),
         ]
         entity.add_properties(properties)
         self.assertEqual(entity.get_properties(response_format="list"),
                          properties)
 
-    def test_entity_delete_attributes(self):
+    def test_entity_delete_properties(self):
         """
-        Test the delete_attributes methode
+        Test the delete_properties method
         """
-        attr = ContextProperty(**{'value': 20, 'type': 'Text'})
-        named_attr = NamedContextProperty(**{'name': 'test2',
+        prop = ContextProperty(**{'value': 20, 'type': 'Text'})
+        named_prop = NamedContextProperty(**{'name': 'test2',
                                              'value': 20,
                                              'type': 'Text'})
-        attr3 = ContextProperty(**{'value': 20, 'type': 'Text'})
+        prop3 = ContextProperty(**{'value': 20, 'type': 'Text'})
 
         entity = ContextLDEntity(id="urn:ngsi-ld:12", type="Test")
 
-        entity.add_properties({"test1": attr, "test3": attr3})
-        entity.add_properties([named_attr])
+        entity.add_properties({"test1": prop, "test3": prop3})
+        entity.add_properties([named_prop])
 
-        entity.delete_properties({"test1": attr})
+        entity.delete_properties({"test1": prop})
         self.assertEqual(set([_prop.name for _prop in entity.get_properties()]),
                          {"test2", "test3"})
 
-        entity.delete_properties([named_attr])
+        entity.delete_properties([named_prop])
         self.assertEqual(set([_prop.name for _prop in entity.get_properties()]),
                          {"test3"})
 
