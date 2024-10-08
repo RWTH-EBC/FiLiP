@@ -9,20 +9,23 @@ LONG_DESCRIPTION = readme_path.read_text()
 
 INSTALL_REQUIRES = ['aenum~=3.1.15',
                     'datamodel_code_generator[http]~=0.25.0',
-                    'paho-mqtt~=1.6.1',
+                    'paho-mqtt~=2.0.0',
                     'pandas_datapackage_reader~=0.18.0',
                     'pydantic~=2.5.2',
                     'pydantic-settings~=2.0.0',
+                    'geojson_pydantic~=1.0.2',
                     'stringcase>=1.2.0',
                     'rdflib~=6.0.0',
                     'regex~=2023.10.3',
                     'requests~=2.31.0',
                     'rapidfuzz~=3.4.0',
-                    'wget~=3.2']
+                    'geojson-pydantic~=1.0.2',
+                    'wget~=3.2',
+                    'pyjexl~=0.3.0']
 
 SETUP_REQUIRES = INSTALL_REQUIRES.copy()
 
-VERSION = '0.3.0'
+VERSION = '0.4.1'
 
 setuptools.setup(
     name='filip',
@@ -47,9 +50,10 @@ setuptools.setup(
     classifiers=['Development Status :: 3 - Alpha',
                  'Topic :: Scientific/Engineering',
                  'Intended Audience :: Science/Research',
-                 'Programming Language :: Python :: 3.7',
                  'Programming Language :: Python :: 3.8',
                  'Programming Language :: Python :: 3.9',
+                 'Programming Language :: Python :: 3.10',
+                 'Programming Language :: Python :: 3.11',
                  "License :: OSI Approved :: BSD License"],
     keywords=['iot', 'fiware', 'semantic'],
     packages=setuptools.find_packages(exclude=['tests',
@@ -61,11 +65,11 @@ setuptools.setup(
     setup_requires=SETUP_REQUIRES,
     # optional modules
     extras_require={
-        "semantics": ["igraph~=0.9.8"],
+        "semantics": ["igraph~=0.11.2"],
         ":python_version < '3.9'": ["pandas~=1.3.5"],
         ":python_version >= '3.9'": ["pandas~=2.1.4"]
     },
     install_requires=INSTALL_REQUIRES,
-    python_requires=">=3.7",
+    python_requires=">=3.8",
 
 )

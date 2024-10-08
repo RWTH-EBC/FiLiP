@@ -4,17 +4,19 @@ Module contains models for accessing and interaction with FIWARE's IoT-Agents.
 from __future__ import annotations
 import logging
 import itertools
+import warnings
 from enum import Enum
 from typing import Any, Dict, Optional, List, Union
 import pytz
-from pydantic import field_validator, ConfigDict, BaseModel, Field, AnyHttpUrl
+from pydantic import field_validator, model_validator, ConfigDict, BaseModel, Field, AnyHttpUrl
 from filip.models.base import NgsiVersion, DataType
 from filip.models.ngsi_v2.base import \
     BaseAttribute, \
     BaseValueAttribute, \
     BaseNameAttribute
-from filip.utils.validators import validate_fiware_datatype_string_protect, \
-    validate_fiware_datatype_standard
+from filip.utils.validators import (validate_fiware_datatype_string_protect, validate_fiware_datatype_standard,
+                                    validate_jexl_expression, validate_device_expression_language,
+                                    validate_service_group_expression_language)
 
 logger = logging.getLogger()
 
@@ -57,7 +59,7 @@ class IoTABaseAttribute(BaseAttribute, BaseNameAttribute):
                     "expression based on a combination of the reported values. "
                     "See the Expression Language definition for details "
                     "(https://iotagent-node-lib.readthedocs.io/en/latest/"
-                    "expressionLanguage/index.html)"
+                    "api.html#expression-language-support)"
     )
     entity_name: Optional[str] = Field(
         default=None,
@@ -68,10 +70,10 @@ class IoTABaseAttribute(BaseAttribute, BaseNameAttribute):
                     "configured with the entity_type attribute. If no type is "
                     "configured, the device entity type is used instead. "
                     "Entity names can be defined as expressions, using the "
-                    "Expression Language definition. "
+                    "Expression Language definition "
                     "(https://iotagent-node-lib.readthedocs.io/en/latest/"
-                    "expressionLanguage/index.html) Allowed characters "
-                    "are the ones in the plain ASCII set, except the following "
+                    "api.html#expression-language-support). Allowed characters are"
+                    " the ones in the plain ASCII set, except the following "
                     "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
@@ -219,15 +221,15 @@ class ServiceGroup(BaseModel):
         Returns:
             timezone
         """
-        return str(value)
+        return str(value) if value else value
     lazy: Optional[List[LazyDeviceAttribute]] = Field(
         default=[],
-        desription="list of common lazy attributes of the device. For each "
+        description="list of common lazy attributes of the device. For each "
                    "attribute, its name and type must be provided."
     )
     commands: Optional[List[DeviceCommand]] = Field(
         default=[],
-        desription="list of common commands attributes of the device. For each "
+        description="list of common commands attributes of the device. For each "
                    "attribute, its name and type must be provided, additional "
                    "metadata is optional"
     )
@@ -248,13 +250,13 @@ class ServiceGroup(BaseModel):
                     "IoT Agents to store information along with the devices "
                     "in the Device Registry."
     )
-    expressionLanguage: Optional[ExpressionLanguage] = Field(
-        default="legacy",
+    expressionLanguage: ExpressionLanguage = Field(
+        default=ExpressionLanguage.JEXL,
         description="optional boolean value, to set expression language used "
                     "to compute expressions, possible values are: "
-                    "legacy or jexl. When not set or wrongly set, legacy "
-                    "is used as default value."
+                    "legacy or jexl, but legacy is deprecated."
     )
+    valid_expressionLanguage = field_validator("expressionLanguage")(validate_service_group_expression_language)
     explicitAttrs: Optional[bool] = Field(
         default=False,
         description="optional boolean value, to support selective ignore "
@@ -319,13 +321,13 @@ class DeviceSettings(BaseModel):
         description="Name of the device transport protocol, for the IoT Agents "
                     "with multiple transport protocols."
     )
-    expressionLanguage: Optional[ExpressionLanguage] = Field(
-        default=None,
+    expressionLanguage: ExpressionLanguage = Field(
+        default=ExpressionLanguage.JEXL,
         description="optional boolean value, to set expression language used "
                     "to compute expressions, possible values are: "
-                    "legacy or jexl. When not set or wrongly set, legacy "
-                    "is used as default value."
+                    "legacy or jexl, but legacy is deprecated."
     )
+    valid_expressionLanguage = field_validator("expressionLanguage")(validate_device_expression_language)
     explicitAttrs: Optional[bool] = Field(
         default=False,
         description="optional boolean value, to support selective ignore "
@@ -380,7 +382,7 @@ class Device(DeviceSettings):
     )
     commands: List[DeviceCommand] = Field(
         default=[],
-        desription="List of commands of the device"
+        description="List of commands of the device"
     )
     attributes: List[DeviceAttribute] = Field(
         default=[],
@@ -414,6 +416,67 @@ class Device(DeviceSettings):
         """
         assert value in pytz.all_timezones
         return value
+
+    @model_validator(mode='after')
+    def validate_device_attributes_expression(self):
+        """
+        Validates device attributes expressions based on the expression language (JEXL or Legacy, where Legacy is
+        deprecated).
+
+        Args:
+            self: The Device instance.
+
+        Returns:
+            The Device instance after validation.
+        """
+        if self.expressionLanguage == ExpressionLanguage.JEXL:
+            for attribute in self.attributes:
+                if attribute.expression:
+                    validate_jexl_expression(attribute.expression, attribute.name, self.device_id)
+        elif self.expressionLanguage == ExpressionLanguage.LEGACY:
+            warnings.warn(f"No validation for legacy expression language of Device {self.device_id}.")
+
+        return self
+
+    @model_validator(mode='after')
+    def validate_duplicated_device_attributes(self):
+        """
+        Check whether device has identical attributes
+        Args:
+            self: dict of Device instance.
+
+        Returns:
+            The dict of Device instance after validation.
+        """
+        for i, attr in enumerate(self.attributes):
+            for other_attr in self.attributes[:i] + self.attributes[i + 1:]:
+                if attr.model_dump() == other_attr.model_dump():
+                    raise ValueError(f"Duplicated attributes found: {attr.name}")
+        return self
+
+    @model_validator(mode='after')
+    def validate_device_attributes_name_object_id(self):
+        """
+        Validate the device regarding the behavior with devices attributes.
+        According to https://iotagent-node-lib.readthedocs.io/en/latest/api.html and
+        based on our best practice, following rules are checked
+            - name is required, but not necessarily unique
+            - object_id is not required, if given must be unique, i.e. not equal to any
+                existing object_id and name
+        Args:
+            self: dict of Device instance.
+
+        Returns:
+            The dict of Device instance after validation.
+        """
+        for i, attr in enumerate(self.attributes):
+            for other_attr in self.attributes[:i] + self.attributes[i + 1:]:
+                if attr.object_id and other_attr.object_id and \
+                        attr.object_id == other_attr.object_id:
+                    raise ValueError(f"object_id {attr.object_id} is not unique")
+                if attr.object_id and attr.object_id == other_attr.name:
+                    raise ValueError(f"object_id {attr.object_id} is not unique")
+        return self
 
     def get_attribute(self, attribute_name: str) -> Union[DeviceAttribute,
                                                           LazyDeviceAttribute,
@@ -456,7 +519,8 @@ class Device(DeviceSettings):
         """
         try:
             if type(attribute) == DeviceAttribute:
-                if attribute in self.attributes:
+                if attribute.model_dump(exclude_none=True) in \
+                        [attr.model_dump(exclude_none=True) for attr in self.attributes]:
                     raise ValueError
 
                 self.attributes.append(attribute)

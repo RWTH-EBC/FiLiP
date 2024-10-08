@@ -8,7 +8,6 @@ __pycache__
 *.log
 .project
 .pydevproject
-
 *.yml
 # include issue branch workflows
 !.github/workflows/issue-tracker.yml
@@ -24,13 +23,14 @@ __pycache__
 dist
 *.pypirc
 build
+requirements.txt
 
 # PyCharm #
 #####################
 .idea
 .cache
 venv
-
+.venv
 # Unittest #
 #####################
 .pytest_cache
@@ -44,3 +44,4 @@ venv
 /examples/ngsi_v2/data_models/
 /tests/semantics/models.py
 /tests/semantics/models2.py
+/.env.filip

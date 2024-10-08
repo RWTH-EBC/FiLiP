@@ -96,9 +96,8 @@ class IoTAClient(BaseHttpClient):
         url = urljoin(self.base_url, 'iot/services')
         headers = self.headers
         data = {'services': [group.model_dump(exclude={'service', 'subservice'},
-                                              exclude_none=True,
-                                              exclude_unset=True) for
-                             group in service_groups]}
+                                              exclude_none=True)
+                             for group in service_groups]}
         try:
             res = self.post(url=url, headers=headers, json=data)
             if res.ok:
@@ -229,7 +228,7 @@ class IoTAClient(BaseHttpClient):
                            json=service_group.model_dump(
                                include=fields,
                                exclude={'service', 'subservice'},
-                               exclude_unset=True))
+                               exclude_none=True))
             if res.ok:
                 self.logger.info("ServiceGroup updated!")
             elif (res.status_code == 404) & (add is True):
@@ -287,6 +286,7 @@ class IoTAClient(BaseHttpClient):
             devices = [devices]
         url = urljoin(self.base_url, 'iot/devices')
         headers = self.headers
+        
         data = {"devices": [json.loads(device.model_dump_json(exclude_none=True)
                                        ) for device in devices]}
         try:
