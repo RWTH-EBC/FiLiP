@@ -32,6 +32,7 @@ from filip.models.ngsi_v2.context import (
 from filip.models.ngsi_v2.base import AttrsFormat
 from filip.models.ngsi_v2.subscriptions import Subscription, Message
 from filip.models.ngsi_v2.registrations import Registration
+from filip.clients.exceptions import BaseHttpClientException
 
 if TYPE_CHECKING:
     from filip.clients.ngsi_v2.iota import IoTAClient
@@ -157,7 +158,7 @@ class ContextBrokerClient(BaseHttpClient):
             res.raise_for_status()
         except requests.RequestException as err:
             self.logger.error(err)
-            raise
+            raise BaseHttpClientException(message=err.response.text, response=err.response) from err
 
     def get_resources(self) -> Dict:
         """
@@ -174,7 +175,7 @@ class ContextBrokerClient(BaseHttpClient):
             res.raise_for_status()
         except requests.RequestException as err:
             self.logger.error(err)
-            raise
+            raise BaseHttpClientException(message=err.response.text, response=err.response) from err
 
     # STATISTICS API
     def get_statistics(self) -> Dict:
@@ -191,7 +192,7 @@ class ContextBrokerClient(BaseHttpClient):
             res.raise_for_status()
         except requests.RequestException as err:
             self.logger.error(err)
-            raise
+            raise BaseHttpClientException(message=err.response.text, response=err.response) from err
 
     # CONTEXT MANAGEMENT API ENDPOINTS
     # Entity Operations
@@ -267,7 +268,7 @@ class ContextBrokerClient(BaseHttpClient):
                     return self.update_entity_key_values(entity=entity)
             msg = f"Could not post entity {entity.id}"
             self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def get_entity_list(
         self,
@@ -413,7 +414,7 @@ class ContextBrokerClient(BaseHttpClient):
         except requests.RequestException as err:
             msg = "Could not load entities"
             self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def get_entity(
         self,
@@ -476,7 +477,7 @@ class ContextBrokerClient(BaseHttpClient):
         except requests.RequestException as err:
             msg = f"Could not load entity {entity_id}"
             self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def get_entity_attributes(
         self,
@@ -539,7 +540,7 @@ class ContextBrokerClient(BaseHttpClient):
         except requests.RequestException as err:
             msg = f"Could not load attributes from entity {entity_id} !"
             self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def update_entity(self, entity: ContextEntity, append_strict: bool = False):
         """
@@ -678,7 +679,7 @@ class ContextBrokerClient(BaseHttpClient):
         except requests.RequestException as err:
             msg = f"Could not delete entity {entity_id} !"
             self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
         if delete_devices:
             from filip.clients.ngsi_v2 import IoTAClient
@@ -826,7 +827,7 @@ class ContextBrokerClient(BaseHttpClient):
         except requests.RequestException as err:
             msg = f"Could not update or append attributes of entity" f" {entity.id} !"
             self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def update_entity_key_values(self,
                                  entity: Union[ContextEntityKeyValues, dict],):
@@ -863,7 +864,7 @@ class ContextBrokerClient(BaseHttpClient):
             msg = f"Could not update attributes of entity" \
                   f" {entity.id} !"
             self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def update_entity_attributes_key_values(self,
                                             entity_id: str,
@@ -969,7 +970,7 @@ class ContextBrokerClient(BaseHttpClient):
         except requests.RequestException as err:
             msg = f"Could not update attributes of entity" f" {entity.id} !"
             self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def override_entity(self,
                         entity: Union[ContextEntity, ContextEntityKeyValues],
@@ -1065,7 +1066,7 @@ class ContextBrokerClient(BaseHttpClient):
         except requests.RequestException as err:
             msg = f"Could not replace attribute of entity {entity_id} !"
             self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     # Attribute operations
     def get_attribute(
@@ -1112,7 +1113,7 @@ class ContextBrokerClient(BaseHttpClient):
                 f"Could not load attribute '{attr_name}' from entity" f"'{entity_id}' "
             )
             self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def update_entity_attribute(self,
                                 entity_id: str,
@@ -1198,7 +1199,7 @@ class ContextBrokerClient(BaseHttpClient):
                 f"Could not update attribute '{attr_name}' of entity" f"'{entity_id}' "
             )
             self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def delete_entity_attribute(
         self, entity_id: str, attr_name: str, entity_type: str = None
@@ -1235,7 +1236,7 @@ class ContextBrokerClient(BaseHttpClient):
                 f"Could not delete attribute '{attr_name}' of entity '{entity_id}'"
             )
             self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     # Attribute value operations
     def get_attribute_value(
@@ -1272,7 +1273,7 @@ class ContextBrokerClient(BaseHttpClient):
                 f"entity'{entity_id}' "
             )
             self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def update_attribute_value(self, *,
                                entity_id: str,
@@ -1330,7 +1331,7 @@ class ContextBrokerClient(BaseHttpClient):
                 f"entity '{entity_id}' "
             )
             self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     # Types Operations
     def get_entity_types(
@@ -1364,7 +1365,7 @@ class ContextBrokerClient(BaseHttpClient):
         except requests.RequestException as err:
             msg = "Could not load entity types!"
             self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def get_entity_type(self, entity_type: str) -> Dict[str, Any]:
         """
@@ -1387,7 +1388,7 @@ class ContextBrokerClient(BaseHttpClient):
         except requests.RequestException as err:
             msg = f"Could not load entities of type" f"'{entity_type}' "
             self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     # SUBSCRIPTION API ENDPOINTS
     def get_subscription_list(self, limit: PositiveInt = inf) -> List[Subscription]:
@@ -1414,7 +1415,7 @@ class ContextBrokerClient(BaseHttpClient):
         except requests.RequestException as err:
             msg = "Could not load subscriptions!"
             self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def post_subscription(
         self,
@@ -1499,7 +1500,7 @@ class ContextBrokerClient(BaseHttpClient):
         except requests.RequestException as err:
             msg = "Could not send subscription!"
             self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def get_subscription(self, subscription_id: str) -> Subscription:
         """
@@ -1521,7 +1522,7 @@ class ContextBrokerClient(BaseHttpClient):
         except requests.RequestException as err:
             msg = f"Could not load subscription {subscription_id}"
             self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def update_subscription(
         self, subscription: Subscription, skip_initial_notification: bool = False
@@ -1575,7 +1576,7 @@ class ContextBrokerClient(BaseHttpClient):
         except requests.RequestException as err:
             msg = f"Could not update subscription {subscription.id}"
             self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def delete_subscription(self, subscription_id: str) -> None:
         """
@@ -1596,7 +1597,7 @@ class ContextBrokerClient(BaseHttpClient):
         except requests.RequestException as err:
             msg = f"Could not delete subscription {subscription_id}"
             self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     # Registration API
     def get_registration_list(self, *, limit: PositiveInt = None) -> List[Registration]:
@@ -1624,7 +1625,7 @@ class ContextBrokerClient(BaseHttpClient):
         except requests.RequestException as err:
             msg = "Could not load registrations!"
             self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def post_registration(self, registration: Registration):
         """
@@ -1654,7 +1655,7 @@ class ContextBrokerClient(BaseHttpClient):
         except requests.RequestException as err:
             msg = f"Could not send registration {registration.id}!"
             self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def get_registration(self, registration_id: str) -> Registration:
         """
@@ -1677,7 +1678,7 @@ class ContextBrokerClient(BaseHttpClient):
         except requests.RequestException as err:
             msg = f"Could not load registration {registration_id} !"
             self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def update_registration(self, registration: Registration):
         """
@@ -1707,7 +1708,7 @@ class ContextBrokerClient(BaseHttpClient):
         except requests.RequestException as err:
             msg = f"Could not update registration {registration.id} !"
             self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def delete_registration(self, registration_id: str) -> None:
         """
@@ -1727,7 +1728,7 @@ class ContextBrokerClient(BaseHttpClient):
         except requests.RequestException as err:
             msg = f"Could not delete registration {registration_id} !"
             self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     # Batch operation API
     def update(self,
@@ -1811,7 +1812,7 @@ class ContextBrokerClient(BaseHttpClient):
         except requests.RequestException as err:
             msg = f"Update operation '{action_type}' failed!"
             self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def query(
         self,
@@ -1862,7 +1863,7 @@ class ContextBrokerClient(BaseHttpClient):
         except requests.RequestException as err:
             msg = "Query operation failed!"
             self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def notify(self, message: Message) -> None:
         """
@@ -1901,7 +1902,7 @@ class ContextBrokerClient(BaseHttpClient):
                 f"{message.model_dump_json(indent=2)}"
             )
             self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def post_command(
         self,
