@@ -394,10 +394,19 @@ class TestAgent(unittest.TestCase):
             device = Device(**self.device)
             client.post_device(device=device)
 
-            try:
+            with self.assertRaises(BaseHttpClientException) as context:
                 client.post_device(device=device)
-            except BaseHttpClientException as err:
-                self.assertEqual(json.loads(err.response.text)["name"], "DUPLICATE_DEVICE_ID")
+            self.assertEqual(json.loads(context.exception.response.text)["name"], "DUPLICATE_DEVICE_ID")
+
+            with self.assertRaises(BaseHttpClientException) as context:
+                client.update_device(device=device, add=False)
+            self.assertEqual(json.loads(context.exception.response.text)["name"], "ENTITY_GENERIC_ERROR")
+
+            client.delete_device(device_id=device.device_id)
+
+            with self.assertRaises(BaseHttpClientException) as context:
+                client.delete_device(device_id=device.device_id)
+            self.assertEqual(json.loads(context.exception.response.text)["name"], "DEVICE_NOT_FOUND")
 
     def test_service_group(self):
         """

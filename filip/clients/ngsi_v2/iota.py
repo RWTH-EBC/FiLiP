@@ -118,7 +118,6 @@ class IoTAClient(BaseHttpClient):
             else:
                 res.raise_for_status()
         except requests.RequestException as err:
-            self.log_error(err=err, msg=None)
             raise BaseHttpClientException(message=err.response.text, response=err.response) from err
 
     def post_group(self, service_group: ServiceGroup, update: bool = False):
@@ -155,7 +154,6 @@ class IoTAClient(BaseHttpClient):
                 return ta.validate_python(res.json()['services'])
             res.raise_for_status()
         except requests.RequestException as err:
-            self.log_error(err=err, msg=None)
             raise BaseHttpClientException(message=err.response.text, response=err.response) from err
 
     def get_group(self, *, resource: str, apikey: str) -> ServiceGroup:
@@ -237,7 +235,6 @@ class IoTAClient(BaseHttpClient):
             else:
                 res.raise_for_status()
         except requests.RequestException as err:
-            self.log_error(err=err, msg=None)
             raise BaseHttpClientException(message=err.response.text, response=err.response) from err
 
     def delete_group(self, *, resource: str, apikey: str):
@@ -266,7 +263,6 @@ class IoTAClient(BaseHttpClient):
         except requests.RequestException as err:
             msg = f"Could not delete ServiceGroup with resource " \
                   f"'{resource}' and apikey '{apikey}'!"
-            self.log_error(err=err, msg=msg)
             raise BaseHttpClientException(message=msg, response=err.response) from err
 
     # DEVICE API
@@ -368,7 +364,6 @@ class IoTAClient(BaseHttpClient):
                 return devices
             res.raise_for_status()
         except requests.RequestException as err:
-            self.log_error(err=err, msg=None)
             raise BaseHttpClientException(message=err.response.text, response=err.response) from err
 
     def get_device(self, *, device_id: str) -> Device:
@@ -392,7 +387,6 @@ class IoTAClient(BaseHttpClient):
             res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Device {device_id} was not found"
-            self.log_error(err=err, msg=msg)
             raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def update_device(self, *, device: Device, add: bool = True) -> None:
@@ -425,7 +419,6 @@ class IoTAClient(BaseHttpClient):
                 res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Could not update device '{device.device_id}'"
-            self.log_error(err=err, msg=msg)
             raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def update_devices(self, *, devices: Union[Device, List[Device]],
@@ -492,7 +485,6 @@ class IoTAClient(BaseHttpClient):
                 res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Could not delete device {device_id}!"
-            self.log_error(err=err, msg=msg)
             raise BaseHttpClientException(message=msg, response=err.response) from err
 
         if delete_entity:
