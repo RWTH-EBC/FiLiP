@@ -27,6 +27,7 @@ from filip.models.ngsi_v2.context import \
     Query, \
     ActionType, \
     ContextEntityKeyValues
+from filip.clients.exceptions import BaseHttpClientException
 
 from filip.models.ngsi_v2.base import AttrsFormat, EntityPattern, Status, \
     NamedMetadata
@@ -1896,6 +1897,18 @@ class TestContextBroker(unittest.TestCase):
                 entity_id=entity.id,
                 entity_type=entity.type)
         )
+
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                cb_url=settings.CB_URL)
+    def test_entity_exceptions(self):
+        entity1 = self.entity.model_copy(deep=True)
+        self.client.post_entity(entity1)
+
+        with self.assertRaises(BaseHttpClientException) as context:
+            self.client.post_entity(entity1)
+        self.assertEqual(json.loads(context.exception.response.text)["description"], "Already Exists")
+
 
     def tearDown(self) -> None:
         """
