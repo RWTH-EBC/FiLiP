@@ -1,3 +1,7 @@
+"""
+# This example shows how to generate an access token from an authnetication srever in order to access Fiware services
+# which are protected behind an authentication/authorisation layer.
+"""
 import os
 
 import requests
@@ -10,10 +14,14 @@ from filip.models.base import FiwareHeaderSecure
 urllib3.disable_warnings()
 session = requests.Session()
 CB_URL = settings.CB_URL
+# FIWARE-Service
 SERVICE = 'filip'
+# FIWARE-Servicepath
 SERVICE_PATH = '/'
+# Provide client credentials which are used when generating access token from authentication server
 CLIENT_ID = 'client_id'
 CLIENT_SECRET = 'client_secret'
+# TODO: Please adapt it according to your authentication server which is generating access token for the service
 KEYCLOAK_HOST = 'https://keycloak.example.com'
 
 
@@ -109,3 +117,5 @@ if __name__ == "__main__":
 
     # create a context broker client
     cb_client = ContextBrokerClient(url=CB_URL, fiware_header=fiware_header, session=session)
+    # you don't need to set any extra parameter for requesting the service besides setting session in the client object
+    entity_list = cb_client.get_entity_list()
