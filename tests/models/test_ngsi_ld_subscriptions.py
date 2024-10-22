@@ -232,10 +232,3 @@ class TestLDSubscriptions(unittest.TestCase):
         examples[10] = 'sensor.rawdata[airquality.particulate]==40'
         for example in examples.values():
             validate_ngsi_ld_query(example)
-
-    def tearDown(self) -> None:
-        """
-        Cleanup test server
-        """
-        clear_all(fiware_header=self.fiware_header,
-                  cb_url=settings.CB_URL)
