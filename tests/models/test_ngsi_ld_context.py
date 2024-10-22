@@ -133,43 +133,30 @@ class TestLDContextModels(unittest.TestCase):
                 }
             }
         }
-        # The entity for testing the nested structure of properties
-        self.entity_sub_props_dict_wrong = {
-            "id": "urn:ngsi-ld:OffStreetParking:Downtown1",
-            "type": "OffStreetParking",
-            "name": {
-                "type": "Property",
-                "value": "Downtown One"
-            },
-            "availableSpotNumber": {
-                "type": "Property",
-                "value": 121,
-                "observedAt": "2017-07-29T12:05:02Z",
-                "reliability": {
-                    "type": "NotAProperty",
-                    "value": 0.7
-                },
-                "providedBy": {
-                    "type": "NotARelationship",
-                    "object": "urn:ngsi-ld:Camera:C1"
-                }
-            },
-            "totalSpotNumber": {
-                "type": "Property",
-                "value": 200
-            },
-            "location": {
-                "type": "GeoProperty",
-                "value": {
-                    "type": "Point",
-                    "coordinates": [-8.5, 41.2]
-                }
-            },
-            "@context": [
-                "http://example.org/ngsi-ld/latest/parking.jsonld",
-                "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.3.jsonld"
-            ]
-        }
+        # # The entity for testing the nested structure of properties
+        # self.entity_sub_props_dict_wrong = {
+        #     "id": "urn:ngsi-ld:OffStreetParking:Downtown1",
+        #     "type": "OffStreetParking",
+        #     "name": {
+        #         "type": "Property",
+        #         "value": "Downtown One"
+        #     },
+        #     "totalSpotNumber": {
+        #         "type": "Property",
+        #         "value": 200
+        #     },
+        #     "location": {
+        #         "type": "GeoProperty",
+        #         "value": {
+        #             "type": "Point",
+        #             "coordinates": [-8.5, 41.2]
+        #         }
+        #     },
+        #     "@context": [
+        #         "http://example.org/ngsi-ld/latest/parking.jsonld",
+        #         "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.3.jsonld"
+        #     ]
+        # }
         self.testpoint_value = {
             "type": "Point",
             "coordinates": (-8.5, 41.2)
@@ -354,7 +341,16 @@ class TestLDContextModels(unittest.TestCase):
         Returns:
             None
         """
-        entity5 = ContextLDEntity(**self.entity_sub_props_dict_wrong)
+        entity_sub_props_dict_wrong_1 = self.entity1_dict.copy()
+        entity_sub_props_dict_wrong_1[
+            "availableSpotNumber"]["reliability"]["type"] = "NotProperty"
+        with self.assertRaises(ValueError):
+            entity5 = ContextLDEntity(**entity_sub_props_dict_wrong_1)
+        entity_sub_props_dict_wrong_2 = self.entity1_dict.copy()
+        entity_sub_props_dict_wrong_2[
+            "availableSpotNumber"]["providedBy"]["type"] = "NotRelationship"
+        with self.assertRaises(ValueError):
+            entity5 = ContextLDEntity(**entity_sub_props_dict_wrong_2)
 
     def test_get_properties(self):
         """
@@ -414,7 +410,8 @@ class TestLDContextModels(unittest.TestCase):
         self.assertEqual(self.entity1_context,
                          context_entity1)
 
-        # test here if entity without context can be validated and get_context works accordingly:
+        # test here if entity without context can be validated and get_context
+        # works accordingly:
         entity3 = ContextLDEntity(**self.entity3_dict)
         context_entity3 = entity3.get_context()
 
