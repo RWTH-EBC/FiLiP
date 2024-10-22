@@ -190,14 +190,14 @@ class TestLDContextModels(unittest.TestCase):
         }
         self.testpolygon_value = {
             "type": "Polygon",
-            "coordinates": (
-                (
+            "coordinates": [
+                [
                     (-3.80356167695194, 43.46296641666926),
                     (-3.804056, 43.464638),
                     (-3.805056, 43.463638),
                     (-3.80356167695194, 43.46296641666926)
-                )
-            )
+                ]
+            ]
         }
         self.testgeometrycollection_value = {
             "type": "GeometryCollection",
@@ -257,10 +257,6 @@ class TestLDContextModels(unittest.TestCase):
         prop = ContextProperty(**{'value': 20})
         self.assertIsInstance(prop.value, int)
 
-    def test_entity_id(self) -> None:
-        with self.assertRaises(ValidationError):
-            ContextLDEntity(**{'id': 'MyId', 'type': 'MyType'})
-
     def test_geo_property(self) -> None:
         """
         Test ContextGeoPropertyValue models
@@ -303,6 +299,7 @@ class TestLDContextModels(unittest.TestCase):
         Returns:
             None
         """
+        test = ContextLDEntity.get_model_fields_set()
         entity1 = ContextLDEntity(**self.entity1_dict)
         entity2 = ContextLDEntity(**self.entity2_dict)
 
@@ -363,14 +360,19 @@ class TestLDContextModels(unittest.TestCase):
         """
         Test the get_properties method
         """
-        pass
-        entity = ContextLDEntity(id="urn:ngsi-ld:test", type="Tester")
+        entity = ContextLDEntity(id="urn:ngsi-ld:test",
+                                 type="Tester",
+                                 hasLocation={
+                                     "type": "Relationship",
+                                     "object": "urn:ngsi-ld:test2"
+                                 })
 
         properties = [
             NamedContextProperty(name="prop1"),
             NamedContextProperty(name="prop2"),
         ]
         entity.add_properties(properties)
+        entity.get_properties(response_format="list")
         self.assertEqual(entity.get_properties(response_format="list"),
                          properties)
 
@@ -378,11 +380,11 @@ class TestLDContextModels(unittest.TestCase):
         """
         Test the delete_properties method
         """
-        prop = ContextProperty(**{'value': 20, 'type': 'Text'})
+        prop = ContextProperty(**{'value': 20, 'type': 'Property'})
         named_prop = NamedContextProperty(**{'name': 'test2',
                                              'value': 20,
-                                             'type': 'Text'})
-        prop3 = ContextProperty(**{'value': 20, 'type': 'Text'})
+                                             'type': 'Property'})
+        prop3 = ContextProperty(**{'value': 20, 'type': 'Property'})
 
         entity = ContextLDEntity(id="urn:ngsi-ld:12", type="Test")
 

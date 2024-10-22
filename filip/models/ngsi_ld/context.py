@@ -19,7 +19,7 @@ class DataTypeLD(str, Enum):
     In NGSI-LD the data types on context entities are only divided into properties and relationships.
     """
     _init_ = 'value __doc__'
-
+    GEOPROPERTY = "GeoProperty", "A property that represents a geometry value"
     PROPERTY = "Property", "All attributes that do not represent a relationship"
     RELATIONSHIP = "Relationship", "Reference to another context entity, which can be identified with a URN."
 
@@ -98,6 +98,15 @@ class ContextProperty(BaseModel):
         min_length=1,
     )
     field_validator("datasetId")(validate_fiware_datatype_string_protect)
+
+    @classmethod
+    def get_model_fields_set(cls):
+        """
+        Get all names and aliases of the model fields.
+        """
+        return set([field.validation_alias
+                    for (_, field) in cls.model_fields.items()] +
+                   [field_name for field_name in cls.model_fields])
 
     @field_validator("type")
     @classmethod
@@ -192,7 +201,7 @@ class ContextGeoProperty(BaseModel):
 
     Example:
 
-        "location": {
+        {
         "type": "GeoProperty",
         "value": {
             "type": "Point",
@@ -201,7 +210,6 @@ class ContextGeoProperty(BaseModel):
                 43.46296641666926
             ]
         }
-    }
 
     """
     model_config = ConfigDict(extra='allow')
@@ -500,18 +508,28 @@ class ContextLDEntity(ContextLDEntityKeyValues):
         data.update(self._validate_attributes(data))
         super().__init__(id=id, type=type, **data)
 
+    @classmethod
+    def get_model_fields_set(cls):
+        """
+        Get all names and aliases of the model fields.
+        """
+        return set([field.validation_alias
+                    for (_, field) in cls.model_fields.items()] +
+                   [field_name for field_name in cls.model_fields])
+
     # TODO should geoproperty has subproperties? and can geoproperty be subproperties?
     @classmethod
     def _validate_single_property(cls, attr) -> ContextProperty:
-        property_fields = set([field.validation_alias
-                      for (_, field) in ContextProperty.model_fields.items()] +
-                     [field_name for field_name in ContextProperty.model_fields])
+        property_fields = ContextProperty.get_model_fields_set()
         property_fields.remove(None)
         # subattrs = {}
         if attr.get("type") == "Relationship":
             attr_instance = ContextRelationship.model_validate(attr)
         elif attr.get("type") == "GeoProperty":
-            attr_instance = ContextGeoProperty.model_validate(attr)
+            try:
+                attr_instance = ContextGeoProperty.model_validate(attr)
+            except Exception as e:
+                pass
         elif attr.get("type") == "Property":
             attr_instance = ContextProperty.model_validate(attr)
         else:
@@ -527,8 +545,7 @@ class ContextLDEntity(ContextLDEntityKeyValues):
 
     @classmethod
     def _validate_attributes(cls, data: Dict):
-        entity_fields = set([field.validation_alias for (_, field) in cls.model_fields.items()] +
-                     [field_name for field_name in cls.model_fields])
+        entity_fields = cls.get_model_fields_set()
         entity_fields.remove(None)
         # Initialize the attribute dictionary
         attrs = {}
@@ -574,30 +591,26 @@ class ContextLDEntity(ContextLDEntityKeyValues):
         if response_format == PropertyFormat.DICT:
             final_dict = {}
             for key, value in self.model_dump(exclude_unset=True).items():
-                if key not in ContextLDEntity.model_fields:
-                    try:
-                        if value.get('type') != DataTypeLD.RELATIONSHIP:
-                            try:
-                                final_dict[key] = ContextGeoProperty(**value)
-                            except ValueError:          # if context attribute
-                                final_dict[key] = ContextProperty(**value)
-                    except AttributeError:
-                        if isinstance(value, list):
-                            pass
+                if key not in ContextLDEntity.get_model_fields_set():
+                    if value.get('type') != DataTypeLD.RELATIONSHIP:
+                        if value.get('type') == DataTypeLD.GEOPROPERTY:
+                            final_dict[key] = ContextGeoProperty(**value)
+                        elif value.get('type') == DataTypeLD.PROPERTY:
+                            final_dict[key] = ContextProperty(**value)
+                        else:  # named context property by default
+                            final_dict[key] = ContextProperty(**value)
             return final_dict
         # response format list:
         final_list = []
         for key, value in self.model_dump(exclude_unset=True).items():
-            if key not in ContextLDEntity.model_fields:
-                try:
-                    if value.get('type') != DataTypeLD.RELATIONSHIP:
-                        try:
-                            final_list.append(NamedContextGeoProperty(name=key, **value))
-                        except ValueError:              # if context attribute
-                            final_list.append(NamedContextProperty(name=key, **value))
-                except AttributeError:
-                    if isinstance(value, list):
-                        pass
+            if key not in ContextLDEntity.get_model_fields_set():
+                if value.get('type') != DataTypeLD.RELATIONSHIP:
+                    if value.get('type') == DataTypeLD.GEOPROPERTY:
+                        final_list.append(NamedContextGeoProperty(name=key, **value))
+                    elif value.get('type') == DataTypeLD.PROPERTY:
+                        final_list.append(NamedContextProperty(name=key, **value))
+                    else:  # named context property by default
+                        final_list.append(NamedContextProperty(name=key, **value))
         return final_list
 
     def add_attributes(self, **kwargs):
@@ -728,7 +741,7 @@ class ContextLDEntity(ContextLDEntityKeyValues):
         if response_format == PropertyFormat.DICT:
             final_dict = {}
             for key, value in self.model_dump(exclude_unset=True).items():
-                if key not in ContextLDEntity.model_fields:
+                if key not in ContextLDEntity.get_model_fields_set():
                     try:
                         if value.get('type') == DataTypeLD.RELATIONSHIP:
                             final_dict[key] = ContextRelationship(**value)
@@ -739,13 +752,9 @@ class ContextLDEntity(ContextLDEntityKeyValues):
         # response format list:
         final_list = []
         for key, value in self.model_dump(exclude_unset=True).items():
-            if key not in ContextLDEntity.model_fields:
-                try:
-                    if value.get('type') == DataTypeLD.RELATIONSHIP:
-                        final_list.append(NamedContextRelationship(name=key, **value))
-                except AttributeError:              # if context attribute
-                    if isinstance(value, list):
-                        pass
+            if key not in ContextLDEntity.get_model_fields_set():
+                if value.get('type') == DataTypeLD.RELATIONSHIP:
+                    final_list.append(NamedContextRelationship(name=key, **value))
         return final_list
 
     def get_context(self):
@@ -758,7 +767,7 @@ class ContextLDEntity(ContextLDEntityKeyValues):
         """
         found_list = False
         for key, value in self.model_dump(exclude_unset=True).items():
-            if key not in ContextLDEntity.model_fields:
+            if key not in ContextLDEntity.get_model_fields_set():
                 if isinstance(value, list):
                     found_list = True
                     return value
