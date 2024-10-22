@@ -92,7 +92,7 @@ class EntitiesBatchOperations(unittest.TestCase):
             for entity in entity_list_b:
                 self.cb_client.delete_entity_by_id(entity_id=entity.id)
 
-    def test_entity_operations_update(self) -> None:
+    def test_entity_batch_operations_update(self) -> None:
         """
         Batch Entity update. 
         Args:
@@ -141,7 +141,6 @@ class EntitiesBatchOperations(unittest.TestCase):
         nupdated = [x for x in entity_list if int(x.id.split(':')[3]) in range(0,3)]
         self.assertCountEqual(entities_a[0:3],nupdated)
         self.assertCountEqual(entities_update[0:2],updated)
-        # TODO @lro: does Test 1 still provide any benefit when the entities are retrieved with two calls?
 
         """Test 2"""
         #use that all entities have attr temperature at this point
@@ -180,7 +179,7 @@ class EntitiesBatchOperations(unittest.TestCase):
         for entity in entity_list:
             self.cb_client.delete_entity_by_id(entity_id=entity.id)
 
-    def test_entity_operations_upsert(self) -> None:
+    def test_entity_batch_operations_upsert(self) -> None:
         """
         Batch Entity upsert.
         Args:
@@ -260,7 +259,7 @@ class EntitiesBatchOperations(unittest.TestCase):
         for entity in entity_list:
             self.cb_client.delete_entity_by_id(entity_id=entity.id)
     
-    def test_entity_operations_delete(self) -> None:
+    def test_entity_batch_operations_delete(self) -> None:
         """
         Batch entity delete.
         Args:
