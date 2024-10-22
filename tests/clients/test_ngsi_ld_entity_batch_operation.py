@@ -143,7 +143,8 @@ class EntitiesBatchOperations(unittest.TestCase):
         self.assertCountEqual(entities_update[0:2],updated)
 
         """Test 2"""
-        #use that all entities have attr temperature at this point
+        # presssure will be appended while the existing temperature will
+        # not be overwritten
         entities_update = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
                                            type=f'filip:object:test',
                                            **{'temperature': {'value': self.r.randint(50,100)},
@@ -173,7 +174,8 @@ class EntitiesBatchOperations(unittest.TestCase):
         with self.assertRaises(HTTPError):
             self.cb_client.entity_batch_operation(entities=[],action_type=ActionTypeLD.UPDATE)
         
-        #according to spec, this should raise bad request data, but pydantic is intercepting
+        # according to spec, this should raise bad request data,
+        # but pydantic is intercepting
         with self.assertRaises(ValidationError):
             self.cb_client.entity_batch_operation(entities=[None],action_type=ActionTypeLD.UPDATE)
             
@@ -209,19 +211,24 @@ class EntitiesBatchOperations(unittest.TestCase):
                     e should contain only a0
         """
         """Test 1"""
+        # create entities 1 -3
         entities_a = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
                                       type=f'filip:object:test',
                                       **{'temperature': {'value': self.r.randint(0,20)}}) for i in
                       range(1, 4)]
         self.cb_client.entity_batch_operation(entities=entities_a, action_type=ActionTypeLD.CREATE)
 
+        # replace entities 0 - 1
         entities_replace = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
                                             type=f'filip:object:test',
                                             **{'pressure': {'value': self.r.randint(50,100)}}) for i in
                       range(0, 2)]
         self.cb_client.entity_batch_operation(entities=entities_replace, action_type=ActionTypeLD.UPSERT,
                                               options="replace")
-        
+
+        # update entities 3 - 4,
+        # pressure will be appended for 3
+        # temperature will be appended for 4
         entities_update = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
                                            type=f'filip:object:test',
                                            **{'pressure': {'value': self.r.randint(50,100)}}) for i in
@@ -295,7 +302,6 @@ class EntitiesBatchOperations(unittest.TestCase):
                                                   action_type=ActionTypeLD.DELETE)
 
         """Test 2"""
-        entity_del_type = 'filip:object:test'
         entity_del_type = 'filip:object:test'
         entities_ids_a = [f"urn:ngsi-ld:test:{str(i)}" for i in
                           range(0, 4)]

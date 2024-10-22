@@ -689,7 +689,7 @@ class ContextBrokerLDClient(BaseHttpClient):
                                *,
                                entities: List[ContextLDEntity],
                                action_type: Union[ActionTypeLD, str],
-                               options: str = None) -> None:
+                               options: Literal['noOverwrite', 'replace', 'update'] = None) -> None:
         """
         This operation allows to create, update and/or delete several entities
         in a single batch operation.
@@ -720,7 +720,7 @@ class ContextBrokerLDClient(BaseHttpClient):
             action_type (Update): "actionType, to specify the kind of update
                     action to do: either append, appendStrict, update, delete,
                     or replace. "
-            options (str): Optional 'keyValues' 'noOverwrite' 'replace'
+            options (str): Optional 'noOverwrite' 'replace' 'update'
 
         Returns:
 
