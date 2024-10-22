@@ -1,3 +1,6 @@
+### v0.6.X
+- add: Tutorial for connecting with secured endpoints ([#319](https://github.com/RWTH-EBC/FiLiP/pull/319))
+
 ### v0.5.0
 - update: allow duplicated name in device, check uniqueness of object_id ([#279](https://github.com/RWTH-EBC/FiLiP/pull/279))
 - update: upgrade dependency of `paho-mqtt` to v2 ([#273](https://github.com/RWTH-EBC/FiLiP/pull/273/))
