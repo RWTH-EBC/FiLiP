@@ -689,7 +689,7 @@ class ContextBrokerLDClient(BaseHttpClient):
                                *,
                                entities: List[ContextLDEntity],
                                action_type: Union[ActionTypeLD, str],
-                               update_format: str = None) -> None:
+                               options: str = None) -> None:
         """
         This operation allows to create, update and/or delete several entities
         in a single batch operation.
@@ -720,7 +720,7 @@ class ContextBrokerLDClient(BaseHttpClient):
             action_type (Update): "actionType, to specify the kind of update
                     action to do: either append, appendStrict, update, delete,
                     or replace. "
-            update_format (str): Optional 'keyValues'
+            options (str): Optional 'keyValues' 'noOverwrite' 'replace'
 
         Returns:
 
@@ -730,8 +730,8 @@ class ContextBrokerLDClient(BaseHttpClient):
         headers = self.headers.copy()
         headers.update({'Content-Type': 'application/json'})
         params = {}
-        if update_format:
-            params.update({'options': update_format})
+        if options:
+            params.update({'options': options})
         update = UpdateLD(entities=entities)
         try:
             if action_type == ActionTypeLD.DELETE:

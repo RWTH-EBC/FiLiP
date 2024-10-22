@@ -150,8 +150,9 @@ class EntitiesBatchOperations(unittest.TestCase):
                                               'pressure':{'value': self.r.randint(1,100)}}) for i in
                            range(0, 5)]
         
-        self.cb_client.entity_batch_operation(entities=entities_update, action_type=ActionTypeLD.UPDATE,
-                                              update_format="noOverwrite")
+        self.cb_client.entity_batch_operation(entities=entities_update,
+                                              action_type=ActionTypeLD.UPDATE,
+                                              options="noOverwrite")
         
         previous = entity_list
         previous.sort(key=lambda x: int(x.id.split(':')[3]))
@@ -219,14 +220,14 @@ class EntitiesBatchOperations(unittest.TestCase):
                                             **{'pressure': {'value': self.r.randint(50,100)}}) for i in
                       range(0, 2)]
         self.cb_client.entity_batch_operation(entities=entities_replace, action_type=ActionTypeLD.UPSERT,
-                                              update_format="replace")
+                                              options="replace")
         
         entities_update = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
                                            type=f'filip:object:test',
                                            **{'pressure': {'value': self.r.randint(50,100)}}) for i in
                       range(3, 5)]
         self.cb_client.entity_batch_operation(entities=entities_update, action_type=ActionTypeLD.UPSERT,
-                                            update_format="update")
+                                              options="update")
    
         # 0,1 and 4 should have pressure only
         # 2 should have temperature only
