@@ -79,20 +79,16 @@ class TestContextBroker(unittest.TestCase):
         """
         self.assertIsNotNone(self.client.get_statistics())
 
-    def test_pagination(self):
+    def test_get_entities_pagination(self):
         """
-        Test pagination of context broker client
-        Test pagination. only works if enough entities are available
-        self.assertLessEqual(len(self.client.get_entity_list(limit=1)), 1)
-        self.assertLessEqual(len(self.client.get_entity_list(limit=50)), 50)
-        self.assertLessEqual(len(self.client.get_entity_list(limit=100)), 100)
-        self.client.entity_batch_operation(action_type=ActionTypeLD.DELETE, entities=entities_a)
+        Test pagination of get entities
         """
         entities_a = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
                                     type=f'filip:object:TypeA') for i in
                         range(0, 2000)]
         
-        self.client.entity_batch_operation(action_type=ActionTypeLD.CREATE, entities=entities_a)
+        self.client.entity_batch_operation(action_type=ActionTypeLD.CREATE,
+                                           entities=entities_a)
         
         entity_list = self.client.get_entity_list(limit=1)
         self.assertEqual(len(entity_list),1)
