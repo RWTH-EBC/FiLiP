@@ -3,25 +3,13 @@ Tests for filip.cb.client
 """
 import unittest
 import logging
-import time
-import random
-import json
-import paho.mqtt.client as mqtt
-from datetime import datetime
 from requests import RequestException
-
 from filip.clients.ngsi_ld.cb import ContextBrokerLDClient
-from filip.models.base import  DataType, FiwareLDHeader
-from filip.models.ngsi_ld.context import ActionTypeLD, ContextLDEntity, ContextProperty, NamedContextProperty
-from filip.utils.simple_ql import QueryString
-
-from filip.models.ngsi_v2.base import AttrsFormat
-from filip.models.ngsi_v2.subscriptions import Subscription
+from filip.models.base import FiwareLDHeader
+from filip.models.ngsi_ld.context import ActionTypeLD, ContextLDEntity, ContextProperty, \
+    NamedContextProperty
 from tests.config import settings
-from filip.models.ngsi_v2.context import \
-    NamedCommand, \
-    Query, \
-    ContextEntity
+import requests
 
 
 # Setting up logging
@@ -50,17 +38,17 @@ class TestContextBroker(unittest.TestCase):
                 'value': 20.0}
         }
         self.entity = ContextLDEntity(id='urn:ngsi-ld:my:id4', type='MyType', **self.attr)
+        self.entity_2 = ContextLDEntity(id="urn:ngsi-ld:room2", type="room")
         self.fiware_header = FiwareLDHeader(ngsild_tenant=settings.FIWARE_SERVICE)
         self.client = ContextBrokerLDClient(fiware_header=self.fiware_header,
                                             url=settings.LD_CB_URL)
         # todo replace with clean up function for ld
         try:
-            # todo implement with pagination, the default limit is 20
-            #  and max limit is 1000 for orion-ld
-            for i in range(0, 10):
+            entity_list = True
+            while entity_list:
                 entity_list = self.client.get_entity_list(limit=1000)
-                for entity in entity_list:
-                    self.client.delete_entity_by_id(entity_id=entity.id)
+                self.client.entity_batch_operation(action_type=ActionTypeLD.DELETE,
+                                                   entities=entity_list)
         except RequestException:
             pass
 
@@ -68,12 +56,12 @@ class TestContextBroker(unittest.TestCase):
         """
         Cleanup test server
         """
-        # todo replace with clean up function for ld
         try:
-            for i in range(0, 10):
+            entity_list = True
+            while entity_list:
                 entity_list = self.client.get_entity_list(limit=1000)
-                for entity in entity_list:
-                    self.client.delete_entity_by_id(entity_id=entity.id)
+                self.client.entity_batch_operation(action_type=ActionTypeLD.DELETE,
+                                                   entities=entity_list)
         except RequestException:
             pass
         self.client.close()
@@ -91,259 +79,570 @@ class TestContextBroker(unittest.TestCase):
         """
         self.assertIsNotNone(self.client.get_statistics())
 
-    def aatest_pagination(self):
+    def test_get_entities_pagination(self):
         """
-        Test pagination of context broker client
-        Test pagination. only works if enough entities are available
+        Test pagination of get entities
         """
-        fiware_header = FiwareLDHeader()
-        with ContextBrokerLDClient(fiware_header=fiware_header) as client:
-            entities_a = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
-                                        type=f'filip:object:TypeA') for i in
-                          range(0, 1000)]
-            client.entity_batch_operation(action_type=ActionTypeLD.CREATE, entities=entities_a)
-            entities_b = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
-                                        type=f'filip:object:TypeB') for i in
-                          range(1000, 2001)]
-            client.entity_batch_operation(action_type=ActionTypeLD.CREATE, entities=entities_b)
-            self.assertLessEqual(len(client.get_entity_list(limit=1)), 1)
-            self.assertLessEqual(len(client.get_entity_list(limit=999)), 999)
-            self.assertLessEqual(len(client.get_entity_list(limit=1001)), 1001)
-            self.assertLessEqual(len(client.get_entity_list(limit=2001)), 2001)
-
-            client.entity_batch_operation(action_type=ActionTypeLD.DELETE, entities=entities_a)
-            client.entity_batch_operation(action_type=ActionTypeLD.DELETE, entities=entities_b)
-
-    def aatest_entity_filtering(self):
-        """
-        Test filter operations of context broker client
-        """
-
-        with ContextBrokerLDClient(fiware_header=self.fiware_header) as client:
-            print(client.session.headers)
-            # test patterns
-            with self.assertRaises(ValueError):
-                client.get_entity_list(id_pattern='(&()?')
-            with self.assertRaises(ValueError):
-                client.get_entity_list(type_pattern='(&()?')
-            entities_a = [ContextLDEntity(id=f"urn:ngsi-ld:TypeA:{str(i)}",
-                                        type=f'filip:object:TypeA') for i in
-                          range(0, 5)]
-
-            client.entity_batch_operation(action_type=ActionTypeLD.CREATE, entities=entities_a)
-            entities_b = [ContextLDEntity(id=f"urn:ngsi-ld:TypeB:{str(i)}",
-                                        type=f'filip:object:TypeB') for i in
-                          range(6, 10)]
-
-            client.entity_batch_operation(action_type=ActionTypeLD.CREATE, entities=entities_b)
-
-            entities_all = client.get_entity_list()
-            entities_by_id_pattern = client.get_entity_list(
-                id_pattern='.*[1-5]')
-            self.assertLess(len(entities_by_id_pattern), len(entities_all))
-
-            # entities_by_type_pattern = client.get_entity_list(
-            #     type_pattern=".*TypeA$")
-            # self.assertLess(len(entities_by_type_pattern), len(entities_all))
-
-            qs = QueryString(qs=[('presentValue', '>', 0)])
-            entities_by_query = client.get_entity_list(q=qs)
-            self.assertLess(len(entities_by_query), len(entities_all))
-
-            # test options
-            for opt in list(AttrsFormat):
-                entities_by_option = client.get_entity_list(response_format=opt)
-                self.assertEqual(len(entities_by_option), len(entities_all))
-                self.assertEqual(client.get_entity(
-                    entity_id='urn:ngsi-ld:TypeA:0',
-                    response_format=opt),
-                    ContextLDEntity(id="urn:ngsi-ld:TypeA:0",
-                                    type='filip:object:TypeA'))
-            with self.assertRaises(ValueError):
-                client.get_entity_list(response_format='not in AttrFormat')
-
-            client.entity_batch_operation(action_type=ActionTypeLD.DELETE, entities=entities_a)
-
-            client.entity_batch_operation(action_type=ActionTypeLD.DELETE, entities=entities_b)
-
-    def test_entity_operations(self):
-        """
-        Test entity operations of context broker client
-        """
-        self.client.post_entity(entity=self.entity, update=True)
-        res_entity = self.client.get_entity(entity_id=self.entity.id)
-        self.client.get_entity(entity_id=self.entity.id, attrs=['testtemperature'])
-        #    self.assertEqual(client.get_entity_attributes(
-        #        entity_id=self.entity.id), res_entity.get_properties(
-        #        response_format='dict'))
-        #    res_entity.testtemperature.value = 25
-        #    client.update_entity(entity=res_entity)  # TODO: how to use context?
-        #    self.assertEqual(client.get_entity(entity_id=self.entity.id),
-        #                     res_entity)
-        #    res_entity.add_properties({'pressure': ContextProperty(
-        #        type='Number', value=1050)})
-        #    client.update_entity(entity=res_entity)
-        #    self.assertEqual(client.get_entity(entity_id=self.entity.id),
-        #                     res_entity)
-
-    def aatest_attribute_operations(self):
-        """
-        Test attribute operations of context broker client
-        """
-        with ContextBrokerLDClient(fiware_header=self.fiware_header) as client:
-            entity = self.entity
-            attr_txt = NamedContextProperty(name='attr_txt',
-                                             value="Test")
-            attr_bool = NamedContextProperty(name='attr_bool',
-                                              value=True)
-            attr_float = NamedContextProperty(name='attr_float',
-                                               value=round(random.random(), 5))
-            attr_list = NamedContextProperty(name='attr_list',
-                                              value=[1, 2, 3])
-            attr_dict = NamedContextProperty(name='attr_dict',
-                                              value={'key': 'value'})
-            entity.add_properties([attr_txt,
-                                   attr_bool,
-                                   attr_float,
-                                   attr_list,
-                                   attr_dict])
-
-            self.assertIsNotNone(client.post_entity(entity=entity,
-                                                    update=True))
-            res_entity = client.get_entity(entity_id=entity.id)
-
-            for attr in entity.get_properties():
-                self.assertIn(attr, res_entity.get_properties())
-                res_attr = client.get_attribute(entity_id=entity.id,
-                                                attr_name=attr.name)
-
-                self.assertEqual(type(res_attr.value), type(attr.value))
-                self.assertEqual(res_attr.value, attr.value)
-                value = client.get_attribute_value(entity_id=entity.id,
-                                                   attr_name=attr.name)
-                # unfortunately FIWARE returns an int for 20.0 although float
-                # is expected
-                if isinstance(value, int) and not isinstance(value, bool):
-                    value = float(value)
-                self.assertEqual(type(value), type(attr.value))
-                self.assertEqual(value, attr.value)
-
-            for attr_name, attr in entity.get_properties(
-                    response_format='dict').items():
-
-                client.update_entity_attribute(entity_id=entity.id,
-                                               attr_name=attr_name,
-                                               attr=attr)
-                value = client.get_attribute_value(entity_id=entity.id,
-                                                   attr_name=attr_name)
-                # unfortunately FIWARE returns an int for 20.0 although float
-                # is expected
-                if isinstance(value, int) and not isinstance(value, bool):
-                    value = float(value)
-                self.assertEqual(type(value), type(attr.value))
-                self.assertEqual(value, attr.value)
-
-            new_value = 1337.0
-            client.update_attribute_value(entity_id=entity.id,
-                                          attr_name='testtemperature',
-                                          value=new_value)
-            attr_value = client.get_attribute_value(entity_id=entity.id,
-                                                    attr_name='testtemperature')
-            self.assertEqual(attr_value, new_value)
-
-            client.delete_entity(entity_id=entity.id)
-
-    def aatest_type_operations(self):
-        """
-        Test type operations of context broker client
-        """
-        with ContextBrokerLDClient(fiware_header=self.fiware_header) as client:
-            self.assertIsNotNone(client.post_entity(entity=self.entity,
-                                                    update=True))
-            client.get_entity_types()
-            #client.get_entity_types(options='count') # TODO ask Thomas
-            #client.get_entity_types(options='values')
-            client.get_entity_type(entity_type='MyType')
-            client.delete_entity(entity_id=self.entity.id)
-
-    def test_batch_operations(self):
-        """
-        Test batch operations of context broker client
-        """
-
-        entities = [ContextLDEntity(id=f"test:{i}",
+        entities_a = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
                                     type=f'filip:object:TypeA') for i in
-                    range(0, 1000)]
-        self.client.entity_batch_operation(entities=entities, action_type=ActionTypeLD.CREATE)
-        with self.assertRaises(RuntimeError):
-            # the entity id must be unique
-            entities = [ContextLDEntity(id=f"test:{i}",
-                                        type=f'filip:object:TypeB') for i in
-                        range(0, 1000)]
-            self.client.entity_batch_operation(entities=entities, action_type=ActionTypeLD.CREATE)
-        # check upsert
-        entities_upsert = [ContextLDEntity(id=f"test:{i}",
-                                           type=f'filip:object:TypeB') for i in
-                           range(0, 1000)]
-        with self.assertRaises(RuntimeError):
-            # cannot use upsert to change the type
-            self.client.entity_batch_operation(entities=entities_upsert, action_type=ActionTypeLD.UPSERT)
-        entities_upsert = [ContextLDEntity(id=f"testUpsert:{i}",
-                                           type=f'filip:object:TypeB'
-                                           ) for i in
-                           range(0, 1000)]
-        # create entities
-        self.client.entity_batch_operation(entities=entities_upsert, action_type=ActionTypeLD.UPSERT)
-        # add properties
-        for entity_upsert in entities_upsert:
-            entity_upsert.add_properties([NamedContextProperty(name='testAttr',
-                                                               value='testValue')])
-        self.client.entity_batch_operation(entities=entities_upsert, action_type=ActionTypeLD.UPSERT)
-        entities_query = self.client.get_entity_list(
-            entity_type=f'filip:object:TypeB',
-            limit=1000)
-        for entity_query in entities_query:
-            self.assertEqual(len(entity_query.get_properties()), 1)
-        # check update
-        entities_update = [ContextLDEntity(id=f"test:{i}",
-                                           type=f'filip:object:TypeC') for i in
-                           range(0, 1000)]
-        self.client.entity_batch_operation(entities=entities_update, action_type=ActionTypeLD.UPDATE)
-        entities_query_update = self.client.get_entity_list(
-            entity_type=f'filip:object:TypeC',
-            limit=1000)
-        for entity_query_update in entities_query_update:
-            self.assertIn(entity_query_update, entities_update)
-        # check delete
-        self.client.entity_batch_operation(entities=entities_update, action_type=ActionTypeLD.DELETE)
-        entities_query_update = self.client.get_entity_list(
-            entity_type=f'filip:object:TypeC',
-            limit=1000)
-        self.assertEqual(len(entities_query_update), 0)
+                        range(0, 2000)]
+        
+        self.client.entity_batch_operation(action_type=ActionTypeLD.CREATE,
+                                           entities=entities_a)
+        
+        entity_list = self.client.get_entity_list(limit=1)
+        self.assertEqual(len(entity_list),1)
+        
+        entity_list = self.client.get_entity_list(limit=400)
+        self.assertEqual(len(entity_list),400)
+        
+        entity_list = self.client.get_entity_list(limit=800)
+        self.assertEqual(len(entity_list),800)
+        
+        entity_list = self.client.get_entity_list(limit=1000)
+        self.assertEqual(len(entity_list),1000)
 
-    def aatest_get_all_attributes(self):
-        fiware_header = FiwareLDHeader(service='filip',
-                                       service_path='/testing')
-        with ContextBrokerLDClient(fiware_header=self.fiware_header) as client:
-            entity = self.entity
-            attr_txt = NamedContextProperty(name='attr_txt',
-                                            value="Test")
-            attr_bool = NamedContextProperty(name='attr_bool',
-                                             value=True)
-            attr_float = NamedContextProperty(name='attr_float',
-                                              value=round(random.random(), 5))
-            attr_list = NamedContextProperty(name='attr_list',
-                                             value=[1, 2, 3])
-            attr_dict = NamedContextProperty(name='attr_dict',
-                                             value={'key': 'value'})
-            entity.add_properties([attr_txt,
-                                   attr_bool,
-                                   attr_float,
-                                   attr_list,
-                                   attr_dict])
+        # currently, there is a limit of 1000 entities per delete request
+        self.client.entity_batch_operation(action_type=ActionTypeLD.DELETE,
+                                           entities=entities_a)
 
-            client.post_entity(entity=entity, update=True)
-            attrs_list = client.get_all_attributes()
-            self.assertEqual(['attr_bool', 'attr_dict', 'attr_float', 'attr_list', 'attr_txt', 'testtemperature'],
-                             attrs_list)
+    def test_get_entites(self):
+        """
+        Retrieve a set of entities which matches a specific query from an NGSI-LD system
+        Args: 
+            - id(string): Comma separated list of URIs to be retrieved
+            - idPattern(string): Regular expression that must be matched by Entity ids
+            - type(string): Comma separated list of Entity type names to be retrieved
+            - attrs(string): Comma separated list of attribute names (properties or relationships) to be retrieved
+            - q(string): Query
+            - georel: Geo-relationship
+            - geometry(string): Geometry; Available values : Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon
+            - coordinates: Coordinates serialized as a string
+            - geoproperty(string): The name of the property that contains the geo-spatial data that will be used to resolve the geoquery
+            - csf(string): Context Source Filter
+            - limit(integer): Pagination limit
+            - options(string): Options dictionary; Available values : keyValues, sysAttrs
+        """
+        entity_list = self.client.get_entity_list()
+        self.assertEqual(len(entity_list), 0)
 
+        self.client.post_entity(entity=self.entity)
+        entity_list_idpattern = self.client.get_entity_list(
+            id_pattern="urn:ngsi-ld:my*")
+        self.assertEqual(len(entity_list_idpattern), 1)
+        self.assertEqual(entity_list_idpattern[0].id, self.entity.id)
+
+        entity_list_attrs = self.client.get_entity_list(attrs=["testtemperature"])
+        self.assertEqual(len(entity_list_attrs), 1)
+        self.assertEqual(entity_list_attrs[0].id, self.entity.id)
+
+    def test_post_entity(self):
+        """
+        Post an entity.
+        Args:
+            - Entity{
+                @context: LdContext{}
+                location: GeoProperty{}
+                observationSpace: GeoProperty{}
+                operationSpace: GeoProperty{}
+                id: string($uri) required
+                type: Name(string) required
+                (NGSI-LD Name)
+                createdAt: string($date-time)
+                modifiedAt: string($date_time)
+                <*>: Property{}
+                     Relationship{}
+                     GeoProperty{}    
+            }
+        Returns: 
+            - (201) Created. Contains the resource URI of the created Entity
+            - (400) Bad request.
+            - (409) Already exists.
+            - (422) Unprocessable Entity.
+        Tests:
+            - Post an entity -> Does it return 201? 
+            - Post an entity again -> Does it return 409?
+            - Post an entity without requires args -> Does it return 422?
+        """
+        """
+        Test 1:
+            Post enitity with entity_ID and entity_type
+            if return != 201:
+                Raise Error
+            Get entity list
+            If entity with entity_ID is not on entity list:
+                Raise Error
+        Test 2: 
+            Post entity with entity_ID and entity_type
+            Post entity with the same entity_ID and entity_type as before
+            If return != 409: 
+                Raise Error
+            Get entity list
+            If there are duplicates on entity list:
+                Raise Error
+        Test 3: 
+            Post an entity with an entity_ID and without an entity_type 
+            If return != 422:
+                Raise Error
+            Get entity list 
+            If the entity list does contain the posted entity:
+                Raise Error
+        Test Additonal:
+            post two entities with the same enitity id but different entity type-> should throw error.
+        """
+        """Test1"""
+        self.client.post_entity(entity=self.entity)
+        entity_list = self.client.get_entity_list(entity_type=self.entity.type)
+        self.assertEqual(len(entity_list), 1)
+        self.assertEqual(entity_list[0].id, self.entity.id)
+        self.assertEqual(entity_list[0].type, self.entity.type)
+        self.assertEqual(entity_list[0].testtemperature.value,
+                         self.entity.testtemperature.value)
+
+        """Test2"""
+        self.entity_identical = self.entity.model_copy()
+        with self.assertRaises(requests.exceptions.HTTPError) as contextmanager:
+            self.client.post_entity(entity=self.entity_identical)
+        response = contextmanager.exception.response
+        self.assertEqual(response.status_code, 409)
+
+        entity_list = self.client.get_entity_list(
+            entity_type=self.entity_identical.type)
+        self.assertEqual(len(entity_list), 1)
+
+        """Test3"""
+        with self.assertRaises(Exception):
+            self.client.post_entity(ContextLDEntity(id="room2"))
+        entity_list = self.client.get_entity_list()
+        self.assertNotIn("room2", entity_list)
+
+        """delete"""
+        self.client.entity_batch_operation(entities=entity_list,
+                                              action_type=ActionTypeLD.DELETE)
+
+    def test_get_entity(self):
+        """
+        Get an entity with an specific ID.
+        Args:
+            - entityID(string): Entity ID, required
+            - attrs(string): Comma separated list of attribute names (properties or relationships) to be retrieved
+            - type(string): Entity Type
+            - options(string): Options dictionary; Available values : keyValues, sysAttrs
+        Returns:
+            - (200) Entity
+            - (400) Bad request
+            - (404) Not found
+        Tests for get entity: 
+            - Post entity and see if get entity with the same ID returns the entity
+                with the correct values
+            - Get entity with an ID that does not exit. See if Not found error is 
+                raised
+        """
+
+        """
+        Test 1:
+            post entity_1 with entity_1_ID
+            get enntity_1 with enity_1_ID
+            compare if the posted entity_1 is the same as the get_enity_1
+                If attributes posted entity.id !=  ID get entity:
+                    Raise Error
+                If type posted entity != type get entity:
+                    Raise Error
+        Test 2:
+            get enitity with enitity_ID that does not exit
+            If return != 404:
+                Raise Error
+        """
+        """Test1"""
+        self.client.post_entity(entity=self.entity)
+        ret_entity = self.client.get_entity(entity_id=self.entity.id)
+        ret_entity_with_type = self.client.get_entity(entity_id=self.entity.id,
+                                                         entity_type=self.entity.type)
+        ret_entity_keyValues = self.client.get_entity(entity_id=self.entity.id,
+                                                         options="keyValues")
+        ret_entity_sysAttrs = self.client.get_entity(entity_id=self.entity.id,
+                                                        options="sysAttrs")
+
+        self.assertEqual(ret_entity.id, self.entity.id)
+        self.assertEqual(ret_entity.type, self.entity.type)
+        self.assertEqual(ret_entity_with_type.id, self.entity.id)
+        self.assertEqual(ret_entity_with_type.type, self.entity.type)
+        self.assertEqual(ret_entity_keyValues.id, self.entity.id)
+        self.assertEqual(ret_entity_keyValues.type, self.entity.type)
+        self.assertEqual(ret_entity_sysAttrs.id, self.entity.id)
+        self.assertEqual(ret_entity_sysAttrs.type, self.entity.type)
+        self.assertNotEqual(ret_entity_sysAttrs.createdAt, None)
+
+        """Test2"""
+        with self.assertRaises(requests.exceptions.HTTPError) as contextmanager:
+            self.client.get_entity("urn:roomDoesnotExist")
+        response = contextmanager.exception.response
+        self.assertEqual(response.status_code, 404)
+
+        with self.assertRaises(requests.exceptions.HTTPError) as contextmanager:
+            self.client.get_entity("roomDoesnotExist")
+        response = contextmanager.exception.response
+        self.assertEqual(response.status_code, 400)
+
+    def test_delete_entity(self):
+        """
+        Removes an specific Entity from an NGSI-LD system.
+        Args:
+            - entityID(string): Entity ID; required
+            - type(string): Entity Type
+        Returns: 
+            - (204) No Content. The entity was removed successfully.
+            - (400) Bad request.
+            - (404) Not found.
+        Tests:
+            - Try to delete an non existent entity -> Does it return a Not found?
+            - Post an entity and try to delete the entity -> Does it return 204?
+            - Try to get to delete an deleted entity -> Does it return 404?
+        """
+
+        """
+        Test 1:
+            delete entity with non existent entity_ID
+            If return != 404:
+                Raise Error
+
+        Test 2: 
+            post an entity with entity_ID and entity_type
+            delete entity with entity_ID
+            get entity list 
+            If entity with entity_ID in entity list:
+                Raise Error
+
+        Test 3: 
+            delete entity with entity_ID 
+                return != 404 ? 
+                    yes: 
+                        Raise Error
+        """
+
+        """Test1"""
+        # try to delete nonexistent entity
+        with self.assertRaises(requests.exceptions.HTTPError) as contextmanager:
+            self.client.get_entity(entity_id=self.entity.id)
+        response = contextmanager.exception.response
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json()["title"], "Entity Not Found")
+
+        """Test2"""
+        self.client.post_entity(entity=self.entity)
+        self.client.post_entity(entity=self.entity_2)
+        entity_list = self.client.get_entity_list()
+        entity_ids = [entity.id for entity in entity_list]
+        self.assertIn(self.entity.id, entity_ids)
+
+        self.client.delete_entity_by_id(entity_id=self.entity.id)
+        entity_list = self.client.get_entity_list()
+        entity_ids = [entity.id for entity in entity_list]
+        self.assertNotIn(self.entity.id, entity_ids)
+        self.assertIn(self.entity_2.id, entity_ids)
+
+        """Test3"""
+        # entity was already deleted
+        with self.assertRaises(requests.exceptions.HTTPError) as contextmanager:
+            self.client.get_entity(entity_id=self.entity.id)
+        response = contextmanager.exception.response
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json()["title"], "Entity Not Found")
+
+    def test_add_attributes_entity(self):
+        """
+        Append new Entity attributes to an existing Entity within an NGSI-LD system.
+        Args: 
+            - entityID(string): Entity ID; required
+            - options(string): Indicates that no attribute overwrite shall be performed. 
+                Available values: noOverwrite
+        Returns: 
+            - (204) No Content
+            - (207) Partial Success. Only the attributes included in the response payload were successfully appended.
+            - (400) Bad Request
+            - (404) Not Found
+        Tests:
+            - Post an entity and add an attribute. Test if the attribute is added when Get is done.
+            - Try to add an attribute to an non existent entity -> Return 404
+            - Try to overwrite an attribute even though noOverwrite option is used
+        """
+        """
+        Test 1:
+            post an entity with entity_ID and entity_type
+            add attribute to the entity with entity_ID
+            get entity with entity_ID and new attribute
+            Is new attribute not added to enitity ? 
+                yes:
+                    Raise Error
+        Test 2: 
+            add attribute to an non existent entity
+            Raise Error
+        Test 3:
+            post an entity with entity_ID, entity_type, entity_attribute
+            add attribute that already exists with noOverwrite
+                Raise Error
+            get entity and compare previous with entity attributes
+            If attributes are different?
+                Raise Error
+        """
+        """Test 1"""
+        self.client.post_entity(self.entity)
+        attr = ContextProperty(**{'value': 20, 'unitCode': 'Number'})
+
+        self.entity.add_properties({"test_value": attr})
+        self.client.append_entity_attributes(self.entity)
+        entity_list = self.client.get_entity_list()
+        for entity in entity_list:
+            self.assertEqual(first=entity.test_value.value, second=attr.value)
+        for entity in entity_list:
+            self.client.delete_entity_by_id(entity_id=entity.id)
+
+        """Test 2"""
+        attr = ContextProperty(**{'value': 20, 'type': 'Number'})
+        with self.assertRaises(Exception):
+            self.entity.add_properties({"test_value": attr})
+            self.client.append_entity_attributes(self.entity)
+
+        """Test 3"""
+        self.client.post_entity(self.entity)
+        # What makes an property/ attribute unique ???
+        attr = ContextProperty(**{'value': 20, 'type': 'Number'})
+        attr_same = ContextProperty(**{'value': 40, 'type': 'Number'})
+
+        self.entity.add_properties({"test_value": attr})
+        self.client.append_entity_attributes(self.entity)
+        self.entity.add_properties({"test_value": attr_same})
+        # Removed raise check because noOverwrite gives back a 207 and not a 400 (res IS ok)
+        self.client.append_entity_attributes(self.entity, options="noOverwrite")
+        entity_list = self.client.get_entity_list()
+        for entity in entity_list:
+            self.assertEqual(first=entity.test_value.value, second=attr.value)
+            self.assertNotEqual(first=entity.test_value, second=attr_same.value)
+
+    def test_patch_entity_attrs(self):
+        """
+        Update existing Entity attributes within an NGSI-LD system
+        Args:
+            - entityId(string): Entity ID; required
+            - Request body; required
+        Returns:
+            - (201) Created. Contains the resource URI of the created Entity
+            - (400) Bad request
+            - (409) Already exists
+            - (422) Unprocessable Entity
+        Tests:
+            - Post an enitity with specific attributes. Change the attributes with patch.
+        """
+        """
+        Test 1:
+            post an enitity with entity_ID and entity_type and attributes
+            patch one of the attributes with entity_id by sending request body
+            get entity list
+            If new attribute is not added to the entity?
+                Raise Error
+        """
+        """Test1"""
+        new_prop = {'new_prop': ContextProperty(value=25)}
+        newer_prop = NamedContextProperty(value=40, name='new_prop')
+
+        self.entity.add_properties(new_prop)
+        self.client.post_entity(entity=self.entity)
+        self.client.update_entity_attribute(entity_id=self.entity.id, attr=newer_prop,
+                                               attr_name='new_prop')
+        entity = self.client.get_entity(entity_id=self.entity.id)
+        prop_dict = entity.model_dump()
+        self.assertIn("new_prop", prop_dict)
+        self.assertEqual(prop_dict["new_prop"], 40)
+
+    def test_patch_entity_attrs_contextprop(self):
+        """
+        Update existing Entity attributes within an NGSI-LD system
+        Args:
+            - entityId(string): Entity ID; required
+            - Request body; required
+        Returns:
+            - (201) Created. Contains the resource URI of the created Entity
+            - (400) Bad request
+            - (409) Already exists
+            - (422) Unprocessable Entity
+        Tests:
+            - Post an enitity with specific attributes. Change the attributes with patch.
+        """
+        """
+        Test 1:
+            post an enitity with entity_ID and entity_type and attributes
+            patch one of the attributes with entity_id by sending request body
+            get entity list
+            If new attribute is not added to the entity?
+                Raise Error
+        """
+        """Test1"""
+        new_prop = {'new_prop': ContextProperty(value=25)}
+        newer_prop = ContextProperty(value=55)
+
+        self.entity.add_properties(new_prop)
+        self.client.post_entity(entity=self.entity)
+        self.client.update_entity_attribute(entity_id=self.entity.id, attr=newer_prop,
+                                               attr_name='new_prop')
+        entity = self.client.get_entity(entity_id=self.entity.id)
+        prop_dict = entity.model_dump()
+        self.assertIn("new_prop", prop_dict)
+        self.assertEqual(prop_dict["new_prop"], 55)
+
+    def test_patch_entity_attrs_attrId(self):
+        """
+        Update existing Entity attribute ID within an NGSI-LD system
+        Args: 
+            - entityId(string): Entity Id; required
+            - attrId(string): Attribute Id; required
+        Returns: 
+            - (204) No Content
+            - (400) Bad Request
+            - (404) Not Found
+        Tests:
+            - Post an enitity with specific attributes. Change the attributes with patch.
+        """
+        """
+        Test 1: 
+            post an entity with entity_ID, entity_type and attributes
+            patch with entity_ID and attribute_ID 
+            return != 204: 
+                yes: 
+                    Raise Error
+        """
+        """Test 1"""
+        attr = NamedContextProperty(name="test_value",
+                                    value=20)
+        self.entity.add_properties(attrs=[attr])
+        self.client.post_entity(entity=self.entity)
+
+        attr.value = 40
+        self.client.update_entity_attribute(entity_id=self.entity.id, attr=attr,
+                                               attr_name="test_value")
+        entity = self.client.get_entity(entity_id=self.entity.id)
+        prop_dict = entity.model_dump()
+        self.assertIn("test_value", prop_dict)
+        self.assertEqual(prop_dict["test_value"], 40)
+
+    def test_delete_entity_attribute(self):
+        """
+        Delete existing Entity atrribute within an NGSI-LD system.
+        Args:
+            - entityId: Entity Id; required
+            - attrId: Attribute Id; required
+        Returns:
+            - (204) No Content
+            - (400) Bad Request
+            - (404) Not Found
+        Tests:
+            - Post an entity with attributes. Try to delete non existent attribute with non existent attribute 
+                id. Then check response code. 
+            - Post an entity with attributes. Try to delete one the attributes. Test if the attribute is really 
+                removed by either posting the entity or by trying to delete it again. 
+        """
+        """
+        Test 1: 
+            post an enitity with entity_ID, entity_type and attribute with attribute_ID
+            delete an attribute with an non existent attribute_ID of the entity with the entity_ID
+                Raise Error
+        Test 2:
+            post an entity with entity_ID, entitiy_name and attribute with attribute_ID
+            delete the attribute with the attribute_ID of the entity with the entity_ID
+            get entity with entity_ID 
+            If attribute with attribute_ID is still there?
+                Raise Error
+            delete the attribute with the attribute_ID of the entity with the entity_ID
+                Raise Error
+        """
+        """Test 1"""
+
+        attr = NamedContextProperty(name="test_value",
+                                    value=20)
+        self.entity.add_properties(attrs=[attr])
+        self.client.post_entity(entity=self.entity)
+        with self.assertRaises(Exception):
+            self.client.delete_attribute(entity_id=self.entity.id,
+                                            attribute_id="does_not_exist")
+
+        entity_list = self.client.get_entity_list()
+
+        for entity in entity_list:
+            self.client.delete_entity_by_id(entity_id=entity.id)
+
+        """Test 2"""
+        attr = NamedContextProperty(name="test_value",
+                                    value=20)
+        self.entity.add_properties(attrs=[attr])
+        self.client.post_entity(entity=self.entity)
+        self.client.delete_attribute(entity_id=self.entity.id,
+                                        attribute_id="test_value")
+
+        with self.assertRaises(requests.exceptions.HTTPError) as contextmanager:
+            self.client.delete_attribute(entity_id=self.entity.id,
+                                            attribute_id="test_value")
+        response = contextmanager.exception.response
+        self.assertEqual(response.status_code, 404)
+
+    def test_replacing_attributes(self):
+        """
+        Patch existing Entity attributes within an NGSI-LD system.
+        Args:
+            - entityId: Entity Id; required
+        Returns:
+            - (204) No Content
+            - (400) Bad Request
+            - (404) Not Found
+        Tests:
+            - Post an entity with attribute. Change the attributes with patch.
+        """
+        """
+        Test 1:
+            replace attribute with same name and different value
+        Test 2:
+            replace two attributes
+        """
+
+        """Test 1"""
+        attr1 = NamedContextProperty(name="test_value", value=20)
+        self.entity.add_properties(attrs=[attr1])
+        self.client.post_entity(entity=self.entity)
+        entity = self.client.get_entity(entity_id=self.entity.id)
+        prop_dict = entity.model_dump()
+        self.assertIn("test_value", prop_dict)
+        self.assertEqual(prop_dict["test_value"], 20)
+
+        attr2 = NamedContextProperty(name="test_value", value=44)
+        self.entity.delete_properties(props=[attr1])
+        self.entity.add_properties(attrs=[attr2])
+        self.client.replace_existing_attributes_of_entity(entity=self.entity)
+        entity = self.client.get_entity(entity_id=self.entity.id)
+        prop_dict = entity.model_dump()
+        self.assertIn("test_value", prop_dict)
+        self.assertEqual(prop_dict["test_value"], 44)
+
+        self.client.delete_entity_by_id(entity_id=self.entity.id)
+
+        """Test 2"""
+        attr1 = NamedContextProperty(name="test_value", value=20)
+        attr2 = NamedContextProperty(name="my_value", value=44)
+        self.entity.add_properties(attrs=[attr1, attr2])
+        self.client.post_entity(entity=self.entity)
+        entity = self.client.get_entity(entity_id=self.entity.id)
+        prop_dict = entity.model_dump()
+        self.assertIn("test_value", prop_dict)
+        self.assertEqual(prop_dict["test_value"], 20)
+        self.assertIn("my_value", prop_dict)
+        self.assertEqual(prop_dict["my_value"], 44)
+
+        self.entity.delete_properties(props=[attr1])
+        self.entity.delete_properties(props=[attr2])
+        attr3 = NamedContextProperty(name="test_value", value=25)
+        attr4 = NamedContextProperty(name="my_value", value=45)
+        self.entity.add_properties(attrs=[attr3, attr4])
+        self.client.replace_existing_attributes_of_entity(entity=self.entity)
+        entity = self.client.get_entity(entity_id=self.entity.id)
+        prop_dict = entity.model_dump()
+        self.assertIn("test_value", prop_dict)
+        self.assertEqual(prop_dict["test_value"], 25)
+        self.assertIn("my_value", prop_dict)
+        self.assertEqual(prop_dict["my_value"], 45)

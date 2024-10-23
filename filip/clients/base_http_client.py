@@ -25,7 +25,7 @@ class BaseHttpClient:
                  url: Union[AnyHttpUrl, str] = None,
                  *,
                  session: requests.Session = None,
-                 fiware_header: Union[Dict, FiwareHeader] = None,
+                 fiware_header: Union[Dict, FiwareHeader, FiwareLDHeader] = None,
                  **kwargs):
 
         self.logger = logging.getLogger(
