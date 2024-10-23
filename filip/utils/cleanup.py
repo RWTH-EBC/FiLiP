@@ -14,8 +14,8 @@ from filip.clients.ngsi_v2 import \
     QuantumLeapClient
 
 
-def clear_context_broker(url: str,
-                         fiware_header: FiwareHeader,
+def clear_context_broker(url: str=None,
+                         fiware_header: FiwareHeader=None,
                          clear_registrations: bool = False,
                          cb_client: ContextBrokerClient = None
                          ):
