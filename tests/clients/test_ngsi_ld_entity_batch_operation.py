@@ -1,6 +1,7 @@
 from random import Random
 import unittest
 from requests.exceptions import HTTPError
+from requests import RequestException
 from pydantic import ValidationError
 
 from filip.models.base import FiwareLDHeader
@@ -30,11 +31,17 @@ class EntitiesBatchOperations(unittest.TestCase):
 
     def tearDown(self) -> None:
         """
-        Cleanup entities from test server
+        Cleanup test server
         """
-        entity_list = self.cb_client.get_entity_list(entity_type="filip:object:test")
-        for entity in entity_list:
-            self.cb_client.delete_entity_by_id(entity_id=entity.id)
+        try:
+            entity_list = True
+            while entity_list:
+                entity_list = self.cb_client.get_entity_list(limit=1000)
+                for entity in entity_list:
+                    self.cb_client.delete_entity_by_id(entity_id=entity.id)
+        except RequestException:
+            pass
+        self.cb_client.close()
 
     def test_entity_batch_operations_create(self) -> None:
         """
