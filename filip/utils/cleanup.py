@@ -40,7 +40,7 @@ def clear_context_broker(url: str=None,
     Returns:
         None
     """
-    assert (url and fiware_header) or cb_client, "Either url and headers or client object must be given"
+    assert url or cb_client, "Either url or client object must be given"
     # create client
     if cb_client is None:
         client = ContextBrokerClient(url=url, fiware_header=fiware_header)
