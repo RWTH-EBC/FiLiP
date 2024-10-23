@@ -39,7 +39,7 @@ class TestContextBroker(unittest.TestCase):
         }
         self.entity = ContextLDEntity(id='urn:ngsi-ld:my:id4', type='MyType', **self.attr)
         self.entity_2 = ContextLDEntity(id="urn:ngsi-ld:room2", type="room")
-        self.fiware_header = FiwareLDHeader()
+        self.fiware_header = FiwareLDHeader(ngsild_tenant=settings.FIWARE_SERVICE)
         self.client = ContextBrokerLDClient(fiware_header=self.fiware_header,
                                             url=settings.LD_CB_URL)
         # todo replace with clean up function for ld
