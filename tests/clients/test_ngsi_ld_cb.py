@@ -44,12 +44,11 @@ class TestContextBroker(unittest.TestCase):
                                             url=settings.LD_CB_URL)
         # todo replace with clean up function for ld
         try:
-            # todo implement with pagination, the default limit is 20
-            #  and max limit is 1000 for orion-ld
-            for i in range(0, 10):
+            entity_list = True
+            while entity_list:
                 entity_list = self.client.get_entity_list(limit=1000)
-                for entity in entity_list:
-                    self.client.delete_entity_by_id(entity_id=entity.id)
+                self.client.entity_batch_operation(action_type=ActionTypeLD.DELETE,
+                                                   entities=entity_list)
         except RequestException:
             pass
 
@@ -61,8 +60,8 @@ class TestContextBroker(unittest.TestCase):
             entity_list = True
             while entity_list:
                 entity_list = self.client.get_entity_list(limit=1000)
-                for entity in entity_list:
-                    self.client.delete_entity_by_id(entity_id=entity.id)
+                self.client.entity_batch_operation(action_type=ActionTypeLD.DELETE,
+                                                   entities=entity_list)
         except RequestException:
             pass
         self.client.close()
@@ -89,11 +88,9 @@ class TestContextBroker(unittest.TestCase):
         self.assertLessEqual(len(self.client.get_entity_list(limit=100)), 100)
         self.client.entity_batch_operation(action_type=ActionTypeLD.DELETE, entities=entities_a)
         """
-        
-        #for some reason, batch delete fails if batch size is above 800 ???
         entities_a = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
                                     type=f'filip:object:TypeA') for i in
-                        range(0, 800)]
+                        range(0, 2000)]
         
         self.client.entity_batch_operation(action_type=ActionTypeLD.CREATE, entities=entities_a)
         
@@ -107,9 +104,11 @@ class TestContextBroker(unittest.TestCase):
         self.assertEqual(len(entity_list),800)
         
         entity_list = self.client.get_entity_list(limit=1000)
-        self.assertEqual(len(entity_list),800)
-        
-        self.client.entity_batch_operation(action_type=ActionTypeLD.DELETE, entities=entities_a)
+        self.assertEqual(len(entity_list),1000)
+
+        # currently, there is a limit of 1000 entities per delete request
+        self.client.entity_batch_operation(action_type=ActionTypeLD.DELETE,
+                                           entities=entities_a)
 
     def test_get_entites(self):
         """

@@ -37,8 +37,8 @@ class EntitiesBatchOperations(unittest.TestCase):
             entity_list = True
             while entity_list:
                 entity_list = self.cb_client.get_entity_list(limit=1000)
-                for entity in entity_list:
-                    self.cb_client.delete_entity_by_id(entity_id=entity.id)
+                self.cb_client.entity_batch_operation(action_type=ActionTypeLD.DELETE,
+                                                      entities=entity_list)
         except RequestException:
             pass
         self.cb_client.close()
