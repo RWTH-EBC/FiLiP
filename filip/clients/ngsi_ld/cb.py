@@ -173,7 +173,8 @@ class ContextBrokerLDClient(BaseHttpClient):
             self.post_entity(entity=e)
             self.delete_entity_by_id(idhex)
         except Exception as err:
-            self.log_error(err=err,msg="Error while creating default tenant")
+            self.log_error(err=err,msg="Error while creating tenant")
+            raise
 
     def get_statistics(self) -> Dict:
         """
