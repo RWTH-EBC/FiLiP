@@ -3,10 +3,12 @@ Shared data models
 """
 
 from aenum import Enum
-from pydantic import ConfigDict, BaseModel, Field, field_validator
+from pydantic import ConfigDict, BaseModel, Field, field_validator, computed_field
 
 from filip.utils.validators import (validate_fiware_service_path,
                                     validate_fiware_service)
+
+core_context = "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.6.jsonld"
 
 
 class NgsiVersion(str, Enum):
@@ -162,14 +164,6 @@ class FiwareLDHeader(BaseModel):
     https://fiware-orion.readthedocs.io/en/master/user/service_path/index.html
     """
     model_config = ConfigDict(populate_by_name=True, validate_assignment=True)
-
-    link_header: str = Field(
-        alias="Link",
-        default='<https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld>; '
-                'rel="http://www.w3.org/ns/json-ld#context"; '
-                'type="application/ld+json"',
-        description="Fiware service used for multi-tenancy",
-        pattern=r"\w*$")
     ngsild_tenant: str = Field(
         alias="NGSILD-Tenant",
         default=None,
@@ -177,6 +171,19 @@ class FiwareLDHeader(BaseModel):
         description="Alias to the Fiware service to used for multitenancy",
         pattern=r"\w*$"
     )
+    link_header: str = Field(
+        alias="Link",
+        default='<https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld>; '
+                'rel="http://www.w3.org/ns/json-ld#context"; '
+                'type="application/ld+json"',
+        description="Fiware service used for multi-tenancy",
+        pattern=r"\w*$")
+    # @computed_field
+    # def Link(self) -> str:
+    #     link_header = f'<{self.context}>; ' \
+    #                   'rel="http://www.w3.org/ns/json-ld#context"; ' \
+    #                   'type="application/ld+json"'
+    #     return link_header
 
     def set_context(self, context: str):
         self.link_header = f'<{context}>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"'
