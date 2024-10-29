@@ -133,6 +133,7 @@ class TestClearFunctions(unittest.TestCase):
             "service": self.fiware_header.service,
             "service_path": self.fiware_header.service_path,
             "entity_name": "test_entity",
+            "entity_type": "test_type",
         }
 
         self.iota_client.post_groups(service_group, update=False)
@@ -154,6 +155,7 @@ class TestClearFunctions(unittest.TestCase):
             "service": self.fiware_header.service,
             "service_path": self.fiware_header.service_path,
             "entity_name": "test_entity",
+            "entity_type": "test_type",
         }
 
         self.iota_client.post_groups(service_group, update=False)
