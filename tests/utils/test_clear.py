@@ -2,16 +2,20 @@
 Tests clear functions in filip.utils.cleanup
 """
 import random
+import time
 import unittest
 from datetime import datetime
+from typing import List
 from uuid import uuid4
+
+from requests import RequestException
 
 from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient, QuantumLeapClient
 from filip.models.base import FiwareHeader
 from filip.models.ngsi_v2.context import ContextEntity
 from filip.models.ngsi_v2.iot import Device, ServiceGroup
-from filip.models.ngsi_v2.subscriptions import Subscription
-from filip.utils.cleanup import clear_context_broker, clear_iot_agent
+from filip.models.ngsi_v2.subscriptions import Subscription, Message
+from filip.utils.cleanup import clear_context_broker, clear_iot_agent, clear_quantumleap
 from tests.config import settings
 
 
@@ -24,8 +28,9 @@ class TestClearFunctions(unittest.TestCase):
         Returns:
             None
         """
+        # use specific service for testing clear functions
         self.fiware_header = FiwareHeader(
-            service=settings.FIWARE_SERVICE,
+            service="filip_clear_test",
             service_path=settings.FIWARE_SERVICEPATH)
         self.cb_url = settings.CB_URL
         self.cb_client = ContextBrokerClient(url=self.cb_url,
@@ -35,16 +40,9 @@ class TestClearFunctions(unittest.TestCase):
                                       fiware_header=self.fiware_header)
 
         self.ql_url = settings.QL_URL
-        self.ql_client = QuantumLeapClient(url=self.ql_url, fiware_header=self.fiware_header)
-
-    def test_clear_context_broker(self):
-        """
-        Test for clearing context broker using context broker client
-        """
-        entity = ContextEntity(id=str(random.randint(1, 50)),
-                               type=f'filip:object:Type')
-        self.cb_client.post_entity(entity=entity)
-        subscription = Subscription.model_validate({
+        self.ql_client = QuantumLeapClient(url=self.ql_url,
+                                           fiware_header=self.fiware_header)
+        self.sub_dict = {
             "description": "One subscription to rule them all",
             "subject": {
                 "entities": [
@@ -73,7 +71,16 @@ class TestClearFunctions(unittest.TestCase):
             },
             "expires": datetime.now(),
             "throttling": 0
-        })
+        }
+
+    def test_clear_context_broker(self):
+        """
+        Test for clearing context broker using context broker client
+        """
+        entity = ContextEntity(id=str(random.randint(1, 50)),
+                               type=f'filip:object:Type')
+        self.cb_client.post_entity(entity=entity)
+        subscription = Subscription.model_validate(self.sub_dict)
         self.cb_client.post_subscription(subscription=subscription)
         clear_context_broker(cb_client=self.cb_client)
 
@@ -86,36 +93,7 @@ class TestClearFunctions(unittest.TestCase):
         entity = ContextEntity(id=str(random.randint(1, 50)),
                                type=f'filip:object:Type')
         self.cb_client.post_entity(entity=entity)
-        subscription = Subscription.model_validate({
-            "description": "One subscription to rule them all",
-            "subject": {
-                "entities": [
-                    {
-                        "idPattern": ".*",
-                        "type": "Room"
-                    }
-                ],
-                "condition": {
-                    "attrs": [
-                        "temperature"
-                    ],
-                    "expression": {
-                        "q": "temperature>40"
-                    }
-                }
-            },
-            "notification": {
-                "http": {
-                    "url": "http://localhost:1234"
-                },
-                "attrs": [
-                    "temperature",
-                    "humidity"
-                ]
-            },
-            "expires": datetime.now(),
-            "throttling": 0
-        })
+        subscription = Subscription.model_validate(self.sub_dict)
         self.cb_client.post_subscription(subscription=subscription)
         clear_context_broker(url=self.cb_url, fiware_header=self.fiware_header)
 
@@ -166,8 +144,45 @@ class TestClearFunctions(unittest.TestCase):
         self.assertEqual(0, len(self.iota_client.get_device_list()) or len(self.iota_client.get_group_list()))
 
     def test_clear_quantumleap(self):
-        # TODO
-        pass
+        from random import random
+
+        clear_quantumleap(ql_client=self.ql_client)
+        rec_numbs = 3
+        def create_data_points():
+            def create_entities(_id) -> List[ContextEntity]:
+                def create_attr():
+                    return {'temperature': {'value': random(),
+                                            'type': 'Number'},
+                            'humidity': {'value': random(),
+                                         'type': 'Number'},
+                            'co2': {'value': random(),
+                                    'type': 'Number'}}
+
+                return [ContextEntity(id=f'Room:{_id}', type='Room', **create_attr())]
+
+            fiware_header = self.fiware_header
+
+            with QuantumLeapClient(url=settings.QL_URL, fiware_header=fiware_header) \
+                    as client:
+                for i in range(rec_numbs):
+                    notification_message = Message(data=create_entities(i),
+                                                   subscriptionId="test")
+                    client.post_notification(notification_message)
+
+        create_data_points()
+        time.sleep(1)
+        self.assertEqual(len(self.ql_client.get_entities()), rec_numbs)
+        clear_quantumleap(url=self.ql_url,
+                          fiware_header=self.fiware_header)
+        with self.assertRaises(RequestException):
+            self.ql_client.get_entities()
+
+        create_data_points()
+        time.sleep(1)
+        self.assertEqual(len(self.ql_client.get_entities()), rec_numbs)
+        clear_quantumleap(ql_client=self.ql_client)
+        with self.assertRaises(RequestException):
+            self.ql_client.get_entities()
 
     def tearDown(self) -> None:
         """
