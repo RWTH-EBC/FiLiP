@@ -438,6 +438,10 @@ class ContextLDEntity(ContextLDEntityKeyValues):
         >>> entity = ContextLDEntity(**data)
 
     """
+    model_config = ConfigDict(extra='allow',
+                              validate_default=True,
+                              validate_assignment=True,
+                              populate_by_name=True)
 
     observationSpace: Optional[ContextGeoProperty] = Field(
         default=None,
@@ -501,12 +505,10 @@ class ContextLDEntity(ContextLDEntityKeyValues):
     field_validator("modifiedAt")(validate_fiware_datatype_string_protect)
 
     def __init__(self,
-                 id: str,
-                 type: str,
                  **data):
+        super().__init__(**data)
         # There is currently no validation for extra fields
         data.update(self._validate_attributes(data))
-        super().__init__(id=id, type=type, **data)
 
     @classmethod
     def get_model_fields_set(cls):
@@ -555,8 +557,6 @@ class ContextLDEntity(ContextLDEntityKeyValues):
             if key not in entity_fields:
                 attrs[key] = cls._validate_single_property(attr=attr)
         return attrs
-
-    model_config = ConfigDict(extra='allow', validate_default=True, validate_assignment=True)
 
     def model_dump(
         self,
