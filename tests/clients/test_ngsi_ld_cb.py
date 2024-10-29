@@ -3,9 +3,10 @@ Tests for filip.cb.client
 """
 import unittest
 import logging
+import pyld
 from requests import RequestException
 from filip.clients.ngsi_ld.cb import ContextBrokerLDClient
-from filip.models.base import FiwareLDHeader
+from filip.models.base import FiwareLDHeader, core_context
 from filip.models.ngsi_ld.context import ActionTypeLD, ContextLDEntity, ContextProperty, \
     NamedContextProperty
 from tests.config import settings
@@ -300,13 +301,11 @@ class TestContextBroker(unittest.TestCase):
         }
 
         # client with custom context
+        custom_context = "https://n5geh.github.io/n5geh.test-context.io/context_saref.jsonld"
         custom_header = FiwareLDHeader(
             ngsild_tenant=settings.FIWARE_SERVICE,
-            link_header=
-            '<https://n5geh.github.io/n5geh.test-context.io/context_saref.jsonld>; '
-            'rel="http://www.w3.org/ns/json-ld#context"; '
-            'type="application/ld+json"'
         )
+        custom_header.set_context(custom_context)
         client_custom_context = ContextBrokerLDClient(
             fiware_header=custom_header,
             url=settings.LD_CB_URL)
@@ -315,20 +314,42 @@ class TestContextBroker(unittest.TestCase):
         temperature_sensor = ContextLDEntity(**temperature_sensor_dict)
         self.client.post_entity(entity=temperature_sensor)
         entity_default = self.client.get_entity(entity_id=temperature_sensor.id)
-        entity_custom_context = client_custom_context.get_entity(entity_id=temperature_sensor.id)
+        self.assertEqual(entity_default.context,
+                         core_context)
+        self.assertEqual(entity_default.model_dump(exclude_unset=True,
+                                                   exclude={"context"}),
+                         temperature_sensor_dict)
+        entity_custom_context = client_custom_context.get_entity(
+            entity_id=temperature_sensor.id)
+        self.assertEqual(entity_custom_context.context,
+                         custom_context)
+        self.assertEqual(entity_custom_context.model_dump(exclude_unset=True,
+                                                          exclude={"context"}),
+                         temperature_sensor_dict)
         self.client.delete_entity_by_id(entity_id=temperature_sensor.id)
 
         # custom context in client
-        # TODO need to allow changing the Accept header
-        #  which will influence the returned format,
-        #  application/ld+json -> JSON-LD (with @context)
-        #  application/json -> JSON
-        #  And the Link header influence the parsing behavior
-
         temperature_sensor = ContextLDEntity(**temperature_sensor_dict)
         client_custom_context.post_entity(entity=temperature_sensor)
         entity_custom = client_custom_context.get_entity(entity_id=temperature_sensor.id)
+        self.assertEqual(entity_custom.context,
+                         custom_context)
+        self.assertEqual(entity_custom.model_dump(exclude_unset=True,
+                                                  exclude={"context"}),
+                         temperature_sensor_dict)
         entity_default_context = self.client.get_entity(entity_id=temperature_sensor.id)
+        self.assertEqual(entity_default_context.context,
+                         core_context)
+        # TODO implement expand and compact validation
+        # self.assertEqual(
+        #     pyld.jsonld.compact(entity_default_context.model_dump(exclude_unset=True,
+        #                                                           exclude={"context"}),
+        #                                                           custom_context),
+        #     temperature_sensor_dict)
+        self.assertNotEqual(
+            entity_default_context.model_dump(exclude_unset=True,
+                                              exclude={"context"}),
+            temperature_sensor_dict)
         client_custom_context.delete_entity_by_id(entity_id=temperature_sensor.id)
 
         # custom context in entity
@@ -337,7 +358,19 @@ class TestContextBroker(unittest.TestCase):
             **temperature_sensor_dict)
         self.client.post_entity(entity=temperature_sensor)
         entity_custom = client_custom_context.get_entity(entity_id=temperature_sensor.id)
+        self.assertEqual(entity_custom.context,
+                         custom_context)
+        self.assertEqual(entity_custom.model_dump(exclude_unset=True,
+                                                  exclude={"context"}),
+                         temperature_sensor_dict)
         entity_default_context = self.client.get_entity(entity_id=temperature_sensor.id)
+        self.assertEqual(entity_default_context.context,
+                         core_context)
+        # TODO implement expand and compact validation
+        self.assertNotEqual(
+            entity_default_context.model_dump(exclude_unset=True,
+                                              exclude={"context"}),
+            temperature_sensor_dict)
         self.client.delete_entity_by_id(entity_id=temperature_sensor.id)
 
     def test_delete_entity(self):

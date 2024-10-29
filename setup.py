@@ -21,6 +21,7 @@ INSTALL_REQUIRES = ['aenum~=3.1.15',
                     'rapidfuzz~=3.4.0',
                     'geojson-pydantic~=1.0.2',
                     'wget~=3.2',
+                    'PyLD~=2.0.4',
                     'pyjexl~=0.3.0']
 
 SETUP_REQUIRES = INSTALL_REQUIRES.copy()

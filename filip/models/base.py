@@ -173,7 +173,7 @@ class FiwareLDHeader(BaseModel):
     )
     link_header: str = Field(
         alias="Link",
-        default='<https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld>; '
+        default=f'<{core_context}>; '
                 'rel="http://www.w3.org/ns/json-ld#context"; '
                 'type="application/ld+json"',
         description="Fiware service used for multi-tenancy",
