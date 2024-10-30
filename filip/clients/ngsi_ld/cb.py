@@ -62,7 +62,7 @@ class ContextBrokerLDClient(BaseHttpClient):
         #base_http_client overwrites empty header with FiwareHeader instead of FiwareLD
         init_header = FiwareLDHeader()
         if fiware_header:
-            init_header=fiware_header
+            init_header = fiware_header
         
         super().__init__(url=url,
                          session=session,
@@ -71,7 +71,7 @@ class ContextBrokerLDClient(BaseHttpClient):
         # set the version specific url-pattern
         self._url_version = NgsiURLVersion.ld_url
         # init Content-Type header , account for @context field further down
-        self.headers.update({'Content-Type':'application/json'})
+        self.headers.update({'Content-Type': 'application/json'})
         if init_header.ngsild_tenant is not None:
             self.__make_tenant()
 
