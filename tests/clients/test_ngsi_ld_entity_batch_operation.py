@@ -141,31 +141,50 @@ class EntitiesBatchOperations(unittest.TestCase):
         """Test 1"""
         entities_a = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
                                       type=f'filip:object:test',
-                                      **{'temperature': {'value': self.r.randint(20,50)}}) for i in
+                                      **{'temperature': {
+                                          'value': self.r.randint(20,50),
+                                          "type": "Property"
+                                      }}) for i in
                       range(0, 5)]
 
         self.cb_client.entity_batch_operation(entities=entities_a, action_type=ActionTypeLD.CREATE)
 
         entities_update = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
                                            type=f'filip:object:test',
-                                           **{'temperature': {'value': self.r.randint(0,20)}}) for i in
+                                           **{'temperature':
+                                                  {'value': self.r.randint(0,20),
+                                                   "type": "Property"
+                                                   }}) for i in
                            range(3, 6)]
         self.cb_client.entity_batch_operation(entities=entities_update, action_type=ActionTypeLD.UPDATE)
         entity_list = self.cb_client.get_entity_list(entity_type=f'filip:object:test')
         self.assertEqual(len(entity_list),5)
-        updated = [x for x in entity_list if int(x.id.split(':')[3]) in range(3,5)]
-        nupdated = [x for x in entity_list if int(x.id.split(':')[3]) in range(0,3)]
-        self.assertCountEqual(entities_a[0:3],nupdated)
-        self.assertCountEqual(entities_update[0:2],updated)
+        updated = [x.model_dump(exclude_unset=True, exclude={"context"})
+                   for x in entity_list if int(x.id.split(':')[3]) in range(3,5)]
+        nupdated = [x.model_dump(exclude_unset=True, exclude={"context"})
+                    for x in entity_list if int(x.id.split(':')[3]) in range(0,3)]
+
+        self.assertCountEqual([entity.model_dump(exclude_unset=True)
+                               for entity in entities_a[0:3]],
+                              nupdated)
+
+        self.assertCountEqual([entity.model_dump(exclude_unset=True)
+                               for entity in entities_update[0:2]],
+                              updated)
 
         """Test 2"""
         # presssure will be appended while the existing temperature will
         # not be overwritten
         entities_update = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
                                            type=f'filip:object:test',
-                                           **{'temperature': {'value': self.r.randint(50,100)},
-                                              'pressure':{'value': self.r.randint(1,100)}}) for i in
-                           range(0, 5)]
+                                           **{'temperature':
+                                                  {'value': self.r.randint(50, 100),
+                                                   "type": "Property"},
+                                              'pressure': {
+                                                  'value': self.r.randint(1,100),
+                                                  "type": "Property"
+                                              }
+                                              }) for i in range(0, 5)]
         
         self.cb_client.entity_batch_operation(entities=entities_update,
                                               action_type=ActionTypeLD.UPDATE,
@@ -230,14 +249,20 @@ class EntitiesBatchOperations(unittest.TestCase):
         # create entities 1 -3
         entities_a = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
                                       type=f'filip:object:test',
-                                      **{'temperature': {'value': self.r.randint(0,20)}}) for i in
+                                      **{'temperature':
+                                             {'value': self.r.randint(0,20),
+                                              "type": "Property"
+                                              }}) for i in
                       range(1, 4)]
         self.cb_client.entity_batch_operation(entities=entities_a, action_type=ActionTypeLD.CREATE)
 
         # replace entities 0 - 1
         entities_replace = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
                                             type=f'filip:object:test',
-                                            **{'pressure': {'value': self.r.randint(50,100)}}) for i in
+                                            **{'pressure':
+                                                   {'value': self.r.randint(50,100),
+                                                    "type": "Property"
+                                                    }}) for i in
                       range(0, 2)]
         self.cb_client.entity_batch_operation(entities=entities_replace, action_type=ActionTypeLD.UPSERT,
                                               options="replace")
@@ -247,9 +272,13 @@ class EntitiesBatchOperations(unittest.TestCase):
         # temperature will be appended for 4
         entities_update = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
                                            type=f'filip:object:test',
-                                           **{'pressure': {'value': self.r.randint(50,100)}}) for i in
+                                           **{'pressure':
+                                                  {'value': self.r.randint(50,100),
+                                                   "type": "Property"
+                                                   }}) for i in
                       range(3, 5)]
-        self.cb_client.entity_batch_operation(entities=entities_update, action_type=ActionTypeLD.UPSERT,
+        self.cb_client.entity_batch_operation(entities=entities_update,
+                                              action_type=ActionTypeLD.UPSERT,
                                               options="update")
    
         # 0,1 and 4 should have pressure only
@@ -258,27 +287,36 @@ class EntitiesBatchOperations(unittest.TestCase):
         # can be made modular for variable size batches
         entity_list = self.cb_client.get_entity_list()
         self.assertEqual(len(entity_list),5)
-        for e in entity_list:
-            id = int(e.id.split(':')[3])
-            if id in [0,1]:
-                self.assertIsNone(e.model_dump().get('temperature',None))
-                self.assertIsNotNone(e.model_dump().get('pressure',None))
-                self.assertCountEqual([e],[x for x in entities_replace if x.id == e.id])
-            elif id == 4:
-                self.assertIsNone(e.model_dump().get('temperature',None))
-                self.assertIsNotNone(e.model_dump().get('pressure',None))
-                self.assertCountEqual([e],[x for x in entities_update if x.id == e.id])
-            elif id == 2:
-                self.assertIsNone(e.model_dump().get('pressure',None))
-                self.assertIsNotNone(e.model_dump().get('temperature',None))
-                self.assertCountEqual([e],[x for x in entities_a if x.id == e.id])
-            elif id == 3:
-                self.assertIsNotNone(e.model_dump().get('temperature',None))
-                self.assertIsNotNone(e.model_dump().get('pressure',None))
-                self.assertCountEqual([e.model_dump().get('temperature')],
-                                      [x.model_dump().get('temperature') for x in entities_a if x.id == e.id])
-                self.assertCountEqual([e.model_dump().get('pressure')],
-                                      [x.model_dump().get('pressure') for x in entities_update if x.id == e.id])
+        for _e in entity_list:
+            _id = int(_e.id.split(':')[3])
+            e = _e.model_dump(exclude_unset=True, exclude={'context'})
+            if _id in [0,1]:
+                self.assertIsNone(e.get('temperature',None))
+                self.assertIsNotNone(e.get('pressure',None))
+                self.assertCountEqual([e],
+                                      [x.model_dump(exclude_unset=True)
+                                       for x in entities_replace if x.id == _e.id])
+            elif _id == 4:
+                self.assertIsNone(e.get('temperature',None))
+                self.assertIsNotNone(e.get('pressure',None))
+                self.assertCountEqual([e],
+                                      [x.model_dump(exclude_unset=True)
+                                       for x in entities_update if x.id == _e.id])
+            elif _id == 2:
+                self.assertIsNone(e.get('pressure',None))
+                self.assertIsNotNone(e.get('temperature',None))
+                self.assertCountEqual([e],
+                                      [x.model_dump(exclude_unset=True)
+                                       for x in entities_a if x.id == _e.id])
+            elif _id == 3:
+                self.assertIsNotNone(e.get('temperature',None))
+                self.assertIsNotNone(e.get('pressure',None))
+                self.assertCountEqual([e.get('temperature')],
+                                      [x.model_dump(exclude_unset=True).get('temperature')
+                                       for x in entities_a if x.id == _e.id])
+                self.assertCountEqual([e.get('pressure')],
+                                      [x.model_dump(exclude_unset=True).get('pressure')
+                                       for x in entities_update if x.id == _e.id])
                 
         for entity in entity_list:
             self.cb_client.delete_entity_by_id(entity_id=entity.id)
