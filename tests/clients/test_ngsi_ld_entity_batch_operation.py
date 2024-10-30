@@ -28,6 +28,15 @@ class EntitiesBatchOperations(unittest.TestCase):
         self.fiware_header = FiwareLDHeader(ngsild_tenant=settings.FIWARE_SERVICE)
         self.cb_client = ContextBrokerLDClient(fiware_header=self.fiware_header,
                                                url=settings.LD_CB_URL)
+        # todo replace with clean up function for ld
+        try:
+            entity_list = True
+            while entity_list:
+                entity_list = self.cb_client.get_entity_list(limit=1000)
+                self.cb_client.entity_batch_operation(action_type=ActionTypeLD.DELETE,
+                                                      entities=entity_list)
+        except RequestException:
+            pass
 
     def tearDown(self) -> None:
         """
