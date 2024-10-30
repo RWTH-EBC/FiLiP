@@ -2,7 +2,7 @@
 Context Broker Module for API Client
 """
 import json
-import re
+import os
 import warnings
 from math import inf
 from enum import Enum
@@ -62,9 +62,11 @@ class ContextBrokerLDClient(BaseHttpClient):
         #base_http_client overwrites empty header with FiwareHeader instead of FiwareLD
         init_header = FiwareLDHeader()
         if fiware_header:
-            init_header=fiware_header
+            init_header = fiware_header
         if init_header.link_header is None:
             init_header.set_context(core_context)
+        if init_header.ngsild_tenant is not None:
+            self.__make_tenant()
         super().__init__(url=url,
                          session=session,
                          fiware_header=init_header,
@@ -166,6 +168,20 @@ class ContextBrokerLDClient(BaseHttpClient):
             res.raise_for_status()
         except requests.RequestException as err:
             self.logger.error(err)
+            raise
+
+    def __make_tenant(self):
+        """
+        Create tenant if tenant
+        is given in headers
+        """
+        idhex = f"urn:ngsi-ld:{os.urandom(6).hex()}"
+        e = ContextLDEntity(id=idhex,type=f"urn:ngsi-ld:{os.urandom(6).hex()}")
+        try:
+            self.post_entity(entity=e)
+            self.delete_entity_by_id(idhex)
+        except Exception as err:
+            self.log_error(err=err,msg="Error while creating tenant")
             raise
 
     def get_statistics(self) -> Dict:
