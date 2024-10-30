@@ -73,6 +73,22 @@ class TestContextBroker(unittest.TestCase):
         self.assertIsNotNone(self.client.get_version())
         # TODO: check whether there are other "management" endpoints
 
+    @unittest.skip("Only for local testing environment")
+    def test_not_existing_tenant(self):
+        """
+        Test the expected behavior of the client when the tenant does not exist
+        This test will not be included in the CI/CD pipeline. For local testing please
+        comment out the decorator.
+        """
+        # create uuid for the tenant
+        import uuid
+        tenant = str(uuid.uuid4()).split('-')[0]
+        fiware_header = FiwareLDHeader(ngsild_tenant=tenant)
+        client = ContextBrokerLDClient(fiware_header=fiware_header,
+                                       url=settings.LD_CB_URL)
+        entities = client.get_entity_list()
+        self.assertEqual(len(entities), 0)
+
     def test_statistics(self):
         """
         Test statistics of context broker client
