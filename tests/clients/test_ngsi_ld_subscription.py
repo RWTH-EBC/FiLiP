@@ -339,7 +339,8 @@ class TestSubsCheckBroker(TestCase):
 
         self.timeout = 5 # in seconds
         self.last_test_timeout = [True]
-        self.timeout_proc = threading.Timer(self.timeout,self.timeout_func)
+        self.timeout_proc = threading.Timer(self.timeout,
+                                            self.timeout_func)
 
 
     def tearDown(self) -> None:
@@ -421,7 +422,9 @@ class TestSubsCheckBroker(TestCase):
 
         self.mqtt_client.on_message = on_message
         
-        self.mqtt_client.connect("localhost",1883,60)
+        self.mqtt_client.connect(settings.MQTT_BROKER_URL.host,
+                                 settings.MQTT_BROKER_URL.port,
+                                 60)
         self.mqtt_client.loop_start()
         self.cb_client.post_subscription(subscription=Subscription(**self.sub_dict))
         self.timeout_proc.start()
@@ -433,7 +436,8 @@ class TestSubsCheckBroker(TestCase):
                                                 attr_name='temperature')
         while(self.timeout_proc.is_alive()):
             continue
-        self.assertTrue(self.last_test_timeout[0],"Operation timed out")
+        self.assertTrue(self.last_test_timeout[0],
+                        "Operation timed out")
 
         self.last_test_timeout = [True]
         self.timeout_proc = threading.Timer(self.timeout,self.timeout_func)
@@ -451,7 +455,8 @@ class TestSubsCheckBroker(TestCase):
                                             attr_name='temperature')
         while(self.timeout_proc.is_alive()):
             continue
-        self.assertTrue(self.last_test_timeout[0],"Operation timed out")
+        self.assertTrue(self.last_test_timeout[0],
+                        "Operation timed out")
         self.mqtt_client.loop_stop()
         self.mqtt_client.disconnect()
 
