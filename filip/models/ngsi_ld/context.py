@@ -530,7 +530,7 @@ class ContextLDEntity(ContextLDEntityKeyValues):
                 attr_instance = ContextGeoProperty.model_validate(attr)
             except Exception as e:
                 pass
-        elif attr.get("type") == "Property":
+        elif attr.get("type") == "Property" or attr.get("type") is None:
             attr_instance = ContextProperty.model_validate(attr)
         else:
             raise ValueError(f"Attribute {attr.get('type')} "
