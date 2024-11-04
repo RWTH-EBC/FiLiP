@@ -47,7 +47,7 @@ class TestContextBroker(unittest.TestCase):
         try:
             entity_list = True
             while entity_list:
-                entity_list = self.client.get_entity_list(limit=1000)
+                entity_list = self.client.get_entity_list(limit=100)
                 self.client.entity_batch_operation(action_type=ActionTypeLD.DELETE,
                                                    entities=entity_list)
         except RequestException:
@@ -60,7 +60,7 @@ class TestContextBroker(unittest.TestCase):
         try:
             entity_list = True
             while entity_list:
-                entity_list = self.client.get_entity_list(limit=1000)
+                entity_list = self.client.get_entity_list(limit=100)
                 self.client.entity_batch_operation(action_type=ActionTypeLD.DELETE,
                                                    entities=entity_list)
         except RequestException:
