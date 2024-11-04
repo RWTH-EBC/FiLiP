@@ -517,8 +517,9 @@ class TestContextBroker(unittest.TestCase):
         self.entity.add_properties({"test_value": attr})
         self.client.append_entity_attributes(self.entity)
         self.entity.add_properties({"test_value": attr_same})
-        # Removed raise check because noOverwrite gives back a 207 and not a 400 (res IS ok)
-        self.client.append_entity_attributes(self.entity, options="noOverwrite")
+        # noOverwrite will raise 400, because all attributes exist already.
+        with self.assertRaises(RequestException):
+            self.client.append_entity_attributes(self.entity, options="noOverwrite")
         entity_list = self.client.get_entity_list()
         for entity in entity_list:
             self.assertEqual(first=entity.test_value.value, second=attr.value)
