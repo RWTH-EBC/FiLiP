@@ -7,6 +7,7 @@
 # In short: this workflow shows you a way to keep use case model simple and
 # reusable while ensuring the compatability with FIWARE NGSI-V2 standards
 """
+from typing import Optional
 from pydantic import ConfigDict, BaseModel
 from pydantic.fields import Field, FieldInfo
 from filip.models import FiwareHeader
@@ -43,11 +44,11 @@ class PostalAddress(BaseModel):
         alias="streetAddress",
         description="The street address. For example, 1600 Amphitheatre Pkwy.",
     )
-    address_region: str = Field(
+    address_region: Optional[str] = Field(
         alias="addressRegion",
         default=None,
     )
-    address_locality: str = Field(
+    address_locality: Optional[str] = Field(
         alias="addressLocality",
         default=None,
         description="The locality in which the street address is, and which is "
@@ -125,7 +126,7 @@ if __name__ == "__main__":
 
     # 2. Update data
     weather_station.temperature = 30  # represent use case algorithm
-    cb_client.update_entity_key_values(entity=weather_station)
+    cb_client.update_entity(entity=weather_station, key_values=True)
 
     # 3. Query and validate data
     # represent querying data by data users

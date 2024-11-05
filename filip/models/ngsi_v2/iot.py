@@ -14,9 +14,10 @@ from filip.models.ngsi_v2.base import \
     BaseAttribute, \
     BaseValueAttribute, \
     BaseNameAttribute
-from filip.utils.validators import (validate_fiware_datatype_string_protect, validate_fiware_datatype_standard,
-                                    validate_jexl_expression, validate_device_expression_language,
-                                    validate_service_group_expression_language)
+from filip.utils.validators import (validate_fiware_datatype_string_protect,
+                                    validate_fiware_datatype_standard,
+                                    validate_jexl_expression,
+                                    validate_expression_language)
 
 logger = logging.getLogger()
 
@@ -250,13 +251,13 @@ class ServiceGroup(BaseModel):
                     "IoT Agents to store information along with the devices "
                     "in the Device Registry."
     )
-    expressionLanguage: ExpressionLanguage = Field(
+    expressionLanguage: Optional[ExpressionLanguage] = Field(
         default=ExpressionLanguage.JEXL,
         description="optional boolean value, to set expression language used "
                     "to compute expressions, possible values are: "
-                    "legacy or jexl, but legacy is deprecated."
+                    "legacy or jexl, but legacy is deprecated. If it is set None, jexl is used."
     )
-    valid_expressionLanguage = field_validator("expressionLanguage")(validate_service_group_expression_language)
+    valid_expressionLanguage = field_validator("expressionLanguage")(validate_expression_language)
     explicitAttrs: Optional[bool] = Field(
         default=False,
         description="optional boolean value, to support selective ignore "
@@ -321,13 +322,13 @@ class DeviceSettings(BaseModel):
         description="Name of the device transport protocol, for the IoT Agents "
                     "with multiple transport protocols."
     )
-    expressionLanguage: ExpressionLanguage = Field(
+    expressionLanguage: Optional[ExpressionLanguage] = Field(
         default=ExpressionLanguage.JEXL,
         description="optional boolean value, to set expression language used "
                     "to compute expressions, possible values are: "
-                    "legacy or jexl, but legacy is deprecated."
+                    "legacy or jexl, but legacy is deprecated. If it is set None, jexl is used."
     )
-    valid_expressionLanguage = field_validator("expressionLanguage")(validate_device_expression_language)
+    valid_expressionLanguage = field_validator("expressionLanguage")(validate_expression_language)
     explicitAttrs: Optional[bool] = Field(
         default=False,
         description="optional boolean value, to support selective ignore "
