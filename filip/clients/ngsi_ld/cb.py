@@ -60,9 +60,7 @@ class ContextBrokerLDClient(BaseHttpClient):
         # set service url
         url = url or settings.CB_URL
         #base_http_client overwrites empty header with FiwareHeader instead of FiwareLD
-        init_header = FiwareLDHeader()
-        if fiware_header:
-            init_header = fiware_header
+        init_header = fiware_header if fiware_header else FiwareLDHeader()        
         if init_header.link_header is None:
             init_header.set_context(core_context)
         super().__init__(url=url,
