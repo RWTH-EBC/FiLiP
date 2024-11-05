@@ -100,9 +100,10 @@ class TestContextBroker(unittest.TestCase):
         """
         Test pagination of get entities
         """
+        init_numb = 2000
         entities_a = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
-                                    type=f'filip:object:TypeA') for i in
-                        range(0, 2000)]
+                                      type=f'filip:object:TypeA') for i in
+                      range(0, init_numb)]
         
         self.client.entity_batch_operation(action_type=ActionTypeLD.CREATE,
                                            entities=entities_a)
@@ -121,7 +122,11 @@ class TestContextBroker(unittest.TestCase):
 
         # currently, there is a limit of 1000 entities per delete request
         self.client.entity_batch_operation(action_type=ActionTypeLD.DELETE,
-                                           entities=entities_a)
+                                           entities=entities_a[0:800])
+        self.client.entity_batch_operation(action_type=ActionTypeLD.DELETE,
+                                           entities=entities_a[800:1600])
+        entity_list = self.client.get_entity_list(limit=1000)
+        self.assertEqual(len(entity_list), init_numb - 1600)
 
     def test_get_entites(self):
         """
