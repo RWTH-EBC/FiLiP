@@ -307,7 +307,7 @@ class TestContextBroker(unittest.TestCase):
         Returns:
         """
         temperature_sensor_dict = {
-            "id": "urn:temperatureSensor",
+            "id": "urn:ngsi-ld:temperatureSensor",
             "type": "TemperatureSensor",
             "temperature": {
                 "type": "Property",
