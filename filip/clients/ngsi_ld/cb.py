@@ -15,7 +15,7 @@ from pydantic import \
     PositiveFloat
 from filip.clients.base_http_client import BaseHttpClient
 from filip.config import settings
-from filip.models.base import FiwareLDHeader, PaginationMethod
+from filip.models.base import FiwareLDHeader, PaginationMethod, core_context
 from filip.utils.simple_ql import QueryString
 from filip.models.ngsi_v2.base import AttrsFormat
 from filip.models.ngsi_ld.subscriptions import Subscription
@@ -60,18 +60,25 @@ class ContextBrokerLDClient(BaseHttpClient):
         # set service url
         url = url or settings.CB_URL
         #base_http_client overwrites empty header with FiwareHeader instead of FiwareLD
-        init_header = FiwareLDHeader()
-        if fiware_header:
-            init_header = fiware_header
-        
+        init_header = fiware_header if fiware_header else FiwareLDHeader()        
+        if init_header.link_header is None:
+            init_header.set_context(core_context)
         super().__init__(url=url,
                          session=session,
                          fiware_header=init_header,
                          **kwargs)
         # set the version specific url-pattern
         self._url_version = NgsiURLVersion.ld_url
-        # init Content-Type header , account for @context field further down
+        # For uplink requests, the Content-Type header is essential,
+        # Accept will be ignored
+        # For downlink requests, the Accept header is essential,
+        # Content-Type will be ignored
+
+        # default uplink content JSON
         self.headers.update({'Content-Type': 'application/json'})
+        # default downlink content JSON-LD
+        self.headers.update({'Accept': 'application/ld+json'})
+
         if init_header.ngsild_tenant is not None:
             self.__make_tenant()
 
@@ -161,7 +168,7 @@ class ContextBrokerLDClient(BaseHttpClient):
         except requests.RequestException as err:
             self.logger.error(err)
             raise
-        
+
     def __make_tenant(self):
         """
         Create tenant if tenant
@@ -191,7 +198,6 @@ class ContextBrokerLDClient(BaseHttpClient):
         except requests.RequestException as err:
             self.logger.error(err)
             raise
-
 
     def post_entity(self,
                     entity: ContextLDEntity,
@@ -237,7 +243,7 @@ class ContextBrokerLDClient(BaseHttpClient):
                    entity_id: str,
                    entity_type: str = None,
                    attrs: List[str] = None,
-                   options: Optional[str] = "keyValues",
+                   options: Optional[str] = None,
                    **kwargs  # TODO how to handle metadata?
                    ) \
             -> Union[ContextLDEntity, ContextLDEntityKeyValues, Dict[str, Any]]:
@@ -271,9 +277,10 @@ class ContextBrokerLDClient(BaseHttpClient):
             params.update({'type': entity_type})
         if attrs:
             params.update({'attrs': ','.join(attrs)})
-        if options != 'keyValues' and options != 'sysAttrs':
-            raise ValueError(f'Only available options are \'keyValues\' and \'sysAttrs\'')
-        params.update({'options': options})
+        if options:
+            if options != 'keyValues' and options != 'sysAttrs':
+                raise ValueError(f'Only available options are \'keyValues\' and \'sysAttrs\'')
+            params.update({'options': options})
 
         try:
             res = self.get(url=url, params=params, headers=headers)
@@ -282,7 +289,7 @@ class ContextBrokerLDClient(BaseHttpClient):
                 self.logger.debug("Received: %s", res.json())
                 if options == "keyValues":
                     return ContextLDEntityKeyValues(**res.json())
-                if options == "sysAttrs":
+                else:
                     return ContextLDEntity(**res.json())
             res.raise_for_status()
         except requests.RequestException as err:

@@ -3,9 +3,10 @@ Tests for filip.cb.client
 """
 import unittest
 import logging
+import pyld
 from requests import RequestException
 from filip.clients.ngsi_ld.cb import ContextBrokerLDClient
-from filip.models.base import FiwareLDHeader
+from filip.models.base import FiwareLDHeader, core_context
 from filip.models.ngsi_ld.context import ActionTypeLD, ContextLDEntity, ContextProperty, \
     NamedContextProperty
 from tests.config import settings
@@ -300,6 +301,94 @@ class TestContextBroker(unittest.TestCase):
         response = contextmanager.exception.response
         self.assertEqual(response.status_code, 400)
 
+    def test_different_context(self):
+        """
+        Get entities with different contexts.
+        Returns:
+        """
+        temperature_sensor_dict = {
+            "id": "urn:ngsi-ld:temperatureSensor",
+            "type": "TemperatureSensor",
+            "temperature": {
+                "type": "Property",
+                "value": 23,
+                "unitCode": "CEL"
+            }
+        }
+
+        # client with custom context
+        custom_context = "https://n5geh.github.io/n5geh.test-context.io/context_saref.jsonld"
+        custom_header = FiwareLDHeader(
+            ngsild_tenant=settings.FIWARE_SERVICE,
+        )
+        custom_header.set_context(custom_context)
+        client_custom_context = ContextBrokerLDClient(
+            fiware_header=custom_header,
+            url=settings.LD_CB_URL)
+
+        # default context
+        temperature_sensor = ContextLDEntity(**temperature_sensor_dict)
+        self.client.post_entity(entity=temperature_sensor)
+        entity_default = self.client.get_entity(entity_id=temperature_sensor.id)
+        self.assertEqual(entity_default.context,
+                         core_context)
+        self.assertEqual(entity_default.model_dump(exclude_unset=True,
+                                                   exclude={"context"}),
+                         temperature_sensor_dict)
+        entity_custom_context = client_custom_context.get_entity(
+            entity_id=temperature_sensor.id)
+        self.assertEqual(entity_custom_context.context,
+                         custom_context)
+        self.assertEqual(entity_custom_context.model_dump(exclude_unset=True,
+                                                          exclude={"context"}),
+                         temperature_sensor_dict)
+        self.client.delete_entity_by_id(entity_id=temperature_sensor.id)
+
+        # custom context in client
+        temperature_sensor = ContextLDEntity(**temperature_sensor_dict)
+        client_custom_context.post_entity(entity=temperature_sensor)
+        entity_custom = client_custom_context.get_entity(entity_id=temperature_sensor.id)
+        self.assertEqual(entity_custom.context,
+                         custom_context)
+        self.assertEqual(entity_custom.model_dump(exclude_unset=True,
+                                                  exclude={"context"}),
+                         temperature_sensor_dict)
+        entity_default_context = self.client.get_entity(entity_id=temperature_sensor.id)
+        self.assertEqual(entity_default_context.context,
+                         core_context)
+        # TODO implement expand and compact validation
+        # self.assertEqual(
+        #     pyld.jsonld.compact(entity_default_context.model_dump(exclude_unset=True,
+        #                                                           exclude={"context"}),
+        #                                                           custom_context),
+        #     temperature_sensor_dict)
+        self.assertNotEqual(
+            entity_default_context.model_dump(exclude_unset=True,
+                                              exclude={"context"}),
+            temperature_sensor_dict)
+        client_custom_context.delete_entity_by_id(entity_id=temperature_sensor.id)
+
+        # custom context in entity
+        temperature_sensor = ContextLDEntity(
+            context=["https://n5geh.github.io/n5geh.test-context.io/context_saref.jsonld"],
+            **temperature_sensor_dict)
+        self.client.post_entity(entity=temperature_sensor)
+        entity_custom = client_custom_context.get_entity(entity_id=temperature_sensor.id)
+        self.assertEqual(entity_custom.context,
+                         custom_context)
+        self.assertEqual(entity_custom.model_dump(exclude_unset=True,
+                                                  exclude={"context"}),
+                         temperature_sensor_dict)
+        entity_default_context = self.client.get_entity(entity_id=temperature_sensor.id)
+        self.assertEqual(entity_default_context.context,
+                         core_context)
+        # TODO implement expand and compact validation
+        self.assertNotEqual(
+            entity_default_context.model_dump(exclude_unset=True,
+                                              exclude={"context"}),
+            temperature_sensor_dict)
+        self.client.delete_entity_by_id(entity_id=temperature_sensor.id)
+
     def test_delete_entity(self):
         """
         Removes an specific Entity from an NGSI-LD system.
@@ -414,7 +503,7 @@ class TestContextBroker(unittest.TestCase):
             self.client.delete_entity_by_id(entity_id=entity.id)
 
         """Test 2"""
-        attr = ContextProperty(**{'value': 20, 'type': 'Number'})
+        attr = ContextProperty(**{'value': 20, 'type': 'Property'})
         with self.assertRaises(Exception):
             self.entity.add_properties({"test_value": attr})
             self.client.append_entity_attributes(self.entity)
@@ -422,8 +511,8 @@ class TestContextBroker(unittest.TestCase):
         """Test 3"""
         self.client.post_entity(self.entity)
         # What makes an property/ attribute unique ???
-        attr = ContextProperty(**{'value': 20, 'type': 'Number'})
-        attr_same = ContextProperty(**{'value': 40, 'type': 'Number'})
+        attr = ContextProperty(**{'value': 20, 'type': 'Property'})
+        attr_same = ContextProperty(**{'value': 40, 'type': 'Property'})
 
         self.entity.add_properties({"test_value": attr})
         self.client.append_entity_attributes(self.entity)
@@ -465,7 +554,7 @@ class TestContextBroker(unittest.TestCase):
         self.client.post_entity(entity=self.entity)
         self.client.update_entity_attribute(entity_id=self.entity.id, attr=newer_prop,
                                                attr_name='new_prop')
-        entity = self.client.get_entity(entity_id=self.entity.id)
+        entity = self.client.get_entity(entity_id=self.entity.id, options="keyValues")
         prop_dict = entity.model_dump()
         self.assertIn("new_prop", prop_dict)
         self.assertEqual(prop_dict["new_prop"], 40)
@@ -500,7 +589,7 @@ class TestContextBroker(unittest.TestCase):
         self.client.post_entity(entity=self.entity)
         self.client.update_entity_attribute(entity_id=self.entity.id, attr=newer_prop,
                                                attr_name='new_prop')
-        entity = self.client.get_entity(entity_id=self.entity.id)
+        entity = self.client.get_entity(entity_id=self.entity.id, options="keyValues")
         prop_dict = entity.model_dump()
         self.assertIn("new_prop", prop_dict)
         self.assertEqual(prop_dict["new_prop"], 55)
@@ -535,7 +624,7 @@ class TestContextBroker(unittest.TestCase):
         attr.value = 40
         self.client.update_entity_attribute(entity_id=self.entity.id, attr=attr,
                                                attr_name="test_value")
-        entity = self.client.get_entity(entity_id=self.entity.id)
+        entity = self.client.get_entity(entity_id=self.entity.id, options="keyValues")
         prop_dict = entity.model_dump()
         self.assertIn("test_value", prop_dict)
         self.assertEqual(prop_dict["test_value"], 40)
@@ -622,7 +711,7 @@ class TestContextBroker(unittest.TestCase):
         attr1 = NamedContextProperty(name="test_value", value=20)
         self.entity.add_properties(attrs=[attr1])
         self.client.post_entity(entity=self.entity)
-        entity = self.client.get_entity(entity_id=self.entity.id)
+        entity = self.client.get_entity(entity_id=self.entity.id, options="keyValues")
         prop_dict = entity.model_dump()
         self.assertIn("test_value", prop_dict)
         self.assertEqual(prop_dict["test_value"], 20)
@@ -631,7 +720,7 @@ class TestContextBroker(unittest.TestCase):
         self.entity.delete_properties(props=[attr1])
         self.entity.add_properties(attrs=[attr2])
         self.client.replace_existing_attributes_of_entity(entity=self.entity)
-        entity = self.client.get_entity(entity_id=self.entity.id)
+        entity = self.client.get_entity(entity_id=self.entity.id, options="keyValues")
         prop_dict = entity.model_dump()
         self.assertIn("test_value", prop_dict)
         self.assertEqual(prop_dict["test_value"], 44)
@@ -643,7 +732,7 @@ class TestContextBroker(unittest.TestCase):
         attr2 = NamedContextProperty(name="my_value", value=44)
         self.entity.add_properties(attrs=[attr1, attr2])
         self.client.post_entity(entity=self.entity)
-        entity = self.client.get_entity(entity_id=self.entity.id)
+        entity = self.client.get_entity(entity_id=self.entity.id, options="keyValues")
         prop_dict = entity.model_dump()
         self.assertIn("test_value", prop_dict)
         self.assertEqual(prop_dict["test_value"], 20)
@@ -656,7 +745,7 @@ class TestContextBroker(unittest.TestCase):
         attr4 = NamedContextProperty(name="my_value", value=45)
         self.entity.add_properties(attrs=[attr3, attr4])
         self.client.replace_existing_attributes_of_entity(entity=self.entity)
-        entity = self.client.get_entity(entity_id=self.entity.id)
+        entity = self.client.get_entity(entity_id=self.entity.id, options="keyValues")
         prop_dict = entity.model_dump()
         self.assertIn("test_value", prop_dict)
         self.assertEqual(prop_dict["test_value"], 25)
