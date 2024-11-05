@@ -338,6 +338,8 @@ class ContextBrokerLDClient(BaseHttpClient):
         if csf:
             params.update({'csf': csf})
         if limit:
+            if limit > 1000:
+                raise ValueError("limit must be an integer value <= 1000")
             params.update({'limit': limit})
         if options:
             if options != 'keyValues' and options != 'sysAttrs':
