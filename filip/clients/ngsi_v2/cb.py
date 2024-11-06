@@ -940,7 +940,7 @@ class ContextBrokerClient(BaseHttpClient):
             None
 
         """
-        url = urljoin(self.base_url, f'{self._url_version}/entities/{entity_id}')
+        url = urljoin(self.base_url, f'{self._url_version}/entities/{entity_id}/attrs')
         headers = self.headers.copy()
         if entity_type:
             params = {"type": entity_type}
