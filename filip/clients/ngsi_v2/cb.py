@@ -15,7 +15,7 @@ import re
 import requests
 from urllib.parse import urljoin
 import warnings
-from filip.clients.base_http_client import BaseHttpClient
+from filip.clients.base_http_client import BaseHttpClient, NgsiURLVersion
 from filip.config import settings
 from filip.models.base import FiwareHeader, PaginationMethod
 from filip.utils.simple_ql import QueryString
@@ -36,14 +36,6 @@ from filip.models.ngsi_v2.subscriptions import Subscription, Message
 from filip.models.ngsi_v2.registrations import Registration
 if TYPE_CHECKING:
     from filip.clients.ngsi_v2.iota import IoTAClient
-
-
-class NgsiURLVersion(str, Enum):
-    """
-    URL part that defines the NGSI version for the API.
-    """
-    v2_url = "v2"
-    ld_url = "ngsi-ld/v1"
 
 
 class ContextBrokerClient(BaseHttpClient):
@@ -79,7 +71,7 @@ class ContextBrokerClient(BaseHttpClient):
         """
         # set service url
         url = url or settings.CB_URL
-        self._url_version = NgsiURLVersion.v2_url
+        self._url_version = NgsiURLVersion.v2_url.value
         super().__init__(
             url=url, session=session, fiware_header=fiware_header, **kwargs
         )
