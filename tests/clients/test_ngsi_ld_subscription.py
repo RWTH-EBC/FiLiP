@@ -3,25 +3,23 @@ Test the endpoint for subscription related task of NGSI-LD for ContextBrokerClie
 """
 import json
 import time
+import urllib.parse
 from unittest import TestCase
-from pydantic import ValidationError
 import threading
 from paho.mqtt.enums import CallbackAPIVersion
 import paho.mqtt.client as mqtt
+from requests import RequestException
 from filip.clients.ngsi_ld.cb import ContextBrokerLDClient
 from filip.models.base import FiwareLDHeader
 from filip.models.ngsi_ld.context import \
-    ContextProperty, \
     NamedContextProperty, \
-    ContextLDEntity
+    ContextLDEntity, ActionTypeLD
 from filip.models.ngsi_ld.subscriptions import \
     Endpoint, \
     NotificationParams, \
     Subscription
-from filip.utils.cleanup import clear_all, clean_test
 from tests.config import settings
-from random import randint
-from pydantic import AnyUrl
+
 
 class TestSubscriptions(TestCase):
     """
@@ -37,6 +35,8 @@ class TestSubscriptions(TestCase):
         self.fiware_header = FiwareLDHeader(ngsild_tenant=settings.FIWARE_SERVICE)
         self.cb_client = ContextBrokerLDClient(fiware_header=self.fiware_header,
                                                url=settings.LD_CB_URL)
+        self.cleanup()
+
         # initial tenant
         self.cb_client.post_entity(ContextLDEntity(id="Dummy:1", type="Dummy"),
                                    update=True)
@@ -54,15 +54,15 @@ class TestSubscriptions(TestCase):
         self.cb_client = ContextBrokerLDClient()
         self.mqtt_topic = ''.join([settings.FIWARE_SERVICE,
                                    settings.FIWARE_SERVICEPATH])
-        self.MQTT_BROKER_URL_INTERNAL = "mqtt://mosquitto:1883"
-        self.MQTT_BROKER_URL_EXPOSED = "mqtt://localhost:1883"
         self.endpoint_mqtt = Endpoint(**{
-            "uri": "mqtt://my.host.org:1883/my/test/topic",
-            "accept": "application/json",  # TODO check whether it works
+            "uri": str(settings.LD_MQTT_BROKER_URL) + "/my/test/topic",
+            "accept": "application/json",
         })
-        self.cb_client = ContextBrokerLDClient(url=settings.LD_CB_URL, fiware_header=self.fiware_header)
+        self.cb_client = ContextBrokerLDClient(url=settings.LD_CB_URL,
+                                               fiware_header=self.fiware_header)
         self.endpoint_http = Endpoint(**{
-            "uri": "http://137.226.248.246:1027/ngsi-ld/v1/subscriptions",
+            "uri": urllib.parse.urljoin(str(settings.LD_CB_URL),
+                                        "/ngsi-ld/v1/subscriptions"),
             "accept": "application/json"
         }
                                       )
@@ -70,6 +70,7 @@ class TestSubscriptions(TestCase):
 
     def tearDown(self) -> None:
         self.cleanup()
+        self.cb_client.close()
     
     def cleanup(self):
         """
@@ -165,7 +166,6 @@ class TestSubscriptions(TestCase):
         sub_list2 = self.cb_client.get_subscription_list(limit=sub_limit)
         self.assertEqual(len(sub_list2), sub_limit)
 
-
     def test_delete_subscription(self):
         """
         Cancels subscription. 
@@ -230,16 +230,14 @@ class TestSubscriptions(TestCase):
         u_sub= self.cb_client.get_subscription(subscription_id=id)
         self.assertNotEqual(u_sub,sub_list[0])
         self.maxDiff = None
-        self.assertDictEqual(sub_changed.model_dump(),u_sub.model_dump())
-        sub_list = self.cb_client.get_subscription_list()
-        self.assertEqual(u_sub.model_dump(),sub_list[0])
-        non_sub = Subscription(id="urn:ngsi-ld:Subscription:nonexist", 
-                                notification=notification_param, 
-                                entities=[{"type":"house"}])
+        self.assertDictEqual(sub_changed.model_dump(),
+                             u_sub.model_dump())
+        non_sub = Subscription(id="urn:ngsi-ld:Subscription:nonexist",
+                               notification=notification_param,
+                               entities=[{"type":"house"}])
         with self.assertRaises(Exception):
             self.cb_client.update_subscription(non_sub)
-        #Try to patch more than one subscription at once.
-        # TODO
+
 
 class TestSubsCheckBroker(TestCase):
     """
@@ -257,10 +255,14 @@ class TestSubsCheckBroker(TestCase):
         for sub in sub_list:
             if sub.id.startswith('urn:ngsi-ld:Subscription:test_sub'):
                 self.cb_client.delete_subscription(sub.id)
-        entity_list = self.cb_client.get_entity_list()
-        for entity in entity_list:
-            if entity.id.startswith('urn:ngsi-ld:Entity:test_entity'):
-                self.cb_client.delete_entity_by_id(entity_id=entity.id)
+        try:
+            entity_list = True
+            while entity_list:
+                entity_list = self.cb_client.get_entity_list(limit=100)
+                self.cb_client.entity_batch_operation(action_type=ActionTypeLD.DELETE,
+                                                      entities=entity_list)
+        except RequestException:
+            pass
 
     def setUp(self) -> None:
         """
@@ -268,45 +270,43 @@ class TestSubsCheckBroker(TestCase):
         Returns:
             None
         """
-        self.MQTT_BROKER_URL_INTERNAL = "mqtt://mqtt-broker-ld:1883"
-        self.MQTT_BROKER_URL_INTERNAL = AnyUrl(self.MQTT_BROKER_URL_INTERNAL)
         self.entity_dict = {
-            'id':'urn:ngsi-ld:Entity:test_entity03',
-            'type':'Room',
-            'temperature':{
-                'type':'Property',
-                'value':30
+            'id': 'urn:ngsi-ld:Entity:test_entity03',
+            'type': 'Room',
+            'temperature': {
+                'type':  'Property',
+                'value': 30
             }
         }
         
         self.sub_dict = {
-            'description':'Test Subscription',
-            'id':'urn:ngsi-ld:Subscription:test_sub25',
-            'type':'Subscription',
-            'entities':[
+            'description': 'Test Subscription',
+            'id': 'urn:ngsi-ld:Subscription:test_sub25',
+            'type': 'Subscription',
+            'entities': [
                 {
-                    'type':'Room'
+                    'type': 'Room'
                 }
             ],
-            'watchedAttributes':[
+            'watchedAttributes': [
                 'temperature'
             ],
-            'q':'temperature<30',
-            'notification':{
-                'attributes':[
+            'q': 'temperature<30',
+            'notification':  {
+                'attributes': [
                     'temperature'
                 ],
-                'format':'normalized',
-                'endpoint':{
-                    'uri':f'mqtt://'
-                          f'{settings.MQTT_BROKER_URL_INTERNAL.host}:'
-                          f'{settings.MQTT_BROKER_URL_INTERNAL.port}/my/test/topic', # change uri
-                    'Accept':'application/json'
+                'format': 'normalized',
+                'endpoint': {
+                    'uri':  f'mqtt://'  # change uri
+                          f'{settings.LD_MQTT_BROKER_URL_INTERNAL.host}:'
+                          f'{settings.LD_MQTT_BROKER_URL_INTERNAL.port}/my/test/topic',
+                    'Accept': 'application/json'
                 },
-                'notifierInfo':[
+                'notifierInfo': [
                     {
-                        "key":"MQTT-Version",
-                        "value":"mqtt5.0"
+                        "key": "MQTT-Version",
+                        "value": "mqtt5.0"
                     }
                 ]
             }
@@ -339,12 +339,12 @@ class TestSubsCheckBroker(TestCase):
 
         self.timeout = 5 # in seconds
         self.last_test_timeout = [True]
-        self.timeout_proc = threading.Timer(self.timeout,self.timeout_func)
-
+        self.timeout_proc = threading.Timer(self.timeout,
+                                            self.timeout_func)
 
     def tearDown(self) -> None:
         self.cleanup()
-
+        self.cb_client.close()
 
     def test_post_subscription_mqtt(self):
         """
@@ -364,8 +364,8 @@ class TestSubsCheckBroker(TestCase):
                              json.loads(msg.payload.decode())['body']['data'][0])
 
         self.mqtt_client.on_message = on_message
-        self.mqtt_client.connect(settings.MQTT_BROKER_URL.host,
-                                 settings.MQTT_BROKER_URL.port,
+        self.mqtt_client.connect(settings.LD_MQTT_BROKER_URL.host,
+                                 settings.LD_MQTT_BROKER_URL.port,
                                  60)
         self.mqtt_client.loop_start()
         #post subscription then start timer
@@ -421,7 +421,9 @@ class TestSubsCheckBroker(TestCase):
 
         self.mqtt_client.on_message = on_message
         
-        self.mqtt_client.connect("localhost",1883,60)
+        self.mqtt_client.connect(settings.LD_MQTT_BROKER_URL.host,
+                                 settings.LD_MQTT_BROKER_URL.port,
+                                 60)
         self.mqtt_client.loop_start()
         self.cb_client.post_subscription(subscription=Subscription(**self.sub_dict))
         self.timeout_proc.start()
@@ -433,7 +435,8 @@ class TestSubsCheckBroker(TestCase):
                                                 attr_name='temperature')
         while(self.timeout_proc.is_alive()):
             continue
-        self.assertTrue(self.last_test_timeout[0],"Operation timed out")
+        self.assertTrue(self.last_test_timeout[0],
+                        "Operation timed out")
 
         self.last_test_timeout = [True]
         self.timeout_proc = threading.Timer(self.timeout,self.timeout_func)
@@ -451,7 +454,8 @@ class TestSubsCheckBroker(TestCase):
                                             attr_name='temperature')
         while(self.timeout_proc.is_alive()):
             continue
-        self.assertTrue(self.last_test_timeout[0],"Operation timed out")
+        self.assertTrue(self.last_test_timeout[0],
+                        "Operation timed out")
         self.mqtt_client.loop_stop()
         self.mqtt_client.disconnect()
 

@@ -13,7 +13,7 @@ from pydantic import \
     TypeAdapter, \
     PositiveInt, \
     PositiveFloat
-from filip.clients.base_http_client import BaseHttpClient
+from filip.clients.base_http_client import BaseHttpClient, NgsiURLVersion
 from filip.config import settings
 from filip.models.base import FiwareLDHeader, PaginationMethod, core_context
 from filip.utils.simple_ql import QueryString
@@ -22,14 +22,6 @@ from filip.models.ngsi_ld.subscriptions import Subscription
 from filip.models.ngsi_ld.context import ContextLDEntity, ContextLDEntityKeyValues, ContextProperty, ContextRelationship, NamedContextProperty, \
     NamedContextRelationship, ActionTypeLD, UpdateLD
 from filip.models.ngsi_v2.context import Query
-
-
-class NgsiURLVersion(str, Enum):
-    """
-    URL part that defines the NGSI version for the API.
-    """
-    v2_url = "/v2"
-    ld_url = "/ngsi-ld/v1"
 
 
 class ContextBrokerLDClient(BaseHttpClient):
@@ -68,7 +60,7 @@ class ContextBrokerLDClient(BaseHttpClient):
                          fiware_header=init_header,
                          **kwargs)
         # set the version specific url-pattern
-        self._url_version = NgsiURLVersion.ld_url
+        self._url_version = NgsiURLVersion.ld_url.value
         # For uplink requests, the Content-Type header is essential,
         # Accept will be ignored
         # For downlink requests, the Accept header is essential,
@@ -129,9 +121,9 @@ class ContextBrokerLDClient(BaseHttpClient):
             if res.ok:
                 items = res.json()
                 # do pagination
-                if self._url_version == NgsiURLVersion.v2_url:
+                if self._url_version == NgsiURLVersion.v2_url.value:
                     count = int(res.headers['Fiware-Total-Count'])
-                elif self._url_version == NgsiURLVersion.ld_url:
+                elif self._url_version == NgsiURLVersion.ld_url.value:
                     count = int(res.headers['NGSILD-Results-Count'])
                 else:
                     count = 0
@@ -336,6 +328,8 @@ class ContextBrokerLDClient(BaseHttpClient):
         if csf:
             params.update({'csf': csf})
         if limit:
+            if limit > 1000:
+                raise ValueError("limit must be an integer value <= 1000")
             params.update({'limit': limit})
         if options:
             if options != 'keyValues' and options != 'sysAttrs':

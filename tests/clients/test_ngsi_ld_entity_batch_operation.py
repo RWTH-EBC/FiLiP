@@ -32,7 +32,7 @@ class EntitiesBatchOperations(unittest.TestCase):
         try:
             entity_list = True
             while entity_list:
-                entity_list = self.cb_client.get_entity_list(limit=1000)
+                entity_list = self.cb_client.get_entity_list(limit=100)
                 self.cb_client.entity_batch_operation(action_type=ActionTypeLD.DELETE,
                                                       entities=entity_list)
         except RequestException:
@@ -45,7 +45,7 @@ class EntitiesBatchOperations(unittest.TestCase):
         try:
             entity_list = True
             while entity_list:
-                entity_list = self.cb_client.get_entity_list(limit=1000)
+                entity_list = self.cb_client.get_entity_list(limit=100)
                 self.cb_client.entity_batch_operation(action_type=ActionTypeLD.DELETE,
                                                       entities=entity_list)
         except RequestException:

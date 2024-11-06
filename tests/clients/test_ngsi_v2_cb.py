@@ -895,7 +895,7 @@ class TestContextBroker(unittest.TestCase):
 
         # update entity with ContextEntityKeyValues
         entity1_key_value.temperature = 30
-        self.client.update_entity_key_values(entity=entity1_key_value)
+        self.client.update_entity(entity=entity1_key_value, key_values=True)
         self.assertEqual(entity1_key_value,
                          self.client.get_entity(
                              entity_id=entity1.id,
@@ -908,7 +908,8 @@ class TestContextBroker(unittest.TestCase):
         # update entity with dictionary
         entity1_key_value_dict = entity1_key_value.model_dump()
         entity1_key_value_dict["temperature"] = 40
-        self.client.update_entity_key_values(entity=entity1_key_value_dict)
+        self.client.update_entity(entity=entity1_key_value_dict,
+                                  key_values=True)
         self.assertEqual(entity1_key_value_dict,
                          self.client.get_entity(
                              entity_id=entity1.id,
@@ -917,9 +918,57 @@ class TestContextBroker(unittest.TestCase):
         entity3 = self.client.get_entity(entity_id=entity1.id)
         self.assertEqual(entity1.temperature.type,
                          entity3.temperature.type)
+        # if attribute not existing, will be created
         entity1_key_value_dict.update({"humidity": 50})
+        self.client.update_entity(entity=entity1_key_value_dict,
+                                  key_values=True)
+        self.assertEqual(entity1_key_value_dict,
+                         self.client.get_entity(
+                             entity_id=entity1.id,
+                             response_format=AttrsFormat.KEY_VALUES).model_dump()
+                         )
+
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                cb_url=settings.CB_URL)
+    def test_update_attributes_keyvalues(self):
+        entity1 = self.entity.model_copy(deep=True)
+        # initial entity
+        self.client.post_entity(entity1)
+
+        # update existing attributes
+        self.client.update_or_append_entity_attributes(
+            entity_id=entity1.id,
+            attrs={"temperature": 30},
+            key_values=True)
+        self.assertEqual(30, self.client.get_attribute_value(entity_id=entity1.id,
+                                                             attr_name="temperature"))
+
+        # update not existing attributes
+        self.client.update_or_append_entity_attributes(
+            entity_id=entity1.id,
+            attrs={"humidity": 40},
+            key_values=True)
+        self.assertEqual(40, self.client.get_attribute_value(entity_id=entity1.id,
+                                                             attr_name="humidity"))
+
+        # update both existing and not existing attributes
         with self.assertRaises(RequestException):
-            self.client.update_entity_key_values(entity=entity1_key_value_dict)
+            self.client.update_or_append_entity_attributes(
+                entity_id=entity1.id,
+                attrs={"humidity": 50, "co2": 300},
+                append_strict=True,
+                key_values=True)
+        self.client.update_or_append_entity_attributes(
+            entity_id=entity1.id,
+            attrs={"humidity": 50, "co2": 300},
+            key_values=True)
+        self.assertEqual(50, self.client.get_attribute_value(entity_id=entity1.id,
+                                                             attr_name="humidity"))
+        self.assertEqual(300, self.client.get_attribute_value(entity_id=entity1.id,
+                                                              attr_name="co2"))
+        self.assertEqual(30, self.client.get_attribute_value(entity_id=entity1.id,
+                                                             attr_name="temperature"))
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
@@ -1083,6 +1132,28 @@ class TestContextBroker(unittest.TestCase):
                 },
                 "attrs": ["temperature", "humidity", "co2"],
                 "onlyChangedAttrs": False
+            },
+            "expires": datetime.now() + timedelta(days=1),
+            "throttling": 0
+        })
+
+        sub_with_covered_attrs_notification = Subscription.model_validate({
+            "description": "Test notification with covered attributes",
+            "subject": {
+                "entities": [
+                    {
+                        "id": "Test:001",
+                        "type": "Test"
+                    }
+                ]
+            },
+            "notification": {
+                "mqtt": {
+                    "url": mqtt_url_internal,
+                    "topic": mqtt_topic
+                },
+                "attrs": ["temperature", "not_exist_attr"],
+                "covered": True
             },
             "expires": datetime.now() + timedelta(days=1),
             "throttling": 0
@@ -1260,6 +1331,28 @@ class TestContextBroker(unittest.TestCase):
             self.assertEqual(sub_message.data[0].get_attribute("co2").value, 78)
             self.assertEqual(sub_message.data[0].get_attribute("temperature").value, 123)
             client.delete_subscription(sub_id_6)
+
+            # test7 notification with covered attributes
+            sub_id_7 = client.post_subscription(
+                subscription=sub_with_covered_attrs_notification,
+                )
+            time.sleep(1)
+            client.update_attribute_value(entity_id=entity.id,
+                                          attr_name="temperature",
+                                          value=40
+                                          )
+            time.sleep(1)
+            sub_4 = client.get_subscription(sub_id_7)
+            self.assertEqual(sub_4.notification.timesSent, 1)
+            notified_attr_names = sub_messages[sub_id_7].data[0].get_attribute_names()
+            self.assertEqual(
+                len(notified_attr_names), 2)
+            self.assertIn("temperature", notified_attr_names)
+            self.assertIn("not_exist_attr", notified_attr_names)
+            with self.assertRaises(KeyError):
+                # The attribute "not_exist_attr" has type None,
+                #  so it will not be taken as an attribute by filip
+                sub_messages[sub_id_7].data[0].get_attribute("not_exist_attr")
 
     @clean_test(fiware_service=settings.FIWARE_SERVICE,
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,

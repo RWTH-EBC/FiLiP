@@ -132,7 +132,9 @@ class TestSubscriptions(unittest.TestCase):
                 "type": "entityType",
                 "k": "v"
             }
-            NgsiPayload(NgsiPayloadAttr(**attr_dict),id="someId",type="someType")
+            NgsiPayload(NgsiPayloadAttr(**attr_dict),
+                        id="someId",
+                        type="someType")
 
         # test onlyChangedAttrs-field
         notification = Notification.model_validate(self.notification)
@@ -140,6 +142,12 @@ class TestSubscriptions(unittest.TestCase):
         notification.onlyChangedAttrs = False
         with self.assertRaises(ValidationError):
             notification.onlyChangedAttrs = dict()
+
+        # test covered
+        notification = Notification.model_validate(self.notification)
+        notification.covered = True
+        with self.assertRaises(ValidationError):
+            notification.attrs = []
 
     def test_substitution_models(self):
         """
