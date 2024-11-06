@@ -4,7 +4,9 @@ Tests for filip.cb.client
 import unittest
 import logging
 import pyld
-from requests import RequestException
+from requests import RequestException, Session
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 from filip.clients.ngsi_ld.cb import ContextBrokerLDClient
 from filip.models.base import FiwareLDHeader, core_context
 from filip.models.ngsi_ld.context import ActionTypeLD, ContextLDEntity, ContextProperty, \
@@ -41,7 +43,19 @@ class TestContextBroker(unittest.TestCase):
         self.entity = ContextLDEntity(id='urn:ngsi-ld:my:id4', type='MyType', **self.attr)
         self.entity_2 = ContextLDEntity(id="urn:ngsi-ld:room2", type="room")
         self.fiware_header = FiwareLDHeader(ngsild_tenant=settings.FIWARE_SERVICE)
+        # Set up retry strategy
+        session = Session()
+        retry_strategy = Retry(
+            total=5,  # Maximum number of retries
+            backoff_factor=1,  # Exponential backoff (1, 2, 4, 8, etc.)
+            status_forcelist=[429, 500, 502, 503, 504], # Retry on these HTTP status codes
+        )
+        # Set the HTTP adapter with retry strategy
+        adapter = HTTPAdapter(max_retries=retry_strategy)
+        session.mount("https://", adapter)
+        session.mount("http://", adapter)
         self.client = ContextBrokerLDClient(fiware_header=self.fiware_header,
+                                            session=session,
                                             url=settings.LD_CB_URL)
         # todo replace with clean up function for ld
         try:
