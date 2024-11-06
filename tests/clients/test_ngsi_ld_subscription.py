@@ -70,6 +70,7 @@ class TestSubscriptions(TestCase):
 
     def tearDown(self) -> None:
         self.cleanup()
+        self.cb_client.close()
     
     def cleanup(self):
         """
@@ -237,6 +238,7 @@ class TestSubscriptions(TestCase):
         with self.assertRaises(Exception):
             self.cb_client.update_subscription(non_sub)
 
+
 class TestSubsCheckBroker(TestCase):
     """
     These tests are more oriented towards testing the actual broker.
@@ -340,10 +342,9 @@ class TestSubsCheckBroker(TestCase):
         self.timeout_proc = threading.Timer(self.timeout,
                                             self.timeout_func)
 
-
     def tearDown(self) -> None:
         self.cleanup()
-
+        self.cb_client.close()
 
     def test_post_subscription_mqtt(self):
         """
