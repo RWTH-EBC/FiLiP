@@ -170,7 +170,7 @@ class TestClearFunctions(unittest.TestCase):
                     client.post_notification(notification_message)
 
         create_data_points()
-        time.sleep(1)
+        time.sleep(2)
         self.assertEqual(len(self.ql_client.get_entities()), rec_numbs)
         clear_quantumleap(url=self.ql_url,
                           fiware_header=self.fiware_header)
@@ -178,7 +178,7 @@ class TestClearFunctions(unittest.TestCase):
             self.ql_client.get_entities()
 
         create_data_points()
-        time.sleep(1)
+        time.sleep(2)
         self.assertEqual(len(self.ql_client.get_entities()), rec_numbs)
         clear_quantumleap(ql_client=self.ql_client)
         with self.assertRaises(RequestException):
