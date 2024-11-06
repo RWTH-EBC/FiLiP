@@ -501,11 +501,10 @@ class TestContextBroker(unittest.TestCase):
 
         self.entity.add_properties({"test_value": attr})
         self.client.append_entity_attributes(self.entity)
-        entity_list = self.client.get_entity_list()
-        for entity in entity_list:
-            self.assertEqual(first=entity.test_value.value, second=attr.value)
-        for entity in entity_list:
-            self.client.delete_entity_by_id(entity_id=entity.id)
+
+        entity = self.client.get_entity(entity_id=self.entity.id)
+        self.assertEqual(first=entity.test_value.value, second=attr.value)
+        self.client.delete_entity_by_id(entity_id=entity.id)
 
         """Test 2"""
         attr = ContextProperty(**{'value': 20, 'type': 'Property'})
@@ -525,10 +524,9 @@ class TestContextBroker(unittest.TestCase):
         # noOverwrite will raise 400, because all attributes exist already.
         with self.assertRaises(RequestException):
             self.client.append_entity_attributes(self.entity, options="noOverwrite")
-        entity_list = self.client.get_entity_list()
-        for entity in entity_list:
-            self.assertEqual(first=entity.test_value.value, second=attr.value)
-            self.assertNotEqual(first=entity.test_value, second=attr_same.value)
+        entity = self.client.get_entity(entity_id=self.entity.id)
+        self.assertEqual(first=entity.test_value.value, second=attr.value)
+        self.assertNotEqual(first=entity.test_value.value, second=attr_same.value)
 
     def test_patch_entity_attrs(self):
         """
