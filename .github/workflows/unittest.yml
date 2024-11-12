@@ -1,0 +1,44 @@
+name: Run Unit Tests
+
+on:
+  push:
+    branches:
+      - 315-Unittest-via-Github-actions # Trigger only on this specific branch
+  pull_request:
+    branches:
+      - 315-Unittest-via-Github-actions # Trigger only on pull requests to this branch
+
+jobs:
+  test:
+    name: Run Unit Tests Across Python Versions
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: [3.7, 3.8, 3.9, 3.10, 3.11]
+
+    steps:
+    # Step 1: Checkout the repository
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    # Step 2: Set up Python
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    # Step 3: Install Dependencies
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    # Step 4: Run Unit Tests
+    - name: Run Unit Tests
+      run: |
+        if [[ "${{ matrix.python-version }}" == "3.7" ]]; then
+          python -m unittest discover --verbose . "test_*.py"
+        else
+          python -m pytest tests/
+        fi
