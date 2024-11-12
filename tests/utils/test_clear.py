@@ -4,18 +4,22 @@ Tests clear functions in filip.utils.cleanup
 import random
 import time
 import unittest
+import urllib.parse
 from datetime import datetime
 from typing import List
 from uuid import uuid4
-
 from requests import RequestException
-
+from filip.clients.ngsi_ld.cb import ContextBrokerLDClient
 from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient, QuantumLeapClient
-from filip.models.base import FiwareHeader
+from filip.models.base import FiwareHeader, FiwareLDHeader
+from filip.models.ngsi_ld.context import ContextLDEntity, ActionTypeLD
+from filip.models.ngsi_ld.subscriptions import SubscriptionLD, NotificationParams, \
+    Endpoint
 from filip.models.ngsi_v2.context import ContextEntity
 from filip.models.ngsi_v2.iot import Device, ServiceGroup
 from filip.models.ngsi_v2.subscriptions import Subscription, Message
-from filip.utils.cleanup import clear_context_broker, clear_iot_agent, clear_quantumleap
+from filip.utils.cleanup import clear_context_broker, clear_iot_agent, clear_quantumleap, \
+    clear_context_broker_ld
 from tests.config import settings
 
 
@@ -35,6 +39,10 @@ class TestClearFunctions(unittest.TestCase):
         self.cb_url = settings.CB_URL
         self.cb_client = ContextBrokerClient(url=self.cb_url,
                                              fiware_header=self.fiware_header)
+        self.cb_client_ld = ContextBrokerLDClient(
+            fiware_header=FiwareLDHeader(ngsild_tenant=settings.FIWARE_SERVICE),
+            url=settings.LD_CB_URL)
+
         self.iota_url = settings.IOTA_URL
         self.iota_client = IoTAClient(url=self.iota_url,
                                       fiware_header=self.fiware_header)
@@ -85,6 +93,30 @@ class TestClearFunctions(unittest.TestCase):
         clear_context_broker(cb_client=self.cb_client)
 
         self.assertEqual(0, len(self.cb_client.get_entity_list()) or len(self.cb_client.get_subscription_list()))
+
+    def test_clear_context_broker_ld(self):
+        """
+        Test for clearing context broker LD using context broker client
+        """
+        random_list = [random.randint(0, 100) for _ in range(10)]
+        entities = [ContextLDEntity(id=f"urn:ngsi-ld:clear_test:{str(i)}",
+                                    type='clear_test') for i in random_list]
+        self.cb_client_ld.entity_batch_operation(action_type=ActionTypeLD.CREATE,
+                                                 entities=entities)
+        notification_param = NotificationParams(attributes=["attr"],
+                                                endpoint=Endpoint(**{
+                                                    "uri": urllib.parse.urljoin(
+                                                        str(settings.LD_CB_URL),
+                                                        "/ngsi-ld/v1/subscriptions"),
+                                                    "accept": "application/json"
+                                                }))
+        sub = SubscriptionLD(id=f"urn:ngsi-ld:Subscription:clear_test:{random.randint(0, 100)}",
+                             notification=notification_param,
+                             entities=[{"type": "clear_test"}])
+        self.cb_client_ld.post_subscription(subscription=sub)
+        clear_context_broker_ld(cb_ld_client=self.cb_client_ld)
+        self.assertEqual(0, len(self.cb_client_ld.get_entity_list()))
+        self.assertEqual(0, len(self.cb_client_ld.get_subscription_list()))
 
     def test_clear_context_broker_with_url(self):
         """
