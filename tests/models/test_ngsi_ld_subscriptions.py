@@ -7,7 +7,7 @@ import unittest
 from pydantic import ValidationError
 from filip.models.ngsi_ld.base import validate_ngsi_ld_query
 from filip.models.ngsi_ld.subscriptions import \
-    Subscription, \
+    SubscriptionLD, \
     Endpoint, NotificationParams, EntityInfo, TemporalQuery
 from filip.models.base import FiwareHeader
 from filip.utils.cleanup import clear_all

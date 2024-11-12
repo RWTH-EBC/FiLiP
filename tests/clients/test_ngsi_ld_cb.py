@@ -13,6 +13,7 @@ from filip.models.ngsi_ld.context import ActionTypeLD, ContextLDEntity, ContextP
     NamedContextProperty
 from tests.config import settings
 import requests
+from filip.utils.cleanup import clear_context_broker_ld
 
 
 # Setting up logging
@@ -57,28 +58,13 @@ class TestContextBroker(unittest.TestCase):
         self.client = ContextBrokerLDClient(fiware_header=self.fiware_header,
                                             session=session,
                                             url=settings.LD_CB_URL)
-        # todo replace with clean up function for ld
-        try:
-            entity_list = True
-            while entity_list:
-                entity_list = self.client.get_entity_list(limit=100)
-                self.client.entity_batch_operation(action_type=ActionTypeLD.DELETE,
-                                                   entities=entity_list)
-        except RequestException:
-            pass
+        clear_context_broker_ld(cb_ld_client=self.client)
 
     def tearDown(self) -> None:
         """
         Cleanup test server
         """
-        try:
-            entity_list = True
-            while entity_list:
-                entity_list = self.client.get_entity_list(limit=100)
-                self.client.entity_batch_operation(action_type=ActionTypeLD.DELETE,
-                                                   entities=entity_list)
-        except RequestException:
-            pass
+        clear_context_broker_ld(cb_ld_client=self.client)
         self.client.close()
 
     def test_management_endpoints(self):

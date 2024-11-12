@@ -9,6 +9,7 @@ from filip.models.base import FiwareLDHeader
 from filip.clients.ngsi_ld.cb import ContextBrokerLDClient
 from filip.models.ngsi_ld.context import ContextLDEntity, ActionTypeLD
 from tests.config import settings
+from filip.utils.cleanup import clear_context_broker_ld
 
 
 class EntitiesBatchOperations(unittest.TestCase):
@@ -28,28 +29,13 @@ class EntitiesBatchOperations(unittest.TestCase):
         self.fiware_header = FiwareLDHeader(ngsild_tenant=settings.FIWARE_SERVICE)
         self.cb_client = ContextBrokerLDClient(fiware_header=self.fiware_header,
                                                url=settings.LD_CB_URL)
-        # todo replace with clean up function for ld
-        try:
-            entity_list = True
-            while entity_list:
-                entity_list = self.cb_client.get_entity_list(limit=100)
-                self.cb_client.entity_batch_operation(action_type=ActionTypeLD.DELETE,
-                                                      entities=entity_list)
-        except RequestException:
-            pass
+        clear_context_broker_ld(cb_ld_client=self.cb_client)
 
     def tearDown(self) -> None:
         """
         Cleanup test server
         """
-        try:
-            entity_list = True
-            while entity_list:
-                entity_list = self.cb_client.get_entity_list(limit=100)
-                self.cb_client.entity_batch_operation(action_type=ActionTypeLD.DELETE,
-                                                      entities=entity_list)
-        except RequestException:
-            pass
+        clear_context_broker_ld(cb_ld_client=self.cb_client)
         self.cb_client.close()
 
     def test_entity_batch_operations_create(self) -> None:
