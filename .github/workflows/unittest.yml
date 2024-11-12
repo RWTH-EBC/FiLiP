@@ -31,7 +31,6 @@ jobs:
     # Step 3: Install Filip Library
     - name: Install Filip Library
       run: |
-        pip install --upgrade pip
         pip install -U git+https://github.com/RWTH-EBC/filip.git
 
 
