@@ -1,4 +1,4 @@
-name: Run Unit Tests
+name: Python Unit Tests
 
 on:
   push:
@@ -15,7 +15,7 @@ jobs:
 
     strategy:
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11"]
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
 
     steps:
     # Step 1: Checkout the repository
@@ -34,14 +34,14 @@ jobs:
         python --version
         pip --version
 
-  run-unittests:
-    name: Run Unit Tests on All Python Versions
+  install-dependencies:
+    name: Install Dependencies
     needs: setup-python
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11"]
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
 
     steps:
     # Step 1: Checkout the repository
@@ -57,24 +57,65 @@ jobs:
     # Step 3: Install Dependencies
     - name: Install Dependencies
       run: |
-        echo "geojson_pydantic>=1.0.2" > requirements.txt
         pip install --upgrade pip
-        pip install -r requirements.txt --timeout 120 --verbose
-        pip install -e . --timeout 120 --verbose
+        pip install -e .
 
-    # Step 4: Create .env File
+  create-env:
+    name: Create Test Environment
+    needs: install-dependencies
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Checkout the repository
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    # Step 2: Create .env File
     - name: Set up Test Environment
       run: |
-        echo "LOG_LEVEL=INFO" >> tests/.env
-        echo "CB_URL=http://localhost:1026" >> tests/.env
-        echo "IOTA_JSON_URL=http://localhost:4041" >> tests/.env
-        echo "IOTA_UL_URL=http://localhost:4061" >> tests/.env
-        echo "QL_URL=http://localhost:8668" >> tests/.env
-        echo "MQTT_BROKER_URL=mqtt://localhost:1883" >> tests/.env
-        echo "FIWARE_SERVICE=filip" >> tests/.env
-        echo "FIWARE_SERVICEPATH=/testing" >> tests/.env
+        echo "LOG_LEVEL=INFO" >> FiLiP/tests/.env
+        echo "CB_URL=http://localhost:1026" >> FiLiP/tests/.env
+        echo "IOTA_JSON_URL=http://localhost:4041" >> FiLiP/tests/.env
+        echo "IOTA_UL_URL=http://localhost:4061" >> FiLiP/tests/.env
+        echo "QL_URL=http://localhost:8668" >> FiLiP/tests/.env
+        echo "MQTT_BROKER_URL=mqtt://localhost:1883" >> FiLiP/tests/.env
+        echo "FIWARE_SERVICE=filip" >> FiLiP/tests/.env
+        echo "FIWARE_SERVICEPATH=/testing" >> FiLiP/tests/.env
 
-    # Step 5: Run Unit Tests
-    - name: Run Unit Tests
+  run-tests:
+    name: Run Unit Tests
+    needs: create-env
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+        test-engine: ["PYTEST", "UNITTEST"]
+
+    steps:
+    # Step 1: Checkout the repository
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    # Step 2: Set up Python
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    # Step 3: Install Test Engine
+    - name: Install Test Engine
       run: |
-        python -m unittest discover tests --verbose
+        if [ "${{ matrix.test-engine }}" == "PYTEST" ]; then
+          pip install pytest;
+        fi
+
+    # Step 4: Run Tests
+    - name: Run Tests
+      run: |
+        TEST_PATH="FiLiP/tests"
+        if [ "${{ matrix.test-engine }}" == "PYTEST" ]; then 
+          python -m pytest $TEST_PATH/; 
+        else 
+          python -m unittest discover --verbose $TEST_PATH "test_*.py"; 
+        fi
