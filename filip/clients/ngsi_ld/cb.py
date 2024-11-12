@@ -18,7 +18,7 @@ from filip.config import settings
 from filip.models.base import FiwareLDHeader, PaginationMethod, core_context
 from filip.utils.simple_ql import QueryString
 from filip.models.ngsi_v2.base import AttrsFormat
-from filip.models.ngsi_ld.subscriptions import Subscription
+from filip.models.ngsi_ld.subscriptions import SubscriptionLD
 from filip.models.ngsi_ld.context import ContextLDEntity, ContextLDEntityKeyValues, ContextProperty, ContextRelationship, NamedContextProperty, \
     NamedContextRelationship, ActionTypeLD, UpdateLD
 from filip.models.ngsi_v2.context import Query
@@ -518,7 +518,7 @@ class ContextBrokerLDClient(BaseHttpClient):
 
     # SUBSCRIPTION API ENDPOINTS
     def get_subscription_list(self,
-                              limit: PositiveInt = inf) -> List[Subscription]:
+                              limit: PositiveInt = inf) -> List[SubscriptionLD]:
         """
         Returns a list of all the subscriptions present in the system.
         Args:
@@ -538,14 +538,14 @@ class ContextBrokerLDClient(BaseHttpClient):
                                       url=url,
                                       params=params,
                                       headers=headers)
-            adapter = TypeAdapter(List[Subscription])
+            adapter = TypeAdapter(List[SubscriptionLD])
             return adapter.validate_python(items)
         except requests.RequestException as err:
             msg = "Could not load subscriptions!"
             self.log_error(err=err, msg=msg)
             raise
 
-    def post_subscription(self, subscription: Subscription,
+    def post_subscription(self, subscription: SubscriptionLD,
                           update: bool = False) -> str:
         """
         Creates a new subscription. The subscription is represented by a
@@ -577,8 +577,8 @@ class ContextBrokerLDClient(BaseHttpClient):
                     subscription.id = ex_sub.id
                     self.update_subscription(subscription)
                 else:
-                    warnings.warn(f"Subscription existed already with the id"
-                                  f" {ex_sub.id}")
+                    self.logger.warning(f"Subscription existed already with the id"
+                                        f" {ex_sub.id}")
                 return ex_sub.id
 
         url = urljoin(self.base_url, f'{self._url_version}/subscriptions')
@@ -602,7 +602,7 @@ class ContextBrokerLDClient(BaseHttpClient):
             self.log_error(err=err, msg=msg)
             raise
 
-    def get_subscription(self, subscription_id: str) -> Subscription:
+    def get_subscription(self, subscription_id: str) -> SubscriptionLD:
         """
         Retrieves a subscription from
         Args:
@@ -617,14 +617,14 @@ class ContextBrokerLDClient(BaseHttpClient):
             res = self.get(url=url, headers=headers)
             if res.ok:
                 self.logger.debug('Received: %s', res.json())
-                return Subscription(**res.json())
+                return SubscriptionLD(**res.json())
             res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Could not load subscription {subscription_id}"
             self.log_error(err=err, msg=msg)
             raise
 
-    def update_subscription(self, subscription: Subscription) -> None:
+    def update_subscription(self, subscription: SubscriptionLD) -> None:
         """
         Only the fields included in the request are updated in the subscription.
         Args:

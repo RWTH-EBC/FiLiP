@@ -206,7 +206,7 @@ class TemporalQuery(BaseModel):
         return self
 
 
-class Subscription(BaseModel):
+class SubscriptionLD(BaseModel):
     id: Optional[str] = Field(
         default=None,
         description="Subscription identifier (JSON-LD @id)"
