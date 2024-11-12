@@ -9,15 +9,35 @@ on:
       - 315-Unittest-via-Github-actions
 
 jobs:
-  test:
-    name: Run Unit Tests Across Python Versions
+  setup-python:
+    name: Setup Python Versions
     runs-on: ubuntu-latest
-    services:
-      fiware:
-        image: fiware/orion:latest
-        options: >-
-          --network-alias fiware
-          --publish 1026:1026
+
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
+
+    steps:
+    # Step 1: Checkout the repository
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    # Step 2: Set up Python
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    # Step 3: Verify Python Installation
+    - name: Verify Python Version
+      run: |
+        python --version
+        pip --version
+
+  run-unittests:
+    name: Run Unit Tests on All Python Versions
+    needs: setup-python
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
@@ -54,14 +74,7 @@ jobs:
         echo "FIWARE_SERVICE=filip" >> tests/.env
         echo "FIWARE_SERVICEPATH=/testing" >> tests/.env
 
-    # Step 5: Wait for FIWARE Services to Start
-    - name: Wait for Context Broker to Start
-      run: |
-        for i in {1..30}; do
-          curl -s http://localhost:1026/version && break || sleep 2;
-        done
-
-    # Step 6: Run Unit Tests
+    # Step 5: Run Unit Tests
     - name: Run Unit Tests
       run: |
         python -m unittest discover tests --verbose
