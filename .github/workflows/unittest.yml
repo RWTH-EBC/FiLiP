@@ -30,45 +30,18 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    # Step 3: Verify Python Version
-    - name: Verify Python Version
+    # Step 3: Verify Directory Structure
+    - name: Verify Directory Structure
       run: |
-        python --version || true
-        pip --version || true
+        echo "Listing files to verify directory structure:"
+        ls -R ${GITHUB_WORKSPACE}
 
-    # Step 4: Install Dependencies
-    - name: Install Dependencies
-      continue-on-error: true
-      run: |
-        pip install --upgrade pip || true
-        pip install -e . || true
-
-    # Step 5: Create Test Environment
-    - name: Create .env File
-      continue-on-error: true
-      run: |
-        echo "LOG_LEVEL=INFO" >> FiLiP/tests/.env || true
-        echo "CB_URL=http://localhost:1026" >> FiLiP/tests/.env || true
-        echo "IOTA_JSON_URL=http://localhost:4041" >> FiLiP/tests/.env || true
-        echo "IOTA_UL_URL=http://localhost:4061" >> FiLiP/tests/.env || true
-        echo "QL_URL=http://localhost:8668" >> FiLiP/tests/.env || true
-        echo "MQTT_BROKER_URL=mqtt://localhost:1883" >> FiLiP/tests/.env || true
-        echo "FIWARE_SERVICE=filip" >> FiLiP/tests/.env || true
-        echo "FIWARE_SERVICEPATH=/testing" >> FiLiP/tests/.env || true
-
-    # Step 6: Install Test Engine
-    - name: Install Test Engine
-      continue-on-error: true
-      run: |
-        if [ "${{ matrix.test-engine }}" == "PYTEST" ]; then
-          pip install pytest || true;
-        fi
-
-    # Step 7: Run Tests
+    # Step 4: Run Tests
     - name: Run Tests
       continue-on-error: true
       run: |
-        TEST_PATH="FiLiP/tests"
+        TEST_PATH="${{ github.workspace }}/FiLiP/tests"
+        echo "Testing path: $TEST_PATH"
         if [ "${{ matrix.test-engine }}" == "PYTEST" ]; then 
           python -m pytest $TEST_PATH/ || true; 
         else 
