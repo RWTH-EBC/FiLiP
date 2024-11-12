@@ -17,8 +17,9 @@ from filip.models.ngsi_ld.context import \
 from filip.models.ngsi_ld.subscriptions import \
     Endpoint, \
     NotificationParams, \
-    Subscription
+    SubscriptionLD
 from tests.config import settings
+from filip.utils.cleanup import clear_context_broker_ld
 
 
 class TestSubscriptions(TestCase):
@@ -35,51 +36,23 @@ class TestSubscriptions(TestCase):
         self.fiware_header = FiwareLDHeader(ngsild_tenant=settings.FIWARE_SERVICE)
         self.cb_client = ContextBrokerLDClient(fiware_header=self.fiware_header,
                                                url=settings.LD_CB_URL)
-        self.cleanup()
+        clear_context_broker_ld(cb_ld_client=self.cb_client)
 
-        # initial tenant
-        self.cb_client.post_entity(ContextLDEntity(id="Dummy:1", type="Dummy"),
-                                   update=True)
-        self.cb_client.delete_entity_by_id("Dummy:1")
-        # self.mqtt_url = "mqtt://test.de:1883"
-        # self.mqtt_topic = '/filip/testing'
-        # self.notification =  {
-        #     "attributes": ["filling", "controlledAsset"],
-        #     "format": "keyValues",
-        #     "endpoint": {
-        #     "uri": "http://test:1234/subscription/low-stock-farm001-ngsild",
-        #     "accept": "application/json"
-        #     }
-        # }
-        self.cb_client = ContextBrokerLDClient()
         self.mqtt_topic = ''.join([settings.FIWARE_SERVICE,
                                    settings.FIWARE_SERVICEPATH])
         self.endpoint_mqtt = Endpoint(**{
             "uri": str(settings.LD_MQTT_BROKER_URL) + "/my/test/topic",
             "accept": "application/json",
         })
-        self.cb_client = ContextBrokerLDClient(url=settings.LD_CB_URL,
-                                               fiware_header=self.fiware_header)
         self.endpoint_http = Endpoint(**{
             "uri": urllib.parse.urljoin(str(settings.LD_CB_URL),
                                         "/ngsi-ld/v1/subscriptions"),
             "accept": "application/json"
-        }
-                                      )
-        self.cleanup()
+        })
 
     def tearDown(self) -> None:
-        self.cleanup()
+        clear_context_broker_ld(cb_ld_client=self.cb_client)
         self.cb_client.close()
-    
-    def cleanup(self):
-        """
-        Cleanup test subscriptions
-        """
-        sub_list = self.cb_client.get_subscription_list()
-        for sub in sub_list:
-            if sub.id.startswith('urn:ngsi-ld:Subscription:test_sub'):
-                self.cb_client.delete_subscription(sub.id)
 
     def test_post_subscription_http(self):
         """
@@ -94,7 +67,7 @@ class TestSubscriptions(TestCase):
         attr_id = "attr"
         id = "urn:ngsi-ld:Subscription:" + "test_sub0"
         notification_param = NotificationParams(attributes=[attr_id], endpoint=self.endpoint_http)
-        sub = Subscription(id=id, notification=notification_param, entities=[{"type": "Room"}])
+        sub = SubscriptionLD(id=id, notification=notification_param, entities=[{"type": "Room"}])
         self.cb_client.post_subscription(sub)
         sub_list = [x for x in self.cb_client.get_subscription_list() 
                     if x.id == 'urn:ngsi-ld:Subscription:test_sub0']
@@ -129,7 +102,7 @@ class TestSubscriptions(TestCase):
         attr_id = "attr"
         id = "urn:ngsi-ld:Subscription:" + "test_sub0"
         notification_param = NotificationParams(attributes=[attr_id], endpoint=self.endpoint_http)
-        sub = Subscription(id=id, notification=notification_param, entities=[{"type": "Room"}])
+        sub = SubscriptionLD(id=id, notification=notification_param, entities=[{"type": "Room"}])
         self.cb_client.post_subscription(sub)
         sub_get = self.cb_client.get_subscription(subscription_id=id)
         self.assertEqual(sub.entities, sub_get.entities)
@@ -152,7 +125,7 @@ class TestSubscriptions(TestCase):
             attr_id = "attr" + str(i)
             id = "urn:ngsi-ld:Subscription:" + "test_sub" + str(i)
             notification_param = NotificationParams(attributes=[attr_id], endpoint=self.endpoint_http)
-            sub = Subscription(id=id, notification=notification_param, entities=[{"type": "Room"}])
+            sub = SubscriptionLD(id=id, notification=notification_param, entities=[{"type": "Room"}])
             sub_post_list.append(sub)
             self.cb_client.post_subscription(sub)
 
@@ -181,10 +154,10 @@ class TestSubscriptions(TestCase):
             notification_param = NotificationParams(
                 attributes=[attr_id], endpoint=self.endpoint_http)
             id = "urn:ngsi-ld:Subscription:" + "test_sub" + str(i)
-            sub = Subscription(id=id,
-                               notification=notification_param,
-                               entities=[{"type": "Room"}]
-                               )
+            sub = SubscriptionLD(id=id,
+                                 notification=notification_param,
+                                 entities=[{"type": "Room"}]
+                                 )
 
             if i == 0: 
                 del_sub = sub
@@ -220,21 +193,21 @@ class TestSubscriptions(TestCase):
         attr_id = "attr"
         id = "urn:ngsi-ld:Subscription:" + "test_sub77"
         notification_param = NotificationParams(attributes=[attr_id], endpoint=self.endpoint_http)
-        sub = Subscription(id=id, notification=notification_param, entities=[{"type": "Room"}])
+        sub = SubscriptionLD(id=id, notification=notification_param, entities=[{"type": "Room"}])
         self.cb_client.post_subscription(sub)
         sub_list = self.cb_client.get_subscription_list()
         self.assertEqual(len(sub_list), 1)
         print(self.endpoint_http.model_dump())
-        sub_changed = Subscription(id=id, notification=notification_param, entities=[{"type": "House"}])
+        sub_changed = SubscriptionLD(id=id, notification=notification_param, entities=[{"type": "House"}])
         self.cb_client.update_subscription(sub_changed)
         u_sub= self.cb_client.get_subscription(subscription_id=id)
         self.assertNotEqual(u_sub,sub_list[0])
         self.maxDiff = None
         self.assertDictEqual(sub_changed.model_dump(),
                              u_sub.model_dump())
-        non_sub = Subscription(id="urn:ngsi-ld:Subscription:nonexist",
-                               notification=notification_param,
-                               entities=[{"type":"house"}])
+        non_sub = SubscriptionLD(id="urn:ngsi-ld:Subscription:nonexist",
+                                 notification=notification_param,
+                                 entities=[{"type":"house"}])
         with self.assertRaises(Exception):
             self.cb_client.update_subscription(non_sub)
 
@@ -369,7 +342,7 @@ class TestSubsCheckBroker(TestCase):
                                  60)
         self.mqtt_client.loop_start()
         #post subscription then start timer
-        self.cb_client.post_subscription(subscription=Subscription(**self.sub_dict))
+        self.cb_client.post_subscription(subscription=SubscriptionLD(**self.sub_dict))
         self.timeout_proc.start()
         #update entity to (ideally) get a notification
         self.cb_client.update_entity_attribute(entity_id='urn:ngsi-ld:Entity:test_entity03',
@@ -425,7 +398,7 @@ class TestSubsCheckBroker(TestCase):
                                  settings.LD_MQTT_BROKER_URL.port,
                                  60)
         self.mqtt_client.loop_start()
-        self.cb_client.post_subscription(subscription=Subscription(**self.sub_dict))
+        self.cb_client.post_subscription(subscription=SubscriptionLD(**self.sub_dict))
         self.timeout_proc.start()
 
         self.cb_client.update_entity_attribute(entity_id='urn:ngsi-ld:Entity:test_entity03',
@@ -442,7 +415,7 @@ class TestSubsCheckBroker(TestCase):
         self.timeout_proc = threading.Timer(self.timeout,self.timeout_func)
         
         self.sub_dict.update({'q':'temperature>30'})
-        self.cb_client.update_subscription(subscription=Subscription(**self.sub_dict))
+        self.cb_client.update_subscription(subscription=SubscriptionLD(**self.sub_dict))
         time.sleep(5)
         updated = self.cb_client.get_subscription(self.sub_dict['id'])
         self.assertEqual(updated.q,'temperature>30')

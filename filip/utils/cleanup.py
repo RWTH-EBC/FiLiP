@@ -7,11 +7,60 @@ from functools import wraps
 from pydantic import AnyHttpUrl, AnyUrl
 from requests import RequestException
 from typing import Callable, List, Union
-from filip.models import FiwareHeader
+from filip.models import FiwareHeader, FiwareLDHeader
 from filip.clients.ngsi_v2 import \
     ContextBrokerClient, \
     IoTAClient, \
     QuantumLeapClient
+from filip.clients.ngsi_ld.cb import ContextBrokerLDClient
+from filip.models.ngsi_ld.context import ActionTypeLD
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+
+def clear_context_broker_ld(url: str = None,
+                            fiware_ld_header: FiwareLDHeader = None,
+                            cb_ld_client: ContextBrokerLDClient = None
+                            ):
+    """
+    Function deletes all entities and subscriptions for a tenant in an LD context broker.
+
+    Args:
+        url: Url of the context broker LD
+        fiware_ld_header: header of the NGSI-LD tenant
+        cb_ld_client: NGSI-LD context broker client object
+
+    Returns:
+
+    """
+    assert url or cb_ld_client, "Either url or client object must be given"
+    # create client
+    if cb_ld_client is None:
+        client = ContextBrokerLDClient(url=url, fiware_header=fiware_ld_header)
+    else:
+        client = cb_ld_client
+    # clean entities iteratively
+    try:
+        entity_list = True
+        while entity_list:
+            entity_list = client.get_entity_list(limit=100)
+            if entity_list:
+                client.entity_batch_operation(action_type=ActionTypeLD.DELETE,
+                                              entities=entity_list)
+    except RequestException as e:
+        logger.warning("Could not clean entities completely")
+        raise
+
+    # clean subscriptions
+    try:
+        sub_list = cb_ld_client.get_subscription_list()
+        for sub in sub_list:
+            cb_ld_client.delete_subscription(sub.id)
+    except RequestException as e:
+        logger.warning("Could not clean subscriptions completely")
+        raise
 
 
 def clear_context_broker(url: str=None,
