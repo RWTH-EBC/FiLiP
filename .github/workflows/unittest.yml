@@ -15,7 +15,7 @@ jobs:
 
     strategy:
       matrix:
-        python-version: [3.7, 3.8, 3.9, 3.10, 3.11]
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
 
     steps:
     # Step 1: Checkout the repository
@@ -29,10 +29,11 @@ jobs:
         python-version: ${{ matrix.python-version }}
 
     # Step 3: Install Filip Library
-    - name: Install Filip Library
+    - name: Clone Filip with Submodules
       run: |
-        pip install -U git+https://github.com/RWTH-EBC/filip.git
-
+        git clone --recurse-submodules https://github.com/RWTH-EBC/filip.git
+        cd filip
+        pip install -e .
 
     # Step 4: Set up Environment Variables
     - name: Set up Test Environment
