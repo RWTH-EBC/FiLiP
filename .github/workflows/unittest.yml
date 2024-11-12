@@ -3,10 +3,10 @@ name: Run Unit Tests
 on:
   push:
     branches:
-      - 315-Unittest-via-Github-actions # Trigger only on this specific branch
+      - 315-Unittest-via-Github-actions
   pull_request:
     branches:
-      - 315-Unittest-via-Github-actions # Trigger only on pull requests to this branch
+      - 315-Unittest-via-Github-actions
 
 jobs:
   test:
@@ -15,7 +15,7 @@ jobs:
 
     strategy:
       matrix:
-        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
 
     steps:
     # Step 1: Checkout the repository
@@ -28,13 +28,15 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    # Step 3: Install Filip Library
-    - name: Install Filip Library in Editable Mode
+    # Step 3: Pin and Install Dependencies
+    - name: Install Dependencies
       run: |
+        echo "geojson_pydantic>=1.0.2" > requirements.txt
         pip install --upgrade pip
-        pip install -e .
+        pip install -r requirements.txt --timeout 120 --verbose
+        pip install -e . --timeout 120 --verbose
 
-    # Step 4: Set up Environment Variables
+    # Step 4: Create .env File
     - name: Set up Test Environment
       run: |
         echo "LOG_LEVEL=INFO" >> tests/.env
