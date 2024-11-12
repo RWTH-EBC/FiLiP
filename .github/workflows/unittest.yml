@@ -12,6 +12,12 @@ jobs:
   test:
     name: Run Unit Tests Across Python Versions
     runs-on: ubuntu-latest
+    services:
+      fiware:
+        image: fiware/orion:latest
+        options: >-
+          --network-alias fiware
+          --publish 1026:1026
 
     strategy:
       matrix:
@@ -28,7 +34,7 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    # Step 3: Pin and Install Dependencies
+    # Step 3: Install Dependencies
     - name: Install Dependencies
       run: |
         echo "geojson_pydantic>=1.0.2" > requirements.txt
@@ -48,7 +54,14 @@ jobs:
         echo "FIWARE_SERVICE=filip" >> tests/.env
         echo "FIWARE_SERVICEPATH=/testing" >> tests/.env
 
-    # Step 5: Run Unit Tests
+    # Step 5: Wait for FIWARE Services to Start
+    - name: Wait for Context Broker to Start
+      run: |
+        for i in {1..30}; do
+          curl -s http://localhost:1026/version && break || sleep 2;
+        done
+
+    # Step 6: Run Unit Tests
     - name: Run Unit Tests
       run: |
         python -m unittest discover tests --verbose
