@@ -215,6 +215,22 @@ class TestContextv2IoTModels(unittest.TestCase):
 
             assert len(w) == 2
 
+        # Test for expression language set to None
+        service_group_null_expression = ServiceGroup(
+            entity_type='Thing',
+            apikey=api_key,
+            resource='/iot/json',
+            expressionLanguage=None)
+        self.assertEqual(service_group_null_expression.expressionLanguage, ExpressionLanguage.JEXL)
+
+        device4 = Device(device_id="null_expression_device",
+                         entity_name="null_expression_entity",
+                         entity_type="test_entity_type",
+                         transport=TransportProtocol.MQTT,
+                         protocol=PayloadProtocol.IOTA_JSON,
+                         expressionLanguage=None)
+        self.assertEqual(device4.expressionLanguage, ExpressionLanguage.JEXL)
+
     def test_add_device_attributes(self):
         """
         Test the device model regarding the behavior with devices attributes.

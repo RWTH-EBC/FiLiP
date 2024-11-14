@@ -1,14 +1,24 @@
-### v0.4.2
+### v0.6.X
+- add: Tutorial for connecting with secured endpoints ([#319](https://github.com/RWTH-EBC/FiLiP/pull/319))
+- add: tests for clear functions ([#318](https://github.com/RWTH-EBC/FiLiP/pull/336))
+- fix: clear functions for context broker ([#318](https://github.com/RWTH-EBC/FiLiP/pull/336))
+
+### v0.5.0
 - update: allow duplicated name in device, check uniqueness of object_id ([#279](https://github.com/RWTH-EBC/FiLiP/pull/279))
+- update: upgrade dependency of `paho-mqtt` to v2 ([#273](https://github.com/RWTH-EBC/FiLiP/pull/273/))
+- add: `json` and `ngsi` as payload format in custom notification model ([#296](https://github.com/RWTH-EBC/FiLiP/pull/296))
 - add: support alterationTypes in subscription model ([#293](https://github.com/RWTH-EBC/FiLiP/pull/293))
 - add: validation for JEXL based expression ([#260](https://github.com/RWTH-EBC/FiLiP/pull/260))
 - add: tutorials for multi-entity ([#260](https://github.com/RWTH-EBC/FiLiP/pull/260))
 - add: add ``update_entity_relationships`` to allow relationship update ([#271](https://github.com/RWTH-EBC/FiLiP/pull/271))
 - add: timeseries query with all attrs and specific attr name ([#16](https://github.com/RWTH-EBC/FiLiP/pull/16))
 - add: flag to determine the deletion of registration when clearing the CB ([#267](https://github.com/RWTH-EBC/FiLiP/pull/267))
+- add: ``covered`` flag in notification model ([#310](https://github.com/RWTH-EBC/FiLiP/pull/310))
 - fix: rework tutorials for pydantic v2 ([#259](https://github.com/RWTH-EBC/FiLiP/pull/259))
 - fix: inconsistency of `entity_type` as required argument ([#188](https://github.com/RWTH-EBC/FiLiP/pull/188))
 - fix: allow empty string in attribute value validation ([#311](https://github.com/RWTH-EBC/FiLiP/pull/311))
+
+BREAKING CHANGE: upgrade dependency of `paho-mqtt` to v2 ([#273](https://github.com/RWTH-EBC/FiLiP/pull/273/))
 
 ### v0.4.1
 - fix: Session added as optional parameter to enable tls communication with clients ([#249](https://github.com/RWTH-EBC/FiLiP/pull/249))

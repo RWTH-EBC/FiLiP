@@ -113,9 +113,12 @@ class NotificationParams(BaseModel):
         ...,
         description="Notification endpoint details"
     )
-    status: Optional[str] = Field(
-        default=None,
-        description="Status of the Notification. It shall be 'ok' if the last attempt to notify the subscriber succeeded. It shall be 'failed' if the last attempt to notify the subscriber failed"
+    # status can either be "ok" or "failed"
+    status: Literal["ok", "failed"] = Field(
+        default="ok",
+        description="Status of the Notification. It shall be 'ok' if the last attempt "
+                    "to notify the subscriber succeeded. It shall be 'failed' if the last"
+                    " attempt to notify the subscriber failed"
     )
 
     # Additional members
@@ -203,7 +206,7 @@ class TemporalQuery(BaseModel):
         return self
 
 
-class Subscription(BaseModel):
+class SubscriptionLD(BaseModel):
     id: Optional[str] = Field(
         default=None,
         description="Subscription identifier (JSON-LD @id)"

@@ -33,6 +33,7 @@ from filip.models.ngsi_v2.iot import (Device, ServiceGroup, TransportProtocol,
                                       ExpressionLanguage)
 from filip.utils.cleanup import clear_all
 from paho.mqtt import client as mqtt_client
+from paho.mqtt.client import CallbackAPIVersion
 
 # Host address of Context Broker
 CB_URL = "http://localhost:1026"
@@ -114,7 +115,7 @@ if __name__ == '__main__':
                      )
     iota_client.post_device(device=device2)
 
-    client = mqtt_client.Client()
+    client = mqtt_client.Client(callback_api_version=CallbackAPIVersion.VERSION2)
     client.username_pw_set(username="", password="")
     client.connect(MQTT_BROKER_HOST, MQTT_BROKER_PORT)
     client.loop_start()
@@ -172,7 +173,7 @@ if __name__ == '__main__':
                      )
     iota_client.post_device(device=device3)
 
-    client = mqtt_client.Client()
+    client = mqtt_client.Client(callback_api_version=CallbackAPIVersion.VERSION2)
     client.username_pw_set(username="", password="")
     client.connect(MQTT_BROKER_HOST, MQTT_BROKER_PORT)
     client.loop_start()

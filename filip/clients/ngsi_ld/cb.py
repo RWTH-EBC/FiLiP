@@ -2,7 +2,7 @@
 Context Broker Module for API Client
 """
 import json
-import re
+import os
 import warnings
 from math import inf
 from enum import Enum
@@ -13,23 +13,15 @@ from pydantic import \
     TypeAdapter, \
     PositiveInt, \
     PositiveFloat
-from filip.clients.base_http_client import BaseHttpClient
+from filip.clients.base_http_client import BaseHttpClient, NgsiURLVersion
 from filip.config import settings
-from filip.models.base import FiwareLDHeader, PaginationMethod
+from filip.models.base import FiwareLDHeader, PaginationMethod, core_context
 from filip.utils.simple_ql import QueryString
 from filip.models.ngsi_v2.base import AttrsFormat
-from filip.models.ngsi_ld.subscriptions import Subscription
+from filip.models.ngsi_ld.subscriptions import SubscriptionLD
 from filip.models.ngsi_ld.context import ContextLDEntity, ContextLDEntityKeyValues, ContextProperty, ContextRelationship, NamedContextProperty, \
     NamedContextRelationship, ActionTypeLD, UpdateLD
 from filip.models.ngsi_v2.context import Query
-
-
-class NgsiURLVersion(str, Enum):
-    """
-    URL part that defines the NGSI version for the API.
-    """
-    v2_url = "/v2"
-    ld_url = "/ngsi-ld/v1"
 
 
 class ContextBrokerLDClient(BaseHttpClient):
@@ -60,17 +52,27 @@ class ContextBrokerLDClient(BaseHttpClient):
         # set service url
         url = url or settings.CB_URL
         #base_http_client overwrites empty header with FiwareHeader instead of FiwareLD
-        init_header = FiwareLDHeader()
-        if fiware_header:
-            init_header=fiware_header
+        init_header = fiware_header if fiware_header else FiwareLDHeader()        
+        if init_header.link_header is None:
+            init_header.set_context(core_context)
         super().__init__(url=url,
                          session=session,
                          fiware_header=init_header,
                          **kwargs)
         # set the version specific url-pattern
-        self._url_version = NgsiURLVersion.ld_url
-        # init Content-Type header , account for @context field further down
-        self.headers.update({'Content-Type':'application/json'})
+        self._url_version = NgsiURLVersion.ld_url.value
+        # For uplink requests, the Content-Type header is essential,
+        # Accept will be ignored
+        # For downlink requests, the Accept header is essential,
+        # Content-Type will be ignored
+
+        # default uplink content JSON
+        self.headers.update({'Content-Type': 'application/json'})
+        # default downlink content JSON-LD
+        self.headers.update({'Accept': 'application/ld+json'})
+
+        if init_header.ngsild_tenant is not None:
+            self.__make_tenant()
 
     def __pagination(self,
                      *,
@@ -119,9 +121,9 @@ class ContextBrokerLDClient(BaseHttpClient):
             if res.ok:
                 items = res.json()
                 # do pagination
-                if self._url_version == NgsiURLVersion.v2_url:
+                if self._url_version == NgsiURLVersion.v2_url.value:
                     count = int(res.headers['Fiware-Total-Count'])
-                elif self._url_version == NgsiURLVersion.ld_url:
+                elif self._url_version == NgsiURLVersion.ld_url.value:
                     count = int(res.headers['NGSILD-Results-Count'])
                 else:
                     count = 0
@@ -159,6 +161,20 @@ class ContextBrokerLDClient(BaseHttpClient):
             self.logger.error(err)
             raise
 
+    def __make_tenant(self):
+        """
+        Create tenant if tenant
+        is given in headers
+        """
+        idhex = f"urn:ngsi-ld:{os.urandom(6).hex()}"
+        e = ContextLDEntity(id=idhex,type=f"urn:ngsi-ld:{os.urandom(6).hex()}")
+        try:
+            self.post_entity(entity=e)
+            self.delete_entity_by_id(idhex)
+        except Exception as err:
+            self.log_error(err=err,msg="Error while creating tenant")
+            raise
+
     def get_statistics(self) -> Dict:
         """
         Gets statistics of context broker
@@ -174,7 +190,6 @@ class ContextBrokerLDClient(BaseHttpClient):
         except requests.RequestException as err:
             self.logger.error(err)
             raise
-
 
     def post_entity(self,
                     entity: ContextLDEntity,
@@ -220,7 +235,7 @@ class ContextBrokerLDClient(BaseHttpClient):
                    entity_id: str,
                    entity_type: str = None,
                    attrs: List[str] = None,
-                   options: Optional[str] = "keyValues",
+                   options: Optional[str] = None,
                    **kwargs  # TODO how to handle metadata?
                    ) \
             -> Union[ContextLDEntity, ContextLDEntityKeyValues, Dict[str, Any]]:
@@ -254,9 +269,10 @@ class ContextBrokerLDClient(BaseHttpClient):
             params.update({'type': entity_type})
         if attrs:
             params.update({'attrs': ','.join(attrs)})
-        if options != 'keyValues' and options != 'sysAttrs':
-            raise ValueError(f'Only available options are \'keyValues\' and \'sysAttrs\'')
-        params.update({'options': options})
+        if options:
+            if options != 'keyValues' and options != 'sysAttrs':
+                raise ValueError(f'Only available options are \'keyValues\' and \'sysAttrs\'')
+            params.update({'options': options})
 
         try:
             res = self.get(url=url, params=params, headers=headers)
@@ -265,7 +281,7 @@ class ContextBrokerLDClient(BaseHttpClient):
                 self.logger.debug("Received: %s", res.json())
                 if options == "keyValues":
                     return ContextLDEntityKeyValues(**res.json())
-                if options == "sysAttrs":
+                else:
                     return ContextLDEntity(**res.json())
             res.raise_for_status()
         except requests.RequestException as err:
@@ -312,6 +328,8 @@ class ContextBrokerLDClient(BaseHttpClient):
         if csf:
             params.update({'csf': csf})
         if limit:
+            if limit > 1000:
+                raise ValueError("limit must be an integer value <= 1000")
             params.update({'limit': limit})
         if options:
             if options != 'keyValues' and options != 'sysAttrs':
@@ -500,7 +518,7 @@ class ContextBrokerLDClient(BaseHttpClient):
 
     # SUBSCRIPTION API ENDPOINTS
     def get_subscription_list(self,
-                              limit: PositiveInt = inf) -> List[Subscription]:
+                              limit: PositiveInt = inf) -> List[SubscriptionLD]:
         """
         Returns a list of all the subscriptions present in the system.
         Args:
@@ -520,14 +538,14 @@ class ContextBrokerLDClient(BaseHttpClient):
                                       url=url,
                                       params=params,
                                       headers=headers)
-            adapter = TypeAdapter(List[Subscription])
+            adapter = TypeAdapter(List[SubscriptionLD])
             return adapter.validate_python(items)
         except requests.RequestException as err:
             msg = "Could not load subscriptions!"
             self.log_error(err=err, msg=msg)
             raise
 
-    def post_subscription(self, subscription: Subscription,
+    def post_subscription(self, subscription: SubscriptionLD,
                           update: bool = False) -> str:
         """
         Creates a new subscription. The subscription is represented by a
@@ -559,8 +577,8 @@ class ContextBrokerLDClient(BaseHttpClient):
                     subscription.id = ex_sub.id
                     self.update_subscription(subscription)
                 else:
-                    warnings.warn(f"Subscription existed already with the id"
-                                  f" {ex_sub.id}")
+                    self.logger.warning(f"Subscription existed already with the id"
+                                        f" {ex_sub.id}")
                 return ex_sub.id
 
         url = urljoin(self.base_url, f'{self._url_version}/subscriptions')
@@ -584,7 +602,7 @@ class ContextBrokerLDClient(BaseHttpClient):
             self.log_error(err=err, msg=msg)
             raise
 
-    def get_subscription(self, subscription_id: str) -> Subscription:
+    def get_subscription(self, subscription_id: str) -> SubscriptionLD:
         """
         Retrieves a subscription from
         Args:
@@ -599,14 +617,14 @@ class ContextBrokerLDClient(BaseHttpClient):
             res = self.get(url=url, headers=headers)
             if res.ok:
                 self.logger.debug('Received: %s', res.json())
-                return Subscription(**res.json())
+                return SubscriptionLD(**res.json())
             res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Could not load subscription {subscription_id}"
             self.log_error(err=err, msg=msg)
             raise
 
-    def update_subscription(self, subscription: Subscription) -> None:
+    def update_subscription(self, subscription: SubscriptionLD) -> None:
         """
         Only the fields included in the request are updated in the subscription.
         Args:

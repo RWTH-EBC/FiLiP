@@ -7,6 +7,15 @@ from typing import Dict, ByteString, List, IO, Tuple, Union
 import requests
 from filip.models.base import FiwareHeader, FiwareLDHeader
 from filip.utils import validate_http_url
+from enum import Enum
+
+
+class NgsiURLVersion(str, Enum):
+    """
+    URL part that defines the NGSI version for the API.
+    """
+    v2_url = "/v2"
+    ld_url = "/ngsi-ld/v1"
 
 
 class BaseHttpClient:
