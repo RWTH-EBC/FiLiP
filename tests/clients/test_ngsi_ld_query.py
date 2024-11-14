@@ -277,15 +277,14 @@ class TestLDQueryLanguage(unittest.TestCase):
             m.object = self.cam.id
 
             #Every car is endowed with a set of relationships , periodically
-            match (i % self.period):
-                case 0:
-                    self.cars[i].add_relationships([p])
-                case 1:
-                    self.cars[i].add_relationships([m])
-                case 2:
-                    self.cars[i].add_relationships([p,m])
-                case _:
-                    pass
+            r = i % self.period
+            if r==0:
+                self.cars[i].add_relationships([p])
+            elif r==1:
+                self.cars[i].add_relationships([m])
+            elif r==2:
+                self.cars[i].add_relationships([p,m])
+    
         #Post everything
         for car in self.cars:
             self.cb.post_entity(entity=car)
