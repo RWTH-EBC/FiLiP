@@ -190,7 +190,7 @@ class TestLDQueryLanguage(unittest.TestCase):
         
         return n,keys
     
-    def sub_key_with_val(self,q:str,entity:ContextLDEntity,keylist:list[str],token:str):
+    def sub_key_with_val(self,q:str,entity:ContextLDEntity,keylist,token:str):
         '''
         Substitute key names in q expression with corresponding entity property/
         relationship values. All while accounting for access of nested properties
