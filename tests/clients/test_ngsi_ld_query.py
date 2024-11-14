@@ -39,6 +39,17 @@ class TestLDQueryLanguage(unittest.TestCase):
         self.fiware_header = FiwareLDHeader(ngsild_tenant=settings.FIWARE_SERVICE)
         self.cb = ContextBrokerLDClient(fiware_header=self.fiware_header,
                                         url=settings.LD_CB_URL)
+
+        #Prep db
+        try:
+            entity_list = True
+            while entity_list:
+                entity_list = self.cb.get_entity_list(limit=1000)
+                self.cb.entity_batch_operation(action_type=ActionTypeLD.DELETE,
+                                                   entities=entity_list)
+        except RequestException:
+            pass
+        
         #base id
         self.base='urn:ngsi-ld:'
         
