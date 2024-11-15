@@ -32,8 +32,8 @@ class TestLDQueryLanguage(unittest.TestCase):
             None
         """
         #Extra size parameters for modular testing
-        self.cars_nb = 10
-        self.period = 3
+        self.cars_nb = 500
+        self.span = 3
         
         #client parameters
         self.fiware_header = FiwareLDHeader(ngsild_tenant=settings.FIWARE_SERVICE)
@@ -93,20 +93,21 @@ class TestLDQueryLanguage(unittest.TestCase):
         self.isMonitoredBy = NamedContextRelationship(name="isMonitoredBy",object="placeholder")
         
         #q Expressions to test
-        #Mixing single checks with op (e.g : isMonitoredBy ; temperature<30)
-        #is not implemented
         self.qs = [
             'temperature > 0',
             'brand != "Batmobile"',
-            '(isParked | isMonitoredBy); address[stree-address.number]'
+            'isParked | isMonitoredBy',
             'isParked == "urn:ngsi-ld:garage0"',
-            'temperature < 60; isParked == "urn:ngsi-ld:garage"',
+            'temperature < 60; isParked == "urn:ngsi-ld:garage0"',
             '(temperature >= 59 | humidity < 3); brand == "DeLorean"',
+            '(isMonitoredBy; temperature<30) | isParked',
             '(temperature > 30; temperature < 90)| humidity <= 5',
             'temperature.observedAt >= "2020-12-24T12:00:00Z"',
             'address[country] == "Germany"',
-            'address[street-address.number] == 810'
+            'address[street-address.number] == 810',
+            'address[street-address.number]'
         ]
+        
         self.post()
         
 
@@ -127,18 +128,22 @@ class TestLDQueryLanguage(unittest.TestCase):
     def test_ld_query_language(self):
         #Itertools product actually interferes with test results here
         for q in self.qs:
-            entities = self.cb.get_entity_list(q=q)
+            entities = self.cb.get_entity_list(q=q,limit=1000)
             tokenized,keys_dict = self.extract_keys(q)
-            f = self.expr_eval_func
             
-            #This means that q expression contains no comparaison operators
-            #And should be dealt with as such
-            if re.fullmatch('[$\d();|][^<>=!]',tokenized) is not None:
-                f = self.single_eval_func
-            
+            #Replace logical ops with python ones
+            tokenized = tokenized.replace("|"," or ")
+            tokenized = tokenized.replace(";"," and ")
+            size = len([x for x in self.cars if self.search_predicate(x,tokenized,keys_dict)])
+            #Check we get the same number of entities
+            self.assertEqual(size,len(entities))
             for e in entities:
-                bool = f(tokenized,keys_dict,e)
-                self.assertTrue(bool)
+                copy = tokenized
+                for token,keylist in keys_dict.items():
+                    copy = self.sub_key_with_val(copy,e,keylist,token)
+                
+                #Check each obtained entity obeys the q expression
+                self.assertTrue(eval(copy))
                 
     def extract_keys(self,q:str):
         '''
@@ -147,7 +152,7 @@ class TestLDQueryLanguage(unittest.TestCase):
         Returns:
             str,dict
         '''
-        #First, trim empty spaces
+        #Trim empty spaces
         n=q.replace(" ","")
         
         #Find all literals that are not logical operators or parentheses -> keys/values
@@ -155,16 +160,20 @@ class TestLDQueryLanguage(unittest.TestCase):
         keys = {}
         i=0
         for r in res:
-            #Remove empty string from the regex search result
+            #Skip empty string from the regex search result
             if len(r) == 0:
                 continue
             
-            #Remove anything purely numeric -> Definitely a value
+            #Skip anything purely numeric -> Definitely a value
             if r.isnumeric():
                 continue
             
-            #Remove anything with a double quote -> Definitely a string value
+            #Skip anything with a double quote -> Definitely a string value
             if '"' in r:
+                continue
+            
+            #Skip keys we already encountered
+            if [r] in keys.values():
                 continue
             
             #Replace the key name with a custom token in the string
@@ -196,9 +205,14 @@ class TestLDQueryLanguage(unittest.TestCase):
             else:
                 l=[r]
             
+            #Finalize incomplete key presence check 
+            idx_next = n.index(token)+len(token)
+            if idx_next>=len(n) or n[idx_next] not in ['>','<','=','!']:
+                n = n.replace(token,f'{token} != None')
+            
             #Associate each chain of nested keys with the token it was replaced with
             keys[token] = l
-        
+            
         return n,keys
     
     def sub_key_with_val(self,q:str,entity:ContextLDEntity,keylist,token:str):
@@ -212,7 +226,11 @@ class TestLDQueryLanguage(unittest.TestCase):
         for key in keylist:
             if 'value' in obj:
                 obj = obj['value']
-            obj = obj[key]
+            try:   
+                obj = obj[key]
+            except:
+                obj = None
+                break
             
         if isinstance(obj,Iterable):
             if 'value' in obj:
@@ -221,54 +239,47 @@ class TestLDQueryLanguage(unittest.TestCase):
                 obj=obj['object']
         
         #Enclose value in double quotes if it's a string ( contains at least one letter)
-        if re.compile('[a-zA-Z]+').match(str(obj)):
+        if obj is not None and re.compile('[a-zA-Z]+').match(str(obj)):
             obj = f'"{str(obj)}"'
         
         #replace key names with entity values
         n = q.replace(token,str(obj))
         
-        #replace logical operators with python ones
-        n = n.replace("|"," or ")
-        n = n.replace(";"," and ")
-        
         return n
     
-    def expr_eval_func(self,tokenized,keys_dict,e):
+    def search_predicate(self,e,tokenized,keys_dict):
         '''
-        Check function for the case of q expression containing comparaison operators
-        Have to replace the keys with values then call Eval
+        Search function to search our posted data for checks
+        This function is needed because , whereas the context broker will not return
+        an entity with no nested key if that key is given as a filter, our eval attempts
+        to compare None values using logical operators
         '''
+        copy = tokenized
         for token,keylist in keys_dict.items():
-            tokenized = self.sub_key_with_val(tokenized,e,keylist,token)
-        return eval(tokenized)
-    
-    def single_eval_func(self,tokenized,keys_dict,e):
-        '''
-        Check function for the case of q expression containing NO comparaison operators
-        Only have to check if entity has the key
-        '''
-        for token,keylist in keys_dict.items():
-            level = e.model_dump()
-            for key in keylist:
-                if 'value' in level:
-                    level = level['value']
-                if key not in level:
-                    return False
-                level = level[key]
+            copy = self.sub_key_with_val(copy,e,keylist,token)
         
-        return True
+        try:
+            return eval(copy)
+        except:
+            return False
+    
     
     def post(self):
         '''
         Somewhat randomized generation of data. Can be made further random by 
         Choosing a bigger number of cars, and a more irregular number for remainder
-        Calculations (self.cars_nb & self.period)
+        Calculations (self.cars_nb & self.span)
         Returns:
             None
         '''
         for i in range(len(self.cars)):
-            r = i%self.period
-            a=r*30
+            #Big number rnd generator
+            r = Random().randint(1,self.span)
+            tri_rnd = Random().randint(0,(10*self.span)**2)
+            r = math.trunc(tri_rnd/r) % self.span
+            r_2 = Random().randint(0,r)
+            
+            a=r_2*30
             b=a+30
 
             #Every car will have temperature, humidity, brand and address
@@ -288,14 +299,13 @@ class TestLDQueryLanguage(unittest.TestCase):
             m.object = self.cam.id
 
             #Every car is endowed with a set of relationships , periodically
-            r = i % self.period
             if r==0:
                 self.cars[i].add_relationships([p])
             elif r==1:
                 self.cars[i].add_relationships([m])
             elif r==2:
                 self.cars[i].add_relationships([p,m])
-    
+
         #Post everything
         for car in self.cars:
             self.cb.post_entity(entity=car)
