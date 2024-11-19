@@ -277,10 +277,6 @@ class SubscriptionLD(BaseModel):
         default=None,
         description="Temporal Query"
     )
-    scopeQ: Optional[str] = Field(
-        default=None,
-        description="Scope query"
-    )
     lang: Optional[str] = Field(
         default=None,
         description="Language filter applied to the query"
