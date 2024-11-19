@@ -13,6 +13,7 @@ from tests.config import settings
 import re
 import math
 from random import Random
+from filip.utils.cleanup import clear_context_broker_ld
 
 
 # Setting up logging
@@ -41,14 +42,7 @@ class TestLDQueryLanguage(unittest.TestCase):
                                         url=settings.LD_CB_URL)
 
         #Prep db
-        try:
-            entity_list = True
-            while entity_list:
-                entity_list = self.cb.get_entity_list(limit=1000)
-                self.cb.entity_batch_operation(action_type=ActionTypeLD.DELETE,
-                                                   entities=entity_list)
-        except RequestException:
-            pass
+        clear_context_broker_ld(cb_ld_client=self.cb)
         
         #base id
         self.base='urn:ngsi-ld:'
@@ -56,6 +50,8 @@ class TestLDQueryLanguage(unittest.TestCase):
         #Some entities for relationships
         self.garage = ContextLDEntity(id=f"{self.base}garage0",type=f"{self.base}gar")
         self.cam = ContextLDEntity(id=f"{self.base}cam0",type=f"{self.base}cam")
+        self.cb.post_entity(entity=self.garage)
+        self.cb.post_entity(entity=self.cam)
         
         #Entities to post/test on
         self.cars = [ContextLDEntity(id=f"{self.base}car0{i}",type=f"{self.base}car") for i in range(0,self.cars_nb-1)]
@@ -88,7 +84,7 @@ class TestLDQueryLanguage(unittest.TestCase):
 
         #base properties/relationships
         self.humidity = NamedContextProperty(name="humidity",value=1)
-        self.temperature = NamedContextProperty(name="temperature",value=0);
+        self.temperature = NamedContextProperty(name="temperature",value=0)
         self.isParked = NamedContextRelationship(name="isParked",object="placeholder")
         self.isMonitoredBy = NamedContextRelationship(name="isMonitoredBy",object="placeholder")
         
@@ -115,14 +111,7 @@ class TestLDQueryLanguage(unittest.TestCase):
         """
         Cleanup test server
         """
-        try:
-            entity_list = True
-            while entity_list:
-                entity_list = self.cb.get_entity_list(limit=1000)
-                self.cb.entity_batch_operation(action_type=ActionTypeLD.DELETE,
-                                                   entities=entity_list)
-        except RequestException:
-            pass
+        clear_context_broker_ld(cb_ld_client=self.cb)
         self.cb.close()
     
     def test_ld_query_language(self):
