@@ -251,8 +251,7 @@ class TestLDQueryLanguage(unittest.TestCase):
             return eval(copy)
         except:
             return False
-    
-    
+
     def post(self):
         '''
         Somewhat randomized generation of data. Can be made further random by 
@@ -296,5 +295,5 @@ class TestLDQueryLanguage(unittest.TestCase):
                 self.cars[i].add_relationships([p,m])
 
         #Post everything
-        for car in self.cars:
-            self.cb.post_entity(entity=car)
+        self.cb.entity_batch_operation(action_type=ActionTypeLD.CREATE,
+                                       entities=self.cars)
