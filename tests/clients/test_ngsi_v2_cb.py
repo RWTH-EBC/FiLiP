@@ -1128,10 +1128,13 @@ class TestContextBroker(unittest.TestCase):
                             "value": 123,
                             "type": "Number"
                         },
+                        "co2_new": {
+                            "value": "${co2}",
+                            "type": "Number"
+                        }
 
                     }
                 },
-                "attrs": ["temperature", "humidity", "co2"],
                 "onlyChangedAttrs": False
             },
             "expires": datetime.now() + timedelta(days=1),
@@ -1326,10 +1329,11 @@ class TestContextBroker(unittest.TestCase):
             sub_6 = client.get_subscription(sub_id_6)
             sub_message = Message.model_validate_json(custom_sub_message)
             self.assertEqual(sub_6.notification.timesSent, 1)
-            self.assertEqual(len(sub_message.data[0].get_attributes()), 3)
+            self.assertEqual(len(sub_message.data[0].get_attributes()), 4)
             self.assertEqual(sub_message.data[0].id, "prefix:Test:001")
             self.assertEqual(sub_message.data[0].type, "newType")
             self.assertEqual(sub_message.data[0].get_attribute("co2").value, 78)
+            self.assertEqual(sub_message.data[0].get_attribute("co2_new").value, 78)
             self.assertEqual(sub_message.data[0].get_attribute("temperature").value, 123)
             client.delete_subscription(sub_id_6)
 
