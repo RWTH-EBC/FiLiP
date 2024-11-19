@@ -101,7 +101,8 @@ class TestLDQueryLanguage(unittest.TestCase):
             'temperature.observedAt >= "2020-12-24T12:00:00Z"',
             'address[country] == "Germany"',
             'address[street-address.number] == 810',
-            'address[street-address.number]'
+            'address[street-address.number]',
+            'address[street-address.extra]',
         ]
         
         self.post()
