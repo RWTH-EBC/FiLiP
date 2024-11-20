@@ -578,6 +578,7 @@ class ContextLDEntity(ContextLDEntityKeyValues):
             Union[List[NamedContextProperty],
                   Dict[str, ContextProperty]]:
         """
+        Get all properties of the entity.
         Args:
             response_format:
 
