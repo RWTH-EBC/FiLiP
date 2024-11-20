@@ -26,6 +26,12 @@ class Settings(BaseSettings):
                                validation_alias=AliasChoices(
                                    'ORION_URL', 'CB_URL', 'CB_HOST',
                                    'CONTEXTBROKER_URL', 'OCB_URL'))
+    LD_CB_URL: AnyHttpUrl = Field(default="http://127.0.0.1:1026",
+                                  validation_alias=AliasChoices('LD_ORION_URL',
+                                                                'LD_CB_URL',
+                                                                'ORION_LD_URL',
+                                                                'SCORPIO_URL',
+                                                                'STELLIO_URL'))
 
     IOTA_URL: AnyHttpUrl = Field(default="http://127.0.0.1:4041",
                                  validation_alias='IOTA_URL')
@@ -38,6 +44,11 @@ class Settings(BaseSettings):
                                         'MQTT_BROKER_URL',
                                         'MQTT_URL',
                                         'MQTT_BROKER'))
+    LD_MQTT_BROKER_URL: AnyUrl = Field(default="mqtt://127.0.0.1:1884",
+                                       validation_alias=AliasChoices(
+                                           'LD_MQTT_BROKER_URL',
+                                           'LD_MQTT_URL',
+                                           'LD_MQTT_BROKER'))
 
 # create settings object
 settings = Settings()
