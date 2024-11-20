@@ -3677,7 +3677,7 @@ Differences between this model and the usual Context entity models include:</p>
 <dl class="py class pydantic_model">
 <dt class="sig sig-object py" id="filip.models.ngsi_v2.subscriptions.NgsiPayloadAttr">
 <em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">filip.models.ngsi_v2.subscriptions.</span></span><span class="sig-name descname"><span class="pre">NgsiPayloadAttr</span></span><a class="reference internal" href="../_modules/filip/models/ngsi_v2/subscriptions.html#NgsiPayloadAttr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_v2.subscriptions.NgsiPayloadAttr" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#filip.models.ngsi_v2.base.BaseValueAttribute" title="filip.models.ngsi_v2.base.BaseValueAttribute"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseValueAttribute</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
 <p>Model for NGSI V2 type payload in httpCustom/mqttCustom notifications.
 The difference between this model and the usual BaseValueAttribute model is that
 a metadata field is not allowed.
@@ -3696,12 +3696,6 @@ model.</p>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.NgsiPayloadAttr.value" title="filip.models.ngsi_v2.subscriptions.NgsiPayloadAttr.value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span> <span class="pre">(Any</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 </ul>
 </dd>
-<dt class="field-odd">Validators<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_type" title="filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_value_type</span></code></a> » <a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.NgsiPayloadAttr.value" title="filip.models.ngsi_v2.subscriptions.NgsiPayloadAttr.value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span></code></a></p></li>
-<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrapper</span></code> » <a class="reference internal" href="#filip.models.ngsi_v2.subscriptions.NgsiPayloadAttr.type" title="filip.models.ngsi_v2.subscriptions.NgsiPayloadAttr.type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">type</span></code></a></p></li>
-</ul>
-</dd>
 </dl>
 <dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="filip.models.ngsi_v2.subscriptions.NgsiPayloadAttr.type">
@@ -3714,11 +3708,6 @@ model.</p>
 <li><p><strong>max_length</strong> = 256</p></li>
 </ul>
 </dd>
-<dt class="field-even">Validated by<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrapper</span></code></p></li>
-</ul>
-</dd>
 </dl>
 </dd></dl>
 
@@ -3726,13 +3715,6 @@ model.</p>
 <dt class="sig sig-object py" id="filip.models.ngsi_v2.subscriptions.NgsiPayloadAttr.value">
 <em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">value</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_v2.subscriptions.NgsiPayloadAttr.value" title="Permalink to this definition"></a></dt>
 <dd><p>the actual data</p>
-<dl class="field-list simple">
-<dt class="field-odd">Validated by<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_type" title="filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_value_type</span></code></a></p></li>
-</ul>
-</dd>
-</dl>
 </dd></dl>
 
 </dd></dl>

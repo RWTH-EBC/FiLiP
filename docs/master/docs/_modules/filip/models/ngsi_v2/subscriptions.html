@@ -97,7 +97,7 @@
 <span class="kn">from</span> <span class="nn">filip.models.ngsi_v2.base</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">EntityPattern</span><span class="p">,</span>
     <span class="n">Expression</span><span class="p">,</span>
-    <span class="n">BaseValueAttribute</span>
+    <span class="n">DataType</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">filip.custom_types</span> <span class="kn">import</span> <span class="n">AnyMqttUrl</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
@@ -109,7 +109,7 @@
                         <span class="n">message</span><span class="o">=</span><span class="s1">&#39;Field name &quot;json&quot; shadows an attribute in parent &quot;Mqtt&quot;&#39;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="NgsiPayloadAttr"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.subscriptions.NgsiPayloadAttr">[docs]</a><span class="k">class</span> <span class="nc">NgsiPayloadAttr</span><span class="p">(</span><span class="n">BaseValueAttribute</span><span class="p">):</span>
+<div class="viewcode-block" id="NgsiPayloadAttr"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.subscriptions.NgsiPayloadAttr">[docs]</a><span class="k">class</span> <span class="nc">NgsiPayloadAttr</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Model for NGSI V2 type payload in httpCustom/mqttCustom notifications.</span>
 <span class="sd">    The difference between this model and the usual BaseValueAttribute model is that</span>
@@ -118,7 +118,21 @@
 <span class="sd">    representations ( as specified in the orion api manual), done by the BaseValueAttr.</span>
 <span class="sd">    model.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s2">&quot;forbid&quot;</span><span class="p">)</span></div>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s2">&quot;forbid&quot;</span><span class="p">)</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">DataType</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">DataType</span><span class="o">.</span><span class="n">TEXT</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The attribute type represents the NGSI value type of the &quot;</span>
+        <span class="s2">&quot;attribute value. Note that FIWARE NGSI has its own type &quot;</span>
+        <span class="s2">&quot;system for attribute values, so NGSI value types are not &quot;</span>
+        <span class="s2">&quot;the same as JSON types. Allowed characters &quot;</span>
+        <span class="s2">&quot;are the ones in the plain ASCII set, except the following &quot;</span>
+        <span class="s2">&quot;ones: control characters, whitespace, &amp;, ?, / and #.&quot;</span><span class="p">,</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
+        <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Attribute value&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;the actual data&quot;</span>
+    <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="NgsiPayload"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.subscriptions.NgsiPayload">[docs]</a><span class="k">class</span> <span class="nc">NgsiPayload</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
