@@ -129,14 +129,14 @@ class TestLDQueryLanguage(unittest.TestCase):
             tokenized = tokenized.replace(";"," and ")
             size = len([x for x in self.cars if self.search_predicate(x,tokenized,keys_dict)])
             #Check we get the same number of entities
-            self.assertEqual(size,len(entities),q)
+            self.assertEqual(size,len(entities),msg=q)
             for e in entities:
                 copy = tokenized
                 for token,keylist in keys_dict.items():
                     copy = self.sub_key_with_val(copy,e,keylist,token)
                 
                 #Check each obtained entity obeys the q expression
-                self.assertTrue(eval(copy),q)
+                self.assertTrue(eval(copy),msg=q)
                 
     def extract_keys(self,q:str):
         '''
