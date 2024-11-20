@@ -190,33 +190,7 @@ class TestContextBroker(unittest.TestCase):
             - Post an entity again -> Does it return 409?
             - Post an entity without requires args -> Does it return 422?
         """
-        """
-        Test 1:
-            Post enitity with entity_ID and entity_type
-            if return != 201:
-                Raise Error
-            Get entity list
-            If entity with entity_ID is not on entity list:
-                Raise Error
-        Test 2: 
-            Post entity with entity_ID and entity_type
-            Post entity with the same entity_ID and entity_type as before
-            If return != 409: 
-                Raise Error
-            Get entity list
-            If there are duplicates on entity list:
-                Raise Error
-        Test 3: 
-            Post an entity with an entity_ID and without an entity_type 
-            If return != 422:
-                Raise Error
-            Get entity list 
-            If the entity list does contain the posted entity:
-                Raise Error
-        Test Additonal:
-            post two entities with the same enitity id but different entity type-> should throw error.
-        """
-        """Test1"""
+        # create entity
         self.client.post_entity(entity=self.entity)
         entity_list = self.client.get_entity_list(entity_type=self.entity.type)
         self.assertEqual(len(entity_list), 1)
@@ -225,7 +199,7 @@ class TestContextBroker(unittest.TestCase):
         self.assertEqual(entity_list[0].testtemperature.value,
                          self.entity.testtemperature.value)
 
-        """Test2"""
+        # existed entity
         self.entity_identical = self.entity.model_copy()
         with self.assertRaises(requests.exceptions.HTTPError) as contextmanager:
             self.client.post_entity(entity=self.entity_identical)
@@ -236,7 +210,33 @@ class TestContextBroker(unittest.TestCase):
             entity_type=self.entity_identical.type)
         self.assertEqual(len(entity_list), 1)
 
-        """Test3"""
+        # append new attribute to existed entity
+        self.entity_append = self.entity.model_copy()
+        self.entity_append.delete_properties(['testtemperature'])
+        self.entity_append.add_properties(
+            {'humidity': ContextProperty(**{
+                'type': 'Property',
+                'value': 50})})
+        self.client.post_entity(entity=self.entity_append, append=True)
+        entity_append_res = self.client.get_entity(entity_id=self.entity_append.id)
+        self.assertEqual(entity_append_res.humidity.value,
+                         self.entity_append.humidity.value)
+        self.assertEqual(entity_append_res.testtemperature.value,
+                         self.entity.testtemperature.value)
+
+        # override existed entity
+        new_attr = {'newattr':
+                        {'type': 'Property', 'value': 999}
+                    }
+        self.entity_override = ContextLDEntity(
+            id=self.entity.id, type=self.entity.type, **new_attr)
+        self.client.post_entity(entity=self.entity_override, update=True)
+        entity_override_res = self.client.get_entity(entity_id=self.entity.id)
+        self.assertEqual(entity_override_res.newattr.value,
+                         self.entity_override.newattr.value)
+        self.assertNotIn('testtemperature', entity_override_res.model_dump())
+
+        # post without entity type is not allowed
         with self.assertRaises(Exception):
             self.client.post_entity(ContextLDEntity(id="room2"))
         entity_list = self.client.get_entity_list()

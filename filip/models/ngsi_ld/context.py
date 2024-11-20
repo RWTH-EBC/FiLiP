@@ -4,7 +4,7 @@ NGSI LD models for context broker interaction
 import logging
 from typing import Any, List, Dict, Union, Optional
 from geojson_pydantic import Point, MultiPoint, LineString, MultiLineString, Polygon, \
-    MultiPolygon, GeometryCollection
+    MultiPolygon
 from typing_extensions import Self
 from aenum import Enum
 from pydantic import field_validator, ConfigDict, BaseModel, Field, model_validator
@@ -190,7 +190,7 @@ class ContextGeoPropertyValue(BaseModel):
         elif self.model_dump().get("type") == "MultiPolygon":
             return MultiPolygon(**self.model_dump())
         elif self.model_dump().get("type") == "GeometryCollection":
-            return GeometryCollection(**self.model_dump())
+            raise ValueError("GeometryCollection is not supported")
 
 
 class ContextGeoProperty(BaseModel):
@@ -221,7 +221,7 @@ class ContextGeoProperty(BaseModel):
     value: Optional[Union[ContextGeoPropertyValue,
                           Point, LineString, Polygon,
                           MultiPoint, MultiPolygon,
-                          MultiLineString, GeometryCollection]] = Field(
+                          MultiLineString]] = Field(
         default=None,
         title="GeoProperty value",
         description="the actual data"

@@ -198,7 +198,7 @@ class ContextBrokerLDClient(BaseHttpClient):
         """
         Function registers an Object with the NGSI-LD Context Broker,
         if it already exists it can be automatically updated
-        if the overwrite bool is True
+        if the update flag bool is True.
         First a post request with the entity is tried, if the response code
         is 422 the entity is uncrossable, as it already exists there are two
         options, either overwrite it, if the attribute have changed
@@ -223,13 +223,23 @@ class ContextBrokerLDClient(BaseHttpClient):
                 return res.headers.get('Location')
             res.raise_for_status()
         except requests.RequestException as err:
-            if append and err.response.status_code == 409:
-                return self.append_entity_attributes(entity=entity)
+            if err.response.status_code == 409:
+                if append:  # 409 entity already exists
+                    return self.append_entity_attributes(entity=entity)
+                elif update:
+                    return self.override_entities(entities=[entity])
             msg = f"Could not post entity {entity.id}"
             self.log_error(err=err, msg=msg)
             raise
 
-    GeometryShape = Literal["Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon"]
+    def override_entities(self, entities: List[ContextLDEntity]):
+        """
+        Function to create or override existing entites with the NGSI-LD Context Broker.
+        The batch operation with Upsert will be used.
+        """
+        return self.entity_batch_operation(entities=entities,
+                                           action_type=ActionTypeLD.UPSERT,
+                                           options="replace")
 
     def get_entity(self,
                    entity_id: str,
@@ -289,6 +299,8 @@ class ContextBrokerLDClient(BaseHttpClient):
             self.log_error(err=err, msg=msg)
             raise
 
+    GeometryShape = Literal["Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon"]
+
     def get_entity_list(self,
                         entity_id: Optional[str] = None,
                         id_pattern: Optional[str] = ".*",
@@ -296,7 +308,7 @@ class ContextBrokerLDClient(BaseHttpClient):
                         attrs: Optional[List[str]] = None,
                         q: Optional[str] = None,
                         georel: Optional[str] = None,
-                        geometry: Optional[GeometryShape] = None,  # So machen oder wie auch für response_format
+                        geometry: Optional[GeometryShape] = None,
                         coordinates: Optional[str] = None,
                         geoproperty: Optional[str] = None,
                         csf: Optional[str] = None,
