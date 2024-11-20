@@ -67,14 +67,6 @@ class TestContextBroker(unittest.TestCase):
         clear_context_broker_ld(cb_ld_client=self.client)
         self.client.close()
 
-    def test_management_endpoints(self):
-        """
-        Test management functions of context broker client
-        """
-        # todo remove 'Accept-Language''Accept-Encoding''DNT''Referer''Priority' from headers
-        # self.assertIsNotNone(self.client.get_version())
-        pass
-        # TODO: check whether there are other "management" endpoints
 
     @unittest.skip("Only for local testing environment")
     def test_not_existing_tenant(self):
@@ -92,13 +84,6 @@ class TestContextBroker(unittest.TestCase):
         entities = client.get_entity_list()
         self.assertEqual(len(entities), 0)
 
-    def test_statistics(self):
-        """
-        Test statistics of context broker client
-        """
-        # todo remove 'Accept-Language''Accept-Encoding''DNT''Referer''Priority' from headers
-        # self.assertIsNotNone(self.client.get_statistics())
-        pass
 
     def test_get_entities_pagination(self):
         """
@@ -365,12 +350,6 @@ class TestContextBroker(unittest.TestCase):
         entity_default_context = self.client.get_entity(entity_id=temperature_sensor.id)
         self.assertEqual(entity_default_context.context,
                          core_context)
-        # TODO implement expand and compact validation
-        # self.assertEqual(
-        #     pyld.jsonld.compact(entity_default_context.model_dump(exclude_unset=True,
-        #                                                           exclude={"context"}),
-        #                                                           custom_context),
-        #     temperature_sensor_dict)
         self.assertNotEqual(
             entity_default_context.model_dump(exclude_unset=True,
                                               exclude={"context"}),
@@ -391,7 +370,6 @@ class TestContextBroker(unittest.TestCase):
         entity_default_context = self.client.get_entity(entity_id=temperature_sensor.id)
         self.assertEqual(entity_default_context.context,
                          core_context)
-        # TODO implement expand and compact validation
         self.assertNotEqual(
             entity_default_context.model_dump(exclude_unset=True,
                                               exclude={"context"}),
