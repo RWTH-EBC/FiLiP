@@ -8,7 +8,8 @@ from pydantic import ValidationError
 
 from filip.models.ngsi_ld.context import \
     ContextLDEntity, ContextProperty, NamedContextProperty, \
-    ContextGeoPropertyValue, ContextGeoProperty, NamedContextGeoProperty
+    ContextGeoPropertyValue, ContextGeoProperty, NamedContextGeoProperty, \
+    NamedContextRelationship
 
 
 class TestLDContextModels(unittest.TestCase):
@@ -396,8 +397,30 @@ class TestLDContextModels(unittest.TestCase):
                          set())
 
     def test_entity_relationships(self):
-        pass
-        # TODO relationships CRUD
+        entity = ContextLDEntity(**self.entity3_dict)
+
+        # test get relationships
+        relationships_list = entity.get_relationships(response_format='list')
+        self.assertEqual(len(relationships_list), 1)
+        relationships_dict = entity.get_relationships(response_format='dict')
+        self.assertIn("isParked", relationships_dict)
+
+        # test add relationships
+        new_rel_dict = {
+                "name": "new_rel",
+                "type": "Relationship",
+                "obejct": 'urn:ngsi-ld:test'}
+        new_rel = NamedContextRelationship(**new_rel_dict)
+        entity.add_relationships([new_rel])
+        relationships_list = entity.get_relationships(response_format='list')
+        self.assertEqual(len(relationships_list), 2)
+
+        # test delete relationships
+        entity.delete_relationships(["isParked"])
+        relationships_list = entity.get_relationships(response_format='list')
+        self.assertEqual(len(relationships_list), 1)
+        relationships_dict = entity.get_relationships(response_format='dict')
+        self.assertNotIn("isParked", relationships_dict)
 
     def test_get_context(self):
         entity1 = ContextLDEntity(**self.entity1_dict)
