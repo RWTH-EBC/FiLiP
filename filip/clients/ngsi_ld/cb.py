@@ -50,7 +50,7 @@ class ContextBrokerLDClient(BaseHttpClient):
             **kwargs (Optional): Optional arguments that ``request`` takes.
         """
         # set service url
-        url = url or settings.CB_URL
+        url = url or settings.LD_CB_URL
         #base_http_client overwrites empty header with FiwareHeader instead of FiwareLD
         init_header = fiware_header if fiware_header else FiwareLDHeader()        
         if init_header.link_header is None:
