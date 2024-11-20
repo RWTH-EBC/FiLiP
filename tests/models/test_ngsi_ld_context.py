@@ -223,11 +223,6 @@ class TestLDContextModels(unittest.TestCase):
                 "type": "GeoProperty",
                 "value": self.testpolygon_value,
                 "observedAt": "2023-09-12T12:36:00Z"
-            },
-            "testgeometrycollection": {
-                "type": "GeoProperty",
-                "value": self.testgeometrycollection_value,
-                "observedAt": "2023-09-12T12:36:30Z"
             }
         }
 
@@ -272,13 +267,14 @@ class TestLDContextModels(unittest.TestCase):
             type="GeoProperty",
             value=Polygon(**self.testpolygon_value)
         )
-        test_GeometryCollection = NamedContextGeoProperty(
-            name="testgeometrycollection",
-            type="GeoProperty",
-            value=GeometryCollection(**self.testgeometrycollection_value)
-        )
+        with self.assertRaises(ValidationError):
+            test_GeometryCollection = NamedContextGeoProperty(
+                name="testgeometrycollection",
+                type="GeoProperty",
+                value=GeometryCollection(**self.testgeometrycollection_value)
+            )
         new_entity.add_geo_properties([test_point, test_MultiPoint, test_LineString,
-                                       test_Polygon, test_GeometryCollection])
+                                       test_Polygon])
 
     def test_cb_entity(self) -> None:
         """
