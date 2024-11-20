@@ -3,6 +3,10 @@ Tests for filip.cb.client
 """
 import unittest
 import logging
+import re
+import math
+import time
+from dateutil.parser import parse
 from collections.abc import Iterable
 from requests import RequestException
 from filip.clients.ngsi_ld.cb import ContextBrokerLDClient
@@ -10,8 +14,6 @@ from filip.models.base import FiwareLDHeader
 from filip.models.ngsi_ld.context import ActionTypeLD, ContextLDEntity, ContextProperty, \
     NamedContextProperty, NamedContextRelationship
 from tests.config import settings
-import re
-import math
 from random import Random
 from filip.utils.cleanup import clear_context_broker_ld
 
@@ -48,8 +50,8 @@ class TestLDQueryLanguage(unittest.TestCase):
         self.base='urn:ngsi-ld:'
         
         #Some entities for relationships
-        self.garage = ContextLDEntity(id=f"{self.base}garage0",type=f"{self.base}gar")
-        self.cam = ContextLDEntity(id=f"{self.base}cam0",type=f"{self.base}cam")
+        self.garage = ContextLDEntity(id=f"{self.base}garage0",type=f"garage")
+        self.cam = ContextLDEntity(id=f"{self.base}cam0",type=f"camera")
         self.cb.post_entity(entity=self.garage)
         self.cb.post_entity(entity=self.cam)
         
@@ -58,6 +60,7 @@ class TestLDQueryLanguage(unittest.TestCase):
         
         #Some dictionaries for randomizing properties
         self.brands = ["Batmobile","DeLorean","Knight 2000"]
+        self.timestamps = ["2020-12-24T11:00:00Z","2020-12-24T12:00:00Z","2020-12-24T13:00:00Z"]
         self.addresses = [
             {
                 "country": "Germany",
@@ -126,14 +129,14 @@ class TestLDQueryLanguage(unittest.TestCase):
             tokenized = tokenized.replace(";"," and ")
             size = len([x for x in self.cars if self.search_predicate(x,tokenized,keys_dict)])
             #Check we get the same number of entities
-            self.assertEqual(size,len(entities))
+            self.assertEqual(size,len(entities),q)
             for e in entities:
                 copy = tokenized
                 for token,keylist in keys_dict.items():
                     copy = self.sub_key_with_val(copy,e,keylist,token)
                 
                 #Check each obtained entity obeys the q expression
-                self.assertTrue(eval(copy))
+                self.assertTrue(eval(copy),q)
                 
     def extract_keys(self,q:str):
         '''
@@ -157,11 +160,18 @@ class TestLDQueryLanguage(unittest.TestCase):
             #Skip anything purely numeric -> Definitely a value
             if r.isnumeric():
                 continue
-            
-            #Skip anything with a double quote -> Definitely a string value
+            #Skip anything with a double quote -> string or date
             if '"' in r:
+                try:
+                    #replace date with unix ts
+                    timestamp = r.replace("\"","")
+                    date = parse(timestamp)
+                    timestamp = str(time.mktime(date.timetuple()))
+                    n = n.replace(r,timestamp)
+                except Exception as e:
+                    r=f'\"{r}\"'
                 continue
-            
+             
             #Skip keys we already encountered
             if [r] in keys.values():
                 continue
@@ -202,7 +212,6 @@ class TestLDQueryLanguage(unittest.TestCase):
             
             #Associate each chain of nested keys with the token it was replaced with
             keys[token] = l
-            
         return n,keys
     
     def sub_key_with_val(self,q:str,entity:ContextLDEntity,keylist,token:str):
@@ -214,11 +223,11 @@ class TestLDQueryLanguage(unittest.TestCase):
         '''
         obj = entity.model_dump()
         for key in keylist:
-            if 'value' in obj:
-                obj = obj['value']
-            try:   
+            if key in obj:
                 obj = obj[key]
-            except:
+            elif 'value' in obj and key in obj['value']:
+                obj = obj['value'][key]
+            else:
                 obj = None
                 break
             
@@ -228,13 +237,16 @@ class TestLDQueryLanguage(unittest.TestCase):
             elif 'object' in obj:
                 obj=obj['object']
         
-        #Enclose value in double quotes if it's a string ( contains at least one letter)
-        if obj is not None and re.compile('[a-zA-Z]+').match(str(obj)):
-            obj = f'"{str(obj)}"'
+        if obj is not None and re.compile('[a-zA-Z]+').search(str(obj)) is not None:
+            try:
+                date = parse(obj)
+                obj = str(time.mktime(date.timetuple())) #convert to unix ts
+            except Exception as e:
+                obj = f'"{str(obj)}"'
+            
         
         #replace key names with entity values
         n = q.replace(token,str(obj))
-        
         return n
     
     def search_predicate(self,e,tokenized,keys_dict):
@@ -274,6 +286,7 @@ class TestLDQueryLanguage(unittest.TestCase):
             #Every car will have temperature, humidity, brand and address
             t = self.temperature.model_copy()
             t.value = Random().randint(a,b)
+            t.observedAt = self.timestamps[r]
             
             h = self.humidity.model_copy()
             h.value = Random().randint(math.trunc(a/10),math.trunc(b/10))
@@ -287,7 +300,7 @@ class TestLDQueryLanguage(unittest.TestCase):
             m = self.isMonitoredBy.model_copy()
             m.object = self.cam.id
 
-            #Every car is endowed with a set of relationships , periodically
+            #Every car is endowed with a set of relationships/nested key
             if r==0:
                 self.cars[i].add_relationships([p])
             elif r==1:
