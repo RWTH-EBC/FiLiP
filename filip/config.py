@@ -26,7 +26,7 @@ class Settings(BaseSettings):
                                validation_alias=AliasChoices(
                                    'ORION_URL', 'CB_URL', 'CB_HOST',
                                    'CONTEXTBROKER_URL', 'OCB_URL'))
-    LD_CB_URL: AnyHttpUrl = Field(default="http://127.0.0.1:1026",
+    LD_CB_URL: AnyHttpUrl = Field(default="http://127.0.0.1:1027",
                                   validation_alias=AliasChoices('LD_ORION_URL',
                                                                 'LD_CB_URL',
                                                                 'ORION_LD_URL',
