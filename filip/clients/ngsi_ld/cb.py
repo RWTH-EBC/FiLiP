@@ -766,6 +766,7 @@ class ContextBrokerLDClient(BaseHttpClient):
                     params=params,
                     data=json.dumps(update.model_dump(by_alias=True,
                                                       exclude_unset=True,
+                                                      exclude_none=True,
                                                       ).get('entities'))
                 )
             self.handle_multi_status_response(res)
