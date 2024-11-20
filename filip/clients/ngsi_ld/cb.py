@@ -3,9 +3,7 @@ Context Broker Module for API Client
 """
 import json
 import os
-import warnings
 from math import inf
-from enum import Enum
 from typing import Any, Dict, List, Union, Optional, Literal
 from urllib.parse import urljoin
 import requests
@@ -16,10 +14,10 @@ from pydantic import \
 from filip.clients.base_http_client import BaseHttpClient, NgsiURLVersion
 from filip.config import settings
 from filip.models.base import FiwareLDHeader, PaginationMethod, core_context
-from filip.utils.simple_ql import QueryString
 from filip.models.ngsi_v2.base import AttrsFormat
 from filip.models.ngsi_ld.subscriptions import SubscriptionLD
-from filip.models.ngsi_ld.context import ContextLDEntity, ContextLDEntityKeyValues, ContextProperty, ContextRelationship, NamedContextProperty, \
+from filip.models.ngsi_ld.context import ContextLDEntity, ContextLDEntityKeyValues, \
+    ContextProperty, ContextRelationship, NamedContextProperty, \
     NamedContextRelationship, ActionTypeLD, UpdateLD
 from filip.models.ngsi_v2.context import Query
 
@@ -246,7 +244,7 @@ class ContextBrokerLDClient(BaseHttpClient):
                    entity_type: str = None,
                    attrs: List[str] = None,
                    options: Optional[str] = None,
-                   **kwargs  # TODO how to handle metadata?
+                   geometryProperty: Optional[str] = None,
                    ) \
             -> Union[ContextLDEntity, ContextLDEntityKeyValues, Dict[str, Any]]:
         """
@@ -269,6 +267,9 @@ class ContextBrokerLDClient(BaseHttpClient):
                 Example: temperature, humidity.
             options (String): keyValues (simplified representation of entity)
                 or sysAttrs (include generated attrs createdAt and modifiedAt)
+            geometryProperty (String): Name of a GeoProperty. In the case of GeoJSON
+                Entity representation, this parameter indicates which GeoProperty to
+                use for the "geometry" element. By default, it shall be 'location'.
         Returns:
             ContextEntity
         """
@@ -279,6 +280,8 @@ class ContextBrokerLDClient(BaseHttpClient):
             params.update({'type': entity_type})
         if attrs:
             params.update({'attrs': ','.join(attrs)})
+        if geometryProperty:
+            params.update({'geometryProperty': geometryProperty})
         if options:
             if options != 'keyValues' and options != 'sysAttrs':
                 raise ValueError(f'Only available options are \'keyValues\' and \'sysAttrs\'')
