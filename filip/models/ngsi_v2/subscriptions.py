@@ -19,7 +19,7 @@ from filip.models.ngsi_v2.context import ContextEntity
 from filip.models.ngsi_v2.base import (
     EntityPattern,
     Expression,
-    BaseValueAttribute
+    DataType
 )
 from filip.custom_types import AnyMqttUrl
 import warnings
@@ -31,7 +31,7 @@ warnings.filterwarnings("ignore", category=UserWarning,
                         message='Field name "json" shadows an attribute in parent "Mqtt"')
 
 
-class NgsiPayloadAttr(BaseValueAttribute):
+class NgsiPayloadAttr(BaseModel):
     """
     Model for NGSI V2 type payload in httpCustom/mqttCustom notifications.
     The difference between this model and the usual BaseValueAttribute model is that
@@ -41,6 +41,20 @@ class NgsiPayloadAttr(BaseValueAttribute):
     model.
     """
     model_config = ConfigDict(extra="forbid")
+    type: Union[DataType, str] = Field(
+        default=DataType.TEXT,
+        description="The attribute type represents the NGSI value type of the "
+        "attribute value. Note that FIWARE NGSI has its own type "
+        "system for attribute values, so NGSI value types are not "
+        "the same as JSON types. Allowed characters "
+        "are the ones in the plain ASCII set, except the following "
+        "ones: control characters, whitespace, &, ?, / and #.",
+        max_length=256,
+        min_length=1,
+    )
+    value: Optional[Any] = Field(
+        default=None, title="Attribute value", description="the actual data"
+    )
 
 
 class NgsiPayload(BaseModel):
