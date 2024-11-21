@@ -101,13 +101,19 @@ class Endpoint(BaseModel):
 
 
 class NotificationParams(BaseModel):
+    """
+    NGSI-LD Notification model. It contains the parameters that allow to
+    convey the details of a notification, as described in NGSI-LD Spec section 5.2.14
+    """
     attributes: Optional[List[str]] = Field(
         default=None,
-        description="Entity Attribute Names (Properties or Relationships) to be included in the notification payload body. If undefined, it will mean all Attributes"
+        description="Entity Attribute Names (Properties or Relationships) to be included "
+                    "in the notification payload body. If undefined, it will mean all Attributes"
     )
     format: Optional[str] = Field(
         default="normalized",
-        description="Conveys the representation format of the entities delivered at notification time. By default, it will be in normalized format"
+        description="Conveys the representation format of the entities delivered at "
+                    "notification time. By default, it will be in normalized format"
     )
     endpoint: Endpoint = Field(
         ...,
@@ -124,19 +130,23 @@ class NotificationParams(BaseModel):
     # Additional members
     timesSent: Optional[int] = Field(
         default=None,
-        description="Number of times that the notification was sent. Provided by the system when querying the details of a subscription"
+        description="Number of times that the notification was sent. Provided by the "
+                    "system when querying the details of a subscription"
     )
     lastNotification: Optional[str] = Field(
         default=None,
-        description="Timestamp corresponding to the instant when the last notification was sent. Provided by the system when querying the details of a subscription"
+        description="Timestamp corresponding to the instant when the last notification "
+                    "was sent. Provided by the system when querying the details of a subscription"
     )
     lastFailure: Optional[str] = Field(
         default=None,
-        description="Timestamp corresponding to the instant when the last notification resulting in failure was sent. Provided by the system when querying the details of a subscription"
+        description="Timestamp corresponding to the instant when the last notification"
+                    " resulting in failure was sent. Provided by the system when querying the details of a subscription"
     )
     lastSuccess: Optional[str] = Field(
         default=None,
-        description="Timestamp corresponding to the instant when the last successful notification was sent. Provided by the system when querying the details of a subscription"
+        description="Timestamp corresponding to the instant when the last successful "
+                    "notification was sent. Provided by the system when querying the details of a subscription"
     )
     model_config = ConfigDict(populate_by_name=True)
 
@@ -207,6 +217,9 @@ class TemporalQuery(BaseModel):
 
 
 class SubscriptionLD(BaseModel):
+    """
+    Context Subscription model according to NGSI-LD Spec section 5.2.12
+    """
     id: Optional[str] = Field(
         default=None,
         description="Subscription identifier (JSON-LD @id)"

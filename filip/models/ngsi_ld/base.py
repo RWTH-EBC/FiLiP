@@ -3,6 +3,9 @@ from pydantic import BaseModel, Field, ConfigDict
 
 
 class GeoQuery(BaseModel):
+    """
+    GeoQuery used for Subscriptions, as described in NGSI-LD Spec section 5.2.13
+    """
     geometry: str = Field(
         description="A valid GeoJSON [8] geometry, type excepting GeometryCollection"
     )

@@ -517,7 +517,6 @@ class ContextLDEntity(ContextLDEntityKeyValues):
                     for (_, field) in cls.model_fields.items()] +
                    [field_name for field_name in cls.model_fields])
 
-    # TODO should geoproperty has subproperties? and can geoproperty be subproperties?
     @classmethod
     def _validate_single_property(cls, attr) -> ContextProperty:
         property_fields = ContextProperty.get_model_fields_set()
@@ -536,7 +535,6 @@ class ContextLDEntity(ContextLDEntityKeyValues):
             raise ValueError(f"Attribute {attr.get('type')} "
                              "is not a valid type")
         for subkey, subattr in attr.items():
-            # TODO can we ensure that the subattr can only be dict?
             if isinstance(subattr, dict) and subkey not in property_fields:
                 attr_instance.model_extra.update(
                     {subkey: cls._validate_single_property(attr=subattr)}
@@ -578,6 +576,7 @@ class ContextLDEntity(ContextLDEntityKeyValues):
             Union[List[NamedContextProperty],
                   Dict[str, ContextProperty]]:
         """
+        Get all properties of the entity.
         Args:
             response_format:
 
@@ -638,6 +637,23 @@ class ContextLDEntity(ContextLDEntityKeyValues):
         """
         raise NotImplementedError(
             "This method should not be used in NGSI-LD")
+
+    def delete_relationships(self, relationships: List[str]):
+        """
+        Delete the given relationships from the entity
+
+        Args:
+            relationships: List of relationship names
+
+        Returns:
+
+        """
+        all_relationships = self.get_relationships(response_format='dict')
+        for relationship in relationships:
+            # check they are relationships
+            if relationship not in all_relationships:
+                raise ValueError(f"Relationship {relationship} does not exist")
+            delattr(self, relationship)
 
     def delete_properties(self, props: Union[Dict[str, ContextProperty],
                                              List[NamedContextProperty],
@@ -705,19 +721,19 @@ class ContextLDEntity(ContextLDEntityKeyValues):
         for key, attr in attrs.items():
             self.__setattr__(name=key, value=attr)
 
-    def add_relationships(self, attrs: Union[Dict[str, ContextRelationship],
-                                             List[NamedContextRelationship]]) -> None:
+    def add_relationships(self, relationships: Union[Dict[str, ContextRelationship],
+                                                     List[NamedContextRelationship]]) -> None:
         """
         Add relationship to entity
         Args:
-            attrs:
+            relationships:
         Returns:
             None
         """
-        if isinstance(attrs, list):
-            attrs = {attr.name: ContextRelationship(**attr.dict(exclude={'name'}))
-                     for attr in attrs}
-        for key, attr in attrs.items():
+        if isinstance(relationships, list):
+            relationships = {attr.name: ContextRelationship(**attr.dict(exclude={'name'}))
+                             for attr in relationships}
+        for key, attr in relationships.items():
             self.__setattr__(name=key, value=attr)
 
     def get_relationships(self,
