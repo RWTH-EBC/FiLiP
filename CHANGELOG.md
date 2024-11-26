@@ -1,4 +1,5 @@
 ### v0.6.X
+- add: Tutorial for saving live timeseries data (e.g., forecast) in context broker and timeseries database ([#352](TODO))
 - add: Tutorial for connecting with secured endpoints ([#319](https://github.com/RWTH-EBC/FiLiP/pull/319))
 - add: tests for clear functions ([#318](https://github.com/RWTH-EBC/FiLiP/pull/336))
 - fix: clear functions for context broker ([#318](https://github.com/RWTH-EBC/FiLiP/pull/336))
