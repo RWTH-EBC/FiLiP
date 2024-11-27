@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>filip.clients.base_http_client &mdash; FiLiP 0.5.0 documentation</title>
+  <title>filip.clients.base_http_client &mdash; FiLiP 0.6.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
@@ -83,9 +83,17 @@
 <span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">AnyHttpUrl</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">ByteString</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">IO</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">import</span> <span class="nn">requests</span>
-
-<span class="kn">from</span> <span class="nn">filip.models.base</span> <span class="kn">import</span> <span class="n">FiwareHeader</span>
+<span class="kn">from</span> <span class="nn">filip.models.base</span> <span class="kn">import</span> <span class="n">FiwareHeader</span><span class="p">,</span> <span class="n">FiwareLDHeader</span>
 <span class="kn">from</span> <span class="nn">filip.utils</span> <span class="kn">import</span> <span class="n">validate_http_url</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+
+
+<div class="viewcode-block" id="NgsiURLVersion"><a class="viewcode-back" href="../../../code/filip.clients.html#filip.clients.base_http_client.NgsiURLVersion">[docs]</a><span class="k">class</span> <span class="nc">NgsiURLVersion</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    URL part that defines the NGSI version for the API.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">v2_url</span> <span class="o">=</span> <span class="s2">&quot;/v2&quot;</span>
+    <span class="n">ld_url</span> <span class="o">=</span> <span class="s2">&quot;/ngsi-ld/v1&quot;</span></div>
 
 
 <div class="viewcode-block" id="BaseHttpClient"><a class="viewcode-back" href="../../../code/filip.clients.html#filip.clients.base_http_client.BaseHttpClient">[docs]</a><span class="k">class</span> <span class="nc">BaseHttpClient</span><span class="p">:</span>
@@ -104,7 +112,7 @@
                  <span class="n">url</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">AnyHttpUrl</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="o">*</span><span class="p">,</span>
                  <span class="n">session</span><span class="p">:</span> <span class="n">requests</span><span class="o">.</span><span class="n">Session</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">fiware_header</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="n">FiwareHeader</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">fiware_header</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="n">FiwareHeader</span><span class="p">,</span> <span class="n">FiwareLDHeader</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span>
@@ -170,10 +178,16 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">headers</span><span class="p">,</span> <span class="n">FiwareHeader</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_fiware_headers</span> <span class="o">=</span> <span class="n">headers</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">headers</span><span class="p">,</span> <span class="n">FiwareLDHeader</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fiware_headers</span> <span class="o">=</span> <span class="n">headers</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">headers</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_fiware_headers</span> <span class="o">=</span> <span class="n">FiwareHeader</span><span class="o">.</span><span class="n">model_validate</span><span class="p">(</span><span class="n">headers</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">headers</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_fiware_headers</span> <span class="o">=</span> <span class="n">FiwareHeader</span><span class="o">.</span><span class="n">model_validate_json</span><span class="p">(</span><span class="n">headers</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">headers</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fiware_headers</span> <span class="o">=</span> <span class="n">FiwareLDHeader</span><span class="o">.</span><span class="n">parse_obj</span><span class="p">(</span><span class="n">headers</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">headers</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fiware_headers</span> <span class="o">=</span> <span class="n">FiwareLDHeader</span><span class="o">.</span><span class="n">parse_raw</span><span class="p">(</span><span class="n">headers</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Invalid headers! </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">headers</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fiware_headers</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">by_alias</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>

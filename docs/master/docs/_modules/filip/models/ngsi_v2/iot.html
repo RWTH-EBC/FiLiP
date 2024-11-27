@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>filip.models.ngsi_v2.iot &mdash; FiLiP 0.5.0 documentation</title>
+  <title>filip.models.ngsi_v2.iot &mdash; FiLiP 0.6.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
@@ -303,12 +303,12 @@
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">if</span> <span class="n">value</span> <span class="k">else</span> <span class="n">value</span></div>
     <span class="n">lazy</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">LazyDeviceAttribute</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
-        <span class="n">desription</span><span class="o">=</span><span class="s2">&quot;list of common lazy attributes of the device. For each &quot;</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;list of common lazy attributes of the device. For each &quot;</span>
                    <span class="s2">&quot;attribute, its name and type must be provided.&quot;</span>
     <span class="p">)</span>
     <span class="n">commands</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">DeviceCommand</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
-        <span class="n">desription</span><span class="o">=</span><span class="s2">&quot;list of common commands attributes of the device. For each &quot;</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;list of common commands attributes of the device. For each &quot;</span>
                    <span class="s2">&quot;attribute, its name and type must be provided, additional &quot;</span>
                    <span class="s2">&quot;metadata is optional&quot;</span>
     <span class="p">)</span>
@@ -461,7 +461,7 @@
     <span class="p">)</span>
     <span class="n">commands</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DeviceCommand</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
-        <span class="n">desription</span><span class="o">=</span><span class="s2">&quot;List of commands of the device&quot;</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;List of commands of the device&quot;</span>
     <span class="p">)</span>
     <span class="n">attributes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DeviceAttribute</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="p">[],</span>

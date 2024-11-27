@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>filip.config &mdash; FiLiP 0.5.0 documentation</title>
+  <title>filip.config &mdash; FiLiP 0.6.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -104,6 +104,12 @@
                                <span class="n">validation_alias</span><span class="o">=</span><span class="n">AliasChoices</span><span class="p">(</span>
                                    <span class="s1">&#39;ORION_URL&#39;</span><span class="p">,</span> <span class="s1">&#39;CB_URL&#39;</span><span class="p">,</span> <span class="s1">&#39;CB_HOST&#39;</span><span class="p">,</span>
                                    <span class="s1">&#39;CONTEXTBROKER_URL&#39;</span><span class="p">,</span> <span class="s1">&#39;OCB_URL&#39;</span><span class="p">))</span>
+    <span class="n">LD_CB_URL</span><span class="p">:</span> <span class="n">AnyHttpUrl</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;http://127.0.0.1:1027&quot;</span><span class="p">,</span>
+                                  <span class="n">validation_alias</span><span class="o">=</span><span class="n">AliasChoices</span><span class="p">(</span><span class="s1">&#39;LD_ORION_URL&#39;</span><span class="p">,</span>
+                                                                <span class="s1">&#39;LD_CB_URL&#39;</span><span class="p">,</span>
+                                                                <span class="s1">&#39;ORION_LD_URL&#39;</span><span class="p">,</span>
+                                                                <span class="s1">&#39;SCORPIO_URL&#39;</span><span class="p">,</span>
+                                                                <span class="s1">&#39;STELLIO_URL&#39;</span><span class="p">))</span>
 
     <span class="n">IOTA_URL</span><span class="p">:</span> <span class="n">AnyHttpUrl</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;http://127.0.0.1:4041&quot;</span><span class="p">,</span>
                                  <span class="n">validation_alias</span><span class="o">=</span><span class="s1">&#39;IOTA_URL&#39;</span><span class="p">)</span>
@@ -115,7 +121,12 @@
                                     <span class="n">validation_alias</span><span class="o">=</span><span class="n">AliasChoices</span><span class="p">(</span>
                                         <span class="s1">&#39;MQTT_BROKER_URL&#39;</span><span class="p">,</span>
                                         <span class="s1">&#39;MQTT_URL&#39;</span><span class="p">,</span>
-                                        <span class="s1">&#39;MQTT_BROKER&#39;</span><span class="p">))</span></div>
+                                        <span class="s1">&#39;MQTT_BROKER&#39;</span><span class="p">))</span>
+    <span class="n">LD_MQTT_BROKER_URL</span><span class="p">:</span> <span class="n">AnyUrl</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;mqtt://127.0.0.1:1884&quot;</span><span class="p">,</span>
+                                       <span class="n">validation_alias</span><span class="o">=</span><span class="n">AliasChoices</span><span class="p">(</span>
+                                           <span class="s1">&#39;LD_MQTT_BROKER_URL&#39;</span><span class="p">,</span>
+                                           <span class="s1">&#39;LD_MQTT_URL&#39;</span><span class="p">,</span>
+                                           <span class="s1">&#39;LD_MQTT_BROKER&#39;</span><span class="p">))</span></div>
 
 <span class="c1"># create settings object</span>
 <span class="n">settings</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">()</span>

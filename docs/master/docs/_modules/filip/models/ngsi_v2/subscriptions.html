@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>filip.models.ngsi_v2.subscriptions &mdash; FiLiP 0.5.0 documentation</title>
+  <title>filip.models.ngsi_v2.subscriptions &mdash; FiLiP 0.6.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
@@ -575,21 +575,21 @@
     <span class="p">)</span>
     <span class="n">subject</span><span class="p">:</span> <span class="n">Subject</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;An object that describes the subject of the subscription.&quot;</span><span class="p">,</span>
-        <span class="n">examples</span><span class="o">=</span><span class="p">[{</span>
+        <span class="n">json_schema_extra</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;example&#39;</span><span class="p">:{</span>
             <span class="s1">&#39;entities&#39;</span><span class="p">:</span> <span class="p">[{</span><span class="s1">&#39;idPattern&#39;</span><span class="p">:</span> <span class="s1">&#39;.*&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;Room&#39;</span><span class="p">}],</span>
             <span class="s1">&#39;condition&#39;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="s1">&#39;attrs&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;temperature&#39;</span><span class="p">],</span>
                 <span class="s1">&#39;expression&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;q&#39;</span><span class="p">:</span> <span class="s1">&#39;temperature&gt;40&#39;</span><span class="p">},</span>
-            <span class="p">},</span>
-        <span class="p">}],</span>
+                <span class="p">},</span>
+            <span class="p">}}</span>
     <span class="p">)</span>
     <span class="n">notification</span><span class="p">:</span> <span class="n">Notification</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;An object that describes the notification to send when &quot;</span>
                     <span class="s2">&quot;the subscription is triggered.&quot;</span><span class="p">,</span>
-        <span class="n">examples</span><span class="o">=</span><span class="p">[{</span>
+        <span class="n">json_schema_extra</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;example&#39;</span><span class="p">:{</span>
             <span class="s1">&#39;http&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="s1">&#39;http://localhost:1234&#39;</span><span class="p">},</span>
             <span class="s1">&#39;attrs&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;temperature&#39;</span><span class="p">,</span> <span class="s1">&#39;humidity&#39;</span><span class="p">],</span>
-        <span class="p">}],</span>
+            <span class="p">}}</span>
     <span class="p">)</span>
     <span class="n">expires</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>

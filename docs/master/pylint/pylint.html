@@ -28,9 +28,9 @@
 
         
         <h2>Score</h2>
-        9.03 / 10
+        8.89 / 10
             
-            (previous score: 9.03 / 10)
+            (previous score: 8.89 / 10)
             
         
 
@@ -922,15 +922,50 @@
                 <td>R0801</td>
                 <td></td>
                 <td><pre>Similar lines in 2 files
-==filip.config:[35:42]
-==tests.config:[45:51]
+==filip.config:[46:53]
+==tests.config:[62:68]
+    LD_MQTT_BROKER_URL: AnyUrl = Field(default=&#34;mqtt://127.0.0.1:1884&#34;,
+                                       validation_alias=AliasChoices(
+                                           &#39;LD_MQTT_BROKER_URL&#39;,
+                                           &#39;LD_MQTT_URL&#39;,
+                                           &#39;LD_MQTT_BROKER&#39;))
+
+# create settings object</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.config:[41:46]
+==tests.config:[51:57]
     MQTT_BROKER_URL: AnyUrl = Field(default=&#34;mqtt://127.0.0.1:1883&#34;,
                                     validation_alias=AliasChoices(
                                         &#39;MQTT_BROKER_URL&#39;,
                                         &#39;MQTT_URL&#39;,
                                         &#39;MQTT_BROKER&#39;))
-
-# create settings object</pre></td>
+</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.config:[29:35]
+==tests.config:[34:39]
+                                  validation_alias=AliasChoices(&#39;LD_ORION_URL&#39;,
+                                                                &#39;LD_CB_URL&#39;,
+                                                                &#39;ORION_LD_URL&#39;,
+                                                                &#39;SCORPIO_URL&#39;,
+                                                                &#39;STELLIO_URL&#39;))</pre></td>
             </tr>
             
         </table>
@@ -948,7 +983,7 @@
             
             <tr>
                 <td>refactor</td>
-                <td>68</td>
+                <td>70</td>
             </tr>
             
             <tr>
@@ -1003,7 +1038,7 @@
             
             <tr>
                 <td>duplicate-code</td>
-                <td>1</td>
+                <td>3</td>
             </tr>
             
         </table>
@@ -1038,7 +1073,7 @@
             
             <tr>
                 <td>tutorials.__init__</td>
-                <td>1</td>
+                <td>3</td>
             </tr>
             
         </table>
@@ -1073,7 +1108,7 @@
             
             <tr>
                 <td>tutorials/__init__.py</td>
-                <td>1</td>
+                <td>3</td>
             </tr>
             
         </table>

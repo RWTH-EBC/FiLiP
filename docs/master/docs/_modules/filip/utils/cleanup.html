@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>filip.utils.cleanup &mdash; FiLiP 0.5.0 documentation</title>
+  <title>filip.utils.cleanup &mdash; FiLiP 0.6.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
@@ -85,11 +85,60 @@
 <span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">AnyHttpUrl</span><span class="p">,</span> <span class="n">AnyUrl</span>
 <span class="kn">from</span> <span class="nn">requests</span> <span class="kn">import</span> <span class="n">RequestException</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
-<span class="kn">from</span> <span class="nn">filip.models</span> <span class="kn">import</span> <span class="n">FiwareHeader</span>
+<span class="kn">from</span> <span class="nn">filip.models</span> <span class="kn">import</span> <span class="n">FiwareHeader</span><span class="p">,</span> <span class="n">FiwareLDHeader</span>
 <span class="kn">from</span> <span class="nn">filip.clients.ngsi_v2</span> <span class="kn">import</span> \
     <span class="n">ContextBrokerClient</span><span class="p">,</span> \
     <span class="n">IoTAClient</span><span class="p">,</span> \
     <span class="n">QuantumLeapClient</span>
+<span class="kn">from</span> <span class="nn">filip.clients.ngsi_ld.cb</span> <span class="kn">import</span> <span class="n">ContextBrokerLDClient</span>
+<span class="kn">from</span> <span class="nn">filip.models.ngsi_ld.context</span> <span class="kn">import</span> <span class="n">ActionTypeLD</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="clear_context_broker_ld"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.cleanup.clear_context_broker_ld">[docs]</a><span class="k">def</span> <span class="nf">clear_context_broker_ld</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                            <span class="n">fiware_ld_header</span><span class="p">:</span> <span class="n">FiwareLDHeader</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                            <span class="n">cb_ld_client</span><span class="p">:</span> <span class="n">ContextBrokerLDClient</span> <span class="o">=</span> <span class="kc">None</span>
+                            <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function deletes all entities and subscriptions for a tenant in an LD context broker.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        url: Url of the context broker LD</span>
+<span class="sd">        fiware_ld_header: header of the NGSI-LD tenant</span>
+<span class="sd">        cb_ld_client: NGSI-LD context broker client object</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">url</span> <span class="ow">or</span> <span class="n">cb_ld_client</span><span class="p">,</span> <span class="s2">&quot;Either url or client object must be given&quot;</span>
+    <span class="c1"># create client</span>
+    <span class="k">if</span> <span class="n">cb_ld_client</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="n">ContextBrokerLDClient</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">fiware_header</span><span class="o">=</span><span class="n">fiware_ld_header</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="n">cb_ld_client</span>
+    <span class="c1"># clean entities iteratively</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">entity_list</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">while</span> <span class="n">entity_list</span><span class="p">:</span>
+            <span class="n">entity_list</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_entity_list</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">entity_list</span><span class="p">:</span>
+                <span class="n">client</span><span class="o">.</span><span class="n">entity_batch_operation</span><span class="p">(</span><span class="n">action_type</span><span class="o">=</span><span class="n">ActionTypeLD</span><span class="o">.</span><span class="n">DELETE</span><span class="p">,</span>
+                                              <span class="n">entities</span><span class="o">=</span><span class="n">entity_list</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">RequestException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Could not clean entities completely&quot;</span><span class="p">)</span>
+        <span class="k">raise</span>
+
+    <span class="c1"># clean subscriptions</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">sub_list</span> <span class="o">=</span> <span class="n">cb_ld_client</span><span class="o">.</span><span class="n">get_subscription_list</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">sub_list</span><span class="p">:</span>
+            <span class="n">cb_ld_client</span><span class="o">.</span><span class="n">delete_subscription</span><span class="p">(</span><span class="n">sub</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">RequestException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Could not clean subscriptions completely&quot;</span><span class="p">)</span>
+        <span class="k">raise</span></div>
 
 
 <div class="viewcode-block" id="clear_context_broker"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.cleanup.clear_context_broker">[docs]</a><span class="k">def</span> <span class="nf">clear_context_broker</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -125,19 +174,20 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">client</span> <span class="o">=</span> <span class="n">cb_client</span>
 
+    <span class="c1"># clear registrations</span>
+    <span class="k">if</span> <span class="n">clear_registrations</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">reg</span> <span class="ow">in</span> <span class="n">client</span><span class="o">.</span><span class="n">get_registration_list</span><span class="p">():</span>
+            <span class="n">client</span><span class="o">.</span><span class="n">delete_registration</span><span class="p">(</span><span class="n">registration_id</span><span class="o">=</span><span class="n">reg</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">get_registration_list</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span>
+
     <span class="c1"># clean entities</span>
     <span class="n">client</span><span class="o">.</span><span class="n">delete_entities</span><span class="p">(</span><span class="n">entities</span><span class="o">=</span><span class="n">client</span><span class="o">.</span><span class="n">get_entity_list</span><span class="p">())</span>
 
     <span class="c1"># clear subscriptions</span>
     <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">client</span><span class="o">.</span><span class="n">get_subscription_list</span><span class="p">():</span>
         <span class="n">client</span><span class="o">.</span><span class="n">delete_subscription</span><span class="p">(</span><span class="n">subscription_id</span><span class="o">=</span><span class="n">sub</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">get_subscription_list</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">get_subscription_list</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span></div>
 
-    <span class="c1"># clear registrations</span>
-    <span class="k">if</span> <span class="n">clear_registrations</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">reg</span> <span class="ow">in</span> <span class="n">client</span><span class="o">.</span><span class="n">get_registration_list</span><span class="p">():</span>
-            <span class="n">client</span><span class="o">.</span><span class="n">delete_registration</span><span class="p">(</span><span class="n">registration_id</span><span class="o">=</span><span class="n">reg</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">get_registration_list</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span></div>
 
 
 <div class="viewcode-block" id="clear_iot_agent"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.cleanup.clear_iot_agent">[docs]</a><span class="k">def</span> <span class="nf">clear_iot_agent</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AnyHttpUrl</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -232,7 +282,8 @@
               <span class="n">iota_client</span><span class="p">:</span> <span class="n">IoTAClient</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
               <span class="n">ql_client</span><span class="p">:</span> <span class="n">QuantumLeapClient</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Clears all services that a url is provided for</span>
+<span class="sd">    Clears all services that a url is provided for.</span>
+<span class="sd">    If cb_url is provided, the registration will also be deleted.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        fiware_header:</span>
@@ -263,7 +314,8 @@
                 <span class="n">clear_iot_agent</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">fiware_header</span><span class="o">=</span><span class="n">fiware_header</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">cb_url</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">cb_client</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">clear_context_broker</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">cb_url</span><span class="p">,</span> <span class="n">fiware_header</span><span class="o">=</span><span class="n">fiware_header</span><span class="p">,</span> <span class="n">cb_client</span><span class="o">=</span><span class="n">cb_client</span><span class="p">)</span>
+        <span class="n">clear_context_broker</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">cb_url</span><span class="p">,</span> <span class="n">fiware_header</span><span class="o">=</span><span class="n">fiware_header</span><span class="p">,</span> <span class="n">cb_client</span><span class="o">=</span><span class="n">cb_client</span><span class="p">,</span>
+                             <span class="n">clear_registrations</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">ql_url</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">ql_client</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">clear_quantumleap</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">ql_url</span><span class="p">,</span> <span class="n">fiware_header</span><span class="o">=</span><span class="n">fiware_header</span><span class="p">,</span> <span class="n">ql_client</span><span class="o">=</span><span class="n">ql_client</span><span class="p">)</span></div>

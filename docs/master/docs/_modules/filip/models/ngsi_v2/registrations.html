@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>filip.models.ngsi_v2.registrations &mdash; FiLiP 0.5.0 documentation</title>
+  <title>filip.models.ngsi_v2.registrations &mdash; FiLiP 0.6.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
@@ -179,18 +179,19 @@
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;A free text used by the client to describe the &quot;</span>
                     <span class="s2">&quot;registration.&quot;</span><span class="p">,</span>
-        <span class="n">example</span><span class="o">=</span><span class="s2">&quot;Relative Humidity Context Source&quot;</span>
+        <span class="n">json_schema_extra</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;example&quot;</span><span class="p">:</span><span class="s2">&quot;Relative Humidity Context Source&quot;</span><span class="p">}</span>
     <span class="p">)</span>
     <span class="n">provider</span><span class="p">:</span> <span class="n">Provider</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Object that describes the context source registered.&quot;</span><span class="p">,</span>
-        <span class="n">example</span><span class="o">=</span><span class="s1">&#39;&quot;http&quot;: {&quot;url&quot;: &quot;http://localhost:1234&quot;}&#39;</span>
+        <span class="n">json_schema_extra</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;example&quot;</span><span class="p">:</span> <span class="s1">&#39;&quot;http&quot;: {&quot;url&quot;: &quot;http://localhost:1234&quot;}&#39;</span><span class="p">}</span>
     <span class="p">)</span>
     <span class="n">dataProvided</span><span class="p">:</span> <span class="n">DataProvided</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Object that describes the data provided by this source&quot;</span><span class="p">,</span>
-        <span class="n">example</span><span class="o">=</span><span class="s1">&#39;{&#39;</span>
+        <span class="n">json_schema_extra</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;example&quot;</span><span class="p">:</span> <span class="s1">&#39;{&#39;</span>
                 <span class="s1">&#39;   &quot;entities&quot;: [{&quot;id&quot;: &quot;room2&quot;, &quot;type&quot;: &quot;Room&quot;}],&#39;</span>
                 <span class="s1">&#39;   &quot;attrs&quot;: [&quot;relativeHumidity&quot;]&#39;</span>
                 <span class="s1">&#39;},&#39;</span>
+        <span class="p">}</span>
     <span class="p">)</span>
     <span class="n">status</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Status</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="n">Status</span><span class="o">.</span><span class="n">ACTIVE</span><span class="p">,</span>

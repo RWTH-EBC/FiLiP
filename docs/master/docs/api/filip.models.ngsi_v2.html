@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>filip.models.ngsi_v2 package &mdash; FiLiP 0.5.0 documentation</title>
+  <title>filip.models.ngsi_v2 package &mdash; FiLiP 0.6.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
@@ -482,7 +482,7 @@ of the data provided.
 
 <dl class="py method pydantic_validator">
 <dt class="sig sig-object py" id="filip.models.ngsi_v2.base.Expression.validate_expressions">
-<em class="property"><span class="pre">validator</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_expressions</span></span><em class="autodoc_pydantic_validator_arrow property">&#160; <span class="pre">»</span>&#160; </em><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.base.Expression.q" title="filip.models.ngsi_v2.base.Expression.q"><em class="xref py py-obj"><span class="pre">q</span></em></a><em class="property"><span class="pre">,</span> </em><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.base.Expression.mq" title="filip.models.ngsi_v2.base.Expression.mq"><em class="xref py py-obj"><span class="pre">mq</span></em></a><a class="reference internal" href="../_modules/filip/models/ngsi_v2/base.html#Expression.validate_expressions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_v2.base.Expression.validate_expressions" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">validator</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_expressions</span></span><em class="autodoc_pydantic_validator_arrow property">&#160; <span class="pre">»</span>&#160; </em><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.base.Expression.mq" title="filip.models.ngsi_v2.base.Expression.mq"><em class="xref py py-obj"><span class="pre">mq</span></em></a><em class="property"><span class="pre">,</span> </em><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.base.Expression.q" title="filip.models.ngsi_v2.base.Expression.q"><em class="xref py py-obj"><span class="pre">q</span></em></a><a class="reference internal" href="../_modules/filip/models/ngsi_v2/base.html#Expression.validate_expressions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_v2.base.Expression.validate_expressions" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1516,7 +1516,8 @@ List of NamedContextAttributes or as Dict of ContextAttributes.</p>
 <dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.Device.commands">
 <em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">commands</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.DeviceCommand" title="filip.models.ngsi_v2.iot.DeviceCommand"><span class="pre">DeviceCommand</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#filip.models.ngsi_v2.iot.Device.commands" title="Permalink to this definition"></a></dt>
-<dd><dl class="field-list simple">
+<dd><p>List of commands of the device</p>
+<dl class="field-list simple">
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.Device.validate_device_attributes_expression" title="filip.models.ngsi_v2.iot.Device.validate_device_attributes_expression"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_device_attributes_expression</span></code></a></p></li>
@@ -2232,7 +2233,8 @@ based on our best practice, following rules are checked</p>
 <dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.ServiceGroup.commands">
 <em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">commands</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.DeviceCommand" title="filip.models.ngsi_v2.iot.DeviceCommand"><span class="pre">DeviceCommand</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#filip.models.ngsi_v2.iot.ServiceGroup.commands" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>list of common commands attributes of the device. For each attribute, its name and type must be provided, additional metadata is optional</p>
+</dd></dl>
 
 <dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.ServiceGroup.defaultEntityNameConjunction">
@@ -2287,7 +2289,8 @@ based on our best practice, following rules are checked</p>
 <dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.ServiceGroup.lazy">
 <em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lazy</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.LazyDeviceAttribute" title="filip.models.ngsi_v2.iot.LazyDeviceAttribute"><span class="pre">LazyDeviceAttribute</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#filip.models.ngsi_v2.iot.ServiceGroup.lazy" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>list of common lazy attributes of the device. For each attribute, its name and type must be provided.</p>
+</dd></dl>
 
 <dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.ServiceGroup.ngsiVersion">

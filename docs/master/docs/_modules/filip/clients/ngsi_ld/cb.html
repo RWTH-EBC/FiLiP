@@ -1,0 +1,971 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>filip.clients.ngsi_ld.cb &mdash; FiLiP 0.6.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/autodoc_pydantic.css" />
+
+  
+      <script src="../../../../_static/jquery.js"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+      <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+      <script src="../../../../_static/doctools.js"></script>
+      <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../contents.html" class="icon icon-home">
+            FiLiP
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index.html">FiLiP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/index.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contribute as a user</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html#contribute-as-a-developer">Contribute as a developer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../about/index.html">About FiLiP</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../contents.html">FiLiP</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../contents.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">filip.clients.ngsi_ld.cb</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for filip.clients.ngsi_ld.cb</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Context Broker Module for API Client</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">inf</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Literal</span>
+<span class="kn">from</span> <span class="nn">urllib.parse</span> <span class="kn">import</span> <span class="n">urljoin</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> \
+    <span class="n">TypeAdapter</span><span class="p">,</span> \
+    <span class="n">PositiveInt</span><span class="p">,</span> \
+    <span class="n">PositiveFloat</span>
+<span class="kn">from</span> <span class="nn">filip.clients.base_http_client</span> <span class="kn">import</span> <span class="n">BaseHttpClient</span><span class="p">,</span> <span class="n">NgsiURLVersion</span>
+<span class="kn">from</span> <span class="nn">filip.config</span> <span class="kn">import</span> <span class="n">settings</span>
+<span class="kn">from</span> <span class="nn">filip.models.base</span> <span class="kn">import</span> <span class="n">FiwareLDHeader</span><span class="p">,</span> <span class="n">PaginationMethod</span><span class="p">,</span> <span class="n">core_context</span>
+<span class="kn">from</span> <span class="nn">filip.models.ngsi_v2.base</span> <span class="kn">import</span> <span class="n">AttrsFormat</span>
+<span class="kn">from</span> <span class="nn">filip.models.ngsi_ld.subscriptions</span> <span class="kn">import</span> <span class="n">SubscriptionLD</span>
+<span class="kn">from</span> <span class="nn">filip.models.ngsi_ld.context</span> <span class="kn">import</span> <span class="n">ContextLDEntity</span><span class="p">,</span> <span class="n">ContextLDEntityKeyValues</span><span class="p">,</span> \
+    <span class="n">ContextProperty</span><span class="p">,</span> <span class="n">ContextRelationship</span><span class="p">,</span> <span class="n">NamedContextProperty</span><span class="p">,</span> \
+    <span class="n">NamedContextRelationship</span><span class="p">,</span> <span class="n">ActionTypeLD</span><span class="p">,</span> <span class="n">UpdateLD</span>
+<span class="kn">from</span> <span class="nn">filip.models.ngsi_v2.context</span> <span class="kn">import</span> <span class="n">Query</span>
+
+
+<div class="viewcode-block" id="ContextBrokerLDClient"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_ld.html#filip.clients.ngsi_ld.cb.ContextBrokerLDClient">[docs]</a><span class="k">class</span> <span class="nc">ContextBrokerLDClient</span><span class="p">(</span><span class="n">BaseHttpClient</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Implementation of NGSI-LD Context Broker functionalities, such as creating</span>
+<span class="sd">    entities and subscriptions; retrieving, updating and deleting data.</span>
+<span class="sd">    Further documentation:</span>
+<span class="sd">    https://fiware-orion.readthedocs.io/en/master/</span>
+
+<span class="sd">    Api specifications for LD are located here:</span>
+<span class="sd">    https://www.etsi.org/deliver/etsi_gs/CIM/001_099/009/01.04.01_60/gs_cim009v010401p.pdf</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="o">*</span><span class="p">,</span>
+                 <span class="n">session</span><span class="p">:</span> <span class="n">requests</span><span class="o">.</span><span class="n">Session</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">fiware_header</span><span class="p">:</span> <span class="n">FiwareLDHeader</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            url: Url of context broker server</span>
+<span class="sd">            session (requests.Session):</span>
+<span class="sd">            fiware_header (FiwareHeader): fiware service and fiware service path</span>
+<span class="sd">            **kwargs (Optional): Optional arguments that ``request`` takes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># set service url</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">url</span> <span class="ow">or</span> <span class="n">settings</span><span class="o">.</span><span class="n">LD_CB_URL</span>
+        <span class="c1">#base_http_client overwrites empty header with FiwareHeader instead of FiwareLD</span>
+        <span class="n">init_header</span> <span class="o">=</span> <span class="n">fiware_header</span> <span class="k">if</span> <span class="n">fiware_header</span> <span class="k">else</span> <span class="n">FiwareLDHeader</span><span class="p">()</span>        
+        <span class="k">if</span> <span class="n">init_header</span><span class="o">.</span><span class="n">link_header</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">init_header</span><span class="o">.</span><span class="n">set_context</span><span class="p">(</span><span class="n">core_context</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+                         <span class="n">session</span><span class="o">=</span><span class="n">session</span><span class="p">,</span>
+                         <span class="n">fiware_header</span><span class="o">=</span><span class="n">init_header</span><span class="p">,</span>
+                         <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="c1"># set the version specific url-pattern</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_url_version</span> <span class="o">=</span> <span class="n">NgsiURLVersion</span><span class="o">.</span><span class="n">ld_url</span><span class="o">.</span><span class="n">value</span>
+        <span class="c1"># For uplink requests, the Content-Type header is essential,</span>
+        <span class="c1"># Accept will be ignored</span>
+        <span class="c1"># For downlink requests, the Accept header is essential,</span>
+        <span class="c1"># Content-Type will be ignored</span>
+
+        <span class="c1"># default uplink content JSON</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json&#39;</span><span class="p">})</span>
+        <span class="c1"># default downlink content JSON-LD</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;Accept&#39;</span><span class="p">:</span> <span class="s1">&#39;application/ld+json&#39;</span><span class="p">})</span>
+
+        <span class="k">if</span> <span class="n">init_header</span><span class="o">.</span><span class="n">ngsild_tenant</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__make_tenant</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__pagination</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                     <span class="o">*</span><span class="p">,</span>
+                     <span class="n">method</span><span class="p">:</span> <span class="n">PaginationMethod</span> <span class="o">=</span> <span class="n">PaginationMethod</span><span class="o">.</span><span class="n">GET</span><span class="p">,</span>
+                     <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                     <span class="n">headers</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span>
+                     <span class="n">limit</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">PositiveInt</span><span class="p">,</span> <span class="n">PositiveFloat</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                     <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                     <span class="n">data</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        NGSIv2 implements a pagination mechanism in order to help clients to</span>
+<span class="sd">        retrieve large sets of resources. This mechanism works for all listing</span>
+<span class="sd">        operations in the API (e.g. GET /v2/entities, GET /v2/subscriptions,</span>
+<span class="sd">        POST /v2/op/query, etc.). This function helps getting datasets that are</span>
+<span class="sd">        larger than the limit for the different GET operations.</span>
+
+<span class="sd">        https://fiware-orion.readthedocs.io/en/master/user/pagination/index.html</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            url: Information about the url, obtained from the original function</span>
+<span class="sd">            headers: The headers from the original function</span>
+<span class="sd">            params:</span>
+<span class="sd">            limit:</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            object:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">limit</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">limit</span> <span class="o">=</span> <span class="n">inf</span>
+        <span class="k">if</span> <span class="n">limit</span> <span class="o">&gt;</span> <span class="mi">1000</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;limit&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1000</span>  <span class="c1"># maximum items per request</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;limit&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">limit</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">:</span>
+            <span class="n">session</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">session</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span>
+        <span class="k">with</span> <span class="n">session</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span>
+                                  <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+                                  <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+                                  <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
+                                  <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+                <span class="n">items</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+                <span class="c1"># do pagination</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url_version</span> <span class="o">==</span> <span class="n">NgsiURLVersion</span><span class="o">.</span><span class="n">v2_url</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+                    <span class="n">count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s1">&#39;Fiware-Total-Count&#39;</span><span class="p">])</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url_version</span> <span class="o">==</span> <span class="n">NgsiURLVersion</span><span class="o">.</span><span class="n">ld_url</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+                    <span class="n">count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s1">&#39;NGSILD-Results-Count&#39;</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+
+                <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">limit</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">count</span><span class="p">:</span>
+                    <span class="c1"># Establishing the offset from where entities are retrieved</span>
+                    <span class="n">params</span><span class="p">[</span><span class="s1">&#39;offset&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
+                    <span class="n">params</span><span class="p">[</span><span class="s1">&#39;limit&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="p">(</span><span class="n">limit</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)))</span>
+                    <span class="n">res</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span>
+                                          <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+                                          <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+                                          <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
+                                          <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+                        <span class="n">items</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Received: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">items</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">items</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+
+<div class="viewcode-block" id="ContextBrokerLDClient.get_version"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_ld.html#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.get_version">[docs]</a>    <span class="k">def</span> <span class="nf">get_version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets version of Orion-LD context broker</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Dictionary with response</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">urljoin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span> <span class="s1">&#39;/version&#39;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+            <span class="k">raise</span></div>
+
+    <span class="k">def</span> <span class="nf">__make_tenant</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create tenant if tenant</span>
+<span class="sd">        is given in headers</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">idhex</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;urn:ngsi-ld:</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">urandom</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">hex</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">e</span> <span class="o">=</span> <span class="n">ContextLDEntity</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">idhex</span><span class="p">,</span><span class="nb">type</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;urn:ngsi-ld:</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">urandom</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">hex</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">post_entity</span><span class="p">(</span><span class="n">entity</span><span class="o">=</span><span class="n">e</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">delete_entity_by_id</span><span class="p">(</span><span class="n">idhex</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Error while creating tenant&quot;</span><span class="p">)</span>
+            <span class="k">raise</span>
+
+<div class="viewcode-block" id="ContextBrokerLDClient.get_statistics"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_ld.html#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.get_statistics">[docs]</a>    <span class="k">def</span> <span class="nf">get_statistics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets statistics of context broker</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Dictionary with response</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">urljoin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span> <span class="s1">&#39;statistics&#39;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+            <span class="k">raise</span></div>
+
+<div class="viewcode-block" id="ContextBrokerLDClient.post_entity"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_ld.html#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.post_entity">[docs]</a>    <span class="k">def</span> <span class="nf">post_entity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                    <span class="n">entity</span><span class="p">:</span> <span class="n">ContextLDEntity</span><span class="p">,</span>
+                    <span class="n">append</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                    <span class="n">update</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function registers an Object with the NGSI-LD Context Broker,</span>
+<span class="sd">        if it already exists it can be automatically updated</span>
+<span class="sd">        if the update flag bool is True.</span>
+<span class="sd">        First a post request with the entity is tried, if the response code</span>
+<span class="sd">        is 422 the entity is uncrossable, as it already exists there are two</span>
+<span class="sd">        options, either overwrite it, if the attribute have changed</span>
+<span class="sd">        (e.g. at least one new/new values) (update = True) or leave</span>
+<span class="sd">        it the way it is (update=False)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">urljoin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_url_version</span><span class="si">}</span><span class="s1">/entities&#39;</span><span class="p">)</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">entity</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;@context&#39;</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">headers</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">:</span><span class="s1">&#39;application/ld+json&#39;</span><span class="p">})</span>
+            <span class="n">headers</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;Link&#39;</span><span class="p">:</span><span class="kc">None</span><span class="p">})</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+                <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+                <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
+                <span class="n">json</span><span class="o">=</span><span class="n">entity</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                 <span class="n">exclude_defaults</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                 <span class="n">exclude_none</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Entity successfully posted!&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Location&#39;</span><span class="p">)</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">409</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">append</span><span class="p">:</span>  <span class="c1"># 409 entity already exists</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">append_entity_attributes</span><span class="p">(</span><span class="n">entity</span><span class="o">=</span><span class="n">entity</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">update</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">override_entities</span><span class="p">(</span><span class="n">entities</span><span class="o">=</span><span class="p">[</span><span class="n">entity</span><span class="p">])</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not post entity </span><span class="si">{</span><span class="n">entity</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">raise</span></div>
+
+<div class="viewcode-block" id="ContextBrokerLDClient.override_entities"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_ld.html#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.override_entities">[docs]</a>    <span class="k">def</span> <span class="nf">override_entities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entities</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ContextLDEntity</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function to create or override existing entites with the NGSI-LD Context Broker.</span>
+<span class="sd">        The batch operation with Upsert will be used.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">entity_batch_operation</span><span class="p">(</span><span class="n">entities</span><span class="o">=</span><span class="n">entities</span><span class="p">,</span>
+                                           <span class="n">action_type</span><span class="o">=</span><span class="n">ActionTypeLD</span><span class="o">.</span><span class="n">UPSERT</span><span class="p">,</span>
+                                           <span class="n">options</span><span class="o">=</span><span class="s2">&quot;replace&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ContextBrokerLDClient.get_entity"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_ld.html#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.get_entity">[docs]</a>    <span class="k">def</span> <span class="nf">get_entity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                   <span class="n">entity_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                   <span class="n">entity_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                   <span class="n">attrs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                   <span class="n">options</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                   <span class="n">geometryProperty</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                   <span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">ContextLDEntity</span><span class="p">,</span> <span class="n">ContextLDEntityKeyValues</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This operation must return one entity element only, but there may be</span>
+<span class="sd">        more than one entity with the same ID (e.g. entities with same ID but</span>
+<span class="sd">        different types). In such case, an error message is returned, with</span>
+<span class="sd">        the HTTP status code set to 409 Conflict.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            entity_id (String): Id of the entity to be retrieved</span>
+<span class="sd">            entity_type (String): Entity type, to avoid ambiguity in case</span>
+<span class="sd">                there are several entities with the same entity id.</span>
+<span class="sd">            attrs (List of Strings): List of attribute names whose data must be</span>
+<span class="sd">                included in the response. The attributes are retrieved in the</span>
+<span class="sd">                order specified by this parameter.</span>
+<span class="sd">                See &quot;Filtering out attributes and metadata&quot; section for more</span>
+<span class="sd">                detail. If this parameter is not included, the attributes are</span>
+<span class="sd">                retrieved in arbitrary order, and all the attributes of the</span>
+<span class="sd">                entity are included in the response.</span>
+<span class="sd">                Example: temperature, humidity.</span>
+<span class="sd">            options (String): keyValues (simplified representation of entity)</span>
+<span class="sd">                or sysAttrs (include generated attrs createdAt and modifiedAt)</span>
+<span class="sd">            geometryProperty (String): Name of a GeoProperty. In the case of GeoJSON</span>
+<span class="sd">                Entity representation, this parameter indicates which GeoProperty to</span>
+<span class="sd">                use for the &quot;geometry&quot; element. By default, it shall be &#39;location&#39;.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            ContextEntity</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">urljoin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_url_version</span><span class="si">}</span><span class="s1">/entities/</span><span class="si">{</span><span class="n">entity_id</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">entity_type</span><span class="p">:</span>
+            <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="n">entity_type</span><span class="p">})</span>
+        <span class="k">if</span> <span class="n">attrs</span><span class="p">:</span>
+            <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;attrs&#39;</span><span class="p">:</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">attrs</span><span class="p">)})</span>
+        <span class="k">if</span> <span class="n">geometryProperty</span><span class="p">:</span>
+            <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;geometryProperty&#39;</span><span class="p">:</span> <span class="n">geometryProperty</span><span class="p">})</span>
+        <span class="k">if</span> <span class="n">options</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">options</span> <span class="o">!=</span> <span class="s1">&#39;keyValues&#39;</span> <span class="ow">and</span> <span class="n">options</span> <span class="o">!=</span> <span class="s1">&#39;sysAttrs&#39;</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Only available options are </span><span class="se">\&#39;</span><span class="s1">keyValues</span><span class="se">\&#39;</span><span class="s1"> and </span><span class="se">\&#39;</span><span class="s1">sysAttrs</span><span class="se">\&#39;</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;options&#39;</span><span class="p">:</span> <span class="n">options</span><span class="p">})</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Entity successfully retrieved!&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Received: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+                <span class="k">if</span> <span class="n">options</span> <span class="o">==</span> <span class="s2">&quot;keyValues&quot;</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">ContextLDEntityKeyValues</span><span class="p">(</span><span class="o">**</span><span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">ContextLDEntity</span><span class="p">(</span><span class="o">**</span><span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not load entity </span><span class="si">{</span><span class="n">entity_id</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">raise</span></div>
+
+    <span class="n">GeometryShape</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;Point&quot;</span><span class="p">,</span> <span class="s2">&quot;MultiPoint&quot;</span><span class="p">,</span> <span class="s2">&quot;LineString&quot;</span><span class="p">,</span> <span class="s2">&quot;MultiLineString&quot;</span><span class="p">,</span> <span class="s2">&quot;Polygon&quot;</span><span class="p">,</span> <span class="s2">&quot;MultiPolygon&quot;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="ContextBrokerLDClient.get_entity_list"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_ld.html#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.get_entity_list">[docs]</a>    <span class="k">def</span> <span class="nf">get_entity_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                        <span class="n">entity_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">id_pattern</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;.*&quot;</span><span class="p">,</span>
+                        <span class="n">entity_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">attrs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">q</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">georel</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">geometry</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">GeometryShape</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">coordinates</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">geoproperty</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="c1"># csf: Optional[str] = None,  # Context Source Filter</span>
+                        <span class="n">limit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PositiveInt</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">options</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">ContextLDEntity</span><span class="p">,</span> <span class="n">ContextLDEntityKeyValues</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This operation retrieves a list of entities based on different query options.</span>
+<span class="sd">        By default, the operation retrieves all the entities in the context broker.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            entity_id:</span>
+<span class="sd">                Id of the entity to be retrieved</span>
+<span class="sd">            id_pattern:</span>
+<span class="sd">                Regular expression to match the entity id</span>
+<span class="sd">            entity_type:</span>
+<span class="sd">                Entity type, to avoid ambiguity in case there are several</span>
+<span class="sd">                entities with the same entity id.</span>
+<span class="sd">            attrs:</span>
+<span class="sd">                List of attribute names whose data must be included in the response.</span>
+<span class="sd">            q:</span>
+<span class="sd">                Query expression, composed of attribute names, operators and values.</span>
+<span class="sd">            georel:</span>
+<span class="sd">                Geospatial relationship between the query geometry and the entities.</span>
+<span class="sd">            geometry:</span>
+<span class="sd">                Type of geometry for the query. The possible values are Point,</span>
+<span class="sd">                MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon.</span>
+<span class="sd">            coordinates:</span>
+<span class="sd">                Coordinates of the query geometry. The coordinates must be</span>
+<span class="sd">                expressed as a string of comma-separated values.</span>
+<span class="sd">            geoproperty:</span>
+<span class="sd">                Name of a GeoProperty. In the case of GeoJSON Entity representation,</span>
+<span class="sd">                this parameter indicates which GeoProperty to use for the &quot;geometry&quot; element.</span>
+<span class="sd">            limit:</span>
+<span class="sd">                Maximum number of entities to retrieve.</span>
+<span class="sd">            options:</span>
+<span class="sd">                Further options for the query. The available options are:</span>
+<span class="sd">                 - keyValues (simplified representation of entity)</span>
+<span class="sd">                 - sysAttrs (including createdAt and modifiedAt, etc.)</span>
+<span class="sd">                 - count (include number of all matched entities in response header)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">urljoin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_url_version</span><span class="si">}</span><span class="s1">/entities/&#39;</span><span class="p">)</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">entity_id</span><span class="p">:</span>
+            <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">entity_id</span><span class="p">})</span>
+        <span class="k">if</span> <span class="n">id_pattern</span><span class="p">:</span>
+            <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;idPattern&#39;</span><span class="p">:</span> <span class="n">id_pattern</span><span class="p">})</span>
+        <span class="k">if</span> <span class="n">entity_type</span><span class="p">:</span>
+            <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="n">entity_type</span><span class="p">})</span>
+        <span class="k">if</span> <span class="n">attrs</span><span class="p">:</span>
+            <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;attrs&#39;</span><span class="p">:</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">attrs</span><span class="p">)})</span>
+        <span class="k">if</span> <span class="n">q</span><span class="p">:</span>
+            <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;q&#39;</span><span class="p">:</span> <span class="n">q</span><span class="p">})</span>
+        <span class="k">if</span> <span class="n">georel</span><span class="p">:</span>
+            <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;georel&#39;</span><span class="p">:</span> <span class="n">georel</span><span class="p">})</span>
+        <span class="k">if</span> <span class="n">geometry</span><span class="p">:</span>
+            <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="n">geometry</span><span class="p">})</span>
+        <span class="k">if</span> <span class="n">coordinates</span><span class="p">:</span>
+            <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;coordinates&#39;</span><span class="p">:</span> <span class="n">coordinates</span><span class="p">})</span>
+        <span class="k">if</span> <span class="n">geoproperty</span><span class="p">:</span>
+            <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;geoproperty&#39;</span><span class="p">:</span> <span class="n">geoproperty</span><span class="p">})</span>
+        <span class="c1"># if csf:  # ContextSourceRegistration not supported yet</span>
+        <span class="c1">#     params.update({&#39;csf&#39;: csf})</span>
+        <span class="k">if</span> <span class="n">limit</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">limit</span> <span class="o">&gt;</span> <span class="mi">1000</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;limit must be an integer value &lt;= 1000&quot;</span><span class="p">)</span>
+            <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;limit&#39;</span><span class="p">:</span> <span class="n">limit</span><span class="p">})</span>
+        <span class="k">if</span> <span class="n">options</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">options</span> <span class="o">!=</span> <span class="s1">&#39;keyValues&#39;</span> <span class="ow">and</span> <span class="n">options</span> <span class="o">!=</span> <span class="s1">&#39;sysAttrs&#39;</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Only available options are </span><span class="se">\&#39;</span><span class="s1">keyValues</span><span class="se">\&#39;</span><span class="s1"> and </span><span class="se">\&#39;</span><span class="s1">sysAttrs</span><span class="se">\&#39;</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;options&#39;</span><span class="p">:</span> <span class="n">options</span><span class="p">})</span>
+        <span class="c1"># params.update({&#39;local&#39;: &#39;true&#39;})</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Entity successfully retrieved!&quot;</span><span class="p">)</span>
+                <span class="n">entity_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">ContextLDEntity</span><span class="p">,</span> <span class="n">ContextLDEntityKeyValues</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">if</span> <span class="n">options</span> <span class="o">==</span> <span class="s2">&quot;keyValues&quot;</span><span class="p">:</span>
+                    <span class="n">entity_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">ContextLDEntityKeyValues</span><span class="p">(</span><span class="o">**</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">()]</span>
+                    <span class="k">return</span> <span class="n">entity_list</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">entity_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">ContextLDEntity</span><span class="p">(</span><span class="o">**</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">()]</span>
+                    <span class="k">return</span> <span class="n">entity_list</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not load entity matching</span><span class="si">{</span><span class="n">params</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">raise</span></div>
+
+<div class="viewcode-block" id="ContextBrokerLDClient.replace_existing_attributes_of_entity"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_ld.html#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.replace_existing_attributes_of_entity">[docs]</a>    <span class="k">def</span> <span class="nf">replace_existing_attributes_of_entity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entity</span><span class="p">:</span> <span class="n">ContextLDEntity</span><span class="p">,</span> <span class="n">append</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The attributes previously existing in the entity are removed and</span>
+<span class="sd">        replaced by the ones in the request.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            entity (ContextEntity):</span>
+<span class="sd">            append (bool):</span>
+<span class="sd">            options:</span>
+<span class="sd">        Returns:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">urljoin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_url_version</span><span class="si">}</span><span class="s1">/entities/</span><span class="si">{</span><span class="n">entity</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s1">/attrs&#39;</span><span class="p">)</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">entity</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;@context&#39;</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">headers</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">:</span><span class="s1">&#39;application/ld+json&#39;</span><span class="p">})</span>
+            <span class="n">headers</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;Link&#39;</span><span class="p">:</span><span class="kc">None</span><span class="p">})</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+                             <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
+                             <span class="n">json</span><span class="o">=</span><span class="n">entity</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">},</span>
+                                              <span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                              <span class="n">exclude_none</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Entity </span><span class="si">{</span><span class="n">entity</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> successfully &quot;</span>
+                                 <span class="s2">&quot;updated!&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">append</span> <span class="ow">and</span> <span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">207</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">append_entity_attributes</span><span class="p">(</span><span class="n">entity</span><span class="o">=</span><span class="n">entity</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not replace attribute of entity </span><span class="si">{</span><span class="n">entity</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> !&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">raise</span></div>
+
+<div class="viewcode-block" id="ContextBrokerLDClient.update_entity_attribute"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_ld.html#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.update_entity_attribute">[docs]</a>    <span class="k">def</span> <span class="nf">update_entity_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                <span class="n">entity_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                                <span class="n">attr</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ContextProperty</span><span class="p">,</span> <span class="n">ContextRelationship</span><span class="p">,</span>
+                                            <span class="n">NamedContextProperty</span><span class="p">,</span> <span class="n">NamedContextRelationship</span><span class="p">],</span>
+                                <span class="n">attr_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Updates a specified attribute from an entity.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            attr: context attribute to update</span>
+<span class="sd">            entity_id: Id of the entity. Example: Bcn_Welt</span>
+<span class="sd">            entity_type: Entity type, to avoid ambiguity in case there are</span>
+<span class="sd">            several entities with the same entity id.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">NamedContextProperty</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">NamedContextRelationship</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="n">attr_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;Missing name for attribute. &quot;</span> \
+                                          <span class="s2">&quot;attr_name must be present if&quot;</span> \
+                                          <span class="s2">&quot;attr is of type ContextAttribute&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">attr_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;Invalid argument attr_name. Do not set &quot;</span> \
+                                      <span class="s2">&quot;attr_name if attr is of type &quot;</span> \
+                                      <span class="s2">&quot;NamedContextAttribute or NamedContextRelationship&quot;</span>
+
+        <span class="n">url</span> <span class="o">=</span> <span class="n">urljoin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span>
+                      <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_url_version</span><span class="si">}</span><span class="s1">/entities/</span><span class="si">{</span><span class="n">entity_id</span><span class="si">}</span><span class="s1">/attrs/</span><span class="si">{</span><span class="n">attr_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="n">jsonnn</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">NamedContextProperty</span><span class="p">):</span>
+            <span class="n">jsonnn</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">},</span>
+                                            <span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                            <span class="n">exclude_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">prop</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">prop</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">value</span> <span class="ow">and</span> <span class="n">value</span> <span class="o">!=</span> <span class="s1">&#39;Property&#39;</span><span class="p">:</span>
+                    <span class="n">jsonnn</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+                             <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
+                             <span class="n">json</span><span class="o">=</span><span class="n">jsonnn</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Attribute </span><span class="si">{</span><span class="n">attr_name</span><span class="si">}</span><span class="s2"> of </span><span class="si">{</span><span class="n">entity_id</span><span class="si">}</span><span class="s2"> successfully updated!&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not update attribute &#39;</span><span class="si">{</span><span class="n">attr_name</span><span class="si">}</span><span class="s2">&#39; of entity </span><span class="si">{</span><span class="n">entity_id</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">raise</span></div>
+
+<div class="viewcode-block" id="ContextBrokerLDClient.append_entity_attributes"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_ld.html#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.append_entity_attributes">[docs]</a>    <span class="k">def</span> <span class="nf">append_entity_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                 <span class="n">entity</span><span class="p">:</span> <span class="n">ContextLDEntity</span><span class="p">,</span>
+                                 <span class="n">options</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+                                 <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Append new Entity attributes to an existing Entity within an NGSI-LD system</span>
+<span class="sd">        Args:</span>
+<span class="sd">            entity (ContextLDEntity):</span>
+<span class="sd">                Entity to append attributes to.</span>
+<span class="sd">            options (str):</span>
+<span class="sd">                Options for the request. The only available value is</span>
+<span class="sd">                &#39;noOverwrite&#39;. If set, it will raise 400, if all attributes</span>
+<span class="sd">                exist already.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">urljoin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_url_version</span><span class="si">}</span><span class="s1">/entities/</span><span class="si">{</span><span class="n">entity</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s1">/attrs&#39;</span><span class="p">)</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">entity</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;@context&#39;</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">headers</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">:</span><span class="s1">&#39;application/ld+json&#39;</span><span class="p">})</span>
+            <span class="n">headers</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;Link&#39;</span><span class="p">:</span><span class="kc">None</span><span class="p">})</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">if</span> <span class="n">options</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">options</span> <span class="o">!=</span> <span class="s1">&#39;noOverwrite&#39;</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The only available value is </span><span class="se">\&#39;</span><span class="s1">noOverwrite</span><span class="se">\&#39;</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;options&#39;</span><span class="p">:</span> <span class="n">options</span><span class="p">})</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+                            <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
+                            <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+                            <span class="n">json</span><span class="o">=</span><span class="n">entity</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">},</span>
+                                             <span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                             <span class="n">exclude_none</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Entity </span><span class="si">{</span><span class="n">entity</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> successfully updated!&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not update entity </span><span class="si">{</span><span class="n">entity</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">!&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">raise</span></div>
+
+    <span class="c1"># def update_existing_attribute_by_name(self, entity: ContextLDEntity</span>
+    <span class="c1">#                                       ):</span>
+    <span class="c1">#     pass</span>
+
+<div class="viewcode-block" id="ContextBrokerLDClient.delete_entity_by_id"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_ld.html#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.delete_entity_by_id">[docs]</a>    <span class="k">def</span> <span class="nf">delete_entity_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                            <span class="n">entity_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                            <span class="n">entity_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deletes an entity by its id. For deleting mulitple entities at once,</span>
+<span class="sd">        entity_batch_operation() is more efficient.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            entity_id:</span>
+<span class="sd">                ID of entity to delete.</span>
+<span class="sd">            entity_type:</span>
+<span class="sd">                Type of entity to delete.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">urljoin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_url_version</span><span class="si">}</span><span class="s1">/entities/</span><span class="si">{</span><span class="n">entity_id</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">if</span> <span class="n">entity_type</span><span class="p">:</span>
+            <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="n">entity_type</span><span class="p">})</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Entity </span><span class="si">{</span><span class="n">entity_id</span><span class="si">}</span><span class="s2"> successfully deleted&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not delete entity </span><span class="si">{</span><span class="n">entity_id</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">raise</span></div>
+
+<div class="viewcode-block" id="ContextBrokerLDClient.delete_attribute"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_ld.html#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.delete_attribute">[docs]</a>    <span class="k">def</span> <span class="nf">delete_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                         <span class="n">entity_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                         <span class="n">attribute_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deletes an attribute from an entity.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            entity_id:</span>
+<span class="sd">                ID of the entity.</span>
+<span class="sd">            attribute_id:</span>
+<span class="sd">                Name of the attribute to delete.</span>
+<span class="sd">        Returns:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">urljoin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_url_version</span><span class="si">}</span><span class="s1">/entities/</span><span class="si">{</span><span class="n">entity_id</span><span class="si">}</span><span class="s1">/attrs/</span><span class="si">{</span><span class="n">attribute_id</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Attribute </span><span class="si">{</span><span class="n">attribute_id</span><span class="si">}</span><span class="s2"> of Entity </span><span class="si">{</span><span class="n">entity_id</span><span class="si">}</span><span class="s2"> successfully deleted&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not delete attribute </span><span class="si">{</span><span class="n">attribute_id</span><span class="si">}</span><span class="s2"> of entity </span><span class="si">{</span><span class="n">entity_id</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">raise</span></div>
+
+    <span class="c1"># SUBSCRIPTION API ENDPOINTS</span>
+<div class="viewcode-block" id="ContextBrokerLDClient.get_subscription_list"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_ld.html#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.get_subscription_list">[docs]</a>    <span class="k">def</span> <span class="nf">get_subscription_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                              <span class="n">limit</span><span class="p">:</span> <span class="n">PositiveInt</span> <span class="o">=</span> <span class="n">inf</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">SubscriptionLD</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a list of all the subscriptions present in the system.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            limit: Limit the number of subscriptions to be retrieved</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            list of subscriptions</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">urljoin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_url_version</span><span class="si">}</span><span class="s1">/subscriptions/&#39;</span><span class="p">)</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># We always use the &#39;count&#39; option to check weather pagination is</span>
+        <span class="c1"># required</span>
+        <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;options&#39;</span><span class="p">:</span> <span class="s1">&#39;count&#39;</span><span class="p">})</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__pagination</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span>
+                                      <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+                                      <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+                                      <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+            <span class="n">adapter</span> <span class="o">=</span> <span class="n">TypeAdapter</span><span class="p">(</span><span class="n">List</span><span class="p">[</span><span class="n">SubscriptionLD</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">adapter</span><span class="o">.</span><span class="n">validate_python</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Could not load subscriptions!&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">raise</span></div>
+
+<div class="viewcode-block" id="ContextBrokerLDClient.post_subscription"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_ld.html#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.post_subscription">[docs]</a>    <span class="k">def</span> <span class="nf">post_subscription</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subscription</span><span class="p">:</span> <span class="n">SubscriptionLD</span><span class="p">,</span>
+                          <span class="n">update</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a new subscription. The subscription is represented by a</span>
+<span class="sd">        Subscription object defined in filip.cb.models.</span>
+
+<span class="sd">        If the subscription already exists, the adding is prevented and the id</span>
+<span class="sd">        of the existing subscription is returned.</span>
+
+<span class="sd">        A subscription is deemed as already existing if there exists a</span>
+<span class="sd">        subscription with the exact same subject and notification fields. All</span>
+<span class="sd">        optional fields are not considered.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            subscription: Subscription</span>
+<span class="sd">            update: True - If the subscription already exists, update it</span>
+<span class="sd">                    False- If the subscription already exists, throw warning</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            str: Id of the (created) subscription</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">existing_subscriptions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_subscription_list</span><span class="p">()</span>
+
+        <span class="n">sub_hash</span> <span class="o">=</span> <span class="n">subscription</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;subject&#39;</span><span class="p">,</span> <span class="s1">&#39;notification&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">})</span>
+        <span class="k">for</span> <span class="n">ex_sub</span> <span class="ow">in</span> <span class="n">existing_subscriptions</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">sub_hash</span> <span class="o">==</span> <span class="n">ex_sub</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;subject&#39;</span><span class="p">,</span> <span class="s1">&#39;notification&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">}):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Subscription already exists&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">update</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Updated subscription&quot;</span><span class="p">)</span>
+                    <span class="n">subscription</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">ex_sub</span><span class="o">.</span><span class="n">id</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">update_subscription</span><span class="p">(</span><span class="n">subscription</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Subscription existed already with the id&quot;</span>
+                                        <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">ex_sub</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">ex_sub</span><span class="o">.</span><span class="n">id</span>
+
+        <span class="n">url</span> <span class="o">=</span> <span class="n">urljoin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_url_version</span><span class="si">}</span><span class="s1">/subscriptions&#39;</span><span class="p">)</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">subscription</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;@context&#39;</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">headers</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">:</span><span class="s1">&#39;application/ld+json&#39;</span><span class="p">})</span>
+            <span class="n">headers</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;Link&#39;</span><span class="p">:</span><span class="kc">None</span><span class="p">})</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+                <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+                <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">subscription</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">(</span><span class="n">exclude_unset</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                                  <span class="n">exclude_defaults</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                                  <span class="n">exclude_none</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Subscription successfully created!&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s1">&#39;Location&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Could not send subscription!&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">raise</span></div>
+
+<div class="viewcode-block" id="ContextBrokerLDClient.get_subscription"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_ld.html#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.get_subscription">[docs]</a>    <span class="k">def</span> <span class="nf">get_subscription</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subscription_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SubscriptionLD</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves a subscription from the context broker.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            subscription_id: id of the subscription</span>
+
+<span class="sd">        Returns:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">urljoin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_url_version</span><span class="si">}</span><span class="s1">/subscriptions/</span><span class="si">{</span><span class="n">subscription_id</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Received: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+                <span class="k">return</span> <span class="n">SubscriptionLD</span><span class="p">(</span><span class="o">**</span><span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not load subscription </span><span class="si">{</span><span class="n">subscription_id</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">raise</span></div>
+
+<div class="viewcode-block" id="ContextBrokerLDClient.update_subscription"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_ld.html#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.update_subscription">[docs]</a>    <span class="k">def</span> <span class="nf">update_subscription</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subscription</span><span class="p">:</span> <span class="n">SubscriptionLD</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Only the fields included in the request are updated in the subscription.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            subscription: Subscription to update</span>
+<span class="sd">        Returns:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">urljoin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_url_version</span><span class="si">}</span><span class="s1">/subscriptions/</span><span class="si">{</span><span class="n">subscription</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">subscription</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;@context&#39;</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">headers</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">:</span><span class="s1">&#39;application/ld+json&#39;</span><span class="p">})</span>
+            <span class="n">headers</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;Link&#39;</span><span class="p">:</span><span class="kc">None</span><span class="p">})</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span>
+                <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+                <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">subscription</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">},</span>
+                                                  <span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                                  <span class="n">exclude_defaults</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                                  <span class="n">exclude_none</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Subscription successfully updated!&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not update subscription </span><span class="si">{</span><span class="n">subscription</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">raise</span></div>
+
+<div class="viewcode-block" id="ContextBrokerLDClient.delete_subscription"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_ld.html#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.delete_subscription">[docs]</a>    <span class="k">def</span> <span class="nf">delete_subscription</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subscription_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deletes a subscription from a Context Broker</span>
+<span class="sd">        Args:</span>
+<span class="sd">            subscription_id: id of the subscription</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">urljoin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span>
+                      <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_url_version</span><span class="si">}</span><span class="s1">/subscriptions/</span><span class="si">{</span><span class="n">subscription_id</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Subscription &#39;</span><span class="si">{</span><span class="n">subscription_id</span><span class="si">}</span><span class="s2">&#39; &quot;</span>
+                                 <span class="sa">f</span><span class="s2">&quot;successfully deleted!&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not delete subscription </span><span class="si">{</span><span class="n">subscription_id</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">raise</span></div>
+
+<div class="viewcode-block" id="ContextBrokerLDClient.log_multi_errors"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_ld.html#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.log_multi_errors">[docs]</a>    <span class="k">def</span> <span class="nf">log_multi_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">errors</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">error</span> <span class="ow">in</span> <span class="n">errors</span><span class="p">:</span>
+            <span class="n">entity_id</span> <span class="o">=</span> <span class="n">error</span><span class="p">[</span><span class="s1">&#39;entityId&#39;</span><span class="p">]</span>
+            <span class="n">error_details</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">error</span><span class="p">[</span><span class="s1">&#39;error&#39;</span><span class="p">]</span>
+            <span class="n">error_title</span> <span class="o">=</span> <span class="n">error_details</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">)</span>
+            <span class="n">error_status</span> <span class="o">=</span> <span class="n">error_details</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;status&#39;</span><span class="p">)</span>
+            <span class="c1"># error_detail = error_details[&#39;detail&#39;]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Response status: </span><span class="si">%d</span><span class="s2">, Entity: </span><span class="si">%s</span><span class="s2">, Reason: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+                              <span class="n">error_status</span><span class="p">,</span> <span class="n">entity_id</span><span class="p">,</span> <span class="n">error_title</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ContextBrokerLDClient.handle_multi_status_response"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_ld.html#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.handle_multi_status_response">[docs]</a>    <span class="k">def</span> <span class="nf">handle_multi_status_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">res</span><span class="p">:</span> <span class="n">requests</span><span class="o">.</span><span class="n">Response</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Handles the response of a batch_operation. If the response contains</span>
+<span class="sd">        errors, they are logged. If the response contains only errors, a RuntimeError</span>
+<span class="sd">        is raised.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            res:</span>
+
+<span class="sd">        Returns:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">text</span><span class="p">:</span>
+                <span class="n">response_data</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+                <span class="k">if</span> <span class="s1">&#39;errors&#39;</span> <span class="ow">in</span> <span class="n">response_data</span><span class="p">:</span>
+                    <span class="n">errors</span> <span class="o">=</span> <span class="n">response_data</span><span class="p">[</span><span class="s1">&#39;errors&#39;</span><span class="p">]</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">log_multi_errors</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span>
+                <span class="k">if</span> <span class="s1">&#39;success&#39;</span> <span class="ow">in</span> <span class="n">response_data</span><span class="p">:</span>
+                    <span class="n">successList</span> <span class="o">=</span> <span class="n">response_data</span><span class="p">[</span><span class="s1">&#39;success&#39;</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">successList</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Batch operation resulted in errors only, see logs&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Empty response received.&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Error decoding JSON. Response may not be in valid JSON format.&quot;</span><span class="p">)</span></div>
+
+    <span class="c1"># Batch operation API</span>
+<div class="viewcode-block" id="ContextBrokerLDClient.entity_batch_operation"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_ld.html#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.entity_batch_operation">[docs]</a>    <span class="k">def</span> <span class="nf">entity_batch_operation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                               <span class="o">*</span><span class="p">,</span>
+                               <span class="n">entities</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ContextLDEntity</span><span class="p">],</span>
+                               <span class="n">action_type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ActionTypeLD</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+                               <span class="n">options</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;noOverwrite&#39;</span><span class="p">,</span> <span class="s1">&#39;replace&#39;</span><span class="p">,</span> <span class="s1">&#39;update&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This operation allows to create, update and/or delete several entities</span>
+<span class="sd">        in a single batch operation.</span>
+
+<span class="sd">        This operation is split in as many individual operations as entities</span>
+<span class="sd">        in the entities vector, so the actionType is executed for each one of</span>
+<span class="sd">        them. Depending on the actionType, a mapping with regular non-batch</span>
+<span class="sd">        operations can be done:</span>
+
+<span class="sd">        append: maps to POST /v2/entities (if the entity does not already exist)</span>
+<span class="sd">        or POST /v2/entities/&lt;id&gt;/attrs (if the entity already exists).</span>
+
+<span class="sd">        appendStrict: maps to POST /v2/entities (if the entity does not</span>
+<span class="sd">        already exist) or POST /v2/entities/&lt;id&gt;/attrs?options=append (if the</span>
+<span class="sd">        entity already exists).</span>
+
+<span class="sd">        update: maps to PATCH /v2/entities/&lt;id&gt;/attrs.</span>
+
+<span class="sd">        delete: maps to DELETE /v2/entities/&lt;id&gt;/attrs/&lt;attrName&gt; on every</span>
+<span class="sd">            attribute included in the entity or to DELETE /v2/entities/&lt;id&gt; if</span>
+<span class="sd">            no attribute were included in the entity.</span>
+
+<span class="sd">        replace: maps to PUT /v2/entities/&lt;id&gt;/attrs.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            entities: &quot;an array of entities, each entity specified using the &quot;</span>
+<span class="sd">                      &quot;JSON entity representation format &quot;</span>
+<span class="sd">            action_type (Update): &quot;actionType, to specify the kind of update</span>
+<span class="sd">                    action to do: either append, appendStrict, update, delete,</span>
+<span class="sd">                    or replace. &quot;</span>
+<span class="sd">            options (str): Optional &#39;noOverwrite&#39; &#39;replace&#39; &#39;update&#39;</span>
+
+<span class="sd">        Returns:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">url</span> <span class="o">=</span> <span class="n">urljoin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_url_version</span><span class="si">}</span><span class="s1">/entityOperations/</span><span class="si">{</span><span class="n">action_type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">headers</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json&#39;</span><span class="p">})</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">options</span><span class="p">:</span>
+            <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;options&#39;</span><span class="p">:</span> <span class="n">options</span><span class="p">})</span>
+        <span class="n">update</span> <span class="o">=</span> <span class="n">UpdateLD</span><span class="p">(</span><span class="n">entities</span><span class="o">=</span><span class="n">entities</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">action_type</span> <span class="o">==</span> <span class="n">ActionTypeLD</span><span class="o">.</span><span class="n">DELETE</span><span class="p">:</span>
+                <span class="n">id_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">entity</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="n">entities</span><span class="p">]</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+                    <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+                    <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
+                    <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+                    <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">id_list</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+                    <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+                    <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
+                    <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+                    <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">update</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">by_alias</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                                      <span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                                      <span class="n">exclude_none</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                                      <span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;entities&#39;</span><span class="p">))</span>
+                <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">handle_multi_status_response</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">RuntimeError</span> <span class="k">as</span> <span class="n">rerr</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">rerr</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">err</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Update operation </span><span class="si">{</span><span class="n">action_type</span><span class="si">}</span><span class="s2"> succeeded!&quot;</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021-2024, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

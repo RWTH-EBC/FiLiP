@@ -85,15 +85,33 @@ tests/test_config.py:7:0: C0411: standard import "import json" should be placed 
 tests/test_config.py:8:0: C0411: third party import "from pydantic import AnyHttpUrl" should be placed before "from filip.config import Settings" (wrong-import-order)
 ************* Module tutorials.__init__
 tutorials/__init__.py:1:0: R0801: Similar lines in 2 files
-==filip.config:[35:42]
-==tests.config:[45:51]
+==filip.config:[46:53]
+==tests.config:[62:68]
+    LD_MQTT_BROKER_URL: AnyUrl = Field(default="mqtt://127.0.0.1:1884",
+                                       validation_alias=AliasChoices(
+                                             'LD_MQTT_BROKER_URL',
+                                             'LD_MQTT_URL',
+                                             'LD_MQTT_BROKER'))
+ (duplicate-code)
+tutorials/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.config:[41:46]
+==tests.config:[51:57]
     MQTT_BROKER_URL: AnyUrl = Field(default="mqtt://127.0.0.1:1883",
                                     validation_alias=AliasChoices(
                                         'MQTT_BROKER_URL',
                                         'MQTT_URL',
                                         'MQTT_BROKER'))
  (duplicate-code)
+tutorials/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.config:[29:35]
+==tests.config:[34:39]
+                                  validation_alias=AliasChoices('LD_ORION_URL',
+                                                                'LD_CB_URL',
+                                                                'ORION_LD_URL',
+                                                                'SCORPIO_URL',
+                                                                'STELLIO_URL'))
+ (duplicate-code)
 
 -----------------------------------
-Your code has been rated at 9.03/10
+Your code has been rated at 8.89/10
 

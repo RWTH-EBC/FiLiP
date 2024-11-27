@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>API Documentation &mdash; FiLiP 0.5.0 documentation</title>
+  <title>API Documentation &mdash; FiLiP 0.6.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
@@ -59,6 +59,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#filip.config.Settings"><code class="docutils literal notranslate"><span class="pre">Settings</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#filip.config.Settings.CB_URL"><code class="docutils literal notranslate"><span class="pre">Settings.CB_URL</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#filip.config.Settings.IOTA_URL"><code class="docutils literal notranslate"><span class="pre">Settings.IOTA_URL</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filip.config.Settings.LD_CB_URL"><code class="docutils literal notranslate"><span class="pre">Settings.LD_CB_URL</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filip.config.Settings.LD_MQTT_BROKER_URL"><code class="docutils literal notranslate"><span class="pre">Settings.LD_MQTT_BROKER_URL</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#filip.config.Settings.MQTT_BROKER_URL"><code class="docutils literal notranslate"><span class="pre">Settings.MQTT_BROKER_URL</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#filip.config.Settings.QL_URL"><code class="docutils literal notranslate"><span class="pre">Settings.QL_URL</span></code></a></li>
 </ul>
@@ -148,6 +150,11 @@
 <li class="toctree-l4"><a class="reference internal" href="filip.clients.html#filip.clients.base_http_client.BaseHttpClient.put"><code class="docutils literal notranslate"><span class="pre">BaseHttpClient.put()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="filip.clients.html#filip.clients.base_http_client.NgsiURLVersion"><code class="docutils literal notranslate"><span class="pre">NgsiURLVersion</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.html#filip.clients.base_http_client.NgsiURLVersion.ld_url"><code class="docutils literal notranslate"><span class="pre">NgsiURLVersion.ld_url</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.html#filip.clients.base_http_client.NgsiURLVersion.v2_url"><code class="docutils literal notranslate"><span class="pre">NgsiURLVersion.v2_url</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="filip.clients.html#module-filip.clients">Module contents</a></li>
@@ -201,6 +208,12 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="filip.models.html#filip.models.base.FiwareHeaderSecure"><code class="docutils literal notranslate"><span class="pre">FiwareHeaderSecure</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="filip.models.html#filip.models.base.FiwareHeaderSecure.authorization"><code class="docutils literal notranslate"><span class="pre">FiwareHeaderSecure.authorization</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="filip.models.html#filip.models.base.FiwareLDHeader"><code class="docutils literal notranslate"><span class="pre">FiwareLDHeader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.html#filip.models.base.FiwareLDHeader.link_header"><code class="docutils literal notranslate"><span class="pre">FiwareLDHeader.link_header</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.html#filip.models.base.FiwareLDHeader.ngsild_tenant"><code class="docutils literal notranslate"><span class="pre">FiwareLDHeader.ngsild_tenant</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.html#filip.models.base.FiwareLDHeader.set_context"><code class="docutils literal notranslate"><span class="pre">FiwareLDHeader.set_context()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="filip.models.html#filip.models.base.LogLevel"><code class="docutils literal notranslate"><span class="pre">LogLevel</span></code></a><ul>
@@ -292,6 +305,7 @@
 <li class="toctree-l3"><a class="reference internal" href="filip.utils.html#filip.utils.cleanup.clean_test"><code class="docutils literal notranslate"><span class="pre">clean_test()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="filip.utils.html#filip.utils.cleanup.clear_all"><code class="docutils literal notranslate"><span class="pre">clear_all()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="filip.utils.html#filip.utils.cleanup.clear_context_broker"><code class="docutils literal notranslate"><span class="pre">clear_context_broker()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="filip.utils.html#filip.utils.cleanup.clear_context_broker_ld"><code class="docutils literal notranslate"><span class="pre">clear_context_broker_ld()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="filip.utils.html#filip.utils.cleanup.clear_iot_agent"><code class="docutils literal notranslate"><span class="pre">clear_iot_agent()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="filip.utils.html#filip.utils.cleanup.clear_quantumleap"><code class="docutils literal notranslate"><span class="pre">clear_quantumleap()</span></code></a></li>
 </ul>
@@ -396,6 +410,13 @@ in the FiLiP repository.</p>
 <span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Orion Url&quot;</span><span class="p">,</span>
 <span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
 <span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;LD_ORION_URL&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://127.0.0.1:1027&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;format&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uri&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;minLength&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Ld Orion Url&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">      </span><span class="p">},</span>
 <span class="w">      </span><span class="nt">&quot;IOTA_URL&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://127.0.0.1:4041&quot;</span><span class="p">,</span>
 <span class="w">         </span><span class="nt">&quot;format&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uri&quot;</span><span class="p">,</span>
@@ -416,6 +437,13 @@ in the FiLiP repository.</p>
 <span class="w">         </span><span class="nt">&quot;minLength&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
 <span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Mqtt Broker Url&quot;</span><span class="p">,</span>
 <span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;LD_MQTT_BROKER_URL&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;mqtt://127.0.0.1:1884&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;format&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uri&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;minLength&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Ld Mqtt Broker Url&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
 <span class="w">      </span><span class="p">}</span>
 <span class="w">   </span><span class="p">}</span>
 <span class="p">}</span>
@@ -433,6 +461,8 @@ in the FiLiP repository.</p>
 <dd class="field-even"><ul class="simple">
 <li><p><a class="reference internal" href="../code/filip.html#filip.config.Settings.CB_URL" title="filip.config.Settings.CB_URL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CB_URL</span> <span class="pre">(pydantic_core._pydantic_core.Url)</span></code></a></p></li>
 <li><p><a class="reference internal" href="../code/filip.html#filip.config.Settings.IOTA_URL" title="filip.config.Settings.IOTA_URL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">IOTA_URL</span> <span class="pre">(pydantic_core._pydantic_core.Url)</span></code></a></p></li>
+<li><p><a class="reference internal" href="../code/filip.html#filip.config.Settings.LD_CB_URL" title="filip.config.Settings.LD_CB_URL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LD_CB_URL</span> <span class="pre">(pydantic_core._pydantic_core.Url)</span></code></a></p></li>
+<li><p><a class="reference internal" href="../code/filip.html#filip.config.Settings.LD_MQTT_BROKER_URL" title="filip.config.Settings.LD_MQTT_BROKER_URL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LD_MQTT_BROKER_URL</span> <span class="pre">(pydantic_core._pydantic_core.Url)</span></code></a></p></li>
 <li><p><a class="reference internal" href="../code/filip.html#filip.config.Settings.MQTT_BROKER_URL" title="filip.config.Settings.MQTT_BROKER_URL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MQTT_BROKER_URL</span> <span class="pre">(pydantic_core._pydantic_core.Url)</span></code></a></p></li>
 <li><p><a class="reference internal" href="../code/filip.html#filip.config.Settings.QL_URL" title="filip.config.Settings.QL_URL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">QL_URL</span> <span class="pre">(pydantic_core._pydantic_core.Url)</span></code></a></p></li>
 </ul>
@@ -461,6 +491,23 @@ in the FiLiP repository.</p>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.config.Settings.LD_CB_URL">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">LD_CB_URL</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Url</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'http://127.0.0.1:1027'</span></em><a class="headerlink" href="#filip.config.Settings.LD_CB_URL" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Constraints<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>allowed_schemes</strong> = [‘http’, ‘https’]</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.config.Settings.LD_MQTT_BROKER_URL">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">LD_MQTT_BROKER_URL</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Url</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'mqtt://127.0.0.1:1884'</span></em><a class="headerlink" href="#filip.config.Settings.LD_MQTT_BROKER_URL" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="filip.config.Settings.MQTT_BROKER_URL">

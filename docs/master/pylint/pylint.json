@@ -899,7 +899,29 @@
             "column": 0,
             "path": "tutorials/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.config:[35:42]\n==tests.config:[45:51]\n    MQTT_BROKER_URL: AnyUrl = Field(default=\"mqtt://127.0.0.1:1883\",\n                                    validation_alias=AliasChoices(\n                                        'MQTT_BROKER_URL',\n                                        'MQTT_URL',\n                                        'MQTT_BROKER'))\n\n# create settings object",
+            "message": "Similar lines in 2 files\n==filip.config:[46:53]\n==tests.config:[62:68]\n    LD_MQTT_BROKER_URL: AnyUrl = Field(default=\"mqtt://127.0.0.1:1884\",\n                                       validation_alias=AliasChoices(\n                                           'LD_MQTT_BROKER_URL',\n                                           'LD_MQTT_URL',\n                                           'LD_MQTT_BROKER'))\n\n# create settings object",
+            "message-id": "R0801"
+        },
+        {
+            "type": "refactor",
+            "module": "tutorials.__init__",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "tutorials/__init__.py",
+            "symbol": "duplicate-code",
+            "message": "Similar lines in 2 files\n==filip.config:[41:46]\n==tests.config:[51:57]\n    MQTT_BROKER_URL: AnyUrl = Field(default=\"mqtt://127.0.0.1:1883\",\n                                    validation_alias=AliasChoices(\n                                        'MQTT_BROKER_URL',\n                                        'MQTT_URL',\n                                        'MQTT_BROKER'))\n",
+            "message-id": "R0801"
+        },
+        {
+            "type": "refactor",
+            "module": "tutorials.__init__",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "tutorials/__init__.py",
+            "symbol": "duplicate-code",
+            "message": "Similar lines in 2 files\n==filip.config:[29:35]\n==tests.config:[34:39]\n                                  validation_alias=AliasChoices('LD_ORION_URL',\n                                                                'LD_CB_URL',\n                                                                'ORION_LD_URL',\n                                                                'SCORPIO_URL',\n                                                                'STELLIO_URL'))",
             "message-id": "R0801"
         }
     ],
@@ -935,7 +957,7 @@
                 "fatal": 0,
                 "info": 0,
                 "refactor": 0,
-                "statement": 13,
+                "statement": 15,
                 "warning": 0
             },
             "filip.custom_types": {
@@ -962,7 +984,7 @@
                 "fatal": 0,
                 "info": 0,
                 "refactor": 0,
-                "statement": 30,
+                "statement": 33,
                 "warning": 1
             },
             "tests.test_config": {
@@ -988,7 +1010,7 @@
                 "error": 0,
                 "fatal": 0,
                 "info": 0,
-                "refactor": 1,
+                "refactor": 3,
                 "statement": 0,
                 "warning": 0
             }
@@ -998,7 +1020,7 @@
             "missing-module-docstring": 1,
             "unused-import": 1,
             "line-too-long": 1,
-            "duplicate-code": 1
+            "duplicate-code": 3
         },
         "code_type_count": {
             "code": 0,
@@ -1016,18 +1038,18 @@
                 "filip"
             ],
             "pydantic": [
-                "filip.config",
-                "tests.test_config",
+                "tests.config",
                 "filip.custom_types",
-                "tests.config"
+                "filip.config",
+                "tests.test_config"
             ],
             "pydantic_settings": [
-                "filip.config",
-                "tests.config"
+                "tests.config",
+                "filip.config"
             ],
             "dotenv": [
-                "filip.config",
-                "tests.config"
+                "tests.config",
+                "filip.config"
             ],
             "typing_extensions": [
                 "filip.custom_types"
@@ -1059,12 +1081,12 @@
         "error": 0,
         "fatal": 0,
         "info": 0,
-        "refactor": 1,
-        "statement": 103,
+        "refactor": 3,
+        "statement": 108,
         "warning": 1,
         "global_note": 0,
-        "nb_duplicated_lines": 5,
-        "percent_duplicated_lines": 1.7241379310344827
+        "nb_duplicated_lines": 15,
+        "percent_duplicated_lines": 4.716981132075472
     },
     "previous": {
         "bad_names": {
@@ -1098,7 +1120,7 @@
                 "fatal": 0,
                 "info": 0,
                 "refactor": 0,
-                "statement": 13,
+                "statement": 15,
                 "warning": 0
             },
             "filip.custom_types": {
@@ -1125,7 +1147,7 @@
                 "fatal": 0,
                 "info": 0,
                 "refactor": 0,
-                "statement": 30,
+                "statement": 33,
                 "warning": 1
             },
             "tests.test_config": {
@@ -1151,7 +1173,7 @@
                 "error": 0,
                 "fatal": 0,
                 "info": 0,
-                "refactor": 1,
+                "refactor": 3,
                 "statement": 0,
                 "warning": 0
             }
@@ -1161,7 +1183,7 @@
             "missing-module-docstring": 1,
             "unused-import": 1,
             "line-too-long": 1,
-            "duplicate-code": 1
+            "duplicate-code": 3
         },
         "code_type_count": {
             "code": 0,
@@ -1179,18 +1201,18 @@
                 "filip"
             ],
             "pydantic": [
-                "filip.config",
+                "tests.config",
                 "filip.custom_types",
-                "tests.test_config",
-                "tests.config"
+                "filip.config",
+                "tests.test_config"
             ],
             "pydantic_settings": [
-                "filip.config",
-                "tests.config"
+                "tests.config",
+                "filip.config"
             ],
             "dotenv": [
-                "filip.config",
-                "tests.config"
+                "tests.config",
+                "filip.config"
             ],
             "typing_extensions": [
                 "filip.custom_types"
@@ -1222,11 +1244,11 @@
         "error": 0,
         "fatal": 0,
         "info": 0,
-        "refactor": 1,
-        "statement": 103,
+        "refactor": 3,
+        "statement": 108,
         "warning": 1,
-        "global_note": 9.029126213592233,
-        "nb_duplicated_lines": 5,
-        "percent_duplicated_lines": 1.7241379310344827
+        "global_note": 8.88888888888889,
+        "nb_duplicated_lines": 15,
+        "percent_duplicated_lines": 4.716981132075472
     }
 }

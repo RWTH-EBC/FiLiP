@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>filip.models package &mdash; FiLiP 0.5.0 documentation</title>
+  <title>filip.models package &mdash; FiLiP 0.6.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
@@ -794,6 +794,61 @@ Context Brokers to support hierarchical scopes:
 </dd>
 </dl>
 </dd></dl>
+
+</dd></dl>
+
+<dl class="py class pydantic_model">
+<dt class="sig sig-object py" id="filip.models.base.FiwareLDHeader">
+<em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">filip.models.base.</span></span><span class="sig-name descname"><span class="pre">FiwareLDHeader</span></span><a class="reference internal" href="../_modules/filip/models/base.html#FiwareLDHeader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.base.FiwareLDHeader" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>Define entity service paths which are supported by the NGSI
+Context Brokers to support hierarchical scopes:
+<a class="reference external" href="https://fiware-orion.readthedocs.io/en/master/user/service_path/index.html">https://fiware-orion.readthedocs.io/en/master/user/service_path/index.html</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Config<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>populate_by_name</strong>: <em>bool = True</em></p></li>
+<li><p><strong>validate_assignment</strong>: <em>bool = True</em></p></li>
+</ul>
+</dd>
+<dt class="field-even">Fields<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="../code/filip.models.html#filip.models.base.FiwareLDHeader.link_header" title="filip.models.base.FiwareLDHeader.link_header"><code class="xref py py-obj docutils literal notranslate"><span class="pre">link_header</span> <span class="pre">(str)</span></code></a></p></li>
+<li><p><a class="reference internal" href="../code/filip.models.html#filip.models.base.FiwareLDHeader.ngsild_tenant" title="filip.models.base.FiwareLDHeader.ngsild_tenant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ngsild_tenant</span> <span class="pre">(str)</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.base.FiwareLDHeader.link_header">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">link_header</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'&lt;https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.6.jsonld&gt;;</span> <span class="pre">rel=&quot;http://www.w3.org/ns/json-ld#context&quot;;</span> <span class="pre">type=&quot;application/ld+json&quot;'</span></em><em class="property"> <span class="pre">(alias</span> <span class="pre">'Link')</span></em><a class="headerlink" href="#filip.models.base.FiwareLDHeader.link_header" title="Permalink to this definition"></a></dt>
+<dd><p>Fiware service used for multi-tenancy</p>
+<dl class="field-list simple">
+<dt class="field-odd">Constraints<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pattern</strong> = w*$</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.base.FiwareLDHeader.ngsild_tenant">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ngsild_tenant</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"> <span class="pre">(alias</span> <span class="pre">'NGSILD-Tenant')</span></em><a class="headerlink" href="#filip.models.base.FiwareLDHeader.ngsild_tenant" title="Permalink to this definition"></a></dt>
+<dd><p>Alias to the Fiware service to used for multitenancy</p>
+<dl class="field-list simple">
+<dt class="field-odd">Constraints<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>max_length</strong> = 50</p></li>
+<li><p><strong>pattern</strong> = w*$</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.models.base.FiwareLDHeader.set_context">
+<span class="sig-name descname"><span class="pre">set_context</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/models/base.html#FiwareLDHeader.set_context"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.base.FiwareLDHeader.set_context" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
