@@ -26,14 +26,14 @@ INSTALL_REQUIRES = ['aenum~=3.1.15',
 
 SETUP_REQUIRES = INSTALL_REQUIRES.copy()
 
-VERSION = '0.5.0'
+VERSION = '0.6.0'
 
 setuptools.setup(
     name='filip',
     version=VERSION,
     author='RWTH Aachen University, E.ON Energy Research Center, Institute\
         of Energy Efficient Buildings and Indoor Climate',
-    author_email='tstorek@eonerc.rwth-aachen.de',
+    author_email='junsong.du@eonerc.rwth-aachen.de',
     description='[FI]WARE [Li]brary for [P]ython',
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
