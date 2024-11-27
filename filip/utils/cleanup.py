@@ -96,6 +96,12 @@ def clear_context_broker(url: str=None,
     else:
         client = cb_client
 
+    # clear registrations
+    if clear_registrations:
+        for reg in client.get_registration_list():
+            client.delete_registration(registration_id=reg.id)
+        assert len(client.get_registration_list()) == 0
+
     # clean entities
     client.delete_entities(entities=client.get_entity_list())
 
@@ -104,11 +110,6 @@ def clear_context_broker(url: str=None,
         client.delete_subscription(subscription_id=sub.id)
     assert len(client.get_subscription_list()) == 0
 
-    # clear registrations
-    if clear_registrations:
-        for reg in client.get_registration_list():
-            client.delete_registration(registration_id=reg.id)
-        assert len(client.get_registration_list()) == 0
 
 
 def clear_iot_agent(url: Union[str, AnyHttpUrl] = None,
@@ -203,7 +204,8 @@ def clear_all(*,
               iota_client: IoTAClient = None,
               ql_client: QuantumLeapClient = None):
     """
-    Clears all services that a url is provided for
+    Clears all services that a url is provided for.
+    If cb_url is provided, the registration will also be deleted.
 
     Args:
         fiware_header:
@@ -234,7 +236,8 @@ def clear_all(*,
                 clear_iot_agent(url=url, fiware_header=fiware_header)
 
     if cb_url is not None or cb_client is not None:
-        clear_context_broker(url=cb_url, fiware_header=fiware_header, cb_client=cb_client)
+        clear_context_broker(url=cb_url, fiware_header=fiware_header, cb_client=cb_client,
+                             clear_registrations=True)
 
     if ql_url is not None or ql_client is not None:
         clear_quantumleap(url=ql_url, fiware_header=fiware_header, ql_client=ql_client)
