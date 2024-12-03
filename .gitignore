@@ -30,7 +30,7 @@ requirements.txt
 .idea
 .cache
 venv
-
+.venv
 # Unittest #
 #####################
 .pytest_cache

@@ -154,7 +154,11 @@ Therefore, FiLiP currently only covers the APIs of the following GEs:
     - [github](https://github.com/telefonicaid/fiware-orion)
     - [swagger](https://swagger.lab.fiware.org/)
     - [NGSI v2 specifications](https://github.com/FIWARE/specifications/tree/master/OpenAPI/ngsiv2)
-    
+
+- NGSI-LD Context Broker for managing context data with Linked Data concept. The functionalities that FiLiP supports are closely aligned with the specification **_NGSI-LD V1.3.1_**, which is according to the FIWARE [catalogue](https://github.com/FIWARE/catalogue#core-context-broker-components) the latest spec version that has been implemented by all three brokers (Orion-LD, Scorpio, and Stellio). We currently use Orion-LD for testing.
+    - [github](https://github.com/FIWARE/context.Orion-LD)
+    - [swagger](https://swagger.lab.fiware.org/?url=https://raw.githubusercontent.com/FIWARE/specifications/master/OpenAPI/ngsi-ld/full_api.json#/)
+  > **Note**: `-experimental` flag need to be set for Orion-LD Context Broker to enable the full functionality. Check this [issue](https://github.com/FIWARE/context.Orion-LD/issues/1648) for more information
     
 - IoT-Agents for managing IoT Devices. IoT agents are implemented using 
   the FIWARE IoT Agent Node Lib as a common framework.
