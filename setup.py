@@ -24,7 +24,6 @@ INSTALL_REQUIRES = [
     "geojson-pydantic~=1.0.2",
     "wget~=3.2",
     "pyjexl~=0.3.0",
-    "pre-commit~=4.0.1",
 ]
 
 SETUP_REQUIRES = INSTALL_REQUIRES.copy()
@@ -67,6 +66,7 @@ setuptools.setup(
     setup_requires=SETUP_REQUIRES,
     # optional modules
     extras_require={
+        "development": ["pre-commit~=4.0.1"],
         "semantics": ["igraph~=0.11.2"],
         ":python_version < '3.9'": ["pandas~=1.3.5"],
         ":python_version >= '3.9'": ["pandas~=2.1.4"],
