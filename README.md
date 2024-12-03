@@ -89,6 +89,13 @@ pip install -U git+git://github.com/RWTH-EBC/filip
 > pip install -e .
 > ````
 
+#### Install extra dependencies for tutorials and examples (optional)
+
+If you need to go through the tutorials or examples, please install filip with extra module ``tutorials``:
+````
+pip install -U filip[tutorials]
+````
+
 #### Install semantics module (optional)
 
 If you want to use the optional [semantics module](filip/semantics), use the following command (This will install the libraries that only required for the semantics module):

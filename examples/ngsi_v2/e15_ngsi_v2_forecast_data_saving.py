@@ -1,15 +1,16 @@
+"""
+
+"""
+
 import logging
 import time
-import random
 from datetime import datetime, timedelta
-
 from filip.config import settings
 from filip.models.ngsi_v2.subscriptions import Message, Subscription
 from filip.models.ngsi_v2.context import ContextEntity, NamedContextAttribute
 from filip.models.base import FiwareHeader
 from filip.clients.ngsi_v2 import ContextBrokerClient, QuantumLeapClient
 from filip.utils.cleanup import clear_all
-import matplotlib.pyplot as plt
 
 # ## Parameters
 #
@@ -89,7 +90,13 @@ if __name__ == "__main__":
             "03:30": 20,
             "04:00": 20
         })
-    weather_station.add_attributes([forecast])
+    temperature = NamedContextAttribute(
+        name="temperature",
+        type="Number",
+        value=20
+    )
+    weather_station.add_attributes([temperature, forecast])
+
     cb_client.post_entity(weather_station)
 
     # create timeseries notification for weather forecast
@@ -120,20 +127,23 @@ if __name__ == "__main__":
     for i in range(10):
         time.sleep(1)
         # weather_station.temperatureForecast.value = forecast
+        temperature.value = forecast.value["00:00"]
         forecast.value = temperature_forecast(forecast.value["00:30"])
-        # weather_station.update_attribute(forecast)
-        cb_client.update_attribute_value(
-            entity_id=weather_station.id,
-            attr_name=forecast.name,
-            value=forecast.value
-        )
+        weather_station.update_attribute([temperature, forecast])
+        cb_client.update_entity(weather_station)
 
     # check forecast from QuantumLeap
     query = ql_client.get_entity_by_id(entity_id=weather_station.id)
+    forecast_history = ql_client.get_entity_attr_values_by_id(
+        entity_id=weather_station.id,
+        attr_name=forecast.name)
+    temperature_history = ql_client.get_entity_attr_values_by_id(
+        entity_id=weather_station.id,
+        attr_name=temperature.name)
 
-    # plot the forecast
-    values = query.attributes[0].values
-    index = query.index
+    # Modify the time index
+    index = forecast_history.index
+    # index = query.index
     plot_time = datetime.strptime("00:00", "%H:%M")
     # get current year , month and day
     current_date = datetime.now().date()
@@ -141,39 +151,60 @@ if __name__ == "__main__":
         year=current_date.year,
         month=current_date.month,
         day=current_date.day)
-
     plot_time_delta = timedelta(minutes=30)
     for i, _ in enumerate(index[:]):
-        index[i] = plot_time
+        forecast_history.index[i] = plot_time
+        temperature_history.index[i] = plot_time
         plot_time += plot_time_delta
 
-    forecast_time_labels = list(values[0].keys())
+    # Plot the history with plotly
+    import plotly.graph_objects as go
+    from datetime import timedelta
 
-    import matplotlib
-    matplotlib.use('Agg')  # GUI-based backend
+    # Create a Plotly figure
+    fig = go.Figure()
 
-    # Plot each forecast
-    plt.figure(figsize=(12, 6))
-    for i, forecast in enumerate(values):
+    # Add historical forecast to the plot
+    forecast_time_labels = list(forecast_history.attributes[0].values[0].keys())
+    for i, forecast in enumerate(forecast_history.attributes[0].values):
         forecast_values = [forecast[time] for time in forecast_time_labels]
         time_axis = [
-            index[i] + timedelta(hours=int(time.split(":")[0]),
-                                 minutes=int(time.split(":")[1]))
+            forecast_history.index[i] + timedelta(hours=int(time.split(":")[0]),
+                                                  minutes=int(time.split(":")[1]))
             for time in forecast_time_labels
         ]
-        plt.plot(time_axis, forecast_values,
-                 label=index[i].strftime("%Y-%m-%d %H:%M:%S"))
+        fig.add_trace(go.Scatter(
+            x=time_axis,
+            y=forecast_values,
+            mode='lines',
+            name="Forecast "+index[i].strftime("%Y-%m-%d %H:%M:%S")
+        ))
 
-    # Customize the plot
-    plt.title("Historical Forecasts at Different Time Points")
-    plt.xlabel("Time (Forecast Period)")
-    plt.ylabel("Forecast Value")
-    plt.xticks(rotation=45)
-    plt.legend(title="Forecast Time")
-    plt.grid(True)
-    plt.tight_layout()
+    # Add temperature history to the plot
+    # for i, temperature in enumerate(temperature_history.attributes[0].values):
+    temperature_values = temperature_history.attributes[0].values
+    fig.add_trace(go.Scatter(
+        x=temperature_history.index,
+        y=temperature_values,
+        mode='lines',
+        line=dict(width=4),  # Make the temperature lines thicker
+        name=f"Temperature History",
+    ))
+
+    # Customize the layout
+    fig.update_layout(
+        title="Historical Data",
+        xaxis_title="Time",
+        yaxis_title="Value",
+        xaxis=dict(
+            tickangle=45
+        ),
+        template="plotly_white"
+    )
+
+    # Add gridlines
+    fig.update_xaxes(showgrid=True)
+    fig.update_yaxes(showgrid=True)
 
     # Show the plot
-    # plt.savefig("forecast.png")
-    plt.show()
-
+    fig.show()
