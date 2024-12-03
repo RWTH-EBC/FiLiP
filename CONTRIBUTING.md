@@ -34,6 +34,24 @@ We use PEP8 as a coding style guide. Some IDEs (like PyCharm) automatically show
 
 For committing style guide please use Conventional Commits 1.0.0. For more details how to structure your commits please visit this [page](https://www.conventionalcommits.org/en/v1.0.0/).
 
+### Pre-commit Hooks
+
+In order to make the development easy and uniform, use of pre-commit is highly recommended. The pre-commit hooks run before every commit to ensure the code is compliant with the project style.
+
+Check if pre-commit is installed:
+```commandline
+pre-commit --version
+```
+Install pre-commit via pip if it's not already installed.
+```commandline
+pip install pre-commit
+```
+Install the git hook scripts:
+```commandline
+pre-commit install
+```
+This will run pre-commit automatically on every git commit. Checkout [pre-commit-config.yaml](.pre-commit-config.yaml) file to find out which hooks are currently configured.
+
 ## Documentation
 
 All created or modified functions should be documented properly. 
