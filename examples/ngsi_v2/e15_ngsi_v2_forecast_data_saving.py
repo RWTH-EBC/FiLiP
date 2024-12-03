@@ -1,5 +1,14 @@
 """
+Usually the live data is stored in Context Broker and the historical data in the time
+series database. However, there is a specific use case, where the live data itself is a
+time series, i.e. the forecast data.
 
+This is not a trivial task, because by default the historical forecasts will be saved
+as objects in the time series database, complicating the request and the visualization
+in dashboard.
+
+In this example, we will demonstrate the best practice to save the forecast data in
+Context Broker and in the time series database.
 """
 
 import logging
