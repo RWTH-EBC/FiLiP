@@ -217,3 +217,19 @@ if __name__ == "__main__":
 
     # Show the plot
     fig.show()
+
+    # An example to query data directly from CrateDB, for example via Grafana
+    query = f"""SELECT entity_id, entity_type, time_index, 
+                                           temperatureforecast['00:00'], 
+                                           temperatureforecast['00:30'], 
+                                           temperatureforecast['01:00'], 
+                                           temperatureforecast['01:30'], 
+                                           temperatureforecast['02:00'], 
+                                           temperatureforecast['02:30'], 
+                                           temperatureforecast['03:00'], 
+                                           temperatureforecast['03:30'],
+                                           temperatureforecast['04:00']
+                FROM "etweatherstation"
+                LIMIT 100;
+    """
+
