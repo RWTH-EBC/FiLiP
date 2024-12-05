@@ -5,9 +5,17 @@ import logging
 from pydantic import AnyHttpUrl
 from typing import Dict, ByteString, List, IO, Tuple, Union
 import requests
-
-from filip.models.base import FiwareHeader
+from filip.models.base import FiwareHeader, FiwareLDHeader
 from filip.utils import validate_http_url
+from enum import Enum
+
+
+class NgsiURLVersion(str, Enum):
+    """
+    URL part that defines the NGSI version for the API.
+    """
+    v2_url = "/v2"
+    ld_url = "/ngsi-ld/v1"
 
 
 class BaseHttpClient:
@@ -26,7 +34,7 @@ class BaseHttpClient:
                  url: Union[AnyHttpUrl, str] = None,
                  *,
                  session: requests.Session = None,
-                 fiware_header: Union[Dict, FiwareHeader] = None,
+                 fiware_header: Union[Dict, FiwareHeader, FiwareLDHeader] = None,
                  **kwargs):
 
         self.logger = logging.getLogger(
@@ -92,10 +100,16 @@ class BaseHttpClient:
         """
         if isinstance(headers, FiwareHeader):
             self._fiware_headers = headers
+        elif isinstance(headers, FiwareLDHeader):
+            self._fiware_headers = headers
         elif isinstance(headers, dict):
             self._fiware_headers = FiwareHeader.model_validate(headers)
         elif isinstance(headers, str):
             self._fiware_headers = FiwareHeader.model_validate_json(headers)
+        elif isinstance(headers, dict):
+            self._fiware_headers = FiwareLDHeader.parse_obj(headers)
+        elif isinstance(headers, str):
+            self._fiware_headers = FiwareLDHeader.parse_raw(headers)
         else:
             raise TypeError(f'Invalid headers! {type(headers)}')
         self.headers.update(self.fiware_headers.model_dump(by_alias=True))

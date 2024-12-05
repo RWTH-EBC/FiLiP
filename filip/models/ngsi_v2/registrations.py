@@ -101,18 +101,19 @@ class Registration(BaseModel):
         default=None,
         description="A free text used by the client to describe the "
                     "registration.",
-        example="Relative Humidity Context Source"
+        json_schema_extra={"example":"Relative Humidity Context Source"}
     )
     provider: Provider = Field(
         description="Object that describes the context source registered.",
-        example='"http": {"url": "http://localhost:1234"}'
+        json_schema_extra={"example": '"http": {"url": "http://localhost:1234"}'}
     )
     dataProvided: DataProvided = Field(
         description="Object that describes the data provided by this source",
-        example='{'
+        json_schema_extra={"example": '{'
                 '   "entities": [{"id": "room2", "type": "Room"}],'
                 '   "attrs": ["relativeHumidity"]'
                 '},'
+        }
     )
     status: Optional[Status] = Field(
         default=Status.ACTIVE,

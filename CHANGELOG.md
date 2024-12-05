@@ -1,7 +1,21 @@
-### v0.6.X
+### v0.6.0
 - add: Tutorial for connecting with secured endpoints ([#319](https://github.com/RWTH-EBC/FiLiP/pull/319))
-- add: tests for clear functions ([#318](https://github.com/RWTH-EBC/FiLiP/pull/336))
-- fix: clear functions for context broker ([#318](https://github.com/RWTH-EBC/FiLiP/pull/336))
+- add: Example for notification based command ([#332](https://github.com/RWTH-EBC/FiLiP/pull/332))
+- add: tests for clear functions ([#336](https://github.com/RWTH-EBC/FiLiP/pull/336))
+- 🚀 **add: API client for NGSI-LD context broker** ([#338](https://github.com/RWTH-EBC/FiLiP/pull/338)
+,[#356](https://github.com/RWTH-EBC/FiLiP/pull/356)
+,[#327](https://github.com/RWTH-EBC/FiLiP/pull/327)
+,[#300](https://github.com/RWTH-EBC/FiLiP/pull/300)
+,[#301](https://github.com/RWTH-EBC/FiLiP/pull/301)
+,[#212](https://github.com/RWTH-EBC/FiLiP/pull/212)
+,[#222](https://github.com/RWTH-EBC/FiLiP/pull/222)
+,[#221](https://github.com/RWTH-EBC/FiLiP/pull/221)
+  )
+- fix: clear functions for context broker ([#336](https://github.com/RWTH-EBC/FiLiP/pull/336))
+- fix: validation error of ``ngsipayloadattr`` when the attribute substitution is used([#351](https://github.com/RWTH-EBC/FiLiP/pull/351))
+- update: integrate the key-values endpoints with normalized endpoints ([#318](https://github.com/RWTH-EBC/FiLiP/pull/318))
+- remove: ``update_entity_attributes_key_values`` and ``update_entity_key_values`` are removed ([#318](https://github.com/RWTH-EBC/FiLiP/pull/318))
+
 
 ### v0.5.0
 - update: allow duplicated name in device, check uniqueness of object_id ([#279](https://github.com/RWTH-EBC/FiLiP/pull/279))
