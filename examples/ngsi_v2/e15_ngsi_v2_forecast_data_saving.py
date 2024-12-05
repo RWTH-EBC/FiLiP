@@ -33,7 +33,7 @@ QL_URL = settings.QL_URL
 
 # Here you can also change FIWARE service and service path.
 # FIWARE-Service
-SERVICE = 'filip'
+SERVICE = 'filip_e15'
 # FIWARE-Service path
 SERVICE_PATH = '/'
 
