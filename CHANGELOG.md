@@ -1,3 +1,6 @@
+### v0.6.x
+- add: Tutorial for saving live timeseries data (e.g., forecast) in context broker and timeseries database ([#336](https://github.com/RWTH-EBC/FiLiP/pull/363))
+
 ### v0.6.0
 - add: Tutorial for connecting with secured endpoints ([#319](https://github.com/RWTH-EBC/FiLiP/pull/319))
 - add: Example for notification based command ([#332](https://github.com/RWTH-EBC/FiLiP/pull/332))
