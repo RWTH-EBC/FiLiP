@@ -36,6 +36,7 @@ from filip.clients.mqtt import IoTAMQTTClient
 from filip.models.base import FiwareHeader
 from filip.models.ngsi_v2.iot import Device, DeviceAttribute, ServiceGroup
 from filip.utils.cleanup import clear_context_broker, clear_iot_agent
+
 # import simulation model
 from tutorials.ngsi_v2.simulation_model import SimulationModel
 
@@ -55,14 +56,14 @@ MQTT_PW = ""
 #  collisions. You will use this service through the whole tutorial.
 #  If you forget to change it, an error will be raised!
 # FIWARE-Service
-SERVICE = 'filip_tutorial'
+SERVICE = "filip_tutorial"
 # FIWARE-Service path
-SERVICE_PATH = '/'
+SERVICE_PATH = "/"
 
 # ToDo: Change the APIKEY to something unique. This represents the "token"
 #  for IoT devices to connect (send/receive data) with the platform. In the
 #  context of MQTT, APIKEY is linked with the topic used for communication.
-APIKEY = 'your_apikey'
+APIKEY = "your_apikey"
 
 # path to json-files to device configuration data for follow-up exercises
 WRITE_GROUPS_FILEPATH = Path("../e4_iot_thermal_zone_sensors_groups.json")
@@ -78,65 +79,57 @@ T_SIM_END = 24 * 60 * 60  # simulation end time in seconds
 COM_STEP = 60 * 60 * 0.25  # 15 min communication step in seconds
 
 # ## Main script
-if __name__ == '__main__':
+if __name__ == "__main__":
     # create a fiware header object
-    fiware_header = FiwareHeader(service=SERVICE,
-                                 service_path=SERVICE_PATH)
+    fiware_header = FiwareHeader(service=SERVICE, service_path=SERVICE_PATH)
     # clear the state of your service and scope
     clear_iot_agent(url=IOTA_URL, fiware_header=fiware_header)
     clear_context_broker(url=CB_URL, fiware_header=fiware_header)
 
     # instantiate simulation model
-    sim_model = SimulationModel(t_start=T_SIM_START,
-                                t_end=T_SIM_END,
-                                temp_max=TEMPERATURE_MAX,
-                                temp_min=TEMPERATURE_MIN,
-                                temp_start=TEMPERATURE_ZONE_START)
+    sim_model = SimulationModel(
+        t_start=T_SIM_START,
+        t_end=T_SIM_END,
+        temp_max=TEMPERATURE_MAX,
+        temp_min=TEMPERATURE_MIN,
+        temp_start=TEMPERATURE_ZONE_START,
+    )
 
     # define lists to store historical data
     history_weather_station = []
     history_zone_temperature_sensor = []
 
     # create a service group with your api key
-    service_group = ServiceGroup(apikey=APIKEY,
-                                 resource="/iot/json")
+    service_group = ServiceGroup(apikey=APIKEY, resource="/iot/json")
 
     # ToDo: Create two IoTA-MQTT devices for the weather station and the zone
     #  temperature sensor. Also add the simulation time as `active attribute`
     #  to each device!
     # create the weather station device
     # create the `sim_time` attribute and add it to the weather station's attributes
-    t_sim = DeviceAttribute(name='sim_time',
-                            object_id='t_sim',
-                            type="Number")
+    t_sim = DeviceAttribute(name="sim_time", object_id="t_sim", type="Number")
 
-    weather_station = Device(device_id='device:001',
-                             entity_name='urn:ngsi-ld:WeatherStation:001',
-                             entity_type='WeatherStation',
-                             protocol='IoTA-JSON',
-                             transport='MQTT',
-                             apikey=APIKEY,
-                             attributes=[t_sim],
-                             commands=[])
+    weather_station = Device(
+        device_id="device:001",
+        entity_name="urn:ngsi-ld:WeatherStation:001",
+        entity_type="WeatherStation",
+        protocol="IoTA-JSON",
+        transport="MQTT",
+        apikey=APIKEY,
+        attributes=[t_sim],
+        commands=[],
+    )
 
     # create a temperature attribute and add it via the api of the
     # `device`-model. Use the `t_amb` as `object_id`. `object_id` specifies
     # what key will be used in the MQTT Message payload
-    t_amb = DeviceAttribute(name='temperature',
-                            object_id='t_amb',
-                            type="Number")
+    t_amb = DeviceAttribute(name="temperature", object_id="t_amb", type="Number")
 
     weather_station.add_attribute(t_amb)
 
     # ToDo: Create the zone temperature device and add the `t_sim` attribute upon
     #  creation.
     zone_temperature_sensor = Device(...)
-
-
-
-
-
-
 
     # ToDo: Create the temperature attribute. Use the `t_zone` as `object_id`.
     #  `object_id` specifies what key will be used in the MQTT Message payload.
@@ -159,7 +152,9 @@ if __name__ == '__main__':
     #  devices were correctly created.
     cbc = ContextBrokerClient(url=CB_URL, fiware_header=fiware_header)
     # get weather station entity
-    print(f"Weather station:\n{cbc.get_entity(weather_station.entity_name).model_dump_json(indent=2)}")
+    print(
+        f"Weather station:\n{cbc.get_entity(weather_station.entity_name).model_dump_json(indent=2)}"
+    )
     # ToDo: Get zone temperature sensor entity.
     print(...)
 
@@ -184,12 +179,6 @@ if __name__ == '__main__':
     # ToDO: Connect to the MQTT broker and subscribe to your topic.
     ...
 
-
-
-
-
-
-
     # subscribe to topics
     # subscribe to all incoming command topics for the registered devices
     mqttc.subscribe()
@@ -200,18 +189,17 @@ if __name__ == '__main__':
     #  to the broker that holds the simulation time `sim_time` and the
     #  corresponding temperature `temperature`. You may use the `object_id`
     #  or the attribute name as a key in your payload.
-    for t_sim in range(sim_model.t_start,
-                       sim_model.t_end + int(COM_STEP),
-                       int(COM_STEP)):
+    for t_sim in range(
+        sim_model.t_start, sim_model.t_end + int(COM_STEP), int(COM_STEP)
+    ):
         # publish the simulated ambient temperature
-        mqttc.publish(device_id=weather_station.device_id,
-                      payload={"temperature": sim_model.t_amb,
-                               "sim_time": sim_model.t_sim})
+        mqttc.publish(
+            device_id=weather_station.device_id,
+            payload={"temperature": sim_model.t_amb, "sim_time": sim_model.t_sim},
+        )
 
         # ToDo: Publish the simulated zone temperature.
         ...
-
-
 
         # simulation step for the next loop
         sim_model.do_step(int(t_sim + COM_STEP))
@@ -221,22 +209,20 @@ if __name__ == '__main__':
         # get corresponding entities and store the data
         weather_station_entity = cbc.get_entity(
             entity_id=weather_station.entity_name,
-            entity_type=weather_station.entity_type
+            entity_type=weather_station.entity_type,
         )
         # append the data to the local history
         history_weather_station.append(
-            {"sim_time": weather_station_entity.sim_time.value,
-             "temperature": weather_station_entity.temperature.value})
+            {
+                "sim_time": weather_station_entity.sim_time.value,
+                "temperature": weather_station_entity.temperature.value,
+            }
+        )
 
         # ToDo: Get zone temperature sensor and store the data.
         zone_temperature_sensor_entity = ...
 
-
-
-
         history_zone_temperature_sensor.append(...)
-
-
 
     # close the mqtt listening thread
     mqttc.loop_stop()
@@ -245,20 +231,19 @@ if __name__ == '__main__':
 
     # plot the results
     fig, ax = plt.subplots()
-    t_simulation = [item["sim_time"]/3600 for item in history_weather_station]
+    t_simulation = [item["sim_time"] / 3600 for item in history_weather_station]
     temperature = [item["temperature"] for item in history_weather_station]
     ax.plot(t_simulation, temperature)
     ax.title.set_text("Weather Station")
-    ax.set_xlabel('time in h')
-    ax.set_ylabel('ambient temperature in °C')
+    ax.set_xlabel("time in h")
+    ax.set_ylabel("ambient temperature in °C")
 
     fig2, ax2 = plt.subplots()
-    t_simulation = [item["sim_time"]/3600 for item in history_zone_temperature_sensor]
-    temperature = [item["temperature"] for item in
-                   history_zone_temperature_sensor]
+    t_simulation = [item["sim_time"] / 3600 for item in history_zone_temperature_sensor]
+    temperature = [item["temperature"] for item in history_zone_temperature_sensor]
     ax2.plot(t_simulation, temperature)
     ax2.title.set_text("Zone Temperature Sensor")
-    ax2.set_xlabel('time in h')
-    ax2.set_ylabel('zone temperature in °C')
+    ax2.set_xlabel("time in h")
+    ax2.set_ylabel("zone temperature in °C")
 
     plt.show()

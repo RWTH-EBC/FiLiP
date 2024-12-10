@@ -8,34 +8,36 @@ from pathlib import Path
 readme_path = Path(__file__).parent.joinpath("README.md")
 LONG_DESCRIPTION = readme_path.read_text()
 
-INSTALL_REQUIRES = ['aenum~=3.1.15',
-                    'datamodel_code_generator[http]~=0.25.0',
-                    'paho-mqtt~=2.0.0',
-                    'pandas_datapackage_reader~=0.18.0',
-                    'pydantic>=2.5.2,<2.7.0',
-                    'pydantic-settings>=2.0.0,<2.3.0',
-                    'geojson_pydantic~=1.0.2',
-                    'stringcase>=1.2.0',
-                    'rdflib~=6.0.0',
-                    'regex~=2023.10.3',
-                    'requests~=2.32.0',
-                    'rapidfuzz~=3.4.0',
-                    'geojson-pydantic~=1.0.2',
-                    'wget~=3.2',
-                    'PyLD~=2.0.4',
-                    'pyjexl~=0.3.0']
+INSTALL_REQUIRES = [
+    "aenum~=3.1.15",
+    "datamodel_code_generator[http]~=0.25.0",
+    "paho-mqtt~=2.0.0",
+    "pandas_datapackage_reader~=0.18.0",
+    "pydantic>=2.5.2,<2.7.0",
+    "pydantic-settings>=2.0.0,<2.3.0",
+    "geojson_pydantic~=1.0.2",
+    "stringcase>=1.2.0",
+    "rdflib~=6.0.0",
+    "regex~=2023.10.3",
+    "requests~=2.32.0",
+    "rapidfuzz~=3.4.0",
+    "geojson-pydantic~=1.0.2",
+    "wget~=3.2",
+    "PyLD~=2.0.4",
+    "pyjexl~=0.3.0",
+]
 
 SETUP_REQUIRES = INSTALL_REQUIRES.copy()
 
-VERSION = '0.6.0'
+VERSION = "0.6.0"
 
 setuptools.setup(
     name="filip",
     version=VERSION,
-    author='RWTH Aachen University, E.ON Energy Research Center, Institute\
-        of Energy Efficient Buildings and Indoor Climate',
-    author_email='junsong.du@eonerc.rwth-aachen.de',
-    description='[FI]WARE [Li]brary for [P]ython',
+    author="RWTH Aachen University, E.ON Energy Research Center, Institute\
+        of Energy Efficient Buildings and Indoor Climate",
+    author_email="junsong.du@eonerc.rwth-aachen.de",
+    description="[FI]WARE [Li]brary for [P]ython",
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
     url="https://github.com/RWTH-EBC/filip",

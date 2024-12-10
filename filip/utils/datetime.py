@@ -25,6 +25,4 @@ def convert_datetime_to_iso_8601_with_z_suffix(dt: datetime) -> str:
         String in iso 8601 notation with z-suffix
     """
     dt = transform_to_utc_datetime(dt)
-    return dt.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]+'Z'
-
-
+    return dt.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"

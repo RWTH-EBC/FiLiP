@@ -2,6 +2,7 @@
 Implementation of an extended MQTT client that automatically handles the
 topic subscription for FIWARE's IoT communication pattern.
 """
+
 import itertools
 import logging
 import warnings
@@ -12,11 +13,12 @@ import paho.mqtt.client as mqtt
 
 from filip.clients.mqtt.encoder import BaseEncoder, Json, Ultralight
 from filip.models.mqtt import IoTAMQTTMessageType
-from filip.models.ngsi_v2.iot import \
-    Device, \
-    PayloadProtocol, \
-    ServiceGroup, \
-    TransportProtocol
+from filip.models.ngsi_v2.iot import (
+    Device,
+    PayloadProtocol,
+    ServiceGroup,
+    TransportProtocol,
+)
 
 
 class IoTAMQTTClient(mqtt.Client):
@@ -121,16 +123,18 @@ class IoTAMQTTClient(mqtt.Client):
 
     """
 
-    def __init__(self,
-                 client_id="",
-                 clean_session=None,
-                 userdata=None,
-                 protocol=mqtt.MQTTv311,
-                 transport="tcp",
-                 callback_api_version=mqtt.CallbackAPIVersion.VERSION2,
-                 devices: List[Device] = None,
-                 service_groups: List[ServiceGroup] = None,
-                 custom_encoder: Dict[str, BaseEncoder] = None):
+    def __init__(
+        self,
+        client_id="",
+        clean_session=None,
+        userdata=None,
+        protocol=mqtt.MQTTv311,
+        transport="tcp",
+        callback_api_version=mqtt.CallbackAPIVersion.VERSION2,
+        devices: List[Device] = None,
+        service_groups: List[ServiceGroup] = None,
+        custom_encoder: Dict[str, BaseEncoder] = None,
+    ):
         """
         Args:
             client_id:
@@ -186,16 +190,17 @@ class IoTAMQTTClient(mqtt.Client):
                 essentially saves boiler plate code.
         """
         # initialize parent client
-        super().__init__(client_id=client_id,
-                         clean_session=clean_session,
-                         userdata=userdata,
-                         protocol=protocol,
-                         callback_api_version=callback_api_version,
-                         transport=transport)
+        super().__init__(
+            client_id=client_id,
+            clean_session=clean_session,
+            userdata=userdata,
+            protocol=protocol,
+            callback_api_version=callback_api_version,
+            transport=transport,
+        )
 
         # setup logging functionality
-        self.logger = logging.getLogger(
-            name=f"{self.__class__.__name__}")
+        self.logger = logging.getLogger(name=f"{self.__class__.__name__}")
         self.logger.addHandler(logging.NullHandler())
         self.enable_logger(self.logger)
 
@@ -213,8 +218,7 @@ class IoTAMQTTClient(mqtt.Client):
             self.devices = devices
 
         # create dict with available encoders
-        self._encoders = {'IoTA-JSON': Json(),
-                          'PDI-IoTA-UltraLight': Ultralight()}
+        self._encoders = {"IoTA-JSON": Json(), "PDI-IoTA-UltraLight": Ultralight()}
 
         # add custom encoder for message parsing
         if custom_encoder:
@@ -263,8 +267,9 @@ class IoTAMQTTClient(mqtt.Client):
 
     def add_encoder(self, encoder: Dict[str, BaseEncoder]):
         for value in encoder.values():
-            assert isinstance(value, BaseEncoder), \
-                f"Encoder must be a subclass of {type(BaseEncoder)}"
+            assert isinstance(
+                value, BaseEncoder
+            ), f"Encoder must be a subclass of {type(BaseEncoder)}"
 
         self._encoders.update(encoder)
 
@@ -286,25 +291,26 @@ class IoTAMQTTClient(mqtt.Client):
 
         assert isinstance(device, Device), "Invalid device configuration!"
 
-        assert device.transport == TransportProtocol.MQTT, \
-            "Unsupported transport protocol found in device configuration!"
+        assert (
+            device.transport == TransportProtocol.MQTT
+        ), "Unsupported transport protocol found in device configuration!"
 
         if device.apikey in self.service_groups.keys():
             pass
         # check if matching service group is registered
         else:
-            msg = "Could not find matching service group! " \
-                  "Communication may not work correctly!"
+            msg = (
+                "Could not find matching service group! "
+                "Communication may not work correctly!"
+            )
             self.logger.warning(msg=msg)
             warnings.warn(message=msg)
 
         return device
 
-    def __create_topic(self,
-                       *,
-                       topic_type: IoTAMQTTMessageType,
-                       device: Device,
-                       attribute: str = None) -> str:
+    def __create_topic(
+        self, *, topic_type: IoTAMQTTMessageType, device: Device, attribute: str = None
+    ) -> str:
         """
         Creates a topic for a device configuration based on the requested
         topic type.
@@ -332,46 +338,61 @@ class IoTAMQTTClient(mqtt.Client):
                 If attribute name is missing for single measurements
         """
         if topic_type == IoTAMQTTMessageType.MULTI:
-            topic = '/'.join((self._encoders[device.protocol].prefix,
-                              device.apikey,
-                              device.device_id,
-                              'attrs'))
+            topic = "/".join(
+                (
+                    self._encoders[device.protocol].prefix,
+                    device.apikey,
+                    device.device_id,
+                    "attrs",
+                )
+            )
         elif topic_type == IoTAMQTTMessageType.SINGLE:
             if attribute:
-                attr = next(attr for attr in device.attributes
-                            if attr.name == attribute)
+                attr = next(
+                    attr for attr in device.attributes if attr.name == attribute
+                )
                 if attr.object_id:
                     attr_suffix = attr.object_id
                 else:
                     attr_suffix = attr.name
-                topic = '/'.join((self._encoders[device.protocol].prefix,
-                                  device.apikey,
-                                  device.device_id,
-                                  'attrs',
-                                  attr_suffix))
+                topic = "/".join(
+                    (
+                        self._encoders[device.protocol].prefix,
+                        device.apikey,
+                        device.device_id,
+                        "attrs",
+                        attr_suffix,
+                    )
+                )
             else:
                 raise ValueError("Missing argument name for single measurement")
         elif topic_type == IoTAMQTTMessageType.CMD:
-            topic = '/' + '/'.join((device.apikey, device.device_id, 'cmd'))
+            topic = "/" + "/".join((device.apikey, device.device_id, "cmd"))
         elif topic_type == IoTAMQTTMessageType.CMDEXE:
-            topic = '/'.join((self._encoders[device.protocol].prefix,
-                              device.apikey,
-                              device.device_id,
-                              'cmdexe'))
+            topic = "/".join(
+                (
+                    self._encoders[device.protocol].prefix,
+                    device.apikey,
+                    device.device_id,
+                    "cmdexe",
+                )
+            )
         elif topic_type == IoTAMQTTMessageType.CONFIG:
-            topic = '/'.join((self._encoders[device.protocol].prefix,
-                              device.apikey,
-                              device.device_id,
-                              'configuration'))
+            topic = "/".join(
+                (
+                    self._encoders[device.protocol].prefix,
+                    device.apikey,
+                    device.device_id,
+                    "configuration",
+                )
+            )
         else:
             raise KeyError("topic_type not supported")
         return topic
 
-    def __subscribe_commands(self, *,
-                             device: Device = None,
-                             qos=0,
-                             options=None,
-                             properties=None):
+    def __subscribe_commands(
+        self, *, device: Device = None, qos=0, options=None, properties=None
+    ):
         """
         Subscribes commands based on device configuration. If device argument is
         omitted the function will subscribe to all topics of already registered
@@ -390,19 +411,18 @@ class IoTAMQTTClient(mqtt.Client):
         """
         if Device:
             if len(device.commands) > 0:
-                topic = self.__create_topic(device=device,
-                                            topic_type=IoTAMQTTMessageType.CMD)
-                super().subscribe(topic=topic,
-                                  qos=qos,
-                                  options=options,
-                                  properties=properties)
+                topic = self.__create_topic(
+                    device=device, topic_type=IoTAMQTTMessageType.CMD
+                )
+                super().subscribe(
+                    topic=topic, qos=qos, options=options, properties=properties
+                )
         else:
             # call itself but with device argument for all registered _devices
             for device in self._devices.values():
-                self.__subscribe_commands(device=device,
-                                          qos=qos,
-                                          options=options,
-                                          properties=properties)
+                self.__subscribe_commands(
+                    device=device, qos=qos, options=options, properties=properties
+                )
 
     def get_service_group(self, apikey: str) -> ServiceGroup:
         """
@@ -446,14 +466,14 @@ class IoTAMQTTClient(mqtt.Client):
         """
         if isinstance(service_group, dict):
             service_group = ServiceGroup.model_validate(service_group)
-        assert isinstance(service_group, ServiceGroup), \
-            "Invalid content for service group!"
+        assert isinstance(
+            service_group, ServiceGroup
+        ), "Invalid content for service group!"
 
         if self.service_groups.get(service_group.apikey, None) is None:
             pass
         else:
-            raise ValueError("Service group already exists! %s",
-                             service_group.apikey)
+            raise ValueError("Service group already exists! %s", service_group.apikey)
         # add service group configuration to the service group list
         self.service_groups[service_group.apikey] = service_group
 
@@ -469,11 +489,9 @@ class IoTAMQTTClient(mqtt.Client):
         """
         group = self.service_groups.pop(apikey, None)
         if group:
-            self.logger.info("Successfully unregistered Service Group '%s'!",
-                             apikey)
+            self.logger.info("Successfully unregistered Service Group '%s'!", apikey)
         else:
-            self.logger.error("Could not unregister service group '%s'!",
-                              apikey)
+            self.logger.error("Could not unregister service group '%s'!", apikey)
             raise KeyError("Device not found!")
 
     def update_service_group(self, service_group: Union[ServiceGroup, Dict]):
@@ -493,12 +511,12 @@ class IoTAMQTTClient(mqtt.Client):
         """
         if isinstance(service_group, dict):
             service_group = ServiceGroup.model_validate(service_group)
-        assert isinstance(service_group, ServiceGroup), \
-            "Invalid content for service group"
+        assert isinstance(
+            service_group, ServiceGroup
+        ), "Invalid content for service group"
 
         if self.service_groups.get(service_group.apikey, None) is None:
-            raise KeyError("Service group not found! %s",
-                           service_group.apikey)
+            raise KeyError("Service group not found! %s", service_group.apikey)
         # add service group configuration to the service group list
         self.service_groups[service_group.apikey] = service_group
 
@@ -526,11 +544,9 @@ class IoTAMQTTClient(mqtt.Client):
         """
         return self._devices[device_id]
 
-    def add_device(self,
-                   device: Union[Device, Dict],
-                   qos=0,
-                   options=None,
-                   properties=None):
+    def add_device(
+        self, device: Union[Device, Dict], qos=0, options=None, properties=None
+    ):
         """
         Registers a device config with the mqtt client. Subsequently,
         the client will magically subscribe to the corresponding topics based
@@ -563,10 +579,9 @@ class IoTAMQTTClient(mqtt.Client):
         # add device configuration to the device list
         self._devices[device.device_id] = device
         # subscribes to the command topic
-        self.__subscribe_commands(device=device,
-                                  qos=qos,
-                                  options=options,
-                                  properties=properties)
+        self.__subscribe_commands(
+            device=device, qos=qos, options=options, properties=properties
+        )
 
     def delete_device(self, device_id: str):
         """
@@ -580,20 +595,18 @@ class IoTAMQTTClient(mqtt.Client):
         """
         device = self._devices.pop(device_id, None)
         if device:
-            topic = self.__create_topic(device=device,
-                                        topic_type=IoTAMQTTMessageType.CMD)
+            topic = self.__create_topic(
+                device=device, topic_type=IoTAMQTTMessageType.CMD
+            )
             self.unsubscribe(topic=topic)
             self.message_callback_remove(sub=topic)
-            self.logger.info("Successfully unregistered Device '%s'!",
-                             device_id)
+            self.logger.info("Successfully unregistered Device '%s'!", device_id)
         else:
             self.logger.error("Could not unregister device '%s'", device_id)
 
-    def update_device(self,
-                      device: Union[Device, Dict],
-                      qos=0,
-                      options=None,
-                      properties=None):
+    def update_device(
+        self, device: Union[Device, Dict], qos=0, options=None, properties=None
+    ):
         """
         Updates a registered device configuration. There is no opportunity
         to only partially update the device. Hence, your device model should
@@ -619,10 +632,9 @@ class IoTAMQTTClient(mqtt.Client):
         # update device configuration in the device list
         self._devices[device.device_id] = device
         # subscribes to the command topic
-        self.__subscribe_commands(device=device,
-                                  qos=qos,
-                                  options=options,
-                                  properties=properties)
+        self.__subscribe_commands(
+            device=device, qos=qos, options=options, properties=properties
+        )
 
     def add_command_callback(self, device_id: str, callback: Callable):
         """
@@ -660,21 +672,21 @@ class IoTAMQTTClient(mqtt.Client):
         if device is None:
             raise KeyError("Device does not exist! %s", device_id)
         self.__subscribe_commands(device=device)
-        topic = self.__create_topic(device=device,
-                                    topic_type=IoTAMQTTMessageType.CMD)
+        topic = self.__create_topic(device=device, topic_type=IoTAMQTTMessageType.CMD)
         self.message_callback_add(topic, callback)
 
-    def publish(self,
-                topic=None,
-                payload: Union[Dict, Any] = None,
-                qos: int = 0,
-                retain: bool = False,
-                properties=None,
-                device_id: str = None,
-                attribute_name: str = None,
-                command_name: str = None,
-                timestamp: bool = False
-                ):
+    def publish(
+        self,
+        topic=None,
+        payload: Union[Dict, Any] = None,
+        qos: int = 0,
+        retain: bool = False,
+        properties=None,
+        device_id: str = None,
+        attribute_name: str = None,
+        command_name: str = None,
+        timestamp: bool = False,
+    ):
         """
         Publish an MQTT Message to a specified topic. If you want to publish
         a device specific message to a device use the device_id argument for
@@ -741,10 +753,9 @@ class IoTAMQTTClient(mqtt.Client):
 
             # create message for multi measurement payload
             if attribute_name is None and command_name is None:
-                assert isinstance(payload, dict), \
-                    "Payload must be a dictionary"
+                assert isinstance(payload, dict), "Payload must be a dictionary"
 
-                if timestamp and 'timeInstant' not in payload.keys():
+                if timestamp and "timeInstant" not in payload.keys():
                     payload["timeInstant"] = datetime.utcnow()
                 # validate if dict keys match device configuration
 
@@ -752,69 +763,78 @@ class IoTAMQTTClient(mqtt.Client):
                 for key in payload.keys():
                     for attr in device.attributes:
                         key_constraint = key == "timeInstant"
-                        def elif_action(msg): None
+
+                        def elif_action(msg):
+                            None
 
                         if attr.object_id is not None:
                             key_constraint = key_constraint or (key in attr.object_id)
-                            def elif_action(msg): msg[attr.object_id] = msg.pop(key)
-                                            
-                        #could be made more compact by pulling up the second condition
-                        #but would probably make the code less readable...
+
+                            def elif_action(msg):
+                                msg[attr.object_id] = msg.pop(key)
+
+                        # could be made more compact by pulling up the second condition
+                        # but would probably make the code less readable...
                         if key_constraint:
                             break
-                                            
+
                         elif key == attr.name:
                             elif_action(msg_payload)
                             break
 
                     else:
-                        err_msg = f"Attribute key '{key}' is not allowed " \
-                                  f"in the message payload for this " \
-                                  f"device configuration with device_id " \
-                                  f"'{device_id}'"
+                        err_msg = (
+                            f"Attribute key '{key}' is not allowed "
+                            f"in the message payload for this "
+                            f"device configuration with device_id "
+                            f"'{device_id}'"
+                        )
                         raise KeyError(err_msg)
                 topic = self.__create_topic(
-                    device=device,
-                    topic_type=IoTAMQTTMessageType.MULTI)
+                    device=device, topic_type=IoTAMQTTMessageType.MULTI
+                )
                 payload = self._encoders[device.protocol].encode_msg(
                     device_id=device_id,
                     payload=msg_payload,
-                    msg_type=IoTAMQTTMessageType.MULTI)
+                    msg_type=IoTAMQTTMessageType.MULTI,
+                )
 
             # create message for command acknowledgement
             elif attribute_name is None and command_name:
                 assert isinstance(payload, Dict), "Payload must be a dictionary"
-                assert len(payload.keys()) == 1, \
-                    "Cannot acknowledge multiple commands simultaneously"
-                assert next(iter(payload.keys())) in \
-                       [cmd.name for cmd in device.commands], \
-                    "Unknown command for this device!"
+                assert (
+                    len(payload.keys()) == 1
+                ), "Cannot acknowledge multiple commands simultaneously"
+                assert next(iter(payload.keys())) in [
+                    cmd.name for cmd in device.commands
+                ], "Unknown command for this device!"
                 topic = self.__create_topic(
-                    device=device,
-                    topic_type=IoTAMQTTMessageType.CMDEXE)
+                    device=device, topic_type=IoTAMQTTMessageType.CMDEXE
+                )
                 payload = self._encoders[device.protocol].encode_msg(
                     device_id=device_id,
                     payload=payload,
-                    msg_type=IoTAMQTTMessageType.CMDEXE)
+                    msg_type=IoTAMQTTMessageType.CMDEXE,
+                )
 
             # create message for single measurement
             elif attribute_name and command_name is None:
                 topic = self.__create_topic(
                     device=device,
                     topic_type=IoTAMQTTMessageType.SINGLE,
-                    attribute=attribute_name)
+                    attribute=attribute_name,
+                )
                 payload = self._encoders[device.protocol].encode_msg(
                     device_id=device_id,
                     payload=payload,
-                    msg_type=IoTAMQTTMessageType.SINGLE)
+                    msg_type=IoTAMQTTMessageType.SINGLE,
+                )
             else:
                 raise ValueError("Inconsistent arguments!")
 
-        super().publish(topic=topic,
-                        payload=payload,
-                        qos=qos,
-                        retain=retain,
-                        properties=properties)
+        super().publish(
+            topic=topic, payload=payload, qos=qos, retain=retain, properties=properties
+        )
 
     def subscribe(self, topic=None, qos=0, options=None, properties=None):
         """
@@ -835,13 +855,11 @@ class IoTAMQTTClient(mqtt.Client):
             None
         """
         if topic:
-            super().subscribe(topic=topic,
-                              qos=qos,
-                              options=options,
-                              properties=properties)
+            super().subscribe(
+                topic=topic, qos=qos, options=options, properties=properties
+            )
         else:
             for device in self._devices.values():
-                self.__subscribe_commands(device=device,
-                                          qos=qos,
-                                          options=options,
-                                          properties=properties)
+                self.__subscribe_commands(
+                    device=device, qos=qos, options=options, properties=properties
+                )

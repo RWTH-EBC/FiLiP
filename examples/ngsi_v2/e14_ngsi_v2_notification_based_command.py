@@ -15,6 +15,7 @@ suit your actuators' requirements. The default payload format is a quit verbose 
 object. With the customization, you can simplify the payload format to a simple string.
 More information: https://fiware-orion.readthedocs.io/en/3.8.0/orion-api.html#custom-notifications
 """
+
 import json
 import time
 
@@ -34,32 +35,31 @@ CB_URL = settings.CB_URL
 MQTT_BROKER_URL = settings.MQTT_BROKER_URL
 
 # FIWARE-Service
-SERVICE = 'filip'
+SERVICE = "filip"
 # FIWARE-Service path
-SERVICE_PATH = '/'
+SERVICE_PATH = "/"
 
 # Setting up logging
 logging.basicConfig(
-    level='INFO',
-    format='%(asctime)s %(name)s %(levelname)s: %(message)s',
-    datefmt='%d-%m-%Y %H:%M:%S')
+    level="INFO",
+    format="%(asctime)s %(name)s %(levelname)s: %(message)s",
+    datefmt="%d-%m-%Y %H:%M:%S",
+)
 
 logger = logging.getLogger(__name__)
 
 
-def set_up_mqtt_actuator(normal_topic: str,
-                         custom_topic: str):
+def set_up_mqtt_actuator(normal_topic: str, custom_topic: str):
     """
     This function sets up the MQTT actuator
     """
+
     def on_connect(client, userdata, flags, reasonCode, properties=None):
         if reasonCode != 0:
-            logger.error(f"Connection failed with error code: "
-                         f"'{reasonCode}'")
+            logger.error(f"Connection failed with error code: " f"'{reasonCode}'")
             raise ConnectionError
         else:
-            logger.info("Successfully, connected with result code " + str(
-                reasonCode))
+            logger.info("Successfully, connected with result code " + str(reasonCode))
         client.subscribe(mqtt_topic)
         client.subscribe(mqtt_topic_custom)
 
@@ -67,8 +67,7 @@ def set_up_mqtt_actuator(normal_topic: str,
         logger.info("Successfully subscribed to with QoS: %s", granted_qos)
 
     def on_message(client, userdata, msg):
-        logger.info("Receive MQTT command: " + msg.topic + " " + str(
-            msg.payload))
+        logger.info("Receive MQTT command: " + msg.topic + " " + str(msg.payload))
         if msg.topic == normal_topic:
             data = json.loads(msg.payload)
             data_pretty = json.dumps(data, indent=2)
@@ -80,13 +79,14 @@ def set_up_mqtt_actuator(normal_topic: str,
             print(f"Turn heat power to: {msg.payload.decode()}")
 
     def on_disconnect(client, userdata, flags, reasonCode, properties=None):
-        logger.info("MQTT client disconnected with reasonCode "
-                    + str(reasonCode))
+        logger.info("MQTT client disconnected with reasonCode " + str(reasonCode))
 
-    mqtt_client = mqtt.Client(userdata=None,
-                              protocol=mqtt.MQTTv5,
-                              callback_api_version=mqtt.CallbackAPIVersion.VERSION2,
-                              transport="tcp")
+    mqtt_client = mqtt.Client(
+        userdata=None,
+        protocol=mqtt.MQTTv5,
+        callback_api_version=mqtt.CallbackAPIVersion.VERSION2,
+        transport="tcp",
+    )
     # add callbacks to the client
     mqtt_client.on_connect = on_connect
     mqtt_client.on_subscribe = on_subscribe
@@ -97,25 +97,20 @@ def set_up_mqtt_actuator(normal_topic: str,
 
 
 def create_subscription(
-        cbc: ContextBrokerClient,
-        entity_id: str,
-        notification: Notification):
-    sub = Subscription.model_validate({
-        "description": "Test mqtt custom notification with payload message",
-        "subject": {
-            "entities": [
-                {
-                    "id": entity_id
-                }
-            ]
-        },
-        "notification": notification.model_dump(),
-        "throttling": 0
-    })
+    cbc: ContextBrokerClient, entity_id: str, notification: Notification
+):
+    sub = Subscription.model_validate(
+        {
+            "description": "Test mqtt custom notification with payload message",
+            "subject": {"entities": [{"id": entity_id}]},
+            "notification": notification.model_dump(),
+            "throttling": 0,
+        }
+    )
     cbc.post_subscription(sub)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # FIWARE header
     fiware_header = FiwareHeader(service=SERVICE, service_path=SERVICE_PATH)
 
@@ -124,7 +119,7 @@ if __name__ == '__main__':
     clear_context_broker(url=CB_URL, fiware_header=fiware_header)
 
     # Set up a dummy MQTT actuator
-    mqtt_topic = "actuator/1"   # Topic for the actuator 1
+    mqtt_topic = "actuator/1"  # Topic for the actuator 1
     mqtt_topic_custom = "actuator/2"  # Topic for the actuator 2 (custom payload)
 
     actuator_client = set_up_mqtt_actuator(mqtt_topic, mqtt_topic_custom)
@@ -132,37 +127,34 @@ if __name__ == '__main__':
     actuator_client.loop_start()
 
     # Create entities for the actuators
-    actuator_1 = ContextEntity(id="actuator_1", type="Actuator",
-                               toggle={
-                                      "type": "Boolean",
-                                      "value": False
-                               })
+    actuator_1 = ContextEntity(
+        id="actuator_1", type="Actuator", toggle={"type": "Boolean", "value": False}
+    )
     cb_client.post_entity(actuator_1)
-    actuator_2 = ContextEntity(id="actuator_2", type="Actuator",
-                               heatPower={
-                                        "type": "Number",
-                                        "value": 0
-                                 })
+    actuator_2 = ContextEntity(
+        id="actuator_2", type="Actuator", heatPower={"type": "Number", "value": 0}
+    )
     cb_client.post_entity(actuator_2)
 
     # Create a notification for the actuator 1 with normal payload
     notification_normal = Notification(
-        mqtt={
-            "url": MQTT_BROKER_URL, "topic": mqtt_topic
-        },
-        attrs=["toggle"])
-    create_subscription(cb_client,
-                        entity_id=actuator_1.id,
-                        notification=notification_normal)
+        mqtt={"url": MQTT_BROKER_URL, "topic": mqtt_topic}, attrs=["toggle"]
+    )
+    create_subscription(
+        cb_client, entity_id=actuator_1.id, notification=notification_normal
+    )
 
     # Create a subscription for the actuator 2 with custom payload
     notification_custom = Notification(
         mqttCustom={
-            "url": MQTT_BROKER_URL, "topic": mqtt_topic_custom,
-            "payload": "${heatPower}"})
-    create_subscription(cb_client,
-                        entity_id=actuator_2.id,
-                        notification=notification_custom)
+            "url": MQTT_BROKER_URL,
+            "topic": mqtt_topic_custom,
+            "payload": "${heatPower}",
+        }
+    )
+    create_subscription(
+        cb_client, entity_id=actuator_2.id, notification=notification_custom
+    )
 
     # Send command to actuator 1
     actuator_1.toggle.value = True
