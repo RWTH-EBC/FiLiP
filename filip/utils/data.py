@@ -29,7 +29,7 @@ def load_datapackage(url: str, package_name: str) -> Dict[str, pd.DataFrame]:
 
     # create directory for data if not exists
     validate_http_url(url=url)
-    path = Path(__file__).parent.parent.absolute().joinpath('data')
+    path = Path(__file__).parent.parent.absolute().joinpath("data")
     path.mkdir(parents=True, exist_ok=True)
     package_path = path.joinpath(package_name)
 
@@ -42,28 +42,29 @@ def load_datapackage(url: str, package_name: str) -> Dict[str, pd.DataFrame]:
             file_name = file[:-4]
             # read in each file as one dataframe, prevents the deletion of NaN
             # values with na_filter=False
-            frame = pd.read_csv(package_path.joinpath(file),
-                                index_col=0,
-                                header=0,
-                                na_filter=False)
+            frame = pd.read_csv(
+                package_path.joinpath(file), index_col=0, header=0, na_filter=False
+            )
             data[file_name] = frame
 
     else:
         # download external data and store data
-        logger.info("Could not find data package in 'filip.data'. Will "
-                    "try to download from %s", url)
+        logger.info(
+            "Could not find data package in 'filip.data'. Will "
+            "try to download from %s",
+            url,
+        )
         try:
             data = read_datapackage(url)
             # rename keys
-            data = {k.replace('-', '_'): v for k, v in data.items()}
+            data = {k.replace("-", "_"): v for k, v in data.items()}
             os.mkdir(package_path)
 
             # store data in filip.data
             for k, v in data.items():
                 v: DataFrame = v
                 v.loc[:, :] = v[:].applymap(str)
-                table_filepath = \
-                    str(package_path) + f"\\{k.replace('-', '_')}.csv"
+                table_filepath = str(package_path) + f"\\{k.replace('-', '_')}.csv"
                 v.to_csv(table_filepath)
 
         except:

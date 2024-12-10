@@ -1,6 +1,7 @@
 """
 Tests for filip.cb.client
 """
+
 import unittest
 import logging
 import pyld
@@ -9,8 +10,12 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 from filip.clients.ngsi_ld.cb import ContextBrokerLDClient
 from filip.models.base import FiwareLDHeader, core_context
-from filip.models.ngsi_ld.context import ActionTypeLD, ContextLDEntity, ContextProperty, \
-    NamedContextProperty
+from filip.models.ngsi_ld.context import (
+    ActionTypeLD,
+    ContextLDEntity,
+    ContextProperty,
+    NamedContextProperty,
+)
 from tests.config import settings
 import requests
 from filip.utils.cleanup import clear_context_broker_ld
@@ -18,14 +23,15 @@ from filip.utils.cleanup import clear_context_broker_ld
 
 # Setting up logging
 logging.basicConfig(
-    level='ERROR',
-    format='%(asctime)s %(name)s %(levelname)s: %(message)s')
+    level="ERROR", format="%(asctime)s %(name)s %(levelname)s: %(message)s"
+)
 
 
 class TestContextBroker(unittest.TestCase):
     """
     Test class for ContextBrokerClient
     """
+
     def setUp(self) -> None:
         """
         Setup test data
@@ -34,14 +40,12 @@ class TestContextBroker(unittest.TestCase):
         """
         self.resources = {
             "entities_url": "/ngsi-ld/v1/entities",
-            "types_url": "/ngsi-ld/v1/types"
+            "types_url": "/ngsi-ld/v1/types",
         }
-        self.attr = {
-            'testtemperature': {
-                'type': 'Property',
-                'value': 20.0}
-        }
-        self.entity = ContextLDEntity(id='urn:ngsi-ld:my:id4', type='MyType', **self.attr)
+        self.attr = {"testtemperature": {"type": "Property", "value": 20.0}}
+        self.entity = ContextLDEntity(
+            id="urn:ngsi-ld:my:id4", type="MyType", **self.attr
+        )
         self.entity_2 = ContextLDEntity(id="urn:ngsi-ld:room2", type="room")
         self.fiware_header = FiwareLDHeader(ngsild_tenant=settings.FIWARE_SERVICE)
         # Set up retry strategy
@@ -49,15 +53,21 @@ class TestContextBroker(unittest.TestCase):
         retry_strategy = Retry(
             total=5,  # Maximum number of retries
             backoff_factor=1,  # Exponential backoff (1, 2, 4, 8, etc.)
-            status_forcelist=[429, 500, 502, 503, 504], # Retry on these HTTP status codes
+            status_forcelist=[
+                429,
+                500,
+                502,
+                503,
+                504,
+            ],  # Retry on these HTTP status codes
         )
         # Set the HTTP adapter with retry strategy
         adapter = HTTPAdapter(max_retries=retry_strategy)
         session.mount("https://", adapter)
         session.mount("http://", adapter)
-        self.client = ContextBrokerLDClient(fiware_header=self.fiware_header,
-                                            session=session,
-                                            url=settings.LD_CB_URL)
+        self.client = ContextBrokerLDClient(
+            fiware_header=self.fiware_header, session=session, url=settings.LD_CB_URL
+        )
         clear_context_broker_ld(cb_ld_client=self.client)
 
     def tearDown(self) -> None:
@@ -66,7 +76,6 @@ class TestContextBroker(unittest.TestCase):
         """
         clear_context_broker_ld(cb_ld_client=self.client)
         self.client.close()
-
 
     @unittest.skip("Only for local testing environment")
     def test_not_existing_tenant(self):
@@ -77,50 +86,55 @@ class TestContextBroker(unittest.TestCase):
         """
         # create uuid for the tenant
         import uuid
-        tenant = str(uuid.uuid4()).split('-')[0]
+
+        tenant = str(uuid.uuid4()).split("-")[0]
         fiware_header = FiwareLDHeader(ngsild_tenant=tenant)
-        client = ContextBrokerLDClient(fiware_header=fiware_header,
-                                       url=settings.LD_CB_URL)
+        client = ContextBrokerLDClient(
+            fiware_header=fiware_header, url=settings.LD_CB_URL
+        )
         entities = client.get_entity_list()
         self.assertEqual(len(entities), 0)
-
 
     def test_get_entities_pagination(self):
         """
         Test pagination of get entities
         """
         init_numb = 2000
-        entities_a = [ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}",
-                                      type=f'filip:object:TypeA') for i in
-                      range(0, init_numb)]
-        
-        self.client.entity_batch_operation(action_type=ActionTypeLD.CREATE,
-                                           entities=entities_a)
-        
+        entities_a = [
+            ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}", type=f"filip:object:TypeA")
+            for i in range(0, init_numb)
+        ]
+
+        self.client.entity_batch_operation(
+            action_type=ActionTypeLD.CREATE, entities=entities_a
+        )
+
         entity_list = self.client.get_entity_list(limit=1)
-        self.assertEqual(len(entity_list),1)
-        
+        self.assertEqual(len(entity_list), 1)
+
         entity_list = self.client.get_entity_list(limit=400)
-        self.assertEqual(len(entity_list),400)
-        
+        self.assertEqual(len(entity_list), 400)
+
         entity_list = self.client.get_entity_list(limit=800)
-        self.assertEqual(len(entity_list),800)
-        
+        self.assertEqual(len(entity_list), 800)
+
         entity_list = self.client.get_entity_list(limit=1000)
-        self.assertEqual(len(entity_list),1000)
+        self.assertEqual(len(entity_list), 1000)
 
         # currently, there is a limit of 1000 entities per delete request
-        self.client.entity_batch_operation(action_type=ActionTypeLD.DELETE,
-                                           entities=entities_a[0:800])
-        self.client.entity_batch_operation(action_type=ActionTypeLD.DELETE,
-                                           entities=entities_a[800:1600])
+        self.client.entity_batch_operation(
+            action_type=ActionTypeLD.DELETE, entities=entities_a[0:800]
+        )
+        self.client.entity_batch_operation(
+            action_type=ActionTypeLD.DELETE, entities=entities_a[800:1600]
+        )
         entity_list = self.client.get_entity_list(limit=1000)
         self.assertEqual(len(entity_list), init_numb - 1600)
 
     def test_get_entites(self):
         """
         Retrieve a set of entities which matches a specific query from an NGSI-LD system
-        Args: 
+        Args:
             - id(string): Comma separated list of URIs to be retrieved
             - idPattern(string): Regular expression that must be matched by Entity ids
             - type(string): Comma separated list of Entity type names to be retrieved
@@ -139,7 +153,8 @@ class TestContextBroker(unittest.TestCase):
 
         self.client.post_entity(entity=self.entity)
         entity_list_idpattern = self.client.get_entity_list(
-            id_pattern="urn:ngsi-ld:my*")
+            id_pattern="urn:ngsi-ld:my*"
+        )
         self.assertEqual(len(entity_list_idpattern), 1)
         self.assertEqual(entity_list_idpattern[0].id, self.entity.id)
 
@@ -163,15 +178,15 @@ class TestContextBroker(unittest.TestCase):
                 modifiedAt: string($date_time)
                 <*>: Property{}
                      Relationship{}
-                     GeoProperty{}    
+                     GeoProperty{}
             }
-        Returns: 
+        Returns:
             - (201) Created. Contains the resource URI of the created Entity
             - (400) Bad request.
             - (409) Already exists.
             - (422) Unprocessable Entity.
         Tests:
-            - Post an entity -> Does it return 201? 
+            - Post an entity -> Does it return 201?
             - Post an entity again -> Does it return 409?
             - Post an entity without requires args -> Does it return 422?
         """
@@ -181,8 +196,9 @@ class TestContextBroker(unittest.TestCase):
         self.assertEqual(len(entity_list), 1)
         self.assertEqual(entity_list[0].id, self.entity.id)
         self.assertEqual(entity_list[0].type, self.entity.type)
-        self.assertEqual(entity_list[0].testtemperature.value,
-                         self.entity.testtemperature.value)
+        self.assertEqual(
+            entity_list[0].testtemperature.value, self.entity.testtemperature.value
+        )
 
         # existed entity
         self.entity_identical = self.entity.model_copy()
@@ -192,34 +208,36 @@ class TestContextBroker(unittest.TestCase):
         self.assertEqual(response.status_code, 409)
 
         entity_list = self.client.get_entity_list(
-            entity_type=self.entity_identical.type)
+            entity_type=self.entity_identical.type
+        )
         self.assertEqual(len(entity_list), 1)
 
         # append new attribute to existed entity
         self.entity_append = self.entity.model_copy()
-        self.entity_append.delete_properties(['testtemperature'])
+        self.entity_append.delete_properties(["testtemperature"])
         self.entity_append.add_properties(
-            {'humidity': ContextProperty(**{
-                'type': 'Property',
-                'value': 50})})
+            {"humidity": ContextProperty(**{"type": "Property", "value": 50})}
+        )
         self.client.post_entity(entity=self.entity_append, append=True)
         entity_append_res = self.client.get_entity(entity_id=self.entity_append.id)
-        self.assertEqual(entity_append_res.humidity.value,
-                         self.entity_append.humidity.value)
-        self.assertEqual(entity_append_res.testtemperature.value,
-                         self.entity.testtemperature.value)
+        self.assertEqual(
+            entity_append_res.humidity.value, self.entity_append.humidity.value
+        )
+        self.assertEqual(
+            entity_append_res.testtemperature.value, self.entity.testtemperature.value
+        )
 
         # override existed entity
-        new_attr = {'newattr':
-                        {'type': 'Property', 'value': 999}
-                    }
+        new_attr = {"newattr": {"type": "Property", "value": 999}}
         self.entity_override = ContextLDEntity(
-            id=self.entity.id, type=self.entity.type, **new_attr)
+            id=self.entity.id, type=self.entity.type, **new_attr
+        )
         self.client.post_entity(entity=self.entity_override, update=True)
         entity_override_res = self.client.get_entity(entity_id=self.entity.id)
-        self.assertEqual(entity_override_res.newattr.value,
-                         self.entity_override.newattr.value)
-        self.assertNotIn('testtemperature', entity_override_res.model_dump())
+        self.assertEqual(
+            entity_override_res.newattr.value, self.entity_override.newattr.value
+        )
+        self.assertNotIn("testtemperature", entity_override_res.model_dump())
 
         # post without entity type is not allowed
         with self.assertRaises(Exception):
@@ -228,8 +246,9 @@ class TestContextBroker(unittest.TestCase):
         self.assertNotIn("room2", entity_list)
 
         """delete"""
-        self.client.entity_batch_operation(entities=entity_list,
-                                              action_type=ActionTypeLD.DELETE)
+        self.client.entity_batch_operation(
+            entities=entity_list, action_type=ActionTypeLD.DELETE
+        )
 
     def test_get_entity(self):
         """
@@ -243,10 +262,10 @@ class TestContextBroker(unittest.TestCase):
             - (200) Entity
             - (400) Bad request
             - (404) Not found
-        Tests for get entity: 
+        Tests for get entity:
             - Post entity and see if get entity with the same ID returns the entity
                 with the correct values
-            - Get entity with an ID that does not exit. See if Not found error is 
+            - Get entity with an ID that does not exit. See if Not found error is
                 raised
         """
 
@@ -267,12 +286,15 @@ class TestContextBroker(unittest.TestCase):
         """Test1"""
         self.client.post_entity(entity=self.entity)
         ret_entity = self.client.get_entity(entity_id=self.entity.id)
-        ret_entity_with_type = self.client.get_entity(entity_id=self.entity.id,
-                                                         entity_type=self.entity.type)
-        ret_entity_keyValues = self.client.get_entity(entity_id=self.entity.id,
-                                                         options="keyValues")
-        ret_entity_sysAttrs = self.client.get_entity(entity_id=self.entity.id,
-                                                        options="sysAttrs")
+        ret_entity_with_type = self.client.get_entity(
+            entity_id=self.entity.id, entity_type=self.entity.type
+        )
+        ret_entity_keyValues = self.client.get_entity(
+            entity_id=self.entity.id, options="keyValues"
+        )
+        ret_entity_sysAttrs = self.client.get_entity(
+            entity_id=self.entity.id, options="sysAttrs"
+        )
 
         self.assertEqual(ret_entity.id, self.entity.id)
         self.assertEqual(ret_entity.type, self.entity.type)
@@ -303,77 +325,81 @@ class TestContextBroker(unittest.TestCase):
         temperature_sensor_dict = {
             "id": "urn:ngsi-ld:temperatureSensor",
             "type": "TemperatureSensor",
-            "temperature": {
-                "type": "Property",
-                "value": 23,
-                "unitCode": "CEL"
-            }
+            "temperature": {"type": "Property", "value": 23, "unitCode": "CEL"},
         }
 
         # client with custom context
-        custom_context = "https://n5geh.github.io/n5geh.test-context.io/context_saref.jsonld"
+        custom_context = (
+            "https://n5geh.github.io/n5geh.test-context.io/context_saref.jsonld"
+        )
         custom_header = FiwareLDHeader(
             ngsild_tenant=settings.FIWARE_SERVICE,
         )
         custom_header.set_context(custom_context)
         client_custom_context = ContextBrokerLDClient(
-            fiware_header=custom_header,
-            url=settings.LD_CB_URL)
+            fiware_header=custom_header, url=settings.LD_CB_URL
+        )
 
         # default context
         temperature_sensor = ContextLDEntity(**temperature_sensor_dict)
         self.client.post_entity(entity=temperature_sensor)
         entity_default = self.client.get_entity(entity_id=temperature_sensor.id)
-        self.assertEqual(entity_default.context,
-                         core_context)
-        self.assertEqual(entity_default.model_dump(exclude_unset=True,
-                                                   exclude={"context"}),
-                         temperature_sensor_dict)
+        self.assertEqual(entity_default.context, core_context)
+        self.assertEqual(
+            entity_default.model_dump(exclude_unset=True, exclude={"context"}),
+            temperature_sensor_dict,
+        )
         entity_custom_context = client_custom_context.get_entity(
-            entity_id=temperature_sensor.id)
-        self.assertEqual(entity_custom_context.context,
-                         custom_context)
-        self.assertEqual(entity_custom_context.model_dump(exclude_unset=True,
-                                                          exclude={"context"}),
-                         temperature_sensor_dict)
+            entity_id=temperature_sensor.id
+        )
+        self.assertEqual(entity_custom_context.context, custom_context)
+        self.assertEqual(
+            entity_custom_context.model_dump(exclude_unset=True, exclude={"context"}),
+            temperature_sensor_dict,
+        )
         self.client.delete_entity_by_id(entity_id=temperature_sensor.id)
 
         # custom context in client
         temperature_sensor = ContextLDEntity(**temperature_sensor_dict)
         client_custom_context.post_entity(entity=temperature_sensor)
-        entity_custom = client_custom_context.get_entity(entity_id=temperature_sensor.id)
-        self.assertEqual(entity_custom.context,
-                         custom_context)
-        self.assertEqual(entity_custom.model_dump(exclude_unset=True,
-                                                  exclude={"context"}),
-                         temperature_sensor_dict)
+        entity_custom = client_custom_context.get_entity(
+            entity_id=temperature_sensor.id
+        )
+        self.assertEqual(entity_custom.context, custom_context)
+        self.assertEqual(
+            entity_custom.model_dump(exclude_unset=True, exclude={"context"}),
+            temperature_sensor_dict,
+        )
         entity_default_context = self.client.get_entity(entity_id=temperature_sensor.id)
-        self.assertEqual(entity_default_context.context,
-                         core_context)
+        self.assertEqual(entity_default_context.context, core_context)
         self.assertNotEqual(
-            entity_default_context.model_dump(exclude_unset=True,
-                                              exclude={"context"}),
-            temperature_sensor_dict)
+            entity_default_context.model_dump(exclude_unset=True, exclude={"context"}),
+            temperature_sensor_dict,
+        )
         client_custom_context.delete_entity_by_id(entity_id=temperature_sensor.id)
 
         # custom context in entity
         temperature_sensor = ContextLDEntity(
-            context=["https://n5geh.github.io/n5geh.test-context.io/context_saref.jsonld"],
-            **temperature_sensor_dict)
+            context=[
+                "https://n5geh.github.io/n5geh.test-context.io/context_saref.jsonld"
+            ],
+            **temperature_sensor_dict,
+        )
         self.client.post_entity(entity=temperature_sensor)
-        entity_custom = client_custom_context.get_entity(entity_id=temperature_sensor.id)
-        self.assertEqual(entity_custom.context,
-                         custom_context)
-        self.assertEqual(entity_custom.model_dump(exclude_unset=True,
-                                                  exclude={"context"}),
-                         temperature_sensor_dict)
+        entity_custom = client_custom_context.get_entity(
+            entity_id=temperature_sensor.id
+        )
+        self.assertEqual(entity_custom.context, custom_context)
+        self.assertEqual(
+            entity_custom.model_dump(exclude_unset=True, exclude={"context"}),
+            temperature_sensor_dict,
+        )
         entity_default_context = self.client.get_entity(entity_id=temperature_sensor.id)
-        self.assertEqual(entity_default_context.context,
-                         core_context)
+        self.assertEqual(entity_default_context.context, core_context)
         self.assertNotEqual(
-            entity_default_context.model_dump(exclude_unset=True,
-                                              exclude={"context"}),
-            temperature_sensor_dict)
+            entity_default_context.model_dump(exclude_unset=True, exclude={"context"}),
+            temperature_sensor_dict,
+        )
         self.client.delete_entity_by_id(entity_id=temperature_sensor.id)
 
     def test_delete_entity(self):
@@ -382,7 +408,7 @@ class TestContextBroker(unittest.TestCase):
         Args:
             - entityID(string): Entity ID; required
             - type(string): Entity Type
-        Returns: 
+        Returns:
             - (204) No Content. The entity was removed successfully.
             - (400) Bad request.
             - (404) Not found.
@@ -444,11 +470,11 @@ class TestContextBroker(unittest.TestCase):
     def test_add_attributes_entity(self):
         """
         Append new Entity attributes to an existing Entity within an NGSI-LD system.
-        Args: 
+        Args:
             - entityID(string): Entity ID; required
-            - options(string): Indicates that no attribute overwrite shall be performed. 
+            - options(string): Indicates that no attribute overwrite shall be performed.
                 Available values: noOverwrite
-        Returns: 
+        Returns:
             - (204) No Content
             - (207) Partial Success. Only the attributes included in the response payload were successfully appended.
             - (400) Bad Request
@@ -479,7 +505,7 @@ class TestContextBroker(unittest.TestCase):
         """
         """Test 1"""
         self.client.post_entity(self.entity)
-        attr = ContextProperty(**{'value': 20, 'unitCode': 'Number'})
+        attr = ContextProperty(**{"value": 20, "unitCode": "Number"})
 
         self.entity.add_properties({"test_value": attr})
         self.client.append_entity_attributes(self.entity)
@@ -489,7 +515,7 @@ class TestContextBroker(unittest.TestCase):
         self.client.delete_entity_by_id(entity_id=entity.id)
 
         """Test 2"""
-        attr = ContextProperty(**{'value': 20, 'type': 'Property'})
+        attr = ContextProperty(**{"value": 20, "type": "Property"})
         with self.assertRaises(Exception):
             self.entity.add_properties({"test_value": attr})
             self.client.append_entity_attributes(self.entity)
@@ -497,8 +523,8 @@ class TestContextBroker(unittest.TestCase):
         """Test 3"""
         self.client.post_entity(self.entity)
         # What makes an property/ attribute unique ???
-        attr = ContextProperty(**{'value': 20, 'type': 'Property'})
-        attr_same = ContextProperty(**{'value': 40, 'type': 'Property'})
+        attr = ContextProperty(**{"value": 20, "type": "Property"})
+        attr_same = ContextProperty(**{"value": 40, "type": "Property"})
 
         self.entity.add_properties({"test_value": attr})
         self.client.append_entity_attributes(self.entity)
@@ -533,13 +559,14 @@ class TestContextBroker(unittest.TestCase):
                 Raise Error
         """
         """Test1"""
-        new_prop = {'new_prop': ContextProperty(value=25)}
-        newer_prop = NamedContextProperty(value=40, name='new_prop')
+        new_prop = {"new_prop": ContextProperty(value=25)}
+        newer_prop = NamedContextProperty(value=40, name="new_prop")
 
         self.entity.add_properties(new_prop)
         self.client.post_entity(entity=self.entity)
-        self.client.update_entity_attribute(entity_id=self.entity.id, attr=newer_prop,
-                                               attr_name='new_prop')
+        self.client.update_entity_attribute(
+            entity_id=self.entity.id, attr=newer_prop, attr_name="new_prop"
+        )
         entity = self.client.get_entity(entity_id=self.entity.id, options="keyValues")
         prop_dict = entity.model_dump()
         self.assertIn("new_prop", prop_dict)
@@ -568,13 +595,14 @@ class TestContextBroker(unittest.TestCase):
                 Raise Error
         """
         """Test1"""
-        new_prop = {'new_prop': ContextProperty(value=25)}
+        new_prop = {"new_prop": ContextProperty(value=25)}
         newer_prop = ContextProperty(value=55)
 
         self.entity.add_properties(new_prop)
         self.client.post_entity(entity=self.entity)
-        self.client.update_entity_attribute(entity_id=self.entity.id, attr=newer_prop,
-                                               attr_name='new_prop')
+        self.client.update_entity_attribute(
+            entity_id=self.entity.id, attr=newer_prop, attr_name="new_prop"
+        )
         entity = self.client.get_entity(entity_id=self.entity.id, options="keyValues")
         prop_dict = entity.model_dump()
         self.assertIn("new_prop", prop_dict)
@@ -583,10 +611,10 @@ class TestContextBroker(unittest.TestCase):
     def test_patch_entity_attrs_attrId(self):
         """
         Update existing Entity attribute ID within an NGSI-LD system
-        Args: 
+        Args:
             - entityId(string): Entity Id; required
             - attrId(string): Attribute Id; required
-        Returns: 
+        Returns:
             - (204) No Content
             - (400) Bad Request
             - (404) Not Found
@@ -602,14 +630,14 @@ class TestContextBroker(unittest.TestCase):
                     Raise Error
         """
         """Test 1"""
-        attr = NamedContextProperty(name="test_value",
-                                    value=20)
+        attr = NamedContextProperty(name="test_value", value=20)
         self.entity.add_properties(attrs=[attr])
         self.client.post_entity(entity=self.entity)
 
         attr.value = 40
-        self.client.update_entity_attribute(entity_id=self.entity.id, attr=attr,
-                                               attr_name="test_value")
+        self.client.update_entity_attribute(
+            entity_id=self.entity.id, attr=attr, attr_name="test_value"
+        )
         entity = self.client.get_entity(entity_id=self.entity.id, options="keyValues")
         prop_dict = entity.model_dump()
         self.assertIn("test_value", prop_dict)
@@ -626,10 +654,10 @@ class TestContextBroker(unittest.TestCase):
             - (400) Bad Request
             - (404) Not Found
         Tests:
-            - Post an entity with attributes. Try to delete non existent attribute with non existent attribute 
-                id. Then check response code. 
-            - Post an entity with attributes. Try to delete one the attributes. Test if the attribute is really 
-                removed by either posting the entity or by trying to delete it again. 
+            - Post an entity with attributes. Try to delete non existent attribute with non existent attribute
+                id. Then check response code.
+            - Post an entity with attributes. Try to delete one the attributes. Test if the attribute is really
+                removed by either posting the entity or by trying to delete it again.
         """
         """
         Test 1: 
@@ -647,13 +675,13 @@ class TestContextBroker(unittest.TestCase):
         """
         """Test 1"""
 
-        attr = NamedContextProperty(name="test_value",
-                                    value=20)
+        attr = NamedContextProperty(name="test_value", value=20)
         self.entity.add_properties(attrs=[attr])
         self.client.post_entity(entity=self.entity)
         with self.assertRaises(Exception):
-            self.client.delete_attribute(entity_id=self.entity.id,
-                                            attribute_id="does_not_exist")
+            self.client.delete_attribute(
+                entity_id=self.entity.id, attribute_id="does_not_exist"
+            )
 
         entity_list = self.client.get_entity_list()
 
@@ -661,16 +689,17 @@ class TestContextBroker(unittest.TestCase):
             self.client.delete_entity_by_id(entity_id=entity.id)
 
         """Test 2"""
-        attr = NamedContextProperty(name="test_value",
-                                    value=20)
+        attr = NamedContextProperty(name="test_value", value=20)
         self.entity.add_properties(attrs=[attr])
         self.client.post_entity(entity=self.entity)
-        self.client.delete_attribute(entity_id=self.entity.id,
-                                        attribute_id="test_value")
+        self.client.delete_attribute(
+            entity_id=self.entity.id, attribute_id="test_value"
+        )
 
         with self.assertRaises(requests.exceptions.HTTPError) as contextmanager:
-            self.client.delete_attribute(entity_id=self.entity.id,
-                                            attribute_id="test_value")
+            self.client.delete_attribute(
+                entity_id=self.entity.id, attribute_id="test_value"
+            )
         response = contextmanager.exception.response
         self.assertEqual(response.status_code, 404)
 

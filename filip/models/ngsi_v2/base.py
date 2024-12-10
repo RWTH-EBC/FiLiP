@@ -1,6 +1,7 @@
 """
 Shared models that are used by multiple submodules
 """
+
 import json
 
 from aenum import Enum
@@ -442,9 +443,7 @@ class BaseValueAttribute(BaseModel):
                 elif isinstance(value, BaseModel):
                     value.model_dump_json()
                     return value
-                raise TypeError(
-                    f"{type(value)} does not match " f"{DataType.OBJECT}"
-                )
+                raise TypeError(f"{type(value)} does not match " f"{DataType.OBJECT}")
 
             # allows geojson as structured value
             if type_ == DataType.GEOJSON:
@@ -480,8 +479,7 @@ class BaseValueAttribute(BaseModel):
                         return Feature(**value)
                     elif _geo_json_type == "FeatureCollection":
                         return FeatureCollection(**value)
-                raise TypeError(f"{type(value)} does not match "
-                                f"{DataType.GEOJSON}")
+                raise TypeError(f"{type(value)} does not match " f"{DataType.GEOJSON}")
 
             # allows list, dict and BaseModel as structured value
             if type_ == DataType.STRUCTUREDVALUE:
