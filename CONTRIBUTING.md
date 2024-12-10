@@ -39,15 +39,15 @@ For committing style guide please use Conventional Commits 1.0.0. For more detai
 In order to make the development easy and uniform, use of pre-commit is highly recommended. The pre-commit hooks run before every commit to ensure the code is compliant with the project style.
 
 Check if pre-commit is installed:
-```commandline
+```bash
 pre-commit --version
 ```
 Install pre-commit via pip if it's not already installed.
-```commandline
-pip install pre-commit
+```bash
+pip install pre-commit~=4.0.1
 ```
 Install the git hook scripts:
-```commandline
+```bash
 pre-commit install
 ```
 This will run pre-commit automatically on every git commit. Checkout [pre-commit-config.yaml](.pre-commit-config.yaml) file to find out which hooks are currently configured.
