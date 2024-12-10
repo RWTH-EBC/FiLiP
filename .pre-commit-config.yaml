@@ -10,4 +10,4 @@ repos:
     hooks:
       - id: black
         # Specifying the latest version of Python supported by Filip
-        language_version: python3.11
+        language_version: python
