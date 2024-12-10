@@ -52,6 +52,11 @@ pre-commit install
 ```
 This will run pre-commit automatically on every git commit. Checkout [pre-commit-config.yaml](.pre-commit-config.yaml) file to find out which hooks are currently configured.
 
+> **Note:** Currently we are using the pre-commit to perform black formatter. You can perform a formatting to all files by running the following command:
+> ```bash
+> pre-commit run black --all-files
+> ```
+
 ## Documentation
 
 All created or modified functions should be documented properly. 
