@@ -7,7 +7,7 @@
 [![coverage](https://rwth-ebc.github.io/FiLiP/master/coverage/badge.svg)](https://rwth-ebc.github.io/FiLiP/master/coverage)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![build](https://rwth-ebc.github.io/FiLiP/master/build/build.svg)](https://rwth-ebc.github.io/FiLiP/master/build/build.svg)
-[![DOI](https://joss.theoj.org/papers/10.21105/joss.06953/status.svg )](https://doi.org/10.21105/joss.06953)
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.06953/status.svg     )](https://doi.org/10.21105/joss.06953    )
 
 FiLiP (Fiware Library for Python) is a python software development kit (SDK) for 
 accelerating the development of web services that use Fiware's Generic 
@@ -68,6 +68,19 @@ If this is not an option for you, FIWARE also provides a testing server.
 You can register for a testing account 
 [here](https://www.fiware.org/developers/fiware-lab/).
 > **Note**: FiLiP is now compatible to [Pydantic V2](https://docs.pydantic.dev/latest/migration/). If your program still require Pydantic V1.x for some reason, please use release [v0.2.5](https://github.com/RWTH-EBC/FiLiP/releases/tag/v0.2.5) or earlier version of FiLiP. Besides, we recommended to set `pydantic~=1.10` in the `requirements.txt`, otherwise Pydantic V2 might still be installed.
+
+#### Supported Python Versions
+
+| Version   | Status     |
+|-----------|------------|
+| 3.7      | ❌ Deprecated   |
+| 3.8      | ✅ Tested   |
+| 3.9      | ✅ Tested   |
+| 3.10     | ✅ Tested   |
+| 3.11     | ✅ Tested   |
+| 3.12     | 🔄 Ongoing   |
+
+> ✅ Tested python versions have passed the unittests 
 
 ### Installation
 
