@@ -15,7 +15,7 @@ import logging
 import time
 from datetime import datetime, timedelta
 from filip.config import settings
-from filip.models.ngsi_v2.subscriptions import Message, Subscription
+from filip.models.ngsi_v2.subscriptions import Subscription
 from filip.models.ngsi_v2.context import ContextEntity, NamedContextAttribute
 from filip.models.base import FiwareHeader
 from filip.clients.ngsi_v2 import ContextBrokerClient, QuantumLeapClient
@@ -46,6 +46,11 @@ logger = logging.getLogger(__name__)
 
 
 def temperature_forecast(current_temperature):
+    """
+    Calculate forecast examples
+    Args:
+        current_temperature: current temperature
+    """
     start_time = datetime.strptime("00:00", "%H:%M")
     end_time = datetime.strptime("04:00", "%H:%M")
 
@@ -83,21 +88,22 @@ if __name__ == "__main__":
     weather_station = ContextEntity(id='WeatherStation:001',
                                     type='WeatherStation')
 
-    # add forecast attribute in the entity
+    # add forecast attribute in the entity 
+    # (forecast values should be Float values to ensure correct data type in CrateDB)
     forecast = NamedContextAttribute(
         name="temperatureForecast",
         type="StructuredValue",
         # "hh:mm": temperature
         value={
-            "00:00": 20,
-            "00:30": 20,
-            "01:00": 20,
-            "01:30": 20,
-            "02:00": 20,
-            "02:30": 20,
-            "03:00": 20,
-            "03:30": 20,
-            "04:00": 20
+            "00:00": 20.0,
+            "00:30": 20.0,
+            "01:00": 20.0,
+            "01:30": 20.0,
+            "02:00": 20.0,
+            "02:30": 20.0,
+            "03:00": 20.0,
+            "03:30": 20.0,
+            "04:00": 20.0
         })
     temperature = NamedContextAttribute(
         name="temperature",
@@ -197,7 +203,7 @@ if __name__ == "__main__":
         y=temperature_values,
         mode='lines',
         line=dict(width=4),  # Make the temperature lines thicker
-        name=f"Temperature History",
+        name="Temperature History",
     ))
 
     # Customize the layout
@@ -219,7 +225,7 @@ if __name__ == "__main__":
     fig.show()
 
     # An example to query data directly from CrateDB, for example via Grafana
-    query = f"""SELECT entity_id, entity_type, time_index, 
+    query = """SELECT entity_id, entity_type, time_index,
                                            temperatureforecast['00:00'], 
                                            temperatureforecast['00:30'], 
                                            temperatureforecast['01:00'], 
