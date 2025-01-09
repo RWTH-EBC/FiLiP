@@ -24,18 +24,23 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    - name: Install dependencies using setup.py
+    - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -e .[development]  # Install dependencies from setup.py
+        pip install .[development]
 
     - name: Create .env file
       run: |
         echo "CB_URL=http://134.130.56.175:1026" > .env
         echo "LD_CB_URL=http://134.130.56.175:1027" >> .env
-        echo "IOTA_URL=http://134.130.56.175:4041/" >> .env
+        echo "IOTA_URL=http://134.130.56.175:4041" >> .env
         echo "QL_URL=http://134.130.56.175:8668" >> .env
         echo "MQTT_BROKER_URL=mqtt://134.130.56.175:1883" >> .env
+
+    - name: Verify environment setup
+      run: |
+        echo "Verifying .env file:"
+        cat .env
 
   test:
     needs: setup
