@@ -13,7 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.8, 3.9, 3.10, 3.11]
+        python-version: [3.8, 3.9, 3.10, 3.11, 3.12]
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
@@ -23,12 +24,19 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    - name: Install dependencies
+    - name: Install dependencies using setup.py
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt
+        pip install -e .[development]  # Install dependencies with setup.py
 
-    - name: Run tests
+    - name: Create .env file
       run: |
-        pip install pytest coverage
-        pytest --cov
+        echo "CB_URL=http://134.130.56.175:1026" > .env
+        echo "LD_CB_URL=http://134.130.56.175:1027" >> .env
+        echo "IOTA_URL=http://134.130.56.175:4041/" >> .env
+        echo "QL_URL=http://134.130.56.175:8668" >> .env
+        echo "MQTT_BROKER_URL=mqtt://134.130.56.175:1883" >> .env
+
+    - name: Run unittests
+      run: |
+        python -m unittest discover -s tests -p "test_*.py"  # Discover and run all unittests in the 'tests' folder
