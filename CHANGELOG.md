@@ -1,3 +1,6 @@
+### v0.6.x
+- add: Tutorial for using session object ([#370](https://github.com/RWTH-EBC/FiLiP/pull/370))
+
 ### v0.6.0
 - add: Tutorial for connecting with secured endpoints ([#319](https://github.com/RWTH-EBC/FiLiP/pull/319))
 - add: Example for notification based command ([#332](https://github.com/RWTH-EBC/FiLiP/pull/332))
