@@ -16,7 +16,7 @@ from urllib.parse import urlparse, urljoin
 import requests
 from requests import RequestException
 from pydantic import AnyHttpUrl
-from filip.clients.base_http_client import NgsiURLVersion
+from filip.clients.base_http_client import NgsiURLVersion, BaseHttpClient
 from filip.models.base import FiwareHeader
 from filip.utils.simple_ql import QueryString
 from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient
@@ -120,8 +120,9 @@ class TestContextBroker(unittest.TestCase):
         }
         for url in user_input_urls:
             url_correct = AnyHttpUrl(user_input_urls[url])
+            bhc = BaseHttpClient(url=url)
             url_filip = AnyHttpUrl(
-                urljoin(url, f"{NgsiURLVersion.v2_url.value}/entities")
+                urljoin(bhc.base_url, f"{NgsiURLVersion.v2_url.value}/entities")
             )
             self.assertEqual(url_correct, url_filip)
 

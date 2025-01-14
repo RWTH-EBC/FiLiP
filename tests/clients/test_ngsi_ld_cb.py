@@ -12,7 +12,7 @@ from requests import RequestException, Session
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-from filip.clients.base_http_client import NgsiURLVersion
+from filip.clients.base_http_client import NgsiURLVersion, BaseHttpClient
 from filip.clients.ngsi_ld.cb import ContextBrokerLDClient
 from filip.models.base import FiwareLDHeader, core_context
 from filip.models.ngsi_ld.context import (
@@ -114,8 +114,9 @@ class TestContextBroker(unittest.TestCase):
         }
         for url in user_input_urls:
             url_correct = AnyHttpUrl(user_input_urls[url])
+            bhc = BaseHttpClient(url=url)
             url_filip = AnyHttpUrl(
-                urljoin(url, f"{NgsiURLVersion.ld_url.value}/entities")
+                urljoin(bhc.base_url, f"{NgsiURLVersion.ld_url.value}/entities")
             )
             self.assertEqual(url_correct, url_filip)
 
