@@ -1,6 +1,11 @@
 """
-# This example shows how to manipulate settings like retry strategy and certificate verification on requests by
-including session object with the client request.
+# This example shows how to manipulate settings like retry strategy and certificate
+verification on requests by including session object with the client request.
+Possible options are for examples:
+
+1. Set retry strategy in the session
+2. Set default headers for the session (e.g., for authentication)
+3. Disable certificate verification / Load custom SSL certificate
 """
 
 import requests
@@ -22,10 +27,10 @@ SERVICE_PATH = "/"
 
 if __name__ == "__main__":
 
-    # 1. Create fiware header
+    # Create fiware header
     fiware_header = FiwareHeader(service=SERVICE, service_path=SERVICE_PATH)
 
-    # (Optional) 2. Set retry strategy in the session
+    # Option 1. Set retry strategy in the session
     retry_strategy = Retry(
         total=5,  # Maximum number of retries
         backoff_factor=1,  # Exponential backoff (1, 2, 4, 8, etc.)
@@ -41,13 +46,16 @@ if __name__ == "__main__":
     session.mount("https://", adapter)
     session.mount("http://", adapter)
 
-    # (Optional) 3. Disable certificate verification for the request
+    # Option 2. set default headers for the session (e.g., for authentication)
+    session.headers.update({"Authorization": "Bearer your_token"})
+
+    # Option 3. Disable certificate verification for the request
     session.verify = False
 
-    # 4. Create a context broker client including the session object
+    # Create a context broker client including the session object
     cb_client = ContextBrokerClient(
         url=CB_URL, fiware_header=fiware_header, session=session
     )
 
-    # (Optional) 5. Make desired requests using the client
+    # Make desired requests using the client
     entity_list = cb_client.get_entity_list()
