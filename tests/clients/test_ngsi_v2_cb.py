@@ -12,9 +12,11 @@ import uuid
 
 import paho.mqtt.client as mqtt
 from datetime import datetime, timedelta
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urljoin
 import requests
 from requests import RequestException
+from pydantic import AnyHttpUrl
+from filip.clients.base_http_client import NgsiURLVersion
 from filip.models.base import FiwareHeader
 from filip.utils.simple_ql import QueryString
 from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient
@@ -103,6 +105,25 @@ class TestContextBroker(unittest.TestCase):
                 "throttling": 0,
             }
         )
+
+    def test_url_composition(self):
+        """
+        Test URL composition for context broker client
+        """
+        user_input_urls = {
+            "http://example.org/orion/": "http://example.org/orion/v2/entities",
+            "http://example.org/orion": "http://example.org/orion/v2/entities",
+            "http://123.0.0.0:1026": "http://123.0.0.0:1026/v2/entities",
+            "http://123.0.0.0:1026/": "http://123.0.0.0:1026/v2/entities",
+            "http://123.0.0.0/orion": "http://123.0.0.0/orion/v2/entities",
+            "http://123.0.0.0/orion/": "http://123.0.0.0/orion/v2/entities",
+        }
+        for url in user_input_urls:
+            url_correct = AnyHttpUrl(user_input_urls[url])
+            url_filip = AnyHttpUrl(
+                urljoin(url, f"{NgsiURLVersion.v2_url.value}/entities")
+            )
+            self.assertEqual(url_correct, url_filip)
 
     def test_management_endpoints(self):
         """
