@@ -1,5 +1,7 @@
 ### v0.6.x
 - add: Tutorial for saving live timeseries data (e.g., forecast) in context broker and timeseries database ([#336](https://github.com/RWTH-EBC/FiLiP/pull/363))
+- add: Tutorial for using session object ([#370](https://github.com/RWTH-EBC/FiLiP/pull/370))
+
 
 ### v0.6.0
 - add: Tutorial for connecting with secured endpoints ([#319](https://github.com/RWTH-EBC/FiLiP/pull/319))

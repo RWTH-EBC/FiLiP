@@ -36,6 +36,7 @@
 # ## Import packages
 import json
 from pathlib import Path
+
 # filip imports
 from filip.clients.ngsi_v2 import ContextBrokerClient
 from filip.models import FiwareHeader
@@ -52,9 +53,9 @@ CB_URL = "http://localhost:1026"
 #  collisions. You will use this service through the whole tutorial.
 #  If you forget to change it, an error will be raised!
 # FIWARE-Service
-SERVICE = 'filip_tutorial'
+SERVICE = "filip_tutorial"
 # FIWARE-Service path
-SERVICE_PATH = '/'
+SERVICE_PATH = "/"
 
 # ToDo: Path to json-files to store entity data for follow up exercises,
 #  e.g. ../e3_my_entities.json. Files that are used in exercises and files
@@ -64,47 +65,30 @@ SERVICE_PATH = '/'
 WRITE_ENTITIES_FILEPATH = Path("../e3_context_entities.json")
 
 # ## Main script
-if __name__ == '__main__':
+if __name__ == "__main__":
     # create a fiware header object
-    fiware_header = FiwareHeader(service=SERVICE,
-                                 service_path=SERVICE_PATH)
+    fiware_header = FiwareHeader(service=SERVICE, service_path=SERVICE_PATH)
     # clear the state of your service and scope
     clear_context_broker(url=CB_URL, fiware_header=fiware_header)
 
     # Create a context entity for a `building` following the smart data models
     # specifications
-    building = ContextEntity(id="urn:ngsi-ld:building:001",
-                             type="Building")
+    building = ContextEntity(id="urn:ngsi-ld:building:001", type="Building")
 
     # create the property `category` to your building
-    category = NamedContextAttribute(name="category",
-                                     type="Array",
-                                     value=["office"])
+    category = NamedContextAttribute(name="category", type="Array", value=["office"])
 
     # ToDo: Create a property `address` for your building. Follow the full yaml
     #  description in the specifications. It reuses the specification from
     #  here: https://schema.org/PostalAddress
-    address = NamedContextAttribute(name="address",
-                                    type="PostalAddress",
-                                    value={...})
-
-
-
-
+    address = NamedContextAttribute(name="address", type="PostalAddress", value={...})
 
     # ToDo: Create a `description` property for your building.
     building_description = NamedContextAttribute(...)
 
-
-
-
-
-
     # add all properties to your building using the
     # `add_attribute` function of your building object
-    building.add_attributes(attrs=[building_description,
-                                   category,
-                                   address])
+    building.add_attributes(attrs=[building_description, category, address])
 
     # ToDo: Create a context broker client and add the fiware_header.
     cbc = ...
@@ -113,8 +97,7 @@ if __name__ == '__main__':
     ...
 
     # Update your local building model with the one from the server
-    building = cbc.get_entity(entity_id=building.id,
-                              entity_type=building.type)
+    building = cbc.get_entity(entity_id=building.id, entity_type=building.type)
 
     # print your `building model` as json
     print(f"This is your building model: \n {building.model_dump_json(indent=2)} \n")
@@ -122,80 +105,67 @@ if __name__ == '__main__':
     # ToDo: Create an `opening hours` property and add it to the building object
     #  in the context broker. Do not update the whole entity! In real
     #  scenarios it might have been modified by other users.
-    opening_hours = NamedContextAttribute(name="openingHours",
-                                          type="array",
-                                          value=[...])
-
-
-
-
+    opening_hours = NamedContextAttribute(
+        name="openingHours", type="array", value=[...]
+    )
 
     cbc.update_or_append_entity_attributes(
-        entity_id=building.id,
-        entity_type=building.type,
-        attrs=[opening_hours])
+        entity_id=building.id, entity_type=building.type, attrs=[opening_hours]
+    )
 
     # ToDo: Retrieve and print the property `opening hours`.
     hours = cbc.get_attribute_value(...)
-
 
     print(f"Your opening hours: {hours} \n")
 
     # ToDo: Modify the property `opening hours` of the building.
     cbc.update_attribute_value(...)
 
-
-
-
-
     # ToDo: At this point you might have already noticed that your local
     #  building model and the building model in the context broker are out of
     #  sync. Hence, synchronize them again!
-    building = cbc.get_entity(entity_id=building.id,
-                              entity_type=building.type)
+    building = cbc.get_entity(entity_id=building.id, entity_type=building.type)
 
     # print your building
     print(f"Your updated building model: \n {building.model_dump_json(indent=2)} \n")
 
     # ToDo: Create an entity of the thermal zone and add a description property
     #  to it.
-    thermal_zone = ContextEntity(id="ThermalZone:001",
-                                 type="ThermalZone")
+    thermal_zone = ContextEntity(id="ThermalZone:001", type="ThermalZone")
 
-    thermal_zone_description = NamedContextAttribute(name="description",
-                                                     type="Text",
-                                                     value="This zones covers "
-                                                           "the entire building")
+    thermal_zone_description = NamedContextAttribute(
+        name="description",
+        type="Text",
+        value="This zones covers " "the entire building",
+    )
     thermal_zone.add_attributes(attrs=[thermal_zone_description])
 
     # ToDo: Create and add a property that references your building model. Use the
     #  `Relationship` for type and `refBuilding` for its name.
-    ref_building = NamedContextAttribute(name="refBuilding",
-                                         type="Relationship",
-                                         value=building.id)
+    ref_building = NamedContextAttribute(
+        name="refBuilding", type="Relationship", value=building.id
+    )
     thermal_zone.add_attributes(attrs=[ref_building])
 
     # print all relationships of your thermal zone
     for relationship in thermal_zone.get_relationships():
-        print(f"Relationship properties of your thermal zone model: \n "
-              f"{relationship.model_dump_json(indent=2)} \n")
+        print(
+            f"Relationship properties of your thermal zone model: \n "
+            f"{relationship.model_dump_json(indent=2)} \n"
+        )
 
     # ToDo: Post your thermal zone model to the context broker.
     ...
     ...
-
 
     # ToDo: Create and add a property that references your thermal zone. Use the
     #  `Relationship` for type and `hasZone` for its name. Make sure that
     #  your local model and the server model are in sync afterwards.
     ref_zone = NamedContextAttribute(...)
 
-
     cbc.update_or_append_entity_attributes(...)
 
-
-    building = cbc.get_entity(entity_id=building.id,
-                              entity_type=building.type)
+    building = cbc.get_entity(entity_id=building.id, entity_type=building.type)
 
     # ToDo: Create a filter request that retrieves all entities from the
     #   server that have `refBuilding` attribute that reference your building
@@ -205,8 +175,10 @@ if __name__ == '__main__':
     #   2. Use the string in a context broker request and retrieve the entities.
     query = QueryString(qs=("refBuilding", "==", building.id))
     for entity in cbc.get_entity_list(q=query):
-        print(f"All entities referencing the building: "
-              f"\n {entity.model_dump_json(indent=2)}\n")
+        print(
+            f"All entities referencing the building: "
+            f"\n {entity.model_dump_json(indent=2)}\n"
+        )
 
     # ToDo: Create a filter request that retrieves all entities from the
     #   server that have `hasZone` attribute that reference your thermal zone
@@ -216,14 +188,17 @@ if __name__ == '__main__':
     #   2. Use the string in a context broker request and retrieve the entities.
     query = ...
     for entity in cbc.get_entity_list(q=query):
-        print(f"All entities referencing the thermal zone: "
-              f"\n {entity.model_dump_json(indent=2)} \n")
+        print(
+            f"All entities referencing the thermal zone: "
+            f"\n {entity.model_dump_json(indent=2)} \n"
+        )
 
     # write entities to file and clear server state
-    assert WRITE_ENTITIES_FILEPATH.suffix == '.json', \
-        f"Wrong file extension! {WRITE_ENTITIES_FILEPATH.suffix}"
+    assert (
+        WRITE_ENTITIES_FILEPATH.suffix == ".json"
+    ), f"Wrong file extension! {WRITE_ENTITIES_FILEPATH.suffix}"
     WRITE_ENTITIES_FILEPATH.touch(exist_ok=True)
-    with WRITE_ENTITIES_FILEPATH.open('w', encoding='utf-8') as f:
+    with WRITE_ENTITIES_FILEPATH.open("w", encoding="utf-8") as f:
         entities = [item.model_dump() for item in cbc.get_entity_list()]
         json.dump(entities, f, ensure_ascii=False, indent=2)
 

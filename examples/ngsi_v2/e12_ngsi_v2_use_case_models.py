@@ -7,6 +7,7 @@
 # In short: this workflow shows you a way to keep use case model simple and
 # reusable while ensuring the compatability with FIWARE NGSI-V2 standards
 """
+
 from typing import Optional
 from pydantic import ConfigDict, BaseModel
 from pydantic.fields import Field, FieldInfo
@@ -16,16 +17,16 @@ from filip.clients.ngsi_v2.cb import ContextBrokerClient
 from filip.utils.cleanup import clear_context_broker
 from pprint import pprint
 from filip.config import settings
+
 # Host address of Context Broker
 CB_URL = settings.CB_URL
 
 # You can here also change the used Fiware service
 # FIWARE-Service
-SERVICE = 'filip'
+SERVICE = "filip"
 # FIWARE-Servicepath
-SERVICE_PATH = '/'
-fiware_header = FiwareHeader(service=SERVICE,
-                             service_path=SERVICE_PATH)
+SERVICE_PATH = "/"
+fiware_header = FiwareHeader(service=SERVICE, service_path=SERVICE_PATH)
 
 
 # Reuse existing data model from the internet
@@ -52,7 +53,7 @@ class PostalAddress(BaseModel):
         alias="addressLocality",
         default=None,
         description="The locality in which the street address is, and which is "
-                    "in the region. For example, Mountain View.",
+        "in the region. For example, Mountain View.",
     )
     postal_code: str = Field(
         alias="postalCode",
@@ -105,8 +106,7 @@ if __name__ == "__main__":
     # Workflow to utilize these data models.
 
     # 0. Initial client
-    cb_client = ContextBrokerClient(url=CB_URL,
-                                    fiware_header=fiware_header)
+    cb_client = ContextBrokerClient(url=CB_URL, fiware_header=fiware_header)
     # clear cb
     clear_context_broker(cb_client=cb_client, fiware_header=fiware_header, url=CB_URL)
 
@@ -121,8 +121,7 @@ if __name__ == "__main__":
             "postal_code": 52072,
         },
     )
-    cb_client.post_entity(entity=weather_station, key_values=True,
-                          update=True)
+    cb_client.post_entity(entity=weather_station, key_values=True, update=True)
 
     # 2. Update data
     weather_station.temperature = 30  # represent use case algorithm
@@ -130,8 +129,9 @@ if __name__ == "__main__":
 
     # 3. Query and validate data
     # represent querying data by data users
-    weather_station_data = cb_client.get_entity(entity_id="myWeatherStation",
-                                                response_format="keyValues")
+    weather_station_data = cb_client.get_entity(
+        entity_id="myWeatherStation", response_format="keyValues"
+    )
     # validate with general model
     weather_station_2_general = WeatherStation.model_validate(
         weather_station_data.model_dump()
@@ -143,15 +143,21 @@ if __name__ == "__main__":
 
     # 4. Use data for different purposes
     #  for use case specific usage
-    print("Data complied with general model can be forwarded to other platform/system:\n"
-          f"{weather_station_2_general.model_dump_json(indent=2)}")
-    print(f"For example, address still comply with existing model:\n"
-          f"{weather_station_2_general.address.model_dump_json(indent=2)}\n")
+    print(
+        "Data complied with general model can be forwarded to other platform/system:\n"
+        f"{weather_station_2_general.model_dump_json(indent=2)}"
+    )
+    print(
+        f"For example, address still comply with existing model:\n"
+        f"{weather_station_2_general.address.model_dump_json(indent=2)}\n"
+    )
 
     #  for fiware specific usage
-    print("For usage within FIWARE system, id and type is helpful, e.g. for creating"
-          "notification for entity:\n"
-          f"{weather_station_2_fiware.model_dump_json(indent=2, include={'id', 'type'})}\n")
+    print(
+        "For usage within FIWARE system, id and type is helpful, e.g. for creating"
+        "notification for entity:\n"
+        f"{weather_station_2_fiware.model_dump_json(indent=2, include={'id', 'type'})}\n"
+    )
 
     # clear cb
     clear_context_broker(cb_client=cb_client, fiware_header=fiware_header, url=CB_URL)

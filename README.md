@@ -84,10 +84,11 @@ If you want to benefit from the latest changes, use the following command
 pip install -U git+git://github.com/RWTH-EBC/filip
 ```
 
-> **Note**: For local development, you can install the library in editable mode with the following command:
+> **Note**: For development, you should install FiLiP in editable mode with the following command:
+> ````bash
+> pip install -e .[development]
 > ````
-> pip install -e .
-> ````
+> The `development` option will install extra libraries required for contribution. Please check the [CONTRIBUTING.md](CONTRIBUTING.md) for more information. 
 
 #### Install extra dependencies for tutorials and examples (optional)
 

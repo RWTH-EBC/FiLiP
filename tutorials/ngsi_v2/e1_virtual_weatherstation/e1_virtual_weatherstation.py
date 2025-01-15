@@ -52,12 +52,14 @@ T_SIM_END = 24 * 60 * 60  # simulation end time in seconds
 COM_STEP = 60 * 60  # 60 min communication step in seconds
 
 # ## Main script
-if __name__ == '__main__':
+if __name__ == "__main__":
     # instantiate simulation model
-    sim_model = SimulationModel(t_start=T_SIM_START,
-                                t_end=T_SIM_END,
-                                temp_max=TEMPERATURE_MAX,
-                                temp_min=TEMPERATURE_MIN)
+    sim_model = SimulationModel(
+        t_start=T_SIM_START,
+        t_end=T_SIM_END,
+        temp_max=TEMPERATURE_MAX,
+        temp_min=TEMPERATURE_MIN,
+    )
 
     # define a list for storing historical data
     history_weather_station = []
@@ -76,7 +78,7 @@ if __name__ == '__main__':
         Callback function for incoming messages
         """
         # decode the payload
-        payload = msg.payload.decode('utf-8')
+        payload = msg.payload.decode("utf-8")
         # ToDo: Parse the payload using the `json` package and write it to
         #  the history.
         ...
@@ -91,12 +93,6 @@ if __name__ == '__main__':
     mqtt_url = urlparse(MQTT_BROKER_URL)
     ...
 
-
-
-
-
-
-
     # ToDo: Print and subscribe to the weather station topic.
     print(f"WeatherStation topic:\n {TOPIC_WEATHER_STATION}")
     mqttc.subscribe(topic=TOPIC_WEATHER_STATION)
@@ -107,13 +103,11 @@ if __name__ == '__main__':
     # ToDo: Create a loop that publishes every 0.2 seconds a message to the broker
     #  that holds the simulation time "t_sim" and the corresponding temperature
     #  "t_amb".
-    for t_sim in range(sim_model.t_start,
-                       int(sim_model.t_end + COM_STEP),
-                       int(COM_STEP)):
+    for t_sim in range(
+        sim_model.t_start, int(sim_model.t_end + COM_STEP), int(COM_STEP)
+    ):
         # ToDo: Publish the simulated ambient temperature.
         ...
-
-
 
         # simulation step for next loop
         sim_model.do_step(int(t_sim + COM_STEP))
@@ -126,9 +120,9 @@ if __name__ == '__main__':
 
     # plot results
     fig, ax = plt.subplots()
-    t_simulation = [item["t_sim"]/3600 for item in history_weather_station]
+    t_simulation = [item["t_sim"] / 3600 for item in history_weather_station]
     temperature = [item["t_amb"] for item in history_weather_station]
     ax.plot(t_simulation, temperature)
-    ax.set_xlabel('time in h')
-    ax.set_ylabel('ambient temperature in °C')
+    ax.set_xlabel("time in h")
+    ax.set_ylabel("ambient temperature in °C")
     plt.show()
