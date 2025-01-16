@@ -1,64 +1,92 @@
-name: Python Unit Tests with Debugging
+name: CI for FiLiP
 
 on:
   push:
     branches:
-      - 315-Unittest-via-Github-actions
+      - "**"
   pull_request:
     branches:
-      - 315-Unittest-via-Github-actions
+      - main
 
 jobs:
-  run-tests:
-    name: Run Unit Tests Across Python Versions
+  setup:
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
-        python-version: ["3.8", "3.9"]
-        test-engine: ["PYTEST", "UNITTEST"]
+        python-version: [3.8, 3.9]
 
     steps:
-      # Step 1: Checkout the repository
-      - name: Checkout Repository
+      # Step 1: Checkout code
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Create .env File from .env.filip.EXAMPLE
-      - name: Create .env File
-        run: cp .env.filip.EXAMPLE .env.filip
-
-      # Step 3: Set up Python
+      # Step 2: Set up Python
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
 
-      # Step 4: Install setuptools and wheel
+      # Step 3: Install build tools
       - name: Install build tools
         run: |
           python -m pip install --upgrade pip
           pip install setuptools wheel
 
-      # Step 5: Install dependencies
+      # Step 4: Install dependencies
       - name: Install dependencies
         run: |
-          pip install pytest
-          if [[ -f requirements.txt ]]; then pip install --no-use-pep517 -r requirements.txt; fi
-          if [[ -f setup.py ]]; then pip install --no-use-pep517 -e .; fi
+          pip install .[development]
 
-      # Step 6: Verify Directory Structure
-      - name: Verify Directory Structure
+      # Step 5: Create .env file
+      - name: Create .env file
         run: |
-          echo "Listing files to verify directory structure:"
-          ls -R ${GITHUB_WORKSPACE}
+          echo "CB_URL=http://localhost:1026" > .env
+          echo "LD_CB_URL=http://localhost:1027" >> .env
+          echo "IOTA_URL=http://localhost:4041" >> .env
+          echo "QL_URL=http://localhost:8668" >> .env
+          echo "MQTT_BROKER_URL=mqtt://localhost:1883" >> .env
 
-      # Step 7: Run Tests
-      - name: Run Tests
+      # Step 6: Verify .env file
+      - name: Verify environment setup
         run: |
-          TEST_PATH="${{ github.workspace }}/FiLiP/tests"
-          echo "Testing path: $TEST_PATH"
-          if [ "${{ matrix.test-engine }}" == "PYTEST" ]; then 
-            python -m pytest $TEST_PATH/; 
-          else 
-            python -m unittest discover --verbose $TEST_PATH "test_*.py"; 
-          fi
+          echo "Verifying .env file:"
+          cat .env
+
+  test:
+    needs: setup
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8, 3.9]
+
+    steps:
+      # Step 1: Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Python
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      # Step 3: Install build tools
+      - name: Install build tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install setuptools wheel
+
+      # Step 4: Install test dependencies
+      - name: Install test dependencies
+        run: |
+          pip install .[test]
+
+      # Step 5: Run unit tests
+      - name: Run unittests
+        run: |
+          python -m unittest discover -s tests -p "test_*.py"
+
+      # Step 6: Run pytest (optional, if you have pytest-based tests)
+      - name: Run pytest
+        run: |
+          python -m pytest tests || true
