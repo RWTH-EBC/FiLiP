@@ -40,11 +40,11 @@ jobs:
       # Step 5: Create .env file
       - name: Create .env file
         run: |
-          echo "CB_URL=http://localhost:1026" > .env
-          echo "LD_CB_URL=http://localhost:1027" >> .env
-          echo "IOTA_URL=http://localhost:4041" >> .env
-          echo "QL_URL=http://localhost:8668" >> .env
-          echo "MQTT_BROKER_URL=mqtt://localhost:1883" >> .env
+          echo "CB_URL=http://134.130.56.175:1026" > .env
+          echo "LD_CB_URL=http://134.130.56.175:1027" >> .env
+          echo "IOTA_URL=http://134.130.56.175:4041" >> .env
+          echo "QL_URL=http://134.130.56.175:8668" >> .env
+          echo "MQTT_BROKER_URL=mqtt://134.130.56.175:1883" >> .env
 
       # Step 6: Verify .env file
       - name: Verify environment setup
