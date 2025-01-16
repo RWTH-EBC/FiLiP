@@ -37,27 +37,15 @@ jobs:
         run: |
           pip install .[development]
 
-      # Step 4: Start FIWARE services
-      - name: Start FIWARE services
-        run: docker-compose up -d
-
-      # Step 5: Wait for FIWARE services to start
-      - name: Wait for FIWARE services
-        run: |
-          for i in {1..30}; do
-            curl -s http://localhost:1026/version && break || sleep 2
-          done
-
-      # Step 6: Create .env file
+      # Step 5: Create .env file
       - name: Create .env file
         run: |
           echo "CB_URL=http:/localhost:1026" > .env
-          echo "LD_CB_URL=http://localhost:1027" >> .env
           echo "IOTA_URL=http://localhost:4041" >> .env
           echo "QL_URL=http://localhost:8668" >> .env
           echo "MQTT_BROKER_URL=mqtt://localhost:1883" >> .env
 
-      # Step 7: Verify .env file
+      # Step 6: Verify .env file
       - name: Verify environment setup
         run: |
           echo "Verifying .env file:"

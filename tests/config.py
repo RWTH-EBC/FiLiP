@@ -31,8 +31,6 @@ class TestSettings(BaseSettings):
                                     'CB_HOST',
                                     'CONTEXTBROKER_URL',
                                     'OCB_URL'))
-    LD_CB_URL: AnyHttpUrl = Field(default="http://localhost:1027",  # Add this field
-                                  validation_alias='LD_CB_URL')
     IOTA_URL: AnyHttpUrl = Field(default="http://localhost:4041",
                                  validation_alias='IOTA_URL')
     IOTA_JSON_URL: AnyHttpUrl = Field(default="http://localhost:4041",
