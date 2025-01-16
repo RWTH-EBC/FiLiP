@@ -33,21 +33,26 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      # Step 4: Install dependencies
-      - name: Install dependencies
+      # Step 4: Install setuptools and wheel
+      - name: Install build tools
         run: |
           python -m pip install --upgrade pip
+          pip install setuptools wheel
+
+      # Step 5: Install dependencies
+      - name: Install dependencies
+        run: |
           pip install pytest
           if [[ -f requirements.txt ]]; then pip install --no-use-pep517 -r requirements.txt; fi
           if [[ -f setup.py ]]; then pip install --no-use-pep517 -e .; fi
 
-      # Step 5: Verify Directory Structure
+      # Step 6: Verify Directory Structure
       - name: Verify Directory Structure
         run: |
           echo "Listing files to verify directory structure:"
           ls -R ${GITHUB_WORKSPACE}
 
-      # Step 6: Run Tests
+      # Step 7: Run Tests
       - name: Run Tests
         run: |
           TEST_PATH="${{ github.workspace }}/FiLiP/tests"

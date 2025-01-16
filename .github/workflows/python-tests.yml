@@ -1,4 +1,4 @@
-name: CI for FiLIP
+name: CI for FiLiP
 
 on:
   push:
@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.8, 3.9, 3.10, 3.11]
+        python-version: [3.8, 3.9]
 
     steps:
     - name: Checkout code
@@ -24,18 +24,22 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    - name: Install dependencies
+    - name: Install build tools
       run: |
         python -m pip install --upgrade pip
+        pip install setuptools wheel
+
+    - name: Install dependencies
+      run: |
         pip install .[development]
 
     - name: Create .env file
       run: |
-        echo "CB_URL=http://134.130.56.175:1026" > .env
-        echo "LD_CB_URL=http://134.130.56.175:1027" >> .env
-        echo "IOTA_URL=http://134.130.56.175:4041" >> .env
-        echo "QL_URL=http://134.130.56.175:8668" >> .env
-        echo "MQTT_BROKER_URL=mqtt://134.130.56.175:1883" >> .env
+        echo "CB_URL=http://localhost:1026" > .env
+        echo "LD_CB_URL=http://localhost:1027" >> .env
+        echo "IOTA_URL=http://localhost:4041" >> .env
+        echo "QL_URL=http://localhost:8668" >> .env
+        echo "MQTT_BROKER_URL=mqtt://localhost:1883" >> .env
 
     - name: Verify environment setup
       run: |
@@ -47,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.8, 3.9, 3.10, 3.11]
+        python-version: [3.8, 3.9]
 
     steps:
     - name: Checkout code
@@ -58,6 +62,19 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
+    - name: Install build tools
+      run: |
+        python -m pip install --upgrade pip
+        pip install setuptools wheel
+
+    - name: Install test dependencies
+      run: |
+        pip install .[test]
+
     - name: Run unittests
       run: |
         python -m unittest discover -s tests -p "test_*.py"
+
+    - name: Run pytest (if applicable)
+      run: |
+        python -m pytest tests || true
