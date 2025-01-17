@@ -40,10 +40,10 @@ jobs:
       # Step 5: Create .env file
       - name: Create .env file
         run: |
-          echo "CB_URL=http://localhost:1026" > .env
-          echo "IOTA_URL=http://localhost:4041" >> .env
-          echo "QL_URL=http://localhost:8668" >> .env
-          echo "MQTT_BROKER_URL=mqtt://localhost:1883" >> .env
+          echo "CB_URL=http://orion:1026" > .env
+          echo "IOTA_URL=http://iot-agent:4041" >> .env
+          echo "QL_URL=http://quantumleap:8668" >> .env
+          echo "MQTT_BROKER_URL=mqtt://mqtt-broker:1883" >> .env
 
       # Step 6: Verify .env file
       - name: Verify environment setup
@@ -79,7 +79,9 @@ jobs:
       - name: Wait for FIWARE services to start
         run: |
           for i in {1..30}; do
-            curl -s http://localhost:1026/version && break || sleep 2
+            curl -s http://localhost:1026/version && \
+            curl -s http://localhost:4041/iot/about && \
+            curl -s http://localhost:8668/version && break || sleep 2
           done
 
   test:
@@ -115,8 +117,7 @@ jobs:
       # Step 5: Run tests
       - name: Run tests with both unittest and pytest
         run: |
-          TEST_PATH="tests"
-          echo "Running tests with unittest:"
-          python -m unittest discover -s $TEST_PATH -p "test_*.py" || true
-          echo "Running tests with pytest:"
-          python -m pytest $TEST_PATH || true
+          docker compose run --rm orion bash -c "
+          export TEST_ENGINE=PYTEST &&
+          export TEST_PATH=tests &&
+          if [ \"$TEST_ENGINE\" == \"PYTEST\" ]; then python -m pytest $TEST_PATH/; else python -m unittest discover --verbose . \"test_*.py\"; fi"
