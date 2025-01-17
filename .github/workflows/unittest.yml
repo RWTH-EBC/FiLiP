@@ -34,7 +34,6 @@ jobs:
       - name: Clone FIWARE repository
         run: |
           git clone https://github.com/N5GEH/n5geh.platform.git
-          cd n5geh.platform/v2
 
       - name: Start FIWARE services
         run: |
