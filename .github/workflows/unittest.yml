@@ -119,4 +119,4 @@ jobs:
         run: |
           export TEST_ENGINE=PYTEST &&
           export TEST_PATH=tests &&
-          if [ \"$TEST_ENGINE\" == \"PYTEST\" ]; then python -m pytest $TEST_PATH/; else python -m unittest discover --verbose . \"test_*.py\"; fi"
+          if [ \"$TEST_ENGINE\" == \"PYTEST\" ]; then python -m pytest $TEST_PATH/; else python -m unittest discover --verbose . \"test_*.py\"; fi
