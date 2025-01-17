@@ -51,8 +51,30 @@ jobs:
           echo "Verifying .env file:"
           cat .env
 
-  test:
+  fiware_setup:
     needs: setup
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Clone the FIWARE platform repository
+      - name: Clone FIWARE repository
+        run: |
+          git clone https://github.com/N5GEH/n5geh.platform.git
+          cd n5geh.platform/v2
+
+      # Step 2: Start FIWARE services
+      - name: Start FIWARE services
+        run: docker-compose up -d
+
+      # Step 3: Wait for FIWARE services to start
+      - name: Wait for FIWARE services
+        run: |
+          for i in {1..30}; do
+            curl -s http://localhost:1026/version && break || sleep 2
+          done
+
+  test:
+    needs: fiware_setup
     runs-on: ubuntu-latest
     strategy:
       matrix:
