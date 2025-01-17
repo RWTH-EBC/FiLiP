@@ -69,7 +69,7 @@ jobs:
       # Step 3: Start FIWARE services
       - name: Start FIWARE services
         working-directory: n5geh.platform/v2
-        run: docker-compose up -d
+        run: docker compose up -d
 
       # Step 4: Wait for FIWARE services
       - name: Wait for FIWARE services to start
