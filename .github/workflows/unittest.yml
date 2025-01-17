@@ -40,7 +40,7 @@ jobs:
       # Step 5: Create .env file
       - name: Create .env file
         run: |
-          echo "CB_URL=http:/localhost:1026" > .env
+          echo "CB_URL=http://localhost:1026" > .env
           echo "IOTA_URL=http://localhost:4041" >> .env
           echo "QL_URL=http://localhost:8668" >> .env
           echo "MQTT_BROKER_URL=mqtt://localhost:1883" >> .env
@@ -60,14 +60,19 @@ jobs:
       - name: Clone FIWARE repository
         run: |
           git clone https://github.com/N5GEH/n5geh.platform.git
-          cd n5geh.platform/v2
 
-      # Step 2: Start FIWARE services
+      # Step 2: Navigate to the correct directory
+      - name: Navigate to v2 directory
+        working-directory: n5geh.platform/v2
+        run: echo "In FIWARE v2 directory"
+
+      # Step 3: Start FIWARE services
       - name: Start FIWARE services
-        run: docker compose up -d
+        working-directory: n5geh.platform/v2
+        run: docker-compose up -d
 
-      # Step 3: Wait for FIWARE services to start
-      - name: Wait for FIWARE services
+      # Step 4: Wait for FIWARE services
+      - name: Wait for FIWARE services to start
         run: |
           for i in {1..30}; do
             curl -s http://localhost:1026/version && break || sleep 2
