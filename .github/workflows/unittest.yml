@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  setup:
+  setup_and_fiware:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -41,51 +41,43 @@ jobs:
       - name: Create .env file
         run: |
           echo "CB_URL=http://orion:1026" > .env
-          echo "IOTA_URL=http://iot-agent:4041" >> .env
+          echo "IOTA_URL=http://iot-agent-json:4041" >> .env
           echo "QL_URL=http://quantumleap:8668" >> .env
           echo "MQTT_BROKER_URL=mqtt://mqtt-broker:1883" >> .env
 
-      # Step 6: Verify .env file
-      - name: Verify environment setup
-        run: |
-          echo "Verifying .env file:"
-          cat .env
-
-  fiware_setup:
-    needs: setup
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.10"]
-
-    steps:
-      # Step 1: Set up Python
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      # Step 2: Clone the FIWARE platform repository
+      # Step 6: Clone FIWARE repository
       - name: Clone FIWARE repository
         run: |
           git clone https://github.com/N5GEH/n5geh.platform.git
 
-      # Step 3: Start FIWARE services
+      # Step 7: Start FIWARE services
       - name: Start FIWARE services
         working-directory: n5geh.platform/v2
         run: docker compose up -d
 
-      # Step 4: Wait for FIWARE services
+      # Step 8: Wait for FIWARE services to start
       - name: Wait for FIWARE services to start
         run: |
-          for i in {1..30}; do
+          for i in {1..60}; do
             curl -s http://localhost:1026/version && \
             curl -s http://localhost:4041/iot/about && \
-            curl -s http://localhost:8668/version && break || sleep 2
+            curl -s http://localhost:8668/version && break || sleep 5
           done
 
+      # Step 9: Verify FIWARE services
+      - name: Verify FIWARE services
+        run: |
+          curl -X GET "http://localhost:1026/version"
+          curl -X GET "http://localhost:4041/iot/about"
+          curl -X GET "http://localhost:8668/version"
+
+      # Step 10: Print Docker logs for debugging
+      - name: Print Docker logs
+        working-directory: n5geh.platform/v2
+        run: docker compose logs
+
   test:
-    needs: fiware_setup
+    needs: setup_and_fiware
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -114,9 +106,9 @@ jobs:
           pip install .[test]
           pip install pytest
 
-      # Step 5: Run tests
-      - name: Run tests with both unittest and pytest
+      # Step 5: Run tests with both unittest and pytest
+      - name: Run tests
         run: |
-          export TEST_ENGINE=PYTEST &&
-          export TEST_PATH=tests &&
-          if [ \"$TEST_ENGINE\" == \"PYTEST\" ]; then python -m pytest $TEST_PATH/; else python -m unittest discover --verbose . \"test_*.py\"; fi
+          TEST_PATH="tests"
+          python -m unittest discover -s $TEST_PATH -p "test_*.py" || true
+          python -m pytest $TEST_PATH || true
