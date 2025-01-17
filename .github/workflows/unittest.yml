@@ -117,7 +117,6 @@ jobs:
       # Step 5: Run tests
       - name: Run tests with both unittest and pytest
         run: |
-          docker compose run --rm orion bash -c "
           export TEST_ENGINE=PYTEST &&
           export TEST_PATH=tests &&
           if [ \"$TEST_ENGINE\" == \"PYTEST\" ]; then python -m pytest $TEST_PATH/; else python -m unittest discover --verbose . \"test_*.py\"; fi"
