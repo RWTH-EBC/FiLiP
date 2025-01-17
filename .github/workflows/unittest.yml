@@ -38,7 +38,7 @@ jobs:
       - name: Start FIWARE services
         run: |
           cd n5geh.platform/v2
-          docker-compose up -d
+          docker compose up -d
 
       - name: Wait for FIWARE services to stabilize
         run: sleep 30
