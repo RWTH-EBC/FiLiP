@@ -50,7 +50,11 @@ def validate_http_url(url: AnyHttpUrl) -> str:
     Returns:
         validated url
     """
-    return str(url) if url else url
+    url = str(url) if url else url
+    if url[-1] != "/":
+        # add trailing slash
+        url = f"{url}/"
+    return url
 
 
 @validate_call

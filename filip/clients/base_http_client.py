@@ -16,8 +16,8 @@ class NgsiURLVersion(str, Enum):
     URL part that defines the NGSI version for the API.
     """
 
-    v2_url = "/v2"
-    ld_url = "/ngsi-ld/v1"
+    v2_url = "v2"
+    ld_url = "ngsi-ld/v1"
 
 
 class BaseHttpClient:
