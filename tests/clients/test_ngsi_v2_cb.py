@@ -1422,6 +1422,77 @@ class TestContextBroker(unittest.TestCase):
             self.assertEqual(1000, len(entities_keyvalues_query))
             self.assertEqual(1000, sum([e.attr2 for e in entities_keyvalues_query]))
 
+    def test_batch_operations_custom_models(self):
+        from pydantic import ConfigDict, Field
+
+        # Inherit from ContextEntity
+        class WeatherStation(ContextEntity):
+            """
+            A context specific model for a weather station
+            """
+
+            # add default for type if not explicitly set
+            type: str = "WeatherStation"
+            temperature: ContextAttribute = ContextAttribute(
+                type="Number",
+                value=20.0,
+            )
+
+        # Inherit from ContextEntityKeyValues
+        class WeatherStationKeyValues(ContextEntityKeyValues):
+            """
+            A context specific model for a weather station in keyValues format
+            """
+
+            model_config = ConfigDict(coerce_numbers_to_str=True, extra="ignore")
+            type: str = "WeatherStation"
+            temperature: float = Field(default=20.0)
+
+        # test with normalized model
+        weather_station_list = [
+            WeatherStation(
+                id=f"test_custom_batch:weather_station_{i}",
+                temperature={"type": "Number", "value": 20 + i},
+            )
+            for i in range(5)
+        ]
+
+        self.client.update(entities=weather_station_list, action_type="append")
+        entities = self.client.get_entity_list()
+        # assert entities should have temperature
+        self.assertTrue(
+            all(
+                [
+                    entity.model_dump().get("temperature") is not None
+                    for entity in entities
+                ]
+            )
+        )
+        # delete created entities
+        self.client.delete_entities(entities=entities)
+
+        # test with keyValues model
+        weather_station_list_keyvalues = [
+            WeatherStationKeyValues(
+                id=f"test_custom_batch_kv:weather_station_{i}", temperature=20 + i
+            )
+            for i in range(5)
+        ]
+        self.client.update(
+            entities=weather_station_list_keyvalues,
+            update_format="keyValues",
+            action_type="append",
+        )
+        entities_kv = self.client.get_entity_list()
+        self.assertTrue(
+            all(
+                [
+                    entity.model_dump().get("temperature") is not None
+                    for entity in entities_kv
+                ]
+            )
+        )
+
     def test_force_update_option(self):
         """
         Test the functionality of the flag forceUpdate
