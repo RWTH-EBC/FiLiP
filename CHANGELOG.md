@@ -2,6 +2,7 @@
 - add: Tutorial for saving live timeseries data (e.g., forecast) in context broker and timeseries database ([#336](https://github.com/RWTH-EBC/FiLiP/pull/363))
 - add: Tutorial for using session object ([#370](https://github.com/RWTH-EBC/FiLiP/pull/370))
 - fix: Addition of trailing slash if missing from base url ([#371](https://github.com/RWTH-EBC/FiLiP/pull/371))
+- update: omit invalid entities in `get_entity_list` ([#375](https://github.com/RWTH-EBC/FiLiP/pull/375))
 
 ### v0.6.0
 - add: Tutorial for connecting with secured endpoints ([#319](https://github.com/RWTH-EBC/FiLiP/pull/319))
