@@ -275,6 +275,52 @@ class TestContextBroker(unittest.TestCase):
         fiware_servicepath=settings.FIWARE_SERVICEPATH,
         cb_url=settings.CB_URL,
     )
+    def test_get_entity_list_with_bad_validation(self):
+
+        def post_entity_request(data):
+            headers = {"Content-Type": "application/json"}
+            headers.update(self.fiware_header)
+            url = f"{settings.CB_URL}v2/entities"
+            response = requests.request("POST", url, headers=headers, data=data)
+            return response
+
+        # Send bad entities to the Context Broker
+        entity_wrong_value_type = {
+            "id": "test:weather_station_1",
+            "type": "WeatherStation",
+            "temperature": {"type": "Number", "value": "Error"},
+        }
+
+        entity_wrong_unit = {
+            "id": "test:weather_station_2",
+            "type": "WeatherStation",
+            "temperature": {
+                "type": "Number",
+                "value": 20,
+                "metadata": {"unitCode": {"type": "Text", "value": "Error"}},
+            },
+        }
+
+        for entity in [entity_wrong_value_type, entity_wrong_unit]:
+            payload = json.dumps(entity)
+            post_entity_request(data=payload)
+
+        # send dummy valid entities to the Context Broker
+        entities_valid = [
+            ContextEntity(id=f"test374:Entity:{i}", type="Test") for i in range(10)
+        ]
+        self.client.update(entities=entities_valid, action_type="append")
+
+        # The bad entities should not block the whole request
+        entities_res = self.client.get_entity_list()
+
+        self.assertEqual(len(entities_res), len(entities_valid))
+
+    @clean_test(
+        fiware_service=settings.FIWARE_SERVICE,
+        fiware_servicepath=settings.FIWARE_SERVICEPATH,
+        cb_url=settings.CB_URL,
+    )
     def test_entity_update(self):
         """
         Test different ways (post, update, override, patch) to update entity
