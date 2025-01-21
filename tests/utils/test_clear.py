@@ -235,6 +235,7 @@ class TestClearFunctions(unittest.TestCase):
         time.sleep(2)
         self.assertEqual(len(self.ql_client.get_entities()), rec_numbs)
         clear_quantumleap(ql_client=self.ql_client)
+        time.sleep(2)
         with self.assertRaises(RequestException):
             self.ql_client.get_entities()
 
