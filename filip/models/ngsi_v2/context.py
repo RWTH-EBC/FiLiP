@@ -8,7 +8,7 @@ from typing import Any, List, Dict, Union, Optional, Set, Tuple
 from aenum import Enum
 from pydantic import field_validator, ConfigDict, BaseModel, Field, model_validator
 from pydantic_core.core_schema import ValidationInfo
-
+from pydantic.types import OnErrorOmit
 from filip.models.ngsi_v2.base import (
     EntityPattern,
     Expression,
@@ -622,6 +622,22 @@ class ContextEntity(ContextEntityKeyValues):
         command_info = self.get_attribute(f"{command_attribute_name}_info")
 
         return command, command_status, command_info
+
+
+class ContextEntityList(BaseModel):
+    """
+    Collection model for a list of context entities
+    """
+
+    entities: List[OnErrorOmit[ContextEntity]]
+
+
+class ContextEntityKeyValuesList(BaseModel):
+    """
+    Collection model for a list of context entities in key-values format
+    """
+
+    entities: List[OnErrorOmit[ContextEntityKeyValues]]
 
 
 class Query(BaseModel):

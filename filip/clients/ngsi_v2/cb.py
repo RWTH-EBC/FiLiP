@@ -9,7 +9,7 @@ from copy import deepcopy
 from enum import Enum
 from math import inf
 from pkg_resources import parse_version
-from pydantic import PositiveInt, PositiveFloat, AnyHttpUrl
+from pydantic import PositiveInt, PositiveFloat, AnyHttpUrl, ValidationError
 from pydantic.type_adapter import TypeAdapter
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 import re
@@ -31,6 +31,8 @@ from filip.models.ngsi_v2.context import (
     Query,
     Update,
     PropertyFormat,
+    ContextEntityList,
+    ContextEntityKeyValuesList,
 )
 from filip.models.ngsi_v2.base import AttrsFormat
 from filip.models.ngsi_v2.subscriptions import Subscription, Message
@@ -397,6 +399,8 @@ class ContextBrokerClient(BaseHttpClient):
             params.update({"orderBy": order_by})
         if response_format not in list(AttrsFormat):
             raise ValueError(f"Value must be in {list(AttrsFormat)}")
+        if response_format == AttrsFormat.VALUES:
+            raise ValueError("VALUES format is not supported for this method")
         response_format = ",".join(["count", response_format])
         params.update({"options": response_format})
         try:
@@ -408,12 +412,11 @@ class ContextBrokerClient(BaseHttpClient):
                 headers=headers,
             )
             if AttrsFormat.NORMALIZED in response_format:
-                adapter = TypeAdapter(List[ContextEntity])
-                return adapter.validate_python(items)
-            if AttrsFormat.KEY_VALUES in response_format:
-                adapter = TypeAdapter(List[ContextEntityKeyValues])
-                return adapter.validate_python(items)
-            return items
+                return ContextEntityList.model_validate({"entities": items}).entities
+            elif AttrsFormat.KEY_VALUES in response_format:
+                return ContextEntityKeyValuesList.model_validate(
+                    {"entities": items}
+                ).entities
 
         except requests.RequestException as err:
             msg = "Could not load entities"
