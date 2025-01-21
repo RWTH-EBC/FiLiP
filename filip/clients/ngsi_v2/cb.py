@@ -399,8 +399,6 @@ class ContextBrokerClient(BaseHttpClient):
             params.update({"orderBy": order_by})
         if response_format not in list(AttrsFormat):
             raise ValueError(f"Value must be in {list(AttrsFormat)}")
-        if response_format == AttrsFormat.VALUES:
-            raise ValueError("VALUES format is not supported for this method")
         response_format = ",".join(["count", response_format])
         params.update({"options": response_format})
         try:
@@ -417,7 +415,7 @@ class ContextBrokerClient(BaseHttpClient):
                 return ContextEntityKeyValuesList.model_validate(
                     {"entities": items}
                 ).entities
-
+            return items  # in case of VALUES as response_format
         except requests.RequestException as err:
             msg = "Could not load entities"
             self.log_error(err=err, msg=msg)
