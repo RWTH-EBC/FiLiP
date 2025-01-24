@@ -78,18 +78,10 @@ jobs:
 
       # Step 11: Print current directory for debugging
       - name: Print current directory
-        run: |
-          pwd
-          ls
+        run: pwd
 
-      # Step 12: Install test dependencies
-      - name: Install test dependencies
-        run: |
-          pip install .[test]
-          pip install pytest
-
-      # Step 13: Run tests
+      # Step 12: Navigate to correct directory and run tests
       - name: Run tests
-        working-directory: ${{ github.workspace }}
+        working-directory: ${{ github.workspace }}/tests
         run: |
-          python -m unittest discover -s tests -p "test_*.py" || true
+          python -m unittest discover -s . -p "test_*.py" || true
