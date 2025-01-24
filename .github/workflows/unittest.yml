@@ -99,32 +99,29 @@ jobs:
         working-directory: n5geh.platform/v2
         run: docker compose logs
 
-      # Step 9: Change back to the main directory
+      # Step 9: Change back to the root directory
       - name: Change back to the root directory
         run: cd $GITHUB_WORKSPACE
 
-      # Step 10: Install build tools
+      # Step 10: Print working directory (for debugging)
+      - name: Print working directory
+        run: pwd
+
+      # Step 11: Install build tools
       - name: Install build tools
         run: |
           python -m pip install --upgrade pip
           pip install setuptools wheel
 
-      # Step 11: Install test dependencies
+      # Step 12: Install test dependencies
       - name: Install test dependencies
         run: |
           pip install .[test]
           pip install pytest
 
-      # Step 11: check Pwd
-      - name: check directory
-        run: pwd
-      
-      # Step 11: check docker
-      - name: check docker
-        run: docker ps -a
-
-      # Step 12: Run tests with both unittest and pytest
+      # Step 13: Run tests with both unittest and pytest
       - name: Run tests
+        working-directory: $GITHUB_WORKSPACE
         run: |
           TEST_PATH="tests"
           python -m unittest discover -s $TEST_PATH -p "test_*.py" || true
