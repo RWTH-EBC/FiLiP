@@ -58,7 +58,7 @@ jobs:
       # Step 8: Wait for FIWARE services to start
       - name: Wait for FIWARE services to start
         run: |
-          for i in {1..60}; do
+          for i in {1..100}; do
             curl -s http://localhost:1026/version && \
             curl -s http://localhost:4041/iot/about && \
             curl -s http://localhost:8668/version && break || sleep 5
@@ -93,6 +93,15 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
+
+      # Step 8: Wait for FIWARE services to start
+      - name: Wait for FIWARE services to start
+        run: |
+          for i in {1..100}; do
+            curl -s http://localhost:1026/version && \
+            curl -s http://localhost:4041/iot/about && \
+            curl -s http://localhost:8668/version && break || sleep 5
+          done
 
       # Step 3: Install build tools
       - name: Install build tools
