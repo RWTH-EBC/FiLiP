@@ -122,6 +122,6 @@ jobs:
       # Step 13: Run tests with both unittest and pytest
       - name: Run tests
         run: |
-          TEST_PATH="tests"
-          python -m unittest discover -s $TEST_PATH -p "test_*.py" || true
-          python -m pytest $TEST_PATH || true
+          pwd  # Confirm working directory
+          python -m unittest discover -s tests -p "test_*.py"
+          python -m pytest tests
