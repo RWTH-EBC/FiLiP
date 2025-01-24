@@ -49,32 +49,11 @@ jobs:
       - name: Clone FIWARE repository
         run: |
           git clone https://github.com/N5GEH/n5geh.platform.git
-
-      # Step 7: Start FIWARE services
+      
+      # Step 7: Start docker pull
       - name: Start FIWARE services
         working-directory: n5geh.platform/v2
-        run: docker compose up -d
-
-      # Step 8: Wait for FIWARE services to start
-      - name: Wait for FIWARE services to start
-        run: |
-          for i in {1..100}; do
-            curl -s http://localhost:1026/version && \
-            curl -s http://localhost:4041/iot/about && \
-            curl -s http://localhost:8668/version && break || sleep 5
-          done
-
-      # Step 9: Verify FIWARE services
-      - name: Verify FIWARE services
-        run: |
-          curl -X GET "http://localhost:1026/version"
-          curl -X GET "http://localhost:4041/iot/about"
-          curl -X GET "http://localhost:8668/version"
-
-      # Step 10: Print Docker logs for debugging
-      - name: Print Docker logs
-        working-directory: n5geh.platform/v2
-        run: docker compose logs
+        run: docker compose pull
 
   test:
     needs: setup_and_fiware
@@ -96,7 +75,12 @@ jobs:
 
       # Step 8: start docker
       - name: Checking Docker
-        run: docker ps
+        run: docker ps -a
+
+      # Step 7: Start FIWARE services
+      - name: Start FIWARE services
+        working-directory: n5geh.platform/v2
+        run: docker compose up -d
         
       # Step 8: Wait for FIWARE services to start
       - name: Wait for FIWARE services to start
@@ -106,7 +90,19 @@ jobs:
             curl -s http://localhost:4041/iot/about && \
             curl -s http://localhost:8668/version && break || sleep 5
           done
+      
+      # Step 9: Verify FIWARE services
+      - name: Verify FIWARE services
+        run: |
+          curl -X GET "http://localhost:1026/version"
+          curl -X GET "http://localhost:4041/iot/about"
+          curl -X GET "http://localhost:8668/version"
 
+      # Step 10: Print Docker logs for debugging
+      - name: Print Docker logs
+        working-directory: n5geh.platform/v2
+        run: docker compose logs 
+        
       # Step 3: Install build tools
       - name: Install build tools
         run: |
