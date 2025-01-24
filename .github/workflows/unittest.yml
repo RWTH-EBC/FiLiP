@@ -115,6 +115,14 @@ jobs:
           pip install .[test]
           pip install pytest
 
+      # Step 11: check Pwd
+      - name: check directory
+        run: pwd
+      
+      # Step 11: check docker
+      - name: check docker
+        run: docker ps -a
+
       # Step 12: Run tests with both unittest and pytest
       - name: Run tests
         run: |
