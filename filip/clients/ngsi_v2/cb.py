@@ -1693,6 +1693,90 @@ class ContextBrokerClient(BaseHttpClient):
             self.log_error(err=err, msg=msg)
             raise
 
+    def add_valid_relationships(
+        self, entities: List[ContextEntity]
+    ) -> List[ContextEntity]:
+        """
+        Validate all attributes in the givben entities. If the attribute value points to
+        an existing entity, it is assumed that this attribute is a relationship, and it
+        will be assigned with the attribute type "relationship"
+
+        Args:
+            entities: list of entities that need to be validated.
+
+        Returns:
+            updated entities
+        """
+        for entity in entities:
+            for attr_name, attr_value in entity.model_dump(
+                exclude={"id", "type"}
+            ).items():
+                if isinstance(attr_value, dict):
+                    if self.validate_relationship(attr_value):
+                        entity.update_attribute(
+                            {
+                                attr_name: ContextAttribute(
+                                    **{
+                                        "type": "Relationship",
+                                        "value": attr_value.get("value"),
+                                    }
+                                )
+                            }
+                        )
+        return entities
+
+    def remove_invalid_relationships(
+        self, entities: List[ContextEntity]
+    ) -> List[ContextEntity]:
+        """
+        Removes invalid relationships from the entities. An invalid relationship
+        is a relationship that has no destination entity.
+
+        Args:
+            entities: list of entities that need to be validated.
+
+        Returns:
+            updated entities
+        """
+        for entity in entities:
+            for relationship in entity.get_relationships():
+                if not self.validate_relationship(relationship):
+                    entity.delete_attributes(attrs=[relationship])
+        return entities
+
+    def validate_relationship(
+        self, relationship: Union[NamedContextAttribute, ContextAttribute, Dict]
+    ) -> bool:
+        """
+        Validates a relationship. A relationship is valid if it points to an existing
+        entity. Otherwise, it is considered invalid
+
+        Args:
+            relationship: relationship to validate
+        Returns
+            True if the relationship is valid, False otherwise
+        """
+        if isinstance(relationship, NamedContextAttribute) or isinstance(
+            relationship, ContextAttribute
+        ):
+            destination_id = relationship.value
+        elif isinstance(relationship, dict):
+            destination_id = relationship.get("value")
+            if destination_id is None:
+                raise ValueError(
+                    "Invalid relationship dictionary format\n"
+                    'Expected format: {"type": "relationship", '
+                    '"value" "entity_id"}'
+                )
+        else:
+            raise ValueError("Invalid relationship type.")
+        try:
+            destination_entity = self.get_entity(entity_id=destination_id)
+            return destination_entity.id == destination_id
+        except requests.RequestException as err:
+            if err.response.status_code == 404:
+                return False
+
     def update_registration(self, registration: Registration):
         """
         Only the fields included in the request are updated in the registration.
