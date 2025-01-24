@@ -1707,7 +1707,8 @@ class ContextBrokerClient(BaseHttpClient):
         Returns:
             updated entities
         """
-        for entity in entities:
+        updated_entities = []
+        for entity in entities[:]:
             for attr_name, attr_value in entity.model_dump(
                 exclude={"id", "type"}
             ).items():
@@ -1723,10 +1724,11 @@ class ContextBrokerClient(BaseHttpClient):
                                 )
                             }
                         )
-        return entities
+            updated_entities.append(entity)
+        return updated_entities
 
     def remove_invalid_relationships(
-        self, entities: List[ContextEntity]
+        self, entities: List[ContextEntity], hard_remove: bool = True
     ) -> List[ContextEntity]:
         """
         Removes invalid relationships from the entities. An invalid relationship
@@ -1734,15 +1736,31 @@ class ContextBrokerClient(BaseHttpClient):
 
         Args:
             entities: list of entities that need to be validated.
+            hard_remove: If True, invalid relationships will be deleted.
+                        If False, invalid relationships will be changed to Text
+                        attributes.
 
         Returns:
             updated entities
         """
-        for entity in entities:
+        updated_entities = []
+        for entity in entities[:]:
             for relationship in entity.get_relationships():
                 if not self.validate_relationship(relationship):
-                    entity.delete_attributes(attrs=[relationship])
-        return entities
+                    if hard_remove:
+                        entity.delete_attributes(attrs=[relationship])
+                    else:
+                        entity.update_attribute(
+                            attrs=[
+                                NamedContextAttribute(
+                                    name=relationship.name,
+                                    type="Text",
+                                    value=relationship.value,
+                                )
+                            ]
+                        )
+                    updated_entities.append(entity)
+        return updated_entities
 
     def validate_relationship(
         self, relationship: Union[NamedContextAttribute, ContextAttribute, Dict]
