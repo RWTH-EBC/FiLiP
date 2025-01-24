@@ -94,6 +94,10 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      # Step 8: start docker
+      - name: Checking Docker
+        run: docker ps
+        
       # Step 8: Wait for FIWARE services to start
       - name: Wait for FIWARE services to start
         run: |
