@@ -117,6 +117,7 @@ jobs:
 
       # Step 5: Run tests with both unittest and pytest
       - name: Run tests
+        working-directory: FiLiP
         run: |
           TEST_PATH="tests"
           python -m unittest discover -s $TEST_PATH -p "test_*.py" || true
