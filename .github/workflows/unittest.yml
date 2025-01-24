@@ -78,7 +78,9 @@ jobs:
 
       # Step 11: Print current directory for debugging
       - name: Print current directory
-        run: pwd
+        run: |
+          pwd
+          ls
 
       # Step 12: Install test dependencies
       - name: Install test dependencies
