@@ -124,5 +124,6 @@ jobs:
         run: |
           docker ps -a
           pwd  # Confirm working directory
+          cd tests
           python -m unittest discover -s tests -p "test_*.py"
           python -m pytest tests
