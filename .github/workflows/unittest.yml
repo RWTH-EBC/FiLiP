@@ -121,7 +121,6 @@ jobs:
 
       # Step 13: Run tests with both unittest and pytest
       - name: Run tests
-        working-directory: $GITHUB_WORKSPACE
         run: |
           TEST_PATH="tests"
           python -m unittest discover -s $TEST_PATH -p "test_*.py" || true
