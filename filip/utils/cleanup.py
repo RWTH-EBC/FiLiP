@@ -1,6 +1,7 @@
 """
 Functions to clean up a tenant within a fiware based platform.
 """
+
 import warnings
 from functools import wraps
 
@@ -8,10 +9,7 @@ from pydantic import AnyHttpUrl, AnyUrl
 from requests import RequestException
 from typing import Callable, List, Union
 from filip.models import FiwareHeader, FiwareLDHeader
-from filip.clients.ngsi_v2 import \
-    ContextBrokerClient, \
-    IoTAClient, \
-    QuantumLeapClient
+from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient, QuantumLeapClient
 from filip.clients.ngsi_ld.cb import ContextBrokerLDClient
 from filip.models.ngsi_ld.context import ActionTypeLD
 import logging
@@ -20,10 +18,11 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 
-def clear_context_broker_ld(url: str = None,
-                            fiware_ld_header: FiwareLDHeader = None,
-                            cb_ld_client: ContextBrokerLDClient = None
-                            ):
+def clear_context_broker_ld(
+    url: str = None,
+    fiware_ld_header: FiwareLDHeader = None,
+    cb_ld_client: ContextBrokerLDClient = None,
+):
     """
     Function deletes all entities and subscriptions for a tenant in an LD context broker.
 
@@ -47,8 +46,9 @@ def clear_context_broker_ld(url: str = None,
         while entity_list:
             entity_list = client.get_entity_list(limit=100)
             if entity_list:
-                client.entity_batch_operation(action_type=ActionTypeLD.DELETE,
-                                              entities=entity_list)
+                client.entity_batch_operation(
+                    action_type=ActionTypeLD.DELETE, entities=entity_list
+                )
     except RequestException as e:
         logger.warning("Could not clean entities completely")
         raise
@@ -63,11 +63,12 @@ def clear_context_broker_ld(url: str = None,
         raise
 
 
-def clear_context_broker(url: str=None,
-                         fiware_header: FiwareHeader=None,
-                         clear_registrations: bool = False,
-                         cb_client: ContextBrokerClient = None
-                         ):
+def clear_context_broker(
+    url: str = None,
+    fiware_header: FiwareHeader = None,
+    clear_registrations: bool = False,
+    cb_client: ContextBrokerClient = None,
+):
     """
     Function deletes all entities, registrations and subscriptions for a
     given fiware header. To use TLS connection you need to provide the cb_client parameter
@@ -111,10 +112,11 @@ def clear_context_broker(url: str=None,
     assert len(client.get_subscription_list()) == 0
 
 
-
-def clear_iot_agent(url: Union[str, AnyHttpUrl] = None,
-                    fiware_header: FiwareHeader = None,
-                    iota_client: IoTAClient = None):
+def clear_iot_agent(
+    url: Union[str, AnyHttpUrl] = None,
+    fiware_header: FiwareHeader = None,
+    iota_client: IoTAClient = None,
+):
     """
     Function deletes all device groups and devices for a
     given fiware header. To use TLS connection you need to provide the iota_client parameter
@@ -142,14 +144,15 @@ def clear_iot_agent(url: Union[str, AnyHttpUrl] = None,
 
     # clear groups
     for group in client.get_group_list():
-        client.delete_group(resource=group.resource,
-                            apikey=group.apikey)
+        client.delete_group(resource=group.resource, apikey=group.apikey)
     assert len(client.get_group_list()) == 0
 
 
-def clear_quantumleap(url: str = None,
-                      fiware_header: FiwareHeader = None,
-                      ql_client: QuantumLeapClient = None):
+def clear_quantumleap(
+    url: str = None,
+    fiware_header: FiwareHeader = None,
+    ql_client: QuantumLeapClient = None,
+):
     """
     Function deletes all data for a given fiware header. To use TLS connection you need to provide the ql_client parameter
     as an argument with the Session object including the certificate and private key.
@@ -161,6 +164,7 @@ def clear_quantumleap(url: str = None,
     Returns:
         None
     """
+
     def handle_emtpy_db_exception(err: RequestException) -> None:
         """
         When the database is empty for request quantumleap returns a 404
@@ -170,11 +174,14 @@ def clear_quantumleap(url: str = None,
         Args:
             err: exception raised by delete function
         """
-        if err.response.status_code == 404 \
-                and err.response.json().get('error', None) == 'Not Found':
+        if (
+            err.response.status_code == 404
+            and err.response.json().get("error", None) == "Not Found"
+        ):
             pass
         else:
             raise
+
     assert url or ql_client, "Either url or client object must be given"
     # create client
     if ql_client is None:
@@ -191,18 +198,19 @@ def clear_quantumleap(url: str = None,
 
     # will be executed for all found entities
     for entity in entities:
-        client.delete_entity(entity_id=entity.entityId,
-                             entity_type=entity.entityType)
+        client.delete_entity(entity_id=entity.entityId, entity_type=entity.entityType)
 
 
-def clear_all(*,
-              fiware_header: FiwareHeader = None,
-              cb_url: str = None,
-              iota_url: Union[str, List[str]] = None,
-              ql_url: str = None,
-              cb_client: ContextBrokerClient = None,
-              iota_client: IoTAClient = None,
-              ql_client: QuantumLeapClient = None):
+def clear_all(
+    *,
+    fiware_header: FiwareHeader = None,
+    cb_url: str = None,
+    iota_url: Union[str, List[str]] = None,
+    ql_url: str = None,
+    cb_client: ContextBrokerClient = None,
+    iota_client: IoTAClient = None,
+    ql_client: QuantumLeapClient = None
+):
     """
     Clears all services that a url is provided for.
     If cb_url is provided, the registration will also be deleted.
@@ -236,22 +244,28 @@ def clear_all(*,
                 clear_iot_agent(url=url, fiware_header=fiware_header)
 
     if cb_url is not None or cb_client is not None:
-        clear_context_broker(url=cb_url, fiware_header=fiware_header, cb_client=cb_client,
-                             clear_registrations=True)
+        clear_context_broker(
+            url=cb_url,
+            fiware_header=fiware_header,
+            cb_client=cb_client,
+            clear_registrations=True,
+        )
 
     if ql_url is not None or ql_client is not None:
         clear_quantumleap(url=ql_url, fiware_header=fiware_header, ql_client=ql_client)
 
 
-def clean_test(*,
-               fiware_service: str,
-               fiware_servicepath: str,
-               cb_url: str = None,
-               iota_url: Union[str, List[str]] = None,
-               ql_url: str = None,
-               cb_client: ContextBrokerClient = None,
-               iota_client: IoTAClient = None,
-               ql_client: QuantumLeapClient = None) -> Callable:
+def clean_test(
+    *,
+    fiware_service: str,
+    fiware_servicepath: str,
+    cb_url: str = None,
+    iota_url: Union[str, List[str]] = None,
+    ql_url: str = None,
+    cb_client: ContextBrokerClient = None,
+    iota_client: IoTAClient = None,
+    ql_client: QuantumLeapClient = None
+) -> Callable:
     """
     Decorator to clean up the server before and after the test
 
@@ -274,29 +288,36 @@ def clean_test(*,
     Returns:
         Decorator for clean tests
     """
-    fiware_header = FiwareHeader(service=fiware_service,
-                                 service_path=fiware_servicepath)
-    clear_all(fiware_header=fiware_header,
-              cb_url=cb_url,
-              iota_url=iota_url,
-              ql_url=ql_url,
-              cb_client=cb_client,
-              iota_client=iota_client,
-              ql_client=ql_client)
+    fiware_header = FiwareHeader(
+        service=fiware_service, service_path=fiware_servicepath
+    )
+    clear_all(
+        fiware_header=fiware_header,
+        cb_url=cb_url,
+        iota_url=iota_url,
+        ql_url=ql_url,
+        cb_client=cb_client,
+        iota_client=iota_client,
+        ql_client=ql_client,
+    )
+
     # Inner decorator function
     def decorator(func):
         #  Wrapper function for the decorated function
         @wraps(func)
         def wrapper(*args, **kwargs):
             return func(*args, **kwargs)
+
         return wrapper
 
-    clear_all(fiware_header=fiware_header,
-              cb_url=cb_url,
-              iota_url=iota_url,
-              ql_url=ql_url,
-              cb_client=cb_client,
-              iota_client=iota_client,
-              ql_client=ql_client)
+    clear_all(
+        fiware_header=fiware_header,
+        cb_url=cb_url,
+        iota_url=iota_url,
+        ql_url=ql_url,
+        cb_client=cb_client,
+        iota_client=iota_client,
+        ql_client=ql_client,
+    )
 
     return decorator

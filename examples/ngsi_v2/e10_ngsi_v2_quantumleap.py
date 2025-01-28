@@ -1,6 +1,7 @@
 """
 # Example for working with the QuantumLeapClient
 """
+
 # ## Import packages
 import logging
 import time
@@ -11,6 +12,7 @@ from filip.models.ngsi_v2.context import ContextEntity
 from filip.models.base import FiwareHeader
 from filip.clients.ngsi_v2 import ContextBrokerClient, QuantumLeapClient
 from filip.utils.cleanup import clear_all
+
 # ## Parameters
 #
 # To run this example you need a working Fiware v2 setup with a
@@ -23,15 +25,16 @@ QL_URL = settings.QL_URL
 
 # Here you can also change FIWARE service and service path.
 # FIWARE-Service
-SERVICE = 'filip'
+SERVICE = "filip"
 # FIWARE-Service path
-SERVICE_PATH = '/example'
+SERVICE_PATH = "/example"
 
 # Setting up logging
 logging.basicConfig(
-    level='INFO',
-    format='%(asctime)s %(name)s %(levelname)s: %(message)s',
-    datefmt='%d-%m-%Y %H:%M:%S')
+    level="INFO",
+    format="%(asctime)s %(name)s %(levelname)s: %(message)s",
+    datefmt="%d-%m-%Y %H:%M:%S",
+)
 logger = logging.getLogger(__name__)
 
 if __name__ == "__main__":
@@ -48,24 +51,28 @@ if __name__ == "__main__":
     clear_all(fiware_header=fiware_header, cb_url=CB_URL, ql_url=QL_URL)
 
     ql_client = QuantumLeapClient(url=QL_URL, fiware_header=fiware_header)
-    print(f"Quantum Leap Client version: {ql_client.get_version()['version']}"
-          f" located at url: {ql_client.base_url}")
+    print(
+        f"Quantum Leap Client version: {ql_client.get_version()['version']}"
+        f" located at url: {ql_client.base_url}"
+    )
 
     cb_client = ContextBrokerClient(url=CB_URL, fiware_header=fiware_header)
 
-    print(f"Context Broker version: {cb_client.get_version()['orion']['version']}"
-          f" located at url: {cb_client.base_url}")
+    print(
+        f"Context Broker version: {cb_client.get_version()['orion']['version']}"
+        f" located at url: {cb_client.base_url}"
+    )
 
     # ## 2 Interact with QL
     #
     # ### 2.1 Create a ContextEntity to work with
     #
     # For more information see: e01_ngsi_v2_context_basics.py
-    hall = {"id": "Hall_1",
-            "type": "Room",
-            "temperature": {"value": random.randint(0, 100),
-                            "type": "Integer"},
-            }
+    hall = {
+        "id": "Hall_1",
+        "type": "Room",
+        "temperature": {"value": random.randint(0, 100), "type": "Integer"},
+    }
 
     hall_entity = ContextEntity(**hall)
     cb_client.post_entity(hall_entity)
@@ -76,20 +83,14 @@ if __name__ == "__main__":
     # Note: The IPs must be the ones that Orion and quantumleap can access,
     # e.g. service name or static IP, localhost will not work here.
 
-    subscription: Subscription = Subscription.model_validate({
-        "subject": {
-            "entities": [
-                {
-                    "id": hall_entity.id
-                }
-            ]
-        },
-        "notification": {  # Notify QL automatically
-            "http": {
-                "url": "http://quantumleap:8668/v2/notify"
-            }
+    subscription: Subscription = Subscription.model_validate(
+        {
+            "subject": {"entities": [{"id": hall_entity.id}]},
+            "notification": {  # Notify QL automatically
+                "http": {"url": "http://quantumleap:8668/v2/notify"}
+            },
         }
-    })
+    )
     subscription_id = cb_client.post_subscription(subscription=subscription)
 
     # get all subscriptions
@@ -101,40 +102,53 @@ if __name__ == "__main__":
             if entity.id == hall_entity.id:
                 try:
                     ql_client.post_notification(
-                        notification=Message(
-                            data=[hall_entity],
-                            subscriptionId=sub.id))
+                        notification=Message(data=[hall_entity], subscriptionId=sub.id)
+                    )
                     subscription_id = sub.id
                 except:
                     logger.error("Can not notify QL")
 
     # notify QL via Orion
     for i in range(5, 10):
-        cb_client.update_attribute_value(entity_id=hall_entity.id,
-                                         entity_type=hall_entity.type,
-                                         attr_name="temperature",
-                                         value=i)
+        cb_client.update_attribute_value(
+            entity_id=hall_entity.id,
+            entity_type=hall_entity.type,
+            attr_name="temperature",
+            value=i,
+        )
 
     time.sleep(1)
     # get historical data as object and you can directly convert them to pandas dataframes
     try:
-        print(f"get_entity_by_id method converted to pandas:\n"
-              f"{ql_client.get_entity_by_id(hall_entity.id).to_pandas()}\n")
+        print(
+            f"get_entity_by_id method converted to pandas:\n"
+            f"{ql_client.get_entity_by_id(hall_entity.id).to_pandas()}\n"
+        )
 
-        print(f"get_entity_values_by_id method:\n"
-              f"{ql_client.get_entity_values_by_id(hall_entity.id)}\n")
+        print(
+            f"get_entity_values_by_id method:\n"
+            f"{ql_client.get_entity_values_by_id(hall_entity.id)}\n"
+        )
 
-        print(f"get_entity_attr_by_id method:\n"
-              f"{ql_client.get_entity_attr_by_id(hall_entity.id, 'temperature')}\n")
+        print(
+            f"get_entity_attr_by_id method:\n"
+            f"{ql_client.get_entity_attr_by_id(hall_entity.id, 'temperature')}\n"
+        )
 
-        print(f"get_entity_attr_values_by_id method:\n"
-              f"{ql_client.get_entity_attr_values_by_id(hall_entity.id, attr_name='temperature')}\n")
+        print(
+            f"get_entity_attr_values_by_id method:\n"
+            f"{ql_client.get_entity_attr_values_by_id(hall_entity.id, attr_name='temperature')}\n"
+        )
 
-        print(f"get_entity_attr_by_type method:\n"
-              f"{ql_client.get_entity_attr_by_type(hall_entity.type, attr_name='temperature')}\n")
+        print(
+            f"get_entity_attr_by_type method:\n"
+            f"{ql_client.get_entity_attr_by_type(hall_entity.type, attr_name='temperature')}\n"
+        )
 
-        print(f"get_entity_attr_values_by_type method:\n"
-              f"{ql_client.get_entity_attr_values_by_type(hall_entity.type, 'temperature')}")
+        print(
+            f"get_entity_attr_values_by_type method:\n"
+            f"{ql_client.get_entity_attr_values_by_type(hall_entity.type, 'temperature')}"
+        )
     except:
         logger.info("There might be no historical data for some calls.")
 
@@ -142,15 +156,13 @@ if __name__ == "__main__":
     #
     # Delete entity in QL
     try:
-        ql_client.delete_entity(entity_id=hall_entity.id,
-                                entity_type=hall_entity.type)
+        ql_client.delete_entity(entity_id=hall_entity.id, entity_type=hall_entity.type)
     except:
         logger.error("Can not delete data from QL")
 
     # delete entity in CV
     try:
-        cb_client.delete_entity(entity_id=hall_entity.id,
-                                entity_type=hall_entity.type)
+        cb_client.delete_entity(entity_id=hall_entity.id, entity_type=hall_entity.type)
     except:
         logger.error("Can not delete entity from context broker")
 

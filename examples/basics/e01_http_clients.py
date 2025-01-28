@@ -6,12 +6,10 @@
 
 # ## Import packages
 import requests
-from filip.clients.ngsi_v2 import \
-    ContextBrokerClient, \
-    IoTAClient, \
-    QuantumLeapClient
+from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient, QuantumLeapClient
 from filip.models.base import FiwareHeader
 from filip.config import settings
+
 # ## Parameters
 #
 # Note: This example also reads parameters from the '.env.filip'-file
@@ -25,12 +23,12 @@ QL_URL = settings.QL_URL
 #
 # Here you can also change the used Fiware service
 # FIWARE-Service
-service = 'filip'
+service = "filip"
 # FIWARE-Servicepath
-service_path = '/example'
+service_path = "/example"
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     # # 1 FiwareHeader
     #
@@ -41,8 +39,7 @@ if __name__ == '__main__':
     # In short, a fiware header specifies a location in Fiware where the
     # created entities will be saved and requests are executed.
     # It can be thought of as a separate subdirectory where you work in.
-    fiware_header = FiwareHeader(service='filip',
-                                 service_path='/example')
+    fiware_header = FiwareHeader(service="filip", service_path="/example")
 
     # # 2 Client modes
     # You can run the clients in different modes:
@@ -50,8 +47,7 @@ if __name__ == '__main__':
     # ## 2.1 Run it as a pure python object.
     #
     # This will open and close a connection each time you use a function.
-    cb_client = ContextBrokerClient(url=CB_URL,
-                                    fiware_header=fiware_header)
+    cb_client = ContextBrokerClient(url=CB_URL, fiware_header=fiware_header)
     print(f"OCB Version: {cb_client.get_version()}")
 
     # ## 2.2 Run the client via python's context protocol.
@@ -103,8 +99,7 @@ if __name__ == '__main__':
     # additional keyword arguments a requests.request would also take,
     # e.g. headers, params etc.
 
-    cb_client = ContextBrokerClient(url=CB_URL,
-                                    fiware_header=fiware_header)
+    cb_client = ContextBrokerClient(url=CB_URL, fiware_header=fiware_header)
 
     # # 5 Combined Client
     #

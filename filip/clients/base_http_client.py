@@ -1,6 +1,7 @@
 """
 Base http client module
 """
+
 import logging
 from pydantic import AnyHttpUrl
 from typing import Dict, ByteString, List, IO, Tuple, Union
@@ -14,8 +15,9 @@ class NgsiURLVersion(str, Enum):
     """
     URL part that defines the NGSI version for the API.
     """
-    v2_url = "/v2"
-    ld_url = "/ngsi-ld/v1"
+
+    v2_url = "v2"
+    ld_url = "ngsi-ld/v1"
 
 
 class BaseHttpClient:
@@ -30,15 +32,17 @@ class BaseHttpClient:
         **kwargs: Optional arguments that ``request`` takes.
 
     """
-    def __init__(self,
-                 url: Union[AnyHttpUrl, str] = None,
-                 *,
-                 session: requests.Session = None,
-                 fiware_header: Union[Dict, FiwareHeader, FiwareLDHeader] = None,
-                 **kwargs):
 
-        self.logger = logging.getLogger(
-            name=f"{self.__class__.__name__}")
+    def __init__(
+        self,
+        url: Union[AnyHttpUrl, str] = None,
+        *,
+        session: requests.Session = None,
+        fiware_header: Union[Dict, FiwareHeader, FiwareLDHeader] = None,
+        **kwargs,
+    ):
+
+        self.logger = logging.getLogger(name=f"{self.__class__.__name__}")
         self.logger.addHandler(logging.NullHandler())
         self.logger.debug("Creating %s", self.__class__.__name__)
 
@@ -58,7 +62,7 @@ class BaseHttpClient:
         else:
             self.fiware_headers = fiware_header
 
-        self.headers.update(kwargs.pop('headers', {}))
+        self.headers.update(kwargs.pop("headers", {}))
         self.kwargs: Dict = kwargs
 
     # Context Manager Protocol
@@ -111,7 +115,7 @@ class BaseHttpClient:
         elif isinstance(headers, str):
             self._fiware_headers = FiwareLDHeader.parse_raw(headers)
         else:
-            raise TypeError(f'Invalid headers! {type(headers)}')
+            raise TypeError(f"Invalid headers! {type(headers)}")
         self.headers.update(self.fiware_headers.model_dump(by_alias=True))
 
     @property
@@ -170,10 +174,9 @@ class BaseHttpClient:
         return self._headers
 
     # modification to requests api
-    def get(self,
-            url: str,
-            params: Union[Dict, List[Tuple], ByteString] = None,
-            **kwargs) -> requests.Response:
+    def get(
+        self, url: str, params: Union[Dict, List[Tuple], ByteString] = None, **kwargs
+    ) -> requests.Response:
         """
         Sends a GET request either using the provided session or the single
         session.
@@ -188,8 +191,7 @@ class BaseHttpClient:
             requests.Response
         """
 
-        kwargs.update({k: v for k, v in self.kwargs.items()
-                       if k not in kwargs.keys()})
+        kwargs.update({k: v for k, v in self.kwargs.items() if k not in kwargs.keys()})
 
         if self.session:
             return self.session.get(url=url, params=params, **kwargs)
@@ -207,16 +209,15 @@ class BaseHttpClient:
         Returns:
             requests.Response
         """
-        kwargs.update({k: v for k, v in self.kwargs.items()
-                       if k not in kwargs.keys()})
+        kwargs.update({k: v for k, v in self.kwargs.items() if k not in kwargs.keys()})
 
         if self.session:
             return self.session.options(url=url, **kwargs)
         return requests.options(url=url, **kwargs)
 
-    def head(self, url: str,
-             params: Union[Dict, List[Tuple], ByteString] = None,
-             **kwargs) -> requests.Response:
+    def head(
+        self, url: str, params: Union[Dict, List[Tuple], ByteString] = None, **kwargs
+    ) -> requests.Response:
         """
         Sends a HEAD request either using the provided session or the
         single session.
@@ -230,18 +231,19 @@ class BaseHttpClient:
         Returns:
             requests.Response
         """
-        kwargs.update({k: v for k, v in self.kwargs.items()
-                       if k not in kwargs.keys()})
+        kwargs.update({k: v for k, v in self.kwargs.items() if k not in kwargs.keys()})
 
         if self.session:
             return self.session.head(url=url, params=params, **kwargs)
         return requests.head(url=url, params=params, **kwargs)
 
-    def post(self,
-             url: str,
-             data: Union[Dict, ByteString, List[Tuple], IO, str] = None,
-             json: Dict = None,
-             **kwargs) -> requests.Response:
+    def post(
+        self,
+        url: str,
+        data: Union[Dict, ByteString, List[Tuple], IO, str] = None,
+        json: Dict = None,
+        **kwargs,
+    ) -> requests.Response:
         """
         Sends a POST request either using the provided session or the
         single session.
@@ -257,18 +259,19 @@ class BaseHttpClient:
         Returns:
 
         """
-        kwargs.update({k: v for k, v in self.kwargs.items()
-                       if k not in kwargs.keys()})
+        kwargs.update({k: v for k, v in self.kwargs.items() if k not in kwargs.keys()})
 
         if self.session:
             return self.session.post(url=url, data=data, json=json, **kwargs)
         return requests.post(url=url, data=data, json=json, **kwargs)
 
-    def put(self,
-            url: str,
-            data: Union[Dict, ByteString, List[Tuple], IO, str] = None,
-            json: Dict = None,
-            **kwargs) -> requests.Response:
+    def put(
+        self,
+        url: str,
+        data: Union[Dict, ByteString, List[Tuple], IO, str] = None,
+        json: Dict = None,
+        **kwargs,
+    ) -> requests.Response:
         """
         Sends a PUT request either using the provided session or the
         single session.
@@ -285,18 +288,19 @@ class BaseHttpClient:
         Returns:
             request.Response
         """
-        kwargs.update({k: v for k, v in self.kwargs.items()
-                       if k not in kwargs.keys()})
+        kwargs.update({k: v for k, v in self.kwargs.items() if k not in kwargs.keys()})
 
         if self.session:
             return self.session.put(url=url, data=data, json=json, **kwargs)
         return requests.put(url=url, data=data, json=json, **kwargs)
 
-    def patch(self,
-              url: str,
-              data: Union[Dict, ByteString, List[Tuple], IO, str] = None,
-              json: Dict = None,
-              **kwargs) -> requests.Response:
+    def patch(
+        self,
+        url: str,
+        data: Union[Dict, ByteString, List[Tuple], IO, str] = None,
+        json: Dict = None,
+        **kwargs,
+    ) -> requests.Response:
         """
         Sends a PATCH request either using the provided session or the
         single session.
@@ -313,8 +317,7 @@ class BaseHttpClient:
         Returns:
             request.Response
         """
-        kwargs.update({k: v for k, v in self.kwargs.items()
-                       if k not in kwargs.keys()})
+        kwargs.update({k: v for k, v in self.kwargs.items() if k not in kwargs.keys()})
 
         if self.session:
             return self.session.patch(url=url, data=data, json=json, **kwargs)
@@ -332,16 +335,13 @@ class BaseHttpClient:
         Returns:
             request.Response
         """
-        kwargs.update({k: v for k, v in self.kwargs.items()
-                       if k not in kwargs.keys()})
+        kwargs.update({k: v for k, v in self.kwargs.items() if k not in kwargs.keys()})
 
         if self.session:
             return self.session.delete(url=url, **kwargs)
         return requests.delete(url=url, **kwargs)
 
-    def log_error(self,
-                  err: requests.RequestException,
-                  msg: str = None) -> None:
+    def log_error(self, err: requests.RequestException, msg: str = None) -> None:
         """
         Outputs the error messages from the client request function. If
         additional information is available in the server response this will

@@ -1,12 +1,12 @@
 """
 NGSIv2 models for context broker interaction
 """
+
 import json
 from typing import Any, List, Dict, Union, Optional, Set, Tuple
 
 from aenum import Enum
-from pydantic import field_validator, ConfigDict, BaseModel, Field, \
-    model_validator
+from pydantic import field_validator, ConfigDict, BaseModel, Field, model_validator
 from pydantic_core.core_schema import ValidationInfo
 
 from filip.models.ngsi_v2.base import (
@@ -101,6 +101,7 @@ class ContextAttribute(BaseAttribute, BaseValueAttribute):
         >>> attr = ContextAttribute(**data)
 
     """
+
     # although `type` is a required field in the NGSIv2 specification, it is
     # set to optional here to allow for the possibility of setting
     # default-types in child classes. Pydantic will raise the correct error
@@ -144,10 +145,10 @@ class ContextEntityKeyValues(BaseModel):
         ...,
         title="Entity Id",
         description="Id of an entity in an NGSI context broker. Allowed "
-                    "characters are the ones in the plain ASCII set, except "
-                    "the following ones: control characters, "
-                    "whitespace, &, ?, / and #.",
-        json_schema_extra={"example":"Bcn-Welt"},
+        "characters are the ones in the plain ASCII set, except "
+        "the following ones: control characters, "
+        "whitespace, &, ?, / and #.",
+        json_schema_extra={"example": "Bcn-Welt"},
         max_length=256,
         min_length=1,
         frozen=True,
@@ -157,10 +158,10 @@ class ContextEntityKeyValues(BaseModel):
         ...,
         title="Entity Type",
         description="Id of an entity in an NGSI context broker. "
-                    "Allowed characters are the ones in the plain ASCII set, "
-                    "except the following ones: control characters, "
-                    "whitespace, &, ?, / and #.",
-        json_schema_extra={"example":"Room"},
+        "Allowed characters are the ones in the plain ASCII set, "
+        "except the following ones: control characters, "
+        "whitespace, &, ?, / and #.",
+        json_schema_extra={"example": "Room"},
         max_length=256,
         min_length=1,
         frozen=True,
@@ -231,6 +232,7 @@ class ContextEntity(ContextEntityKeyValues):
     model_config = ConfigDict(
         extra="allow", validate_default=True, validate_assignment=True
     )
+
     # although `type` is a required field in the NGSIv2 specification, it is
     # set to optional here to allow for the possibility of setting
     # default-types in child classes. Pydantic will raise the correct error
@@ -259,7 +261,7 @@ class ContextEntity(ContextEntityKeyValues):
 
         return attrs
 
-    @field_validator('*')
+    @field_validator("*")
     @classmethod
     def check_attributes(cls, value, info: ValidationInfo):
         """
@@ -267,13 +269,17 @@ class ContextEntity(ContextEntityKeyValues):
         ensure full functionality.
         """
         if info.field_name in ["id", "type"]:
-             return value
+            return value
 
         if info.field_name in cls.model_fields:
-            if not (isinstance(value, ContextAttribute)
-                    or value == cls.model_fields[info.field_name].default):
-                raise ValueError(f"Attribute {info.field_name} must be a of "
-                                 f"type or subtype ContextAttribute")
+            if not (
+                isinstance(value, ContextAttribute)
+                or value == cls.model_fields[info.field_name].default
+            ):
+                raise ValueError(
+                    f"Attribute {info.field_name} must be a of "
+                    f"type or subtype ContextAttribute"
+                )
         return value
 
     @model_validator(mode="after")
@@ -282,11 +288,13 @@ class ContextEntity(ContextEntityKeyValues):
         try:
             for attr in values.model_extra:
                 if not isinstance(values.__getattr__(attr), ContextAttribute):
-                    raise ValueError(f"Attribute {attr} must be a of type or "
-                                     f"subtype ContextAttribute. You most "
-                                     f"likely tried to directly assign an "
-                                     f"attribute without converting it to a "
-                                     f"proper Attribute-Type!")
+                    raise ValueError(
+                        f"Attribute {attr} must be a of type or "
+                        f"subtype ContextAttribute. You most "
+                        f"likely tried to directly assign an "
+                        f"attribute without converting it to a "
+                        f"proper Attribute-Type!"
+                    )
         except TypeError:
             pass
         return values
@@ -632,8 +640,7 @@ class Query(BaseModel):
     )
     expression: Optional[Expression] = Field(
         default=None,
-        description="An expression composed of q, mq, georel, geometry and "
-                    "coords",
+        description="An expression composed of q, mq, georel, geometry and " "coords",
     )
     metadata: Optional[List[str]] = Field(
         default=None,

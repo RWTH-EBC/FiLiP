@@ -7,7 +7,7 @@
 [![coverage](https://rwth-ebc.github.io/FiLiP/master/coverage/badge.svg)](https://rwth-ebc.github.io/FiLiP/master/coverage)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![build](https://rwth-ebc.github.io/FiLiP/master/build/build.svg)](https://rwth-ebc.github.io/FiLiP/master/build/build.svg)
-[![DOI](https://joss.theoj.org/papers/10.21105/joss.06953/status.svg )](https://doi.org/10.21105/joss.06953)
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.06953/status.svg     )](https://doi.org/10.21105/joss.06953    )
 
 FiLiP (Fiware Library for Python) is a python software development kit (SDK) for 
 accelerating the development of web services that use Fiware's Generic 
@@ -69,6 +69,19 @@ You can register for a testing account
 [here](https://www.fiware.org/developers/fiware-lab/).
 > **Note**: FiLiP is now compatible to [Pydantic V2](https://docs.pydantic.dev/latest/migration/). If your program still require Pydantic V1.x for some reason, please use release [v0.2.5](https://github.com/RWTH-EBC/FiLiP/releases/tag/v0.2.5) or earlier version of FiLiP. Besides, we recommended to set `pydantic~=1.10` in the `requirements.txt`, otherwise Pydantic V2 might still be installed.
 
+#### Supported Python Versions
+
+| Version   | Status     |
+|-----------|------------|
+| 3.7      | ❌ Deprecated   |
+| 3.8      | ✅ Tested   |
+| 3.9      | ✅ Tested   |
+| 3.10     | ✅ Tested   |
+| 3.11     | ✅ Tested   |
+| 3.12     | 🔄 Ongoing   |
+
+> ✅ Tested python versions have passed the unittests 
+
 ### Installation
 
 The easiest way to install the library is via pip:
@@ -84,10 +97,18 @@ If you want to benefit from the latest changes, use the following command
 pip install -U git+git://github.com/RWTH-EBC/filip
 ```
 
-> **Note**: For local development, you can install the library in editable mode with the following command:
+> **Note**: For development, you should install FiLiP in editable mode with the following command:
+> ````bash
+> pip install -e .[development]
 > ````
-> pip install -e .
-> ````
+> The `development` option will install extra libraries required for contribution. Please check the [CONTRIBUTING.md](CONTRIBUTING.md) for more information. 
+
+#### Install extra dependencies for tutorials and examples (optional)
+
+If you need to go through the tutorials or examples, please install filip with extra module ``tutorials``:
+````
+pip install -U filip[tutorials]
+````
 
 #### Install semantics module (optional)
 

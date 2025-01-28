@@ -4,12 +4,13 @@
 # the vocabulary configured
 # and exported as a python model file
 """
+
 from filip.semantics.vocabulary import DataFieldType
 from filip.semantics.vocabulary.vocabulary import VocabularySettings
 from filip.semantics.vocabulary_configurator import VocabularyConfigurator
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     # # 1 Creating a new vocabulary
     #
@@ -36,7 +37,7 @@ if __name__ == '__main__':
         pascal_case_individual_labels=True,
         camel_case_property_labels=True,
         camel_case_datatype_labels=True,
-        pascal_case_datatype_enum_labels=True
+        pascal_case_datatype_enum_labels=True,
     )
     # We create our new blank vocabulary:
     vocabulary = VocabularyConfigurator.create_vocabulary(settings=settings)
@@ -49,20 +50,16 @@ if __name__ == '__main__':
     # We always get a new vocabulary object returned
 
     # ### 2.0.1 as file
-    vocabulary = \
-        VocabularyConfigurator.add_ontology_to_vocabulary_as_file(
-            vocabulary=vocabulary,
-            path_to_file='ontology_files/building circuits.owl')
+    vocabulary = VocabularyConfigurator.add_ontology_to_vocabulary_as_file(
+        vocabulary=vocabulary, path_to_file="ontology_files/building circuits.owl"
+    )
 
     # ### 2.0.2 as string
-    with open('ontology_files/ParsingTesterOntology.ttl', 'r') as file:
+    with open("ontology_files/ParsingTesterOntology.ttl", "r") as file:
         data = file.read()
-    vocabulary = \
-        VocabularyConfigurator.add_ontology_to_vocabulary_as_string(
-            vocabulary=vocabulary,
-            source_content=data,
-            source_name="ParsingExample"
-        )
+    vocabulary = VocabularyConfigurator.add_ontology_to_vocabulary_as_string(
+        vocabulary=vocabulary, source_content=data, source_name="ParsingExample"
+    )
 
     # ### 2.0.3 as link
     #
@@ -70,11 +67,9 @@ if __name__ == '__main__':
     # here: "saref.tll". Only for demonstration of the function, we do not need
     # saref in our example vocabulary
 
-    vocabulary = \
-        VocabularyConfigurator.add_ontology_to_vocabulary_as_link(
-            vocabulary=vocabulary,
-            link="https://ontology.tno.nl/saref.ttl"
-        )
+    vocabulary = VocabularyConfigurator.add_ontology_to_vocabulary_as_link(
+        vocabulary=vocabulary, link="https://ontology.tno.nl/saref.ttl"
+    )
 
     # ## 2.1 Inspect added sources
     #
@@ -84,8 +79,10 @@ if __name__ == '__main__':
     # Here we print out the names and adding time of all contained sources:
     print("\u0332".join("Sources in vocabulary:"))
     for source in vocabulary.get_source_list():
-        print(f'Name: {source.source_name}; Added: {source.timestamp}; '
-              f'Id: {source.id}')
+        print(
+            f"Name: {source.source_name}; Added: {source.timestamp}; "
+            f"Id: {source.id}"
+        )
     print("")
 
     # ## 2.2 Predefined source
@@ -100,7 +97,7 @@ if __name__ == '__main__':
     # To see if an ontology could be parsed completely we have to look at
     # the parsing logs:
     print("\u0332".join("Parsing Logs of vocabulary:"))
-    print(f'{VocabularyConfigurator.get_parsing_logs(vocabulary)}\n')
+    print(f"{VocabularyConfigurator.get_parsing_logs(vocabulary)}\n")
     # Here we see that a statement in the ParsingTesterOntology was dropped
     # as it was in a non supported OR format. The semantic logic is not
     # compatible with the OR combination of two relations.
@@ -113,12 +110,15 @@ if __name__ == '__main__':
     # the parsing logs. We could also look it up in the vocabulary as shown
     # above
 
-    source_id = [source.id for source in vocabulary.get_source_list() if
-                 source.source_name == "ParsingExample"][0]
+    source_id = [
+        source.id
+        for source in vocabulary.get_source_list()
+        if source.source_name == "ParsingExample"
+    ][0]
 
     vocabulary = VocabularyConfigurator.delete_source_from_vocabulary(
-                    vocabulary=vocabulary,
-                    source_id=source_id)
+        vocabulary=vocabulary, source_id=source_id
+    )
 
     # # 3 Completeness
     #
@@ -187,7 +187,7 @@ if __name__ == '__main__':
     # To get the used label of an entity always use .get_label()
 
     # The easiest way to access an entity is the get_entity_by_iri function
-    entity = vocabulary.get_entity_by_iri('https://w3id.org/saref#Sensor')
+    entity = vocabulary.get_entity_by_iri("https://w3id.org/saref#Sensor")
     entity.set_label("SarefSensor")
 
     # # 6 IoT Devices
@@ -218,7 +218,7 @@ if __name__ == '__main__':
     # To see a list of all our available data-properties we can use:
     print("\u0332".join("Available Data-properties:"))
     for prop_iri, prop in vocabulary.data_properties.items():
-        print(f'Label: {prop.get_label()}, Iri: {prop.iri}')
+        print(f"Label: {prop.get_label()}, Iri: {prop.iri}")
     print("")
     # This logic is the same if we want to look into classes,
     # object-properties, datatypes or individuals of our vocabulary.
@@ -228,20 +228,20 @@ if __name__ == '__main__':
     # We access the wanted properties over the specialised getter,
     # the general getter, or directly
     vocabulary.get_data_property(
-        "http://www.semanticweb.org/building#controlCommand").field_type = \
-        DataFieldType.command
+        "http://www.semanticweb.org/building#controlCommand"
+    ).field_type = DataFieldType.command
     vocabulary.get_entity_by_iri(
-        "http://www.semanticweb.org/building#measurement").field_type = \
-        DataFieldType.device_attribute
+        "http://www.semanticweb.org/building#measurement"
+    ).field_type = DataFieldType.device_attribute
     vocabulary.get_entity_by_iri(
-        "http://www.semanticweb.org/building#state").field_type = \
-        DataFieldType.device_attribute
+        "http://www.semanticweb.org/building#state"
+    ).field_type = DataFieldType.device_attribute
 
     # To see which classes are now device classes we can use:
     print("\u0332".join("Device Classes:"))
     for class_ in vocabulary.get_classes():
         if class_.is_iot_class(vocabulary=vocabulary):
-            print(f'Label: {class_.get_label()}, Iri: {class_.iri}')
+            print(f"Label: {class_.get_label()}, Iri: {class_.iri}")
     print("")
 
     # # 7 Exporting Vocabulary to models
@@ -263,15 +263,16 @@ if __name__ == '__main__':
 
     # The saref ontology was good to display some functions of the vocabulary
     # configurator, but to simplify the next example we remove it here
-    source_id = [source.id for source in vocabulary.get_source_list() if
-                 source.source_name == "saref.ttl"][0]
+    source_id = [
+        source.id
+        for source in vocabulary.get_source_list()
+        if source.source_name == "saref.ttl"
+    ][0]
     vocabulary = VocabularyConfigurator.delete_source_from_vocabulary(
-        vocabulary=vocabulary,
-        source_id=source_id)
+        vocabulary=vocabulary, source_id=source_id
+    )
 
     # The export function takes two arguments: path_to_file and file_name
     # it creates the file: path_to_file/file_name.py overriding any existing
     # file
-    VocabularyConfigurator.generate_vocabulary_models(vocabulary, "",
-                                                      "models")
-
+    VocabularyConfigurator.generate_vocabulary_models(vocabulary, "", "models")

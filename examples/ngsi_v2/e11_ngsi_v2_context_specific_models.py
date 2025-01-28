@@ -13,6 +13,7 @@
 # duplication of code unnecessary and allows for a more consistent
 # entities and systems.
 """
+
 import json
 from pprint import pprint
 from typing import Literal

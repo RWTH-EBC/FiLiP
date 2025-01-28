@@ -9,6 +9,7 @@ For further details of the language please refer to:
 
 https://telefonicaid.github.io/fiware-orion/api/v2/stable/
 """
+
 import regex as re
 from aenum import Enum
 from typing import Union, List, Tuple, Any
@@ -18,87 +19,109 @@ class Operator(str, Enum):
     """
     The list of operators (and the format of the values they use) is as follows:
     """
-    _init_ = 'value __doc__'
 
-    EQUAL = '==', "Single element, e.g. temperature!=41. For an entity to " \
-                  "match, it must contain the target property (temperature) " \
-                  "and the target property value must not be the query value " \
-                  "(41). " \
-                  "A list of comma-separated values, e.g. color!=black," \
-                  "red. For an entity to match, it must contain the target " \
-                  "property and the target property value must not be any " \
-                  "of the values in the list (AND clause) (or not include any "\
-                  "of the values in the list in case the target property " \
-                  "value is an array). Eg. entities whose attribute color is " \
-                  "set to black will not match, while entities whose " \
-                  "attribute color is set to white will match." \
-                  "A range, specified as a minimum and maximum separated by " \
-                  ".., e.g. temperature!=10..20. For an entity to match, " \
-                  "it must contain the target property (temperature) and the " \
-                  "target property value must not be between the upper and " \
-                  "lower limits (both included). Ranges can only be used " \
-                  "with elements target properties that represent dates (in " \
-                  "ISO8601 format), numbers or strings. "
-    UNEQUAL = '!=', "Single element, e.g. temperature!=41. For an entity to " \
-                    "match, it must contain the target property " \
-                    "(temperature) and the target property value must not be " \
-                    "the query value (41). A list of comma-separated values, " \
-                    "e.g. color!=black,red. For an entity to match, it must " \
-                    "contain the target property and the target property " \
-                    "value must not be any of the values in the list (AND " \
-                    "clause) (or not include any of the values in the list " \
-                    "in case the target property value is an array). Eg. " \
-                    "entities whose attribute color is set to black will not " \
-                    "match, while entities whose attribute color is set to " \
-                    "white will match. A range, specified as a minimum and " \
-                    "maximum separated by .., e.g. temperature!=10..20. For " \
-                    "an entity to match, it must contain the target property " \
-                    "(temperature) and the target property value must not be " \
-                    "between the upper and lower limits (both included). " \
-                    "Ranges can only be used with elements target properties " \
-                    "that represent dates (in ISO8601 format), numbers or " \
-                    "strings. "
-    GREATER_THAN = '>', "The right-hand side must be a single element, e.g. " \
-                        "temperature>42. For an entity to match, it must " \
-                        "contain the target property (temperature) and the " \
-                        "target property value must be strictly greater than " \
-                        "the query value (42). This operation is only valid " \
-                        "for target properties of type date, number or " \
-                        "string (used with target properties of other types " \
-                        "may lead to unpredictable results). "
-    LESS_THAN = '<', "The right-hand side must be a single element, e.g. " \
-                     "temperature<43. For an entity to match, it must " \
-                     "contain the target property (temperature) and the " \
-                     "target property value must be strictly less than the " \
-                     "value (43). This operation is only valid for target " \
-                     "properties of type date, number or string (used with " \
-                     "target properties of other types may lead to " \
-                     "unpredictable results). "
-    GREATER_OR_EQUAL = '>=', "The right-hand side must be a single element, " \
-                             "e.g. temperature>=44. For an entity to match, " \
-                             "it must contain the target property (" \
-                             "temperature) and the target property value " \
-                             "must be greater than or equal to that value " \
-                             "(44). This operation is only valid for target " \
-                             "properties of type date, number or string " \
-                             "(used with target properties of other types " \
-                             "may lead to unpredictable results). "
-    LESS_OR_EQUAL = '<=', "The right-hand side must be a single element, " \
-                          "e.g. temperature<=45. For an entity to match, " \
-                          "it must contain the target property (temperature) " \
-                          "and the target property value must be less than " \
-                          "or equal to that value (45). This operation is " \
-                          "only valid for target properties of type date, " \
-                          "number or string (used with target properties of " \
-                          "other types may lead to unpredictable results). "
-    MATCH_PATTERN = '~=', "The value matches a given pattern, expressed as a " \
-                          "regular expression, e.g. color~=ow. For an entity " \
-                          "to match, it must contain the target property (" \
-                          "color) and the target property value must match " \
-                          "the string in the right-hand side, 'ow' in this " \
-                          "example (brown and yellow would match, black and " \
-                          "white would not). This operation is only valid " \
-                          "for target properties of type string. "
+    _init_ = "value __doc__"
+
+    EQUAL = (
+        "==",
+        "Single element, e.g. temperature!=41. For an entity to "
+        "match, it must contain the target property (temperature) "
+        "and the target property value must not be the query value "
+        "(41). "
+        "A list of comma-separated values, e.g. color!=black,"
+        "red. For an entity to match, it must contain the target "
+        "property and the target property value must not be any "
+        "of the values in the list (AND clause) (or not include any "
+        "of the values in the list in case the target property "
+        "value is an array). Eg. entities whose attribute color is "
+        "set to black will not match, while entities whose "
+        "attribute color is set to white will match."
+        "A range, specified as a minimum and maximum separated by "
+        ".., e.g. temperature!=10..20. For an entity to match, "
+        "it must contain the target property (temperature) and the "
+        "target property value must not be between the upper and "
+        "lower limits (both included). Ranges can only be used "
+        "with elements target properties that represent dates (in "
+        "ISO8601 format), numbers or strings. ",
+    )
+    UNEQUAL = (
+        "!=",
+        "Single element, e.g. temperature!=41. For an entity to "
+        "match, it must contain the target property "
+        "(temperature) and the target property value must not be "
+        "the query value (41). A list of comma-separated values, "
+        "e.g. color!=black,red. For an entity to match, it must "
+        "contain the target property and the target property "
+        "value must not be any of the values in the list (AND "
+        "clause) (or not include any of the values in the list "
+        "in case the target property value is an array). Eg. "
+        "entities whose attribute color is set to black will not "
+        "match, while entities whose attribute color is set to "
+        "white will match. A range, specified as a minimum and "
+        "maximum separated by .., e.g. temperature!=10..20. For "
+        "an entity to match, it must contain the target property "
+        "(temperature) and the target property value must not be "
+        "between the upper and lower limits (both included). "
+        "Ranges can only be used with elements target properties "
+        "that represent dates (in ISO8601 format), numbers or "
+        "strings. ",
+    )
+    GREATER_THAN = (
+        ">",
+        "The right-hand side must be a single element, e.g. "
+        "temperature>42. For an entity to match, it must "
+        "contain the target property (temperature) and the "
+        "target property value must be strictly greater than "
+        "the query value (42). This operation is only valid "
+        "for target properties of type date, number or "
+        "string (used with target properties of other types "
+        "may lead to unpredictable results). ",
+    )
+    LESS_THAN = (
+        "<",
+        "The right-hand side must be a single element, e.g. "
+        "temperature<43. For an entity to match, it must "
+        "contain the target property (temperature) and the "
+        "target property value must be strictly less than the "
+        "value (43). This operation is only valid for target "
+        "properties of type date, number or string (used with "
+        "target properties of other types may lead to "
+        "unpredictable results). ",
+    )
+    GREATER_OR_EQUAL = (
+        ">=",
+        "The right-hand side must be a single element, "
+        "e.g. temperature>=44. For an entity to match, "
+        "it must contain the target property ("
+        "temperature) and the target property value "
+        "must be greater than or equal to that value "
+        "(44). This operation is only valid for target "
+        "properties of type date, number or string "
+        "(used with target properties of other types "
+        "may lead to unpredictable results). ",
+    )
+    LESS_OR_EQUAL = (
+        "<=",
+        "The right-hand side must be a single element, "
+        "e.g. temperature<=45. For an entity to match, "
+        "it must contain the target property (temperature) "
+        "and the target property value must be less than "
+        "or equal to that value (45). This operation is "
+        "only valid for target properties of type date, "
+        "number or string (used with target properties of "
+        "other types may lead to unpredictable results). ",
+    )
+    MATCH_PATTERN = (
+        "~=",
+        "The value matches a given pattern, expressed as a "
+        "regular expression, e.g. color~=ow. For an entity "
+        "to match, it must contain the target property ("
+        "color) and the target property value must match "
+        "the string in the right-hand side, 'ow' in this "
+        "example (brown and yellow would match, black and "
+        "white would not). This operation is only valid "
+        "for target properties of type string. ",
+    )
 
     @classmethod
     def list(cls):
@@ -136,19 +159,22 @@ class QueryStatement(Tuple):
         """
         if isinstance(value, (tuple, QueryStatement)):
             if len(value) != 3:
-                raise TypeError('3-tuple required')
+                raise TypeError("3-tuple required")
             if not isinstance(value[0], str):
-                raise TypeError('First argument must be a string!')
+                raise TypeError("First argument must be a string!")
             if value[1] not in Operator.list():
-                raise TypeError('Invalid comparison operator!')
-            if value[1] not in [Operator.EQUAL,
-                                Operator.UNEQUAL,
-                                Operator.MATCH_PATTERN]:
+                raise TypeError("Invalid comparison operator!")
+            if value[1] not in [
+                Operator.EQUAL,
+                Operator.UNEQUAL,
+                Operator.MATCH_PATTERN,
+            ]:
                 try:
                     float(value[2])
                 except ValueError as err:
-                    err.args += ("Invalid combination of operator and right "
-                                 "hand side!",)
+                    err.args += (
+                        "Invalid combination of operator and right " "hand side!",
+                    )
                     raise
             return value
         elif isinstance(value, str):
@@ -168,7 +194,7 @@ class QueryStatement(Tuple):
             right = f"{self[2]}"
         else:
             right = self[2]
-        return ''.join([self[0], self[1], right])
+        return "".join([self[0], self[1], right])
 
     @classmethod
     def parse_str(cls, string: str):
@@ -195,11 +221,11 @@ class QueryStatement(Tuple):
                 raise ValueError
 
     def __str__(self):
-        """ Return str(self). """
+        """Return str(self)."""
         return self.to_str()
 
     def __repr__(self):
-        """ Return repr(self). """
+        """Return repr(self)."""
         return self.to_str().__repr__()
 
 
@@ -207,9 +233,10 @@ class QueryString:
     """
     Class for validated QueryStrings that can be used in api clients
     """
-    def __init__(self, qs: Union[Tuple,
-                                 QueryStatement,
-                                 List[Union[QueryStatement, Tuple]]]):
+
+    def __init__(
+        self, qs: Union[Tuple, QueryStatement, List[Union[QueryStatement, Tuple]]]
+    ):
         qs = self.__check_arguments(qs=qs)
         self._qs = qs
 
@@ -235,7 +262,7 @@ class QueryString:
         elif isinstance(qs, tuple):
             qs = [QueryStatement(*qs)]
         else:
-            raise ValueError('Invalid argument!')
+            raise ValueError("Invalid argument!")
         return qs
 
     def update(self, qs: Union[Tuple, QueryStatement, List[QueryStatement]]):
@@ -277,7 +304,7 @@ class QueryString:
             return v
         if isinstance(v, str):
             return cls.parse_str(v)
-        raise ValueError('Invalid argument!')
+        raise ValueError("Invalid argument!")
 
     def to_str(self):
         """
@@ -286,7 +313,7 @@ class QueryString:
         Returns:
             String: query string that can be added to requests as parameter
         """
-        return ';'.join([q.to_str() for q in self._qs])
+        return ";".join([q.to_str() for q in self._qs])
 
     @classmethod
     def parse_str(cls, string: str):
@@ -299,7 +326,7 @@ class QueryString:
         Returns:
             QueryString
         """
-        q_parts = string.split(';')
+        q_parts = string.split(";")
         qs = []
         for part in q_parts:
             q = QueryStatement.parse_str(part)
@@ -307,9 +334,9 @@ class QueryString:
         return QueryString(qs=qs)
 
     def __str__(self):
-        """ Return str(self). """
+        """Return str(self)."""
         return self.to_str()
 
     def __repr__(self):
-        """ Return repr(self). """
+        """Return repr(self)."""
         return self.to_str().__repr__()

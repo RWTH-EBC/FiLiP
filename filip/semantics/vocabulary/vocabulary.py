@@ -14,29 +14,30 @@ class LabelSummary(BaseModel):
     """
     Model holding all information for label conflicts in a vocabulary
     """
+
     class_label_duplicates: Dict[str, List[Entity]] = Field(
         description="All Labels that are used more than once for class_names "
-                    "on export."
-                    "Key: Label, Values: List of entities with key label"
+        "on export."
+        "Key: Label, Values: List of entities with key label"
     )
     field_label_duplicates: Dict[str, List[Entity]] = Field(
         description="All Labels that are used more than once for property_names"
-                    "on export."
-                    "Key: Label, Values: List of entities with key label"
+        "on export."
+        "Key: Label, Values: List of entities with key label"
     )
     datatype_label_duplicates: Dict[str, List[Entity]] = Field(
         description="All Labels that are used more than once for datatype "
-                    "on export." 
-                    "Key: Label, Values: List of entities with key label"
+        "on export."
+        "Key: Label, Values: List of entities with key label"
     )
 
     blacklisted_labels: List[Tuple[str, Entity]] = Field(
         description="All Labels that are blacklisted, "
-                    "Tuple(Label, Entity with label)"
+        "Tuple(Label, Entity with label)"
     )
     labels_with_illegal_chars: List[Tuple[str, Entity]] = Field(
         description="All Labels that contain illegal characters, "
-                    "Tuple(Label, Entity with label)"
+        "Tuple(Label, Entity with label)"
     )
 
     def is_valid(self) -> bool:
@@ -45,11 +46,13 @@ class LabelSummary(BaseModel):
         Returns:
             bool, True if no entries exist
         """
-        return len(self.class_label_duplicates) == 0 and \
-               len(self.field_label_duplicates) == 0 and \
-               len(self.datatype_label_duplicates) == 0 and \
-               len(self.blacklisted_labels) == 0 and \
-               len(self.labels_with_illegal_chars) == 0
+        return (
+            len(self.class_label_duplicates) == 0
+            and len(self.field_label_duplicates) == 0
+            and len(self.datatype_label_duplicates) == 0
+            and len(self.blacklisted_labels) == 0
+            and len(self.labels_with_illegal_chars) == 0
+        )
 
     def __str__(self):
         res = ""
@@ -90,14 +93,15 @@ class LabelSummary(BaseModel):
 
 class IdType(str, Enum):
     """Type of object that is referenced by an id/iri"""
-    class_ = 'Class'
-    object_property = 'Object Property'
-    data_property = 'Data Property'
-    datatype = 'Datatype'
-    relation = 'Relation'
-    combined_relation = 'Combined Relation'
-    individual = 'Individual'
-    source = 'Source'
+
+    class_ = "Class"
+    object_property = "Object Property"
+    data_property = "Data Property"
+    datatype = "Datatype"
+    relation = "Relation"
+    combined_relation = "Combined Relation"
+    individual = "Individual"
+    source = "Source"
 
 
 class VocabularySettings(BaseModel):
@@ -105,30 +109,31 @@ class VocabularySettings(BaseModel):
     Settings that state how labels of ontology entities should be
     automatically converted on parsing
     """
+
     pascal_case_class_labels: bool = Field(
         default=True,
         description="If true, convert all class labels given in the ontologies "
-                    "to PascalCase"
+        "to PascalCase",
     )
     pascal_case_individual_labels: bool = Field(
         default=True,
         description="If true, convert all labels of individuals given in the "
-                    "ontologies to PascalCase"
+        "ontologies to PascalCase",
     )
     camel_case_property_labels: bool = Field(
         default=True,
         description="If true, convert all labels of properties given in the "
-                    "ontologies to camelCase"
+        "ontologies to camelCase",
     )
     camel_case_datatype_labels: bool = Field(
         default=True,
         description="If true, convert all labels of datatypes given in the "
-                    "ontologies to camelCase"
+        "ontologies to camelCase",
     )
     pascal_case_datatype_enum_labels: bool = Field(
         default=True,
         description="If true, convert all values of enum datatypes given in "
-                    "the to PascalCase"
+        "the to PascalCase",
     )
 
 
@@ -148,53 +153,59 @@ class Vocabulary(BaseModel):
     """
 
     classes: Dict[str, Class] = Field(
-        default={},
-        description="Classes of the vocabulary. Key: class_iri")
+        default={}, description="Classes of the vocabulary. Key: class_iri"
+    )
     object_properties: Dict[str, ObjectProperty] = Field(
         default={},
-        description="ObjectProperties of the vocabulary. "
-                    "Key: object_property_iri")
+        description="ObjectProperties of the vocabulary. " "Key: object_property_iri",
+    )
     data_properties: Dict[str, DataProperty] = Field(
         default={},
-        description="DataProperties of the vocabulary. Key: data_property_iri")
+        description="DataProperties of the vocabulary. Key: data_property_iri",
+    )
     datatypes: Dict[str, Datatype] = Field(
-        default={},
-        description="Datatypes of the vocabulary. Key: datatype_iri")
+        default={}, description="Datatypes of the vocabulary. Key: datatype_iri"
+    )
     individuals: Dict[str, Individual] = Field(
-        default={},
-        description="Individuals in the vocabulary. Key: individual_iri")
+        default={}, description="Individuals in the vocabulary. Key: individual_iri"
+    )
 
     relations: Dict[str, Relation] = Field(
         default={},
-        description="Relations of classes in the vocabulary. Key: relation_id")
+        description="Relations of classes in the vocabulary. Key: relation_id",
+    )
     combined_object_relations: Dict[str, CombinedObjectRelation] = Field(
         default={},
         description="CombinedObjectRelations of classes in the vocabulary."
-                    " Key: combined_relation_id")
+        " Key: combined_relation_id",
+    )
     combined_data_relations: Dict[str, CombinedDataRelation] = Field(
         default={},
         description="CombinedDataRelations of classes in the vocabulary."
-                    "Key: combined_data_id")
+        "Key: combined_data_id",
+    )
 
     sources: Dict[str, Source] = Field(
-        default={},
-        description="Sources of the vocabulary. Key: source_id")
+        default={}, description="Sources of the vocabulary. Key: source_id"
+    )
 
     id_types: Dict[str, IdType] = Field(
         default={},
         description="Maps all entity iris and (combined)relations to their "
-                    "Entity/Object type, to speed up lookups")
+        "Entity/Object type, to speed up lookups",
+    )
 
     original_label_summary: Optional[LabelSummary] = Field(
         default=None,
-        description="Original label after parsing, before the user made "
-                    "changes")
+        description="Original label after parsing, before the user made " "changes",
+    )
 
     settings: VocabularySettings = Field(
         default=VocabularySettings(),
-        description="Settings how to auto transform the entity labels")
+        description="Settings how to auto transform the entity labels",
+    )
 
-    def get_type_of_id(self, id: str) -> Union[IdType,None]:
+    def get_type_of_id(self, id: str) -> Union[IdType, None]:
         """Get the type (class, relation,...) of an iri/id
 
         Args:
@@ -263,7 +274,7 @@ class Vocabulary(BaseModel):
         if self.id_types[iri] is IdType.datatype:
             return self.get_datatype(iri).predefined
 
-    def get_datatype(self, datatype_iri:str) -> Datatype:
+    def get_datatype(self, datatype_iri: str) -> Datatype:
         """Get the datatype belonging to the iri
 
         Args:
@@ -334,15 +345,14 @@ class Vocabulary(BaseModel):
     def get_classes_sorted_by_label(self) -> List[Class]:
         """Get all classes sorted by their labels
 
-         Returns:
-            List[Class]: sorted classes, ascending
+        Returns:
+           List[Class]: sorted classes, ascending
         """
-        return sorted(self.classes.values(),
-                      key=operator.methodcaller("get_label"),
-                      reverse=False)
+        return sorted(
+            self.classes.values(), key=operator.methodcaller("get_label"), reverse=False
+        )
 
-    def get_entity_list_sorted_by_label(self, list: List[Entity]) \
-            -> List[Entity]:
+    def get_entity_list_sorted_by_label(self, list: List[Entity]) -> List[Entity]:
         """Sort a given entity list by their labels
 
         Args:
@@ -350,8 +360,7 @@ class Vocabulary(BaseModel):
         Returns:
             List[Entity]: sorted list
         """
-        return sorted(list, key=operator.methodcaller("get_label"),
-                      reverse=False)
+        return sorted(list, key=operator.methodcaller("get_label"), reverse=False)
 
     def get_object_properties_sorted_by_label(self) -> List[ObjectProperty]:
         """Get all object properties of the vocabulary sorted by their labels
@@ -359,8 +368,11 @@ class Vocabulary(BaseModel):
         Returns:
             List[ObjectProperty], sorted by ascending labels
         """
-        return sorted(self.object_properties.values(),
-                      key=operator.methodcaller("get_label"), reverse=False)
+        return sorted(
+            self.object_properties.values(),
+            key=operator.methodcaller("get_label"),
+            reverse=False,
+        )
 
     def get_data_properties_sorted_by_label(self) -> List[DataProperty]:
         """Get all data properties of the vocabulary sorted by their labels
@@ -368,8 +380,11 @@ class Vocabulary(BaseModel):
         Returns:
             List[DataProperty], sorted by ascending labels
         """
-        return sorted(self.data_properties.values(),
-                      key=operator.methodcaller("get_label"), reverse=False)
+        return sorted(
+            self.data_properties.values(),
+            key=operator.methodcaller("get_label"),
+            reverse=False,
+        )
 
     def get_individuals_sorted_by_label(self) -> List[Individual]:
         """Get all individuals of the vocabulary sorted by their labels
@@ -377,8 +392,11 @@ class Vocabulary(BaseModel):
         Returns:
             List[Individual], sorted by ascending labels
         """
-        return sorted(self.individuals.values(),
-                      key=operator.methodcaller("get_label"), reverse=False)
+        return sorted(
+            self.individuals.values(),
+            key=operator.methodcaller("get_label"),
+            reverse=False,
+        )
 
     def get_datatypes_sorted_by_label(self) -> List[Datatype]:
         """Get all datatypes of the vocabulary sorted by their labels
@@ -386,8 +404,11 @@ class Vocabulary(BaseModel):
         Returns:
             List[Datatype], sorted by ascending labels
         """
-        return sorted(self.datatypes.values(),
-                      key=operator.methodcaller("get_label"), reverse=False)
+        return sorted(
+            self.datatypes.values(),
+            key=operator.methodcaller("get_label"),
+            reverse=False,
+        )
 
     def get_relation_by_id(self, id: str) -> Relation:
         """Get Relation by relation id
@@ -435,8 +456,7 @@ class Vocabulary(BaseModel):
         """
         return self.combined_data_relations[id]
 
-    def get_combined_object_relation_by_id(self, id: str)\
-            -> CombinedObjectRelation:
+    def get_combined_object_relation_by_id(self, id: str) -> CombinedObjectRelation:
         """Get CombinedObjectRelation by id
 
         Args:
@@ -603,12 +623,13 @@ class Vocabulary(BaseModel):
         Returns:
             List[Entity]
         """
-        lists = [self.classes.values(),
-                 self.object_properties.values(),
-                 self.data_properties.values(),
-                 self.datatypes.values(),
-                 self.individuals.values()
-                 ]
+        lists = [
+            self.classes.values(),
+            self.object_properties.values(),
+            self.data_properties.values(),
+            self.datatypes.values(),
+            self.individuals.values(),
+        ]
 
         res = []
         for l in lists:
@@ -621,5 +642,8 @@ class Vocabulary(BaseModel):
         Returns:
             Dict[str, Datatype], {datatype.iri: Datatype}
         """
-        return {datatype.iri: datatype for datatype in self.datatypes.values()
-                if len(datatype.enum_values) > 0 and not datatype.predefined}
+        return {
+            datatype.iri: datatype
+            for datatype in self.datatypes.values()
+            if len(datatype.enum_values) > 0 and not datatype.predefined
+        }

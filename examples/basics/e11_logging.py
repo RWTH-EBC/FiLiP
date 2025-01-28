@@ -8,8 +8,10 @@
 
 # import python's built-in logging implementation
 import logging
+
 # import an api client from filip as example
 from filip.clients.ngsi_v2 import ContextBrokerClient
+
 # setting up the basic configuration of the logging system. Please check the
 # official documentation and the functions docstrings for more details.
 # Handling for 'handlers' in the logging system is not trivial.
@@ -20,9 +22,9 @@ from filip.clients.ngsi_v2 import ContextBrokerClient
 
 # In this example we will simply change the log level and the log format.
 logging.basicConfig(
-    level='DEBUG',
-    format='%(asctime)s %(name)s %(levelname)s: %(message)s')
+    level="DEBUG", format="%(asctime)s %(name)s %(levelname)s: %(message)s"
+)
 
 # You need to change the output
-ocb = ContextBrokerClient(url='http://<PleaseChange.Me>')
+ocb = ContextBrokerClient(url="http://<PleaseChange.Me>")
 ocb.get_version()

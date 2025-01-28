@@ -1,6 +1,7 @@
 """
 Helper functions to prohibit boiler plate code
 """
+
 import logging
 import re
 import warnings
@@ -45,7 +46,11 @@ def validate_http_url(url: AnyHttpUrl) -> str:
     Returns:
         validated url
     """
-    return str(url) if url else url
+    url = str(url) if url else url
+    if url[-1] != "/":
+        # add trailing slash
+        url = f"{url}/"
+    return url
 
 
 @validate_call
@@ -97,11 +102,9 @@ def validate_escape_character_free(value: Any) -> Any:
             # if a value here is not a string, it will also not contain ' or "
             value = str(value)
             if '"' == value[-1:] or '"' == value[0:1]:
-                raise ValueError(f"The value {value} contains "
-                                 f"the forbidden char \"")
+                raise ValueError(f"The value {value} contains " f'the forbidden char "')
             if "'" == value[-1:] or "'" == value[0:1]:
-                raise ValueError(f"The value {value} contains "
-                                 f"the forbidden char '")
+                raise ValueError(f"The value {value} contains " f"the forbidden char '")
     return values
 
 
@@ -123,6 +126,7 @@ def ignore_none_input(func):
         if arg is None:
             return arg
         return func(arg)
+
     return wrapper
 
 
@@ -136,12 +140,13 @@ def validate_fiware_string_protect_regex(vale: str):
 
 @ignore_none_input
 def validate_mqtt_topic(topic: str):
-    return match_regex(topic, r'^((?![\'\"#+,])[\x00-\x7F])*$')
+    return match_regex(topic, r"^((?![\'\"#+,])[\x00-\x7F])*$")
 
 
 @ignore_none_input
 def validate_fiware_datatype_standard(_type):
     from filip.models.base import DataType
+
     if isinstance(_type, DataType):
         return _type
     elif isinstance(_type, str):
@@ -153,6 +158,7 @@ def validate_fiware_datatype_standard(_type):
 @ignore_none_input
 def validate_fiware_datatype_string_protect(_type):
     from filip.models.base import DataType
+
     if isinstance(_type, DataType):
         return _type
     elif isinstance(_type, str):
@@ -163,14 +169,12 @@ def validate_fiware_datatype_string_protect(_type):
 
 @ignore_none_input
 def validate_fiware_service_path(service_path):
-    return match_regex(service_path,
-                       r'^((\/\w*)|(\/\#))*(\,((\/\w*)|(\/\#)))*$')
+    return match_regex(service_path, r"^((\/\w*)|(\/\#))*(\,((\/\w*)|(\/\#)))*$")
 
 
 @ignore_none_input
 def validate_fiware_service(service):
-    return match_regex(service,
-                       r"\w*$")
+    return match_regex(service, r"\w*$")
 
 
 jexl_transformation_functions = {
@@ -204,7 +208,7 @@ jexl_transformation_functions = {
     "addset": "(arr, x) => list(set(arr).add(x))",
     "removeset": "(arr, x) => list(set(arr).remove(x))",
     "touppercase": "(val) => str(val).upper()",
-    "tolowercase": "(val) => str(val).lower()"
+    "tolowercase": "(val) => str(val).lower()",
 }
 
 
@@ -216,7 +220,7 @@ def validate_jexl_expression(expression, attribute_name, device_id):
                 warnings.warn(f"{jexl_expression.name} might not supported")
     except ParseError:
         msg = f"Invalid JEXL expression '{expression}' inside the attribute '{attribute_name}' of Device '{device_id}'."
-        if '|' in expression:
+        if "|" in expression:
             msg += " If the expression contains the transform operator '|' you need to remove the spaces around it."
         raise ParseError(msg)
     return expression
@@ -224,8 +228,10 @@ def validate_jexl_expression(expression, attribute_name, device_id):
 
 def validate_expression_language(cls, expressionLanguage):
     if expressionLanguage == "legacy":
-        warnings.warn(f"Using 'LEGACY' expression language inside {cls.__name__} is "
-                      f"deprecated. Use 'JEXL' instead.")
+        warnings.warn(
+            f"Using 'LEGACY' expression language inside {cls.__name__} is "
+            f"deprecated. Use 'JEXL' instead."
+        )
     elif expressionLanguage is None:
         expressionLanguage = "jexl"
     return expressionLanguage

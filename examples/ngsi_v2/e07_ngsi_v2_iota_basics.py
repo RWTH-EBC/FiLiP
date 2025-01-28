@@ -1,13 +1,21 @@
 """
 # # Examples for working with IoT Devices
 """
+
 # ## Import packages
 import logging
 import json
 from filip.clients.ngsi_v2 import IoTAClient
 from filip.models.base import FiwareHeader, DataType
-from filip.models.ngsi_v2.iot import Device, ServiceGroup, TransportProtocol, \
-    StaticDeviceAttribute, DeviceAttribute, LazyDeviceAttribute, DeviceCommand
+from filip.models.ngsi_v2.iot import (
+    Device,
+    ServiceGroup,
+    TransportProtocol,
+    StaticDeviceAttribute,
+    DeviceAttribute,
+    LazyDeviceAttribute,
+    DeviceCommand,
+)
 from uuid import uuid4
 from filip.config import settings
 
@@ -23,15 +31,16 @@ IOTA_URL = settings.IOTA_URL
 
 # Here you can also change FIWARE service and service path.
 # FIWARE-Service
-SERVICE = 'filip'
+SERVICE = "filip"
 # FIWARE-Service path
-SERVICE_PATH = '/example'
+SERVICE_PATH = "/example"
 
 # Setting up logging
 logging.basicConfig(
-    level='INFO',
-    format='%(asctime)s %(name)s %(levelname)s: %(message)s',
-    datefmt='%d-%m-%Y %H:%M:%S')
+    level="INFO",
+    format="%(asctime)s %(name)s %(levelname)s: %(message)s",
+    datefmt="%d-%m-%Y %H:%M:%S",
+)
 
 logger = logging.getLogger(__name__)
 
@@ -43,14 +52,14 @@ if __name__ == "__main__":
     #
     # For more details about this step see e01_http_clients.py.
 
-    fiware_header = FiwareHeader(service=SERVICE,
-                                 service_path=SERVICE_PATH)
+    fiware_header = FiwareHeader(service=SERVICE, service_path=SERVICE_PATH)
 
-    iota_client = IoTAClient(url=IOTA_URL,
-                             fiware_header=fiware_header)
+    iota_client = IoTAClient(url=IOTA_URL, fiware_header=fiware_header)
 
-    print(f"IoTA: {json.dumps(iota_client.get_version(), indent=2)}"
-          f" located at the url: {iota_client.base_url}")
+    print(
+        f"IoTA: {json.dumps(iota_client.get_version(), indent=2)}"
+        f" located at the url: {iota_client.base_url}"
+    )
 
     # # 2 Device Model
     #
@@ -66,33 +75,37 @@ if __name__ == "__main__":
     # and manipulated.
     #
     # Dictionary:
-    example_device_dict = {"device_id": "urn:ngsi-ld:sensor:001",
-                           "service": SERVICE,
-                           "service_path": SERVICE_PATH,
-                           "entity_name": "sensor1",
-                           "entity_type": "Sensor",
-                           "timezone": 'Europe/Berlin',
-                           "timestamp": True,
-                           "apikey": "1234",
-                           "protocol": "IoTA-UL",
-                           "transport": "MQTT",
-                           "lazy": [],
-                           "commands": [],
-                           "attributes": [],
-                           "static_attributes": [],
-                           "internal_attributes": [],
-                           "explicitAttrs": False,
-                           "ngsiVersion": "v2"}
+    example_device_dict = {
+        "device_id": "urn:ngsi-ld:sensor:001",
+        "service": SERVICE,
+        "service_path": SERVICE_PATH,
+        "entity_name": "sensor1",
+        "entity_type": "Sensor",
+        "timezone": "Europe/Berlin",
+        "timestamp": True,
+        "apikey": "1234",
+        "protocol": "IoTA-UL",
+        "transport": "MQTT",
+        "lazy": [],
+        "commands": [],
+        "attributes": [],
+        "static_attributes": [],
+        "internal_attributes": [],
+        "explicitAttrs": False,
+        "ngsiVersion": "v2",
+    }
     device1 = Device(**example_device_dict)
 
     # Direct Parameters:
-    device2 = Device(device_id="urn:ngsi-ld:sensor:002",
-                     service=SERVICE,
-                     service_path=SERVICE_PATH,
-                     entity_name="sensor2",
-                     entity_type="Sensor",
-                     transport=TransportProtocol.HTTP,
-                     endpoint="http://orion:1026")  # URL for IoTAgent to reach Orion
+    device2 = Device(
+        device_id="urn:ngsi-ld:sensor:002",
+        service=SERVICE,
+        service_path=SERVICE_PATH,
+        entity_name="sensor2",
+        entity_type="Sensor",
+        transport=TransportProtocol.HTTP,
+        endpoint="http://orion:1026",
+    )  # URL for IoTAgent to reach Orion
 
     # ## 2.2 Device Attributes
     #
@@ -104,9 +117,9 @@ if __name__ == "__main__":
     #
     # These attributes represent static information (such as names) and are
     # mirrored 1:1
-    device2.add_attribute(StaticDeviceAttribute(name="address",
-                                                type=DataType.TEXT,
-                                                value="Lichtenhof 3"))
+    device2.add_attribute(
+        StaticDeviceAttribute(name="address", type=DataType.TEXT, value="Lichtenhof 3")
+    )
     # ### 2.2.2 DeviceAttribute
     #
     # These attributes represent live information of the device.
@@ -116,8 +129,7 @@ if __name__ == "__main__":
     #
     # DeviceAttributes, always keep the value in the context entity up-to-date
     # (polling)
-    device2.add_attribute(DeviceAttribute(name="temperature",
-                                          object_id="t"))
+    device2.add_attribute(DeviceAttribute(name="temperature", object_id="t"))
     # LazyDeviceAttributes, only update the value in the entity if it is
     # accessed (event based)
     device2.add_attribute(LazyDeviceAttribute(name="temperature"))
@@ -134,8 +146,10 @@ if __name__ == "__main__":
     # # 3 Interact with Fiware
     #
     # ## 3.1 Upload a new Device
-    print(f"Payload that will be sent to the IoT-Agent:\n "
-          f"{device2.model_dump_json(indent=2)}")
+    print(
+        f"Payload that will be sent to the IoT-Agent:\n "
+        f"{device2.model_dump_json(indent=2)}"
+    )
     iota_client.post_device(device=device2, update=True)
     #
     # ## 3.2 Load a specific device as model
@@ -161,9 +175,9 @@ if __name__ == "__main__":
     # https://iotagent-node-lib.readthedocs.io/en/latest/api/index.html#service-group-api
 
     # ## 4.1. Create a service group
-    service_group1 = ServiceGroup(entity_type='Thing',
-                                  resource='/iot/json',
-                                  apikey=str(uuid4()))
+    service_group1 = ServiceGroup(
+        entity_type="Thing", resource="/iot/json", apikey=str(uuid4())
+    )
     iota_client.post_groups(service_groups=[service_group1])
 
     # ## 4.2 Access a service group
@@ -171,12 +185,10 @@ if __name__ == "__main__":
     # All groups:
     retrieved_groups = iota_client.get_group_list()
     # a specific group
-    my_group = iota_client.get_group(resource='/iot/json',
-                                     apikey=service_group1.apikey)
+    my_group = iota_client.get_group(resource="/iot/json", apikey=service_group1.apikey)
 
     # ## 4.3 Delete a service group
-    iota_client.delete_group(resource='/iot/json',
-                             apikey=service_group1.apikey)
+    iota_client.delete_group(resource="/iot/json", apikey=service_group1.apikey)
 
     # # 5 Clean up (Optional)
     #

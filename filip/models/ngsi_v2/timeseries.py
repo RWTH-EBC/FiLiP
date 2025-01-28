@@ -1,6 +1,7 @@
 """
 Data models for interacting with FIWARE's time series-api (aka QuantumLeap)
 """
+
 from __future__ import annotations
 import logging
 from typing import Any, List, Union
@@ -18,18 +19,19 @@ class TimeSeriesBase(BaseModel):
     """
     Base model for other time series api models
     """
+
     index: Union[List[datetime], datetime] = Field(
         default=None,
         description="Array of the timestamps which are indexes of the response "
-                    "for the requested data. It's a parallel array to 'values'."
-                    " The timestamp will be in the ISO8601 format "
-                    "(e.g. 2010-10-10T07:09:00.792) or in milliseconds since "
-                    "epoch whichever format was used in the input "
-                    "(notification), but ALWAYS in UTC. When using aggregation "
-                    "options, the format of this remains the same, only the "
-                    "semantics will change. For example, if aggrPeriod is day, "
-                    "each index will be a valid timestamp of a moment in the "
-                    "corresponding day."
+        "for the requested data. It's a parallel array to 'values'."
+        " The timestamp will be in the ISO8601 format "
+        "(e.g. 2010-10-10T07:09:00.792) or in milliseconds since "
+        "epoch whichever format was used in the input "
+        "(notification), but ALWAYS in UTC. When using aggregation "
+        "options, the format of this remains the same, only the "
+        "semantics will change. For example, if aggrPeriod is day, "
+        "each index will be a valid timestamp of a moment in the "
+        "corresponding day.",
     )
 
 
@@ -37,34 +39,38 @@ class TimeSeriesHeader(TimeSeriesBase):
     """
     Model to describe an available entity in the time series api
     """
+
     model_config = ConfigDict(populate_by_name=True)
     # aliases are required due to formally inconsistencies in the api-specs
-    entityId: str = Field(default=None,
-                          alias="id",
-                          description="The entity id the time series api."
-                                      "If the id is unique among all entity "
-                                      "types, this could be used to uniquely "
-                                      "identify the entity instance. Otherwise,"
-                                      " you will have to use the entityType "
-                                      "attribute to resolve ambiguity.")
-    entityType: str = Field(default=None,
-                            alias="type",
-                            description="The type of an entity")
+    entityId: str = Field(
+        default=None,
+        alias="id",
+        description="The entity id the time series api."
+        "If the id is unique among all entity "
+        "types, this could be used to uniquely "
+        "identify the entity instance. Otherwise,"
+        " you will have to use the entityType "
+        "attribute to resolve ambiguity.",
+    )
+    entityType: str = Field(
+        default=None, alias="type", description="The type of an entity"
+    )
 
 
 class IndexedValues(BaseModel):
     """
     Model for time indexed values
     """
+
     values: List[Any] = Field(
         default=None,
         description="Array of values of the selected attribute, in the same "
-                    "corresponding order of the 'index' array. When using "
-                    "aggregation options, the format of this remains the same, "
-                    "only the semantics will change. For example, if "
-                    "aggrPeriod is day, each value of course may not "
-                    "correspond to original measurements but rather the "
-                    "aggregate of measurements in each day."
+        "corresponding order of the 'index' array. When using "
+        "aggregation options, the format of this remains the same, "
+        "only the semantics will change. For example, if "
+        "aggrPeriod is day, each value of course may not "
+        "correspond to original measurements but rather the "
+        "aggregate of measurements in each day.",
     )
 
 
@@ -72,16 +78,15 @@ class AttributeValues(IndexedValues):
     """
     Model for indexed values that contain attribute name
     """
-    attrName: str = Field(
-        title="Attribute name",
-        description=""
-    )
+
+    attrName: str = Field(title="Attribute name", description="")
 
 
 class TimeSeries(TimeSeriesHeader):
     """
     Model for time series data
     """
+
     model_config = ConfigDict(populate_by_name=True)
     attributes: List[AttributeValues] = None
 
@@ -115,12 +120,13 @@ class TimeSeries(TimeSeriesHeader):
         Returns:
             pandas.DataFrame
         """
-        index = pd.Index(data=self.index, name='datetime')
+        index = pd.Index(data=self.index, name="datetime")
         attr_names = [attr.attrName for attr in self.attributes]
         values = np.array([attr.values for attr in self.attributes]).transpose()
         columns = pd.MultiIndex.from_product(
             [[self.entityId], [self.entityType], attr_names],
-            names=['entityId', 'entityType', 'attribute'])
+            names=["entityId", "entityType", "attribute"],
+        )
 
         return pd.DataFrame(data=values, index=index, columns=columns)
 
@@ -129,7 +135,8 @@ class AggrMethod(str, Enum):
     """
     Aggregation Methods
     """
-    _init_ = 'value __doc__'
+
+    _init_ = "value __doc__"
     COUNT = "count", "Number of Entries"
     SUM = "sum", "Sum"
     AVG = "avg", "Average"
@@ -141,7 +148,8 @@ class AggrPeriod(str, Enum):
     """
     Aggregation Periods
     """
-    _init_ = 'value __doc__'
+
+    _init_ = "value __doc__"
     YEAR = "year", "year"
     MONTH = "month", "month"
     DAY = "day", "day"
@@ -157,6 +165,7 @@ class AggrScope(str, Enum):
     multiple entities instances, you can define the aggregation method to be
     applied for each entity instance [entity] or across them [global].
     """
-    _init_ = 'value __doc__'
+
+    _init_ = "value __doc__"
     ENTITY = "entity", "Entity (default)"
     GLOBAL = "global", "Global"
