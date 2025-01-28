@@ -4,6 +4,7 @@ Test module for context broker models
 import unittest
 from typing import List
 from pydantic import ValidationError
+from pydantic_core import PydanticCustomError
 from geojson_pydantic import (
     Point,
     MultiPoint,
@@ -74,6 +75,8 @@ class TestContextModels(unittest.TestCase):
         self.assertIsInstance(attr.value, list)
         attr = ContextAttribute(**{"value": [20, 20], "type": "Array"})
         self.assertIsInstance(attr.value, list)
+        with self.assertRaises(ValidationError) as context:
+            ContextAttribute(**{"value": "2(0", "type": "Text"})
 
     def test_geojson_attribute(self):
         """
@@ -440,6 +443,18 @@ class TestContextModels(unittest.TestCase):
         self.assertEqual(self.entity_data, entity.model_dump(exclude_unset=True))
         entity = generated_model.model_validate(self.entity_data)
         self.assertEqual(self.entity_data, entity.model_dump(exclude_unset=True))
+
+        # try to generate a entity with dissalowed character in attribute name
+        with self.assertRaises(PydanticCustomError) as context:
+            ContextEntity(**{"id": "Room",
+                                "type": "Room",
+                                "temper=ature": {"value": "20","type": "Text"}})
+
+        # try to generate a entity with dissalowed character in attribute value
+        with self.assertRaises(ValidationError) as context:
+            ContextEntity(**{"id": "Room",
+                                "type": "Room",
+                                "temperature": {"value": "2(0","type": "Text"}})
 
     def test_command(self):
         """

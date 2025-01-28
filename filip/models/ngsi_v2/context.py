@@ -20,8 +20,8 @@ from filip.models.base import DataType
 from filip.utils.validators import (
     validate_fiware_datatype_standard,
     validate_fiware_datatype_string_protect,
+    validate_fiware_string_protect_regex,
 )
-
 
 class GetEntitiesOptions(str, Enum):
     """Options for queries"""
@@ -254,7 +254,7 @@ class ContextEntity(ContextEntityKeyValues):
         attrs = {
             key: ContextAttribute.model_validate(attr)
             for key, attr in data.items()
-            if (key not in cls.model_fields and not isinstance(attr, ContextAttribute))
+            if (validate_fiware_string_protect_regex(key) not in cls.model_fields and not isinstance(attr, ContextAttribute))
         }
 
         return attrs
