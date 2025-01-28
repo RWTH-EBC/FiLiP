@@ -7,15 +7,64 @@ from functools import wraps
 from pydantic import AnyHttpUrl, AnyUrl
 from requests import RequestException
 from typing import Callable, List, Union
-from filip.models import FiwareHeader
+from filip.models import FiwareHeader, FiwareLDHeader
 from filip.clients.ngsi_v2 import \
     ContextBrokerClient, \
     IoTAClient, \
     QuantumLeapClient
+from filip.clients.ngsi_ld.cb import ContextBrokerLDClient
+from filip.models.ngsi_ld.context import ActionTypeLD
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
-def clear_context_broker(url: str,
-                         fiware_header: FiwareHeader,
+def clear_context_broker_ld(url: str = None,
+                            fiware_ld_header: FiwareLDHeader = None,
+                            cb_ld_client: ContextBrokerLDClient = None
+                            ):
+    """
+    Function deletes all entities and subscriptions for a tenant in an LD context broker.
+
+    Args:
+        url: Url of the context broker LD
+        fiware_ld_header: header of the NGSI-LD tenant
+        cb_ld_client: NGSI-LD context broker client object
+
+    Returns:
+
+    """
+    assert url or cb_ld_client, "Either url or client object must be given"
+    # create client
+    if cb_ld_client is None:
+        client = ContextBrokerLDClient(url=url, fiware_header=fiware_ld_header)
+    else:
+        client = cb_ld_client
+    # clean entities iteratively
+    try:
+        entity_list = True
+        while entity_list:
+            entity_list = client.get_entity_list(limit=100)
+            if entity_list:
+                client.entity_batch_operation(action_type=ActionTypeLD.DELETE,
+                                              entities=entity_list)
+    except RequestException as e:
+        logger.warning("Could not clean entities completely")
+        raise
+
+    # clean subscriptions
+    try:
+        sub_list = cb_ld_client.get_subscription_list()
+        for sub in sub_list:
+            cb_ld_client.delete_subscription(sub.id)
+    except RequestException as e:
+        logger.warning("Could not clean subscriptions completely")
+        raise
+
+
+def clear_context_broker(url: str=None,
+                         fiware_header: FiwareHeader=None,
                          clear_registrations: bool = False,
                          cb_client: ContextBrokerClient = None
                          ):
@@ -47,6 +96,12 @@ def clear_context_broker(url: str,
     else:
         client = cb_client
 
+    # clear registrations
+    if clear_registrations:
+        for reg in client.get_registration_list():
+            client.delete_registration(registration_id=reg.id)
+        assert len(client.get_registration_list()) == 0
+
     # clean entities
     client.delete_entities(entities=client.get_entity_list())
 
@@ -55,11 +110,6 @@ def clear_context_broker(url: str,
         client.delete_subscription(subscription_id=sub.id)
     assert len(client.get_subscription_list()) == 0
 
-    # clear registrations
-    if clear_registrations:
-        for reg in client.get_registration_list():
-            client.delete_registration(registration_id=reg.id)
-        assert len(client.get_registration_list()) == 0
 
 
 def clear_iot_agent(url: Union[str, AnyHttpUrl] = None,
@@ -154,7 +204,8 @@ def clear_all(*,
               iota_client: IoTAClient = None,
               ql_client: QuantumLeapClient = None):
     """
-    Clears all services that a url is provided for
+    Clears all services that a url is provided for.
+    If cb_url is provided, the registration will also be deleted.
 
     Args:
         fiware_header:
@@ -185,7 +236,8 @@ def clear_all(*,
                 clear_iot_agent(url=url, fiware_header=fiware_header)
 
     if cb_url is not None or cb_client is not None:
-        clear_context_broker(url=cb_url, fiware_header=fiware_header, cb_client=cb_client)
+        clear_context_broker(url=cb_url, fiware_header=fiware_header, cb_client=cb_client,
+                             clear_registrations=True)
 
     if ql_url is not None or ql_client is not None:
         clear_quantumleap(url=ql_url, fiware_header=fiware_header, ql_client=ql_client)
