@@ -261,6 +261,8 @@ class ContextBrokerClient(BaseHttpClient):
                 return res.headers.get("Location")
             res.raise_for_status()
         except requests.RequestException as err:
+            if err.response is None:
+                raise
             if update and err.response.status_code == 422:
                 return self.override_entity(entity=entity, key_values=key_values)
             if patch and err.response.status_code == 422:
@@ -2078,7 +2080,7 @@ class ContextBrokerClient(BaseHttpClient):
                 except requests.RequestException as err:
                     # if the attribute is provided by a registration the
                     # deletion will fail
-                    if not err.response.status_code == 404:
+                    if err.response is None or not err.response.status_code == 404:
                         raise
             else:
                 # Check if attributed changed in any way, if yes update
@@ -2094,7 +2096,7 @@ class ContextBrokerClient(BaseHttpClient):
                     except requests.RequestException as err:
                         # if the attribute is provided by a registration the
                         # update will fail
-                        if not err.response.status_code == 404:
+                        if err.response is None or not err.response.status_code == 404:
                             raise
 
         # Create new attributes
