@@ -22,16 +22,25 @@ class FiwareRegex(str, Enum):
     Collection of Regex expression used to check if the value of a Pydantic
     field, can be used in the related Fiware field.
     """
-    _init_ = 'value __doc__'
 
-    standard = r"(^((?![?&#/\"' ()=])[\x00-\x7F])*$)", \
-               "Prevents any string that contains at least one of the " \
-               "symbols: ? & # / ' \" or a whitespace"
-    string_protect = r"(?!^id$)(?!^type$)(?!^geo:location$)" \
-                     r"(^((?![?&#/\"' ()=])[\x00-\x7F])*$)",  \
-                     "Prevents any string that contains at least one of " \
-                     "the symbols: ? & # / ' \" or a whitespace." \
-                     "AND the strings: id, type, geo:location"
+    _init_ = "value __doc__"
+
+    standard = (
+        r"(^((?![?&#/\"' ])[\x00-\x7F])*$)",
+        "Prevents any string that contains at least one of the "
+        "symbols: ? & # / ' \" or a whitespace",
+    )
+    string_protect = (
+        r"(?!^id$)(?!^type$)(?!^geo:location$)" r"(^((?![?&#/\"' ])[\x00-\x7F])*$)",
+        "Prevents any string that contains at least one of "
+        "the symbols: ? & # / ' \" or a whitespace."
+        "AND the strings: id, type, geo:location",
+    )
+    attribute = (
+        r"(^((?![?&#/\"'()=])[\x00-\x7F])*$)",
+        "Prevents any string that contains at least one of the "
+        "symbols: ( ) = ? & # / ' \"",
+    )
 
 
 @validate_call
@@ -112,11 +121,13 @@ def match_regex(value: str, pattern: str):
     regex = re.compile(pattern)
     if not regex.match(value):
         raise PydanticCustomError(
-            'string_pattern_mismatch',
+            "string_pattern_mismatch",
             "String should match pattern '{pattern}', [type='{error_type}', input_value='{value}']",
-            {'pattern': pattern,
-             'error_type': 'string_pattern_mismatch',
-             'value': value},
+            {
+                "pattern": pattern,
+                "error_type": "string_pattern_mismatch",
+                "value": value,
+            },
         )
     return value
 
