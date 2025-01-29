@@ -77,7 +77,7 @@ class TestContextModels(unittest.TestCase):
         attr = ContextAttribute(**{"value": [20, 20], "type": "Array"})
         self.assertIsInstance(attr.value, list)
         with self.assertRaises(ValidationError) as context:
-            ContextAttribute(**{"value": "2(0", "type": "Text"})
+            ContextAttribute(**{"value": "2?0", "type": "Text"})
 
     def test_geojson_attribute(self):
         """
@@ -447,15 +447,23 @@ class TestContextModels(unittest.TestCase):
 
         # try to generate a entity with dissalowed character in attribute name
         with self.assertRaises(PydanticCustomError) as context:
-            ContextEntity(**{"id": "Room",
-                                "type": "Room",
-                                "temper=ature": {"value": "20","type": "Text"}})
+            ContextEntity(
+                **{
+                    "id": "Room",
+                    "type": "Room",
+                    "temper=ature": {"value": "20", "type": "Text"},
+                }
+            )
 
         # try to generate a entity with dissalowed character in attribute value
         with self.assertRaises(ValidationError) as context:
-            ContextEntity(**{"id": "Room",
-                                "type": "Room",
-                                "temperature": {"value": "2(0","type": "Text"}})
+            ContextEntity(
+                **{
+                    "id": "Room",
+                    "type": "Room",
+                    "temperature": {"value": "2(0", "type": "Text"},
+                }
+            )
 
     def test_command(self):
         """
