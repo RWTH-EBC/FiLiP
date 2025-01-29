@@ -227,7 +227,7 @@ class ContextBrokerLDClient(BaseHttpClient):
                 return res.headers.get("Location")
             res.raise_for_status()
         except requests.RequestException as err:
-            if err.response.status_code == 409:
+            if err.response is not None and err.response.status_code == 409:
                 if append:  # 409 entity already exists
                     return self.append_entity_attributes(entity=entity)
                 elif update:
@@ -454,7 +454,7 @@ class ContextBrokerLDClient(BaseHttpClient):
             else:
                 res.raise_for_status()
         except requests.RequestException as err:
-            if append and err.response.status_code == 207:
+            if err.response is not None and append and err.response.status_code == 207:
                 return self.append_entity_attributes(entity=entity)
             msg = f"Could not replace attribute of entity {entity.id} !"
             self.log_error(err=err, msg=msg)
