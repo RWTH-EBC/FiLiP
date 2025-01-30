@@ -36,7 +36,7 @@ class FiwareRegex(str, Enum):
         "the symbols: ? & # / ' \" or a whitespace."
         "AND the strings: id, type, geo:location",
     )
-    attribute = (
+    attribute_value = (
         r"(^((?![?&#/\"'()=])[\x00-\x7F])*$)",
         "Prevents any string that contains at least one of the "
         "symbols: ( ) = ? & # / ' \"",
@@ -147,6 +147,10 @@ def validate_fiware_standard_regex(vale: str):
 
 def validate_fiware_string_protect_regex(vale: str):
     return match_regex(vale, FiwareRegex.string_protect.value)
+
+
+def validate_fiware_attribute_value_regex(vale: str):
+    return match_regex(vale, FiwareRegex.attribute_value.value)
 
 
 @ignore_none_input

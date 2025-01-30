@@ -36,7 +36,7 @@ from filip.utils.validators import (
     validate_escape_character_free,
     validate_fiware_datatype_string_protect,
     validate_fiware_datatype_standard,
-    validate_fiware_string_protect_regex
+    validate_fiware_attribute_value_regex,
 )
 
 
@@ -401,7 +401,7 @@ class BaseValueAttribute(BaseModel):
         value = values.get("value")
 
         if type_ == DataType.TEXT:
-            values["value"] = validate_fiware_string_protect_regex(str(value))
+            values["value"] = validate_fiware_attribute_value_regex(str(value))
 
         return values
 
