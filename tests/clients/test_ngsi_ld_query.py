@@ -150,6 +150,33 @@ class TestLDQueryLanguage(unittest.TestCase):
                 # Check each obtained entity obeys the q expression
                 self.assertTrue(eval(copy), msg=q)
 
+    def test_quoted_string_validation(self):
+        incorrect = [
+            "(temperature >= 59 | humidity < 3); brand == 'DeLorean'",
+            "temperature.observedAt > '2020-12-24T12:00:00Z'",
+            "address[country] == '\"G\"ermany'",
+            "address[country] >= 'Germany'",
+            "address[country] < '250'",
+        ]
+        
+        for q in incorrect:
+            with self.assertRaises(AssertionError):
+                self.cb.get_entity_list(q=q)
+ 
+        correct = [
+            "brand != \"Batmobile\"",
+            "isParked == \"urn:ngsi-ld:garage0\"",
+            "temperature < 60; isParked == \"urn:ngsi-ld:garage0\"",
+            "brand > \"Bat'mobile'\"",
+            "isParked < \"1999\""
+        ]
+        
+        for q in correct:
+            try:
+                self.cb.get_entity_list(q=q)
+            except:
+                self.fail(f"Test failed on supposedly correct expression {q}")
+
     def extract_keys(self, q: str):
         """
         Extract substring from string expression that is likely to be the name of a
