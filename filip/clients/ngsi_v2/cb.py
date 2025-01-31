@@ -2089,8 +2089,10 @@ class ContextBrokerClient(BaseHttpClient):
                             f" The attribute is probably provided "
                             f"by a registration."
                         )
-                    self.log_error(err=err, msg=msg)
-                    raise
+                        self.log_error(err=err, msg=msg)
+                    else:
+                        self.log_error(err=err, msg=msg)
+                        raise
             else:
                 # Check if attributed changed in any way, if yes update
                 # else do nothing and keep current state
