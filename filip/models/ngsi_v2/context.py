@@ -183,7 +183,19 @@ class ContextEntityKeyValues(BaseModel):
                 # `type` was found and pydantic will raise the correct error
                 super().__init__(id=id, **data)
         # This will result in usual behavior
+        data.update(self._validate_attributes(data))
         super().__init__(id=id, type=type, **data)
+
+    # Validation of attributes
+    @classmethod
+    def _validate_attributes(cls, data: dict):
+        """
+        Validate attribute name and value of the entity in keyvalues format
+        """
+        for attr_name, attr_value in data.items():
+            validate_fiware_attribute_value_regex(attr_value)
+            validate_fiware_datatype_string_protect(attr_name)
+        return data
 
     def get_attributes(self) -> dict:
         """
