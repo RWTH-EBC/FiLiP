@@ -9,7 +9,7 @@ from copy import deepcopy
 from enum import Enum
 from math import inf
 from pkg_resources import parse_version
-from pydantic import PositiveInt, PositiveFloat, AnyHttpUrl
+from pydantic import PositiveInt, PositiveFloat, AnyHttpUrl, ValidationError
 from pydantic.type_adapter import TypeAdapter
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 import re
@@ -31,6 +31,8 @@ from filip.models.ngsi_v2.context import (
     Query,
     Update,
     PropertyFormat,
+    ContextEntityList,
+    ContextEntityKeyValuesList,
 )
 from filip.models.ngsi_v2.base import AttrsFormat
 from filip.models.ngsi_v2.subscriptions import Subscription, Message
@@ -261,15 +263,16 @@ class ContextBrokerClient(BaseHttpClient):
                 return res.headers.get("Location")
             res.raise_for_status()
         except requests.RequestException as err:
-            if update and err.response.status_code == 422:
-                return self.override_entity(entity=entity, key_values=key_values)
-            if patch and err.response.status_code == 422:
-                if not key_values:
-                    return self.patch_entity(
-                        entity=entity, override_attr_metadata=override_attr_metadata
-                    )
-                else:
-                    return self._patch_entity_key_values(entity=entity)
+            if err.response is not None:
+                if update and err.response.status_code == 422:
+                    return self.override_entity(entity=entity, key_values=key_values)
+                if patch and err.response.status_code == 422:
+                    if not key_values:
+                        return self.patch_entity(
+                            entity=entity, override_attr_metadata=override_attr_metadata
+                        )
+                    else:
+                        return self._patch_entity_key_values(entity=entity)
             msg = f"Could not post entity {entity.id}"
             self.log_error(err=err, msg=msg)
             raise
@@ -408,13 +411,12 @@ class ContextBrokerClient(BaseHttpClient):
                 headers=headers,
             )
             if AttrsFormat.NORMALIZED in response_format:
-                adapter = TypeAdapter(List[ContextEntity])
-                return adapter.validate_python(items)
-            if AttrsFormat.KEY_VALUES in response_format:
-                adapter = TypeAdapter(List[ContextEntityKeyValues])
-                return adapter.validate_python(items)
-            return items
-
+                return ContextEntityList.model_validate({"entities": items}).entities
+            elif AttrsFormat.KEY_VALUES in response_format:
+                return ContextEntityKeyValuesList.model_validate(
+                    {"entities": items}
+                ).entities
+            return items  # in case of VALUES as response_format
         except requests.RequestException as err:
             msg = "Could not load entities"
             self.log_error(err=err, msg=msg)
@@ -1980,6 +1982,7 @@ class ContextBrokerClient(BaseHttpClient):
             res.raise_for_status()
         except requests.RequestException as err:
             if err.response is None or not err.response.status_code == 404:
+                self.log_error(err=err, msg="Checking entity existence failed!")
                 raise
             return False
 
@@ -2076,9 +2079,20 @@ class ContextBrokerClient(BaseHttpClient):
                         attr_name=old_attr.name,
                     )
                 except requests.RequestException as err:
-                    # if the attribute is provided by a registration the
-                    # deletion will fail
-                    if not err.response.status_code == 404:
+                    msg = (
+                        f"Failed to delete attribute {old_attr.name} of "
+                        f"entity {new_entity.id}."
+                    )
+                    if err.response is not None and err.response.status_code == 404:
+                        # if the attribute is provided by a registration the
+                        # deletion will fail
+                        msg += (
+                            f" The attribute is probably provided "
+                            f"by a registration."
+                        )
+                        self.log_error(err=err, msg=msg)
+                    else:
+                        self.log_error(err=err, msg=msg)
                         raise
             else:
                 # Check if attributed changed in any way, if yes update
@@ -2092,10 +2106,19 @@ class ContextBrokerClient(BaseHttpClient):
                             override_metadata=override_attr_metadata,
                         )
                     except requests.RequestException as err:
-                        # if the attribute is provided by a registration the
-                        # update will fail
-                        if not err.response.status_code == 404:
-                            raise
+                        msg = (
+                            f"Failed to update attribute {old_attr.name} of "
+                            f"entity {new_entity.id}."
+                        )
+                        if err.response is not None and err.response.status_code == 404:
+                            # if the attribute is provided by a registration the
+                            # update will fail
+                            msg += (
+                                f" The attribute is probably provided "
+                                f"by a registration."
+                            )
+                        self.log_error(err=err, msg=msg)
+                        raise
 
         # Create new attributes
         update_entity = ContextEntity(id=entity.id, type=entity.type)
