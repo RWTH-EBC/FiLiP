@@ -20,21 +20,23 @@ logger = logging.getLogger(name=__name__)
 class FiwareRegex(str, Enum):
     """
     Collection of Regex expression used to check if the value of a Pydantic
-    field, can be used in the related Fiware field.
+    field, can be used in the related Fiware field. The regexes here are primarily
+    defined based on the identifiers syntax restriction:
+    https://fiware-orion.readthedocs.io/en/stable/orion-api.html#identifiers-syntax-restrictions
     """
 
     _init_ = "value __doc__"
-
+    #  Identifiers syntax restriction
     standard = (
         r"(^((?![?&#/\"' ])[\x00-\x7F])*$)",
         "Prevents any string that contains at least one of the "
         "symbols: ? & # / ' \" or a whitespace",
     )
     string_protect = (
-        r"(?!^id$)(?!^type$)(?!^geo:location$)" r"(^((?![?&#/\"' ])[\x00-\x7F])*$)",
+        r"(?!^id$)(?!^type$)(?!^geo:json$)" r"(^((?![?&#/\"' ])[\x00-\x7F])*$)",
         "Prevents any string that contains at least one of "
         "the symbols: ? & # / ' \" or a whitespace."
-        "AND the strings: id, type, geo:location",
+        "AND the strings: id, type, geo:json",
     )
     attribute_value = (
         r"(^((?![?&#/\"'()=])[\x00-\x7F])*$)",
