@@ -649,7 +649,7 @@ class TestContextBroker(unittest.TestCase):
                 subscription=self.subscription, skip_initial_notification=True
             )
             sub_res = client.get_subscription(subscription_id=sub_id)
-            time.sleep(1)
+            time.sleep(2)
             sub_update = sub_res.model_copy(
                 update={"expires": datetime.now() + timedelta(days=2), "throttling": 1},
             )
@@ -779,12 +779,12 @@ class TestContextBroker(unittest.TestCase):
         test_entity = self.client.get_entity(entity_id=test_entity.id)
         test_entity.temperature.value = 26.0
         self.client.update_entity(test_entity)
-        time.sleep(1)
+        time.sleep(2)
         sub_result_default = self.client.get_subscription(sub_id_default)
         self.assertEqual(sub_result_default.notification.timesSent, 1)
         # not triggered during with no actual update
         self.client.update_entity(test_entity)
-        time.sleep(1)
+        time.sleep(2)
         sub_result_default = self.client.get_subscription(sub_id_default)
         self.assertEqual(sub_result_default.notification.timesSent, 1)
         self.client.delete_subscription(sub_id_default)
@@ -794,12 +794,12 @@ class TestContextBroker(unittest.TestCase):
         sub_id_change = self.client.post_subscription(subscription=sub)
         test_entity.temperature.value = 27.0
         self.client.update_entity(test_entity)
-        time.sleep(1)
+        time.sleep(2)
         sub_result_change = self.client.get_subscription(sub_id_change)
         self.assertEqual(sub_result_change.notification.timesSent, 1)
         # not triggered during with no actual update
         self.client.update_entity(test_entity)
-        time.sleep(1)
+        time.sleep(2)
         sub_result_change = self.client.get_subscription(sub_id_change)
         self.assertEqual(sub_result_change.notification.timesSent, 1)
         self.client.delete_subscription(sub_id_change)
@@ -813,14 +813,14 @@ class TestContextBroker(unittest.TestCase):
         sub.subject.condition.alterationTypes = ["entityCreate"]
         sub_id_create = self.client.post_subscription(subscription=sub)
         self.client.post_entity(test_entity_create)
-        time.sleep(1)
+        time.sleep(2)
         sub_result_create = self.client.get_subscription(sub_id_create)
         self.assertEqual(sub_result_create.notification.timesSent, 1)
         # not triggered during when update
         test_entity_create = self.client.get_entity(entity_id=test_entity_create.id)
         test_entity_create.temperature.value = 26.0
         self.client.update_entity(test_entity_create)
-        time.sleep(1)
+        time.sleep(2)
         sub_result_create = self.client.get_subscription(sub_id_create)
         self.assertEqual(sub_result_create.notification.timesSent, 1)
         self.client.delete_subscription(sub_id_create)
@@ -829,7 +829,7 @@ class TestContextBroker(unittest.TestCase):
         sub.subject.condition.alterationTypes = ["entityDelete"]
         sub_id_delete = self.client.post_subscription(subscription=sub)
         self.client.delete_entity(test_entity_create.id)
-        time.sleep(1)
+        time.sleep(2)
         sub_result_delete = self.client.get_subscription(sub_id_delete)
         self.assertEqual(sub_result_delete.notification.timesSent, 1)
         self.client.delete_subscription(sub_id_delete)
@@ -840,12 +840,12 @@ class TestContextBroker(unittest.TestCase):
         # triggered when actual change
         test_entity.temperature.value = 28.0
         self.client.update_entity(test_entity)
-        time.sleep(1)
+        time.sleep(2)
         sub_result_update = self.client.get_subscription(sub_id_update)
         self.assertEqual(sub_result_update.notification.timesSent, 1)
         # triggered when no actual change
         self.client.update_entity(test_entity)
-        time.sleep(1)
+        time.sleep(2)
         sub_result_update = self.client.get_subscription(sub_id_update)
         self.assertEqual(sub_result_update.notification.timesSent, 2)
         self.client.delete_subscription(sub_id_update)
@@ -927,14 +927,14 @@ class TestContextBroker(unittest.TestCase):
         mqtt_client.loop_start()
         new_value = 50
 
-        time.sleep(1)
+        time.sleep(2)
         self.client.update_attribute_value(
             entity_id=entity.id,
             attr_name="temperature",
             value=new_value,
             entity_type=entity.type,
         )
-        time.sleep(1)
+        time.sleep(2)
 
         # test if the subscriptions arrives and the content aligns with updates
         self.assertIsNotNone(sub_message)
@@ -942,7 +942,7 @@ class TestContextBroker(unittest.TestCase):
         self.assertEqual(new_value, sub_message.data[0].temperature.value)
         mqtt_client.loop_stop()
         mqtt_client.disconnect()
-        time.sleep(1)
+        time.sleep(2)
 
     @clean_test(
         fiware_service=settings.FIWARE_SERVICE,
@@ -1286,12 +1286,12 @@ class TestContextBroker(unittest.TestCase):
             sub_id_1 = client.post_subscription(
                 subscription=sub_with_empty_notification
             )
-            time.sleep(1)
+            time.sleep(2)
             client.update_attribute_value(
                 entity_id=entity.id, attr_name="temperature", value=10
             )
             # check the notified entities
-            time.sleep(1)
+            time.sleep(2)
             sub_1 = client.get_subscription(sub_id_1)
             self.assertEqual(sub_1.notification.timesSent, 1)
             self.assertEqual(len(sub_message.data[0].get_attributes()), 3)
@@ -1299,7 +1299,7 @@ class TestContextBroker(unittest.TestCase):
             # test2 notification with None attrs, which should be identical to
             # the previous one
             sub_id_2 = client.post_subscription(subscription=sub_with_none_notification)
-            time.sleep(1)
+            time.sleep(2)
             subscription_list = client.get_subscription_list()
             self.assertEqual(sub_id_1, sub_id_2)
             self.assertEqual(len(subscription_list), 1)
@@ -1307,7 +1307,7 @@ class TestContextBroker(unittest.TestCase):
             client.update_attribute_value(
                 entity_id=entity.id, attr_name="humidity", value=20
             )
-            time.sleep(1)
+            time.sleep(2)
             sub_1 = client.get_subscription(sub_id_1)
             self.assertEqual(sub_1.notification.timesSent, 2)
             self.assertEqual(sub_message.data[0].get_attribute("humidity").value, 20)
@@ -1317,7 +1317,7 @@ class TestContextBroker(unittest.TestCase):
             sub_id_3 = client.post_subscription(
                 subscription=sub_with_single_attr_notification
             )
-            time.sleep(1)
+            time.sleep(2)
             subscription_list = client.get_subscription_list()
             self.assertNotEqual(sub_id_1, sub_id_3)
             self.assertEqual(len(subscription_list), 2)
@@ -1326,7 +1326,7 @@ class TestContextBroker(unittest.TestCase):
             client.update_attribute_value(
                 entity_id=entity.id, attr_name="co2", value=30
             )
-            time.sleep(1)
+            time.sleep(2)
             sub_1 = client.get_subscription(sub_id_1)
             sub_3 = client.get_subscription(sub_id_3)
             self.assertEqual(sub_1.notification.timesSent, 3)
@@ -1344,11 +1344,11 @@ class TestContextBroker(unittest.TestCase):
             sub_id_4 = client.post_subscription(
                 subscription=sub_with_mqtt_custom_notification_payload
             )
-            time.sleep(1)
+            time.sleep(2)
             client.update_attribute_value(
                 entity_id=entity.id, attr_name="temperature", value=44
             )
-            time.sleep(1)
+            time.sleep(2)
             sub_4 = client.get_subscription(sub_id_4)
             self.assertEqual(
                 first=custom_sub_message,
@@ -1362,11 +1362,11 @@ class TestContextBroker(unittest.TestCase):
             sub_id_5 = client.post_subscription(
                 subscription=sub_with_mqtt_custom_notification_json
             )
-            time.sleep(1)
+            time.sleep(2)
             client.update_attribute_value(
                 entity_id=entity.id, attr_name="humidity", value=67
             )
-            time.sleep(1)
+            time.sleep(2)
             sub_5 = client.get_subscription(sub_id_5)
             self.assertEqual(first=custom_sub_message, second=b'{"t":44,"h":67,"c":30}')
             self.assertEqual(sub_5.notification.timesSent, 1)
@@ -1376,11 +1376,11 @@ class TestContextBroker(unittest.TestCase):
             sub_id_6 = client.post_subscription(
                 subscription=sub_with_mqtt_custom_notification_ngsi
             )
-            time.sleep(1)
+            time.sleep(2)
             client.update_attribute_value(
                 entity_id=entity.id, attr_name="co2", value=78
             )
-            time.sleep(1)
+            time.sleep(2)
             sub_6 = client.get_subscription(sub_id_6)
             sub_message = Message.model_validate_json(custom_sub_message)
             self.assertEqual(sub_6.notification.timesSent, 1)
@@ -1398,11 +1398,11 @@ class TestContextBroker(unittest.TestCase):
             sub_id_7 = client.post_subscription(
                 subscription=sub_with_covered_attrs_notification,
             )
-            time.sleep(1)
+            time.sleep(2)
             client.update_attribute_value(
                 entity_id=entity.id, attr_name="temperature", value=40
             )
-            time.sleep(1)
+            time.sleep(2)
             sub_4 = client.get_subscription(sub_id_7)
             self.assertEqual(sub_4.notification.timesSent, 1)
             notified_attr_names = sub_messages[sub_id_7].data[0].get_attribute_names()
@@ -1468,6 +1468,77 @@ class TestContextBroker(unittest.TestCase):
             self.assertEqual(1000, len(entities_keyvalues_query))
             self.assertEqual(1000, sum([e.attr2 for e in entities_keyvalues_query]))
 
+    def test_batch_operations_custom_models(self):
+        from pydantic import ConfigDict, Field
+
+        # Inherit from ContextEntity
+        class WeatherStation(ContextEntity):
+            """
+            A context specific model for a weather station
+            """
+
+            # add default for type if not explicitly set
+            type: str = "WeatherStation"
+            temperature: ContextAttribute = ContextAttribute(
+                type="Number",
+                value=20.0,
+            )
+
+        # Inherit from ContextEntityKeyValues
+        class WeatherStationKeyValues(ContextEntityKeyValues):
+            """
+            A context specific model for a weather station in keyValues format
+            """
+
+            model_config = ConfigDict(coerce_numbers_to_str=True, extra="ignore")
+            type: str = "WeatherStation"
+            temperature: float = Field(default=20.0)
+
+        # test with normalized model
+        weather_station_list = [
+            WeatherStation(
+                id=f"test_custom_batch:weather_station_{i}",
+                temperature={"type": "Number", "value": 20 + i},
+            )
+            for i in range(5)
+        ]
+
+        self.client.update(entities=weather_station_list, action_type="append")
+        entities = self.client.get_entity_list()
+        # assert entities should have temperature
+        self.assertTrue(
+            all(
+                [
+                    entity.model_dump().get("temperature") is not None
+                    for entity in entities
+                ]
+            )
+        )
+        # delete created entities
+        self.client.delete_entities(entities=entities)
+
+        # test with keyValues model
+        weather_station_list_keyvalues = [
+            WeatherStationKeyValues(
+                id=f"test_custom_batch_kv:weather_station_{i}", temperature=20 + i
+            )
+            for i in range(5)
+        ]
+        self.client.update(
+            entities=weather_station_list_keyvalues,
+            update_format="keyValues",
+            action_type="append",
+        )
+        entities_kv = self.client.get_entity_list()
+        self.assertTrue(
+            all(
+                [
+                    entity.model_dump().get("temperature") is not None
+                    for entity in entities_kv
+                ]
+            )
+        )
+
     def test_force_update_option(self):
         """
         Test the functionality of the flag forceUpdate
@@ -1506,7 +1577,7 @@ class TestContextBroker(unittest.TestCase):
         self.client.update_attribute_value(
             entity_id=entity.id, attr_name="temperature", value=20
         )
-        time.sleep(1)
+        time.sleep(2)
         sub_1 = self.client.get_subscription(sub_id_1)
         time_sent_1_is = (
             sub_1.notification.timesSent if sub_1.notification.timesSent else 0
@@ -1518,7 +1589,7 @@ class TestContextBroker(unittest.TestCase):
             entity_id=entity.id, attr_name="temperature", value=21
         )
         time_sent_1 += 1  # should be activated
-        time.sleep(1)
+        time.sleep(2)
         sub_1 = self.client.get_subscription(sub_id_1)
         time_sent_1_is = (
             sub_1.notification.timesSent if sub_1.notification.timesSent else 0
@@ -1530,7 +1601,7 @@ class TestContextBroker(unittest.TestCase):
             entity_id=entity.id, attr_name="temperature", value=21, forcedUpdate=True
         )
         time_sent_1 += 1  # should be activated
-        time.sleep(1)
+        time.sleep(2)
         sub_1 = self.client.get_subscription(sub_id_1)
         time_sent_1_is = (
             sub_1.notification.timesSent if sub_1.notification.timesSent else 0
@@ -1565,7 +1636,7 @@ class TestContextBroker(unittest.TestCase):
         self.client.update_attribute_value(
             entity_id=entity.id, attr_name="temperature", value=20
         )
-        time.sleep(1)
+        time.sleep(2)
         sub_2 = self.client.get_subscription(sub_id_2)
         time_sent_2_is = (
             sub_2.notification.timesSent if sub_2.notification.timesSent else 0
@@ -1577,7 +1648,7 @@ class TestContextBroker(unittest.TestCase):
             entity_id=entity.id, attr_name="temperature", value=41
         )
         time_sent_2 += 1  # should be activated
-        time.sleep(1)
+        time.sleep(2)
         sub_2 = self.client.get_subscription(sub_id_2)
         time_sent_2_is = (
             sub_2.notification.timesSent if sub_2.notification.timesSent else 0
@@ -1588,7 +1659,7 @@ class TestContextBroker(unittest.TestCase):
         self.client.update_attribute_value(
             entity_id=entity.id, attr_name="temperature", value=20, forcedUpdate=True
         )
-        time.sleep(1)
+        time.sleep(2)
         sub_2 = self.client.get_subscription(sub_id_2)
         time_sent_2_is = (
             sub_2.notification.timesSent if sub_2.notification.timesSent else 0
