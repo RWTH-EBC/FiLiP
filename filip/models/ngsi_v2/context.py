@@ -193,7 +193,8 @@ class ContextEntityKeyValues(BaseModel):
         Validate attribute name and value of the entity in keyvalues format
         """
         for attr_name, attr_value in data.items():
-            validate_fiware_attribute_value_regex(attr_value)
+            if isinstance(attr_value, str):
+                validate_fiware_attribute_value_regex(attr_value)
             validate_fiware_datatype_string_protect(attr_name)
         return data
 
