@@ -66,9 +66,11 @@ jobs:
 
     steps:
       # Step 1: Navigate to docker folder
+      - name: List files for debugging
+        run: ls - l
+
       - name: Navigate to Docker folder
         run: |
-          ls
           cd docker
 
       # Step 2: Start FIWARE services using local docker-compose.yml
