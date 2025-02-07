@@ -53,7 +53,7 @@ jobs:
           echo 'LOG_LEVEL="INFO"' > .env
           echo 'CB_URL="http://localhost:1026"' >> .env
           echo 'IOTA_JSON_URL="http://localhost:4041"' >> .env
-          # echo 'IOTA_UL_URL="http://localhost:4061"' >> .env
+          echo 'IOTA_UL_URL="http://localhost:4061"' >> .env
           echo 'QL_URL="http://localhost:8668"' >> .env
           echo 'MQTT_BROKER_URL="mqtt://localhost:1883"' >> .env
           echo 'MQTT_BROKER_URL_INTERNAL="mqtt://mqtt-broker:1883"' >> .env
