@@ -9,102 +9,7 @@ on:
       - main
 
 jobs:
-  setup:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
-
-    steps:
-      # Step 1: Checkout correct branch
-      - name: Checkout Code
-        uses: actions/checkout@v3
-        with:
-          ref: 315-Unittest-via-Github-actions  # Ensure correct branch
-
-      # Step 2: Debug - Verify checkout and directory structure
-      - name: Debug - Verify Repository Structure
-        run: |
-          pwd
-          ls -la
-
-      # Step 3: Set up Python
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      # Step 4: Install build tools
-      - name: Install build tools
-        run: |
-          python -m pip install --upgrade pip
-          pip install setuptools wheel
-
-      # Step 5: Install dependencies
-      - name: Install dependencies
-        run: |
-          pip install .[development]
-
-      # Step 6: Create .env file
-      - name: Create .env file
-        run: |
-          echo 'LOG_LEVEL="INFO"' > .env
-          echo 'CB_URL="http://localhost:1026"' >> .env
-          echo 'ORION_LD_URL="http://localhost:1027"' >> .env
-          echo 'IOTA_JSON_URL="http://localhost:4041"' >> .env
-          # echo 'IOTA_UL_URL="http://localhost:4061"' >> .env
-          echo 'QL_URL="http://localhost:8668"' >> .env
-          echo 'MQTT_BROKER_URL="mqtt://localhost:1883"' >> .env
-          echo 'MQTT_BROKER_URL_INTERNAL="mqtt://mqtt-broker:1883"' >> .env
-          echo 'FIWARE_SERVICE="filip"' >> .env
-          echo 'FIWARE_SERVICEPATH="/testing"' >> .env
-
-      # Step 7: Verify .env file
-      - name: Verify environment setup
-        run: cat .env
-
-  fiware_setup:
-    needs: setup
-    runs-on: ubuntu-latest
-
-    steps:
-      # Step 1: Checkout correct branch
-      - name: Checkout Code
-        uses: actions/checkout@v3
-        with:
-          ref: 315-Unittest-via-Github-actions  # Ensure correct branch
-
-      # Step 2: Debug - Verify directory structure
-      - name: Debug - Verify Repository Structure
-        run: |
-          pwd
-          ls -la
-
-      # Step 3: Navigate to docker folder
-      - name: Navigate to docker folder
-        run: cd docker && ls -la
-
-      # Step 4: Start FIWARE services from docker-compose
-      - name: Start FIWARE Services
-        run: |
-          cd docker
-          docker compose up -d
-
-      # Step 5: Wait for FIWARE services to start
-      - name: Wait for FIWARE Services
-        run: |
-          for i in {1..30}; do
-            curl -s http://localhost:1026/version && \
-            curl -s http://localhost:4041/iot/about && \
-            curl -s http://localhost:8668/version && break || sleep 5
-          done
-
-      # Step 6: Debug - Show running containers
-      - name: Debug - Show Running Docker Containers
-        run: docker ps -a
-
   test:
-    needs: fiware_setup
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -136,20 +41,54 @@ jobs:
           pip install setuptools wheel
 
       # Step 5: Install test dependencies
-      - name: Install test dependencies
+      - name: Install dependencies
         run: |
+          pip install .[development]
           pip install .[test]
           pip install pytest
 
-      # Step 6: Debug - Ensure FIWARE is running before tests
-      - name: Debug - Check FIWARE Services Before Tests
+      # Step 6: Create .env file
+      - name: Create .env file
         run: |
-          docker ps -a
-          curl -s http://localhost:1026/version
-          curl -s http://localhost:4041/iot/about
-          curl -s http://localhost:8668/version
+          echo 'LOG_LEVEL="INFO"' > .env
+          echo 'CB_URL="http://localhost:1026"' >> .env
+          echo 'ORION_LD_URL="http://localhost:1027"' >> .env
+          echo 'IOTA_JSON_URL="http://localhost:4041"' >> .env
+          # echo 'IOTA_UL_URL="http://localhost:4061"' >> .env
+          echo 'QL_URL="http://localhost:8668"' >> .env
+          echo 'MQTT_BROKER_URL="mqtt://localhost:1883"' >> .env
+          echo 'MQTT_BROKER_URL_INTERNAL="mqtt://mqtt-broker:1883"' >> .env
+          echo 'FIWARE_SERVICE="filip"' >> .env
+          echo 'FIWARE_SERVICEPATH="/testing"' >> .env
 
-      # Step 7: Run tests
+      # Step 7: Verify .env file
+      - name: Verify environment setup
+        run: cat .env
+
+      # Step 8: Navigate to docker folder & Start FIWARE services
+      - name: Start FIWARE Services
+        run: |
+          cd docker
+          docker compose up -d
+
+      # Step 9: Wait for FIWARE Services
+      - name: Wait for FIWARE Services
+        run: |
+          for i in {1..30}; do
+            curl -s http://localhost:1026/version && \
+            curl -s http://localhost:4041/iot/about && \
+            curl -s http://localhost:8668/version && break || sleep 5
+          done
+
+      # Step 10: Debug - Show Running Docker Containers
+      - name: Debug - Show Running Docker Containers
+        run: docker ps -a
+
+      # Step 11: Navigate back to home and then tests folder
+      - name: Navigate to Tests Folder
+        run: cd $GITHUB_WORKSPACE/tests && ls -la
+
+      # Step 12: Run tests
       - name: Run tests with both unittest and pytest
         run: |
           export TEST_ENGINE=PYTEST &&
