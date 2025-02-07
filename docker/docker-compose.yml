@@ -95,6 +95,34 @@ services:
       - IOTA_MQTT_KEEPALIVE=${IOTA_JSON_MQTT_KEEPALIVE:-60}
       - IOTA_AMQP_DISABLED=${IOTA_JSON_AMQP_DISABLED:-true}
     logging: *logging-high
+
+  iot-agent-ul:
+    image: fiware/iotagent-ul:${IOTA_UL_VERSION:-1.19.0}
+    hostname: iot-agent-ul
+    networks:
+      - filip
+    ports:
+      - "4061:4061"
+    environment:
+      - IOTA_CB_HOST=${IOTA_UL_CB_HOST:-orion} # name of the context broker to update context
+      - IOTA_CB_PORT=${IOTA_UL_CB_PORT:-1026} # port the context broker listens on to update context
+      - IOTA_NORTH_PORT=${IOTA_UL_NORTH_PORT:-4061}
+      - IOTA_REGISTRY_TYPE=${IOTA_UL_REGISTRY_TYPE:-mongodb} # Whether to hold IoT device info in memory or in a database
+      - IOTA_LOG_LEVEL=${IOTA_UL_LOG_LEVEL:-ERROR} # The log level of the IoT Agent
+      - IOTA_TIMESTAMP=${IOTA_UL_TIMESTAMP:-true} # Supply timestamp information with each measurement
+      - IOTA_CB_NGSI_VERSION=${IOTA_UL_CB_NGSI_VERSION:-v2} # use NGSIv2 when sending updates for active attributes
+      - IOTA_AUTOCAST=${IOTA_UL_AUTOCAST:-true} # Ensure Ultralight number values are read as numbers not strings
+      - IOTA_MONGO_HOST=${IOTA_UL_MONGODB_HOST:-mongodb1,mongodb2,mongodb3} # The host name of MongoDB or list of hosts in case mongodb is instanciated as replicaset
+      - IOTA_MONGO_PORT=${IOTA_UL_MONGODB_PORT:-27017} # The port mongoDB is listening on
+      - IOTA_MONGO_REPLICASET=${IOTA_UL_MONGO_REPLICASET:-rs0} # Optional - name of the replicaset if mongodb is instanciated as replicaset
+      - IOTA_MONGO_DB=${IOTA_UL_MONGODB_DB_NAME:-iotagentul} # The name of the database used in mongoDB
+      - IOTA_MQTT_HOST=${IOTA_UL_MQTT_HOST:-mqtt-broker} # The host name of the MQTT Broker
+      - IOTA_MQTT_PORT=${IOTA_UL_MQTT_PORT:-1883} # The port the MQTT Broker is listening on to receive topics
+      - IOTA_MQTT_KEEPALIVE=${IOTA_UL_MQTT_KEEPALIVE:-60}
+      - IOTA_PROVIDER_URL=${IOTA_UL_PROVIDER_URL:-http://iot-agent-ul:4061}
+      - IOTA_MULTI_CORE=${IOTA_UL_MULTI_CORE:-true}
+    logging: *logging-high
+
     
   mqtt-broker:
     image: eclipse-mosquitto:${MOSQUITTO_VERSION:-2.0.11}
