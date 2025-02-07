@@ -88,7 +88,6 @@ class TestMQTTClient(unittest.TestCase):
         self.mqttc.on_subscribe = on_subscribe
         self.mqttc.on_log = on_log
 
-    @unittest.skip("test")
     def test_original_functionality(self):
         """
         demonstrate normal client behavior
@@ -139,7 +138,6 @@ class TestMQTTClient(unittest.TestCase):
         self.mqttc.loop_stop()
         self.mqttc.disconnect()
 
-    @unittest.skip("test")
     def test_optional_object_id(self):
         """
         Test:
@@ -196,7 +194,6 @@ class TestMQTTClient(unittest.TestCase):
             tmp_mqttc.publish(device_id=tmp_id, payload={"t": Random().randint(0, 50)})
             tmp_mqttc.delete_device(device_id=tmp_id)
 
-    @unittest.skip("test")
     def test_init(self):
         devices = [self.device_json, self.device_ul]
         mqttc = IoTAMQTTClient(
@@ -204,7 +201,6 @@ class TestMQTTClient(unittest.TestCase):
         )
         self.assertListEqual(mqttc.devices, devices)
 
-    @unittest.skip("test")
     def test_service_groups(self):
         self.mqttc.add_service_group(service_group=self.service_group_json)
         with self.assertRaises(AssertionError):
@@ -233,7 +229,6 @@ class TestMQTTClient(unittest.TestCase):
 
         self.mqttc.delete_service_group(apikey=self.service_group_json.apikey)
 
-    @unittest.skip("test")
     def test_devices(self):
         with self.assertRaises(ValueError):
             self.mqttc.devices = [self.device_ul, self.device_ul]
@@ -253,7 +248,6 @@ class TestMQTTClient(unittest.TestCase):
 
         self.mqttc.delete_device(device_id=self.device_json.device_id)
 
-    @unittest.skip("test")
     @clean_test(
         fiware_service=settings.FIWARE_SERVICE,
         fiware_servicepath=settings.FIWARE_SERVICEPATH,
@@ -338,7 +332,6 @@ class TestMQTTClient(unittest.TestCase):
         # The main part of this test, for all this setup was done
         self.assertEqual("OK", entity.heater_status.value)
 
-    @unittest.skip("test")
     @clean_test(
         fiware_service=settings.FIWARE_SERVICE,
         fiware_servicepath=settings.FIWARE_SERVICEPATH,
@@ -437,7 +430,6 @@ class TestMQTTClient(unittest.TestCase):
         # disconnect the mqtt device
         self.mqttc.disconnect()
 
-    @unittest.skip("test")
     @clean_test(
         fiware_service=settings.FIWARE_SERVICE,
         fiware_servicepath=settings.FIWARE_SERVICEPATH,
@@ -522,7 +514,6 @@ class TestMQTTClient(unittest.TestCase):
         # The main part of this test, for all this setup was done
         self.assertEqual("OK", entity.heater_status.value)
 
-    @unittest.skip("test")
     @clean_test(
         fiware_service=settings.FIWARE_SERVICE,
         fiware_servicepath=settings.FIWARE_SERVICEPATH,
