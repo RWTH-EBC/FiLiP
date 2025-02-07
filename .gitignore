@@ -13,7 +13,7 @@ __pycache__
 !.github/workflows/issue-tracker.yml
 !.github/issue-branch.yml
 !.github/workflows/unittest.yml
-
+!docker/docker-compose.yml
 
 *.yaml
 
