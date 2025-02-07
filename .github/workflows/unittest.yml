@@ -67,7 +67,7 @@ jobs:
     steps:
       # Step 1: Navigate to docker folder
       - name: List files for debugging
-        run: ls - l
+        run: ls -l
 
       - name: Navigate to Docker folder
         run: |
