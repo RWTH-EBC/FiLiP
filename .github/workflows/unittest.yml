@@ -11,6 +11,7 @@ on:
 jobs:
   setup:
     runs-on: ubuntu-latest
+    environment: unittests  # Environment for unit tests
     strategy:
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
@@ -40,7 +41,7 @@ jobs:
         run: |
           cat <<EOF > .env
           LOG_LEVEL="INFO"
-          CB_URL=${{ vars.CB_URL }}
+          CB_URL=${{ vars.CB_URL }} # Using stored environment variable
           ORION_LD_URL="http://localhost:1027"
           IOTA_JSON_URL="http://localhost:4041"
           IOTA_UL_URL="http://localhost:4061"
