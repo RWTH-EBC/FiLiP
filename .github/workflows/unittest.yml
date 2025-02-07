@@ -92,7 +92,7 @@ jobs:
       # Step 12: Run tests
       - name: Run tests with both unittest and pytest
         run: |
-          python -m unittest tests/clients/test_ngsi_v2_cb.py
+          python -m unittest discover --verbose . "test_*.py
         
         #export TEST_ENGINE=PYTEST &&
           #export TEST_PATH=tests &&
