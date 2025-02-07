@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  full_setup_and_test:
+  setup:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -37,51 +37,90 @@ jobs:
         run: |
           pip install .[development]
 
-      # Step 5: Create .env file
+      # Step 5: Create .env file with updated values
       - name: Create .env file
         run: |
-          echo "CB_URL=http://localhost:1026" > .env
-          echo "IOTA_URL=http://localhost:4041" >> .env
+          echo "LOG_LEVEL=INFO" > .env
+          echo "CB_URL=http://localhost:1026" >> .env
+          echo "ORION_LD_URL=http://localhost:1027" >> .env
+          echo "IOTA_JSON_URL=http://localhost:4041" >> .env
+          # echo "IOTA_UL_URL=http://localhost:4061" >> .env  # Commented as per request
           echo "QL_URL=http://localhost:8668" >> .env
           echo "MQTT_BROKER_URL=mqtt://localhost:1883" >> .env
+          echo "MQTT_BROKER_URL_INTERNAL=mqtt://mqtt-broker:1883" >> .env
+          echo "FIWARE_SERVICE=filip" >> .env
+          echo "FIWARE_SERVICEPATH=/testing" >> .env
 
-      # Step 6: Clone FIWARE repository and start services
-      - name: Clone FIWARE repository
+      # Step 6: Verify environment setup
+      - name: Verify environment setup
         run: |
-          git clone https://github.com/N5GEH/n5geh.platform.git
-          cd n5geh.platform/v2 && docker compose pull && docker compose up -d
+          echo "Verifying .env file:"
+          cat .env
 
-      # Step 7: Wait for FIWARE services to start
+  fiware_setup:
+    needs: setup
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10"]
+
+    steps:
+      # Step 1: Navigate to docker folder
+      - name: Navigate to Docker folder
+        run: cd docker
+
+      # Step 2: Start FIWARE services using local docker-compose.yml
+      - name: Start FIWARE services from docker folder
+        working-directory: docker
+        run: docker compose up -d
+
+      # Step 3: Wait for FIWARE services
       - name: Wait for FIWARE services to start
         run: |
-          for i in {1..120}; do
+          for i in {1..30}; do
             curl -s http://localhost:1026/version && \
+            curl -s http://localhost:1027/version && \
             curl -s http://localhost:4041/iot/about && \
-            curl -s http://localhost:8668/version && break || sleep 10
+            curl -s http://localhost:8668/version && break || sleep 2
           done
 
-      # Step 8: Verify FIWARE services
-      - name: Verify FIWARE services
-        run: |
-          curl -X GET "http://localhost:1026/version"
-          curl -X GET "http://localhost:4041/iot/about"
-          curl -X GET "http://localhost:8668/version"
-
-      # Step 9: Print Docker logs for debugging
-      - name: Print Docker logs
-        working-directory: n5geh.platform/v2
-        run: docker compose logs
-
-      # Step 10: Print Docker ps -a for debugging
-      - name: Print Docker ps
+      # Step 4: Check running Docker containers
+      - name: Verify running FIWARE services
         run: docker ps -a
 
-      # Step 11: Print current directory for debugging
-      - name: Print current directory
-        run: pwd
+  test:
+    needs: fiware_setup
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
 
-      # Step 12: Navigate to correct directory and run tests
-      - name: Run tests
-        working-directory: ${{ github.workspace }}/tests
+    steps:
+      # Step 1: Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Python
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      # Step 3: Install build tools
+      - name: Install build tools
         run: |
-          python -m unittest discover -s . -p "test_*.py" || true
+          python -m pip install --upgrade pip
+          pip install setuptools wheel
+
+      # Step 4: Install test dependencies
+      - name: Install test dependencies
+        run: |
+          pip install .[test]
+          pip install pytest
+
+      # Step 5: Run tests
+      - name: Run tests with both unittest and pytest
+        run: |
+          export TEST_ENGINE=PYTEST &&
+          export TEST_PATH=tests &&
+          if [ "$TEST_ENGINE" == "PYTEST" ]; then python -m pytest $TEST_PATH/; else python -m unittest discover --verbose . "test_*.py"; fi
