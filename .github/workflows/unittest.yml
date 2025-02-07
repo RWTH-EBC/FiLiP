@@ -94,4 +94,7 @@ jobs:
         run: |
           export TEST_ENGINE=PYTEST &&
           export TEST_PATH=tests &&
-          if [ "$TEST_ENGINE" == "PYTEST" ]; then python -m pytest $TEST_PATH/; else python -m unittest discover --verbose . "test_*.py"; fi
+          if [ "$TEST_ENGINE" == "PYTEST" ]; then python -m pytest $TEST_PATH/; else
+          python -m unittest tests/clients/test_ngsi_v2_cb.py; fi
+          
+      #python -m unittest discover --verbose . "test_*.py"; fi
