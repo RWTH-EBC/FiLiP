@@ -7,7 +7,7 @@
 [![coverage](https://rwth-ebc.github.io/FiLiP/master/coverage/badge.svg)](https://rwth-ebc.github.io/FiLiP/master/coverage)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![build](https://rwth-ebc.github.io/FiLiP/master/build/build.svg)](https://rwth-ebc.github.io/FiLiP/master/build/build.svg)
-[![DOI](https://joss.theoj.org/papers/10.21105/joss.06953/status.svg )](https://doi.org/10.21105/joss.06953)
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.06953/status.svg     )](https://doi.org/10.21105/joss.06953    )
 
 FiLiP (Fiware Library for Python) is a python software development kit (SDK) for 
 accelerating the development of web services that use Fiware's Generic 
@@ -69,6 +69,19 @@ You can register for a testing account
 [here](https://www.fiware.org/developers/fiware-lab/).
 > **Note**: FiLiP is now compatible to [Pydantic V2](https://docs.pydantic.dev/latest/migration/). If your program still require Pydantic V1.x for some reason, please use release [v0.2.5](https://github.com/RWTH-EBC/FiLiP/releases/tag/v0.2.5) or earlier version of FiLiP. Besides, we recommended to set `pydantic~=1.10` in the `requirements.txt`, otherwise Pydantic V2 might still be installed.
 
+#### Supported Python Versions
+
+| Version   | Status     |
+|-----------|------------|
+| 3.7      | ❌ Deprecated   |
+| 3.8      | ✅ Tested   |
+| 3.9      | ✅ Tested   |
+| 3.10     | ✅ Tested   |
+| 3.11     | ✅ Tested   |
+| 3.12     | 🔄 Ongoing   |
+
+> ✅ Tested python versions have passed the unittests 
+
 ### Installation
 
 The easiest way to install the library is via pip:
@@ -84,10 +97,18 @@ If you want to benefit from the latest changes, use the following command
 pip install -U git+git://github.com/RWTH-EBC/filip
 ```
 
-> **Note**: For local development, you can install the library in editable mode with the following command:
+> **Note**: For development, you should install FiLiP in editable mode with the following command:
+> ````bash
+> pip install -e .[development]
 > ````
-> pip install -e .
-> ````
+> The `development` option will install extra libraries required for contribution. Please check the [CONTRIBUTING.md](CONTRIBUTING.md) for more information. 
+
+#### Install extra dependencies for tutorials and examples (optional)
+
+If you need to go through the tutorials or examples, please install filip with extra module ``tutorials``:
+````
+pip install -U filip[tutorials]
+````
 
 #### Install semantics module (optional)
 
@@ -147,7 +168,11 @@ Therefore, FiLiP currently only covers the APIs of the following GEs:
     - [github](https://github.com/telefonicaid/fiware-orion)
     - [swagger](https://swagger.lab.fiware.org/)
     - [NGSI v2 specifications](https://github.com/FIWARE/specifications/tree/master/OpenAPI/ngsiv2)
-    
+
+- NGSI-LD Context Broker for managing context data with Linked Data concept. The functionalities that FiLiP supports are closely aligned with the specification **_NGSI-LD V1.3.1_**, which is according to the FIWARE [catalogue](https://github.com/FIWARE/catalogue#core-context-broker-components) the latest spec version that has been implemented by all three brokers (Orion-LD, Scorpio, and Stellio). We currently use Orion-LD for testing.
+    - [github](https://github.com/FIWARE/context.Orion-LD)
+    - [swagger](https://swagger.lab.fiware.org/?url=https://raw.githubusercontent.com/FIWARE/specifications/master/OpenAPI/ngsi-ld/full_api.json#/)
+  > **Note**: `-experimental` flag need to be set for Orion-LD Context Broker to enable the full functionality. Check this [issue](https://github.com/FIWARE/context.Orion-LD/issues/1648) for more information
     
 - IoT-Agents for managing IoT Devices. IoT agents are implemented using 
   the FIWARE IoT Agent Node Lib as a common framework.

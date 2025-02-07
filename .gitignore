@@ -16,6 +16,7 @@ __pycache__
 !docker/docker-compose.yml
 
 *.yaml
+!.pre-commit-config.yaml
 
 # pip install #
 #####################
@@ -32,7 +33,7 @@ requirements.txt
 .idea
 .cache
 venv
-
+.venv
 # Unittest #
 #####################
 .pytest_cache

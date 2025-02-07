@@ -1,4 +1,5 @@
 """Vocabulary Models for CombinedRelations"""
+
 from aenum import Enum
 
 from filip.semantics.vocabulary import DataFieldType
@@ -23,20 +24,23 @@ class CombinedRelation(BaseModel):
     relation_ids: List[str] = Field(
         default=[],
         description="List of all relations of the class that are "
-                    "bundled; have the same property")
-    property_iri: str = Field(description="IRI of the property, under which "
-                                          "the relations are bundled")
-    class_iri: str = Field(description="IRI of the class the relations and "
-                                       "this CR belongs to")
+        "bundled; have the same property",
+    )
+    property_iri: str = Field(
+        description="IRI of the property, under which " "the relations are bundled"
+    )
+    class_iri: str = Field(
+        description="IRI of the class the relations and " "this CR belongs to"
+    )
 
-    def get_relations(self, vocabulary: 'Vocabulary') -> List[Relation]:
+    def get_relations(self, vocabulary: "Vocabulary") -> List[Relation]:
         result = []
         for id in self.relation_ids:
             result.append(vocabulary.get_relation_by_id(id))
 
         return result
 
-    def get_property_label(self, vocabulary: 'Vocabulary') -> str:
+    def get_property_label(self, vocabulary: "Vocabulary") -> str:
         """Get the label of the Property. Overwritten by children
 
         Args:
@@ -47,8 +51,7 @@ class CombinedRelation(BaseModel):
         """
         return ""
 
-    def get_all_targetstatements_as_string(self, vocabulary: 'Vocabulary') \
-            -> str:
+    def get_all_targetstatements_as_string(self, vocabulary: "Vocabulary") -> str:
         """
         Get a string stating all conditions(target statement) that need to
         be fulfilled, so that this CR is fulfilled
@@ -65,7 +68,7 @@ class CombinedRelation(BaseModel):
 
         return res[:-2]
 
-    def get_all_target_iris(self, vocabulary: 'Vocabulary') -> Set[str]:
+    def get_all_target_iris(self, vocabulary: "Vocabulary") -> Set[str]:
         """Get all iris of referenced targets
 
         Args:
@@ -81,8 +84,8 @@ class CombinedRelation(BaseModel):
             iris.update(relation.get_all_target_iris())
         return iris
 
-    def get_all_target_labels(self, vocabulary: 'Vocabulary') -> Set[str]:
-        """ Get all labels of referenced targets
+    def get_all_target_labels(self, vocabulary: "Vocabulary") -> Set[str]:
+        """Get all labels of referenced targets
 
         Args:
             vocabulary (Vocabulary): Vocabulary of the project
@@ -90,11 +93,12 @@ class CombinedRelation(BaseModel):
         Returns:
             set(str)
         """
-        return {vocabulary.get_label_for_entity_iri(iri)
-                for iri in self.get_all_target_iris(vocabulary)}
+        return {
+            vocabulary.get_label_for_entity_iri(iri)
+            for iri in self.get_all_target_iris(vocabulary)
+        }
 
-    def export_rule(self, vocabulary: 'Vocabulary',
-                    stringify_fields: bool) -> str:
+    def export_rule(self, vocabulary: "Vocabulary", stringify_fields: bool) -> str:
         """Get the rule as string
 
         Args:
@@ -106,12 +110,14 @@ class CombinedRelation(BaseModel):
            str
         """
 
-        rules = [vocabulary.get_relation_by_id(id).export_rule(vocabulary)
-                 for id in self.relation_ids]
+        rules = [
+            vocabulary.get_relation_by_id(id).export_rule(vocabulary)
+            for id in self.relation_ids
+        ]
         if stringify_fields:
             return str(rules).replace('"', "")
         else:
-            return str(rules).replace("'","").replace('"', "'")
+            return str(rules).replace("'", "").replace('"', "'")
 
 
 class CombinedDataRelation(CombinedRelation):
@@ -120,7 +126,7 @@ class CombinedDataRelation(CombinedRelation):
     Represents one Data Field of a class
     """
 
-    def get_property_label(self, vocabulary: 'Vocabulary') -> str:
+    def get_property_label(self, vocabulary: "Vocabulary") -> str:
         """Get the label of the DataProperty
 
         Args:
@@ -131,8 +137,7 @@ class CombinedDataRelation(CombinedRelation):
         """
         return vocabulary.get_data_property(self.property_iri).get_label()
 
-    def get_possible_enum_target_values(self, vocabulary: 'Vocabulary') \
-            -> List[str]:
+    def get_possible_enum_target_values(self, vocabulary: "Vocabulary") -> List[str]:
         """Get all enum values that are allowed as values for this Data field
 
         Args:
@@ -150,7 +155,7 @@ class CombinedDataRelation(CombinedRelation):
 
         return sorted(list(enum_values))
 
-    def get_field_type(self, vocabulary: 'Vocabulary') -> DataFieldType:
+    def get_field_type(self, vocabulary: "Vocabulary") -> DataFieldType:
         """Get type of CDR (command, devicedata , simple)
 
          Args:
@@ -162,7 +167,7 @@ class CombinedDataRelation(CombinedRelation):
         property = vocabulary.get_data_property(self.property_iri)
         return property.field_type
 
-    def is_device_relation(self, vocabulary: 'Vocabulary') -> bool:
+    def is_device_relation(self, vocabulary: "Vocabulary") -> bool:
         """Test if the CDR is a device property(command, or readings)
 
         Args:
@@ -190,17 +195,17 @@ class CombinedObjectRelation(CombinedRelation):
             List[str]
         """
         from . import Vocabulary
+
         assert isinstance(vocabulary, Vocabulary)
 
         relations = self.get_relations(vocabulary)
         result_set = set()
         for relation in relations:
-            result_set.update(relation.
-                              get_all_possible_target_class_iris(vocabulary))
+            result_set.update(relation.get_all_possible_target_class_iris(vocabulary))
 
         return list(result_set)
 
-    def get_property_label(self, vocabulary: 'Vocabulary') -> str:
+    def get_property_label(self, vocabulary: "Vocabulary") -> str:
         """Get the label of the ObjectProperty
 
         Args:
@@ -211,15 +216,17 @@ class CombinedObjectRelation(CombinedRelation):
         """
         return vocabulary.get_object_property(self.property_iri).get_label()
 
-    def get_inverse_of_labels(self, vocabulary: 'Vocabulary') -> List[str]:
+    def get_inverse_of_labels(self, vocabulary: "Vocabulary") -> List[str]:
         """Get the labels of the inverse_of properties of this COR
 
-         Args:
-             vocabulary (Vocabulary): Vocabulary of the project
+        Args:
+            vocabulary (Vocabulary): Vocabulary of the project
 
-         Returns:
-             List[str]
-         """
+        Returns:
+            List[str]
+        """
         property = vocabulary.get_object_property(self.property_iri)
-        return [vocabulary.get_entity_by_iri(iri).label
-                for iri in property.inverse_property_iris]
+        return [
+            vocabulary.get_entity_by_iri(iri).label
+            for iri in property.inverse_property_iris
+        ]

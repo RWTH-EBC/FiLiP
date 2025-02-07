@@ -1,6 +1,7 @@
 """
 Test module for context subscriptions and notifications
 """
+
 import unittest
 
 from pydantic import ValidationError
@@ -15,6 +16,7 @@ class TestSubscriptions(unittest.TestCase):
     """
     Test class for context broker models
     """
+
     def setUp(self) -> None:
         """
         Setup test data
@@ -22,15 +24,14 @@ class TestSubscriptions(unittest.TestCase):
             None
         """
         self.fiware_header = FiwareHeader(
-            service=settings.FIWARE_SERVICE,
-            service_path=settings.FIWARE_SERVICEPATH)
+            service=settings.FIWARE_SERVICE, service_path=settings.FIWARE_SERVICEPATH
+        )
         self.http_url = "https://test.de:80"
         self.mqtt_url = "mqtt://test.de:1883"
-        self.mqtt_topic = '/filip/testing'
+        self.mqtt_topic = "/filip/testing"
 
     def test_entity_pattern(self) -> None:
-        """
-        """
+        """ """
         _id = "urn:ngsi-ld:Test:001"
         _idPattern = ".*"
         _type = "Test"
@@ -68,5 +69,4 @@ class TestSubscriptions(unittest.TestCase):
         """
         Cleanup test server
         """
-        clear_all(fiware_header=self.fiware_header,
-                  cb_url=settings.CB_URL)
+        clear_all(fiware_header=self.fiware_header, cb_url=settings.CB_URL)

@@ -3,10 +3,11 @@ Shared data models
 """
 
 from aenum import Enum
-from pydantic import ConfigDict, BaseModel, Field, field_validator
+from pydantic import ConfigDict, BaseModel, Field, field_validator, computed_field
 
-from filip.utils.validators import (validate_fiware_service_path,
-                                    validate_fiware_service)
+from filip.utils.validators import validate_fiware_service_path, validate_fiware_service
+
+core_context = "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.6.jsonld"
 
 
 class NgsiVersion(str, Enum):
@@ -58,9 +59,9 @@ class DataType(str, Enum):
         "hh:mm:ss[Z|(+|-)hh:mm] (see XML schema for details).",
     )
     RELATIONSHIP = "Relationship", "Reference to another context entity"
-    STRUCTUREDVALUE = "StructuredValue", ("Structured datatype must be an "
-                                          "array or object"
-                                          "serializable")
+    STRUCTUREDVALUE = "StructuredValue", (
+        "Structured datatype must be an " "array or object" "serializable"
+    )
     ARRAY = "Array", "Array of the types above"
     OBJECT = "Object", "JSON-Object of the types above, i.e. a dictionary"
     COMMAND = "command", "A command for IoT Devices"
@@ -127,7 +128,7 @@ class FiwareHeaderSecure(FiwareHeader):
         default="",
         max_length=3000,
         description="authorization key",
-        pattern=r".*"
+        pattern=r".*",
     )
 
 
@@ -153,3 +154,37 @@ class LogLevel(str, Enum):
         for member in cls:
             if member.value.casefold() == name.casefold():
                 return member
+
+
+class FiwareLDHeader(BaseModel):
+    """
+    Define entity service paths which are supported by the NGSI
+    Context Brokers to support hierarchical scopes:
+    https://fiware-orion.readthedocs.io/en/master/user/service_path/index.html
+    """
+
+    model_config = ConfigDict(populate_by_name=True, validate_assignment=True)
+    ngsild_tenant: str = Field(
+        alias="NGSILD-Tenant",
+        default=None,
+        max_length=50,
+        description="Alias to the Fiware service to used for multitenancy",
+        pattern=r"\w*$",
+    )
+    link_header: str = Field(
+        alias="Link",
+        default=f"<{core_context}>; "
+        'rel="http://www.w3.org/ns/json-ld#context"; '
+        'type="application/ld+json"',
+        description="Fiware service used for multi-tenancy",
+        pattern=r"\w*$",
+    )
+    # @computed_field
+    # def Link(self) -> str:
+    #     link_header = f'<{self.context}>; ' \
+    #                   'rel="http://www.w3.org/ns/json-ld#context"; ' \
+    #                   'type="application/ld+json"'
+    #     return link_header
+
+    def set_context(self, context: str):
+        self.link_header = f'<{context}>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"'

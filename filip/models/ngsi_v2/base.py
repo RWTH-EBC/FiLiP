@@ -1,6 +1,7 @@
 """
 Shared models that are used by multiple submodules
 """
+
 import json
 
 from aenum import Enum
@@ -238,7 +239,7 @@ class NamedMetadata(Metadata):
     """
 
     name: str = Field(
-        titel="metadata name",
+        title="metadata name",
         description="a metadata name, describing the role of the metadata in "
         "the place where it occurs; for example, the metadata name "
         "accuracy indicates that the metadata value describes how "
@@ -354,7 +355,7 @@ class BaseNameAttribute(BaseModel):
     """
 
     name: str = Field(
-        titel="Attribute name",
+        title="Attribute name",
         description="The attribute name describes what kind of property the "
         "attribute value represents of the entity, for example "
         "current_speed. Allowed characters "
@@ -442,9 +443,7 @@ class BaseValueAttribute(BaseModel):
                 elif isinstance(value, BaseModel):
                     value.model_dump_json()
                     return value
-                raise TypeError(
-                    f"{type(value)} does not match " f"{DataType.OBJECT}"
-                )
+                raise TypeError(f"{type(value)} does not match " f"{DataType.OBJECT}")
 
             # allows geojson as structured value
             if type_ == DataType.GEOJSON:
@@ -480,8 +479,7 @@ class BaseValueAttribute(BaseModel):
                         return Feature(**value)
                     elif _geo_json_type == "FeatureCollection":
                         return FeatureCollection(**value)
-                raise TypeError(f"{type(value)} does not match "
-                                f"{DataType.GEOJSON}")
+                raise TypeError(f"{type(value)} does not match " f"{DataType.GEOJSON}")
 
             # allows list, dict and BaseModel as structured value
             if type_ == DataType.STRUCTUREDVALUE:

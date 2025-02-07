@@ -1,6 +1,7 @@
 """
 Module for FIWARE api client
 """
+
 import logging
 import json
 import errno
@@ -12,19 +13,17 @@ from requests import Session
 from filip.clients.base_http_client import BaseHttpClient
 from filip.config import settings
 from filip.models.base import FiwareHeader
-from filip.clients.ngsi_v2 import \
-    ContextBrokerClient, \
-    IoTAClient, \
-    QuantumLeapClient
+from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient, QuantumLeapClient
 
 
-logger = logging.getLogger('client')
+logger = logging.getLogger("client")
 
 
 class HttpClientConfig(BaseModel):
     """
     Config class for http client
     """
+
     cb_url: Optional[AnyHttpUrl] = settings.CB_URL
     iota_url: Optional[AnyHttpUrl] = settings.IOTA_URL
     ql_url: Optional[AnyHttpUrl] = settings.QL_URL
@@ -37,11 +36,14 @@ class HttpClient(BaseHttpClient):
     the principal of composition. Hence, each sub client is accessible from
     this client, but they share a general config and if provided a session.
     """
-    def __init__(self,
-                 config: Union[str, Path, HttpClientConfig, Dict] = None,
-                 session: Session = None,
-                 fiware_header: FiwareHeader = None,
-                 **kwargs):
+
+    def __init__(
+        self,
+        config: Union[str, Path, HttpClientConfig, Dict] = None,
+        session: Session = None,
+        fiware_header: FiwareHeader = None,
+        **kwargs
+    ):
         """
         Constructor for master client
         Args:
@@ -55,40 +57,48 @@ class HttpClient(BaseHttpClient):
         else:
             self.config = HttpClientConfig()
 
-        super().__init__(session=session,
-                         fiware_header=fiware_header,
-                         **kwargs)
+        super().__init__(session=session, fiware_header=fiware_header, **kwargs)
 
         # initialize sub clients
-        self.cb = ContextBrokerClient(url=self.config.cb_url,
-                                      session=self.session,
-                                      fiware_header=self.fiware_headers,
-                                      **self.kwargs)
+        self.cb = ContextBrokerClient(
+            url=self.config.cb_url,
+            session=self.session,
+            fiware_header=self.fiware_headers,
+            **self.kwargs
+        )
 
-        self.iota = IoTAClient(url=self.config.iota_url,
-                               session=self.session,
-                               fiware_header=self.fiware_headers,
-                               **self.kwargs)
+        self.iota = IoTAClient(
+            url=self.config.iota_url,
+            session=self.session,
+            fiware_header=self.fiware_headers,
+            **self.kwargs
+        )
 
-        self.timeseries = QuantumLeapClient(url=self.config.ql_url,
-                                            session=self.session,
-                                            fiware_header=self.fiware_headers,
-                                            **self.kwargs)
+        self.timeseries = QuantumLeapClient(
+            url=self.config.ql_url,
+            session=self.session,
+            fiware_header=self.fiware_headers,
+            **self.kwargs
+        )
 
         # from here on deprecated?
-        auth_types = {'basicauth': self.__http_basic_auth,
-                      'digestauth': self.__http_digest_auth}
+        auth_types = {
+            "basicauth": self.__http_basic_auth,
+            "digestauth": self.__http_digest_auth,
+        }
         # 'oauth2': self.__oauth2}
 
         if self.config.auth:
-            assert self.config.auth['type'].lower() in auth_types.keys()
-            self.__get_secrets_file(path=self.config.auth['secret'])
-            auth_types[self.config.auth['type']]()
+            assert self.config.auth["type"].lower() in auth_types.keys()
+            self.__get_secrets_file(path=self.config.auth["secret"])
+            auth_types[self.config.auth["type"]]()
 
-        self.__secrets = {"username": None,
-                          "password": None,
-                          "client_id": None,
-                          "client_secret": None}
+        self.__secrets = {
+            "username": None,
+            "password": None,
+            "client_id": None,
+            "client_secret": None,
+        }
 
     @property
     def config(self):
@@ -137,7 +147,7 @@ class HttpClient(BaseHttpClient):
              None
         """
         try:
-            with open(path, 'r') as filename:
+            with open(path, "r") as filename:
                 logger.info("Reading credentials from: %s", path)
                 self.__secrets.update(json.load(filename))
 
@@ -158,8 +168,9 @@ class HttpClient(BaseHttpClient):
         """
         try:
             self.session = Session()
-            self.session.auth = HTTPBasicAuth(self.__secrets['username'],
-                                              self.__secrets['password'])
+            self.session.auth = HTTPBasicAuth(
+                self.__secrets["username"], self.__secrets["password"]
+            )
         except KeyError:
             pass
 
@@ -172,8 +183,9 @@ class HttpClient(BaseHttpClient):
         """
         try:
             self.session = Session()
-            self.session.auth = HTTPDigestAuth(self.__secrets['username'],
-                                               self.__secrets['password'])
+            self.session.auth = HTTPDigestAuth(
+                self.__secrets["username"], self.__secrets["password"]
+            )
         except KeyError:
             pass
 
@@ -200,7 +212,7 @@ class HttpClient(BaseHttpClient):
     #                       f"Other oauth2-workflows available are: "
     #                       f"{oauth2clients.keys()}")
     #        workflow = 'authorization_code_grant'
-#
+    #
     #    oauthclient = oauth2clients[workflow](client_id=self.__secrets[
     #        'client_id'])
     #    self.session = OAuth2Session(client_id=None,
@@ -210,7 +222,7 @@ class HttpClient(BaseHttpClient):
     #                                 auto_refresh_kwargs={
     #                                     self.__secrets['client_id'],
     #                                     self.__secrets['client_secret']})
-#
+    #
     #    self.__token = self.session.fetch_token(
     #        token_url=self.__secrets['token_url'],
     #        username=self.__secrets['username'],
