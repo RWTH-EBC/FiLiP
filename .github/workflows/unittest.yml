@@ -3,10 +3,10 @@ name: CI for FiLiP
 on:
   push:
     branches:
-      - "**"
+      - "315-Unittest-via-Github-actions"
   pull_request:
     branches:
-      - main
+      - "315-Unittest-via-Github-actions"
 
 jobs:
   setup:
@@ -67,7 +67,9 @@ jobs:
     steps:
       # Step 1: Navigate to docker folder
       - name: Navigate to Docker folder
-        run: cd docker
+        run: |
+          ls
+          cd docker
 
       # Step 2: Start FIWARE services using local docker-compose.yml
       - name: Start FIWARE services from docker folder
