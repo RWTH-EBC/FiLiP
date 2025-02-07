@@ -57,6 +57,8 @@ jobs:
           echo 'QL_URL="http://localhost:8668"' >> .env
           echo 'MQTT_BROKER_URL="mqtt://localhost:1883"' >> .env
           echo 'MQTT_BROKER_URL_INTERNAL="mqtt://mqtt-broker:1883"' >> .env
+          echo "LD_MQTT_BROKER_URL": "mqtt://localhost:1883"' >> .env
+          echo '"LD_MQTT_BROKER_URL_INTERNAL": "mqtt://mqtt-broker:1883"' >> .env
           echo 'FIWARE_SERVICE="filip"' >> .env
           echo 'FIWARE_SERVICEPATH="/testing"' >> .env
 
