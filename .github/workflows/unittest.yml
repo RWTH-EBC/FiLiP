@@ -36,7 +36,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      # Step 6: Create .env file
+      # Step 4: Create .env file
       - name: Create .env file
         run: |
           cat <<EOF > .env
@@ -54,17 +54,17 @@ jobs:
           FIWARE_SERVICEPATH=${{ vars.FIWARE_SERVICEPATH }}
           EOF
 
-      # Step 7: Verify .env file
+      # Step 5: Verify .env file
       - name: Verify .env file
         run: cat .env
 
-      # Step 8: Start FIWARE services
+      # Step 6: Start FIWARE services
       - name: Start FIWARE Services
         run: |
           cd docker
           docker compose up -d
 
-      # Step 9: Wait for FIWARE Services
+      # Step 7: Wait for FIWARE Services
       - name: Wait for FIWARE Services
         run: |
           for i in {1..30}; do
@@ -73,7 +73,7 @@ jobs:
             curl -s http://localhost:8668/version && break || sleep 5
           done
 
-      # Step 4: Install dependencies (if cache is empty)
+      # Step 8: Install dependencies (if cache is empty)
       - name: Install dependencies (if needed)
         run: |
           python -m pip install --upgrade pip
@@ -81,17 +81,17 @@ jobs:
           pip install .
           pip install pytest
 
-      # Step 10: Debug - Show Running Docker Containers
+      # Step 9: Debug - Show Running Docker Containers
       - name: Debug - Show Running Docker Containers
         run: docker ps -a
       
-      # Step 6: Navigate back to tests folder
+      # Step 10: Navigate back to tests folder
       - name: Navigate to Tests Folder
         run: |
           cd $GITHUB_WORKSPACE
           ls -la
 
-      # Step 6: Run Tests
+      # Step 11: Run Tests
       - name: Run tests with unittest and pytest
         run: |
           python -m unittest tests/clients/test_ngsi_v2_cb.py
