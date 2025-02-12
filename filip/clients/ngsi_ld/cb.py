@@ -381,8 +381,11 @@ class ContextBrokerLDClient(BaseHttpClient):
         if attrs:
             params.update({"attrs": ",".join(attrs)})
         if q:
-            x = re.search(r"[=!<>~]{1}\'.*\'",q.replace(" ",""))
-            assert x is None, f'String/Date value in {x.group()} must be in double quote'
+            x = re.search(r"[=!<>~]{1}\'.*\'", q.replace(" ", ""))
+            if x is not None:
+                raise ValueError(
+                    f"String/Date/etc. value in {x.group()} must be " f"in double quote"
+                )
             params.update({"q": q})
         if georel:
             params.update({"georel": georel})

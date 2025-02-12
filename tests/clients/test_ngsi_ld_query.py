@@ -158,19 +158,19 @@ class TestLDQueryLanguage(unittest.TestCase):
             "address[country] >= 'Germany'",
             "address[country] < '250'",
         ]
-        
+
         for q in incorrect:
-            with self.assertRaises(AssertionError):
+            with self.assertRaises(ValueError):
                 self.cb.get_entity_list(q=q)
- 
+
         correct = [
-            "brand != \"Batmobile\"",
-            "isParked == \"urn:ngsi-ld:garage0\"",
-            "temperature < 60; isParked == \"urn:ngsi-ld:garage0\"",
+            'brand != "Batmobile"',
+            'isParked == "urn:ngsi-ld:garage0"',
+            'temperature < 60; isParked == "urn:ngsi-ld:garage0"',
             "brand > \"Bat'mobile'\"",
-            "isParked < \"1999\""
+            'isParked < "1999"',
         ]
-        
+
         for q in correct:
             try:
                 self.cb.get_entity_list(q=q)
