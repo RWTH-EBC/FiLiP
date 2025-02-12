@@ -71,14 +71,14 @@ You can register for a testing account
 
 #### Supported Python Versions
 
-| Version   | Status     |
-|-----------|------------|
+| Version   | Status         |
+|-----------|----------------|
 | 3.7      | ❌ Deprecated   |
-| 3.8      | ✅ Tested   |
-| 3.9      | ✅ Tested   |
-| 3.10     | ✅ Tested   |
-| 3.11     | ✅ Tested   |
-| 3.12     | 🔄 Ongoing   |
+| 3.8      | ✅ Tested       |
+| 3.9      | ✅ Tested       |
+| 3.10     | ✅ Tested       |
+| 3.11     | ✅ Tested       |
+| 3.12     | ✅ Tested      |
 
 > ✅ Tested python versions have passed the unittests 
 

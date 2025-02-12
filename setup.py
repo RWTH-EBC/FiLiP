@@ -29,7 +29,7 @@ INSTALL_REQUIRES = [
 
 SETUP_REQUIRES = INSTALL_REQUIRES.copy()
 
-VERSION = "0.6.0"
+VERSION = "0.6.1"
 
 setuptools.setup(
     name="filip",
@@ -57,6 +57,7 @@ setuptools.setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
         "License :: OSI Approved :: BSD License",
     ],
     keywords=["iot", "fiware", "semantic"],
