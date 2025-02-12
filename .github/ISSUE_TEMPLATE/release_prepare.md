@@ -12,14 +12,13 @@ Specify the version number for the release (e.g., v0.7.1):
 
 **Checklist**
 Following steps will be checked:
-- [ ] Create issue and branch for preparation release
 - [ ] Revise the changelog if necessary
 - [ ] Update the version tag in:
   - [ ] `setup.py`
   - [ ] `filip/__init__.py`
   - [ ] `Changelog`
-- [ ] Check dependencies, especially when a new library is introduced
-- [ ] Verify information in `setup.py` (author, email, etc.)
+- [ ] Check dependencies in `setup.py`, especially when a new library is introduced
+- [ ] Check other information in `setup.py`
 
 After that, this can this branch will be merged the branch to `master` with a commit message containing `[PYPI-RELEASE]`
 
