@@ -77,7 +77,7 @@ class TestContextModels(unittest.TestCase):
         attr = ContextAttribute(**{"value": [20, 20], "type": "Array"})
         self.assertIsInstance(attr.value, list)
         with self.assertRaises(ValidationError) as context:
-            ContextAttribute(**{"value": "2?0", "type": "Text"})
+            ContextAttribute(**{"value": "2<0", "type": "Text"})
 
     def test_geojson_attribute(self):
         """
@@ -445,25 +445,44 @@ class TestContextModels(unittest.TestCase):
         entity = generated_model.model_validate(self.entity_data)
         self.assertEqual(self.entity_data, entity.model_dump(exclude_unset=True))
 
-        # try to generate a entity with dissalowed character in attribute name
-        with self.assertRaises(PydanticCustomError) as context:
-            ContextEntity(
-                **{
-                    "id": "Room",
-                    "type": "Room",
-                    "temper=ature": {"value": "20", "type": "Text"},
-                }
-            )
+        # try to generate a entity with one of dissalowed character in attribute name
+        attribute_name = [
+            "<",
+            ">",
+            '"',
+            "'",
+            "=",
+            ";",
+            "(",
+            ")",
+            " ",
+            "§",
+            "&",
+            "/",
+            "#",
+            "?",
+        ]
+        for char in attribute_name:
+            with self.assertRaises(PydanticCustomError) as context:
+                ContextEntity(
+                    **{
+                        "id": "Room",
+                        "type": "Room",
+                        "temper" + char + "ature": {"value": "20", "type": "Text"},
+                    }
+                )
 
-        # try to generate a entity with dissalowed character in attribute value
-        with self.assertRaises(ValidationError) as context:
-            ContextEntity(
-                **{
-                    "id": "Room",
-                    "type": "Room",
-                    "temperature": {"value": "2(0", "type": "Text"},
-                }
-            )
+        # try to generate a entity with with one of dissalowed character in attribute value
+        attribute_value = ["<", ">", '"', "'", "=", ";", "(", ")"]
+        for char in attribute_value:
+            with self.assertRaises(ValidationError) as context:
+                ContextEntity(
+                    **{
+                        "id": "Room",
+                        "type": "Room",
+                        "temperature": {"value": "2" + char + "0", "type": "Text"},
+                    }
+                )
 
     def test_command(self):
         """
@@ -506,9 +525,8 @@ class TestContextModels(unittest.TestCase):
 
         valid_strings: List[str] = ["name", "test123", "3_:strange-Name!"]
         invalid_strings: List[str] = ["my name", "Test?", "#False", "/notvalid"]
-
-        special_strings: List[str] = ["id", "type", "geo:location"]
-
+        self.assertRaises(ValidationError, NamedContextAttribute, name="type")
+        special_strings: List[str] = ["id", "type", "geo:json"]
         # Test if all needed fields, detect all invalid strings
         for string in invalid_strings:
             self.assertRaises(ValidationError, Metadata, type=string)

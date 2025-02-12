@@ -41,18 +41,13 @@ class FiwareRegex(str, Enum):
     attribute_name = (
         r"(^((?![\"'<>()=; §&/#?])[\x00-\x7F])*$)",
         "Prevents any string that contains at least one of the "
-        "symbols: ( ) < > \" ' = ; ",
+        "symbols: ( ) < > \" ' = ; § & / # ?",
     )
     attribute_value = (
         r"(^((?![\"'<>()=;])[\x00-\x7F])*$)",
         "Prevents any string that contains at least one of the "
         "symbols: ( ) < > \" ' = ; ",
     )
-    # attribute_value = (
-    #     r"(^((?![?&#/\"'()=])[\x00-\x7F])*$)",
-    #     "Prevents any string that contains at least one of the "
-    #     "symbols: ( ) = ? & # / ' \"",
-    # )
 
 
 @validate_call

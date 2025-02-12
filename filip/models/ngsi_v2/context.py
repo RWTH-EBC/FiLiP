@@ -196,7 +196,7 @@ class ContextEntityKeyValues(BaseModel):
         for attr_name, attr_value in data.items():
             if isinstance(attr_value, str):
                 validate_fiware_attribute_value_regex(attr_value)
-            validate_fiware_datatype_string_protect(attr_name)
+            validate_fiware_attribute_name_regex(attr_name)
         return data
 
     def get_attributes(self) -> dict:
