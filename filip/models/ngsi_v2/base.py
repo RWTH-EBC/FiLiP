@@ -36,6 +36,7 @@ from filip.utils.validators import (
     validate_escape_character_free,
     validate_fiware_datatype_string_protect,
     validate_fiware_datatype_standard,
+    validate_fiware_attribute_value_regex,
 )
 
 
@@ -394,6 +395,16 @@ class BaseValueAttribute(BaseModel):
         default=None, title="Attribute value", description="the actual data"
     )
 
+    @model_validator(mode="before")
+    def validate_value_based_on_type(cls, values):
+        type_ = values.get("type")
+        value = values.get("value")
+
+        if type_ == DataType.TEXT:
+            values["value"] = validate_fiware_attribute_value_regex(str(value))
+
+        return values
+
     @field_validator("value")
     def validate_value_type(cls, value, info: ValidationInfo):
         """
@@ -404,7 +415,6 @@ class BaseValueAttribute(BaseModel):
         original pydantic model will be dumped.
         If the type is unknown it will check json-serializable.
         """
-
         type_ = info.data.get("type")
         value_ = value
         if isinstance(value, BaseModel):

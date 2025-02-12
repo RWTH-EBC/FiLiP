@@ -67,7 +67,7 @@ class TestContextv2IoTModels(unittest.TestCase):
         valid_strings: List[str] = ["name", "test123", "3_:strange-Name!"]
         invalid_strings: List[str] = ["my name", "Test?", "#False", "/notvalid"]
 
-        special_strings: List[str] = ["id", "type", "geo:location"]
+        special_strings: List[str] = ["id", "type", "geo:json"]
 
         # Test if all needed fields, detect all invalid strings
         for string in invalid_strings:
