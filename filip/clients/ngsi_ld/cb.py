@@ -2,6 +2,7 @@
 Context Broker Module for API Client
 """
 
+import re
 import json
 import os
 from math import inf
@@ -380,6 +381,11 @@ class ContextBrokerLDClient(BaseHttpClient):
         if attrs:
             params.update({"attrs": ",".join(attrs)})
         if q:
+            x = re.search(r"[=!<>~]{1}\'.*\'", q.replace(" ", ""))
+            if x is not None:
+                raise ValueError(
+                    f"String/Date/etc. value in {x.group()} must be " f"in double quote"
+                )
             params.update({"q": q})
         if georel:
             params.update({"georel": georel})
