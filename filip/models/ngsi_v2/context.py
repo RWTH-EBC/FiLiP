@@ -21,6 +21,7 @@ from filip.utils.validators import (
     validate_fiware_datatype_standard,
     validate_fiware_datatype_string_protect,
     validate_fiware_attribute_value_regex,
+    validate_fiware_attribute_name_regex,
 )
 
 
@@ -258,8 +259,11 @@ class ContextEntity(ContextEntityKeyValues):
             key: ContextAttribute.model_validate(attr)
             for key, attr in data.items()
             if (
-                validate_fiware_attribute_value_regex(key) not in cls.model_fields
+                # validate_fiware_attribute_value_regex(key) not in cls.model_fields
+                validate_fiware_attribute_name_regex(key) not in cls.model_fields
                 and not isinstance(attr, ContextAttribute)
+                # key not in cls.model_fields
+                # and not isinstance(attr, ContextAttribute)
             )
         }
 
