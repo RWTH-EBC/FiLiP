@@ -29,7 +29,7 @@ INSTALL_REQUIRES = [
 
 SETUP_REQUIRES = INSTALL_REQUIRES.copy()
 
-VERSION = "0.6.0"
+VERSION = "0.6.1"
 
 setuptools.setup(
     name="filip",
